@@ -318,6 +318,12 @@
            name="%Output.location"
            weight="009"           
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
+     <!--tab
+           class="org.eclipse.cdt.ui.newui.StructureTreeTab"
+           icon="icons/obj16/hierarchy.gif"
+           name="%Data.hierarchy"
+           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
+           weight="012"/-->
      <tab
            class="org.eclipse.cdt.ui.newui.EnvironmentTab"
            icon="icons/obj16/environment.gif"

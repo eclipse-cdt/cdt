@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
 import java.net.URI;
@@ -34,6 +34,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -72,7 +73,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
  * 
  * Notes:
  * 
- * 1. All strings in the file remain unlocalized
+ * 1. Many strings in the file remain unlocalized
  *    since they represent method names.
  * 2. It is experimental functionality. Work is in progress.  
  * 3. Tree depth is limited by 16. Deeper branches are truncated.
@@ -81,26 +82,23 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 public class StructureTreeTab  extends AbstractCPropertyTab {
 
 	protected class LevelDialog extends Dialog {
-		Spinner sp;
-		
 		protected LevelDialog() {
 			super(CUIPlugin.getActiveWorkbenchShell());
 		}
-
 		protected Control createDialogArea(Composite parent) {
 			Composite c = new Composite(parent, 0);
 			c.setLayoutData(new GridData(GridData.FILL_BOTH));
 			c.setLayout(new GridLayout(2, false));
 			Label l = new Label(c, 0);
-			l.setText("Level : ");
+			l.setText(NewUIMessages.getResourceString("StructureTreeTab.0"));  //$NON-NLS-1$
 			c.setLayoutData(new GridData(GridData.BEGINNING));
-			sp = new Spinner(c, SWT.BORDER);
+			Spinner sp = new Spinner(c, SWT.BORDER);
 			sp.setMaximum(NESTING_MAX);
 			sp.setMinimum(0);
 			sp.setSelection(currentLevel);
 			sp.addSelectionListener(new SelectionAdapter () {
 				public void widgetSelected(SelectionEvent e) {
-					currentLevel = sp.getSelection();
+					currentLevel = ((Spinner)e.widget).getSelection();
 				}
 			});
 			return c;
@@ -108,28 +106,31 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 	}
 	private static final String BL = "["; //$NON-NLS-1$
 	private static final String BR = "]"; //$NON-NLS-1$
-	private static final int BUTTON_SIZE = 200; 
 	private static final Image IMG = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_ERROR);
 	private static final int NESTING_CFG = 5;
 	private static final int NESTING_MAX = 16;
-//	private static final Class[] NOCLASS = new Class[0];
-	private int currentLevel = 4; // default 
-	private int minCnt = 20;
-	protected Button r_cfg;
-	protected Button r_prj;
-	protected Button r_res;
-	
-	protected Tree tree;
-	
+	private static final String NULL = "<NULL>"; //$NON-NLS-1$
+	private int currentLevel = 4; // default depth
+	private Combo combo;
+	private Tree tree;
+	private ICResourceDescription cfg;
+
+	/*
+	 * Common check for each tree item:
+	 * - corresponding objects are not null.
+	 * - tree item nesting is no too deep.
+	 */
 	private boolean check(TreeItem ti, Object obj) {
 		if (obj == null || ti == null) return false;
+		// data not used now
+		// ti.setData(obj);
 		int cnt = NESTING_MAX;
 		TreeItem tiSaved = ti;
 		while (--cnt > 0) {
 			ti = ti.getParentItem();
 			if (ti == null) return true;
 		}
-		tiSaved.setText(2, "Maximal tree nesting");
+		tiSaved.setText(2, NewUIMessages.getResourceString("StructureTreeTab.1")); //$NON-NLS-1$
 		tiSaved.setImage(IMG);
 		return false;
 	}
@@ -147,94 +148,93 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 	}
 	private TreeItem create(TreeItem ti0, String text, long val) {
 		TreeItem t = create(ti0, text, String.valueOf(val));
-		t.setText(2, "Long");
+		t.setText(2, NewUIMessages.getResourceString("StructureTreeTab.2")); //$NON-NLS-1$
 		return t;
 	}
 
 	private TreeItem create(TreeItem ti0, String text, String val) {
 		TreeItem ti =  ti0 == null ? new TreeItem(tree, 0) : new TreeItem(ti0, 0);
-		ti.setText(0, text == null ? "<NULL>" : text);
-		ti.setText(1, val  == null ? "<NULL>" : val );
-		ti.setText(2, "String");
+		ti.setText(0, text == null ? NULL : text);
+		ti.setText(1, val  == null ? NULL : val );
+		ti.setText(2, NewUIMessages.getResourceString("StructureTreeTab.3")); //$NON-NLS-1$
 		return ti;
 	}
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		usercomp.setLayout(new GridLayout(2, false));
+		usercomp.setLayout(new GridLayout(5, false));
 		
-		r_prj = new Button(usercomp, SWT.RADIO);
-		r_prj.setLayoutData(new GridData(GridData.BEGINNING));
-		r_prj.setText(NewUIMessages.getResourceString("ConfigDescriptionTab.0")); //$NON-NLS-1$
-		r_prj.setSelection(true);		
-		r_prj.addSelectionListener(new SelectionAdapter() {
+		Label lb = new Label(usercomp, 0);
+		lb.setText(NewUIMessages.getResourceString("StructureTreeTab.4")); //$NON-NLS-1$
+		lb.setLayoutData(new GridData(GridData.BEGINNING));
+		
+		combo = new Combo(usercomp, SWT.BORDER);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.add(NewUIMessages.getResourceString("ConfigDescriptionTab.0")); //$NON-NLS-1$
+		combo.add(NewUIMessages.getResourceString("ConfigDescriptionTab.1")); //$NON-NLS-1$
+		if (page.isForFolder() || page.isForFile()) {
+			combo.add(NewUIMessages.getResourceString("ConfigDescriptionTab.2")); //$NON-NLS-1$
+			combo.select(2); // ResourceDescription
+		} else
+			combo.select(1); // ConfigurationDescription
+		combo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateData(getResDesc());
+				updateData(cfg);
 			}});
 
 		Button b1 = new Button(usercomp, SWT.PUSH);
 		GridData gd = new GridData(GridData.END);
-		gd.widthHint = BUTTON_SIZE;
+		gd.minimumWidth = BUTTON_WIDTH;
 		b1.setLayoutData(gd);
-		b1.setText("Expand all");
+		b1.setText(NewUIMessages.getResourceString("StructureTreeTab.5")); //$NON-NLS-1$
 		b1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				tree.setRedraw(false);
 				expandAll(tree.getItem(0), true, -1);
-			}});
-		
-		r_cfg = new Button(usercomp, SWT.RADIO);
-		r_cfg.setLayoutData(new GridData(GridData.BEGINNING));
-		r_cfg.setText(NewUIMessages.getResourceString("ConfigDescriptionTab.1")); //$NON-NLS-1$
-		r_cfg.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateData(getResDesc());
+				tree.setRedraw(true);
 			}});
 
 		Button b2 = new Button(usercomp, SWT.PUSH);
 		gd = new GridData(GridData.END);
-		gd.widthHint = BUTTON_SIZE;
+		gd.minimumWidth = BUTTON_WIDTH;
 		b2.setLayoutData(gd);
-		b2.setText("Expand level...");
+		b2.setText(NewUIMessages.getResourceString("StructureTreeTab.6")); //$NON-NLS-1$
 		b2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				LevelDialog ld = new LevelDialog();
 				if (ld.open() == Window.OK) {
+					tree.setRedraw(false);
 					expandAll(tree.getItem(0), true, 0);
+					tree.setRedraw(true);
 				}
 			}});		
 
-		r_res = new Button(usercomp, SWT.RADIO);
-		r_res.setLayoutData(new GridData(GridData.BEGINNING));
-		r_res.setText(NewUIMessages.getResourceString("ConfigDescriptionTab.2")); //$NON-NLS-1$
-		r_res.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateData(getResDesc());
-			}});
-
 		Button b3 = new Button(usercomp, SWT.PUSH);
 		gd = new GridData(GridData.END);
-		gd.widthHint = BUTTON_SIZE;
+		gd.minimumWidth = BUTTON_WIDTH;
 		b3.setLayoutData(gd);
-		b3.setText("Collapse all");
+		b3.setText(NewUIMessages.getResourceString("StructureTreeTab.7")); //$NON-NLS-1$
 		b3.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				tree.setRedraw(false);
 				expandAll(tree.getItem(0), false, -1);
+				tree.setRedraw(true);
 			}});		
 
 		tree = new Tree(usercomp, SWT.BORDER);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 5;
 		tree.setLayoutData(gd);
 		
 		TreeColumn tc = new TreeColumn(tree, 0);
-		tc.setText("Property");
+		tc.setText(NewUIMessages.getResourceString("StructureTreeTab.8")); //$NON-NLS-1$
+		tc.setWidth(300);
+		tc = new TreeColumn(tree, 0);
+		tc.setText(NewUIMessages.getResourceString("StructureTreeTab.9")); //$NON-NLS-1$
+		tc.setWidth(100);
+		tc = new TreeColumn(tree, 0);
+		tc.setText(NewUIMessages.getResourceString("StructureTreeTab.10")); //$NON-NLS-1$
 		tc.setWidth(200);
-		tc = new TreeColumn(tree, 0);
-		tc.setText("Value");
-		tc.setWidth(100);
-		tc = new TreeColumn(tree, 0);
-		tc.setText("Class");
-		tc.setWidth(100);
 		
 		tree.setHeaderVisible(true);
 		tree.setLinesVisible(true);
@@ -246,19 +246,8 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			}});
 	}
 	
-	private TreeItem createObj(TreeItem ti0, String text, Object obj) {
-//		String s = EMPTY_STR;
-//		if (obj != null) try {
-//			Class c = obj.getClass();
-//			Method m = c.getMethod("getName", NOCLASS);
-//			s = (String)m.invoke(obj, null);
-//		} catch (NoSuchMethodException e) {}
-//		  catch(IllegalAccessException e) {}
-//		  catch(IllegalArgumentException e) {}
-//		  catch(InvocationTargetException e) {}
-//		  catch(ClassCastException e) {}
-//
-		TreeItem t = create(ti0, text, EMPTY_STR);
+	private TreeItem createObj(TreeItem ti0, String text, String name, Object obj) {
+		TreeItem t = create(ti0, text, BL+name+BR);
 		if (obj != null) t.setText(2, obj.getClass().getName());
 		return t;
 	}
@@ -285,14 +274,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			else update(ti, s, obs[i]);
 		}
 	}
-/*
-	private void expand(TreeItem ti0, String text, ICSettingObject[] obs) {
-		TreeItem ti = create(ti0, text, obs == null ? 0 : obs.length);
-		if (!check(ti, obs)) return;
-		return;
-//		for (int i=0; i<obs.length; i++) update(ti, LB+i+RB, obs[i]);
-	}
-*/
+
 	private void expandAll(TreeItem ti, boolean b, int level) {
 		if (level == -1) ti.setExpanded(b);
 		else ti.setExpanded(level++ < currentLevel);
@@ -328,392 +310,395 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 	public void performApply(ICResourceDescription src,ICResourceDescription dst) {}
 
 	protected void performDefaults() {}
+	
 	private void update(ICProjectDescription prj) {
 		TreeItem ti = new TreeItem(tree, 0);
 		if (!check(ti, prj)) return;
-		ti.setText(0, "ICProjectDescription");
-		update(ti, "getActiveConfiguration()", prj.getActiveConfiguration());
-		expand(ti, "getChildSettings()", prj.getChildSettings());
-		expand(ti, "getConfigurations()", prj.getConfigurations());
-		create(ti,"getId()",prj.getId());
-		create(ti,"getName()",prj.getName());
-		update(ti, "getParent()", prj.getParent());
-		update(ti, "getProject()", prj.getProject());
-		create(ti,"getType()",prj.getType());
-		create(ti,"isModified()",prj.isModified());
-		create(ti,"isReadOnly()",prj.isReadOnly());
-		create(ti,"isValid()",prj.isValid());
+		ti.setText(0, "ICProjectDescription");  //$NON-NLS-1$
+		update(ti, "getActiveConfiguration()", prj.getActiveConfiguration()); //$NON-NLS-1$
+		expand(ti, "getConfigurations()", prj.getConfigurations()); //$NON-NLS-1$
+		create(ti,"getId()",prj.getId()); //$NON-NLS-1$
+		create(ti,"getName()",prj.getName()); //$NON-NLS-1$
+		update(ti, "getParent()", prj.getParent()); //$NON-NLS-1$
+		update(ti, "getProject()", prj.getProject()); //$NON-NLS-1$
+		create(ti,"getType()",prj.getType()); //$NON-NLS-1$
+		create(ti,"isModified()",prj.isModified()); //$NON-NLS-1$
+		create(ti,"isReadOnly()",prj.isReadOnly()); //$NON-NLS-1$
+		create(ti,"isValid()",prj.isValid()); //$NON-NLS-1$
 	}
 
 	private TreeItem update(TreeItem ti0, String text, CBuildData bd) {
-		TreeItem ti = createObj(ti0, text, bd);
+		TreeItem ti = createObj(ti0, text, bd  == null ? NULL : bd.getName(), bd);
 		if (!check(ti, bd)) return ti;
 		// ALMOST THE SAME AS ICBuildSetting
-		update(ti, "getBuilderCWD()", bd.getBuilderCWD());
-		createObj(ti, "getBuildEnvironmentContributor()", bd.getBuildEnvironmentContributor());
-		expand(ti, "getErrorParserIDs()", bd.getErrorParserIDs());
-		create(ti, "getId()", bd.getId());
-		create(ti, "getName()", bd.getName());
-		expand(ti, "getOutputDirectories()", bd.getOutputDirectories());
-		create(ti, "getType()", bd.getType());
-		create(ti, "isValid()",bd.isValid());
+		update(ti, "getBuilderCWD()", bd.getBuilderCWD()); //$NON-NLS-1$
+		createObj(ti, "getBuildEnvironmentContributor()", EMPTY_STR, bd.getBuildEnvironmentContributor()); //$NON-NLS-1$
+		expand(ti, "getErrorParserIDs()", bd.getErrorParserIDs()); //$NON-NLS-1$
+		create(ti, "getId()", bd.getId()); //$NON-NLS-1$
+		create(ti, "getName()", bd.getName()); //$NON-NLS-1$
+		expand(ti, "getOutputDirectories()", bd.getOutputDirectories()); //$NON-NLS-1$
+		create(ti, "getType()", bd.getType()); //$NON-NLS-1$
+		create(ti, "isValid()",bd.isValid()); //$NON-NLS-1$
 		return ti;
 	}
 	
 	private TreeItem update(TreeItem ti0, String text, CConfigurationData cd) {
-		TreeItem ti = createObj(ti0, text, cd);
+		TreeItem ti = createObj(ti0, text, cd == null ? NULL : cd.getName(), cd);
 		if (!check(ti, cd)) return ti;
-		update(ti, "getBuildData()", cd.getBuildData());
-		createObj(ti, "getBuildVariablesContributor()", cd.getBuildVariablesContributor());
-		create(ti, "getDescription()", cd.getDescription());
-		create(ti, "getId()", cd.getId());
-		create(ti, "getName()", cd.getName());
-		expand(ti, "getResourceDatas()", cd.getResourceDatas());
-		update(ti, "getRootFolderData()", cd.getRootFolderData());
-		expand(ti, "getSourcePaths()", cd.getSourcePaths());
-		update(ti, "getTargetPlatformData()", cd.getTargetPlatformData());
-		create(ti,"getType()",cd.getType());
-		create(ti,"isValid()",cd.isValid());
+		update(ti, "getBuildData()", cd.getBuildData()); //$NON-NLS-1$
+		createObj(ti, "getBuildVariablesContributor()", EMPTY_STR, cd.getBuildVariablesContributor()); //$NON-NLS-1$
+		create(ti, "getDescription()", cd.getDescription()); //$NON-NLS-1$
+		create(ti, "getId()", cd.getId()); //$NON-NLS-1$
+		create(ti, "getName()", cd.getName()); //$NON-NLS-1$
+		expand(ti, "getResourceDatas()", cd.getResourceDatas()); //$NON-NLS-1$
+		update(ti, "getRootFolderData()", cd.getRootFolderData()); //$NON-NLS-1$
+		expand(ti, "getSourcePaths()", cd.getSourcePaths()); //$NON-NLS-1$
+		update(ti, "getTargetPlatformData()", cd.getTargetPlatformData()); //$NON-NLS-1$
+		create(ti,"getType()",cd.getType()); //$NON-NLS-1$
+		create(ti,"isValid()",cd.isValid()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, CLanguageData ls) {
-		TreeItem ti = createObj(ti0, text, ls);
+		TreeItem ti = createObj(ti0, text, ls == null ? NULL : ls.getName(), ls);
 		if (!check(ti, ls)) return ti;
-		create(ti, "getId()", ls.getId());
-		create(ti, "getLanguageId()", ls.getLanguageId());
-		create(ti, "getName()", ls.getName());
-		expand(ti, "getSourceContentTypeIds()", ls.getSourceContentTypeIds());
-		expand(ti, "getSourceExtensions()", ls.getSourceExtensions());
-		create(ti,"getType()",ls.getType());
+		create(ti, "getId()", ls.getId()); //$NON-NLS-1$
+		create(ti, "getLanguageId()", ls.getLanguageId()); //$NON-NLS-1$
+		create(ti, "getName()", ls.getName()); //$NON-NLS-1$
+		expand(ti, "getSourceContentTypeIds()", ls.getSourceContentTypeIds()); //$NON-NLS-1$
+		expand(ti, "getSourceExtensions()", ls.getSourceExtensions()); //$NON-NLS-1$
+		create(ti,"getType()",ls.getType()); //$NON-NLS-1$
 		int k = ls.getSupportedEntryKinds(); 
-		TreeItem ti1 = create(ti, "getSupportedEntryKinds()", k);
+		TreeItem ti1 = create(ti, "getSupportedEntryKinds()", k); //$NON-NLS-1$
 		int[] kind = flagsToArray(k);
 		for (int j=0; j<kind.length; j++) {
-			TreeItem ti2 = create(ti1, "Kind", kind[j]);
-			expand(ti2, "getEntries",ls.getEntries(kind[j]));
+			TreeItem ti2 = create(ti1, "Kind", kind[j]); //$NON-NLS-1$
+			expand(ti2, "getEntries",ls.getEntries(kind[j])); //$NON-NLS-1$
 		}
-		create(ti,"isValid()",ls.isValid());
+		create(ti,"isValid()",ls.isValid()); //$NON-NLS-1$
 		return ti;
 	}
 		
 	private TreeItem update(TreeItem ti0, String text, CResourceData bd) {
-		TreeItem ti = createObj(ti0, text, bd);
+		TreeItem ti = createObj(ti0, text, bd == null ? NULL : bd.getName(), bd);
 		if (!check(ti, bd)) return ti;
-		create(ti, "getId()", bd.getId());
+		create(ti, "getId()", bd.getId()); //$NON-NLS-1$
 		if (bd instanceof CFolderData) 
-		    expand(ti, "getLanguageDatas()", ((CFolderData)bd).getLanguageDatas());
-		create(ti, "getName()", bd.getName());
-		update(ti,"getPath()",bd.getPath());
-		create(ti,"getType()",bd.getType());
-		create(ti,"isExcluded()",bd.isExcluded());
-		create(ti,"isValid()",bd.isValid());
+		    expand(ti, "getLanguageDatas()", ((CFolderData)bd).getLanguageDatas()); //$NON-NLS-1$
+		create(ti, "getName()", bd.getName()); //$NON-NLS-1$
+		update(ti,"getPath()",bd.getPath()); //$NON-NLS-1$ 
+		create(ti,"getType()",bd.getType()); //$NON-NLS-1$
+		create(ti,"isExcluded()",bd.isExcluded()); //$NON-NLS-1$
+		create(ti,"isValid()",bd.isValid()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, CTargetPlatformData bd) {
-		TreeItem ti = createObj(ti0, text, bd);
+		TreeItem ti = createObj(ti0, text, bd == null ? NULL : bd.getName(), bd);
 		if (!check(ti, bd)) return ti;
-		expand(ti, "getBinaryParserIds()", bd.getBinaryParserIds());
-		create(ti, "getId()", bd.getId());
-		create(ti, "getName()", bd.getName());
-		create(ti, "getType()",bd.getType());
-		create(ti, "isValid()",bd.isValid());
+		expand(ti, "getBinaryParserIds()", bd.getBinaryParserIds()); //$NON-NLS-1$
+		create(ti, "getId()", bd.getId()); //$NON-NLS-1$
+		create(ti, "getName()", bd.getName()); //$NON-NLS-1$
+		create(ti, "getType()",bd.getType()); //$NON-NLS-1$
+		create(ti, "isValid()",bd.isValid()); //$NON-NLS-1$
 		return ti;
 	}
 	private TreeItem update(TreeItem ti0, String text, ICBuildSetting obj) {
-		TreeItem ti = createObj(ti0, text, obj);
+		TreeItem ti = createObj(ti0, text, obj == null ? NULL : obj.getName(), obj);
 		if (!check(ti, obj)) return ti;
 		// ALMOST THE SAME AS CBuildData
-		update(ti, "getBuilderCWD()", obj.getBuilderCWD());
-		createObj(ti, "getBuildEnvironmentContributor()", obj.getBuildEnvironmentContributor());
-		createObj(ti, "getConfiguration()", obj.getConfiguration());
-		expand(ti, "getErrorParserIDs()", obj.getErrorParserIDs());
-		create(ti, "getId()", obj.getId());
-		create(ti, "getName()", obj.getName());
-		expand(ti, "getOutputDirectories()", obj.getOutputDirectories());
-		update(ti, "getParent()", obj.getParent());
-		create(ti, "getType()", obj.getType());
-		create(ti, "isReadOnly()", obj.isReadOnly());
-		create(ti, "isValid()",obj.isValid());
+		update(ti, "getBuilderCWD()", obj.getBuilderCWD()); //$NON-NLS-1$
+		createObj(ti, "getBuildEnvironmentContributor()", EMPTY_STR, obj.getBuildEnvironmentContributor()); //$NON-NLS-1$
+		ICConfigurationDescription cd = obj.getConfiguration();
+		createObj(ti, "getConfiguration()", cd == null ? NULL : cd.getName(), cd); //$NON-NLS-1$
+		expand(ti, "getErrorParserIDs()", obj.getErrorParserIDs()); //$NON-NLS-1$
+		create(ti, "getId()", obj.getId()); //$NON-NLS-1$
+		create(ti, "getName()", obj.getName()); //$NON-NLS-1$
+		expand(ti, "getOutputDirectories()", obj.getOutputDirectories()); //$NON-NLS-1$
+		update(ti, "getParent()", obj.getParent()); //$NON-NLS-1$
+		create(ti, "getType()", obj.getType()); //$NON-NLS-1$
+		create(ti, "isReadOnly()", obj.isReadOnly()); //$NON-NLS-1$
+		create(ti, "isValid()",obj.isValid()); //$NON-NLS-1$
 		return ti;
 	}
 	private TreeItem update(TreeItem ti0, String text, ICConfigurationDescription cfg) {
-		TreeItem ti = createObj(ti0, text, cfg);
+		TreeItem ti = createObj(ti0, text, cfg == null ? NULL : cfg.getName(), cfg);
 		if (!check(ti, cfg)) return ti;
 		if (getDepth(ti) > NESTING_CFG) return ti;
 		
-		update(ti, "getBuildSetting()", cfg.getBuildSetting());
-		create(ti, "getBuildSystemId()", cfg.getBuildSystemId());
-		createObj(ti, "getBuildVariablesContributor()", cfg.getBuildVariablesContributor());
-		expand(ti, "getChildSettings()", cfg.getChildSettings());
-		update(ti, "getConfigurationData()", cfg.getConfigurationData());
-		create(ti, "getDescription()", cfg.getDescription());
-		expand(ti, "getExternalSettings()", cfg.getExternalSettings());
-		expand(ti, "getFileDescriptions()", cfg.getFileDescriptions());
-		expand(ti, "getFolderDescriptions()", cfg.getFolderDescriptions());
-		create(ti, "getId()", cfg.getId());
-		create(ti, "getName()", cfg.getName());
-		update(ti, "getParent()", cfg.getParent());
-		update(ti, "getReferenceInfo()", cfg.getReferenceInfo());
-		expand(ti, "getResourceDescriptions()", cfg.getResourceDescriptions());
-		update(ti, "getRootFolderDescription()", cfg.getRootFolderDescription());
-		expand(ti, "getSourceEntries()", cfg.getSourceEntries());
-		update(ti, "getTargetPlatformSetting()", cfg.getTargetPlatformSetting());
-		create(ti,"getType()",cfg.getType());
-		create(ti,"isActive()",cfg.isActive());
-		create(ti,"isModified()",cfg.isModified());
-		create(ti,"isPreferenceConfiguration()",cfg.isPreferenceConfiguration());
-		create(ti,"isReadOnly()",cfg.isReadOnly());
-		create(ti,"isValid()",cfg.isValid());
-	return ti;
+		update(ti, "getBuildSetting()", cfg.getBuildSetting()); //$NON-NLS-1$
+		create(ti, "getBuildSystemId()", cfg.getBuildSystemId()); //$NON-NLS-1$
+		createObj(ti, "getBuildVariablesContributor()", EMPTY_STR, cfg.getBuildVariablesContributor()); //$NON-NLS-1$
+		update(ti, "getConfigurationData()", cfg.getConfigurationData()); //$NON-NLS-1$
+		create(ti, "getDescription()", cfg.getDescription()); //$NON-NLS-1$
+		expand(ti, "getExternalSettings()", cfg.getExternalSettings()); //$NON-NLS-1$
+		expand(ti, "getFileDescriptions()", cfg.getFileDescriptions()); //$NON-NLS-1$
+		expand(ti, "getFolderDescriptions()", cfg.getFolderDescriptions()); //$NON-NLS-1$
+		create(ti, "getId()", cfg.getId()); //$NON-NLS-1$
+		create(ti, "getName()", cfg.getName()); //$NON-NLS-1$
+		update(ti, "getParent()", cfg.getParent()); //$NON-NLS-1$
+		update(ti, "getReferenceInfo()", cfg.getReferenceInfo()); //$NON-NLS-1$
+		expand(ti, "getResourceDescriptions()", cfg.getResourceDescriptions()); //$NON-NLS-1$
+		update(ti, "getRootFolderDescription()", cfg.getRootFolderDescription()); //$NON-NLS-1$
+		expand(ti, "getSourceEntries()", cfg.getSourceEntries()); //$NON-NLS-1$
+		update(ti, "getTargetPlatformSetting()", cfg.getTargetPlatformSetting()); //$NON-NLS-1$
+		create(ti,"getType()",cfg.getType()); //$NON-NLS-1$
+		create(ti,"isActive()",cfg.isActive()); //$NON-NLS-1$
+		create(ti,"isModified()",cfg.isModified()); //$NON-NLS-1$
+		create(ti,"isPreferenceConfiguration()",cfg.isPreferenceConfiguration()); //$NON-NLS-1$
+		create(ti,"isReadOnly()",cfg.isReadOnly()); //$NON-NLS-1$
+		create(ti,"isValid()",cfg.isValid()); //$NON-NLS-1$
+		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, ICExclusionPatternPathEntry s) {
-		TreeItem ti = createObj(ti0, text, s);
+		TreeItem ti = createObj(ti0, text, s.getName(), s);
 		if (!check(ti, s)) return ti;
 		char[][] chrs = s.fullExclusionPatternChars();
-		TreeItem ti1 = create(ti, "fullExclusionPatternChars()", chrs.length);
+		TreeItem ti1 = create(ti, "fullExclusionPatternChars()", chrs.length); //$NON-NLS-1$
 		for (int j=0; j<chrs.length; j++) 
 			create(ti1, BL+j+BR, new String(chrs[j]));
-		expand(ti, "getExclusionPatterns()", s.getExclusionPatterns());
-		create(ti,"getFlags()", s.getFlags());
-		update(ti, "getFullPath()", s.getFullPath());
-		create(ti,"getKind()", s.getKind());
-		update(ti, "getLocation()", s.getLocation());
-		create(ti, "getName()", s.getName());
-		create(ti, "getValue()", s.getValue());
-		create(ti, "isBuiltIn()", s.isBuiltIn());
-		create(ti, "isReadOnly()", s.isReadOnly());
-		create(ti, "isResolved()", s.isResolved());
-		create(ti, "isValueWorkspacePath()", s.isValueWorkspacePath());
+		expand(ti, "getExclusionPatterns()", s.getExclusionPatterns()); //$NON-NLS-1$
+		create(ti,"getFlags()", s.getFlags()); //$NON-NLS-1$
+		update(ti, "getFullPath()", s.getFullPath()); //$NON-NLS-1$
+		create(ti,"getKind()", s.getKind()); //$NON-NLS-1$
+		update(ti, "getLocation()", s.getLocation()); //$NON-NLS-1$
+		create(ti, "getName()", s.getName()); //$NON-NLS-1$
+		create(ti, "getValue()", s.getValue()); //$NON-NLS-1$
+		create(ti, "isBuiltIn()", s.isBuiltIn()); //$NON-NLS-1$ 
+		create(ti, "isReadOnly()", s.isReadOnly()); //$NON-NLS-1$
+		create(ti, "isResolved()", s.isResolved()); //$NON-NLS-1$
+		create(ti, "isValueWorkspacePath()", s.isValueWorkspacePath()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, ICExternalSetting es) {
-		TreeItem ti = createObj(ti0, text, es);
+		TreeItem ti = createObj(ti0, text, EMPTY_STR, es);
 		if (!check(ti, es)) return ti;
-		expand(ti, "getCompatibleContentTypeIds()", es.getCompatibleContentTypeIds());
-		expand(ti, "getCompatibleExtensions()", es.getCompatibleExtensions());
-		expand(ti, "getCompatibleLanguageIds()", es.getCompatibleLanguageIds());
-		expand(ti, "getEntries()", es.getEntries());
+		expand(ti, "getCompatibleContentTypeIds()", es.getCompatibleContentTypeIds()); //$NON-NLS-1$
+		expand(ti, "getCompatibleExtensions()", es.getCompatibleExtensions()); //$NON-NLS-1$
+		expand(ti, "getCompatibleLanguageIds()", es.getCompatibleLanguageIds()); //$NON-NLS-1$
+		expand(ti, "getEntries()", es.getEntries()); //$NON-NLS-1$
 		return ti;
 	}
 	private TreeItem update(TreeItem ti0, String text, ICResourceDescription rcfg) {
-		TreeItem ti = createObj(ti0, text, rcfg);
+		TreeItem ti = createObj(ti0, text, rcfg == null ? NULL : rcfg.getName(), rcfg);
 		if (!check(ti, rcfg)) return ti;
-		expand(ti, "getChildSettings()", rcfg.getChildSettings());
-		update(ti, "getConfiguration()", rcfg.getConfiguration());
-		create(ti, "getId()", rcfg.getId());
-		create(ti, "getName()", rcfg.getName());
+		update(ti, "getConfiguration()", rcfg.getConfiguration()); //$NON-NLS-1$
+		create(ti, "getId()", rcfg.getId()); //$NON-NLS-1$
+		create(ti, "getName()", rcfg.getName()); //$NON-NLS-1$
 		if (rcfg instanceof ICFileDescription)
-			update(ti, "getLanguageSettings()", ((ICFileDescription)rcfg).getLanguageSetting());
+			update(ti, "getLanguageSettings()", ((ICFileDescription)rcfg).getLanguageSetting()); //$NON-NLS-1$
 		else if (rcfg instanceof ICFolderDescription) {
-			expand(ti, "getLanguageSettings()", ((ICFolderDescription)rcfg).getLanguageSettings());
-			expand(ti, "getNestedResourceDescriptions()", ((ICFolderDescription)rcfg).getNestedResourceDescriptions());
+			expand(ti, "getLanguageSettings()", ((ICFolderDescription)rcfg).getLanguageSettings()); //$NON-NLS-1$
+			ICResourceDescription[] rds = ((ICFolderDescription)rcfg).getNestedResourceDescriptions();
+			if (getDepth(ti) > NESTING_CFG) 
+				create(ti, "getNestedResourceDescriptions()", rds.length); //$NON-NLS-1$
+			else
+				expand(ti, "getNestedResourceDescriptions()", rds); //$NON-NLS-1$
 		}
-		update(ti, "getParent()", rcfg.getParent());
-		update(ti, "getParentFolderDescription()", rcfg.getParentFolderDescription());
-		update(ti, "getPath()", rcfg.getPath());
-		create(ti, "getType()", rcfg.getType());
-		create(ti,"isExcluded()", rcfg.isExcluded());
-		create(ti,"isReadOnly()", rcfg.isReadOnly());
-		if (rcfg instanceof ICFolderDescription) 
-			create(ti,"isRoot()",((ICFolderDescription)rcfg).isRoot());
-		create(ti,"isValid()",rcfg.isValid());
+		update(ti, "getParent()", rcfg.getParent()); //$NON-NLS-1$
+		update(ti, "getParentFolderDescription()", rcfg.getParentFolderDescription()); //$NON-NLS-1$
+		update(ti, "getPath()", rcfg.getPath()); //$NON-NLS-1$
+		create(ti, "getType()", rcfg.getType()); //$NON-NLS-1$
+		create(ti,"isExcluded()", rcfg.isExcluded()); //$NON-NLS-1$
+		create(ti,"isReadOnly()", rcfg.isReadOnly()); //$NON-NLS-1$
+		if (rcfg instanceof ICFolderDescription)
+			create(ti,"isRoot()",((ICFolderDescription)rcfg).isRoot()); //$NON-NLS-1$
+		create(ti,"isValid()",rcfg.isValid()); //$NON-NLS-1$
 		return ti;
 	}	
 	private TreeItem update(TreeItem ti0, String text, ICLanguageSetting ls) {
-		TreeItem ti = new TreeItem(tree, 0);
+		TreeItem ti = createObj(ti0, text, ls == null ? NULL : ls.getName(), ls);
 		if (!check(ti, ls)) return ti;
-		update(ti, "getConfiguration()", ls.getConfiguration());
-		create(ti, "getId()", ls.getId());
-		create(ti, "getLanguageId()", ls.getLanguageId());
-		create(ti, "getName()", ls.getName());
-		update(ti, "getParent()", ls.getParent());
-		expand(ti, "getSourceContentTypeIds()", ls.getSourceContentTypeIds());
-		expand(ti, "getSourceExtensions()", ls.getSourceExtensions());
-		create(ti,"getType()",ls.getType());
-		int k = ls.getSupportedEntryKinds(); 
-		TreeItem ti1 = create(ti, "getSupportedEntryKinds()", k);
+		update(ti, "getConfiguration()", ls.getConfiguration()); //$NON-NLS-1$
+		create(ti, "getId()", ls.getId()); //$NON-NLS-1$
+		create(ti, "getLanguageId()", ls.getLanguageId()); //$NON-NLS-1$
+		create(ti, "getName()", ls.getName()); //$NON-NLS-1$
+		update(ti, "getParent()", ls.getParent()); //$NON-NLS-1$
+		expand(ti, "getSourceContentTypeIds()", ls.getSourceContentTypeIds()); //$NON-NLS-1$
+		expand(ti, "getSourceExtensions()", ls.getSourceExtensions()); //$NON-NLS-1$
+		create(ti,"getType()",ls.getType()); //$NON-NLS-1$
+		int k = ls.getSupportedEntryKinds();
+		TreeItem ti1 = create(ti, "getSupportedEntryKinds()", k); //$NON-NLS-1$
 		int[] kind = flagsToArray(k);
 		for (int j=0; j<kind.length; j++) {
-			TreeItem ti2 = create(ti1, "Kind", kind[j]);
-			expand(ti2, "getResolvedSettingEntries",ls.getResolvedSettingEntries(kind[j]));
-			expand(ti2, "getSettingEntries", ls.getSettingEntries(kind[j]));
+			TreeItem ti2 = create(ti1, "Kind", kind[j]); //$NON-NLS-1$
+			expand(ti2, "getResolvedSettingEntries",ls.getResolvedSettingEntries(kind[j])); //$NON-NLS-1$
+			expand(ti2, "getSettingEntries", ls.getSettingEntries(kind[j])); //$NON-NLS-1$
 		}
-		create(ti,"isReadOnly()",ls.isReadOnly());
-		create(ti,"isValid()",ls.isValid());
+		create(ti,"isReadOnly()",ls.isReadOnly()); //$NON-NLS-1$
+		create(ti,"isValid()",ls.isValid()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, ICLanguageSettingEntry ent) {
-		TreeItem ti = createObj(ti0, text, ent);
+		TreeItem ti = createObj(ti0, text, ent == null ? NULL : ent.getName(), ent);
 		if (!check(ti, ent)) return ti;
-		create(ti, "getFlags()", ent.getFlags());
-		create(ti, "getKind()", ent.getKind());
-		create(ti, "getName()", ent.getName());
-		create(ti, "getValue()", ent.getValue());
-		create(ti, "isBuiltIn()", ent.isBuiltIn());
-		create(ti, "isReadOnly()", ent.isReadOnly());
-		create(ti, "isResolved()", ent.isResolved());
+		create(ti, "getFlags()", ent.getFlags()); //$NON-NLS-1$
+		create(ti, "getKind()", ent.getKind()); //$NON-NLS-1$
+		create(ti, "getName()", ent.getName()); //$NON-NLS-1$
+		create(ti, "getValue()", ent.getValue()); //$NON-NLS-1$
+		create(ti, "isBuiltIn()", ent.isBuiltIn()); //$NON-NLS-1$
+		create(ti, "isReadOnly()", ent.isReadOnly()); //$NON-NLS-1$
+		create(ti, "isResolved()", ent.isResolved()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, ICSettingContainer c) {
-		TreeItem ti = createObj(ti0, text, c);
+		TreeItem ti = createObj(ti0, text, EMPTY_STR, c);
 		if (!check(ti, c)) return ti;
 		if (getDepth(ti) > NESTING_CFG) return ti;
-		expand(ti, "getChildSettings()", c.getChildSettings());
+		expand(ti, "getChildSettings()", c.getChildSettings()); //$NON-NLS-1$
 		return ti;
 	}	
 	
 	private TreeItem update(TreeItem ti0, String text, ICSettingObject obj) {
-		TreeItem ti = createObj(ti0, text, obj);
+		TreeItem ti = createObj(ti0, text, obj == null ? NULL : obj.getName(), obj);
 		if (!check(ti, obj)) return ti;
 		if (obj instanceof ICTargetPlatformSetting)
-			expand(ti, "getBinaryParserIds()", ((ICTargetPlatformSetting)obj).getBinaryParserIds());
-		update(ti, "getConfiguration()", obj.getConfiguration());
-		create(ti, "getId()", obj.getId());
-		create(ti, "getName()", obj.getName());
-		createObj(ti, "getParent()", obj.getParent());
-		create(ti, "getType()", obj.getType());
-		create(ti,"isReadOnly()", obj.isReadOnly());
-		create(ti,"isValid()",obj.isValid());
+			expand(ti, "getBinaryParserIds()", ((ICTargetPlatformSetting)obj).getBinaryParserIds()); //$NON-NLS-1$
+		update(ti, "getConfiguration()", obj.getConfiguration()); //$NON-NLS-1$
+		create(ti, "getId()", obj.getId()); //$NON-NLS-1$
+		create(ti, "getName()", obj.getName()); //$NON-NLS-1$
+		createObj(ti, "getParent()", EMPTY_STR, obj.getParent()); //$NON-NLS-1$
+		create(ti, "getType()", obj.getType()); //$NON-NLS-1$
+		create(ti,"isReadOnly()", obj.isReadOnly()); //$NON-NLS-1$
+		create(ti,"isValid()",obj.isValid()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, ICTargetPlatformSetting obj) {
-		TreeItem ti = createObj(ti0, text, obj);
+		TreeItem ti = createObj(ti0, text, obj == null ? NULL : obj.getName(), obj);
 		if (!check(ti, obj)) return ti;
-		update(ti, "getConfiguration()", obj.getConfiguration());
-		create(ti, "getId()", obj.getId());
-		create(ti, "getName()", obj.getName());
-		update(ti, "getParent()", obj.getParent());
-		create(ti, "getType()", obj.getType());
-		create(ti,"isReadOnly()", obj.isReadOnly());
-		create(ti,"isValid()",obj.isValid());
+		update(ti, "getConfiguration()", obj.getConfiguration()); //$NON-NLS-1$
+		create(ti, "getId()", obj.getId()); //$NON-NLS-1$
+		create(ti, "getName()", obj.getName()); //$NON-NLS-1$
+		update(ti, "getParent()", obj.getParent()); //$NON-NLS-1$
+		create(ti, "getType()", obj.getType()); //$NON-NLS-1$
+		create(ti,"isReadOnly()", obj.isReadOnly()); //$NON-NLS-1$
+		create(ti,"isValid()",obj.isValid()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, IPath p) {
-		TreeItem ti = createObj(ti0, text, p);
+		TreeItem ti = createObj(ti0, text, p == null ? NULL : p.toString(), p);
 		if (!check(ti, p)) return ti;
-		create(ti, "getDevice()", p.getDevice()); 
-		create(ti, "getFileExtension()", p.getFileExtension());
-		create(ti, "hasTrailingSeparator()", p.hasTrailingSeparator());
-		create(ti, "isAbsolute()", p.isAbsolute());
-		create(ti, "isEmpty()", p.isEmpty());
-		create(ti, "isRoot()", p.isRoot());
-		create(ti, "isUNC()", p.isUNC());
-		TreeItem ti1 = create(ti, "segmentCount()", p.segmentCount());
+		create(ti, "getDevice()", p.getDevice()); //$NON-NLS-1$ 
+		create(ti, "getFileExtension()", p.getFileExtension()); //$NON-NLS-1$
+		create(ti, "hasTrailingSeparator()", p.hasTrailingSeparator()); //$NON-NLS-1$
+		create(ti, "isAbsolute()", p.isAbsolute()); //$NON-NLS-1$
+		create(ti, "isEmpty()", p.isEmpty()); //$NON-NLS-1$
+		create(ti, "isRoot()", p.isRoot()); //$NON-NLS-1$
+		create(ti, "isUNC()", p.isUNC()); //$NON-NLS-1$
+		TreeItem ti1 = create(ti, "segmentCount()", p.segmentCount()); //$NON-NLS-1$
 		for (int i=0; i<p.segmentCount(); i++) 
-			create(ti1, "segment("+i+")", p.segment(i)); 
-		create(ti, "toOSString()", p.toOSString());
-		create(ti, "toPortableString()", p.toPortableString());
+			create(ti1, "segment("+i+")", p.segment(i)); //$NON-NLS-1$  //$NON-NLS-2$ 
+		create(ti, "toOSString()", p.toOSString()); //$NON-NLS-1$
+		create(ti, "toPortableString()", p.toPortableString()); //$NON-NLS-1$
 		return ti;
 	}
 	private TreeItem update(TreeItem ti0, String text, IProject prj) {
-		TreeItem ti = createObj(ti0, text, prj);
+		TreeItem ti = createObj(ti0, text, prj == null ? NULL : prj.getName(), prj);
 		if (!check(ti, prj)) return ti;
-		create(ti, "exists()", prj.exists());
+		create(ti, "exists()", prj.exists()); //$NON-NLS-1$
 		try {
-			create(ti, "getDefaultCharset()", prj.getDefaultCharset());
+			create(ti, "getDefaultCharset()", prj.getDefaultCharset()); //$NON-NLS-1$
 			prj.getDescription();
 		} catch (CoreException e) {}
-		update(ti, "getFullPath()", prj.getFullPath());
-		create(ti, "getName()", prj.getName());
-		update(ti, "getParent()", prj.getParent());
+		update(ti, "getFullPath()", prj.getFullPath()); //$NON-NLS-1$
+		create(ti, "getName()", prj.getName()); //$NON-NLS-1$
+		update(ti, "getParent()", prj.getParent()); //$NON-NLS-1$
 		try {
 			IProject[] ps = prj.getReferencedProjects();
-			TreeItem ti1 = create(ti, "getReferencedProjects()", ps == null ? 0 : ps.length);
+			TreeItem ti1 = create(ti, "getReferencedProjects()", ps == null ? 0 : ps.length); //$NON-NLS-1$
 			if (ps != null)
 				for (int i=0; i<ps.length; i++) update(ti1, BL+i+BR, ps[i]);
 		} catch (CoreException e) {}			
 		prj.getResourceAttributes();
-		create(ti, "getType()", prj.getType());
-		update(ti, "getWorkspace()", prj.getWorkspace());
+		create(ti, "getType()", prj.getType()); //$NON-NLS-1$
+		update(ti, "getWorkspace()", prj.getWorkspace()); //$NON-NLS-1$
 		return ti;
 	}
 	
 	private TreeItem update(TreeItem ti0, String text, IProjectNatureDescriptor nd) {
-		TreeItem ti = createObj(ti0, text, nd);
+		TreeItem ti = createObj(ti0, text, nd == null ? NULL : nd.getLabel(), nd);
 		if (!check(ti, nd)) return ti;
-		create(ti, "getLabel()", nd.getLabel());
-		create(ti, "getNatureId()", nd.getNatureId());
-		expand(ti, "getNatureSetIds()", nd.getNatureSetIds());
-		expand(ti, "getRequiredNatureIds()", nd.getRequiredNatureIds());
-		create(ti, "isLinkingAllowed()", nd.isLinkingAllowed());
+		create(ti, "getLabel()", nd.getLabel()); //$NON-NLS-1$
+		create(ti, "getNatureId()", nd.getNatureId()); //$NON-NLS-1$
+		expand(ti, "getNatureSetIds()", nd.getNatureSetIds()); //$NON-NLS-1$
+		expand(ti, "getRequiredNatureIds()", nd.getRequiredNatureIds()); //$NON-NLS-1$
+		create(ti, "isLinkingAllowed()", nd.isLinkingAllowed()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, IResource c) {
-		TreeItem ti = createObj(ti0, text, c);
+		TreeItem ti = createObj(ti0, text, c == null ? NULL : c.getName(), c);
 		if (!check(ti, c)) return ti;
 		if (getDepth(ti) > NESTING_CFG) return ti;
 		
 		if (c instanceof IContainer)
 			try {
-				create(ti, "getDefaultCharset()", ((IContainer)c).getDefaultCharset());
+				create(ti, "getDefaultCharset()", ((IContainer)c).getDefaultCharset()); //$NON-NLS-1$
 			} catch (CoreException e) {}
-		create(ti, "getFileExtension()", c.getFileExtension());
-		update(ti, "getFullPath()", c.getFullPath());
+		create(ti, "getFileExtension()", c.getFileExtension()); //$NON-NLS-1$
+		update(ti, "getFullPath()", c.getFullPath()); //$NON-NLS-1$
 // TODO:		
 //		c.getLocalTimeStamp());
-		update(ti, "getLocation()", c.getLocation());
-		update(ti, "getLocationURI()", c.getLocationURI());
+		update(ti, "getLocation()", c.getLocation()); //$NON-NLS-1$
+		update(ti, "getLocationURI()", c.getLocationURI()); //$NON-NLS-1$
 //		c.getModificationStamp());
-		create(ti, "getName()", c.getName());
-		update(ti, "getParent()", c.getParent());
-		update(ti, "getProject()", c.getProject());
+		create(ti, "getName()", c.getName()); //$NON-NLS-1$
+		update(ti, "getParent()", c.getParent()); //$NON-NLS-1$
+		update(ti, "getProject()", c.getProject()); //$NON-NLS-1$
 		if (c instanceof IWorkspaceRoot)
-			expand(ti, "getProjects()", ((IWorkspaceRoot)c).getProjects());
-		update(ti, "getProjectRelativePath()", c.getProjectRelativePath());
-		update(ti, "getRawLocation()", c.getRawLocation());
-		update(ti, "getRawLocationURI()", c.getRawLocationURI());
-		update(ti, "getResourceAttributes()", c.getResourceAttributes());
-		create(ti, "getType()", c.getType());
-		createObj(ti, "getWorkspace()", c.getWorkspace());
-		create(ti, "isAccessible()", c.isAccessible());
-		create(ti, "isDerived()", c.isDerived());
-		create(ti, "isLinked()", c.isLinked());
-		create(ti, "isLocal(ZERO)", c.isLocal(0));
-		create(ti, "isLocal(INIFINITE)", c.isLocal(2));
-		create(ti, "isPhantom()", c.isPhantom());
-		create(ti, "isReadOnly()", c.isReadOnly());
-		create(ti, "isSynchronized(ZERO)", c.isSynchronized(0));
-		create(ti, "isSynchronized(INFINITE)", c.isSynchronized(2));
-		create(ti, "isTeamPrivateMember()", c.isTeamPrivateMember());
+			expand(ti, "getProjects()", ((IWorkspaceRoot)c).getProjects()); //$NON-NLS-1$
+		update(ti, "getProjectRelativePath()", c.getProjectRelativePath()); //$NON-NLS-1$
+		update(ti, "getRawLocation()", c.getRawLocation()); //$NON-NLS-1$
+		update(ti, "getRawLocationURI()", c.getRawLocationURI()); //$NON-NLS-1$
+		update(ti, "getResourceAttributes()", c.getResourceAttributes()); //$NON-NLS-1$
+		create(ti, "getType()", c.getType()); //$NON-NLS-1$
+		createObj(ti, "getWorkspace()", EMPTY_STR, c.getWorkspace()); //$NON-NLS-1$
+		create(ti, "isAccessible()", c.isAccessible()); //$NON-NLS-1$
+		create(ti, "isDerived()", c.isDerived()); //$NON-NLS-1$
+		create(ti, "isLinked()", c.isLinked()); //$NON-NLS-1$
+	//	create(ti, "isLocal(ZERO)", c.isLocal(0)); //$NON-NLS-1$
+	//	create(ti, "isLocal(INIFINITE)", c.isLocal(2)); //$NON-NLS-1$
+		create(ti, "isPhantom()", c.isPhantom()); //$NON-NLS-1$
+	//	create(ti, "isReadOnly()", c.isReadOnly()); //$NON-NLS-1$
+		create(ti, "isSynchronized(ZERO)", c.isSynchronized(0)); //$NON-NLS-1$
+		create(ti, "isSynchronized(INFINITE)", c.isSynchronized(2)); //$NON-NLS-1$
+		create(ti, "isTeamPrivateMember()", c.isTeamPrivateMember()); //$NON-NLS-1$
 		if (c instanceof IContainer)
 			try {
-				expand(ti, "members()", ((IContainer)c).members());
+				expand(ti, "members()", ((IContainer)c).members()); //$NON-NLS-1$
 			} catch (CoreException e) {}
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, IWorkspace w) {
-		TreeItem ti = createObj(ti0, text, w);
+		TreeItem ti = createObj(ti0, text, EMPTY_STR, w);
 		if (!check(ti, w)) return ti;
-		update(ti, "getDescription()", w.getDescription());
-		expand(ti, "getNatureDescriptors()", w.getNatureDescriptors());
-		createObj(ti, "getPathVariableManager()", w.getPathVariableManager());
-		update(ti, "getRoot()", w.getRoot());
-		createObj(ti, "getSynchronizer()", w.getSynchronizer());
-		create(ti, "isAutoBuilding()", w.isAutoBuilding());
-		create(ti, "isTreeLocked()", w.isTreeLocked());
+		update(ti, "getDescription()", w.getDescription()); //$NON-NLS-1$
+		expand(ti, "getNatureDescriptors()", w.getNatureDescriptors()); //$NON-NLS-1$
+		createObj(ti, "getPathVariableManager()", EMPTY_STR, w.getPathVariableManager()); //$NON-NLS-1$
+		update(ti, "getRoot()", w.getRoot()); //$NON-NLS-1$
+		createObj(ti, "getSynchronizer()", EMPTY_STR, w.getSynchronizer()); //$NON-NLS-1$
+		create(ti, "isAutoBuilding()", w.isAutoBuilding()); //$NON-NLS-1$
+		create(ti, "isTreeLocked()", w.isTreeLocked()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, IWorkspaceDescription w) {
-		TreeItem ti = createObj(ti0, text, w);
+		TreeItem ti = createObj(ti0, text, EMPTY_STR, w);
 		if (!check(ti, w)) return ti;
-		expand(ti, "getBuildOrder()", w.getBuildOrder());
-		create(ti, "getFileStateLongevity()", w.getFileStateLongevity());
-		create(ti, "getMaxBuildIterations()", w.getMaxBuildIterations());
-		create(ti, "getMaxFileStates()", w.getMaxFileStates());
-		create(ti, "getMaxFileStateSize()", w.getMaxFileStateSize());
-		create(ti, "getSnapshotInterval()", w.getSnapshotInterval());
-		create(ti, "isAutoBuilding()", w.isAutoBuilding());
+		expand(ti, "getBuildOrder()", w.getBuildOrder()); //$NON-NLS-1$
+		create(ti, "getFileStateLongevity()", w.getFileStateLongevity()); //$NON-NLS-1$
+		create(ti, "getMaxBuildIterations()", w.getMaxBuildIterations()); //$NON-NLS-1$
+		create(ti, "getMaxFileStates()", w.getMaxFileStates()); //$NON-NLS-1$
+		create(ti, "getMaxFileStateSize()", w.getMaxFileStateSize()); //$NON-NLS-1$
+		create(ti, "getSnapshotInterval()", w.getSnapshotInterval()); //$NON-NLS-1$
+		create(ti, "isAutoBuilding()", w.isAutoBuilding()); //$NON-NLS-1$
 		return ti;
 	}
 
@@ -721,61 +706,74 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 	 * Default method to display unknown classes
 	 */
 	private TreeItem update(TreeItem ti0, String text, Object ob) {
-		TreeItem ti = createObj(ti0, BL+text+BR, ob);
+		TreeItem ti = createObj(ti0, BL+text+BR, "???", ob); //$NON-NLS-1$
 		check(ti, ob);
 		return ti;
 	}
 	
 	private TreeItem update(TreeItem ti0, String text, Map m) {
-		TreeItem ti = createObj(ti0, text, m);
+		String s = (m == null) ? NULL : String.valueOf(m.size());
+		TreeItem ti = createObj(ti0, text, s, m);
 		if (!check(ti, m)) return ti;
 		Iterator it = m.keySet().iterator();
 		while (it.hasNext()) {
-			String s = (String)it.next();
-			create(ti, s + " =", (String)m.get(s));
+			s = (String)it.next();
+			create(ti, s + " =", (String)m.get(s)); //$NON-NLS-1$
 		}
 		return ti;
 	}
 	
 	private TreeItem update(TreeItem ti0, String text, ResourceAttributes ra) {
-		TreeItem ti = createObj(ti0, text, ra);
+		TreeItem ti = createObj(ti0, text, EMPTY_STR, ra);
 		if (!check(ti, ra)) return ti;
-		create(ti, "isArchive()", ra.isArchive());
-		create(ti, "isExecutable()", ra.isExecutable());
-		create(ti, "isHidden()", ra.isHidden());
-		create(ti, "isReadOnly()", ra.isReadOnly());
+		create(ti, "isArchive()", ra.isArchive()); //$NON-NLS-1$
+		create(ti, "isExecutable()", ra.isExecutable()); //$NON-NLS-1$
+		create(ti, "isHidden()", ra.isHidden()); //$NON-NLS-1$
+		create(ti, "isReadOnly()", ra.isReadOnly()); //$NON-NLS-1$
 		return ti;
 	}
 
 	private TreeItem update(TreeItem ti0, String text, URI uri) {
-		TreeItem ti = createObj(ti0, text, uri);
+		TreeItem ti = createObj(ti0, text, uri == null ? NULL : uri.toString(), uri);
 		if (!check(ti, uri)) return ti;
-		create(ti, "getAuthority()", uri.getAuthority());
-		create(ti, "getFragment()", uri.getFragment());
-		create(ti, "getHost()", uri.getHost());
-		create(ti, "getPath()", uri.getPath());
-		create(ti, "getPort()", uri.getPort());
-		create(ti, "getQuery()", uri.getQuery());
-/*		
-		create(ti, "getRawAuthority()", uri.getRawAuthority());
-		create(ti, "getRawFragment()", uri.getRawFragment());
-		create(ti, "getRawHost()", uri.getRawHost());
-		create(ti, "getRawPath()", uri.getRawPath());
-		create(ti, "getRawQuery()", uri.getRawQuery());
-		create(ti, "getRawSchemeSpecificPart()", uri.getRawSchemeSpecificPart());
-		create(ti, "getRawUserInfo()", uri.getRawUserInfo());
-*/		
-		create(ti, "isAbsolute()", uri.isAbsolute());
-		create(ti, "isOpaque()", uri.isOpaque());
-		create(ti, "toASCIIString()", uri.toASCIIString());
-//		create(ti, "uri.toIRIString()", uri.toIRIString());
+		create(ti, "getAuthority()", uri.getAuthority()); //$NON-NLS-1$
+		create(ti, "getFragment()", uri.getFragment()); //$NON-NLS-1$
+		create(ti, "getHost()", uri.getHost()); //$NON-NLS-1$
+		create(ti, "getPath()", uri.getPath()); //$NON-NLS-1$
+		create(ti, "getPort()", uri.getPort()); //$NON-NLS-1$
+		create(ti, "getQuery()", uri.getQuery()); //$NON-NLS-1$
+		create(ti, "isAbsolute()", uri.isAbsolute()); //$NON-NLS-1$
+		create(ti, "isOpaque()", uri.isOpaque()); //$NON-NLS-1$
+		create(ti, "toASCIIString()", uri.toASCIIString()); //$NON-NLS-1$
 		return ti;
 	}
 	
 	public void updateData(ICResourceDescription rcfg) {
-		tree.removeAll();
-		if (r_prj.getSelection()) update(rcfg.getConfiguration().getProjectDescription());
-		if (r_cfg.getSelection()) update(null, "ICConfigurationDescription", rcfg.getConfiguration());
-		if (r_res.getSelection()) update(null, "ICResourceDescription", rcfg);
+		cfg = rcfg;
+		tree.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				try {
+					tree.removeAll();
+					TreeItem ti = new TreeItem(tree, 0);
+					ti.setText(0, NewUIMessages.getResourceString("StructureTreeTab.11")); //$NON-NLS-1$
+					tree.update();
+					tree.setRedraw(false);
+					tree.removeAll();
+					switch (combo.getSelectionIndex()) {
+					case 0:
+						update(cfg.getConfiguration().getProjectDescription());
+						break;
+					case 1:	
+						update(null, "ICConfigurationDescription", cfg.getConfiguration()); //$NON-NLS-1$
+						break;
+					case 2:	
+						update(null, "ICResourceDescription", cfg); //$NON-NLS-1$
+						break;
+					}
+				} finally {
+					tree.setRedraw(true);
+				}
+			}
+		});
 	}
 }

@@ -55,12 +55,12 @@
 Using this new functionality, it is also possible to hook up new system types with existing 
 subsystemConfigurations [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173265">173265</a>].
 <li>Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-24&chfieldto=2007-02-25&chfield=resolution&cmdtype=doit">
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->
-  this query</a> to show the list of bugs fixed since the last release,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M4-200701040900/index.php">
-  RSE 2.0M4</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M4-200701040900/buildNotes.php">build notes</a>].</li>
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-02-25&chfieldto=2007-04-08&chfield=resolution&cmdtype=doit">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->
+  this query</a> to show the list of bugs fixed since the last milestone,
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M5-200702240204/index.php">
+  TM 2.0M5</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M5-200702240204/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -133,6 +133,14 @@ for future releases.</p>
 The following lists those API changes that are not backward compatible and require
 user attention. A short hint on what needs to change is given directly in the list.
 More information can be found in the associated bugzilla items.
+<ul><li>TM 2.0M6 API Changes
+<ul>
+<li><b>Cleaned up ISystemRegistry</b> - removed or changed signature of several methods [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>].</li>
+<li><b>Renamed getAdapter(Object) -&gt; getViewAdapter(Object)</b> on several classes [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175150">175150</a>].</li>
+<li><b>Refactored IConnectorService</b> and moved to Core [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168977">168977</a>].</li>
+<li>[Just additions?] <b>Support Menu Configuration in RSESystemTypeAdapter</b> [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161195">161195</a>].</li>
+</ul></li>
+<li>TM 2.0M5 API Changes
 <ul>
 <li><b>Modified Extension Point subsystemConfigurations</b> to reference system types by ID rather than
 by name. Client code needs to use the <b><i>systemTypeIds</i></b> tag now rather than <samp>systemTypes</samp>
@@ -157,6 +165,7 @@ to the new extension points. [<a href="https://bugs.eclipse.org/bugs/show_bug.cg
   warnings of discourage access has been enabled. Client code should not have used the classes which are
   now internal anyways; but if you do, just running "organize imports" should make your code compile again.
   For details, see [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=170922">170922</a>].</li>
+</ul></li>
 </ul>
 
 Use 

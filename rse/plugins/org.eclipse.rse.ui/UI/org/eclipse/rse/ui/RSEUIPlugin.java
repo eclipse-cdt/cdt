@@ -43,7 +43,6 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
-import org.eclipse.rse.internal.ui.RSEUIRegistry;
 import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapterFactory;
 import org.eclipse.rse.internal.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewResourceAdapterFactory;
@@ -1066,14 +1065,5 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	/**
-	 * Returns the RSE UI registry. Clients should use this method to get the registry which
-	 * is the starting point for working with UI elements in the RSE framework.
-	 * @return the RSE UI registry.
-	 */
-	public IRSEUIRegistry getRegistry() {
-		return RSEUIRegistry.getDefault();
 	}
 }

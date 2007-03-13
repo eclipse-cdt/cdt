@@ -30,10 +30,4 @@ public interface IRSEAdapter extends IWorkbenchAdapter, IWorkbenchAdapter2 {
 	 * @return the description text for the given object
 	 */
 	public String getDescription(Object o);
-
-	/**
-	 * Returns the RSE UI registry.
-	 * @return the RSE UI registry
-	 */
-	public IRSEUIRegistry getRegistry();
 }

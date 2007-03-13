@@ -38,12 +38,4 @@ public abstract class RSEAdapter extends WorkbenchAdapter implements IRSEAdapter
 	public String getDescription(Object object) {
 		return ""; //$NON-NLS-1$
 	}
-
-	/**
-	 * Returns the RSE UI registry.
-	 * @see org.eclipse.rse.ui.IRSEAdapter#getRegistry()
-	 */
-	public IRSEUIRegistry getRegistry() {
-		return RSEUIPlugin.getDefault().getRegistry();
-	}
 }

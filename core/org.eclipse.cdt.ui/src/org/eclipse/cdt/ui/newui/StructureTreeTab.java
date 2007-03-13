@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -24,6 +24,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,6 +35,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -56,6 +61,7 @@ import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
@@ -69,22 +75,50 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
  * 1. All strings in the file remain unlocalized
  *    since they represent method names.
  * 2. It is experimental functionality. Work is in progress.  
- * 3. Tree depth is limited by 12. Deeper branches are truncated.
- *    In future, more flexible mechanism will be applied instead.
- * 4. Tree creation process is long enough now. To be optimized.   
+ * 3. Tree depth is limited by 16. Deeper branches are truncated.
+ *    But it seems to be very rare situation.
  */
 public class StructureTreeTab  extends AbstractCPropertyTab {
 
-	private static final Class[] NOCLASS = new Class[0];
+	protected class LevelDialog extends Dialog {
+		Spinner sp;
+		
+		protected LevelDialog() {
+			super(CUIPlugin.getActiveWorkbenchShell());
+		}
+
+		protected Control createDialogArea(Composite parent) {
+			Composite c = new Composite(parent, 0);
+			c.setLayoutData(new GridData(GridData.FILL_BOTH));
+			c.setLayout(new GridLayout(2, false));
+			Label l = new Label(c, 0);
+			l.setText("Level : ");
+			c.setLayoutData(new GridData(GridData.BEGINNING));
+			sp = new Spinner(c, SWT.BORDER);
+			sp.setMaximum(NESTING_MAX);
+			sp.setMinimum(0);
+			sp.setSelection(currentLevel);
+			sp.addSelectionListener(new SelectionAdapter () {
+				public void widgetSelected(SelectionEvent e) {
+					currentLevel = sp.getSelection();
+				}
+			});
+			return c;
+		}
+	}
+	private static final String BL = "["; //$NON-NLS-1$
+	private static final String BR = "]"; //$NON-NLS-1$
+	private static final int BUTTON_SIZE = 200; 
 	private static final Image IMG = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_ERROR);
-	private static final String LB = "["; 
-	private static final int NESTING_MAX = 12;
-	private static final int NESTING_CFG = 2;
-	private static final String RB = "]";
-	
+	private static final int NESTING_CFG = 5;
+	private static final int NESTING_MAX = 16;
+//	private static final Class[] NOCLASS = new Class[0];
+	private int currentLevel = 4; // default 
+	private int minCnt = 20;
 	protected Button r_cfg;
 	protected Button r_prj;
 	protected Button r_res;
+	
 	protected Tree tree;
 	
 	private boolean check(TreeItem ti, Object obj) {
@@ -98,15 +132,6 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		tiSaved.setText(2, "Maximal tree nesting");
 		tiSaved.setImage(IMG);
 		return false;
-	}
-	
-	private int getDepth(TreeItem ti) {
-		int x = 0;
-		while (ti != null) {
-			ti = ti.getParentItem();
-			x++;
-		}
-		return x;
 	}
 	
 	private TreeItem create(TreeItem ti0, String text, boolean val) {
@@ -148,11 +173,13 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			}});
 
 		Button b1 = new Button(usercomp, SWT.PUSH);
-		b1.setLayoutData(new GridData(GridData.END));
+		GridData gd = new GridData(GridData.END);
+		gd.widthHint = BUTTON_SIZE;
+		b1.setLayoutData(gd);
 		b1.setText("Expand all");
 		b1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				expandAll(tree.getItem(0), true);
+				expandAll(tree.getItem(0), true, -1);
 			}});
 		
 		r_cfg = new Button(usercomp, SWT.RADIO);
@@ -164,10 +191,16 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			}});
 
 		Button b2 = new Button(usercomp, SWT.PUSH);
-		b2.setLayoutData(new GridData(GridData.END));
+		gd = new GridData(GridData.END);
+		gd.widthHint = BUTTON_SIZE;
+		b2.setLayoutData(gd);
 		b2.setText("Expand level...");
 		b2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				LevelDialog ld = new LevelDialog();
+				if (ld.open() == Window.OK) {
+					expandAll(tree.getItem(0), true, 0);
+				}
 			}});		
 
 		r_res = new Button(usercomp, SWT.RADIO);
@@ -179,15 +212,17 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			}});
 
 		Button b3 = new Button(usercomp, SWT.PUSH);
-		b3.setLayoutData(new GridData(GridData.END));
+		gd = new GridData(GridData.END);
+		gd.widthHint = BUTTON_SIZE;
+		b3.setLayoutData(gd);
 		b3.setText("Collapse all");
 		b3.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				expandAll(tree.getItem(0), false);
+				expandAll(tree.getItem(0), false, -1);
 			}});		
 
 		tree = new Tree(usercomp, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		tree.setLayoutData(gd);
 		
@@ -212,98 +247,61 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 	}
 	
 	private TreeItem createObj(TreeItem ti0, String text, Object obj) {
-		String s = EMPTY_STR;
-		if (obj != null) try {
-			Class c = obj.getClass();
-			Method m = c.getMethod("getName", NOCLASS);
-			s = (String)m.invoke(obj, null);
-		} catch (NoSuchMethodException e) {}
-		  catch(IllegalAccessException e) {}
-		  catch(IllegalArgumentException e) {}
-		  catch(InvocationTargetException e) {}
-		  catch(ClassCastException e) {}
-
-		TreeItem t = create(ti0, text, s);
+//		String s = EMPTY_STR;
+//		if (obj != null) try {
+//			Class c = obj.getClass();
+//			Method m = c.getMethod("getName", NOCLASS);
+//			s = (String)m.invoke(obj, null);
+//		} catch (NoSuchMethodException e) {}
+//		  catch(IllegalAccessException e) {}
+//		  catch(IllegalArgumentException e) {}
+//		  catch(InvocationTargetException e) {}
+//		  catch(ClassCastException e) {}
+//
+		TreeItem t = create(ti0, text, EMPTY_STR);
 		if (obj != null) t.setText(2, obj.getClass().getName());
 		return t;
 	}
 
-	private void expand(TreeItem ti0, String text, CLanguageData[] lds) {
-		TreeItem ti = create(ti0, text, lds == null ? 0 : lds.length);
-		if (!check(ti, lds)) return;
-		for (int i=0; i<lds.length; i++) update(ti, LB+i+RB, lds[i]);
+	/**
+	 * Adds conents of array to tree. 
+	 */
+	private void expand(TreeItem ti0, String text, Object[] obs) {
+		TreeItem ti = create(ti0, text, obs == null ? 0 : obs.length);
+		if (!check(ti, obs)) return;
+		for (int i=0; i<obs.length; i++) {
+			String s = BL+i+BR;
+			if (obs[i] instanceof String) create(ti, s, (String)obs[i]);
+			else if (obs[i] instanceof CLanguageData) update(ti, s, (CLanguageData)obs[i]);
+			else if (obs[i] instanceof CResourceData) update(ti, s, (CResourceData)obs[i]);
+			else if (obs[i] instanceof ICExclusionPatternPathEntry) update(ti, s, (ICExclusionPatternPathEntry)obs[i]);
+			else if (obs[i] instanceof ICExternalSetting) update(ti, s, (ICExternalSetting)obs[i]);
+			else if (obs[i] instanceof ICLanguageSettingEntry) update(ti, s, (ICLanguageSettingEntry)obs[i]);
+			else if (obs[i] instanceof ICResourceDescription) update(ti, s, (ICResourceDescription)obs[i]);
+			else if (obs[i] instanceof ICSettingObject) update(ti, s, (ICSettingObject)obs[i]);
+			else if (obs[i] instanceof IPath) update(ti, s, (IPath)obs[i]);
+			else if (obs[i] instanceof IResource) update(ti, s, (IResource)obs[i]);
+			else if (obs[i] instanceof IProjectNatureDescriptor) update(ti, s, (IProjectNatureDescriptor)obs[i]);
+			else update(ti, s, obs[i]);
+		}
 	}
-		
-	private void expand(TreeItem ti0, String text, CResourceData[] rd) {
-		TreeItem ti = create(ti0, text, rd.length);
-		if (!check(ti, rd)) return;
-		for (int i=0; i<rd.length; i++) update(ti, LB+i+RB, rd[i]);
-	}
-
-	private void expand(TreeItem ti0, String text, ICExclusionPatternPathEntry[] ses) {
-		TreeItem ti = create(ti0, text, ses.length);
-		if (!check(ti, ses)) return;
-		for (int i=0; i<ses.length; i++) update(ti, LB+i+RB, ses[i]); 
-	}
-	
-	private void expand(TreeItem ti0, String text, ICExternalSetting[] ess) {
-		TreeItem ti = create(ti0, text, ess == null ? 0 : ess.length);
-		if (!check(ti, ess)) return;
-		for (int i=0; i<ess.length; i++) update(ti, LB+i+RB, ess[i]);
-	}
-	
-	private void expand(TreeItem ti0, String text, ICFileDescription[] fds) {
-		TreeItem ti = create(ti0, text, fds == null ? 0 : fds.length);
-		if (!check(ti, fds)) return;
-		for (int i=0; i<fds.length; i++) update(ti, LB+i+RB, fds[i]);
-	}
-	
-	private void expand(TreeItem ti0, String text, ICFolderDescription[] fds) {
-		TreeItem ti = create(ti0, text, fds == null ? 0 : fds.length);
-		if (!check(ti, fds)) return;
-		for (int i=0; i<fds.length; i++) update(ti, LB+i+RB, fds[i]);
-	}
-
-	private void expand(TreeItem ti0, String text, ICLanguageSettingEntry[] ents) {
-		TreeItem ti = create(ti0, text, ents == null ? 0 : ents.length);
-		if (!check(ti, ents)) return;
-		for (int i=0; i<ents.length; i++) update(ti, LB+i+RB, ents[i]);
-	}
-
-	private void expand (TreeItem ti0, String text, ICResourceDescription[] rdes) {
-		TreeItem ti = create(ti0, text, rdes.length);
-		if (!check(ti, rdes)) return;
-		for (int i=0; i<rdes.length; i++) update(ti, LB+i+RB, rdes[i]);
-	}
-	
+/*
 	private void expand(TreeItem ti0, String text, ICSettingObject[] obs) {
 		TreeItem ti = create(ti0, text, obs == null ? 0 : obs.length);
 		if (!check(ti, obs)) return;
-		for (int i=0; i<obs.length; i++) update(ti, LB+i+RB, obs[i]);
+		return;
+//		for (int i=0; i<obs.length; i++) update(ti, LB+i+RB, obs[i]);
 	}
+*/
+	private void expandAll(TreeItem ti, boolean b, int level) {
+		if (level == -1) ti.setExpanded(b);
+		else ti.setExpanded(level++ < currentLevel);
 
-	private void expand(TreeItem ti0, String text, IPath[] ps) {
-		TreeItem ti = create(ti0, text, ps.length);
-		if (!check(ti, ps)) return;
-		for (int i=0; i<ps.length; i++) update(ti, LB+i+RB, ps[i]);
+		TreeItem[] tis = ti.getItems();
+		if (tis == null) return;
+		for (int i=0; i<tis.length; i++) 
+			expandAll(tis[i], b, level);
 	}
-	private void expand(TreeItem ti0, String text, IProjectNatureDescriptor[] nds) {
-		TreeItem ti = create(ti0, text, nds.length);
-		if (!check(ti, nds)) return;
-		for (int i=0; i<nds.length; i++) update(ti, LB+i+RB, nds[i]);
-	}
-
-	private void expand(TreeItem ti0, String text, IResource[] rss) {
-		TreeItem ti = create(ti0, text, rss == null ? 0 : rss.length);
-		if (!check(ti, rss)) return;
-		for (int i=0; i<rss.length; i++) update(ti, LB+i+RB, rss[i]);
-	}
-	private void expand(TreeItem ti0, String text, String[] ss) {
-		TreeItem ti = create(ti0, text, ss == null ? 0 : ss.length);
-		if (!check(ti, ss)) return;
-		for (int j=0; j<ss.length; j++) create(ti, LB+j+RB, ss[j]);
-	}
-
 	// used for languages kinds display
 	private int[] flagsToArray(int flags){
 		int arr[] = new int[32];
@@ -318,9 +316,18 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		System.arraycopy(arr, 0, result, 0, num);
 		return result;
 	}
-	public void performApply(ICResourceDescription src,ICResourceDescription dst) {}
-	protected void performDefaults() {}
+	private int getDepth(TreeItem ti) {
+		int x = 0;
+		while (ti != null) {
+			ti = ti.getParentItem();
+			x++;
+		}
+		return x;
+	}
 
+	public void performApply(ICResourceDescription src,ICResourceDescription dst) {}
+
+	protected void performDefaults() {}
 	private void update(ICProjectDescription prj) {
 		TreeItem ti = new TreeItem(tree, 0);
 		if (!check(ti, prj)) return;
@@ -352,6 +359,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "isValid()",bd.isValid());
 		return ti;
 	}
+	
 	private TreeItem update(TreeItem ti0, String text, CConfigurationData cd) {
 		TreeItem ti = createObj(ti0, text, cd);
 		if (!check(ti, cd)) return ti;
@@ -388,7 +396,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti,"isValid()",ls.isValid());
 		return ti;
 	}
-	
+		
 	private TreeItem update(TreeItem ti0, String text, CResourceData bd) {
 		TreeItem ti = createObj(ti0, text, bd);
 		if (!check(ti, bd)) return ti;
@@ -413,7 +421,6 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "isValid()",bd.isValid());
 		return ti;
 	}
-		
 	private TreeItem update(TreeItem ti0, String text, ICBuildSetting obj) {
 		TreeItem ti = createObj(ti0, text, obj);
 		if (!check(ti, obj)) return ti;
@@ -431,7 +438,6 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "isValid()",obj.isValid());
 		return ti;
 	}
-
 	private TreeItem update(TreeItem ti0, String text, ICConfigurationDescription cfg) {
 		TreeItem ti = createObj(ti0, text, cfg);
 		if (!check(ti, cfg)) return ti;
@@ -449,8 +455,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "getId()", cfg.getId());
 		create(ti, "getName()", cfg.getName());
 		update(ti, "getParent()", cfg.getParent());
-// TODO:		
-		cfg.getReferenceInfo();		
+		update(ti, "getReferenceInfo()", cfg.getReferenceInfo());
 		expand(ti, "getResourceDescriptions()", cfg.getResourceDescriptions());
 		update(ti, "getRootFolderDescription()", cfg.getRootFolderDescription());
 		expand(ti, "getSourceEntries()", cfg.getSourceEntries());
@@ -463,13 +468,14 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti,"isValid()",cfg.isValid());
 	return ti;
 	}
+
 	private TreeItem update(TreeItem ti0, String text, ICExclusionPatternPathEntry s) {
 		TreeItem ti = createObj(ti0, text, s);
 		if (!check(ti, s)) return ti;
 		char[][] chrs = s.fullExclusionPatternChars();
 		TreeItem ti1 = create(ti, "fullExclusionPatternChars()", chrs.length);
 		for (int j=0; j<chrs.length; j++) 
-			create(ti1, LB+j+RB, new String(chrs[j]));
+			create(ti1, BL+j+BR, new String(chrs[j]));
 		expand(ti, "getExclusionPatterns()", s.getExclusionPatterns());
 		create(ti,"getFlags()", s.getFlags());
 		update(ti, "getFullPath()", s.getFullPath());
@@ -483,6 +489,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "isValueWorkspacePath()", s.isValueWorkspacePath());
 		return ti;
 	}
+
 	private TreeItem update(TreeItem ti0, String text, ICExternalSetting es) {
 		TreeItem ti = createObj(ti0, text, es);
 		if (!check(ti, es)) return ti;
@@ -492,42 +499,30 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		expand(ti, "getEntries()", es.getEntries());
 		return ti;
 	}
-
-	private TreeItem update(TreeItem ti0, String text, ICFileDescription fd) {
-		TreeItem ti = createObj(ti0, text, fd);
-		if (!check(ti, fd)) return ti;
-		expand(ti, "getChildSettings()", fd.getChildSettings());
-		create(ti, "getId()", fd.getId());
-		create(ti, "getName()", fd.getName());
-		update(ti, "getParent()", fd.getParent());
-		update(ti, "getParentFolderDescription()", fd.getParentFolderDescription());
-		update(ti, "getPath()", fd.getPath());
-		create(ti,"getType()",fd.getType());
-		create(ti,"isExcluded()",fd.isExcluded());
-		create(ti,"isReadOnly()",fd.isReadOnly());
-		create(ti,"isValid()",fd.isValid());
+	private TreeItem update(TreeItem ti0, String text, ICResourceDescription rcfg) {
+		TreeItem ti = createObj(ti0, text, rcfg);
+		if (!check(ti, rcfg)) return ti;
+		expand(ti, "getChildSettings()", rcfg.getChildSettings());
+		update(ti, "getConfiguration()", rcfg.getConfiguration());
+		create(ti, "getId()", rcfg.getId());
+		create(ti, "getName()", rcfg.getName());
+		if (rcfg instanceof ICFileDescription)
+			update(ti, "getLanguageSettings()", ((ICFileDescription)rcfg).getLanguageSetting());
+		else if (rcfg instanceof ICFolderDescription) {
+			expand(ti, "getLanguageSettings()", ((ICFolderDescription)rcfg).getLanguageSettings());
+			expand(ti, "getNestedResourceDescriptions()", ((ICFolderDescription)rcfg).getNestedResourceDescriptions());
+		}
+		update(ti, "getParent()", rcfg.getParent());
+		update(ti, "getParentFolderDescription()", rcfg.getParentFolderDescription());
+		update(ti, "getPath()", rcfg.getPath());
+		create(ti, "getType()", rcfg.getType());
+		create(ti,"isExcluded()", rcfg.isExcluded());
+		create(ti,"isReadOnly()", rcfg.isReadOnly());
+		if (rcfg instanceof ICFolderDescription) 
+			create(ti,"isRoot()",((ICFolderDescription)rcfg).isRoot());
+		create(ti,"isValid()",rcfg.isValid());
 		return ti;
-	}
-
-	private TreeItem update(TreeItem ti0, String text, ICFolderDescription fd) {
-		TreeItem ti = createObj(ti0, text, fd);
-		if (!check(ti, fd)) return ti;
-		expand(ti, "getChildSettings()", fd.getChildSettings());
-		expand(ti, "getLanguageSettings()", fd.getLanguageSettings());
-		create(ti, "getId()", fd.getId());
-		create(ti, "getName()", fd.getName());
-		expand(ti, "getNestedResourceDescriptions()", fd.getNestedResourceDescriptions());
-		update(ti, "getParent()", fd.getParent());
-		update(ti, "getParentFolderDescription()", fd.getParentFolderDescription());
-		update(ti, "getPath()", fd.getPath());
-		create(ti,"getType()",fd.getType());
-		create(ti,"isExcluded()",fd.isExcluded());
-		create(ti,"isReadOnly()",fd.isReadOnly());
-		create(ti,"isRoot()",fd.isRoot());
-		create(ti,"isValid()",fd.isValid());
-		return ti;
-	}
-
+	}	
 	private TreeItem update(TreeItem ti0, String text, ICLanguageSetting ls) {
 		TreeItem ti = new TreeItem(tree, 0);
 		if (!check(ti, ls)) return ti;
@@ -551,6 +546,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti,"isValid()",ls.isValid());
 		return ti;
 	}
+
 	private TreeItem update(TreeItem ti0, String text, ICLanguageSettingEntry ent) {
 		TreeItem ti = createObj(ti0, text, ent);
 		if (!check(ti, ent)) return ti;
@@ -563,22 +559,6 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "isResolved()", ent.isResolved());
 		return ti;
 	}
-	private TreeItem update(TreeItem ti0, String text, ICResourceDescription rcfg) {
-		TreeItem ti = createObj(ti0, text, rcfg);
-		if (!check(ti, rcfg)) return ti;
-		expand(ti, "getChildSettings()", rcfg.getChildSettings());
-		update(ti, "getConfiguration()", rcfg.getConfiguration());
-		create(ti, "getId()", rcfg.getId());
-		create(ti, "getName()", rcfg.getName());
-		update(ti, "getParent()", rcfg.getParent());
-		update(ti, "getParentFolderDescription()", rcfg.getParentFolderDescription());
-		update(ti, "getPath()", rcfg.getPath());
-		create(ti, "getType()", rcfg.getType());
-		create(ti,"isExcluded()", rcfg.isExcluded());
-		create(ti,"isReadOnly()", rcfg.isReadOnly());
-		create(ti,"isValid()",rcfg.isValid());
-		return ti;
-	}
 
 	private TreeItem update(TreeItem ti0, String text, ICSettingContainer c) {
 		TreeItem ti = createObj(ti0, text, c);
@@ -586,25 +566,23 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		if (getDepth(ti) > NESTING_CFG) return ti;
 		expand(ti, "getChildSettings()", c.getChildSettings());
 		return ti;
-	}
-
+	}	
+	
 	private TreeItem update(TreeItem ti0, String text, ICSettingObject obj) {
 		TreeItem ti = createObj(ti0, text, obj);
 		if (!check(ti, obj)) return ti;
-		if (obj instanceof ICTargetPlatformSetting) {
+		if (obj instanceof ICTargetPlatformSetting)
 			expand(ti, "getBinaryParserIds()", ((ICTargetPlatformSetting)obj).getBinaryParserIds());
-//			update(ti, "getParent()", obj.getParent());
-//		} else { // do not expand configuration descr to avoid dead loop
-		}
-		createObj(ti, "getParent()", obj.getParent());
 		update(ti, "getConfiguration()", obj.getConfiguration());
 		create(ti, "getId()", obj.getId());
 		create(ti, "getName()", obj.getName());
+		createObj(ti, "getParent()", obj.getParent());
 		create(ti, "getType()", obj.getType());
 		create(ti,"isReadOnly()", obj.isReadOnly());
 		create(ti,"isValid()",obj.isValid());
 		return ti;
-	}	
+	}
+
 	private TreeItem update(TreeItem ti0, String text, ICTargetPlatformSetting obj) {
 		TreeItem ti = createObj(ti0, text, obj);
 		if (!check(ti, obj)) return ti;
@@ -616,8 +594,8 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti,"isReadOnly()", obj.isReadOnly());
 		create(ti,"isValid()",obj.isValid());
 		return ti;
-	}	
-	
+	}
+
 	private TreeItem update(TreeItem ti0, String text, IPath p) {
 		TreeItem ti = createObj(ti0, text, p);
 		if (!check(ti, p)) return ti;
@@ -635,7 +613,6 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "toPortableString()", p.toPortableString());
 		return ti;
 	}
-
 	private TreeItem update(TreeItem ti0, String text, IProject prj) {
 		TreeItem ti = createObj(ti0, text, prj);
 		if (!check(ti, prj)) return ti;
@@ -651,14 +628,14 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			IProject[] ps = prj.getReferencedProjects();
 			TreeItem ti1 = create(ti, "getReferencedProjects()", ps == null ? 0 : ps.length);
 			if (ps != null)
-				for (int i=0; i<ps.length; i++) update(ti1, LB+i+RB, ps[i]);
+				for (int i=0; i<ps.length; i++) update(ti1, BL+i+BR, ps[i]);
 		} catch (CoreException e) {}			
 		prj.getResourceAttributes();
 		create(ti, "getType()", prj.getType());
 		update(ti, "getWorkspace()", prj.getWorkspace());
 		return ti;
 	}
-
+	
 	private TreeItem update(TreeItem ti0, String text, IProjectNatureDescriptor nd) {
 		TreeItem ti = createObj(ti0, text, nd);
 		if (!check(ti, nd)) return ti;
@@ -669,9 +646,12 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "isLinkingAllowed()", nd.isLinkingAllowed());
 		return ti;
 	}
+
 	private TreeItem update(TreeItem ti0, String text, IResource c) {
 		TreeItem ti = createObj(ti0, text, c);
 		if (!check(ti, c)) return ti;
+		if (getDepth(ti) > NESTING_CFG) return ti;
+		
 		if (c instanceof IContainer)
 			try {
 				create(ti, "getDefaultCharset()", ((IContainer)c).getDefaultCharset());
@@ -710,12 +690,10 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			} catch (CoreException e) {}
 		return ti;
 	}
-	
+
 	private TreeItem update(TreeItem ti0, String text, IWorkspace w) {
 		TreeItem ti = createObj(ti0, text, w);
 		if (!check(ti, w)) return ti;
-		// TODO:
-		w.getDanglingReferences();
 		update(ti, "getDescription()", w.getDescription());
 		expand(ti, "getNatureDescriptors()", w.getNatureDescriptors());
 		createObj(ti, "getPathVariableManager()", w.getPathVariableManager());
@@ -739,6 +717,26 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		return ti;
 	}
 
+	/*
+	 * Default method to display unknown classes
+	 */
+	private TreeItem update(TreeItem ti0, String text, Object ob) {
+		TreeItem ti = createObj(ti0, BL+text+BR, ob);
+		check(ti, ob);
+		return ti;
+	}
+	
+	private TreeItem update(TreeItem ti0, String text, Map m) {
+		TreeItem ti = createObj(ti0, text, m);
+		if (!check(ti, m)) return ti;
+		Iterator it = m.keySet().iterator();
+		while (it.hasNext()) {
+			String s = (String)it.next();
+			create(ti, s + " =", (String)m.get(s));
+		}
+		return ti;
+	}
+	
 	private TreeItem update(TreeItem ti0, String text, ResourceAttributes ra) {
 		TreeItem ti = createObj(ti0, text, ra);
 		if (!check(ti, ra)) return ti;
@@ -758,6 +756,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "getPath()", uri.getPath());
 		create(ti, "getPort()", uri.getPort());
 		create(ti, "getQuery()", uri.getQuery());
+/*		
 		create(ti, "getRawAuthority()", uri.getRawAuthority());
 		create(ti, "getRawFragment()", uri.getRawFragment());
 		create(ti, "getRawHost()", uri.getRawHost());
@@ -765,19 +764,12 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "getRawQuery()", uri.getRawQuery());
 		create(ti, "getRawSchemeSpecificPart()", uri.getRawSchemeSpecificPart());
 		create(ti, "getRawUserInfo()", uri.getRawUserInfo());
+*/		
 		create(ti, "isAbsolute()", uri.isAbsolute());
 		create(ti, "isOpaque()", uri.isOpaque());
 		create(ti, "toASCIIString()", uri.toASCIIString());
-		create(ti, "uri.toIRIString()", uri.toIRIString());
+//		create(ti, "uri.toIRIString()", uri.toIRIString());
 		return ti;
-	}
-
-	private void expandAll(TreeItem ti, boolean b) {
-		ti.setExpanded(b);
-		TreeItem[] tis = ti.getItems();
-		if (tis == null) return;
-		for (int i=0; i<tis.length; i++) 
-			expandAll(tis[i], b);
 	}
 	
 	public void updateData(ICResourceDescription rcfg) {

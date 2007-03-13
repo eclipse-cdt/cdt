@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -40,6 +41,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,8 +70,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
 
 /**
  * It is a parent for all standard CDT property pages
@@ -500,16 +500,8 @@ implements
 	}
 	
 	public void setVisible(boolean visible) {
-		/*
-		if (visible) {
-			Rectangle r = getControl().getBounds();
-			if (r.width > MAX_WIDTH) {
-				r.width = MAX_WIDTH;
-				getControl().setBounds(r);
-			}
-		}
-		*/
 		super.setVisible(visible);
+		if (visible) handleResize(visible);
 		if (visible) displayedConfig = true;
 
 		if (itabs.size() < 1) return;
@@ -522,6 +514,35 @@ implements
 			currentTab.handleTabEvent(ICPropertyTab.VISIBLE, visible ? NOT_NULL : null);
 	}
 	
+	protected void handleResize(boolean visible) {
+		if (pages.size() > 1) return; // do not duplicate
+		IProject prj = getProject();
+		if (prj == null) return; // preferences. Do not process. 
+		QualifiedName WIDTH  = new QualifiedName(prj.getName(),".property.page.width"); //$NON-NLS-1$
+		QualifiedName HEIGHT = new QualifiedName(prj.getName(),".property.page.height"); //$NON-NLS-1$
+		QualifiedName XKEY = new QualifiedName(prj.getName(),".property.page.x"); //$NON-NLS-1$
+		QualifiedName YKEY = new QualifiedName(prj.getName(),".property.page.y"); //$NON-NLS-1$
+		Rectangle r = getShell().getBounds();
+		try {
+			if (visible) {
+				String w = prj.getPersistentProperty(WIDTH);
+				String h = prj.getPersistentProperty(HEIGHT);
+				String x = prj.getPersistentProperty(XKEY);
+				String y = prj.getPersistentProperty(YKEY);
+				if (w != null) r.width  = Integer.parseInt(w);
+				if (h != null) r.height = Integer.parseInt(h);
+				if (x != null) r.x = Integer.parseInt(x);
+				if (y != null) r.y = Integer.parseInt(y);
+				getShell().setBounds(r);
+			} else {
+				prj.setPersistentProperty(WIDTH,  String.valueOf(r.width));
+				prj.setPersistentProperty(HEIGHT, String.valueOf(r.height));
+				prj.setPersistentProperty(XKEY, String.valueOf(r.x));
+				prj.setPersistentProperty(YKEY, String.valueOf(r.y));
+			}
+		} catch (CoreException e) {}
+	}
+
 	public IPreferenceStore getPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
@@ -618,7 +639,8 @@ implements
 	}
 	
 	public void dispose() {
-		if (displayedConfig) forEach(ICPropertyTab.DISPOSE); 
+		if (displayedConfig) forEach(ICPropertyTab.DISPOSE);
+		handleResize(false); // save page size 
 		if (pages.contains(this)) pages.remove(this);
 	} 
 	

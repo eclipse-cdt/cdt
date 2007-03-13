@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Set action id for identification from plugin.xml menu extensions.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -101,6 +101,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 		this.fromPopupMenu = fromPopupMenu;
 		this.sp = sp;
 		setHelp(RSEUIPlugin.HELPPREFIX + "actn0000"); //$NON-NLS-1$
+		setId("org.eclipse.rse.ui.action.newconnection"); //$NON-NLS-1$
 	}
 
 	/**

@@ -46,7 +46,7 @@ import org.eclipse.rse.ui.actions.SystemDisconnectAllSubSystemsAction;
 import org.eclipse.rse.ui.actions.SystemMoveConnectionAction;
 import org.eclipse.rse.ui.actions.SystemMoveDownConnectionAction;
 import org.eclipse.rse.ui.actions.SystemMoveUpConnectionAction;
-import org.eclipse.rse.ui.actions.SystemNewConnectionFromExistingConnectionAction;
+import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.rse.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.actions.SystemShowInMonitorAction;
@@ -73,7 +73,7 @@ public class SystemViewConnectionAdapter
        extends AbstractSystemViewAdapter 
        implements IRSEUserIdConstants
 {
-	private SystemNewConnectionFromExistingConnectionAction anotherConnectionAction = null;
+	private SystemNewConnectionAction anotherConnectionAction = null;
 	//private SystemUpdateConnectionAction updateAction = null;
 	private SystemMoveUpConnectionAction upAction = null;
 	private SystemMoveDownConnectionAction downAction = null;
@@ -188,7 +188,14 @@ public class SystemViewConnectionAdapter
 	
 	private void createActions()
 	{
-	    anotherConnectionAction = new SystemNewConnectionFromExistingConnectionAction(null);
+	    anotherConnectionAction = new SystemNewConnectionAction(null,
+	                                                            SystemResources.ACTION_ANOTHERCONN_LABEL,
+	                                                            SystemResources.ACTION_ANOTHERCONN_TOOLTIP,
+	                                                            false,
+	                                                            true,
+	                                                            null);
+			anotherConnectionAction.setHelp(RSEUIPlugin.HELPPREFIX+"actn0015"); //$NON-NLS-1$
+
 	    //updateAction = new SystemUpdateConnectionAction(null);
 	    upAction = new SystemMoveUpConnectionAction(null);	
 	    downAction = new SystemMoveDownConnectionAction(null);	

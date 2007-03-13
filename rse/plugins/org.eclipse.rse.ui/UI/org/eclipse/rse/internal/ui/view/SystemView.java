@@ -146,11 +146,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.progress.PendingUpdateAdapter;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.views.framelist.GoIntoAction;
 
 /**
@@ -613,6 +615,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	 */
 	public IAction getRefreshAction() {
 		if (refreshAction == null) refreshAction = new SystemRefreshAction(getShell());
+		refreshAction.setId(ActionFactory.REFRESH.getId());
+		refreshAction.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
 		return refreshAction;
 	}
 
@@ -639,6 +643,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	public PropertyDialogAction getPropertyDialogAction() {
 		if (propertyDialogAction == null) {
 			propertyDialogAction = new PropertyDialogAction(new SameShellProvider(getShell()), this);
+			propertyDialogAction.setId(ActionFactory.PROPERTIES.getId());
+			propertyDialogAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PROPERTIES);
 			//propertyDialogAction.setToolTipText(" "); 
 		}
 
@@ -663,6 +669,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	 */
 	public IAction getRenameAction() {
 		if (renameAction == null) renameAction = new SystemCommonRenameAction(getShell(), this);
+		renameAction.setId(ActionFactory.RENAME.getId());
+		renameAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.RENAME);
 		return renameAction;
 	}
 
@@ -672,6 +680,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	 */
 	public IAction getDeleteAction() {
 		if (deleteAction == null) deleteAction = new SystemCommonDeleteAction(getShell(), this);
+		deleteAction.setId(ActionFactory.DELETE.getId());
+		deleteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
 		return deleteAction;
 	}
 

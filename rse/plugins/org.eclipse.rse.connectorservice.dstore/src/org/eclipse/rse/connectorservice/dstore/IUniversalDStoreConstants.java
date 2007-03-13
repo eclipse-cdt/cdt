@@ -38,10 +38,6 @@ public interface IUniversalDStoreConstants
 	public static final String ICON_SUFFIX = "Icon";	 //$NON-NLS-1$
 	public static final String ICON_EXT = ".gif";	 //$NON-NLS-1$
 
-	//public static final String ICON_SYSTEM_LIBRARY_ROOT = "system400Library";		
-	//public static final String ICON_SYSTEM_LIBRARY      = ICON_SYSTEM_LIBRARY_ROOT + ICON_EXT;
-	//public static final String ICON_SYSTEM_LIBRARY_ID   = PREFIX + ICON_SYSTEM_LIBRARY_ROOT + ICON_SUFFIX;
-	
     // -------------------------
 	// Action prefixes.
 	//  SYstemBaseAction class adds "label" to get text and "tooltip" and "description" to get hover help

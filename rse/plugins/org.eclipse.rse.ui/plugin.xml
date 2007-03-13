@@ -180,18 +180,6 @@ Contributors:
 <!-- predefine known system types -->
    <extension
          point="org.eclipse.rse.core.systemTypes">
-      <!--   
-      <systemType id="org.eclipse.rse.systemtype.iseries"
-            name="iSeries"
-			description="%systemType.iseries.description"
-            icon="icons/full/obj16/system400_obj.gif"
-			iconLive="icons/full/obj16/system400live_obj.gif"/>
-      <systemType id="org.eclipse.rse.systemtype.iseries.PASE"
-            name="PASE"
-			description="%systemType.iseries.PASE.description"
-			icon="icons/full/obj16/system400_obj.gif"
-			iconLive="icons/full/obj16/system400live_obj.gif"/>
-      -->
       <systemType
             description="%systemType.windows.description"
             icon="icons/full/obj16/systemwin_obj.gif"
@@ -199,13 +187,6 @@ Contributors:
             id="org.eclipse.rse.systemtype.windows"
             label="%systemType.windows.label"
             name="Windows"/>
-	  <!--
-      <systemType id="org.eclipse.rse.systemtype.zseries"
-         	name="z/OS"
-			description="%systemType.zseries.description"
-			icon="icons/full/obj16/system390_obj.gif"
-			iconLive="icons/full/obj16/system390live_obj.gif"/>
-   	  -->
       <systemType
             description="%systemType.linux.description"
             icon="icons/full/obj16/systemlinux_obj.gif"
@@ -219,11 +200,6 @@ Contributors:
 			description="%systemType.powerlinux.description"
 			icon="icons/full/obj16/systemlinux_obj.gif"
 			iconLive="icons/full/obj16/systemlinuxlive_obj.gif"/>
-      <systemType id="org.eclipse.rse.systemtype.linux.zSeries"
-            name="zSeries Linux"
-			description="%systemType.zlinux.description"
-			icon="icons/full/obj16/systemlinux_obj.gif"
-			iconLive="icons/full/obj16/systemlinuxlive_obj.gif"/>    
       -->      
       <systemType
             description="%systemType.unix.description"
@@ -232,13 +208,6 @@ Contributors:
             id="org.eclipse.rse.systemtype.unix"
             label="%systemType.unix.label"
             name="Unix"/>
-      <!--
-      <systemType id="org.eclipse.rse.systemtype.aix"
-            name="AIX"
-			description="%systemType.aix.description"
-			icon="icons/full/obj16/systemaix_obj.gif"
-			iconLive="icons/full/obj16/systemaixlive_obj.gif"/>
-      -->      
       <systemType
             description="%systemType.local.description"
             icon="icons/full/obj16/systemlocal_obj.gif"

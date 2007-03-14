@@ -1602,8 +1602,6 @@ class Rendering extends Composite implements IDebugEventSetListener
             if(containsEditedCell(address)) // cell size cannot be switched during an edit
                 return getEditedMemory(address);
 
-            IMemoryBlockExtension memoryBlock = getMemoryBlock();
-
             boolean contains = false;
             if(fCache != null && fCache.start != null)
             {

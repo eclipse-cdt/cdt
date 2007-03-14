@@ -191,7 +191,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
      * @param length
      * @param declarator
      */
-    private void assertSoleFileLocation(IASTNode n, String pathEndsWith,
+    protected void assertSoleFileLocation(IASTNode n, String pathEndsWith,
             int offset, int length) {
         IASTNodeLocation[] locations = n.getNodeLocations();
         assertEquals(locations.length, 1);
@@ -240,7 +240,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
         }
     }
 
-    private void checkInclude(IASTPreprocessorIncludeStatement inc, String file, String code, String name, boolean system) {
+    protected void checkInclude(IASTPreprocessorIncludeStatement inc, String file, String code, String name, boolean system) {
         IASTName incName= inc.getName();
     	
         assertEquals(system, inc.isSystemInclude());

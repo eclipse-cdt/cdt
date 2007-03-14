@@ -67,7 +67,16 @@ public class TestSourceReader {
 		fqn = fqn.indexOf("$")==-1 ? fqn : fqn.substring(0,fqn.indexOf("$"));
 		IPath filePath= new Path(srcRoot + '/' + fqn + ".java");
 	    
-	    InputStream in= FileLocator.openStream(bundle, filePath, false);
+		InputStream in;
+		try {
+			in = FileLocator.openStream(bundle, filePath, false);
+		} catch(IOException e) {
+			if(clazz.getSuperclass()!=null && !clazz.equals(TestCase.class)) {
+		    	return getContentsForTest(bundle, srcRoot, clazz.getSuperclass(), testName, sections);
+		    }
+			throw e;
+		}
+	    
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    
 	    List contents = new ArrayList();

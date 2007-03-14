@@ -200,9 +200,6 @@ public class TextPane extends AbstractPane
     {
         super.paint(pe);
 
-        IMemoryBlockExtension memoryBlock = fRendering.getMemoryBlock();
-        // FIXME what if it is null?
-
         GC gc = pe.gc;
         gc.setFont(fRendering.getFont());
 

@@ -10,9 +10,9 @@ struct SimpleStruct
 };
 
 
-void SimpleStruct_construct( struct SimpleStruct * const this );
+void SimpleStruct_construct( struct SimpleStruct * const s );
 
-int SimpleStruct_doSomething( const struct SimpleStruct * const this );
+int SimpleStruct_doSomething( const struct SimpleStruct * const s );
 
 #endif /* SIMPLE_H */
 
@@ -53,15 +53,15 @@ const SimpleStruct array[] =
 //          single line outside scope
 
 void SimpleStruct_construct( 
-struct SimpleStruct * const this )
+struct SimpleStruct * const s )
   {
 // single line
-this->num = 1;
-this->name = "boo";
-this->floatNum = 1.5;
+s->num = 1;
+s->name = "boo";
+s->floatNum = 1.5;
   }
 
-int ConnectParams_doSomething( const struct SimpleStruct * const this )
+int ConnectParams_doSomething( const struct SimpleStruct * const s )
     {
 /*
  * multiline

@@ -115,7 +115,10 @@ import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
 import org.eclipse.cdt.internal.formatter.scanner.Token;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.Position;
 import org.eclipse.text.edits.TextEdit;
 
@@ -129,13 +132,25 @@ import org.eclipse.text.edits.TextEdit;
  */
 public class CodeFormatterVisitor extends CPPASTVisitor {
 
-	private static boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.core/debug/formatter"));
+	private static boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.core/debug/formatter")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static class ASTProblemException extends RuntimeException {
 		private static final long serialVersionUID= 1L;
+		private IASTProblem fProblem;
 		ASTProblemException(IASTProblem problem) {
-			super(problem.getMessage());
-			if (DEBUG) System.err.println("PROBLEM: "+getMessage());
+			super();
+			fProblem= problem;
+		}
+		/*
+		 * @see java.lang.Throwable#getMessage()
+		 */
+		public String getMessage() {
+			String message= fProblem.getMessage();
+			if (fProblem.getFileLocation() != null) {
+				int line= fProblem.getFileLocation().getStartingLineNumber();
+				message += " (line " + line + ')'; //$NON-NLS-1$
+			}
+			return message;
 		}
 	}
 
@@ -179,6 +194,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private boolean fInsideFor;
 
+	private MultiStatus fStatus;
+
 	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, Map settings, int offset, int length) {
 		localScanner = new Scanner() {
 			public Token nextToken() {
@@ -210,32 +227,26 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.setSkipPositions(collectInactiveCodePositions(unit));
 
 		fTranslationUnitFile= unit.getFilePath();
+		fStatus= new MultiStatus(CCorePlugin.PLUGIN_ID, 0, "Formatting problem(s)", null); //$NON-NLS-1$
 		try {
 			unit.accept(this);
-		} catch (AbortFormatting e){
-			return failedToFormat(e);
 		} catch (RuntimeException e) {
-			return failedToFormat(new AbortFormatting(e));
+			reportFormattingProblem(e);
+			if (DEBUG) return failedToFormat(e);
 		}
 		if (DEBUG){
 			System.out.println("Formatting time: " + (System.currentTimeMillis() - startTime));  //$NON-NLS-1$
 		}
+		if (!fStatus.isOK()) {
+			CCorePlugin.log(fStatus);
+		}
 		return scribe.getRootEdit();
 	}
 
-	private final TextEdit failedToFormat(AbortFormatting e) {
-		String errorMessage= e.getMessage();
-		if (errorMessage == null) {
-			if (e.nestedException != null) {
-				errorMessage= e.nestedException.getClass().getName();
-			} else {
-				errorMessage= "Unknown error";
-			}
-		}
-		CCorePlugin.log(CCorePlugin.createStatus("Could not format: " + errorMessage, e.nestedException));
+	private final TextEdit failedToFormat(RuntimeException e) {
 		if (DEBUG) {
-			System.out.println("COULD NOT FORMAT: " + e.getMessage());
-			System.out.println(scribe.scanner); //$NON-NLS-1$
+			System.out.println("COULD NOT FORMAT: " + e.getMessage()); //$NON-NLS-1$
+			System.out.println(scribe.scanner);
 			System.out.println(scribe);
 			System.out.flush();
 			System.err.flush();
@@ -245,6 +256,18 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		return null;
 	}
 
+	private void reportFormattingProblem(RuntimeException e) {
+		String errorMessage= e.getMessage();
+		if (errorMessage == null) {
+			errorMessage= "Unknown error"; //$NON-NLS-1$
+		}
+		fStatus.add(createStatus(errorMessage, e));
+	}
+
+	private static IStatus createStatus(String msg, Throwable e) {
+		return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, e);
+	}
+
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 	 */
@@ -252,7 +275,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		// fake new line
 		scribe.lastNumberOfNewLines = 1;
 		scribe.startNewLine();
-		int indentLevel= scribe.indentationLevel;
+		final int indentLevel= scribe.indentationLevel;
 		IASTDeclaration[] decls= tu.getDeclarations();
 		for (int i = 0; i < decls.length; i++) {
 			IASTDeclaration declaration = decls[i];
@@ -262,7 +285,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			try {
 				declaration.accept(this);
 				scribe.startNewLine();
-			} catch (ASTProblemException e) {
+			} catch (RuntimeException e) {
+				// report, but continue
+				reportFormattingProblem(e);
 				if (i < decls.length - 1) {
 					exitAlignments();
 					skipToNode(decls[i+1]);
@@ -876,8 +901,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
 			formatList(declarators, align, false, false);
 		}
-		if (peekNextToken() == Token.tIDENTIFIER) {
-			// there may be a macro
+		if (peekNextToken() != Token.tSEMI) {
 			scribe.skipToToken(Token.tSEMI);
 		}
 		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
@@ -1138,6 +1162,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 					ok = true;
 				} catch (AlignmentException e) {
 					scribe.redoAlignment(e);
+				} catch (ASTProblemException e) {
+					
 				}
 			} while (!ok);
 			scribe.exitAlignment(listAlignment, true);
@@ -1231,6 +1257,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.printNextToken(peekNextToken());
 		scribe.printNextToken(Token.tLPAREN);
 		node.getTypeId().accept(this);
+		if (peekNextToken() == Token.tCOMMA) {
+			scribe.printNextToken(Token.tCOMMA, preferences.insert_space_before_comma_in_method_invocation_arguments);
+			scribe.printNextToken(peekNextToken(), preferences.insert_space_after_comma_in_method_invocation_arguments);
+			scribe.skipToToken(Token.tRPAREN);
+		}
 		scribe.printNextToken(Token.tRPAREN);
     	return PROCESS_SKIP;
 	}
@@ -1301,34 +1332,32 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(IASTLiteralExpression node) {
-		if (node.getKind() == IASTLiteralExpression.lk_string_literal) {
+		if (node.getNodeLocations().length > 1) {
+			// cannot handle embedded macros
+			skipNode(node);
+		} else if (node.getKind() == IASTLiteralExpression.lk_string_literal) {
 			// handle concatentation of string literals
-			if (node.getNodeLocations().length > 1) {
-				// cannot handle embedded macros
-				skipNode(node);
-			} else {
-				int token;
-				boolean needSpace= false;
-				final int line= scribe.line;
-				boolean indented= false;
-				try {
-					while (true) {
-						scribe.printCommentPreservingNewLines();
-						scribe.printNextToken(Token.tSTRING, needSpace);
-						token= peekNextToken();
-						if (token != Token.tSTRING) {
-							break;
-						}
-						needSpace= true;
-						if (!indented && line != scribe.line) {
-							indented= true;
-							scribe.indent();
-						}
+			int token;
+			boolean needSpace= false;
+			final int line= scribe.line;
+			boolean indented= false;
+			try {
+				while (true) {
+					scribe.printNextToken(Token.tSTRING, needSpace);
+					token= peekNextToken();
+					if (token != Token.tSTRING) {
+						break;
 					}
-				} finally {
-					if (indented) {
-						scribe.unIndent();
+					scribe.printCommentPreservingNewLines();
+					if (!indented && line != scribe.line) {
+						indented= true;
+						scribe.indent();
 					}
+					needSpace= true;
+				}
+			} finally {
+				if (indented) {
+					scribe.unIndent();
 				}
 			}
 		} else {

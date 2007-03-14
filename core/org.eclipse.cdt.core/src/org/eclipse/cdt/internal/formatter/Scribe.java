@@ -776,6 +776,9 @@ public class Scribe {
 
 			switch (currentCharacter) {
 			case '\r':
+				if (isNewLine) {
+					line++;
+				}
 				start= previousStart;
 				isNewLine= true;
 				if (scanner.getNextChar('\n')) {
@@ -784,6 +787,9 @@ public class Scribe {
 				}
 				break;
 			case '\n':
+				if (isNewLine) {
+					line++;
+				}
 				start= previousStart;
 				isNewLine= true;
 				break;
@@ -865,7 +871,7 @@ public class Scribe {
 			previousStart= nextCharacterStart;
 			scanner.setCurrentPosition(nextCharacterStart);
 		}
-		lastNumberOfNewLines= 0;
+		lastNumberOfNewLines= isNewLine ? 1 : 0;
 		needSpace= false;
 		scanner.resetTo(currentTokenEndPosition, scannerEndPosition - 1);
 	}
@@ -1232,7 +1238,7 @@ public class Scribe {
 		currentToken= scanner.nextToken();
 		if (currentToken == null || expectedTokenType != currentToken.type) {
 			throw new AbortFormatting(
-					"["	+ line + "/" + column + "] unexpected token type, expecting:" + expectedTokenType + ", actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$
+					"["	+ (line+1) + "/" + column + "] unexpected token type, expecting:" + expectedTokenType + ", actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		print(currentToken.getLength(), considerSpaceIfAny);
 	}
@@ -1253,7 +1259,7 @@ public class Scribe {
 				expectations.append(expectedTokenTypes[i]);
 			}
 			throw new AbortFormatting(
-					"unexpected token type, expecting:[" + expectations.toString() + "], actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$
+					"["	+ (line+1) + "/" + column + "] unexpected token type, expecting:[" + expectations.toString() + "], actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		print(currentToken.getLength(), considerSpaceIfAny);
 	}
@@ -1521,6 +1527,24 @@ public class Scribe {
 				hasComment= false;
 				break;
 			default:
+				if (currentToken.getType() == Token.tIDENTIFIER) {
+					if (currentToken.getText().startsWith("__")) { //$NON-NLS-1$
+						// assume this is a declspec modifier
+						print(currentToken.getLength(), !isFirstModifier);
+						isFirstModifier= false;
+						currentTokenStartPosition= scanner.getCurrentPosition();
+						if ((currentToken= scanner.nextToken()) != null) {
+							if (currentToken.getType() == Token.tLPAREN) {
+								if (skipToToken(Token.tRPAREN)) {
+									currentToken= scanner.nextToken();
+									currentToken= scanner.nextToken();
+									currentTokenStartPosition= scanner.getCurrentPosition();
+								}
+							}
+						}
+						break;
+					}
+				}
 				// step back one token
 				scanner.resetTo(currentTokenStartPosition, scannerEndPosition - 1);
 				return;

@@ -1,0 +1,30 @@
+<?eclipse version="3.0"?>
+<plugin>
+
+<extension point="org.eclipse.debug.ui.memoryRenderings">
+    <renderingType 
+        name="Traditional"
+        id="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRendering"
+        class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingTypeDelegate">
+    </renderingType>
+    <renderingBindings
+        renderingIds="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRendering"
+        defaultIds="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRendering">
+        <enablement>
+            <instanceof value="org.eclipse.debug.core.model.IMemoryBlockExtension"/>
+        </enablement>    
+    </renderingBindings>          
+</extension>
+<extension
+      point="org.eclipse.ui.preferencePages">
+   <page
+         class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferencePage"
+         id="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferencePage"
+         name="Traditional Memory Rendering"/>
+</extension>
+<extension
+      point="org.eclipse.core.runtime.preferences">
+   <initializer class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferenceInitializer"/>
+</extension>
+
+</plugin>

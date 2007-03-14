@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -18,8 +20,8 @@ import java.util.Map;
  */
 public class ScannerInfo implements IScannerInfo
 {
-	private Map definedSymbols = null; 
-	private String [] includePaths = null; 
+	private Map definedSymbols = Collections.EMPTY_MAP; 
+	private String [] includePaths = {}; 
 	
 	public ScannerInfo()
 	{
@@ -27,15 +29,19 @@ public class ScannerInfo implements IScannerInfo
 	
 	public ScannerInfo( Map d, String [] incs )
 	{
-		definedSymbols = d; 
-		includePaths = incs;
+		if (d != null) {
+			definedSymbols = d;
+		}
+		if (incs != null) {
+			includePaths = incs;
+		}
 	}
 		
     /**
 	 * @param definitions
 	 */
 	public ScannerInfo(Map definitions) {
-		this( definitions, (String [])null);
+		this(definitions, (String [])null);
 	}
 
 	/* (non-Javadoc)

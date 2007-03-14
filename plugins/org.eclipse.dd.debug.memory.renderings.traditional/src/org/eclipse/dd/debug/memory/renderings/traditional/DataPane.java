@@ -3,7 +3,6 @@ package org.eclipse.dd.debug.memory.renderings.traditional;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
@@ -225,9 +224,6 @@ public class DataPane extends AbstractPane
     protected void paint(PaintEvent pe)
     {
         super.paint(pe);
-
-        IMemoryBlockExtension memoryBlock = fRendering.getMemoryBlock();
-        // TODO what if it is null?
 
         GC gc = pe.gc;
         gc.setFont(fRendering.getFont());

@@ -116,6 +116,7 @@ public class RemoteTreeContentManager {
          */
         public void add(Object[] elements, IProgressMonitor monitor) {
             Object[] filtered = fViewer.filter(elements);
+            fViewer.getSorter().sort(fViewer, filtered);
             if (filtered.length > 0) {
                 replaceChildren(fParent, filtered, offset, monitor);
                 offset = offset + filtered.length;

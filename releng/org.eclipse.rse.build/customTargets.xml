@@ -243,6 +243,7 @@
 		/>
 		<!-- Run generated fetch script -->
 		<ant antfile="${buildDirectory}/fetch_org.apache.oro.xml">
+			<property name="featureOnly" value="true"/>
 			<property name="featureAndPlugins" value="true"/>
 		</ant>
 		<eclipse.fetch
@@ -255,6 +256,7 @@
 		/>
 		<!-- Run generated fetch script -->
 		<ant antfile="${buildDirectory}/fetch_org.apache.commons.net.xml">
+			<property name="featureOnly" value="true"/>
 			<property name="featureAndPlugins" value="true"/>
 		</ant>
 	</target>

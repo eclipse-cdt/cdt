@@ -26,6 +26,7 @@ public abstract class AbstractPane extends Canvas
     protected Rendering fRendering;
 
     // selection state
+    protected boolean fSelectionStarted = false;
     protected boolean fSelectionInProgress = false;
 
     protected BigInteger fSelectionStartAddress = null;
@@ -84,15 +85,17 @@ public abstract class AbstractPane extends Canvas
         this.addMouseListener(new MouseListener()
         {
             public void mouseUp(MouseEvent me)
-            {
+            { 
                 positionCaret(me.x, me.y);
 
                 fCaret.setVisible(true);
 
-                if(me.button == 1)
+                if(fSelectionInProgress && me.button == 1)
                 {
                     endSelection(me.x, me.y);
                 }
+                
+                fSelectionInProgress = fSelectionStarted = false;
             }
 
             public void mouseDown(MouseEvent me)
@@ -119,7 +122,7 @@ public abstract class AbstractPane extends Canvas
                             AbstractPane.this.fSelectionStartAddress = fRendering
                                 .getSelection().getStart();
 
-                        AbstractPane.this.fSelectionInProgress = true;
+                        AbstractPane.this.fSelectionStarted = true;
 
                         AbstractPane.this.appendSelection(me.x, me.y);
 
@@ -135,6 +138,21 @@ public abstract class AbstractPane extends Canvas
 
             public void mouseDoubleClick(MouseEvent me)
             {
+            	try
+            	{
+            		BigInteger address = getViewportAddress(me.x / getCellWidth(), me.y
+            			/ getCellHeight());
+            		
+            		fRendering.getSelection().clear();
+            		fRendering.getSelection().setStart(address.add(BigInteger
+                            .valueOf(fRendering.getAddressesPerColumn())), address);
+            		fRendering.getSelection().setEnd(address.add(BigInteger
+                            .valueOf(fRendering.getAddressesPerColumn())), address);
+            	}
+            	catch(DebugException de)
+            	{
+            		// do nothing
+            	}
             }
         });
 
@@ -142,8 +160,9 @@ public abstract class AbstractPane extends Canvas
         {
             public void mouseMove(MouseEvent me)
             {
-                if(fSelectionInProgress)
+                if(fSelectionStarted)
                 {
+                	fSelectionInProgress = true;
                     appendSelection(me.x, me.y);
                 }
             }
@@ -269,7 +288,10 @@ public abstract class AbstractPane extends Canvas
                 else if(Rendering.isValidEditCharacter(ke.character))
                 {
                 	if(fRendering.getSelection().hasSelection())
+                	{
                 		setCaretAddress(fRendering.getSelection().getLow());
+                		fSubCellCaretPosition = 0;
+                	}
                 	
                     editCell(fCaretAddress, fSubCellCaretPosition, ke.character);
                 }
@@ -504,7 +526,7 @@ public abstract class AbstractPane extends Canvas
                 fRendering.getSelection().setStart(address.add(BigInteger.valueOf(
                     fRendering.getBytesPerColumn() / fRendering.getAddressableSize())), address);
 
-                fSelectionInProgress = true;
+                fSelectionStarted = true;
             }
         }
         catch(DebugException e)

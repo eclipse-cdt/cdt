@@ -27,14 +27,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.apache.commons.net.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.apache.oro.source"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.rse.core.source"
          version="0.0.0"/>
 

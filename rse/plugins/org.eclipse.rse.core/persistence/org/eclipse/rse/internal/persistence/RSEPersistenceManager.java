@@ -338,12 +338,16 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 */
 	private boolean load(ISystemProfileManager profileManager) {
 		boolean successful = true;
-		if (isExporting() || isImporting()) {
-			successful = false;
-		} else {
-			_currentState = STATE_IMPORTING;
-			IProject project = getRemoteSystemsProject();
+		synchronized(this) {
+			if (isExporting() || isImporting()) {
+				successful = false;
+			} else {
+				setState(STATE_IMPORTING);
+			}
+		}
+		if(successful) {
 			try {
+				IProject project = getRemoteSystemsProject();
 				if (!project.isSynchronized(IResource.DEPTH_ONE)) project.refreshLocal(IResource.DEPTH_ONE, null);
 				IRSEPersistenceProvider persistenceProvider = getRSEPersistenceProvider();
 				String[] profileNames = persistenceProvider.getSavedProfileNames();
@@ -361,8 +365,10 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				successful = false;
+			} finally {
+				setState(STATE_NONE);
 			}
-			_currentState = STATE_NONE;
 		}
 		return successful;
 	}
@@ -375,18 +381,27 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 */
 	private boolean save(ISystemProfile profile, boolean force) {
 		boolean result = false;
-		if (!isImporting()) {
-			_currentState = STATE_EXPORTING;
-			RSEDOM dom = exportRSEDOM(profile, true); // DWD should do merge, but does not handle deletes properly yet
-			_currentState = STATE_NONE;
-			result = true;
-			if (dom.needsSave()) {
-				Job job = dom.getSaveJob();
-				if (job == null) {
-					job = new SaveRSEDOMJob(dom, getRSEPersistenceProvider());
-					dom.setSaveJob(job);
+		boolean acquiredLock = false;
+		synchronized(this) {
+			if (!isImporting()) {
+				setState(STATE_EXPORTING);
+				acquiredLock = true;
+			}
+		}
+		if (acquiredLock) {
+			try {
+				RSEDOM dom = exportRSEDOM(profile, true); // DWD should do merge, but does not handle deletes properly yet
+				result = true;
+				if (dom.needsSave()) {
+					Job job = dom.getSaveJob();
+					if (job == null) {
+						job = new SaveRSEDOMJob(dom, getRSEPersistenceProvider());
+						dom.setSaveJob(job);
+					}
+					job.schedule(3000); // three second delay
 				}
-				job.schedule(3000); // three second delay
+			} finally {
+				setState(STATE_NONE);
 			}
 		}
 		return result;
@@ -406,17 +421,17 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		job.schedule();
 	}
 
-	public boolean isExporting() {
+	public synchronized boolean isExporting() {
 		return _currentState == STATE_EXPORTING;
 	}
 
-	public boolean isImporting() {
+	public synchronized boolean isImporting() {
 		return _currentState == STATE_IMPORTING;
 	}
 
-	//	public void setState(int state) {
-	//		_currentState = state;
-	//	}
+	private synchronized void setState(int state) {
+		_currentState = state;
+	}
 
 	private RSEDOM exportRSEDOM(ISystemProfile profile, boolean force) {
 		RSEDOM dom = _exporter.createRSEDOM(profile, force);

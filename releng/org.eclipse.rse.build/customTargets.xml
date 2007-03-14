@@ -5,16 +5,6 @@
 	<!-- Add one <ant> task for each top level element being built. -->
 	<!-- ===================================================================== -->
 	<target name="allElements">
-		<!--
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.apache.oro" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.apache.commons.net" />
-		</ant>
-		-->
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.core" />
@@ -71,19 +61,6 @@
 	<!-- ${assembleScriptName}) but may also add pre and post processing       -->
 	<!-- Add one target for each root element and each configuration           -->
 	<!-- ===================================================================== -->
-
-	<!-- No separate assembly, included in FTP ::
-	<target name="assemble.org.apache.oro">
-		<property name="archiveName" value="jakarta-oro-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-	<target name="assemble.org.apache.commons.net">
-		<property name="archiveName" value="commons-net-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-	-->
 
 	<target name="assemble.org.eclipse.rse.core">
 		<property name="archiveName" value="RSE-runtime-core-${buildId}.zip"/>
@@ -251,14 +228,13 @@
 		<!-- the latest released version even in case of an N-build -->
 		<!--
 		<ant antfile="${genericTargets}" target="fetchElement">
-			<property name="type" value="feature" />
+			<property name="type" value="plugin" />
 			<property name="id" value="org.apache.commons.net" />
 		</ant>
 		-->
-		<mkdir dir="${buildDirectory}/features"/>
 		<mkdir dir="${buildDirectory}/plugins"/>
 		<eclipse.fetch
-			elements="feature@org.apache.oro"
+			elements="plugin@org.apache.oro"
 			buildDirectory="${buildDirectory}"
 			directory="${buildDirectory}/directory.txt"
 			fetchTag=""
@@ -267,11 +243,10 @@
 		/>
 		<!-- Run generated fetch script -->
 		<ant antfile="${buildDirectory}/fetch_org.apache.oro.xml">
-			<property name="featureOnly" value="true"/>
 			<property name="featureAndPlugins" value="true"/>
 		</ant>
 		<eclipse.fetch
-			elements="feature@org.apache.commons.net"
+			elements="plugin@org.apache.commons.net"
 			buildDirectory="${buildDirectory}"
 			directory="${buildDirectory}/directory.txt"
 			fetchTag=""
@@ -280,7 +255,6 @@
 		/>
 		<!-- Run generated fetch script -->
 		<ant antfile="${buildDirectory}/fetch_org.apache.commons.net.xml">
-			<property name="featureOnly" value="true"/>
 			<property name="featureAndPlugins" value="true"/>
 		</ant>
 	</target>

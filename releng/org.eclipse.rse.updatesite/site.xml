@@ -41,12 +41,6 @@
    <feature url="features/org.eclipse.tm.discovery_2.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="2.0.0.qualifier">
       <category name="Target Management Add-ons and Stand-alone Offerings"/>
    </feature>
-   <feature url="features/org.apache.commons.net_1.4.1.qualifier.jar" id="org.apache.commons.net" version="1.4.1.qualifier">
-      <category name="Enabling Features"/>
-   </feature>
-   <feature url="features/org.apache.oro_2.0.8.qualifier.jar" id="org.apache.oro" version="2.0.8.qualifier">
-      <category name="Enabling Features"/>
-   </feature>
    <feature url="features/org.eclipse.tm.terminal.sdk_1.0.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.0.qualifier">
       <category name="Target Management Add-ons and Stand-alone Offerings"/>
    </feature>
@@ -66,11 +60,6 @@
    <category-def name="Target Management Add-ons and Stand-alone Offerings" label="Target Management Add-ons and Stand-alone Offerings">
       <description>
          Target Management Core Components as well as Experimental add-ons for RSE.
-      </description>
-   </category-def>
-   <category-def name="Enabling Features" label="Enabling Features">
-      <description>
-         Third Party Libraries
       </description>
    </category-def>
 </site>

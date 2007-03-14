@@ -741,9 +741,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		CodeReader reader;
 		reader = getCodeReader();
 		
-		ILanguage language= getLanguage();
-		if (language != null) {
-			return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
+		if (reader != null) {
+			ILanguage language= getLanguage();
+			if (language != null) {
+				return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
+			}
 		}
 		return null;
 	}

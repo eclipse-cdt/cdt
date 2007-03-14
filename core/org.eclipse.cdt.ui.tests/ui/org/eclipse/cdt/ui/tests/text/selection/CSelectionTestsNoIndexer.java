@@ -107,12 +107,8 @@ public class CSelectionTestsNoIndexer extends TestCase {
     }
     
     public void cleanupProject() throws Exception {
-        try{
-            project.delete( true, false, monitor );
-            project = null;
-        } catch( Throwable e ){
-            /*boo*/
-        }
+    	CProjectHelper.delete(cPrj);
+    	project= null;
     }
     
     protected void tearDown() throws Exception {
@@ -126,7 +122,7 @@ public class CSelectionTestsNoIndexer extends TestCase {
             if (members[i].getName().equals(".settings")) 
             	continue;
             try{
-                members[i].delete( false, monitor );
+                members[i].delete( true, monitor );
             } catch( Throwable e ){
                 /*boo*/
             }
@@ -153,7 +149,7 @@ public class CSelectionTestsNoIndexer extends TestCase {
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); //$NON-NLS-1$
+        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); 
         
         File linkFile = new File(location.toOSString());
         if (!linkFile.exists()) {
@@ -206,7 +202,7 @@ public class CSelectionTestsNoIndexer extends TestCase {
     	//Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        IPath location = new Path(folder.getLocation().toOSString() + File.separator + fileName); //$NON-NLS-1$
+        IPath location = new Path(folder.getLocation().toOSString() + File.separator + fileName); 
         
         File linkFile = new File(location.toOSString());
         if (!linkFile.exists()) {
@@ -655,7 +651,7 @@ public class CSelectionTestsNoIndexer extends TestCase {
         String code = buffer.toString();
         IFile file = importFileWithLink("testBug78354.cpp", code); //$NON-NLS-1$
         
-        int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$ //$NON-NLS-2$
+        int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$ 
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "TestTypeOne"); //$NON-NLS-1$

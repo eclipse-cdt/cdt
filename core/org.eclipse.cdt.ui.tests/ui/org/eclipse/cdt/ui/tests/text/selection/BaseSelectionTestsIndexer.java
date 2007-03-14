@@ -109,19 +109,24 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         //Obtain file handle
         IFile file = fCProject.getProject().getFile(fileName);
         
-        IPath location = new Path(fCProject.getProject().getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); //$NON-NLS-1$
+        IPath location = new Path(fCProject.getProject().getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); 
         
         File linkFile = new File(location.toOSString());
-        if (!linkFile.exists()) {
-        	linkFile.createNewFile();
+        if (linkFile.exists()) {
+        	linkFile.delete();
         }
         
         file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
         
         InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if( file.exists() ) {
+			long timestamp= file.getLocalTimeStamp();
+        	file.setContents( stream, false, false, monitor );
+        	if (file.getLocalTimeStamp() == timestamp) {
+        		file.setLocalTimeStamp(timestamp+1000);
+        	}
+        }	
         else
             file.create( stream, false, monitor );
         

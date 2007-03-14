@@ -269,6 +269,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		synchronized( getBreakpointMap() ) {
 			for ( int i = 0; i < breakpoints.length; ++i ) {
 				if ( breakpoints[i] instanceof ICBreakpoint ) {
+					try { // Remove any problem markers for this breakpoint
+						BreakpointProblems.removeProblemsForBreakpoint((ICBreakpoint)breakpoints[i]);
+					} catch (CoreException e) {}
 					Object obj = getBreakpointMap().get( (ICBreakpoint)breakpoints[i] );
 					ICDIBreakpoint b = null;
 					if ( obj instanceof ICDIBreakpoint ) {

@@ -3,7 +3,7 @@ package org.eclipse.cdt.ui.newui;
 public class PrefPage_Vars extends AbstractPrefPage {
 
 	protected boolean isSingle() { return true; }
-	protected boolean needsHeader() { return false; }
+	protected String getHeader() { return null; }
 
 	// Tabs themselves should save data 
 	public boolean performOk() {

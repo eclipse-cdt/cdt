@@ -10,5 +10,5 @@ public class PrefPage_Env extends AbstractPrefPage {
 		return true;
 	}
 
-	protected boolean needsHeader() { return false;	}
+	protected String getHeader() { return null;	}
 }

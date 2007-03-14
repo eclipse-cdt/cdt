@@ -224,7 +224,7 @@ public class ScannerASTProblem extends ASTNode implements IASTProblem {
             file = f.getFileName();
             line = f.getStartingLineNumber();
         }
-        Object[] args = new Object[] { msg, file, new Integer(line) }; //$NON-NLS-1$        
+        Object[] args = new Object[] { msg, file, new Integer(line) };
         message = ParserMessages.getFormattedString(PROBLEM_PATTERN, args);
         return message;
     }

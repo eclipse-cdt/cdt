@@ -288,7 +288,7 @@ public class CASTProblem extends CASTNode implements IASTProblem {
             offset = f.getNodeOffset();
         }
         
-        Object[] args = new Object[] { msg, file, new Integer( offset ) }; //$NON-NLS-1$        
+        Object[] args = new Object[] { msg, file, new Integer( offset ) };
         message = ParserMessages.getFormattedString(AST_PROBLEM_PATTERN, args);
         return message;
     }

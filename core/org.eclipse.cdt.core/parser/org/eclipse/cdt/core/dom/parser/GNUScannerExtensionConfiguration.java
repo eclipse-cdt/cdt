@@ -86,7 +86,7 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
     private static final FunctionStyleMacro __builtin_constant_p = new FunctionStyleMacro(
             "__builtin_constant_p".toCharArray(), //$NON-NLS-1$
             "0".toCharArray(), //$NON-NLS-1$
-            new char[][] { "exp".toCharArray() }); //$NON-NLS-1$//$NON-NLS-2$
+            new char[][] { "exp".toCharArray() }); //$NON-NLS-1$
 
     /**
      * @return

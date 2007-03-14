@@ -1,2 +1,2 @@
-plugin@org.apache.commons.net=v20061222,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.orbit/org.apache.commons.net
-plugin@org.apache.oro=v20061222,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.orbit/org.apache.oro
+plugin@org.apache.commons.net=v20070313,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.orbit/org.apache.commons.net
+plugin@org.apache.oro=v20070313,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.orbit/org.apache.oro

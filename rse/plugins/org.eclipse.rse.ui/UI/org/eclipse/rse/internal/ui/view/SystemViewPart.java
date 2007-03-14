@@ -43,6 +43,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
@@ -81,7 +82,6 @@ import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
-import org.eclipse.rse.ui.view.ISystemShellProvider;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.dnd.Clipboard;
@@ -119,7 +119,7 @@ import org.eclipse.ui.views.framelist.FrameList;
  */
 public class SystemViewPart 
 	extends ViewPart
-	implements ISetSelectionTarget, ISystemShellProvider, ISystemMessageLine, IElementFactory, IPersistableElement, IAdapterFactory, ISystemPreferenceChangeListener, ISelectionChangedListener, IRSEViewPart
+	implements ISetSelectionTarget, IShellProvider, ISystemMessageLine, IElementFactory, IPersistableElement, IAdapterFactory, ISystemPreferenceChangeListener, ISelectionChangedListener, IRSEViewPart
 {
 
 	public class ToggleLinkingAction extends Action

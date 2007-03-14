@@ -1756,6 +1756,12 @@ class Rendering extends Composite implements IDebugEventSetListener
             redrawPanes();
         }
         
+        protected boolean hasSelection()
+        {
+        	return fStartHigh != null && fStartLow != null
+        		&& fEndHigh != null && fEndLow != null;
+        }
+        
         protected boolean isSelected(BigInteger address)
         {
             // do we have valid start and end addresses
@@ -1844,6 +1850,22 @@ class Rendering extends Composite implements IDebugEventSetListener
                 redrawPanes();
         }
     
+        protected BigInteger getHigh()
+        {
+        	if(!hasSelection())
+        		return null;
+        	
+        	return getStart().max(getEnd());
+        }
+        
+        protected BigInteger getLow()
+        {
+        	if(!hasSelection())
+        		return null;
+        	
+        	return getStart().min(getEnd());
+        }
+        
         protected BigInteger getStart()
         {
             // if there is no start, return null

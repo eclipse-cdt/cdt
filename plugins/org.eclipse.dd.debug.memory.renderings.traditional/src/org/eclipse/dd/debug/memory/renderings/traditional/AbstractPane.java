@@ -268,6 +268,9 @@ public abstract class AbstractPane extends Canvas
                 }
                 else if(Rendering.isValidEditCharacter(ke.character))
                 {
+                	if(fRendering.getSelection().hasSelection())
+                		setCaretAddress(fRendering.getSelection().getLow());
+                	
                     editCell(fCaretAddress, fSubCellCaretPosition, ke.character);
                 }
 

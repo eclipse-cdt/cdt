@@ -20,9 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -106,7 +104,7 @@ public class Checksums {
 	 * @throws OperationCanceledException
 	 * @since 4.0
 	 */
-	public static Map createChecksumMap(ITranslationUnit[] tus, MessageDigest md, IProgressMonitor pm) 
+	public static Map createChecksumMap(IFile[] tus, MessageDigest md, IProgressMonitor pm) 
 			throws OperationCanceledException {
 		Map result= new HashMap();
 		putAlgorithm(result, md);
@@ -115,10 +113,8 @@ public class Checksums {
 			if (pm.isCanceled()) {
 				throw new OperationCanceledException();
 			}
-			ITranslationUnit tu = tus[i];
-			IResource res= tu.getResource();
-			if (res instanceof IFile) {
-				IFile file= (IFile) res;
+			IFile file = tus[i];
+			if (file != null) {
 				IPath location= file.getLocation();
 				if (location != null) {
 					File f= location.toFile();

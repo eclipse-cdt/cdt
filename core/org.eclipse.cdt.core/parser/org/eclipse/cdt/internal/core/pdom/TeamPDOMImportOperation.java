@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -44,6 +45,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -51,11 +53,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.util.NLS;
 
-public class PDOMImporter {
-	private static final String CHECKSUMS_NAME = "checksums.dat"; //$NON-NLS-1$
-	private static final String INDEX_NAME = "cdt-index.pdom"; //$NON-NLS-1$
+public class TeamPDOMImportOperation implements IWorkspaceRunnable {
+	static final String CHECKSUMS_NAME = "checksums.dat"; //$NON-NLS-1$
+	static final String INDEX_NAME = "cdt-index.pdom"; //$NON-NLS-1$
+	private static Pattern PROJECT_VAR_PATTERN= Pattern.compile("\\$\\{(project_[a-zA-Z0-9]*)\\}"); //$NON-NLS-1$
+	private static final String PROJECT_VAR_REPLACEMENT_BEGIN = "\\${$1:"; //$NON-NLS-1$
+	private static final String PROJECT_VAR_REPLACEMENT_END = "}"; //$NON-NLS-1$
+	private static final String DOLLAR_OR_BACKSLASH_REPLACEMENT = "\\\\$0"; //$NON-NLS-1$
+	private static Pattern DOLLAR_OR_BACKSLASH_PATTERN= Pattern.compile("[\\$\\\\]"); //$NON-NLS-1$
 
 	private static final class FileAndChecksum {
 		public ITranslationUnit fFile;
@@ -71,51 +80,23 @@ public class PDOMImporter {
 	private ITranslationUnit[] fTranslationUnitsToUpdate= new ITranslationUnit[0];
 	private boolean fShowActivity;
 
-	public PDOMImporter(ICProject project) {
+	public TeamPDOMImportOperation(ICProject project) {
 		fProject= project;
 		fShowActivity= PDOMIndexerTask.checkDebugOption(IPDOMIndexerTask.TRACE_ACTIVITY, "true"); //$NON-NLS-1$
 	}
 
-	public void performImport(IProgressMonitor pm) {
+	public void run(IProgressMonitor pm) {
 		if (fShowActivity) {
 			System.out.println("Indexer: PDOMImporter start"); //$NON-NLS-1$
 		}
-		IPath importLocation= getImportLocation();
-		fSuccess= importIndex(importLocation, pm);
-		if (fShowActivity) {
-			System.out.println("Indexer: PDOMImporter completed, ok=" + fSuccess); //$NON-NLS-1$
-		}
-	}
-
-	public boolean wasSuccessful() {
-		return fSuccess;
-	}
-		
-	public ITranslationUnit[] getTranslationUnitsToUpdate() {
-		return fTranslationUnitsToUpdate;
-	}
-	
-	
-	private IPath getImportLocation() {
-		IProject project= fProject.getProject();
-		String locationString= IndexerPreferences.getIndexImportLocation(project);
-		// mstodo support variables
-		IPath location= new Path(locationString);
-		if (!location.isAbsolute()) {
-			location= project.getLocation().append(location);
-		}
-		return location;
-	}
-
-	private boolean importIndex(IPath importLocation, IProgressMonitor monitor) {
-		File importFile= importLocation.toFile();
-		if (!importFile.exists()) {
-			return false;
-		}
-		
+		fSuccess= false;
 		Exception ex= null;
 		try {
-			doImportIndex(importFile, monitor);
+			File importFile= getImportLocation();
+			if (importFile.exists()) {
+				doImportIndex(importFile, pm);
+				fSuccess= true;
+			}
 		}
 		catch (InterruptedException e) {
 			throw new OperationCanceledException();
@@ -132,11 +113,41 @@ public class PDOMImporter {
 		
 		if (ex != null) {
 			CCorePlugin.log(ex);
-			return false;
 		}
-		return true;
+		if (fShowActivity) {
+			System.out.println("Indexer: PDOMImporter completed, ok=" + fSuccess); //$NON-NLS-1$
+		}
+	}
+
+	public boolean wasSuccessful() {
+		return fSuccess;
+	}
+		
+	public ITranslationUnit[] getTranslationUnitsToUpdate() {
+		return fTranslationUnitsToUpdate;
 	}
 	
+	
+	private File getImportLocation() throws CoreException {
+		IProject project= fProject.getProject();
+		String locationString= IndexerPreferences.getIndexImportLocation(project);
+		return expandLocation(project, locationString);
+	}
+
+	static File expandLocation(IProject project, String loc) throws CoreException {
+		String replacement= PROJECT_VAR_REPLACEMENT_BEGIN
+		 	+ DOLLAR_OR_BACKSLASH_PATTERN.matcher(project.getName()).replaceAll(DOLLAR_OR_BACKSLASH_REPLACEMENT) 
+		 	+ PROJECT_VAR_REPLACEMENT_END; 
+		
+		loc= PROJECT_VAR_PATTERN.matcher(loc).replaceAll(replacement);
+		IStringVariableManager varManager= VariablesPlugin.getDefault().getStringVariableManager();
+		IPath location= new Path(varManager.performStringSubstitution(loc));
+		if (!location.isAbsolute()) {
+			location= project.getLocation().append(location);
+		}
+		return location.toFile();
+	}
+
 	private void doImportIndex(File importFile, IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		ZipFile zip= new ZipFile(importFile);
 		Map checksums= null;

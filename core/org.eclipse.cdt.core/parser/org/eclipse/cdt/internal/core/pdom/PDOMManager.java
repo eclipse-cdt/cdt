@@ -348,8 +348,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 			}
 					
 			// perform import
-			PDOMImporter importer= new PDOMImporter(project);
-			importer.performImport(pm);
+			TeamPDOMImportOperation operation= new TeamPDOMImportOperation(project);
+			operation.run(pm);
 
 			synchronized (fIndexerMutex) {
 				Properties props= IndexerPreferences.getProperties(prj);
@@ -357,11 +357,11 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 				registerIndexer(project, indexer);
 				IPDOMIndexerTask task= null;
-				if (!importer.wasSuccessful()) {
+				if (!operation.wasSuccessful()) {
 					task= new PDOMRebuildTask(indexer);
 				}
 				else {
-					ITranslationUnit[] tus= importer.getTranslationUnitsToUpdate();
+					ITranslationUnit[] tus= operation.getTranslationUnitsToUpdate();
 					if (tus.length > 0) {
 						task= indexer.createTask(NO_TUS, tus, NO_TUS);
 					}
@@ -464,7 +464,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		Job addProject= new Job(Messages.PDOMManager_StartJob_name) {
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("", 100); //$NON-NLS-1$
-				if (project.isOpen()) {
+				if (project.isOpen() && CoreModel.hasCNature(project)) {
 					ICProject cproject= CoreModel.getDefault().create(project);
 					if (cproject != null) {
 						syncronizeProjectSettings(project, new SubProgressMonitor(monitor, 1));
@@ -918,5 +918,12 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		finally {
 			pdom.releaseWriteLock();
 		}
+	}
+	
+	public void export(ICProject project, String location, int options, IProgressMonitor monitor) throws CoreException {
+		TeamPDOMExportOperation operation= new TeamPDOMExportOperation(project);
+		operation.setTargetLocation(location);
+		operation.setOptions(options);
+		operation.run(monitor);
 	}
 }

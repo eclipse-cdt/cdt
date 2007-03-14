@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @author Doug Schaefer
@@ -31,9 +32,19 @@ public interface IPDOMManager {
 	 */
 	public void reindex(ICProject project) throws CoreException;
 
+	/**
+	 * Export index for usage within a team.
+	 * @param project a project for which the pdom is to be exported.
+	 * @param location the target location for the database.
+	 * @param options currently none are supported.
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public void export(ICProject project, String location, int options, IProgressMonitor monitor) throws CoreException;
+
 	// Getting and setting indexer Ids
 	public String getDefaultIndexerId();
-	public void setDefaultIndexerId(String indexerId);
+	public void setDefaultIndexerId(String indexerId); 
 	
 	public String getIndexerId(ICProject project) throws CoreException;
 	public void setIndexerId(ICProject project, String indexerId) throws CoreException;

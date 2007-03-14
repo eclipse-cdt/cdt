@@ -178,7 +178,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			((IListener)i.next()).handleChange(this);
 	}
 
-	public Database getDB() throws CoreException {
+	public Database getDB() {
 		return db;
 	}
 

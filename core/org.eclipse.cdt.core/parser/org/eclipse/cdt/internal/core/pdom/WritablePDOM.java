@@ -111,10 +111,10 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 			String internalFormat = newConverter.toInternalFormat(file.getLocation());
 			if(internalFormat!=null) {
 				file.setInternalLocation(internalFormat);
+				getFileIndex().insert(file.getRecord());
 			} else {
 				notConverted.add(file);
 			}
-			getFileIndex().insert(file.getRecord());
 		}
 
 		return notConverted;

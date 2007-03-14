@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -46,6 +47,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -75,6 +77,7 @@ import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * A memory rendering displaying memory in a traditional 
@@ -181,6 +184,22 @@ public class TraditionalRendering extends AbstractMemoryRendering
     {
       this.fRendering.gotoAddress(address);
     }
+    
+    public void updateRenderingLabels()
+	{
+		UIJob job = new UIJob("updateLabels"){ //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				
+				// update tab labels
+				String fLabel = getLabel();
+				firePropertyChangedEvent(new PropertyChangeEvent(TraditionalRendering.this, 
+						IBasicPropertyConstants.P_TEXT, null, fLabel));
+				
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true);
+		job.schedule();
+	}
     
     private Color colorBackground;
     private Color colorChanged;
@@ -949,6 +968,9 @@ class Rendering extends Composite implements IDebugEventSetListener
     private int fCellPadding = 2;
 
     private int fPaneSpacing = 16;
+    
+    // flag whether the memory cache is dirty
+    private boolean fCacheDirty = false;
 
     public Rendering(Composite parent,
         TraditionalRendering renderingParent)
@@ -1699,6 +1721,16 @@ class Rendering extends Composite implements IDebugEventSetListener
         fAddressBar.layout(true);
         fAddressBar.setText(getAddressString(getViewportStartAddress()));
     }
+    
+    public void setDirty(boolean needRefresh)
+    {
+    	fCacheDirty = needRefresh; 	
+    }
+
+    public boolean isDirty()
+    {
+    	return fCacheDirty; 	
+    }
 
     public void dispose()
     {
@@ -1967,7 +1999,18 @@ class Rendering extends Composite implements IDebugEventSetListener
 
     protected void refresh()
     {
-        fViewportCache.refresh();
+    	if(!this.isDisposed())
+    	{
+    		if(this.isVisible())
+    		{
+    			fViewportCache.refresh();
+    		}
+    		else
+    		{
+    			setDirty(true);
+    			fParent.updateRenderingLabels();
+    		}
+    	}
     }
     
     protected void archiveDeltas()
@@ -2266,29 +2309,34 @@ class Rendering extends Composite implements IDebugEventSetListener
 
     protected void redrawPanes()
     {
-        if(fAddressPane.isPaneVisible())
-        {
-            fAddressPane.redraw();
-            fAddressPane.setRowCount();
-            if(fAddressPane.isFocusControl())
-                fAddressPane.updateCaret();
-        }
-
-        if(fBinaryPane.isPaneVisible())
-        {
-            fBinaryPane.redraw();
-            fBinaryPane.setRowCount();
-            if(fBinaryPane.isFocusControl())
-                fBinaryPane.updateCaret();
-        }
-
-        if(fTextPane.isPaneVisible())
-        {
-            fTextPane.redraw();
-            fTextPane.setRowCount();
-            if(fTextPane.isFocusControl())
-                fTextPane.updateCaret();
-        }
+    	if(this.isVisible())
+    	{
+	        if(fAddressPane.isPaneVisible())
+	        {
+	            fAddressPane.redraw();
+	            fAddressPane.setRowCount();
+	            if(fAddressPane.isFocusControl())
+	                fAddressPane.updateCaret();
+	        }
+	
+	        if(fBinaryPane.isPaneVisible())
+	        {
+	            fBinaryPane.redraw();
+	            fBinaryPane.setRowCount();
+	            if(fBinaryPane.isFocusControl())
+	                fBinaryPane.updateCaret();
+	        }
+	
+	        if(fTextPane.isPaneVisible())
+	        {
+	            fTextPane.redraw();
+	            fTextPane.setRowCount();
+	            if(fTextPane.isFocusControl())
+	                fTextPane.updateCaret();
+	        }
+    	}
+    	
+    	fParent.updateRenderingLabels();
     }
 
     private void layoutPanes()

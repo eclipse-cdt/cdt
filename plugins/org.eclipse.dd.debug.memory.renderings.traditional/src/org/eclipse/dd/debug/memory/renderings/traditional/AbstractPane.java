@@ -572,6 +572,12 @@ public abstract class AbstractPane extends Canvas
     protected void paint(PaintEvent pe)
     {
     	fRowCount = getBounds().height / getCellHeight();
+    	
+    	if(fRendering.isDirty())
+        {
+    		fRendering.setDirty(false);
+    		fRendering.refresh();
+        }
     }
 
     abstract protected BigInteger getViewportAddress(int col, int row)

@@ -325,7 +325,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
     		setMessage(null);
 
             String projectFieldContents = getProjectNameFieldValue();
-	        if (projectFieldContents.equals("")) { //$NON-NLS-1$
+	        if (projectFieldContents.length() == 0) {
 	            setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectNameEmpty);
 	            return false;
 	        }
@@ -339,8 +339,16 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 
 	        IProject handle = getProjectHandle();
 	        if (handle.exists()) {
-	            setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);
-	            return false;
+	        	boolean bad = true;
+	        	if (getWizard() instanceof NewModelProjectWizard) {
+	        		NewModelProjectWizard w = (NewModelProjectWizard)getWizard();
+	        		if (w.lastProjectName != null && w.lastProjectName.equals(getProjectName()))
+	        			bad = false;
+	        	}
+	        	if (bad) {
+	        		setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);
+	        		return false;
+	        	}
 	        }
 	        
 	        if (!locationArea.isDefault()) {

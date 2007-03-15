@@ -60,7 +60,7 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 	private String wz_title;
 	private String wz_desc;
 	
-	private String lastProjectName = null;
+	public String lastProjectName = null;
 	private ICWizardHandler savedHandler = null;
 	private IToolChain[] savedToolChains = null;
 	private boolean savedDefaults = false;
@@ -128,7 +128,7 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 			return true;
 		for (int i=0; i<savedToolChains.length; i++) {
 			boolean found = false;
-			for (int j=0; i<tcs.length; j++) {
+			for (int j=0; j<tcs.length; j++) {
 				if (savedToolChains[i] == tcs[j]) {
 					found = true; break;
 				}

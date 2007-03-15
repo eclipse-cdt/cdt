@@ -31,6 +31,8 @@
   <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
   "Check for updates" will automatically reference this milestone update site, so you can get milestone
   patches from there [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>].</li>
+<li><b>Qualifiers of feature names</b> are currently missing the last digit 
+  due to Platform <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176010">bug 176010</a>.</li>
 <li><b>Apache Commons.Net and ORO</b> are now distributed as single-jar bundles. The separate commons.net and ORO features 
 have been removed. The bundles are now directly included in the RSE FTP feature only.</li>
 <li><b>SystemRemoteResourceDialog.setPreSelection()</b> now works correctly [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174944">174944</a>].

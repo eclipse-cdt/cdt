@@ -236,9 +236,10 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			// When parameter 'data' is null, we construct a descriptive string to
 			// display in the content description line.
 			String strConnected = getStateDisplayName(fCtlTerminal.getState());
-			String status=""; //$NON-NLS-1$
-			status=fCtlTerminal.getStatusString(strConnected);
-			strTitle = ViewMessages.PROP_TITLE + ": "+ status; //$NON-NLS-1$
+			String status=fCtlTerminal.getStatusString(strConnected);
+			if(status.length()>0)
+				status=": "+status;  //$NON-NLS-1$
+			strTitle = ViewMessages.PROP_TITLE + status;
 		}
 
 		setContentDescription(strTitle);

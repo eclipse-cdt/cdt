@@ -259,12 +259,7 @@ public class SystemViewConnectionAdapter
 			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
 			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 			if (sysTypeAdapter != null) {
-				boolean accepted = false;
-				Class[] affectedClasses = new Class[] { GoIntoAction.class, SystemOpenExplorerPerspectiveAction.class };
-				for (int i = 0; i < affectedClasses.length && accepted == false; i++) {
-					accepted |= sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, affectedClasses[i]);
-				}
-				return accepted;
+				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, SystemOpenExplorerPerspectiveAction.class);
 			}
 		}
 		return super.showOpenViewActions(element);

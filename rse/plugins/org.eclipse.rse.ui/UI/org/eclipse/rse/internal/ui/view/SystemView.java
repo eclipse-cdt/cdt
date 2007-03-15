@@ -15,6 +15,8 @@
  * Tobias Schwarz (Wind River) - Fix 166343 getChildCount() counts invalid items
  * Martin Oberhuber (Wind River) - Improve fix for 166343 getChildCount()
  * Uwe Stieber (Wind River) - [172492] Use SafeTreeViewer
+ *                          - [177537] [api] Dynamic system type provider need a hook to add dynamic system type specific menu groups
+ *                          - Several bugfixes.
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  ********************************************************************************/
 
@@ -60,6 +62,8 @@ import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.SameShellProvider;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -94,6 +98,7 @@ import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemRenameTarget;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemPreferencesManager;
@@ -896,16 +901,16 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			
 			// GO INTO ACTION...
 			// OPEN IN NEW WINDOW ACTION...
-			if (fromSystemViewPart && showOpenViewActions()) {
-
-				
+			if (fromSystemViewPart) {
 				GoIntoAction goIntoAction = getGoIntoAction();
 				goIntoAction.setEnabled(selection.size() == 1);
 				menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
 
-				SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();
-				openToPerspectiveAction.setSelection(selection);
-				menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), openToPerspectiveAction);
+				if (showOpenViewActions()) {
+					SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();
+					openToPerspectiveAction.setSelection(selection);
+					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), openToPerspectiveAction);
+				}
 
 				if (showGenericShowInTableAction()) {
 
@@ -992,6 +997,16 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_COMPAREWITH));
 		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_REPLACEWITH));
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_PROPERTIES)); // Properties
+
+		// [177537] [api] Dynamic system type provider need a hook to add dynamic system type specific menu groups.
+		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		for (int i = 0; i < systemTypes.length; i++) {
+			IRSESystemType systemType = systemTypes[i];
+			Object adapter = systemType.getAdapter(IRSESystemType.class);
+			if (adapter instanceof RSESystemTypeAdapter) {
+				((RSESystemTypeAdapter)adapter).addCustomMenuGroups(menu);
+			}
+		}
 
 		return menu;
 	}

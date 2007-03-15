@@ -23,6 +23,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
@@ -31,6 +32,7 @@ import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.ui.actions.SystemClearAllPasswordsAction;
 import org.eclipse.rse.ui.actions.SystemWorkOfflineAction;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardDescriptor;
@@ -39,7 +41,7 @@ import org.osgi.framework.Bundle;
 /**
  * Adapter for RSE system types.
  */
-public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeConstants {
+public class RSESystemTypeAdapter extends RSEAdapter {
 
 	public RSESystemTypeAdapter() {
 		super();
@@ -51,7 +53,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	 * @see org.eclipse.ui.model.WorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		ImageDescriptor img = getImage(object, ICON);
+		ImageDescriptor img = getImage(object, IRSESystemTypeConstants.ICON);
 		if (img==null) img = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID);
 		return img;
 	}
@@ -68,8 +70,8 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
      * @return ImageDescriptor
 	 */
 	public ImageDescriptor getLiveImageDescriptor(Object object) {
-		ImageDescriptor img = getImage(object, ICON_LIVE);
-		if (img==null) img = getImage(object, ICON);
+		ImageDescriptor img = getImage(object, IRSESystemTypeConstants.ICON_LIVE);
+		if (img==null) img = getImage(object, IRSESystemTypeConstants.ICON);
 		if (img==null) img = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTIONLIVE_ID);
 		return img;
 	}
@@ -166,7 +168,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 
 	public boolean isEnableOffline(Object object) {
 		if ((object != null) && (object instanceof IRSESystemType)) {
-			String property = ((IRSESystemType)object).getProperty(ENABLE_OFFLINE);
+			String property = ((IRSESystemType)object).getProperty(IRSESystemTypeConstants.ENABLE_OFFLINE);
 			if (property != null) {
 				return Boolean.valueOf(property).booleanValue();
 			}
@@ -246,6 +248,15 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 		return result;
 	}
 	
+	/**
+	 * Called from {@link SystemView#createStandardGroups(IMenuManager)} to allow dynamic system
+	 * type providers to customize the RSE standard menu structure regarding their needs.
+	 * 
+	 * @param menu The menu manager. Must be not <code>null</code>.
+	 */
+	public void addCustomMenuGroups(IMenuManager menu) {
+		// The static standard RSE system types have no custom menu groups.
+	}
 	
 	/**
 	 * Called to approve the contribution of the specified action class to the context menu of the
@@ -254,12 +265,6 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	 * <b>Note:</b> System type providers should implement this method in a way that specific
 	 * 							actions might be denied, but all other action contributions, including unknown
 	 * 							action contributions, should be accepted.
-	 * <p>
-	 * This method is called from:<br>
-	 * <ul>
-	 * <li>SystemViewConnectionAdapter.addActions(...)</li>
-	 * <li>SystemViewConnectionAdapter.showDelete(...)</li>
-	 * </ul>
 	 * 
 	 * @param host The host object. Must be not <code>null</code>.
 	 * @param actionClass The contributed action. Must be not <code>null</code>.

@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -53,7 +52,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbenchPropertyPage;
@@ -99,28 +97,16 @@ implements
 		IPreferencePageContainer, // dynamic pages
 		ICPropertyProvider // utility methods for tabs
 {
-	// Toggle this constant to <false> 
-	// to hide "Manage configurations" button.
-	// Corresponding menu items and toolbar button 
-	// will not be affected by this change.
-	private static final boolean ENABLE_MANAGE = true;
-	
+	// All(Multiple) configuration support is now disabled 
+	private static final boolean ENABLE_MULTI_CFG = false;
+
 	private static ArrayList pages = new ArrayList(5);
 	private static ICResourceDescription resd = null;
 	private static ICConfigurationDescription[] cfgDescs = null;
+	private static ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
 	private static ICProjectDescription prjd = null;
 	private static int cfgIndex = 0;
 	private static boolean doneOK = false;
-	/*
-	 * String constants
-	 */
-	private static final String PREFIX = "CLanguagesPropertyPage"; //$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
-	private static final String TIP = PREFIX + ".tip"; //$NON-NLS-1$
-	private static final String CONFIG_LABEL = LABEL + ".Configuration"; //$NON-NLS-1$
-	private static final String ALL_CONFS = PREFIX	+ ".selection.configuration.all"; //$NON-NLS-1$
-	private static final String CONF_TIP = TIP + ".config"; //$NON-NLS-1$
-
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME = "tab"; //$NON-NLS-1$
@@ -145,12 +131,11 @@ implements
 	 */
 	private boolean noContentOnPage = false;
 	protected boolean displayedConfig = false;
-	protected boolean isDirty = false;
-
 	protected IResource internalElement = null;
 	protected boolean isProject = false;
 	protected boolean isFolder  = false;
 	protected boolean isFile    = false;
+	protected boolean isMulti   = false;
 	
 	// tabs
 	TabFolder folder;
@@ -245,7 +230,8 @@ implements
 		// Use the form layout inside the group composite
 		GridLayout ff = new GridLayout(3, false);
 		configGroup.setLayout(ff);
-		Label configLabel = ControlFactory.createLabel(configGroup, NewUIMessages.getResourceString(CONFIG_LABEL));
+		Label configLabel = new Label(configGroup, SWT.NONE);
+		configLabel.setText(NewUIMessages.getResourceString("AbstractPage.6")); //$NON-NLS-1$
 		configLabel.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		configSelector = new Combo(configGroup, SWT.READ_ONLY | SWT.DROP_DOWN);
@@ -254,7 +240,6 @@ implements
 				handleConfigSelection();
 			}
 		});
-		configSelector.setToolTipText(NewUIMessages.getResourceString(CONF_TIP));
 		gd = new GridData(GridData.FILL);
 		gd.grabExcessHorizontalSpace = true;
 	    gd.grabExcessVerticalSpace = true;
@@ -263,9 +248,9 @@ implements
 	  	
 		configSelector.setLayoutData(gd);
 		
-		if (ENABLE_MANAGE) {
+		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_MANAGE)) {
 			manageButton = new Button(configGroup, SWT.PUSH);
-			manageButton.setText("Manage configurations"); //$NON-NLS-1$
+			manageButton.setText(NewUIMessages.getResourceString("AbstractPage.12")); //$NON-NLS-1$
 			gd = new GridData(GridData.END);
 			gd.widthHint = 150;
 			manageButton.setLayoutData(gd);
@@ -285,7 +270,7 @@ implements
 		
 		if (isForFolder() || isForFile()) {
 			excludeFromBuildCheck = new Button(configGroup, SWT.CHECK);
-			excludeFromBuildCheck.setText("Exclude resource from build"); //$NON-NLS-1$
+			excludeFromBuildCheck.setText(NewUIMessages.getResourceString("AbstractPage.7")); //$NON-NLS-1$
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 3;
 			excludeFromBuildCheck.setLayoutData(gd);
@@ -358,43 +343,44 @@ implements
 	 * Event Handlers
 	 */
 	private void handleConfigSelection() {
+		isMulti = false; // no multi config selection by default 
 		// If there is nothing in config selection widget just bail
 		if (configSelector.getItemCount() == 0) return;
 		int selectionIndex = configSelector.getSelectionIndex();
 		if (selectionIndex == -1) return;
-		// Check if the user has selected the "all" configuration
-		String configName = configSelector.getItem(selectionIndex);
-		if (configName.equals(NewUIMessages.getResourceString(ALL_CONFS))) {
-			// This is the all config
+
+		// Check if the user has selected the "all / multiple" configuration
+		if (selectionIndex >= cfgDescs.length) {
+			if ((selectionIndex - cfgDescs.length) == 0)  // all
+				multiCfgs = cfgDescs;
+			else {
+				ICConfigurationDescription[] mcfgs = ConfigMultiSelectionDialog.select(cfgDescs);
+				if (mcfgs == null || mcfgs.length == 0) {
+					// return back to previous selection, but not to multi !
+					if (cfgIndex >= cfgDescs.length) {
+						cfgIndex = 0;
+						configSelector.select(0);
+						cfgChanged(cfgDescs[0]);
+					} else {
+						configSelector.select(cfgIndex);
+					}
+					return;
+				}
+				multiCfgs = mcfgs;
+			}
+
+			isMulti = true;
+			// if tab does not support multi cfg,
+			// it will show 1st cfg, at least.
+			cfgChanged(multiCfgs[0]); 
 			return;
 		} else {
 			ICConfigurationDescription newConfig = cfgDescs[selectionIndex];
 			if (newConfig != getResDesc()) {
-				// If the user has changed values, and is now switching configurations, prompt for saving
-			    if (getResDesc() != null) {
-			        if (isDirty) {
-						Shell shell = CUIPlugin.getActiveWorkbenchShell();
-						boolean shouldApply = MessageDialog.openQuestion(shell,
-						        NewUIMessages.getResourceString("BuildPropertyPage.changes.save.title"), //$NON-NLS-1$
-						        NewUIMessages.getFormattedString("BuildPropertyPage.changes.save.question",  //$NON-NLS-1$
-						                new String[] {getResDesc().getName(), newConfig.getName()}));
-						if (shouldApply) {
-						    if (performOk()) {
-						    	isDirty = false;    
-			        		} else {
-						        MessageDialog.openWarning(shell,
-								        NewUIMessages.getResourceString("BuildPropertyPage.changes.save.title"), //$NON-NLS-1$
-								        NewUIMessages.getResourceString("BuildPropertyPage.changes.save.error")); //$NON-NLS-1$ 
-						    }
-						}
-			        }
-			    }
-			    // Set the new selected configuration
-			    cfgIndex = selectionIndex;
+				cfgIndex = selectionIndex;
 				cfgChanged(newConfig);
 			}
 		}
-		return;
 	}
 	
 	/**
@@ -431,7 +417,7 @@ implements
 				try {
 					CoreModel.getDefault().setProjectDescription(getProject(), local_prjd);
 				} catch (CoreException e) {
-					System.out.println("setProjectDescription: " + e.getLocalizedMessage()); //$NON-NLS-1$
+					System.out.println(NewUIMessages.getResourceString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
 				updateViews(internalElement);
 			}
@@ -441,7 +427,9 @@ implements
 			new ProgressMonitorDialog(getShell()).run(false, true, op);
 		} catch (InvocationTargetException e) {
 			Throwable e1 = e.getTargetException();
-			CUIPlugin.errorDialog(getShell(), "Cannot apply", "Internal error", e1, true); //$NON-NLS-1$ //$NON-NLS-2$
+			CUIPlugin.errorDialog(getShell(), 
+					NewUIMessages.getResourceString("AbstractPage.8"),  //$NON-NLS-1$
+					NewUIMessages.getResourceString("AbstractPage.9"), e1, true); //$NON-NLS-1$ 
 		} catch (InterruptedException e) {}
     }
 
@@ -484,6 +472,13 @@ implements
 		for (int i = 0; i < cfgDescs.length; ++i) {
 			configSelector.add(cfgDescs[i].getName());
 			if (cfgDescs[i].isActive()) cfgIndex = i;
+		}
+		// Handling of All/Multiple configurations can be disabled
+		if (ENABLE_MULTI_CFG) {
+			if (cfgDescs.length > 1) // "All cfgs" - shown if at least 2 cfgs available
+				configSelector.add(NewUIMessages.getResourceString("AbstractPage.4")); //$NON-NLS-1$
+			if (cfgDescs.length > 2)// "Multi cfgs" - shown if at least 3 cfgs available
+				configSelector.add(NewUIMessages.getResourceString("AbstractPage.5")); //$NON-NLS-1$
 		}
 		configSelector.select(cfgIndex);
 		handleConfigSelection();
@@ -617,7 +612,7 @@ implements
 					else
 						out = cf.createFileDescription(p, out);
 				} catch (CoreException e) {
-					System.out.println("Cannot create resource configuration for " + //$NON-NLS-1$
+					System.out.println(NewUIMessages.getResourceString("AbstractPage.10") + //$NON-NLS-1$
 							p.toOSString() + "\n" + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
 			}
@@ -696,7 +691,7 @@ implements
 				if (elements[k].getName().equals(ELEMENT_NAME)) {
 					if (loadTab(elements[k], parent)) return;
 				} else {
-					System.out.println("Cannot load " + elements[k].getName()); //$NON-NLS-1$
+					System.out.println(NewUIMessages.getResourceString("AbstractPage.13") + elements[k].getName()); //$NON-NLS-1$
 				}
 			}
 		}
@@ -719,7 +714,8 @@ implements
 		try {
 			page = (ICPropertyTab) element.createExecutableExtension(CLASS_NAME);
 		} catch (CoreException e) {
-			System.out.println("Cannot create page: " + e.getLocalizedMessage()); //$NON-NLS-1$
+			System.out.println(NewUIMessages.getResourceString("AbstractPage.14") +  //$NON-NLS-1$
+					e.getLocalizedMessage());
 			return false; 
 		}
 		if (page == null) return false;
@@ -783,7 +779,6 @@ implements
 			case ICPropertyTab.MANAGEDBUILDSTATE:
 				// generally, single-tabbed pages are not intended to handle this message
 				if (folder == null) return;
-				
 				boolean willAdd = false;
 				TabItem[] ts = folder.getItems();
 				int x = folder.getSelectionIndex();
@@ -847,7 +842,7 @@ implements
 	// override parent's method to use proper class
 	public IAdaptable getElement() {
 		if (internalElement == null && !checkElement()) 
-			throw (new NullPointerException("element not initialized !")); //$NON-NLS-1$
+			throw (new NullPointerException(NewUIMessages.getResourceString("AbstractPage.15"))); //$NON-NLS-1$
 		return internalElement; 
 	}
 	
@@ -855,6 +850,9 @@ implements
 	public boolean isForFolder()   { return isFolder; }
 	public boolean isForFile()     { return isFile; }
 	public boolean isForPrefs()    { return false; }
+	
+	public boolean isMultiCfg()    { return isMulti; }
+	public ICConfigurationDescription[] getMultiCfg() { return (isMulti) ? multiCfgs : null; }
 	
 	/**
 	 * Checks whether CDT property pages can be open for given object.

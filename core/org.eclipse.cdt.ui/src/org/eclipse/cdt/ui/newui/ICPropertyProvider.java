@@ -63,4 +63,7 @@ public interface ICPropertyProvider extends ICOptionContainer {
 	
 	// Checks whether a project is new CDT model-style
 	boolean isCDTProject(IProject p);
+	boolean isMultiCfg();
+	ICConfigurationDescription[] getMultiCfg();
+
 }

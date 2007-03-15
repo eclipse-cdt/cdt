@@ -389,7 +389,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 					ICResourceDescription out = cf[i].getResourceDescription(path, true);
 					if (out != null) result |= TICK_CONFIGURATION;
 					out = cf[i].getResourceDescription(path, false);
-					if (out.isExcluded()) result |= TICK_EXCLUDE;
+					if (out != null && out.isExcluded()) result |= TICK_EXCLUDE;
 				}
 			}
 		}

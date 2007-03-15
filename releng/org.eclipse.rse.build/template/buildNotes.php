@@ -23,9 +23,6 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>Taking into account that TM is actually more than the core RSE framework,
-  and especially includes components like the Terminal that do not require RSE,
-  we changed all references to read <b>TM 2.0</b> instead of RSE 2.0.</li>
 <li>TM 2.0M5 <b>requires Eclipse 3.3M5</b>. Platform Runtime is the minimum
   requirement for dstore and ftp. Terminal-ssh and RSE-ssh also require the
   <b>CVS Client Runtime</b> (The dependency on CVS Client Runtime should go away
@@ -34,26 +31,9 @@
   <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
   "Check for updates" will automatically reference this milestone update site, so you can get milestone
   patches from there [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>].</li>
-<li><b>Terminal</b>: Use rxtx-2.1 (gnu.io) for serial line support instead of javax.comm. See the new
-  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=co">README</a> for installing RXTX
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168893">168893</a>] 
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170810">170810</a>].</li>
-<li>A <b>Shell Processes</b> subsystem is now available for Linux, to show Processes through an SSH or other contributed Shell channel.
-  This is important enabling technology, since it shows how to add functionality in one subsystem, by re-using another subsystem.
-  Thanks to Montavista for this contribution [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=159522">159522</a>]. 
-<li><b>Encodings of remote files</b> can now be specified. This is actually the first plan item that's completed
-[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163820">163820</a>].
-<li><b>FTP now supports passive mode</b> [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=169680">169680</a>].
-<li><b>Read-only</b> and <b>Last-modified</b> properties on remote file systems are now supported by API,
-  so copying files across systems can keep these attributes. A new Preference setting governs the transfer
-  of timestamps. Also, IRemoteFileService now has API to get streams for remote files, thus allowing to 
-  download only parts of a huge remote file. See [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=170926">170926</a>] for details. 
+<li><b>Apache Commons.Net and ORO</b> are now distributed as single-jar bundles. The separate commons.net and ORO features 
+have been removed. The bundles are now directly included in the RSE FTP feature only.</li>
 <li><b>SystemRemoteResourceDialog.setPreSelection()</b> now works correctly [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174944">174944</a>].
-<li><b>SystemTypes can now be contributed dynamically</b> through the new extension point 
-<samp><a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_core_systemTypeProviders.html">org.eclipse.rse.core.systemTypeProviders</a></samp>
-[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172662">172662</a>].
-Using this new functionality, it is also possible to hook up new system types with existing 
-subsystemConfigurations [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173265">173265</a>].
 <li>Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-02-25&chfieldto=2007-04-08&chfield=resolution&cmdtype=doit">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->

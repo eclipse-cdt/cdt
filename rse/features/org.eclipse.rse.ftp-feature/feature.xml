@@ -38,15 +38,15 @@
 
    <plugin
          id="org.apache.oro"
-         download-size="31"
-         install-size="124"
+         download-size="30"
+         install-size="73"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.net"
-         download-size="65"
-         install-size="244"
+         download-size="66"
+         install-size="189"
          version="0.0.0"
          unpack="false"/>
 

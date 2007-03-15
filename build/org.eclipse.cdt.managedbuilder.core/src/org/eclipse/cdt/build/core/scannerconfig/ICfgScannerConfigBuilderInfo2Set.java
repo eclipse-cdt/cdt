@@ -31,4 +31,6 @@ public interface ICfgScannerConfigBuilderInfo2Set {
 	IScannerConfigBuilderInfo2 applyInfo(CfgInfoContext context, IScannerConfigBuilderInfo2 base) throws CoreException;
 	
 	IConfiguration getConfiguration();
+	
+	boolean isProfileSupported(CfgInfoContext context, String profileId);
 }

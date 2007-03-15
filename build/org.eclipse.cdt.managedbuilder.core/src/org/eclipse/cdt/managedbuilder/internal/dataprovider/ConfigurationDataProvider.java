@@ -48,6 +48,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.NotificationManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentType;
 
 public class ConfigurationDataProvider extends CConfigurationDataProvider implements ISettingsChangeListener {
@@ -56,6 +57,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	private static final String PREF_CFG_ID = "org.eclipse.cdt.build.core.prefbase.cfg";	//$NON-NLS-1$
 	public static final String PREF_TC_ID = "org.eclipse.cdt.build.core.prefbase.toolchain";	//$NON-NLS-1$
 	private static final String PREF_TOOL_ID = "org.eclipse.cdt.build.core.settings.holder";	//$NON-NLS-1$
+	private static final QualifiedName CFG_PERSISTED_PROPERTY = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "configPersisted");	//$NON-NLS-1$
 	
 	private static boolean registered;
 	
@@ -111,13 +113,18 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		mProj.applyConfiguration((Configuration)appliedCfg.getConfiguration());
 		writeManagedProjectInfo(des.getProjectDescription(), mProj);
 		try {
-			CfgScannerConfigInfoFactory2.save(des.getProjectDescription(), baseDescription.getProjectDescription());
+			CfgScannerConfigInfoFactory2.save(appliedCfg, des.getProjectDescription(), baseDescription.getProjectDescription(), !isPersistedCfg(des));
 		} catch (CoreException e){
 			ManagedBuilderCorePlugin.log(e);
 		}
 		info.setValid(true);
 		
+		setPersistedFlag(des);
 		return appliedCfg;
+	}
+	
+	private void setPersistedFlag(ICConfigurationDescription cfg){
+		cfg.setSessionProperty(CFG_PERSISTED_PROPERTY, Boolean.TRUE);
 	}
 	
 	private static void writeManagedProjectInfo(ICProjectDescription des,
@@ -163,6 +170,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		if(!newCfg.getId().equals(cfg.getId())){
 			newCfg.exportArtifactInfo();
 		}
+		
+		setPersistedFlag(des);
 		
 		return newCfg.getConfigurationData();
 	}
@@ -397,9 +406,14 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		if(cfg != null){
 			cfg.setConfigurationDescription(des);
 			info.setValid(true);
+			setPersistedFlag(des);
 			return cfg.getConfigurationData();
 		}
 		return null;
+	}
+	
+	private boolean isPersistedCfg(ICConfigurationDescription cfgDes){
+		return cfgDes.getSessionProperty(CFG_PERSISTED_PROPERTY) != null;
 	}
 
 	public void optionChanged(IResourceInfo rcInfo, IHoldsOptions holder, IOption option, Object oldValue) {

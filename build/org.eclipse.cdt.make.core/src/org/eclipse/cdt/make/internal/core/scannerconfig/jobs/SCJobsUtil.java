@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -188,7 +188,7 @@ public class SCJobsUtil {
             ISafeRunnable runnable = new ISafeRunnable() {
                 
                 public void run() {
-                    esiProvider.invokeProvider(monitor, project, null, buildInfo, collector);
+                    esiProvider.invokeProvider(monitor, project, context, null, buildInfo, collector, null);
                     rc.set(true);
                 }
         

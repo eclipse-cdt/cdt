@@ -33,7 +33,7 @@ public class CFileDescription extends CDataProxyContainer implements
 
 	public IPath getPath() {
 		CResourceData data = (CResourceData)getData(false);
-		return data.getPath();
+		return ResourceDescriptionHolder.normalizePath(data.getPath());
 	}
 
 	public boolean isExcluded() {
@@ -50,6 +50,9 @@ public class CFileDescription extends CDataProxyContainer implements
 	}
 
 	public void setPath(IPath path) {
+		path = ResourceDescriptionHolder.normalizePath(path);
+		if(getPath().equals(path))
+			return;
 		CResourceData data = (CResourceData)getData(true);
 		data.setPath(path);
 	}

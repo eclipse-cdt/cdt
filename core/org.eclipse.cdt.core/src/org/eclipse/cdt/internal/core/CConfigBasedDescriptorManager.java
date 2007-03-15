@@ -237,6 +237,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 			dr.setApplyOnChange(false);
 			try {
 				op.execute(dr, monitor);
+				reconsile(dr, des);
 			} finally {
 				clearOperatingDescriptor(project);
 			}

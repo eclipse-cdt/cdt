@@ -16,6 +16,9 @@ import java.util.Map;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -34,7 +37,10 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationData;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 
@@ -266,6 +272,14 @@ public class CfgScannerConfigInfoFactory2 {
 		public IConfiguration getConfiguration() {
 			return cfg;
 		}
+
+		public boolean isProfileSupported(CfgInfoContext context,
+				String profileId) {
+			if(!isPerRcTypeDiscovery())
+				return true;
+
+			return !CfgScannerConfigProfileManager.isPerFileProfile(profileId);
+		}
 	}
 
 	public static ICfgScannerConfigBuilderInfo2Set create(IConfiguration cfg){
@@ -277,14 +291,21 @@ public class CfgScannerConfigInfoFactory2 {
 		}
 		return container;
 	}
-	
-	public static void save(ICProjectDescription des, ICProjectDescription baseDescription) throws CoreException{
+
+	public static void save(BuildConfigurationData data, ICProjectDescription des, ICProjectDescription baseDescription, boolean force) throws CoreException{
 		ContainerInfo info = (ContainerInfo)des.getSessionProperty(CONTAINER_INFO_PROPERTY);
 		if(info != null){
 			if(info.fDes == baseDescription){
 				IScannerConfigBuilderInfo2Set baseContainer = info.fContainer;
 				baseContainer.save();
 			}
+			des.setSessionProperty(CONTAINER_INFO_PROPERTY, null);
+		} else if (force){
+			Configuration cfg = (Configuration)data.getConfiguration();
+			CfgInfo cfgInfo = new CfgInfo(cfg);
+			cfg.setCfgScannerConfigInfo(cfgInfo);
+			cfgInfo.getInfoMap();
+			cfgInfo.fContainer.save();
 			des.setSessionProperty(CONTAINER_INFO_PROPERTY, null);
 		}
 	}

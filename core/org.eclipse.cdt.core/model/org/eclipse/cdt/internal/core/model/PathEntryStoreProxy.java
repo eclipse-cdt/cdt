@@ -129,7 +129,7 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 
 	protected void postProcessProviderChange(Object newProvider,
 			Object oldProvider) {
-		if(oldProvider != null)
+//		if(oldProvider != null)
 			fireContentChangedEvent(getProject());
 	}
 

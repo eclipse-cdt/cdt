@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class BuildOutputReaderJob extends Job {
      * @param buildInfo
      */
     public BuildOutputReaderJob(IProject project, IScannerConfigBuilderInfo2 buildInfo) {
-    	this(project, new InfoContext(project), buildInfo);
+    	this(project, buildInfo.getContext(), buildInfo);
     }
 
     public BuildOutputReaderJob(IProject project, InfoContext context, IScannerConfigBuilderInfo2 buildInfo) {
@@ -58,7 +58,7 @@ public class BuildOutputReaderJob extends Job {
         monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$ 
                 project.getName());
 
-        boolean rc = SCJobsUtil.readBuildOutputFile(project, buildInfo, new SubProgressMonitor(monitor, 70));
+        boolean rc = SCJobsUtil.readBuildOutputFile(project, context, buildInfo, new SubProgressMonitor(monitor, 70));
         rc |= SCJobsUtil.getProviderScannerInfo(project, context, buildInfo, new SubProgressMonitor(monitor, 20));
         if (rc) {
             rc = SCJobsUtil.updateScannerConfiguration(project, context, buildInfo, new SubProgressMonitor(monitor, 10));

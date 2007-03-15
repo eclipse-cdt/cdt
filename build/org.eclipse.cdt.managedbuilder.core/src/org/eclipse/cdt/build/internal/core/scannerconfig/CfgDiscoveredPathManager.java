@@ -10,21 +10,35 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.internal.core.scannerconfig;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.core.scannerconfig.ScannerConfigBuilder;
+import org.eclipse.cdt.build.internal.core.scannerconfig.PerFileSettingsCalculator.ILangSettingInfo;
+import org.eclipse.cdt.build.internal.core.scannerconfig.PerFileSettingsCalculator.IRcSettingInfo;
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
@@ -32,6 +46,9 @@ import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildFileData;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildFolderData;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildLanguageData;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -40,6 +57,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -49,6 +67,18 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 	public static CfgDiscoveredPathManager fInstance;
 
 	private IDiscoveredPathManager fBaseMngr;
+	
+	private static class ContextInfo {
+		
+		public ContextInfo() {
+		}
+		CfgInfoContext fInitialContext;
+		CfgInfoContext fCacheContext;
+		CfgInfoContext fLoadContext;
+		ICfgScannerConfigBuilderInfo2Set fCfgInfo;
+		IScannerConfigBuilderInfo2 fInfo;
+		boolean fIsFerFileCache;
+	}
 	
 	private CfgDiscoveredPathManager() {
         fBaseMngr = MakeCorePlugin.getDefault().getDiscoveryManager();
@@ -111,15 +141,17 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 	}
 
 
-	public IDiscoveredPathManager.IDiscoveredPathInfo getDiscoveredInfo(IProject project,
+	public PathInfo getDiscoveredInfo(IProject project,
 			CfgInfoContext context) throws CoreException {
 
-        context = adjustContext(context);
+		ContextInfo cInfo = getContextInfo(context);
 
-        IDiscoveredPathManager.IDiscoveredPathInfo info = getCachedPathInfo(context);
+        PathInfo info = getCachedPathInfo(cInfo);
 		if (info == null) {
-			info = loadPathInfo(project, context.getConfiguration(), context);
-			setCachedPathInfo(context, info);
+			IDiscoveredPathManager.IDiscoveredPathInfo baseInfo = loadPathInfo(project, context.getConfiguration(), cInfo);
+			
+			info = resolveCacheBaseDiscoveredInfo(cInfo, baseInfo);
+//			setCachedPathInfo(context, info);
 //			if(info instanceof DiscoveredPathInfo && !((DiscoveredPathInfo)info).isLoadded()){
 //				info = createPathInfo(project, context);
 //				setCachedPathInfo(context, info);
@@ -128,17 +160,106 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		return info;
 	}
 	
-	private IDiscoveredPathManager.IDiscoveredPathInfo loadPathInfo(IProject project, IConfiguration cfg, CfgInfoContext context) throws CoreException{
-		IDiscoveredPathManager.IDiscoveredPathInfo info = fBaseMngr.getDiscoveredInfo(cfg.getOwner().getProject(), context.toInfoContext());
-		if(!DiscoveredScannerInfoStore.getInstance().hasInfo(project, context.toInfoContext(), info.getSerializable())){
-			setCachedPathInfo(context, info);
-			ICfgScannerConfigBuilderInfo2Set container = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(context.getConfiguration());
-			IScannerConfigBuilderInfo2 buildInfo = container.getInfo(context);
+//	private void adjustPerRcContextInfo(ContextInfo cInfo){
+//		cInfo.fIsFerFileCache = true;
+//		cInfo.fCacheContext = cInfo.fInitialContext;
+//		cInfo.fLoadContext = new CfgInfoContext(cInfo.fInitialContext.getConfiguration());
+//	}
+	
+	private PathInfo resolveCacheBaseDiscoveredInfo(ContextInfo cInfo, IDiscoveredPathManager.IDiscoveredPathInfo baseInfo){
+		if(cInfo.fIsFerFileCache){
+			if(baseInfo instanceof IDiscoveredPathManager.IPerFileDiscoveredPathInfo2){
+				resolveCachePerFileInfo(cInfo.fLoadContext.getConfiguration(), (IDiscoveredPathManager.IPerFileDiscoveredPathInfo2)baseInfo);
+			}
+			return getCachedPathInfo(cInfo);
+		}
+		
+		Map map = baseInfo.getSymbols();
+		IPath paths[] = baseInfo.getIncludePaths();
+		
+		PathInfo info = new PathInfo(paths, null, map, null, null);
+		setCachedPathInfo(cInfo.fCacheContext, info);
+		return info;
+	}
+	
+	private void resolveCachePerFileInfo(IConfiguration cfg, IDiscoveredPathManager.IPerFileDiscoveredPathInfo2 info){
+		CConfigurationData data = cfg.getConfigurationData();
+		if(data == null)
+			return;
+		
+		PerFileSettingsCalculator calculator = new PerFileSettingsCalculator();
+		IRcSettingInfo[] rcInfos = calculator.getSettingInfos(data, info);
+		
+		CResourceData rcDatas[] = data.getResourceDatas();
+		Map rcDataMap = new HashMap(rcDatas.length);
+		CResourceData rcData;
+		for(int i = 0; i < rcDatas.length; i++){
+			rcData = rcDatas[i];
+			rcDataMap.put(rcData.getPath(), rcData);
+		}
+		
+		IRcSettingInfo rcInfo;
+		
+		for(int i = 0; i < rcInfos.length; i++){
+			rcInfo = rcInfos[i];
+			rcData = rcInfo.getResourceData();
+			
+			rcDataMap.remove(rcData.getPath());
+			cache(rcInfo);
+		}
+		
+		if(!rcDataMap.isEmpty()){
+			for(Iterator iter = rcDataMap.values().iterator(); iter.hasNext();){
+				clearCache((CResourceData)iter.next());
+			}
+		}
+	}
+	
+	private void cache(IRcSettingInfo rcSetting){
+		CResourceData rcData = rcSetting.getResourceData();
+		clearCache(rcData);
+		ILangSettingInfo lInfos[] = rcSetting.getLangInfos();
+		for(int i = 0; i < lInfos.length; i++){
+			cache(lInfos[i]);
+		}
+	}
+	
+	private void cache(ILangSettingInfo lInfo){
+		BuildLanguageData bld = (BuildLanguageData)lInfo.getLanguageData();
+		((Tool)bld.getTool()).setDiscoveredPathInfo(bld.getInputType(), lInfo.getFilePathInfo());
+	}
+		
+	private void clearCache(CResourceData rcData){
+		if(rcData.getType() == ICSettingBase.SETTING_FILE){
+			IFileInfo fiInfo = ((BuildFileData)rcData).getFileInfo();
+			ITool tools[] = fiInfo.getTools();
+			clearCache(tools);
+		} else {
+			IFolderInfo foInfo = ((BuildFolderData)rcData).getFolderInfo();
+			ITool[] tools = foInfo.getTools();
+			clearCache(tools);
+		}
+	}
+	
+	private void clearCache(ITool[] tools){
+		for(int i = 0; i < tools.length; i++){
+			((Tool)tools[i]).clearAllDiscoveredInfo();
+		}
+	}
+	
+	private IDiscoveredPathManager.IDiscoveredPathInfo loadPathInfo(IProject project, IConfiguration cfg, ContextInfo cInfo) throws CoreException{
+		IDiscoveredPathManager.IDiscoveredPathInfo info = fBaseMngr.getDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext());
+		if(!DiscoveredScannerInfoStore.getInstance().hasInfo(project, cInfo.fLoadContext.toInfoContext(), info.getSerializable())){
+//			setCachedPathInfo(context, info);
+			ICfgScannerConfigBuilderInfo2Set container = cInfo.fCfgInfo;
+			IScannerConfigBuilderInfo2 buildInfo = container.getInfo(cInfo.fLoadContext);
 			if(buildInfo != null){
-        		SCProfileInstance instance = ScannerConfigBuilder.build(context, buildInfo, 0, null, new NullProgressMonitor());
+        		SCProfileInstance instance = ScannerConfigBuilder.build(cInfo.fLoadContext, buildInfo, 0, null, new NullProgressMonitor());
         		if(instance != null){
+        			
         			IScannerInfoCollector newC = instance.getScannerInfoCollector();
-        			if(newC instanceof IScannerInfoCollector2){
+        			if(newC instanceof IScannerInfoCollector2
+        					&& !(newC instanceof PerFileSICollector)){
         				info = ((IScannerInfoCollector2)newC).createPathInfoObject();
 //        				setCachedPathInfo(context, info);
         			}
@@ -148,90 +269,141 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		return info;
 	}
 	
-	private IDiscoveredPathManager.IDiscoveredPathInfo getCachedPathInfo(CfgInfoContext context){
-        ICfgScannerConfigBuilderInfo2Set cfgInfo = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(context.getConfiguration());
-        IDiscoveredPathManager.IDiscoveredPathInfo info = null;
-        boolean queryCfg = !cfgInfo.isPerRcTypeDiscovery();
-        if(!queryCfg){
-    		Tool tool = (Tool)context.getTool();
-    		if(tool != null){
-    			info = tool.getDiscoveredPathInfo(context.getInputType());
-    		} else {
-    			queryCfg = true;
-    		}
-        } 
-        if(queryCfg) {
-        	info = ((Configuration)context.getConfiguration()).getDiscoveredPathInfo();
-        }
+	private PathInfo getCachedPathInfo(ContextInfo cInfo){
+//        ICfgScannerConfigBuilderInfo2Set cfgInfo = cInfo.fCfgInfo;
+        PathInfo info = getCachedPathInfo((Configuration)cInfo.fCacheContext.getConfiguration(),
+        		(Tool)cInfo.fCacheContext.getTool(), cInfo.fCacheContext.getInputType(), true);
+//        boolean queryCfg = !cfgInfo.isPerRcTypeDiscovery();
+//        if(!queryCfg){
+//    		Tool tool = (Tool)context.getTool();
+//    		if(tool != null){
+//    			info = tool.getDiscoveredPathInfo(context.getInputType());
+//    		} else {
+//    			queryCfg = true;
+//    		}
+//        } 
+//        if(queryCfg) {
+//        	info = ((Configuration)context.getConfiguration()).getDiscoveredPathInfo();
+//        }
         return info;
 	}
-
-	private CfgInfoContext adjustContext(CfgInfoContext context){
-		return adjustContext(context, null);
+	
+	private PathInfo getCachedPathInfo(Configuration cfg, Tool tool, IInputType inType, boolean queryParent){
+		PathInfo info = null;
+		boolean queryCfg = false;
+		if(tool != null){
+			info = tool.getDiscoveredPathInfo(inType);
+			if(info == null && queryParent){
+				IResourceInfo rcInfo = tool.getParentResourceInfo();
+				ITool superTool = tool.getSuperClass();
+				if(!superTool.isExtensionElement()){
+					if(inType != null){
+						IInputType superInType = null;
+						String exts[] = inType.getSourceExtensions(tool);
+						for(int i = 0; i < exts.length; i++){
+							superInType = superTool.getInputType(exts[i]);
+							if(superInType != null)
+								break;
+						}
+						if(superInType != null){
+							info = getCachedPathInfo(cfg, (Tool)superTool, superInType, true);
+						}
+					} else {
+						info = getCachedPathInfo(cfg, (Tool)superTool, null, true);
+					}
+				} else {
+					info = getCachedPathInfo(cfg, null, null, true);
+				}
+			}
+		} else {
+			info = cfg.getDiscoveredPathInfo();
+		}
 		
+		return info;
 	}
 
-	private CfgInfoContext adjustContext(CfgInfoContext context, ICfgScannerConfigBuilderInfo2Set cfgInfo){
+	private ContextInfo getContextInfo(CfgInfoContext context){
+		return getContextInfo(context, null);
+	}
+
+	private ContextInfo getContextInfo(CfgInfoContext context, ICfgScannerConfigBuilderInfo2Set cfgInfo){
 		if(cfgInfo == null)
 			cfgInfo = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(context.getConfiguration());
 
-        boolean queryCfg = !cfgInfo.isPerRcTypeDiscovery();
+		boolean isPerRcType = cfgInfo.isPerRcTypeDiscovery();
+		ContextInfo contextInfo = new ContextInfo();
+		contextInfo.fInitialContext = context;
+		contextInfo.fCfgInfo = cfgInfo;
+		if(isPerRcType){
+			contextInfo.fLoadContext = adjustPerRcTypeContext(contextInfo.fInitialContext);
+			contextInfo.fCacheContext = contextInfo.fLoadContext;
+			contextInfo.fIsFerFileCache = false;
+			contextInfo.fInfo = cfgInfo.getInfo(contextInfo.fLoadContext);
+		} else {
+			contextInfo.fLoadContext = new CfgInfoContext(context.getConfiguration());
+			contextInfo.fInfo = cfgInfo.getInfo(contextInfo.fLoadContext);
+			contextInfo.fIsFerFileCache = CfgScannerConfigProfileManager.isPerFileProfile(contextInfo.fInfo.getSelectedProfileId());
+			contextInfo.fCacheContext = contextInfo.fIsFerFileCache ? contextInfo.fInitialContext : contextInfo.fLoadContext;
+		}
         
+        return contextInfo;
+	}
+	
+	private CfgInfoContext adjustPerRcTypeContext(CfgInfoContext context){
         Tool tool = (Tool)context.getTool();
         IResourceInfo rcInfo = context.getResourceInfo();
         IInputType inType = context.getInputType();
         boolean adjust = false;
         CfgInfoContext newContext = context;
         
-        if(!queryCfg){
-    		if(tool != null){
-    			if(inType != null){
-	        		if(!tool.hasScannerConfigSettings(inType)){
+   		if(tool != null){
+   			if(inType != null){
+        		if(!tool.hasScannerConfigSettings(inType)){
 //	        			tool = null;
-	        			inType = null;
-	        			adjust = true;
-	        		}
-    			}
-    			if(inType == null){
-	        		if(!tool.hasScannerConfigSettings(null)){
-	        			tool = null;
-	        			adjust = true;
-	        		}
-    			}
-    		}
-    		if(tool == null){
-    			if(inType != null){
-    				inType = null;
-    				adjust = true;
-    			}
+        			inType = null;
+        			adjust = true;
+        		}
+   			}
+   			if(inType == null){
+        		if(!tool.hasScannerConfigSettings(null)){
+        			tool = null;
+        			adjust = true;
+        		}
+   			}
+   		}
+   		if(tool == null){
+   			if(inType != null){
+   				inType = null;
+   				adjust = true;
+   			}
     			
-    			if(rcInfo != null){
-	    			ToolChain tc = rcInfo instanceof FolderInfo ? 
-	    					(ToolChain)((FolderInfo)rcInfo).getToolChain()
-	    					: (ToolChain)((ResourceConfiguration)rcInfo).getBaseToolChain();
-	    					
-	    			if(tc != null){
-	    				if(!tc.hasScannerConfigSettings()){
-	    					adjust = true;
-	    					rcInfo = null;
-	    				}
-	    			}
+   			if(rcInfo != null){
+    			ToolChain tc = rcInfo instanceof FolderInfo ? 
+    					(ToolChain)((FolderInfo)rcInfo).getToolChain()
+    					: (ToolChain)((ResourceConfiguration)rcInfo).getBaseToolChain();
+    					
+    			if(tc != null){
+    				if(!tc.hasScannerConfigSettings()){
+    					adjust = true;
+    					rcInfo = null;
+    				}
     			}
-    		}
-        } else {
-        	if(tool != null){
-        		tool = null;
-        		adjust = true;
-        	}
-        	if(rcInfo != null){
-        		rcInfo = null;
-        		adjust = true;
-        	}
-        	if(inType != null){
-        		inType = null;
-        		adjust = true;
-        	}
-        }
+   			}
+   		}
+//        } else {
+//        	if(tool != null){
+//        		tool = null;
+//        		adjust = true;
+//        	}
+//        	if(rcInfo != null){
+//        		rcInfo = null;
+//        		adjust = true;
+//        	}
+//        	if(inType != null){
+//        		inType = null;
+//        		adjust = true;
+//        	}
+//        }
         
         if(adjust){
         	if(rcInfo == null)
@@ -243,10 +415,10 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
         return newContext;
 	}
 	
-	private IDiscoveredPathManager.IDiscoveredPathInfo setCachedPathInfo(CfgInfoContext context, IDiscoveredPathManager.IDiscoveredPathInfo info){
+	private PathInfo setCachedPathInfo(CfgInfoContext context, PathInfo info){
         ICfgScannerConfigBuilderInfo2Set cfgInfo = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(context.getConfiguration());
         boolean cacheOnCfg = !cfgInfo.isPerRcTypeDiscovery();
-        IDiscoveredPathManager.IDiscoveredPathInfo oldInfo = null;
+        PathInfo oldInfo = null;
         if(!cacheOnCfg){
     		Tool tool = (Tool)context.getTool();
     		if(tool != null){
@@ -264,16 +436,16 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
         return oldInfo;
 	}
 
-	public void removeDiscoveredInfo(IProject project, CfgInfoContext context) {
-//        if(context == null)
-//        	context = ScannerConfigUtil.createContextForProject(project);
-
-        context = adjustContext(context);
-
-        IDiscoveredPathManager.IDiscoveredPathInfo info = setCachedPathInfo(context, null);
-        fBaseMngr.removeDiscoveredInfo(project, context.toInfoContext());
-//		if (info != null) {
-//			fireUpdate(INFO_REMOVED, info);
-//		}
-	}
+//	public void removeDiscoveredInfo(IProject project, CfgInfoContext context) {
+////        if(context == null)
+////        	context = ScannerConfigUtil.createContextForProject(project);
+//
+//        context = adjustContext(context);
+//
+//        setCachedPathInfo(context, null);
+//        fBaseMngr.removeDiscoveredInfo(project, context.toInfoContext());
+////		if (info != null) {
+////			fireUpdate(INFO_REMOVED, info);
+////		}
+//	}
 }

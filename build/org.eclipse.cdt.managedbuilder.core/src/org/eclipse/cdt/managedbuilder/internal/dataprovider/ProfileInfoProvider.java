@@ -17,7 +17,8 @@ import java.util.Map;
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
+import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IProject;
@@ -76,6 +77,16 @@ public class ProfileInfoProvider {
 //		clear();
 	}
 	
+	void checkUpdateInputType(IInputType inType){
+		if(inType != fContext.getInputType()){
+//			IResourceInfo rcInfo = fContext.getResourceInfo();
+//			if(rcInfo == null){
+//				rcInfo = fContext.getConfiguration().getRootFolderInfo();
+//			}
+			fContext = new CfgInfoContext(fContext.getResourceInfo(), fContext.getTool(), inType);
+		}
+	}
+	
 //	public void clear(){
 //		fDataCollected = false;
 //	}
@@ -118,7 +129,7 @@ public class ProfileInfoProvider {
 //		if(type != null){
 		if(fProject != null){
 			try {
-				IDiscoveredPathManager.IDiscoveredPathInfo info = fMngr.getDiscoveredInfo(fProject, fContext);
+				PathInfo info = fMngr.getDiscoveredInfo(fProject, fContext);
 				if(info != null){
 					return entriesForKind(info, kind);
 				}
@@ -140,12 +151,29 @@ public class ProfileInfoProvider {
 //		return null;
 //	}
 	
-	private DiscoveredEntry[] entriesForKind(IDiscoveredPathManager.IDiscoveredPathInfo info, int kind){
+	private DiscoveredEntry[] entriesForKind(PathInfo info, int kind){
 		switch (kind) {
 		case ICLanguageSettingEntry.INCLUDE_PATH:
-			return calculateEntries(info.getIncludePaths());
+			DiscoveredEntry[] incPaths = calculateEntries(info.getIncludePaths());
+			IPath[] quotedPaths = info.getQuoteIncludePaths();
+			if(quotedPaths.length != 0){
+				if(incPaths.length != 0){
+					DiscoveredEntry quotedEntries[] = calculateEntries(quotedPaths);
+					DiscoveredEntry[] tmp = new DiscoveredEntry[incPaths.length + quotedEntries.length];
+					System.arraycopy(incPaths, 0, tmp, 0, incPaths.length);
+					System.arraycopy(quotedEntries, 0, tmp, incPaths.length, quotedEntries.length);
+					incPaths = tmp;
+				} else {
+					incPaths = calculateEntries(quotedPaths);
+				}
+			}
+			return incPaths;
 		case ICLanguageSettingEntry.MACRO:
 			return calculateEntries(info.getSymbols());
+		case ICLanguageSettingEntry.MACRO_FILE:
+			return calculateEntries(info.getMacroFiles());
+		case ICLanguageSettingEntry.INCLUDE_FILE:
+			return calculateEntries(info.getIncludeFiles());
 		}
 		return new DiscoveredEntry[0];
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Element;
@@ -73,6 +74,17 @@ public interface IDiscoveredPathManager {
 		 */
 		boolean isEmpty(IPath path);
     }
+    
+    interface IPerFileDiscoveredPathInfo2 extends IPerFileDiscoveredPathInfo {
+    	/**
+    	 * returns the map containing {@link IResource} - to - {@link PathInfo} pairs representing 
+    	 * complete set of discovered information for the whole project
+    	 * 
+    	 * @return Map
+    	 */
+    	Map getPathInfoMap();
+    }
+
     
     interface IDiscoveredScannerInfoSerializable {
         /**

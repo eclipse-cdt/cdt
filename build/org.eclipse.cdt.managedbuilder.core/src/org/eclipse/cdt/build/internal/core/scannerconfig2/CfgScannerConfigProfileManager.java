@@ -13,6 +13,9 @@ package org.eclipse.cdt.build.internal.core.scannerconfig2;
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -22,6 +25,11 @@ public class CfgScannerConfigProfileManager {
 	
 	public static ICfgScannerConfigBuilderInfo2Set getCfgScannerConfigBuildInfo(IConfiguration cfg){
 		return CfgScannerConfigInfoFactory2.create(cfg);
+	}
+	
+	public static boolean isPerFileProfile(String profileId){
+		ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(profileId);
+		return profile.getProfileScope().equals(ScannerConfigScope.FILE_SCOPE);
 	}
 	
 	public static InfoContext createDefaultContext(IProject project){

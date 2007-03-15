@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
@@ -295,8 +297,25 @@ public class PathEntryConfigurationDataProvider extends
 
 		cproject.close();
 		
+		String[] ids = getIds(des.get(CCorePlugin.BINARY_PARSER_UNIQ_ID));
+		data.getTargetPlatformData().setBinaryParserIds(ids);
+		
+		ids = getIds(des.get(CCorePlugin.ERROR_PARSER_UNIQ_ID));
+		data.getBuildData().setErrorParserIDs(ids);
+		
 		data.setModified(false);
 		return data;
+	}
+	
+	private String[] getIds(ICConfigExtensionReference refs[]){
+		if(refs == null || refs.length == 0)
+			return new String[0];
+		
+		String[] ids = new String[refs.length];
+		for(int i = 0; i < refs.length; i++){
+			ids[i] = refs[i].getID();
+		}
+		return ids;
 	}
 
 	public CConfigurationData loadConfiguration(ICConfigurationDescription des)

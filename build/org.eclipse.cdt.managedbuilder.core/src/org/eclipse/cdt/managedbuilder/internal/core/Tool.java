@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -28,7 +29,7 @@ import java.util.Vector;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
+import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -1179,7 +1180,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createInputType(IInputType, String, String, boolean)
 	 */
 	public IInputType createInputType(IInputType superClass, String Id, String name, boolean isExtensionElement) {
-		InputType type = new InputType(this, superClass, Id, name, isExtensionElement);
+		InputType type = superClass == null || superClass.isExtensionElement() ?
+				new InputType(this, superClass, Id, name, isExtensionElement)
+				: new InputType(this, Id, name, (InputType)superClass);
 		
 		if(superClass != null){
 			BuildLanguageData data = (BuildLanguageData)typeToDataMap.remove(superClass);
@@ -1233,8 +1236,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				IInputType ourType = (IInputType)ourTypes.get(i);
 				int j;
 				for (j = 0; j < types.length; j++) {
+					IInputType otherTypeToCheck = ManagedBuildManager.getExtensionInputType(types[j]);
+					if(otherTypeToCheck == null)
+						otherTypeToCheck = types[j];
+					
 					if (ourType.getSuperClass() != null &&
-					    ourType.getSuperClass().getId().equals(types[j].getId())) {
+					    ourType.getSuperClass().getId().equals(otherTypeToCheck.getId())) {
 						types[j] = ourType;
 						break;
 					}
@@ -3376,7 +3383,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(fDataMapInited)
 			return;
 		
-		Collection types = getLanguageInputTypes();
+		List types = getLanguageInputTypes();
+//		List datas = new ArrayList();
+		
 		if(types != null){
 			if(types.size() == 0){
 				CLanguageData data = (CLanguageData)typeToDataMap.get(null);
@@ -3387,15 +3396,26 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					}
 					typeToDataMap.put(null, data);
 				}
+				
+//				datas.add(data);
 			} else {
+				//create editable input types for lang datas first
+				
+				for(ListIterator iter = types.listIterator(); iter.hasNext();){
+					IInputType type = (IInputType)iter.next();
+					iter.set(getEdtableInputType(type));
+				}
+
 				Map map = (Map)typeToDataMap.clone();
-				for(Iterator iter = types.iterator(); iter.hasNext();){
+				for(ListIterator iter = types.listIterator(); iter.hasNext();){
 					IInputType type = (IInputType)iter.next();
 					CLanguageData data = (CLanguageData)map.remove(type);
 					if(data == null){
 						data = new BuildLanguageData(this, type);
 						typeToDataMap.put(type, data);
 					}
+					
+//					datas.add(data);
 				}
 				
 				if(map.size() > 0){
@@ -3403,7 +3423,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 						typeToDataMap.remove(iter.next());
 					}
 				}
-			}		
+			}	
+			
+//			int size = datas.size();
+//			for(int i = 0; i < size; i++){
+//				((BuildLanguageData)datas.get(i)).obtainEditableInputType();
+//			}
 		}
 		fDataMapInited = true;
 	}
@@ -3436,7 +3461,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return found;
 	}
 	
-	private Collection getLanguageInputTypes(){
+	private List getLanguageInputTypes(){
 		List list = new ArrayList();
 		IInputType types[] = getInputTypes();
 		for(int i = 0; i < types.length; i++){
@@ -3495,7 +3520,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		} else {
 			id = ManagedBuildManager.calculateChildId(getId(), null);
 		}
-		return createInputType(extType, id, base.getName(), false);
+		return createInputType(base, id, base.getName(), false);
 	}
 
 	public boolean supportsType(IBuildPropertyType type) {
@@ -3864,18 +3889,22 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return false;
 	}
 	
-	public IDiscoveredPathManager.IDiscoveredPathInfo setDiscoveredPathInfo(IInputType type, IDiscoveredPathManager.IDiscoveredPathInfo info){
-		return (IDiscoveredPathManager.IDiscoveredPathInfo)discoveredInfoMap.put(getTypeKey(type), info);
+	public PathInfo setDiscoveredPathInfo(IInputType type, PathInfo info){
+		return (PathInfo)discoveredInfoMap.put(getTypeKey(type), info);
 	}
 
-	public IDiscoveredPathManager.IDiscoveredPathInfo getDiscoveredPathInfo(IInputType type){
-		return (IDiscoveredPathManager.IDiscoveredPathInfo)discoveredInfoMap.get(getTypeKey(type));
+	public PathInfo getDiscoveredPathInfo(IInputType type){
+		return (PathInfo)discoveredInfoMap.get(getTypeKey(type));
 	}
 	
-	public IDiscoveredPathManager.IDiscoveredPathInfo clearDiscoveredPathInfo(IInputType type){
-		return (IDiscoveredPathManager.IDiscoveredPathInfo)discoveredInfoMap.remove(getTypeKey(type));
+	public PathInfo clearDiscoveredPathInfo(IInputType type){
+		return (PathInfo)discoveredInfoMap.remove(getTypeKey(type));
 	}
-	
+
+	public void clearAllDiscoveredInfo(){
+		discoveredInfoMap.clear();
+	}
+
 	private Object getTypeKey(IInputType type){
 		if(type != null)
 			return type.getId();

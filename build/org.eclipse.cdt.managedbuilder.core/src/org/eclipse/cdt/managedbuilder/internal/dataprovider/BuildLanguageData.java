@@ -46,21 +46,35 @@ public class BuildLanguageData extends CLanguageData {
 
 	public BuildLanguageData(ITool tool, IInputType inType){
 		fTool = tool;
-		fInputType = inType;
 		if(inType != null){ 
-			IInputType extType = inType;
-			for(;extType != null && !extType.isExtensionElement(); extType = extType.getSuperClass());
-			String typeId;
-			if(extType != null)
-				typeId = extType.getId();
-			else
-				typeId = inType.getId();
-			fId = new StringBuffer(fTool.getId()).append(".").append(typeId).toString(); //$NON-NLS-1$
+//			inType = tool.getEdtableInputType(inType);
+			fInputType = inType;
+			if(inType.getParent() != tool)
+				throw new IllegalArgumentException();
+//			IInputType extType = inType;
+//			for(;extType != null && !extType.isExtensionElement(); extType = extType.getSuperClass());
+//			String typeId;
+//			if(extType != null)
+//				typeId = extType.getId();
+//			else
+//				typeId = inType.getId();
+			fId = inType.getId();//new StringBuffer(fTool.getId()).append(".").append(typeId).toString(); //$NON-NLS-1$
 		} else {
+			fInputType = null;
 			fId = new StringBuffer(fTool.getId()).append(".").append("languagedata").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		fDiscoveredInfo = new ProfileInfoProvider(this);
+	}
+	
+	private void obtainEditableInputType(){
+		if(fInputType != null){
+			IInputType old = fInputType;
+			fInputType = fTool.getEdtableInputType(fInputType);
+			if(old != fInputType){
+				fDiscoveredInfo.checkUpdateInputType(fInputType);
+			}
+		}
 	}
 
 	public void setEntries(int kind, ICLanguageSettingEntry entries[]) {
@@ -349,7 +363,8 @@ public class BuildLanguageData extends CLanguageData {
 
 	public void setLanguageId(String id) {
 		if(CDataUtil.objectsEqual(id, fInputType.getLanguageId(fTool))){
-			fInputType = fTool.getEdtableInputType(fInputType);
+//			fInputType = fTool.getEdtableInputType(fInputType);
+			obtainEditableInputType();
 			fInputType.setLanguageIdAttribute(id);
 		}
 	}
@@ -440,12 +455,14 @@ public class BuildLanguageData extends CLanguageData {
 		String newHeaderIds[] = (String[])newHeaders.toArray(new String[newHeaders.size()]);
 		
 		if(!Arrays.equals(newSrcIds, fInputType.getSourceContentTypeIds())){
-			fInputType = fTool.getEdtableInputType(fInputType);
+//			fInputType = fTool.getEdtableInputType(fInputType);
+			obtainEditableInputType();
 			fInputType.setSourceContentTypeIds(newSrcIds);
 		}
 
 		if(!Arrays.equals(newHeaderIds, fInputType.getHeaderContentTypeIds())){
-			fInputType = fTool.getEdtableInputType(fInputType);
+//			fInputType = fTool.getEdtableInputType(fInputType);
+			obtainEditableInputType();
 			fInputType.setHeaderContentTypeIds(newHeaderIds);
 		}
 

@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
+import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -2761,12 +2761,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //		return tc.setScannerConfigBuilderInfo(info);
 //	}
 
-	public IDiscoveredPathManager.IDiscoveredPathInfo setDiscoveredPathInfo(IDiscoveredPathManager.IDiscoveredPathInfo info){
+	public PathInfo setDiscoveredPathInfo(PathInfo info){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
 		return tc.setDiscoveredPathInfo(info);
 	}
 
-	public IDiscoveredPathManager.IDiscoveredPathInfo getDiscoveredPathInfo(){
+	public PathInfo getDiscoveredPathInfo(){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
 		return tc.getDiscoveredPathInfo();
 	}
@@ -2776,7 +2776,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return tc.getScannerConfigDiscoveryProfileId();
 	}
 	
-	public IDiscoveredPathManager.IDiscoveredPathInfo clearDiscoveredPathInfo(){
+	public PathInfo clearDiscoveredPathInfo(){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
 		return tc.setDiscoveredPathInfo(null);
 	}
@@ -2792,4 +2792,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public boolean isPreference(){
 		return isPreferenceConfig;
 	}
+	
+//	public boolean isPerFileDiscoveryCache(){
+//		return isPerFileDiscoveryCache;
+//	}
+//	
+//	public void setPerFileDiscoveryCache(boolean perFile){
+//		isPerFileDiscoveryCache = perFile;
+//	}
 }

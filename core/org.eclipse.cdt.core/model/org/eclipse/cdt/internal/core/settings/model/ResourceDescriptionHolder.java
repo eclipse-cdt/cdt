@@ -176,4 +176,8 @@ public class ResourceDescriptionHolder {
 			return (ICFolderDescription)parent.getValue();
 		return null;
 	}
+	
+	public static IPath normalizePath(IPath path){
+		return path.makeRelative();
+	}
 }

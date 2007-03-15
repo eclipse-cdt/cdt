@@ -51,7 +51,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	ResourceInfo(IConfiguration cfg, ResourceInfo base, String id) {
 		config = cfg;
-		path = base.path;
+		path = normalizePath(base.path);
 		internalSetExclude(base.isExcluded);
 
 		setId(id);
@@ -89,6 +89,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	ResourceInfo(IConfiguration cfg, IPath path, String id, String name) {
 		config = cfg;
+		path = normalizePath(path);
 		this.path = path;
 
 //		inheritParentInfo = inherit;
@@ -101,6 +102,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 		setId(id);
 		setName(name);
+		
+		path = normalizePath(path);
 		
 		this.path = path;
 		internalSetExclude(base.isExcluded());
@@ -116,6 +119,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 		setId(id);
 		setName(name);
+		
+		path = normalizePath(path);
 		
 		this.path = path;
 		internalSetExclude(base.isExcluded());
@@ -145,9 +150,13 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 		// resourcePath
 		String tmp = element.getAttribute(RESOURCE_PATH);
-		if(tmp != null)
+		if(tmp != null){
 			path = new Path(tmp);
-		else {
+			if(IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME.equals(element.getName())){
+				path = path.removeFirstSegments(1);
+			}
+			path = normalizePath(path);
+		} else {
 			//TODO
 		}
 		
@@ -178,6 +187,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 				if(IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME.equals(element.getName())){
 					path = path.removeFirstSegments(1);
 				}
+				path = normalizePath(path);
 			} else {
 				//TODO
 			}
@@ -214,7 +224,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 */	
 	public IPath getPath() {
-		return path;
+		return normalizePath(path);
 	}
 
 	public boolean isDirty() {
@@ -248,9 +258,10 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	public void setPath(IPath p) {
+		p = normalizePath(p);
 		if(path == null)
 			path = p;
-		else if (!p.equals(this.path)) {
+		else if (!p.equals(normalizePath(this.path))) {
 			ResourceInfoContainer info = getRcInfo();
 			info.changeCurrentPath(p, true);
 			this.path = p;
@@ -445,6 +456,10 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		return null;
 	}
 	
+	public static IPath normalizePath(IPath path){
+		return path.makeRelative();
+	}
+
 	abstract void resolveProjectReferences(boolean onLoad);
 
 }

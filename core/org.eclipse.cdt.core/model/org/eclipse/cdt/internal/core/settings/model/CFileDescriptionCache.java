@@ -80,4 +80,8 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 	public ICFolderDescription getParentFolderDescription() {
 		return getRcDesHolder().getParentFolderDescription();
 	}
+
+	public IPath getPath() {
+		return ResourceDescriptionHolder.normalizePath(super.getPath());
+	}
 }

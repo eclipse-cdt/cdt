@@ -109,7 +109,7 @@ public class PathSettingsContainer {
 		return fListeners;
 	}
 	
-	private boolean hasChildren(){
+	public boolean hasChildren(){
 		Map map = getChildrenMap(false);
 		return map != null && map.size() != 0;
 	}
@@ -407,5 +407,4 @@ public class PathSettingsContainer {
 	private void setParent(PathSettingsContainer parent){
 		fDirectParentContainer = parent;
 	}
-
 }

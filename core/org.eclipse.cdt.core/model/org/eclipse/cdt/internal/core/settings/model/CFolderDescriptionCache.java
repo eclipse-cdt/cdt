@@ -126,4 +126,8 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 	public boolean isRoot() {
 		return getPath().segmentCount() == 0;
 	}
+	
+	public IPath getPath() {
+		return ResourceDescriptionHolder.normalizePath(super.getPath());
+	}
 }

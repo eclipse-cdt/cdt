@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector3;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo2;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
@@ -576,7 +578,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
      * 
      * @author vhirsl
      */
-    public class PerFileDiscoveredPathInfo implements IPerFileDiscoveredPathInfo {
+    public class PerFileDiscoveredPathInfo implements IPerFileDiscoveredPathInfo2 {
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getProject()
          */
@@ -711,6 +713,59 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 			}
 			return rc;
 		}
+
+		public Map getPathInfoMap() {
+			//TODO: do we need to cache this?
+			return calculatePathInfoMap();
+		}
+
+    }
+    
+    private Map calculatePathInfoMap(){
+    	Map map = new HashMap(sid.fileToCommandIdMap.size() + 1);
+    	Map.Entry entry;
+    	IFile file;
+    	CCommandDSC cmd;
+    	PathInfo fpi;
+    	for(Iterator iter = sid.fileToCommandIdMap.entrySet().iterator(); iter.hasNext();){
+    		entry = (Map.Entry)iter.next();
+    		file = (IFile)entry.getKey();
+    		if(file != null){
+	    		cmd = (CCommandDSC)sid.commandIdCommandMap.get(entry.getValue());
+	    		if(cmd != null){
+	    			fpi = createFilePathInfo(cmd);
+	    			map.put(file, fpi);
+	    		}
+    		}
+    	}
+    	
+    	if(project != null){
+	    	if(psi == null){
+	    		generateProjectScannerInfo();
+	    	}
+	    	
+	    	fpi = new PathInfo(psi.includePaths, psi.quoteIncludePaths, psi.definedSymbols, psi.includeFiles, psi.macrosFiles);
+	    	map.put(project, fpi);
+    	}
+    	
+    	return map;
+    }
+    
+    private PathInfo createFilePathInfo(CCommandDSC cmd){
+    	IPath[] includes = stringListToPathArray(cmd.getIncludes());
+    	IPath[] quotedIncludes = stringListToPathArray(cmd.getQuoteIncludes());
+    	IPath[] incFiles = stringListToPathArray(cmd.getIncludeFile());
+    	IPath[] macroFiles = stringListToPathArray(cmd.getImacrosFile());
+        List symbols = cmd.getSymbols();
+        Map definedSymbols = new HashMap(symbols.size());
+        for (Iterator i = symbols.iterator(); i.hasNext(); ) {
+            String symbol = (String) i.next();
+            String key = ScannerConfigUtil.getSymbolKey(symbol);
+            String value = ScannerConfigUtil.getSymbolValue(symbol);
+            definedSymbols.put(key, value);
+        }
+        
+        return new PathInfo(includes, quotedIncludes, definedSymbols, incFiles, macroFiles);
 
     }
 

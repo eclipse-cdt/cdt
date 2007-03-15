@@ -245,7 +245,7 @@ public class ProjectConverter implements ICProjectConverter {
 								IMakeTarget newT = mngr.createTarget(project, t.getName(), NEW_MAKE_TARGET_BUIDER_ID);
 								copySettings(t, newT);
 								mngr.removeTarget(t);
-								mngr.addTarget(newT);
+								mngr.addTarget(cr, newT);
 							}
 						} catch ( CoreException e){
 							ManagedBuilderCorePlugin.log(e);

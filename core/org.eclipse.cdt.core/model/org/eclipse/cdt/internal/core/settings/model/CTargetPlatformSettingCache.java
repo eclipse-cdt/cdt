@@ -25,6 +25,8 @@ public class CTargetPlatformSettingCache extends CDefaultTargetPlatformData
 		fCfgCache = cfgCache;
 		
 		fCfgCache.addTargetPlatformSetting(this);
+		
+		copyDataFrom(base);
 	}
 	
 	

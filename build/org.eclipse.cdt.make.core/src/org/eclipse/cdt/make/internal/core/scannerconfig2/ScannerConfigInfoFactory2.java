@@ -1095,6 +1095,10 @@ public class ScannerConfigInfoFactory2 {
 //                         runDescriptorOperation(project, op, null);
 //            }
         }
+        
+        public InfoContext getContext(){
+        	return context;
+        }
 
 	}
 
@@ -1294,6 +1298,9 @@ public class ScannerConfigInfoFactory2 {
         		prefsContainer.save();
         }
 
+        public InfoContext getContext(){
+        	return context;
+        }
 	}
 
 	public static IScannerConfigBuilderInfo2 create(IProject project, String profileId) throws CoreException {

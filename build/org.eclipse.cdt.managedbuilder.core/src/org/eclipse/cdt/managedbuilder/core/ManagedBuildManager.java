@@ -4253,7 +4253,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		for(;extTool != null && !extTool.isExtensionElement(); extTool = extTool.getSuperClass());
 		return extTool;
 	}
-	
+
+	public static IInputType getExtensionInputType(IInputType inType){
+		IInputType extIT = inType;
+		for(;extIT != null && !extIT.isExtensionElement(); extIT = extIT.getSuperClass());
+		return extIT;
+	}
+
 	public static IConfiguration getPreferenceConfiguration(boolean write){
 		try {
 			ICConfigurationDescription des = CCorePlugin.getDefault().getPreferenceConfiguration(CFG_DATA_PROVIDER_ID, write);

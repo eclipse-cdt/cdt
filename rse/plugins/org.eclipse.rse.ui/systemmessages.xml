@@ -1368,7 +1368,7 @@ Contributors:
                           <LevelTwo></LevelTwo>
                     </Message>
                     <Message ID="2315" Indicator="I">
-                          <LevelOne>Connection %1 has not been secured using SSL. Proceed anyways?</LevelOne>
+                          <LevelOne>Connection %1 has not been secured using SSL. Proceed anyway?</LevelOne>
                           <LevelTwo></LevelTwo>
                     </Message>
                           <Message ID="2316" Indicator="E">

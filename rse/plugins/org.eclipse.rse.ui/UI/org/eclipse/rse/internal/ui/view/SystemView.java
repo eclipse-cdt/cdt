@@ -776,7 +776,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		if (selectionCount == 0) // nothing selected
 		{
 			menu.add(getNewConnectionAction());
-			menu.add(new Separator(ISystemContextMenuConstants.GROUP_ADDITIONS)); // user or BP/ISV additions
+			menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_ADDITIONS)); // user or BP/ISV additions
 		} else {
 			if (selectionCount > 1) {
 				allSelectionsFromSameParent = sameParent();

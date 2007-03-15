@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,6 +33,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemRegistryUI;
+import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -60,7 +62,6 @@ import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.views.framelist.GoIntoAction;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
@@ -133,8 +134,10 @@ public class SystemViewConnectionAdapter
 		
 		//updateAction.setValue(null); // reset
 		if (sysTypeAdapter == null
-				|| sysTypeAdapter.acceptContextMenuActionContribution(host, anotherConnectionAction.getClass()))
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, anotherConnectionAction.getClass())) {
 			menu.add(menuGroup, anotherConnectionAction);
+			menu.appendToGroup(menuGroup, new GroupMarker(ISystemContextMenuConstants.GROUP_ADDITIONS)); // user or BP/ISV additions
+		}
 
 		if (sysTypeAdapter == null
 				|| sysTypeAdapter.acceptContextMenuActionContribution(host, copyAction.getClass()))

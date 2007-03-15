@@ -101,7 +101,6 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 		this.fromPopupMenu = fromPopupMenu;
 		this.sp = sp;
 		setHelp(RSEUIPlugin.HELPPREFIX + "actn0000"); //$NON-NLS-1$
-		setId("org.eclipse.rse.ui.action.newconnection"); //$NON-NLS-1$
 	}
 
 	/**

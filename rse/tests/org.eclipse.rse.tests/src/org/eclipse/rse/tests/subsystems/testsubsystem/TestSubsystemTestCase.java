@@ -13,9 +13,6 @@ package org.eclipse.rse.tests.subsystems.testsubsystem;
 import java.util.Vector;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.ui.view.SystemView;
@@ -109,12 +106,10 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
         registry.invalidateFiltersFor(testSubSystem);
         
-		TestSubSystemContainerNode firstNode = null;
 		TestSubSystemContainerNode node = null;
 		for (int i=0; i<100; i++) {
 			if (node == null) {
 				node = new TestSubSystemContainerNode("node "+i); //$NON-NLS-1$
-				firstNode = node;
 				testSubSystem.addChildNode(node);
 			}
 			else {
@@ -132,30 +127,12 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		rseSystemView.expandToLevel(testSubSystem, AbstractTreeViewer.ALL_LEVELS);
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 		
-		rseSystemView.setSelection(new StructuredSelection(node));
-		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
-
-		ISelection selection = rseSystemView.getSelection();
-		assertTrue("missing selection", selection != null); //$NON-NLS-1$
-		assertTrue("not a structured selection", selection instanceof IStructuredSelection); //$NON-NLS-1$
-		IStructuredSelection structSel = (IStructuredSelection)selection;
-		assertEquals("invalid number of selected items", 1, structSel.size()); //$NON-NLS-1$
-		assertEquals("wrong item selected", node, structSel.getFirstElement()); //$NON-NLS-1$
-
 		testSubSystem.removeAllChildNodes();
 		//registry.invalidateFiltersFor(testSubSystem);
 		 
 		//SystemPerspectiveHelpers.findRSEView().refresh(testSubSystem);
 		registry.fireEvent(new SystemResourceChangeEvent(testSubSystem, ISystemResourceChangeEvents.EVENT_REFRESH, testSubSystem));
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
-		
-		rseSystemView.setSelection(new StructuredSelection(firstNode));
-
-		 selection = rseSystemView.getSelection();
-		assertTrue("missing selection", selection != null); //$NON-NLS-1$
-		assertTrue("not a structured selection", selection instanceof IStructuredSelection); //$NON-NLS-1$
-		 structSel = (IStructuredSelection)selection;
-		assertEquals("invalid number of selected items", structSel.size(), structSel.size()); //$NON-NLS-1$
 	}
 	
 	public void testBugzilla170728() {

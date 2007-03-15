@@ -1,0 +1,20 @@
+      *****************************************************************
+      * The program contains source to be used for NL testing.        *
+      *****************************************************************
+
+      *****************************************************************
+      * The following lines are comments with text in FRE             *
+      * The text should appear same on the client as the host         *
+      *****************************************************************
+      *                                                               *
+      * Les naïfs ægithales hâtifs pondant à Noël où il gèle sont sûrs
+      * d'être déçus et de voir leurs drôles d'oeufs abîmés.          *
+      *****************************************************************
+
+      *****************************************************************
+      * The following lines define Fspecs with the "special chars"    *
+      * There should be no syntax or veryfy errors on these lines     *
+      * due to the special chars                                      *
+      *****************************************************************
+      Fileà£$   if   f   80        disk
+      File£$à   if   f   80        disk

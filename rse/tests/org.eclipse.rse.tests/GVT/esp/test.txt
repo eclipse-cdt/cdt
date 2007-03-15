@@ -1,0 +1,20 @@
+      *****************************************************************
+      * The program contains source to be used for NL testing.        *
+      *****************************************************************
+
+      *****************************************************************
+      * The following lines are comments with text in ESP             *
+      * The text should appear same on the client as the host         *
+      *****************************************************************
+      *                                                               *
+      * El pingüino Wenceslao hizo kilómetros bajo exhaustiva lluvia y frío,
+      * AÑORABA a su querido cachorro.                                *
+      *****************************************************************
+
+      *****************************************************************
+      * The following lines define Fspecs with the "special chars"    *
+      * There should be no syntax or veryfy errors on these lines     *
+      * due to the special chars                                      *
+      *****************************************************************
+      File@Ñ$   if   f   80        disk
+      FileÑ$@   if   f   80        disk

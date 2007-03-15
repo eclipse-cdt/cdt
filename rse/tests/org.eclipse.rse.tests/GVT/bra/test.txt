@@ -1,0 +1,20 @@
+      *****************************************************************
+      * The program contains source to be used for NL testing.        *
+      *****************************************************************
+
+      *****************************************************************
+      * The following lines are comments with text in BRA             *
+      * The text should appear same on the client as the host         *
+      *****************************************************************
+      *                                                               *
+      * O próximo vôo à noite sobre o Atlântico, põe freqüentemente o *
+      * médico.                                                       *
+      *****************************************************************
+
+      *****************************************************************
+      * The following lines define Fspecs with the "special chars"    *
+      * There should be no syntax or veryfy errors on these lines     *
+      * due to the special chars                                      *
+      *****************************************************************
+      File@#$   if   f   80        disk
+      File#$@   if   f   80        disk

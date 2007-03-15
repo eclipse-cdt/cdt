@@ -12,11 +12,12 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.newui.ManagedBuilderUIImages;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -38,6 +39,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class CConfigWizardPage extends MBSCustomPage {
 
@@ -47,28 +49,27 @@ public class CConfigWizardPage extends MBSCustomPage {
 	private static final String TITLE = IDEWorkbenchMessages.getString("CConfigWizardPage.0"); //$NON-NLS-1$
 	private static final String MESSAGE = IDEWorkbenchMessages.getString("CConfigWizardPage.1"); //$NON-NLS-1$
 	private static final String COMMENT = IDEWorkbenchMessages.getString("CConfigWizardPage.12"); //$NON-NLS-1$
-	private static final String DELIMITER = "_with_";  //$NON-NLS-1$
 	private static final String EMPTY_STR = "";  //$NON-NLS-1$
 	
-	ICWizardHandler handler;
-	Table table;
-	CheckboxTableViewer tv;
-	Label l_projtype;
-	Label l_chains;
+	private ICWizardHandler handler;
+	private Table table;
+	private CheckboxTableViewer tv;
+	private Label l_projtype;
+	private Label l_chains;
+	private Composite parent;
 
-	Composite parent;
-	String errorMessage = null;
-	String message = MESSAGE;
+	private String propertyId;
+	private String errorMessage = null;
+	private String message = MESSAGE;
 	boolean isVisible = false;
-	Button propButton;
 	
 	public CConfigWizardPage() { pageID = PAGE_ID; }
 	
-	private CfgItem[] getCfgItems(boolean getDefault) {
+	public CfgHolder[] getCfgItems(boolean getDefault) {
 		if (handler == null) return null; 
-		CfgItem[] its;
+		CfgHolder[] its;
 		if (getDefault)  
-			its = cfgItems(getDefaultCfgs(handler));
+			its = getDefaultCfgs(handler);
 		else {
 			ArrayList out = new ArrayList(table.getItemCount());
 			TableItem[] tis = table.getItems();
@@ -76,27 +77,11 @@ public class CConfigWizardPage extends MBSCustomPage {
 				if (tis[i].getChecked())
 					out.add(tis[i].getData()); 
 			}
-			its = (CfgItem[])out.toArray(new CfgItem[out.size()]);
+			its = (CfgHolder[])out.toArray(new CfgHolder[out.size()]);
 		}
 		return its;
 	}
-	
-	public IConfiguration[] getConfigurations(boolean getDefault) {
-		CfgItem[] its = getCfgItems(getDefault);
-		if (its == null) return new IConfiguration[0];
-		IConfiguration[] cfgs = new IConfiguration[its.length];
-		for (int i=0; i<its.length; i++) cfgs[i] = its[i].cfg;
-		return cfgs;
-	}
-	
-	public String[] getNames(boolean getDefault) {
-		CfgItem[] its = getCfgItems(getDefault);
-		if (its == null) return new String[0];
-		String [] names = new String[its.length];
-		for (int i=0; i<its.length; i++) names[i] = its[i].name;
-		return names;
-	}
-	
+
 	public void createControl(Composite p) {
 		parent = new Composite(p, SWT.NONE);
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -123,7 +108,7 @@ public class CConfigWizardPage extends MBSCustomPage {
 		});
 		tv.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {
-				return element == null ? EMPTY_STR : ((CfgItem)element).name;
+				return element == null ? EMPTY_STR : ((CfgHolder)element).name;
 			}
 			public Image getImage(Object element) { return IMG; }
 		});
@@ -155,16 +140,18 @@ public class CConfigWizardPage extends MBSCustomPage {
 				isCustomPageComplete();
 				update();
 			}});
-		propButton = new Button(parent, SWT.CHECK);
-		gd = new GridData(GridData.BEGINNING);
-		gd.horizontalSpan = 3;
-		propButton.setLayoutData(gd);
-		propButton.setText(IDEWorkbenchMessages.getString("CConfigWizardPage.9")); //$NON-NLS-1$
-		propButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handler.setShowProperties(((Button)e.widget).getSelection());
-			}});
 
+		// dummy placeholder
+		new Label(c, 0).setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Button b3 = new Button(c, SWT.PUSH);
+		b3.setText(IDEWorkbenchMessages.getString("CConfigWizardPage.13")); //$NON-NLS-1$
+		b3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		b3.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				advancedDialog();
+			}});
+		
 		Group gr = new Group(parent, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
@@ -179,25 +166,29 @@ public class CConfigWizardPage extends MBSCustomPage {
 	 * @param handler
 	 * @return
 	 */
-	static public IConfiguration[] getDefaultCfgs(ICWizardHandler handler) {
+	static public CfgHolder[] getDefaultCfgs(ICWizardHandler handler) {
 		IToolChain[] tcs = handler.getSelectedToolChains();
 		String id = handler.getPropertyId();
 		IProjectType pt = handler.getProjectType(); 
 		ArrayList out = new ArrayList(tcs.length * 2);
 		for (int i=0; i < tcs.length; i++) {
-			IConfiguration[] cfgs = null;
+			CfgHolder[] cfgs = null;
 			if (id != null) 
-				cfgs = ManagedBuildManager.getExtensionConfigurations(tcs[i], ICWizardHandler.ARTIFACT, id);
+				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tcs[i], ICWizardHandler.ARTIFACT, id));
 			else if (pt != null) 
-				cfgs = ManagedBuildManager.getExtensionConfigurations(tcs[i], pt);
+				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tcs[i], pt));
+			else { // Create default configuration for StdProject
+				cfgs = new CfgHolder[1];
+				cfgs[0] = new CfgHolder(tcs[i], null);
+			}
 			if (cfgs == null) return null;
 			
 			for (int j=0; j<cfgs.length; j++) {
-				if (cfgs[j].isSystemObject() || (handler.supportedOnly() && !cfgs[j].isSupported())) continue;
+				if (cfgs[j].isSystem() || (handler.supportedOnly() && !cfgs[j].isSupported())) continue;
 				out.add(cfgs[j]);
 			}
 		}
-		return (IConfiguration[])out.toArray(new IConfiguration[out.size()]);
+		return (CfgHolder[])out.toArray(new CfgHolder[out.size()]);
 	}
 	
     /**
@@ -231,66 +222,24 @@ public class CConfigWizardPage extends MBSCustomPage {
     public void setVisible(boolean visible) {
     	isVisible = visible;
 		if (visible && handler != null) { 
-			if (handler.needsConfig()) {
-				tv.setInput(cfgItems(getDefaultCfgs(handler)));
-				tv.setAllChecked(true);
-				String s = EMPTY_STR;
-				IToolChain[] tc = handler.getSelectedToolChains();
-				for (int i=0; i < tc.length; i++) {
-					s = s + tc[i].getName();
-					if (i < tc.length - 1) s = s + ", ";  //$NON-NLS-1$
-				}
-				l_chains.setText(s);
-				l_projtype.setText(handler.getName());
+			tv.setInput(CfgHolder.unique(getDefaultCfgs(handler)));
+			tv.setAllChecked(true);
+			String s = EMPTY_STR;
+			IToolChain[] tc = handler.getSelectedToolChains();
+			for (int i=0; i < tc.length; i++) {
+				s = s + ((tc[i] == null) ? 
+						IDEWorkbenchMessages.getString("StdProjectTypeHandler.0") : //$NON-NLS-1$
+						tc[i].getName());  
+				if (i < tc.length - 1) s = s + ", ";  //$NON-NLS-1$
 			}
-			propButton.setSelection(handler.showProperties());
+			l_chains.setText(s);
+			l_projtype.setText(handler.getName());
 		}
 		parent.setVisible(visible);
 		if (visible) update();
     }
 
-    class CfgItem {
-    	String name;
-    	IConfiguration cfg;
-    	CfgItem(IConfiguration _cfg) { 
-    		cfg = _cfg;
-    		name = cfg.getName();
-    	}
-    }
-    
-    private boolean hasDoubles(CfgItem[] its) {
-   		for (int i=0; i<its.length; i++) {
-       		String s = its[i].name;
-       		for (int j=0; j<its.length; j++) {
-       			if (i == j) continue;
-       			if (s.equals(its[j].name)) 
-       				return true;
-       		}
-       	}
-   		return false;
-    }
-    
-    private CfgItem[] cfgItems(IConfiguration[] cfgs) {
-    	CfgItem[] its = new CfgItem[cfgs.length];
-    	for (int i=0; i<cfgs.length; i++)
-    		its[i] = new CfgItem(cfgs[i]);
-    	
-    	// if names are not unique, add toolchain name
-    	if (hasDoubles(its)) {
-       		for (int k=0; k<its.length; k++) {
-       			its[k].name = its[k].name + DELIMITER + its[k].cfg.getToolChain().getName();
-       		}
-		}
-    	// if names are still not unique, add index
-    	if (hasDoubles(its)) {
-       		for (int k=0; k<its.length; k++) {
-       			its[k].name = its[k].name + k;
-       		}
-		}
-    	return its;
-    }
-    
-	//------------------------
+    	//------------------------
     private Label setupLabel(Composite c, String name, int span, int mode) {
 		Label l = new Label(c, SWT.NONE);
 		l.setText(name);
@@ -322,4 +271,25 @@ public class CConfigWizardPage extends MBSCustomPage {
 		wizard.getContainer().updateMessage();
 		wizard.getContainer().updateTitleBar();
 	}
+	
+	/**
+	 * Edit properties
+	 */
+	private void advancedDialog() {
+		if (wizard instanceof NewModelProjectWizard) {
+			NewModelProjectWizard nmWizard = (NewModelProjectWizard)wizard;
+			IProject newProject = nmWizard.getProject(true);
+			if (newProject != null) {
+				boolean oldManage = CDTPrefUtil.getBool(CDTPrefUtil.KEY_MANAGE);
+				// disable manage configurations button
+				CDTPrefUtil.setBool(CDTPrefUtil.KEY_MANAGE, false);
+				try {
+					PreferencesUtil.createPropertyDialogOn(wizard.getContainer().getShell(), newProject, propertyId, null, null).open();
+				} finally {
+					CDTPrefUtil.setBool(CDTPrefUtil.KEY_MANAGE, oldManage);
+				}
+			}
+		}
+	}
+	
 }

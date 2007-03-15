@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -78,13 +79,18 @@ public class CNewWizard extends AbstractCWizard {
 			if (tc ==  null) continue;
 			h.addTc(tc);
 
-			if (oldsRoot == null) {
-				oldsRoot = new TreeItem(tree, SWT.NONE);
-				oldsRoot.setText(IDEWorkbenchMessages.getString("CNewWizard.0")); //$NON-NLS-1$
-				oldsRoot.setData(new DummyHandler(parent));
-				oldsRoot.setImage(IMG0);				
+			TreeItem ti = null;
+			if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS)) {
+				if (oldsRoot == null) {
+					oldsRoot = new TreeItem(tree, SWT.NONE);
+					oldsRoot.setText(IDEWorkbenchMessages.getString("CNewWizard.0")); //$NON-NLS-1$
+					oldsRoot.setData(new DummyHandler(parent));
+					oldsRoot.setImage(IMG0);				
+				}
+				ti = new TreeItem(oldsRoot, SWT.NONE);
+			} else { // do not group to <Others>
+				ti = new TreeItem(tree, SWT.NONE);
 			}
-			TreeItem ti = new TreeItem(oldsRoot, SWT.NONE);
 			ti.setText(h.getName());
 			ti.setData(h);
 			ti.setImage(h.getIcon());

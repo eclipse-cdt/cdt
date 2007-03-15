@@ -1,6 +1,8 @@
 package org.eclipse.cdt.managedbuilder.ui.newui;
 
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.newui.AbstractPrefPage;
+import org.eclipse.cdt.ui.newui.ICPropertyTab;
 
 public class PrefPage_NewCDTWizard extends AbstractPrefPage {
 
@@ -9,8 +11,16 @@ public class PrefPage_NewCDTWizard extends AbstractPrefPage {
 		       Messages.getString("PrefPage_NewCDTWizard.1"); //$NON-NLS-1$
 	}
 
-	protected boolean isSingle() {
-		return false;
+	/*
+	 * All affected settings are stored in preferences.
+	 * Tabs are responsible for saving, after OK signal.
+	 * No need to affect Project Description somehow.
+	 */
+	public boolean performOk() {
+		forEach(ICPropertyTab.OK, null);
+		return true;
 	}
+	public ICResourceDescription getResDesc() { return null; } 
+	protected boolean isSingle() { return false; }
 
 }

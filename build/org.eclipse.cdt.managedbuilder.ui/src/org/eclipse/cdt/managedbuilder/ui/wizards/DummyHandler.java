@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import java.util.List;
+
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.core.resources.IProject;
@@ -42,7 +43,7 @@ public class DummyHandler implements ICWizardHandler {
 	public void handleSelection() {}
 	public void handleUnSelection() {}
 	public IWizardPage getNextPage() { return null; }
-	public void createProject(IProject project, IConfiguration[] cfgs, String[] names) throws CoreException {}
+	public void createProject(IProject project, CfgHolder[] cfgs) throws CoreException {}
 	public boolean isDummy() { return true; }
 	public boolean needsConfig() { return false; }
 	public IToolChain[] getSelectedToolChains() {return null;}
@@ -54,5 +55,7 @@ public class DummyHandler implements ICWizardHandler {
 	public boolean canCreateWithoutToolchain() { return false; }
 	public void setSupportedOnly(boolean supp) {}
 	public boolean supportedOnly() { return true; }
-	public boolean isFirstPageSelected() { return false; } 
+	public boolean isFirstPageSelected() { return false; }
+	public boolean supportsPreferred() {return false; }
+	public void updatePreferred(List prefs) {} 
 }

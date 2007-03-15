@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import java.util.List;
+
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.core.resources.IProject;
@@ -26,21 +27,34 @@ public interface ICWizardHandler {
 	String getName();
 	Image getIcon();
 	String getHeader();
-	void createProject(IProject proj, IConfiguration[] cfgs, String[] names) throws CoreException;
+	void createProject(IProject proj, CfgHolder[] cfgs) throws CoreException;
 	boolean isDummy();
-	boolean needsConfig();
-	
 	public IToolChain[] getSelectedToolChains();
 	public int getToolChainsCount();
 	public IProjectType getProjectType();
-	public void setShowProperties(boolean show);
-	public boolean showProperties();
 	public String getPropertyId();
+	/**
+	 * @return true if only supported project types and toolchains are displayed
+	 */
 	public boolean supportedOnly();
+	/**
+	 * Defines whether only supported project types and toolchains are displayed
+	 * @param supp 
+	 */
 	public void setSupportedOnly(boolean supp);
 	/**
 	 * @return true if project can be created with zero toolchains selected
 	 */
 	public boolean canCreateWithoutToolchain();
-
+	/**
+	 * @return true if handler is able to process preferred toolchains
+	 */
+	public boolean supportsPreferred();
+	/**
+	 * Asks handler to update its data according to preferred list.
+	 * Usually, marks preferred toolchains somehow (icon, font etc)
+	 * @param prefs - list of strings (preferred Toolchain IDs)
+	 */
+	public void updatePreferred(List prefs);
+	
 }

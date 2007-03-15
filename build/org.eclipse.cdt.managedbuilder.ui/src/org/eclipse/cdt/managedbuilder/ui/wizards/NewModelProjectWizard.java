@@ -18,12 +18,13 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.newui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -37,29 +38,19 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 public abstract class NewModelProjectWizard extends BasicNewResourceWizard implements IExecutableExtension  
-//extends NewManagedProjectWizard 
 {
-	private static final String MSG_CREATE = "MngCCWizard.message.creating";	//$NON-NLS-1$
 	private static final String PREFIX= "CProjectWizard"; //$NON-NLS-1$
 	private static final String OP_ERROR= "CProjectWizard.op_error"; //$NON-NLS-1$
-	private static final String OP_DESC= "CProjectWizard.op_description"; //$NON-NLS-1$
+	private static final String title= CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$
+	private static final String message= CUIPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
 	
 	protected IConfigurationElement fConfigElement;
 	protected CMainWizardPage fMainPage;
@@ -68,7 +59,11 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 	protected IProject newProject;
 	private String wz_title;
 	private String wz_desc;
-	private String propertyId;
+	
+	private String lastProjectName = null;
+	private ICWizardHandler savedHandler = null;
+	private IToolChain[] savedToolChains = null;
+	private boolean savedDefaults = false;
 
 	protected List localPages = new ArrayList(); // replacing Wizard.pages since we have to delete them
 	
@@ -122,50 +117,61 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 		}
 	}
 
-	protected void doRun(IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.beginTask(NewUIMessages.getResourceString(MSG_CREATE), 8);
-		
-		newProject = createIProject(fMainPage.getProjectName(), fMainPage.getProjectLocation());
-		if (newProject != null) {
-			try {
-				if (fMainPage.h_selected.needsConfig()) {
-					boolean def = fMainPage.isCurrent();
-					fMainPage.h_selected.createProject(newProject, fConfigPage.getConfigurations(def), fConfigPage.getNames(def));
-				} else 
-					fMainPage.h_selected.createProject(newProject, null, null);
-			} catch (CoreException e) {
-				ManagedBuilderUIPlugin.log(e);
-				throw e;
+	/**
+	 * @return true if user has changed settings since project creation
+	 */
+	private boolean isChanged() {
+		if (savedHandler != fMainPage.h_selected || !fMainPage.getProjectName().equals(lastProjectName))
+			return true;
+		IToolChain[] tcs = fMainPage.h_selected.getSelectedToolChains();
+		if (savedToolChains.length != tcs.length) 
+			return true;
+		for (int i=0; i<savedToolChains.length; i++) {
+			boolean found = false;
+			for (int j=0; i<tcs.length; j++) {
+				if (savedToolChains[i] == tcs[j]) {
+					found = true; break;
+				}
 			}
+			if (!found) return true;
 		}
-		monitor.done();
+		return false;
+	}
+	
+	public IProject getProject(boolean defaults) {
+		if (newProject != null && isChanged()) 
+			clearProject(); 
+		if (newProject == null)	{
+			savedDefaults = defaults;
+			savedHandler = fMainPage.h_selected;
+			savedToolChains = fMainPage.h_selected.getSelectedToolChains();
+			lastProjectName = fMainPage.getProjectName();
+			// start creation process
+			invokeRunnable(getRunnable(defaults)); 
+		} 
+		return newProject;
 	}
 
-	protected IProject getProjectHandle() throws UnsupportedOperationException {
-		if (null == fMainPage)
-			throw new UnsupportedOperationException();
-		return fMainPage.getProjectHandle();
+	/**
+	 * Remove created project either after error
+	 * or if user returned back from config page. 
+	 */
+	public void clearProject() {
+		if (lastProjectName == null) return;
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().getProject(lastProjectName).delete(false, false, null);
+		} catch (CoreException ignore) {}
+		newProject = null;
+		lastProjectName = null;
 	}
-
-	protected boolean invokeRunnable(IRunnableWithProgress runnable) {
+	
+	private boolean invokeRunnable(IRunnableWithProgress runnable) {
 		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(runnable);
 		try {
 			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
-			Shell shell= getShell();
-			String title= CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$
-			String message= CUIPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
-                       
-			Throwable th= e.getTargetException();
-			CUIPlugin.errorDialog(shell, title, message, th, false);
-			try {
-				getProjectHandle().delete(false, false, null);
-			} catch (CoreException ignore) {
-			} catch (UnsupportedOperationException ignore) {
-			}
+			CUIPlugin.errorDialog(getShell(), title, message, e.getTargetException(), false);
+			clearProject();
 			return false;
 		} catch  (InterruptedException e) {
 			return false;
@@ -174,117 +180,81 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 	}
 
 	public boolean performFinish() {
-		if (!invokeRunnable(getRunnable())) {
-			return false;
-		}
-			
+		// needs delete only if project was 
+		// created before and still valid
+		boolean needsDelete = (newProject != null && savedDefaults && !isChanged());
+		// create project if it is not created yet
+		if (getProject(false) == null) return false;
+		// process custom pages
+		doCustom();
+		// project is created with all possible configs
+		// to let user modify all of them. Resulting
+		// project should contain only selected cfgs.
+		if (needsDelete) deleteExtraConfigs();
+		
 		BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
-		IResource resource = newProject;
-		selectAndReveal(resource);
-		if (resource != null && resource.getType() == IResource.FILE) {
-			IFile file = (IFile)resource;
-			// Open editor on new file.
-			IWorkbenchWindow dw = getWorkbench().getActiveWorkbenchWindow();
-			if (dw != null) {
-				try {
-					IWorkbenchPage page = dw.getActivePage();
-					if (page != null)
-						IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
-					MessageDialog.openError(dw.getShell(),
-						CUIPlugin.getResourceString(OP_ERROR), e.getMessage());
-				}
-			}
-		}
-		// run properties dialog if required
-		if (fMainPage.h_selected.showProperties())
-			PreferencesUtil.createPropertyDialogOn(getShell(), newProject, propertyId, null, null).open();
+		selectAndReveal(newProject);
 		return true;
 	}
 
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-		fConfigElement= config;
+	private void deleteExtraConfigs() {
+		if (fMainPage.isCurrent()) return; // nothing to delete
+		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(newProject, true);
+		if (prjd == null) return;
+		ICConfigurationDescription[] all = prjd.getConfigurations();
+		if (all == null) return;
+		CfgHolder[] req = fConfigPage.getCfgItems(false);
+		boolean modified = false;
+		for (int i=0; i<all.length; i++) {
+			boolean found = false;
+			for (int j=0; j<req.length; j++) {
+				if (all[i].getName() == req[j].name) {
+					found = true; break;
+				}
+			}
+			if (!found) {
+				modified = true;
+				prjd.removeConfiguration(all[i]);
+			}
+		}
+		if (modified) try {
+			CoreModel.getDefault().setProjectDescription(newProject, prjd);
+		} catch (CoreException e) {}
 	}
 	
-	public IRunnableWithProgress getRunnable() {
-		return new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
-			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
-				final Exception except[] = new Exception[1];
-				// ugly, need to make the wizard page run in a non ui thread so that this can go away!!!
-				getShell().getDisplay().syncExec(new Runnable() {
-					public void run() {
-						IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				final IProgressMonitor fMonitor;
-				if (monitor == null) {
-					fMonitor= new NullProgressMonitor();
-				} else {
-					fMonitor = monitor;
-				}
-				fMonitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
-						doRunPrologue(new SubProgressMonitor(fMonitor, 1));
-						try {
-							doRun(new SubProgressMonitor(fMonitor, 1));
-						}
-						catch (CoreException e) {
-							except[0] = e;
-						}
-						doRunEpilogue(new SubProgressMonitor(fMonitor, 1));
-								fMonitor.done();
-					}
-				});
-						try {
-							getContainer().run(false, true, op);
-						} catch (InvocationTargetException e) {
-							except[0] = e;
-						} catch (InterruptedException e) {
-							except[0] = e;
-						}
-					}
-				});
-				if (except[0] != null) {
-					if (except[0] instanceof InvocationTargetException) {
-						throw (InvocationTargetException)except[0];
-					}
-					if (except[0] instanceof InterruptedException) {
-						throw (InterruptedException)except[0];
-					}
-					throw new InvocationTargetException(except[0]);
-				}
-	}
-		});
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunPrologue(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void doRunPrologue(IProgressMonitor monitor) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunEpilogue(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void doRunEpilogue(IProgressMonitor monitor) {
-		if(newProject == null) return;
-
-		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(newProject);
-		if (initResult.getCode() != IStatus.OK) {
-			ManagedBuilderUIPlugin.log(initResult);
-		}
-		
-		// execute any operations specified by custom pages
+	private void doCustom() {
 		Runnable operations[] = MBSCustomPageManager.getOperations();
 		if(operations != null)
 			for(int k = 0; k < operations.length; k++)
 				operations[k].run();
 	}
 	
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+		fConfigElement= config;
+	}
+
+	private IRunnableWithProgress getRunnable(boolean _defaults) {
+		final boolean defaults = _defaults;
+		return new IRunnableWithProgress() {
+			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
+				getShell().getDisplay().syncExec(new Runnable() {
+					public void run() { 
+						try {
+							newProject = createIProject(lastProjectName, fMainPage.getProjectLocation());
+							if (newProject != null) 
+								fMainPage.h_selected.createProject(newProject, fConfigPage.getCfgItems(defaults));
+						} catch (CoreException e) {	ManagedBuilderUIPlugin.log(e); }
+					}
+				});
+			}
+		};
+	}
+
 	/**
 	 * 
 	 */	
 	public IProject createIProject(final String name, final IPath location) throws CoreException{
-		if (newProject != null)
-			return newProject;
+		if (newProject != null)	return newProject;
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
@@ -317,5 +287,5 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 	}
 	
 	protected abstract IProject continueCreation(IProject prj); 
-	protected abstract String[] getNatures(); 	
+	protected abstract String[] getNatures();
 }

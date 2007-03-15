@@ -40,6 +40,7 @@ public class ManagedBuilderUIImages {
 	public static final String T_BUILD= "elcl16/"; //$NON-NLS-1$
 	// list icons dir
 	public static final String T_LIST= "elcl16/"; //$NON-NLS-1$
+	public static final String T_OBJ= "obj16/"; //$NON-NLS-1$
 
 
 	// For the managed build images
@@ -74,11 +75,16 @@ public class ManagedBuilderUIImages {
 	
 	// new images 
 	public static final String IMG_READ_ONLY = NAME_PREFIX + "read_only.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_READ_ONLY = createManaged(T_LIST, IMG_READ_ONLY);
+	public static final ImageDescriptor DESC_READ_ONLY = createManaged(T_OBJ, IMG_READ_ONLY);
 	public static final String IMG_EDITABLE = NAME_PREFIX + "editable.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EDITABLE = createManaged(T_LIST, IMG_EDITABLE);
+	public static final ImageDescriptor DESC_EDITABLE = createManaged(T_OBJ, IMG_EDITABLE);
 	public static final String IMG_BUILT_IN = NAME_PREFIX + "built_in.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_BUILT_IN = createManaged(T_LIST, IMG_EDITABLE);
+	public static final ImageDescriptor DESC_BUILT_IN = createManaged(T_OBJ, IMG_BUILT_IN);
+	
+	public static final String IMG_PREFERRED = NAME_PREFIX + "preferred.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PREFERRED = createManaged(T_OBJ, IMG_PREFERRED);
+	public static final String IMG_EMPTY = NAME_PREFIX + "empty.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EMPTY = createManaged(T_OBJ, IMG_EMPTY);
 	
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
@@ -94,10 +100,6 @@ public class ManagedBuilderUIImages {
 		return imageRegistry.get(key);
 	}
 	
-//	private static ImageDescriptor create(String prefix, String name) {
-//		return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
-//	}
-	
 	private static URL makeIconFileURL(String prefix, String name) {
 		StringBuffer buffer= new StringBuffer(prefix);
 		buffer.append(name);
@@ -108,16 +110,6 @@ public class ManagedBuilderUIImages {
 			return null;
 		}
 	}
-	
-	/**
-	 * Sets all available image descriptors for the given action.
-	 */	
-//	public static void setImageDescriptors(IAction action, String type, String relPath) {
-//		relPath= relPath.substring(NAME_PREFIX_LENGTH);
-//		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
-//		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
-//		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$
-//	}
 	
 	/**
 	 * Helper method to access the image registry from the JavaPlugin class.

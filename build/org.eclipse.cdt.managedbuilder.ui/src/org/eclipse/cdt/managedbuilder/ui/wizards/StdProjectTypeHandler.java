@@ -45,11 +45,7 @@ public class StdProjectTypeHandler extends CWizardHandler {
 	/**
 	 * Note that configurations parameter is ignored
 	 */
-	public void createProject(IProject project, IConfiguration[] cfgs, String[] names)  throws CoreException {
-		IToolChain[] tcs = getSelectedToolChains();
-		if (tcs == null || tcs.length == 0) {
-			tcs = new IToolChain[1]; // null value
-		}
+	public void createProject(IProject project, CfgHolder[] cfgs)  throws CoreException {
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescription des = coreModel.getProjectDescription(project);
 		des = coreModel.createProjectDescription(project, true);
@@ -57,15 +53,9 @@ public class StdProjectTypeHandler extends CWizardHandler {
 		ManagedProject mProj = new ManagedProject(des);
 		info.setManagedProject(mProj);
 		
-		for (int i=0; i<tcs.length; i++) {
-			String s = "0";  //$NON-NLS-1$
-			String name = IDEWorkbenchMessages.getString("StdProjectTypeHandler.2"); //$NON-NLS-1$
-			if (tcs[i] != null) {
-				s = tcs[i].getId();
-				name = tcs[i].getName(); 
-			}
-			
-			Configuration cfg = new Configuration(mProj, (ToolChain)tcs[i], ManagedBuildManager.calculateChildId(s, null), name);
+		for (int i=0; i<cfgs.length; i++) {
+			String s = (cfgs[i].tc == null) ? "0" : cfgs[i].tc.getId();  //$NON-NLS-1$
+			Configuration cfg = new Configuration(mProj, (ToolChain)cfgs[i].tc, ManagedBuildManager.calculateChildId(s, null), cfgs[i].name);
 			IBuilder bld = cfg.getEditableBuilder();
 			if (bld != null) {
 				if(bld.isInternalBuilder()){
@@ -85,7 +75,16 @@ public class StdProjectTypeHandler extends CWizardHandler {
 		}
 		coreModel.setProjectDescription(project, des);
 	}
-
-	public boolean needsConfig() { return false; }
 	public boolean canCreateWithoutToolchain() { return true; } 
+	
+	/**
+	 * If no toolchains selected by user, use default toolchain
+	 */
+	public IToolChain[] getSelectedToolChains() {
+		if (tcs.size() == 0 || table.getSelection().length == 0) 
+			return new IToolChain[] { null };
+		else
+			return super.getSelectedToolChains();
+	}
+
 }

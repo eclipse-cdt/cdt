@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.newui.PageLayout;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -50,7 +51,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 
 	public class CMainWizardPage extends WizardPage implements IToolChainListListener {
 
-		private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.managedbuilder.ui.CDTWizard"; //$NON-NLS-1$
+		public static final String EXTENSION_POINT_ID = "org.eclipse.cdt.managedbuilder.ui.CDTWizard"; //$NON-NLS-1$
 		public static final String ELEMENT_NAME = "wizard"; //$NON-NLS-1$
 		public static final String CLASS_NAME = "class"; //$NON-NLS-1$
 
@@ -65,7 +66,6 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	    private Composite right;
 	    private Button show_sup;
 	    private Label right_label;
-	    private Button propButton;
    
 	    private CConfigWizardPage next;
 	    protected ICWizardHandler h_selected = null;
@@ -119,9 +119,9 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 			
 			createDynamicGroup(composite); 
 			
-	        updateData();
-			
-	        setPageComplete(validatePage());
+			switchTo(updateData(tree, right, show_sup, CMainWizardPage.this));
+
+			setPageComplete(validatePage());
 	        // Show description on opening
 	        setErrorMessage(null);
 	        setMessage(null);
@@ -157,7 +157,6 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	        right.setLayout(new PageLayout());
 
 	        show_sup = new Button(c, SWT.CHECK);
-	        show_sup.setSelection(true);
 	        show_sup.setText(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.1")); //$NON-NLS-1$
 	        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 	        gd.horizontalSpan = 2;
@@ -166,27 +165,11 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 				public void widgetSelected(SelectionEvent e) {
 					if (h_selected != null)
 						h_selected.setSupportedOnly(show_sup.getSelection());
-					updateData();
+					switchTo(updateData(tree, right, show_sup, CMainWizardPage.this));
 				}} );
-			propButton = new Button(c, SWT.CHECK);
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			propButton.setLayoutData(gd);
-			propButton.setText(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.2")); //$NON-NLS-1$
-			propButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (h_selected != null)
-						h_selected.setShowProperties(propButton.getSelection());
-				}});
-	    }
-	    
-	    private void setPropertyCheck(ICWizardHandler h) {
-	        if (h != null) {
-	        	propButton.setSelection(h.showProperties());
-	        	propButton.setEnabled(true);
-	        } else {
-	        	propButton.setEnabled(false);
-	        }
+
+	        // restore settings from preferences
+			show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_UNSUPP));
 	    }
 	    
 	    /**
@@ -213,14 +196,8 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	    public IWizardPage getNextPage() {
 			if (h_selected == null || h_selected.isDummy()) // cannot continue
 				return null;
-
-			if (h_selected.needsConfig()) { // show config page
-				MBSCustomPageManager.setPageHideStatus(next.pageID, false);
-				return next;
-			} else { // skip config page
-				MBSCustomPageManager.setPageHideStatus(next.pageID, true);
-				return MBSCustomPageManager.getNextPage(next.pageID);
-	    	}
+//			MBSCustomPageManager.setPageHideStatus(next.pageID, false);
+			return next;
 	    }		
 	    /**
 	     * Creates the project name specification controls.
@@ -264,7 +241,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	     *
 	     * @return the new project resource handle
 	     */
-	    public IProject getProjectHandle() {
+	    private IProject getProjectHandle() {
 	    	return ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectName());
 	    }
 
@@ -404,10 +381,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	     */
 	    public void setVisible(boolean visible) {
 	        super.setVisible(visible);
-	        setPropertyCheck(h_selected);
-	        if (visible) {
-				projectNameField.setFocus();
-			}
+	        if (visible) projectNameField.setFocus();
 	    }
 
 	    /**
@@ -418,7 +392,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	        return locationArea.isDefault();
 	    }
 
-		void updateData() {
+		public static ICWizardHandler updateData(Tree tree, Composite right, Button show_sup, IToolChainListListener ls) {
 			// remember selected item
 			TreeItem[] sel = tree.getSelection();
 			String savedStr = (sel.length > 0) ? sel[0].getText() : null; 
@@ -426,9 +400,9 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 			tree.removeAll();
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
 				.getExtensionPoint(EXTENSION_POINT_ID);
-			if (extensionPoint == null) return;
+			if (extensionPoint == null) return null;
 			IExtension[] extensions = extensionPoint.getExtensions();
-			if (extensions == null) return;
+			if (extensions == null) return null;
 			for (int i = 0; i < extensions.length; ++i)	{
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 				for (int k = 0; k < elements.length; k++) {
@@ -438,11 +412,11 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 							w = (ICNewWizard) elements[k].createExecutableExtension(CLASS_NAME);
 						} catch (CoreException e) {
 							System.out.println(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.5") + e.getLocalizedMessage()); //$NON-NLS-1$
-							return; 
+							return null; 
 						}
-						if (w == null) return;
+						if (w == null) return null;
 						
-						w.setDependentControl(right, this);
+						w.setDependentControl(right, ls);
 						w.createItems(tree, show_sup.getSelection());
 					}
 				}
@@ -460,15 +434,15 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 					}
 				}
 				tree.setSelection(target);
-				switchTo((ICWizardHandler)target.getData());
+				return (ICWizardHandler)target.getData();
 			}
+			return null;
 		}
 
 		/**
 		 * @param h - new handler
 		 */
 		private void switchTo(ICWizardHandler h) {
-	        setPropertyCheck(h);
 			if (h == null) return;
 			if (h_selected != null) h_selected.handleUnSelection();
 			h_selected = h;

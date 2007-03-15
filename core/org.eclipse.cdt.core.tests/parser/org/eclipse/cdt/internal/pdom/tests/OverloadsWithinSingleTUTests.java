@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -21,7 +19,6 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
  
@@ -65,32 +62,20 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 	}
 
 	public void testReferencesToGlobalBindings() throws Exception {
-		IBinding[] BarBs = pdom.findBindings(Pattern.compile("bar"), false, IndexFilter.ALL, new NullProgressMonitor());
-		IBinding[] globalBs = getGlobalBindings(BarBs);
-		assertEquals(4, globalBs.length);
+		IBinding[] BarBs = pdom.findBindings(Pattern.compile("bar"), true, IndexFilter.ALL, new NullProgressMonitor());
+		assertEquals(4, BarBs.length);
 
 		// bar()
-		assertFunctionRefCount(new Class[] {}, globalBs, 4);
+		assertFunctionRefCount(new Class[] {}, BarBs, 4);
 		
 		// bar(int)
-		assertFunctionRefCount(new Class[] {IBasicType.class}, globalBs, 3);
+		assertFunctionRefCount(new Class[] {IBasicType.class}, BarBs, 3);
 
 		// bar(int,int)
-		assertFunctionRefCount(new Class[] {IBasicType.class, IBasicType.class}, globalBs, 2);
+		assertFunctionRefCount(new Class[] {IBasicType.class, IBasicType.class}, BarBs, 2);
 
 		// bar(Foo,int)
-		assertFunctionRefCount(new Class[] {ICPPClassType.class, IBasicType.class}, globalBs, 1);
-	} 
-
-	// aftodo - this is probably not the best way to determine this
-	private static IBinding[] getGlobalBindings(IBinding[] bindings) throws CoreException {
-		List preresult = new ArrayList();
-		for(int i=0; i<bindings.length; i++) {
-			if(((PDOMBinding)bindings[i]).getParentNode()==null) {
-				preresult.add(bindings[i]);
-			}
-		}
-		return (IBinding[]) preresult.toArray(new IBinding[preresult.size()]);
+		assertFunctionRefCount(new Class[] {ICPPClassType.class, IBasicType.class}, BarBs, 1);
 	}
 
 	public void testReferencesToNamespacedBindings() throws Exception {

@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
@@ -195,7 +196,11 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 					storeDatabaseName(rproject, dbName);
 				}
 			
+				boolean newPDOM= !dbFile.exists();
 				pdom = new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject));
+				if(newPDOM) {
+					writeProjectPDOMProperties(pdom, rproject);
+				}
 				pdom.addListener(this);
 			}
 			
@@ -873,6 +878,11 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 					PDOMFile file = (PDOMFile) i.next();
 					file.clear();
 				}
+				
+				// ensure fragment id has a sensible value, in case callee's do not
+				// overwrite their own values
+				String oldId= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+				newPDOM.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, "exported."+oldId); //$NON-NLS-1$
 			} finally {
 				newPDOM.releaseWriteLock();
 			}
@@ -914,6 +924,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		try {
 			pdom.reloadFromFile(newFile);
 			storeDatabaseName(project.getProject(), newName);
+			writeProjectPDOMProperties(pdom, project.getProject());
 		}
 		finally {
 			pdom.releaseWriteLock();
@@ -925,5 +936,17 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		operation.setTargetLocation(location);
 		operation.setOptions(options);
 		operation.run(monitor);
+	}
+	
+	/**
+	 * Write metadata appropriate for a project pdom
+	 * @param pdom the pdom to write to
+	 * @param project the project to write metadata about
+	 * @throws CoreException
+	 */
+	public static void writeProjectPDOMProperties(WritablePDOM pdom, IProject project) throws CoreException {
+		String DELIM = "\0"; //$NON-NLS-1$
+		String id= CCorePlugin.PLUGIN_ID + ".pdom.project." + DELIM + project.getName() + DELIM; //$NON-NLS-1$
+		pdom.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, id);
 	}
 }

@@ -20,9 +20,12 @@ import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
+import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -69,6 +72,29 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		
 		if (fDelegate != null) {
 			fDelegate.run(monitor);
+			writeProjectProperties(project);
+		}
+	}
+	
+	/**
+	 * Writes project metadata to the pdom
+	 * @see PDOMManager#writeProjectPDOMProperties(WritablePDOM, org.eclipse.core.resources.IProject)
+	 * @param project the project to write project metadata about
+	 */
+	private void writeProjectProperties(ICProject project) {
+		try {
+			PDOMManager mgr= CCoreInternals.getPDOMManager();
+			WritablePDOM projectPDOM= (WritablePDOM) mgr.getPDOM(project);
+			projectPDOM.acquireWriteLock();
+			try {
+				PDOMManager.writeProjectPDOMProperties(projectPDOM, project.getProject());
+			} finally {
+				projectPDOM.releaseWriteLock();
+			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+		} catch(InterruptedException ie) {
+			// no-op
 		}
 	}
 

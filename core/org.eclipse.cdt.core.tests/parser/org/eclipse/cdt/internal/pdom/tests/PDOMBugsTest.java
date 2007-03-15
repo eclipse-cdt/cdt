@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import java.io.File;
+
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -57,6 +63,52 @@ public class PDOMBugsTest extends BaseTestCase {
 			assertEquals("e", wpdom.getProperty("c"));
 		} finally {
 			pdom.releaseWriteLock(0);
+		}
+	}
+	
+	public void testProjectPDOMProperties() throws Exception {
+		IWritableIndexFragment pdom = (IWritableIndexFragment) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		pdom.acquireReadLock();
+		try {
+			String id= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			assertNotNull(id);
+			
+			CCoreInternals.getPDOMManager().reindex(cproject);
+			
+			String id2= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			assertNotNull(id2);
+			assertEquals(id, id2);
+		} finally {
+			pdom.releaseReadLock();
+		}
+	}
+	
+	public void testProjectPDOMPropertiesOnExport() throws Exception {
+		File tmp= new File(System.getProperty("java.io.tmpdir")+"/temp"+System.currentTimeMillis()+".pdom");
+		IIndexLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
+		CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tmp, cvr);
+		
+		IWritableIndexFragment pdom = new WritablePDOM(tmp, cvr);
+		pdom.acquireReadLock();
+		try {
+			String id= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			assertNotNull(id);
+			
+			String id2= ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			assertNotNull(id2);
+			assertFalse(id2.equals(id));
+			
+			CCoreInternals.getPDOMManager().reindex(cproject);
+			
+			String id3= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			assertNotNull(id3);
+			assertEquals(id,id3);
+			
+			String id4= ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			assertNotNull(id4);
+			assertFalse(id4.equals(id));
+		} finally {
+			pdom.releaseReadLock();
 		}
 	}
 }

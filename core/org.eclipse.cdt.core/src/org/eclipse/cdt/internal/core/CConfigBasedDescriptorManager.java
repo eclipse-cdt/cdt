@@ -420,12 +420,12 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 					dr = findDescriptor(newDes);
 					updatedCfg = newDes.getIndexConfiguration();
 					if(dr != null){
-						desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_ADDED, CDescriptorEvent.EXTENSION_CHANGED | CDescriptorEvent.OWNER_CHANGED);
+						desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_ADDED, 0);
 					}
 				} else if(newDes == null) {
 					dr = findDescriptor(oldDes);
 					if(dr != null){
-						desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_REMOVED, CDescriptorEvent.EXTENSION_CHANGED | CDescriptorEvent.OWNER_CHANGED);
+						desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_REMOVED, 0);
 					}
 				} else {
 					dr = findDescriptor(newDes);
@@ -444,9 +444,9 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 						}
 						
 						int drEventFlags = descriptionFlagsToDescriptorFlags(flags);
-						if(drEventFlags != 0){
+//						if(drEventFlags != 0){
 							desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_CHANGED, drEventFlags);
-						}
+//						}
 					}
 				}
 				
@@ -469,9 +469,9 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		if((flags & ICDescriptionDelta.EXT_REF) != 0){
 			result |= CDescriptorEvent.EXTENSION_CHANGED;
 		}
-//		if((flags & ICDescriptionDelta.OWNER) != 0){
+		if((flags & ICDescriptionDelta.OWNER) != 0){
 			result |= CDescriptorEvent.OWNER_CHANGED;
-//		}
+		}
 		return result;
 	}
 	private ICDescriptionDelta findCfgDelta(ICDescriptionDelta delta, String id){

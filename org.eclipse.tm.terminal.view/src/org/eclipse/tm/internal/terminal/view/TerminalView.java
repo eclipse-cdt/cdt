@@ -238,7 +238,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			String strConnected = getStateDisplayName(fCtlTerminal.getState());
 			String status=""; //$NON-NLS-1$
 			status=fCtlTerminal.getStatusString(strConnected);
-			strTitle = ViewMessages.PROP_TITLE + status;
+			strTitle = ViewMessages.PROP_TITLE + ": "+ status; //$NON-NLS-1$
 		}
 
 		setContentDescription(strTitle);

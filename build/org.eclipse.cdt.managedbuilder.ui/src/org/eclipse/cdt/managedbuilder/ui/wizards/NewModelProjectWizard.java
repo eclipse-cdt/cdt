@@ -156,7 +156,7 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 	 * Remove created project either after error
 	 * or if user returned back from config page. 
 	 */
-	public void clearProject() {
+	private void clearProject() {
 		if (lastProjectName == null) return;
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().getProject(lastProjectName).delete(false, false, null);
@@ -196,6 +196,12 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 		selectAndReveal(newProject);
 		return true;
 	}
+	
+    public boolean performCancel() {
+    	clearProject();
+        return true;
+    }
+
 
 	private void deleteExtraConfigs() {
 		if (fMainPage.isCurrent()) return; // nothing to delete
@@ -208,7 +214,7 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 		for (int i=0; i<all.length; i++) {
 			boolean found = false;
 			for (int j=0; j<req.length; j++) {
-				if (all[i].getName() == req[j].name) {
+				if (all[i].getName().equals(req[j].name)) {
 					found = true; break;
 				}
 			}

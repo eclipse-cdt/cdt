@@ -1,4 +1,4 @@
-#Wed Feb 21 11:50:01 CET 2007
+#Fri Mar 16 15:49:02 CET 2007
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=disabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.4
@@ -10,7 +10,7 @@ org.eclipse.jdt.core.compiler.problem.autoboxing=ignore
 org.eclipse.jdt.core.compiler.problem.deprecation=warning
 org.eclipse.jdt.core.compiler.problem.deprecationInDeprecatedCode=disabled
 org.eclipse.jdt.core.compiler.problem.deprecationWhenOverridingDeprecatedMethod=disabled
-org.eclipse.jdt.core.compiler.problem.discouragedReference=warning
+org.eclipse.jdt.core.compiler.problem.discouragedReference=error
 org.eclipse.jdt.core.compiler.problem.emptyStatement=warning
 org.eclipse.jdt.core.compiler.problem.enumIdentifier=warning
 org.eclipse.jdt.core.compiler.problem.fallthroughCase=ignore

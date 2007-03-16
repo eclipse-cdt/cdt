@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,8 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
@@ -49,7 +51,7 @@ public class CTextTools {
 	/** The C source code scanner */
 	private CCodeScanner fCodeScanner;
 	/** The C++ source code scanner */
-	private CppCodeScanner fCppCodeScanner;
+	private CCodeScanner fCppCodeScanner;
 	/** The C partitions scanner */
 	private FastCPartitionScanner fPartitionScanner;
 	/** The C multiline comment scanner */
@@ -97,15 +99,15 @@ public class CTextTools {
 			store = CUIPlugin.getDefault().getPreferenceStore();
 		}
 		fColorManager= new CColorManager(autoDisposeOnDisplayDispose);
-		fCodeScanner= new CCodeScanner(fColorManager, store);
-		fCppCodeScanner= new CppCodeScanner(fColorManager, store);
+		fCodeScanner= new CCodeScanner(fColorManager, store, GCCLanguage.getDefault());
+		fCppCodeScanner= new CCodeScanner(fColorManager, store, GPPLanguage.getDefault());
 		fPartitionScanner= new FastCPartitionScanner();
 		
 		fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_STRING);
-		fCPreprocessorScanner= new CPreprocessorScanner(fColorManager, store, false);
-		fCppPreprocessorScanner= new CPreprocessorScanner(fColorManager, store, true);
+		fCPreprocessorScanner= new CPreprocessorScanner(fColorManager, store, GCCLanguage.getDefault());
+		fCppPreprocessorScanner= new CPreprocessorScanner(fColorManager, store, GPPLanguage.getDefault());
 
 		fPreferenceStore = store;
 		fPreferenceStore.addPropertyChangeListener(fPreferenceListener);

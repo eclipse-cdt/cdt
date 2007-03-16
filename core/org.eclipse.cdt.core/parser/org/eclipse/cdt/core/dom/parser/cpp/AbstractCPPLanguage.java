@@ -11,7 +11,10 @@
 package org.eclipse.cdt.core.dom.parser.cpp;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
@@ -23,16 +26,19 @@ import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -54,7 +60,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @since 4.0
  */
-public abstract class AbstractCPPLanguage extends AbstractLanguage {
+public abstract class AbstractCPPLanguage extends AbstractLanguage implements ICLanguageKeywords {
 
 	protected static class NameCollector extends CPPASTVisitor {
 		{
@@ -74,10 +80,10 @@ public abstract class AbstractCPPLanguage extends AbstractLanguage {
 	}
 
 	public Object getAdapter(Class adapter) {
-		if (adapter == IPDOMLinkageFactory.class)
+		if (adapter == IPDOMLinkageFactory.class) {
 			return new PDOMCPPLinkageFactory();
-		else
-			return super.getAdapter(adapter);
+		}
+		return super.getAdapter(adapter);
 	}
 
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
@@ -166,4 +172,39 @@ public abstract class AbstractCPPLanguage extends AbstractLanguage {
 	 */
 	protected abstract AbstractCPPParserExtensionConfiguration getParserExtensionConfiguration();
 
+	/*
+	 * @see org.eclipse.cdt.core.model.ICLanguageKeywords#getKeywords()
+	 */
+	public String[] getKeywords() {
+		Set keywords= KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, ParserLanguage.CPP);
+		keywords= new HashSet(keywords);
+		List additionalKeywords= getScannerExtensionConfiguration().getAdditionalKeywords().toList();
+		for (Iterator iterator = additionalKeywords.iterator(); iterator.hasNext(); ) {
+			char[] name = (char[]) iterator.next();
+			keywords.add(new String(name));
+		}
+		return (String[]) keywords.toArray(new String[keywords.size()]);
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.model.ICLanguageKeywords#getBuiltinTypes()
+	 */
+	public String[] getBuiltinTypes() {
+		Set types= KeywordSets.getKeywords(KeywordSetKey.TYPES, ParserLanguage.CPP);
+		return (String[]) types.toArray(new String[types.size()]);
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.model.ICLanguageKeywords#getPreprocessorKeywords()
+	 */
+	public String[] getPreprocessorKeywords() {
+		Set keywords= KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, ParserLanguage.CPP);
+		keywords= new HashSet(keywords);
+		List additionalKeywords= getScannerExtensionConfiguration().getAdditionalPreprocessorKeywords().toList();
+		for (Iterator iterator = additionalKeywords.iterator(); iterator.hasNext(); ) {
+			char[] name = (char[]) iterator.next();
+			keywords.add(new String(name));
+		}
+		return (String[]) keywords.toArray(new String[keywords.size()]);
+	}
 }

@@ -63,10 +63,10 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -101,13 +101,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	private String fDocumentPartitioning;
 	/**
-	 * The C++ source code scanner.
+	 * The code scanner.
 	 */
-	private AbstractCScanner fCppCodeScanner;
-	/**
-	 * The C source code scanner.
-	 */
-	private AbstractCScanner fCCodeScanner;
+	private AbstractCScanner fCodeScanner;
 	/**
 	 * The C multi-line comment scanner.
 	 */
@@ -121,17 +117,13 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	private AbstractCScanner fStringScanner;
 	/**
+	 * The preprocessor scanner.
+	 */
+	private AbstractCScanner fPreprocessorScanner;
+	/**
 	 * The color manager.
 	 */
 	private IColorManager fColorManager;
-	/**
-	 * The C preprocessor scanner.
-	 */
-	private AbstractCScanner fCPreprocessorScanner;
-	/**
-	 * The C++ preprocessor scanner.
-	 */
-	private AbstractCScanner fCppPreprocessorScanner;
 	
 	/**
 	 * Creates a new C source viewer configuration for viewers in the given editor
@@ -162,6 +154,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 *
 	 * @param tools the C text tools collection to be used
 	 * @param editor the editor in which the configured viewer will reside
+	 * 
+	 * @deprecated Use {@link #CSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore, ITextEditor editor, String partitioning)} instead.
 	 */
 	public CSourceViewerConfiguration(CTextTools tools, ITextEditor editor) {
 		super(CUIPlugin.getDefault().getCombinedPreferenceStore());
@@ -169,13 +163,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		fColorManager= tools.getColorManager();
 		fTextEditor= editor;
 		fDocumentPartitioning= fTextTools.getDocumentPartitioning();
-		fCppCodeScanner= (AbstractCScanner) fTextTools.getCppCodeScanner();
-		fCCodeScanner= (AbstractCScanner) fTextTools.getCCodeScanner();
 		fMultilineCommentScanner= (AbstractCScanner) fTextTools.getMultilineCommentScanner();
 		fSinglelineCommentScanner= (AbstractCScanner) fTextTools.getSinglelineCommentScanner();
 		fStringScanner= (AbstractCScanner) fTextTools.getStringScanner();
-		fCPreprocessorScanner= (AbstractCScanner) fTextTools.getCPreprocessorScanner();
-		fCppPreprocessorScanner= (AbstractCScanner) fTextTools.getCppPreprocessorScanner();
 	}
 
 	/**
@@ -206,21 +196,31 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 
 	/**
-	 * Returns the C preprocessor scanner for this configuration.
+	 * Returns the preprocessor scanner for this configuration.
 	 *
-	 * @return the C preprocessor scanner
+	 * @return the preprocessor scanner
 	 */
-	protected RuleBasedScanner getCPreprocessorScanner() {
-		return fCPreprocessorScanner;
-	}	
-	
-	/**
-	 * Returns the C++ preprocessor scanner for this configuration.
-	 *
-	 * @return the C++ preprocessor scanner
-	 */
-	protected RuleBasedScanner getCppPreprocessorScanner() {
-		return fCppPreprocessorScanner;
+	protected RuleBasedScanner getPreprocessorScanner(ILanguage language) {
+		if (fPreprocessorScanner != null) {
+			return fPreprocessorScanner;
+		}
+		if (isNewSetup()) {
+			AbstractCScanner scanner= null;
+			if (language instanceof ICLanguageKeywords) {
+				scanner= new CPreprocessorScanner(getColorManager(), fPreferenceStore, (ICLanguageKeywords)language);
+			}
+			if (scanner == null) {
+				scanner= new CPreprocessorScanner(getColorManager(), fPreferenceStore, GPPLanguage.getDefault());
+			}
+			fPreprocessorScanner= scanner;
+		} else {
+			if (language instanceof ICLanguageKeywords) {
+				return fTextTools.getCPreprocessorScanner();
+			} else {
+				return fTextTools.getCppPreprocessorScanner();
+			}
+		}
+		return fPreprocessorScanner;
 	}	
 	
 	/**
@@ -286,13 +286,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	private void initializeScanners() {
 		Assert.isTrue(isNewSetup());
-		fCppCodeScanner= new CppCodeScanner(getColorManager(), fPreferenceStore);
-		fCCodeScanner= new CCodeScanner(getColorManager(), fPreferenceStore);
 		fMultilineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_STRING);
-		fCppPreprocessorScanner= new CPreprocessorScanner(fColorManager, fPreferenceStore, true);
-		fCPreprocessorScanner= new CPreprocessorScanner(fColorManager, fPreferenceStore, false);
 	}
 
     /**
@@ -302,20 +298,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		CPresentationReconciler reconciler= new CPresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
-		RuleBasedScanner scanner = null;
-		ILanguage language = getLanguage();
-		if (language instanceof GPPLanguage) {
-			scanner = fCppCodeScanner;
-		} else if (language instanceof GCCLanguage) {
-			scanner = fCCodeScanner;
-		} else if (language != null) {
-			ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
-			if (languageUI != null)
-				scanner = languageUI.getCodeScanner();
-		}
-		if (scanner == null) {
-			scanner= fCppCodeScanner;
-		}
+		ILanguage language= getLanguage();
+		RuleBasedScanner scanner = getCodeScanner(language);
 
 		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(scanner);
 
@@ -340,19 +324,46 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		reconciler.setDamager(dr, ICPartitions.C_CHARACTER);
 		reconciler.setRepairer(dr, ICPartitions.C_CHARACTER);
 		
-		if (language instanceof GPPLanguage) {
-			dr= new DefaultDamagerRepairer(getCppPreprocessorScanner());
-		} else if (language instanceof GCCLanguage) {
-			dr= new DefaultDamagerRepairer(getCPreprocessorScanner());
-		} else {
-			dr= new DefaultDamagerRepairer(getCppPreprocessorScanner());
-		}
+		dr= new DefaultDamagerRepairer(getPreprocessorScanner(language));
 		if (dr != null) {
 			reconciler.setDamager(new PartitionDamager(), ICPartitions.C_PREPROCESSOR);
 			reconciler.setRepairer(dr, ICPartitions.C_PREPROCESSOR);
 		}
 		
 		return reconciler;
+	}
+
+	/**
+	 * @return the code scanner for the given language
+	 */
+	protected RuleBasedScanner getCodeScanner(ILanguage language) {
+		if (fCodeScanner != null) {
+			return fCodeScanner;
+		}
+		if (isNewSetup()) {
+			RuleBasedScanner scanner= null;
+			if (language instanceof ICLanguageKeywords) {
+				ICLanguageKeywords cLang= (ICLanguageKeywords)language;
+				scanner = new CCodeScanner(getColorManager(), fPreferenceStore, cLang);
+			} else if (language != null) {
+				ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
+				if (languageUI != null)
+					scanner = languageUI.getCodeScanner();
+			}
+			if (scanner == null) {
+				scanner = new CCodeScanner(getColorManager(), fPreferenceStore, GPPLanguage.getDefault());
+			}
+			if (scanner instanceof AbstractCScanner) {
+				fCodeScanner= (AbstractCScanner)scanner;
+			}
+			return scanner;
+		} else {
+			if (language instanceof ICLanguageKeywords) {
+				return fTextTools.getCCodeScanner();
+			} else {
+				return fTextTools.getCppCodeScanner();
+			}
+		}
 	}
 
 	/*
@@ -610,11 +621,18 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 	
 	public boolean affectsBehavior(PropertyChangeEvent event) {
-		return  fCppCodeScanner.affectsBehavior(event)
-			|| fMultilineCommentScanner.affectsBehavior(event)
+		if (fMultilineCommentScanner.affectsBehavior(event)
 			|| fSinglelineCommentScanner.affectsBehavior(event)
-			|| fStringScanner.affectsBehavior(event)
-			|| fCppPreprocessorScanner.affectsBehavior(event);
+			|| fStringScanner.affectsBehavior(event)) {
+			return true;
+		}
+		if (fCodeScanner != null && fCodeScanner.affectsBehavior(event)) {
+			return true;
+		}
+		if (fPreprocessorScanner != null && fPreprocessorScanner.affectsBehavior(event)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -624,6 +642,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @param event the event to whch to adapt
 	 */
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		Assert.isTrue(!isNewSetup());
 		fTextTools.adaptToPreferenceChange(event);
 	}
 
@@ -673,12 +692,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @return <code>true</code> if event causes a behavioral change
 	 */
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
-		return fCppCodeScanner.affectsBehavior(event)
-		    || fCCodeScanner.affectsBehavior(event)
-			|| fMultilineCommentScanner.affectsBehavior(event)
-			|| fSinglelineCommentScanner.affectsBehavior(event)
-			|| fStringScanner.affectsBehavior(event)
-		    || fCppPreprocessorScanner.affectsBehavior(event);
+		return affectsBehavior(event);
 	}
 
 	/**
@@ -694,20 +708,16 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		Assert.isTrue(isNewSetup());
-		if (fCppCodeScanner.affectsBehavior(event))
-			fCppCodeScanner.adaptToPreferenceChange(event);
-		if (fCCodeScanner.affectsBehavior(event))
-			fCCodeScanner.adaptToPreferenceChange(event);
+		if (fCodeScanner != null && fCodeScanner.affectsBehavior(event))
+			fCodeScanner.adaptToPreferenceChange(event);
 		if (fMultilineCommentScanner.affectsBehavior(event))
 			fMultilineCommentScanner.adaptToPreferenceChange(event);
 		if (fSinglelineCommentScanner.affectsBehavior(event))
 			fSinglelineCommentScanner.adaptToPreferenceChange(event);
 		if (fStringScanner.affectsBehavior(event))
 			fStringScanner.adaptToPreferenceChange(event);
-		if (fCppPreprocessorScanner.affectsBehavior(event))
-			fCppPreprocessorScanner.adaptToPreferenceChange(event);
-		if (fCPreprocessorScanner.affectsBehavior(event))
-			fCPreprocessorScanner.adaptToPreferenceChange(event);
+		if (fPreprocessorScanner != null && fPreprocessorScanner.affectsBehavior(event))
+			fPreprocessorScanner.adaptToPreferenceChange(event);
 	}
 
 	/*
@@ -780,7 +790,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	protected ILanguage getLanguage() {
 		if (fTextEditor == null) {
-			return null;
+			return GPPLanguage.getDefault();
 		}
 		ICElement element = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fTextEditor.getEditorInput());
 		if (element instanceof ITranslationUnit) {
@@ -810,6 +820,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 				return LanguageManager.getInstance().getLanguage(contentType);
 			}
 		}
-		return null;
+		// fallback
+		return GPPLanguage.getDefault();
 	}
 }

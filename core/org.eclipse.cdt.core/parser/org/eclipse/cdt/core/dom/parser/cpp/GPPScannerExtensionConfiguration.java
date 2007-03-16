@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,11 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Ed Swartz (Nokia)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.parser.GNUScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IToken;
@@ -22,8 +22,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 /**
  * @author jcamelon
  */
-public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfiguration implements
-        IScannerExtensionConfiguration {
+public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#supportMinAndMaxOperators()

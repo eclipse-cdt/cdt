@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,9 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,9 +22,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
-import org.eclipse.cdt.core.parser.KeywordSetKey;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
 
 import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
@@ -49,19 +45,18 @@ public class CPreprocessorScanner extends AbstractCScanner {
 		ICColorConstants.C_STRING,
         ICColorConstants.PP_HEADER
 	};
+	private ICLanguageKeywords fKeywords;
 	
-	private boolean fIsCpp;
-
 	/**
 	 * Creates a C/C++ preprocessor scanner.
 	 * 
-     * @param manager  the color manager.
-     * @param store  the preference store.
-     * @param isCpp  if <code>true</code> C++ keywords are used, else C keywords
+     * @param manager the color manager
+     * @param store  the preference store
+     * @param keywords  the keywords defined by the language dialect
 	 */
-	public CPreprocessorScanner(IColorManager manager, IPreferenceStore store, boolean isCpp) {
+	public CPreprocessorScanner(IColorManager manager, IPreferenceStore store, ICLanguageKeywords keywords) {
 		super(manager, store);
-		fIsCpp= isCpp;
+		fKeywords= keywords;
 		initialize();
 	}
 
@@ -80,14 +75,11 @@ public class CPreprocessorScanner extends AbstractCScanner {
 		
 		token= getToken(ICColorConstants.PP_DIRECTIVE);
 		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), token);
-		Iterator iter;
-		if (fIsCpp) {
-			iter = ParserFactory.getKeywordSet( KeywordSetKey.PP_DIRECTIVE, ParserLanguage.CPP ).iterator();
-		} else {
-			iter = ParserFactory.getKeywordSet( KeywordSetKey.PP_DIRECTIVE, ParserLanguage.C ).iterator();
+        token= getToken(ICColorConstants.C_TYPE);
+		String[] ppKeywords= fKeywords.getPreprocessorKeywords();
+		for (int i = 0; i < ppKeywords.length; i++) {
+			preprocessorRule.addWord(ppKeywords[i], token);
 		}
-		while( iter.hasNext() )
-			preprocessorRule.addWord((String) iter.next(), token);
 
 		// add ## operator
 		preprocessorRule.addWord("##", token); //$NON-NLS-1$
@@ -97,19 +89,16 @@ public class CPreprocessorScanner extends AbstractCScanner {
 		WordRule wordRule= new WordRule(new CWordDetector(), defaultToken);
 		
 		token= getToken(ICColorConstants.C_KEYWORD);
-		if (fIsCpp) {
-			iter = ParserFactory.getKeywordSet( KeywordSetKey.KEYWORDS, ParserLanguage.CPP ).iterator();
-		} else {
-			iter = ParserFactory.getKeywordSet( KeywordSetKey.KEYWORDS, ParserLanguage.C ).iterator();
+		String[] keywords= fKeywords.getKeywords();
+		for (int i = 0; i < keywords.length; i++) {
+			wordRule.addWord(keywords[i], token);
 		}
-		while( iter.hasNext() )
-			wordRule.addWord((String) iter.next(), token);
-
-		token= getToken(ICColorConstants.C_TYPE);
-		iter = ParserFactory.getKeywordSet( KeywordSetKey.TYPES, ParserLanguage.C ).iterator();
-		while( iter.hasNext() )
-			wordRule.addWord((String) iter.next(), token);
-		rules.add(wordRule);
+        token= getToken(ICColorConstants.C_TYPE);
+		String[] types= fKeywords.getBuiltinTypes();
+		for (int i = 0; i < types.length; i++) {
+			wordRule.addWord(types[i], token);
+		}
+        rules.add(wordRule);
 		
         token = getToken(ICColorConstants.PP_HEADER);
         CHeaderRule headerRule = new CHeaderRule(token);

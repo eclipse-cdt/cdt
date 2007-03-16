@@ -26,10 +26,10 @@ import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
-import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -3889,16 +3889,16 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return false;
 	}
 	
-	public PathInfo setDiscoveredPathInfo(IInputType type, PathInfo info){
-		return (PathInfo)discoveredInfoMap.put(getTypeKey(type), info);
+	public PathInfoCache setDiscoveredPathInfo(IInputType type, PathInfoCache info){
+		return (PathInfoCache)discoveredInfoMap.put(getTypeKey(type), info);
 	}
 
-	public PathInfo getDiscoveredPathInfo(IInputType type){
-		return (PathInfo)discoveredInfoMap.get(getTypeKey(type));
+	public PathInfoCache getDiscoveredPathInfo(IInputType type){
+		return (PathInfoCache)discoveredInfoMap.get(getTypeKey(type));
 	}
 	
-	public PathInfo clearDiscoveredPathInfo(IInputType type){
-		return (PathInfo)discoveredInfoMap.remove(getTypeKey(type));
+	public PathInfoCache clearDiscoveredPathInfo(IInputType type){
+		return (PathInfoCache)discoveredInfoMap.remove(getTypeKey(type));
 	}
 
 	public void clearAllDiscoveredInfo(){

@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
+import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -32,7 +33,6 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
-import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -2761,12 +2761,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //		return tc.setScannerConfigBuilderInfo(info);
 //	}
 
-	public PathInfo setDiscoveredPathInfo(PathInfo info){
+	public PathInfoCache setDiscoveredPathInfo(PathInfoCache info){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
 		return tc.setDiscoveredPathInfo(info);
 	}
 
-	public PathInfo getDiscoveredPathInfo(){
+	public PathInfoCache getDiscoveredPathInfo(){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
 		return tc.getDiscoveredPathInfo();
 	}
@@ -2776,9 +2776,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return tc.getScannerConfigDiscoveryProfileId();
 	}
 	
-	public PathInfo clearDiscoveredPathInfo(){
+	public PathInfoCache clearDiscoveredPathInfo(){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
-		return tc.setDiscoveredPathInfo(null);
+		return tc.clearDiscoveredPathInfo();
 	}
 	
 	public ICfgScannerConfigBuilderInfo2Set getCfgScannerConfigInfo(){

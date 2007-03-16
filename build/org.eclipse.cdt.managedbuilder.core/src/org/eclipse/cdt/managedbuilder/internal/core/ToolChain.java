@@ -22,9 +22,9 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
-import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -116,7 +116,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	
 	private IFolderInfo parentFolderInfo;
 	
-	private PathInfo discoveredInfo;
+	private PathInfoCache discoveredInfo;
 	private Boolean isRcTypeBasedDiscovery;
 
 
@@ -2601,18 +2601,18 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		isRcTypeBasedDiscovery = Boolean.valueOf(on);
 	}
 
-	public PathInfo setDiscoveredPathInfo(PathInfo info){
-		PathInfo oldInfo = discoveredInfo;
+	public PathInfoCache setDiscoveredPathInfo(PathInfoCache info){
+		PathInfoCache oldInfo = discoveredInfo;
 		discoveredInfo = info;
 		return oldInfo;
 	}
 
-	public PathInfo getDiscoveredPathInfo(){
+	public PathInfoCache getDiscoveredPathInfo(){
 		return discoveredInfo;
 	}
 	
-	public PathInfo clearDiscoveredPathInfo(){
-		PathInfo oldInfo = discoveredInfo;
+	public PathInfoCache clearDiscoveredPathInfo(){
+		PathInfoCache oldInfo = discoveredInfo;
 		discoveredInfo = null;
 		return oldInfo;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.PathEntryContainerChanged;
-import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -232,10 +230,12 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#updateDiscoveredInfo(org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo, java.util.List)
      */
     public void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List changedResources) throws CoreException {
-    	DiscoveredInfoHolder holder = getHolder(info.getProject(), false);
-		if (holder != null && holder.getInfo(context) != null) {
+    	DiscoveredInfoHolder holder = getHolder(info.getProject(), true);
+    	IDiscoveredPathInfo oldInfo = holder.getInfo(context); 
+		if (oldInfo != null) {
             IDiscoveredScannerInfoSerializable serializable = info.getSerializable();
 			if (serializable != null) {
+				holder.setInfo(context, info);
                 IProject project = info.getProject();
 				DiscoveredScannerInfoStore.getInstance().saveDiscoveredScannerInfoToState(project, context, serializable);
 				fireUpdate(INFO_CHANGED, info);

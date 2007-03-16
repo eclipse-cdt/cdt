@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.envvar;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
@@ -51,6 +56,81 @@ public class UserDefinedEnvironmentSupplier extends
 */
 	private StorableEnvironment fWorkspaceVariables;
 	
+	
+	static class VarKey {
+		private IEnvironmentVariable fVar;
+		private boolean fNameOnly;
+		private int fCode;
+		
+		VarKey(IEnvironmentVariable var, boolean nameOnly){
+			fVar = var;
+			fNameOnly = nameOnly;
+		}
+		
+		public IEnvironmentVariable getVariable(){
+			return fVar; 
+		}
+
+		public boolean equals(Object obj) {
+			if(obj == this)
+				return true;
+			
+			if(!(obj instanceof VarKey))
+				return false;
+			
+			VarKey other = (VarKey)obj;
+			
+			IEnvironmentVariable otherVar = other.fVar;
+			
+			if(fVar == otherVar)
+				return true;
+			
+			if(!CDataUtil.objectsEqual(fVar.getName(), otherVar.getName()))
+				return false;
+
+			if(fNameOnly)
+				return true;
+			
+			if(fVar.getOperation() != otherVar.getOperation())
+				return false;
+
+			if(!CDataUtil.objectsEqual(fVar.getValue(), otherVar.getValue()))
+				return false;
+			
+			if(!CDataUtil.objectsEqual(fVar.getDelimiter(),otherVar.getDelimiter()))
+				return false;
+				
+			return true;
+		}
+
+		public int hashCode() {
+			int code = fCode;
+			if(code == 0){
+				code = 47;
+				
+				String tmp = fVar.getName();
+				if(tmp != null)
+					code += tmp.hashCode();
+	
+				if(fNameOnly)
+					return code;
+				
+				code += fVar.getOperation();
+				
+				tmp = fVar.getValue();
+				if(tmp != null)
+					code += tmp.hashCode();
+				
+				tmp = fVar.getDelimiter();
+				if(tmp != null)
+					code += tmp.hashCode();
+				
+				fCode = code;
+			}
+			return code;
+		}
+		
+	}
 	protected StorableEnvironment getEnvironment(Object context){
 		return getEnvironment(context,true);
 	}
@@ -183,11 +263,85 @@ public class UserDefinedEnvironmentSupplier extends
 		return new StorableEnvironment(envVar, false);
 	}
 	
-	public void setWorkspaceEnvironment(StorableEnvironment env){
+	public boolean setWorkspaceEnvironment(StorableEnvironment env){
+		StorableEnvironment oldEnv = getEnvironment(null);
+		
 		fWorkspaceVariables = new StorableEnvironment(env, false);
 		
+		EnvironmentChangeEvent event = createEnvironmentChangeEvent(fWorkspaceVariables.getVariables(), oldEnv.getVariables());
+		
 		storeWorkspaceEnvironment(true);
+		
+//		updateProjectInfo(null);
+		
+		return event != null;
 	}
+	
+	static EnvironmentChangeEvent createEnvironmentChangeEvent(IEnvironmentVariable[] newVars, IEnvironmentVariable[] oldVars){
+		IEnvironmentVariable[] addedVars = null, removedVars = null, changedVars = null;
+		
+		if(oldVars == null || oldVars.length == 0){
+			if(newVars != null && newVars.length != 0)
+				addedVars = (IEnvironmentVariable[])newVars.clone() ;
+		} else if(newVars == null || newVars.length == 0){
+			removedVars = (IEnvironmentVariable[])oldVars.clone();
+		} else {
+			HashSet newSet = new HashSet(newVars.length);
+			HashSet oldSet = new HashSet(oldVars.length);
+			
+			for(int i = 0; i < newVars.length; i++){
+				newSet.add(new VarKey(newVars[i], true));
+			}
+	
+			for(int i = 0; i < oldVars.length; i++){
+				oldSet.add(new VarKey(oldVars[i], true));
+			}
+	
+			HashSet newSetCopy = (HashSet)newSet.clone();
+	
+			newSet.removeAll(oldSet);
+			oldSet.removeAll(newSetCopy);
+			
+			if(newSet.size() != 0){
+				addedVars = varsFromKeySet(newSet);
+			}
+			
+			if(oldSet.size() != 0){
+				removedVars = varsFromKeySet(oldSet);
+			}
+			
+			newSetCopy.removeAll(newSet);
+			
+			HashSet modifiedSet = new HashSet(newSetCopy.size());
+			for(Iterator iter = newSetCopy.iterator(); iter.hasNext();){
+				VarKey key = (VarKey)iter.next();
+				modifiedSet.add(new VarKey(key.getVariable(), false));
+			}
+			
+			for(int i = 0; i < oldVars.length; i++){
+				modifiedSet.remove(new VarKey(oldVars[i], false));
+			}
+			
+			if(modifiedSet.size() != 0)
+				changedVars = varsFromKeySet(modifiedSet); 
+		}
+		
+		if(addedVars != null || removedVars != null || changedVars != null)
+			return new EnvironmentChangeEvent(addedVars, removedVars, changedVars);
+		return null;
+	}
+	
+	static IEnvironmentVariable[] varsFromKeySet(Set set){
+		IEnvironmentVariable vars[] = new IEnvironmentVariable[set.size()];
+		int i = 0;
+		for(Iterator iter = set.iterator(); iter.hasNext(); i++){
+			VarKey key = (VarKey)iter.next();
+			vars[i] = key.getVariable();
+		}
+		
+		return vars;
+	}
+
 	
 	public void storeProjectEnvironment(ICProjectDescription des, boolean force){
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
@@ -242,7 +396,7 @@ public class UserDefinedEnvironmentSupplier extends
 			return null;
 		IEnvironmentVariable var =  env.createVariable(name,value,op,delimiter);
 		if(env.isChanged()){
-			setRebuildStateForContext(context);
+//			updateProjectInfo(context);
 			env.setChanged(false);
 		}
 		return var;
@@ -253,8 +407,9 @@ public class UserDefinedEnvironmentSupplier extends
 		if(env == null)
 			return null;
 		IEnvironmentVariable var = env.deleteVariable(name);
-		if(var != null)
-			setRebuildStateForContext(context);
+		if(var != null){
+//			updateProjectInfo(context);
+		}
 		return var;
 	}
 	
@@ -263,8 +418,9 @@ public class UserDefinedEnvironmentSupplier extends
 		if(env == null)
 			return;
 
-		if(env.deleteAll())
-		setRebuildStateForContext(context);
+		if(env.deleteAll()){
+//			updateProjectInfo(context);
+		}
 	}
 	
 	public void setVariables(IEnvironmentVariable vars[], Object context){
@@ -274,35 +430,13 @@ public class UserDefinedEnvironmentSupplier extends
 		
 		env.setVariales(vars);
 		if(env.isChanged()){
-			setRebuildStateForContext(context);
+//			updateProjectInfo(context);
 			env.setChanged(false);
 		}
 	}
 	
-	protected void setRebuildStateForContext(Object context){
-/*		if(context == null)
-			return;
-		if(context instanceof ICConfigurationDescription){
-			cfgVarsModified((ICConfigurationDescription)context);
-		} else if(context == null || context instanceof IWorkspace){
-			CoreModel model = CoreModel.getDefault();
-			IProject projects[] = ((IWorkspace)context).getRoot().getProjects();
-			for(int i = 0; i < projects.length; i++){
-				ICProjectDescription des = model.getProjectDescription(projects[i]);
-				
-//				if(ManagedBuildManager.manages(projects[i])){
-//					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projects[i]);
-					if(des != null){
-						ICConfigurationDescription cfgs[] = des.getConfigurations();
-						for(int j = 0; j < cfgs.length; j++){
-							cfgVarsModified(cfgs[j]);
-						}
-					}
-//				}
-			}
-		}
-*/
-	}
+//	protected void updateProjectInfo(Object context){
+//	}
 	
 //	protected void cfgVarsModified(ICConfigurationDescription cfg){
 //		cfg.setRebuildState(true);

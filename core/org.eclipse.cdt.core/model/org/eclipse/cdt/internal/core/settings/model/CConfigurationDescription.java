@@ -99,7 +99,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		if(baseData instanceof CConfigurationDescriptionCache){
 			baseData = ((CConfigurationDescriptionCache)baseData).getConfigurationData();
 		}
-		setData(CProjectDescriptionManager.getInstance().createData(this, base, baseData, false));
+		setData(CProjectDescriptionManager.getInstance().createData(this, base, baseData, false, null));
 	}
 
 	/*
@@ -134,7 +134,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		fCfgSpecSettings.setId(id);
 		fCfgSpecSettings.setName(name);
 		fCfgSpecSettings.setBuildSystemId(bsId);
-		setData(CProjectDescriptionManager.getInstance().loadData(this));
+		setData(CProjectDescriptionManager.getInstance().loadData(this, null));
 	}
 
 	void doWritable() throws CoreException{
@@ -142,7 +142,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 			CConfigurationData data = getConfigurationData(false);
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)data;
 			data = cache.getConfigurationData();
-			setData(CProjectDescriptionManager.getInstance().createData(this, cache, data, true));
+			setData(CProjectDescriptionManager.getInstance().createData(this, cache, data, true, null));
 		}
 	}
 	

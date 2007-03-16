@@ -47,8 +47,6 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.settings.model.ICBuildSetting;
-import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
@@ -96,12 +94,12 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
@@ -149,34 +147,74 @@ public class CProjectDescriptionManager {
 	private static final QualifiedName SCANNER_INFO_PROVIDER_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "scannerInfoProvider"); //$NON-NLS-1$
 	private static final QualifiedName LOAD_FLAG = new QualifiedName(CCorePlugin.PLUGIN_ID, "descriptionLoadded"); //$NON-NLS-1$
 
-	private class CompositeSafeRunnable implements ISafeRunnable {
+//	private class CompositeSafeRunnable implements ISafeRunnable {
+//		private List fRunnables = new ArrayList();
+//		private boolean fStopOnErr;
+//		
+//		public void add(ISafeRunnable runnable){
+//			fRunnables.add(runnable);
+//		}
+//
+//		public void handleException(Throwable exception) {
+//		}
+//
+//		public void run() throws Exception {
+//			for(Iterator iter = fRunnables.iterator(); iter.hasNext();){
+//				ISafeRunnable r = (ISafeRunnable)iter.next();
+//				try {
+//					r.run();
+//				} catch (Exception e){
+//					r.handleException(e);
+//					if(fStopOnErr)
+//						throw e;
+//					else
+//						r.handleException(e);
+//				}
+//			}
+//		}
+//	}
+
+	private class CompositeWorkspaceRunnable implements IWorkspaceRunnable {
 		private List fRunnables = new ArrayList();
+		private String fName;
 		private boolean fStopOnErr;
 		
-		public void add(ISafeRunnable runnable){
+		CompositeWorkspaceRunnable(String name){
+			if(name == null)
+				name = "";	//$NON-NLS-1$
+			fName = name;
+		}
+
+		public void add(IWorkspaceRunnable runnable){
 			fRunnables.add(runnable);
 		}
 
-		public void handleException(Throwable exception) {
-		}
+		public void run(IProgressMonitor monitor) throws CoreException {
+			try {
+				monitor.beginTask(fName, fRunnables.size());
 
-		public void run() throws Exception {
-			for(Iterator iter = fRunnables.iterator(); iter.hasNext();){
-				ISafeRunnable r = (ISafeRunnable)iter.next();
-				try {
-					r.run();
-				} catch (Exception e){
-					r.handleException(e);
-					if(fStopOnErr)
-						throw e;
-					else
-						r.handleException(e);
+				for(Iterator iter = fRunnables.iterator(); iter.hasNext();){
+					IWorkspaceRunnable r = (IWorkspaceRunnable)iter.next();
+					IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+					try {
+						r.run(subMonitor);
+					} catch (CoreException e){
+						if(fStopOnErr)
+							throw e;
+					} catch (RuntimeException e) {
+						if(fStopOnErr)
+							throw e;
+					} finally {
+						subMonitor.done();
+					}
 				}
+			} finally {
+				monitor.done();
 			}
 		}
 	}
-	
-	private class DesSerializationRunnable implements ISafeRunnable {
+
+	private class DesSerializationRunnable implements IWorkspaceRunnable {
 		private ICProjectDescription fDes;
 		private ICStorageElement fElement;
 		
@@ -185,10 +223,7 @@ public class CProjectDescriptionManager {
 			fElement = el;
 		}
 
-		public void handleException(Throwable exception) {
-		}
-
-		public void run() throws Exception {
+		public void run(IProgressMonitor monitor) throws CoreException {
 			serialize(fDes.getProject(), STORAGE_FILE_NAME, fElement);
 			((ContributedEnvironment)CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
 		}
@@ -574,15 +609,12 @@ public class CProjectDescriptionManager {
 	private void saveConversion(final IProject proj, 
 			final IProjectDescription eDes,
 			CProjectDescription des,
-			final IProgressMonitor monitor) {
+			IProgressMonitor monitor) {
 		
-		CompositeSafeRunnable r = new CompositeSafeRunnable();
-		r.add(new ISafeRunnable(){
+		CompositeWorkspaceRunnable r = new CompositeWorkspaceRunnable(null);
+		r.add(new IWorkspaceRunnable(){
 
-			public void handleException(Throwable exception) {
-			}
-
-			public void run() throws Exception {
+			public void run(IProgressMonitor monitor) throws CoreException {
 				proj.setDescription(eDes, monitor);
 			}
 		});
@@ -596,7 +628,7 @@ public class CProjectDescriptionManager {
 		runWspModification(r, monitor);
 	}
 	
-	public Job runWspModification(final ISafeRunnable runnable, IProgressMonitor monitor){
+	public Job runWspModification(final IWorkspaceRunnable runnable, IProgressMonitor monitor){
 		final IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		boolean scheduleRule = true;
 		if(!wsp.isTreeLocked()) {
@@ -606,11 +638,12 @@ public class CProjectDescriptionManager {
 				mngr.beginRule(rule, monitor);
 				scheduleRule = false;
 				
-				runAtomic(runnable);
+				runAtomic(runnable, monitor);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			} catch (Exception e) {
 			} finally {
+				monitor.done();
 				mngr.endRule(rule);
 			}
 		}
@@ -619,10 +652,12 @@ public class CProjectDescriptionManager {
 			Job job = new Job(SettingsModelMessages.getString("CProjectDescriptionManager.12")){ //$NON-NLS-1$
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						runAtomic(runnable);
+						runAtomic(runnable, monitor);
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
 						return e.getStatus();
+					} finally {
+						monitor.done();
 					}
 					return Status.OK_STATUS;
 				}
@@ -636,33 +671,76 @@ public class CProjectDescriptionManager {
 		return null;
 	}
 	
-	private void runAtomic(final ISafeRunnable r) throws CoreException{
+	private void runAtomic(final IWorkspaceRunnable r, IProgressMonitor monitor) throws CoreException{
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		
-		try {
+//		try {
 			wsp.run(new IWorkspaceRunnable(){
 	
 				public void run(IProgressMonitor monitor) throws CoreException {
 					try {
-						r.run();
+						r.run(monitor);
 					} catch (Exception e){
-						throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, e.getMessage(), e));
+						CCorePlugin.log(e);
+//						throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, e.getMessage(), e));
 					}
 				}
 				
-			}, wsp.getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
-		} catch (CoreException e){
-			IStatus status = e.getStatus();
-			if(CCorePlugin.PLUGIN_ID.equals(status.getPlugin())){
-				Throwable t = status.getException();
-				if(t instanceof Exception){
-					r.handleException((Exception)t);
-					return;
-				}
-			}
-			
-			throw e;
+			}, wsp.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
+//		} catch (CoreException e){
+//			IStatus status = e.getStatus();
+//			if(!CCorePlugin.PLUGIN_ID.equals(status.getPlugin())){
+//				throw e;
+//			}
+////				Throwable t = status.getException();
+////				if(t instanceof Exception){
+////					r.handleException((Exception)t);
+////					return;
+////				}
+////			}
+//			
+//			throw e;
+//		}
+	}
+	
+	public void updateProjectDescriptions(IProgressMonitor monitor) throws CoreException{
+		IWorkspace wsp = ResourcesPlugin.getWorkspace();
+		final IProject projects[] = wsp.getRoot().getProjects();
+		final ICProjectDescription dess[] = new ICProjectDescription[projects.length];
+		int num = 0;
+		for(int i = 0; i < projects.length; i++){
+			ICProjectDescription des = getProjectDescription(projects[i], false, true);
+			if(des != null)
+				dess[num++] = des;
 		}
+		
+		if(num != 0){
+			final int[] fi = new int[num]; 
+			runWspModification(new IWorkspaceRunnable(){
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					monitor.beginTask("Refreshing the project settings", fi[0]);
+					
+					for(int i = 0; i < dess.length; i++){
+						ICProjectDescription des = dess[i];
+						if(des == null)
+							break;
+						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+						try {
+							setProjectDescription(des.getProject(), des, true, subMonitor);
+						} catch (CoreException e){
+							CCorePlugin.log(e);
+						} finally {
+							subMonitor.done();
+						}
+					}
+				}
+			}, new NullProgressMonitor());
+			
+		}
+		
+		monitor.done();
+
 	}
 	
 	private ICProjectConverter getConverter(IProject project, String oldOwnerId, ICProjectDescription des){
@@ -924,9 +1002,12 @@ public class CProjectDescriptionManager {
 		}
 	}
 
-	
 	public void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException {
-		if(!des.isModified())
+		setProjectDescription(project, des, false, null);
+	}
+	
+	public void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException {
+		if(!force && !des.isModified())
 			return;
 
 		if(((CProjectDescription)des).isLoadding()){
@@ -940,12 +1021,15 @@ public class CProjectDescriptionManager {
 //			throw ExceptionFactory.createCoreException("description is being applied");
 			return;
 		}
+		
+		if(monitor == null)
+			monitor = new NullProgressMonitor();
 
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cproject = manager.create(project);
 
 		SetCProjectDescriptionOperation op = new SetCProjectDescriptionOperation(cproject, (CProjectDescription)des);
-		op.runOperation(new NullProgressMonitor());
+		op.runOperation(monitor);
 		
 		
 //		CProjectDescription newDes = new CProjectDescription((CProjectDescription)des, true);
@@ -970,10 +1054,10 @@ public class CProjectDescriptionManager {
 //		serialize(newDes);
 	}
 	
-	private ISafeRunnable createDesSerializationRunnable(CProjectDescription des) throws CoreException{
+	private IWorkspaceRunnable createDesSerializationRunnable(CProjectDescription des) throws CoreException{
 		final ICStorageElement element = des.getRootStorageElement();
 		
-		ISafeRunnable r = new DesSerializationRunnable(des, element);
+		IWorkspaceRunnable r = new DesSerializationRunnable(des, element);
 		return r;
 	}
 	
@@ -1037,7 +1121,7 @@ public class CProjectDescriptionManager {
 //	}
 	
 	void serialize(final CProjectDescription des) throws CoreException{
-		ISafeRunnable r = createDesSerializationRunnable(des);
+		IWorkspaceRunnable r = createDesSerializationRunnable(des);
 		runWspModification(r, new NullProgressMonitor());
 		
 //		IWorkspace wsp = ResourcesPlugin.getWorkspace();
@@ -1339,24 +1423,36 @@ public class CProjectDescriptionManager {
 		return element;
 	}
 	
-	CConfigurationData loadData(ICConfigurationDescription des) throws CoreException{
+	CConfigurationData loadData(ICConfigurationDescription des, IProgressMonitor monitor) throws CoreException{
+		if(monitor == null)
+			monitor = new NullProgressMonitor();
+		
 		CConfigurationDataProvider provider = getProvider(des);
-		return provider.loadConfiguration(des);
+		return provider.loadConfiguration(des, monitor);
 	}
 	
-	CConfigurationData applyData(ICConfigurationDescription des, ICConfigurationDescription baseDescription, CConfigurationData base) throws CoreException {
+	CConfigurationData applyData(ICConfigurationDescription des, ICConfigurationDescription baseDescription, CConfigurationData base, IProgressMonitor monitor) throws CoreException {
+		if(monitor == null)
+			monitor = new NullProgressMonitor();
+		
 		CConfigurationDataProvider provider = getProvider(des);
-		return provider.applyConfiguration(des, baseDescription, base);
+		return provider.applyConfiguration(des, baseDescription, base, monitor);
 	}
 	
-	void removeData(ICConfigurationDescription des, CConfigurationData data) throws CoreException{
+	void removeData(ICConfigurationDescription des, CConfigurationData data, IProgressMonitor monitor) throws CoreException{
+		if(monitor == null)
+			monitor = new NullProgressMonitor();
+		
 		CConfigurationDataProvider provider = getProvider(des);
-		provider.removeConfiguration(des, data);
+		provider.removeConfiguration(des, data, monitor);
 	}
 	
-	CConfigurationData createData(ICConfigurationDescription des, ICConfigurationDescription baseDescription, CConfigurationData base, boolean clone) throws CoreException{
+	CConfigurationData createData(ICConfigurationDescription des, ICConfigurationDescription baseDescription, CConfigurationData base, boolean clone, IProgressMonitor monitor) throws CoreException{
+		if(monitor == null)
+			monitor = new NullProgressMonitor();
+		
 		CConfigurationDataProvider provider = getProvider(des);
-		return provider.createConfiguration(des, baseDescription, base, clone);
+		return provider.createConfiguration(des, baseDescription, base, clone, monitor);
 	}
 	
 	private CConfigurationDataProvider getProvider(ICConfigurationDescription des) throws CoreException{
@@ -1620,14 +1716,14 @@ public class CProjectDescriptionManager {
 			} catch (CoreException e){
 				//try refreshing
 				final Throwable[] t = new Throwable[1];
-				Job job = runWspModification(new ISafeRunnable(){
+				Job job = runWspModification(new IWorkspaceRunnable(){
 
-					public void handleException(Throwable exception) {
-						t[0] = exception;
-					}
-
-					public void run() throws Exception {
-						rscFile.refreshLocal(IResource.DEPTH_ZERO, null);
+					public void run(IProgressMonitor monitor) throws CoreException {
+						try {
+							rscFile.refreshLocal(IResource.DEPTH_ZERO, null);
+						} catch (Exception e){
+							t[0] = e;
+						}
 					}
 					
 				}, null);
@@ -2565,7 +2661,7 @@ public class CProjectDescriptionManager {
 				CConfigurationDescriptionCache des = (CConfigurationDescriptionCache)cfgDeltas[i].getOldSetting();
 				CConfigurationData data = des.getConfigurationData(); 
 				try {
-					removeData(des, data);
+					removeData(des, data, null);
 				} catch (CoreException e) {
 				}
 			}

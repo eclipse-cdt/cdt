@@ -1179,6 +1179,10 @@ public class CCorePlugin extends Plugin {
 		fNewCProjectDescriptionManager.setProjectDescription(project, des);
 	}
 
+	public void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException {
+		fNewCProjectDescriptionManager.setProjectDescription(project, des, force, monitor);
+	}
+
 	/**
 	 * returns the project description associated with this project
 	 * 

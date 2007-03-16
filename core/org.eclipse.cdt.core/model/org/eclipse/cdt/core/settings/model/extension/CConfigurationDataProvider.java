@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.settings.model.extension;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * the class is to be implemented by the Configuration data provider contributed via
@@ -22,7 +23,7 @@ public abstract class CConfigurationDataProvider {
 	/**
 	 * requests the Configuration Data to be loadded for the given ConfigurationDescription
 	 */
-	public abstract CConfigurationData loadConfiguration(ICConfigurationDescription des) throws CoreException;
+	public abstract CConfigurationData loadConfiguration(ICConfigurationDescription des, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * requests the Configuration Data to be created for the given ConfigurationDescription
@@ -42,7 +43,8 @@ public abstract class CConfigurationDataProvider {
 	 */
 	public abstract CConfigurationData createConfiguration(ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
-			CConfigurationData baseData, boolean clone) throws CoreException;
+			CConfigurationData baseData, boolean clone,
+			IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * called to notify the provider that the configuration is removed
@@ -50,7 +52,7 @@ public abstract class CConfigurationDataProvider {
 	 * @param des
 	 * @param data
 	 */
-	public abstract void removeConfiguration(ICConfigurationDescription des, CConfigurationData data);
+	public abstract void removeConfiguration(ICConfigurationDescription des, CConfigurationData data, IProgressMonitor monitor);
 
 	/**
 	 * called during the setProjectDescription operation to notify the provider that the configuration data
@@ -64,5 +66,6 @@ public abstract class CConfigurationDataProvider {
 	 */
 	public abstract CConfigurationData applyConfiguration(ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
-			CConfigurationData baseData) throws CoreException;
+			CConfigurationData baseData,
+			IProgressMonitor monitor) throws CoreException;
 }

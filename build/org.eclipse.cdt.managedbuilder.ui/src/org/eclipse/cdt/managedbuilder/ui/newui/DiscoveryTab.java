@@ -353,8 +353,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
            	try {
            		discoveryPage = (org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage) fElement.createExecutableExtension("class"); //$NON-NLS-1$
            	} catch (CoreException e) {}
-            if (discoveryPage == null) 
-               	System.out.println(Messages.getString("DiscoveryTab.13") + fElement.getAttribute("class")); //$NON-NLS-1$  //$NON-NLS-2$
+            if (discoveryPage == null) {
+//               	System.out.println(Messages.getString("DiscoveryTab.13") + fElement.getAttribute("class")); //$NON-NLS-1$  //$NON-NLS-2$
+            }
             return discoveryPage;
         }
     }
@@ -376,10 +377,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  				try { 
  					cbi2.applyInfo(ic, bi1);
  				} catch (CoreException e) {
- 					System.out.println(Messages.getString("DiscoveryTab.15") + e.getLocalizedMessage()); //$NON-NLS-1$
+// 					System.out.println(Messages.getString("DiscoveryTab.15") + e.getLocalizedMessage()); //$NON-NLS-1$
  				}
- 			} else
- 				System.out.println(Messages.getString("DiscoveryTab.16")); //$NON-NLS-1$
+ 			} else {
+// 				System.out.println(Messages.getString("DiscoveryTab.16")); //$NON-NLS-1$
+ 			}
  		}
 	}
 	

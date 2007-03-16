@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class DefaultConfigurationDataProvider extends
 		CConfigurationDataProvider {
@@ -22,7 +23,8 @@ public class DefaultConfigurationDataProvider extends
 	public CConfigurationData applyConfiguration(
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
-			CConfigurationData base)
+			CConfigurationData base,
+			IProgressMonitor monitor)
 			throws CoreException {
 		//TODO: implement load/store
 		return base;
@@ -32,13 +34,15 @@ public class DefaultConfigurationDataProvider extends
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
 			CConfigurationData base,
-			boolean clone) throws CoreException {
+			boolean clone,
+			IProgressMonitor monitor) throws CoreException {
 		//TODO: implement load/store
 		CDefaultConfigurationData data = new CDefaultConfigurationData(des.getId(), des.getName(), base, null, clone);
 		return data;
 	}
 
-	public CConfigurationData loadConfiguration(ICConfigurationDescription des)
+	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
+			IProgressMonitor monitor)
 			throws CoreException {
 		//TODO: implement load/store
 		CDefaultConfigurationData data = new CDefaultConfigurationData(des.getId(), des.getName(), null);
@@ -47,7 +51,8 @@ public class DefaultConfigurationDataProvider extends
 	}
 
 	public void removeConfiguration(ICConfigurationDescription des,
-			CConfigurationData data) {
+			CConfigurationData data,
+			IProgressMonitor monitor) {
 		//TODO: implement load/store
 
 	}

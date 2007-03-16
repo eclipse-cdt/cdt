@@ -27,9 +27,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class ResourceChangeHandler extends ResourceChangeHandlerBase implements  ISaveParticipant {
@@ -153,13 +154,9 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			}
 			
 			if(fProjDesMap.size() != 0){
-				fMngr.runWspModification(new ISafeRunnable(){
+				fMngr.runWspModification(new IWorkspaceRunnable(){
 
-					public void handleException(Throwable exception) {
-						CCorePlugin.log(exception);
-					}
-
-					public void run() throws Exception {
+					public void run(IProgressMonitor monitor) throws CoreException {
 						for(Iterator iter = fProjDesMap.entrySet().iterator(); iter.hasNext();){
 							Map.Entry entry = (Map.Entry)iter.next();
 							IProject project = (IProject)entry.getKey();

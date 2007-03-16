@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class PathEntryConfigurationDataProvider extends
@@ -222,7 +223,8 @@ public class PathEntryConfigurationDataProvider extends
 	public CConfigurationData applyConfiguration(
 			ICConfigurationDescription des,
 			ICConfigurationDescription baseDescription,
-			CConfigurationData base)
+			CConfigurationData base,
+			IProgressMonitor monitor)
 			throws CoreException {
 		//TODO: check external/reference info here as well.
 		if(!fFactory.isModified(base))
@@ -254,7 +256,8 @@ public class PathEntryConfigurationDataProvider extends
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
 			CConfigurationData base,
-			boolean clone) throws CoreException {
+			boolean clone,
+			IProgressMonitor monitor) throws CoreException {
 		CfgData copy = new CfgData(des.getId(), des.getName(), base, clone);
 		copy.setModified(false);
 		return copy;
@@ -318,13 +321,15 @@ public class PathEntryConfigurationDataProvider extends
 		return ids;
 	}
 
-	public CConfigurationData loadConfiguration(ICConfigurationDescription des)
+	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
+			IProgressMonitor monitor)
 			throws CoreException {
 		return createData(des);
 	}
 
 	public void removeConfiguration(ICConfigurationDescription des,
-			CConfigurationData data) {
+			CConfigurationData data,
+			IProgressMonitor monitor) {
 		//do nothing for now
 	}
 

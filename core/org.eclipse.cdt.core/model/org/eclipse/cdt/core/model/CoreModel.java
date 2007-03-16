@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.internal.core.model.APathEntry;
@@ -1316,6 +1315,10 @@ public class CoreModel {
 	 */
 	public void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException {
 		descriptionManager.setProjectDescription(project, des);
+	}
+
+	public void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException {
+		descriptionManager.setProjectDescription(project, des, force, monitor);
 	}
 
 	/**

@@ -48,6 +48,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.NotificationManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentType;
 
@@ -101,7 +102,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	public CConfigurationData applyConfiguration(
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
-			CConfigurationData base)
+			CConfigurationData base,
+			IProgressMonitor monitor)
 			throws CoreException {
 		if(des.isPreferenceConfiguration())
 			return applyPreferences(des, base);
@@ -155,7 +157,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	public CConfigurationData createConfiguration(
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
-			CConfigurationData base, boolean clone)
+			CConfigurationData base, boolean clone,
+			IProgressMonitor monitor)
 			throws CoreException {
 		if(des.isPreferenceConfiguration())
 			return createPreferences(des, base);
@@ -395,7 +398,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return emptyPrefCfg;
 	}
 
-	public CConfigurationData loadConfiguration(ICConfigurationDescription des)
+	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
+			IProgressMonitor monitor)
 			throws CoreException {
 		if(des.isPreferenceConfiguration())
 			return loadPreferences(des);
@@ -425,7 +429,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 
 	public void removeConfiguration(ICConfigurationDescription des,
-			CConfigurationData data) {
+			CConfigurationData data,
+			IProgressMonitor monitor) {
 		IConfiguration cfg = ((BuildConfigurationData)data).getConfiguration();
 		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_CLOSE);
 		IManagedBuildInfo info = getBuildInfo(des);

@@ -83,7 +83,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		
 		fDataLoadded = true;
 			
-		fData = CProjectDescriptionManager.getInstance().loadData(this);
+		fData = CProjectDescriptionManager.getInstance().loadData(this, null);
 		copySettingsFrom(fData, true);
 		
 		fSpecSettings.reconsileExtensionSettings(true);
@@ -125,7 +125,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		if(fBaseDescription == null)
 			return;
 		
-		fData = CProjectDescriptionManager.getInstance().applyData(this, fBaseDescription, fData);
+		fData = CProjectDescriptionManager.getInstance().applyData(this, fBaseDescription, fData, null);
 		fDataLoadded = true;
 		fName = fData.getName();
 		fId = fData.getId();

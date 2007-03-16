@@ -141,13 +141,13 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		
 		ICdtVariable macro = macros.createMacro(macroName,type,value);
 		if(macros.isChanged()){
-			setRebuildStateForContext(contextType, contextData);
 			macros.setChanged(false);
 		}
 		
 		if(macro != null){
 			VariableChangeEvent event = createVariableChangeEvent(macro, oldVar);
 			if(event != null){
+//				updateProjectInfo(contextType, contextData);
 				notifyListeners(event);
 			}
 		}
@@ -171,13 +171,13 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 
 		ICdtVariable macro = macros.createMacro(macroName,type,value);
 		if(macros.isChanged()){
-			setRebuildStateForContext(contextType, contextData);
 			macros.setChanged(false);
 		}
 		
 		if(macro != null){
 			VariableChangeEvent event = createVariableChangeEvent(macro, oldVar);
 			if(event != null){
+//				updateProjectInfo(contextType, contextData);
 				notifyListeners(event);
 			}
 		}
@@ -200,13 +200,13 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		
 		ICdtVariable macro = macros.createMacro(copy);
 		if(macros.isChanged()){
-			setRebuildStateForContext(contextType, contextData);
 			macros.setChanged(false);
 		}
 		
 		if(macro != null){
 			VariableChangeEvent event = createVariableChangeEvent(macro, oldVar);
 			if(event != null){
+//				updateProjectInfo(contextType, contextData);
 				notifyListeners(event);
 			}
 		}
@@ -219,10 +219,10 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 			return null;
 		ICdtVariable macro = macros.deleteMacro(name);
 		if(macro != null){
-			setRebuildStateForContext(contextType, contextData);
 			
 			VariableChangeEvent event = createVariableChangeEvent(null, macro);
 			if(event != null){
+//				updateProjectInfo(contextType, contextData);
 				notifyListeners(event);
 			}
 
@@ -238,11 +238,13 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 
 		ICdtVariable[] oldVars = macros.getMacros();
 		
-		if(macros.deleteAll())
-			setRebuildStateForContext(contextType, contextData);
+		if(macros.deleteAll()){
+//			setRebuildStateForContext(contextType, contextData);
+		}
 		
 		VariableChangeEvent event = createVariableChangeEvent(null, oldVars);
 		if(event != null){
+//			updateProjectInfo(contextType, contextData);
 			notifyListeners(event);
 		}
 
@@ -257,11 +259,11 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		
 		macros.setMacros(m);
 		if(macros.isChanged()){
-			setRebuildStateForContext(contextType, contextData);
 			macros.setChanged(false);
 			
 			VariableChangeEvent event = createVariableChangeEvent(m, oldVars);
 			if(event != null){
+//				updateProjectInfo(contextType, contextData);
 				notifyListeners(event);
 			}
 
@@ -450,7 +452,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		return new StorableCdtVariables(vars, false);
 	}
 	
-	public void setWorkspaceVariables(StorableCdtVariables vars) throws CoreException{
+	public boolean setWorkspaceVariables(StorableCdtVariables vars) throws CoreException{
 		StorableCdtVariables old = getStorableMacros(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
 		ICdtVariable[] oldVars = null;
 		if(old != null)
@@ -462,10 +464,12 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		
 		VariableChangeEvent event = createVariableChangeEvent(newVars, oldVars);
 		if(event != null){
+//			updateProjectInfo(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
 			notifyListeners(event);
 		}
 
 		storeWorkspaceVariables(true);
+		return event != null;
 	}
 	
 	private Preferences getWorkspaceNode(){
@@ -636,33 +640,8 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		}
 	}
 	
-	protected void setRebuildStateForContext(int contextType, Object contextData){
-/*		
-		switch(contextType){
-		case DefaultMacroContextInfo.CONTEXT_CONFIGURATION:
-			if(contextData instanceof IConfiguration){
-				((IConfiguration)contextData).setRebuildState(true);
-			}
-			break;
-		case DefaultMacroContextInfo.CONTEXT_WORKSPACE:
-			if(contextData instanceof IWorkspace){
-				IProject projects[] = ((IWorkspace)contextData).getRoot().getProjects();
-				for(int i = 0; i < projects.length; i++){
-					if(ManagedBuildManager.manages(projects[i])){
-						IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projects[i]);
-						if(info != null){
-							IConfiguration cfgs[] = info.getManagedProject().getConfigurations();
-							for(int j = 0; j < cfgs.length; j++){
-								cfgs[j].setRebuildState(true);
-							}
-						}
-					}
-				}
-			}
-		}
-
-*/		
-	}
+//	protected void updateProjectInfo(int type, Object context){
+//	}
 	
 	public void addListener(ICdtVariableChangeListener listener){
 		fListeners.add(listener);

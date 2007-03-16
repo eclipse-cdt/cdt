@@ -100,7 +100,7 @@ public class SystemViewFilterReferenceAdapter
 		ssFactory.setCurrentSelection(selection.toArray());
 		  ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 			
-		IAction[] actions = adapter.getFilterActions(ssFactory, filter, shell);
+		IAction[] actions = adapter.getFilterActions(menu, selection, shell, menuGroup, ssFactory, filter);
 		if (actions != null)
 		{
 			for (int idx = 0; idx < actions.length; idx++)
@@ -109,7 +109,7 @@ public class SystemViewFilterReferenceAdapter
 				menu.add(menuGroup, action);
 			}
 		}
-		actions = adapter.getFilterReferenceActions(ssFactory, getFilterReference(selection.getFirstElement()), shell);
+		actions = adapter.getFilterReferenceActions(menu, selection, shell, menuGroup, ssFactory, getFilterReference(selection.getFirstElement()));
 		if (actions != null)
 		{
 			for (int idx = 0; idx < actions.length; idx++)

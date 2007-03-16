@@ -89,7 +89,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 	    ISubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemConfiguration(filter);
 	    ssFactory.setConnection(null);
 	    ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-		IAction[] actions = adapter.getFilterActions(ssFactory, filter, shell);
+		IAction[] actions = adapter.getFilterActions(menu, selection, shell, menuGroup, ssFactory, filter);
 		if (actions != null)
 		{
 		  for (int idx=0; idx<actions.length; idx++)

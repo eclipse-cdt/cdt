@@ -73,7 +73,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter
 		ISystemFilterPool pool = ((ISystemFilterPool)selection.getFirstElement());			
 	    ISubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemConfiguration(pool);
 	    ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-		IAction[] actions = adapter.getFilterPoolActions(ssFactory, pool, shell);
+		IAction[] actions = adapter.getFilterPoolActions(menu, selection, shell, menuGroup, ssFactory, pool);
 		if (actions != null)
 		{
 		  for (int idx=0; idx<actions.length; idx++)

@@ -17,6 +17,7 @@
 package org.eclipse.rse.internal.ui.view;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,6 +28,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
+import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemResources;
@@ -78,22 +80,25 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	 */
 	public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup)
 	{
-		if (selection.size() != 1)
-		  return; // does not make sense adding unique actions per multi-selection
-		Object element = selection.getFirstElement();	
-		ISubSystem ss = (ISubSystem)element;
-		ISubSystemConfiguration ssFactory = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
-		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-			
-		IAction[] actions = adapter.getSubSystemActions(ssFactory, ss,shell);
-		if (actions != null)
-		{
-		  for (int idx=0; idx<actions.length; idx++)
-		  {
-		  	 IAction action = actions[idx];		
-		  	 menu.add(menuGroup, action);
-		  }
+		// does not make sense adding unique actions per multi-selection
+		if (selection.size() == 1) {
+			Object element = selection.getFirstElement();	
+			ISubSystem ss = (ISubSystem)element;
+			ISubSystemConfiguration ssFactory = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
+			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
+
+			IAction[] actions = adapter.getSubSystemActions(menu, selection, shell, menuGroup, ssFactory, ss);
+			if (actions != null)
+			{
+				for (int idx=0; idx<actions.length; idx++)
+				{
+					IAction action = actions[idx];		
+					menu.add(menuGroup, action);
+				}
+			}
 		}
+		
+		menu.appendToGroup(ISystemContextMenuConstants.GROUP_NEW, new GroupMarker(ISystemContextMenuConstants.GROUP_NEW_NONCASCADING));// user or BP/ISV additions
 	}
 	
 	/**

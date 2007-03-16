@@ -18,6 +18,7 @@ package org.eclipse.rse.core.servicesubsystem;
 
 import java.util.Vector;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
@@ -27,6 +28,7 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
+import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
@@ -44,7 +46,7 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * For additional customization of the subsystem, you may supply a {@link SubSystemConfigurationAdapter},
  * which allows you to
- *    <li>supply your own subsystem popup menu actions via {@link SubSystemConfigurationAdapter#getAdditionalSubSystemActions(ISubSystemConfiguration, ISubSystem, Shell)}, 
+ *    <li>supply your own subsystem popup menu actions via {@link SubSystemConfigurationAdapter#getSubSystemActions(SystemMenuManager, IStructuredSelection, Shell, String, ISubSystemConfiguration, ISubSystem)} 
  *    <li>supply your own New->Filter popup menu action via {@link SubSystemConfigurationAdapter#getNewFilterPoolFilterAction(ISubSystemConfiguration, ISystemFilterPool, Shell)}, and 
  *    <li>supply your own Change Filter popup menu action via {@link SubSystemConfigurationAdapter#getChangeFilterAction(ISubSystemConfiguration, ISystemFilter,Shell)}.
  * </ul>
@@ -185,27 +187,6 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
 	// --------------------------------
 	// METHODS FOR SUPPLYING ACTIONS...
 	// --------------------------------
-    /**
-	 * <i>Overridable method for getting Remote System view popup menu actions.</i><br>
-	 * Called by {@link org.eclipse.rse.internal.ui.view.SystemView SystemView} when constructing 
-	 * the popup menu for a selected subsystem.
-	 * <p>
-     * For contributing popup menu actions to <b>subsystem objects</b>, beyond the
-     * default actions already supplied by our parent class. This method is only called with
-     * subsystems created by this subsystem factory.
-     * <p>
-     * Returns null by default. Override to show your own popup menu actions for your own subsystems.
-     * 
-     * @return Vector of IAction objects, which usually are subclasses of {@link org.eclipse.rse.ui.actions.SystemBaseAction SystemBaseAction} or
-     * {@link org.eclipse.rse.ui.actions.SystemBaseDialogAction SystemBaseDialogAction} or
-     * {@link org.eclipse.rse.ui.actions.SystemBaseWizardAction SystemBaseWizardAction} or
-     * {@link org.eclipse.rse.ui.actions.SystemBaseSubMenuAction SystemBaseSubMenuAction}.
-     */
-    protected Vector getAdditionalSubSystemActions(ISubSystem selectedSubSystem, Shell shell)
-    {
-    	return null;
-    }
-
 
     /**
      * <i>Optionally overridable method affecting the visual display of objects within subsystems created by this factory.</i><br>
@@ -224,7 +205,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
      * This method is only called for filters within subsystems created by this subsystem factory.<br>
      * By default, this returns null. Override if appropriate.
      * 
-     * @see SubSystemConfigurationAdapter#getFilterActions(ISubSystemConfiguration, ISystemFilter, Shell)
+     * @see SubSystemConfigurationAdapter#getFilterActions(SystemMenuManager, IStructuredSelection, Shell, String, ISubSystemConfiguration, ISystemFilter)
      * 
      * @return Vector of IAction objects, which usually are subclasses of {@link org.eclipse.rse.ui.actions.SystemBaseAction SystemBaseAction} or
      * {@link org.eclipse.rse.ui.actions.SystemBaseDialogAction SystemBaseDialogAction} or

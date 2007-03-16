@@ -106,7 +106,7 @@ public interface ISubSystemConfigurationAdapter
      *  filter pool object within a subsystem of this factory.
      * Only supported by subsystems that support filters.
      */
-    public IAction[] getFilterPoolActions(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell);
+    public IAction[] getFilterPoolActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPool selectedPool);
  
 	// ---------------------------------
 	// FILTER POOL REFERENCE METHODS...
@@ -118,7 +118,7 @@ public interface ISubSystemConfigurationAdapter
      * <p>
      * Only supported by subsystems that support filters.
      */
-    public IAction[] getFilterPoolReferenceActions(ISubSystemConfiguration factory, ISystemFilterPoolReference selectedPoolReference, Shell shell);
+    public IAction[] getFilterPoolReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPoolReference selectedPoolReference);
 
     
     // ---------------------------------
@@ -133,7 +133,7 @@ public interface ISubSystemConfigurationAdapter
      * Most actions are handled in this base, except if you have your own action for
      * creating a new nested filter. In this case, <b>override getNewFilterAction()</b>
      */
-    public IAction[] getFilterActions(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell);
+    public IAction[] getFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilter selectedFilter);
 
 	/**
 	 * In addition to a change filter action, we now also support the same functionality
@@ -169,17 +169,17 @@ public interface ISubSystemConfigurationAdapter
      * <p>
      * Most actions are handled in this base, except if you have your own action for
      * creating a new filter. In this case, <b>override getNewFilterAction()</b>
-     * To add additional actions, override {@link #getFilterReferenceActions(ISubSystemConfiguration, ISystemFilterReference, Shell)}.
+     * To add additional actions, override {@link #getFilterReferenceActions(SystemMenuManager, IStructuredSelection, Shell, String, ISubSystemConfiguration, ISystemFilterReference)}.
      *
      * @param selectedFilterRef the currently selected filter reference
      * @param shell parent shell of viewer where the popup menu is being constructed
      */
-    public IAction[] getFilterReferenceActions(ISubSystemConfiguration factory, ISystemFilterReference selectedFilterRef, Shell shell);
+    public IAction[] getFilterReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterReference selectedFilterRef);
 
     /**
      * Returns a list of actions for the popup menu when user right clicks on a subsystem object from this factory.
      */
-    public IAction[] getSubSystemActions(ISubSystemConfiguration factory, ISubSystem selectedSubSystem, Shell shell);
+    public IAction[] getSubSystemActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISubSystem selectedSubSystem);
 
 
     

@@ -63,18 +63,6 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter
 		ISystemFilterString filterString = getFilterString(selection.getFirstElement());
 		if (filterString.getParentSystemFilter().isTransient())
 		  return;
-		/*
-	    SubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemConfiguration(filterString);
-	    ssFactory.setConnection(null);
-		IAction[] actions = ssFactory.getFilterActions(filter, shell);
-		if (actions != null)
-		{
-		  for (int idx=0; idx<actions.length; idx++)
-		  {
-		  	 IAction action = actions[idx];		
-		  	 menu.add(menuGroup, action);
-		  }    
-		}  */  	  		
 	}
 
 	private ISystemFilterString getFilterString(Object element)

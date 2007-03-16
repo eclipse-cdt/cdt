@@ -78,7 +78,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	    ISubSystemConfiguration ssFactory = getSubSystemConfiguration(pool);
 	    ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 		
-		IAction[] actions = adapter.getFilterPoolActions(ssFactory, pool, shell);
+		IAction[] actions = adapter.getFilterPoolActions(menu, selection, shell, menuGroup, ssFactory, pool);
 		if (actions != null)
 		{
 		  for (int idx=0; idx<actions.length; idx++)
@@ -87,7 +87,7 @@ public class SystemViewFilterPoolReferenceAdapter
 		  	 menu.add(menuGroup, action);
 		  }   
 		}    	  
-		actions = adapter.getFilterPoolReferenceActions(ssFactory, getFilterPoolReference(element), shell);
+		actions = adapter.getFilterPoolReferenceActions(menu, selection, shell, menuGroup, ssFactory, getFilterPoolReference(element));
 		if (actions != null)
 		{
 		  //menu.addSeparator();

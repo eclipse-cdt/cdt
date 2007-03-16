@@ -430,33 +430,25 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 		/**
 		 * Returns a list of actions for the popup menu when user right clicks on a subsystem object from this factory.
-		 * By default returns a single item array with a SystemNewFilterPoolAction object and
-		 * calls overridable method getAdditionalSubSystemActions.
 		 * <p>
-		 * If you wish to support more actions, override getAdditionalSubSystemActions to return a Vector
-		 * of IAction objects.
-		 * @see #getSubSystemNewFilterPoolActions(ISubSystemConfiguration, ISubSystem, Shell)
-		 * @see #getAdditionalSubSystemActions(ISubSystemConfiguration, ISubSystem, Shell)
+		 * Override if additional actions needs to be contributed.
+		 * <p>
+		 * @see #getSubSystemNewFilterPoolActions(SystemMenuManager, IStructuredSelection, Shell, String, ISubSystemConfiguration, ISubSystem)
+		 * 
 		 * @param selectedSubSystem the currently selected subsystem
 		 * @param shell The Shell of the view where this action was launched from
 		 * @return array of IAction objects to contribute to the popup menu
 		 */
-		public IAction[] getSubSystemActions(ISubSystemConfiguration factory, ISubSystem selectedSubSystem, Shell shell)
+    public IAction[] getSubSystemActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISubSystem selectedSubSystem)
 		{
-			Vector ourChildActions = getAdditionalSubSystemActions(factory, selectedSubSystem, shell);
-			// we need to start with a fresh vector each time not build up on what our child
-			//  class gives us, since that may be cached and hence will grow if we keep adding to i.
 			Vector childActions = new Vector();
-			if (ourChildActions != null)
-				for (int idx = 0; idx < ourChildActions.size(); idx++)
-					childActions.addElement(ourChildActions.elementAt(idx));
 			if (factory.supportsFilters())
 			{
 				boolean showFilterPools = factory.showFilterPools();
 				// if showing filter pools, we have to add a "new filter pool" action here...
 				if (showFilterPools)
 				{
-					IAction[] newFPActions = getSubSystemNewFilterPoolActions(factory, selectedSubSystem, shell);
+					IAction[] newFPActions = getSubSystemNewFilterPoolActions(menu, selection, shell, menuGroup, factory, selectedSubSystem);
 					if (newFPActions != null)
 					{
 						for (int idx = 0; idx < newFPActions.length; idx++)
@@ -482,7 +474,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				// if not showing filter pools, we have to add a "new filter" action here...
 				if (!showFilterPools)
 				{
-					IAction[] newFilterActions = getNewFilterPoolFilterActions(factory, null, shell);
+					IAction[] newFilterActions = getNewFilterPoolFilterActions(menu, selection, shell, menuGroup, factory, null);
 					if ((newFilterActions != null) && (newFilterActions.length > 0))
 					{
 						// pre-scan for legacy
@@ -494,20 +486,6 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 							{
 							}
 						}
-						/*
-						if (anyLegacy)
-						{
-						   SystemFilterPoolReferenceManager refMgr = selectedSubSystem.getSystemFilterPoolReferenceManager();
-						   SystemFilterPool[] refdPools = refMgr.getReferencedSystemFilterPools();
-						   if ( refdPools.length == 0 )
-						      RSEUIPlugin.logInfo("SubSystemConfigurationImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of lenght zero.");
-						   for (int idx=0; idx<newFilterActions.length; idx++)
-						   {
-						         if (newFilterActions[idx] instanceof SystemFilterBaseNewFilterAction && refdPools.length > 0 )
-							          ((SystemFilterBaseNewFilterAction)newFilterActions[idx]).setAllowFilterPoolSelection(refdPools);
-						   } // end for loop
-						}
-						*/
 						// now add the actions
 						for (int idx = 0; idx < newFilterActions.length; idx++)
 							childActions.addElement(newFilterActions[idx]);
@@ -569,7 +547,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			return allActions;
 		}
 		
-		private void addConnectOrDisconnectAction(Vector actions, Shell shell, ISubSystem selectedSS)
+    /**
+     * Overridable method to add the connect or disconnect action.
+     * 
+     * @param actions The list of child actions. Add the connect/disconnect action to this vector is applicable.
+     * @param shell The shell. 
+     * @param selectedSS The selected subsystem.
+     */
+		protected void addConnectOrDisconnectAction(Vector actions, Shell shell, ISubSystem selectedSS)
 		{
 			boolean connected = selectedSS.isConnected();
 			if (connected)
@@ -684,7 +669,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param shell The Shell of the view where this action was launched from
 		 * @return array of IAction objects to contribute to the popup menu
 		 */
-		protected IAction[] getSubSystemNewFilterPoolActions(ISubSystemConfiguration factory, ISubSystem selectedSubSystem, Shell shell)
+		protected IAction[] getSubSystemNewFilterPoolActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISubSystem selectedSubSystem)
 		{
 			IAction[] actions = new IAction[2];
 			actions[0] = new SystemFilterNewFilterPoolAction(shell);
@@ -694,23 +679,6 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			((ISystemAction) actions[1]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0041"); //$NON-NLS-1$
 			return actions;
 		}
-		/**
-		 * Overridable entry for child classes to contribute subsystem actions
-		 * beyond the default supplied actions.
-		 * <p>
-		 * By default, returns null.
-		 * @return Vector of IAction objects.
-		 * @see #getSubSystemActions(ISubSystemConfiguration, ISubSystem, Shell)
-		 */
-		protected Vector getAdditionalSubSystemActions(ISubSystemConfiguration factory, ISubSystem selectedSubSystem, Shell shell)
-		{
-			return null;
-		}
-		
-
-		
-		
-		
 	
 		/**
 		 * Supply the image to be used for filter pool managers, within actions.
@@ -778,19 +746,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * Most actions are handled in this base, except if you have your own action for
 		 * creating a new filter. In this case, <b>override getNewFilterAction()</b>
-		 * To add additional actions, override {@link #getAdditionalFilterPoolActions(ISubSystemConfiguration, ISystemFilterPool, Shell)}.
 		 *
 		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-		public IAction[] getFilterPoolActions(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
+    public IAction[] getFilterPoolActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPool selectedPool)
 		{
 			Vector childActions = new Vector();
-			Vector ourChildActions = getAdditionalFilterPoolActions(factory, selectedPool, shell);
-			if (ourChildActions != null)
-				for (int idx = 0; idx < ourChildActions.size(); idx++)
-					childActions.addElement(ourChildActions.elementAt(idx));
-			IAction[] newActions = getNewFilterPoolFilterActions(factory, selectedPool, shell);
+			IAction[] newActions = getNewFilterPoolFilterActions(menu, selection, shell, menuGroup, factory, selectedPool);
 			if (newActions != null)
 			{
 				for (int idx = 0; idx < newActions.length; idx++)
@@ -826,21 +789,8 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 			return allFilterPoolActions;
 		}
-		/**
-		 * Overridable entry for child classes to contribute filter pool actions beyond the
-		 * default supplied actions.
-		 * <p>
-		 * By default, this returns null.
-		 * @param selectedPool the currently selected pool
-		 * @param shell parent shell of viewer where the popup menu is being constructed
-		 * @return Vector of IAction objects.
-		 * @see #getFilterPoolActions(ISubSystemConfiguration, ISystemFilterPool, Shell)
-		 */
-		protected Vector getAdditionalFilterPoolActions(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
-		{
-			return null;
-		}
-		/**
+
+    /**
 		 * Overridable method to return the actions for creating a new filter in a filter pool.
 		 * By default returns one action created by calling {@link #getNewFilterPoolFilterAction(ISubSystemConfiguration, ISystemFilterPool, Shell)}.
 		 * <p>
@@ -851,7 +801,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-		protected IAction[] getNewFilterPoolFilterActions(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
+		protected IAction[] getNewFilterPoolFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPool selectedPool)
 		{
 			IAction[] actions = new IAction[1];
 			actions[0] = getNewFilterPoolFilterAction(factory, selectedPool, shell);
@@ -1024,49 +974,26 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 *  filter pool reference object within a subsystem of this factory. Note,
 		 *  these are added to the list returned by getFilterPoolActions().
 		 * Only supported by subsystems that support filters.
-		 * @param selectedPoolRef the currently selected pool reference
+		 * @param selectedPoolReference the currently selected pool reference
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-		public IAction[] getFilterPoolReferenceActions(ISubSystemConfiguration factory, ISystemFilterPoolReference selectedPoolRef, Shell shell)
+    public IAction[] getFilterPoolReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPoolReference selectedPoolReference)
 		{
-			ISystemFilterPool selectedPool = selectedPoolRef.getReferencedFilterPool();
-			Vector childActions = getAdditionalFilterPoolReferenceActions(factory, selectedPool, shell);
-			int nbrChildActions = 0;
-			if (childActions != null)
-				nbrChildActions = childActions.size();
-			int fpIdx = 0;
+			ISystemFilterPool selectedPool = selectedPoolReference.getReferencedFilterPool();
 			if (filterPoolReferenceActions == null)
 			{
-				int nbr = 3;
-				filterPoolReferenceActions = new IAction[nbr + nbrChildActions];
-				filterPoolReferenceActions[fpIdx++] = getRemoveFilterPoolReferenceAction(factory, selectedPool, shell);
-				filterPoolReferenceActions[fpIdx] = new SystemFilterMoveUpFilterPoolReferenceAction(shell);
-				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0063"); //$NON-NLS-1$
-				filterPoolReferenceActions[fpIdx] = new SystemFilterMoveDownFilterPoolReferenceAction(shell);
-				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0064"); //$NON-NLS-1$
+				filterPoolReferenceActions = new IAction[3];
+				filterPoolReferenceActions[0] = getRemoveFilterPoolReferenceAction(factory, selectedPool, shell);
+				filterPoolReferenceActions[1] = new SystemFilterMoveUpFilterPoolReferenceAction(shell);
+				((ISystemAction) filterPoolReferenceActions[1]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0063"); //$NON-NLS-1$
+				filterPoolReferenceActions[2] = new SystemFilterMoveDownFilterPoolReferenceAction(shell);
+				((ISystemAction) filterPoolReferenceActions[2]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0064"); //$NON-NLS-1$
 			}
-
-			if (childActions != null)
-				for (int idx = 0; idx < nbrChildActions; idx++)
-					filterPoolReferenceActions[fpIdx++] = (IAction) childActions.elementAt(idx);
 
 			return filterPoolReferenceActions;
 		}
-		/**
-		 * Overridable entry for child classes to contribute filter pool reference actions beyond the
-		 * default supplied actions.
-		 * <p>
-		 * By default, this returns null.
-		 * @param selectedPool the currently selected pool
-		 * @param shell parent shell of viewer where the popup menu is being constructed
-		 * @return Vector of IAction objects.
-		 * @see #getFilterPoolReferenceActions(ISubSystemConfiguration, ISystemFilterPoolReference, Shell)
-		 */
-		protected Vector getAdditionalFilterPoolReferenceActions(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
-		{
-			return null;
-		}
-		/**
+
+    /**
 		 * Overridable method to return the action for removing a filter pool reference.
 		 * By default returns new SystemRemoveFilterPoolReferenceAction.
 		 * @param selectedPool the currently selected pool
@@ -1129,7 +1056,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * Most actions are handled in this base, except if you have your own action for
 		 * creating a new nested filter. In this case, <b>override getNewFilterAction()</b>
 		 */
-		public IAction[] getFilterActions(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell)
+    public IAction[] getFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilter selectedFilter)
 		{
 			Vector childActions = new Vector();
 			Vector ourChildActions = getAdditionalFilterActions(factory, selectedFilter, shell);
@@ -1211,7 +1138,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * By default, this returns null.
 		 * @return Vector of IAction objects.
-		 * @see #getFilterActions(ISubSystemConfiguration, ISystemFilter, Shell)
+		 * @see #getFilterActions(SystemMenuManager, IStructuredSelection, Shell, String, ISubSystemConfiguration, ISystemFilter)
 		 */
 		protected Vector getAdditionalFilterActions(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell)
 		{
@@ -1231,179 +1158,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * Most actions are handled in this base, except if you have your own action for
 		 * creating a new filter. In this case, <b>override getNewFilterAction()</b>
-		 * To add additional actions, override {@link #getAdditionalFilterReferenceActions(ISubSystemConfiguration, ISystemFilterReference, Shell)}.
 		 *
 		 * @param selectedFilterRef the currently selected filter reference
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-		public IAction[] getFilterReferenceActions(ISubSystemConfiguration factory, ISystemFilterReference selectedFilterRef, Shell shell)
-		{
-			Vector childActions = getAdditionalFilterReferenceActions(factory, selectedFilterRef, shell);
-			int nbrChildActions = 0;
-			if (childActions != null)
-				nbrChildActions = childActions.size();
-			else
-				childActions = new Vector();
-			/*
-			if (filterReferenceActions == null)
-			{
-			 int nbr = 2;
-			 filterReferenceActions = new IAction[nbr];
-			}
-			for (int idx=0; idx<filterReferenceActions.length; idx++)
-			{
-				childActions.addElement(filterReferenceActions[idx]);
-				++nbrChildActions;
-			}
-			*/
-			IAction[] allFilterRefActions = new IAction[nbrChildActions];
-			for (int idx = 0; idx < nbrChildActions; idx++)
-				allFilterRefActions[idx] = (IAction) childActions.elementAt(idx);
-
-			return allFilterRefActions;
-		}
-		/**
-		 * Overridable entry for child classes to contribute filter reference actions beyond the
-		 * default supplied actions.
-		 * <p>
-		 * By default, this returns null.
-		 * @param selectedFilterRef the currently selected filter reference
-		 * @param shell parent shell of viewer where the popup menu is being constructed
-		 * @return Vector of IAction objects.
-		 */
-		protected Vector getAdditionalFilterReferenceActions(ISubSystemConfiguration factory, ISystemFilterReference selectedFilterRef, Shell shell)
+    public IAction[] getFilterReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterReference selectedFilterRef)
 		{
 			return null;
 		}
-
-		// ---------------------------------
-		// FILTER STRING METHODS
-		// ---------------------------------
-
-		/*
-		 * Returns a list of actions for the popup menu when user right clicks on a
-		 *  filter string object (and has set the preferences to see them).
-		 * Only supported and used by subsystems that support filters.
-		 * <p>
-		 * YOU DO NOT NEED TO OVERRIDE THIS METHOD.
-		 * <p>
-		 * Most actions are handled in this base, only override if you have something unique.
-		 *
-		public IAction[] getFilterStringActions(SystemFilterString selectedFilterString, Shell shell)
-		{
-			Vector childActions = new Vector();
-			Vector ourChildActions = getAdditionalFilterStringActions(selectedFilterString, shell);
-			if (ourChildActions != null)
-			  for (int idx=0; idx<ourChildActions.size(); idx++)
-			     childActions.addElement(ourChildActions.elementAt(idx));
-			
-			if (filterStringActions == null)
-			{
-				filterStringActions = new IAction[4];
-				filterStringActions[0] = new SystemFilterMoveUpFilterStringAction(shell);
-		        ((ISystemAction)filterStringActions[0]).setHelp(RSEUIPlugin.HELPPREFIX+"actn0093");
-				filterStringActions[1] = new SystemFilterMoveDownFilterStringAction(shell);
-		        ((ISystemAction)filterStringActions[1]).setHelp(RSEUIPlugin.HELPPREFIX+"actn0094");
-		
-			    SystemFilterCopyFilterStringAction copyAction = new SystemFilterCopyFilterStringAction(shell);
-			    copyAction.setPromptString(SystemResources.RESID_COPY_TARGET_FILTER_PROMPT));
-			    copyAction.setHelp(RSEUIPlugin.HELPPREFIX+"actn0091");
-			    copyAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"dcfs0000");
-				filterStringActions[2] = copyAction;
-			    SystemFilterMoveFilterStringAction moveAction = new SystemFilterMoveFilterStringAction(shell);
-			    moveAction.setPromptString(SystemResources.RESID_MOVE_TARGET_FILTER_PROMPT));
-			    moveAction.setHelp(RSEUIPlugin.HELPPREFIX+"actn0093");
-			    moveAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"dmfs0000");
-				filterStringActions[3] = moveAction;
-			}
-		    IAction chgAction = getChangeFilterStringAction(selectedFilterString, shell);
-		    if (chgAction != null)
-		      childActions.addElement(chgAction);
-			for (int idx=0; idx<filterStringActions.length; idx++)
-		    {
-		    	childActions.addElement(filterStringActions[idx]);
-		    }
-		
-			IAction[] allFilterStringActions = new IAction[childActions.size()];
-			for (int idx=0; idx<childActions.size(); idx++)
-			   allFilterStringActions[idx] = (IAction)childActions.elementAt(idx);
-			
-			return allFilterStringActions;
-		}*/
-		/*
-		 * Overridable entry for child classes to contribute filter string actions beyond the
-		 * default supplied actions.
-		 * <p>
-		 * By default, this returns null.
-		 * @param selectedFilterString the currently selected filter string
-		 * @param shell parent shell of viewer where the popup menu is being constructed
-		 * @return Vector of IAction objects.
-		 *
-		protected Vector getAdditionalFilterStringActions(SystemFilterString selectedFilterString, Shell shell)
-		{
-			return null;
-		}*/
-		/*
-		 * Overridable entry for child classes to contribute their own change filter string action.
-		 * <p>
-		 * By default, this returns the default change filter string action.
-		 * @param selectedFilterString the currently selected filter string
-		 * @param shell parent shell of viewer where the popup menu is being constructed
-		 * @return change action.
-		 *
-		protected IAction getChangeFilterStringAction(SystemFilterString selectedFilterString, Shell shell)
-		{
-			//IAction chgAction = new SystemFilterDefaultUpdateFilterStringAction(shell);
-			//return chgAction;
-			return null;
-		}*/
-
-		/*
-		 * Returns a list of actions for the popup menu when user right clicks on a
-		 *  filter string reference object (and has set the preferences to see them).
-		 * <p>
-		 * Only supported and used by subsystems that support filters.
-		 * <p>
-		 * Most actions are handled in this base, only override if you have something unique.
-		 *
-		public IAction[] getFilterStringReferenceActions(SystemFilterStringReference selectedFilterStringRef, Shell shell)
-		{
-			Vector childActions = new Vector();
-			Vector ourChildActions = getAdditionalFilterStringReferenceActions(selectedFilterStringRef, shell);
-			if (ourChildActions != null)
-			  for (int idx=0; idx<ourChildActions.size(); idx++)
-			     childActions.addElement(ourChildActions.elementAt(idx));
-		
-			if (filterStringReferenceActions == null)
-			{
-			}
-			if (filterStringReferenceActions != null)
-			{
-		      for (int idx=0; idx<filterStringReferenceActions.length; idx++)
-		      {
-		    	childActions.addElement(filterStringReferenceActions[idx]);
-		      }
-			}
-			IAction[] allFilterStringRefActions = new IAction[childActions.size()];
-			for (int idx=0; idx<childActions.size(); idx++)
-			   allFilterStringRefActions[idx] = (IAction)childActions.elementAt(idx);
-			
-			return allFilterStringRefActions;    	
-		}*/
-
-		/*
-		 * Overridable entry for child classes to contribute filter string refernce actions beyond the
-		 * default supplied actions.
-		 * <p>
-		 * By default, this returns null.
-		 * @param selectedFilterStringRef the currently selected filter string reference
-		 * @param shell parent shell of viewer where the popup menu is being constructed
-		 * @return Vector of IAction objects.
-		 *
-		protected Vector getAdditionalFilterStringReferenceActions(SystemFilterStringReference selectedFilterStringRef, Shell shell)
-		{
-			return null;
-		}*/
 
 		// -------------------------
 		// SERVER LAUNCH SUPPORT ...

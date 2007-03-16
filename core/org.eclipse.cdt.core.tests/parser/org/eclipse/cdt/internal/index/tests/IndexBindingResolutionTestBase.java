@@ -9,7 +9,7 @@
  * Andrew Ferguson (Symbian) - Initial implementation
  * IBM Corporation
  *******************************************************************************/
-package org.eclipse.cdt.internal.pdom.tests;
+package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
 
@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
@@ -53,7 +54,7 @@ import org.osgi.framework.Bundle;
  * This class is for testing the process by which bindings are looked up in
  * the PDOM purely from AST information (i.e. without a real binding from the DOM)
  */
-public abstract class IndexBindingResolutionTestBase extends PDOMTestBase {
+public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	private ITestStrategy strategy;
 	
 	public void setStrategy(ITestStrategy strategy) {

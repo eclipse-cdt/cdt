@@ -8,7 +8,7 @@
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.pdom.tests;
+package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
 import java.util.Arrays;

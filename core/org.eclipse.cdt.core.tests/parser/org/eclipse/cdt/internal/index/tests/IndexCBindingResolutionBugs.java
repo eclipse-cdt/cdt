@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
-package org.eclipse.cdt.internal.pdom.tests;
+package org.eclipse.cdt.internal.index.tests;
 
 import junit.framework.TestSuite;
 

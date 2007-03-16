@@ -82,6 +82,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 		}
 		
+		doneInitializing();
 		fIsLoadding = false;
 	}
 
@@ -99,7 +100,16 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 		}
 		
+		doneInitializing();
+		
 		fIsApplying = false;
+	}
+	
+	private void doneInitializing(){
+		for(Iterator iter = fCfgMap.values().iterator(); iter.hasNext();){
+			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
+			cache.doneInitialization();
+		}
 	}
 
 	public boolean isLoadding(){

@@ -90,7 +90,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		((CBuildSettingCache)fBuildData).initEnvironmentCache();
 		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
 		fMacros = new StorableCdtVariables(vars, true);
-		fInitializing = false;
+//		fInitializing = false;
 	}
 
 	CConfigurationDescriptionCache(ICConfigurationDescription baseDescription, CConfigurationData base, CConfigurationSpecSettings settingsBase, CProjectDescription parent, ICStorageElement rootEl) throws CoreException {
@@ -138,7 +138,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 			fSpecSettings.serialize();
 		
 		fBaseDescription = null;
-		fInitializing = false;
+//		fInitializing = false;
 	}
 	
 	public StorableCdtVariables getCachedVariables(){
@@ -419,5 +419,9 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	
 	public boolean isPreferenceConfiguration() {
 		return getProjectDescription() == null;
+	}
+	
+	void doneInitialization(){
+		fInitializing = false;
 	}
 }

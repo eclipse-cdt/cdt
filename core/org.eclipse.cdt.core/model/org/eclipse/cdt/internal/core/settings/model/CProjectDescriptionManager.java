@@ -2657,6 +2657,7 @@ public class CProjectDescriptionManager {
 		rootEl = rootParent.importChild(baseRootEl);
 		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(des, baseData, cfgDes.getSpecSettings(), null, rootEl);
 		cache.applyData();
+		cache.doneInitialization();
 		
 		return cache;
 	}
@@ -2734,6 +2735,7 @@ public class CProjectDescriptionManager {
 		}
 		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(cfgEl, null);
 		cache.loadData();
+		cache.doneInitialization();
 		return cache;
 	}
 	

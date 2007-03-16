@@ -12,19 +12,19 @@ package org.eclipse.cdt.core.settings.model.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class PathSettingsContainer {
 	private static final Object INEXISTENT_VALUE = new Object();
-	private static final int INIT_CHILDREN_MAP_CAPACITY = 2;
+//	private static final int INIT_CHILDREN_MAP_CAPACITY = 2;
 	
-	private Map fChildrenMap;
+//	private Map fChildrenMap;
+//	private Map fPatternMap;
+	private PatternNameMap fPatternChildrenMap;
 	private Object fValue;
 	private IPath fPath;
 	private String fName;
@@ -32,24 +32,31 @@ public class PathSettingsContainer {
 	private PathSettingsContainer fDirectParentContainer;
 	private List fListeners;
 	
+	private boolean fIsPatternMode;
+	
 	private static final int ADDED = 1;
 	private static final int REMOVED = 2;
 	private static final int VALUE_CHANGED = 3;
 	private static final int PATH_CHANGED = 4;
 	
-	
+
 	public static PathSettingsContainer createRootContainer(){
-		return new PathSettingsContainer();
+		return createRootContainer(false);
+	}
+
+	public static PathSettingsContainer createRootContainer(boolean patternMode){
+		return new PathSettingsContainer(patternMode);
+	}
+
+	private PathSettingsContainer(boolean pattternMode){
+		this(null, null, "", pattternMode); //$NON-NLS-1$
 	}
 	
-	private PathSettingsContainer(){
-		this(null, null, new String());
-	}
-	
-	private PathSettingsContainer(PathSettingsContainer root, PathSettingsContainer parent, String name){
+	private PathSettingsContainer(PathSettingsContainer root, PathSettingsContainer parent, String name, boolean patternMode){
 		fRootContainer = root;
 		fDirectParentContainer = parent;
 		fName = name;
+		fIsPatternMode = patternMode;
 		if(fRootContainer == null){
 			fRootContainer = this;
 //			fPath = new Path(name);
@@ -58,24 +65,33 @@ public class PathSettingsContainer {
 		}
 	}
 	
-	private Map getChildrenMap(boolean create){
-		if(fChildrenMap == null && create)
-			fChildrenMap = new HashMap(INIT_CHILDREN_MAP_CAPACITY);
-		return fChildrenMap;
+	private PatternNameMap getPatternChildrenMap(boolean create){
+		if(fPatternChildrenMap == null && create)
+			fPatternChildrenMap = new PatternNameMap();
+		return fPatternChildrenMap;
 	}
 	
-	private PathSettingsContainer getChild(String name, boolean create){
-		Map map = getChildrenMap(create);
-		if(map != null){
-			PathSettingsContainer child = (PathSettingsContainer)map.get(name);
+	private PathSettingsContainer getExacChild(String name, boolean create){
+		PatternNameMap pMap = getPatternChildrenMap(create);
+		if(pMap != null){
+			PathSettingsContainer child = (PathSettingsContainer)pMap.get(name);
 			if(child == null && create){
-				child = new PathSettingsContainer(fRootContainer, this, name);
+				child = new PathSettingsContainer(fRootContainer, this, name, fIsPatternMode);
 				connectChild(child);
 			}
 			return child;
 		}
 		return null;
 	}
+	
+	private List getChildren(String name){
+		PatternNameMap pMap = getPatternChildrenMap(false);
+		if(pMap != null){
+			return pMap.getValues(name);
+		}
+		return null;
+	}
+
 	
 	private void notifyChange(PathSettingsContainer container, int type, Object oldValue, boolean childrenAffected){
 		List list = getListenersList(false);
@@ -110,8 +126,8 @@ public class PathSettingsContainer {
 	}
 	
 	public boolean hasChildren(){
-		Map map = getChildrenMap(false);
-		return map != null && map.size() != 0;
+		PatternNameMap pMap = getPatternChildrenMap(false);
+		return pMap != null && pMap.size() != 0;
 	}
 	
 	public PathSettingsContainer getChildContainer(IPath path, boolean create, boolean exactPath){
@@ -168,11 +184,11 @@ public class PathSettingsContainer {
 	}
 	
 	private List doGetDirectChildren(List list){
-		Map map = getChildrenMap(false);
-		if(map != null){
+		PatternNameMap pMap = getPatternChildrenMap(false);
+		if(pMap != null){
 			if(list == null)
 				list = new ArrayList();
-			for(Iterator iter = map.values().iterator(); iter.hasNext(); ){
+			for(Iterator iter = pMap.values().iterator(); iter.hasNext(); ){
 				PathSettingsContainer cr = (PathSettingsContainer)iter.next();
 				if(cr.fValue == INEXISTENT_VALUE){
 					cr.doGetDirectChildren(list);
@@ -242,11 +258,11 @@ public class PathSettingsContainer {
 	}
 	
 	private void disconnectChild(PathSettingsContainer child){
-		getChildrenMap(true).remove(child.getName());
+		getPatternChildrenMap(true).remove(child.getName());
 	}
 
 	private void connectChild(PathSettingsContainer child){
-		getChildrenMap(true).put(child.getName(), child);
+		getPatternChildrenMap(true).put(child.getName(), child);
 	}
 
 	public boolean isValid(){
@@ -254,12 +270,12 @@ public class PathSettingsContainer {
 	}
 	
 	public void removeChildren(){
-		Map map = getChildrenMap(false);
-		if(map == null || map.size() == 0)
+		PatternNameMap pMap = getPatternChildrenMap(false);
+		if(pMap == null || pMap.size() == 0)
 			return;
 		
 		
-		Collection c = map.values();
+		Collection c = pMap.values();
 		PathSettingsContainer childContainers[] = (PathSettingsContainer[])c.toArray(new PathSettingsContainer[c.size()]);
 		
 		for(int i = 0; i < childContainers.length; i++){
@@ -269,7 +285,7 @@ public class PathSettingsContainer {
 	}
 	
 	private void deleteChild(PathSettingsContainer child){
-		getChildrenMap(false).remove(child.getName());
+		getPatternChildrenMap(false).remove(child.getName());
 	}
 	
 	private String getName(){
@@ -280,11 +296,30 @@ public class PathSettingsContainer {
 		PathSettingsContainer container = null;
 		if(path.segmentCount() == 0)
 			container = this;
-		else {
-			PathSettingsContainer child = getChild(path.segment(0), create);
+		else if (create || exactPath || !fIsPatternMode) {
+			PathSettingsContainer child = getExacChild(path.segment(0), create);
 			if(child != null)
 				container = child.findContainer(path.removeFirstSegments(1), create, exactPath);
 			else if(!exactPath)
+				container = this;
+		} else {
+			//looking for container using patterns in read mode (i.e. not creating new container)
+			List list = getChildren(path.segment(0));
+			if(list != null){
+				int size = list.size();
+				PathSettingsContainer child, childFound;
+				
+				for(int i = 0; i < size; i++){
+					child = (PathSettingsContainer)list.get(i);
+					childFound = child.findContainer(path.removeFirstSegments(1), false, false);
+					if(container == null)
+						container = childFound;
+					else if(container.getPath().segmentCount() < childFound.getPath().segmentCount()){
+						container = childFound;
+					}
+				}
+			}
+			if(container == null)
 				container = this;
 		}
 		return container;
@@ -298,9 +333,9 @@ public class PathSettingsContainer {
 		if(fValue != INEXISTENT_VALUE && !visitor.visit(this))
 			return false;
 		
-		Map map = getChildrenMap(false);
-		if(map != null){
-			for(Iterator iter = map.values().iterator(); iter.hasNext();){
+		PatternNameMap pMap = getPatternChildrenMap(false);
+		if(pMap != null){
+			for(Iterator iter = pMap.values().iterator(); iter.hasNext();){
 				PathSettingsContainer child = (PathSettingsContainer)iter.next();
 				if(!child.doAccept(visitor))
 					return false;
@@ -330,8 +365,8 @@ public class PathSettingsContainer {
 		
 		if(!moveChildren){
 			if(hasChildren()){
-				PathSettingsContainer cr = new PathSettingsContainer(fRootContainer, fDirectParentContainer, fName);
-				for(Iterator iter = fChildrenMap.values().iterator(); iter.hasNext();){
+				PathSettingsContainer cr = new PathSettingsContainer(fRootContainer, fDirectParentContainer, fName, fIsPatternMode);
+				for(Iterator iter = fPatternChildrenMap.values().iterator(); iter.hasNext();){
 					PathSettingsContainer child = (PathSettingsContainer)iter.next();
 					iter.remove();
 					child.setParent(cr);

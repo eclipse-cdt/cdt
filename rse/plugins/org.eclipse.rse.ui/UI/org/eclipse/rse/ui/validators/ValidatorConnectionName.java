@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
  * The IInputValidator interface is used by jface's
  * InputDialog class and numerous other platform and system classes.
  */
-public class ValidatorConnectionName extends ValidatorFolderName implements ISystemValidator
+public class ValidatorConnectionName extends ValidatorUniqueString implements ISystemValidator
 {
 	public static final int MAX_CONNECTIONNAME_LENGTH = 100; // arbitrary restriction due to defects
 		
@@ -42,10 +42,11 @@ public class ValidatorConnectionName extends ValidatorFolderName implements ISys
 	 */
 	public ValidatorConnectionName(Vector existingNameList)
 	{
-		super(existingNameList);
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE),
-		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_NOTVALID));  
+		super(existingNameList, CASE_SENSITIVE);
+		setErrorMessages(
+				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_EMPTY),
+				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE)
+				);  
 	}
 	
 	/**

@@ -105,7 +105,7 @@ Contributors:
                           <LevelTwo>Connection names must be unique to the profile that contains the connection. Specify a name not already in use.</LevelTwo>
                     </Message>
                     <Message ID="1023" Indicator="E">
-                          <LevelOne>Invalid connection name. Must be a valid folder name in the underlaying file system.</LevelOne>
+                          <LevelOne>Invalid connection name. Must be a valid folder name in the underlying file system.</LevelOne>
                           <LevelTwo>The connection name is not syntactically valid. The name must be a valid folder name within the workbench and the underlying file system.</LevelTwo>
                     </Message>
                     <Message ID="1024" Indicator="E">

@@ -23,13 +23,13 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * This class is used in dialogs that prompt for filter name. Filter names
- * have to be unique, and to enable saving per file, must be a valid file name.
+ * have to be unique.
  * <p>
  * The IInputValidator interface is implemented by our parent and it
  * is used by jface's InputDialog class and property sheet window.
  */
 public class ValidatorFilterName 
-       extends ValidatorFileName implements ISystemValidator
+       extends ValidatorUniqueString implements ISystemValidator
 {
 	public static final int MAX_FILTERNAME_LENGTH = 100;
 		
@@ -43,7 +43,7 @@ public class ValidatorFilterName
 	 */
 	public ValidatorFilterName(Vector existingList)
 	{
-		super(existingList);
+		super(existingList, CASE_SENSITIVE);
 		init();
 	}
 	/**
@@ -52,15 +52,16 @@ public class ValidatorFilterName
 	 */
 	public ValidatorFilterName(String[] existingList)
 	{
-		super(existingList);
+		super(existingList, CASE_SENSITIVE);
 		init();
 	}
 
     private void init()
     {		
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERNAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERNAME_NOTUNIQUE),  
-		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERNAME_NOTVALID));  
+		super.setErrorMessages(
+				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERNAME_EMPTY),
+				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERNAME_NOTUNIQUE)
+				);  
     }
 
 	public String toString()

@@ -19,5 +19,13 @@
          </run>
       </cextension>
    </extension>
+   <extension
+         id="FakeIndexer"
+         name="FakeIndexer"
+         point="org.eclipse.cdt.core.CIndexer">
+      <run
+            class="org.eclipse.cdt.internal.index.tests.FakeIndexer">
+      </run>
+   </extension>
 
 </plugin>

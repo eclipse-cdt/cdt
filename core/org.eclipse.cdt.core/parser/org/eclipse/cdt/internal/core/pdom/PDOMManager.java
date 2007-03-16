@@ -40,7 +40,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -54,6 +53,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMResourceDeltaTask;
+import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -112,7 +112,6 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 	private static final ISchedulingRule NOTIFICATION_SCHEDULING_RULE = new PerInstanceSchedulingRule();
 	private static final ISchedulingRule INDEXER_SCHEDULING_RULE = new PerInstanceSchedulingRule();
-	private static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
 
 	/**
 	 * Protects indexerJob, currentTask and taskQueue.
@@ -362,18 +361,13 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 				registerIndexer(project, indexer);
 				IPDOMIndexerTask task= null;
-				if (!operation.wasSuccessful()) {
-					task= new PDOMRebuildTask(indexer);
+				if (operation.wasSuccessful()) {
+					task= new PDOMUpdateTask(indexer);
 				}
 				else {
-					ITranslationUnit[] tus= operation.getTranslationUnitsToUpdate();
-					if (tus.length > 0) {
-						task= indexer.createTask(NO_TUS, tus, NO_TUS);
-					}
+					task= new PDOMRebuildTask(indexer);
 				}
-				if (task != null) {
-					enqueue(task);
-				}
+				enqueue(task);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -712,7 +706,6 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		try {
 			try {
 				Job.getJobManager().join(this, monitor);
-				assert Job.getJobManager().find(this).length == 0;
 				return true;
 			} catch (OperationCanceledException e1) {
 			} catch (InterruptedException e1) {

@@ -77,7 +77,6 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 	
 	private ICProject fProject;
 	private boolean fSuccess;
-	private ITranslationUnit[] fTranslationUnitsToUpdate= new ITranslationUnit[0];
 	private boolean fShowActivity;
 
 	public TeamPDOMImportOperation(ICProject project) {
@@ -123,11 +122,6 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		return fSuccess;
 	}
 		
-	public ITranslationUnit[] getTranslationUnitsToUpdate() {
-		return fTranslationUnitsToUpdate;
-	}
-	
-	
 	private File getImportLocation() throws CoreException {
 		IProject project= fProject.getProject();
 		String locationString= IndexerPreferences.getIndexImportLocation(project);
@@ -242,15 +236,14 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					filesToCheck.add(new FileAndChecksum(tu, checksum));
 					i.remove();
 				}
-			}
-			
-			deleteFiles(pdom, 1, filesToDelete, filesToCheck, monitor);
+			}			
 			try {
-				fTranslationUnitsToUpdate= checkFiles(checksums, filesToCheck, monitor);
+				removeOutdatedFiles(checksums, filesToCheck, monitor);
 			}
 			catch (NoSuchAlgorithmException e) {
 				CCorePlugin.log(e);
 			}
+			deleteFiles(pdom, 1, filesToDelete, filesToCheck, monitor);
 		}
 		finally {
 			pdom.releaseReadLock();
@@ -292,8 +285,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
-	private ITranslationUnit[] checkFiles(Map checksums, List filesToCheck, IProgressMonitor monitor) throws NoSuchAlgorithmException {
-		List result= new ArrayList();
+	private void removeOutdatedFiles(Map checksums, List filesToCheck, IProgressMonitor monitor) throws NoSuchAlgorithmException {
         MessageDigest md= Checksums.getAlgorithm(checksums); 
 		for (Iterator i = filesToCheck.iterator(); i.hasNext();) {
 			checkMonitor(monitor);
@@ -306,7 +298,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					try {
 						byte[] checksum= Checksums.computeChecksum(md, location.toFile());
 						if (!Arrays.equals(checksum, cs.fChecksum)) {
-							result.add(tu);
+							i.remove();
 						}
 					}
 					catch (IOException e) {
@@ -315,6 +307,5 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 				}
 			}
 		}
-		return (ITranslationUnit[]) result.toArray(new ITranslationUnit[result.size()]);
 	}
 }

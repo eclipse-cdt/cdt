@@ -97,7 +97,10 @@ public class IndexerPreferences {
 		if (makeCopy) {
 			Preferences[] prefs= getPreferences(project, scope);
 			if (prefs[0].get(KEY_INDEXER_ID, null) == null) {
-				Properties props= getProperties(project, SCOPE_INSTANCE);
+				Preferences ppp= getLocalPreferences(project);
+				int oldScope= ppp.getInt(KEY_INDEXER_PREFS_SCOPE, SCOPE_INSTANCE);
+
+				Properties props= getProperties(project, oldScope);
 				setProperties(prefs[0], props);
 			}
 		}

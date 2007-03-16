@@ -20,33 +20,22 @@ import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.index.IWritableIndex;
-import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
-import org.eclipse.cdt.internal.core.pdom.PDOMManager;
-import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 
-public class PDOMRebuildTask implements IPDOMIndexerTask {
+public class PDOMUpdateTask implements IPDOMIndexerTask {
 	protected static final String TRUE= String.valueOf(true);
 	protected static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
 	
 	private final IPDOMIndexer fIndexer;
 	private final IndexerProgress fProgress;
-	private final boolean fCheckTimestamps;
 	private volatile IPDOMIndexerTask fDelegate;
 
-	public PDOMRebuildTask(IPDOMIndexer indexer) {
-		this(indexer, false);
-	}
-
-	public PDOMRebuildTask(IPDOMIndexer indexer, boolean checkTimestamps) {
+	public PDOMUpdateTask(IPDOMIndexer indexer) {
 		fIndexer= indexer;
 		fProgress= createProgress();
-		fCheckTimestamps= checkTimestamps;
 	}
 
 	private IndexerProgress createProgress() {
@@ -66,56 +55,19 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		ICProject project= fIndexer.getProject();
 		if (project.getProject().isOpen()) {
 			try {
-				clearIndex(project);
 				if (!IPDOMManager.ID_NO_INDEXER.equals(fIndexer.getID())) {
 					createDelegate(project, monitor);
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-			} catch (InterruptedException e) {
-			}
+			} 
 		}
 		
 		if (fDelegate != null) {
 			fDelegate.run(monitor);
-			writeProjectProperties(project);
 		}
 	}
 	
-	/**
-	 * Writes project metadata to the pdom
-	 * @see PDOMManager#writeProjectPDOMProperties(WritablePDOM, org.eclipse.core.resources.IProject)
-	 * @param project the project to write project metadata about
-	 */
-	private void writeProjectProperties(ICProject project) {
-		try {
-			PDOMManager mgr= CCoreInternals.getPDOMManager();
-			WritablePDOM projectPDOM= (WritablePDOM) mgr.getPDOM(project);
-			projectPDOM.acquireWriteLock();
-			try {
-				PDOMManager.writeProjectPDOMProperties(projectPDOM, project.getProject());
-			} finally {
-				projectPDOM.releaseWriteLock();
-			}
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
-		} catch(InterruptedException ie) {
-			// no-op
-		}
-	}
-
-	private void clearIndex(ICProject project) throws CoreException, InterruptedException {
-		IWritableIndex index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(project);
-		// First clear the pdom
-		index.acquireWriteLock(0);
-		try {
-			index.clear();
-		}
-		finally {
-			index.releaseWriteLock(0);
-		}
-	}
-
 	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
 		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
 		List list= new ArrayList();
@@ -124,7 +76,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		ITranslationUnit[] tus= (ITranslationUnit[]) list.toArray(new ITranslationUnit[list.size()]);
 		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (fDelegate instanceof PDOMIndexerTask) {
-			((PDOMIndexerTask) fDelegate).setCheckTimestamps(fCheckTimestamps);
+			((PDOMIndexerTask) fDelegate).setCheckTimestamps(true);
 		}
 	}
 

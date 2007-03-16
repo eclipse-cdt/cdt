@@ -161,9 +161,11 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				if (useLocation != null) {
 					IASTPreprocessorMacroDefinition macroDef= ((IASTMacroExpansion)nodeLocations[0]).getMacroDefinition();
 					IASTNodeLocation defLocation= macroDef.getName().getFileLocation();
-					IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useLocation.getNodeOffset(), defLocation.getNodeLength());
-					if (macroNode != null && visitMacro(macroNode, defLocation.getNodeLength())) {
-						return true;
+					if (defLocation != null) {
+						IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useLocation.getNodeOffset(), defLocation.getNodeLength());
+						if (macroNode != null && visitMacro(macroNode, defLocation.getNodeLength())) {
+							return true;
+						}
 					}
 				}
 			}

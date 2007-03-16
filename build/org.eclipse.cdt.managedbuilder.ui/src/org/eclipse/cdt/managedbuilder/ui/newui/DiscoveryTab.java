@@ -81,7 +81,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     
     private ICfgScannerConfigBuilderInfo2Set cbi;
     private IScannerConfigBuilderInfo2 buildInfo;
-    private CfgInfoContext icontext;
+    private CfgInfoContext iContext;
     private List pagesList = null;
     private List profilesList = null;
     private IPath configPath;
@@ -204,7 +204,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  			IResourceInfo rci = ic.getResourceInfo();
  			if (rci == null) { // per configuration
  				s = ic.getConfiguration().getName();
- 			} else { // pre resource
+ 			} else { // per resource
  				if ( ! configPath.equals(rci.getPath())) continue;
  				IInputType typ = ic.getInputType();
  				if (typ != null) s = typ.getName();
@@ -249,7 +249,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		
 		TableItem ti = resTable.getSelection()[0];
 		buildInfo = (IScannerConfigBuilderInfo2)ti.getData("info"); //$NON-NLS-1$
-		icontext  = (CfgInfoContext)ti.getData("cont"); //$NON-NLS-1$
+		iContext  = (CfgInfoContext)ti.getData("cont"); //$NON-NLS-1$
         scEnabledButton.setSelection(buildInfo.isAutoDiscoveryEnabled());
         scProblemReportingEnabledButton.setSelection(buildInfo.isProblemReportingEnabled());
 
@@ -267,6 +267,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         
         while (it.hasNext()) {
             String profileId = (String)it.next();
+ 			if (!cbi.isProfileSupported(iContext, profileId)) continue; 
+            
             String profileName = getProfileName(profileId);
             profileComboBox.add(profileName);
             if (profileId.equals(savedId)) pos = counter;
@@ -297,7 +299,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	private void handleDiscoveryProfileChanged() {
 		int pos = profileComboBox.getSelectionIndex();
 		for (int i=0; i<realPages.length; i++)
-			realPages[i].setVisible(i==pos);
+			if (realPages[i] != null)
+				realPages[i].setVisible(i==pos);
 	}
 	
     /**
@@ -393,7 +396,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	 * IBuildInfoContainer methods - called from dynamic pages
 	 */
 	public IScannerConfigBuilderInfo2 getBuildInfo() { return buildInfo; }
-	public CfgInfoContext getContext() { return icontext; }
+	public CfgInfoContext getContext() { return iContext; }
 	public IProject getProject() { return page.getProject(); }
 	public ICConfigurationDescription getConfiguration() { return getResDesc().getConfiguration(); }
 

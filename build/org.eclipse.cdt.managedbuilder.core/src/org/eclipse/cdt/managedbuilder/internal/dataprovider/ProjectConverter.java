@@ -108,10 +108,7 @@ public class ProjectConverter implements ICProjectConverter {
 		String[] binErrParserIds = null;
 //		boolean convertMakeTargetInfo = false;
 
-		if(natureSet.contains(OLD_MNG_NATURE_ID)){
-			newDes = model.createProjectDescription(project, false);
-			info = convertManagedBuildInfo(project, newDes);
-		} else if(natureSet.contains(OLD_MAKE_NATURE_ID)){
+		if(natureSet.contains(OLD_MAKE_NATURE_ID)){
 			newDes = oldDes;
 			ICConfigurationDescription des = newDes.getConfigurations()[0];
 			ICConfigExtensionReference refs[] = des.get(OLD_BINARY_PARSER_ID);
@@ -130,6 +127,9 @@ public class ProjectConverter implements ICProjectConverter {
 			cfg.setConfigurationDescription(des);
 
 			des.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
+		} else if(natureSet.contains(OLD_MNG_NATURE_ID)){
+			newDes = model.createProjectDescription(project, false);
+			info = convertManagedBuildInfo(project, newDes);
 		} 
 
 		if(newDes == null || !newDes.isValid() || newDes.getConfigurations().length == 0){
@@ -372,22 +372,22 @@ public class ProjectConverter implements ICProjectConverter {
 	
 	private static boolean convertOldStdMakeToNewStyle(final IProject project, boolean checkOnly, IProgressMonitor monitor, boolean throwExceptions) throws CoreException {
 		try {
-			ICDescriptor dr = CCorePlugin.getDefault().getCProjectDescription(project, false);
-			if(dr == null){
-				if(throwExceptions)
-					throw new CoreException(new Status(IStatus.ERROR,
-							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-							DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
-				return false;
-			}
-
-			if(!MakeCorePlugin.MAKE_PROJECT_ID.equals(dr.getProjectOwner().getID())){
-				if(throwExceptions)
-					throw new CoreException(new Status(IStatus.ERROR,
-							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-							DataProviderMessages.getString("ProjectConverter.1") + dr.getProjectOwner().getID())); //$NON-NLS-1$
-				return false;
-			}
+//			ICDescriptor dr = CCorePlugin.getDefault().getCProjectDescription(project, false);
+//			if(dr == null){
+//				if(throwExceptions)
+//					throw new CoreException(new Status(IStatus.ERROR,
+//							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+//							DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
+//				return false;
+//			}
+//
+//			if(!MakeCorePlugin.MAKE_PROJECT_ID.equals(dr.getProjectOwner().getID())){
+//				if(throwExceptions)
+//					throw new CoreException(new Status(IStatus.ERROR,
+//							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+//							DataProviderMessages.getString("ProjectConverter.1") + dr.getProjectOwner().getID())); //$NON-NLS-1$
+//				return false;
+//			}
 			
 			ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
 			ICConfigurationDescription cfgs[] = des.getConfigurations();

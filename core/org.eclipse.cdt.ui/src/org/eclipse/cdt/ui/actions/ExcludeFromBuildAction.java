@@ -147,10 +147,9 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			dialog.setInitialElementSelections(lst);
 		
 		if (dialog.open() == Window.OK) {
-			Object[] selected = dialog.getResult();
-			if (selected != null && selected.length > 0) {
-				Iterator it2 = objects.iterator();
-outer:				
+			Object[] selected = dialog.getResult(); // may be empty
+			Iterator it2 = objects.iterator();
+			outer:				
 				while(it2.hasNext()) {
 					IResource res = (IResource)it2.next();
 					IProject p = res.getProject();
@@ -186,7 +185,6 @@ outer:
 					} catch (CoreException e) {}
 					AbstractPage.updateViews(res);
 				}
-			}
 		}
 	}
 

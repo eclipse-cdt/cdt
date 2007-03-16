@@ -28,14 +28,14 @@ public class PDOMTests extends TestSuite {
 		suite.addTest(DBPropertiesTests.suite());
 		suite.addTest(PDOMBugsTest.suite());
 		suite.addTest(PDOMSearchTest.suite());
-		suite.addTestSuite(PDOMLocationTests.class);
-		suite.addTestSuite(EnumerationTests.class);
-		suite.addTestSuite(ClassTests.class);
-		suite.addTestSuite(TypesTests.class);
-		suite.addTestSuite(IncludesTests.class);
-		suite.addTestSuite(OverloadsWithinSingleTUTests.class);
+		suite.addTest(PDOMLocationTests.suite());
+		suite.addTest(EnumerationTests.suite());
+		suite.addTest(ClassTests.suite());
+		suite.addTest(TypesTests.suite());
+		suite.addTest(IncludesTests.suite());
+		suite.addTest(OverloadsWithinSingleTUTests.suite());
 		suite.addTest(OverloadsWithinCommonHeaderTests.suite());
-		suite.addTestSuite(BTreeTests.class);
+		suite.addTest(BTreeTests.suite());
 		suite.addTest(FilesOnReindexTests.suite());		
 
 		suite.addTest(CPPFieldTests.suite());
@@ -47,7 +47,7 @@ public class PDOMTests extends TestSuite {
 		IndexCBindingResolutionTest.addTests(suite);
 		IndexCPPBindingResolutionTest.addTests(suite);
 		IndexCBindingResolutionBugs.addTests(suite);
-		suite.addTest(IndexBindingResolutionBugs.suite());
+		IndexBindingResolutionBugs.addTests(suite);
 		
 		suite.addTest(CFunctionTests.suite());
 		suite.addTest(CVariableTests.suite());

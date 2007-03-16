@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import junit.framework.Test;
+
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -28,6 +30,10 @@ import org.osgi.framework.Bundle;
  */
 public class PDOMLocationTests extends BaseTestCase {
 	ICProject cproject;
+	
+	public static Test suite() {
+		return suite(PDOMLocationTests.class);
+	}
 	
 	protected void setUp() throws Exception {
 		cproject= CProjectHelper.createCCProject("PDOMLocationTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);

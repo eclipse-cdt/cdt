@@ -20,6 +20,18 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  */
 public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 
+	public static class SingleProject extends IndexBindingResolutionBugs {
+		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
+	}
+	public static class ProjectWithDepProj extends IndexBindingResolutionBugs {
+		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
+	}
+	
+	public static void addTests(TestSuite suite) {		
+		suite.addTest(suite(SingleProject.class));
+		suite.addTest(suite(ProjectWithDepProj.class));
+	}
+	
 	public static TestSuite suite() {
 		return suite(IndexBindingResolutionBugs.class);
 	}

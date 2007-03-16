@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.regex.Pattern;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -30,6 +32,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 	protected PDOM pdom;
 
+	public static TestSuite suite() {
+		return suite(OverloadsWithinSingleTUTests.class);
+	}
+	
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("overloadsWithinSingleTU");

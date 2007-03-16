@@ -41,6 +41,8 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -48,6 +50,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -73,7 +76,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Slider;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -649,7 +652,165 @@ public class TraditionalRendering extends AbstractMemoryRendering
         };
         displayRadixBinAction
             .setChecked(this.fRendering.getRadix() == Rendering.RADIX_BINARY);
+        
+        final Action displayColumnCountAuto = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_AUTO"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+               TraditionalRendering.this.fRendering.setColumnsSetting(Rendering.COLUMNS_AUTO_SIZE_TO_FIT);
+            }
+        };
+        displayColumnCountAuto.setChecked(fRendering.getColumnsSetting() == Rendering.COLUMNS_AUTO_SIZE_TO_FIT);
+        
+        final Action displayColumnCount1 = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_1"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	TraditionalRendering.this.fRendering.setColumnsSetting(1);  
+            }
+        };
+        displayColumnCount1.setChecked(fRendering.getColumnsSetting() == 1);
 
+        final Action displayColumnCount2 = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_2"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	TraditionalRendering.this.fRendering.setColumnsSetting(2); 
+            }
+        };
+        displayColumnCount2.setChecked(fRendering.getColumnsSetting() == 2);
+        
+        final Action displayColumnCount3 = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_3"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	TraditionalRendering.this.fRendering.setColumnsSetting(3); 
+            }
+        };
+        displayColumnCount3.setChecked(fRendering.getColumnsSetting() == 3);
+        
+        final Action displayColumnCount4 = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_4"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	TraditionalRendering.this.fRendering.setColumnsSetting(4); 
+            }
+        };
+        displayColumnCount4.setChecked(fRendering.getColumnsSetting() == 4);
+        
+        final Action displayColumnCount5 = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_5"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	TraditionalRendering.this.fRendering.setColumnsSetting(5); 
+            }
+        };
+        displayColumnCount5.setChecked(fRendering.getColumnsSetting() == 5);
+        
+        final Action displayColumnCount6 = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_6"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	TraditionalRendering.this.fRendering.setColumnsSetting(6); 
+            }
+        };
+        displayColumnCount6.setChecked(fRendering.getColumnsSetting() == 6);
+        
+        final Action displayColumnCount7 = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_7"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	TraditionalRendering.this.fRendering.setColumnsSetting(7); 
+            }
+        };
+        displayColumnCount7.setChecked(fRendering.getColumnsSetting() == 7);
+        
+        final Action displayColumnCount8 = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_8"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	TraditionalRendering.this.fRendering.setColumnsSetting(8); 
+            }
+        };
+        displayColumnCount8.setChecked(fRendering.getColumnsSetting() == 8);
+        
+        final Action displayColumnCountCustomValue = new Action("", IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	
+            }
+        };
+        displayColumnCountCustomValue.setChecked(fRendering.getColumnsSetting() > 8);
+        
+        
+        final Action displayColumnCountCustom = new Action(
+            TraditionalRenderingMessages
+                .getString("TraditionalRendering.COLUMN_COUNT_CUSTOM"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
+        {
+            public void run()
+            {
+            	InputDialog inputDialog = new InputDialog(
+                    fRendering.getShell(), 
+                    "Set Column Count",  //$NON-NLS-1$
+                    "Please enter column count", //$NON-NLS-1$
+                    "", //$NON-NLS-1$
+                    new IInputValidator() {
+                        public String isValid(String input) {
+                            try {
+                                int i= Integer.parseInt(input);
+                                if (i <= 0)
+                                    return "Please enter a positive integer";  //$NON-NLS-1$
+    
+                            } catch (NumberFormatException x) {
+                                return "Please enter a positive integer";  //$NON-NLS-1$
+                            }
+                            return null;
+                        }                    
+                    }
+                );
+                if (inputDialog.open() != Window.OK) return;
+                int newColumnCount = -1;
+                try {
+                    newColumnCount = Integer.parseInt(inputDialog.getValue());
+                } catch (NumberFormatException x) { assert false; }
+            	
+            	TraditionalRendering.this.fRendering.setColumnsSetting(newColumnCount);
+            	this.setChecked(false);
+            	displayColumnCountCustomValue.setChecked(true);
+            	displayColumnCountCustomValue.setText(Integer.valueOf(
+            		fRendering.getColumnsSetting()).toString());
+            }
+        };
+        
         getPopupMenuManager().addMenuListener(new IMenuListener()
         {
             public void menuAboutToShow(IMenuManager manager)
@@ -694,8 +855,24 @@ public class TraditionalRendering extends AbstractMemoryRendering
                 sub.add(displayRadixOctAction);
                 sub.add(displayRadixBinAction);
                 manager.add(sub);
+                
+                sub = new MenuManager(TraditionalRenderingMessages
+                        .getString("TraditionalRendering.COLUMN_COUNT")); //$NON-NLS-1$
+                sub.add(displayColumnCountAuto);
+                sub.add(displayColumnCount1);
+                sub.add(displayColumnCount2);
+                sub.add(displayColumnCount3);
+                sub.add(displayColumnCount4);
+                sub.add(displayColumnCount5);
+                sub.add(displayColumnCount6);
+                sub.add(displayColumnCount7);
+                sub.add(displayColumnCount8);
+                if(displayColumnCountCustomValue.isChecked())
+                	sub.add(displayColumnCountCustomValue);
+                sub.add(displayColumnCountCustom);
+                manager.add(sub);
                 manager.add(new Separator());
-
+                
                 manager.add(copyAction);
 
                 manager.add(gotoAddressAction);
@@ -900,7 +1077,6 @@ class Rendering extends Composite implements IDebugEventSetListener
     private TraditionalRendering fParent;
 
     // controls
-    private Slider fScrollBar;
 
     private AddressPane fAddressPane;
 
@@ -935,6 +1111,8 @@ class Rendering extends Composite implements IDebugEventSetListener
     private int fBytesPerColumn = 4; // 4 byte cell width default
 
     private int fRadix = RADIX_HEX;
+    
+    private int fColumnsSetting = COLUMNS_AUTO_SIZE_TO_FIT;
 
     private boolean fLittleEndian = false;
     
@@ -964,6 +1142,9 @@ class Rendering extends Composite implements IDebugEventSetListener
     protected final static int TEXT_UTF8 = 3;
     protected final static int TEXT_UTF16 = 4;
     
+    // internal constants
+    protected final static int COLUMNS_AUTO_SIZE_TO_FIT = 0;
+    
     // view internal settings
     private int fCellPadding = 2;
 
@@ -975,8 +1156,9 @@ class Rendering extends Composite implements IDebugEventSetListener
     public Rendering(Composite parent,
         TraditionalRendering renderingParent)
     {
-        super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
-
+        super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND | SWT.H_SCROLL
+        		| SWT.V_SCROLL);
+        
         this.setFont(JFaceResources
             .getFont(IInternalDebugUIConstants.FONT_NAME)); // TODO internal?
 
@@ -1016,8 +1198,21 @@ class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
-        fScrollBar = new Slider(this, SWT.V_SCROLL);
-        fScrollBar.addSelectionListener(new SelectionListener()
+        getHorizontalBar().addSelectionListener(new SelectionListener()
+        {
+        	public void widgetSelected(SelectionEvent se)
+            {
+        		Rendering.this.layout();
+            }
+        	
+        	public void widgetDefaultSelected(SelectionEvent se)
+            {
+                // do nothing
+            }
+        });
+        
+        getVerticalBar().addSelectionListener(
+        	new SelectionListener()
         {
             public void widgetSelected(SelectionEvent se)
             {
@@ -1052,12 +1247,12 @@ class Rendering extends Composite implements IDebugEventSetListener
                         redrawPanes();
                         break;
                     case SWT.SCROLL_LINE:
-                    	if(fScrollBar.getSelection() == fScrollBar.getMinimum())
+                    	if(getVerticalBar().getSelection() == getVerticalBar().getMinimum())
                     	{
                     		// Set view port start address to the start address of the Memory Block
                     		fViewportAddress = Rendering.this.getMemoryBlockStartAddress();
                     	}
-                    	else if(fScrollBar.getSelection() == fScrollBar.getMaximum())
+                    	else if(getVerticalBar().getSelection() == getVerticalBar().getMaximum())
                     	{
                     		// The view port end address should be less or equal to the the end address of the Memory Block
                     		// Set view port address to be bigger than the end address of the Memory Block for now
@@ -1067,13 +1262,15 @@ class Rendering extends Composite implements IDebugEventSetListener
                     	else
                     	{
                             // Figure out the delta
-                        	int delta = fScrollBar.getSelection() - fCurrentScrollSelection;
+                        	int delta = getVerticalBar().getSelection() - fCurrentScrollSelection;
                     		fViewportAddress = fViewportAddress.add(BigInteger.valueOf(
                     				getAddressableCellsPerRow() * delta));
                     	}
                         ensureViewportAddressDisplayable();
                         // Update tooltip
-                    	fScrollBar.setToolTipText(Rendering.this.getAddressString(fViewportAddress));
+                        // FIXME conversion from slider to scrollbar
+                        // getVerticalBar().setToolTipText(Rendering.this.getAddressString(fViewportAddress));
+                        
                         // Update the addresses on the Address pane. 
                     	// Do not update the Binary and Text panes until dragging of the thumb nail stops
                         if(fAddressPane.isPaneVisible())
@@ -1109,9 +1306,13 @@ class Rendering extends Composite implements IDebugEventSetListener
         {
             public void layout(Composite composite, boolean changed)
             {
-                int x = 0;
+            	int xOffset = 0;
+            	if(Rendering.this.getHorizontalBar().isVisible())
+                	xOffset = Rendering.this.getHorizontalBar().getSelection();
+            	
+                int x = xOffset * -1;
                 int y = 0;
-
+                
                 if(fAddressBar.isVisible())
                 {
                     fAddressBar.setBounds(0, 0,
@@ -1122,7 +1323,7 @@ class Rendering extends Composite implements IDebugEventSetListener
 
                 if(fAddressPane.isPaneVisible())
                 {
-                    fAddressPane.setBounds(0, y,
+                    fAddressPane.setBounds(x, y,
                         fAddressPane.computeSize(0, 0).x, Rendering.this
                             .getBounds().height
                             - y);
@@ -1140,22 +1341,29 @@ class Rendering extends Composite implements IDebugEventSetListener
                         + fBinaryPane.getBounds().width;
                 }
 
-                Point scrollBarPreferredSize = fScrollBar.computeSize(20,
-                    Rendering.this.getBounds().height);
-
                 if(fTextPane.isPaneVisible())
                 {
-                    fTextPane.setBounds(x, y, Rendering.this.getBounds().width
-                        - x - scrollBarPreferredSize.x, Rendering.this
-                        .getBounds().height
-                        - y);
+                    fTextPane.setBounds(x, y, 
+                    	Math.max(fTextPane.computeSize(0, 0).x, Rendering.this.getClientArea().width 
+                    		- x - xOffset), Rendering.this.getBounds().height - y);
                 }
 
-                fScrollBar.setBounds(Rendering.this.getBounds().width
-                    - scrollBarPreferredSize.x, y, scrollBarPreferredSize.x,
-                    Rendering.this.getBounds().height - y);
-                
-                fScrollBar.moveAbove(null);
+                if(getClientArea().width >= fTextPane.getBounds().x + fTextPane.getBounds().width + xOffset)
+                {
+                	Rendering.this.getHorizontalBar().setVisible(false);
+                }
+                else
+                {
+                	ScrollBar horizontal = Rendering.this.getHorizontalBar();
+                	
+                	horizontal.setVisible(true);
+                	horizontal.setMinimum(0);
+                	horizontal.setMaximum(fTextPane.getBounds().x 
+                		+ fTextPane.getBounds().width + xOffset);
+                	horizontal.setThumb(getClientArea().width);
+                	horizontal.setPageIncrement(40); // TODO ?
+                	horizontal.setIncrement(20); // TODO ?
+                }
             }
 
             protected Point computeSize(Composite composite, int wHint,
@@ -1963,34 +2171,42 @@ class Rendering extends Composite implements IDebugEventSetListener
         if(fTextPane.isPaneVisible())
             combinedWidth += fTextPane.getCellWidth();
 
-        if(combinedWidth == 0)
-            fColumnCount = 0;
+        if(getColumnsSetting() == Rendering.COLUMNS_AUTO_SIZE_TO_FIT)
+        {
+	        if(combinedWidth == 0)
+	            fColumnCount = 0;
+	        else
+	        {
+	            fColumnCount = availableWidth / combinedWidth;
+	            if(fColumnCount == 0)
+	            	fColumnCount = 1; // paint one column even if only part can show in view
+	        }
+        }
         else
         {
-            fColumnCount = availableWidth / combinedWidth;
-            if(fColumnCount == 0)
-            	fColumnCount = 1; // paint one column even if only part can show in view
+        	fColumnCount = getColumnsSetting();
         }
         
         try
         {
-        // Update the number of bytes per row;
-        // the max and min scroll range and the current thumb nail position.        
-        fBytesPerRow = getBytesPerColumn() * getColumnCount();
-        BigInteger difference = getMemoryBlockEndAddress().subtract(getMemoryBlockStartAddress()).add(BigInteger.ONE);
-        BigInteger maxScrollRange = difference.divide(BigInteger.valueOf(getAddressableCellsPerRow()));
-        if(maxScrollRange.multiply(BigInteger.valueOf(getAddressableCellsPerRow())).compareTo(difference) != 0)
-        	maxScrollRange = maxScrollRange.add(BigInteger.ONE);
-        
-        // support targets with an addressable size greater than 1
-        maxScrollRange = maxScrollRange.divide(BigInteger.valueOf(getAddressableSize()));
-                
-        fScrollBar.setMinimum(1);
-        fScrollBar.setMaximum(maxScrollRange.intValue());
-        fScrollBar.setIncrement(1);
-        fScrollBar.setPageIncrement(this.getRowCount()-1);
-    	fScrollBar.setToolTipText(Rendering.this.getAddressString(fViewportAddress));
-        setCurrentScrollSelection();
+	        // Update the number of bytes per row;
+	        // the max and min scroll range and the current thumb nail position.        
+	        fBytesPerRow = getBytesPerColumn() * getColumnCount();
+	        BigInteger difference = getMemoryBlockEndAddress().subtract(getMemoryBlockStartAddress()).add(BigInteger.ONE);
+	        BigInteger maxScrollRange = difference.divide(BigInteger.valueOf(getAddressableCellsPerRow()));
+	        if(maxScrollRange.multiply(BigInteger.valueOf(getAddressableCellsPerRow())).compareTo(difference) != 0)
+	        	maxScrollRange = maxScrollRange.add(BigInteger.ONE);
+	        
+	        // support targets with an addressable size greater than 1
+	        maxScrollRange = maxScrollRange.divide(BigInteger.valueOf(getAddressableSize()));
+	                
+	        getVerticalBar().setMinimum(1);
+	        getVerticalBar().setMaximum(maxScrollRange.intValue());
+	        getVerticalBar().setIncrement(1);
+	        getVerticalBar().setPageIncrement(this.getRowCount() -1);
+	    	//TW FIXME conversion of slider to scrollbar
+	        // fScrollBar.setToolTipText(Rendering.this.getAddressString(fViewportAddress));
+	        setCurrentScrollSelection();
         }
         catch(Exception e)
         {
@@ -2107,7 +2323,22 @@ class Rendering extends Composite implements IDebugEventSetListener
         return fColumnCount;
     }
 
-    protected void ensureVisible(BigInteger address)
+    public int getColumnsSetting() 
+    {
+		return fColumnsSetting;
+	}
+
+	public void setColumnsSetting(int columns) 
+	{
+		if(fColumnsSetting != columns)
+		{
+			fColumnsSetting = columns;
+			fireSettingsChanged();
+	        layoutPanes();
+		}
+	}
+
+	protected void ensureVisible(BigInteger address)
     {
         BigInteger viewportStart = this.getViewportStartAddress();
         BigInteger viewportEnd = this.getViewportEndAddress();
@@ -2160,7 +2391,7 @@ class Rendering extends Composite implements IDebugEventSetListener
 	{
 		BigInteger selection = getViewportStartAddress().divide(
 			BigInteger.valueOf(getAddressableCellsPerRow()).add(BigInteger.ONE));
-		fScrollBar.setSelection(selection.intValue());
+		getVerticalBar().setSelection(selection.intValue());
 		fCurrentScrollSelection = selection.intValue();
 	}
     

@@ -184,7 +184,7 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 		// created before and still valid
 		boolean needsDelete = (newProject != null && savedDefaults && !isChanged());
 		// create project if it is not created yet
-		if (getProject(false) == null) return false;
+		if (getProject(fMainPage.isCurrent()) == null) return false;
 		// process custom pages
 		doCustom();
 		// project is created with all possible configs

@@ -12,12 +12,15 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
 
 import org.eclipse.rse.core.RSEPreferencesManager;
+import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.ICredentials;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -60,7 +63,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	private boolean validate = true;
 	private ISystemValidator userIdValidator;
 	private ISystemValidator passwordValidator;
-	private ISignonValidator signonValidator;
+	private ICredentialsValidator signonValidator;
 	private IConnectorService connectorService = null;
 
 	/**
@@ -113,7 +116,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 * This must be called prior to opening this dialog if something other than the default is needed.
 	 * @param v a signon validator
 	 */
-	public void setSignonValidator(ISignonValidator v) {
+	public void setSignonValidator(ICredentialsValidator v) {
 		signonValidator = v;
 	}
 
@@ -478,7 +481,10 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 
 		// If all inputs are OK then validate signon
 		if (getErrorMessage() == null && (signonValidator != null)) {
-			SystemMessage m = signonValidator.isValid(this, userId, password);
+			String hostName = connectorService.getHostName();
+			String hostType = connectorService.getHostType();
+			ICredentials credentials = new SystemSignonInformation(hostName, userId, password, hostType);
+			SystemMessage m = signonValidator.validate(credentials);
 			setErrorMessage(m);
 		}
 		boolean closeDialog = (getErrorMessage() == null); 

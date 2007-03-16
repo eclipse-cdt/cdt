@@ -20,6 +20,8 @@ package samples.subsystems;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
+import org.eclipse.rse.core.subsystems.BasicCredentialsProvider;
+import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 
 import samples.RSESamplesPlugin;
 
@@ -30,6 +32,7 @@ import samples.RSESamplesPlugin;
 public class DeveloperConnectorService extends AbstractConnectorService {
 
 	private boolean connected = false;
+	private ICredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
 	/**
 	 * Constructor for DeveloperConnectorService.
@@ -65,26 +68,14 @@ public class DeveloperConnectorService extends AbstractConnectorService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#internalDisconnect(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void internalDisconnect(IProgressMonitor monitor) throws Exception
+	protected void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
 		// pretend. Normally, we'd disconnect from our remote server-side code here
 		connected=false;
 	}
-
-	/**
-	 * @return false
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsPassword()
-	 */
-	public boolean supportsPassword() {
-		return false;
-	}
-
-	/**
-	 * @return false
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsUserId()
-	 */
-	public boolean supportsUserId() {
-		return false;
+	
+	protected ICredentialsProvider getCredentialsProvider() {
+		return credentialsProvider;
 	}
 
 }

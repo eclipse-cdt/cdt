@@ -10,4 +10,13 @@
 package org.eclipse.rse.core.subsystems;
 
 public interface ICredentialsProvider {
+	
+	boolean supportsPassword();
+	
+	boolean supportsUserId();
+	
+	boolean requiresPassword();
+	
+	boolean requiresUserId();
+	
 }

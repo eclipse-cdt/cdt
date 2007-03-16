@@ -32,7 +32,7 @@ import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.dialogs.ISignonValidator;
+import org.eclipse.rse.ui.dialogs.ICredentialsValidator;
 import org.eclipse.rse.ui.dialogs.ISystemPasswordPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemChangePasswordDialog;
 import org.eclipse.rse.ui.dialogs.SystemPasswordPromptDialog;
@@ -169,7 +169,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 			if (userId != null)
 				PasswordPersistenceManager.getInstance().remove(systemType, hostName, userId);
 		}
-		if (shareUserPasswordWithConnection()) {
+		if (sharesCredentials()) {
 			// clear this uid/password with other ISystems in connection
 			clearPasswordForOtherSystemsInConnection(userId, onDisk);
 		}
@@ -197,29 +197,10 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 		return cached;
 	}
     
-    /**
-     * Return true if this system can inherit the uid and password of
-     * other ISystems in this connection
-     * 
-     * @return true if it can inherit the user/password
-     */
-    final public boolean inheritConnectionUserPassword()
-    {
-        return true;
-    }
-    
     /* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresPassword()
 	 */
 	public boolean requiresPassword() {
-		return true;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsPassword()
-	 */
-	public boolean supportsPassword() {
 		return true;
 	}
 
@@ -232,46 +213,28 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsUserId()
-	 */
-	public boolean supportsUserId()
-	{
-		return true;
-	}
-	
 	/**
-     * Return true if this connector service can share it's uid and password
-     * with other connector services in this host (connection).
-     * @return true if it can share the user/password
-     */
-    public boolean shareUserPasswordWithConnection()
-    {
-        return true;
-    }
-    
-    /**
-     * <i>Do not override.</i>
-     * Sets the signon information for this connector service.
-     * The search order for the password is as follows:</p>
-     * <ol>
-     * <li>First check if the password is already known by this connector service and that it is still valid.
-     * <li>If password not known then look in the password store and verify that it is still valid.
-     * <li>If a valid password is not found then prompt the user.
-     * </ol>
-     * Must be run in the UI thread. 
-     * Can be null if the password is known to exist in either this class or in the password store.
-     * @param forcePrompt if true then present the prompt even if the password was found and is valid.
-     * @throws InterruptedException if user is prompted and user cancels that prompt or if isSuppressSignonPrompt is true.
-     */
-    public void promptForPassword(boolean forcePrompt) throws InterruptedException {
+	 * <i>Do not override.</i>
+	 * Sets the signon information for this connector service.
+	 * The search order for the password is as follows:</p>
+	 * <ol>
+	 * <li>First check if the password is already known by this connector service and that it is still valid.
+	 * <li>If password not known then look in the password store and verify that it is still valid.
+	 * <li>If a valid password is not found then prompt the user.
+	 * </ol>
+	 * Must be run in the UI thread. 
+	 * Can be null if the password is known to exist in either this class or in the password store.
+	 * @param forcePrompt if true then present the prompt even if the password was found and is valid.
+	 * @throws InterruptedException if user is prompted and user cancels that prompt or if isSuppressSignonPrompt is true.
+	 */
+	public void promptForPassword(boolean forcePrompt) throws InterruptedException {
 		// dy:  March 24, 2003:  check if prompting is temporarily suppressed by a tool
 		// vendor, this should only be suppressed if the user cancelled a previous signon
 		// dialog (or some other good reason)
 		if (isSuppressSignonPrompt()) {
 			throw new InterruptedException();
 		}
-
+	
 		ISubSystem subsystem = getPrimarySubSystem();
 		IHost host = subsystem.getHost();
 		String hostName = host.getHostName();
@@ -303,17 +266,21 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 				}
 			}
 		}
-		ISignonValidator validator = getSignonValidator();
-		boolean signonValid = (validator == null) || validator.isValid(shell, _passwordInfo);
-
+		ICredentialsValidator validator = getSignonValidator();
+		boolean signonValid = true;
+		if (validator != null) {
+			SystemMessage m =  validator.validate(_passwordInfo);
+			signonValid = (m == null);
+		}
+	
 		// If we ran into an invalid password we need to tell the user.
 		// DWD refactor - want to move this to a pluggable class so that this can be moved to core.
 		// DWD not sure this is necessary, shouldn't this message show up on the password prompt itself?
 		if (!signonValid) {
-       		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
-       		msg.makeSubstitution(getLocalUserId(), getHostName());
-       		SystemMessageDialog dialog = new SystemMessageDialog(shell, msg);
-       		dialog.open();
+	   		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
+	   		msg.makeSubstitution(getLocalUserId(), getHostName());
+	   		SystemMessageDialog dialog = new SystemMessageDialog(shell, msg);
+	   		dialog.open();
 		}
 		if (shell == null)
 		{
@@ -326,7 +293,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 				shell = new Shell();
 			}
 		}
-    		
+			
 		if (supportsPassword() || supportsUserId()) 
 		{
 			if (shell == null)
@@ -381,7 +348,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 				    	}
 				    	if (supportsPassword()) {
 					    	setPassword(userId, password, savePassword);
-					    	if (shareUserPasswordWithConnection()) {
+					    	if (sharesCredentials()) {
 					    	    updatePasswordForOtherSystemsInConnection(userId, password, savePassword);
 					    	}
 				    	}
@@ -389,9 +356,10 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 				}
 			}
 		}
-    }        
-    
-    protected void clearPasswordForOtherSystemsInConnection(String uid, boolean fromDisk)
+	}
+
+
+	protected void clearPasswordForOtherSystemsInConnection(String uid, boolean fromDisk)
     {
     	if (uid != null)
     	{
@@ -403,7 +371,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	        for (int i = 0; i < subsystems.length; i++)
 	        {
 	            IConnectorService system = subsystems[i].getConnectorService();
-	            if (system != this && system.inheritConnectionUserPassword())
+	            if (system != this && system.inheritsCredentials())
 	            {
 	                if (!uniqueSystems.contains(system))
 	                {
@@ -434,7 +402,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
         for (int i = 0; i < subsystems.length; i++)
         {
             IConnectorService system = subsystems[i].getConnectorService();
-            if (system != this && system.inheritConnectionUserPassword())
+            if (system != this && system.inheritsCredentials())
             {
                 if (!uniqueSystems.contains(system))
                 {
@@ -508,7 +476,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * connector service. Assumes it has been set by the subsystem at the 
 	 * time the subsystem acquires the connector service.
 	 */
-	protected SystemSignonInformation getPasswordInformation() {
+	final protected SystemSignonInformation getPasswordInformation() {
 		return _passwordInfo;
 	}
 
@@ -517,7 +485,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * Sets the password information for this system's subsystem.
 	 * @param passwordInfo the password information object
 	 */
-	protected void setPasswordInformation(SystemSignonInformation passwordInfo) {
+	final protected void setPasswordInformation(SystemSignonInformation passwordInfo) {
 		_passwordInfo = passwordInfo;
 		if (passwordInfo != null) {
 			_userId = passwordInfo.getUserid();
@@ -564,11 +532,10 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
      * By default, returns </p>
      *   <pre><code>getSubSystem().getParentSubSystemConfiguration().getUserIdValidator()</code></pre>
      */
-    public ISystemValidator getUserIdValidator()
+    final public ISystemValidator getUserIdValidator()
     {
   		ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
 		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-
     	return adapter.getUserIdValidator(ssFactory);
     }
 
@@ -579,28 +546,23 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
      * By default, returns:</p>
      *   <pre><code>getSubSystem().getParentSubSystemConfiguration().getPasswordValidator()</code></pre>
      */
-    public ISystemValidator getPasswordValidator()
+    final public ISystemValidator getPasswordValidator()
     {
     	ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
 		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-
     	return adapter.getPasswordValidator(ssFactory);
     }
+
     /**
      * <i>Optionally overridable, not implemented by default.</i><br>
      * Get the signon validator to use in the password dialog prompt.
      * By default, returns null.
      */
-    public ISignonValidator getSignonValidator()
+    public ICredentialsValidator getSignonValidator()
     {
     	return null;
     }
 
-    
-    // ---------------------------------------------------
-    // methods that must be overridden by child classes...
-    // ---------------------------------------------------
- 
     
     /**
      * This connection method wrappers the others (internal connect) so that registered subsystems 

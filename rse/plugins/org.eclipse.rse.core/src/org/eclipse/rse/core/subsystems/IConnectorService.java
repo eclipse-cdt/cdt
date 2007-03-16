@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -224,18 +224,18 @@ public interface IConnectorService extends IRSEModelObject {
 	public boolean hasPassword(boolean onDisk);
 
 	/**
-	 * Returns true if this system can inherit the uid and password of
+	 * Returns true if this system can inherit the credentials of
 	 * from the connection (Host).
-	 * @return true if it can inherit the user/password
+	 * @return true if it can inherit the credentials, false otherwise
 	 */
-	public boolean inheritConnectionUserPassword();
+	public boolean inheritsCredentials();
 
 	/**
-	 * Return true if this system can share it's userId and password
+	 * Return true if this system can share it's credentials
 	 * with other connector services in this host.
-	 * @return true if it can share the userId/password
+	 * @return true if it can share the credentials
 	 */
-	public boolean shareUserPasswordWithConnection();
+	public boolean sharesCredentials();
 
 	/**
 	 * Register a communications listener. These listeners will be informed

@@ -43,7 +43,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.connectorservice.dstore.util.ConnectionStatusListener;
 import org.eclipse.rse.connectorservice.dstore.util.StatusMonitor;
 import org.eclipse.rse.connectorservice.dstore.util.StatusMonitorFactory;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
@@ -52,6 +51,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
+import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
@@ -68,6 +68,7 @@ import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.actions.DisplayHidableSystemMessageAction;
 import org.eclipse.rse.ui.actions.DisplaySystemMessageAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.subsystems.StandardCredentialsProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
@@ -82,7 +83,7 @@ import org.osgi.framework.Version;
  */
 public class DStoreConnectorService extends AbstractConnectorService implements IDataStoreProvider
 {
-	
+	private ICredentialsProvider credentialsProvider = null;
 	private ClientConnection clientConnection = null;
 	private ConnectionStatusListener _connectionStatusListener = null;
 	private IServerLauncher starter = null;
@@ -250,6 +251,13 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	    }
 	    return ""; //$NON-NLS-1$
 	}
+
+	protected ICredentialsProvider getCredentialsProvider() {
+		if (credentialsProvider == null) {
+			credentialsProvider = new DStoreCredentialsProvider(this);
+		}
+		return credentialsProvider;
+	}
 	
 	/**
 	 * Return the Client IP that the RSE server is connected to.  When connected,
@@ -293,7 +301,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#disconnect(IProgressMonitor)
 	 */
-	public void internalDisconnect(IProgressMonitor monitor) throws Exception
+	protected void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
 		try
 		{
@@ -1321,32 +1329,5 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	{
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsPassword()
-	 */
-	public boolean supportsPassword() {
-		boolean result = super.supportsPassword();
-		IHost host = getHost();
-		String systemType = host.getSystemType();
-		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
-			result = false;
-		}
-		return result;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsUserid()
-	 */
-	public boolean supportsUserId() {
-		boolean result = super.supportsUserId();
-		IHost host = getHost();
-		String systemType = host.getSystemType();
-		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
-			result = false;
-		}
-		return result;
-	}
-	
 	
 }

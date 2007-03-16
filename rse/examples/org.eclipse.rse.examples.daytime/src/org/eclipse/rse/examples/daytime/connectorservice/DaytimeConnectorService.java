@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and Wind River Systems, Inc.
+ * Copyright (c) 2006, 2007 IBM Corporation and Wind River Systems, Inc.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,6 +24,8 @@ import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
+import org.eclipse.rse.core.subsystems.BasicCredentialsProvider;
+import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 import org.eclipse.rse.examples.daytime.DaytimeResources;
 import org.eclipse.rse.examples.daytime.service.DaytimeService;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
@@ -40,6 +42,7 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 	
 	private boolean fIsConnected = false;
 	private DaytimeService fDaytimeService;
+	private ICredentialsProvider fCredentialsProvider = new BasicCredentialsProvider();
 
 	public DaytimeConnectorService(IHost host) {
 		super(DaytimeResources.Daytime_Connector_Name, DaytimeResources.Daytime_Connector_Description, host, 13);
@@ -70,26 +73,12 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 		return fIsConnected;
 	}
 
-	public void internalDisconnect(IProgressMonitor monitor) throws Exception {
+	protected void internalDisconnect(IProgressMonitor monitor) throws Exception {
 		fIsConnected = false;
 	}
-
-	/**
-	 * @return false
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsPassword()
-	 */
-	public boolean supportsPassword() {
-		return false;
-	}
-
-	/**
-	 * @return false
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsUserId()
-	 */
-	public boolean supportsUserId() {
-		return false;
-	}
-
 	
+	protected ICredentialsProvider getCredentialsProvider() {
+		return fCredentialsProvider;
+	}
 
 }

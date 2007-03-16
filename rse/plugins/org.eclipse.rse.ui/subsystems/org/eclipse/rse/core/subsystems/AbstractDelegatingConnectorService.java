@@ -9,7 +9,7 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -281,11 +281,11 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
-	public boolean inheritConnectionUserPassword() {
+	public boolean inheritsCredentials() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			return conServ.inheritConnectionUserPassword();
+			return conServ.inheritsCredentials();
 		}
 		return false;
 	}
@@ -470,11 +470,11 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
-	public boolean shareUserPasswordWithConnection() {
+	public boolean sharesCredentials() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			return conServ.shareUserPasswordWithConnection();
+			return conServ.sharesCredentials();
 		}
 		return false;
 	}

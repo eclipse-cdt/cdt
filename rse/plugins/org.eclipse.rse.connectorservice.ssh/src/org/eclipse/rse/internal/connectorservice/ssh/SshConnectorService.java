@@ -57,6 +57,7 @@ import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.services.RemoteUtil;
@@ -75,6 +76,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	private static JSch jsch=new JSch();
     private Session session;
     private SessionLostHandler fSessionLostHandler;
+    private ICredentialsProvider credentialsProvider = null;
 
 	public SshConnectorService(IHost host) {
 		//TODO the port parameter doesnt really make sense here since
@@ -321,7 +323,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
         notifyConnection();
     }
 
-	public void internalDisconnect(IProgressMonitor monitor) throws Exception
+	protected void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
 		//TODO Will services like the sftp service be disconnected too? Or notified?
     	Activator.trace("SshConnectorService.disconnect"); //$NON-NLS-1$
@@ -710,6 +712,13 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	 */
 	public boolean requiresPassword() {
 		return false;
+	}
+	
+	protected ICredentialsProvider getCredentialsProvider() {
+		if (credentialsProvider == null) {
+			credentialsProvider = new SshCredentialsProvider(this);
+		}
+		return credentialsProvider;
 	}
 
 }

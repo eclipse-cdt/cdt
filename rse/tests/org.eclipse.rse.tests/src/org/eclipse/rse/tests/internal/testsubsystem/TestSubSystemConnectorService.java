@@ -14,10 +14,13 @@ package org.eclipse.rse.tests.internal.testsubsystem;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
+import org.eclipse.rse.core.subsystems.BasicCredentialsProvider;
+import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 
 public class TestSubSystemConnectorService extends AbstractConnectorService {
 
 	private boolean connected = false;
+	private ICredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
 	/**
 	 * Constructor.
@@ -47,21 +50,14 @@ public class TestSubSystemConnectorService extends AbstractConnectorService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#internalDisconnect(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void internalDisconnect(IProgressMonitor monitor) throws Exception {
+	protected void internalDisconnect(IProgressMonitor monitor) throws Exception {
 		connected = false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsPassword()
+	 * @see org.eclipse.rse.core.subsystems.SuperAbstractConnectorService#getCredentialsProvider()
 	 */
-	public boolean supportsPassword() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsUserId()
-	 */
-	public boolean supportsUserId() {
-		return false;
+	protected ICredentialsProvider getCredentialsProvider() {
+		return credentialsProvider;
 	}
 }

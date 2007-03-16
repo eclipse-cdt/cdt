@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 import org.eclipse.core.resources.IProject;
 
 public class CDTProjectWizard extends NewModelProjectWizard {
 
 	public CDTProjectWizard() {
-		super(IDEWorkbenchMessages.getString("NewModelProjectWizard.0"), IDEWorkbenchMessages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
+		super(Messages.getString("NewModelProjectWizard.0"), Messages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected String[] getNatures() {

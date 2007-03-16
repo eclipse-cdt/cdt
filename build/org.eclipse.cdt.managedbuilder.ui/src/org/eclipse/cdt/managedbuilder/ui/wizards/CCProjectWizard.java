@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -19,7 +20,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class CCProjectWizard extends NewModelProjectWizard {
 
 	public CCProjectWizard() {
-		super(IDEWorkbenchMessages.getString("NewModelProjectWizard.2"), IDEWorkbenchMessages.getString("NewModelProjectWizard.3")); //$NON-NLS-1$ //$NON-NLS-2$
+		super(Messages.getString("NewModelProjectWizard.2"), Messages.getString("NewModelProjectWizard.3")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected String[] getNatures() {

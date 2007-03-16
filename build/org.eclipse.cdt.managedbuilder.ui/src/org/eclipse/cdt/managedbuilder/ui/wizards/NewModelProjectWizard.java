@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.newui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -68,7 +69,7 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 	protected List localPages = new ArrayList(); // replacing Wizard.pages since we have to delete them
 	
 	public NewModelProjectWizard() {
-		this(IDEWorkbenchMessages.getString("NewModelProjectWizard.0"),IDEWorkbenchMessages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
+		this(Messages.getString("NewModelProjectWizard.0"),Messages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public NewModelProjectWizard(String title, String desc) {

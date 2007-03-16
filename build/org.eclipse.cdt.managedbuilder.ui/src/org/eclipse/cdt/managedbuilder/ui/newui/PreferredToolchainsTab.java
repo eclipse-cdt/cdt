@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.wizards.CMainWizardPage;
 import org.eclipse.cdt.managedbuilder.ui.wizards.ICWizardHandler;
-import org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -48,7 +47,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
     	c.setLayout(new GridLayout(2, true));
 
         Label l1 = new Label(c, SWT.NONE);
-        l1.setText(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.0")); //$NON-NLS-1$
+        l1.setText(Messages.getString("CMainWizardPage.0")); //$NON-NLS-1$
         l1.setFont(parent.getFont());
         l1.setLayoutData(new GridData(GridData.BEGINNING));
         
@@ -70,28 +69,28 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         right.setLayout(new PageLayout());
 
     	Label l = new Label(c,SWT.WRAP | SWT.CENTER);
-        l.setText(IDEWorkbenchMessages.getString("PreferredToolchainsTab.0")); //$NON-NLS-1$
+        l.setText(Messages.getString("PreferredToolchainsTab.0")); //$NON-NLS-1$
         GridData gd = new GridData(GridData.CENTER);
         gd.horizontalSpan = 2;
         l.setLayoutData(gd);
 
         new Label(c,0).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         pref1 = new Button(c, SWT.PUSH);
-        pref1.setText(IDEWorkbenchMessages.getString("PreferredToolchainsTab.1")); //$NON-NLS-1$
+        pref1.setText(Messages.getString("PreferredToolchainsTab.1")); //$NON-NLS-1$
         pref1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         pref1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) { setPref(true); }} );
 
         new Label(c,0).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));        
         pref0 = new Button(c, SWT.PUSH);
-        pref0.setText(IDEWorkbenchMessages.getString("PreferredToolchainsTab.2")); //$NON-NLS-1$
+        pref0.setText(Messages.getString("PreferredToolchainsTab.2")); //$NON-NLS-1$
         pref0.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         pref0.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) { setPref(false); }} );
         
         show_sup = new Button(c, SWT.CHECK);
         show_sup.setSelection(true);
-        show_sup.setText(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.1")); //$NON-NLS-1$
+        show_sup.setText(Messages.getString("CMainWizardPage.1")); //$NON-NLS-1$
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         show_sup.setLayoutData(gd);

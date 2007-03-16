@@ -9,10 +9,12 @@
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
-	import java.util.Set;
+	import java.io.File;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.newui.PageLayout;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
@@ -134,7 +136,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	    	c.setLayout(new GridLayout(2, true));
 	    	
 	        Label l1 = new Label(c, SWT.NONE);
-	        l1.setText(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.0")); //$NON-NLS-1$
+	        l1.setText(Messages.getString("CMainWizardPage.0")); //$NON-NLS-1$
 	        l1.setFont(parent.getFont());
 	        l1.setLayoutData(new GridData(GridData.BEGINNING));
 	        
@@ -157,7 +159,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	        right.setLayout(new PageLayout());
 
 	        show_sup = new Button(c, SWT.CHECK);
-	        show_sup.setText(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.1")); //$NON-NLS-1$
+	        show_sup.setText(Messages.getString("CMainWizardPage.1")); //$NON-NLS-1$
 	        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        show_sup.setLayoutData(gd);
@@ -337,9 +339,10 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	            return false;
 	        }
 
+	        boolean bad = true; // should we treat existing project as error
+
 	        IProject handle = getProjectHandle();
 	        if (handle.exists()) {
-	        	boolean bad = true;
 	        	if (getWizard() instanceof NewModelProjectWizard) {
 	        		NewModelProjectWizard w = (NewModelProjectWizard)getWizard();
 	        		if (w.lastProjectName != null && w.lastProjectName.equals(getProjectName()))
@@ -347,6 +350,19 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	        	}
 	        	if (bad) {
 	        		setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);
+	        	    return false;
+	        	}
+	        }
+	        
+	        if (bad) { // skip this check if project already created 
+	        	IPath p = getProjectLocation();
+	        	if (p == null) p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+	        	File f = p.append(getProjectName()).toFile();
+	        	if (f.exists()) {
+	        		if (f.isDirectory())
+	        			setErrorMessage(Messages.getString("CMainWizardPage.6")); //$NON-NLS-1$
+	        		else
+	        			setErrorMessage(Messages.getString("CMainWizardPage.7")); //$NON-NLS-1$
 	        		return false;
 	        	}
 	        }
@@ -361,7 +377,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	        }
 
 	        if (tree.getItemCount() == 0) {
-	        	setErrorMessage(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.3")); //$NON-NLS-1$
+	        	setErrorMessage(Messages.getString("CMainWizardPage.3")); //$NON-NLS-1$
 	        	return false;
 	        }
 	        
@@ -375,7 +391,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 				IToolChain tcs[] = h_selected.getSelectedToolChains(); 
 				int cnt = tcs != null ? tcs.length : 0;
 	        	if (cnt == 0) {
-	        		setErrorMessage(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.4")); //$NON-NLS-1$
+	        		setErrorMessage(Messages.getString("CMainWizardPage.4")); //$NON-NLS-1$
 	        		return false;
 	        	}
 	        }
@@ -419,7 +435,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 						try {
 							w = (ICNewWizard) elements[k].createExecutableExtension(CLASS_NAME);
 						} catch (CoreException e) {
-							System.out.println(org.eclipse.cdt.managedbuilder.ui.wizards.IDEWorkbenchMessages.getString("CMainWizardPage.5") + e.getLocalizedMessage()); //$NON-NLS-1$
+							System.out.println(Messages.getString("CMainWizardPage.5") + e.getLocalizedMessage()); //$NON-NLS-1$
 							return null; 
 						}
 						if (w == null) return null;

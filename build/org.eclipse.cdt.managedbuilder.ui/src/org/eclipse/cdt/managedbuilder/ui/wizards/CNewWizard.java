@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
@@ -83,7 +84,7 @@ public class CNewWizard extends AbstractCWizard {
 			if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS)) {
 				if (oldsRoot == null) {
 					oldsRoot = new TreeItem(tree, SWT.NONE);
-					oldsRoot.setText(IDEWorkbenchMessages.getString("CNewWizard.0")); //$NON-NLS-1$
+					oldsRoot.setText(Messages.getString("CNewWizard.0")); //$NON-NLS-1$
 					oldsRoot.setData(new DummyHandler(parent));
 					oldsRoot.setImage(IMG0);				
 				}

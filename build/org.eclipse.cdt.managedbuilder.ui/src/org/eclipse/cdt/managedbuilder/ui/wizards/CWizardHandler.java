@@ -30,6 +30,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.ui.newui.ManagedBuilderUIImages;
 import org.eclipse.cdt.managedbuilder.ui.newui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -55,13 +56,13 @@ public class CWizardHandler implements ICWizardHandler {
 	private static final Image IMG0 = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_EMPTY);
 	private static final Image IMG1 = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_PREFERRED);
 
-	private static final String head = IDEWorkbenchMessages.getString("CWizardHandler.0"); //$NON-NLS-1$
+	private static final String head = Messages.getString("CWizardHandler.0"); //$NON-NLS-1$
 	private static final String tooltip = 
-		IDEWorkbenchMessages.getString("CWizardHandler.1")+ //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("CWizardHandler.2") +  //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("CWizardHandler.3") + //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("CWizardHandler.4") + //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("CWizardHandler.5"); //$NON-NLS-1$
+		Messages.getString("CWizardHandler.1")+ //$NON-NLS-1$
+		Messages.getString("CWizardHandler.2") +  //$NON-NLS-1$
+		Messages.getString("CWizardHandler.3") + //$NON-NLS-1$
+		Messages.getString("CWizardHandler.4") + //$NON-NLS-1$
+		Messages.getString("CWizardHandler.5"); //$NON-NLS-1$
 	
 	protected SortedMap tcs;
 	private String name;
@@ -175,7 +176,7 @@ public class CWizardHandler implements ICWizardHandler {
 		if (cfgs[0].cfg == null) {
 			throw new CoreException(new Status(IStatus.ERROR, 
 					ManagedBuilderUIPlugin.getUniqueIdentifier(),
-					IDEWorkbenchMessages.getString("CWizardHandler.6"))); //$NON-NLS-1$
+					Messages.getString("CWizardHandler.6"))); //$NON-NLS-1$
 		}
 		
 		ManagedProject mProj = new ManagedProject(project, cfgs[0].cfg.getProjectType());

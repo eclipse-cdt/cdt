@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 
 /*
  * This class is intended for data exchange between 
@@ -33,7 +34,7 @@ public class CfgHolder {
 		cfg = _cfg;
 		if (cfg == null) {
 			if (tc == null)
-				name = IDEWorkbenchMessages.getString("StdProjectTypeHandler.2"); //$NON-NLS-1$
+				name = Messages.getString("StdProjectTypeHandler.2"); //$NON-NLS-1$
 			else	
 				name = tc.getName(); 
 		} else		

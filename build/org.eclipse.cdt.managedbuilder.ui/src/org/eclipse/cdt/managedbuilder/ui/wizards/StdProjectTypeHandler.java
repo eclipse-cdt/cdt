@@ -21,6 +21,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
@@ -34,7 +35,7 @@ public class StdProjectTypeHandler extends CWizardHandler {
 
 	public void addTc(IToolChain tc) {
 		if (tc == null) {
-			tcs.put(IDEWorkbenchMessages.getString("StdProjectTypeHandler.0"), null); //$NON-NLS-1$
+			tcs.put(Messages.getString("StdProjectTypeHandler.0"), null); //$NON-NLS-1$
 		} else {
 			if (tc.isAbstract() || tc.isSystemObject()) return;
 		// 	unlike CWizardHandler, we don't check for configs
@@ -67,7 +68,7 @@ public class StdProjectTypeHandler extends CWizardHandler {
 				}
 				bld.setManagedBuildOn(false);
 			} else {
-				System.out.println(IDEWorkbenchMessages.getString("StdProjectTypeHandler.3"));			 //$NON-NLS-1$
+				System.out.println(Messages.getString("StdProjectTypeHandler.3"));			 //$NON-NLS-1$
 			}
 			cfg.setArtifactName(project.getName());
 			CConfigurationData data = cfg.getConfigurationData();

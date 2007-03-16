@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -19,7 +20,7 @@ import org.eclipse.swt.widgets.TreeItem;
 public class StdBuildWizard extends AbstractCWizard {
 	
 	public void createItems(Tree tree, boolean supportedOnly) {
-		StdProjectTypeHandler h = new StdProjectTypeHandler(IDEWorkbenchMessages.getString("StdBuildWizard.0"), IMG0, parent); //$NON-NLS-1$
+		StdProjectTypeHandler h = new StdProjectTypeHandler(Messages.getString("StdBuildWizard.0"), IMG0, parent); //$NON-NLS-1$
 		h.addTc(null); // add default toolchain
 		IToolChain[] tcs = ManagedBuildManager.getRealToolChains();
 		for (int i=0; i<tcs.length; i++)

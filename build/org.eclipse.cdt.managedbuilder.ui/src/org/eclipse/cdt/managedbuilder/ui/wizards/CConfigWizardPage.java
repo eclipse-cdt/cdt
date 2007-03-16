@@ -16,6 +16,7 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.newui.ManagedBuilderUIImages;
+import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -46,9 +47,9 @@ public class CConfigWizardPage extends MBSCustomPage {
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.CConfigWizardPage"; //$NON-NLS-1$
 
 	private static final Image IMG = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CONFIG);
-	private static final String TITLE = IDEWorkbenchMessages.getString("CConfigWizardPage.0"); //$NON-NLS-1$
-	private static final String MESSAGE = IDEWorkbenchMessages.getString("CConfigWizardPage.1"); //$NON-NLS-1$
-	private static final String COMMENT = IDEWorkbenchMessages.getString("CConfigWizardPage.12"); //$NON-NLS-1$
+	private static final String TITLE = Messages.getString("CConfigWizardPage.0"); //$NON-NLS-1$
+	private static final String MESSAGE = Messages.getString("CConfigWizardPage.1"); //$NON-NLS-1$
+	private static final String COMMENT = Messages.getString("CConfigWizardPage.12"); //$NON-NLS-1$
 	private static final String EMPTY_STR = "";  //$NON-NLS-1$
 	
 	private ICWizardHandler handler;
@@ -87,11 +88,11 @@ public class CConfigWizardPage extends MBSCustomPage {
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 		parent.setLayout(new GridLayout(3, false));
 		
-		setupLabel(parent, IDEWorkbenchMessages.getString("CConfigWizardPage.4"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(parent, Messages.getString("CConfigWizardPage.4"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		l_projtype = setupLabel(parent, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
-		setupLabel(parent, IDEWorkbenchMessages.getString("CConfigWizardPage.5"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(parent, Messages.getString("CConfigWizardPage.5"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		l_chains = setupLabel(parent, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
-		setupLabel(parent, IDEWorkbenchMessages.getString("CConfigWizardPage.6"), 3, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(parent, Messages.getString("CConfigWizardPage.6"), 3, GridData.BEGINNING); //$NON-NLS-1$
 		
 		table = new Table(parent, SWT.BORDER | SWT.CHECK);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -122,7 +123,7 @@ public class CConfigWizardPage extends MBSCustomPage {
 		c.setLayout(new GridLayout(1, false));
 
 		Button b1 = new Button(c, SWT.PUSH);
-		b1.setText(IDEWorkbenchMessages.getString("CConfigWizardPage.7")); //$NON-NLS-1$
+		b1.setText(Messages.getString("CConfigWizardPage.7")); //$NON-NLS-1$
 		b1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) { 
@@ -132,7 +133,7 @@ public class CConfigWizardPage extends MBSCustomPage {
 			}});
 
 		Button b2 = new Button(c, SWT.PUSH);
-		b2.setText(IDEWorkbenchMessages.getString("CConfigWizardPage.8")); //$NON-NLS-1$
+		b2.setText(Messages.getString("CConfigWizardPage.8")); //$NON-NLS-1$
 		b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -145,7 +146,7 @@ public class CConfigWizardPage extends MBSCustomPage {
 		new Label(c, 0).setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Button b3 = new Button(c, SWT.PUSH);
-		b3.setText(IDEWorkbenchMessages.getString("CConfigWizardPage.13")); //$NON-NLS-1$
+		b3.setText(Messages.getString("CConfigWizardPage.13")); //$NON-NLS-1$
 		b3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b3.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -202,12 +203,12 @@ public class CConfigWizardPage extends MBSCustomPage {
     	if (!isVisible) return true;
     	
 		if (table.getItemCount() == 0) {
-			errorMessage = IDEWorkbenchMessages.getString("CConfigWizardPage.10"); //$NON-NLS-1$
+			errorMessage = Messages.getString("CConfigWizardPage.10"); //$NON-NLS-1$
 			message = errorMessage; 
 			return false;
 		}
 		if (tv.getCheckedElements().length == 0) {
-			errorMessage = IDEWorkbenchMessages.getString("CConfigWizardPage.11"); //$NON-NLS-1$
+			errorMessage = Messages.getString("CConfigWizardPage.11"); //$NON-NLS-1$
 			message = errorMessage; 
 			return false;
 		}
@@ -228,7 +229,7 @@ public class CConfigWizardPage extends MBSCustomPage {
 			IToolChain[] tc = handler.getSelectedToolChains();
 			for (int i=0; i < tc.length; i++) {
 				s = s + ((tc[i] == null) ? 
-						IDEWorkbenchMessages.getString("StdProjectTypeHandler.0") : //$NON-NLS-1$
+						Messages.getString("StdProjectTypeHandler.0") : //$NON-NLS-1$
 						tc[i].getName());  
 				if (i < tc.length - 1) s = s + ", ";  //$NON-NLS-1$
 			}

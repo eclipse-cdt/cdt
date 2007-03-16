@@ -64,6 +64,11 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		props.setProperty(IRSEConnectionProperties.ATTR_NAME, "TestHost6"); //$NON-NLS-1$
 		connection = getConnectionManager().findOrCreateConnection(props);
 		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
+
+		props.setProperty(IRSEConnectionProperties.ATTR_NAME, "vxsim_128.11.75.12/4_Cores"); //$NON-NLS-1$
+		connection = getConnectionManager().findOrCreateConnection(props);
+		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
+	
 	}
 	
 	/**
@@ -80,6 +85,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		getConnectionManager().removeConnection(profileName, "TestHost4"); //$NON-NLS-1$
 		getConnectionManager().removeConnection(profileName, "TestHost5"); //$NON-NLS-1$
 		getConnectionManager().removeConnection(profileName, "TestHost6"); //$NON-NLS-1$
+		getConnectionManager().removeConnection(profileName, "vxsim_128.11.75.12/4_Cores"); //$NON-NLS-1$
 	}
 
 	/**

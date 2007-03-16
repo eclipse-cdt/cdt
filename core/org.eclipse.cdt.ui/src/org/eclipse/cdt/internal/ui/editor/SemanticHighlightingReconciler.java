@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,8 @@ import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -62,9 +64,11 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 */
 	private class PositionCollector extends ASTVisitor {
 		{
+			shouldVisitTranslationUnit= true;
 			shouldVisitNames= true;
 			shouldVisitDeclarations= true;
 			shouldVisitExpressions= true;
+			shouldVisitStatements= true;
 			shouldVisitDeclSpecifiers= true;
 		}
 		
@@ -80,6 +84,21 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		public PositionCollector(String filePath, IPositionConverter positionTracker) {
 			fFilePath= filePath;
 			fPositionTracker= positionTracker;
+		}
+
+		/*
+		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
+		 */
+		public int visit(IASTTranslationUnit tu) {
+			// visit macro definitions
+			IASTPreprocessorMacroDefinition[] macroDefs= tu.getMacroDefinitions();
+			for (int i= 0; i < macroDefs.length; i++) {
+				IASTPreprocessorMacroDefinition macroDef= macroDefs[i];
+				if (fFilePath.equals(macroDef.getContainingFilename())) {
+					visit(macroDef.getName());
+				}
+			}
+			return super.visit(tu);
 		}
 
 		/*
@@ -116,19 +135,53 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 
 		/*
+		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTStatement)
+		 */
+		public int visit(IASTStatement statement) {
+			if (checkForMacro(statement)) {
+				return PROCESS_SKIP;
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTName)
 		 */
 		public int visit(IASTName node) {
-			visitNode(node);
+			if (visitNode(node)) {
+				return PROCESS_SKIP;
+			}
 			return PROCESS_CONTINUE;
 		}
 		
 		private boolean checkForMacro(IASTNode node) {
 			IASTNodeLocation[] nodeLocations= node.getNodeLocations();
 			if (nodeLocations.length == 1 && nodeLocations[0] instanceof IASTMacroExpansion) {
-				return visitNode(node);
+				IASTNodeLocation useLocation= getMinFileLocation(nodeLocations);
+				if (useLocation != null) {
+					IASTPreprocessorMacroDefinition macroDef= ((IASTMacroExpansion)nodeLocations[0]).getMacroDefinition();
+					IASTNodeLocation defLocation= macroDef.getName().getFileLocation();
+					IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useLocation.getNodeOffset(), defLocation.getNodeLength());
+					if (macroNode != null && visitMacro(macroNode, defLocation.getNodeLength())) {
+						return true;
+					}
+				}
 			}
 			return false;
+		}
+
+		private boolean visitMacro(IASTNode node, int macroLength) {
+			fToken.update(node);
+			for (int i= 0, n= fJobSemanticHighlightings.length; i < n; ++i) {
+				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
+				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
+					addMacroLocation(node.getFileLocation(), macroLength, fJobHighlightings[i]);
+					break;
+				}
+			}
+			fToken.clear();
+			// always consume this node
+			return true;
 		}
 
 		private boolean visitNode(IASTNode node) {
@@ -137,7 +190,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			for (int i= 0, n= fJobSemanticHighlightings.length; i < n; ++i) {
 				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
 				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
-					addNodeLocations(node.getNodeLocations(), fJobHighlightings[i]);
+					addNodeLocation(node.getFileLocation(), fJobHighlightings[i]);
 					consumed= true;
 					break;
 				}
@@ -149,20 +202,15 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/**
 		 * Add the a location range for the given highlighting.
 		 * 
-		 * @param nodeLocations The node locations
+		 * @param nodeLocation  The node location
 		 * @param highlighting The highlighting
 		 */
-		private void addNodeLocations(IASTNodeLocation[] nodeLocations, HighlightingStyle highlighting) {
-			final IASTFileLocation minLocation= getMinFileLocation(nodeLocations);
-			if (minLocation == null) {
+		private void addNodeLocation(IASTNodeLocation nodeLocation, HighlightingStyle highlighting) {
+			if (nodeLocation == null) {
 				return;
 			}
-			final IASTFileLocation maxLocation= getMaxFileLocation(nodeLocations);
-			if (maxLocation == null) {
-				return;
-			}
-			int offset= minLocation.getNodeOffset();
-			int length= maxLocation.getNodeOffset() + maxLocation.getNodeLength() - offset;
+			int offset= nodeLocation.getNodeOffset();
+			int length= nodeLocation.getNodeLength();
 			if (fPositionTracker != null) {
 				IRegion actualPos= fPositionTracker.historicToActual(new Region(offset, length));
 				offset= actualPos.getOffset();
@@ -173,18 +221,27 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 		}
 
-		private IASTFileLocation getMaxFileLocation(IASTNodeLocation[] locations) {
-			if (locations == null || locations.length == 0) {
-				return null;
+		/**
+		 * Add the a location range for the given macro highlighting.
+		 * 
+		 * @param macroUseLocaton The location of the macro occurrence
+		 * @param macroLength  the length of the macro name
+		 * @param highlighting The highlighting
+		 */
+		private void addMacroLocation(IASTNodeLocation macroUseLocation, int macroLength, HighlightingStyle highlighting) {
+			if (macroUseLocation == null) {
+				return;
 			}
-			final IASTNodeLocation nodeLocation= locations[locations.length-1];
-			if (nodeLocation instanceof IASTFileLocation) {
-				return (IASTFileLocation)nodeLocation;
-			} else if (nodeLocation instanceof IASTMacroExpansion) {
-				IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
-				return getMaxFileLocation(macroLocations);
+			int offset= macroUseLocation.getNodeOffset();
+			int length= macroLength;
+			if (fPositionTracker != null) {
+				IRegion actualPos= fPositionTracker.historicToActual(new Region(offset, length));
+				offset= actualPos.getOffset();
+				length= actualPos.getLength();
 			}
-			return null;
+			if (offset > -1 && length > 0) {
+				addPosition(offset, length, highlighting);
+			}
 		}
 
 		private IASTFileLocation getMinFileLocation(IASTNodeLocation[] locations) {
@@ -298,14 +355,11 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				return;
 			
 			PositionCollector collector= new PositionCollector(ast.getFilePath(), positionTracker);
-			IASTNode[] subtrees= getAffectedSubtrees(ast);
-			if (subtrees.length == 0)
-				return;
-			
+
 			startReconcilingPositions();
 			
 			if (!fJobPresenter.isCanceled())
-				reconcilePositions(subtrees, collector);
+				reconcilePositions(ast, collector);
 			
 			TextPresentation textPresentation= null;
 			if (!fJobPresenter.isCanceled())
@@ -326,14 +380,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	}
 
 	/**
-	 * @param node Root node
-	 * @return Array of subtrees that may be affected by past document changes
-	 */
-	private IASTNode[] getAffectedSubtrees(IASTNode node) {
-		return new IASTNode[] { node };
-	}
-
-	/**
 	 * Start reconciling positions.
 	 */
 	private void startReconcilingPositions() {
@@ -342,15 +388,13 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	}
 
 	/**
-	 * Reconcile positions based on the AST subtrees
+	 * Reconcile positions based on the AST.
 	 *
-	 * @param subtrees the AST subtrees
+	 * @param ast  the AST
+	 * @param visitor  the AST visitor
 	 */
-	private void reconcilePositions(IASTNode[] subtrees, ASTVisitor visitor) {
-		// FIXME: remove positions not covered by subtrees
-		for (int i= 0, n= subtrees.length; i < n; i++) {
-			subtrees[i].accept(visitor);
-		}
+	private void reconcilePositions(IASTTranslationUnit ast, PositionCollector visitor) {
+		ast.accept(visitor);
 		List oldPositions= fRemovedPositions;
 		List newPositions= new ArrayList(fNOfRemovedPositions);
 		for (int i= 0, n= oldPositions.size(); i < n; i ++) {

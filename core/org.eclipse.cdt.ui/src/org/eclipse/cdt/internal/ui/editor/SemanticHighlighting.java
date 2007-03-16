@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,20 +84,4 @@ public abstract class SemanticHighlighting {
 	 * @return <code>true</code> iff the semantic highlighting consumes the semantic token
 	 */
 	public abstract boolean consumes(SemanticToken token);
-	
-	/**
-	 * Returns <code>true</code> iff the semantic highlighting consumes the
-	 * semantic token.
-	 * <p>
-	 * NOTE: Implementors are not allowed to keep a reference on the token or on
-	 * any object retrieved from the token.
-	 * </p>
-	 * @param token the semantic token for a
-	 *        {@link org.eclipse.cdt.core.dom.ast.IASTLiteralExpression}
-	 * @return <code>true</code> iff the semantic highlighting consumes the
-	 *         semantic token
-	 */
-	public boolean consumesLiteral(SemanticToken token) {
-		return false;
-	}
 }

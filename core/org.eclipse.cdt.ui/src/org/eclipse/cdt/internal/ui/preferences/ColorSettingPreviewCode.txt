@@ -18,6 +18,8 @@ public:
     int local= (int)n;
 label: myfunc(local, MACRO('\0'));
     vmethod();
+    staticMethod();
     problem();
   }
+  static void staticMethod();
 };

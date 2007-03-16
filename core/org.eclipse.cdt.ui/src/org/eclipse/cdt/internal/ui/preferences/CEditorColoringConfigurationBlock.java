@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -851,6 +851,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 */
 	private SemanticHighlightingManager.HighlightedRange[][] createPreviewerRanges() {
 		return new SemanticHighlightingManager.HighlightedRange[][] {
+			{ createHighlightedRange( 2,  8,  5, SemanticHighlightings.MACRO_DEFINITION) },
 			{ createHighlightedRange( 3, 16,  3, SemanticHighlightings.NAMESPACE) },
 			{ createHighlightedRange( 5, 21,  4, SemanticHighlightings.TYPEDEF) },
 			{ createHighlightedRange( 6, 11,  6, SemanticHighlightings.FUNCTION_DECLARATION),  createHighlightedRange( 6, 11,  6, SemanticHighlightings.FUNCTION) },
@@ -877,9 +878,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ createHighlightedRange(18,  0,  5, SemanticHighlightings.LABEL) },
 			{ createHighlightedRange(18,  7,  6, SemanticHighlightings.FUNCTION) },
 			{ createHighlightedRange(18, 14,  5, SemanticHighlightings.LOCAL_VARIABLE) },
-			{ createHighlightedRange(18, 21, 11, SemanticHighlightings.MACRO_SUBSTITUTION) },
+			{ createHighlightedRange(18, 21,  5, SemanticHighlightings.MACRO_REFERENCE) },
 			{ createHighlightedRange(19,  4,  7, SemanticHighlightings.METHOD) },
-			{ createHighlightedRange(20,  4,  7, SemanticHighlightings.PROBLEM) },
+			{ createHighlightedRange(20,  4, 12, SemanticHighlightings.STATIC_METHOD_INVOCATION), createHighlightedRange(20,  4, 12, SemanticHighlightings.METHOD) },
+			{ createHighlightedRange(21,  4,  7, SemanticHighlightings.PROBLEM) },
+			{ createHighlightedRange(23, 14, 12, SemanticHighlightings.METHOD_DECLARATION), createHighlightedRange(23, 14, 12, SemanticHighlightings.METHOD) },
 		};
 	}
 

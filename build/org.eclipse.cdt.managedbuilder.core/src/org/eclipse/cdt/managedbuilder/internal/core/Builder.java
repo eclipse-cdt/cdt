@@ -1585,7 +1585,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		return new Path(command);
 	}
 	
-	private String getBuildPathAttribute(){
+	public String getBuildPathAttribute(){
 		if(buildPath == null){
 			if(superClass != null){
 				return ((Builder)superClass).getBuildPathAttribute();

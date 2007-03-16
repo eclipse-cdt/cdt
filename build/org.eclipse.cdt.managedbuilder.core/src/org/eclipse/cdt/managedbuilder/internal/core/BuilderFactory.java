@@ -278,6 +278,10 @@ public class BuilderFactory {
 			args.put(IBuilder.ID, ManagedBuildManager.calculateChildId(cfg.getId(), null));
 		MapStorageElement el = new BuildArgsStorageElement(args, null);
 		Builder builder = new Builder(tCh, el, ManagedBuildManager.getVersion().toString());
+		if(builder.getBuildPathAttribute() == null){
+			//set the build path from the cfg settings
+			builder.setBuildPath(cfg.getEditableBuilder().getBuildPath());
+		}
 		return builder;
 	}
 

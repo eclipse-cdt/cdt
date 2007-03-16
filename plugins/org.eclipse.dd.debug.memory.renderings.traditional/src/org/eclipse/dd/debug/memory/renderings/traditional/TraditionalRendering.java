@@ -17,6 +17,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -32,15 +36,19 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -59,10 +67,12 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -71,6 +81,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -78,7 +89,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.UIJob;
 
@@ -107,14 +122,13 @@ import org.eclipse.ui.progress.UIJob;
  *  </p>
  */
 
-public class TraditionalRendering extends AbstractMemoryRendering
+public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering
 {
-
-    Rendering fRendering;
+	Rendering fRendering;
     
     private Action displayEndianBigAction;
     private Action displayEndianLittleAction;
-
+    
     private IWorkbenchAdapter fWorkbenchAdapter;
 
     public TraditionalRendering(String id)
@@ -183,7 +197,51 @@ public class TraditionalRendering extends AbstractMemoryRendering
         return this.fRendering;
     }
     
-    public void gotoAddress(BigInteger address)
+    // FIXME
+    private static final String ID_GO_TO_ADDRESS_COMMAND = "org.eclipse.debug.ui.command.gotoaddress"; //$NON-NLS-1$
+    private AbstractHandler fGoToAddressHandler;
+    
+    public void activated() 
+    {
+		super.activated();
+		
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
+		
+		if(commandSupport != null)
+		{
+			Command gotoCommand = commandSupport.getCommand(ID_GO_TO_ADDRESS_COMMAND);
+
+			if(fGoToAddressHandler == null)
+			{
+				fGoToAddressHandler = new AbstractHandler() {
+					public Object execute(ExecutionEvent event) throws ExecutionException {
+						// TODO
+						return null;
+					}
+				};
+			}
+			gotoCommand.setHandler(fGoToAddressHandler);
+		}
+
+	}
+
+	public void deactivated() 
+	{
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
+		
+		if(commandSupport != null)
+		{
+			// 	remove handler
+			Command command = commandSupport.getCommand(ID_GO_TO_ADDRESS_COMMAND);
+			command.setHandler(null);
+		}
+		
+		super.deactivated();
+	}
+
+	public void gotoAddress(BigInteger address)
     {
       this.fRendering.gotoAddress(address);
     }
@@ -343,24 +401,14 @@ public class TraditionalRendering extends AbstractMemoryRendering
 
         // go to address
 
-        final Action gotoAddressAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.GO_TO_ADDRESS")) //$NON-NLS-1$
-        {
-            public void run()
-            {
-                Display.getDefault().asyncExec(new Runnable()
-                {
-                    public void run()
-                    {
-                        TraditionalRendering.this.fRendering
-                            .setVisibleAddressBar(true);
-                    }
-                });
-            }
-        };
-        gotoAddressAction.setAccelerator(SWT.CTRL | 'G');
-
+        final Action gotoAddressAction = new GoToAddressAction(TraditionalRendering.this) 
+    	{
+    		public void run() {
+    			TraditionalRendering.this.fRendering
+    				.setVisibleAddressBar(true);
+    		}
+    	};
+        
         // reset to base address
         
         final Action gotoBaseAddressAction = new Action(
@@ -665,107 +713,27 @@ public class TraditionalRendering extends AbstractMemoryRendering
         };
         displayColumnCountAuto.setChecked(fRendering.getColumnsSetting() == Rendering.COLUMNS_AUTO_SIZE_TO_FIT);
         
-        final Action displayColumnCount1 = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.COLUMN_COUNT_1"), //$NON-NLS-1$
-            IAction.AS_RADIO_BUTTON)
+        final int maxMenuColumnCount = 8;
+        final Action[] displayColumnCounts = new Action[maxMenuColumnCount];
+        for(int i = 0; i < maxMenuColumnCount; i++)
         {
-            public void run()
+        	displayColumnCounts[i] = new Action(
+                TraditionalRenderingMessages
+                    .getString("TraditionalRendering.COLUMN_COUNT_" + (i + 1)), //$NON-NLS-1$
+                IAction.AS_RADIO_BUTTON)
             {
-            	TraditionalRendering.this.fRendering.setColumnsSetting(1);  
-            }
-        };
-        displayColumnCount1.setChecked(fRendering.getColumnsSetting() == 1);
+                public void run()
+                {
+                	TraditionalRendering.this.fRendering.setColumnsSetting(1);  
+                }
+            };
+            displayColumnCounts[i].setChecked(fRendering.getColumnsSetting() == i + 1);
+        }
 
-        final Action displayColumnCount2 = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.COLUMN_COUNT_2"), //$NON-NLS-1$
-            IAction.AS_RADIO_BUTTON)
-        {
-            public void run()
-            {
-            	TraditionalRendering.this.fRendering.setColumnsSetting(2); 
-            }
-        };
-        displayColumnCount2.setChecked(fRendering.getColumnsSetting() == 2);
-        
-        final Action displayColumnCount3 = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.COLUMN_COUNT_3"), //$NON-NLS-1$
-            IAction.AS_RADIO_BUTTON)
-        {
-            public void run()
-            {
-            	TraditionalRendering.this.fRendering.setColumnsSetting(3); 
-            }
-        };
-        displayColumnCount3.setChecked(fRendering.getColumnsSetting() == 3);
-        
-        final Action displayColumnCount4 = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.COLUMN_COUNT_4"), //$NON-NLS-1$
-            IAction.AS_RADIO_BUTTON)
-        {
-            public void run()
-            {
-            	TraditionalRendering.this.fRendering.setColumnsSetting(4); 
-            }
-        };
-        displayColumnCount4.setChecked(fRendering.getColumnsSetting() == 4);
-        
-        final Action displayColumnCount5 = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.COLUMN_COUNT_5"), //$NON-NLS-1$
-            IAction.AS_RADIO_BUTTON)
-        {
-            public void run()
-            {
-            	TraditionalRendering.this.fRendering.setColumnsSetting(5); 
-            }
-        };
-        displayColumnCount5.setChecked(fRendering.getColumnsSetting() == 5);
-        
-        final Action displayColumnCount6 = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.COLUMN_COUNT_6"), //$NON-NLS-1$
-            IAction.AS_RADIO_BUTTON)
-        {
-            public void run()
-            {
-            	TraditionalRendering.this.fRendering.setColumnsSetting(6); 
-            }
-        };
-        displayColumnCount6.setChecked(fRendering.getColumnsSetting() == 6);
-        
-        final Action displayColumnCount7 = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.COLUMN_COUNT_7"), //$NON-NLS-1$
-            IAction.AS_RADIO_BUTTON)
-        {
-            public void run()
-            {
-            	TraditionalRendering.this.fRendering.setColumnsSetting(7); 
-            }
-        };
-        displayColumnCount7.setChecked(fRendering.getColumnsSetting() == 7);
-        
-        final Action displayColumnCount8 = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.COLUMN_COUNT_8"), //$NON-NLS-1$
-            IAction.AS_RADIO_BUTTON)
-        {
-            public void run()
-            {
-            	TraditionalRendering.this.fRendering.setColumnsSetting(8); 
-            }
-        };
-        displayColumnCount8.setChecked(fRendering.getColumnsSetting() == 8);
-        
         final Action displayColumnCountCustomValue = new Action("", IAction.AS_RADIO_BUTTON)
         {
             public void run()
             {
-            	
             }
         };
         displayColumnCountCustomValue.setChecked(fRendering.getColumnsSetting() > 8);
@@ -859,14 +827,8 @@ public class TraditionalRendering extends AbstractMemoryRendering
                 sub = new MenuManager(TraditionalRenderingMessages
                         .getString("TraditionalRendering.COLUMN_COUNT")); //$NON-NLS-1$
                 sub.add(displayColumnCountAuto);
-                sub.add(displayColumnCount1);
-                sub.add(displayColumnCount2);
-                sub.add(displayColumnCount3);
-                sub.add(displayColumnCount4);
-                sub.add(displayColumnCount5);
-                sub.add(displayColumnCount6);
-                sub.add(displayColumnCount7);
-                sub.add(displayColumnCount8);
+                for(int i = 0; i < displayColumnCounts.length; i++)
+                	sub.add(displayColumnCounts[i]);
                 if(displayColumnCountCustomValue.isChecked())
                 	sub.add(displayColumnCountCustomValue);
                 sub.add(displayColumnCountCustom);
@@ -891,6 +853,29 @@ public class TraditionalRendering extends AbstractMemoryRendering
         return this.fRendering;
     }
 
+
+	// selection is terminology for caret position
+    public BigInteger getSelectedAddress() {
+    	return fRendering.getCaretAddress();
+	}
+
+	public MemoryByte[] getSelectedAsBytes() {
+		try
+		{
+			return fRendering.getViewportCache().getBytes(
+				fRendering.getCaretAddress(), fRendering.getBytesPerColumn());
+		}
+		catch(DebugException de)
+		{
+			// FIXME log?
+			return null;
+		}
+	}
+
+	public void goToAddress(BigInteger address) throws DebugException {
+		fRendering.gotoAddress(address);
+	}
+    
     protected void bytesAreLittleEndian(boolean areLE)
     {
     	// once we actually read memory we can determine the
@@ -945,112 +930,6 @@ public class TraditionalRendering extends AbstractMemoryRendering
 
 }
 
-
-/*
- * A place holder address bar for go to address. For consistency, 
- * this will eventually be replaced by a standard memory view
- * address bar. 
- */
-
-class AddressBar extends Composite
-{
-    Text fTextControl;
-
-    Label fLabelControl;
-    
-    private final static int DUMMY_WIDTH = 100;
-
-    public AddressBar(final Rendering rendering)
-    {
-        super(rendering, SWT.BORDER);
-
-        this.fLabelControl = new Label(this, SWT.SINGLE);
-        this.fTextControl = new Text(this, SWT.SINGLE);
-
-        GridData layoutData = new GridData();
-
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = false;
-		layout.marginHeight = 0;
-		layout.marginLeft = 0;
-		
-        this.setLayout(layout);
-
-        layoutData.horizontalAlignment = SWT.FILL;
-        layoutData.grabExcessHorizontalSpace = true;
-        layoutData.grabExcessVerticalSpace = true;
-        
-        fLabelControl.setText(TraditionalRenderingMessages
-                .getString("TraditionalRendering.GO_TO_ADDRESS")); //$NON-NLS-1$
-        
-        this.fTextControl.setLayoutData(layoutData);
-
-        this.fTextControl.addFocusListener(new FocusListener()
-        {
-            public void focusGained(FocusEvent e)
-            {
-                // do nothing
-            }
-
-            public void focusLost(FocusEvent e)
-            {
-                rendering.setVisibleAddressBar(false);
-            }
-        });
-
-        this.fTextControl.addKeyListener(new KeyListener()
-        {
-            public void keyPressed(KeyEvent ke)
-            {
-                if(ke.keyCode == SWT.ESC)
-                {
-                    rendering.setVisibleAddressBar(false);
-                }
-                else if(ke.character == '\r')
-                {
-                    int radix = 10;
-                    String s = fTextControl.getText().trim();
-                    if(s.toUpperCase().indexOf("0X") >= 0) //$NON-NLS-1$
-                    {
-                        s = s.substring(2);
-                        radix = 16;
-                    }
-                    try
-                    {
-                        BigInteger newAddress = new BigInteger(s, radix);
-                        rendering.setVisibleAddressBar(false);
-                        rendering.gotoAddress(newAddress);
-                    }
-                    catch(Exception e)
-                    {
-                        // do nothing
-                    }
-
-                }
-            }
-
-            public void keyReleased(KeyEvent ke)
-            {
-                // do nothing
-            }
-        });
-    }
-
-    public void setText(String data)
-    {
-        this.fTextControl.setText(data);
-        this.fTextControl.forceFocus();
-        this.fTextControl.selectAll();
-    }
-
-    public Point computeSize(int wHint, int hHint)
-    {
-    	return new Point(DUMMY_WIDTH, this.fTextControl.computeSize(10, 24,
-                true).y);
-    }
-}
-
 class TraditionalMemoryByte extends MemoryByte
 {
 	private boolean isEdited = false;
@@ -1084,7 +963,9 @@ class Rendering extends Composite implements IDebugEventSetListener
 
     private TextPane fTextPane;
 
-    private AddressBar fAddressBar;
+    private GoToAddressComposite fAddressBar;
+    
+    private Control fAddressBarControl; // FIXME why isn't there a getControl() ?
 
     private Selection fSelection = new Selection();
 
@@ -1103,6 +984,8 @@ class Rendering extends Composite implements IDebugEventSetListener
     private int fBytesPerRow = 0;	// current number of bytes per row are displayed
     
     private int fCurrentScrollSelection = 0;	// current scroll selection;
+    
+    private BigInteger fCaretAddress = BigInteger.valueOf(0); // -1 ?
     
     // user settings
     
@@ -1153,8 +1036,7 @@ class Rendering extends Composite implements IDebugEventSetListener
     // flag whether the memory cache is dirty
     private boolean fCacheDirty = false;
 
-    public Rendering(Composite parent,
-        TraditionalRendering renderingParent)
+    public Rendering(Composite parent, TraditionalRendering renderingParent)
     {
         super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND | SWT.H_SCROLL
         		| SWT.V_SCROLL);
@@ -1170,9 +1052,43 @@ class Rendering extends Composite implements IDebugEventSetListener
         this.fBinaryPane = new DataPane(this);
         this.fTextPane = new TextPane(this);
         
-        // FIXME temporary address bar; will be replaced by standard Memory bar
-        this.fAddressBar = new AddressBar(this);
-        this.fAddressBar.setVisible(false);
+        fAddressBar = new GoToAddressComposite();
+		fAddressBarControl = fAddressBar.createControl(parent);
+		Button button = fAddressBar.getButton(IDialogConstants.OK_ID);
+		if (button != null)
+		{
+			button.addSelectionListener(new SelectionAdapter() {
+
+				public void widgetSelected(SelectionEvent e) {
+					doGoToAddress();
+				}
+			});
+			
+			button = fAddressBar.getButton(IDialogConstants.CANCEL_ID);
+			if (button != null)
+			{
+				button.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						setVisibleAddressBar(false);
+					}});
+			}
+		}
+		
+		fAddressBar.getExpressionWidget().addSelectionListener(new SelectionAdapter() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				doGoToAddress();
+			}});
+		
+		fAddressBar.getExpressionWidget().addKeyListener(new KeyAdapter() {
+
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ESC)
+					setVisibleAddressBar(false);
+				super.keyPressed(e);
+			}
+		});
+    	
+        this.fAddressBarControl.setVisible(false);
 
         // initialize the viewport start
         IMemoryBlockExtension memoryBlock = getMemoryBlock();
@@ -1313,12 +1229,12 @@ class Rendering extends Composite implements IDebugEventSetListener
                 int x = xOffset * -1;
                 int y = 0;
                 
-                if(fAddressBar.isVisible())
+                if(fAddressBarControl.isVisible())
                 {
-                    fAddressBar.setBounds(0, 0,
-                        Rendering.this.getBounds().width, fAddressBar
-                            .computeSize(1, 1).y);
-                    y = fAddressBar.getBounds().height;
+                	fAddressBarControl.setBounds(0, 0,
+                        Rendering.this.getBounds().width, fAddressBarControl
+                            .computeSize(100, 30).y); // FIXME
+                    //y = fAddressBarControl.getBounds().height;
                 }
 
                 if(fAddressPane.isPaneVisible())
@@ -1392,6 +1308,27 @@ class Rendering extends Composite implements IDebugEventSetListener
     {
     	return fParent;
     }
+    
+    protected void setCaretAddress(BigInteger address)
+    {
+    	fCaretAddress = address;
+    }
+    
+    protected BigInteger getCaretAddress()
+    {
+    	return fCaretAddress;
+    }
+    
+    private void doGoToAddress() {
+		try {
+			BigInteger address = fAddressBar.getGoToAddress(this.getMemoryBlockStartAddress(), this.getCaretAddress());
+			getTraditionalRendering().gotoAddress(address);
+			setVisibleAddressBar(false);
+		} catch (NumberFormatException e1)
+		{ 
+			// FIXME log?
+		}
+	}
     
     // Ensure that all addresses displayed are within the addressable range
     protected void ensureViewportAddressDisplayable()
@@ -1921,11 +1858,18 @@ class Rendering extends Composite implements IDebugEventSetListener
 
     public void setVisibleAddressBar(boolean visible)
     {
-        fAddressBar.setVisible(visible);
+    	fAddressBarControl.setVisible(visible);
+    	if(visible)
+    	{
+    		String selectedStr = "0x" + getCaretAddress().toString(16);
+    		Text text = fAddressBar.getExpressionWidget();
+    		text.setText(selectedStr);
+    		text.setSelection(0, text.getCharCount());	
+    		fAddressBar.getExpressionWidget().setFocus();
+    	}
+    	
         layout(true);
         layoutPanes();
-        fAddressBar.layout(true);
-        fAddressBar.setText(getAddressString(getViewportStartAddress()));
     }
     
     public void setDirty(boolean needRefresh)

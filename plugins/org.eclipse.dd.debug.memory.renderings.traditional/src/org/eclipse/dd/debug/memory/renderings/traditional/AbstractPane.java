@@ -328,7 +328,6 @@ public abstract class AbstractPane extends Canvas
                 {
                     fRendering.getSelection().clear();
                 }
-
             }
 
             public void keyReleased(KeyEvent ke)
@@ -479,6 +478,8 @@ public abstract class AbstractPane extends Canvas
             fRendering.ensureViewportAddressDisplayable();
             fRendering.gotoAddress(fRendering.getViewportStartAddress());
         }
+        
+        fRendering.setCaretAddress(fCaretAddress);
     }
 
     protected void advanceCursor()

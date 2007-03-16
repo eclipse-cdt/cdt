@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
@@ -31,6 +32,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
@@ -43,10 +45,10 @@ public class ShellServiceSubSystemConfigurationAdapter extends SubSystemConfigur
     protected ImageDescriptor _activeShellImageDescriptor;
     protected ImageDescriptor _inactiveShellImageDescriptor;
     
-	public IAction[] getSubSystemActions(ISubSystemConfiguration factory, ISubSystem selectedSubSystem, Shell shell)
+  public IAction[] getSubSystemActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISubSystem selectedSubSystem)
 	{
 		List allActions = new ArrayList();
-		IAction[] baseActions = super.getSubSystemActions(factory, selectedSubSystem, shell);
+		IAction[] baseActions = super.getSubSystemActions(menu, selection, shell, menuGroup, factory, selectedSubSystem);
 		for (int i = 0; i < baseActions.length; i++)
 		{
 			allActions.add(baseActions[i]);

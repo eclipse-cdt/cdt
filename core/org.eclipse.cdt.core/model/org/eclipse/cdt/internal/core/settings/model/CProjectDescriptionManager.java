@@ -704,42 +704,45 @@ public class CProjectDescriptionManager {
 	}
 	
 	public void updateProjectDescriptions(IProgressMonitor monitor) throws CoreException{
-		IWorkspace wsp = ResourcesPlugin.getWorkspace();
-		final IProject projects[] = wsp.getRoot().getProjects();
-		final ICProjectDescription dess[] = new ICProjectDescription[projects.length];
-		int num = 0;
-		for(int i = 0; i < projects.length; i++){
-			ICProjectDescription des = getProjectDescription(projects[i], false, true);
-			if(des != null)
-				dess[num++] = des;
-		}
-		
-		if(num != 0){
-			final int[] fi = new int[num]; 
-			runWspModification(new IWorkspaceRunnable(){
-
-				public void run(IProgressMonitor monitor) throws CoreException {
-					monitor.beginTask("Refreshing the project settings", fi[0]);
-					
-					for(int i = 0; i < dess.length; i++){
-						ICProjectDescription des = dess[i];
-						if(des == null)
-							break;
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-						try {
-							setProjectDescription(des.getProject(), des, true, subMonitor);
-						} catch (CoreException e){
-							CCorePlugin.log(e);
-						} finally {
-							subMonitor.done();
+		try {
+			IWorkspace wsp = ResourcesPlugin.getWorkspace();
+			final IProject projects[] = wsp.getRoot().getProjects();
+			final ICProjectDescription dess[] = new ICProjectDescription[projects.length];
+			int num = 0;
+			for(int i = 0; i < projects.length; i++){
+				ICProjectDescription des = getProjectDescription(projects[i], false, true);
+				if(des != null)
+					dess[num++] = des;
+			}
+			
+			if(num != 0){
+				final int[] fi = new int[1];
+				fi[0] = num;
+				runWspModification(new IWorkspaceRunnable(){
+	
+					public void run(IProgressMonitor monitor) throws CoreException {
+						monitor.beginTask("Refreshing the project settings", fi[0]);
+						
+						for(int i = 0; i < dess.length; i++){
+							ICProjectDescription des = dess[i];
+							if(des == null)
+								break;
+							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+							try {
+								setProjectDescription(des.getProject(), des, true, subMonitor);
+							} catch (CoreException e){
+								CCorePlugin.log(e);
+							} finally {
+								subMonitor.done();
+							}
 						}
 					}
-				}
-			}, new NullProgressMonitor());
-			
+				}, monitor);
+				
+			}
+		} finally {
+			monitor.done();
 		}
-		
-		monitor.done();
 
 	}
 	

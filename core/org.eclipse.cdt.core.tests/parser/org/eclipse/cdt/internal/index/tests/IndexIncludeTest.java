@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -77,7 +76,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	}
 	
 	public void testFastIndexer() throws Exception {
-		CCoreInternals.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);
+		CCorePlugin.getIndexManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);
 		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "false");
 		waitForIndexer();
 		checkHeader(false);
@@ -94,7 +93,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	}
 
 	public void testFullIndexer() throws Exception {
-		CCoreInternals.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_FULL_INDEXER);
+		CCorePlugin.getIndexManager().setIndexerId(fProject, IPDOMManager.ID_FULL_INDEXER);
 		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "false");
 		waitForIndexer();
 		checkHeader(false);
@@ -187,7 +186,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			String content = "// comment \n#include \"header20061107.h\"\n";
 			IFile file= TestSourceReader.createFile(fProject.getProject(), "intermed20061107.h", content);
 			TestSourceReader.createFile(fProject.getProject(), "source20061107.cpp", "#include \"intermed20061107.h\"\n");
-			CCoreInternals.getPDOMManager().reindex(fProject);
+			CCorePlugin.getIndexManager().reindex(fProject);
 			waitForIndexer();
 			
 
@@ -214,7 +213,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			String content = "#if 0\n#include \"inactive20070213.h\"\n#endif\n";
 			IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070213.cpp", content);
-			CCoreInternals.getPDOMManager().reindex(fProject);
+			CCorePlugin.getIndexManager().reindex(fProject);
 			waitForIndexer();
 			
 			fIndex.acquireReadLock();
@@ -241,7 +240,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			String content = "#include \"unresolved20070213.h\"\n";
 			IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070214.cpp", content);
-			CCoreInternals.getPDOMManager().reindex(fProject);
+			CCorePlugin.getIndexManager().reindex(fProject);
 			waitForIndexer();
 			
 			fIndex.acquireReadLock();

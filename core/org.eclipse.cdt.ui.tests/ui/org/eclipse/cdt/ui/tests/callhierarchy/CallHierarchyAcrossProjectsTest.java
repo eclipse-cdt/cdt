@@ -27,8 +27,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 
-import org.eclipse.cdt.internal.core.CCoreInternals;
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 
@@ -48,7 +46,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		super.setUp();
 
 		fCProject2= CProjectHelper.createCCProject("__chTest_2__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		CCoreInternals.getPDOMManager().reindex(fCProject2);
+		CCorePlugin.getIndexManager().reindex(fCProject2);
 		fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {fCProject, fCProject2});
 		TestScannerProvider.sIncludes= new String[]{fCProject.getProject().getLocation().toOSString(), fCProject2.getProject().getLocation().toOSString()};
 	}

@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
@@ -200,12 +199,12 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
 
 			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
-			CCoreInternals.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
+			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 
 			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), testData[1].toString());
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
-			// ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
+			// ((PDOM)CCorePlugin.getIndexManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
 
@@ -274,11 +273,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
-			CCoreInternals.getPDOMManager().reindex(cproject);
+			CCorePlugin.getIndexManager().reindex(cproject);
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			
 			// System.out.println("Online: "+getName());
-			// ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
+			// ((PDOM)CCorePlugin.getIndexManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
 			index.acquireReadLock();
@@ -293,11 +292,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			
 			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
-			CCoreInternals.getPDOMManager().reindex(referenced);
+			CCorePlugin.getIndexManager().reindex(referenced);
 			
 			//System.out.println("Referenced: "+getName());
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
-			//((PDOM)CCoreInternals.getPDOMManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
+			//((PDOM)CCorePlugin.getIndexManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
 			
 			return referenced;
 		}

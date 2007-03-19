@@ -1,16 +1,3 @@
-package org.eclipse.cdt.internal.ui.indexview;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.CCoreInternals;
-
 /*******************************************************************************
  * Copyright (c) 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
@@ -21,6 +8,18 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
  * Contributors:
  * QNX - Initial API and implementation
  *******************************************************************************/
+package org.eclipse.cdt.internal.ui.indexview;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * @author Doug Schaefer
@@ -46,7 +45,7 @@ public class RebuildIndexActionDelegate implements IObjectActionDelegate {
 			
 			ICProject project = (ICProject)objs[i];
 			try {
-				CCoreInternals.getPDOMManager().reindex(project);
+				CCorePlugin.getIndexManager().reindex(project);
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			}

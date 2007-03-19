@@ -31,8 +31,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
-import org.eclipse.cdt.internal.core.CCoreInternals;
-
 import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
 import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -50,7 +48,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__chTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		CCoreInternals.getPDOMManager().reindex(fCProject);
+		CCorePlugin.getIndexManager().reindex(fCProject);
 
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}

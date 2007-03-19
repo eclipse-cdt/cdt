@@ -18,10 +18,9 @@ import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.CCoreInternals;
 
 public class PDOMUpdateProjectAction implements IObjectActionDelegate {
 
@@ -47,7 +46,7 @@ public class PDOMUpdateProjectAction implements IObjectActionDelegate {
 			
 			ICProject project = (ICProject)objs[i];
 			try {
-				CCoreInternals.getPDOMManager().reindex(project);
+				CCorePlugin.getIndexManager().reindex(project);
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			}

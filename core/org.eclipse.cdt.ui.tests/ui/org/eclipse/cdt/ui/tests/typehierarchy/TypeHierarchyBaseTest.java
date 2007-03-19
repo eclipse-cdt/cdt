@@ -38,8 +38,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
-import org.eclipse.cdt.internal.core.CCoreInternals;
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.typehierarchy.THViewPart;
 import org.eclipse.cdt.internal.ui.typehierarchy.TypeHierarchyUI;
@@ -57,7 +55,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__thTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		CCoreInternals.getPDOMManager().reindex(fCProject);
+		CCorePlugin.getIndexManager().reindex(fCProject);
 
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}

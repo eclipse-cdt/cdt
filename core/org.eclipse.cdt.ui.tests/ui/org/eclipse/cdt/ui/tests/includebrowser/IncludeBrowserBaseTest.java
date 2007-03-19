@@ -31,8 +31,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
-import org.eclipse.cdt.internal.core.CCoreInternals;
-
 import org.eclipse.cdt.internal.ui.includebrowser.IBViewPart;
 
 public class IncludeBrowserBaseTest extends BaseUITestCase {
@@ -51,7 +49,7 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 		fCProject= CProjectHelper.createCCProject("__ibTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		
 		// clear the index
-		CCoreInternals.getPDOMManager().reindex(fCProject);
+		CCorePlugin.getIndexManager().reindex(fCProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	

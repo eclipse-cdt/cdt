@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 
-import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
 
@@ -76,7 +75,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 		ICProject op= CProjectHelper.createCCProject("__ibTest_other__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		try {
 			IndexerPreferences.set(op.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
-			CCoreInternals.getPDOMManager().reindex(op);
+			CCorePlugin.getIndexManager().reindex(op);
 			fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {getProject(), op});
 			
 			TestScannerProvider.sIncludes= new String[]{op.getProject().getLocation().toOSString()};

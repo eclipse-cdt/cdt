@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -460,7 +459,7 @@ class ProjectBuilder {
 		desc.setReferencedProjects( (IProject[]) dependencies.toArray(new IProject[dependencies.size()]) );
 		result.getProject().setDescription(desc, new NullProgressMonitor());
 
-		CCoreInternals.getPDOMManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
+		CCorePlugin.getIndexManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().joinIndexer(4000, new NullProgressMonitor());
 		return result;
 	}

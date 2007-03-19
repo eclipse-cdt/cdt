@@ -51,7 +51,6 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -76,7 +75,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	protected void setUp() throws CoreException {
 		fCProject= CProjectHelper.createCCProject("__bugsTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		CCoreInternals.getPDOMManager().reindex(fCProject);
+		CCorePlugin.getIndexManager().reindex(fCProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	

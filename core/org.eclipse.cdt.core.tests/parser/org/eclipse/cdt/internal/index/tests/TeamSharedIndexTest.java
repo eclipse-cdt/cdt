@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -52,7 +51,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	}
 
 	private Collection fProjects= new LinkedList();
-	private static final IIndexManager fPDOMManager = CCoreInternals.getPDOMManager();
+	private static final IIndexManager fPDOMManager = CCorePlugin.getIndexManager();
 
 	public TeamSharedIndexTest(String name) {
 		super(name);

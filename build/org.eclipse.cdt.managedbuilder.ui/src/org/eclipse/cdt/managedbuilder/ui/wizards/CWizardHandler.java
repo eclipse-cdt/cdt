@@ -166,8 +166,9 @@ public class CWizardHandler implements ICWizardHandler {
 
 	public void createProject(IProject project, CfgHolder[] cfgs) throws CoreException {
 		CoreModel coreModel = CoreModel.getDefault();
-		ICProjectDescription des = coreModel.getProjectDescription(project);
-		des = coreModel.createProjectDescription(project, true);
+//		ICProjectDescription des = coreModel.getProjectDescription(project);
+//		des = coreModel.createProjectDescription(project, true);
+		ICProjectDescription des = coreModel.createProjectDescription(project, false);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 
 		if (cfgs == null || cfgs.length == 0) 

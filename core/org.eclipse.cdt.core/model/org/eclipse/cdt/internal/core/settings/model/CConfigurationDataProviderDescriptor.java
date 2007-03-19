@@ -25,6 +25,7 @@ public class CConfigurationDataProviderDescriptor {
 	final static String DATA_PROVIDER = "provider";	//$NON-NLS-1$
 	final static String CLASS = "class";	//$NON-NLS-1$
 	final static String NATURES = "natures";	//$NON-NLS-1$
+	final static String CONFLICTING_NATURES = "conflictingNatures";	//$NON-NLS-1$
 	final static String ECLIPSE_BUILDERS = "eclipseBuilders";	//$NON-NLS-1$
 	final static String DELIMITER = ";"; //$NON-NLS-1$
 	
@@ -35,6 +36,7 @@ public class CConfigurationDataProviderDescriptor {
 	private IConfigurationElement fProviderElement;
 //	private String[] fBuilderIds;
 	private String[] fNatureIds;
+	private String[] fConflictingNatureIds;
 	
 	CConfigurationDataProviderDescriptor(IExtension extension){
 		fId = extension.getUniqueIdentifier();
@@ -42,10 +44,12 @@ public class CConfigurationDataProviderDescriptor {
 		fProviderElement = getProviderElement(extension);
 		if(fProviderElement != null){
 			fNatureIds = toArray(fProviderElement.getAttribute(NATURES));
+			fConflictingNatureIds = toArray(fProviderElement.getAttribute(CONFLICTING_NATURES));
 //			fBuilderIds = toArray(fProviderElement.getAttribute(ECLIPSE_BUILDERS));
 		} else {
 			//fBuilderIds = 
 			fNatureIds = new String[0];
+			fConflictingNatureIds = new String[0];
 		}
 	}
 	
@@ -106,7 +110,11 @@ public class CConfigurationDataProviderDescriptor {
 	public String[] getNatureIds(){
 		return (String[])fNatureIds.clone();
 	}
-	
+
+	public String[] getConflictingNatureIds(){
+		return (String[])fConflictingNatureIds.clone();
+	}
+
 /*	public String[] getBuilderIds(){
 		return (String[])fBuilderIds.clone();
 	}

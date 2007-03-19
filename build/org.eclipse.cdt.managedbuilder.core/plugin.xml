@@ -215,6 +215,7 @@
          point="org.eclipse.cdt.core.CConfigurationDataProvider">
          <provider
          	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature;org.eclipse.cdt.managedbuilder.core.ScannerConfigNature"
+         	conflictingNatures="org.eclipse.cdt.make.core.makeNature;org.eclipse.cdt.make.core.ScannerConfigNature"
          	class="org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider"
          />
    </extension>

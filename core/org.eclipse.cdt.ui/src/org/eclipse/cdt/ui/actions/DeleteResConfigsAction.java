@@ -74,6 +74,10 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 						if (res != null) {
 							IProject p = res.getProject();
 							if (!p.isOpen()) continue;
+							
+							if (!CoreModel.getDefault().isNewStyleProject(p))
+								continue;
+
 							IPath path = res.getProjectRelativePath();
 							// getting description in read-only mode
 							ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);

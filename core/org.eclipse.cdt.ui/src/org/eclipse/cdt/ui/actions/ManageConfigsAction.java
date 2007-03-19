@@ -61,6 +61,9 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		}
 		
 		if (prj != null) {
+			if (!CoreModel.getDefault().isNewStyleProject(prj))
+				return false;
+			
 			// 2 or more projects selected - cannot handle
 			if (project != null && project != prj) {
 				project = null;

@@ -427,8 +427,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	}
 
 	protected void performOK() {
-		if (vars != null)
-			fUserSupplier.setWorkspaceEnvironment(vars);
+		if (vars != null) {
+			if (fUserSupplier.setWorkspaceEnvironment(vars))
+				if (page instanceof PrefPage_Abstract)
+					PrefPage_Abstract.isChanged = true;
+		}
 		vars = null;
 		super.performOK();
 	}

@@ -160,8 +160,12 @@ public class ChangeBuildConfigActionBase {
 				}
 				// Check whether the project is CDT project
 				if (project != null) {
-					ICConfigurationDescription[] tmp = getCfgs(project);
-					if (tmp == null || tmp.length == 0)	project = null;
+					if (!CoreModel.getDefault().isNewStyleProject(project))
+						project = null;
+					else {
+						ICConfigurationDescription[] tmp = getCfgs(project);
+						if (tmp == null || tmp.length == 0)	project = null;
+					}
 				}
 				if (project != null) {
 					fProjects.add(project);

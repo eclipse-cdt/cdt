@@ -112,6 +112,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 	private ICConfigurationDescription[] getCfgsRead(IResource res) {
 		IProject p = res.getProject();
 		if (!p.isOpen()) return null;
+		if (!CoreModel.getDefault().isNewStyleProject(p)) return null;
 		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
 		if (prjd == null) return null;
 		return prjd.getConfigurations();

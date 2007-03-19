@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTListComparator;
 import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.PrefPage_Abstract;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 import org.eclipse.core.runtime.CoreException;
@@ -532,7 +533,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	 */
 	protected void performOK() {
 		if (vars != null) try {
-			fUserSupplier.setWorkspaceVariables(vars);
+			if (fUserSupplier.setWorkspaceVariables(vars))
+				if (page instanceof PrefPage_Abstract)
+					PrefPage_Abstract.isChanged = true;
 		} catch (CoreException e) {}
 		vars = null;
 		super.performOK();

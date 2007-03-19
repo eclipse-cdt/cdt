@@ -110,7 +110,7 @@ implements
 	private static ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
 	private static ICProjectDescription prjd = null;
 	private static int cfgIndex = 0;
-	private static boolean doneOK = false;
+//	private static boolean doneOK = false;
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME = "tab"; //$NON-NLS-1$
@@ -123,7 +123,6 @@ implements
 
 	private static final Object NOT_NULL = new Object();
 	public static final String EMPTY_STR = "";  //$NON-NLS-1$
-
 	/*
 	 * Dialog widgets
 	 */
@@ -140,13 +139,14 @@ implements
 	protected boolean isFolder  = false;
 	protected boolean isFile    = false;
 	protected boolean isMulti   = false;
+	protected static int saveCounter = 0;
 	
 	// tabs
-	TabFolder folder;
-	ArrayList itabs = new ArrayList();
+	protected TabFolder folder;
+	protected ArrayList itabs = new ArrayList();
 	ICPropertyTab currentTab;
 
-	class InternalTab {
+	protected class InternalTab {
 		Composite comp;
 		String text;
 		String tip;
@@ -182,8 +182,8 @@ implements
 	public AbstractPage() {
 		// reset static values before new session 
 		if (pages.size() == 0) {
-			doneOK = false; // see "performOk()"
 			prjd = null;    // force getting new descriptors
+			saveCounter = 0; // needs in performOK();
 		}
 		// register current page 
 		if (!pages.contains(this)) pages.add(this);
@@ -394,16 +394,21 @@ implements
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		if (doneOK || noContentOnPage || !displayedConfig) return true;
+		// this part is to be performed by every page 
+		if (!noContentOnPage && displayedConfig) {
+			doInform();
+		}
+		// checks whether it's a last page
+		if (++saveCounter < pages.size()) return true;
+	
+		// this part is to be performed once while OK pressed.
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				forEach(ICPropertyTab.OK, null);
-				doneOK = true; // further pages need not to do anything
-				try {
-//					CoreModel.getDefault().setProjectDescription(getProject(), prjd);
-					CoreModel.getDefault().setProjectDescription(getProject(), prjd, true, monitor);
+				try { 
+					doSave(monitor);
 				} catch (CoreException e) { }
-				updateViews(internalElement);
+				if (!isForPrefs())
+					updateViews(internalElement);
 			}
 		};
 		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
@@ -418,8 +423,24 @@ implements
 		} catch (InterruptedException e) {}
 		return true;
 	}
+
+	/**
+	 * Action performed upon every page while OK pressed
+	 * Normally, all tabs are informed about this action
+	 */
+	protected void doInform() {
+		forEach(ICPropertyTab.OK, null);
+	}
 	
-	
+	/**
+	 * Action performed once while OK pressed
+	 * Assume that all pages are already informed.
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	protected void doSave(IProgressMonitor monitor) throws CoreException {
+		CoreModel.getDefault().setProjectDescription(getProject(), prjd, true, monitor);
+	}
 	
     /**
      * Apply changes for all tabs but for given page & current cfg only.
@@ -897,13 +918,12 @@ implements
 
 	// update views (in particular, display resource configurations)
 	public static void updateViews(IResource res) {
+		if (res == null) return;  
 		IWorkbenchPartReference refs[] = CUIPlugin.getActiveWorkbenchWindow().getActivePage().getViewReferences();
 		for (int k = 0; k < refs.length; k++) {
 			IWorkbenchPart part = refs[k].getPart(false);
 			if (part != null && part instanceof IPropertyChangeListener)
 				((IPropertyChangeListener)part).propertyChange(new PropertyChangeEvent(res, PreferenceConstants.PREF_SHOW_CU_CHILDREN, null, null));
 		}
-//		WorkbenchPlugin.getDefault().getDecoratorManager().updateForEnablementChange();
 	}
-	
 }

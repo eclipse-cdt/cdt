@@ -47,6 +47,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
 import org.eclipse.cdt.internal.core.index.IndexFactory;
 import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
+import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;

@@ -8,8 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - adapted for use in CDT
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.ui.browser.typeinfo;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
@@ -17,10 +23,8 @@ import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
 
 public class TypeInfoLabelProvider extends LabelProvider {
 
@@ -112,7 +116,12 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			ITypeReference ref = typeRef.getResolvedReference();
 			if (ref != null) {
 				path = ref.getPath();
-				if (CoreModel.isValidHeaderUnitName(typeRef.getEnclosingProject().getProject(), path.lastSegment())) {
+				
+				// IndexTypeInfo may not have an enclosing project 
+				ICProject cproject = typeRef.getEnclosingProject();
+				IProject project = cproject==null ? null : cproject.getProject();
+				
+				if (CoreModel.isValidHeaderUnitName(project, path.lastSegment())) {
 					return HEADER_ICON;
 				}
 			}

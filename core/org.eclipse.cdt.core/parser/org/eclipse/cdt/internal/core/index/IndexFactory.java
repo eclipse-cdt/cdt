@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,9 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -36,6 +41,7 @@ import org.eclipse.core.runtime.CoreException;
 public class IndexFactory {
 	private static final int ADD_DEPENDENCIES = IIndexManager.ADD_DEPENDENCIES;
 	private static final int ADD_DEPENDENT = IIndexManager.ADD_DEPENDENT;
+	private static final int SKIP_PROVIDED = IIndexManager.SKIP_PROVIDED;
 
 	private PDOMManager fPDOMManager;
 	
@@ -44,26 +50,37 @@ public class IndexFactory {
 	}
 	
 	public IIndex getIndex(ICProject[] projects, int options) throws CoreException {
+		projects = (ICProject[]) ArrayUtil.removeNulls(ICProject.class, projects);
+		
 		boolean addDependencies= (options & ADD_DEPENDENCIES) != 0;
 		boolean addDependent=    (options & ADD_DEPENDENT) != 0;
+		boolean skipProvided= (options & SKIP_PROVIDED) != 0;
 		
+		IndexProviderManager m = ((PDOMManager)CCorePlugin.getPDOMManager()).getIndexProviderManager();
 		HashMap map= new HashMap();
 		Collection selectedProjects= getProjects(projects, addDependencies, addDependent, map, new Integer(1));
 		
-		ArrayList pdoms= new ArrayList();
+		HashMap fragments= new LinkedHashMap();
 		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-			ICProject project = (ICProject) iter.next();
-			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(project);
+			ICProject cproject = (ICProject) iter.next();
+			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
 			if (pdom != null) {
-				pdoms.add(pdom);
+				fragments.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
+				
+				if(!skipProvided) {
+					ICConfigurationDescription activeCfg= CoreModel.getDefault().getProjectDescription(cproject.getProject()).getActiveConfiguration();
+					IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
+					for(int i=0; i<pFragments.length; i++) {
+						fragments.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+					}
+				}
 			}
 		}
-		if (pdoms.isEmpty()) {
+		if (fragments.isEmpty()) {
 			return EmptyCIndex.INSTANCE;
 		}
 		
-		// todo add the SDKs
-		int primaryFragmentCount= pdoms.size();
+		int primaryFragmentCount= fragments.size();
 		
 		if (!addDependencies) {
 			projects= (ICProject[]) selectedProjects.toArray(new ICProject[selectedProjects.size()]);
@@ -71,15 +88,22 @@ public class IndexFactory {
 			// don't clear the map, so projects are not selected again
 			selectedProjects= getProjects(projects, true, false, map, new Integer(2));
 			for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-				ICProject project = (ICProject) iter.next();
-				IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(project);
+				ICProject cproject = (ICProject) iter.next();
+				IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
 				if (pdom != null) {
-					pdoms.add(pdom);
+					fragments.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
+				}
+				if(!skipProvided) {
+					ICConfigurationDescription activeCfg= CoreModel.getDefault().getProjectDescription(cproject.getProject()).getActiveConfiguration();
+					IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
+					for(int i=0; i<pFragments.length; i++) {
+						fragments.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+					}
 				}
 			}
-			// todo add further SDKs
 		}
 		
+		Collection pdoms= fragments.values();
 		return new CIndex((IIndexFragment[]) pdoms.toArray(new IIndexFragment[pdoms.size()]), primaryFragmentCount); 
 	}
 
@@ -147,34 +171,41 @@ public class IndexFactory {
 // mstodo to support dependent projects: Collection selectedProjects= getSelectedProjects(new ICProject[]{project}, false);
 		
 		Collection selectedProjects= Collections.singleton(project);
-		
-		ArrayList pdoms= new ArrayList();
+		Map readOnlyFrag= new LinkedHashMap();
+		Map fragments= new LinkedHashMap();
 		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
 			ICProject p = (ICProject) iter.next();
 			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(p);
 			if (pdom != null) {
-				pdoms.add(pdom);
+				fragments.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
+				IndexProviderManager m = ((PDOMManager)CCorePlugin.getPDOMManager()).getIndexProviderManager();
+				ICConfigurationDescription activeCfg= CoreModel.getDefault().getProjectDescription(p.getProject()).getActiveConfiguration();
+				IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
+				for(int i=0; i<pFragments.length; i++) {
+					readOnlyFrag.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+				}
 			}
 		}
 		
 		selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap(), new Integer(1));		
 		selectedProjects.remove(project);
-		ArrayList readOnly= new ArrayList();
+		
 		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
 			ICProject cproject = (ICProject) iter.next();
 			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
 			if (pdom != null) {
-				readOnly.add(pdom);
+				readOnlyFrag.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
 			}
 		}
-		
-		
-		if (pdoms.isEmpty()) {
+				
+		if (fragments.isEmpty()) {
 			throw new CoreException(CCorePlugin.createStatus(
 					MessageFormat.format(Messages.IndexFactory_errorNoSuchPDOM0, new Object[]{project.getElementName()})));
 		}
 		
+		Collection pdoms= fragments.values();
+		Collection roPdoms= readOnlyFrag.values();
 		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]),
-				(IIndexFragment[]) readOnly.toArray(new IIndexFragment[readOnly.size()]) );
+				(IIndexFragment[]) roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
 	}
 }

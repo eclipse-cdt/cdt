@@ -32,10 +32,33 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 4.0
  */
 public interface IIndexManager {
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates
+	 * projects referenced by the set of input projects should also be added
+	 * to the resulting index.
+	 */
 	public final static int ADD_DEPENDENCIES = 0x1;
+	
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates
+	 * projects which reference any of the set of input projects should also be
+	 * added to the resulting index.
+	 */
 	public final static int ADD_DEPENDENT    = 0x2;
 	
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates
+	 * that index content provided via the CIndex extension point should not be included
+	 * in the resulting index, as it would have done otherwise.
+	 */
+	public final static int SKIP_PROVIDED    = 0x4;
+	
+	/**
+	 * Constant for indicating there is no time out period for joining the indexer job. 
+	 * @see IIndexManager#joinIndexer(int, IProgressMonitor)
+	 */
 	public final static int FOREVER= -1;
+	
 	/**
 	 * Returns the index for the given project.
 	 * @param project the project to get the index for

@@ -47,6 +47,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
 import org.eclipse.cdt.internal.core.index.IndexFactory;
 import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
+import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
@@ -136,6 +137,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 	private IElementChangedListener fCModelListener= new CModelListener(this);
 	private IndexFactory fIndexFactory= new IndexFactory(this);
+    private IndexProviderManager manager = new IndexProviderManager();
     
 	/**
 	 * Serializes creation of new indexer, when acquiring the lock you are 
@@ -160,6 +162,10 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 			IProject project = projects[i];
 			addProject(project);
 		}
+	}
+
+	public IndexProviderManager getIndexProviderManager() {
+		return manager;
 	}
 
 	public IPDOM getPDOM(ICProject project) throws CoreException {

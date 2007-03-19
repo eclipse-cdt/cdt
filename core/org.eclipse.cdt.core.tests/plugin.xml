@@ -27,5 +27,11 @@
             class="org.eclipse.cdt.internal.index.tests.FakeIndexer">
       </run>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.CIndex">
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.DummyProvider1">
+      </ReadOnlyPDOMProvider>
+   </extension>
 
 </plugin>

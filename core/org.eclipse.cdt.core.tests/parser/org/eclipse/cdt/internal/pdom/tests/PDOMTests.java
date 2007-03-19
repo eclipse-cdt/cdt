@@ -24,11 +24,13 @@ public class PDOMTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new PDOMTests();
 		
+		
 		suite.addTest(DBTest.suite());
 		suite.addTest(DBPropertiesTests.suite());
 		suite.addTest(PDOMBugsTest.suite());
 		suite.addTest(PDOMSearchTest.suite());
 		suite.addTest(PDOMLocationTests.suite());
+		suite.addTest(PDOMProviderTests.suite());
 		suite.addTest(EnumerationTests.suite());
 		suite.addTest(ClassTests.suite());
 		suite.addTest(TypesTests.suite());

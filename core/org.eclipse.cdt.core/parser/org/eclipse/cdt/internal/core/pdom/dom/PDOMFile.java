@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -339,21 +340,26 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	public static IIndexFragmentFile findFile(PDOM pdom, BTree btree, IIndexFileLocation location, IIndexLocationConverter strategy)
 			throws CoreException {
-		Finder finder = new Finder(pdom.getDB(), location, strategy);
-		btree.accept(finder);
-		int record = finder.getRecord();
+		String internalRepresentation= strategy.toInternalFormat(location);
+		int record= 0;
+		if(internalRepresentation!=null) {
+			Finder finder = new Finder(pdom.getDB(), internalRepresentation);
+			btree.accept(finder);
+			record= finder.getRecord();
+		}
 		return record != 0 ? new PDOMFile(pdom, record) : null;
 	}
+	
 	private static class Finder implements IBTreeVisitor {
 		private final Database db;
 		private final String rawKey;
 		private int record;
 
-		public Finder(Database db, IIndexFileLocation location, IIndexLocationConverter strategy)
+		public Finder(Database db, String internalRepresentation)
 			throws CoreException
 		{
 			this.db = db;
-			this.rawKey = strategy.toInternalFormat(location);
+			this.rawKey = internalRepresentation;
 		}
 
 		public int compare(int record) throws CoreException {

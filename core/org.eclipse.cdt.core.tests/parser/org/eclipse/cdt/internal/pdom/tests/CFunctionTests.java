@@ -15,6 +15,8 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -72,4 +74,14 @@ public class CFunctionTests extends PDOMTestBase {
 		assertTrue(((IFunction) bindings[0]).takesVarArgs());
 	}
 
+	public void testKnRStyleFunctionWithProblemParameters() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "KnRfunctionWithProblemParameters");
+		assertEquals(1, bindings.length);
+		IFunction f= (IFunction) bindings[0];
+		IParameter[] params= f.getParameters();
+		assertEquals(3, params.length);
+		assertNull(params[0].getType()); // its a problem binding in the DOM 
+		assertTrue(params[1].getType() instanceof ICBasicType);
+		assertTrue(params[2].getType() instanceof ICBasicType); 
+	}
 }

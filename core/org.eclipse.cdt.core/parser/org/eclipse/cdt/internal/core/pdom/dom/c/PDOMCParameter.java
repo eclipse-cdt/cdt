@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -52,12 +53,14 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter {
 
 		db.putInt(record + NEXT_PARAM, 0);
 		try {
-			IType type = param.getType();
-			while(type instanceof ITypedef)
-				type = ((ITypedef)type).getType();
-			if (type != null) {
-				PDOMNode typeNode = getLinkageImpl().addType(this, type);
-				db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+			if(!(param instanceof IProblemBinding)) {
+				IType type = param.getType();
+				while(type instanceof ITypedef)
+					type = ((ITypedef)type).getType();
+				if (type != null) {
+					PDOMNode typeNode = getLinkageImpl().addType(this, type);
+					db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+				}
 			}
 		} catch(DOMException e) {
 			throw new CoreException(Util.createStatus(e));

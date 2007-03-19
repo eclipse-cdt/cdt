@@ -78,7 +78,7 @@ class PDOMCLinkage extends PDOMLinkage {
 	public PDOMBinding addBinding(IBinding binding) throws CoreException {
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding == null) {
-			PDOMNode parent = getAdaptedParent(binding, true);
+			PDOMNode parent = getAdaptedParent(binding, true, false);
 			if (parent == null)
 				return null;
 			
@@ -176,7 +176,7 @@ class PDOMCLinkage extends PDOMLinkage {
 				return null;
 			}
 		}
-		PDOMNode parent = getAdaptedParent(binding, false);
+		PDOMNode parent = getAdaptedParent(binding, false, false);
 
 		if (parent == this) {
 			return FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});

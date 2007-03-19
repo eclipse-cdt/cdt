@@ -29,11 +29,17 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstanceScope;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -175,6 +181,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 	
+	public abstract PDOMBinding addBinding(IBinding binding) throws CoreException;
+	
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	
 	public abstract PDOMBinding resolveBinding(IASTName name) throws CoreException;
@@ -190,7 +198,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * </ul>
 	 * @throws CoreException
 	 */
-	protected PDOMNode getAdaptedParent(IBinding binding, boolean createFileLocalScope) throws CoreException {
+	protected PDOMNode getAdaptedParent(IBinding binding, boolean createFileLocalScope, boolean addParent) throws CoreException {
 		try {
 		IScope scope = binding.getScope();
 		if (scope == null) {
@@ -203,7 +211,14 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				// in an index the null scope represents global scope.
 				return this;
 			}
-			return null;
+			
+			if (binding instanceof ICPPDeferredTemplateInstance) {
+				ICPPDeferredTemplateInstance deferred = (ICPPDeferredTemplateInstance) binding;
+				ICPPTemplateDefinition template = deferred.getTemplateDefinition();
+				scope = template.getScope();
+			} else {
+				return null;
+			}
 		}
 		 		
 		if(scope instanceof IIndexScope) {
@@ -215,6 +230,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 			
 		// the scope is from the ast
+		if (scope instanceof ICPPTemplateScope && !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPTemplateInstance)) {
+				scope = scope.getParent();
+		}
+		
 		if (scope instanceof ICPPNamespaceScope) {
 			IName name= scope.getScopeName();
 			if (name != null && name.toCharArray().length == 0) {
@@ -234,10 +253,22 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return this;
 		}
 		else {
-			IName scopeName = scope.getScopeName();
-			if (scopeName instanceof IASTName) {
-				IBinding scopeBinding = ((IASTName) scopeName).resolveBinding();
-				PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);
+			IBinding scopeBinding = null;
+			if (scope instanceof CPPClassInstanceScope) {
+				scopeBinding = ((CPPClassInstanceScope)scope).getClassType();
+			} else {
+				IName scopeName = scope.getScopeName();		
+				if (scopeName instanceof IASTName) {
+					scopeBinding = ((IASTName) scopeName).resolveBinding();
+				}	
+			}
+			if (scopeBinding != null) {
+				PDOMBinding scopePDOMBinding = null;
+				if (addParent) {
+					scopePDOMBinding = addBinding(scopeBinding);
+				} else {
+					scopePDOMBinding = adaptBinding(scopeBinding);
+				}
 				if (scopePDOMBinding != null)
 					return scopePDOMBinding;
 			}

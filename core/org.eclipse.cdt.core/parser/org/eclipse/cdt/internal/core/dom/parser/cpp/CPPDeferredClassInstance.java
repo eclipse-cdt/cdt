@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -32,7 +33,8 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 /**
  * @author aniefer
  */
-public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassType {
+public class CPPDeferredClassInstance extends CPPInstance implements
+		ICPPClassType, ICPPDeferredTemplateInstance {
 
 	public IType [] arguments = null;
 	public ICPPClassTemplate classTemplate = null;
@@ -169,8 +171,8 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 			return true;
 		
 		//allow some fuzziness here.
-		if( type instanceof CPPDeferredClassInstance ){
-			ICPPClassTemplate typeClass = (ICPPClassTemplate) ((CPPDeferredClassInstance)type).getSpecializedBinding();
+		if( type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType ){
+			ICPPClassTemplate typeClass = (ICPPClassTemplate) ((ICPPDeferredTemplateInstance)type).getSpecializedBinding();
 			return (typeClass == classTemplate );
 		} else if( type instanceof ICPPClassTemplate && classTemplate == type ){
 			return true;

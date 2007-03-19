@@ -14,7 +14,6 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
@@ -43,11 +42,4 @@ public interface ICPPTemplateInstance extends ICPPSpecialization {
 	 * @return
 	 */
 	public IType [] getArguments();
-	
-	/**
-	 * return a map which maps from template parameter to the corresponding
-	 * template argument 
-	 * @return
-	 */
-	public ObjectMap getArgumentMap();
 }

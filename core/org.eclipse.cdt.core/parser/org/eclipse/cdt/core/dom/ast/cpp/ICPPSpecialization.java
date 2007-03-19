@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
@@ -36,4 +37,11 @@ public interface ICPPSpecialization extends ICPPBinding {
 	 * @return
 	 */
 	public IBinding getSpecializedBinding();
+	
+	/**
+	 * return a map which maps from template parameter to the corresponding
+	 * template argument 
+	 * @return
+	 */
+	public ObjectMap getArgumentMap();
 }

@@ -111,4 +111,7 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
+	public ObjectMap getArgumentMap() {
+		return argumentMap;
+	}
 }

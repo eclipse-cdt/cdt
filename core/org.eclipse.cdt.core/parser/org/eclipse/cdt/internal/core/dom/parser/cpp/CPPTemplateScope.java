@@ -60,8 +60,8 @@ public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
 	 */
 	public IName getScopeName() {
-		// TODO Auto-generated method stub
-		return null;
+		ICPPASTTemplateDeclaration template = (ICPPASTTemplateDeclaration) getPhysicalNode();
+		return CPPTemplates.getTemplateName(template);
 	}
 
 	public IScope getParent() {

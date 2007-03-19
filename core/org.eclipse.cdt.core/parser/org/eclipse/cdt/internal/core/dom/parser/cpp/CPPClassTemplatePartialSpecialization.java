@@ -65,7 +65,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 		}
 		
 		IType [] specArgs = getArguments();
-		if( specArgs.length != arguments.length ){
+		if( specArgs.length != args.length ){
 			return null;
 		}
 		
@@ -102,5 +102,9 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 
 	public IBinding getSpecializedBinding() {
 		return getPrimaryClassTemplate();
+	}
+
+	public ObjectMap getArgumentMap() {
+		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,12 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
- * IBM Corporation
- * Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -25,97 +20,93 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- *
+ * @author Bryan Wilkinson
+ * 
  */
-class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction, ICPPFunctionType, IPDOMOverloader {
+class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
+		implements IIndexType, ICPPFunction, ICPPFunctionType {
 
 	/**
 	 * Offset of total number of function parameters (relative to the
 	 * beginning of the record).
 	 */
-	private static final int NUM_PARAMS = PDOMCPPBinding.RECORD_SIZE + 0;
+	private static final int NUM_PARAMS = PDOMCPPSpecialization.RECORD_SIZE + 0;
 
 	/**
 	 * Offset of pointer to the first parameter of this function (relative to
 	 * the beginning of the record).
 	 */
-	private static final int FIRST_PARAM = PDOMCPPBinding.RECORD_SIZE + 4;
-	
-	/**
-	 * Offset of hash of parameter information to allow fast comparison
-	 */
-	private static final int SIGNATURE_MEMENTO = PDOMCPPBinding.RECORD_SIZE + 8;
+	private static final int FIRST_PARAM = PDOMCPPSpecialization.RECORD_SIZE + 4;
 
 	/**
 	 * Offset for return type of this function (relative to
 	 * the beginning of the record).
 	 */
-	private static final int RETURN_TYPE = PDOMCPPBinding.RECORD_SIZE + 12;	
+	private static final int RETURN_TYPE = PDOMCPPSpecialization.RECORD_SIZE + 8;	
 
 	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	protected static final int ANNOTATION = PDOMCPPBinding.RECORD_SIZE + 16; // byte
+	protected static final int ANNOTATION = PDOMCPPSpecialization.RECORD_SIZE + 12; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 17;
+	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 13;
 	
-	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException {
-		super(pdom, parent, function.getNameCharArray());
+	public PDOMCPPFunctionSpecialization(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding specialized) throws CoreException {
+		super(pdom, parent, (ICPPSpecialization) function, specialized);
+		if (specialized instanceof PDOMCPPFunctionTemplate) {
+			((PDOMCPPFunctionTemplate)specialized).addMember(this);
+		}
 		
 		Database db = pdom.getDB();
-		IBinding binding = function;
 		try {
 			IFunctionType ft= function.getType();
+			IType rt= ft.getReturnType();
+			if (rt != null) {
+				PDOMNode typeNode = getLinkageImpl().addType(this, rt);
+				if (typeNode != null) {
+					db.putInt(record + RETURN_TYPE, typeNode.getRecord());
+				}
+			}
+
 			IParameter[] params= function.getParameters();
 			IType[] paramTypes= ft.getParameterTypes();
 			db.putInt(record + NUM_PARAMS, params.length);
 			
-			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(binding));
-			Integer memento = PDOMCPPOverloaderUtil.getSignatureMemento(binding);
-			pdom.getDB().putInt(record + SIGNATURE_MEMENTO, memento != null ? memento.intValue() : 0);
+			ICPPFunction sFunc= (ICPPFunction) ((ICPPSpecialization)function).getSpecializedBinding();
+			IParameter[] sParams= sFunc.getParameters();
+			IType[] sParamTypes= sFunc.getType().getParameterTypes();
 			
-			if (setTypes) {	
-				IType rt= ft.getReturnType();
-				if (rt != null) {
-					setReturnType(rt);
-				}
-				
-				for (int i=0; i<params.length; ++i) {
-					IType pt= i<paramTypes.length ? paramTypes[i] : null;
-					setFirstParameter(new PDOMCPPParameter(pdom, this, params[i], pt));
-				}		
+			for (int i=0; i<params.length; ++i) {
+				IType pt= i<paramTypes.length ? paramTypes[i] : null;
+				//TODO shouldn't need to make new parameter (find old one)
+				PDOMCPPParameter sParam = new PDOMCPPParameter(pdom, this, sParams[i], sParamTypes[i]);
+				setFirstParameter(new PDOMCPPParameterSpecialization(pdom, this, (ICPPParameter) params[i], sParam, pt));
 			}
+			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
 
-	public PDOMCPPFunction(PDOM pdom, int bindingRecord) {
+	public PDOMCPPFunctionSpecialization(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
-	}
-
-	public int getSignatureMemento() throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
-	}
-	
-	public static int getSignatureMemento(PDOM pdom, int record) throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
 	}
 	
 	protected int getRecordSize() {
@@ -123,15 +114,15 @@ class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPFUNCTION;
-	}
-	
-	public PDOMCPPParameter getFirstParameter() throws CoreException {
-		int rec = pdom.getDB().getInt(record + FIRST_PARAM);
-		return rec != 0 ? new PDOMCPPParameter(pdom, rec) : null;
+		return PDOMCPPLinkage.CPP_FUNCTION_SPECIALIZATION;
 	}
 
-	public void setFirstParameter(PDOMCPPParameter param) throws CoreException {
+	public PDOMCPPParameterSpecialization getFirstParameter() throws CoreException {
+		int rec = pdom.getDB().getInt(record + FIRST_PARAM);
+		return rec != 0 ? new PDOMCPPParameterSpecialization(pdom, rec) : null;
+	}
+
+	public void setFirstParameter(PDOMCPPParameterSpecialization param) throws CoreException {
 		if (param != null)
 			param.setNextParameter(getFirstParameter());
 		int rec = param != null ? param.getRecord() :  0;
@@ -154,7 +145,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction
 		try {
 			int n = pdom.getDB().getInt(record + NUM_PARAMS);
 			IParameter[] params = new IParameter[n];
-			PDOMCPPParameter param = getFirstParameter();
+			PDOMCPPParameterSpecialization param = getFirstParameter();
 			while (param != null) {
 				params[--n] = param;
 				param = param.getNextParameter();
@@ -192,54 +183,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction
 		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
-	public IType[] getParameterTypes() throws DOMException {
-		try {
-			int n = pdom.getDB().getInt(record + NUM_PARAMS);
-			IType[] types = new IType[n];
-			PDOMCPPParameter param = getFirstParameter();
-			while (param != null) {
-				types[--n] = param.getType();
-				param = param.getNextParameter();
-			}
-			return types;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new IType[0];
-		}
-	}
-
-	public IType getReturnType() throws DOMException {
-		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + RETURN_TYPE));
-			if (node instanceof IType) {
-				return (IType) node;
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
-	}
-
-	public void setReturnType(IType type) throws CoreException {
-		PDOMNode typeNode = getLinkageImpl().addType(this, type);
-		if (typeNode != null) {
-			pdom.getDB().putInt(record + RETURN_TYPE, typeNode.getRecord());
-		}
-	}
-	
-	public boolean isConst() {
-		// ISO/IEC 14882:2003 9.3.1.3
-		// Only applicable to member functions
-		return false; 
-	}
-
-	public boolean isVolatile() {
-		// ISO/IEC 14882:2003 9.3.1.3
-		// Only applicable to member functions
-		return false; 
-	}
-
-	public boolean isSameType(IType type) {		
+	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
@@ -283,36 +227,45 @@ class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction
 		return false;
 	}
 
-	public Object clone() {
-		throw new PDOMNotImplementedError();
+	public boolean isConst() {
+		// ISO/IEC 14882:2003 9.3.1.3
+		// Only applicable to member functions
+		return false; 
 	}
-	
-	public int compareTo(Object other) {
-		int cmp = super.compareTo(other);
-		if(cmp==0) {
-			if(other instanceof PDOMCPPFunction) {
-				try {
-					PDOMCPPFunction otherFunction = (PDOMCPPFunction) other;
-					int mySM = getSignatureMemento();
-					int otherSM = otherFunction.getSignatureMemento();
-					return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
-				} catch(CoreException ce) {
-					CCorePlugin.log(ce);
-				}
-			} else {
-				throw new PDOMNotImplementedError();
-			}
-		}
-		return cmp;
+
+	public boolean isVolatile() {
+		// ISO/IEC 14882:2003 9.3.1.3
+		// Only applicable to member functions
+		return false; 
 	}
-	
-	public String toString() {
-		StringBuffer result = new StringBuffer();
+
+	public IType[] getParameterTypes() throws DOMException {
 		try {
-			result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
-		} catch(DOMException de) {
-			result.append(de);
+			int n = pdom.getDB().getInt(record + NUM_PARAMS);
+			IType[] types = new IType[n];
+			PDOMCPPParameterSpecialization param = getFirstParameter();
+			while (param != null) {
+				types[--n] = param.getType();
+				param = param.getNextParameter();
+			}
+			return types;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new IType[0];
 		}
-		return result.toString();
 	}
+
+	public IType getReturnType() throws DOMException {
+		try {
+			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + RETURN_TYPE));
+			if (node instanceof IType) {
+				return (IType) node;
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
+	}
+
+	public Object clone() {fail();return null;}
 }

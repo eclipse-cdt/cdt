@@ -680,7 +680,8 @@ public class CPPSemantics {
         }
 		if( binding instanceof ICPPClassTemplate ){
 			ASTNodeProperty prop = data.astName.getPropertyInParent();
-			if( prop != ICPPASTQualifiedName.SEGMENT_NAME && prop != ICPPASTTemplateId.TEMPLATE_NAME ){
+			if( prop != ICPPASTQualifiedName.SEGMENT_NAME && prop != ICPPASTTemplateId.TEMPLATE_NAME &&
+					binding instanceof ICPPInternalBinding){
 				try {
 					IASTNode def = ((ICPPInternalBinding)binding).getDefinition();
 					if( def != null ){
@@ -2034,7 +2035,7 @@ public class CPPSemantics {
 	        	{
 	        	    //ok, delegates are synonyms
 	        	} else if( type instanceof ICPPClassTemplate && temp instanceof ICPPSpecialization &&
-						   ((ICPPSpecialization)temp).getSpecializedBinding() == type )
+						  ((IType) type).isSameType((IType) ((ICPPSpecialization)temp).getSpecializedBinding()))
 				{
 					//ok, stay with the template, the specialization, if applicable, will come out during instantiation
 				} else if( type != temp && !((IType)type).isSameType( (IType) temp )) {

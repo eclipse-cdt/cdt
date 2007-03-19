@@ -187,7 +187,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 		}
 	}
 
-	private void acceptInHierarchy(Set visited, IPDOMVisitor visitor) throws CoreException {
+	protected void acceptInHierarchy(Set visited, IPDOMVisitor visitor) throws CoreException {
 		if (visited.contains(this))
 			return;
 		visited.add(this);

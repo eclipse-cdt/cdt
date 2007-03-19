@@ -303,7 +303,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//void C2::f() {T/*cursor*/
 	public void testTypes_MethodScope() throws Exception {
 		final String[] expected= {
-				"T1", "T2", "T3"
+				"T1", "T2", "T3", "TClass"
 		};
 		assertCompletionResults(fCursorOffset, expected, true);
 	}

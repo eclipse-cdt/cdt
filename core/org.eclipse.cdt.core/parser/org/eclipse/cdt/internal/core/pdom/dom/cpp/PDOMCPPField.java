@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -25,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 	
-	public PDOMCPPField(PDOM pdom, PDOMCPPClassType parent, ICPPField field)
+	public PDOMCPPField(PDOM pdom, PDOMNode parent, ICPPField field)
 			throws CoreException {
 		super(pdom, parent, field);
 	}		

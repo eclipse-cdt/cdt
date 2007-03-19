@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * @author aniefer
@@ -72,8 +73,8 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
     public boolean isSameType( IType type ) {
         if( type == this )
             return true;
-        if( type instanceof ITypedef )
-            return ((ITypedef)type).isSameType( this );
+        if( type instanceof ITypedef || type instanceof IIndexType )
+            return type.isSameType( this );
         return false;
     }
 

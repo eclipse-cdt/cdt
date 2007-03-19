@@ -27,13 +27,19 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -54,6 +60,62 @@ public class IndexLabelProvider extends LabelProvider {
 		} else if (element instanceof PDOMNode) {
 			try {
 				String result = ((PDOMNamedNode)element).getDBName().getString();
+
+				if (element instanceof ICPPTemplateInstance) {
+					StringBuffer buffer = null;
+					if (element instanceof ICPPDeferredTemplateInstance) {
+						buffer = new StringBuffer("Dfrd: "); //$NON-NLS-1$
+					} else {
+						buffer = new StringBuffer("Inst: "); //$NON-NLS-1$	
+					}
+					buffer.append(result);
+					buffer.append('<');
+					IType[] types = ((ICPPTemplateInstance) element).getArguments();
+					for (int i = 0; i < types.length; i++) {
+						if (i > 0)
+							buffer.append(',');
+						buffer.append(ASTTypeUtil.getType(types[i]));
+					}
+					buffer.append('>');
+					result = buffer.toString();
+				} else if (element instanceof ICPPClassTemplatePartialSpecialization) {
+					StringBuffer buffer = new StringBuffer("Part: "); //$NON-NLS-1$
+					buffer.append(result);
+					buffer.append('<');
+					try {
+						IType[] types = ((ICPPClassTemplatePartialSpecialization) element).getArguments();
+						for (int i = 0; i < types.length; i++) {
+							if (i > 0)
+								buffer.append(',');
+							buffer.append(ASTTypeUtil.getType(types[i]));
+						}
+					} catch (DOMException e) {
+					}
+					buffer.append('>');
+					result = buffer.toString();
+				} else if (element instanceof ICPPSpecialization) {
+					PDOMNode parentOfSpec = ((PDOMNode)((ICPPSpecialization)element).getSpecializedBinding()).getParentNode();
+					PDOMNode parent = ((PDOMNode)element).getParentNode();
+					PDOMNode grandParent = parent != null ? parent.getParentNode() : null;
+					boolean showArgs = parentOfSpec == null || grandParent == null || !parentOfSpec.equals(grandParent);
+					
+					StringBuffer buffer = null;
+					buffer = new StringBuffer("Spec: "); //$NON-NLS-1$
+					buffer.append(result);
+					
+					if (showArgs) {
+						buffer.append('<');
+						ObjectMap argMap = ((ICPPSpecialization) element).getArgumentMap();
+						for (int i = 0; i < argMap.size(); i++) {
+							if (i > 0)
+								buffer.append(',');
+							buffer.append(ASTTypeUtil.getType((IType) argMap.getAt(i)));
+						}
+						buffer.append('>');
+					}
+					
+					result = buffer.toString();
+				}
 				
 				/*
 				 * aftodo - Ideally here we'd call ASTTypeUtil.getType but

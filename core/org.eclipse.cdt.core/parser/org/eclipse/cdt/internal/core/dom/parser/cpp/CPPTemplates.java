@@ -176,10 +176,33 @@ public class CPPTemplates {
 		ICPPTemplateDefinition template = getContainingTemplate( templateParameter );
 		
 		IBinding binding = null;
-		if( template instanceof CPPTemplateDefinition ){
-			binding = ((CPPTemplateDefinition)template).resolveTemplateParameter( templateParameter );
-		} else if( template instanceof CPPTemplateTemplateParameter ){
+		if( template instanceof CPPTemplateTemplateParameter ){
 			binding = ((CPPTemplateTemplateParameter)template).resolveTemplateParameter( templateParameter );
+		} else if (template instanceof CPPTemplateDefinition) {
+			binding = ((CPPTemplateDefinition) template).resolveTemplateParameter(templateParameter);
+		} else if (template != null) {
+			IASTName name = CPPTemplates.getTemplateParameterName(templateParameter);
+			binding = name.getBinding();
+
+			if (binding == null) {
+				ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) templateParameter.getParent();
+				ICPPASTTemplateParameter[] ps = templateDecl.getTemplateParameters();
+
+				int i = 0;
+				for (; i < ps.length; i++) {
+					if (templateParameter == ps[i])
+						break;
+				}
+
+				try {
+					ICPPTemplateParameter[] params = template.getTemplateParameters();
+					if (i < params.length) {
+						binding = params[i];
+						name.setBinding(binding);
+					}
+				} catch (DOMException e) {
+				}
+			}
 		}
 		        
 	    return binding;
@@ -249,10 +272,10 @@ public class CPPTemplates {
 				template = ((ICPPSpecialization)template).getSpecializedBinding();
 			}
 			
-			if( template != null && template instanceof ICPPInternalTemplate ){
+			if( template != null && template instanceof ICPPInternalTemplateInstantiator){
 				IASTNode [] args = id.getTemplateArguments();
 				IType [] types = CPPTemplates.createTypeArray( args );
-				return ((ICPPInternalTemplate)template).instantiate( types );
+				return ((ICPPInternalTemplateInstantiator) template).instantiate(types);
 			}
 		} else {
 			//functions are instatiated as part of the resolution process
@@ -279,8 +302,8 @@ public class CPPTemplates {
 		
 		ICPPClassTemplate classTemplate = (ICPPClassTemplate) template;
 		IType [] args = createTypeArray( id.getTemplateArguments() );
-		if( classTemplate instanceof ICPPInternalTemplate ){
-		    IBinding binding = ((ICPPInternalTemplate)classTemplate).instantiate( args );
+		if( classTemplate instanceof ICPPInternalTemplateInstantiator ){
+		    IBinding binding = ((ICPPInternalTemplateInstantiator)classTemplate).instantiate( args );
 		    return binding;
 		}
 		return null;
@@ -330,7 +353,9 @@ public class CPPTemplates {
 			if( spec == null ) {
 				ICPPScope scope = (ICPPScope) CPPVisitor.getContainingScope( id );
 				spec = new CPPClassSpecialization(binding, scope, argMap );
-				((ICPPInternalTemplate)template).addSpecialization( args, (ICPPSpecialization) spec );
+				if (template instanceof ICPPInternalTemplate) {
+					((ICPPInternalTemplate)template).addSpecialization( args, (ICPPSpecialization) spec );
+				}
 			}
 			IASTNode parent = id.getParent();
 			while( !(parent instanceof IASTDeclSpecifier ) )
@@ -727,6 +752,9 @@ public class CPPTemplates {
 					}
 				}
 			} else {
+				while (templateDecl.getDeclaration() instanceof ICPPASTTemplateDeclaration) {
+					templateDecl = (ICPPASTTemplateDeclaration) templateDecl.getDeclaration();
+				}
 				return templateDecl;
 			}
 		}
@@ -845,7 +873,8 @@ public class CPPTemplates {
 			if( bindingsToClear == null )
 				bindingsToClear = new ObjectSet( templateParams.length );
 			tn.setBinding( defParams[i] );
-			((ICPPInternalBinding)defParams[i]).addDeclaration( tn );
+			if (defParams[i] instanceof ICPPInternalBinding)
+				((ICPPInternalBinding)defParams[i]).addDeclaration( tn );
 			bindingsToClear.put( defParams[i] );
 		}
 		
@@ -1002,7 +1031,7 @@ public class CPPTemplates {
 					instanceArgs = (IType[]) ArrayUtil.append( IType.class, instanceArgs, (arg != null) ? arg : mapped );
 			}
 			instanceArgs  = (IType[]) ArrayUtil.trim( IType.class, instanceArgs );
-			ICPPSpecialization temp = (ICPPSpecialization) ((ICPPInternalTemplate)template).instantiate( instanceArgs );
+			ICPPSpecialization temp = (ICPPSpecialization) ((ICPPInternalTemplateInstantiator)template).instantiate( instanceArgs );
 			if( temp != null )
 				instances = (IFunction[]) ArrayUtil.append( IFunction.class, instances, temp );
 		}
@@ -1274,7 +1303,7 @@ public class CPPTemplates {
 			return -1;
 	}
 	
-	static protected ICPPTemplateDefinition matchTemplatePartialSpecialization( ICPPClassTemplate template, IType[] args ) throws DOMException{
+	static public ICPPTemplateDefinition matchTemplatePartialSpecialization( ICPPClassTemplate template, IType[] args ) throws DOMException{
 		if( template == null ){
 			return null;
 		}
@@ -1532,7 +1561,7 @@ public class CPPTemplates {
 				arg = arguments[i];
 				//If the argument is a template parameter, we can't instantiate yet, defer for later
 				if( typeContainsTemplateParameter( arg ) ){
-					return ((ICPPInternalTemplate)template).deferredInstance( arguments );
+					return ((ICPPInternalTemplateInstantiator)template).deferredInstance(arguments);
 				}
 			} else {
 				IType defaultType = null;
@@ -1569,7 +1598,7 @@ public class CPPTemplates {
 			}
 		}
 		
-		ICPPSpecialization instance = ((ICPPInternalTemplate)template).getInstance( actualArgs );
+		ICPPSpecialization instance = ((ICPPInternalTemplateInstantiator)template).getInstance( actualArgs );
 		if( instance != null ){
 			return instance;
 		} 
@@ -1587,7 +1616,8 @@ public class CPPTemplates {
 			return e.getProblem();
 		}
 		instance = (ICPPTemplateInstance) CPPTemplates.createInstance( scope, template, map, arguments );
-		((ICPPInternalTemplate)template).addSpecialization( arguments, instance );
+		if (template instanceof ICPPInternalTemplate)
+			((ICPPInternalTemplate)template).addSpecialization( arguments, instance );
 	
 		return instance;	
 	}

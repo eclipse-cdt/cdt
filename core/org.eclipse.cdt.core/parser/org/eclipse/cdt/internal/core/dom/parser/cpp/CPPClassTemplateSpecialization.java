@@ -16,11 +16,13 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -94,7 +96,20 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	}
 
 	public IBinding instantiate(IType[] arguments) {
-		// TODO Auto-generated method stub
+		ICPPTemplateDefinition template = null;
+		
+		try {
+			template = CPPTemplates.matchTemplatePartialSpecialization( (ICPPClassTemplate) this, arguments );
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+		
+		if( template instanceof IProblemBinding )
+			return template;
+		if( template != null && template instanceof ICPPClassTemplatePartialSpecialization ){
+			return ((CPPTemplateDefinition)template).instantiate( arguments );	
+		}
+		
 		return CPPTemplates.instantiateTemplate( this, arguments, argumentMap );
 	}
 

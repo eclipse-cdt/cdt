@@ -450,6 +450,8 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	        checkForDefinition();
 		if( definition != null ) {
 			IASTNode parent = definition.getParent();
+			while (parent instanceof IASTName)
+				parent = parent.getParent();
 			if (parent instanceof ICPPASTCompositeTypeSpecifier) {
 				ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier)parent;
 				return compSpec.getScope();

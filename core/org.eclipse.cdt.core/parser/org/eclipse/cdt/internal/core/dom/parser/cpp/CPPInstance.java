@@ -39,13 +39,6 @@ public abstract class CPPInstance extends CPPSpecialization implements ICPPTempl
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPInstance#getArgumentMap()
-	 */
-	public ObjectMap getArgumentMap() {
-		return argumentMap;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance#getArguments()
 	 */
 	public IType[] getArguments() {

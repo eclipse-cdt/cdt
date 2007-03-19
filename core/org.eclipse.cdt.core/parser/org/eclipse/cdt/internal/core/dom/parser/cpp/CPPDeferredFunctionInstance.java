@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -32,7 +33,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 /**
  * @author aniefer
  */
-public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunction, ICPPInternalFunction {
+public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunction, ICPPInternalFunction, ICPPDeferredTemplateInstance {
 	private IParameter [] parameters;
 	private IType[] arguments;
 	private IFunctionType functionType;

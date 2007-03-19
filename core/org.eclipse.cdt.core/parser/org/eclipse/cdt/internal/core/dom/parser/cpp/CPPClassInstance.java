@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -172,7 +173,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
             return true;
         if( type instanceof ITypedef )
             return ((ITypedef)type).isSameType( this );
-        if( type instanceof CPPDeferredClassInstance )
+        if( type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType )
         	return type.isSameType( this );  //the CPPDeferredClassInstance has some fuzziness
         
         if( type instanceof ICPPTemplateInstance ){

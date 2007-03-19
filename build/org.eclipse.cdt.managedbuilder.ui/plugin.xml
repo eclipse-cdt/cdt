@@ -276,7 +276,7 @@
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.ToolChainEditTab"
            name="(Single) Tool chain edit"
-           parent="org.eclipse.cdt.ui.newui.Page_ToolChain"/>
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ToolChain"/>
 
 <!-- exported from CORE -->           
      <tab
@@ -585,7 +585,7 @@
          </enabledWhen>
       </page>
       <page
-            class="org.eclipse.cdt.ui.newui.Page_ToolChain"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.Page_ToolChain"
             id="org.eclipse.ui.propertypages.project.ref14"
             name="%CDTToolchainProperty.name"
             >

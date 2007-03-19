@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
-import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.core.resources.IProject;
 
 public class CDTProjectWizard extends NewModelProjectWizard {

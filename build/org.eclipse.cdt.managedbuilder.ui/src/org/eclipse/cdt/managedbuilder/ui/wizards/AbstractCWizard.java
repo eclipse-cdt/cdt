@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.ui.newui.ManagedBuilderUIImages;
+import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
 import org.eclipse.cdt.utils.Platform;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;

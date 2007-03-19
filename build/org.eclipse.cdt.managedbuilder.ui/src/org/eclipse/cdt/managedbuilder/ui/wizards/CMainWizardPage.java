@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
-import org.eclipse.cdt.managedbuilder.ui.newui.PageLayout;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.PageLayout;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

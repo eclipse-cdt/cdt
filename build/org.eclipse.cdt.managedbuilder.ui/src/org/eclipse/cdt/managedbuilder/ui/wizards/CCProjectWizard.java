@@ -12,7 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.managedbuilder.ui.newui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;

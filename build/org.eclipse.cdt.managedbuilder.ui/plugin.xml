@@ -90,13 +90,13 @@
       <page
             name="%MakeBuildPref.name"
             category="org.eclipse.cdt.managedbuilder.ui.preferences.WizardPreferences"
-            class="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"
             id="org.eclipse.cdt.managedbuilder.ui.preferences.BuildPreferences">
       </page>
       <page
             name="%NewCDTWizardPref.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTWizard"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTWizard"
             id="org.eclipse.cdt.managedbuilder.ui.preferences.WizardPreferences">
       </page>
    </extension>
@@ -240,43 +240,43 @@
   <extension
            point="org.eclipse.cdt.ui.cPropertyTab">
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.DiscoveryTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.DiscoveryTab"
            icon="icons/elcl16/discovery.gif"
            name="%Discovery.options"
            weight="005"
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.ToolSettingsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.ToolSettingsTab"
            icon="icons/elcl16/config-tool.gif"
            name="%Tool.settings"
            weight="001"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.BuildStepsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.BuildStepsTab"
            icon="icons/obj16/steps.gif"
            name="%Build.steps"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"
            weight="002"/>
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.ArtifactTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.ArtifactTab"
            icon="icons/obj16/artifact.gif"
            name="%Build.artifact"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"
            weight="003"/>
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.BuilderSettingsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.BuilderSettingsTab"
            icon="icons/obj16/build_settings.gif"
            name="%Builder.settings"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"
            weight="004"/>
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.CPropertyVarsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.CPropertyVarsTab"
            name="(Single) CDT Vars (macros)"
            parent="org.eclipse.cdt.ui.newui.Page_Variables"/>
-     <!--tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.ToolChainEditTab"
+     <tab
+           class="org.eclipse.cdt.managedbuilder.ui.properties.ToolChainEditTab"
            name="(Single) Tool chain edit"
-           parent="org.eclipse.cdt.ui.newui.Page_ToolChain"/-->
+           parent="org.eclipse.cdt.ui.newui.Page_ToolChain"/>
 
 <!-- exported from CORE -->           
      <tab
@@ -319,7 +319,7 @@
            weight="008"           
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.CBuildLocationOutputTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.CBuildLocationOutputTab"
            icon="icons/obj16/output_folder_obj.gif"
            name="%Output.location"
            weight="009"           
@@ -385,41 +385,41 @@
            name="(Single) Environment"
            parent="org.eclipse.cdt.ui.newui.PrefPage_Env"/>
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.CPropertyVarsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.CPropertyVarsTab"
            name="(Single) CDT Vars (macros)"
            parent="org.eclipse.cdt.ui.newui.PrefPage_Vars"/>
      <tab
            class="org.eclipse.cdt.ui.newui.BinaryParsTab"
            name="%Binary.parsers"
            icon="icons/obj16/bin_obj.gif"
-           parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
            name="%Error.parsers"
            icon="icons/obj16/error_obj.gif"
-           parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"
            />
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.DiscoveryTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.DiscoveryTab"
            icon="icons/elcl16/discovery.gif"
            name="%Discovery.options"
-           parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"
            />
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.BuilderSettingsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.BuilderSettingsTab"
            icon="icons/obj16/build_settings.gif"
            name="%Builder.settings"
-           parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"/>
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"/>
 
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.PreferredToolchainsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.PreferredToolchainsTab"
            name="%Preferred.toolchains"
-           parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTWizard"/>
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTWizard"/>
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.newui.WizardDefaultsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.properties.WizardDefaultsTab"
            name="%Wizard.defaults"
-           parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTWizard"/>
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTWizard"/>
 
   </extension>   
 
@@ -485,7 +485,7 @@
   <extension
         point="org.eclipse.cdt.ui.newCfgDialog">
         <dialog
-              class="org.eclipse.cdt.managedbuilder.ui.newui.NewCfgDialog"
+              class="org.eclipse.cdt.managedbuilder.ui.properties.NewCfgDialog"
               mbs_id="org.eclipse.cdt.managedbuilder.core.configurationDataProvider"
               title="%MBS.create.configuration"/>
   </extension>
@@ -584,7 +584,7 @@
 		    </or>          
          </enabledWhen>
       </page>
-      <!--page
+      <page
             class="org.eclipse.cdt.ui.newui.Page_ToolChain"
             id="org.eclipse.ui.propertypages.project.ref14"
             name="%CDTToolchainProperty.name"
@@ -611,7 +611,7 @@
 	         </and>	
 		    </or>          
          </enabledWhen>
-      </page-->
+      </page>
   </extension>
   
 </plugin>

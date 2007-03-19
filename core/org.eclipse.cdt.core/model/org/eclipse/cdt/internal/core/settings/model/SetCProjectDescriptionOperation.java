@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.model.CModelOperation;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.CompositeWorkspaceRunnable;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class SetCProjectDescriptionOperation extends CModelOperation {
@@ -35,7 +40,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 	protected void executeOperation() throws CModelException {
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
 		ICProject cProject = (ICProject)getElementToProcess();
-		IProject project = cProject.getProject();
+		final IProject project = cProject.getProject();
 		CProjectDescription fOldDescriptionCache = (CProjectDescription)mngr.getProjectDescription(project, false);
 		
 		CProjectDescriptionEvent event = mngr.createAboutToApplyEvent(fSetDescription, fOldDescriptionCache);
@@ -66,7 +71,23 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		}
 
 		mngr.setLoaddedDescription(project, fNewDescriptionCache, true);
-		mngr.checkActiveCfgChange(fNewDescriptionCache, fOldDescriptionCache, new NullProgressMonitor());
+		CompositeWorkspaceRunnable runnable = new CompositeWorkspaceRunnable("CDT Project settings serialization");
+		
+		try {
+			final IProjectDescription eDes = project.getDescription();
+			if(mngr.checkHandleActiveCfgChange(fNewDescriptionCache, fOldDescriptionCache, eDes, new NullProgressMonitor())){
+				runnable.add(new IWorkspaceRunnable(){
+
+					public void run(IProgressMonitor monitor)
+							throws CoreException {
+						project.setDescription(eDes, monitor);
+					}
+					
+				});
+			}
+		} catch (CoreException e2) {
+			CCorePlugin.log(e2);
+		}
 		
 		event = mngr.createDataAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
 		mngr.notifyListeners(event);
@@ -84,7 +105,8 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		mngr.notifyListeners(event);
 
 		try {
-			mngr.serialize(fNewDescriptionCache);
+			runnable.add(mngr.createDesSerializationRunnable(fNewDescriptionCache));
+			mngr.runWspModification(runnable, new NullProgressMonitor());
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}

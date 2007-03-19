@@ -174,7 +174,7 @@ public class CProjectDescriptionManager {
 //		}
 //	}
 
-	private class CompositeWorkspaceRunnable implements IWorkspaceRunnable {
+	static class CompositeWorkspaceRunnable implements IWorkspaceRunnable {
 		private List fRunnables = new ArrayList();
 		private String fName;
 		private boolean fStopOnErr;
@@ -571,12 +571,13 @@ public class CProjectDescriptionManager {
 			if(converter != null){
 				CProjectDescription convertedDes = (CProjectDescription)converter.convertProject(project, eDes, ownerId, des);
 				if(convertedDes != null){
-					ICConfigurationDescription activeCfg = convertedDes.getActiveConfiguration();
-					if(activeCfg != null){
-						checkBuildSystemChange(project, eDes, activeCfg.getBuildSystemId(), null, new NullProgressMonitor());
-			//			if(convertedDes != null)
-							des = convertedDes;
-					} 
+///					ICConfigurationDescription activeCfg = convertedDes.getActiveConfiguration();
+					checkHandleActiveCfgChange(convertedDes, null, eDes, new NullProgressMonitor());
+//					if(activeCfg != null){
+//						checkBuildSystemChange(project, eDes, activeCfg.getBuildSystemId(), null, new NullProgressMonitor());
+//			//			if(convertedDes != null)
+//							des = convertedDes;
+//					} 
 				}
 			} else {
 //				des;
@@ -703,10 +704,14 @@ public class CProjectDescriptionManager {
 //		}
 	}
 	
-	public void updateProjectDescriptions(IProgressMonitor monitor) throws CoreException{
+	public void updateProjectDescriptions(IProject[] projects, IProgressMonitor monitor) throws CoreException{
+		if(monitor == null)
+			monitor = new NullProgressMonitor();
+		
 		try {
 			IWorkspace wsp = ResourcesPlugin.getWorkspace();
-			final IProject projects[] = wsp.getRoot().getProjects();
+			if(projects == null)
+				projects = wsp.getRoot().getProjects();
 			final ICProjectDescription dess[] = new ICProjectDescription[projects.length];
 			int num = 0;
 			for(int i = 0; i < projects.length; i++){
@@ -912,38 +917,45 @@ public class CProjectDescriptionManager {
 		return getProjectDescription(project, true);
 	}
 	
-	private void storeActiveCfgId(ICProjectDescription des, String id){
+	private void storeActiveCfgId(IProject project, String id){
 		try {
-			des.getProject().setPersistentProperty(ACTIVE_CFG_PROPERTY, id);
+			project.setPersistentProperty(ACTIVE_CFG_PROPERTY, id);
 		} catch (CoreException e) {
 			// Hitting this error just means the default config is not set
 		}
 	}
 
-	void checkActiveCfgChange(CProjectDescription newDes, CProjectDescription oldDes, IProgressMonitor monitor){
+	/*
+	 * returns true if the project description was modiofied false - otherwise
+	 */
+	boolean checkHandleActiveCfgChange(CProjectDescription newDes, CProjectDescription oldDes, IProjectDescription eDes, IProgressMonitor monitor){
 		if(newDes == null)
-			return;
+			return false;
 		ICConfigurationDescription newCfg = newDes.getActiveConfiguration();
 		if(newCfg == null)
-			return;
-		
+			return false;
 		
 		ICConfigurationDescription oldCfg = oldDes != null ? oldDes.getActiveConfiguration() : null;
 
-		String newId = newCfg.getId();
-		String oldId = oldCfg != null ? oldCfg.getId() : null;
+		checkActiveCfgChange(newDes, newCfg, oldCfg);
 		
-		if(newDes.needsActiveCfgIdPersistence() || !newId.equals(oldId)){
-			storeActiveCfgId(newDes, newId);
+		boolean modified = false;
+
+		try {
+			if(checkBuildSystemChange(eDes, newCfg, oldCfg, monitor))
+				modified = true;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
-		
-		String newBsId = newCfg.getBuildSystemId();
-		String oldBsId = oldCfg != null ? oldCfg.getBuildSystemId() : null;
 		
 		try {
-			checkBuildSystemChange(newDes.getProject(), newBsId, oldBsId, monitor);
+			if(checkProjectRefChange(eDes, newCfg, oldCfg, monitor))
+				modified = true;
 		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
+		
+		return modified;
 	}
 	
 	String loadActiveCfgId(ICProjectDescription des){
@@ -954,13 +966,70 @@ public class CProjectDescriptionManager {
 		}
 		return null;
 	}
-
-
-	private void checkBuildSystemChange(IProject project, String newBsId, String oldBsId, IProgressMonitor monitor) throws CoreException{
-		checkBuildSystemChange(project, null, newBsId, oldBsId, monitor);
+	
+	private Set projSetFromProjNameSet(Set projNameSet){
+		if(projNameSet.size() == 0)
+			return new HashSet(0);
+		
+		Set set = new HashSet();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		
+		for(Iterator iter = projNameSet.iterator(); iter.hasNext();){
+			IProject proj = root.getProject((String)iter.next());
+			set.add(proj);
+		}
+		
+		return set;
 	}
 
-	private void checkBuildSystemChange(IProject project, IProjectDescription des, String newBsId, String oldBsId, IProgressMonitor monitor) throws CoreException{
+	private boolean checkProjectRefChange(IProjectDescription des, ICConfigurationDescription newCfg, ICConfigurationDescription oldCfg, IProgressMonitor monitor) throws CoreException{
+		if(newCfg == null)
+			return false;
+		
+		Map oldMap = oldCfg != null ? oldCfg.getReferenceInfo() : null;
+		Map newMap = newCfg != null ? newCfg.getReferenceInfo() : null;
+		Set oldProjSet = oldMap != null ? projSetFromProjNameSet(oldMap.keySet()) : new HashSet(0);
+		Set newProjSet = newMap != null ? projSetFromProjNameSet(newMap.keySet()) : new HashSet(0);
+
+		Set tmp = new HashSet(newProjSet);
+		newProjSet.removeAll(oldProjSet);
+		oldProjSet.removeAll(tmp);
+		if(oldProjSet.size() != 0 || newProjSet.size() != 0){
+			IProject[] refs = des.getReferencedProjects();
+			Set set = new HashSet(Arrays.asList(refs));
+			set.removeAll(oldProjSet);
+			set.addAll(newProjSet);
+			des.setReferencedProjects((IProject[])set.toArray(new IProject[set.size()]));
+			return true;
+		}
+		return false;
+	}
+
+
+//	private void checkBuildSystemChange(IProject project, String newBsId, String oldBsId, IProgressMonitor monitor) throws CoreException{
+//		checkBuildSystemChange(project, null, newBsId, oldBsId, monitor);
+//	}
+	
+	private boolean checkActiveCfgChange(CProjectDescription des,
+			ICConfigurationDescription newCfg, 
+			ICConfigurationDescription oldCfg){
+		String newId = newCfg.getId();
+		String oldId = oldCfg != null ? oldCfg.getId() : null;
+		
+		if(des.needsActiveCfgIdPersistence() || !newId.equals(oldId)){
+			storeActiveCfgId(des.getProject(), newId);
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean checkBuildSystemChange(IProjectDescription des, 
+			ICConfigurationDescription newCfg, 
+			ICConfigurationDescription oldCfg, 
+			IProgressMonitor monitor) throws CoreException{
+		String newBsId = newCfg != null ? newCfg.getBuildSystemId() : null;
+		String oldBsId = oldCfg != null ? oldCfg.getBuildSystemId() : null;
+
 		CConfigurationDataProviderDescriptor newDr = newBsId != null ? getCfgProviderDescriptor(newBsId) : null;
 		CConfigurationDataProviderDescriptor oldDr = oldBsId != null ? getCfgProviderDescriptor(oldBsId) : null;
 		
@@ -973,11 +1042,11 @@ public class CProjectDescriptionManager {
 //		List[] builderDiff = ListComparator.compare(newBuilderIds, oldBuilderIds);
 		
 		if(natureDiff != null /*|| builderDiff != null*/){
-			boolean applyDes = false;
-			if(des == null){
-				des = project.getDescription();
-				applyDes = true;
-			}
+//			boolean applyDes = false;
+//			if(des == null){
+//				des = project.getDescription();
+//				applyDes = true;
+//			}
 			
 			String natureIds[] = des.getNatureIds();
 			if(natureDiff[1] != null){
@@ -1000,9 +1069,11 @@ public class CProjectDescriptionManager {
 			if(natureDiff != null)
 				des.setNatureIds(natureIds);
 			
-			if(applyDes)
-				project.setDescription(des, monitor);
+//			if(applyDes)
+//				project.setDescription(des, monitor);
+			return true;
 		}
+		return false;
 	}
 
 	public void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException {
@@ -1057,7 +1128,7 @@ public class CProjectDescriptionManager {
 //		serialize(newDes);
 	}
 	
-	private IWorkspaceRunnable createDesSerializationRunnable(CProjectDescription des) throws CoreException{
+	IWorkspaceRunnable createDesSerializationRunnable(CProjectDescription des) throws CoreException{
 		final ICStorageElement element = des.getRootStorageElement();
 		
 		IWorkspaceRunnable r = new DesSerializationRunnable(des, element);
@@ -1729,7 +1800,7 @@ public class CProjectDescriptionManager {
 						}
 					}
 					
-				}, null);
+				}, new NullProgressMonitor());
 				
 				//if refresh was performed "inline" without job scheduled
 				if(job == null){
@@ -2993,6 +3064,17 @@ public class CProjectDescriptionManager {
 		if(cfgDes != null)
 			return isNewStyleCfg(cfgDes);
 		return false;
+	}
+	
+	public boolean isNewStyleProject(IProject project){
+		return isNewStyleProject(getProjectDescription(project, false));
+	}
+
+	public boolean isNewStyleProject(ICProjectDescription des){
+		if(des == null)
+			return false;
+		
+		return isNewStyleIndexCfg(des);
 	}
 
 	public boolean isNewStyleCfg(ICConfigurationDescription cfgDes){

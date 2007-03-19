@@ -1211,5 +1211,35 @@ public class CCorePlugin extends Plugin {
 	public ICProjectDescription getProjectDescription(IProject project, boolean write){
 		return fNewCProjectDescriptionManager.getProjectDescription(project, write);
 	}
+	
+	/**
+	 * forces the cached data of the specified projects to be re-calculated.
+	 * if the <code>projects</code> argument is <code>null</code> al projects 
+	 * within the workspace are updated
+	 * 
+	 * @param projects
+	 * @param monitor
+	 * @throws CoreException 
+	 */
+	public void updateProjectDescriptions(IProject projects[], IProgressMonitor monitor) throws CoreException{
+		fNewCProjectDescriptionManager.updateProjectDescriptions(projects, monitor);
+	}
+	
+	/**
+	 * aswers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
+	 * @param project
+	 * @return
+	 */
+	public boolean isNewStyleProject(IProject project){
+		return fNewCProjectDescriptionManager.isNewStyleProject(project);
+	}
 
+	/**
+	 * aswers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
+	 * @param des
+	 * @return
+	 */
+	public boolean isNewStyleProject(ICProjectDescription des){
+		return fNewCProjectDescriptionManager.isNewStyleProject(des);
+	}
 }

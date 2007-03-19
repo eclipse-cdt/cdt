@@ -467,7 +467,7 @@ public class ExternalSettingsManager {
 				ICExternalSetting[][] newOldSettings = getNewOldSettings(projectDelta, cfgId);
 				deltas = (ExtSettingsDelta[])deltaMap.get(cfgId);
 				
-				updateReferencedSettings(cfgIter, refInfo, (CExternalSetting[])newOldSettings[0], deltas);
+				updateReferencedSettings(cfgIter, refInfo, (ICExternalSetting[])newOldSettings[0], deltas);
 			}
 		
 			if(cfgIter.isWriteStatusChanged()){
@@ -478,8 +478,6 @@ public class ExternalSettingsManager {
 			}
 		}
 	}
-	
-	
 	
 	static class ExtSettingsDelta {
 		ICExternalSetting fSetting;

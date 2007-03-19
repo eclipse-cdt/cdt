@@ -127,6 +127,76 @@ public class CommonBuilder extends ACBuilder {
 			System.err.println(ERROR_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
 		}
 	}
+	
+	private static class NullConsole implements IConsole { // return a null console
+		private ConsoleOutputStream nullStream = new ConsoleOutputStream() {
+		    public void write(byte[] b) throws IOException {
+		    }			    
+			public void write(byte[] b, int off, int len) throws IOException {
+			}					
+			public void write(int c) throws IOException {
+			}
+		};
+		
+		public void start(IProject project) {
+		}
+	    // this can be a null console....
+		public ConsoleOutputStream getOutputStream() {
+			return nullStream;
+		}
+		public ConsoleOutputStream getInfoStream() {
+			return nullStream; 
+		}
+		public ConsoleOutputStream getErrorStream() {
+			return nullStream;
+		}
+	};
+	
+	private static class CfgBuildInfo {
+		private IProject fProject;
+		private IManagedBuildInfo fBuildInfo;
+		private IConfiguration fCfg;
+		private IBuilder fBuilder;
+		private IConsole fConsole;
+		private boolean fIsForeground;
+		
+		CfgBuildInfo(IBuilder builder, boolean isForegound){
+			this.fBuilder = builder;
+			this.fCfg = builder.getParent().getParent();
+			this.fIsForeground = isForegound;
+			this.fProject = this.fCfg.getOwner().getProject();
+			this.fBuildInfo = ManagedBuildManager.getBuildInfo(this.fProject);
+		}
+		
+		public IProject getProject(){
+			return fProject;
+		}
+		
+		public IConsole getConsole(){
+			if(fConsole == null){
+				fConsole = fIsForeground ? CCorePlugin.getDefault().getConsole() : new NullConsole();
+				fConsole.start(fProject);
+			}
+			return fConsole;
+		}
+		
+		public boolean isForeground(){
+			return fIsForeground;
+		}
+		
+		public IBuilder getBuilder(){
+			return fBuilder;
+		}
+		
+		public IConfiguration getConfiguration(){
+			return fCfg;
+		}
+		
+		public IManagedBuildInfo getBuildInfo(){
+			return fBuildInfo;
+		}
+	}
+
 
 	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		private String buildGoalName;
@@ -363,12 +433,13 @@ public class CommonBuilder extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		IBuilder builders[] = BuilderFactory.createBuilders(getProject(), args);
+		IProject project = getProject();
+		IBuilder builders[] = BuilderFactory.createBuilders(project, args);
 		int num = builders.length;
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IConfiguration activeCfg = info.getDefaultConfiguration();
+		IProject[] refProjects = project.getReferencedProjects();
 		if(num != 0){
-			
 			MultiStatus status = checkBuilders(builders, activeCfg);
 			if(status.getSeverity() != IStatus.OK)
 				throw new CoreException(status);
@@ -377,18 +448,51 @@ public class CommonBuilder extends ACBuilder {
 
 			monitor.beginTask("", num + cfgs.length); //$NON-NLS-1$
 
-			if(cfgs.length != 0)
-				ManagedBuildManager.buildConfigurations(cfgs, new SubProgressMonitor(monitor, 1));
+			if(cfgs.length != 0){
+				Set set = getProjectsSet(cfgs);
+				if(set.size() != 0){
+					set.addAll(Arrays.asList(refProjects));
+					refProjects = (IProject[])set.toArray(new IProject[set.size()]);
+				}
+				buildReferencedConfigs(cfgs, new SubProgressMonitor(monitor, 1));
+			}
 
 			for(int i = 0; i < num; i++){
-				build(kind, builders[i], info, new SubProgressMonitor(monitor, 1));
+				build(kind, new CfgBuildInfo(builders[i], true), new SubProgressMonitor(monitor, 1));
 			}
 		}
 		
-		updateOtherConfigs(builders, kind);
+		updateOtherConfigs(info, builders, kind);
 		
 		monitor.done();
-		return getProject().getReferencedProjects();
+		return project.getReferencedProjects();
+	}
+	
+	private void buildReferencedConfigs(IConfiguration[] cfgs, IProgressMonitor monitor){
+		cfgs = filterConfigsToBuild(cfgs);
+		if(cfgs.length != 0){
+			monitor.beginTask("Building referenced configurations..", cfgs.length);
+			for(int i = 0; i < cfgs.length; i++){
+				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+				try {
+					IConfiguration cfg = cfgs[i];
+					IBuilder builder = cfg.getEditableBuilder();
+					CfgBuildInfo bInfo = new CfgBuildInfo(builder, false);
+					build(INCREMENTAL_BUILD, bInfo, subMonitor);
+				} catch (CoreException e){
+					ManagedBuilderCorePlugin.log(e);
+				} finally {
+					subMonitor.done();
+				}
+			}
+		} else {
+			monitor.done();
+		}
+	}
+	
+	private IConfiguration[] filterConfigsToBuild(IConfiguration[] cfgs){
+		//TODO:
+		return cfgs;
 	}
 	
 	private IConfiguration[] getReferencedConfigs(IBuilder[] builders){
@@ -401,6 +505,18 @@ public class CommonBuilder extends ACBuilder {
 			}
 		}
 		return (IConfiguration[]) set.toArray(new Configuration[set.size()]);
+	}
+	
+	private Set getProjectsSet(IConfiguration[] cfgs){
+		if(cfgs.length == 0)
+			return new HashSet(0);
+		
+		Set set = new HashSet();
+		for(int i = 0; i < cfgs.length; i++){
+			set.add(cfgs[i].getOwner().getProject());
+		}
+		
+		return set;
 	}
 	
 	protected MultiStatus checkBuilders(IBuilder builders[], IConfiguration activeCfg){
@@ -458,11 +574,9 @@ public class CommonBuilder extends ACBuilder {
 		return status;
 	}
 	
-	private void updateOtherConfigs(IBuilder builders[], int buildKind){
-		//IProject project 
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+	private void updateOtherConfigs(IManagedBuildInfo info, IBuilder builders[], int buildKind){
 		IConfiguration allCfgs[] = info.getManagedProject().getConfigurations();
-		new OtherConfigVerifier(builders, allCfgs).updateOtherConfigs(buildKind == FULL_BUILD ? null : getDelta(getProject()));
+		new OtherConfigVerifier(builders, allCfgs).updateOtherConfigs(buildKind == FULL_BUILD ? null : getDelta(info.getManagedProject().getOwner().getProject()));
 	}
 
 	protected class BuildStatus {
@@ -509,7 +623,8 @@ public class CommonBuilder extends ACBuilder {
 		}
 	}
 	
-	protected void build(int kind, IBuilder builder, IManagedBuildInfo info, IProgressMonitor monitor) throws CoreException{
+	protected void build(int kind, CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException{
+		IBuilder builder = bInfo.getBuilder();
 		BuildStatus status = new BuildStatus(builder);
 		if (!shouldBuild(kind, builder)) {
 			return;
@@ -529,20 +644,20 @@ public class CommonBuilder extends ACBuilder {
 		if (status.isBuild()) {
 //			IManagedBuilderMakefileGenerator makeGen = null;
 			if(status.isManagedBuildOn()){
-				status = performPrebuildGeneration(kind, builder, info, status, monitor);
+				status = performPrebuildGeneration(kind, bInfo, status, monitor);
 			}
 
 			IConfiguration cfg = builder.getParent().getParent();
 			
 			if(status.isBuild()){
 				try {
-				boolean isClean = invokeBuilder(kind, builder, monitor);
+				boolean isClean = invokeBuilder(kind, bInfo, monitor);
 					if (isClean) {
 						forgetLastBuiltState();
 						cfg.setRebuildState(true);
 					} else {
 						if(status.isManagedBuildOn()){
-							performPostbuildGeneration(kind, builder, info, status, monitor);
+							performPostbuildGeneration(kind, bInfo, status, monitor);
 						}
 						cfg.setRebuildState(false);
 					}
@@ -551,7 +666,7 @@ public class CommonBuilder extends ACBuilder {
 					throw e;
 				}
 			} else if(status.getConsoleMessagesList().size() != 0) {
-				emitMessage(concatMessages(status.getConsoleMessagesList()));
+				emitMessage(bInfo, concatMessages(status.getConsoleMessagesList()));
 			}
 		}
 		checkCancel(monitor);
@@ -582,17 +697,19 @@ public class CommonBuilder extends ACBuilder {
 	 * @param status
 	 * @param configName
 	 */
-	private String createNoSourceMessage(int buildType, IStatus status, String configName) throws CoreException {
+	private String createNoSourceMessage(int buildType, IStatus status, CfgBuildInfo bInfo) throws CoreException {
 		StringBuffer buf = new StringBuffer();
 		String[] consoleHeader = new String[3];
+		String configName = bInfo.getConfiguration().getName();
+		String projName = bInfo.getProject().getName();
 		if (buildType == FULL_BUILD || buildType == INCREMENTAL_BUILD) {
 			consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
 		} else {
 			consoleHeader[0] = new String();
-			outputError(getProject().getName(), "The given build type is not supported in this context");	//$NON-NLS-1$
+			outputError(projName, "The given build type is not supported in this context");	//$NON-NLS-1$
 		}			
 		consoleHeader[1] = configName;
-		consoleHeader[2] = getProject().getName();
+		consoleHeader[2] = projName;
 		buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 		buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
 		buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
@@ -602,9 +719,9 @@ public class CommonBuilder extends ACBuilder {
 		return buf.toString();
 	}
 
-	private void emitMessage(String msg) throws CoreException {
+	private void emitMessage(CfgBuildInfo info, String msg) throws CoreException {
 		try {
-			IConsole console = getConsole();
+			IConsole console = info.getConsole();
 			ConsoleOutputStream consoleOutStream = console.getOutputStream();
 			// Report a successful clean
 			consoleOutStream.write(msg.getBytes());
@@ -619,11 +736,11 @@ public class CommonBuilder extends ACBuilder {
 		}		
 	}
 	
-	private IConsole getConsole(){
-		IConsole console = CCorePlugin.getDefault().getConsole();
-		console.start(getProject());
-		return console;
-	}
+//	private IConsole getConsole(IProject project, boolean bg){
+//		IConsole console = CCorePlugin.getDefault().getConsole();
+//		console.start(project);
+//		return console;
+//	}
 	/**
 	 * called to invoke the MBS Internal Builder for building the given configuration
 	 *  
@@ -635,16 +752,17 @@ public class CommonBuilder extends ACBuilder {
 	 * If false the build will stop on the first error 
 	 * @param monitor monitor
 	 */
-	protected boolean invokeInternalBuilder(int kind, IBuilder builder,
+	protected boolean invokeInternalBuilder(int kind, CfgBuildInfo bInfo,
 			IProgressMonitor monitor) {
-		
-		IConfiguration cfg = builder.getParent().getParent();
+
+		IBuilder builder = bInfo.getBuilder();
+		IConfiguration cfg = bInfo.getConfiguration();
 		boolean isParallel = builder.getParallelizationNum() != 0;
 //		boolean buildIncrementaly = true;
 		boolean resumeOnErr = !builder.isStopOnError();
 		
 		// Get the project and make sure there's a monitor to cancel the build
-		IProject currentProject = cfg.getOwner().getProject();
+		IProject currentProject = bInfo.getProject();
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -675,8 +793,9 @@ public class CommonBuilder extends ACBuilder {
 
 			// Get a build console for the project
 			StringBuffer buf = new StringBuffer();
-			console = CCorePlugin.getDefault().getConsole();
-			console.start(currentProject);
+//			console = CCorePlugin.getDefault().getConsole();
+//			console.start(currentProject);
+			console = bInfo.getConsole();
 			consoleOutStream = console.getOutputStream();
 			String[] consoleHeader = new String[3];
 			if(buildIncrementaly)
@@ -708,7 +827,7 @@ public class CommonBuilder extends ACBuilder {
 				
 				// Hook up an error parser manager
 				String[] errorParsers = builder.getErrorParsers(); 
-				ErrorParserManager epm = new ErrorParserManager(getProject(), des.getDefaultBuildDirLocation(), this, errorParsers);
+				ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocation(), this, errorParsers);
 				epm.setOutputStream(consoleOutStream);
 				// This variable is necessary to ensure that the EPM stream stay open
 				// until we explicitly close it. See bug#123302.
@@ -771,7 +890,7 @@ public class CommonBuilder extends ACBuilder {
 				epm.reportProblems();
 			} else {
 				buf = new StringBuffer();
-				buf.append(ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName()));
+				buf.append(ManagedMakeMessages.getFormattedString(NOTHING_BUILT, currentProject.getName()));
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();
@@ -854,7 +973,7 @@ public class CommonBuilder extends ACBuilder {
 	 * If false the build will stop on the first error 
 	 * @param monitor Progress monitor.  For every resource built this monitor will consume one unit of work.
 	 */
-	public void invokeInternalBuilder(IResource[] resourcesToBuild, IConfiguration cfg, 
+	private void invokeInternalBuilder(IResource[] resourcesToBuild, CfgBuildInfo bInfo, 
 			boolean buildIncrementaly,
 			boolean resumeOnErr,
 			boolean initNewConsole,
@@ -862,7 +981,9 @@ public class CommonBuilder extends ACBuilder {
 			IProgressMonitor monitor) {
 		// Get the project and make sure there's a monitor to cancel the build
 		
-		IProject currentProject = cfg.getOwner().getProject();
+		IProject currentProject = bInfo.getProject();
+		IConfiguration cfg = bInfo.getConfiguration();
+		
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -881,8 +1002,9 @@ public class CommonBuilder extends ACBuilder {
 			msgs[0] = ManagedMakeMessages.getResourceString(INTERNAL_BUILDER);
 			msgs[1] = currentProject.getName();
 
-			IConsole console = CCorePlugin.getDefault().getConsole();
-			console.start(currentProject);
+//			IConsole console = CCorePlugin.getDefault().getConsole();
+//			console.start(currentProject);
+			IConsole console = bInfo.getConsole();
 			ConsoleOutputStream consoleOutStream = console.getOutputStream();
 			
 			StringBuffer buf = new StringBuffer();
@@ -1044,7 +1166,8 @@ public class CommonBuilder extends ACBuilder {
 		}
 	}
 
-	protected BuildStatus performPostbuildGeneration(int kind, IBuilder builder, IManagedBuildInfo mInfo, BuildStatus buildStatus, IProgressMonitor monitor) throws CoreException{
+	protected BuildStatus performPostbuildGeneration(int kind, CfgBuildInfo bInfo, BuildStatus buildStatus, IProgressMonitor monitor) throws CoreException{
+		IBuilder builder = bInfo.getBuilder();
 		if(builder.isInternalBuilder())
 			return buildStatus;
 
@@ -1057,18 +1180,18 @@ public class CommonBuilder extends ACBuilder {
 		return buildStatus;
 	}
 
-	protected BuildStatus performPrebuildGeneration(int kind, IBuilder builder, IManagedBuildInfo mInfo, BuildStatus buildStatus, IProgressMonitor monitor) throws CoreException{
+	protected BuildStatus performPrebuildGeneration(int kind, CfgBuildInfo bInfo, BuildStatus buildStatus, IProgressMonitor monitor) throws CoreException{
+		IBuilder builder = bInfo.getBuilder();
 		if(builder.isInternalBuilder())
 			return buildStatus;
 
-		IConfiguration cfg = builder.getParent().getParent();
-		buildStatus = performCleanning(kind, cfg, builder, mInfo, buildStatus, monitor);
+		buildStatus = performCleanning(kind, bInfo, buildStatus, monitor);
 		IManagedBuilderMakefileGenerator generator = builder.getBuildFileGenerator();
 		if(generator != null){
-			initializeGenerator(generator, kind, cfg, builder, mInfo, monitor);
+			initializeGenerator(generator, kind, bInfo, monitor);
 			buildStatus.setMakeGen(generator);
 	
-			MultiStatus result = performMakefileGeneration(generator, buildStatus, monitor);
+			MultiStatus result = performMakefileGeneration(bInfo, generator, buildStatus, monitor);
 			if (result.getCode() == IStatus.WARNING || result.getCode() == IStatus.INFO) {
 				IStatus[] kids = result.getChildren();
 				for (int index = 0; index < kids.length; ++index) {
@@ -1084,7 +1207,7 @@ public class CommonBuilder extends ACBuilder {
 //					}
 					if (status.getCode() == IManagedBuilderMakefileGenerator.NO_SOURCE_FOLDERS) {
 //						performBuild = false;
-						buildStatus.getConsoleMessagesList().add(createNoSourceMessage(kind, status, cfg.getName()));
+						buildStatus.getConsoleMessagesList().add(createNoSourceMessage(kind, status, bInfo));
 						buildStatus.cancelBuild();
 //						break;
 						
@@ -1113,21 +1236,25 @@ public class CommonBuilder extends ACBuilder {
 		return buildStatus;
 	}
 	
-	protected BuildStatus performCleanning(int kind, IConfiguration cfg, IBuilder builder, IManagedBuildInfo mInfo, BuildStatus status, IProgressMonitor monitor) throws CoreException{
+	protected BuildStatus performCleanning(int kind, CfgBuildInfo bInfo, BuildStatus status, IProgressMonitor monitor) throws CoreException{
+		IConfiguration cfg = bInfo.getConfiguration();
+		IProject curProject = bInfo.getProject();
+//		IBuilder builder = bInfo.getBuilder();
+		
 		boolean makefileRegenerationNeeded = false;
 		//perform necessary cleaning and build type calculation
 		if(cfg.needsFullRebuild()){
 			//configuration rebuild state is set to true,
 			//full rebuild is needed in any case
 			//clean first, then make a full build
-			outputTrace(getProject().getName(), "config rebuild state is set to true, making a full rebuild");	//$NON-NLS-1$
-			clean(builder, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+			outputTrace(curProject.getName(), "config rebuild state is set to true, making a full rebuild");	//$NON-NLS-1$
+			clean(bInfo, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 			makefileRegenerationNeeded = true;
 		} else {
 			makefileRegenerationNeeded = cfg.needsRebuild();
 			IBuildDescription des = null;
 			
-			IResourceDelta delta = kind == FULL_BUILD ? null : getDelta(getProject());
+			IResourceDelta delta = kind == FULL_BUILD ? null : getDelta(curProject);
 			if(delta == null)
 				makefileRegenerationNeeded = true;
 			if(cfg.needsRebuild() || delta != null){
@@ -1138,14 +1265,14 @@ public class CommonBuilder extends ACBuilder {
 					if(delta != null)
 						flags |= BuildDescriptionManager.REMOVED;
 
-					outputTrace(getProject().getName(), "using a build description..");	//$NON-NLS-1$
+					outputTrace(curProject.getName(), "using a build description..");	//$NON-NLS-1$
 
-					des = BuildDescriptionManager.createBuildDescription(cfg, getDelta(getProject()), flags);
+					des = BuildDescriptionManager.createBuildDescription(cfg, getDelta(curProject), flags);
 	
 					BuildDescriptionManager.cleanGeneratedRebuildResources(des);
 				} catch (Throwable e){
 					//TODO: log error
-					outputError(getProject().getName(), "error occured while build description calculation: " + e.getLocalizedMessage());	//$NON-NLS-1$
+					outputError(curProject.getName(), "error occured while build description calculation: " + e.getLocalizedMessage());	//$NON-NLS-1$
 					//in case an error occured, make it behave in the old stile:
 					if(cfg.needsRebuild()){
 						//make a full clean if an info needs a rebuild
@@ -1154,7 +1281,7 @@ public class CommonBuilder extends ACBuilder {
 					}
 					else if(delta != null && !makefileRegenerationNeeded){
 						// Create a delta visitor to detect the build type
-						ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(cfg, mInfo.getManagedProject().getConfigurations());
+						ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(cfg, bInfo.getBuildInfo().getManagedProject().getConfigurations());
 						delta.accept(visitor);
 						if (visitor.shouldBuildFull()) {
 							clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
@@ -1171,22 +1298,23 @@ public class CommonBuilder extends ACBuilder {
 		return status;
 	}
 	
-	protected MultiStatus performMakefileGeneration(IManagedBuilderMakefileGenerator generator, BuildStatus buildStatus, IProgressMonitor monitor) throws CoreException {
+	protected MultiStatus performMakefileGeneration(CfgBuildInfo bInfo, IManagedBuilderMakefileGenerator generator, BuildStatus buildStatus, IProgressMonitor monitor) throws CoreException {
 		// Need to report status to the user
+		IProject curProject = bInfo.getProject();
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 		
 		// Ask the makefile generator to generate any makefiles needed to build delta
 		checkCancel(monitor);
-		String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.update.makefiles", getProject().getName());	//$NON-NLS-1$
+		String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.update.makefiles", curProject.getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
 		
 		MultiStatus result;
 		if(buildStatus.isRebuild()){
 			result = generator.regenerateMakefiles();
 		} else {
-			result = generator.generateMakefiles(getDelta(getProject()));
+			result = generator.generateMakefiles(getDelta(curProject));
 		}
 		
 		return result;
@@ -1201,45 +1329,47 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	
-	protected void initializeGenerator(IManagedBuilderMakefileGenerator generator, int kind, IConfiguration cfg, IBuilder builder, IManagedBuildInfo info, IProgressMonitor monitor){
+	protected void initializeGenerator(IManagedBuilderMakefileGenerator generator, int kind, CfgBuildInfo bInfo, IProgressMonitor monitor){
 		if(generator instanceof IManagedBuilderMakefileGenerator2){
 			IManagedBuilderMakefileGenerator2 gen2 = (IManagedBuilderMakefileGenerator2)generator;
-			gen2.initialize(kind, cfg, builder, monitor);
+			gen2.initialize(kind, bInfo.getConfiguration(), bInfo.getBuilder(), monitor);
 		} else {
-			generator.initialize(getProject(), info, monitor);
+			generator.initialize(bInfo.getProject(), bInfo.getBuildInfo(), monitor);
 		}
 		
 	}
 	
 	protected void clean(IProgressMonitor monitor) throws CoreException {
-		IBuilder[] builders = BuilderFactory.createBuilders(getProject(), null);
+		IProject curProject = getProject();
+		IBuilder[] builders = BuilderFactory.createBuilders(curProject, null);
 		for(int i = 0; i < builders.length; i++){
 			IBuilder builder = builders[i];
-			clean(builder, monitor);
+			CfgBuildInfo bInfo = new CfgBuildInfo(builder, true);
+			clean(bInfo, monitor);
 		}
 	}
 	
-	protected void clean(IBuilder builder, IProgressMonitor monitor) throws CoreException{
-		if (shouldBuild(CLEAN_BUILD, builder)) {
+	protected void clean(CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException{
+		if (shouldBuild(CLEAN_BUILD, bInfo.getBuilder())) {
 			boolean performExternalClean = true;
-			if(shouldCleanProgrammatically(builder)){
+			if(shouldCleanProgrammatically(bInfo)){
 				try {
-					cleanProgrammatically(builder, monitor);
+					cleanProgrammatically(bInfo, monitor);
 					performExternalClean = false;
 				} catch (CoreException e) {
 				}
 			}
 			
 			if(performExternalClean){
-				performExternalClean(builder, false, monitor);
+				performExternalClean(bInfo, false, monitor);
 			}
 		}
 		
 	}
 	
-	protected void performExternalClean(final IBuilder builder, boolean separateJob, IProgressMonitor monitor) throws CoreException {
+	protected void performExternalClean(final CfgBuildInfo bInfo, boolean separateJob, IProgressMonitor monitor) throws CoreException {
 		IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
-		final ISchedulingRule rule = ruleFactory.modifyRule(getProject());
+		final ISchedulingRule rule = ruleFactory.modifyRule(bInfo.getProject());
 		
 		if(separateJob){
 			Job backgroundJob = new Job("CDT Common Builder"){  //$NON-NLS-1$
@@ -1251,7 +1381,7 @@ public class CommonBuilder extends ACBuilder {
 						ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 	
 							public void run(IProgressMonitor monitor) throws CoreException {
-									invokeMake(CLEAN_BUILD, builder, monitor);
+									invokeMake(CLEAN_BUILD, bInfo, monitor);
 							}
 						}, rule, IWorkspace.AVOID_UPDATE, monitor);
 					} catch (CoreException e) {
@@ -1267,13 +1397,13 @@ public class CommonBuilder extends ACBuilder {
 			backgroundJob.setRule(rule);
 			backgroundJob.schedule();
 		} else {
-			invokeMake(CLEAN_BUILD, builder, monitor);
+			invokeMake(CLEAN_BUILD, bInfo, monitor);
 		}
 		
 	}
 	
-	protected boolean shouldCleanProgrammatically(IBuilder builder){
-		if(!builder.isManagedBuildOn())
+	protected boolean shouldCleanProgrammatically(CfgBuildInfo bInfo){
+		if(!bInfo.getBuilder().isManagedBuildOn())
 			return false;
 		return true;
 //		IConfiguration cfg = builder.getParent().getParent();
@@ -1284,10 +1414,12 @@ public class CommonBuilder extends ACBuilder {
 //		return cfg.getOwner().getProject().getFullPath().isPrefixOf(path);
 	}
 	
-	protected void cleanProgrammatically(IBuilder builder, IProgressMonitor monitor) throws CoreException {
+	protected void cleanProgrammatically(CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException {
 //		referencedProjects = getProject().getReferencedProjects();
-		outputTrace(getProject().getName(), "Clean build requested");	//$NON-NLS-1$
-		IConfiguration cfg = builder.getParent().getParent();
+		IProject curProject = bInfo.getProject();
+		outputTrace(curProject.getName(), "Clean build requested");	//$NON-NLS-1$
+		IBuilder builder = bInfo.getBuilder();
+		IConfiguration cfg = bInfo.getConfiguration();
 		IPath buildPath = ManagedBuildManager.getBuildFullPath(cfg, builder);
 		if(buildPath == null){
 			throw new CoreException(new Status(IStatus.ERROR, 
@@ -1295,7 +1427,7 @@ public class CommonBuilder extends ACBuilder {
 					ManagedMakeMessages.getResourceString("CommonBuilder.0"))); //$NON-NLS-1$
 		}
 		
-		IPath projectFullPath = getProject().getFullPath();
+		IPath projectFullPath = curProject.getFullPath();
 		if(!projectFullPath.isPrefixOf(buildPath)){
 			throw new CoreException(new Status(IStatus.ERROR, 
 					ManagedBuilderCorePlugin.getUniqueIdentifier(), 
@@ -1326,13 +1458,15 @@ public class CommonBuilder extends ACBuilder {
 			workspace.delete(new IResource[]{buildDir}, true, monitor);
 			StringBuffer buf = new StringBuffer();
 			// write to the console
-			IConsole console = CCorePlugin.getDefault().getConsole();
-			console.start(getProject());
+//			
+//			IConsole console = CCorePlugin.getDefault().getConsole();
+//			console.start(getProject());
+			IConsole console = bInfo.getConsole();
 			ConsoleOutputStream consoleOutStream = console.getOutputStream();
 			String[] consoleHeader = new String[3];
 			consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
 			consoleHeader[1] = cfg.getName();
-			consoleHeader[2] = getProject().getName();
+			consoleHeader[2] = curProject.getName();
 			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
 			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
@@ -1340,7 +1474,7 @@ public class CommonBuilder extends ACBuilder {
 			consoleOutStream.flush();
 			buf = new StringBuffer();
 			// Report a successful clean
-			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());
+			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, curProject.getName());
 			buf.append(successMsg);
 			buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
 			consoleOutStream.write(buf.toString().getBytes());
@@ -1350,16 +1484,17 @@ public class CommonBuilder extends ACBuilder {
 		}
 	}
 	
-	protected boolean invokeBuilder(int kind, IBuilder builder, IProgressMonitor monitor) throws CoreException {
-		if(builder.isInternalBuilder())
-			return invokeInternalBuilder(kind, builder, monitor);
-		return invokeMake(kind, builder, monitor);
+	protected boolean invokeBuilder(int kind, CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException {
+		if(bInfo.getBuilder().isInternalBuilder())
+			return invokeInternalBuilder(kind, bInfo, monitor);
+		return invokeMake(kind, bInfo, monitor);
 	}
 
 	
-	protected boolean invokeMake(int kind, IBuilder builder, IProgressMonitor monitor) throws CoreException {
+	protected boolean invokeMake(int kind, CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException {
 		boolean isClean = false;
-		IProject currProject = getProject();
+		IProject currProject = bInfo.getProject();
+		IBuilder builder = bInfo.getBuilder();
 
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -1369,8 +1504,9 @@ public class CommonBuilder extends ACBuilder {
 		try {
 			IPath buildCommand = builder.getBuildCommand();
 			if (buildCommand != null) {
-				IConsole console = CCorePlugin.getDefault().getConsole();
-				console.start(currProject);
+//				IConsole console = CCorePlugin.getDefault().getConsole();
+//				console.start(currProject);
+				IConsole console = bInfo.getConsole();
 
 				OutputStream cos = console.getOutputStream();
 				StringBuffer buf = new StringBuffer();
@@ -1387,9 +1523,9 @@ public class CommonBuilder extends ACBuilder {
 						break;
 				}
 				
-				IConfiguration cfg = builder.getParent().getParent();
+				IConfiguration cfg = bInfo.getConfiguration();
 				consoleHeader[1] = cfg.getName();
-				consoleHeader[2] = getProject().getName();
+				consoleHeader[2] = currProject.getName();
 				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 				buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
 				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
@@ -1439,12 +1575,12 @@ public class CommonBuilder extends ACBuilder {
 //					recon.invokeMakeRecon();
 //					cos = recon;
 				QualifiedName qName = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "progressMonitor"); //$NON-NLS-1$
-				Integer last = (Integer)getProject().getSessionProperty(qName);
+				Integer last = (Integer)currProject.getSessionProperty(qName);
 				if (last == null) {
 					last = new Integer(100);
 				}
 				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), cos, last.intValue());
-				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectory, this, builder.getErrorParsers());
+				ErrorParserManager epm = new ErrorParserManager(currProject, workingDirectory, this, builder.getErrorParsers());
 				epm.setOutputStream(streamMon);
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();
@@ -1487,7 +1623,7 @@ public class CommonBuilder extends ACBuilder {
 				} else {
 					errMsg = launcher.getErrorMessage();
 				}
-				getProject().setSessionProperty(qName, !monitor.isCanceled() && !isClean ? new Integer(streamMon.getWorkDone()) : null);
+				currProject.setSessionProperty(qName, !monitor.isCanceled() && !isClean ? new Integer(streamMon.getWorkDone()) : null);
 
 				if (errMsg != null) {
 					buf = new StringBuffer(buildCommand.toString() + " "); //$NON-NLS-1$

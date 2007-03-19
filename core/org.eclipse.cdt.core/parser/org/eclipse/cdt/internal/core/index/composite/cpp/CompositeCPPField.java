@@ -35,6 +35,6 @@ class CompositeCPPField extends CompositeCPPVariable implements ICPPField {
 	
 	public ICompositeType getCompositeTypeOwner() throws DOMException {
 		IBinding preresult = ((IField)rbinding).getCompositeTypeOwner();
-		return (ICompositeType) cf.getCompositeBinding(preresult);
+		return (ICompositeType) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}
 }

@@ -13,7 +13,11 @@ package org.eclipse.cdt.internal.index.tests;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 
 /**
  * For testing PDOM binding resolution
@@ -126,5 +130,34 @@ public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 		getBindingFromASTName("j=2", 1);
 		getBindingFromASTName("k=2", 1);
 		getBindingFromASTName("l=2", 1);
+	}
+	
+	// namespace X {}
+	
+	// namespace Y {
+	//    class Ambiguity {};
+	//    enum Ambiguity {A1,A2,A3};
+	//    void foo() {
+	//       Ambiguity problem;
+	//    }
+	// }
+	public void testBug176708_CCE() throws Exception {
+		IBinding binding= getBindingFromASTName("Y {", 1);
+		assertTrue(binding instanceof ICPPNamespace);
+		ICPPNamespace adapted= (ICPPNamespace) strategy.getIndex().adaptBinding(binding);
+		IASTName[] names= findNames("Ambiguity problem", 9);
+		assertEquals(1, names.length);
+		IBinding binding2= adapted.getNamespaceScope().getBinding(names[0], true);
+	}
+	
+	// namespace X {int i;}
+	
+	// // references
+	// #include "header.h"
+	// int a= X::i;
+	public void testBug176708_NPE() throws Exception {
+		IBinding binding= getBindingFromASTName("i;", 1);
+		assertTrue(binding instanceof ICPPVariable);
+		IScope scope= binding.getScope();
 	}
 }

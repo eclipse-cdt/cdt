@@ -11,15 +11,16 @@
 package org.eclipse.cdt.internal.core.index.composite;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 public interface ICompositesFactory {
 	
-	public IScope getCompositeScope(IScope rscope) throws DOMException;
+	public IScope getCompositeScope(IIndexScope rscope) throws DOMException;
 
 	/**
 	 * Returns a composite (in the sense of potentially spanning multiple index fragments - i.e. not to be confused
@@ -28,7 +29,7 @@ public interface ICompositesFactory {
 	 * @param type
 	 * @return
 	 */
-	public IType getCompositeType(IType rtype) throws DOMException;
+	public IType getCompositeType(IIndexType rtype) throws DOMException;
 
 	/**
 	 * Returns a composite (index context carrying) binding for the specified binding. It does not
@@ -38,16 +39,8 @@ public interface ICompositesFactory {
 	 * binding methods
 	 * @return a composite (index context carrying) binding for the specified binding
 	 */
-	public IIndexBinding getCompositeBinding(IBinding binding);
+	public IIndexBinding getCompositeBinding(IIndexFragmentBinding binding);
 
-	/**
-	 * A convenience method that operates as getCompositeBinding but over the contents of an array
-	 * @param index the context to construct the composite binding for
-	 * @param bindings an array of composite bindings to use when pair-wise constructing the result via getCompositeBinding
-	 * @return an array of composite bindings pair-wise constructed via getCompositeBinding
-	 */
-	public IIndexBinding[] getCompositeBindings(IBinding[] bindings);
-	
 	/**
 	 * Identifies common bindings, calls getCompositeBindings
 	 * @param index

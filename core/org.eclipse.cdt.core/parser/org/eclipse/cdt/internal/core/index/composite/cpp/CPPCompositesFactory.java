@@ -40,7 +40,8 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.AbstractCompositeFactory;
 import org.eclipse.cdt.internal.core.index.composite.CompositeArrayType;
 import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
@@ -54,41 +55,46 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 	public CPPCompositesFactory(IIndex index) {
 		super(index);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeScope(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IScope)
 	 */
-	public IScope getCompositeScope(IScope rscope) throws DOMException {
+	public IScope getCompositeScope(IIndexScope rscope) throws DOMException {
 		IScope result;
-		
-		if(rscope == null) {
-			return null;
-		} else if(rscope instanceof ICPPClassScope) {
-			ICPPClassScope classScope = (ICPPClassScope) rscope;
-			result = new CompositeCPPClassScope(this,
-					findOneDefinition(classScope.getClassType()));
-		} else if(rscope instanceof ICPPNamespaceScope) {
-			ICPPNamespaceScope nScope = (ICPPNamespaceScope) rscope;
-			try {
-				IBinding binding = ((IIndexFragmentName) nScope.getScopeName()).getBinding();
-				result = ((ICPPNamespace)binding).getNamespaceScope();
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
-				throw new CompositingNotImplementedError(ce.getMessage());
+
+		try {
+			if(rscope == null) {
+				return null;
+			} else if(rscope instanceof ICPPClassScope) {
+				ICPPClassScope classScope = (ICPPClassScope) rscope;
+				result = new CompositeCPPClassScope(this,
+						findOneDefinition(classScope.getClassType()));
+			} else if(rscope instanceof ICPPNamespaceScope) {
+				ICPPNamespace[] namespaces;
+				if(rscope instanceof CompositeCPPNamespace) {
+					// avoid duplicating the search
+					namespaces = ((CompositeCPPNamespace)rscope).namespaces;
+				} else {
+					namespaces = getNamespaces(rscope.getScopeBinding());
+				}
+				return new CompositeCPPNamespaceScope(this, namespaces);
+			} else {
+				throw new CompositingNotImplementedError();
 			}
-		} else {
-			throw new CompositingNotImplementedError();
-		} 
-		
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+			throw new CompositingNotImplementedError(ce.getMessage());		
+		}
+
 		return result;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeType(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IType)
 	 */
-	public IType getCompositeType(IType rtype) throws DOMException {
+	public IType getCompositeType(IIndexType rtype) throws DOMException {
 		IType result;
-		
+
 		if(rtype instanceof ICPPClassType) {
 			result = (ICPPClassType) getCompositeBinding((IIndexFragmentBinding) rtype);
 		} else if(rtype instanceof ITypedef) {
@@ -116,7 +122,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 		return result;
 	}
 
-	
+
 	private ICPPNamespace[] getNamespaces(IBinding rbinding) throws CoreException {
 		CIndex cindex = (CIndex) index;
 		IIndexBinding[] ibs = cindex.findEquivalentBindings(rbinding);
@@ -129,7 +135,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeBinding(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
-	public IIndexBinding getCompositeBinding(IBinding binding) {
+	public IIndexBinding getCompositeBinding(IIndexFragmentBinding binding) {
 		IIndexBinding result;
 
 		try {
@@ -169,7 +175,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 			CCorePlugin.log(ce);
 			throw new CompositingNotImplementedError(ce.getMessage());			
 		}
-		
+
 		return result;
 	}
 }

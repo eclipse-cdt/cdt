@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -55,7 +56,7 @@ import org.osgi.framework.Bundle;
  * the PDOM purely from AST information (i.e. without a real binding from the DOM)
  */
 public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
-	private ITestStrategy strategy;
+	protected ITestStrategy strategy;
 	
 	public void setStrategy(ITestStrategy strategy) {
 		this.strategy = strategy;
@@ -68,8 +69,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	protected void tearDown() throws Exception {
 		strategy.tearDown();
 	}
-		
-	protected IBinding getBindingFromASTName(String section, int len) {
+	
+	protected IASTName[] findNames(String section, int len) {
 		// get the language from the language manager
 		ILanguage language = null;
 		ICProject cproject = strategy.getCProject();
@@ -83,8 +84,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		
 		assertNotNull("No language for file " + ast.getFilePath().toString(), language);
 		
-		IASTName[] names= language.getSelectedNames(ast, strategy.getTestData()[1].indexOf(section), len);
+		return language.getSelectedNames(ast, strategy.getTestData()[1].indexOf(section), len);
+	}
 	
+	protected IBinding getBindingFromASTName(String section, int len) {
+		IASTName[] names= findNames(section, len);
 		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
 		IBinding binding = names[0].resolveBinding();
 		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
@@ -163,6 +167,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public IASTTranslationUnit getAst();
 		public StringBuffer[] getTestData();
 		public ICProject getCProject();
+		public boolean isCompositeIndex();
 	}
 
 	class SinglePDOMTestStrategy implements ITestStrategy {
@@ -200,6 +205,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), testData[1].toString());
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			// ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
 
@@ -218,6 +224,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		public IIndex getIndex() {
 			return index;
+		}
+		
+		public boolean isCompositeIndex() {
+			return false;
 		}
 	}
 
@@ -249,8 +259,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 
 		public void setUp() throws Exception {
-			cproject= cpp ? CProjectHelper.createCCProject("OnlineContent", "bin", IPDOMManager.ID_NO_INDEXER)
-					: CProjectHelper.createCProject("OnlineContent", "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject= cpp ? CProjectHelper.createCCProject("OnlineContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER)
+					: CProjectHelper.createCProject("OnlineContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			Bundle b= CTestPlugin.getDefault().getBundle();
 			testData= TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
 			referenced = createReferencedContent();
@@ -262,8 +272,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			pd.setReferencedProjects(refs);
 			cproject.getProject().setDescription(pd, new NullProgressMonitor());
 
-			CCoreInternals.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
+			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
+			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
+			CCoreInternals.getPDOMManager().reindex(cproject);
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			
+			// System.out.println("Online: "+getName());
+			// ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
 			index.acquireReadLock();
@@ -274,11 +289,16 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			ICProject referenced = cpp ? CProjectHelper.createCCProject("ReferencedContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER)
 					: CProjectHelper.createCProject("ReferencedContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			String content = testData[0].toString();
-			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), content);
-
-			CCoreInternals.getPDOMManager().setIndexerId(referenced, IPDOMManager.ID_FAST_INDEXER);
+			IFile file = TestSourceReader.createFile(referenced.getProject(), new Path("header.h"), content);
+			
+			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
+			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
+			CCoreInternals.getPDOMManager().reindex(referenced);
+			
+			//System.out.println("Referenced: "+getName());
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
-
+			//((PDOM)CCoreInternals.getPDOMManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
+			
 			return referenced;
 		}
 
@@ -292,6 +312,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		public StringBuffer[] getTestData() {
 			return testData;
+		}
+		
+		public boolean isCompositeIndex() {
+			return true;
 		}
 	}
 }

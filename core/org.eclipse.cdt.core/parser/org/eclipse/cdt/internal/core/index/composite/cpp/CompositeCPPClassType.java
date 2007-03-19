@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -35,14 +36,13 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 	public IField findField(String name) throws DOMException {
 		IField preResult = ((ICPPClassType)rbinding).findField(name);
-		return (IField) cf.getCompositeBinding(preResult);
+		return (IField) cf.getCompositeBinding((IIndexFragmentBinding)preResult);
 	}
 
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-		ICPPMethod[] preResult = ((ICPPClassType)rbinding).getAllDeclaredMethods();
-		ICPPMethod[] result = new ICPPMethod[preResult.length];
-		for(int i=0; i<preResult.length; i++) {
-			result[i] = (ICPPMethod) cf.getCompositeBinding(preResult[i]);
+		ICPPMethod[] result = ((ICPPClassType)rbinding).getAllDeclaredMethods();
+		for(int i=0; i<result.length; i++) {
+			result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		}
 		return result;
 	}
@@ -54,7 +54,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 			final int n = i;
 			result[i] = new ICPPBase() {
 				public IBinding getBaseClass() throws DOMException {
-					return cf.getCompositeBinding(preresult[n].getBaseClass());
+					return cf.getCompositeBinding((IIndexFragmentBinding)preresult[n].getBaseClass());
 				}
 
 				public int getVisibility() throws DOMException {
@@ -74,37 +74,33 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	}
 
 	public ICPPConstructor[] getConstructors() throws DOMException {
-		ICPPConstructor[] preResult = ((ICPPClassType)rbinding).getConstructors();
-		ICPPConstructor[] result = new ICPPConstructor[preResult.length];
-		for(int i=0; i<preResult.length; i++) {
-			result[i] = (ICPPConstructor) cf.getCompositeBinding(preResult[i]);
+		ICPPConstructor[] result = ((ICPPClassType)rbinding).getConstructors();
+		for(int i=0; i<result.length; i++) {
+			result[i] = (ICPPConstructor) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}
 
 	public ICPPField[] getDeclaredFields() throws DOMException {
-		ICPPField[] preResult = ((ICPPClassType)rbinding).getDeclaredFields();
-		ICPPField[] result = new ICPPField[preResult.length];
-		for(int i=0; i<preResult.length; i++) {
-			result[i] = (ICPPField) cf.getCompositeBinding(preResult[i]);
+		ICPPField[] result = ((ICPPClassType)rbinding).getDeclaredFields();
+		for(int i=0; i<result.length; i++) {
+			result[i] = (ICPPField) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		}
 		return result;
 	}
 
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		ICPPMethod[] preResult = ((ICPPClassType)rbinding).getDeclaredMethods();
-		ICPPMethod[] result = new ICPPMethod[preResult.length];
-		for(int i=0; i<preResult.length; i++) {
-			result[i] = (ICPPMethod) cf.getCompositeBinding(preResult[i]);
+		ICPPMethod[] result = ((ICPPClassType)rbinding).getDeclaredMethods();
+		for(int i=0; i<result.length; i++) {
+			result[i]= (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		}
 		return result;
 	}
 
 	public IField[] getFields() throws DOMException {
-		IField[] preResult = ((ICPPClassType)rbinding).getFields();
-		IField[] result = new IField[preResult.length];
-		for(int i=0; i<preResult.length; i++) {
-			result[i] = (IField) cf.getCompositeBinding(preResult[i]);
+		IField[] result = ((ICPPClassType)rbinding).getFields();
+		for(int i=0; i<result.length; i++) {
+			result[i]= (IField) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		}
 		return result;
 	}
@@ -113,7 +109,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		IBinding[] preResult = ((ICPPClassType)rbinding).getFriends();
 		IBinding[] result = new IBinding[preResult.length];
 		for(int i=0; i<preResult.length; i++) {
-			result[i] = cf.getCompositeBinding(preResult[i]);
+			result[i] = cf.getCompositeBinding((IIndexFragmentBinding) preResult[i]);
 		}
 		return result;
 	}
@@ -121,16 +117,15 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	public ICPPMethod[] getMethods() throws DOMException {
 		ICPPMethod[] result = ((ICPPClassType)rbinding).getMethods();
 		for(int i=0; i<result.length; i++) {
-			result[i] = (ICPPMethod) cf.getCompositeBinding(result[i]);
+			result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}
 
 	public ICPPClassType[] getNestedClasses() throws DOMException {
-		ICPPClassType[] preResult = ((ICPPClassType)rbinding).getNestedClasses();
-		ICPPClassType[] result = new ICPPClassType[preResult.length];
-		for(int i=0; i<preResult.length; i++) {
-			result[i] = (ICPPClassType) cf.getCompositeBinding(preResult[i]);
+		ICPPClassType[] result = ((ICPPClassType)rbinding).getNestedClasses();
+		for(int i=0; i<result.length; i++) {
+			result[i] = (ICPPClassType) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}

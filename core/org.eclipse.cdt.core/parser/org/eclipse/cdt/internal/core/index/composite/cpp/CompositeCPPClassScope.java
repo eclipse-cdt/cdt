@@ -14,19 +14,16 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
-import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
-	public CompositeCPPClassScope(ICompositesFactory cf, IBinding rbinding) {
+	public CompositeCPPClassScope(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
 
@@ -39,7 +36,7 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 			ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
 			ICPPMethod[] result = rscope.getImplicitMethods();
 			for(int i=0; i<result.length; i++) {
-				result[i] = (ICPPMethod) cf.getCompositeBinding(result[i]);
+				result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 			}
 			return result;
 		} catch (DOMException de) {
@@ -50,29 +47,18 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		IBinding binding = ((ICPPClassType)rbinding).getCompositeScope().getBinding(name, resolve);
-		if(binding instanceof IIndexFragmentBinding) {
-			return cf.getCompositeBinding((IIndexFragmentBinding) binding);			
-		}
-		if(binding instanceof CPPCompositeBinding /* AST composite */) {
-			return new CPPCompositeBinding(
-				cf.getCompositeBindings(((CPPCompositeBinding)binding).getBindings())
-			);
-		}
-		if(binding!=null && !(binding instanceof IProblemBinding)) {
-			throw new CompositingNotImplementedError(binding.getClass().toString());
-		}
-		return binding;
+		return processUncertainBinding(binding);
 	}
 	
 	public IBinding[] find(String name, boolean prefixLookup)
 	throws DOMException {
 		IBinding[] preresult = ((ICPPClassType)rbinding).getCompositeScope().find(name, prefixLookup);
-		return cf.getCompositeBindings(preresult);
+		return processUncertainBindings(preresult);
 	}
 
 	public IBinding[] find(String name) throws DOMException {
 		IBinding[] preresult = ((ICPPClassType)rbinding).getCompositeScope().find(name);
-		return cf.getCompositeBindings(preresult);	
+		return processUncertainBindings(preresult);	
 	}
 	
 	public IIndexBinding getScopeBinding() {

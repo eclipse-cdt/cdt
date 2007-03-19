@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.index.composite.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -23,7 +22,7 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCStructure extends CompositeCBinding implements IIndexBinding, ICompositeType, IIndexType {
 
-	public CompositeCStructure(ICompositesFactory cf, IBinding rbinding) {
+	public CompositeCStructure(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
 

@@ -40,7 +40,7 @@ public abstract class CompositeType implements IType, IIndexType, ITypeContainer
 	}
 	
 	public final IType getType() throws DOMException {
-		return cf.getCompositeType(type.getType());
+		return cf.getCompositeType((IIndexType)type.getType());
 	}
 	
 	protected void fail() {

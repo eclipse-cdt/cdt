@@ -83,13 +83,13 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 	public IType[] getParameterTypes() throws DOMException {
 		IType[] result = ((ICPPFunctionType)rbinding).getParameterTypes();
 		for(int i=0; i<result.length; i++) {
-			result[i] = cf.getCompositeType(result[i]);
+			result[i] = cf.getCompositeType((IIndexType)result[i]);
 		}
 		return result;
 	}
 
 	public IType getReturnType() throws DOMException {
-		return cf.getCompositeType(((ICPPFunctionType)rbinding).getReturnType());
+		return cf.getCompositeType((IIndexType)((ICPPFunctionType)rbinding).getReturnType());
 	}
 
 	public boolean isSameType(IType type) {

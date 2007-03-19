@@ -54,7 +54,8 @@ public class CIndex implements IIndex {
 	final private IIndexFragment[] fFragments;
 	final private int fPrimaryFragmentCount;
 	private int fReadLock;
-
+	private ICompositesFactory cppCF, cCF, fCF;
+	
 	public CIndex(IIndexFragment[] fragments, int primaryFragmentCount) {
 		fFragments= fragments;
 		fPrimaryFragmentCount= primaryFragmentCount;
@@ -328,18 +329,23 @@ public class CIndex implements IIndex {
 			
 		}
 	}
-
+	
 	public IIndexBinding adaptBinding(IBinding binding) {
 		try {
 			if(SPECIALCASE_SINGLES && fFragments.length==1) {
 				return fFragments[0].adaptBinding(binding);
 			} else {
-				return getCompositesFactory(binding.getLinkage().getID()).getCompositeBinding(binding);
+				for (int i = 0; i < fPrimaryFragmentCount; i++) {
+					IIndexFragmentBinding adaptedBinding= fFragments[i].adaptBinding(binding);
+					if (adaptedBinding != null) {
+						return getCompositesFactory(binding.getLinkage().getID()).getCompositeBinding(adaptedBinding);
+					}
+				}
 			}
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
-			return null;
 		}
+		return null;
 	}
 
 	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
@@ -391,7 +397,6 @@ public class CIndex implements IIndex {
 		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 	
-	ICompositesFactory cppCF, cCF, fCF;
 	private ICompositesFactory getCompositesFactory(String linkageID) {
 		if(linkageID.equals(ILinkage.CPP_LINKAGE_ID)) {
 			if(cppCF==null) {
@@ -423,7 +428,7 @@ public class CIndex implements IIndex {
 			}
 			public boolean acceptImplicitMethods() {
 				return filter.acceptImplicitMethods();
-			};
+			}
 			public boolean acceptLinkage(ILinkage other) {
 				return linkage.getID().equals(other.getID());
 			}

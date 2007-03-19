@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -25,7 +27,7 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	ICPPNamespace[] namespaces;
 	
 	public CompositeCPPNamespaceScope(ICompositesFactory cf, ICPPNamespace[] namespaces) {
-		super(cf, namespaces[0]);
+		super(cf, (IIndexFragmentBinding) namespaces[0]);
 		this.namespaces = namespaces;
 	}
 	
@@ -39,11 +41,11 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 
 	public IBinding getBinding(IASTName name, boolean resolve)
 	throws DOMException {
-		IIndexFragmentBinding preresult = null;
+		IBinding preresult = null;
 		for(int i=0; preresult==null && i<namespaces.length; i++) {
-			preresult = (IIndexFragmentBinding) namespaces[i].getNamespaceScope().getBinding(name, resolve);
+			preresult = namespaces[i].getNamespaceScope().getBinding(name, resolve);
 		}
-		return cf.getCompositeBinding(preresult);
+		return processUncertainBinding(preresult);
 	}
 	
 	final public IBinding[] find(String name) throws DOMException {
@@ -68,5 +70,17 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	
 	public IIndexBinding getScopeBinding() {
 		return cf.getCompositeBinding(rbinding);
+	}
+	
+	public IName getScopeName() throws DOMException {
+		for(int i=0; i<namespaces.length; i++) {
+			if(namespaces[i] instanceof IScope) {
+				IScope s= (IScope) namespaces[i];
+				IName nm= s.getScopeName();
+				if(nm!=null)
+					return nm;
+			}
+		}
+		return null;
 	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
@@ -27,7 +28,7 @@ class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
 
 	public IType getType() throws DOMException {
 		IType rtype = ((ICPPVariable)rbinding).getType();
-		return cf.getCompositeType(rtype);
+		return cf.getCompositeType((IIndexType)rtype);
 	}
 
 	public boolean isAuto() throws DOMException {

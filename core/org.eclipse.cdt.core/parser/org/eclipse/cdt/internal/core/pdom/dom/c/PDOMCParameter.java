@@ -21,6 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -34,7 +36,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-class PDOMCParameter extends PDOMNamedNode implements IParameter {
+class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragmentBinding {
 
 	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE + 0;
 	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;
@@ -136,5 +138,34 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter {
 			CCorePlugin.log(e);
 			return new char[0];
 		}
+	}
+
+	public IIndexFragment getFragment() {
+		return pdom;
+	}
+
+	public boolean hasDefinition() throws CoreException {
+		// parameter bindings do not span index fragments
+		return true;
+	}
+
+	public int compareTo(Object arg0) {
+		throw new PDOMNotImplementedError();
+	}
+	
+	public boolean isFileLocal() throws CoreException {
+		return true;
+	}
+	
+	public String[] getQualifiedName() {
+		throw new PDOMNotImplementedError();
+	}
+
+	public char[][] getQualifiedNameCharArray() throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public boolean isGloballyQualified() throws DOMException {
+		throw new PDOMNotImplementedError();
 	}
 }

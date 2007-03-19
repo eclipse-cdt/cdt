@@ -13,9 +13,10 @@ package org.eclipse.cdt.internal.core.index.composite;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -36,9 +37,9 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	 * and some ignore it as a representative binding from each fragment is needed to meet interface
 	 * contracts.
 	 */
-	protected final IBinding rbinding;
+	protected final IIndexFragmentBinding rbinding;
 	
-	public CompositeIndexBinding(ICompositesFactory cf, IBinding rbinding) {
+	public CompositeIndexBinding(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		if(rbinding == null || cf == null)
 			throw new IllegalArgumentException();
 		this.cf = cf;
@@ -69,7 +70,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	}
 	
 	public IScope getScope() throws DOMException {
-		return cf.getCompositeScope(rbinding.getScope());
+		return cf.getCompositeScope((IIndexScope)rbinding.getScope());
 	}
 	
 	public boolean hasDefinition() throws CoreException {

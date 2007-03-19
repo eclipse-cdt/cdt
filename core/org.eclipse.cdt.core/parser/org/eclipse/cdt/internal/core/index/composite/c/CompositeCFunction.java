@@ -11,18 +11,19 @@
 package org.eclipse.cdt.internal.core.index.composite.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCFunction extends CompositeCBinding implements IIndexBinding, IFunction {
 
-	public CompositeCFunction(ICompositesFactory cf, IBinding rbinding) {
+	public CompositeCFunction(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
 
@@ -32,11 +33,11 @@ class CompositeCFunction extends CompositeCBinding implements IIndexBinding, IFu
 		IParameter[] preResult = ((IFunction)rbinding).getParameters();
 		IParameter[] result = new IParameter[preResult.length];
 		for(int i=0; i<preResult.length; i++) {
-			result[i] = (IParameter) cf.getCompositeBinding(preResult[i]);
+			result[i] = (IParameter) cf.getCompositeBinding((IIndexFragmentBinding) preResult[i]);
 		}
 		return result;
 	}
-
+	
 	public IFunctionType getType() throws DOMException {
 		/* @see PDOMCFunction.getType() */
 		return new IFunctionType() {
@@ -45,18 +46,22 @@ class CompositeCFunction extends CompositeCBinding implements IIndexBinding, IFu
 				IType[] result = new IType[preresult.length];
 				for(int i=0; i<preresult.length; i++) {
 					assert preresult!=null;
-					result[i] = cf.getCompositeType(preresult[i]);
+					result[i] = cf.getCompositeType((IIndexType)preresult[i]);
 				}
 				return result;
 			}
 
 			public IType getReturnType() throws DOMException {
-				IType type = ((IFunctionType)rbinding).getReturnType();
-				return cf.getCompositeType(type);
+				IType type = ((IFunction)rbinding).getType().getReturnType();
+				return cf.getCompositeType((IIndexType)type);
 			}
 
 			public boolean isSameType(IType type) {
-				return ((IFunctionType)rbinding).isSameType(type);
+				try {
+					return ((IFunction)rbinding).getType().isSameType(type);
+				} catch(DOMException de) {
+					return false;
+				}
 			}
 			
 			public Object clone() {fail(); return null;}

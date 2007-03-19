@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
-import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 abstract class CompositeCBinding extends CompositeIndexBinding {
-	public CompositeCBinding(ICompositesFactory cf, IBinding rbinding) {
+	public CompositeCBinding(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
 }

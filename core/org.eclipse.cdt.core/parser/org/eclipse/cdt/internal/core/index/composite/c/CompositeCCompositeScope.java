@@ -14,17 +14,15 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
-import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCCompositeScope extends CompositeScope implements ICCompositeTypeScope {
 
-	public CompositeCCompositeScope(ICompositesFactory cf, IBinding rbinding) {
+	public CompositeCCompositeScope(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
 
@@ -38,25 +36,18 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		IBinding binding = ((ICompositeType)rbinding).getCompositeScope().getBinding(name, resolve);
-		if(binding instanceof IIndexFragmentBinding) {
-			IIndexFragmentBinding preresult = (IIndexFragmentBinding) binding; 
-			return cf.getCompositeBinding(preresult);			
-		}
-		if(binding!=null && !(binding instanceof IProblemBinding)) {
-			throw new CompositingNotImplementedError(binding.getClass().toString());
-		}
-		return binding;
+		return processUncertainBinding(binding);
 	}
 
 	public IBinding[] find(String name, boolean prefixLookup)
 			throws DOMException {
 		IBinding[] preresult = ((ICompositeType)rbinding).getCompositeScope().find(name, prefixLookup);
-		return cf.getCompositeBindings(preresult);
+		return processUncertainBindings(preresult);
 	}
 	
 	public IBinding[] find(String name) throws DOMException {
 		IBinding[] preresult = ((ICompositeType)rbinding).getCompositeScope().find(name);
-		return cf.getCompositeBindings(preresult);	
+		return processUncertainBindings(preresult);	
 	}
 	
 	public IIndexBinding getScopeBinding() {

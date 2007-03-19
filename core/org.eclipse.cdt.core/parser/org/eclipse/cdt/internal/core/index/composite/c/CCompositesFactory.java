@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -31,6 +30,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.AbstractCompositeFactory;
 import org.eclipse.cdt.internal.core.index.composite.CompositeArrayType;
 import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
@@ -47,7 +48,7 @@ public class CCompositesFactory extends AbstractCompositeFactory implements ICom
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeScope(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IScope)
 	 */
-	public IScope getCompositeScope(IScope rscope) {
+	public IScope getCompositeScope(IIndexScope rscope) {
 		if(rscope==null)
 			return null;
 		if(rscope instanceof ICCompositeTypeScope) {
@@ -65,7 +66,7 @@ public class CCompositesFactory extends AbstractCompositeFactory implements ICom
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeType(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IType)
 	 */
-	public IType getCompositeType(IType rtype) throws DOMException {
+	public IType getCompositeType(IIndexType rtype) throws DOMException {
 		IType result;
 		
 		if(rtype==null) {
@@ -95,7 +96,7 @@ public class CCompositesFactory extends AbstractCompositeFactory implements ICom
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeBinding(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
-	public IIndexBinding getCompositeBinding(IBinding rbinding) {
+	public IIndexBinding getCompositeBinding(IIndexFragmentBinding rbinding) {
 		IIndexBinding result;
 		
 		if(rbinding==null) {

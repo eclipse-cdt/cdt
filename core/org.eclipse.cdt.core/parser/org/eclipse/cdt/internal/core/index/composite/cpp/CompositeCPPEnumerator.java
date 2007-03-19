@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCPPEnumerator extends CompositeCPPBinding implements IEnumerator {
@@ -23,6 +24,6 @@ class CompositeCPPEnumerator extends CompositeCPPBinding implements IEnumerator 
 
 	public IType getType() throws DOMException {
 		IType type = ((IEnumerator)rbinding).getType();
-		return cf.getCompositeType(type);
+		return cf.getCompositeType((IIndexType)type);
 	}
 }

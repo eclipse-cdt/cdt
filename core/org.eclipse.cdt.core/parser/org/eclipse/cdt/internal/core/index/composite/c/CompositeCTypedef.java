@@ -11,21 +11,21 @@
 package org.eclipse.cdt.internal.core.index.composite.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCTypedef extends CompositeCBinding implements ITypedef, IIndexType, ITypeContainer {
-	public CompositeCTypedef(ICompositesFactory cf, IBinding rbinding) {
+	public CompositeCTypedef(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
 
 	public IType getType() throws DOMException {
 		IType type = ((ITypedef)rbinding).getType();
-		return cf.getCompositeType(type);
+		return cf.getCompositeType((IIndexType)type);
 	}
 
 	public boolean isSameType(IType type) {

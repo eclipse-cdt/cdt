@@ -71,9 +71,10 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		};
 
 	// // referencing file
-	//	#include "referenced.h"
+	//	#include "header.h"
+	//  
+	//  C *cp = new C(); /*b0, b1*/
 	//	void references() {
-	//		C *cp = new C(); /*b0, b1*/
 	//		long l = 5, *lp;
 	//		lp = &l;
 	//		cp->cs.*cp->ouch = lp = cp->cs.*cp->autsch; /*b2, b3, b4*/
@@ -1039,8 +1040,18 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertEquals(binding2, getBindingFromASTName("f(const_int_ptr_const)", 1));
 		assertEquals(binding2, getBindingFromASTName("f(int_const_ptr_const)", 1));
 
-		assertEquals(2, getIndex().findNames(binding1, IIndex.FIND_DECLARATIONS).length);
-		assertEquals(4, getIndex().findNames(binding2, IIndex.FIND_DECLARATIONS).length);
+		if(strategy.isCompositeIndex()) {
+			// getIndex() returns the index for the referencing content only
+			assertEquals(0, getIndex().findNames(binding1, IIndex.FIND_DECLARATIONS).length);
+			assertEquals(0, getIndex().findNames(binding2, IIndex.FIND_DECLARATIONS).length);
+			assertEquals(1, getIndex().findNames(binding1, IIndex.FIND_DEFINITIONS).length);
+			assertEquals(1, getIndex().findNames(binding2, IIndex.FIND_DEFINITIONS).length);
+		} else {
+			assertEquals(2, getIndex().findNames(binding1, IIndex.FIND_DECLARATIONS).length);
+			assertEquals(4, getIndex().findNames(binding2, IIndex.FIND_DECLARATIONS).length);
+			assertEquals(1, getIndex().findNames(binding1, IIndex.FIND_DEFINITIONS).length);
+			assertEquals(1, getIndex().findNames(binding2, IIndex.FIND_DEFINITIONS).length);
+		}
 	}
 
 	// typedef struct S {int a;} S;

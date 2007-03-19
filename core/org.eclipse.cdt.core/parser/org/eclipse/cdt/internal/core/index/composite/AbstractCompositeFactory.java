@@ -34,7 +34,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.ICompositesFactory#getCompositeBindings(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.internal.core.index.IIndexFragmentBinding[])
 	 */
-	public final IIndexBinding[] getCompositeBindings(IBinding[] bindings) {
+	public final IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[] bindings) {
 		IIndexBinding[] result = new IIndexBinding[bindings.length];
 		for(int i=0; i<result.length; i++)
 			result[i] = getCompositeBinding(bindings[i]);

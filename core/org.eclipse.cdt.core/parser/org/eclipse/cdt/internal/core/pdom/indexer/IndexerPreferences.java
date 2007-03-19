@@ -302,12 +302,22 @@ public class IndexerPreferences {
 	}
 
 	public static String getIndexImportLocation(IProject project) {
-		Preferences[] prefs= new Preferences[] {
-				getProjectPreferences(project),
-				getInstancePreferences(),
-				getConfigurationPreferences(),
-				getDefaultPreferences()
-		};
+		Preferences[] prefs;
+		if (project != null) {
+			prefs= new Preferences[] {
+					getProjectPreferences(project),
+					getInstancePreferences(),
+					getConfigurationPreferences(),
+					getDefaultPreferences()
+			};
+		}
+		else {
+			prefs= new Preferences[] {
+					getInstancePreferences(),
+					getConfigurationPreferences(),
+					getDefaultPreferences()
+			};
+		}
 		
 		return Platform.getPreferencesService().get(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION, prefs);
 	}

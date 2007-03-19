@@ -1942,5 +1942,25 @@
            properties="isSource"
            type="org.eclipse.core.resources.IFile"/>
   </extension>
+  <extension
+        point="org.eclipse.ui.exportWizards">
+     <wizard
+           category="org.eclipse.cdt.ui.exportWizardCategory"
+           class="org.eclipse.cdt.internal.ui.wizards.indexwizards.TeamProjectIndexExportWizard"
+           icon="icons/etool16/exportzip_wiz.gif"
+           id="org.eclipse.cdt.ui.teamSharedIndexWizard"
+           name="%teamProjectIndexExportWizard.name">
+        <selection
+              class="org.eclipse.core.resources.IProject">
+        </selection>
+        <description>
+           %teamProjectIndexExportWizard.description
+        </description>
+     </wizard>
+     <category
+           id="org.eclipse.cdt.ui.exportWizardCategory"
+           name="%exportWizard.CDTCategory.name">
+     </category>
+  </extension>
   
 </plugin>

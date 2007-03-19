@@ -84,25 +84,26 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			PDOMManager pdomManager= CCoreInternals.getPDOMManager();
 
 			// wait for indexer
-			monitor.beginTask(Messages.TeamPDOMExportOperation_taskExportIndex, 100);
-			pdomManager.joinIndexer(Integer.MAX_VALUE, subMonitor(monitor, 80));
+			monitor.beginTask("", 100); //$NON-NLS-1$
+			pdomManager.joinIndexer(Integer.MAX_VALUE, subMonitor(monitor, 1));
 			checkMonitor(monitor);
 
 			// create index
 			IIndexLocationConverter converter= new ResourceContainerRelativeLocationConverter(ResourcesPlugin.getWorkspace().getRoot());
-			monitor.subTask(Messages.TeamPDOMExportOperation_subtaskCreateDatabase);
 			pdomManager.exportProjectPDOM(fProject, tmpPDOM, converter);
 			checkMonitor(monitor);
 			monitor.worked(5);
 			
 			// create checksums
 			PDOM pdom= new PDOM(tmpPDOM, converter);
-			createChecksums(fProject, pdom, tmpChecksums, subMonitor(monitor, 10));
+			monitor.setTaskName(Messages.Checksums_taskComputeChecksums);
+			createChecksums(fProject, pdom, tmpChecksums, subMonitor(monitor, 94));
 			
 			// create archive
 			createArchive(tmpPDOM, tmpChecksums);
 			
 			// store preferences
+			monitor.setTaskName(Messages.TeamPDOMExportOperation_taskExportIndex);
 			IndexerPreferences.setIndexImportLocation(fProject.getProject(), fTargetLocation.toString());
 		}
 		finally {

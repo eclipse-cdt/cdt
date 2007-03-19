@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
@@ -997,11 +997,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		ManagedBuildTestHelper.createFile(project, "f.h", "\n");
 	
 		ICProject cProject = CoreModel.getDefault().create(project);
-		try {
-			CCorePlugin.getPDOMManager().setIndexerId(cProject, PDOMFastIndexer.ID);
-		} catch (CoreException e2) {
-			doFail("testDes_gnu30_exe_deps: failed to associate the fast indexer with the project");
-		}
+		CCorePlugin.getIndexManager().setIndexerId(cProject, IPDOMManager.ID_FAST_INDEXER);
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];

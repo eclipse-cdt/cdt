@@ -58,7 +58,7 @@ public class TrilogyPerformanceTest extends IndexTestBase {
 			try {
 				IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 				long start = System.currentTimeMillis();
-				CCorePlugin.getPDOMManager().reindex(cproject);
+				CCorePlugin.getIndexManager().reindex(cproject);
 				assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 				System.out.println("Took: "+(System.currentTimeMillis() - start));
 				IIndex index= CCorePlugin.getIndexManager().getIndex(cproject);

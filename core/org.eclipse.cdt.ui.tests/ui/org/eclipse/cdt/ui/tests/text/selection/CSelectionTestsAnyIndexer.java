@@ -52,7 +52,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 		fCProject = createProject("CSelectionTestsDOMIndexerProject"); //$NON-NLS-1$
 		assertNotNull("Unable to create project", fCProject);
 
-		CCorePlugin.getPDOMManager().setIndexerId(fCProject, sourceIndexerID);
+		CCorePlugin.getIndexManager().setIndexerId(fCProject, sourceIndexerID);
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 

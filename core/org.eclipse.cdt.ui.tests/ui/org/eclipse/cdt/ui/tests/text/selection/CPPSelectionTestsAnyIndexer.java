@@ -56,7 +56,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 //		ScannerConfigNature.addScannerConfigNature(project);
 //		PerProjectSICollector.calculateCompilerBuiltins(project);
 
-		CCorePlugin.getPDOMManager().setIndexerId(fCProject, sourceIndexerID);
+		CCorePlugin.getIndexManager().setIndexerId(fCProject, sourceIndexerID);
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 

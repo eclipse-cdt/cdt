@@ -72,7 +72,7 @@ public class IndexLocationTest extends BaseTestCase {
 		String content = testData[2].toString().replaceAll("ABS_EXTERNAL", externalHeader.getAbsolutePath().replaceAll("\\\\","\\\\\\\\"));
 		IFile file3 = TestSourceReader.createFile(cproject.getProject(), "source.cpp", content);
 
-		CCorePlugin.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);		
+		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);		
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, new NullProgressMonitor()));
 
 		super.setUp();

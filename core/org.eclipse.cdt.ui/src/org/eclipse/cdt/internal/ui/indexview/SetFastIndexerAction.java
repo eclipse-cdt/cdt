@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems
+ * Copyright (c) 2005, 2007 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -33,14 +34,10 @@ public class SetFastIndexerAction extends IndexAction {
 
 	public void run() {
 		try {
-			IPDOMManager manager = CCorePlugin.getPDOMManager();
+			IIndexManager manager = CCorePlugin.getIndexManager();
 			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
 			for (int i = 0; i < projects.length; ++i) {
-				try {
-					manager.setIndexerId(projects[i], IPDOMManager.ID_FAST_INDEXER);
-				} catch (CoreException e) {
-					CUIPlugin.getDefault().log(e);
-				}
+				manager.setIndexerId(projects[i], IPDOMManager.ID_FAST_INDEXER);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

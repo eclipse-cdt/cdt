@@ -18,7 +18,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
@@ -117,10 +116,8 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		if (proj == null) return null;
 		
 		try{
-			IPDOMManager manager = CCorePlugin.getPDOMManager();
-			String indexerId = manager.getIndexerId(proj);
-			
-			if (!IPDOMManager.ID_NO_INDEXER.equals(indexerId)) {
+			IIndexManager manager= CCorePlugin.getIndexManager();
+			if (manager.isProjectIndexed(proj)) {
 				fIndex = CCorePlugin.getIndexManager().getIndex(proj,
 						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 

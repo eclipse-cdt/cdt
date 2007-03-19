@@ -25,7 +25,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class CCoreInternals {
 
 	public static PDOMManager getPDOMManager() {
-		return (PDOMManager) CCorePlugin.getPDOMManager();
+		return (PDOMManager) CCorePlugin.getIndexManager();
 	}
 	
 	/**

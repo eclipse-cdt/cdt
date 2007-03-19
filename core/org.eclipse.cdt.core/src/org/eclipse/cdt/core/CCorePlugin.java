@@ -678,6 +678,9 @@ public class CCorePlugin extends Plugin {
 		return fCoreModel;
 	}
 
+	/**
+	 * @deprecated use getIndexManager().
+	 */
 	public static IPDOMManager getPDOMManager() {
 		return getDefault().pdomManager;
 	}
@@ -1211,7 +1214,7 @@ public class CCorePlugin extends Plugin {
 	public ICProjectDescription getProjectDescription(IProject project, boolean write){
 		return fNewCProjectDescriptionManager.getProjectDescription(project, write);
 	}
-	
+
 	/**
 	 * forces the cached data of the specified projects to be re-calculated.
 	 * if the <code>projects</code> argument is <code>null</code> al projects 

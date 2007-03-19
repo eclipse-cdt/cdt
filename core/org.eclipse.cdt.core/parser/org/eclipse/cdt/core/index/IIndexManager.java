@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,14 +32,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @since 4.0
  */
-public interface IIndexManager {
+public interface IIndexManager extends IPDOMManager {
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates
 	 * projects referenced by the set of input projects should also be added
 	 * to the resulting index.
 	 */
 	public final static int ADD_DEPENDENCIES = 0x1;
-	
+
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates
 	 * projects which reference any of the set of input projects should also be
@@ -58,7 +59,6 @@ public interface IIndexManager {
 	 * @see IIndexManager#joinIndexer(int, IProgressMonitor)
 	 */
 	public final static int FOREVER= -1;
-	
 	/**
 	 * Returns the index for the given project.
 	 * @param project the project to get the index for
@@ -130,4 +130,39 @@ public interface IIndexManager {
 	 * Checks whether the indexer is currently idle
 	 */
 	boolean isIndexerIdle();
+	
+	/**
+	 * Returns whether an indexer is selected for the project.
+	 * @since 4.0
+	 */
+	boolean isProjectIndexed(ICProject proj);
+
+	/**
+	 * Returns the id of the indexer working on the project.
+	 * @since 4.0
+	 */
+	public String getIndexerId(ICProject project);
+
+	/**
+	 * Changes the indexer working on the project.
+	 * @since 4.0
+	 */
+	public void setIndexerId(ICProject project, String indexerId);
+	
+	/**
+	 * Clears the entire index of the project and schedules the indexer.
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public void reindex(ICProject project) throws CoreException;
+
+	/**
+	 * Export index for usage within a team.
+	 * @param project a project for which the pdom is to be exported.
+	 * @param location the target location for the database.
+	 * @param options currently none are supported.
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public void export(ICProject project, String location, int options, IProgressMonitor monitor) throws CoreException;
 }

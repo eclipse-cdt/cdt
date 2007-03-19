@@ -47,7 +47,6 @@ import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
 import org.eclipse.cdt.internal.core.index.IndexFactory;
 import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
-import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
@@ -86,7 +85,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
  * 
  * @author Doug Schaefer
  */
-public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListener {
+public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private static final class PerInstanceSchedulingRule implements ISchedulingRule {
 		public boolean contains(ISchedulingRule rule) {
@@ -250,7 +249,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	
     public String getIndexerId(ICProject project) {
     	IProject prj= project != null ? project.getProject() : null;
-    	return IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, ID_NO_INDEXER);
+    	return IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
     }
 
     public void setIndexerId(final ICProject project, String indexerId) {
@@ -276,7 +275,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		IPDOMIndexer oldIndexer= null;
 		IProject prj= cproject.getProject();
 		
-		String newid= IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, ID_NO_INDEXER);
+		String newid= IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
 		Properties props= IndexerPreferences.getProperties(prj);
 		
 		synchronized (fIndexerMutex) {
@@ -947,5 +946,9 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		String DELIM = "\0"; //$NON-NLS-1$
 		String id= CCorePlugin.PLUGIN_ID + ".pdom.project." + DELIM + project.getName() + DELIM; //$NON-NLS-1$
 		pdom.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, id);
+	}
+
+	public boolean isProjectIndexed(ICProject proj) {
+		return !IPDOMManager.ID_NO_INDEXER.equals(getIndexerId(proj));
 	}
 }

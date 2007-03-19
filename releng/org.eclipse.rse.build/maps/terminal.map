@@ -6,4 +6,4 @@ feature@org.eclipse.tm.terminal.view=v20070223,:pserver:anonymous:none@dev.eclip
 plugin@org.eclipse.tm.terminal=v20070223,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal
 plugin@org.eclipse.tm.terminal.serial=v20070223,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial
 plugin@org.eclipse.tm.terminal.ssh=v20070227,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.ssh
-plugin@org.eclipse.tm.terminal.view=v20070223,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.view
+plugin@org.eclipse.tm.terminal.view=v20070319,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.view

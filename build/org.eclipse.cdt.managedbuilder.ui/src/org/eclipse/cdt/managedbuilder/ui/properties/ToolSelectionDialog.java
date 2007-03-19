@@ -182,13 +182,14 @@ public class ToolSelectionDialog extends Dialog {
 			if (!exists) added.add(t);
 			add(t, t2, !exists);
 		}
-		if (check && removed.size() > 0 || added.size() > 0) {
+		if (true/*check && removed.size() > 0 || added.size() > 0 */) {
 			IModificationStatus st = fi.getToolChainModificationStatus(
 					(ITool[])removed.toArray(new ITool[removed.size()]), 
 					(ITool[])added.toArray(new ITool[added.size()]));
 			if (st.isOK()) {
 				errorLabel.setText("");  //$NON-NLS-1$
-				getButton(IDialogConstants.OK_ID).setEnabled(true);
+				if(getButton(IDialogConstants.OK_ID) != null)
+					getButton(IDialogConstants.OK_ID).setEnabled(true);
 			} else {
 				int c = st.getCode();
 				String s = "";  //$NON-NLS-1$

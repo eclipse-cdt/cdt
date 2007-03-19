@@ -996,12 +996,28 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	
 	private ITool[] calculateToolsArray(ITool[] removed, ITool[] added){
 		ITool tools[] = getTools();
-		HashSet set = new HashSet();
-		set.addAll(Arrays.asList(tools));
-		set.removeAll(Arrays.asList(removed));
-		set.addAll(Arrays.asList(added));
+		Map map = calcExtToolIdToToolMap(tools);
+		Map removedMap = calcExtToolIdToToolMap(removed);
+		for(Iterator iter = removedMap.keySet().iterator(); iter.hasNext();){
+			map.remove(iter.next());
+		}
+		map.putAll(calcExtToolIdToToolMap(added));
 		
-		return (ITool[])set.toArray(new ITool[set.size()]);
+		return (ITool[])map.values().toArray(new ITool[map.size()]);
+	}
+	
+	private Map calcExtToolIdToToolMap(ITool tools[]){
+		Map map = new HashMap();
+		for(int i = 0; i < tools.length; i++){
+			ITool tool = tools[i];
+			ITool extTool = ManagedBuildManager.getExtensionTool(tool);
+			if(extTool == null)
+				extTool = tool;
+			
+			map.put(extTool.getId(), tool);
+		}
+		
+		return map;
 	}
 	
 	private ITool[][] calculateConflictingTools(ITool[] newTools){

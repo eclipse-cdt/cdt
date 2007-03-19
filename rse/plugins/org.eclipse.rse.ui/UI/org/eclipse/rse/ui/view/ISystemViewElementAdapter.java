@@ -29,6 +29,7 @@ import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -55,7 +56,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
  * </p>
  * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter
  */
-public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragDropAdapter, ISystemViewActionFilter
+public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragDropAdapter, IActionFilter
 {
 	public static final IAction[] noActions = new IAction[0];
 	

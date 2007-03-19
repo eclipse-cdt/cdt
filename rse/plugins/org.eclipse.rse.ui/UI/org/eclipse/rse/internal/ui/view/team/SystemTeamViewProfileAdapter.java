@@ -309,7 +309,7 @@ public class SystemTeamViewProfileAdapter
 		String name = (String)key;
 		ISystemProfile profile = (ISystemProfile)propertySourceInput;		
 		
-		if (name.equals(P_IS_ACTIVE))
+		if (name.equals(ISystemPropertyConstants.P_IS_ACTIVE))
 		{			
 			boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 			if (active)

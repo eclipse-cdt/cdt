@@ -15,6 +15,7 @@
  ********************************************************************************/
 package org.eclipse.rse.core;
 
+
 /**
  * Interface for RSE core registry. Clients should use this interface as the starting point for querying and
  * manipulating model objects in the RSE framework.

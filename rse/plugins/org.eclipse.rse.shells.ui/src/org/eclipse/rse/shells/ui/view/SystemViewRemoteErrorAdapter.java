@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -56,10 +57,10 @@ public class SystemViewRemoteErrorAdapter extends SystemViewRemoteOutputAdapter
 					//RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 
 					// path
-					_uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(P_ERROR_FILENAME, SystemViewResources.RESID_PROPERTY_ERROR_FILENAME_LABEL, SystemViewResources.RESID_PROPERTY_ERROR_FILENAME_TOOLTIP);
+					_uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ERROR_FILENAME, SystemViewResources.RESID_PROPERTY_ERROR_FILENAME_LABEL, SystemViewResources.RESID_PROPERTY_ERROR_FILENAME_TOOLTIP);
 
 					// line
-					_uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(P_ERROR_LINENO, SystemViewResources.RESID_PROPERTY_ERROR_LINENO_LABEL, SystemViewResources.RESID_PROPERTY_ERROR_LINENO_TOOLTIP);	
+					_uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ERROR_LINENO, SystemViewResources.RESID_PROPERTY_ERROR_LINENO_LABEL, SystemViewResources.RESID_PROPERTY_ERROR_LINENO_TOOLTIP);	
 				}
 
 				return _uniquePropertyDescriptorArray;
@@ -80,7 +81,7 @@ public class SystemViewRemoteErrorAdapter extends SystemViewRemoteOutputAdapter
 			int idx = -1;
 
 			// path
-			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(P_FILE_PATH, SystemViewResources.RESID_PROPERTY_FILE_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PATH_TOOLTIP);				
+			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PATH, SystemViewResources.RESID_PROPERTY_FILE_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PATH_TOOLTIP);				
 			// append...
 			for (int i = 0; i < unique.length; i++)
 			{
@@ -101,15 +102,15 @@ public class SystemViewRemoteErrorAdapter extends SystemViewRemoteOutputAdapter
 		{			
 			IRemoteError output = (IRemoteError) propertySourceInput;
 
-			if (name.equals(P_FILE_PATH))
+			if (name.equals(ISystemPropertyConstants.P_FILE_PATH))
 			{
 				return output.getAbsolutePath();
 			}
-			else if (name.equals(P_ERROR_FILENAME))
+			else if (name.equals(ISystemPropertyConstants.P_ERROR_FILENAME))
 			{
 				return output.getAbsolutePath();
 			}
-			else if (name.equals(P_ERROR_LINENO))
+			else if (name.equals(ISystemPropertyConstants.P_ERROR_LINENO))
 			{
 				return new Integer(output.getLine());
 			}

@@ -530,21 +530,21 @@ public class SystemViewConnectionAdapter
 		String name = (String)key;
 		IHost conn = (IHost)propertySourceInput;
 		
-		if (name.equals(P_SYSTEMTYPE))
+		if (name.equals(ISystemPropertyConstants.P_SYSTEMTYPE))
 		  	return conn.getSystemType();
-		else if (name.equals(P_HOSTNAME))
+		else if (name.equals(ISystemPropertyConstants.P_HOSTNAME))
 		  	return conn.getHostName();
-		else if (name.equals(P_DEFAULTUSERID))
+		else if (name.equals(ISystemPropertyConstants.P_DEFAULTUSERID))
 		{
           	setDefaultUserIdPropertyData(userIdData, conn);
 	      	//System.out.println("Testing getPropertyValue: " + userIdData);		
 		  	return userIdData;	
 		}
-		else if (name.equals(P_DESCRIPTION))
+		else if (name.equals(ISystemPropertyConstants.P_DESCRIPTION))
 		  	return conn.getDescription();		  
-		else if (name.equals(P_PROFILE))
+		else if (name.equals(ISystemPropertyConstants.P_PROFILE))
 		  	return conn.getSystemProfile().getName();		  
-		else if (name.equals(P_IS_CONNECTED))
+		else if (name.equals(ISystemPropertyConstants.P_IS_CONNECTED))
 		{
 			if (conn.isOffline())
 			{
@@ -606,11 +606,11 @@ public class SystemViewConnectionAdapter
 	{
 		String property = (String)propertyObject;    			
 		boolean changed = false;
-	    if (property.equals(P_DEFAULTUSERID))
+	    if (property.equals(ISystemPropertyConstants.P_DEFAULTUSERID))
 	      changed = changed_userId;
-	    else if (property.equals(P_HOSTNAME))
+	    else if (property.equals(ISystemPropertyConstants.P_HOSTNAME))
 	      changed = changed_hostName;	    
-	    else if (property.equals(P_DESCRIPTION))
+	    else if (property.equals(ISystemPropertyConstants.P_DESCRIPTION))
 	      changed = changed_description;
 		return changed; 
 	}
@@ -625,18 +625,18 @@ public class SystemViewConnectionAdapter
 	    IHost conn = (IHost)propertySourceInput;   	
 	    ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
 	    	   
-	    if (property.equals(P_DEFAULTUSERID))
+	    if (property.equals(ISystemPropertyConstants.P_DEFAULTUSERID))
 	    {
 		  //sr.updateConnection(null, conn, conn.getSystemType(), conn.getAliasName(),
 		  //                    conn.getHostName(), conn.getDescription(), original_userId, USERID_LOCATION_CONNECTION);		  
 		  updateDefaultUserId(conn, original_userIdData);
 	    }
-	    else if (property.equals(P_HOSTNAME))
+	    else if (property.equals(ISystemPropertyConstants.P_HOSTNAME))
 	    {
 		  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
 		                      original_hostName, conn.getDescription(), conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    }
-	    else if (property.equals(P_DESCRIPTION))
+	    else if (property.equals(ISystemPropertyConstants.P_DESCRIPTION))
 	    {
 		  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
 		                      conn.getHostName(), original_description, conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
@@ -665,7 +665,7 @@ public class SystemViewConnectionAdapter
 	    IHost conn = (IHost)propertySourceInput;   		   
 	    ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
 	       	
-	    if (name.equals(P_DEFAULTUSERID))
+	    if (name.equals(ISystemPropertyConstants.P_DEFAULTUSERID))
 	    {
 	      //System.out.println("Testing setPropertyValue: " + value);		
 		  //sr.updateConnection(null, conn, conn.getSystemType(), conn.getAliasName(),
@@ -673,7 +673,7 @@ public class SystemViewConnectionAdapter
 		  updateDefaultUserId(conn, (SystemInheritablePropertyData)value);
 		  changed_userId = true;
 	    }
-	    else if (name.equals(P_HOSTNAME))
+	    else if (name.equals(ISystemPropertyConstants.P_HOSTNAME))
 	    {
 	    	// DKM - don't update unless it really changed
 	    	// defect  57739
@@ -684,7 +684,7 @@ public class SystemViewConnectionAdapter
 	    		changed_hostName = true;
 	    	}
 	    }
-	    else if (name.equals(P_DESCRIPTION))
+	    else if (name.equals(ISystemPropertyConstants.P_DESCRIPTION))
 	    {
 	    	// DKM - don't update unless it really changed
 	    	// defect  57739

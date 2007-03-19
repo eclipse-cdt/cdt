@@ -355,11 +355,11 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 		  	int idx = 0;
 		    
 		  	// parent filter pool
-		  	propertyDescriptorArray[idx] = createSimplePropertyDescriptor(P_PARENT_FILTERPOOL,SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_TOOLTIP);
+		  	propertyDescriptorArray[idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_PARENT_FILTERPOOL,SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_TOOLTIP);
 		  	// parent filter
-		  	propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PARENT_FILTER,SystemViewResources.RESID_PROPERTY_FILTERPARENTFILTER_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPARENTFILTER_TOOLTIP);	      
+		  	propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_PARENT_FILTER,SystemViewResources.RESID_PROPERTY_FILTERPARENTFILTER_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPARENTFILTER_TOOLTIP);	      
 		  	// number filter strings
-		  	propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_FILTERSTRINGS_COUNT,SystemViewResources.RESID_PROPERTY_FILTERSTRINGS_COUNT_LABEL, SystemViewResources.RESID_PROPERTY_FILTERSTRINGS_COUNT_TOOLTIP);
+		  	propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILTERSTRINGS_COUNT,SystemViewResources.RESID_PROPERTY_FILTERSTRINGS_COUNT_LABEL, SystemViewResources.RESID_PROPERTY_FILTERSTRINGS_COUNT_TOOLTIP);
 		}		
 		return propertyDescriptorArray;		
 	}

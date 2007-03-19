@@ -161,7 +161,7 @@ public class RSECorePlugin extends Plugin {
 	 * @return the RSE core registry.
 	 */
 	public IRSECoreRegistry getRegistry() {
-		return RSECoreRegistry.getDefault();
+		return RSECoreRegistry.getInstance();
 	}
 	
 	/**

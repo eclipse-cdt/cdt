@@ -474,10 +474,10 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			int idx = -1;
 
 			// path
-			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(P_FILE_PATH, SystemViewResources.RESID_PROPERTY_FILE_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PATH_TOOLTIP);
+			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PATH, SystemViewResources.RESID_PROPERTY_FILE_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PATH_TOOLTIP);
 			
 			// char start
-			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(P_SEARCH_LINE, SystemViewResources.RESID_PROPERTY_SEARCH_LINE_LABEL, SystemViewResources.RESID_PROPERTY_SEARCH_LINE_TOOLTIP);
+			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SEARCH_LINE, SystemViewResources.RESID_PROPERTY_SEARCH_LINE_LABEL, SystemViewResources.RESID_PROPERTY_SEARCH_LINE_TOOLTIP);
 			//_propertyDescriptors[++idx] = createSimplePropertyDescriptor(P_SEARCH_CHAR_END, SystemViewResources.RESID_PROPERTY_SEARCH_CHAR_END_ROOT);
 		}
 		return _propertyDescriptors;
@@ -496,11 +496,11 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		{
 			IHostSearchResult output = (IHostSearchResult) propertySourceInput;
 
-			if (name.equals(P_FILE_PATH))
+			if (name.equals(ISystemPropertyConstants.P_FILE_PATH))
 			{
 				return output.getAbsolutePath();
 			}
-			else if (name.equals(P_SEARCH_LINE))
+			else if (name.equals(ISystemPropertyConstants.P_SEARCH_LINE))
 			{
 			    return new Integer(output.getLine());
 			}

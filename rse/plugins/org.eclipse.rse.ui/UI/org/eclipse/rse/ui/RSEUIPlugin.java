@@ -474,33 +474,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		registerDynamicPopupMenuExtensions();
 		registerKeystoreProviders();
 
-		 // if first time creating the remote systems project, add some default connections...
-//	    if (SystemResourceManager.isFirstTime() 
-//	    		&& !dontShowLocalConnection) // new support to allow products to not pre-create a local connection
-//	    {	    
-	      //try
-	      //{
-	    	
-//				registry.createLocalHost(null, SystemResources.TERM_LOCAL, SystemProfileManager.getSystemProfileManager().getDefaultPrivateSystemProfileName()); // profile, name, userId 
-				/* replaced with re-usable method by Phil, in v5.1.2	      		
-	      	SystemConnection localConn = registry.createConnection(
-	      	    //SystemResourceConstants.RESOURCE_TEAMPROFILE_NAME, IRSESystemType.SYSTEMTYPE_LOCAL,
-	      	    SystemResourceConstants.RESOURCE_PRIVATEPROFILE_NAME, IRSESystemType.SYSTEMTYPE_LOCAL,
-	      	    getString(ISystemConstants.TERM_LOCAL, "Local"), // connection name
-	      	    "localhost", // hostname
-	      	    "", // description
-	      	    // DY:  defect 42101, description cannot be null
-	      	    // null, // description
-	      	    getLocalMachineName(), // userId
-	      	    IRSEUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE, null);
-	      	    */
-	      //}
-	      //catch (Exception exc)
-	      //{
-	      	//logError("Error creating default Local connection", exc);
-	      //}
-//	    }
-		
 		// new support to allow products to not pre-create a local connection
 		if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
 			// create the connection only if the local system type is enabled!

@@ -181,13 +181,13 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter
 			int idx = 0;
 
 			// parent filter pool
-			propertyDescriptorArray[idx] = createSimplePropertyDescriptor(P_PARENT_FILTERPOOL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_PARENTPOOL_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_PARENTPOOL_TOOLTIP);
+			propertyDescriptorArray[idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_PARENT_FILTERPOOL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_PARENTPOOL_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_PARENTPOOL_TOOLTIP);
 
 			// parent filter pool's profile
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROFILE, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_PARENTPROFILE_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_PARENTPROFILE_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_PROFILE, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_PARENTPROFILE_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_PARENTPROFILE_TOOLTIP);
 
 			// Related connection
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_RELATED_CONNECTION, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_RELATEDCONNECTION_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_RELATEDCONNECTION_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_RELATED_CONNECTION, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_RELATEDCONNECTION_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPOOLREFERENCE_RELATEDCONNECTION_TOOLTIP);
 
 		}		
 		return propertyDescriptorArray;

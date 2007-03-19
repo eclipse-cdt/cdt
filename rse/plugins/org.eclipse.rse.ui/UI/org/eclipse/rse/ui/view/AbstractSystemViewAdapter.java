@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,13 +11,15 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Allow to extend action filter by dynamic system type providers.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -26,11 +28,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemResourceSet;
@@ -60,12 +68,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 
@@ -74,10 +82,20 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  * It implements the ISystemViewElementAdapter interface. 
  * @see AbstractSystemRemoteAdapterFactory
  */
-public abstract class AbstractSystemViewAdapter 
-                implements ISystemViewElementAdapter, IPropertySource, ISystemPropertyConstants, IWorkbenchAdapter,
-                             ISystemViewActionFilter, IDeferredWorkbenchAdapter
+public abstract class AbstractSystemViewAdapter implements ISystemViewElementAdapter, IWorkbenchAdapter,
+                                                           IDeferredWorkbenchAdapter
 {	
+	// Static action filter per system type cache. Filled from testAttribute.
+	private final static Map ACTION_FILTER_CACHE = new HashMap();
+
+	// Internal helper class to cache system type -> no action filter relation ships.
+	// Used from testAttribute.
+	private final static class NULL_ACTION_FILTER implements IActionFilter {
+		public boolean testAttribute(Object target, String name, String value) {
+			return false;
+		}
+	}
+	
 	//protected boolean isEditable = false;
 	
 	protected String filterString = null;
@@ -90,6 +108,7 @@ public abstract class AbstractSystemViewAdapter
 	 * Current input provider. Set by content provider
 	 */
 	protected Object propertySourceInput = null;
+
 	/**
 	 * Current shell, set by the content provider
 	 */
@@ -161,6 +180,13 @@ public abstract class AbstractSystemViewAdapter
 	 * A variable that can be used to cache last selection, if desired
 	 */
 	protected Object   _lastSelected = null;
+
+	/**
+	 * Static constructor.
+	 */
+	static {
+		ACTION_FILTER_CACHE.clear();
+	}
 	
 	// ------------------------------------------------------------------ 	 
 	// Configuration methods, called by the label and content provider...
@@ -524,11 +550,11 @@ public abstract class AbstractSystemViewAdapter
 	      // The following determine what properties will be displayed in the PropertySheet
 	      // resource type
 	      int idx = 0;
-	      propertyDescriptorArray[idx++] = createSimplePropertyDescriptor(P_TYPE, SystemPropertyResources.RESID_PROPERTY_TYPE_LABEL, SystemPropertyResources.RESID_PROPERTY_TYPE_TOOLTIP);
+	      propertyDescriptorArray[idx++] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_TYPE, SystemPropertyResources.RESID_PROPERTY_TYPE_LABEL, SystemPropertyResources.RESID_PROPERTY_TYPE_TOOLTIP);
 	      // resource name
-	      propertyDescriptorArray[idx++] = createSimplePropertyDescriptor(P_TEXT, SystemPropertyResources.RESID_PROPERTY_NAME_LABEL, SystemPropertyResources.RESID_PROPERTY_NAME_TOOLTIP);
+	      propertyDescriptorArray[idx++] = createSimplePropertyDescriptor(IBasicPropertyConstants.P_TEXT, SystemPropertyResources.RESID_PROPERTY_NAME_LABEL, SystemPropertyResources.RESID_PROPERTY_NAME_TOOLTIP);
 	      // number of children in tree currently
-	      propertyDescriptorArray[idx++] = createSimplePropertyDescriptor(P_NBRCHILDREN, SystemViewResources.RESID_PROPERTY_NBRCHILDREN_LABEL, SystemViewResources.RESID_PROPERTY_NBRCHILDREN_TOOLTIP);
+	      propertyDescriptorArray[idx++] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_NBRCHILDREN, SystemViewResources.RESID_PROPERTY_NBRCHILDREN_LABEL, SystemViewResources.RESID_PROPERTY_NBRCHILDREN_TOOLTIP);
 
 		}
 		//System.out.println("In getDefaultDescriptors() in AbstractSystemViewAdapter");
@@ -698,12 +724,12 @@ public abstract class AbstractSystemViewAdapter
 	public Object getPropertyValue(Object key) 
 	{
 		String name = (String)key;
-		if (name.equals(P_TEXT))
+		if (name.equals(IBasicPropertyConstants.P_TEXT))
 		  	//return getText(propertySourceInput);
 		  	return getName(propertySourceInput);
-		else if (name.equals(P_TYPE))
+		else if (name.equals(ISystemPropertyConstants.P_TYPE))
 		  	return getType(propertySourceInput);
-		else if (name.equals(P_NBRCHILDREN))
+		else if (name.equals(ISystemPropertyConstants.P_NBRCHILDREN))
 		{
 			ISystemTree tree = getSystemTree();
 			if (tree != null)
@@ -1458,6 +1484,50 @@ public abstract class AbstractSystemViewAdapter
 			}
 			return false;
 		}
+		
+		// Give the ISV's as the element owners/contibutors the chance to extend the standard RSE action
+		// filters for their specific needs. We do this by trying to determine the system type from the
+		// target object and try to adapt the system type to an IActionFilter.
+		//
+		// Note: Everything we do here is performance critical to the menu to show up. Therefor
+		//       we cache as much as possible here. The cache is static to all AbstractSystemViewAdapter
+		//       instances throughout the whole hierarchy.
+		IHost conn = null;
+		if (target instanceof IHost) {
+			conn = (IHost)target;
+		} else if (target instanceof ISubSystem) {
+			conn = ((ISubSystem)target).getHost();
+		} else if (target instanceof ISystemFilterPoolReference) {
+			ISystemFilterPoolReference modelObject = (ISystemFilterPoolReference)target;
+			if (modelObject.getProvider() != null) conn = ((ISubSystem)modelObject.getProvider()).getHost();
+		} else if (target instanceof ISystemFilterReference) {
+			ISystemFilterReference modelObject = (ISystemFilterReference)target;
+			if (modelObject.getProvider() != null) conn = ((ISubSystem)modelObject.getProvider()).getHost();
+		} else if (target instanceof ISystemFilterStringReference) {
+			ISystemFilterStringReference modelObject = (ISystemFilterStringReference)target;
+			if (modelObject.getProvider() != null) conn = ((ISubSystem)modelObject.getProvider()).getHost();
+		}
+		
+		if (conn != null) {
+			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(conn.getSystemType());
+			if (systemType != null) {
+				IActionFilter actionFilter = (IActionFilter)ACTION_FILTER_CACHE.get(systemType);
+				if (actionFilter == null) {
+					Object adapter = systemType.getAdapter(IActionFilter.class);
+					if (adapter instanceof IActionFilter && !adapter.equals(this)) {
+						// put the association in the cache
+						ACTION_FILTER_CACHE.put(systemType, adapter);
+						actionFilter = (IActionFilter)adapter;
+					} else if (!(adapter instanceof IActionFilter)) {
+						// put the association in the cache
+						ACTION_FILTER_CACHE.put(systemType, new NULL_ACTION_FILTER());
+					}
+				}
+				if (actionFilter instanceof NULL_ACTION_FILTER) actionFilter = null;
+				if (actionFilter != null) return actionFilter.testAttribute(target, name, value);
+			}
+		}
+		
 		return false;
 	}
 	

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Dynamic system type provider extension.
  ********************************************************************************/
 package org.eclipse.rse.core.internal;
 
@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.osgi.framework.Bundle;
@@ -29,7 +30,7 @@ import org.osgi.framework.Bundle;
 /**
  * Class representing a system type.
  */
-public class RSESystemType implements IRSESystemType {
+public class RSESystemType extends PlatformObject implements IRSESystemType {
 
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
@@ -150,12 +151,5 @@ public class RSESystemType implements IRSESystemType {
 	 */
 	public String[] getSubsystemConfigurationIds() {
 		return subsystemConfigurationIds;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 }

@@ -21,6 +21,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
@@ -29,6 +30,8 @@ import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.model.RSEModelResources;
+import org.eclipse.rse.model.Host;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
 
 
 /**
@@ -205,7 +208,19 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         try
         {
           ISystemProfile profile = getSystemProfile();
-          conn = new Host(profile);
+          
+          // delegate the creation of the host object instance to the system type provider!!!
+          IRSESystemType systemTypeObject = RSECorePlugin.getDefault().getRegistry().getSystemType(systemType);
+          if (systemTypeObject != null) {
+          	Object adapter = systemTypeObject.getAdapter(IRSESystemType.class);
+          	if (adapter instanceof RSESystemTypeAdapter) {
+          		conn = ((RSESystemTypeAdapter)adapter).createNewHostInstance(profile);
+          	}
+          }
+          // Fallback to create host object instance here if failed by system type provider.
+          if (conn == null) conn = new Host(profile);
+          assert conn != null;
+          
           addHost(conn); // only record internally if saved successfully
           conn.setHostPool(this);          
           conn.setAliasName(aliasName);

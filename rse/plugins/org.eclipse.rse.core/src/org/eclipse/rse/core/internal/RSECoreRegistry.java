@@ -17,8 +17,10 @@ package org.eclipse.rse.core.internal;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -37,15 +39,16 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 	// the singleton instance
 	private static RSECoreRegistry instance = null;
 
-	// extension registry
-	private IExtensionRegistry registry;
-
 	// state variables
 	private boolean hasReadSystemTypes;
 
 	// model objects
 	private IRSESystemType[] systemTypes;
 
+	// Cache for accessed system type either by id or by name. Avoids to
+	// re-iterate over all registered ones each call again.
+	private final Map accessedSystemTypeCache = new HashMap();
+	
 	// constants
 	private static final String ELEMENT_SYTEM_TYPE = "systemType"; //$NON-NLS-1$
 
@@ -54,21 +57,13 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 	 */
 	private RSECoreRegistry() {
 		super();
-		init();
-	}
-
-	/**
-	 * Initializes the registry. This should only be called from the constructor.
-	 */
-	private void init() {
-		registry = Platform.getExtensionRegistry();
 	}
 
 	/**
 	 * Returns the singleton instance of the registry.
 	 * @return the singleton instance
 	 */
-	public static final RSECoreRegistry getDefault() {
+	public static final RSECoreRegistry getInstance() {
 
 		if (instance == null) {
 			instance = new RSECoreRegistry();
@@ -95,12 +90,18 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 	 */
 	public IRSESystemType getSystemTypeById(String systemTypeId) {
 		if (systemTypeId != null) {
-			IRSESystemType[] types = getSystemTypes();
-			for (int i = 0; i < types.length; i++) {
-				if (types[i].getId().equals(systemTypeId)) {
-					return types[i];
+			IRSESystemType systemType = (IRSESystemType)accessedSystemTypeCache.get(systemTypeId);
+			if (systemType == null) {
+				// We have to re-lookup the system type
+				IRSESystemType[] types = getSystemTypes();
+				for (int i = 0; i < types.length && systemType == null; i++) {
+					if (types[i].getId().equals(systemTypeId)) {
+						systemType = types[i];
+					}
 				}
+				if (systemType != null) accessedSystemTypeCache.put(systemTypeId, systemType);
 			}
+			return systemType;
 		}
 		return null;
 	}
@@ -109,28 +110,35 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 	 * @see org.eclipse.rse.core.IRSECoreRegistry#getSystemType(java.lang.String)
 	 */
 	public IRSESystemType getSystemType(String name) {
-		IRSESystemType[] types = getSystemTypes();
-
-		for (int i = 0; i < types.length; i++) {
-			IRSESystemType type = types[i];
-
-			if (type.getName().equals(name)) {
-				return type;
+		if (name != null) {
+			IRSESystemType systemType = (IRSESystemType)accessedSystemTypeCache.get(name);
+			if (systemType == null) {
+				// We have to re-lookup the system type
+				IRSESystemType[] types = getSystemTypes();
+				for (int i = 0; i < types.length && systemType == null; i++) {
+					if (types[i].getName().equals(name)) {
+						systemType = types[i];
+					}
+				}
+				if (systemType != null) accessedSystemTypeCache.put(name, systemType);
 			}
+			return systemType;
 		}
-
+		
 		return null;
 	}
 
 	/**
 	 * Reads system types from the extension point registry and returns the defined system types.
-	 * @return an array of system types that have been defined
+	 * 
+	 * @return An array of system types that have been defined.
 	 */
 	private IRSESystemType[] readSystemTypes() {
 		List types = new LinkedList();
 		List typeIds = new ArrayList();
+		accessedSystemTypeCache.clear();
 
-		IExtensionRegistry registry = getExtensionRegistry();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		
 		// First we take the direct system type contributions via extension point
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(PI_RSE_CORE, PI_SYSTEM_TYPES);
@@ -142,6 +150,10 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 				if (!typeIds.contains(type.getId())) {
 					types.add(type);
 					typeIds.add(type.getId());
+					
+					// Build up the cache directly for improving access performance.
+					accessedSystemTypeCache.put(type.getId(), type);
+					accessedSystemTypeCache.put(type.getName(), type);
 					
 					String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
 					message = MessageFormat.format(message, new Object[] { type.getLabel(), type.getId() });
@@ -170,6 +182,10 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 							types.add(type);
 							typeIds.add(type.getId());
 							
+							// Build up the cache directly for improving access performance.
+							accessedSystemTypeCache.put(type.getId(), type);
+							accessedSystemTypeCache.put(type.getName(), type);
+
 							String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
 							message = MessageFormat.format(message, new Object[] { type.getLabel(), type.getId() });
 							RSECorePlugin.getDefault().getLogger().logInfo(message);
@@ -188,13 +204,5 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 		}
 		
 		return (IRSESystemType[])types.toArray(new IRSESystemType[types.size()]);
-	}
-
-	/**
-	 * Returns the platform extension registry.
-	 * @return the platform extension registry
-	 */
-	private IExtensionRegistry getExtensionRegistry() {
-		return registry;
 	}
 }

@@ -1150,8 +1150,8 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		    {
 		        _shellPropertyDescriptors = new IPropertyDescriptor[2];
 		        
-		        _shellPropertyDescriptors[0] = createSimplePropertyDescriptor(P_SHELL_STATUS, SystemViewResources.RESID_PROPERTY_SHELL_STATUS_LABEL, SystemViewResources.RESID_PROPERTY_SHELL_STATUS_TOOLTIP);
-		        _shellPropertyDescriptors[1] = createSimplePropertyDescriptor(P_SHELL_CONTEXT, SystemViewResources.RESID_PROPERTY_SHELL_CONTEXT_LABEL, SystemViewResources.RESID_PROPERTY_SHELL_CONTEXT_TOOLTIP);
+		        _shellPropertyDescriptors[0] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SHELL_STATUS, SystemViewResources.RESID_PROPERTY_SHELL_STATUS_LABEL, SystemViewResources.RESID_PROPERTY_SHELL_STATUS_TOOLTIP);
+		        _shellPropertyDescriptors[1] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SHELL_CONTEXT, SystemViewResources.RESID_PROPERTY_SHELL_CONTEXT_LABEL, SystemViewResources.RESID_PROPERTY_SHELL_CONTEXT_TOOLTIP);
 		    }
 		    return _shellPropertyDescriptors;
 		}

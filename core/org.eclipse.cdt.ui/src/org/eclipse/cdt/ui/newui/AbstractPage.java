@@ -395,14 +395,31 @@ implements
 	 */
 	public boolean performOk() {
 		if (doneOK || noContentOnPage || !displayedConfig) return true;
-		forEach(ICPropertyTab.OK, null);
-		doneOK = true; // further pages need not to do anything
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				forEach(ICPropertyTab.OK, null);
+				doneOK = true; // further pages need not to do anything
+				try {
+//					CoreModel.getDefault().setProjectDescription(getProject(), prjd);
+					CoreModel.getDefault().setProjectDescription(getProject(), prjd, true, monitor);
+				} catch (CoreException e) { }
+				updateViews(internalElement);
+			}
+		};
+		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
 		try {
-			CoreModel.getDefault().setProjectDescription(getProject(), prjd);
-		} catch (CoreException e) { }
-		updateViews(internalElement);
+			new ProgressMonitorDialog(getShell()).run(false, true, op);
+		} catch (InvocationTargetException e) {
+			Throwable e1 = e.getTargetException();
+			CUIPlugin.errorDialog(getShell(), 
+					NewUIMessages.getResourceString("AbstractPage.8"),  //$NON-NLS-1$
+					NewUIMessages.getResourceString("AbstractPage.9"), e1, true); //$NON-NLS-1$
+			return false;
+		} catch (InterruptedException e) {}
 		return true;
 	}
+	
+	
 	
     /**
      * Apply changes for all tabs but for given page & current cfg only.

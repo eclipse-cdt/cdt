@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -125,6 +126,15 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			public void dispose() {}
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		});
+		tv.setLabelProvider(new LabelProvider() {
+			public String getText(Object element) {
+				String txt = (element != null) ? element.toString() : EMPTY_STR;
+				if (element instanceof BinaryParserConfiguration)
+					txt = ((BinaryParserConfiguration)element).getName();
+				return txt;
+			}
+		});
+
 		tv.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				saveChecked();

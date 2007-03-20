@@ -134,6 +134,7 @@
 			<topic label="org.eclipse.rse.ui.open" href="reference/api/org/eclipse/rse/ui/open/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.operations" href="reference/api/org/eclipse/rse/ui/operations/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.propertypages" href="reference/api/org/eclipse/rse/ui/propertypages/package-summary.html"/>
+			<topic label="org.eclipse.rse.ui.subsystems" href="reference/api/org/eclipse/rse/ui/subsystems/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.validators" href="reference/api/org/eclipse/rse/ui/validators/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.view" href="reference/api/org/eclipse/rse/ui/view/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.widgets" href="reference/api/org/eclipse/rse/ui/widgets/package-summary.html"/>

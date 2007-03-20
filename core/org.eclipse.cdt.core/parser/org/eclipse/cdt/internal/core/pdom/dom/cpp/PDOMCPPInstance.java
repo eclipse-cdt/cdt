@@ -47,7 +47,8 @@ abstract class PDOMCPPInstance extends PDOMCPPSpecialization implements
 		IType[] args = inst.getArguments();
 		for (int i = 0; i < args.length; i++) {
 			PDOMNode typeNode = getLinkageImpl().addType(this, args[i]);
-			list.addMember(typeNode);
+			if (typeNode != null)
+				list.addMember(typeNode);
 		}
 	}
 

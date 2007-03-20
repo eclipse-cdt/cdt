@@ -56,9 +56,11 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		if (argMap != null) {
 			for (int i = 0; i < argMap.size(); i++) {
 				PDOMNode paramNode = getLinkageImpl().addType(this, (IType) argMap.keyAt(i));
-				paramList.addMember(paramNode);
 				PDOMNode argNode = getLinkageImpl().addType(this, (IType) argMap.getAt(i));
-				argList.addMember(argNode);
+				if (paramNode != null && argNode != null) {
+					paramList.addMember(paramNode);
+					argList.addMember(argNode);
+				}
 			}
 		}
 		try {

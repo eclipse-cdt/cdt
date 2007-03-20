@@ -110,7 +110,8 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 	public void addArgument(IType type) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
 		PDOMNode typeNode = getLinkageImpl().addType(this, type);
-		list.addMember(typeNode);
+		if (typeNode != null)
+			list.addMember(typeNode);
 	}
 	
 	private static class TemplateArgumentCollector implements IPDOMVisitor {

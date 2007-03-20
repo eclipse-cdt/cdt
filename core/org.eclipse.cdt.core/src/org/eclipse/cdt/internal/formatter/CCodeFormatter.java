@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.text.edits.TextEdit;
 
 public class CCodeFormatter extends CodeFormatter {
@@ -147,6 +148,10 @@ public class CCodeFormatter extends CodeFormatter {
 				}
 				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, this.options, offset, length);
 				edit= codeFormatter.format(source, ast);
+				IStatus status= codeFormatter.getStatus();
+				if (!status.isOK()) {
+					CCorePlugin.log(status);
+				}
 			} finally {
 				index.releaseReadLock();
 			}

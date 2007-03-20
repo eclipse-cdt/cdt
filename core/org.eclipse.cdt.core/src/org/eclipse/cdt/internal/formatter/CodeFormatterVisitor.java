@@ -237,12 +237,16 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		if (DEBUG){
 			System.out.println("Formatting time: " + (System.currentTimeMillis() - startTime));  //$NON-NLS-1$
 		}
-		if (!fStatus.isOK()) {
-			CCorePlugin.log(fStatus);
-		}
 		return scribe.getRootEdit();
 	}
 
+	/**
+	 * @return the status collected during formatting
+	 */
+	IStatus getStatus() {
+		return fStatus;
+	}
+	
 	private final TextEdit failedToFormat(RuntimeException e) {
 		if (DEBUG) {
 			System.out.println("COULD NOT FORMAT: " + e.getMessage()); //$NON-NLS-1$

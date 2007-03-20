@@ -43,13 +43,15 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 public class IndexLocationTest extends BaseTestCase {
-	ICProject cproject, emptyCProject;
-	File movedLocation;
-	File externalHeader;
-	IFolder linkedFolder;
+	protected ICProject cproject, emptyCProject;
+	protected File movedLocation;
+	protected File externalHeader;
+	protected IFolder linkedFolder;
+	protected boolean isWin;
 	
 	public static Test suite() {
 		return suite(IndexLocationTest.class);
@@ -75,6 +77,8 @@ public class IndexLocationTest extends BaseTestCase {
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);		
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, new NullProgressMonitor()));
 
+		isWin= Platform.getOS().equals(Platform.OS_WIN32);
+			
 		super.setUp();
 	}
 
@@ -180,12 +184,20 @@ public class IndexLocationTest extends BaseTestCase {
 	}
 	
 	public void testURLC_RCRLC_Interaction1() throws Exception {
-		String[] paths = new String[] {
+		String[] winPaths = new String[] {
 				"c:/foo/bar/baz.cpp",
 				"c:\\foo\\bar\\a b c\\baz.cpp",
 				"c:/foo/bar/a b/baz.cpp",
 				"c:\\foo\\bar\\a b c\\a b/baz.cpp"
 			};
+		String[] unxPaths = new String[] {
+				"/home/cdt/foo/bar/baz.cpp",
+				"/home/cdt/foo/bar/a b c/baz.cpp",
+				"/home/cdt/foo/bar/a b/baz.cpp",
+				"/home/cdt/foo/bar/a b c/a b/baz.cpp"
+			};
+		URI base = URIUtil.toURI(isWin ? "c:/foo/bar/" : "/home/cdt/foo/bar/");
+		String[] paths= isWin ? winPaths : unxPaths;
 		String[] expectedFullPaths = new String[] {
 				"/"+cproject.getProject().getName()+"/baz.cpp",
 				"/"+cproject.getProject().getName()+"/a b c/baz.cpp",
@@ -195,7 +207,6 @@ public class IndexLocationTest extends BaseTestCase {
 		IContainer root= ResourcesPlugin.getWorkspace().getRoot();
 		// loc -uri-> raw -project-> loc
 		for(int i=0; i<paths.length; i++) {
-			URI base = URIUtil.toURI("c:/foo/bar/");
 			IIndexFileLocation ifl1 = IndexLocationFactory.getExternalIFL(paths[i]);
 			URIRelativeLocationConverter urlc = new URIRelativeLocationConverter(base);
 			String r1 = urlc.toInternalFormat(ifl1);
@@ -212,11 +223,18 @@ public class IndexLocationTest extends BaseTestCase {
 	}
 	
 	public void testURLC_RCRLC_Interaction2() throws Exception {
-		String[] paths = new String[] {
+		String[] winPaths = new String[] {
 				"a b c/d/e f/g.h",
 				"a \\b /c.d",
 				"/a b c/d-e/f.g"
 			};
+		String[] unxPaths = new String[] {
+				"a b c/d/e f/g.h",
+				"a /b /c.d",
+				"/a b c/d-e/f.g"
+			};
+		String[] paths= isWin ? winPaths : unxPaths;
+		String basePath = isWin ? "c:/foo/bar/" : "/home/cdt/foo/bar/";
 		String[] expectedFullPaths = new String[] {
 				"/"+cproject.getProject().getName()+"/a b c/d/e f/g.h",
 				"/"+cproject.getProject().getName()+"/a /b /c.d",
@@ -229,23 +247,30 @@ public class IndexLocationTest extends BaseTestCase {
 			ResourceContainerRelativeLocationConverter prlc= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 			String r1= prlc.toInternalFormat(ifl1);
 			assertNotNull(r1);
-			URI base = URIUtil.toURI("c:/foo/bar/");
+			URI base = URIUtil.toURI(basePath);
 			URIRelativeLocationConverter c1 = new URIRelativeLocationConverter(base);
 			IIndexFileLocation ifl2= c1.fromInternalFormat(r1);
 			assertNotNull(ifl2);
 			assertEquals(expectedFullPaths[i], ifl1.getFullPath());
 			assertNull(ifl2.getFullPath());
 			assertEquals(cproject.getProject().getFile(paths[i]).getLocationURI(), ifl1.getURI());
-			assertEquals(URIUtil.toURI("c:/foo/bar/"+paths[i]).normalize(), ifl2.getURI());
+			assertEquals(URIUtil.toURI(basePath+paths[i]).normalize(), ifl2.getURI());
 		}
 	}
 	
 	public void testURLC_RCRLC_Interaction3() throws Exception {
-		String[] paths = new String[] {
+		String[] winPaths = new String[] {
 				"a b c/d/e f/g.h",
 				"a \\b /c.d",
 				"/a b c/d-e/f.g"
 			};
+		String[] unxPaths = new String[] {
+				"a b c/d/e f/g.h",
+				"a /b /c.d",
+				"/a b c/d-e/f.g"
+			};
+		String[] paths= isWin ? winPaths : unxPaths;
+		String basePath = isWin ? "c:/foo/bar/" : "/home/cdt/foo/bar/";
 		String[] expectedFullPaths = new String[] {
 				linkedFolder.getFullPath()+"/a b c/d/e f/g.h",
 				linkedFolder.getFullPath()+"/a /b /c.d",
@@ -258,14 +283,14 @@ public class IndexLocationTest extends BaseTestCase {
 			ResourceContainerRelativeLocationConverter prlc= new ResourceContainerRelativeLocationConverter(linkedFolder);
 			String r1= prlc.toInternalFormat(ifl1);
 			assertNotNull(r1);
-			URI base = URIUtil.toURI("c:/foo/bar/");
+			URI base = URIUtil.toURI(basePath);
 			URIRelativeLocationConverter c1 = new URIRelativeLocationConverter(base);
 			IIndexFileLocation ifl2= c1.fromInternalFormat(r1);
 			assertNotNull(ifl2);
 			assertEquals(expectedFullPaths[i], ifl1.getFullPath());
 			assertNull(ifl2.getFullPath());
 			assertEquals(linkedFolder.getFile(paths[i]).getLocationURI(), ifl1.getURI());
-			assertEquals(URIUtil.toURI("c:/foo/bar/"+paths[i]).normalize(), ifl2.getURI());
+			assertEquals(URIUtil.toURI(basePath+paths[i]).normalize(), ifl2.getURI());
 		}
 	}
 }

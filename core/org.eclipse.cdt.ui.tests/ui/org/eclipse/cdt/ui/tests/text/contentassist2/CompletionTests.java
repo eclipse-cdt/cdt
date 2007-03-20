@@ -128,8 +128,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}
 
-	protected void assertCompletionResults(int offset, String[] expected, boolean compareIdString) throws Exception {
-		assertContentAssistResults(offset, expected, true, compareIdString);
+	protected void assertCompletionResults(int offset, String[] expected, int compareType) throws Exception {
+		assertContentAssistResults(offset, expected, true, compareType);
 	}
 	
 	//void gfunc() {C1 v; v.m/*cursor*/
@@ -139,7 +139,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void gfunc() {C1 v; v.fMySelf.m/*cursor*/
@@ -149,7 +150,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void gfunc() {C1 v; v.m12().m/*cursor*/
@@ -159,7 +161,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void gfunc() {gfC1().m/*cursor*/
@@ -169,7 +172,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void C1::self() {m/*cursor*/
@@ -177,7 +181,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)", "m1private(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void C1::self() {this->m/*cursor*/
@@ -185,7 +190,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)", "m1private(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void gfunc() {try{int bla;}catch(C1 v) {v.fMySelf.m/*cursor*/
@@ -195,7 +201,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void gfunc() {try{int bla;}catch(C2 c){} catch(C1 v) {v.fMySelf.m/*cursor*/
@@ -205,7 +212,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {gC/*cursor*/
@@ -213,7 +221,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"gC1", "gC2"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void C1::f() {gC/*cursor*/
@@ -221,7 +230,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"gC1", "gC2"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C2* cLocal1; while(true) {C1* cLocal2; cL/*cursor*/
@@ -229,7 +239,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"cLocal1", "cLocal2"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void C2::f() {C2* cLocal1; while(true) {C1* cLocal2; cL/*cursor*/
@@ -237,7 +248,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"cLocal1", "cLocal2"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C2* cLocal1; cLocal1.f/*cursor*/
@@ -245,7 +257,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"fMySelf"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void C2::f() {while(true) {f/*cursor*/
@@ -253,7 +266,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"fMySelf"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {gf/*cursor*/
@@ -261,7 +275,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"gfC1(void)", "gfC2(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void C3::f() {gf/*cursor*/
@@ -269,7 +284,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"gfC1(void)", "gfC2(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C1* l1; l1.m/*cursor*/
@@ -279,7 +295,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void C3::f() {m/*cursor*/
@@ -289,7 +306,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C/*cursor*/
@@ -297,7 +315,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"C1", "C2", "C3"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void C2::f() {T/*cursor*/
@@ -305,7 +324,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"T1", "T2", "T3", "TClass"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected, 
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//namespace ns {void nsfunc(){C/*cursor*/
@@ -313,7 +333,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"C1", "C2", "C3", "CNS"	
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	
 	//namespace ns {void gfunc(){::C/*cursor*/
@@ -321,7 +342,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"C1", "C2", "C3"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	
 	//void f() {e/*cursor*/
@@ -329,7 +351,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"e11", "e12", "E1"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected, 
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void C3::f() {e/*cursor*/
@@ -337,7 +360,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"e11", "e12", "e21", "e22", "E1", "E2"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected, 
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C3* l1; l1.C/*cursor*/
@@ -346,7 +370,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"C3", "C2", "C1"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C2* l1; l1.C/*cursor*/
@@ -355,7 +380,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"C2", "C1"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C3* l1; l1.C3::fMySelf.iam/*cursor*/
@@ -364,7 +390,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam3(void)", "iam2(void)", "iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C3* l1; l1.C2::fMySelf.iam/*cursor*/
@@ -373,7 +400,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam2(void)", "iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C3* l1; l1.C1::fMySelf.iam/*cursor*/
@@ -381,7 +409,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C3* l1; l1.T3::fMySelf.iam/*cursor*/
@@ -390,7 +419,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam3(void)", "iam2(void)", "iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C3* l1; l1.T2::fMySelf.iam/*cursor*/
@@ -399,7 +429,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam2(void)", "iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C3* l1; l1.T1::fMySelf.iam/*cursor*/
@@ -407,7 +438,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C1().iam/*cursor*/
@@ -415,7 +447,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C1 c; (&c)->iam/*cursor*/
@@ -423,7 +456,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C1* c; (*c).iam/*cursor*/
@@ -431,7 +465,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C1** c; (**c).iam/*cursor*/
@@ -439,14 +474,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void f() {C1** c; (*c)->iam/*cursor*/
 	public void testDereferencingOperator3() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C1* c; c[0].iam/*cursor*/
@@ -454,28 +491,32 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void f() {C1** c; c[0][1].iam/*cursor*/
 	public void testArrayAccessOperator2() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void f() {C1** c; c[0]->iam/*cursor*/
 	public void testArrayAccessOperator3() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void f() {C1* c; (&c[0])->iam/*cursor*/
 	public void testArrayAccessOperator4() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {void* c; ((C1*)c)->iam/*cursor*/
@@ -483,14 +524,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void g(int a) {}; void f() {void* c; g(((C1*)c)->iam/*cursor*/
 	public void testCasts2() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {C1* c; c++->iam/*cursor*/
@@ -498,35 +541,40 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void f() {C1* c; (*++c).iam/*cursor*/
 	public void testPointerArithmetic2() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void f() {C1* c; c--->iam/*cursor*/
 	public void testPointerArithmetic3() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void f() {C1 c; (&c+1)->iam/*cursor*/
 	public void testPointerArithmetic4() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void f() {C1 c; (&c-1)->iam/*cursor*/
 	public void testPointerArithmetic5() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//void f() {int localVar=0; if (*cond && somefunc(&local/*cursor*/
@@ -534,7 +582,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"localVar"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//int a[] = {1,2}; void f(int _0306_b) {_0306_b/*cursor*/
@@ -542,14 +591,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"_0306_b"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//int a[] = {1,2}; void f(int b) {int _0306_b[] = {2,3}; _0306_b/*cursor*/
 	public void testCuttingInput2() throws Exception {
 		final String[] expected= {
 				"_0306_b"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//enum EnumType function() {int _031209_v; _031209/*cursor*/
@@ -557,7 +608,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"_031209_v"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
 	//namespace ns {void x() {NSCO/*cursor*/
@@ -565,14 +617,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"NSCONST"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	//void ns::CNS::mcns(){NSCO/*cursor*/
 	public void testAccessToNamespaceFromClassMember2() throws Exception {
 		final String[] expected= {
 				"NSCONST"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	
 	//#i/*cursor*/
@@ -580,7 +634,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"#if", "#ifdef", "#ifndef", "#include"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	
 	//void gfunc(){TClass<int> t(0); t./*cursor*/
@@ -589,7 +644,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"add(T)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	
 	//void gfunc(){C3 c3; c3.t/*cursor*/
@@ -599,7 +655,8 @@ public class CompletionTests extends AbstractContentAssistTest {
 				"tConvert(void)"
 //				"tConvert<T>(void)"
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	
 	//using namespace ns;void gfunc(){NSC/*cursor*/
@@ -607,6 +664,25 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"NSCONST"	
 		};
-		assertCompletionResults(fCursorOffset, expected, true);
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
+	}
+	
+	//void gfunc(){n/*cursor*/
+	public void testAutoColons() throws Exception {
+		final String[] expected= {
+				"ns::"	
+		};
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	//using namespace /*cursor*/
+	public void testAutoColons2() throws Exception {
+		final String[] expected= {
+				"ns"	
+		};
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
 }

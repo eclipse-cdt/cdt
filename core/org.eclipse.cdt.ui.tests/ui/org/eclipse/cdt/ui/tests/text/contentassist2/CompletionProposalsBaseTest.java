@@ -90,13 +90,13 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 		return bodyFile;
 	}
 
-	protected void assertCompletionResults(int offset, String[] expected, boolean compareIdString) throws Exception {
-		assertContentAssistResults(offset, expected, true, compareIdString);
+	protected void assertCompletionResults(int offset, String[] expected, int compareType) throws Exception {
+		assertContentAssistResults(offset, expected, true, compareType);
 	}
 	
 	public void testCompletionProposals() throws Exception {
 		String[] expected = getExpectedResultsValues();
-		assertCompletionResults(getCompletionPosition(), expected, false);
-
+		assertCompletionResults(getCompletionPosition(), expected,
+				AbstractContentAssistTest.COMPARE_DISP_STRINGS);
 	}
 }

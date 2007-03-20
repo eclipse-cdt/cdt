@@ -39,10 +39,15 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
+	public static final int COMPARE_ID_STRINGS = 0;
+	public static final int COMPARE_DISP_STRINGS = 1;
+	public static final int COMPARE_REP_STRINGS = 2;
+	
 	private ICProject fCProject;
 	protected IFile fCFile;
 	private ITextEditor fEditor;
@@ -86,7 +91,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		super.tearDown();
 	}
 
-	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion, boolean compareIdString) throws Exception {
+	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion, int compareType) throws Exception {
 
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("\n\n\n\n\nTesting "+this.getClass().getName());
@@ -105,7 +110,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		assertTrue(results != null);
 
 		results= filterResults(results);
-		String[] resultStrings= toStringArray(results, compareIdString);
+		String[] resultStrings= toStringArray(results, compareType);
 		Arrays.sort(expected);
 		Arrays.sort(resultStrings);
 
@@ -170,14 +175,18 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return filtered.toArray();
 	}
 	
-	private String[] toStringArray(Object[] results, boolean useIdString) {
+	private String[] toStringArray(Object[] results, int compareType) {
 		String[] strings= new String[results.length];
 		for(int i=0; i< results.length; i++){
 			Object result = results[i];
-			if (result instanceof ICCompletionProposal && useIdString) {
-				strings[i]= ((ICCompletionProposal)result).getIdString();
-			} else if (result instanceof ICompletionProposal) {
-				strings[i]= ((ICompletionProposal)result).getDisplayString();
+			if (result instanceof ICompletionProposal) {
+				if (compareType == COMPARE_ID_STRINGS) {
+					strings[i]= ((CCompletionProposal)result).getIdString();
+				} else if (compareType == COMPARE_DISP_STRINGS) {
+					strings[i]= ((CCompletionProposal)result).getDisplayString();
+				} else {
+					strings[i]= ((CCompletionProposal)result).getReplacementString();
+				}
 			} else {
 				strings[i]= ((IContextInformation)result).getContextDisplayString();
 			}

@@ -40,6 +40,9 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -200,12 +203,16 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		if (!isAnonymousBinding(binding)) {
 			if (binding instanceof ICPPClassType) {
 				handleClass((ICPPClassType) binding, cContext, proposals);
-			} else if (binding instanceof IFunction)  {
+			} else if (binding instanceof IFunction) {
 				handleFunction((IFunction)binding, cContext, proposals);
-			} else if (binding instanceof IVariable)  {
-				handleVariable((IVariable) binding, cContext, proposals);
 			} else if (!cContext.isContextInformationStyle()) {
-				proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), cContext));
+				if (binding instanceof IVariable) {
+					handleVariable((IVariable) binding, cContext, proposals);
+				} else if (binding instanceof ICPPNamespace) {
+					handleNamespace((ICPPNamespace) binding, astContext, cContext, proposals);
+				} else {
+					proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), cContext));
+				}	
 			}
 		}
 	}
@@ -314,8 +321,6 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	}
 	
 	private void handleVariable(IVariable variable, CContentAssistInvocationContext context, List proposals) {
-		if (context.isContextInformationStyle()) return;
-		
 		StringBuffer repStringBuff = new StringBuffer();
 		repStringBuff.append(variable.getName());
 		
@@ -342,6 +347,28 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		Image image = getImage(variable);
 		CCompletionProposal proposal = createProposal(repString, dispString, idString, image, context);
 		proposals.add(proposal);
+	}
+	
+	private void handleNamespace(ICPPNamespace namespace,
+			IASTCompletionContext astContext,
+			CContentAssistInvocationContext cContext, List proposals) {
+		if (astContext instanceof ICPPASTQualifiedName) {
+			IASTCompletionContext parent = ((ICPPASTQualifiedName) astContext)
+					.getCompletionContext();
+			handleNamespace(namespace, parent, cContext, proposals);
+			return;
+		}
+		
+		StringBuffer repStringBuff = new StringBuffer();
+		repStringBuff.append(namespace.getName());
+		
+		if (!(astContext instanceof ICPPASTUsingDeclaration)
+				&& !(astContext instanceof ICPPASTUsingDirective)) {
+			repStringBuff.append("::"); //$NON-NLS-1$
+		}
+		
+		String repString = repStringBuff.toString();
+		proposals.add(createProposal(repString, namespace.getName(), getImage(namespace), cContext));
 	}
 	
 	private CCompletionProposal createProposal(String repString, String dispString, Image image, CContentAssistInvocationContext context) {

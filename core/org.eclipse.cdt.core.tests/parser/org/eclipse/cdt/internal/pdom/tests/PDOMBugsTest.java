@@ -84,6 +84,9 @@ public class PDOMBugsTest extends BaseTestCase {
 	}
 	
 	public void testProjectPDOMPropertiesOnExport() throws Exception {
+		// this test is currently failing on the cdt test build machine, but
+		// not on my local linux or windows boxes.
+		
 		File tmp= new File(System.getProperty("java.io.tmpdir")+"/temp"+System.currentTimeMillis()+".pdom");
 		IIndexLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tmp, cvr);
@@ -92,21 +95,21 @@ public class PDOMBugsTest extends BaseTestCase {
 		pdom.acquireReadLock();
 		try {
 			String id= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-			assertNotNull(id);
+			assertNotNull("Exported pdom ID is null", id);
 			
 			String id2= ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-			assertNotNull(id2);
-			assertFalse(id2.equals(id));
+			assertNotNull("Project pdom ID is null", id2);
+			assertFalse("Project pdom ID equals export PDOM id", id2.equals(id));
 			
 			CCoreInternals.getPDOMManager().reindex(cproject);
 			
 			String id3= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-			assertNotNull(id3);
-			assertEquals(id,id3);
+			assertNotNull("Reindexed project pdom ID is null", id3);
+			assertEquals("Reindexex project pdom ID equals exported pdom ID", id, id3);
 			
 			String id4= ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-			assertNotNull(id4);
-			assertFalse(id4.equals(id));
+			assertNotNull("Exported pdom ID is null after project reindex", id4);
+			assertFalse("Exported pdom ID equals project pdom ID after reindex", id4.equals(id));
 		} finally {
 			pdom.releaseReadLock();
 		}

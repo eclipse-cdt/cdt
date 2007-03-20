@@ -137,6 +137,7 @@ public class IBViewPart extends ViewPart
 	private Action fHistoryAction;
 	private IContextActivation fContextActivation;
 	private WorkingSetFilterUI fWorkingSetFilterUI;
+	private IBSetInputJob fSetInputJob;
 
     
     public void setFocus() {
@@ -152,6 +153,10 @@ public class IBViewPart extends ViewPart
     }
     
     public void setInput(final ITranslationUnit input) {
+    	if (fPagebook.isDisposed()) {
+    		return;
+    	}
+    	fSetInputJob.cancel();
     	if (input == null) {
     		setMessage(IBMessages.IBViewPart_instructionMessage);
     		fTreeViewer.setInput(null);
@@ -163,13 +168,8 @@ public class IBViewPart extends ViewPart
     	}
     	else {
     		setMessage(IBMessages.IBViewPart_waitingOnIndexerMessage);
-    		Display disp= Display.getCurrent();
-    		if (disp != null && !disp.isDisposed()) {
-    			disp.timerExec(500, new Runnable() {
-					public void run() {
-						setInput(input);
-					}});
-    		}
+    		fSetInputJob.setInput(input);
+    		fSetInputJob.schedule();
     	}
     }
 
@@ -204,6 +204,8 @@ public class IBViewPart extends ViewPart
 	}
 
 	public void createPartControl(Composite parent) {
+		fSetInputJob= new IBSetInputJob(this, Display.getCurrent());
+		
         fPagebook = new PageBook(parent, SWT.NULL);
         fPagebook.setLayoutData(new GridData(GridData.FILL_BOTH));
         createInfoPage();

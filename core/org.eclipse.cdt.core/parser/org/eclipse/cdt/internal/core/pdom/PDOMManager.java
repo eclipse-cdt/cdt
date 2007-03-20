@@ -697,18 +697,21 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	public boolean joinIndexer(final int waitMaxMillis, final IProgressMonitor monitor) {
 		assert monitor != null;
-		Thread th= new Thread() {
-			public void run() {
-				try {
-					Thread.sleep(waitMaxMillis);
-					monitor.setCanceled(true);
+		Thread th= null;
+		if (waitMaxMillis != FOREVER) {
+			th= new Thread() {
+				public void run() {
+					try {
+						Thread.sleep(waitMaxMillis);
+						monitor.setCanceled(true);
+					}
+					catch (InterruptedException e) {
+					}
 				}
-				catch (InterruptedException e) {
-				}
-			}
-		};
-		th.setDaemon(true);
-		th.start();
+			};
+			th.setDaemon(true);
+			th.start();
+		}
 		try {
 			try {
 				Job.getJobManager().join(this, monitor);
@@ -719,7 +722,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			return Job.getJobManager().find(this).length == 0;
 		}
 		finally {
-			th.interrupt();
+			if (th != null) {
+				th.interrupt();
+			}
 		}
 	}
 	

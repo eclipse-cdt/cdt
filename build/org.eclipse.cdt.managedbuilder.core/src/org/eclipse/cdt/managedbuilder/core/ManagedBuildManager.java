@@ -4141,7 +4141,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					if(des == null)
 						continue;
 					
-					ICConfigurationDescription refCfgDes = des.getConfigurationById(cfgId);
+					ICConfigurationDescription refCfgDes = cfgId.length() == 0 ? des.getActiveConfiguration() : des.getConfigurationById(cfgId);
 					if(refCfgDes == null)
 						continue;
 					

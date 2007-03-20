@@ -48,8 +48,9 @@ public class StdProjectTypeHandler extends CWizardHandler {
 	 */
 	public void createProject(IProject project, CfgHolder[] cfgs)  throws CoreException {
 		CoreModel coreModel = CoreModel.getDefault();
-		ICProjectDescription des = coreModel.getProjectDescription(project);
-		des = coreModel.createProjectDescription(project, true);
+//		ICProjectDescription des = coreModel.getProjectDescription(project);
+//		des = coreModel.createProjectDescription(project, true);
+		ICProjectDescription des = coreModel.createProjectDescription(project, false);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 		ManagedProject mProj = new ManagedProject(des);
 		info.setManagedProject(mProj);

@@ -33,6 +33,8 @@ public class CompletionTest_SingleName_Method_Prefix	  extends CompletionProposa
 			"anotherFunction(void) void",
 			"aClass",
 			"anotherClass",
+			"anotherClass(const anotherClass &)",
+			"anotherClass(void)",
 			"aNamespace",
 			"anEnumeration",
 			"aFirstEnum",
@@ -44,8 +46,6 @@ public class CompletionTest_SingleName_Method_Prefix	  extends CompletionProposa
 	
 	public CompletionTest_SingleName_Method_Prefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
-		setExpectFailure(109724);
 	}
 
 	public static Test suite() {

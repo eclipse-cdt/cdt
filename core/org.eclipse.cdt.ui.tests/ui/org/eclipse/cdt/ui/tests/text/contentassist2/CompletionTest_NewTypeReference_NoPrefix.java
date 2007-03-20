@@ -34,17 +34,14 @@ public class CompletionTest_NewTypeReference_NoPrefix  extends CompletionProposa
 			"xOtherClass",
 			"XStruct",
 			"aNamespace",
-			"xNamespace"
-			/* extra results:
-			anEnumeration
-			xEnumeration
-			*/
+			"xNamespace",
+			// enums may not be desired, but valid
+			"anEnumeration",
+			"xEnumeration"
 	};
 	
 	public CompletionTest_NewTypeReference_NoPrefix(String name) {
 		super(name);
-		// unknown problem
-		setExpectFailure(77777);
 	}
 
 	public static Test suite() {

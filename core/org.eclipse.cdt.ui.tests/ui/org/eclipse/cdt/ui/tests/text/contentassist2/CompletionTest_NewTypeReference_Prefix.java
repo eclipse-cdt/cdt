@@ -31,16 +31,13 @@ public class CompletionTest_NewTypeReference_Prefix  extends CompletionProposals
 			"aClass",
 			"anotherClass",
 			"aNamespace",
-			"AStruct"
-			// extra proposal:
-			// anEnumeration
-
+			"AStruct",
+			// enums may not be desired, but valid
+			"anEnumeration"
 	};
 	
 	public CompletionTest_NewTypeReference_Prefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
-		setExpectFailure(109724);
 	}
 
 	public static Test suite() {

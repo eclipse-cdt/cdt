@@ -35,5 +35,11 @@ public class BasicCredentialsProvider implements ICredentialsProvider {
 	public boolean supportsUserId() {
 		return false;
 	}
+	
+	public void acquireCredentials(boolean reacquire) {
+	}
+	
+	public void clearCredentials() {
+	}
 
 }

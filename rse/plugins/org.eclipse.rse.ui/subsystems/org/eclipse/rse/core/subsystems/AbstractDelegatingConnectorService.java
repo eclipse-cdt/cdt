@@ -63,11 +63,11 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
-	public void clearUserId() {
+	public void clearCredentials() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			conServ.clearUserId();
+			conServ.clearCredentials();
 		}
 	}
 
@@ -318,11 +318,11 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
-	public boolean isSuppressSignonPrompt() {
+	public boolean isSuppressed() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			return conServ.isSuppressSignonPrompt();
+			return conServ.isSuppressed();
 		}
 		return false;
 	}
@@ -336,12 +336,12 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
-	public void promptForPassword(boolean forcePrompt)
+	public void acquireCredentials(boolean forcePrompt)
 			throws InterruptedException {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			conServ.promptForPassword(forcePrompt);
+			conServ.acquireCredentials(forcePrompt);
 		}
 	}
 
@@ -446,11 +446,11 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
-	public void setSuppressSignonPrompt(boolean suppressSignonPrompt) {
+	public void setSuppressed(boolean suppressSignonPrompt) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			conServ.setSuppressSignonPrompt(suppressSignonPrompt);			
+			conServ.setSuppressed(suppressSignonPrompt);			
 		}
 	}
 

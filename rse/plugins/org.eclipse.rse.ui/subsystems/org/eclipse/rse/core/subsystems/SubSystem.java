@@ -448,7 +448,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      	  RSEPreferencesManager.clearUserId(previousUserIdKey);    	
     	IConnectorService system = getConnectorService();
     	if (system != null)
-    	  system.clearUserId();
+    	  system.clearCredentials();
     }
 
     /**
@@ -2394,7 +2394,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 //dwd			if (runnableContext instanceof ProgressMonitorDialog) {
 //dwd				((ProgressMonitorDialog) runnableContext).setCancelable(true);
 //dwd			}
-			getConnectorService().promptForPassword(forcePrompt); // prompt for userid and password    
+			getConnectorService().acquireCredentials(forcePrompt); // prompt for userid and password    
 			ConnectJob job = new ConnectJob(this);
 			scheduleJob(job, null);
 		}
@@ -2438,7 +2438,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	
     	try
     	{
-    	  getConnectorService().promptForPassword(force); // prompt for password
+    	  getConnectorService().acquireCredentials(force); // prompt for password
     	  doConnection = true;
     	  ok = true;
     	}

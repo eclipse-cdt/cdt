@@ -41,13 +41,14 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Prompt user for password.
- * This class is final due to the sensitive nature of the information being prompted for.
+ * This class is final due to the sensitive nature of the
+ * information being prompted for.
  */
 public final class SystemPasswordPromptDialog extends SystemPromptDialog implements ISystemPasswordPromptDialog {
 
-	// labels are not as big as text fields so we need to set the height for the system type 
-	// and hostname labels so they are equally spaced with the user ID and password entry fields
-//	private static final int LABEL_HEIGHT = 17;
+// labels are not as big as text fields so we need to set the height for the system type 
+// and hostname labels so they are equally spaced with the user ID and password entry fields
+// private static final int LABEL_HEIGHT = 17;
 
 	private Text textPassword;
 	private Text textUserId;
@@ -61,6 +62,8 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	private boolean forceToUpperCase;
 	private boolean userIdChanged = false;
 	private boolean validate = true;
+	private boolean requiresPassword;
+	private boolean requiresUserId;
 	private ISystemValidator userIdValidator;
 	private ISystemValidator passwordValidator;
 	private ICredentialsValidator signonValidator;
@@ -69,10 +72,18 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	/**
 	 * Constructor for SystemPasswordPromptDialog
 	 * @param shell The shell in which to base this dialog.
+	 * @param requiresUserId true if the userid field of the dialog must not be empty.
+	 * Used only if there is no validator specified for 
+	 * {@link #setUserIdValidator(ISystemValidator)}.
+	 * @param requiresPassword true if the password field of the dialog must not be empty.
+	 * Used only if there is no password validator specified using
+	 * {@link #setPasswordValidator(ISystemValidator)}. 
 	 */
-	public SystemPasswordPromptDialog(Shell shell) {
+	public SystemPasswordPromptDialog(Shell shell, boolean requiresUserId, boolean requiresPassword) {
 		super(shell, SystemResources.RESID_PASSWORD_TITLE);
 		setHelp(RSEUIPlugin.HELPPREFIX + "pwdp0000"); //$NON-NLS-1$
+		this.requiresPassword = requiresPassword;
+		this.requiresUserId = requiresUserId;
 	}
 
 	/**
@@ -341,7 +352,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		if (connectorService.supportsUserId() && validate) {
 			if (userIdValidator != null) {
 				m = userIdValidator.validate(userId);
-			} else if (connectorService.requiresUserId() && userId.length() == 0) {
+			} else if (requiresUserId && userId.length() == 0) {
 				m = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
 			}
 		}
@@ -366,7 +377,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		}
 		okButton.setEnabled(m == null);
 		if (savePasswordCB != null) {
-			savePasswordCB.setEnabled(!(connectorService.requiresPassword() && password.length() == 0));
+			savePasswordCB.setEnabled(!(requiresPassword && password.length() == 0));
 		}
 	}
 	
@@ -379,7 +390,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		if (connectorService.supportsPassword() && validate) {
 			if (passwordValidator != null) {
 				m = passwordValidator.validate(password);
-			} else if (connectorService.requiresPassword() && password.length() == 0) {
+			} else if (requiresPassword && password.length() == 0) {
 				m = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_EMPTY);
 			}
 		}

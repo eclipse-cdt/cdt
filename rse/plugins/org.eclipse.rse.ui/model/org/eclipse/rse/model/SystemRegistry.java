@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - patch for an NPE in getSubSystemConfigurations()
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
  * Uwe Stieber (Wind River) - bugfixing
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.model;
@@ -2538,7 +2539,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 						if (subsystems[idx].isConnected()) subsystems[idx].disconnect(); // MJB: added conditional for defect 45754
 						if (defaultUserIdChanged)
 						{
-							subsystems[idx].getConnectorService().clearUserId();
+							subsystems[idx].getConnectorService().clearCredentials();
 						}
 						subsystems[idx].getConnectorService().clearPassword(false);
 					}

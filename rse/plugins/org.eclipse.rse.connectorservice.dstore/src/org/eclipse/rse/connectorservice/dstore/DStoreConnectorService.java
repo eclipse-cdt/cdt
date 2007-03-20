@@ -952,7 +952,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 						{
 							try
 							{
-								promptForPassword(true);
+								acquireCredentials(true);
 							}
 							catch (InterruptedException e)
 							{
@@ -1064,7 +1064,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 					{
 						try
 						{
-							promptForPassword(true);
+							acquireCredentials(true);
 						}
 						catch (InterruptedException e)
 						{

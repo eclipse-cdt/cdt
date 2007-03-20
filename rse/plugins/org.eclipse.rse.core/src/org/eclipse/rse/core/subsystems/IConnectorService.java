@@ -166,6 +166,41 @@ public interface IConnectorService extends IRSEModelObject {
 	public void setIsUsingSSL(boolean flag);
 
 	/**
+	 * Reports if this connector service can use a user identifier.
+	 * Returns true in default implementation.
+	 * Typically used to indicate if a login dialog needs to be presented when connecting.
+	 * @return true if and only if the connector service can use a user id.
+	 */
+	public boolean supportsUserId();
+
+	/**
+	 * Determines if this connector service understand the concept of a
+	 * password.
+	 * The default implementation of this interface should return true.
+	 * @return true if the connector service can use a password, 
+	 * false if a password is irrelevant.
+	 */
+	public boolean supportsPassword();
+
+	/**
+	 * Reports if this connector service requires a user id.
+	 * Returns true in default implementation.
+	 * Typically used to indicate if a login dialog can allow an empty user id.
+	 * Must be ignored if supportsUserId() is false.
+	 * @return true or false to indicate if the connector service requires a user id.
+	 */
+	public boolean requiresUserId();
+
+	/**
+	 * Determines if a password is required for this connector service.
+	 * Must be ignored if {@link #supportsPassword()} returns false.
+	 * The default implementation of this interface should return true.
+	 * @return true if the connector service requires a password, 
+	 * false if a password may be empty.
+	 */
+	public boolean requiresPassword();
+
+	/**
 	 * @return the userId that will be used by this connector when
 	 * establishing its connection.
 	 */
@@ -179,19 +214,6 @@ public interface IConnectorService extends IRSEModelObject {
 	public void setUserId(String userId);
 
 	/**
-	 * Acquire the password for this connector service.
-	 * <p>
-	 * Implementations may retain a remembered password or
-	 * use this acquire the password using some implementation defined means.
-	 * <p>
-	 * Throws InterruptedException if acquisition of the 
-	 * password is canceled for some reason.
-	 * @param reacquire if true will force the connector service to discard
-	 * any remembered value and reacquire the password.
-	 */
-	public void promptForPassword(boolean reacquire) throws InterruptedException;
-
-	/**
 	 * Sets the password used by this connector service.
 	 * Can be used if the connector service acquires a password by some external
 	 * means.
@@ -200,13 +222,6 @@ public interface IConnectorService extends IRSEModelObject {
 	 * @param persist true if the password is to be persisted for later use.
 	 */
 	public void setPassword(String matchingUserId, String password, boolean persist);
-
-	/**
-	 * Clears the userId held by this service.
-	 * Should be called if there is a change to the user id for 
-	 * any using subsystem.
-	 */
-	public void clearUserId();
 
 	/**
 	 * Clear password held by this service and optionally 
@@ -238,6 +253,49 @@ public interface IConnectorService extends IRSEModelObject {
 	public boolean sharesCredentials();
 
 	/**
+	 * Clears the credentials held by this service.
+	 * Should be called if there is a change to any part of the credentials
+	 * expected by any using subsystem.
+	 */
+	public void clearCredentials();
+
+	/**
+	 * Acquire the credentials for this connector service.
+	 * Acquisition may be temporarily suppressed
+	 * by using the {@link #setSuppressed(boolean)}.
+	 * <p>
+	 * Implementations may retain a remembered credentials or
+	 * use this acquire the credentials using some implementation defined means.
+	 * <p>
+	 * Throws InterruptedException if acquisition of the 
+	 * credentials is canceled or is being suppressed.
+	 * @param refresh if true will force the connector service to discard
+	 * any remembered value and reacquire the credentials.
+	 */
+	public void acquireCredentials(boolean refresh) throws InterruptedException;
+
+	/**
+	 * @return true if the acquisition of credentials is being suppressed.
+	 */
+	public boolean isSuppressed();
+
+	/**
+	 * Suppresses the acquisition of a credentials by the connector service.
+	 * Causes {@link #acquireCredentials(boolean)} to immediately
+	 * throw an InterruptedException.
+	 * <p>
+	 * The intent is to allow tool writers to prevent multiple 
+	 * attempts to acquire credentials during a set period of time.
+	 * <b>It is the callers responsibility to set this value 
+	 * back to false when the tool no longer needs to suppress
+	 * acquisition credentials.</b>
+	 * 
+	 * @param suppress <code>true</code> if acquisition is to be suppressed.
+	 * <code>false</code> if acquisition is to be allowed.
+	 */
+	public void setSuppressed(boolean suppress);
+
+	/**
 	 * Register a communications listener. These listeners will be informed
 	 * of connect and disconnect events.
 	 * @param listener a listener for the communications event.
@@ -249,27 +307,6 @@ public interface IConnectorService extends IRSEModelObject {
 	 * @param listener a listener for the communications event.
 	 */
 	public void removeCommunicationsListener(ICommunicationsListener listener);
-
-	/**
-	 * @return true if the password acquisition is to be suppressed.
-	 */
-	public boolean isSuppressSignonPrompt();
-
-	/**
-	 * Suppresses the acquisition of a password by the connector service.
-	 * Causes {@link #promptForPassword(boolean)} to immediately
-	 * throw an InterruptedException.
-	 * <p>
-	 * The intent is to allow tool writers to prevent multiple 
-	 * attempts to acquire a password during a set period of time.
-	 * <b>It is the callers responsibility to set this value 
-	 * back to false when the tool no longer needs to suppress
-	 * acquisition of the password.</b>
-	 * 
-	 * @param suppressSignonPrompt <code>true</code> if acquisition is to be suppressed.
-	 * <code>false</code> if acquisition is to be allowed.
-	 */
-	public void setSuppressSignonPrompt(boolean suppressSignonPrompt);
 
 	/**
 	 * This methods returns the enablement state of a server launch type.
@@ -325,40 +362,5 @@ public interface IConnectorService extends IRSEModelObject {
 	 * is true.
 	 */
 	IServerLauncher getRemoteServerLauncher();
-
-	/**
-	 * Reports if this connector service can use a user identifier.
-	 * Returns true in default implementation.
-	 * Typically used to indicate if a login dialog needs to be presented when connecting.
-	 * @return true if and only if the connector service can use a user id.
-	 */
-	public boolean supportsUserId();
-
-	/**
-	 * Reports if this connector service requires a user id.
-	 * Returns true in default implementation.
-	 * Typically used to indicate if a login dialog can allow an empty user id.
-	 * Must be ignored if supportsUserId() is false.
-	 * @return true or false to indicate if the connector service requires a user id.
-	 */
-	public boolean requiresUserId();
-
-	/**
-	 * Determines if this connector service understand the concept of a
-	 * password.
-	 * The default implementation of this interface should return true.
-	 * @return true if the connector service can use a password, 
-	 * false if a password is irrelevant.
-	 */
-	public boolean supportsPassword();
-
-	/**
-	 * Determines if a password is required for this connector service.
-	 * Must be ignored if {@link #supportsPassword()} returns false.
-	 * The default implementation of this interface should return true.
-	 * @return true if the connector service requires a password, 
-	 * false if a password may be empty.
-	 */
-	public boolean requiresPassword();
 
 }

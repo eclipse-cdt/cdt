@@ -146,7 +146,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * the next call to getUserId() it is requeried from subsystem. 
 	 * Also clears the password.
 	 */
-	final public void clearUserId() {
+	final public void clearCredentials() {
 		_userId = null;
 		clearPassword(false);
 	}
@@ -157,7 +157,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * change his userId.  
 	 * 
 	 * @param onDisk if this is true, clear the password from the disk cache as well
-	 * @see #clearUserId()
+	 * @see #clearCredentials()
 	 */
 	final public void clearPassword(boolean onDisk) {
 		setPasswordInformation(null);
@@ -227,11 +227,11 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * @param forcePrompt if true then present the prompt even if the password was found and is valid.
 	 * @throws InterruptedException if user is prompted and user cancels that prompt or if isSuppressSignonPrompt is true.
 	 */
-	public void promptForPassword(boolean forcePrompt) throws InterruptedException {
+	public void acquireCredentials(boolean forcePrompt) throws InterruptedException {
 		// dy:  March 24, 2003:  check if prompting is temporarily suppressed by a tool
 		// vendor, this should only be suppressed if the user cancelled a previous signon
 		// dialog (or some other good reason)
-		if (isSuppressSignonPrompt()) {
+		if (isSuppressed()) {
 			throw new InterruptedException();
 		}
 	
@@ -462,7 +462,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 */
     protected final ISystemPasswordPromptDialog getPasswordPromptDialog(Shell shell)
     {
-    	  ISystemPasswordPromptDialog dlg = new SystemPasswordPromptDialog(shell);
+    	  ISystemPasswordPromptDialog dlg = new SystemPasswordPromptDialog(shell, requiresUserId(), requiresPassword());
     	  dlg.setForceToUpperCase(forcePasswordToUpperCase());
   	      dlg.setUserIdValidator(getUserIdValidator());
   	      dlg.setPasswordValidator(getPasswordValidator());
@@ -629,7 +629,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * 
 	 * @return boolean
 	 */
-	public boolean isSuppressSignonPrompt()
+	public boolean isSuppressed()
 	{
 		return _suppressSignonPrompt;
 	}
@@ -646,7 +646,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * 
 	 * @param suppressSignonPrompt
 	 */
-	public void setSuppressSignonPrompt(boolean suppressSignonPrompt)
+	public void setSuppressed(boolean suppressSignonPrompt)
 	{
 		_suppressSignonPrompt = suppressSignonPrompt;
 	}

@@ -19,4 +19,8 @@ public interface ICredentialsProvider {
 	
 	boolean requiresUserId();
 	
+	void acquireCredentials(boolean reacquire);
+	
+	void clearCredentials();
+	
 }

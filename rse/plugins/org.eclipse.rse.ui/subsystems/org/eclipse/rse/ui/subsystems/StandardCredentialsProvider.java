@@ -60,4 +60,12 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 		return connectorService.getHost();
 	}
 	
+	public void acquireCredentials(boolean reacquire) {
+		// TODO Auto-generated method stub
+	}
+	
+	public void clearCredentials() {
+		// TODO Auto-generated method stub
+	}
+	
 }

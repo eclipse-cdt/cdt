@@ -372,5 +372,5 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 		boolean result = cp.supportsUserId();
 		return result;
 	}
-	
+		
 }

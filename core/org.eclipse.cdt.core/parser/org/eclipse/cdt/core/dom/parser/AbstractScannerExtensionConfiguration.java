@@ -30,52 +30,52 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 public abstract class AbstractScannerExtensionConfiguration implements IScannerExtensionConfiguration {
 
 	/*
-	 * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration#getAdditionalKeywords()
-	 */
-	public CharArrayIntMap getAdditionalKeywords() {
-		return null;
-	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration#getAdditionalMacros()
-	 */
-	public CharArrayObjectMap getAdditionalMacros() {
-		return null;
-	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration#getAdditionalPreprocessorKeywords()
-	 */
-	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
-		return null;
-	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration#initializeMacroValuesTo1()
+	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#initializeMacroValuesTo1()
 	 */
 	public boolean initializeMacroValuesTo1() {
 		return false;
 	}
 
 	/*
-	 * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration#support$InIdentifiers()
+	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#support$InIdentifiers()
 	 */
 	public boolean support$InIdentifiers() {
 		return false;
 	}
 
 	/*
-	 * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration#supportAdditionalNumericLiteralSuffixes()
+	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#supportAdditionalNumericLiteralSuffixes()
 	 */
 	public char[] supportAdditionalNumericLiteralSuffixes() {
 		return null;
 	}
 
 	/*
-	 * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration#supportMinAndMaxOperators()
+	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#supportMinAndMaxOperators()
 	 */
 	public boolean supportMinAndMaxOperators() {
 		return false;
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#getAdditionalKeywords()
+	 */
+	public CharArrayIntMap getAdditionalKeywords() {
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#getAdditionalMacros()
+	 */
+	public CharArrayObjectMap getAdditionalMacros() {
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#getAdditionalPreprocessorKeywords()
+	 */
+	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
+		return null;
 	}
 
 	/**

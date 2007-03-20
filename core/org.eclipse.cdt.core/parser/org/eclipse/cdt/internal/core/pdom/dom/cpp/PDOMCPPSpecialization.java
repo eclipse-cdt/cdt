@@ -55,11 +55,18 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		ObjectMap argMap = ((ICPPSpecialization)spec).getArgumentMap();
 		if (argMap != null) {
 			for (int i = 0; i < argMap.size(); i++) {
-				PDOMNode paramNode = getLinkageImpl().addType(this, (IType) argMap.keyAt(i));
-				PDOMNode argNode = getLinkageImpl().addType(this, (IType) argMap.getAt(i));
-				if (paramNode != null && argNode != null) {
-					paramList.addMember(paramNode);
-					argList.addMember(argNode);
+				Object param = argMap.keyAt(i);
+				Object arg = argMap.getAt(i);
+				/* TODO: allow template non-type parameters once they have been
+				 * implemented in the PDOM
+				 */
+				if (param instanceof IType && arg instanceof IType) {
+					PDOMNode paramNode = getLinkageImpl().addType(this, (IType) param);
+					PDOMNode argNode = getLinkageImpl().addType(this, (IType) arg);
+					if (paramNode != null && argNode != null) {
+						paramList.addMember(paramNode);
+						argList.addMember(argNode);
+					}
 				}
 			}
 		}

@@ -82,6 +82,7 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 						else if (obs[i] instanceof ICProject) 
 							prj = ((ICProject)obs[i]).getProject();
 						if (prj != null) {
+							if (!CoreModel.getDefault().isNewStyleProject(prj))	continue;
 							ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
 							if (prjd == null) continue;
 							ICConfigurationDescription[] cfgds = prjd.getConfigurations();

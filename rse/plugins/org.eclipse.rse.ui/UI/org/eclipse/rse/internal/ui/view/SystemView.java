@@ -818,7 +818,56 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				((ISystemAction) getRenameAction()).setInputs(getShell(), this, selection);
 			}
 
-			// ADAPTER SPECIFIC ACTIONS   	      
+		// COMMON DELETE ACTION...
+			if (showDelete()) {
+				//menu.add(getDeleteAction());
+				menu.appendToGroup(ISystemContextMenuConstants.GROUP_REORGANIZE, getDeleteAction());
+				((ISystemAction) getDeleteAction()).setInputs(getShell(), this, selection);
+				menu.add(new Separator());
+			}
+			
+			// PROPERTIES ACTION...
+			// This is supplied by the system, so we pretty much get it for free. It finds the
+			// registered propertyPages extension points registered for the selected object's class type.
+			//propertyDialogAction.selectionChanged(selection);		  
+			if (showProperties()) {
+				PropertyDialogAction pdAction = getPropertyDialogAction();
+				if (pdAction.isApplicableForSelection()) menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
+			}
+			
+			// GO INTO ACTION...
+			// OPEN IN NEW WINDOW ACTION...
+			if (fromSystemViewPart) {
+				GoIntoAction goIntoAction = getGoIntoAction();
+				goIntoAction.setEnabled(selection.size() == 1);
+				menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
+
+				if (showOpenViewActions()) {
+					SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();
+					openToPerspectiveAction.setSelection(selection);
+					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), openToPerspectiveAction);
+				}
+
+				if (showGenericShowInTableAction()) {
+					SystemShowInTableAction showInTableAction = getShowInTableAction();
+					showInTableAction.setSelection(selection);
+					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInTableAction);
+
+					SystemShowInMonitorAction showInMonitorAction = getShowInMonitorAction();
+					showInMonitorAction.setSelection(selection);
+					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInMonitorAction);
+
+				}
+			}
+			
+			// GO TO CASCADING ACTIONS...
+			if (fromSystemViewPart && (selectionIsRemoteObject || showOpenViewActions())) {
+				SystemCascadingGoToAction gotoActions = getGoToActions();
+				gotoActions.setSelection(selection);
+				menu.appendToGroup(gotoActions.getContextMenuGroup(), gotoActions.getSubMenu());
+			}
+
+			// ADAPTER SPECIFIC ACTIONS (Must be the last actions added to the menu!!!) 	      
 			SystemMenuManager ourMenu = new SystemMenuManager(menu);
 
 			// yantzi:artemis 6.0 (defect 53970), do not show adapter specific actions when 
@@ -882,61 +931,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				}
 			}
 
-			// COMMON DELETE ACTION...
-			if (showDelete()) {
-				//menu.add(getDeleteAction());
-				menu.appendToGroup(ISystemContextMenuConstants.GROUP_REORGANIZE, getDeleteAction());
-				((ISystemAction) getDeleteAction()).setInputs(getShell(), this, selection);
-				menu.add(new Separator());
-			}
-			
-			// PROPERTIES ACTION...
-			// This is supplied by the system, so we pretty much get it for free. It finds the
-			// registered propertyPages extension points registered for the selected object's class type.
-			//propertyDialogAction.selectionChanged(selection);		  
-			if (showProperties()) {
-				PropertyDialogAction pdAction = getPropertyDialogAction();
-				if (pdAction.isApplicableForSelection()) menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
-			}
-			
-			// GO INTO ACTION...
-			// OPEN IN NEW WINDOW ACTION...
-			if (fromSystemViewPart) {
-				GoIntoAction goIntoAction = getGoIntoAction();
-				goIntoAction.setEnabled(selection.size() == 1);
-				menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
-
-				if (showOpenViewActions()) {
-					SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();
-					openToPerspectiveAction.setSelection(selection);
-					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), openToPerspectiveAction);
-				}
-
-				if (showGenericShowInTableAction()) {
-
-					
-					SystemShowInTableAction showInTableAction = getShowInTableAction();
-					showInTableAction.setSelection(selection);
-					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInTableAction);
-
-					SystemShowInMonitorAction showInMonitorAction = getShowInMonitorAction();
-					showInMonitorAction.setSelection(selection);
-					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInMonitorAction);
-
-				}
-
-				
-			}
-
-
-			
-			// GO TO CASCADING ACTIONS...
-			if (fromSystemViewPart && (selectionIsRemoteObject || showOpenViewActions())) {
-				SystemCascadingGoToAction gotoActions = getGoToActions();
-				gotoActions.setSelection(selection);
-				menu.appendToGroup(gotoActions.getContextMenuGroup(), gotoActions.getSubMenu());
-			}
-			
+			// ***** DO NOT ADD ANY ACTIONS AFTER HERE *****			
 		
 		}
 

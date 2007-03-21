@@ -2326,7 +2326,15 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			SystemResourceChangeEvent event = new SystemResourceChangeEvent(conn, eventType, reg);
 			//event.setPosition(pool.getConnectionPosition(conn));
 			//event.setPosition(getConnectionPositionInView(conn));
-			event.setRelativePrevious(getPreviousHost(conn));
+			IHost previous = getPreviousHost(conn);
+			if (previous != null)
+			{
+				event.setRelativePrevious(previous);
+			}
+			else
+			{
+				event.setType(ISystemResourceChangeEvents.EVENT_ADD);
+			}
 			fireEvent(event);
 			fireModelChangeEvent(SYSTEM_RESOURCE_ADDED, SYSTEM_RESOURCETYPE_CONNECTION, conn, null);
 		

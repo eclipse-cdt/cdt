@@ -3,7 +3,7 @@
 <!--
 
 ###############################################################################
-# Copyright (c) 2000, 2006 IBM Corporation and others.
+# Copyright (c) 2000, 2007 IBM Corporation and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -20,17 +20,17 @@
 -->
 
 <templates>
-<template name="for" description="for loop" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.for" enabled="true">for (${var} = 0; ${var} &lt; ${max}; ++${var}) {
+<template name="for" description="%forLoop" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.for" enabled="true">for (${var} = 0; ${var} &lt; ${max}; ++${var}) {
 	${line_selection}${cursor}
 }</template>
 
-<template name="for" description="for loop %withtempvar" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.for" enabled="true">for (int ${var} = 0; ${var} &lt; ${max}; ++${var}) {
+<template name="for" description="%forLoopWithTempVar" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.for" enabled="true">for (int ${var} = 0; ${var} &lt; ${max}; ++${var}) {
 	${line_selection}${cursor}
 }</template>
-<template name="do" description="do while %statement" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.do" enabled="true">do {
+<template name="do" description="%doWhileStmt" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.do" enabled="true">do {
 	${line_selection}${cursor}
 } while (${condition});</template>
-<template name="switch" description="switch case %statement" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.switch" enabled="true">switch (${key}) {
+<template name="switch" description="%switchCaseStmt" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.switch" enabled="true">switch (${key}) {
 	case ${value}:
 		${cursor}
 		break;
@@ -38,37 +38,37 @@
 		break;
 }</template>
 
-<template name="if" description="if %statement" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.if" enabled="true">if (${condition}) {
+<template name="if" description="%ifStmt" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.if" enabled="true">if (${condition}) {
 	${line_selection}${cursor}
 }</template>
-<template name="ifelse" description="if else %statement" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.ifelse" enabled="true">if (${condition}) {
+<template name="ifelse" description="%ifElseStmt" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.ifelse" enabled="true">if (${condition}) {
 	${cursor}
 } else {
 	
 }</template>
-<template name="elseif" description="else if %block" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.elseif" enabled="true">else if (${condition}) {
+<template name="elseif" description="%elseIfBlock" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.elseif" enabled="true">else if (${condition}) {
 	${cursor}
 }</template>
-<template name="else" description="else %block" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.else" enabled="true">else {
+<template name="else" description="%elseBlock" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.else" enabled="true">else {
 	${cursor}
 }</template>
-<template name="try" description="try catch %block" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.try" enabled="true">try {
+<template name="try" description="%tryCatchBlock" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.try" enabled="true">try {
 	${line_selection}${cursor}
 } catch (${Exception} e) {
 }</template>
-<template name="catch" description="catch %block" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.catch" enabled="true">catch (${Exception} e) {
+<template name="catch" description="%catchBlock" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.catch" enabled="true">catch (${Exception} e) {
 	${cursor}
 }</template>
-<template name="main" description="main %method" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.main" enabled="true">int main(int argc, char **argv) {
+<template name="main" description="%mainMethod" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.main" enabled="true">int main(int argc, char **argv) {
 	${cursor}
 }</template>
-<template name="class" description="class %declaration" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.class" enabled="true">class ${name} {
+<template name="class" description="%classDeclaration" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.class" enabled="true">class ${name} {
 	${cursor}
 private:
 };</template>
 <template name="using" description="%usinganamespace" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.using" enabled="true">using namespace ${namespace};
 </template>
-<template name="namespace" description="namespace %declaration" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.namespace" enabled="true">namespace ${namespace} {
+<template name="namespace" description="%namespaceDeclaration" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.namespace" enabled="true">namespace ${namespace} {
 	${cursor}
 }</template>
 <template name="new" description="%createnewobject" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.new" enabled="true">${type} ${name} = new ${type}(${arguments});</template>

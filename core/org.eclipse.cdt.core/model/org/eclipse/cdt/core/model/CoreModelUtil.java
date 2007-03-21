@@ -11,9 +11,18 @@
 
 package org.eclipse.cdt.core.model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
@@ -581,4 +590,92 @@ public class CoreModelUtil {
         return null;
     }
 
+    
+    /**
+	 * Returns the configuration descriptions referenced directly by the specified
+	 * configuration description. The result will not contain duplicates. Returns 
+	 * an empty array if there are no referenced configuration descriptions.
+	 *
+	 * @param cfgDes
+	 * @param writable - specifies whether the returned descriptions should be writable or read-only
+	 * @since 4.0
+	 * @return a list of configuration descriptions
+	 * @see CoreModelUtil#getReferencingConfigurationDescriptions(ICConfigurationDescription, boolean)
+	 */
+    
+    public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable){
+    	List result = new ArrayList();
+
+    	if(cfgDes != null) {
+    		Map map = cfgDes.getReferenceInfo();
+    		if(map.size() != 0){
+    			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    			CoreModel model = CoreModel.getDefault();
+    			for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+    				Map.Entry entry = (Map.Entry)iter.next();
+    				String projName = (String)entry.getKey();
+    				String cfgId = (String)entry.getValue();
+    				IProject project = root.getProject(projName);
+    				if(!project.exists())
+    					continue;
+
+    				ICProjectDescription des = model.getProjectDescription(project, writable);
+    				if(des == null)
+    					continue;
+
+    				ICConfigurationDescription refCfgDes;
+    				if(cfgId!=null && cfgId.length()>0) {
+    					refCfgDes= des.getConfigurationById(cfgId);
+    				} else {
+    					refCfgDes= des.getActiveConfiguration();
+    				}
+    				if(refCfgDes != null)
+    					result.add(refCfgDes);
+    			}
+    		}
+    	}
+    	
+    	return (ICConfigurationDescription[]) result.toArray(new ICConfigurationDescription[result.size()]);
+    }
+    
+    /**
+	 * Returns the list of all configuration descriptions which directly reference
+	 * the specified configuration description. Returns an empty array if there are
+	 * no referencing configuration descriptions.
+	 * 
+	 * @since 4.0
+     * @param cfgDes
+     * @param writable - specifies whether the returned descriptions should be writable or read-only
+     * @return a list of configuration descriptions referencing this configuration description
+     * @see CoreModelUtil#getReferencedConfigurationDescriptions(ICConfigurationDescription, boolean)
+     */
+    public static ICConfigurationDescription[] getReferencingConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
+    	List result = new ArrayList();
+    	
+    	if(cfgDes!=null) {
+    		CoreModel core= CoreModel.getDefault();
+    		IProject[] cprojects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+
+    		for (int i=0; i<cprojects.length; i++) {
+    			IProject cproject= (IProject) cprojects[i];
+    			ICProjectDescription prjDes= core.getProjectDescription(cproject, writable);
+    			//in case this is not a CDT project the description will be null, so check for null
+    			if(prjDes != null){
+	    			ICConfigurationDescription[] cfgDscs= prjDes.getConfigurations();
+	    			for(int j=0; j<cfgDscs.length; j++) {
+	    				ICConfigurationDescription[] references = getReferencedConfigurationDescriptions(cfgDscs[j], false);
+	    				for (int k=0; k<references.length; k++) {
+	    					if(references[k]!=null
+	    							&& references[k].getId().equals(cfgDes.getId())) {
+	    						result.add(cfgDscs[j]);
+	    						break;
+	    					}				
+	    				}
+	    			}
+    			}
+    		}
+    	}
+    	
+		return (ICConfigurationDescription[]) result.toArray(new ICConfigurationDescription[result.size()]);
+	}
 }

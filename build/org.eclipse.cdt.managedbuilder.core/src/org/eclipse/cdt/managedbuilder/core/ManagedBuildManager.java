@@ -35,6 +35,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -137,8 +138,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final String MANIFEST_ERROR_OPTION_CATEGORY = "ManagedBuildManager.error.manifest.option.category";	//$NON-NLS-1$
 	private static final String MANIFEST_ERROR_OPTION_FILTER = "ManagedBuildManager.error.manifest.option.filter";	//$NON-NLS-1$
 	private static final String MANIFEST_ERROR_OPTION_VALUEHANDLER = "ManagedBuildManager.error.manifest.option.valuehandler";	//$NON-NLS-1$
-	private static final String MANIFEST_ERROR_READ_ONLY = "ManagedBuildManager.error.read_only";	//$NON-NLS-1$
-	private static final String MANIFEST_ERROR_WRITE_FAILED = "ManagedBuildManager.error.write_failed";	//$NON-NLS-1$
+	private static final String MANIFEST_ERROR_READ_ONLY = "ManagedBuildManager.error.read_only";  //$NON-NLS-1$
+	private static final String MANIFEST_ERROR_WRITE_FAILED = "ManagedBuildManager.error.write_failed";  //$NON-NLS-1$
 	
 	// Error ID's for OptionValidError()
 	public static final int ERROR_CATEGORY = 0;
@@ -4120,48 +4121,28 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return BuildPropertyManager.getInstance();
 	}
 	
+	/**
+	 * Returns the configurations referenced by this configuration.
+	 * Returns an empty array if there are no referenced configurations.
+	 *
+	 * @see CoreModelUtil.getReferencedConfigurations()
+	 * @return an array of IConfiguration objects referenced by this IConfiguration
+	 */
 	public static IConfiguration[] getReferencedConfigurations(IConfiguration config){
-		IConfiguration[] refConfigs = null;
 		ICConfigurationDescription cfgDes = getDescriptionForConfiguration(config);
 		if(cfgDes != null){
-			Map map = cfgDes.getReferenceInfo();
-			if(map.size() != 0){
-				List list = new ArrayList(map.size());
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				CoreModel model = CoreModel.getDefault();
-				for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-					Map.Entry entry = (Map.Entry)iter.next();
-					String projName = (String)entry.getKey();
-					String cfgId = (String)entry.getValue();
-					IProject project = root.getProject(projName);
-					if(!project.exists())
-						continue;
-					
-					ICProjectDescription des = model.getProjectDescription(project, false);
-					if(des == null)
-						continue;
-					
-					ICConfigurationDescription refCfgDes = cfgId.length() == 0 ? des.getActiveConfiguration() : des.getConfigurationById(cfgId);
-					if(refCfgDes == null)
-						continue;
-					
-					IConfiguration refdCfg = ManagedBuildManager.getConfigurationForDescription(refCfgDes);
-					if(refdCfg == null)
-						continue;
-					
-					list.add(refdCfg);
-				}
-				
-				if(list.size() != 0){
-					refConfigs = (IConfiguration[])list.toArray(new Configuration[list.size()]);
+			ICConfigurationDescription[] descs= CoreModelUtil.getReferencedConfigurationDescriptions(cfgDes, false);
+			List result = new ArrayList();
+			for(int i=0; i<descs.length; i++) {
+				IConfiguration cfg = getConfigurationForDescription(descs[i]);
+				if(cfg != null) {
+					result.add(cfg);
 				}
 			}
+			return (IConfiguration[]) result.toArray(new IConfiguration[result.size()]);
 		}
-		
-		if(refConfigs == null)
-			refConfigs = new Configuration[0];
 
-		return refConfigs;
+		return new Configuration[0];
 	}
 	
 	public static void buildConfigurations(IConfiguration[] configs, IProgressMonitor monitor) throws CoreException{

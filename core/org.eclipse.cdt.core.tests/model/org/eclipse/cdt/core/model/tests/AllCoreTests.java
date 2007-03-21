@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.failedTests.FailedDeclaratorsTest;
+import org.eclipse.cdt.core.settings.model.CConfigurationDescriptionReferenceTests;
 
 
 /**
@@ -45,6 +46,7 @@ public class AllCoreTests {
 		suite.addTest(DeclaratorsTests.suite());
 		suite.addTest(FailedDeclaratorsTest.suite());
 		suite.addTest(CPathEntryTest.suite());
+		suite.addTest(CConfigurationDescriptionReferenceTests.suite());
 
         return suite;
 

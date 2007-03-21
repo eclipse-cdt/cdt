@@ -18,7 +18,15 @@ package org.eclipse.rse.ui.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -30,6 +38,7 @@ import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
+import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.dnd.Clipboard;
@@ -41,6 +50,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.PluginTransferData;
+import org.eclipse.ui.part.ResourceTransfer;
 
 
 /**
@@ -48,10 +58,33 @@ import org.eclipse.ui.part.PluginTransferData;
  */
 public class SystemCopyToClipboardAction extends SystemBaseAction implements  IValidatorRemoteSelection
 {
-
+	private class LazyDownloadJob extends Job
+	{
+		private ISystemEditableRemoteObject _editable;
+		public LazyDownloadJob(ISystemEditableRemoteObject editable) 
+		{
+			// TODO Auto-generated constructor stub
+			super("Downloading " + editable.getAbsolutePath());
+			_editable = editable;
+		}
+		
+		public IStatus run(IProgressMonitor monitor)
+		{	
+			try
+			{
+				_editable.download(monitor);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			return Status.OK_STATUS;
+		}
+	}
 
 	private IStructuredSelection _selection;
 	private Clipboard _clipboard;
+	private boolean  _doResourceTransfer = true; //experiment
 
 	/**
 	 * Constructor
@@ -76,6 +109,65 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 			copySelectionToClipboard(_selection);
 		}
 	}
+	
+	private IResource getResource(IAdaptable dragObject)
+	{
+		IResource resource = null;
+		ISystemViewElementAdapter viewAdapter = (ISystemViewElementAdapter) dragObject.getAdapter(ISystemViewElementAdapter.class);
+		ISystemRemoteElementAdapter remoteAdapter = (ISystemRemoteElementAdapter)dragObject.getAdapter(ISystemRemoteElementAdapter.class);
+		
+		if (remoteAdapter != null)
+		{
+			
+			if (remoteAdapter.canEdit(dragObject))
+			{				
+				ISystemEditableRemoteObject editable = remoteAdapter.getEditableRemoteObject(dragObject);
+				// corresponds to a file
+				IFile file = editable.getLocalResource();
+				if (!file.exists())
+				{
+					LazyDownloadJob job = new LazyDownloadJob(editable);
+					job.schedule();
+				}
+				resource = file;
+			}
+			else if (viewAdapter != null)
+			{
+				if (viewAdapter.hasChildren(dragObject)) 
+				{
+					IContainer parentFolder = null;
+					// corresponds to a folder
+					Object[] children = viewAdapter.getChildren(new NullProgressMonitor(), dragObject);
+					for (int i = 0; i < children.length; i++)
+					{
+						IAdaptable child = (IAdaptable)children[i];
+						IResource childResource = getResource(child);
+						if (childResource != null)
+						{							
+							parentFolder = childResource.getParent();
+							if (!parentFolder.exists())
+							{
+								try
+								{
+									parentFolder.touch(new NullProgressMonitor());
+								}
+								catch (Exception e)
+								{
+									
+								}
+							
+							}
+						}
+					}
+					
+					
+					resource = parentFolder;
+				}				
+			}
+		}		
+		return resource;
+	}
+	
 
 	private void copySelectionToClipboard(IStructuredSelection ss)
 	{
@@ -84,7 +176,10 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 		// marshall data
 		StringBuffer textStream = new StringBuffer(""); //$NON-NLS-1$
 		StringBuffer dataStream = new StringBuffer(""); //$NON-NLS-1$
+		
 		ArrayList fileNames = new ArrayList();
+		ArrayList resources = new ArrayList();
+		
 		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		while (iterator.hasNext())
@@ -119,6 +214,11 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 							dataStream.append(SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
 						}
 
+						if (_doResourceTransfer)
+						{
+							resources.add(getResource((IAdaptable)dragObject));
+						}
+						
 						/** FIXME - files can't be coupled to systems.core!
 						// support for external copy for local files
 						if (dragObject instanceof IRemoteFile)
@@ -141,7 +241,18 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 		PluginTransferData data = new PluginTransferData(SystemDropActionDelegate.ID, dataStream.toString().getBytes());
 
 		// put data in clipboard
-		if (fileNames.size() == 0)
+		if (_doResourceTransfer && resources.size() > 0)
+		{
+			IResource[] ft = new IResource[resources.size()];
+			for (int i = 0; i < ft.length; i++)
+			{
+				ft[i] = (IResource) resources.get(i);								
+			}
+
+			_clipboard.setContents(new Object[] { data, ft, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), ResourceTransfer.getInstance(), TextTransfer.getInstance()});
+
+		}
+		else if (fileNames.size() == 0)
 		{
 			_clipboard.setContents(new Object[] { data, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance()});
 		}

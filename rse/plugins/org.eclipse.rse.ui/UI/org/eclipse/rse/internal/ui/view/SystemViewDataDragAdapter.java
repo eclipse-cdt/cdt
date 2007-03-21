@@ -300,7 +300,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 										editable.addAsListener();
 										editable.setLocalResourceProperties();
 									
-										IFile theFile = editable.getLocalResource();	
+										IFile theFile = (IFile)editable.getLocalResource();	
 									
 										IEditorDescriptor preferredEditor = editRegistry.getDefaultEditor(theFile.getName()); // may be null
 										if (preferredEditor == null)

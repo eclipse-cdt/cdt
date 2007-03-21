@@ -45,7 +45,11 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
         show_mng = new Button(usercomp, SWT.CHECK);
         show_mng.setText(Messages.getString("WizardDefaultsTab.2")); //$NON-NLS-1$
         show_mng.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-}
+
+		show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_UNSUPP));
+		show_oth.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS));
+		show_mng.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_MANAGE));
+	}
 
 	protected void performOK() {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_UNSUPP, !show_sup.getSelection());
@@ -62,9 +66,7 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
 	}
 
 	protected void updateData(ICResourceDescription cfg) {
-		show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_UNSUPP));
-		show_oth.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS));
-		show_mng.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_MANAGE));
+        // Do nothing. Data is read once after creation
 	}
 
 }

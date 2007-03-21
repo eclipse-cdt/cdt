@@ -88,6 +88,7 @@ public class ManageConfigDialog extends Dialog {
 	 */
 	public ManageConfigDialog(Shell parentShell, String _title, ICProjectDescription prjd) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		title = _title;
 		des = prjd;
 	}
@@ -109,7 +110,7 @@ public class ManageConfigDialog extends Dialog {
 	
 		// Create the current config table
 		table = new Table(composite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
-		GridData gd = new GridData(GridData.FILL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 4;
 		table.setLayoutData(gd);
 		table.setHeaderVisible(true);

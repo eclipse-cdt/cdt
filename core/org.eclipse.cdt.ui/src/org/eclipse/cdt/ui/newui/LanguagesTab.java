@@ -48,7 +48,7 @@ public class LanguagesTab extends AbstractCPropertyTab {
 		table = new Table(usercomp, SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		String[] headers = new String[] {NewUIMessages.getResourceString("LanguagesTab.0"), NewUIMessages.getResourceString("LanguagesTab.1"), };  //$NON-NLS-1$ //$NON-NLS-2$
+		String[] headers = new String[] {UIMessages.getString("LanguagesTab.0"), UIMessages.getString("LanguagesTab.1"), };  //$NON-NLS-1$ //$NON-NLS-2$
 
 		for (int i = 0; i < headers.length; i++) {
 			TableColumn tc = new TableColumn(table, SWT.LEFT);

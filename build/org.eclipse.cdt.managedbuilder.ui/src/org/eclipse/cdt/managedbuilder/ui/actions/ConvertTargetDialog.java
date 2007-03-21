@@ -18,7 +18,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -124,7 +124,7 @@ public class ConvertTargetDialog extends Dialog {
 		// Create the converters list group area
 		final Group convertersListGroup = new Group(comp, SWT.NONE);
 		convertersListGroup.setFont(parent.getFont());
-		convertersListGroup.setText(NewUIMessages.getResourceString(CONVERTERS_LIST));
+		convertersListGroup.setText(UIMessages.getString(CONVERTERS_LIST));
 		convertersListGroup.setLayout(new GridLayout(1, false));
 		convertersListGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 	

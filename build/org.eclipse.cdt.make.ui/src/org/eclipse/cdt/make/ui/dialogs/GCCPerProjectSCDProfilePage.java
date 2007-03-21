@@ -12,7 +12,6 @@ package org.eclipse.cdt.make.ui.dialogs;
 
 import java.io.File;
 
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.internal.core.scannerconfig.jobs.BuildOutputReaderJob;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
@@ -114,8 +113,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         // load button
         bopLoadButton = ControlFactory.createPushButton(profileGroup,
                 MakeUIPlugin.getResourceString(BO_PROVIDER_LOAD_BUTTON));
-        ((GridData) bopLoadButton.getLayoutData()).widthHint = 
-                SWTUtil.getButtonWidthHint(bopLoadButton);
+        ((GridData) bopLoadButton.getLayoutData()).minimumWidth = 120;
         bopLoadButton.addSelectionListener(new SelectionAdapter() {
             
             public void widgetSelected(SelectionEvent event) {
@@ -139,8 +137,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         // browse button
         Button browseButton = ControlFactory.createPushButton(profileGroup,
                 MakeUIPlugin.getResourceString(BO_PROVIDER_BROWSE_BUTTON));
-        ((GridData) browseButton.getLayoutData()).widthHint = 
-                SWTUtil.getButtonWidthHint(browseButton);
+        ((GridData) browseButton.getLayoutData()).minimumWidth = 120;
         browseButton.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent event) {
@@ -149,7 +146,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
 
             private void handleBOPBrowseButtonSelected() {
                 FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-                dialog.setText(MakeUIPlugin.getResourceString(BO_PROVIDER_OPEN_FILE_DIALOG)); //$NON-NLS-1$
+                dialog.setText(MakeUIPlugin.getResourceString(BO_PROVIDER_OPEN_FILE_DIALOG));
                 String fileName = getBopOpenFileText();
                 IPath filterPath;
                 if (fileName.length() == 0 && getContainer().getProject() != null) {
@@ -204,8 +201,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         // si browse button
         Button siBrowseButton = ControlFactory.createPushButton(profileGroup,
                 MakeUIPlugin.getResourceString(SI_PROVIDER_BROWSE_BUTTON));
-        ((GridData) siBrowseButton.getLayoutData()).widthHint = 
-                SWTUtil.getButtonWidthHint(browseButton);
+        ((GridData) siBrowseButton.getLayoutData()).minimumWidth = 120;
         siBrowseButton.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent event) {
@@ -214,7 +210,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
 
             private void handleSIPBrowseButtonSelected() {
                 FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-                dialog.setText(MakeUIPlugin.getResourceString(SI_PROVIDER_COMMAND_DIALOG)); //$NON-NLS-1$
+                dialog.setText(MakeUIPlugin.getResourceString(SI_PROVIDER_COMMAND_DIALOG));
                 String fileName = sipRunCommandText.getText().trim();
                 int lastSeparatorIndex = fileName.lastIndexOf(File.separator);
                 if (lastSeparatorIndex != -1) {

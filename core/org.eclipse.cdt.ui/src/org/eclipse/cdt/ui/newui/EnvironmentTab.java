@@ -101,7 +101,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				return td.var.getName();
 			case 1:
 				if(td.var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
-					return NewUIMessages.getResourceString(VALUE_UNDEF);
+					return UIMessages.getString(VALUE_UNDEF);
 				return td.var.getValue();
 			}
 			return EMPTY_STR;
@@ -143,7 +143,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
 		Label l1 = new Label(usercomp, SWT.LEFT);
-		l1.setText(NewUIMessages.getResourceString("EnvironmentTab.0")); //$NON-NLS-1$
+		l1.setText(UIMessages.getString("EnvironmentTab.0")); //$NON-NLS-1$
 		l1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		table = new Table(usercomp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
@@ -173,16 +173,16 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		tv.setLabelProvider(new EnvironmentLabelProvider(true));
 		// add headers
 		TableColumn tc = new TableColumn(table, SWT.LEFT);
-		tc.setText(NewUIMessages.getResourceString("EnvironmentTab.1")); //$NON-NLS-1$
+		tc.setText(UIMessages.getString("EnvironmentTab.1")); //$NON-NLS-1$
 		tc.setWidth(200);
 		tc = new TableColumn(table, SWT.LEFT);
-		tc.setText(NewUIMessages.getResourceString("EnvironmentTab.2")); //$NON-NLS-1$
+		tc.setText(UIMessages.getString("EnvironmentTab.2")); //$NON-NLS-1$
 		tc.setWidth(200);
 		                      
 	    table.setLayoutData(new GridData(GridData.FILL_BOTH));
 	    
 	    b1 = new Button(usercomp, SWT.RADIO);
-	    b1.setText(NewUIMessages.getResourceString("EnvironmentTab.3")); //$NON-NLS-1$
+	    b1.setText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
 	    b1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    b1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -194,7 +194,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			}});
 
 	    b2 = new Button(usercomp, SWT.RADIO);
-	    b2.setText(NewUIMessages.getResourceString("EnvironmentTab.4")); //$NON-NLS-1$
+	    b2.setText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
 	    b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    b2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -205,7 +205,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				updateData();
 			}});
 	    
-	    initButtons(new String[] {NewUIMessages.getResourceString("EnvironmentTab.5"),NewUIMessages.getResourceString("EnvironmentTab.6"),NewUIMessages.getResourceString("EnvironmentTab.7"),NewUIMessages.getResourceString("EnvironmentTab.8"),NewUIMessages.getResourceString("EnvironmentTab.9")}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	    initButtons(new String[] {UIMessages.getString("EnvironmentTab.5"),UIMessages.getString("EnvironmentTab.6"),UIMessages.getString("EnvironmentTab.7"),UIMessages.getString("EnvironmentTab.8"),UIMessages.getString("EnvironmentTab.9")}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
 	public void buttonPressed(int i) {
@@ -215,7 +215,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		int[] idx;
 		switch (i) {
 		case 0:
-			dlg = new EnvDialog(usercomp.getShell(), var, NewUIMessages.getResourceString("EnvironmentTab.10"), true, cfgd); //$NON-NLS-1$
+			dlg = new EnvDialog(usercomp.getShell(), var, UIMessages.getString("EnvironmentTab.10"), true, cfgd); //$NON-NLS-1$
 			if (dlg.open() == Window.OK) {
 				if (dlg.t1.trim().length() > 0) {
 					ICConfigurationDescription[] cfgs;
@@ -243,7 +243,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		case 2: // edit
 			if (n == -1) return;
 			var = ((TabData)tv.getElementAt(n)).var;
-			dlg = new EnvDialog(usercomp.getShell(), var, NewUIMessages.getResourceString("EnvironmentTab.11"), false, cfgd); //$NON-NLS-1$
+			dlg = new EnvDialog(usercomp.getShell(), var, UIMessages.getString("EnvironmentTab.11"), false, cfgd); //$NON-NLS-1$
 			if (dlg.open() == Window.OK) {
 				if (cfgd != null)
 					ce.addVariable(	dlg.t1.trim(), dlg.t2.trim(), 
@@ -347,12 +347,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	private class MyListSelectionDialog extends ListSelectionDialog {
 		public boolean toAll = false;
 	    public MyListSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider) {
-	        super(parentShell, input, contentProvider, new LabelProvider() {}, NewUIMessages.getResourceString("EnvironmentTab.12")); //$NON-NLS-1$
+	        super(parentShell, input, contentProvider, new LabelProvider() {}, UIMessages.getString("EnvironmentTab.12")); //$NON-NLS-1$
 	    }
 	    protected Control createDialogArea(Composite parent) {
 	    	Composite composite = (Composite) super.createDialogArea(parent);
 	    	Button b = new Button(composite, SWT.CHECK);
-	    	b.setText(NewUIMessages.getResourceString("EnvironmentTab.13")); //$NON-NLS-1$
+	    	b.setText(UIMessages.getString("EnvironmentTab.13")); //$NON-NLS-1$
 	    	b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    	if (cfgd == null)
 	    		b.setVisible(false);

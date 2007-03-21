@@ -22,14 +22,14 @@ public class IncludeTab extends AbstractLangsListTab {
    public void additionalTableSet() {
 	   TableColumn c = new TableColumn(table, SWT.NONE);
 	   c.setWidth(210);
-	   c.setText(NewUIMessages.getResourceString("IncludeTab.0")); //$NON-NLS-1$
+	   c.setText(UIMessages.getString("IncludeTab.0")); //$NON-NLS-1$
 	   showBIButton.setSelection(true);
    }
 	
 	public ICLanguageSettingEntry doAdd() {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.NEW_DIR,
-				NewUIMessages.getResourceString("IncludeTab.1"),  //$NON-NLS-1$
+				UIMessages.getString("IncludeTab.1"),  //$NON-NLS-1$
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			toAll = dlg.check1;
@@ -45,7 +45,7 @@ public class IncludeTab extends AbstractLangsListTab {
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.OLD_DIR,
-				NewUIMessages.getResourceString("IncludeTab.2"),  //$NON-NLS-1$
+				UIMessages.getString("IncludeTab.2"),  //$NON-NLS-1$
 				ent.getValue(), getResDesc().getConfiguration(),
 				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
 		if (dlg.open()) {

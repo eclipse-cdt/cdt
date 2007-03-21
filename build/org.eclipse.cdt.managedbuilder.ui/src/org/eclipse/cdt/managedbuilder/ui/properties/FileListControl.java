@@ -17,7 +17,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.ui.newui.CDTStatusInfo;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;
 import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.core.resources.IContainer;
@@ -267,27 +267,27 @@ public class FileListControl {
 	private static final String WORKSPACELOC_VAR = "workspace_loc"; //$NON-NLS-1$
 	
 	/* Names, messages and titles */
-	private static final String WORKSPACEBUTTON_NAME = NewUIMessages.getResourceString("FileListControl.button.workspace"); //$NON-NLS-1$
-	private static final String FILESYSTEMBUTTON_NAME = NewUIMessages.getResourceString("FileListControl.button.fs"); //$NON-NLS-1$
+	private static final String WORKSPACEBUTTON_NAME = UIMessages.getString("FileListControl.button.workspace"); //$NON-NLS-1$
+	private static final String FILESYSTEMBUTTON_NAME = UIMessages.getString("FileListControl.button.fs"); //$NON-NLS-1$
 
-	private static final String ADD_STR = NewUIMessages.getResourceString("FileListControl.add"); //$NON-NLS-1$
-	private static final String DEL_STR = NewUIMessages.getResourceString("FileListControl.delete"); //$NON-NLS-1$
-	private static final String EDIT_STR = NewUIMessages.getResourceString("FileListControl.edit"); //$NON-NLS-1$
-	private static final String MOVEUP_STR = NewUIMessages.getResourceString("FileListControl.moveup"); //$NON-NLS-1$
-	private static final String MOVEDOWN_STR = NewUIMessages.getResourceString("FileListControl.movedown"); //$NON-NLS-1$
-	private static final String FILE_TITLE_ADD = NewUIMessages.getResourceString("BrowseEntryDialog.file.title.add");	//$NON-NLS-1$
-	private static final String DIR_TITLE_ADD = NewUIMessages.getResourceString("BrowseEntryDialog.dir.title.add");	//$NON-NLS-1$
-	private static final String FILE_TITLE_EDIT = NewUIMessages.getResourceString("BrowseEntryDialog.file.title.edit");	//$NON-NLS-1$
-	private static final String DIR_TITLE_EDIT = NewUIMessages.getResourceString("BrowseEntryDialog.dir.title.edit");	//$NON-NLS-1$
-	private static final String WORKSPACE_DIR_DIALOG_TITLE = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.title");	//$NON-NLS-1$
-	private static final String WORKSPACE_FILE_DIALOG_TITLE = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.title");	//$NON-NLS-1$
-	private static final String WORKSPACE_DIR_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
-	private static final String WORKSPACE_FILE_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
-	private static final String WORKSPACE_FILE_DIALOG_ERR = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
-	private static final String FILESYSTEM_DIR_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.fs.dir.dlg.msg");	//$NON-NLS-1$
-	private static final String FILE_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.message.file");	//$NON-NLS-1$
-	private static final String DIR_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.message.directory");	//$NON-NLS-1$
-	private static final String TITLE = NewUIMessages.getResourceString("BuildPropertyCommon.label.title");	//$NON-NLS-1$
+	private static final String ADD_STR = UIMessages.getString("FileListControl.add"); //$NON-NLS-1$
+	private static final String DEL_STR = UIMessages.getString("FileListControl.delete"); //$NON-NLS-1$
+	private static final String EDIT_STR = UIMessages.getString("FileListControl.edit"); //$NON-NLS-1$
+	private static final String MOVEUP_STR = UIMessages.getString("FileListControl.moveup"); //$NON-NLS-1$
+	private static final String MOVEDOWN_STR = UIMessages.getString("FileListControl.movedown"); //$NON-NLS-1$
+	private static final String FILE_TITLE_ADD = UIMessages.getString("BrowseEntryDialog.file.title.add");	//$NON-NLS-1$
+	private static final String DIR_TITLE_ADD = UIMessages.getString("BrowseEntryDialog.dir.title.add");	//$NON-NLS-1$
+	private static final String FILE_TITLE_EDIT = UIMessages.getString("BrowseEntryDialog.file.title.edit");	//$NON-NLS-1$
+	private static final String DIR_TITLE_EDIT = UIMessages.getString("BrowseEntryDialog.dir.title.edit");	//$NON-NLS-1$
+	private static final String WORKSPACE_DIR_DIALOG_TITLE = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.title");	//$NON-NLS-1$
+	private static final String WORKSPACE_FILE_DIALOG_TITLE = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.title");	//$NON-NLS-1$
+	private static final String WORKSPACE_DIR_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
+	private static final String WORKSPACE_FILE_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
+	private static final String WORKSPACE_FILE_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
+	private static final String FILESYSTEM_DIR_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.fs.dir.dlg.msg");	//$NON-NLS-1$
+	private static final String FILE_MSG = UIMessages.getString("BrowseEntryDialog.message.file");	//$NON-NLS-1$
+	private static final String DIR_MSG = UIMessages.getString("BrowseEntryDialog.message.directory");	//$NON-NLS-1$
+	private static final String TITLE = UIMessages.getString("BuildPropertyCommon.label.title");	//$NON-NLS-1$
 	
 	//toolbar
 	private ToolBar toolBar;
@@ -587,8 +587,8 @@ public class FileListControl {
 	private void removePressed() {
 		int index = list.getSelectionIndex();
 		if (browseType == IOption.BROWSE_DIR || browseType == IOption.BROWSE_FILE) {
-			String quest = NewUIMessages.getResourceString("FileListControl.deletedialog.message"); //$NON-NLS-1$
-			String title = NewUIMessages.getResourceString("FileListControl.deletedialog.title"); //$NON-NLS-1$
+			String quest = UIMessages.getString("FileListControl.deletedialog.message"); //$NON-NLS-1$
+			String title = UIMessages.getString("FileListControl.deletedialog.title"); //$NON-NLS-1$
 			boolean delDir = MessageDialog.openQuestion(list.getShell(), title,
 					quest);
 			if (delDir && index != -1){
@@ -655,7 +655,7 @@ public class FileListControl {
 							message, selItem, null, browseType);
 					
 				} else {
-					String title = NewUIMessages.getResourceString("FileListControl.editdialog.title"); //$NON-NLS-1$
+					String title = UIMessages.getString("FileListControl.editdialog.title"); //$NON-NLS-1$
 					dialog = new InputDialog(null, title, compTitle,
 							selItem, null);
 				}

@@ -123,7 +123,7 @@ public class RenameConfigurationDialog extends Dialog {
 		// Add a label and a text widget for Configuration's name
 		final Label nameLabel = new Label(group1, SWT.LEFT);
 		nameLabel.setFont(parent.getFont());
-		nameLabel.setText(NewUIMessages.getResourceString(NAME));
+		nameLabel.setText(UIMessages.getString(NAME));
 				
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
@@ -147,7 +147,7 @@ public class RenameConfigurationDialog extends Dialog {
 //		 Add a label and a text widget for Configuration's description
         final Label descriptionLabel = new Label(group1, SWT.LEFT);
         descriptionLabel.setFont(parent.getFont());
-        descriptionLabel.setText(NewUIMessages.getResourceString(DESCRIPTION));
+        descriptionLabel.setText(UIMessages.getString(DESCRIPTION));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
@@ -235,11 +235,11 @@ public class RenameConfigurationDialog extends Dialog {
 			s = "";	//$NON-NLS-1$
 		 	// Make sure the name is not a duplicate
 		} else if (isDuplicateName(currentName)) {
-			s = NewUIMessages.getFormattedString(DUPLICATE, currentName);
+			s = UIMessages.getFormattedString(DUPLICATE, currentName);
 		} else if (isSimilarName(currentName)) {
-			s = NewUIMessages.getFormattedString(CASE, currentName);
+			s = UIMessages.getFormattedString(CASE, currentName);
 		} else if (!validateName(currentName)) {
-			s = NewUIMessages.getFormattedString(INVALID, currentName);	
+			s = UIMessages.getFormattedString(INVALID, currentName);	
 		}
 		Button b = getButton(IDialogConstants.OK_ID);
 		if (s != null) {

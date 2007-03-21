@@ -39,7 +39,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class ManageConfigDialog extends Dialog {
-	public static final String MANAGE_TITLE = NewUIMessages.getResourceString("ManageConfigDialog.0");  //$NON-NLS-1$
+	public static final String MANAGE_TITLE = UIMessages.getString("ManageConfigDialog.0");  //$NON-NLS-1$
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.newCfgDialog"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME = "dialog"; //$NON-NLS-1$
 	public static final String CLASS_NAME = "class"; //$NON-NLS-1$
@@ -116,17 +116,17 @@ public class ManageConfigDialog extends Dialog {
 		table.setLinesVisible(true);
 		
 		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setText(NewUIMessages.getResourceString("ManageConfigDialog.1")); //$NON-NLS-1$
+		col.setText(UIMessages.getString("ManageConfigDialog.1")); //$NON-NLS-1$
 		col.setWidth(100);
 		col = new TableColumn(table, SWT.NONE);
-		col.setText(NewUIMessages.getResourceString("ManageConfigDialog.2")); //$NON-NLS-1$
+		col.setText(UIMessages.getString("ManageConfigDialog.2")); //$NON-NLS-1$
 		col.setWidth(120);
 		col = new TableColumn(table, SWT.NONE);
-		col.setText(NewUIMessages.getResourceString("ManageConfigDialog.3")); //$NON-NLS-1$
+		col.setText(UIMessages.getString("ManageConfigDialog.3")); //$NON-NLS-1$
 		col.setWidth(80);
 
 		actBtn = new Button(composite, SWT.PUSH);
-		actBtn.setText(NewUIMessages.getResourceString("ManageConfigDialog.4")); //$NON-NLS-1$
+		actBtn.setText(UIMessages.getString("ManageConfigDialog.4")); //$NON-NLS-1$
 		actBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		actBtn.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -139,7 +139,7 @@ public class ManageConfigDialog extends Dialog {
 			}} ); 
 
 		newBtn = new Button(composite, SWT.PUSH);
-		newBtn.setText(NewUIMessages.getResourceString(NEW));
+		newBtn.setText(UIMessages.getString(NEW));
 		newBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		newBtn.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -147,7 +147,7 @@ public class ManageConfigDialog extends Dialog {
 			}} ); 
 
 		delBtn = new Button(composite, SWT.PUSH);
-		delBtn.setText(NewUIMessages.getResourceString(REMOVE));
+		delBtn.setText(UIMessages.getString(REMOVE));
 		delBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		delBtn.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -155,7 +155,7 @@ public class ManageConfigDialog extends Dialog {
 			}} ); 
 
 		renBtn = new Button(composite, SWT.PUSH);
-		renBtn.setText(NewUIMessages.getResourceString(RENAME));
+		renBtn.setText(UIMessages.getString(RENAME));
 		renBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		renBtn.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -172,7 +172,7 @@ public class ManageConfigDialog extends Dialog {
 		INewCfgDialog dialog = handleSpecificMBS(mbs_id);
 		if (dialog == null) { // default (core) implementation.
 			dialog = new NewConfigurationDialog(getShell());
-			dialog.setTitle(NewUIMessages.getResourceString(NEW_CONF_DLG));
+			dialog.setTitle(UIMessages.getString(NEW_CONF_DLG));
 		}
 		dialog.setProject(des); 
 		if (dialog.open() == OK) updateData();
@@ -219,7 +219,7 @@ public class ManageConfigDialog extends Dialog {
 			ICConfigurationDescription cfgd = (ICConfigurationDescription) table.getItem(sel).getData();
 			RenameConfigurationDialog dialog = new RenameConfigurationDialog(
 					getShell(), cfgd, des.getConfigurations(),
-					NewUIMessages.getResourceString(RENAME_CONF_DLG));
+					UIMessages.getString(RENAME_CONF_DLG));
 			if (dialog.open() == OK) {
 				cfgd.setName(dialog.getNewName());
 				cfgd.setDescription(dialog.getNewDescription());
@@ -240,8 +240,8 @@ public class ManageConfigDialog extends Dialog {
 		// Get the confirmation from user before deleting the configuration
 		Shell shell = CUIPlugin.getActiveWorkbenchShell();
 		boolean shouldDelete = MessageDialog.openQuestion(shell,
-		        NewUIMessages.getResourceString("ManageConfig.deletedialog.title"), //$NON-NLS-1$
-		        NewUIMessages.getFormattedString("ManageConfig.deletedialog.message",  //$NON-NLS-1$
+		        UIMessages.getString("ManageConfig.deletedialog.title"), //$NON-NLS-1$
+		        UIMessages.getFormattedString("ManageConfig.deletedialog.message",  //$NON-NLS-1$
 		                names));
 		if (shouldDelete) {
 			boolean wasActive = false;
@@ -279,7 +279,7 @@ public class ManageConfigDialog extends Dialog {
 			TableItem t = new TableItem(table, 0);
 			t.setText(0, cfgds[i].getName());
 			t.setText(1, cfgds[i].getDescription());
-			t.setText(2, cfgds[i].isActive() ? NewUIMessages.getResourceString("ManageConfigDialog.5") : ""); //$NON-NLS-1$ //$NON-NLS-2$
+			t.setText(2, cfgds[i].isActive() ? UIMessages.getString("ManageConfigDialog.5") : ""); //$NON-NLS-1$ //$NON-NLS-2$
 			t.setData(cfgds[i]);
 		}
 		if (table.getItemCount() > 0) table.select(0);

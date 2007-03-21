@@ -23,7 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -67,10 +67,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private static final String RCBS_DISABLE = LABEL + ".applicability.rule.disable";	//$NON-NLS-1$
 
 	private static final String[] rcbsApplicabilityRules = {
-		new String(NewUIMessages.getResourceString(RCBS_OVERRIDE)),
+		new String(UIMessages.getString(RCBS_OVERRIDE)),
 //		new String(ManagedBuilderUIMessages.getResourceString(RCBS_BEFORE)),
 //		new String(ManagedBuilderUIMessages.getResourceString(RCBS_AFTER)),
-		new String(NewUIMessages.getResourceString(RCBS_DISABLE)),
+		new String(UIMessages.getString(RCBS_DISABLE)),
 	};
 	
 	
@@ -124,7 +124,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	 */
 	private void createForFile() {
 		Group g1 = setupGroup (usercomp, Messages.getString("BuildStepsTab.4"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
-		setupLabel(g1, NewUIMessages.getResourceString(RCBS_APPLICABILITY), 1, GridData.BEGINNING);
+		setupLabel(g1, UIMessages.getString(RCBS_APPLICABILITY), 1, GridData.BEGINNING);
 		
 		combo = new Combo(g1, SWT.BORDER);
 		combo.setItems(rcbsApplicabilityRules);
@@ -315,11 +315,11 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	
 	private int sel2app(int index){
 		String sel = combo.getItem(index);
-		if(NewUIMessages.getResourceString(RCBS_OVERRIDE).equals(sel)){
+		if(UIMessages.getString(RCBS_OVERRIDE).equals(sel)){
 			return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE;
-		} else if(NewUIMessages.getResourceString(RCBS_AFTER).equals(sel)){
+		} else if(UIMessages.getString(RCBS_AFTER).equals(sel)){
 			return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER;
-		} else if(NewUIMessages.getResourceString(RCBS_BEFORE).equals(sel)){
+		} else if(UIMessages.getString(RCBS_BEFORE).equals(sel)){
 			return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE;
 		}
 		return IResourceConfiguration.KIND_DISABLE_RCBS_TOOL;
@@ -330,14 +330,14 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private int app2sel(int val){
 		switch(val){
 		case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER:
-			return combo.indexOf(NewUIMessages.getResourceString(RCBS_AFTER));
+			return combo.indexOf(UIMessages.getString(RCBS_AFTER));
 		case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE:
-			return combo.indexOf(NewUIMessages.getResourceString(RCBS_BEFORE));
+			return combo.indexOf(UIMessages.getString(RCBS_BEFORE));
 		case IResourceConfiguration.KIND_DISABLE_RCBS_TOOL:
-			return combo.indexOf(NewUIMessages.getResourceString(RCBS_DISABLE));
+			return combo.indexOf(UIMessages.getString(RCBS_DISABLE));
 		case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE:
 		default:
-			return combo.indexOf(NewUIMessages.getResourceString(RCBS_OVERRIDE));
+			return combo.indexOf(UIMessages.getString(RCBS_OVERRIDE));
 		}
 	}
 	

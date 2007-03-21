@@ -81,22 +81,22 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 
 	// commonly used button names
 	public static final String EMPTY_STR = ""; //$NON-NLS-1$
-	public static final String ADD_STR = NewUIMessages.getResourceString("FileListControl.add"); //$NON-NLS-1$
-	public static final String DEL_STR = NewUIMessages.getResourceString("FileListControl.delete"); //$NON-NLS-1$
-	public static final String EDIT_STR = NewUIMessages.getResourceString("FileListControl.edit"); //$NON-NLS-1$
-	public static final String MOVEUP_STR = NewUIMessages.getResourceString("FileListControl.moveup"); //$NON-NLS-1$
-	public static final String MOVEDOWN_STR = NewUIMessages.getResourceString("FileListControl.movedown"); //$NON-NLS-1$
-	public static final String WORKSPACEBUTTON_NAME = NewUIMessages.getResourceString("FileListControl.button.workspace"); //$NON-NLS-1$
-	public static final String FILESYSTEMBUTTON_NAME = NewUIMessages.getResourceString("FileListControl.button.fs"); //$NON-NLS-1$
-	public static final String VARIABLESBUTTON_NAME = NewUIMessages.getResourceString("AbstractCPropertyTab.1"); //$NON-NLS-1$
-	public static final String FILESYSTEM_DIR_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.fs.dir.dlg.msg");	//$NON-NLS-1$
+	public static final String ADD_STR = UIMessages.getString("FileListControl.add"); //$NON-NLS-1$
+	public static final String DEL_STR = UIMessages.getString("FileListControl.delete"); //$NON-NLS-1$
+	public static final String EDIT_STR = UIMessages.getString("FileListControl.edit"); //$NON-NLS-1$
+	public static final String MOVEUP_STR = UIMessages.getString("FileListControl.moveup"); //$NON-NLS-1$
+	public static final String MOVEDOWN_STR = UIMessages.getString("FileListControl.movedown"); //$NON-NLS-1$
+	public static final String WORKSPACEBUTTON_NAME = UIMessages.getString("FileListControl.button.workspace"); //$NON-NLS-1$
+	public static final String FILESYSTEMBUTTON_NAME = UIMessages.getString("FileListControl.button.fs"); //$NON-NLS-1$
+	public static final String VARIABLESBUTTON_NAME = UIMessages.getString("AbstractCPropertyTab.1"); //$NON-NLS-1$
+	public static final String FILESYSTEM_DIR_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.fs.dir.dlg.msg");	//$NON-NLS-1$
 	public static final String FILESYSTEM_FILE_DIALOG_TITLE = EMPTY_STR;	
-	public static final String WORKSPACE_DIR_DIALOG_TITLE = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.title");	//$NON-NLS-1$
-	public static final String WORKSPACE_FILE_DIALOG_TITLE = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.title");	//$NON-NLS-1$
-	public static final String WORKSPACE_DIR_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
-	public static final String WORKSPACE_FILE_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
-	public static final String WORKSPACE_FILE_DIALOG_ERR = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
-	public static final String WORKSPACE_DIR_DIALOG_ERR = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.err");	//$NON-NLS-1$
+	public static final String WORKSPACE_DIR_DIALOG_TITLE = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.title");	//$NON-NLS-1$
+	public static final String WORKSPACE_FILE_DIALOG_TITLE = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.title");	//$NON-NLS-1$
+	public static final String WORKSPACE_DIR_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
+	public static final String WORKSPACE_FILE_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
+	public static final String WORKSPACE_FILE_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
+	public static final String WORKSPACE_DIR_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.err");	//$NON-NLS-1$
 
 	protected Composite usercomp; // space where user can create widgets 
 	protected Composite buttoncomp; // space for buttons on the right
@@ -371,7 +371,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		
 		dialog.setInput(vm.getVariables(cfgd));
 		dialog.setHeightInChars(10);
-		dialog.setTitle(NewUIMessages.getResourceString("AbstractCPropertyTab.0")); //$NON-NLS-1$
+		dialog.setTitle(UIMessages.getString("AbstractCPropertyTab.0")); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (selected.length > 0) {

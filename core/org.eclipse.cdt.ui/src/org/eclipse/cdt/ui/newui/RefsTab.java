@@ -37,7 +37,7 @@ public class RefsTab extends AbstractCPropertyTab {
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		initButtons(new String[] {NewUIMessages.getResourceString("RefsTab.0"), NewUIMessages.getResourceString("RefsTab.1"), NewUIMessages.getResourceString("RefsTab.2")}, 120); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		initButtons(new String[] {UIMessages.getString("RefsTab.0"), UIMessages.getString("RefsTab.1"), UIMessages.getString("RefsTab.2")}, 120); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		usercomp.setLayout(new GridLayout(1, false));
 		
 		tree = new Tree(usercomp, SWT.SINGLE | SWT.CHECK | SWT.BORDER);

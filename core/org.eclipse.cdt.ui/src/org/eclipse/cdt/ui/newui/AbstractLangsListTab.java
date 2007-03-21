@@ -71,10 +71,10 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected SashForm sashForm;
 	
 	protected final static String[] BUTTONS = {ADD_STR, EDIT_STR, DEL_STR, 
-			NewUIMessages.getResourceString("AbstractLangsListTab.2"), //$NON-NLS-1$
+			UIMessages.getString("AbstractLangsListTab.2"), //$NON-NLS-1$
     		null, MOVEUP_STR, MOVEDOWN_STR };
 	protected final static String[] BUTTSYM = {ADD_STR, EDIT_STR, DEL_STR, 
-		NewUIMessages.getResourceString("AbstractLangsListTab.2")}; //$NON-NLS-1$
+		UIMessages.getString("AbstractLangsListTab.2")}; //$NON-NLS-1$
 
 	private final static Image IMG_FS = CPluginImages.get(CPluginImages.IMG_FILESYSTEM); 
 	private final static Image IMG_WS = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
@@ -148,7 +148,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	    	}
 	    });
 	    setupLabel(usercomp, EMPTY_STR, 1, 0);
-	    showBIButton = setupCheck(usercomp, NewUIMessages.getResourceString("AbstractLangsListTab.0"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+	    showBIButton = setupCheck(usercomp, UIMessages.getString("AbstractLangsListTab.0"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 	    showBIButton.addSelectionListener(new SelectionAdapter() {
 	    	public void widgetSelected(SelectionEvent e) {
 	    		update(); 
@@ -213,7 +213,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			}});
 		
 		langCol = new TreeColumn(langTree, SWT.NONE);
-		langCol.setText(NewUIMessages.getResourceString("AbstractLangsListTab.1")); //$NON-NLS-1$
+		langCol.setText(UIMessages.getString("AbstractLangsListTab.1")); //$NON-NLS-1$
 		langCol.setResizable(false);
 		return langTree;
 	}
@@ -441,7 +441,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			if (columnIndex == 0) {
 				String s = le.getName();
 				if (exported.contains(le))
-					s = s + NewUIMessages.getResourceString("AbstractLangsListTab.3"); //$NON-NLS-1$
+					s = s + UIMessages.getString("AbstractLangsListTab.3"); //$NON-NLS-1$
 				return s;
 			}
 			if (le.getKind() == ICSettingEntry.MACRO) {

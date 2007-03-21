@@ -14,7 +14,7 @@ import java.net.URL;
 
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.ResourceManager;
@@ -98,7 +98,7 @@ public class ToolListLabelProvider extends LabelProvider {
 	}
 
 	protected RuntimeException unknownElement(Object element) {
-		return new RuntimeException(NewUIMessages.getFormattedString(ERROR_UNKNOWN_ELEMENT, element.getClass().getName()));
+		return new RuntimeException(UIMessages.getFormattedString(ERROR_UNKNOWN_ELEMENT, element.getClass().getName()));
 	}
 
     /**

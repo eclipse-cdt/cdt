@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTListComparator;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.newui.PrefPage_Abstract;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
@@ -135,9 +135,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	};
 
 	private static final String[] fTableColumnNames = new String[] {
-		NewUIMessages.getResourceString(HEADER_NAME),
-		NewUIMessages.getResourceString(HEADER_TYPE),
-		NewUIMessages.getResourceString(HEADER_VALUE),
+		UIMessages.getString(HEADER_NAME),
+		UIMessages.getString(HEADER_TYPE),
+		UIMessages.getString(HEADER_VALUE),
 	};
 
 	private static final ColumnLayoutData[] fTableColumnLayouts = {new ColumnPixelData(100), new ColumnPixelData(100), new ColumnPixelData(250)};
@@ -163,21 +163,21 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			case 1:
 				switch(var.getValueType()){
 				case ICdtVariable.VALUE_PATH_FILE:
-					return NewUIMessages.getResourceString(TYPE_PATH_FILE);
+					return UIMessages.getString(TYPE_PATH_FILE);
 				case ICdtVariable.VALUE_PATH_FILE_LIST:
-					return NewUIMessages.getResourceString(TYPE_PATH_FILE_LIST);
+					return UIMessages.getString(TYPE_PATH_FILE_LIST);
 				case ICdtVariable.VALUE_PATH_DIR:
-					return NewUIMessages.getResourceString(TYPE_PATH_DIR);
+					return UIMessages.getString(TYPE_PATH_DIR);
 				case ICdtVariable.VALUE_PATH_DIR_LIST:
-					return NewUIMessages.getResourceString(TYPE_PATH_DIR_LIST);
+					return UIMessages.getString(TYPE_PATH_DIR_LIST);
 				case ICdtVariable.VALUE_PATH_ANY:
-					return NewUIMessages.getResourceString(TYPE_PATH_ANY);
+					return UIMessages.getString(TYPE_PATH_ANY);
 				case ICdtVariable.VALUE_PATH_ANY_LIST:
-					return NewUIMessages.getResourceString(TYPE_PATH_ANY_LIST);
+					return UIMessages.getString(TYPE_PATH_ANY_LIST);
 				case ICdtVariable.VALUE_TEXT:
-					return NewUIMessages.getResourceString(TYPE_TEXT);
+					return UIMessages.getString(TYPE_TEXT);
 				case ICdtVariable.VALUE_TEXT_LIST:
-					return NewUIMessages.getResourceString(TYPE_TEXT_LIST);
+					return UIMessages.getString(TYPE_TEXT_LIST);
 				default:
 					return "? " + var.getValueType();   //$NON-NLS-1$
 				}
@@ -283,8 +283,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			ICdtVariable macros[] = getSelectedUserMacros();
 			if(macros != null && macros.length > 0){
 				if(MessageDialog.openQuestion(usercomp.getShell(),
-						NewUIMessages.getResourceString(DELETE_CONFIRM_TITLE),
-						NewUIMessages.getResourceString(DELETE_CONFIRM_MESSAGE))){
+						UIMessages.getString(DELETE_CONFIRM_TITLE),
+						UIMessages.getString(DELETE_CONFIRM_MESSAGE))){
 					for(int i = 0; i < macros.length; i++){
 						if (cfgd != null)
 							fUserSupplier.deleteMacro(macros[i].getName(), CONTEXT, cfgd);
@@ -313,8 +313,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	 */
 	protected void performDefaults() {
 		if(MessageDialog.openQuestion(usercomp.getShell(),
-				NewUIMessages.getResourceString(DELETE_ALL_CONFIRM_TITLE),
-				NewUIMessages.getResourceString(DELETE_ALL_CONFIRM_MESSAGE))){
+				UIMessages.getString(DELETE_ALL_CONFIRM_TITLE),
+				UIMessages.getString(DELETE_ALL_CONFIRM_MESSAGE))){
 			if (cfgd != null)			
 				fUserSupplier.deleteAll(CONTEXT, cfgd);
 			else if (vars != null)
@@ -509,7 +509,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	
 	private String getString(ICdtVariable v) {
 		if (isDynamic(v)) 
-			return NewUIMessages.getResourceString(VALUE_ECLIPSE_DYNAMIC);
+			return UIMessages.getString(VALUE_ECLIPSE_DYNAMIC);
 		String value = EMPTY_STR; 
 		try {			
 			if (CdtVariableResolver.isStringListVariable(v.getValueType()))

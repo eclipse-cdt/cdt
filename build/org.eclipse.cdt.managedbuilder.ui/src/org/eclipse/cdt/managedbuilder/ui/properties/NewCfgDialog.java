@@ -12,7 +12,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.ui.newui.INewCfgDialog;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -133,7 +133,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			// Add a label and a text widget for Configuration's name
 			final Label nameLabel = new Label(group1, SWT.LEFT);
 			nameLabel.setFont(parent.getFont());
-			nameLabel.setText(NewUIMessages.getResourceString(NAME));
+			nameLabel.setText(UIMessages.getString(NAME));
 					
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 1;
@@ -157,7 +157,7 @@ public class NewCfgDialog implements INewCfgDialog {
 //			 Add a label and a text widget for Configuration's description
 	        final Label descriptionLabel = new Label(group1, SWT.LEFT);
 	        descriptionLabel.setFont(parent.getFont());
-	        descriptionLabel.setText(NewUIMessages.getResourceString(DESCRIPTION));
+	        descriptionLabel.setText(UIMessages.getString(DESCRIPTION));
 
 	        gd = new GridData(GridData.FILL_HORIZONTAL);
 	        gd.horizontalSpan = 1;
@@ -175,7 +175,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			
 			final Group group = new Group(composite, SWT.NONE);
 			group.setFont(composite.getFont());
-			group.setText(NewUIMessages.getResourceString(GROUP));
+			group.setText(UIMessages.getString(GROUP));
 			GridLayout layout = new GridLayout(2, false);
 			group.setLayout(layout);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -260,12 +260,12 @@ public class NewCfgDialog implements INewCfgDialog {
 				s = "";	//$NON-NLS-1$
 				// Make sure the name is not a duplicate
 			} else if (isDuplicateName(currentName)) {
-				s = NewUIMessages.getFormattedString(DUPLICATE, currentName);
+				s = UIMessages.getFormattedString(DUPLICATE, currentName);
 			} else if (isSimilarName(currentName)) {
-				s = NewUIMessages.getFormattedString(CASE, currentName);
+				s = UIMessages.getFormattedString(CASE, currentName);
 			} else if (!validateName(currentName)) {
 				// TODO Create a decent I18N string to describe this problem
-				s = NewUIMessages.getFormattedString(INVALID, currentName);
+				s = UIMessages.getFormattedString(INVALID, currentName);
 			} 
 			if (statusLabel == null) return;
 			Button b = getButton(IDialogConstants.OK_ID);

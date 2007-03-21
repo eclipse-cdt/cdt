@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -99,9 +99,9 @@ public class NewVarDialog extends Dialog {
 		super(parentShell);
 		cfgd = _cfgd;
 		if(editedMacro != null)
-			fTitle = NewUIMessages.getResourceString(TITLE_EDIT);
+			fTitle = UIMessages.getString(TITLE_EDIT);
 		else
-			fTitle = NewUIMessages.getResourceString(TITLE_NEW);
+			fTitle = UIMessages.getString(TITLE_NEW);
 		fEditedMacro = editedMacro;
 	}
 
@@ -165,7 +165,7 @@ public class NewVarDialog extends Dialog {
 		
 		Label typeLabel = new Label(comp, SWT.LEFT);
 		typeLabel.setFont(comp.getFont());
-		typeLabel.setText(NewUIMessages.getResourceString(TYPE));
+		typeLabel.setText(UIMessages.getString(TYPE));
 		gd = new GridData();
 		typeLabel.setLayoutData(gd);
 		
@@ -175,14 +175,14 @@ public class NewVarDialog extends Dialog {
 //		gd.widthHint = 100;
 		fTypeSelector.setLayoutData(gd);
 		fTypeSelector.setItems(new String[]{
-				NewUIMessages.getResourceString(TYPE_TEXT),
-				NewUIMessages.getResourceString(TYPE_TEXT_LIST),
-				NewUIMessages.getResourceString(TYPE_PATH_FILE),
-				NewUIMessages.getResourceString(TYPE_PATH_FILE_LIST),
-				NewUIMessages.getResourceString(TYPE_PATH_DIR),
-				NewUIMessages.getResourceString(TYPE_PATH_DIR_LIST),
-				NewUIMessages.getResourceString(TYPE_PATH_ANY),
-				NewUIMessages.getResourceString(TYPE_PATH_ANY_LIST)
+				UIMessages.getString(TYPE_TEXT),
+				UIMessages.getString(TYPE_TEXT_LIST),
+				UIMessages.getString(TYPE_PATH_FILE),
+				UIMessages.getString(TYPE_PATH_FILE_LIST),
+				UIMessages.getString(TYPE_PATH_DIR),
+				UIMessages.getString(TYPE_PATH_DIR_LIST),
+				UIMessages.getString(TYPE_PATH_ANY),
+				UIMessages.getString(TYPE_PATH_ANY_LIST)
 		});
 		setSelectedType(IBuildMacro.VALUE_TEXT);
 
@@ -194,7 +194,7 @@ public class NewVarDialog extends Dialog {
 
 		fMacroValueLabel = new Label(comp, SWT.LEFT);
 		fMacroValueLabel.setFont(comp.getFont());
-		fMacroValueLabel.setText(NewUIMessages.getResourceString(VALUE));
+		fMacroValueLabel.setText(UIMessages.getString(VALUE));
 		gd = new GridData();
 		gd.horizontalSpan = 1;		
 		fMacroValueLabel.setLayoutData(gd);
@@ -213,7 +213,7 @@ public class NewVarDialog extends Dialog {
 
 		fBrowseButton = new Button(comp,SWT.PUSH);
 		fBrowseButton.setFont(comp.getFont());
-		fBrowseButton.setText(NewUIMessages.getResourceString(BROWSE));
+		fBrowseButton.setText(UIMessages.getString(BROWSE));
 		fBrowseButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
 				handleBrowseButtonPressed();
@@ -231,7 +231,7 @@ public class NewVarDialog extends Dialog {
 		fListEditorContainier.setLayoutData(gd);
 		fListEditorContainier.setLayout(new GridLayout());
 
-		fListEditor = new FileListControl(fListEditorContainier, NewUIMessages.getResourceString(LIST_TITLE), IOption.BROWSE_NONE);
+		fListEditor = new FileListControl(fListEditorContainier, UIMessages.getString(LIST_TITLE), IOption.BROWSE_NONE);
 		/* Enable workspace support for list editor */
 		fListEditor.setWorkspaceSupport(true);
 

@@ -67,9 +67,9 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		
 		Label l1 = new Label(c, SWT.NONE);
 		if ((mode & DIR_MASK) == DIR_MASK)
-			l1.setText("Directory :");  //$NON-NLS-1$
+			l1.setText(UIMessages.getString("IncludeDialog.0")); //$NON-NLS-1$
 		else
-			l1.setText("File :");  //$NON-NLS-1$
+			l1.setText(UIMessages.getString("IncludeDialog.1")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 5;
 		l1.setLayoutData(gd);
@@ -85,7 +85,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 				setButtons();
 			}}); 
 		b_add2all = new Button(c, SWT.CHECK);
-		b_add2all.setText("Add to all configurations"); //$NON-NLS-1$
+		b_add2all.setText(UIMessages.getString("IncludeDialog.2")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
 		if ((mode & OLD_MASK) == OLD_MASK) {
@@ -102,7 +102,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		b_file = setupButton(c, AbstractCPropertyTab.FILESYSTEMBUTTON_NAME);
 
 		c_wsp = new Button(c, SWT.CHECK);
-		c_wsp.setText(NewUIMessages.getResourceString("ExpDialog.4")); //$NON-NLS-1$
+		c_wsp.setText(UIMessages.getString("ExpDialog.4")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 5;
 		c_wsp.setLayoutData(gd);

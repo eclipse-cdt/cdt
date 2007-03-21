@@ -25,7 +25,7 @@ public class CLocationSourceTab extends CLocationTab {
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		label.setText("Source folders on build path:"); //$NON-NLS-1$
+		label.setText(UIMessages.getString("CLocationSourceTab.0"));  //$NON-NLS-1$
 	}
 	
 	public ICExclusionPatternPathEntry newEntry(IPath p, IPath[] ex, boolean isWorkspacePath) {

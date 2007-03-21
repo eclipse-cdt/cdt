@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 /**
  * @since 2.0
  */
-public class NewUIMessages {
+public class UIMessages {
 	// Bundle ID
 	private static final String BUNDLE_ID = "org.eclipse.cdt.ui.newui.PluginResources"; //$NON-NLS-1$
 	//Resource bundle.
@@ -32,14 +32,14 @@ public class NewUIMessages {
 	}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new String[] { arg });
+		return MessageFormat.format(getString(key), new String[] { arg });
 	}
 
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), args);
+		return MessageFormat.format(getString(key), args);
 	}
 
-	public static String getResourceString(String key) {
+	public static String getString(String key) {
 		try {
 			return resourceBundle.getString(key);
 		} catch (MissingResourceException e) {
@@ -49,7 +49,7 @@ public class NewUIMessages {
 		}
 	}
 
-	private NewUIMessages() {
+	private UIMessages() {
 		// No constructor
 	}
 

@@ -65,8 +65,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		
 		initButtons(new String[] {
 				MOVEUP_STR, MOVEDOWN_STR, null, 
-				NewUIMessages.getResourceString("ErrorParsTab.0"), //$NON-NLS-1$
-				NewUIMessages.getResourceString("ErrorParsTab.1")  //$NON-NLS-1$
+				UIMessages.getString("ErrorParsTab.0"), //$NON-NLS-1$
+				UIMessages.getString("ErrorParsTab.1")  //$NON-NLS-1$
 				});
 		initMapParsers();
 	}

@@ -28,7 +28,7 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 	public void additionalTableSet() {
 		  TableColumn c = new TableColumn(table, SWT.NONE);
 		  c.setWidth(300);
-		  c.setText(NewUIMessages.getResourceString("LibraryPathTab.0")); //$NON-NLS-1$
+		  c.setText(UIMessages.getString("LibraryPathTab.0")); //$NON-NLS-1$
 	}
 
 	public void createControls(Composite parent) {
@@ -45,7 +45,7 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 	public ICLanguageSettingEntry doAdd() {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.NEW_DIR,
-				NewUIMessages.getResourceString("LibraryPathTab.1"),  //$NON-NLS-1$ 
+				UIMessages.getString("LibraryPathTab.1"),  //$NON-NLS-1$ 
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			int flags = 0;
@@ -58,7 +58,7 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.OLD_DIR,
-				NewUIMessages.getResourceString("LibraryPathTab.2"),  //$NON-NLS-1$ 
+				UIMessages.getString("LibraryPathTab.2"),  //$NON-NLS-1$ 
 				ent.getValue(), getResDesc().getConfiguration(),
 				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {

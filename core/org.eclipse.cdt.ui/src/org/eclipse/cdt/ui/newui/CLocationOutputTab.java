@@ -25,7 +25,7 @@ public class CLocationOutputTab extends CLocationTab {
 
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		label.setText("Output folders folders on build path:"); //$NON-NLS-1$
+		label.setText(UIMessages.getString("CLocationOutputTab.0")); //$NON-NLS-1$
 	}
 
 	public ICExclusionPatternPathEntry[] getEntries(ICResourceDescription cfgd) {

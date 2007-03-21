@@ -23,7 +23,7 @@ import java.util.TreeMap;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -167,9 +167,9 @@ public final class MBSCustomPageManager
 						{
 							// there are currently no other supported element types
 							// so throw an exception
-							throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error0") //$NON-NLS-1$
+							throw new BuildException(UIMessages.getString("MBSCustomPageManager.error0") //$NON-NLS-1$
 									+ element.getName()
-									+ NewUIMessages.getResourceString("MBSCustomPageManager.error1") //$NON-NLS-1$
+									+ UIMessages.getString("MBSCustomPageManager.error1") //$NON-NLS-1$
 									+ EXTENSION_POINT_ID);
 						}
 					}
@@ -244,9 +244,9 @@ public final class MBSCustomPageManager
 						// no other types supported... throw an exception
 						//						 there are currently no other supported element types
 						// so throw an exception
-						throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error2") //$NON-NLS-1$
+						throw new BuildException(UIMessages.getString("MBSCustomPageManager.error2") //$NON-NLS-1$
 								+ element.getName()
-								+ NewUIMessages.getResourceString("MBSCustomPageManager.error3") //$NON-NLS-1$
+								+ UIMessages.getString("MBSCustomPageManager.error3") //$NON-NLS-1$
 								+ EXTENSION_POINT_ID);
 					}
 				}
@@ -262,7 +262,7 @@ public final class MBSCustomPageManager
 		if (projectType != null)
 			currentPageData.addProjectType(projectType);
 		else
-			throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error4")); //$NON-NLS-1$
+			throw new BuildException(UIMessages.getString("MBSCustomPageManager.error4")); //$NON-NLS-1$
 	}
 
 	private static void loadToolchain(IConfigurationElement element,
@@ -286,7 +286,7 @@ public final class MBSCustomPageManager
 			currentPageData.addToolchain(toolchainID, versionsSupported);
 		}
 		else
-			throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error5")); //$NON-NLS-1$
+			throw new BuildException(UIMessages.getString("MBSCustomPageManager.error5")); //$NON-NLS-1$
 	}
 
 	private static void loadNature(IConfigurationElement element,
@@ -297,7 +297,7 @@ public final class MBSCustomPageManager
 		if (nature != null)
 			currentPageData.addNature(nature);
 		else
-			throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error6")); //$NON-NLS-1$
+			throw new BuildException(UIMessages.getString("MBSCustomPageManager.error6")); //$NON-NLS-1$
 	}
 
 	/**

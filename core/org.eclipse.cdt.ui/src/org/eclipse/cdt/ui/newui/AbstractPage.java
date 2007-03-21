@@ -201,11 +201,11 @@ implements
 
 		String s = null;
 		if (!checkElement()) {
-			s = NewUIMessages.getResourceString("AbstractPage.0"); //$NON-NLS-1$
+			s = UIMessages.getString("AbstractPage.0"); //$NON-NLS-1$
 		} else if (!isApplicable()) {
-			s = NewUIMessages.getResourceString("AbstractPage.1"); //$NON-NLS-1$
+			s = UIMessages.getString("AbstractPage.1"); //$NON-NLS-1$
 		} else if (!isCDTProject(getProject())) {
-			s = NewUIMessages.getResourceString("AbstractPage.2"); //$NON-NLS-1$
+			s = UIMessages.getString("AbstractPage.2"); //$NON-NLS-1$
 		}
 		
 	    if (s == null) {
@@ -235,7 +235,7 @@ implements
 		GridLayout ff = new GridLayout(3, false);
 		configGroup.setLayout(ff);
 		Label configLabel = new Label(configGroup, SWT.NONE);
-		configLabel.setText(NewUIMessages.getResourceString("AbstractPage.6")); //$NON-NLS-1$
+		configLabel.setText(UIMessages.getString("AbstractPage.6")); //$NON-NLS-1$
 		configLabel.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		configSelector = new Combo(configGroup, SWT.READ_ONLY | SWT.DROP_DOWN);
@@ -254,7 +254,7 @@ implements
 		
 		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_MANAGE)) {
 			manageButton = new Button(configGroup, SWT.PUSH);
-			manageButton.setText(NewUIMessages.getResourceString("AbstractPage.12")); //$NON-NLS-1$
+			manageButton.setText(UIMessages.getString("AbstractPage.12")); //$NON-NLS-1$
 			gd = new GridData(GridData.END);
 			gd.widthHint = 150;
 			manageButton.setLayoutData(gd);
@@ -274,7 +274,7 @@ implements
 		
 		if (isForFolder() || isForFile()) {
 			excludeFromBuildCheck = new Button(configGroup, SWT.CHECK);
-			excludeFromBuildCheck.setText(NewUIMessages.getResourceString("AbstractPage.7")); //$NON-NLS-1$
+			excludeFromBuildCheck.setText(UIMessages.getString("AbstractPage.7")); //$NON-NLS-1$
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 3;
 			excludeFromBuildCheck.setLayoutData(gd);
@@ -417,8 +417,8 @@ implements
 		} catch (InvocationTargetException e) {
 			Throwable e1 = e.getTargetException();
 			CUIPlugin.errorDialog(getShell(), 
-					NewUIMessages.getResourceString("AbstractPage.8"),  //$NON-NLS-1$
-					NewUIMessages.getResourceString("AbstractPage.9"), e1, true); //$NON-NLS-1$
+					UIMessages.getString("AbstractPage.8"),  //$NON-NLS-1$
+					UIMessages.getString("AbstractPage.9"), e1, true); //$NON-NLS-1$
 			return false;
 		} catch (InterruptedException e) {}
 		return true;
@@ -459,7 +459,7 @@ implements
 				try {
 					CoreModel.getDefault().setProjectDescription(getProject(), local_prjd);
 				} catch (CoreException e) {
-					System.out.println(NewUIMessages.getResourceString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
+					System.out.println(UIMessages.getString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
 				updateViews(internalElement);
 			}
@@ -470,8 +470,8 @@ implements
 		} catch (InvocationTargetException e) {
 			Throwable e1 = e.getTargetException();
 			CUIPlugin.errorDialog(getShell(), 
-					NewUIMessages.getResourceString("AbstractPage.8"),  //$NON-NLS-1$
-					NewUIMessages.getResourceString("AbstractPage.9"), e1, true); //$NON-NLS-1$ 
+					UIMessages.getString("AbstractPage.8"),  //$NON-NLS-1$
+					UIMessages.getString("AbstractPage.9"), e1, true); //$NON-NLS-1$ 
 		} catch (InterruptedException e) {}
     }
 
@@ -518,9 +518,9 @@ implements
 		// Handling of All/Multiple configurations can be disabled
 		if (ENABLE_MULTI_CFG) {
 			if (cfgDescs.length > 1) // "All cfgs" - shown if at least 2 cfgs available
-				configSelector.add(NewUIMessages.getResourceString("AbstractPage.4")); //$NON-NLS-1$
+				configSelector.add(UIMessages.getString("AbstractPage.4")); //$NON-NLS-1$
 			if (cfgDescs.length > 2)// "Multi cfgs" - shown if at least 3 cfgs available
-				configSelector.add(NewUIMessages.getResourceString("AbstractPage.5")); //$NON-NLS-1$
+				configSelector.add(UIMessages.getString("AbstractPage.5")); //$NON-NLS-1$
 		}
 		configSelector.select(cfgIndex);
 		handleConfigSelection();
@@ -654,7 +654,7 @@ implements
 					else
 						out = cf.createFileDescription(p, out);
 				} catch (CoreException e) {
-					System.out.println(NewUIMessages.getResourceString("AbstractPage.10") + //$NON-NLS-1$
+					System.out.println(UIMessages.getString("AbstractPage.10") + //$NON-NLS-1$
 							p.toOSString() + "\n" + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
 			}
@@ -733,7 +733,7 @@ implements
 				if (elements[k].getName().equals(ELEMENT_NAME)) {
 					if (loadTab(elements[k], parent)) return;
 				} else {
-					System.out.println(NewUIMessages.getResourceString("AbstractPage.13") + elements[k].getName()); //$NON-NLS-1$
+					System.out.println(UIMessages.getString("AbstractPage.13") + elements[k].getName()); //$NON-NLS-1$
 				}
 			}
 		}
@@ -756,7 +756,7 @@ implements
 		try {
 			page = (ICPropertyTab) element.createExecutableExtension(CLASS_NAME);
 		} catch (CoreException e) {
-			System.out.println(NewUIMessages.getResourceString("AbstractPage.14") +  //$NON-NLS-1$
+			System.out.println(UIMessages.getString("AbstractPage.14") +  //$NON-NLS-1$
 					e.getLocalizedMessage());
 			return false; 
 		}
@@ -884,7 +884,7 @@ implements
 	// override parent's method to use proper class
 	public IAdaptable getElement() {
 		if (internalElement == null && !checkElement()) 
-			throw (new NullPointerException(NewUIMessages.getResourceString("AbstractPage.15"))); //$NON-NLS-1$
+			throw (new NullPointerException(UIMessages.getString("AbstractPage.15"))); //$NON-NLS-1$
 		return internalElement; 
 	}
 	

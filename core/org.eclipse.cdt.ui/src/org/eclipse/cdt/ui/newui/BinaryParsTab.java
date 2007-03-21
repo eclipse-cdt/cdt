@@ -110,7 +110,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(usercomp, ICHelpContextIds.BINARY_PARSER_PAGE);
 
 		usercomp.setLayout(new GridLayout(2, false));
-		setupLabel(usercomp, NewUIMessages.getResourceString("BinaryParsTab.0"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		setupLabel(usercomp, UIMessages.getString("BinaryParsTab.0"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		table = new Table(usercomp, SWT.BORDER | SWT.CHECK | SWT.SINGLE);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.addSelectionListener(new SelectionAdapter() {

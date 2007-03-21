@@ -16,7 +16,7 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -78,22 +78,22 @@ public class ConvertTargetAction
 			handleConvertTargetAction();
 		} else {
 			MessageDialog.openError(shell,"No converter", //$NON-NLS-1$
-			        NewUIMessages.getFormattedString("ProjectConvert.noConverterErrordialog.message", new String[] {getSelectedProject().getName()}) );  //$NON-NLS-1$
+			        UIMessages.getFormattedString("ProjectConvert.noConverterErrordialog.message", new String[] {getSelectedProject().getName()}) );  //$NON-NLS-1$
 		}
 	}
 
 	private void handleConvertTargetAction() {
 		Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
 		
-		String title = NewUIMessages.getFormattedString(PROJECT_CONVERTER_DIALOG, new String(getSelectedProject().getName())); 
+		String title = UIMessages.getFormattedString(PROJECT_CONVERTER_DIALOG, new String(getSelectedProject().getName())); 
 		ConvertTargetDialog dialog = new ConvertTargetDialog(shell, getSelectedProject(), title);
 		if ( dialog.open() == ConvertTargetDialog.OK ) {
 			if ( ConvertTargetDialog.isConversionSuccessful() == false) {									
 				MessageDialog.openError(
 								shell,
-								NewUIMessages
-										.getResourceString("ProjectConvert.conversionErrordialog.title"), //$NON-NLS-1$
-								NewUIMessages
+								UIMessages
+										.getString("ProjectConvert.conversionErrordialog.title"), //$NON-NLS-1$
+								UIMessages
 										.getFormattedString(
 												"ProjectConvert.conversionErrordialog.message", new String[] { getSelectedProject().getName() })); //$NON-NLS-1$
 			}

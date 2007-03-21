@@ -25,17 +25,17 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 public class SymbolTab extends AbstractLangsListTab {
     public void additionalTableSet() {
     	TableColumn tc = new TableColumn(table, SWT.LEFT);
-    	tc.setText(NewUIMessages.getResourceString("SymbolTab.0")); //$NON-NLS-1$
+    	tc.setText(UIMessages.getString("SymbolTab.0")); //$NON-NLS-1$
     	tc.setWidth(80);
     	tc = new TableColumn(table, SWT.LEFT);
-    	tc.setText(NewUIMessages.getResourceString("SymbolTab.1")); //$NON-NLS-1$
+    	tc.setText(UIMessages.getString("SymbolTab.1")); //$NON-NLS-1$
     	tc.setWidth(130);
     }
 
 	public ICLanguageSettingEntry doAdd() {
 		SymbolDialog dlg = new SymbolDialog(
 				usercomp.getShell(), true,
-				NewUIMessages.getResourceString("SymbolTab.2"), EMPTY_STR, EMPTY_STR, getResDesc()); //$NON-NLS-1$
+				UIMessages.getString("SymbolTab.2"), EMPTY_STR, EMPTY_STR, getResDesc()); //$NON-NLS-1$
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			toAll = dlg.check1;
 			return new CMacroEntry(dlg.text1, dlg.text2, 0);
@@ -46,7 +46,7 @@ public class SymbolTab extends AbstractLangsListTab {
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		SymbolDialog dlg = new SymbolDialog(
 				usercomp.getShell(), false,
-				NewUIMessages.getResourceString("SymbolTab.3"), ent.getName(),  //$NON-NLS-1$
+				UIMessages.getString("SymbolTab.3"), ent.getName(),  //$NON-NLS-1$
 				ent.getValue(), getResDesc());
 		if (dlg.open())
 			return new CMacroEntry(dlg.text1, dlg.text2, 0);

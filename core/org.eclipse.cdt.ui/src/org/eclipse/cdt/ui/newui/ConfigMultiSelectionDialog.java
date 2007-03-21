@@ -53,7 +53,7 @@ public class ConfigMultiSelectionDialog extends Dialog {
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(NewUIMessages.getResourceString("ConfigMultiSelectionDialog.0")); //$NON-NLS-1$
+		shell.setText(UIMessages.getString("ConfigMultiSelectionDialog.0")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -83,14 +83,14 @@ public class ConfigMultiSelectionDialog extends Dialog {
 		
 		message = new Label(composite, SWT.NONE);
 		message.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		message.setText(NewUIMessages.getResourceString("ConfigMultiSelectionDialog.1")); //$NON-NLS-1$
+		message.setText(UIMessages.getString("ConfigMultiSelectionDialog.1")); //$NON-NLS-1$
 		message.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_RED));
 		
 		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setText(NewUIMessages.getResourceString("ManageConfigDialog.1")); //$NON-NLS-1$
+		col.setText(UIMessages.getString("ManageConfigDialog.1")); //$NON-NLS-1$
 		col.setWidth(100);
 		col = new TableColumn(table, SWT.NONE);
-		col.setText(NewUIMessages.getResourceString("ManageConfigDialog.2")); //$NON-NLS-1$
+		col.setText(UIMessages.getString("ManageConfigDialog.2")); //$NON-NLS-1$
 		col.setWidth(120);
 		
 		tv = new CheckboxTableViewer(table);

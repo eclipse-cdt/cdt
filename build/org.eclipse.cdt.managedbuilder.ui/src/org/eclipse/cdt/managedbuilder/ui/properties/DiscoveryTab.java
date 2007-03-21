@@ -28,7 +28,7 @@ import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.ui.newui.CDTListComparator;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -144,9 +144,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     }
     
     private void createScannerConfigControls(Composite parent) {
-        scGroup = setupGroup(parent, NewUIMessages.getResourceString(SC_GROUP_LABEL), 2, GridData.FILL_HORIZONTAL);
+        scGroup = setupGroup(parent, UIMessages.getString(SC_GROUP_LABEL), 2, GridData.FILL_HORIZONTAL);
         
-        scEnabledButton = setupCheck(scGroup, NewUIMessages.getResourceString(SC_ENABLED_BUTTON), 2, GridData.FILL_HORIZONTAL);
+        scEnabledButton = setupCheck(scGroup, UIMessages.getString(SC_ENABLED_BUTTON), 2, GridData.FILL_HORIZONTAL);
         scEnabledButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 buildInfo.setAutoDiscoveryEnabled(scEnabledButton.getSelection());
@@ -155,7 +155,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
                 	handleDiscoveryProfileChanged();
             }
         });
-        scProblemReportingEnabledButton = setupCheck(scGroup, NewUIMessages.getResourceString(SC_PROBLEM_REPORTING_ENABLED_BUTTON), 2, GridData.FILL_HORIZONTAL);
+        scProblemReportingEnabledButton = setupCheck(scGroup, UIMessages.getString(SC_PROBLEM_REPORTING_ENABLED_BUTTON), 2, GridData.FILL_HORIZONTAL);
         scProblemReportingEnabledButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
             	buildInfo.setProblemReportingEnabled(scProblemReportingEnabledButton.getSelection());
@@ -163,7 +163,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         });
 
         // Add profile combo box
-        setupLabel(scGroup,NewUIMessages.getResourceString(SC_SELECTED_PROFILE_COMBO), 1, GridData.BEGINNING); 
+        setupLabel(scGroup,UIMessages.getString(SC_SELECTED_PROFILE_COMBO), 1, GridData.BEGINNING); 
         profileComboBox = new Combo(scGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
         profileComboBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         profileComboBox.addSelectionListener(new SelectionAdapter() {

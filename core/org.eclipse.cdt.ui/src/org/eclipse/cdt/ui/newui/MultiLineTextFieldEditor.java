@@ -123,7 +123,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 		init(name, labelText);
 		setValidateStrategy(strategy);
 		isValid = false;
-		errorMessage = NewUIMessages.getResourceString(ERROR_MESSAGE);
+		errorMessage = UIMessages.getString(ERROR_MESSAGE);
 		createControl(parent);
 	}
 	

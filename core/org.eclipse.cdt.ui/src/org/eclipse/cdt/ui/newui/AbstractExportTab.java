@@ -121,16 +121,16 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	    });
  	    TableColumn c = new TableColumn(table, SWT.NONE);
 	    c.setWidth(hasValues() ? 100 : 200);
-	    c.setText(NewUIMessages.getResourceString("EnvDialog.0")); //$NON-NLS-1$
+	    c.setText(UIMessages.getString("EnvDialog.0")); //$NON-NLS-1$
  	    c = new TableColumn(table, SWT.NONE);
 	    c.setWidth(hasValues() ? 100 : 0);
-	    c.setText(NewUIMessages.getResourceString("EnvDialog.1")); //$NON-NLS-1$
+	    c.setText(UIMessages.getString("EnvDialog.1")); //$NON-NLS-1$
  	    c = new TableColumn(table, SWT.NONE);
 	    c.setWidth(100);
-	    c.setText(NewUIMessages.getResourceString("LanguagesTab.1")); //$NON-NLS-1$
+	    c.setText(UIMessages.getString("LanguagesTab.1")); //$NON-NLS-1$
  	    c = new TableColumn(table, SWT.NONE);
 	    c.setWidth(100);
-	    c.setText(NewUIMessages.getResourceString("LanguagesTab.0")); //$NON-NLS-1$
+	    c.setText(UIMessages.getString("LanguagesTab.0")); //$NON-NLS-1$
 	    
 	    initButtons(new String[] {ADD_STR, EDIT_STR, DEL_STR});
 	    updateData(getResDesc());

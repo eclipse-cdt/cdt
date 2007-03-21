@@ -29,12 +29,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.core.internal.RemoteSystemsProject;
-import org.eclipse.rse.core.internal.SystemResourceConstants;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.core.RemoteSystemsProject;
+import org.eclipse.rse.internal.core.SystemResourceConstants;
 
 
 /**

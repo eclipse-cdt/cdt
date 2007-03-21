@@ -19,8 +19,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.rse.core.internal.RSECoreRegistry;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.internal.core.RSECoreRegistry;
 import org.eclipse.rse.internal.persistence.RSEPersistenceManager;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;

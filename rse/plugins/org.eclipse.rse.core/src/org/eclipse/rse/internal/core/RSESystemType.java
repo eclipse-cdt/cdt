@@ -13,7 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Dynamic system type provider extension.
  ********************************************************************************/
-package org.eclipse.rse.core.internal;
+package org.eclipse.rse.internal.core;
 
 import java.util.HashMap;
 import java.util.LinkedList;

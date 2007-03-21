@@ -13,7 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Added system types provider extension.
  ********************************************************************************/
-package org.eclipse.rse.core.internal;
+package org.eclipse.rse.internal.core;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;

@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial API and implementation
  ********************************************************************************/
-package org.eclipse.rse.core.internal;
+package org.eclipse.rse.internal.core;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.rse.core.RSEPreferencesManager;

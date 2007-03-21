@@ -30,7 +30,7 @@
  <extension
        point="org.eclipse.core.runtime.preferences">
     <initializer
-          class="org.eclipse.rse.core.internal.RSEPreferenceInitializer">
+          class="org.eclipse.rse.internal.core.RSEPreferenceInitializer">
     </initializer>
  </extension>
  

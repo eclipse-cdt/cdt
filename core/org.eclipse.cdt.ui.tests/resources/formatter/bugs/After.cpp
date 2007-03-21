@@ -17,7 +17,7 @@ class AClass : public ABaseClass {
 };
 AClass::AClass(int x) throw(int) :
 	ABaseClass(x) {
-	for (int i=0; i < 12;i++) {
+	for (int i=0; i < 12; i++) {
 	}
 }
 // keep space between decl spec and declarator
@@ -31,4 +31,9 @@ char* s2= "this " "is "
 #define ID(x) x  // identity
 int main() {
 	return ID(0);
+}
+// semicolons inside for
+void g() {
+	for (int i=0; i<10; ++i) {
+	}
 }

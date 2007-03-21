@@ -17,3 +17,5 @@ char* s2= "this " "is "
 // macro definition with line comment
 #define ID(x) x  // identity
 int main() {return ID(0);}
+// semicolons inside for
+void g() {for(int i=0;i<10;++i){}}

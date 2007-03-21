@@ -129,18 +129,15 @@ public class ASTCache {
 				// no cached AST, but wait
 				if (isActiveElement && isReconciling(tUnit)) {
 					try {
-						final ICElement activeElement= fActiveTU;
 						// Wait for AST
 						if (DEBUG)
 							System.out.println(DEBUG_PREFIX + getThreadName() + "waiting for AST for: " + tUnit.getElementName()); //$NON-NLS-1$ 
 						fCacheMutex.wait();
 						// Check whether active element is still valid (
-						synchronized (this) {
-							if (activeElement == fActiveTU && fAST != null) {
-								if (DEBUG)
-									System.out.println(DEBUG_PREFIX + getThreadName() + "...got AST for: " + tUnit.getElementName()); //$NON-NLS-1$ 
-								return fAST;
-							}
+						if (fAST != null) {
+							if (DEBUG)
+								System.out.println(DEBUG_PREFIX + getThreadName() + "...got AST for: " + tUnit.getElementName()); //$NON-NLS-1$ 
+							return fAST;
 						}
 						// try again
 						continue;

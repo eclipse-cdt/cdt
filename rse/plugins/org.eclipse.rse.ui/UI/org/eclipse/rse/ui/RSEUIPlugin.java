@@ -25,7 +25,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -66,6 +70,66 @@ import org.osgi.framework.BundleContext;
  */
 public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvider
 {
+	 public class InitRSEJob extends Job
+	    {
+	    	public InitRSEJob()
+	    	{
+	    		super("Initialize RSE"); //$NON-NLS-1$
+	    	} 
+	    	
+	    	public IStatus run(IProgressMonitor monitor)
+	    	{    		
+	            
+	    		ISystemRegistry registry = getSystemRegistry();
+
+	    		
+	        	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree  
+	        	try
+	        	{
+	        		SystemStartHere.getSystemProfileManager(); // create folders per profile
+	        	}
+	        	catch (Exception e)
+	        	{
+	        		e.printStackTrace();
+	        	}	
+
+	 
+			   
+		
+			    // add workspace listener for our project
+			    SystemResourceManager.startResourceEventListening();
+
+				// Auto-start RSE communications daemon if required
+				SystemCommunicationsDaemon daemon = SystemCommunicationsDaemon.getInstance();
+				
+				if (SystemCommunicationsDaemon.isAutoStart()) {
+					daemon.startDaemon(false);
+				}
+				
+				registerDynamicPopupMenuExtensions();
+				registerKeystoreProviders();
+		
+		
+				
+				// new support to allow products to not pre-create a local connection
+				if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
+					// create the connection only if the local system type is enabled!
+					IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+					if (systemType != null) {
+						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+						if (adapter != null && adapter.isEnabled(systemType)) {
+							ISystemProfileManager profileManager = SystemProfileManager.getSystemProfileManager();
+							ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
+							String userName = System.getProperty("user.name"); //$NON-NLS-1$
+							registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
+						}
+					}
+				}
+		    	
+				return Status.OK_STATUS;
+	    	}
+	    }
+	
 	public static final String PLUGIN_ID  = "org.eclipse.rse.ui"; //$NON-NLS-1$ 	
 	public static final String HELPPREFIX = "org.eclipse.rse.ui."; //$NON-NLS-1$
 	 
@@ -403,6 +467,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
         //System.out.println("Time to load images: "+timer);
     }
 
+   
+    	
     /**
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
@@ -414,22 +480,14 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
         
 	   	messageFile = getMessageFile("systemmessages.xml"); //$NON-NLS-1$
 	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml"); //$NON-NLS-1$
+
         
 		ISystemRegistry registry = getSystemRegistry();
-		
 		RSECorePlugin.getDefault().setSystemRegistry(registry);
-    	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree    	
-    	try
-    	{
-    		SystemStartHere.getSystemProfileManager(); // create folders per profile
-    	}
-    	catch (Exception e)
-    	{
-    		e.printStackTrace();
-    	}
-
-	    IAdapterManager manager = Platform.getAdapterManager();
-
+  	
+    	IAdapterManager manager = Platform.getAdapterManager();
+	    
+	    
 	    // DKM
 	    // for subsystem factories
 	    SubSystemConfigurationAdapterFactory ssfaf = new SubSystemConfigurationAdapterFactory();
@@ -443,51 +501,12 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 
 	    svraf = new SystemTeamViewResourceAdapterFactory();
 	    svraf.registerWithManager(manager);
+	    
+    	
+		InitRSEJob initJob = new InitRSEJob();
+		initJob.schedule();
 
 	
-//		getInstallLocation();
-	
-	    //org.eclipse.rse.core.ui.uda.UserDefinedActionAdapterFactory udaaf = new org.eclipse.rse.core.ui.uda.UserDefinedActionAdapterFactory();	
-	    //udaaf.registerWithManager(manager);	
-	
-		// DKM - 49648 - need to make sure that this is first called on the main thread so
-		// we don't hit an SWT invalid thread exception later when getting the shell
-
-	
-	   
-
-	    // add workspace listener for our project
-	    SystemResourceManager.startResourceEventListening();
-	
-	    // DKM - moved to files.ui plugin
-	    // refresh the remote edit project at plugin startup, to ensure
-	    // it's never closed
-		// SystemRemoteEditManager.getDefault().refreshRemoteEditProject();
-		
-		// Auto-start RSE communications daemon if required
-		SystemCommunicationsDaemon daemon = SystemCommunicationsDaemon.getInstance();
-		
-		if (SystemCommunicationsDaemon.isAutoStart()) {
-			daemon.startDaemon(false);
-		}
-		
-		registerDynamicPopupMenuExtensions();
-		registerKeystoreProviders();
-
-		// new support to allow products to not pre-create a local connection
-		if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
-			// create the connection only if the local system type is enabled!
-			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
-			if (systemType != null) {
-				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
-				if (adapter != null && adapter.isEnabled(systemType)) {
-					ISystemProfileManager profileManager = SystemProfileManager.getSystemProfileManager();
-					ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
-					String userName = System.getProperty("user.name"); //$NON-NLS-1$
-					registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
-				}
-			}
-		}
 	}
 
     /**

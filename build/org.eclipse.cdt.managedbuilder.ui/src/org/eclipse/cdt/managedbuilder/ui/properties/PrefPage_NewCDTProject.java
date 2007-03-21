@@ -7,7 +7,9 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
- *******************************************************************************/package org.eclipse.cdt.managedbuilder.ui.properties;
+ *******************************************************************************/
+
+package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;

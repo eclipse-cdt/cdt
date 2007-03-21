@@ -72,9 +72,10 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
+import org.eclipse.cdt.internal.core.model.ASTCache;
+
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.ASTProvider.ASTRunnable;
 import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 
@@ -1093,11 +1094,11 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			IASTTranslationUnit ast= ctx.getAST();
 			if (ast == null) {
 				final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-				IStatus status= astProvider.runOnAST(getInputElement(), ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTRunnable() {
+				IStatus status= astProvider.runOnAST(getInputElement(), ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTCache.ASTRunnable() {
 					public IStatus runOnAST(IASTTranslationUnit ast) {
 						if (ast != null) {
 							ctx.fAST= ast;
-							ctx.fASTPositionConverter= astProvider.getActivePositionConverter(getInputElement());
+							ctx.fASTPositionConverter= null;
 							fInitialASTReconcile= false;
 							computeFoldingStructure(ast, ctx);
 						}

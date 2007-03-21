@@ -45,7 +45,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.editor.ASTProvider.ASTRunnable;
+import org.eclipse.cdt.internal.core.model.ASTCache;
+
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
@@ -513,7 +514,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 						
 						final Job me= this;
 						ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-						IStatus status= astProvider.runOnAST(element, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
+						IStatus status= astProvider.runOnAST(element, ASTProvider.WAIT_YES, monitor, new ASTCache.ASTRunnable() {
 							public IStatus runOnAST(IASTTranslationUnit ast) {
 								reconciled(ast, null, monitor);
 								synchronized (fJobLock) {

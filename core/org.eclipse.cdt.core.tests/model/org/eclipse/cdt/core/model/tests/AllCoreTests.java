@@ -47,7 +47,7 @@ public class AllCoreTests {
 		suite.addTest(FailedDeclaratorsTest.suite());
 		suite.addTest(CPathEntryTest.suite());
 		suite.addTest(CConfigurationDescriptionReferenceTests.suite());
-
+		suite.addTest(ASTCacheTests.suite());
         return suite;
 
     }

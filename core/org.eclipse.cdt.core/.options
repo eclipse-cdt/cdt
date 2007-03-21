@@ -35,3 +35,6 @@ org.eclipse.cdt.core/debug/indexer/problems=false
 
 # Code formatter debugging
 org.eclipse.cdt.core/debug/formatter=false
+
+# ASTCache debugging
+org.eclipse.cdt.core/debug/ASTCache=false

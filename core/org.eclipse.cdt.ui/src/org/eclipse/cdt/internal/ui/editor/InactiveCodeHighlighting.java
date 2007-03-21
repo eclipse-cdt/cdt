@@ -40,8 +40,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.model.ASTCache;
+
 import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
-import org.eclipse.cdt.internal.ui.editor.ASTProvider.ASTRunnable;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 
 /**
@@ -101,7 +102,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 						IStatus result = Status.OK_STATUS;
 						if (fTranslationUnit != null) {
 							final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-							result= astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
+							result= astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_YES, monitor, new ASTCache.ASTRunnable() {
 								public IStatus runOnAST(IASTTranslationUnit ast) {
 									reconciled(ast, null, monitor);
 									return Status.OK_STATUS;

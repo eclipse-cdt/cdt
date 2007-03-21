@@ -131,7 +131,7 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(118, 4, 15),
 		};
 		Position[] actual= getSemanticHighlightingPositions();
-		System.out.println(toString(actual));
+		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 	

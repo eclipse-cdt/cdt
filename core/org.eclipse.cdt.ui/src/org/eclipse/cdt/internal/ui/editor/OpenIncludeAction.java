@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -96,17 +97,22 @@ public class OpenIncludeAction extends Action {
 					if (info == null) {
 						info = provider.getScannerInformation(proj);
 					}
-					if (info != null) {
-						// search in system includes
-						String[] includePaths = info.getIncludePaths();
-						findFile(includePaths, includeName, filesFound);
+
+					boolean isSystemInclude = include instanceof IInclude 
+						&& ((IInclude) include).isStandard();
+					
+					// search in user includes
+					if (!isSystemInclude && info != null) {
+						IExtendedScannerInfo scanInfo = new ExtendedScannerInfo(info);
+						String[] localIncludePaths = scanInfo.getLocalIncludePath();
+						findFile(localIncludePaths, includeName, filesFound);
 					}
+
 					if (filesFound.size() == 0) {
-						// search in local includes
 						if (info != null) {
-							IExtendedScannerInfo scanInfo = new ExtendedScannerInfo(info);
-							String[] localIncludePaths = scanInfo.getLocalIncludePath();
-							findFile(localIncludePaths, includeName, filesFound);
+							// search in system includes
+							String[] includePaths = info.getIncludePaths();
+							findFile(includePaths, includeName, filesFound);
 						}
 						
 						if (filesFound.size() == 0) {

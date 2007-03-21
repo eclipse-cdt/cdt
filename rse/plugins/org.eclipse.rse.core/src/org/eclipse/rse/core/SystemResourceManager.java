@@ -17,9 +17,7 @@
 package org.eclipse.rse.core;
 
 import java.io.File;
-import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -27,6 +25,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -34,7 +33,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.model.SystemProfileManager;
 
 
 /**
@@ -61,8 +59,8 @@ public class SystemResourceManager implements SystemResourceConstants
 	private static boolean initDone = false;
 	private static boolean firstTime = false;
 	private static SystemResourceHelpers helpers = null;
-	
-	private static SystemResourceListener listener = null;
+
+	private static ISystemResourceListener _listener = null;
 
 	/**
      * Turn off event listening. Please call this before do anything that modifies resources and
@@ -70,8 +68,8 @@ public class SystemResourceManager implements SystemResourceConstants
      */
     public static void turnOffResourceEventListening()
     {
-    	if (listener != null)
-    	  listener.turnOffResourceEventListening();
+    	if (_listener != null)
+    	  _listener.turnOffResourceEventListening();
     }
 
     /**
@@ -79,25 +77,25 @@ public class SystemResourceManager implements SystemResourceConstants
      */
     public static void turnOnResourceEventListening()
     {
-    	if (listener != null)
-    	  listener.turnOnResourceEventListening();
+    	if (_listener != null)
+    	  _listener.turnOnResourceEventListening();
     }
     /**
      * Ensure event listening is on. Called at start of team synch action to be safe.
      */
     public static void ensureOnResourceEventListening()
     {
-    	if (listener != null)
-    	  listener.ensureOnResourceEventListening();
+    	if (_listener != null)
+    	  _listener.ensureOnResourceEventListening();
     }
 
     /**
      * Start event listening. Requests to turn on and off are ignored until this is called,
      *  which is at the appropriate point in the startup sequence.
      */
-    public static void startResourceEventListening()
+    public static void startResourceEventListening(ISystemResourceListener listener)
     {
-	    listener = SystemResourceListener.getListener(remoteSystemsProject);
+	    listener = listener;
 	    listener.turnOnResourceEventListening();
 	    
 	    
@@ -113,11 +111,11 @@ public class SystemResourceManager implements SystemResourceConstants
      */
     public static void endResourceEventListening()
     {
-    	if (listener != null)
+    	if (_listener != null)
     	{
     	  IWorkspace ws = remoteSystemsProject.getWorkspace();
-    	  ws.removeResourceChangeListener(listener);    	
-    	  listener = null;
+    	  ws.removeResourceChangeListener(_listener);    	
+    	  _listener = null;
     	}
     }
 
@@ -132,16 +130,16 @@ public class SystemResourceManager implements SystemResourceConstants
 	 */
 	public static void addResourceChangeListener(IResourceChangeListener l)
 	{
-		if (listener != null)
-		  listener.addResourceChangeListener(l);
+		if (_listener != null)
+		  _listener.addResourceChangeListener(l);
 	}
 	/**
 	 * Remove a listener for resource change events on an object in our remote system project.
 	 */
 	public static void removeResourceChangeListener(IResourceChangeListener l)
 	{
-		if (listener != null)
-		  listener.removeResourceChangeListener(l);
+		if (_listener != null)
+		  _listener.removeResourceChangeListener(l);
 	}
 	
     /**
@@ -152,7 +150,7 @@ public class SystemResourceManager implements SystemResourceConstants
     {
     	if (remoteSystemsProject == null)
     	{
-	      remoteSystemsProject = SystemBasePlugin.getWorkspaceRoot().getProject(RESOURCE_PROJECT_NAME);
+	      remoteSystemsProject = ResourcesPlugin.getWorkspace().getRoot().getProject(RESOURCE_PROJECT_NAME);
 	      if (!initDone || !remoteSystemsProject.isAccessible())
 	        remoteSystemsProject = createRemoteSystemsProjectInternal(remoteSystemsProject);
     	}
@@ -167,7 +165,7 @@ public class SystemResourceManager implements SystemResourceConstants
 	{
 		if (remoteSystemsTempFilesProject == null)
 		{
-		  remoteSystemsTempFilesProject = SystemBasePlugin.getWorkspaceRoot().getProject(RESOURCE_TEMPFILES_PROJECT_NAME);
+		  remoteSystemsTempFilesProject = ResourcesPlugin.getWorkspace().getRoot().getProject(RESOURCE_TEMPFILES_PROJECT_NAME);
 		}
 		return remoteSystemsTempFilesProject;
 	}
@@ -176,7 +174,8 @@ public class SystemResourceManager implements SystemResourceConstants
      * @param proj the handle for the remote systems project
      * @return the IProject handle of the project (the argument)
      */
-    protected static IProject createRemoteSystemsProjectInternal(IProject proj) {
+    protected static IProject createRemoteSystemsProjectInternal(IProject proj) 
+    {
 		// Check first for the project to be closed. If yes, try to open it and if this fails,
 		// try to delete if first before failing here. The case is that the user removed the
 		// directory in the workspace and we must be able to recover from it.
@@ -187,10 +186,11 @@ public class SystemResourceManager implements SystemResourceConstants
 			} catch (Exception e) {
 				try {
 					proj.delete(false, true, null);
-					SystemBasePlugin.logWarning("Removed stale remote systems project reference. Re-creating remote system project to recover."); //$NON-NLS-1$
+					
+					RSECorePlugin.getDefault().getLogger().logWarning("Removed stale remote systems project reference. Re-creating remote system project to recover."); //$NON-NLS-1$
 				} catch (CoreException exc) {
 					// If the delete fails, the original opening error will be passed to the error log.
-					SystemBasePlugin.logError("error opening remote systems project", e); //$NON-NLS-1$
+					RSECorePlugin.getDefault().getLogger().logError("error opening remote systems project", e); //$NON-NLS-1$
 				}
 			}
 		}
@@ -204,14 +204,14 @@ public class SystemResourceManager implements SystemResourceConstants
 				proj.setDescription(description, null);
 				firstTime = true;
 			} catch (Exception e) {
-				SystemBasePlugin.logError("error creating remote systems project", e); //$NON-NLS-1$
+				RSECorePlugin.getDefault().getLogger().logError("error creating remote systems project", e); //$NON-NLS-1$
 			}
 		}
 		try {
 			// create types folder...
 			// getResourceHelpers().getOrCreateFolder(proj, RESOURCE_TYPE_FILTERS_FOLDER_NAME);
 		} catch (Exception e) {
-			SystemBasePlugin.logError("error opening/creating types folder", e); //$NON-NLS-1$
+			RSECorePlugin.getDefault().getLogger().logError("error opening/creating types folder", e); //$NON-NLS-1$
 		}
 		initDone = true;
 		return proj;
@@ -227,56 +227,11 @@ public class SystemResourceManager implements SystemResourceConstants
     	firstTime = false;
     	return firsttime;
     }
-    // --------------------------------------------
-    // GET ALL EXISTING PROFILE NAMES OR FOLDERS...
-    // --------------------------------------------
-    /**
-     * Each root folder of the project is assumed to be a profile, if it has a file named profile.xmi
-     */
-    public static IFolder[] getProfileFolders()
-    {
-    	IProject proj = getRemoteSystemsProject();
-    	IFolder[] allFolders = getResourceHelpers().listFolders(proj);
-    	//System.out.println("Inside getProfileFolders. allFolders.length = " + allFolders.length);
-    	Vector v = new Vector();
-    	for (int idx=0; idx<allFolders.length; idx++)
-    	{
-    		String saveFileName = SystemProfileManager.getSaveFileName(allFolders[idx].getName());
-    		IFile saveFile = getResourceHelpers().getFile(allFolders[idx], saveFileName);    		
-    		boolean saveFileExists = getResourceHelpers().fileExists(saveFile);
-    	    //System.out.println("...folderName = " + allFolders[idx].getName());
-    	    //System.out.println("...saveFileName = " + saveFileName);
-    	    //System.out.println("...saveFile.exists() = " + saveFileExists);
-    		if (saveFileExists)
-    		  v.addElement(allFolders[idx]);
-    	}
-    	return getResourceHelpers().convertToFolderArray(v);
-    }
-
-    /**
-     * Guess the profile names by itemizing all the root folders, and
-     *  assuming any such folder that has a file in it named "profile.xmi" is
-     *  indeed a profile whose name equals the folder name.
-     */
-    public static String[] deduceProfileNames()
-    {
-    	IFolder[] folders = getProfileFolders();
-    	String[] names = new String[folders.length];
-    	for (int idx=0; idx<names.length; idx++)
-    	   names[idx] = folders[idx].getName();
-    	return names;
-    }
 
     // -----------------------------------
     // GET A SPECIFIC PROFILE FOLDER...
     // -----------------------------------
-    /**
-     * Get profiles folder for a given profile
-     */
-    public static IFolder getProfileFolder(ISystemProfile profile)
-    {
-    	return getProfileFolder(profile.getName());
-    }
+
 
     /**
      * Get profiles folder for a given profile name
@@ -351,59 +306,8 @@ public class SystemResourceManager implements SystemResourceConstants
         return getResourceHelpers().getOrCreateFolder(parentFolder, factoryId); // Do create it.
     }
 
-    /*
-     * --------------------------------------------------------------------------------------------------------------------------------
-     * COMPILE COMMAND SUBTREE FOLDER METHODS...
-     * ======================================
-     *  .--- Team (folder)           - getProfileFolder(SystemProfile/"team")
-     *  |  |
-     *  |  |
-     *  |  .--- CompileCommands (folder)    - getCompileCommandsFolder(SystemProfile/"team")
-     *  |     |
-     *  |     .--- SubSystemConfigurationID1 (folder) - getCompileCommandsFolder(SystemProfile/"team", SubSystemConfiguration)
-     *  |     |  .--- compileCommands.xml (file)
-     *  |     .--- SubSystemConfigurationID2 (folder)
-     *  |        .--- compileCommands.xml (file)
-     * --------------------------------------------------------------------------------------------------------------------------------
-     */
-    // ---------------------------------------------------
-    // GET COMPILE COMMANDS ROOT FOLDER PER PROFILE...
-    // ---------------------------------------------------
-    /**
-     * Get compile commands root folder given a system profile name
-     */
-    protected static IFolder getCompileCommandsFolder(String profileName)
-    {
-        return getResourceHelpers().getOrCreateFolder(getProfileFolder(profileName),RESOURCE_COMPILECOMMANDS_FOLDER_NAME);      	
-    }
-    /**
-     * Get compile commands root folder given a system profile object and subsystem factory
-     */
-    public static IFolder getCompileCommandsFolder(ISystemProfile profile, ISubSystemConfiguration ssFactory)
-    {
-        return getCompileCommandsFolder(profile.getName(),ssFactory);
-    }
-    /**
-     * Get compile commands root folder given a system profile name and subsystem factory
-     */
-    public static IFolder getCompileCommandsFolder(String profileName, ISubSystemConfiguration ssFactory)
-    {
-        IFolder parentFolder = getCompileCommandsFolder(profileName);
-        String folderName = getFolderName(ssFactory);
-        return getResourceHelpers().getOrCreateFolder(parentFolder, folderName); // Do create it.
-    }
 
-    /**
-     * Get compile commands root folder given a system profile name and subsystem factory Id.
-     * This is a special-needs method provided for the Import action processing,
-     * when a subsystem instance is not available.
-     */
-    public static IFolder getCompileCommandsFolder( String profileName, String factoryId)
-    {
-        IFolder parentFolder = getCompileCommandsFolder(profileName);
-        return getResourceHelpers().getOrCreateFolder(parentFolder, factoryId); // Do create it.
-    }
-
+   
 
     // -------------------
     // FOLDER ACTIONS...
@@ -547,38 +451,5 @@ public class SystemResourceManager implements SystemResourceConstants
     	return SystemResourceHelpers.testIfResourceInUse(resource);
     }
     
-    /*
-     * --------------------------------------------------------------------------------------------------------------------------------
-     * TYPE FILTERS SUBTREE FOLDER METHODS...
-     * ======================================
-     *  .--- TypeFilters (folder)    - getTypeFiltersFolder()
-     *     .--- SubSystemConfigurationID1 (folder) - getTypeFiltersFolder(SubSystemConfiguration)
-     *     |  .--- typefilters.xmi (file)
-     * --------------------------------------------------------------------------------------------------------------------------------
-     */
 
-    /**
-     * Get the typeFilters root folder
-     */
-    public static IFolder getTypeFiltersFolder()
-    {
-        return getResourceHelpers().getFolder(getRemoteSystemsProject(),RESOURCE_TYPE_FILTERS_FOLDER_NAME);      	
-    }
-    /**
-     * Get the typeFilters sub-folder per subsystem factory object
-     */
-    public static IFolder getTypeFiltersFolder(ISubSystemConfiguration ssFactory)
-    {
-        IFolder parentFolder = getTypeFiltersFolder();
-        String folderName = getFolderName(ssFactory);
-        return getResourceHelpers().getOrCreateFolder(parentFolder, folderName); // DO create it.            	
-    }
-    /**
-     * Get the typeFilters sub-folder per subsystem factory id
-     */
-    public static IFolder getTypeFiltersFolder(String ssFactoryId)
-    {
-        IFolder parentFolder = getTypeFiltersFolder();
-        return getResourceHelpers().getOrCreateFolder(parentFolder, ssFactoryId); // DO create it.            	
-    }
 }

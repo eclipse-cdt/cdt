@@ -46,7 +46,7 @@ import org.eclipse.ui.PlatformUI;
  * Normally, we do not care about such changes. However, after a team synchronize,
  * we do.
  */
-public class SystemResourceListener implements IResourceChangeListener, Runnable
+public class SystemResourceListener implements ISystemResourceListener, Runnable
 {
     private boolean debug = true;
     private boolean fullDebug = debug && true;

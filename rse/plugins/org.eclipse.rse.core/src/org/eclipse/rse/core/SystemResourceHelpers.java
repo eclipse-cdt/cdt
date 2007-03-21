@@ -733,11 +733,11 @@ public class SystemResourceHelpers implements FileFilter
         
     public void logMessage(String msg)
     {
-        SystemBasePlugin.logWarning(msg);
+    	RSECorePlugin.getDefault().getLogger().logWarning(msg);
     }
     public void logException(String msg, Exception exc)
     {
-    	SystemBasePlugin.logError(msg, exc);
+    	RSECorePlugin.getDefault().getLogger().logError(msg, exc);
     }            
 
 

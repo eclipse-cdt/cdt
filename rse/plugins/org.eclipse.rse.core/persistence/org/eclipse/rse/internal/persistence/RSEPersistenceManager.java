@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -30,6 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -85,9 +85,11 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * @return IProject handle of the project. Use exists() to test existence.
 	 */
 	public static IProject getRemoteSystemsProject() {
-		if (remoteSystemsProject == null) {
-			remoteSystemsProject = ResourcesPlugin.getWorkspace().getRoot().getProject(RESOURCE_PROJECT_NAME);
+		if (remoteSystemsProject == null) 
+		{
+			remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject();
 		}
+
 		return remoteSystemsProject;
 	}
 

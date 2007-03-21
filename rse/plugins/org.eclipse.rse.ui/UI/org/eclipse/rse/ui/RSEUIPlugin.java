@@ -34,6 +34,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.SystemResourceListener;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
@@ -97,7 +98,9 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 			   
 		
 			    // add workspace listener for our project
-			    SystemResourceManager.startResourceEventListening();
+	        	IProject remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject();
+	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
+			    SystemResourceManager.startResourceEventListening(listener);
 
 				// Auto-start RSE communications daemon if required
 				SystemCommunicationsDaemon daemon = SystemCommunicationsDaemon.getInstance();

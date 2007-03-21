@@ -40,15 +40,15 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * The IndexProviderManager is responsible for maintaining the set of index
- * fragments contributed via the CIndex extension point. This is done
- * for the current project state (on a per-project basis).
+ * fragments contributed via the CIndex extension point.
  * <p>
  * It is an internal class, and is public only for testing purposes.
  */
 public final class IndexProviderManager implements IElementChangedListener {
 	public static final String READ_ONLY_PDOM_PROVIDER= "ReadOnlyPDOMProvider"; //$NON-NLS-1$
 	private IIndexFragmentProvider[] allProviders;
-
+	private Map provisionMap= new HashMap();
+	
 	public IndexProviderManager() {
 		List providers = new ArrayList();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -127,23 +127,22 @@ public final class IndexProviderManager implements IElementChangedListener {
 		allProviders = newAllProviders;
 	}
 
-	Map map = new HashMap();
 	private boolean providesForProject(IIndexProvider provider, IProject project) {
 		List key = new ArrayList();
 		key.add(provider);
 		key.add(project);
 
-		if(!map.containsKey(key)) {
+		if(!provisionMap.containsKey(key)) {
 			try {
 				ICProject cproject= CoreModel.getDefault().create(project);
-				map.put(key, new Boolean(provider.providesFor(cproject)));
+				provisionMap.put(key, new Boolean(provider.providesFor(cproject)));
 			} catch(CoreException ce) {
 				CCorePlugin.log(ce);
-				map.put(key, Boolean.FALSE);
+				provisionMap.put(key, Boolean.FALSE);
 			}
 		}
 
-		return ((Boolean) map.get(key)).booleanValue();
+		return ((Boolean) provisionMap.get(key)).booleanValue();
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
@@ -166,19 +165,18 @@ public final class IndexProviderManager implements IElementChangedListener {
 				processDelta(children[i]);
 			break;
 		case ICElement.C_PROJECT:
-			// Find the appropriate indexer and pass the delta on
 			final ICProject cproject = (ICProject)delta.getElement();
 			switch (delta.getKind()) {
 			case ICElementDelta.REMOVED:
 				List toRemove = new ArrayList();
-				for(Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+				for(Iterator i = provisionMap.keySet().iterator(); i.hasNext(); ) {
 					List key = (List) i.next();
 					if(key.contains(cproject.getProject())) {
 						toRemove.add(key);
 					}
 				}
 				for(Iterator i = toRemove.iterator(); i.hasNext(); ) {
-					map.remove(i.next());
+					provisionMap.remove(i.next());
 				}
 				break;
 			}

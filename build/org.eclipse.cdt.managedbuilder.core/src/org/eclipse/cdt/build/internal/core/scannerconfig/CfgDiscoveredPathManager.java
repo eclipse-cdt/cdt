@@ -23,6 +23,7 @@ import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfil
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
@@ -202,7 +203,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 			return;
 		
 		PerFileSettingsCalculator calculator = new PerFileSettingsCalculator();
-		IRcSettingInfo[] rcInfos = calculator.getSettingInfos(data, info);
+		IRcSettingInfo[] rcInfos = calculator.getSettingInfos(cInfo.fLoadContext.getConfiguration().getOwner().getProject(), data, info, true);
 		
 		CResourceData rcDatas[] = data.getResourceDatas();
 		Map rcDataMap = new HashMap(rcDatas.length);
@@ -223,11 +224,18 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		}
 		
 		if(!rcDataMap.isEmpty()){
+			CResourceData tmpRcData;
 			for(Iterator iter = rcDataMap.values().iterator(); iter.hasNext();){
-				clearCache((CResourceData)iter.next());
+				tmpRcData = (CResourceData)iter.next();
+				if(tmpRcData.getPath().segmentCount() == 0 && tmpRcData.getType() == ICSettingBase.SETTING_FOLDER){
+					cache(cInfo, PerFileSettingsCalculator.createEmptyRcSettingInfo((CFolderData)tmpRcData));
+				} else {
+					clearCache(tmpRcData);
+				}
 			}
 		}
 	}
+	
 	
 	private void cache(ContextInfo cInfo, IRcSettingInfo rcSetting){
 		CResourceData rcData = rcSetting.getResourceData();

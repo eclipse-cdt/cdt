@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.cdt.core.settings.model.util.EntryStore;
 import org.eclipse.core.resources.IProject;
 
@@ -74,7 +75,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 			String[] typeIds = getSourceContentTypeIds();
 			String exts[] = null;
 			if(typeIds != null && typeIds.length != 0){
-				exts = CProjectDescriptionManager.getInstance().getExtensionsFromContentTypes(getProject(), typeIds);
+				exts = CDataUtil.getExtensionsFromContentTypes(getProject(), typeIds);
 			} else {
 				exts = super.getSourceExtensions();
 				if(exts != null && exts.length != 0)
@@ -154,6 +155,20 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 
 	public boolean isReadOnly() {
 		return true;
+	}
+
+	protected ICLanguageSettingEntry[] processStoredEntries(
+			ICLanguageSettingEntry[] entries, int op) {
+		if(entries.length != 0){
+			CConfigurationDescriptionCache cfgCache = (CConfigurationDescriptionCache)getConfiguration();
+			CSettingEntryFactory factory = cfgCache.getSettingsFactory();
+			if(factory != null){
+				for(int i = 0; i < entries.length; i++){
+					entries[i] = factory.getLanguageSettingEntry(entries[i]);
+				}
+			}
+		}
+		return entries;
 	}
 
 }

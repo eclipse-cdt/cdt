@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -723,5 +724,9 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		
 		CConfigurationDescriptionCache data = (CConfigurationDescriptionCache)doGetData();
 		return data.isInitializing();
+	}
+
+	public ICLanguageSetting getLanguageSettingForFile(IPath path) {
+		return CProjectDescriptionManager.getLanguageSettingForFile(this, path);
 	}
 }

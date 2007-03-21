@@ -18,8 +18,10 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultFolderData;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -31,9 +33,11 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 	private ResourceDescriptionHolder fRcDesHolder;
 	
 	public CFolderDescriptionCache(CFolderData base, CConfigurationDescriptionCache cfg) {
-		super(base.getId(), base.getPath(), base, cfg, null, true);
+		super(base.getId(), base.getPath(), cfg, null);
 		fCfg = cfg;
 		fCfg.addResourceDescription(this);
+		
+		copyDataFrom(base, true);
 	}
 	
 	public ICLanguageSetting getLanguageSettingForFile(String fileName) {

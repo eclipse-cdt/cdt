@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -72,10 +73,11 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		if(!fIsReadOnly || !fIsLoadding)
 			return;
 		
+		CSettingEntryFactory factory = new CSettingEntryFactory();
 		for(Iterator iter = fCfgMap.values().iterator(); iter.hasNext();){
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
 			try {
-				cache.loadData();
+				cache.loadData(factory);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				iter.remove();
@@ -83,6 +85,9 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		}
 		
 		doneInitializing();
+		
+		factory.clear();
+		
 		fIsLoadding = false;
 	}
 
@@ -90,10 +95,11 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		if(!fIsReadOnly || !fIsApplying)
 			return;
 		
+		CSettingEntryFactory factory = new CSettingEntryFactory();
 		for(Iterator iter = fCfgMap.values().iterator(); iter.hasNext();){
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
 			try {
-				cache.applyData();
+				cache.applyData(factory);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				iter.remove();
@@ -101,6 +107,8 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		}
 		
 		doneInitializing();
+		
+		factory.clear();
 		
 		fIsApplying = false;
 	}
@@ -149,7 +157,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 					configurationCreated(cfg);
 				}
 			} catch (CoreException e){
-				//TODO: log
+				CCorePlugin.log(e);
 			}
 		}
 		

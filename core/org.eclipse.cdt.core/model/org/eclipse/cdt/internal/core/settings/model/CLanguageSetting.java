@@ -113,21 +113,22 @@ public class CLanguageSetting extends CDataProxy implements
 */
 	public String[] getSourceExtensions() {
 		CLanguageData data = getCLanguageData(false);
-		String[] exts = null;
-		String[] typeIds = data.getSourceContentTypeIds();
-		if(typeIds != null && typeIds.length != 0){
-			exts = CProjectDescriptionManager.getInstance().getExtensionsFromContentTypes(getProject(), typeIds);
-		} else {
-			exts = data.getSourceExtensions();
-			if(exts != null && exts.length != 0)
-				exts = (String[])exts.clone();
-			else
-				exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
-		}
-		
-		if(exts == null)
-			exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
-		return exts;
+		return CDataUtil.getSourceExtensions(getProject(), data);
+//		String[] exts = null;
+//		String[] typeIds = data.getSourceContentTypeIds();
+//		if(typeIds != null && typeIds.length != 0){
+//			exts = CProjectDescriptionManager.getInstance().getExtensionsFromContentTypes(getProject(), typeIds);
+//		} else {
+//			exts = data.getSourceExtensions();
+//			if(exts != null && exts.length != 0)
+//				exts = (String[])exts.clone();
+//			else
+//				exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
+//		}
+//		
+//		if(exts == null)
+//			exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
+//		return exts;
 	}
 	
 /*

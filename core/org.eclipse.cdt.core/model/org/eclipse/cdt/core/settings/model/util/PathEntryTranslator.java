@@ -67,7 +67,6 @@ import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.core.model.PathEntry;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSetting;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.core.resources.IContainer;
@@ -1103,7 +1102,7 @@ public class PathEntryTranslator {
 				for(Iterator iter = composerList.iterator(); iter.hasNext();){
 					PathEntryComposer cs = (PathEntryComposer)iter.next();
 					ICSettingEntry entry = cs.getSettingEntry();
-					if(checkFilter(entry, flags)){
+					if(checkFilter(cs, entry, flags)){
 						IPathEntry pe = cs.toPathEntry();
 						if(pe != null)
 							list.add(pe);
@@ -1114,9 +1113,12 @@ public class PathEntryTranslator {
 			return list;
 		}
 		
-		private static boolean checkFilter(ICSettingEntry entry, int flags){
+		private static boolean checkFilter(PathEntryComposer cs, ICSettingEntry entry, int flags){
 			boolean builtIn = entry != null ?
 					entry.isBuiltIn() || entry.isReadOnly() : false;
+			
+			if(builtIn && cs.getPath().segmentCount() > 1)
+				return false;
 			if((flags & INCLUDE_BUILT_INS) != 0 && builtIn)
 				return true;
 			if((flags & INCLUDE_USER) != 0 && !builtIn)
@@ -1596,7 +1598,7 @@ public class PathEntryTranslator {
 				} else {
 					CFolderData folderData = (CFolderData)base;
 					CLanguageData lDatas[] = folderData.getLanguageDatas();
-					CLanguageData baseLData = CProjectDescriptionManager.getInstance().findLanguagDataForFile(rcInfo.fRc.getFullPath().lastSegment(), fProject, lDatas);
+					CLanguageData baseLData = CDataUtil.findLanguagDataForFile(rcInfo.fRc.getFullPath().lastSegment(), fProject, lDatas);
 					newRcData = fCfgData.createFileData(path, folderData, baseLData);
 				}
 			} else {

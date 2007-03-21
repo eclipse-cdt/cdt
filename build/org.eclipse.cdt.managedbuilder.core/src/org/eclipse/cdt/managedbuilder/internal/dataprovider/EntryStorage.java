@@ -233,11 +233,11 @@ public class EntryStorage {
 		levels[0].setReadOnly(false);
 
 		levels[1].setFlagsToClear(ICSettingEntry.BUILTIN);
-		levels[1].setFlagsToSet(ICSettingEntry.READONLY);
+		levels[1].setFlagsToSet(ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
 		levels[1].setReadOnly(true);
 
 		levels[2].setFlagsToClear(0);
-		levels[2].setFlagsToSet(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
+		levels[2].setFlagsToSet(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN | ICSettingEntry.RESOLVED);
 		levels[2].setReadOnly(true);
 
 		return settings;

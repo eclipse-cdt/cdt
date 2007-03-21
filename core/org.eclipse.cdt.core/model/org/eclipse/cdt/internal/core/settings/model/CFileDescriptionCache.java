@@ -28,9 +28,11 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 	private ResourceDescriptionHolder fRcDesHolder;
 
 	public CFileDescriptionCache(CFileData base, CConfigurationDescriptionCache cfg) {
-		super(base.getId(), base.getPath(), base, cfg, null, true);
+		super(base.getId(), base.getPath(), cfg, null);
 		fCfg = cfg;
 		fCfg.addResourceDescription(this);
+
+		copyDataFrom(base, true);
 	}
 	
 	protected CLanguageData copyLanguageData(CLanguageData data, boolean clone) {

@@ -68,8 +68,8 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
@@ -87,7 +87,6 @@ import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
@@ -102,11 +101,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.framework.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1402,49 +1399,6 @@ public class CProjectDescriptionManager {
 		return setting;
 	}
 
-	public CLanguageData findLanguagDataForFile(String fileName, IProject project, CLanguageData datas[]){
-		//	if(cType != null){
-		//		setting = findLanguageSettingForContentTypeId(cType.getId(), settings, true);
-		//		if(setting == null)
-		//			setting = findLanguageSettingForContentTypeId(cType.getId(), settings, false);
-		//	}
-			CLanguageData data = null;
-			int index = fileName.lastIndexOf('.');
-			if(index > 0){
-				String ext = fileName.substring(index + 1).trim();
-				if(ext.length() > 0){
-					data = findLanguageDataForExtension(ext, datas);
-				}
-			}
-			return data;
-		}
-	
-	public CLanguageData findLanguageDataForExtension(String ext, CLanguageData datas[]/*, boolean src*/){
-		CLanguageData data;
-		for(int i = 0; i < datas.length; i++){
-			data = datas[i]; 
-			String exts[] = data.getSourceExtensions();
-/*			if(src){
-				if(setting.getSourceContentType() == null){
-					exts = setting.getSourceExtensions();
-				}
-			} else {
-				if(setting.getHeaderContentType() == null){
-					exts = setting.getHeaderExtensions();
-				}
-			}
-*/			
-			if(exts != null && exts.length != 0){
-				for(int j = 0; j < exts.length; j++){
-					if(ext.equals(exts[j]))
-						return data;
-				}
-			}
-		}
-		return null;
-	}
-
-	
 	public ICLanguageSetting findLanguageSettingForContentTypeId(String id, ICLanguageSetting settings[]/*, boolean src*/){
 		for(int i = 0; i < settings.length; i++){
 			String ids[] = settings[i].getSourceContentTypeIds();
@@ -2848,9 +2802,10 @@ public class CProjectDescriptionManager {
 		ICStorageElement baseRootEl = settings.getRootStorageElement();
 		rootEl = rootParent.importChild(baseRootEl);
 		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(des, baseData, cfgDes.getSpecSettings(), null, rootEl);
-		cache.applyData();
+		CSettingEntryFactory factory = new CSettingEntryFactory();
+		cache.applyData(factory);
 		cache.doneInitialization();
-		
+		factory.clear();
 		return cache;
 	}
 	
@@ -2926,8 +2881,10 @@ public class CProjectDescriptionManager {
 			
 		}
 		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(cfgEl, null);
-		cache.loadData();
+		CSettingEntryFactory factory = new CSettingEntryFactory();
+		cache.loadData(factory);
 		cache.doneInitialization();
+		factory.clear();
 		return cache;
 	}
 	
@@ -3111,59 +3068,38 @@ public class CProjectDescriptionManager {
 		return data != null && !PathEntryConfigurationDataProvider.isPathEntryData(data);
 	}
 	
-	public String[] getContentTypeFileSpecs (IProject project, IContentType type) {
-		String[] globalSpecs = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC); 
-		IContentTypeSettings settings = null;
-		if (project != null) {
-			IScopeContext projectScope = new ProjectScope(project);
-			try {
-				settings = type.getSettings(projectScope);
-			} catch (Exception e) {}
-			if (settings != null) {
-				String[] specs = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-				if (specs.length > 0) {
-					int total = globalSpecs.length + specs.length;
-					String[] projSpecs = new String[total];
-					int i=0;
-					for (int j=0; j<specs.length; j++) {
-						projSpecs[i] = specs[j];
-						i++;
-					}								
-					for (int j=0; j<globalSpecs.length; j++) {
-						projSpecs[i] = globalSpecs[j];
-						i++;
-					}								
-					return projSpecs;
-				}
-			}
-		}
-		return globalSpecs;		
-	}
-	public String[] getExtensionsFromContentTypes(IProject project, String[] typeIds){
-		String[] exts = null;
-		if(typeIds != null && typeIds.length != 0){
-			IContentTypeManager manager = Platform.getContentTypeManager();
-			IContentType type;
-			if(typeIds.length == 1){
-				type = manager.getContentType(typeIds[0]);
-				if(type != null)
-					exts = getContentTypeFileSpecs(project, type);
-			} else {
-				List list = new ArrayList();
-				for(int i = 0; i < typeIds.length; i++){
-					type = manager.getContentType(typeIds[i]);
-					if(type != null) {
-						list.addAll(Arrays.asList(getContentTypeFileSpecs(project, type)));
-					}
-				}
-				exts = (String[])list.toArray(new String[list.size()]);
-			}
-		}
-		
-		if(exts == null)
-			exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
-		return exts;
-	}
+//	public String[] getContentTypeFileSpecs (IProject project, IContentType type) {
+//		String[] globalSpecs = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC); 
+//		IContentTypeSettings settings = null;
+//		if (project != null) {
+//			IScopeContext projectScope = new ProjectScope(project);
+//			try {
+//				settings = type.getSettings(projectScope);
+//			} catch (Exception e) {}
+//			if (settings != null) {
+//				String[] specs = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+//				if (specs.length > 0) {
+//					int total = globalSpecs.length + specs.length;
+//					String[] projSpecs = new String[total];
+//					int i=0;
+//					for (int j=0; j<specs.length; j++) {
+//						projSpecs[i] = specs[j];
+//						i++;
+//					}								
+//					for (int j=0; j<globalSpecs.length; j++) {
+//						projSpecs[i] = globalSpecs[j];
+//						i++;
+//					}								
+//					return projSpecs;
+//				}
+//			}
+//		}
+//		return globalSpecs;		
+//	}
+	
+//	public String[] getExtensionsFromContentTypes(IProject project, String[] typeIds){
+//		return CDataUtil.getExtensionsFromContentTypes(project, typeIds);
+//	}
 	
 	ICProjectDescription getDescriptionApplying(IProject project){
 		Map map = getDescriptionApplyingMap(false);
@@ -3185,5 +3121,17 @@ public class CProjectDescriptionManager {
 		Map map = getDescriptionApplyingMap(false);
 		if(map != null)
 			map.remove(project);
+	}
+	
+	static ICLanguageSetting getLanguageSettingForFile(ICConfigurationDescription cfgDes, IPath path){
+		int segCount = path.segmentCount(); 
+		if(segCount == 0)
+			return null;
+		
+		ICResourceDescription rcDes = cfgDes.getResourceDescription(path, false);
+		if(rcDes.getType() == ICSettingBase.SETTING_FOLDER){
+			return ((ICFolderDescription)rcDes).getLanguageSettingForFile(path.lastSegment());
+		}
+		return ((ICFileDescription)rcDes).getLanguageSetting();
 	}
 }

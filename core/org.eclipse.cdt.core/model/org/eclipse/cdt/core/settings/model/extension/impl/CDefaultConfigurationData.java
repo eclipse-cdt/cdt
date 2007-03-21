@@ -97,7 +97,6 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		if(base == null)
 			return;
 		fDescription = base.getDescription();
-		CResourceData[] rcDatas = base.getResourceDatas();
 		
 		fTargetPlatformData = copyTargetPlatformData(base.getTargetPlatformData(), clone);
 		fSourcePaths = base.getSourcePaths();
@@ -106,7 +105,9 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		CFolderData baseRootFolderData = base.getRootFolderData();
 		fRootFolderData = copyFolderData(baseRootFolderData.getPath(), baseRootFolderData, clone);
 		addRcData(fRootFolderData);
-		
+
+		CResourceData[] rcDatas = base.getResourceDatas();
+
 		for(int i = 0; i < rcDatas.length; i++){
 			CResourceData rcData = rcDatas[i];
 			if(baseRootFolderData == rcData)

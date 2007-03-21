@@ -19,6 +19,9 @@ import org.eclipse.cdt.core.settings.model.util.EntryStore;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 
 public class CDefaultLanguageData extends CLanguageData {
+	protected final static int OP_COPY = 1;
+	protected final static int OP_SET = 2;
+	
 	protected String fName;
 	protected String fId;
 	protected String fLanguageId;
@@ -84,9 +87,14 @@ public class CDefaultLanguageData extends CLanguageData {
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		for(int i = 0; i < kinds.length; i++){
 			ICLanguageSettingEntry entries[] = data.getEntries(kinds[i]);
+			entries = processStoredEntries(entries, OP_COPY);
 			store.storeEntries(kinds[i], entries);
 		}
 		return store;
+	}
+	
+	protected ICLanguageSettingEntry[] processStoredEntries(ICLanguageSettingEntry[] entries, int op){
+		return entries;
 	}
 	
 	protected EntryStore createStore(){
@@ -174,6 +182,7 @@ public class CDefaultLanguageData extends CLanguageData {
 	}
 
 	public void setEntries(int kind, ICLanguageSettingEntry entries[]) {
+		entries = processStoredEntries(entries, OP_SET);
 		fStore.storeEntries(kind, entries);
 		
 		setModified(true);

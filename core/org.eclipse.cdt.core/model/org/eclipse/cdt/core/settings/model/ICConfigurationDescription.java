@@ -352,4 +352,13 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	void remove(String extensionPoint) throws CoreException;
 	
 	boolean isPreferenceConfiguration();
+	
+	/**
+	 * convenience method to return a language setting for the file
+	 * with the specified project-relative path
+	 * 
+	 * @param path - file project relative path
+	 * @return ICLanguageSetting or null if not found
+	 */
+	ICLanguageSetting getLanguageSettingForFile(IPath path);
 }

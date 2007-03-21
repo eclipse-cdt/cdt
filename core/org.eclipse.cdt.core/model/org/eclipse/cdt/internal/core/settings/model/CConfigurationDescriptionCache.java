@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
+import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
@@ -60,6 +62,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	private boolean fDataLoadded;
 	private boolean fInitializing;
 	private ICConfigurationDescription fBaseDescription;
+	private CSettingEntryFactory fSettingsFactory;
 
 	CConfigurationDescriptionCache(ICStorageElement storage, CProjectDescription parent) throws CoreException{
 		super(null);
@@ -77,14 +80,19 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return fInitializing;
 	}
 	
-	void loadData() throws CoreException{
+	void loadData(CSettingEntryFactory factory) throws CoreException{
 		if(fDataLoadded)
 			return;
 		
 		fDataLoadded = true;
 			
 		fData = CProjectDescriptionManager.getInstance().loadData(this, null);
+		
+		fSettingsFactory = factory;
+		
 		copySettingsFrom(fData, true);
+		
+		fSettingsFactory = null;
 		
 		fSpecSettings.reconsileExtensionSettings(true);
 		((CBuildSettingCache)fBuildData).initEnvironmentCache();
@@ -121,7 +129,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 //		fInitializing = false;
 	}
 	
-	void applyData() throws CoreException{
+	void applyData(CSettingEntryFactory factory) throws CoreException{
 		if(fBaseDescription == null)
 			return;
 		
@@ -129,8 +137,11 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		fDataLoadded = true;
 		fName = fData.getName();
 		fId = fData.getId();
+		fSettingsFactory = factory;
 		
 		copySettingsFrom(fData, true);
+		
+		fSettingsFactory = null;
 		
 		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
 		fMacros = new StorableCdtVariables(vars, true);
@@ -139,6 +150,10 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		
 		fBaseDescription = null;
 //		fInitializing = false;
+	}
+	
+	CSettingEntryFactory getSettingsFactory(){
+		return fSettingsFactory;
 	}
 	
 	public StorableCdtVariables getCachedVariables(){
@@ -423,5 +438,9 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	
 	void doneInitialization(){
 		fInitializing = false;
+	}
+	
+	public ICLanguageSetting getLanguageSettingForFile(IPath path) {
+		return CProjectDescriptionManager.getLanguageSettingForFile(this, path);
 	}
 }

@@ -27,9 +27,10 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.IPathSettingsContainerVisitor;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
-import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
+import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -59,7 +60,7 @@ public class PerFileSettingsCalculator {
 	}
 
 	private static class RcSettingInfo implements IRcSettingInfo{
-		private List fLangInfoList;
+		private ArrayList fLangInfoList;
 		private CResourceData fRcData;
 
 		RcSettingInfo(CResourceData rcData){
@@ -629,7 +630,110 @@ public class PerFileSettingsCalculator {
 		return rcSet;
 	}
 	
-	public IRcSettingInfo[] getSettingInfos(CConfigurationData data, IDiscoveredPathManager.IPerFileDiscoveredPathInfo2 discoveredInfo){
+	/*
+	 * utility method for creating empty IRcSettingInfo
+	 */
+	public static IRcSettingInfo createEmptyRcSettingInfo(CFolderData data){
+		RcSettingInfo rcInfo = new RcSettingInfo(data);
+		CLanguageData[] lDatas = data.getLanguageDatas();
+		addEmptyLanguageInfos(rcInfo, lDatas);
+		return rcInfo;
+	}
+	
+	private static void addEmptyLanguageInfos(RcSettingInfo rcInfo, CLanguageData[] lDatas){
+		ArrayList list = rcInfo.fLangInfoList;
+		if(list == null){
+			list = new ArrayList(lDatas.length);
+			rcInfo.fLangInfoList = list;
+		} else {
+			list.ensureCapacity(lDatas.length);
+		}
+		
+		for(int i = 0; i < lDatas.length; i++){
+			list.add(new LangSettingInfo(lDatas[i], PathInfo.EMPTY_INFO));
+		}
+	}
+	
+	private IRcSettingInfo[] mapFileDiscoveredInfo(IProject project, CConfigurationData data, RcSetSettings rcSet, Map map){
+		IResource rc;
+		PathInfo pInfo;
+		Map.Entry entry;
+		IPath projRelPath;
+		CResourceData rcData;
+//		RcSetSettings dataSetting;
+		List list = new ArrayList(map.size());
+		RcSettingInfo rcInfo;
+		LangSettingInfo lInfo;
+		CLanguageData lData;
+		ArrayList tmpList;
+		
+		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+			entry = (Map.Entry)iter.next();
+			rc = (IResource)entry.getKey();
+			pInfo = (PathInfo)entry.getValue();
+			if(pInfo.isEmpty())
+				continue;
+
+			switch(rc.getType()){
+			case IResource.FILE:
+				projRelPath = rc.getProjectRelativePath();
+//				dataSetting = rcSet.getChild(projRelPath, false); 
+//				rcData = dataSetting.fRcData;
+				rcData = rcSet.getChild(projRelPath, false).fRcData;
+				if(!rcData.getPath().equals(projRelPath)){
+					if(rcData.getType() == ICSettingBase.SETTING_FOLDER){
+						CFolderData foData = (CFolderData)rcData;
+						lData = CDataUtil.findLanguagDataForFile(projRelPath.lastSegment(), project, (CFolderData)rcData);
+						try {
+							rcData = createFileData(data, projRelPath, foData, lData);
+						} catch (CoreException e) {
+							rcData = null;
+							ManagedBuilderCorePlugin.log(e);
+						}
+					} else {
+						try {
+							rcData = createFileData(data, projRelPath, (CFileData)rcData);
+						} catch (CoreException e) {
+							rcData = null;
+							ManagedBuilderCorePlugin.log(e);
+						} 
+					}
+//					if(rcData != null)
+//						dataSetting = rcSet.createChild(projRelPath, rcData, false);
+//					else
+//						dataSetting = null;
+				}
+				
+				if(rcData != null){
+					if(rcData.getType() == ICSettingBase.SETTING_FILE){
+						lData = ((CFileData)rcData).getLanguageData();
+					} else {
+						lData = CDataUtil.findLanguagDataForFile(projRelPath.lastSegment(), project, (CFolderData)rcData);
+						
+					}
+
+					if(lData != null){
+						rcInfo = new RcSettingInfo(rcData);
+						lInfo = new LangSettingInfo(lData, pInfo);
+						tmpList = new ArrayList(1);
+						tmpList.add(lInfo);
+						rcInfo.fLangInfoList = tmpList;
+						list.add(rcInfo);
+					}
+
+				}
+
+				break;
+			}
+		}
+		return (RcSettingInfo[])list.toArray(new RcSettingInfo[list.size()]);
+	}
+	
+	public IRcSettingInfo[] getSettingInfos(IProject project, CConfigurationData data, IDiscoveredPathManager.IPerFileDiscoveredPathInfo2 discoveredInfo, boolean fileDataMode){
+		if(fileDataMode){
+			RcSetSettings rcSettings = createRcSetInfo(data);
+			return mapFileDiscoveredInfo(project, data, rcSettings, discoveredInfo.getPathInfoMap());
+		}
 		RcSetSettings settings = createRcSetSettings(data, discoveredInfo);
 		return createInfos(data, settings);
 	}

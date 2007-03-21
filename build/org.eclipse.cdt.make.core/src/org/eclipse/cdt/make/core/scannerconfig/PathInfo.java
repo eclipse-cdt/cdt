@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.Path;
 
 public final class PathInfo {
 	private static final Path[] EMPTY_PATH_ARRAY = new Path[0];
+	public final static PathInfo EMPTY_INFO = new PathInfo(null, null, null, null, null);
+
 	private static int EMPTY_CODE = 53;
 	
 	private IPath[] fIncludePaths;

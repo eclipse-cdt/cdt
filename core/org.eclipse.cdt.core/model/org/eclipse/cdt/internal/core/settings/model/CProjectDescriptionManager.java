@@ -723,7 +723,7 @@ public class CProjectDescriptionManager {
 				runWspModification(new IWorkspaceRunnable(){
 	
 					public void run(IProgressMonitor monitor) throws CoreException {
-						monitor.beginTask("Refreshing the project settings", fi[0]);
+						monitor.beginTask(SettingsModelMessages.getString("CProjectDescriptionManager.13"), fi[0]); //$NON-NLS-1$
 						
 						for(int i = 0; i < dess.length; i++){
 							ICProjectDescription des = dess[i];

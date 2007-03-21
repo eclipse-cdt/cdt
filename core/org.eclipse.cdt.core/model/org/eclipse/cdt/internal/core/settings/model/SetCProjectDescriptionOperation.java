@@ -71,7 +71,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		}
 
 		mngr.setLoaddedDescription(project, fNewDescriptionCache, true);
-		CompositeWorkspaceRunnable runnable = new CompositeWorkspaceRunnable("CDT Project settings serialization");
+		CompositeWorkspaceRunnable runnable = new CompositeWorkspaceRunnable(SettingsModelMessages.getString("SetCProjectDescriptionOperation.0")); //$NON-NLS-1$
 		
 		try {
 			final IProjectDescription eDes = project.getDescription();

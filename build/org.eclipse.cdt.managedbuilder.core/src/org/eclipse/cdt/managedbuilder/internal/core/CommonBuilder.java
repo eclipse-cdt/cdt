@@ -174,14 +174,14 @@ public class CommonBuilder extends ACBuilder {
 			for(int i = 0; i < projects.length; i++){
 				if(bld.hasBeenBuilt(projects[i])){
 					if(VERBOSE)
-						outputTrace(null, "checking clean: the project " + projects[i].getName() +" was built, no clean needed");
+						outputTrace(null, "checking clean: the project " + projects[i].getName() +" was built, no clean needed"); //$NON-NLS-1$ //$NON-NLS-2$
 
 					return false;
 				}
 			}
 
 			if(VERBOSE)
-				outputTrace(null, "checking clean: no projects were built.. cleanning");
+				outputTrace(null, "checking clean: no projects were built.. cleanning"); //$NON-NLS-1$
 
 			fMap.clear();
 			return true;
@@ -473,13 +473,13 @@ public class CommonBuilder extends ACBuilder {
 		IProject project = getProject();
 
 		if(VERBOSE)
-			outputTrace(project.getName(), ">>build requested, type = " + kind);
+			outputTrace(project.getName(), ">>build requested, type = " + kind); //$NON-NLS-1$
 
 		IBuilder builders[] = BuilderFactory.createBuilders(project, args);
 		IProject[] projects = build(kind, project, builders, true, monitor);
 
 		if(VERBOSE)
-			outputTrace(project.getName(), "<<done build requested, type = " + kind);
+			outputTrace(project.getName(), "<<done build requested, type = " + kind); //$NON-NLS-1$
 
 		return projects;
 	}
@@ -523,7 +523,7 @@ public class CommonBuilder extends ACBuilder {
 		cfgs = filterConfigsToBuild(cfgs);
 
 		if(cfgs.length != 0){
-			monitor.beginTask("Building referenced configurations..", cfgs.length);
+			monitor.beginTask(ManagedMakeMessages.getResourceString("CommonBuilder.22"), cfgs.length); //$NON-NLS-1$
 			for(int i = 0; i < cfgs.length; i++){
 				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 				try {
@@ -531,12 +531,12 @@ public class CommonBuilder extends ACBuilder {
 					IBuilder builder = cfg.getEditableBuilder();
 //					CfgBuildInfo bInfo = new CfgBuildInfo(builder, false);
 					if(VERBOSE)
-						outputTrace(cfg.getOwner().getProject().getName(), ">>>>building reference cfg " + cfg.getName());
+						outputTrace(cfg.getOwner().getProject().getName(), ">>>>building reference cfg " + cfg.getName()); //$NON-NLS-1$
 
 					IProject[] projs = build(INCREMENTAL_BUILD, cfg.getOwner().getProject(), new IBuilder[]{builder}, false, subMonitor);
 
 					if(VERBOSE)
-						outputTrace(cfg.getOwner().getProject().getName(), "<<<<done building reference cfg " + cfg.getName());
+						outputTrace(cfg.getOwner().getProject().getName(), "<<<<done building reference cfg " + cfg.getName()); //$NON-NLS-1$
 
 					projSet.addAll(Arrays.asList(projs));
 				} catch (CoreException e){
@@ -560,13 +560,13 @@ public class CommonBuilder extends ACBuilder {
 			Set set = fBuildSet.getCfgIdSet(project, true);
 			if(set.add(cfg.getId())){
 				if(VERBOSE){
-					outputTrace(cfg.getOwner().getProject().getName(), "set: adding cfg " + cfg.getName() + " ( id=" + cfg.getId() + ")");
-					outputTrace(cfg.getOwner().getProject().getName(), "filtering regs: adding cfg " + cfg.getName() + " ( id=" + cfg.getId() + ")");
+					outputTrace(cfg.getOwner().getProject().getName(), "set: adding cfg " + cfg.getName() + " ( id=" + cfg.getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					outputTrace(cfg.getOwner().getProject().getName(), "filtering regs: adding cfg " + cfg.getName() + " ( id=" + cfg.getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 
 				cfgList.add(cfg);
 			} else if(VERBOSE)
-				outputTrace(cfg.getOwner().getProject().getName(), "filtering regs: excluding cfg " + cfg.getName() + " ( id=" + cfg.getId() + ")");
+				outputTrace(cfg.getOwner().getProject().getName(), "filtering regs: excluding cfg " + cfg.getName() + " ( id=" + cfg.getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		}
 		return (IConfiguration[])cfgList.toArray(new IConfiguration[cfgList.size()]);
@@ -709,7 +709,7 @@ public class CommonBuilder extends ACBuilder {
 	
 	protected void build(int kind, CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException{
 		if(VERBOSE)
-			outputTrace(bInfo.getProject().getName(), "building cfg " + bInfo.getConfiguration().getName() + " with builder " + bInfo.getBuilder().getName());
+			outputTrace(bInfo.getProject().getName(), "building cfg " + bInfo.getConfiguration().getName() + " with builder " + bInfo.getBuilder().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		IBuilder builder = bInfo.getBuilder();
 		BuildStatus status = new BuildStatus(builder);
 		
@@ -735,7 +735,7 @@ public class CommonBuilder extends ACBuilder {
 			if(!builder.isCustomBuilder()){
 				Set set = fBuildSet.getCfgIdSet(bInfo.getProject(), true);
 				if(VERBOSE)
-					outputTrace(bInfo.getProject().getName(), "set: adding cfg " + cfg.getName() + " ( id=" + cfg.getId() + ")");
+					outputTrace(bInfo.getProject().getName(), "set: adding cfg " + cfg.getName() + " ( id=" + cfg.getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				set.add(cfg.getId());
 			}
 

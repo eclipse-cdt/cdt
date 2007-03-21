@@ -329,13 +329,13 @@ public class PerFileSettingsCalculator {
 
 		public String toString() {
 			if(fExts.length == 0)
-				return "<empty>";
+				return "<empty>"; //$NON-NLS-1$
 			
 			StringBuffer buf = new StringBuffer();
 			
 			for(int i = 0; i < fExts.length; i++){
 				if(i != 0)
-					buf.append(",");
+					buf.append(","); //$NON-NLS-1$
 				buf.append(fExts[i]);
 			}
 			return buf.toString();
@@ -924,7 +924,7 @@ public class PerFileSettingsCalculator {
 		String ext = path.getFileExtension();
 		if(ext != null)
 			return ext;
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	private static HashMap createEmptyExtSetMapCopy(HashMap base){

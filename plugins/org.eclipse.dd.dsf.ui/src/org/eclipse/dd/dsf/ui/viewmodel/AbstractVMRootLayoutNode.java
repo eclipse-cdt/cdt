@@ -77,7 +77,7 @@ abstract public class AbstractVMRootLayoutNode extends AbstractVMLayoutNode impl
      * is the input object into the view.  
      */
     public void createDelta(Object event, final GetDataDone<IModelDelta> done) {
-        final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltas(event);
+        final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltaFlags(event);
         assert childNodeDeltas.size() != 0 : "Caller should make sure that there are deltas for given event."; //$NON-NLS-1$
 
         // Always create the rootDelta, no matter what delta flags the child nodes have.

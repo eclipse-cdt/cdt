@@ -17,11 +17,6 @@ public interface IVMProvider
     extends IElementContentProvider, IModelProxyFactoryAdapter, IColumnPresentationFactoryAdapter 
 {
     /**
-     * Returns the View Model Adapter that this provider belongs to.
-     */
-    public IVMAdapter getVMAdapter();
-    
-    /**
      * Returns the root layout node that is configured in this provider.  
      * It may return null, if a root node is not yet configured.
      */

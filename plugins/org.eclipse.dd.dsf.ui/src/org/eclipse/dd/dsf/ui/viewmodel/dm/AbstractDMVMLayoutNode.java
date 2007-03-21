@@ -388,7 +388,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
             // Create the VM context based on the DM context from the DM event.
             final IVMContext vmc = new DMVMContext(DMContexts.getAncestorOfType(event.getDMContext(), fDMCClassType));
     
-            final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltas(event);
+            final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltaFlags(event);
             if (childNodeDeltas.size() == 0) {
                 // There are no child nodes with deltas, just return to parent.
                 getExecutor().execute(done);

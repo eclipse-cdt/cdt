@@ -60,7 +60,7 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         return fProvider.getExecutor();
     }
 
-    protected IVMProvider getVMProvider() {
+    protected AbstractVMProvider getVMProvider() {
         return fProvider;
     }
     
@@ -91,17 +91,20 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         return retVal;
     }
 
-    /**
-     * Handles calling child schema nodes to build the model delta.  If child 
-     * schema nodes have deltas, this schema node has to provide the 
-     * IModelDelta objects that the child shema node can build on.
+    /** 
+     * Base implementation that handles calling child layout nodes to build 
+     * the model delta.  The child nodes are called with all the elements 
+     * in this node, which could be very inefficient.  In order to build delta
+     * only for specific elements in this node, the class extending 
+     * <code>AbstractVMLayoutNode</code> should override this method. 
+     * @see IVMLayoutNode#buildDelta(Object, VMDelta, int, Done)
      */
     public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final Done done) {
         // Find the child nodes that have deltas for the given event. 
-        final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltas(event);
+        final Map<IVMLayoutNode,Integer> childNodesWithDeltaFlags = getChildNodesWithDeltaFlags(event);
 
         // If no child layout nodes have deltas we can stop here. 
-        if (childNodeDeltas.size() == 0) {
+        if (childNodesWithDeltaFlags.size() == 0) {
             getExecutor().execute(done);
             return;
         }            
@@ -112,14 +115,14 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         // use the full path from the delta to handle these flags.
         // Similarly, the index argument is not necessary either.
         boolean mustGetElements = false;
-        for (int childDelta : childNodeDeltas.values()) {
+        for (int childDelta : childNodesWithDeltaFlags.values()) {
             if ((childDelta & ~IModelDelta.CONTENT & ~IModelDelta.STATE) != 0) {
                 mustGetElements = true;
             }
         }
 
         if (!mustGetElements) {
-            callChildNodesToBuildDelta(childNodeDeltas, parentDelta, event, done);
+            callChildNodesToBuildDelta(childNodesWithDeltaFlags, parentDelta, event, done);
         } else {
             // The given child layout nodes have deltas potentially for all elements
             // from this node.  Retrieve all elements and call the child nodes with
@@ -147,9 +150,9 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
                         // For each element from this node, create a new delta, 
                         // and then call all the child nodes to build their delta. 
                         for (int i = 0; i < getData().size(); i++) {
-                            VMDelta delta = parentDelta.addNode((IVMContext)getData().get(i), nodeOffset + i, IModelDelta.NO_CHANGE);
+                            VMDelta delta = parentDelta.addNode(getData().get(i), nodeOffset + i, IModelDelta.NO_CHANGE);
                             callChildNodesToBuildDelta(
-                                childNodeDeltas, delta, event, 
+                                childNodesWithDeltaFlags, delta, event, 
                                 elementsDeltasDoneCollector.add(new Done() { 
                                     public void run() {
                                         elementsDeltasDoneCollector.doneDone(this);
@@ -162,6 +165,17 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         }
     }
     
+    /**
+     * Calls the specified child layout nodes to build the delta for the given event.
+     * @param nodes Map of layout nodes to be invoked, and the corresponding delta 
+     * flags that they will generate.  This map is generated with a call to 
+     * {@link #getChildNodesWithDeltaFlags(Object)}.  
+     * @param delta The delta object to build on.  This delta should have been 
+     * gerated by this node, unless the full delta path is not being calculated
+     * due to an optimization.
+     * @param event The event object that the delta is being built for.
+     * @param done The result token to invoke when the delta is completed.
+     */
     protected void callChildNodesToBuildDelta(final Map<IVMLayoutNode,Integer> nodes, final VMDelta delta, final Object event, final Done done) {
         assert nodes.size() != 0;
 
@@ -203,6 +217,22 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         });
     }
 
+    /**
+     * Calculates the indexes at which the elements of each of the child 
+     * layout nodes begin.  These indexes are necessary to correctly 
+     * calculate the deltas for elements in the child nodes.
+     * @param delta The delta object to build on.  This delta should have been 
+     * gerated by this node, unless the full delta path is not being calculated
+     * due to an optimization.
+     * @param fakeIt If true, it causes this method to fill the return data
+     * structure with dummy values.  The dummy values indicate that the indexes
+     * are not known and are acceptable in the delta if the delta flags being 
+     * generated do not require full index information. 
+     * @param done Return token containing the results.  The result data is a 
+     * mapping between the child nodes and the indexes at which the child nodes' 
+     * elements begin.  There is a special value in the map with a <code>null</code>
+     * key, which contains the full element count for all the nodes. 
+     */
     private void getChildNodesElementOffsets(IModelDelta delta, boolean fakeIt, final GetDataDone<Map<IVMLayoutNode, Integer>> done) {
         assert getChildLayoutNodes().length != 0;
         
@@ -258,7 +288,7 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
      * <code>true</code> to the <code>hasDeltaFlags()</code> test for the given
      * event.   
      */
-    protected Map<IVMLayoutNode, Integer> getChildNodesWithDeltas(Object e) {
+    protected Map<IVMLayoutNode, Integer> getChildNodesWithDeltaFlags(Object e) {
         Map<IVMLayoutNode, Integer> nodes = new HashMap<IVMLayoutNode, Integer>(); 
         for (final IVMLayoutNode childNode : getChildLayoutNodes()) {
             int delta = childNode.getDeltaFlags(e);
@@ -328,10 +358,6 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
     
     protected class ViewerUpdate implements IViewerUpdate {
         
-    	public void cancel() {
-			// FIXME M5
-		}
-
 		final private Done fDone;
         private boolean fDoneInvoked = false;
         final private TreePath fTreePath;
@@ -372,13 +398,8 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         public TreePath getElementPath() { return fTreePath; }
         public IStatus getStatus() { return fStatus; }
         public void setStatus(IStatus status) { fStatus = status; }
-        public void beginTask(String name, int totalWork) {}
-        public void internalWorked(double work) {}
         public boolean isCanceled() { return fCancelled; }
-        public void setCanceled(boolean value) { fCancelled = value; }
-        public void setTaskName(String name) {}
-        public void subTask(String name) {}
-        public void worked(int work) {}
+        public void cancel() { fCancelled = true; }
         
         public void done() {
             assert !fDoneInvoked;
@@ -429,6 +450,11 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
 
         public void setChild(Object child, int offset) {
             fChildren.add(offset, child);
+        }
+        
+        @Override
+        public String toString() {
+            return "ElementsUpdate for all elements under parent = " + getElement(); //$NON-NLS-1$
         }
     }
 

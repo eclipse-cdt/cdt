@@ -177,7 +177,7 @@ public class VMDelta extends ModelDelta {
      * @param numChildren the number of children the element has
      * @return newly created child delta
      */
-    public ModelDelta addNode(Object element, int index, int flags, int numChildren) {
+    public VMDelta addNode(Object element, int index, int flags, int numChildren) {
         VMDelta node = new VMDelta(element, index, flags, numChildren);
         node.setParent(this);
         addDelta(node);
@@ -197,7 +197,7 @@ public class VMDelta extends ModelDelta {
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getParent()
 	 */
     @Override
-	public IModelDelta getParentDelta() {
+	public VMDelta getParentDelta() {
 		return fParent;
 	}
 

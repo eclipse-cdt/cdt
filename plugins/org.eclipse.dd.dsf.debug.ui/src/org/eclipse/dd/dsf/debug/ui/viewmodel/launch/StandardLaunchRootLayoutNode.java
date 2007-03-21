@@ -114,7 +114,7 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
         } 
         
         // Call the child nodes to generate their delta.
-        final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltas(event);
+        final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltaFlags(event);
         if (childNodeDeltas.size() != 0) {
             callChildNodesToBuildDelta(
                 childNodeDeltas, rootDelta, event, 

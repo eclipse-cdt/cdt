@@ -28,8 +28,6 @@ import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.DoneCollector;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
-import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
@@ -90,14 +88,14 @@ abstract public class AbstractVMProvider implements IVMProvider
         fPresentationContext = presentationContext;
     }    
 
-    public IVMAdapter getVMAdapter() {
-        return fVMAdapter;
-    }
-
     public IPresentationContext getPresentationContext() {
         return fPresentationContext;
     }
-    
+
+    public AbstractVMAdapter getVMAdapter() {
+        return fVMAdapter;
+    }
+
     /**
      * Sets the root node for this provider.  
      */
@@ -459,30 +457,6 @@ abstract public class AbstractVMProvider implements IVMProvider
         return false;
     }
         
-    /**
-     * Handle "data model changed" event by generating a delta object for each 
-     * view and passing it to the corresponding view model provider.  The view
-     * model provider is then responsible for filling-in and sending the delta
-     * to the viewer.
-     * @param e
-     */
-    @DsfServiceEventHandler
-    public void eventDispatched(final IDMEvent<?> event) {
-        IVMRootLayoutNode rootLayoutNode = getRootLayoutNode();
-        
-        if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != 0) {
-            rootLayoutNode.createDelta(event, new GetDataDone<IModelDelta>() {
-                public void run() {
-                    if (getStatus().isOK()) {
-                        fModelProxy.fireModelChangedNonDispatch(getData());
-                    }
-                }
-                @Override public String toString() {
-                    return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + AbstractVMProvider.this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                }
-            });
-        }
-    }
     
     @ThreadSafe
     protected class ModelProxy extends AbstractModelProxy {
@@ -500,10 +474,12 @@ abstract public class AbstractVMProvider implements IVMProvider
             public boolean isConflicting(ISchedulingRule rule) { return rule == this; }
         };
 
+        @Override
         public void installed(Viewer viewer) {
             fProxyActive++;
         }
         
+        @Override
         public void dispose() {
             fProxyActive--;
             super.dispose();
@@ -518,6 +494,7 @@ abstract public class AbstractVMProvider implements IVMProvider
             if (fProxyActive <= 0) return;
             
             Job job = new Job("Processing view model delta.") { //$NON-NLS-1$
+                @Override
                 protected IStatus run(IProgressMonitor monitor) {
                     fireModelChanged(delta);
                     return Status.OK_STATUS;
@@ -532,10 +509,6 @@ abstract public class AbstractVMProvider implements IVMProvider
     
     class ViewerUpdate implements IViewerUpdate {
         
-    	public void cancel() {
-        	// FIXME M5
-		}
-
 		private IStatus fStatus;
         private boolean fDoneInvoked = false;
         final private Done fDone;
@@ -552,17 +525,11 @@ abstract public class AbstractVMProvider implements IVMProvider
 
         public IStatus getStatus() { return fStatus; }
         public void setStatus(IStatus status) { fStatus = status; }
-        public void beginTask(String name, int totalWork) {}
-        public void internalWorked(double work) {}
         public boolean isCanceled() { return fClientUpdate.isCanceled(); }
-        public void setCanceled(boolean value) { 
-        	// FIXME M5
-        	// fClientUpdate.setCanceled(value); 
+        public void cancel() {
+            fClientUpdate.cancel();
         }
-        public void setTaskName(String name) {}
-        public void subTask(String name) {}
-        public void worked(int work) {}
-        
+
         public void done() { 
             assert !fDoneInvoked;
             fDoneInvoked = true;
@@ -583,6 +550,7 @@ abstract public class AbstractVMProvider implements IVMProvider
             fDone = done;
         }
         
+        @Override
         public TreePath getElementPath() {
             return ((IHasChildrenUpdate)fClientUpdate).getElementPath();
         }
@@ -591,6 +559,7 @@ abstract public class AbstractVMProvider implements IVMProvider
             fDone.setData(hasChildren);
         }
 
+        @Override
         public void done() {
             assert fDone.getData() != null || !fDone.getStatus().isOK();
             super.done();            
@@ -607,6 +576,7 @@ abstract public class AbstractVMProvider implements IVMProvider
             fDone = done;
         }
 
+        @Override
         public TreePath getElementPath() {
             return fElementPath;
         }
@@ -615,6 +585,7 @@ abstract public class AbstractVMProvider implements IVMProvider
             fDone.setData(count);
         }
         
+        @Override
         public void done() {
             assert fDone.getData() != null || !fDone.getStatus().isOK();
             super.done();
@@ -642,6 +613,7 @@ abstract public class AbstractVMProvider implements IVMProvider
             return fLength;
         }
 
+        @Override
         public TreePath getElementPath() {
             return ((IChildrenUpdate)fClientUpdate).getElementPath();
         }
@@ -650,6 +622,11 @@ abstract public class AbstractVMProvider implements IVMProvider
             if (offset >= fOffset && offset < (fOffset + fLength)) {
                 ((IChildrenUpdate)fClientUpdate).setChild(child, fClientOffset + offset);
             }
+        }
+
+        @Override
+        public String toString() {
+            return "ElementsUpdate for elements under parent = " + getElement() + ", in range " + getOffset() + " -> " + (getOffset() + getLength());  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
         }
 
     }

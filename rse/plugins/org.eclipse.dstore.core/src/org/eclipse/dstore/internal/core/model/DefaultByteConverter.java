@@ -14,10 +14,13 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.model;
+package org.eclipse.dstore.internal.core.model;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+
+import org.eclipse.dstore.core.model.DE;
+import org.eclipse.dstore.core.model.IByteConverter;
 
 /**
  * @author dmcknigh

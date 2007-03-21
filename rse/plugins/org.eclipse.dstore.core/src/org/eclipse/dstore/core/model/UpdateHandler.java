@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
-import org.eclipse.dstore.core.util.DataElementRemover;
+import org.eclipse.dstore.internal.core.util.DataElementRemover;
 
 /**
  * <p>

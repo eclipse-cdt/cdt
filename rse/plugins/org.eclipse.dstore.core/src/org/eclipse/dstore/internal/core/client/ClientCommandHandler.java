@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.client;
+package org.eclipse.dstore.internal.core.client;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.model.CommandHandler;
@@ -22,7 +22,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreResources;
-import org.eclipse.dstore.core.util.Sender;
+import org.eclipse.dstore.internal.core.util.Sender;
 
 
 /**

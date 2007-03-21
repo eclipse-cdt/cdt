@@ -14,12 +14,14 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.model;
+package org.eclipse.dstore.internal.core.util;
 
-public interface ISchemaProvider
+import org.eclipse.dstore.core.model.DataElement;
+
+public interface ISender
 {
 
 
-    public ISchemaRegistry getSchemaRegistry();
-    public ISchemaExtender getSchemaExtender();    
+  public void sendDocument(String document);
+  public void sendDocument(DataElement objectRoot, int depth);
 }

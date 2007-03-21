@@ -14,11 +14,15 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.model;
+package org.eclipse.dstore.internal.core.model;
 
 import java.util.ArrayList;
 
-import org.eclipse.dstore.core.util.ExternalLoader;
+import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.model.ISchemaExtender;
+import org.eclipse.dstore.core.model.ISchemaRegistry;
+import org.eclipse.dstore.internal.core.util.ExternalLoader;
 
 /**
  * SchemaRegistry implements the interface for external tools to contribute their

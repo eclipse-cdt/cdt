@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.server;
+package org.eclipse.dstore.internal.core.server;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -36,9 +36,9 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.ISSLProperties;
-import org.eclipse.dstore.core.util.ExternalLoader;
-import org.eclipse.dstore.core.util.Sender;
-import org.eclipse.dstore.core.util.ssl.DStoreSSLContext;
+import org.eclipse.dstore.internal.core.util.ExternalLoader;
+import org.eclipse.dstore.internal.core.util.Sender;
+import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
 
 /**
  * ConnectionEstablisher is responsible for managing the server DataStore and 

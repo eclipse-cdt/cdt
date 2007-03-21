@@ -18,6 +18,9 @@ package org.eclipse.dstore.core.server;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.dstore.internal.core.server.ConnectionEstablisher;
+import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
+
 /**
  * Server is the standard way of instantiating and controlling a remote DataStore.
  * The server runs a ConnectionEstablisher which manages client connections to

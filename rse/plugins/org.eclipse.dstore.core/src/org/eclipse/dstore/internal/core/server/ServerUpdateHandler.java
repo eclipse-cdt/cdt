@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.server;
+package org.eclipse.dstore.internal.core.server;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.UpdateHandler;
-import org.eclipse.dstore.core.util.CommandGenerator;
-import org.eclipse.dstore.core.util.Sender;
+import org.eclipse.dstore.internal.core.util.CommandGenerator;
+import org.eclipse.dstore.internal.core.util.Sender;
 
 /**
  * The ServerUpdateHandler is contains a queue of data update requests

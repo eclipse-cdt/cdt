@@ -19,9 +19,9 @@ package org.eclipse.dstore.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dstore.core.util.DataElementRemover;
 import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.dstore.extra.IDataElement;
+import org.eclipse.dstore.internal.core.util.DataElementRemover;
 import org.eclipse.dstore.internal.extra.DataElementActionFilter;
 import org.eclipse.dstore.internal.extra.DesktopElement;
 import org.eclipse.dstore.internal.extra.PropertySource;

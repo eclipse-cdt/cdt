@@ -16,7 +16,7 @@
 
 package org.eclipse.dstore.core.model;
 
-import org.eclipse.dstore.core.util.ExternalLoader;
+import org.eclipse.dstore.internal.core.util.ExternalLoader;
 
 /**
  * ISchemaRegistry describes the interface that needs to be 

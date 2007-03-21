@@ -27,7 +27,7 @@ import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.DataStoreSchema;
 import org.eclipse.dstore.core.model.Handler;
 import org.eclipse.dstore.core.model.ISchemaExtender;
-import org.eclipse.dstore.core.util.ExternalLoader;
+import org.eclipse.dstore.internal.core.util.ExternalLoader;
 
 /**
  * Miner is the abstact base class of all DataStore extensions).  

@@ -43,11 +43,12 @@ import org.eclipse.dstore.core.java.ClassByteStreamHandlerRegistry;
 import org.eclipse.dstore.core.java.IClassByteStreamHandler;
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.java.RemoteClassLoader;
-import org.eclipse.dstore.core.util.DataElementRemover;
-import org.eclipse.dstore.core.util.ExternalLoader;
 import org.eclipse.dstore.core.util.StringCompare;
-import org.eclipse.dstore.core.util.XMLgenerator;
-import org.eclipse.dstore.core.util.XMLparser;
+import org.eclipse.dstore.internal.core.model.DefaultByteConverter;
+import org.eclipse.dstore.internal.core.util.DataElementRemover;
+import org.eclipse.dstore.internal.core.util.ExternalLoader;
+import org.eclipse.dstore.internal.core.util.XMLgenerator;
+import org.eclipse.dstore.internal.core.util.XMLparser;
 import org.eclipse.dstore.internal.extra.DomainNotifier;
 
 /**
@@ -498,7 +499,7 @@ public final class DataStore
 		{
 			return true;
 		}
-		else if (_commandHandler instanceof org.eclipse.dstore.core.client.ClientCommandHandler)
+		else if (_commandHandler instanceof org.eclipse.dstore.internal.core.client.ClientCommandHandler)
 		{
 			return true;
 		}

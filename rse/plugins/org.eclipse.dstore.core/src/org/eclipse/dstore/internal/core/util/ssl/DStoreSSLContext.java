@@ -14,13 +14,15 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.util.ssl;
+package org.eclipse.dstore.internal.core.util.ssl;
 
 import java.security.KeyStore;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+
+import org.eclipse.dstore.core.util.ssl.DStoreKeyStore;
 
 
 public class DStoreSSLContext

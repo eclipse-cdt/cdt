@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.client;
+package org.eclipse.dstore.internal.core.client;
 
 import org.eclipse.dstore.core.model.ISSLProperties;
 public class ClientSSLProperties implements ISSLProperties

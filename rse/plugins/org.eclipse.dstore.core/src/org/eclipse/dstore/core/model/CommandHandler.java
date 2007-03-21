@@ -19,7 +19,7 @@ package org.eclipse.dstore.core.model;
 import java.util.ArrayList;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
-import org.eclipse.dstore.core.util.CommandGenerator;
+import org.eclipse.dstore.internal.core.util.CommandGenerator;
 
 /**
  * <p>

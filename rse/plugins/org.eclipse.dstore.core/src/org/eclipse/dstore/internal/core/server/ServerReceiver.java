@@ -14,12 +14,12 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.server;
+package org.eclipse.dstore.internal.core.server;
 
 import java.net.Socket;
 
 import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.util.Receiver;
+import org.eclipse.dstore.internal.core.util.Receiver;
 
 /**
  * The ServerReciever is responsible for recieving data from

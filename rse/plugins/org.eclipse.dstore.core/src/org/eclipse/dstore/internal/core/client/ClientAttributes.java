@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.server;
+package org.eclipse.dstore.internal.core.client;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -23,50 +23,35 @@ import java.net.UnknownHostException;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 
 /**
- * This class is used to store attributes that are required
- * for configurating a remote connection.
+ * ClientAttributes is a container of communication related
+ * information. 
  */
-public class ServerAttributes extends DataStoreAttributes
+public class ClientAttributes extends DataStoreAttributes
 {
 
 	/**
 	 * Constructor
 	 */
-	public ServerAttributes()
+	public ClientAttributes()
 	{
 		super();
 
 		try
 		{
 			String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
-			if (pluginPath != null) pluginPath = pluginPath.trim();
 			if ((pluginPath != null) && (pluginPath.length() > 0))
 			{
-			    File f = new File(pluginPath);
-			    try 
-			    {
-			        pluginPath = f.getCanonicalPath();
-			    }
-			    catch (Exception e)
-			    {
-			        pluginPath = f.getAbsolutePath();
-			    }
-			    
 				setAttribute(A_PLUGIN_PATH, pluginPath + File.separator);
-			}
-			else
-			{
-				setAttribute(A_PLUGIN_PATH, "/home/"); //$NON-NLS-1$
 			}
 
 			setAttribute(A_LOCAL_NAME, InetAddress.getLocalHost().getHostName());
-
-			setAttribute(A_HOST_NAME, "server_host"); //$NON-NLS-1$
-			setAttribute(A_HOST_PATH, "/home/"); //$NON-NLS-1$
+			setAttribute(A_LOCAL_PATH, "/tmp/"); //$NON-NLS-1$
+			setAttribute(A_HOST_NAME, "local"); //$NON-NLS-1$
+			setAttribute(A_HOST_PATH, "/"); //$NON-NLS-1$
 		}
+
 		catch (UnknownHostException e)
 		{
 		}
-
 	}
 }

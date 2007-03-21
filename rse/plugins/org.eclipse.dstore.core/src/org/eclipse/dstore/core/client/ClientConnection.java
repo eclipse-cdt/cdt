@@ -40,12 +40,16 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.ISSLProperties;
-import org.eclipse.dstore.core.server.ServerCommandHandler;
 import org.eclipse.dstore.core.server.ServerLauncher;
-import org.eclipse.dstore.core.util.ExternalLoader;
-import org.eclipse.dstore.core.util.Sender;
-import org.eclipse.dstore.core.util.ssl.DStoreSSLContext;
-import org.eclipse.dstore.core.util.ssl.DataStoreTrustManager;
+import org.eclipse.dstore.internal.core.client.ClientAttributes;
+import org.eclipse.dstore.internal.core.client.ClientCommandHandler;
+import org.eclipse.dstore.internal.core.client.ClientReceiver;
+import org.eclipse.dstore.internal.core.client.ClientUpdateHandler;
+import org.eclipse.dstore.internal.core.server.ServerCommandHandler;
+import org.eclipse.dstore.internal.core.util.ExternalLoader;
+import org.eclipse.dstore.internal.core.util.Sender;
+import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
+import org.eclipse.dstore.internal.core.util.ssl.DataStoreTrustManager;
 import org.eclipse.dstore.internal.extra.DomainNotifier;
 
 

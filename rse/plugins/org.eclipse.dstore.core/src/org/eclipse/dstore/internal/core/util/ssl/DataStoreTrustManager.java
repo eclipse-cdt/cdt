@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.util.ssl;
+package org.eclipse.dstore.internal.core.util.ssl;
 
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
@@ -24,6 +24,8 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.net.ssl.X509TrustManager;
+
+import org.eclipse.dstore.core.util.ssl.DStoreKeyStore;
 
 
 public class DataStoreTrustManager implements X509TrustManager

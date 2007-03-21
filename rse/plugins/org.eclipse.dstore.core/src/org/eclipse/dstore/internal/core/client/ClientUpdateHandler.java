@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.client;
+package org.eclipse.dstore.internal.core.client;
 
 import java.io.File;
 

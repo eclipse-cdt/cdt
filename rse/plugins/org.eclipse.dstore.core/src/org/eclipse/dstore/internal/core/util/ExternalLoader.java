@@ -14,11 +14,12 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.util;
+package org.eclipse.dstore.internal.core.util;
 
 import java.util.ArrayList;
 
 import org.eclipse.dstore.core.java.RemoteClassLoader;
+import org.eclipse.dstore.core.util.StringCompare;
 
 
 /**

@@ -39,7 +39,9 @@ import javax.net.ssl.SSLSocket;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.ISSLProperties;
-import org.eclipse.dstore.core.util.ssl.DStoreSSLContext;
+import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
+import org.eclipse.dstore.internal.core.server.ServerSSLProperties;
+import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
 
 /**
  * This class is the DataStore daemon. It is used for authenticating users,

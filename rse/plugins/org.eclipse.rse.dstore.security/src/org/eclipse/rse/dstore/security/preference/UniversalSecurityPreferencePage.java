@@ -101,6 +101,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		composite.setLayoutData(GridUtil.createFill());
 
 		Text label = new Text(composite, SWT.READ_ONLY);
+		label.setBackground(composite.getBackground());
 		label.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_SEC_DESCRIPTION));
 		GridData data = new GridData();
 		data.horizontalSpan = 2;

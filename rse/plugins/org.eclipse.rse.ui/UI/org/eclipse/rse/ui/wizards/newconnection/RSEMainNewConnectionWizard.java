@@ -339,8 +339,11 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
 		IWizardPage nextPage = null;
-		if (page != null && page == mainPage && getSelectedWizard() != null) {
-			nextPage = getSelectedWizard().getStartingPage();
+		if (page != null && page == mainPage) {
+			// Save the last selected system type on page transition.
+			// But only if it is the main page.
+			saveWidgetValues();
+			if (getSelectedWizard() != null) nextPage = getSelectedWizard().getStartingPage();
 		}
 		
 		if (nextPage == null) super.getNextPage(page);
@@ -368,14 +371,6 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		if (mainPage != null) mainPage.saveWidgetValues();
 		
 		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#doNextPressed()
-	 */
-	protected boolean doNextPressed() {
-		saveWidgetValues();
-		return super.doNextPressed();
 	}
 
 	/**

@@ -145,7 +145,16 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 					try {
 						start = fDocument.getLineOffset( instrNumber - 1 );
 						if ( start > -1 ) {
-							return new Position( start, document.getLineLength( instrNumber - 1 ) );
+							// Avoid the document boundaries; see bugzilla 178485
+							int lineLen = document.getLineLength(instrNumber - 1);							
+							if (start == 0) {
+								start++;
+								lineLen--;
+							}
+							if (start + lineLen == document.getLength()) {
+								lineLen--;
+							}
+							return new Position( start, lineLen );
 						}
 					}
 					catch( BadLocationException e ) {

@@ -234,6 +234,19 @@ public interface ISubSystemConfigurationAdapter
 	 * REQUIRED BY SYSTEMFILTERPOOLMANAGERPROVIDER INTERFACE
 	 */
 	public ImageDescriptor getSystemFilterImage(ISystemFilter filter);
+	
+	
+	/**
+	 * Supply the image to be used for filter pool references
+	 */
+	public ImageDescriptor getSystemFilterPoolImage(ISystemFilterPoolReference filterPool);
+
+	/**
+	 * Supply the image to be used for filter references
+	 */
+	public ImageDescriptor getSystemFilterImage(ISystemFilterReference filter);
+	
+	
 	/*
 	 * Supply the image to be used for the given filter string, within actions.
 	 * REQUIRED BY SYSTEMFILTERPOOLMANAGERPROVIDER INTERFACE

@@ -704,6 +704,30 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		{
 			return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID);
 		}
+		
+		/**
+		 * Supply the image to be used for filter pool references.  This implementation
+		 * just gets the referenced filter pool and calls the method
+		 * getSystemFilterPoolImage(ISystemFilterPool) on it.
+		 * Override this method to provide custom images for filter pool references.
+		 */
+		public ImageDescriptor getSystemFilterPoolImage(ISystemFilterPoolReference filterPoolRef)
+		{
+			return getSystemFilterPoolImage(filterPoolRef.getReferencedFilterPool());
+		}
+
+		/**
+		 * Supply the image to be used for filter references.  This implementation 
+		 * just gets the referenced filter and calls the method
+		 * getSystemFilterImage(ISystemFile) on it.
+		 * Override this method to provide custom images for filter references.
+		 */
+		public ImageDescriptor getSystemFilterImage(ISystemFilterReference filterRef)
+		{
+			return getSystemFilterImage(filterRef.getReferencedFilter());
+		}
+		
+		
 		/*
 		 * Supply the image to be used for the given filter string, within actions.
 		 * REQUIRED BY SYSTEMFILTERPOOLMANAGERPROVIDER INTERFACE

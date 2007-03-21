@@ -90,13 +90,15 @@ public class TeamSharedIndexTest extends IndexTestBase {
 
 	private ICProject recreateProject(final String prjName) throws Exception {
 		final boolean[] changed= {false};
-		CoreModel.getDefault().addElementChangedListener(new IElementChangedListener() {
+		IElementChangedListener waitListener= new IElementChangedListener() {
 			public void elementChanged(ElementChangedEvent event) {
 				synchronized (changed) {
 					changed[0]= true;
+					changed.notifyAll();
 				}
-				changed.notifyAll();
-			}});
+			}
+		};
+		CoreModel.getDefault().addElementChangedListener(waitListener);
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject prjHandle= workspace.getRoot().getProject(prjName);
 		workspace.run(new IWorkspaceRunnable() {
@@ -112,6 +114,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 				assertTrue(changed[0]);
 			}
 		}
+		CoreModel.getDefault().removeElementChangedListener(waitListener);
 		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
 		return CoreModel.getDefault().create(workspace.getRoot().getProject(prjName));
 	}

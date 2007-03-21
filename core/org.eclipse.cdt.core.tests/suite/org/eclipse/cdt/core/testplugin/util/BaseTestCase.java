@@ -7,16 +7,18 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.testplugin.util;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -25,11 +27,18 @@ import junit.framework.TestFailure;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 public class BaseTestCase extends TestCase {
 	protected static final IProgressMonitor NPM= new NullProgressMonitor();
 
 	private boolean fExpectFailure= false;
 	private int fBugnumber= 0;
+	private boolean allowsCoreLogErrors= false;
 	
 	public BaseTestCase() {
 		super();
@@ -74,7 +83,7 @@ public class BaseTestCase extends TestCase {
 		if (name.startsWith("test") || (prefix != null && !name.startsWith(prefix))) {
 			return;
 		}
-		if (name.equals("tearDown") || name.equals("setUp")) {
+		if (name.equals("tearDown") || name.equals("setUp") || name.equals("runBare")) {
 			return;
 		}
 		if (Modifier.isPublic(m.getModifiers())) {
@@ -85,6 +94,40 @@ public class BaseTestCase extends TestCase {
 				((BaseTestCase) test).setExpectFailure(0);
 				suite.addTest(test);
 			}
+		}
+	}
+
+	public void runBare() throws Throwable {
+		final List statusLog= Collections.synchronizedList(new ArrayList());
+		ILogListener logListener= new ILogListener() {
+			public void logging(IStatus status, String plugin) {
+				if(!status.isOK()) {
+					statusLog.add(status);
+				}
+			}
+		};
+		CCorePlugin.getDefault().getLog().addLogListener(logListener);
+		
+		try {
+			super.runBare();
+			
+			if(!allowsCoreLogErrors && !statusLog.isEmpty()) {
+				StringBuffer msg= new StringBuffer("Non-OK Status was logged to CCorePlugin: \n");
+				Throwable cause= null;
+				for(Iterator i= statusLog.iterator(); i.hasNext(); ) {
+					IStatus status= (IStatus) i.next();
+					if(cause==null) {
+						cause= status.getException();
+					}
+					Throwable t= status.getException();
+					msg.append("\t"+status.getMessage()+" "+(t!=null?t.getMessage():"")+"\n");
+				}
+				AssertionFailedError afe= new AssertionFailedError(msg.toString());
+				afe.initCause(cause);
+				throw afe;
+			}
+		} finally {
+			CCorePlugin.getDefault().getLog().removeLogListener(logListener);
 		}
 	}
 
@@ -120,5 +163,15 @@ public class BaseTestCase extends TestCase {
     public void setExpectFailure(int bugnumber) {
     	fExpectFailure= true;
     	fBugnumber= bugnumber;
+    }
+    
+    /**
+     * The last value passed to this method in the body of a testXXX method
+     * will be used to determine whether or not the presence of non-OK status objects
+     * in the log should fail the test.
+     * @param value
+     */
+    public void setAllowCCorePluginLogErrors(boolean value) {
+    	allowsCoreLogErrors= value;
     }
 }

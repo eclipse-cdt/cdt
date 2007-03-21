@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.core.filters;
 
+
 /**
  * A naming policy so tool writers can override defaults used when
  *  saving filter data to disk.

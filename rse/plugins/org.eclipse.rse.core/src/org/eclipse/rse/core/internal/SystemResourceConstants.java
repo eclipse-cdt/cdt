@@ -14,7 +14,7 @@
  * David Dykstal (IBM) - removed RESOURCE_TEAMPROFILE_NAME
  ********************************************************************************/
 
-package org.eclipse.rse.core;
+package org.eclipse.rse.core.internal;
 
 
 /**

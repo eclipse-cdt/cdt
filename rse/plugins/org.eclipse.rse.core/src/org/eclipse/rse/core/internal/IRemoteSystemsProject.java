@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.core;
+package org.eclipse.rse.core.internal;
 
 import org.eclipse.core.resources.IProject;
 

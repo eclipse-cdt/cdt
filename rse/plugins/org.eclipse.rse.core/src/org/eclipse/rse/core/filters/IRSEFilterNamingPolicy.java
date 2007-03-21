@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.core.filters;
 
+
 /**
  * Allows tool writers to specify the naming standards for the
  * persistence files and folders involved with filters.

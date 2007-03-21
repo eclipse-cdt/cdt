@@ -57,6 +57,22 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		suite.addTest(suite(SingleProject.class));
 		suite.addTest(suite(ProjectWithDepProj.class));
 	}
+	
+	// // header file
+	//	template <class T>
+	//	T left(T a, T b) {
+	//	   	return a;
+	//	}
+	//  void sanity() {}
+	
+	//  void foo() { sanity(); }
+	//	class Int {};
+	//	Int a,b;
+	//	Int c= left(a,b);
+	public void _testSimpleFunctionTemplate() {
+		IBinding b0 = getBindingFromASTName("sanity();", 6);
+		IBinding b1 = getBindingFromASTName("left(a,b)", 4);
+	}
 
 	// // header file
 	//  class Base {public: int field; void foo() {}};
@@ -138,7 +154,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// struct S2 : public S {}; /*base*/
 	public void testSimpleGlobalBindings() throws IOException, DOMException {
 		{
-			IBinding b0 = getBindingFromASTName("C c; ", 1);
+ 			IBinding b0 = getBindingFromASTName("C c; ", 1);
 			assertClassTypeBinding(b0, "C", ICPPClassType.k_class, 0, 0, 0, 4, 0, 0, 0, 2, 0);
 
 			IBinding b1 = getBindingFromASTName("c; ", 1);
@@ -1053,26 +1069,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			assertEquals(1, getIndex().findNames(binding2, IIndex.FIND_DEFINITIONS).length);
 		}
 	}
-
-	// typedef struct S {int a;} S;
-	// typedef enum E {A,B} E;
-	
-	// class A {
-	//   public:
-	//     S *s;
-	//	   E *e;
-	// };
-	public void testTypedef() {
-		IBinding b1 = getBindingFromASTName("S", 1);
-		assertTrue(b1 instanceof ICPPClassType);
-		IBinding b2 = getBindingFromASTName("E", 1);
-		assertTrue(b2 instanceof IEnumeration);
-	}
-	
-
-
-
-
 
 	/* CPP assertion helpers */
 	/* ##################################################################### */

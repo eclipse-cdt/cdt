@@ -1658,7 +1658,7 @@ public class CommonBuilder extends ACBuilder {
 //					}
 				} else {
 					String args = builder.getBuildArguments();
-					if (args != null && !args.equals("")) { //$NON-NLS-1$
+					if (args != null && !(args = args.trim()).equals("")) { //$NON-NLS-1$
 						String[] newArgs = makeArray(args);
 						buildArguments = new String[targets.length + newArgs.length];
 						System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);

@@ -14,13 +14,13 @@ package org.eclipse.cdt.debug.internal.ui.views.modules;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
  
-public class ModuleProxyFactory implements IModelProxyFactory {
+public class ModuleProxyFactory implements IModelProxyFactoryAdapter {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactory#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
 	public IModelProxy createModelProxy( Object element, IPresentationContext context ) {
 		if ( ICDebugUIConstants.ID_MODULES_VIEW.equals( context.getId() ) ) {

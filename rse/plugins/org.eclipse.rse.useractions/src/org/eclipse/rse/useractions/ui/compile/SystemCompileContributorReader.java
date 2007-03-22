@@ -1,9 +1,15 @@
 package org.eclipse.rse.useractions.ui.compile;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2003.
- * All Rights Reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -11,10 +17,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2003.
- * All Rights Reserved.
- */
 /**
  * This class reads configuration elements from the workbench's registry, creates contributors
  * and registers them with the manager.

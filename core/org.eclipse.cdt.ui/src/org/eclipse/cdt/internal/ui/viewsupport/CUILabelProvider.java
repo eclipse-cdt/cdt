@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -54,7 +55,6 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 		fStorageLabelProvider= new StorageLabelProvider();
 		fImageFlags= imageFlags;
 		fTextFlags= textFlags;
-		fInactiveColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
 	}
 	
 	/**
@@ -230,6 +230,9 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 		if (element instanceof IInclude) {
 			IInclude include= (IInclude)element;
 			if (!include.isActive()) {
+				if (fInactiveColor == null && Display.getCurrent() != null) {
+					fInactiveColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
+				}
 				return fInactiveColor;
 			}
 		}

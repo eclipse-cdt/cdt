@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Dave McKnight (IBM) - [177155] Move from rse.ui/systems/org.eclipse.rse.core
+ * Martin Oberhuber (Wind River) - Re-add missing methods for user actions
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -97,7 +98,7 @@ public class SystemResourceManager implements SystemResourceConstants
      */
     public static void startResourceEventListening(ISystemResourceListener listener)
     {
-	    listener = listener;
+	    _listener = listener;
 	    listener.turnOnResourceEventListening();
 	    
 	    
@@ -229,11 +230,60 @@ public class SystemResourceManager implements SystemResourceConstants
     	firstTime = false;
     	return firsttime;
     }
+    // --------------------------------------------
+    // GET ALL EXISTING PROFILE NAMES OR FOLDERS...
+    // --------------------------------------------
+    /**
+     * Each root folder of the project is assumed to be a profile, if it has a file named profile.xmi
+     */
+    /*
+    public static IFolder[] getProfileFolders()
+    {
+    	IProject proj = getRemoteSystemsProject();
+    	IFolder[] allFolders = getResourceHelpers().listFolders(proj);
+    	//System.out.println("Inside getProfileFolders. allFolders.length = " + allFolders.length);
+    	Vector v = new Vector();
+    	for (int idx=0; idx<allFolders.length; idx++)
+    	{
+    		String saveFileName = SystemProfileManager.getSaveFileName(allFolders[idx].getName());
+    		IFile saveFile = getResourceHelpers().getFile(allFolders[idx], saveFileName);    		
+    		boolean saveFileExists = getResourceHelpers().fileExists(saveFile);
+    	    //System.out.println("...folderName = " + allFolders[idx].getName());
+    	    //System.out.println("...saveFileName = " + saveFileName);
+    	    //System.out.println("...saveFile.exists() = " + saveFileExists);
+    		if (saveFileExists)
+    		  v.addElement(allFolders[idx]);
+    	}
+    	return getResourceHelpers().convertToFolderArray(v);
+    }
+    */
+
+    /**
+     * Guess the profile names by itemizing all the root folders, and
+     *  assuming any such folder that has a file in it named "profile.xmi" is
+     *  indeed a profile whose name equals the folder name.
+     */
+    /*
+    public static String[] deduceProfileNames()
+    {
+    	IFolder[] folders = getProfileFolders();
+    	String[] names = new String[folders.length];
+    	for (int idx=0; idx<names.length; idx++)
+    	   names[idx] = folders[idx].getName();
+    	return names;
+    }
+    */
 
     // -----------------------------------
     // GET A SPECIFIC PROFILE FOLDER...
     // -----------------------------------
-
+    /**
+     * Get profiles folder for a given profile
+     */
+    public static IFolder getProfileFolder(ISystemProfile profile)
+    {
+    	return getProfileFolder(profile.getName());
+    }
 
     /**
      * Get profiles folder for a given profile name
@@ -308,7 +358,58 @@ public class SystemResourceManager implements SystemResourceConstants
         return getResourceHelpers().getOrCreateFolder(parentFolder, factoryId); // Do create it.
     }
 
+    /*
+     * --------------------------------------------------------------------------------------------------------------------------------
+     * COMPILE COMMAND SUBTREE FOLDER METHODS...
+     * ======================================
+     *  .--- Team (folder)           - getProfileFolder(SystemProfile/"team")
+     *  |  |
+     *  |  |
+     *  |  .--- CompileCommands (folder)    - getCompileCommandsFolder(SystemProfile/"team")
+     *  |     |
+     *  |     .--- SubSystemConfigurationID1 (folder) - getCompileCommandsFolder(SystemProfile/"team", SubSystemConfiguration)
+     *  |     |  .--- compileCommands.xml (file)
+     *  |     .--- SubSystemConfigurationID2 (folder)
+     *  |        .--- compileCommands.xml (file)
+     * --------------------------------------------------------------------------------------------------------------------------------
+     */
+    // ---------------------------------------------------
+    // GET COMPILE COMMANDS ROOT FOLDER PER PROFILE...
+    // ---------------------------------------------------
+    /**
+     * Get compile commands root folder given a system profile name
+     */
+    protected static IFolder getCompileCommandsFolder(String profileName)
+    {
+        return getResourceHelpers().getOrCreateFolder(getProfileFolder(profileName),RESOURCE_COMPILECOMMANDS_FOLDER_NAME);      	
+    }
+    /**
+     * Get compile commands root folder given a system profile object and subsystem factory
+     */
+    public static IFolder getCompileCommandsFolder(ISystemProfile profile, ISubSystemConfiguration ssFactory)
+    {
+        return getCompileCommandsFolder(profile.getName(),ssFactory);
+    }
+    /**
+     * Get compile commands root folder given a system profile name and subsystem factory
+     */
+    public static IFolder getCompileCommandsFolder(String profileName, ISubSystemConfiguration ssFactory)
+    {
+        IFolder parentFolder = getCompileCommandsFolder(profileName);
+        String folderName = getFolderName(ssFactory);
+        return getResourceHelpers().getOrCreateFolder(parentFolder, folderName); // Do create it.
+    }
 
+    /**
+     * Get compile commands root folder given a system profile name and subsystem factory Id.
+     * This is a special-needs method provided for the Import action processing,
+     * when a subsystem instance is not available.
+     */
+    public static IFolder getCompileCommandsFolder( String profileName, String factoryId)
+    {
+        IFolder parentFolder = getCompileCommandsFolder(profileName);
+        return getResourceHelpers().getOrCreateFolder(parentFolder, factoryId); // Do create it.
+    }
    
 
     // -------------------
@@ -453,5 +554,38 @@ public class SystemResourceManager implements SystemResourceConstants
     	return SystemResourceHelpers.testIfResourceInUse(resource);
     }
     
+    /*
+     * --------------------------------------------------------------------------------------------------------------------------------
+     * TYPE FILTERS SUBTREE FOLDER METHODS...
+     * ======================================
+     *  .--- TypeFilters (folder)    - getTypeFiltersFolder()
+     *     .--- SubSystemConfigurationID1 (folder) - getTypeFiltersFolder(SubSystemConfiguration)
+     *     |  .--- typefilters.xmi (file)
+     * --------------------------------------------------------------------------------------------------------------------------------
+     */
 
+    /**
+     * Get the typeFilters root folder
+     */
+    public static IFolder getTypeFiltersFolder()
+    {
+        return getResourceHelpers().getFolder(getRemoteSystemsProject(),RESOURCE_TYPE_FILTERS_FOLDER_NAME);      	
+    }
+    /**
+     * Get the typeFilters sub-folder per subsystem factory object
+     */
+    public static IFolder getTypeFiltersFolder(ISubSystemConfiguration ssFactory)
+    {
+        IFolder parentFolder = getTypeFiltersFolder();
+        String folderName = getFolderName(ssFactory);
+        return getResourceHelpers().getOrCreateFolder(parentFolder, folderName); // DO create it.            	
+    }
+    /**
+     * Get the typeFilters sub-folder per subsystem factory id
+     */
+    public static IFolder getTypeFiltersFolder(String ssFactoryId)
+    {
+        IFolder parentFolder = getTypeFiltersFolder();
+        return getResourceHelpers().getOrCreateFolder(parentFolder, ssFactoryId); // DO create it.            	
+    }
 }

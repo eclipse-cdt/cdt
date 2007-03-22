@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
@@ -71,31 +74,36 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 		if(fCfgDes == null)
 			return INEXISTENT_SCANNER_INFO;
 
-		IPath rcPath = resource.getProjectRelativePath();
-		ICResourceDescription rcDes = fCfgDes.getResourceDescription(rcPath, false);
 		ICLanguageSetting setting = null;
-		if(rcDes.getType() == ICSettingBase.SETTING_FILE){
-			setting = ((ICFileDescription)rcDes).getLanguageSetting();
-		} else {
-			if(resource.getType() == IResource.FILE)
-				setting = ((ICFolderDescription)rcDes).getLanguageSettingForFile(rcPath.lastSegment());
-			else {
-				ICLanguageSetting settings[] = ((ICFolderDescription)rcDes).getLanguageSettings();
-				if(settings.length > 0)
-					setting = settings[0];
+		if(resource.getType() != IResource.PROJECT){
+			IPath rcPath = resource.getProjectRelativePath();
+			ICResourceDescription rcDes = fCfgDes.getResourceDescription(rcPath, false);
+	
+			if(rcDes.getType() == ICSettingBase.SETTING_FILE){
+				setting = ((ICFileDescription)rcDes).getLanguageSetting();
+			} else {
+				if(resource.getType() == IResource.FILE)
+					setting = ((ICFolderDescription)rcDes).getLanguageSettingForFile(rcPath.lastSegment());
+				else {
+					ICLanguageSetting settings[] = ((ICFolderDescription)rcDes).getLanguageSettings();
+					if(settings.length > 0){
+						setting = settings[0];
+					}
+				}
 			}
 		}
 		return getScannerInfo(setting);
 	}
-
+	
 	private IScannerInfo getScannerInfo(ICLanguageSetting ls){
-		if(ls == null)
-			return INEXISTENT_SCANNER_INFO;
+		Object mapKey = ls != null ? ls.getId() : null;
+//		if(ls == null)
+//			return INEXISTENT_SCANNER_INFO;
 			
-		IScannerInfo info = (IScannerInfo)fIdToLanguageSettingsMap.get(ls.getId());
+		IScannerInfo info = (IScannerInfo)fIdToLanguageSettingsMap.get(mapKey);
 		if(info == null){
 			info = createScannerInfo(ls);
-			fIdToLanguageSettingsMap.put(ls.getId(), info);
+			fIdToLanguageSettingsMap.put(mapKey, info);
 		}
 		return info;
 	}
@@ -116,7 +124,51 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 		return macroEntries;
 	}
 
+	private IScannerInfo createProjectStannerInfo(){
+		ICFolderDescription foDes = fCfgDes.getRootFolderDescription();
+		ICLanguageSetting[] lSettings = foDes.getLanguageSettings();
+		ICLanguageSettingPathEntry pathEntries[] = getPathEntries(lSettings, ICLanguageSettingEntry.INCLUDE_PATH);
+		String incs[] = getValues(pathEntries);
+		
+		pathEntries = getPathEntries(lSettings, ICLanguageSettingEntry.INCLUDE_FILE);
+		String incFiles[] = getValues(pathEntries);
+
+		pathEntries = getPathEntries(lSettings, ICLanguageSettingEntry.MACRO_FILE);
+		String macroFiles[] = getValues(pathEntries);
+		
+		ICMacroEntry macroEntries[] = getMacroEntries(lSettings);
+		Map macrosMap = getValues(macroEntries);
+		
+		return new ExtendedScannerInfo(macrosMap, incs, macroFiles, incFiles);
+	}
+	
+	
+	private ICMacroEntry[] getMacroEntries(ICLanguageSetting[] settings){
+		LinkedHashSet set = getEntriesSet(ICLanguageSettingEntry.MACRO, settings);
+		return (ICMacroEntry[])set.toArray(new ICMacroEntry[set.size()]);
+	}
+
+	private ICLanguageSettingPathEntry[] getPathEntries(ICLanguageSetting[] settings, int kind){
+		LinkedHashSet set = getEntriesSet(kind, settings);
+		return (ICLanguageSettingPathEntry[])set.toArray(new ICLanguageSettingPathEntry[set.size()]);
+	}
+	
+	private LinkedHashSet getEntriesSet(int kind, ICLanguageSetting[] settings){
+		LinkedHashSet set = new LinkedHashSet();
+		ICLanguageSettingEntry[] langEntries;
+		for(int i = 0; i < settings.length; i++){
+			langEntries = settings[i].getResolvedSettingEntries(kind);
+			if(langEntries.length != 0){
+				set.addAll(Arrays.asList(langEntries));
+			}
+		}
+		return set;
+	}
+
 	private IScannerInfo createScannerInfo(ICLanguageSetting ls){
+		if(ls == null)
+			return createProjectStannerInfo();
+		
 		ICLanguageSettingPathEntry pathEntries[] = getPathEntries(ls, ICLanguageSettingEntry.INCLUDE_PATH);
 		String incs[] = getValues(pathEntries);
 		

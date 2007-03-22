@@ -20,6 +20,6 @@ Import-Package: org.eclipse.emf.common.ui,
  org.eclipse.tm.internal.discovery.engine,
  org.eclipse.tm.internal.discovery.model.provider,
  org.eclipse.tm.internal.discovery.model.util
-Export-Package: org.eclipse.tm.internal.discovery.view
+Export-Package: org.eclipse.tm.internal.discovery.view;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

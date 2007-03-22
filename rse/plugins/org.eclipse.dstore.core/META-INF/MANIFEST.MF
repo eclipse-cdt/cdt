@@ -17,6 +17,11 @@ Export-Package: org.eclipse.dstore.core,
  org.eclipse.dstore.core.model,
  org.eclipse.dstore.core.server,
  org.eclipse.dstore.core.util,
- org.eclipse.dstore.core.util.ssl
+ org.eclipse.dstore.core.util.ssl,
+ org.eclipse.dstore.internal.core.client;x-internal:=true,
+ org.eclipse.dstore.internal.core.model;x-internal:=true,
+ org.eclipse.dstore.internal.core.server;x-internal:=true,
+ org.eclipse.dstore.internal.core.util;x-internal:=true,
+ org.eclipse.dstore.internal.core.util.ssl;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

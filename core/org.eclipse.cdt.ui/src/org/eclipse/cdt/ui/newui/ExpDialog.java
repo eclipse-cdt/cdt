@@ -17,7 +17,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -95,6 +94,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		txt1 = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
+		gd.widthHint = 300;
 		txt1.setLayoutData(gd);
 		txt1.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -108,6 +108,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		txt2 = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
+		gd.widthHint = 300;
 		txt2.setLayoutData(gd);
 		txt2.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -209,9 +210,6 @@ public class ExpDialog extends AbstractPropertyDialog {
 
 		c.getShell().setDefaultButton(b_ok);
 		c.pack();
-		Rectangle r = shell.getBounds();
-		r.width = 420;
-		shell.setBounds(r);
 		setButtons();
 		return c;
 	}	

@@ -63,8 +63,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	public static final Image IMG_FS = CPluginImages.get(CPluginImages.IMG_FILESYSTEM); 
 	public static final Image IMG_WS = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
 	public static final Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
-	private static final String ALL = "[All]"; //$NON-NLS-1$
-	private static final String LIST = "[List]"; //$NON-NLS-1$
+	private static final String ALL = UIMessages.getString("AbstractExportTab.0"); //$NON-NLS-1$
+	private static final String LIST = UIMessages.getString("AbstractExportTab.1"); //$NON-NLS-1$
 	private static Map names_l = new HashMap();
 	private static Map names_t = new HashMap();
 	private static String[] names_ls; 	
@@ -93,7 +93,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		usercomp.setLayout(new GridLayout(2, false));
 	    table = new Table(usercomp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	    GridData gd = new GridData(GridData.FILL_BOTH);
-	    gd.widthHint = 255;
+	    gd.minimumWidth = 255;
 	    table.setLayoutData(gd);
   	    table.setHeaderVisible(true);
   	    table.setLinesVisible(true);
@@ -214,7 +214,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		switch (i) {
 		case 0: // add
 			dlg = new ExpDialog(usercomp.getShell(), true,
-					"Create", EMPTY_STR, EMPTY_STR, cfg,         //$NON-NLS-1$
+					UIMessages.getString("AbstractExportTab.2"), EMPTY_STR, EMPTY_STR, cfg, //$NON-NLS-1$
 					null, null, getKind(), names_ls, names_ts, namesList, false); 
 			if (dlg.open()) {
 				ent[0] = doAdd(dlg.text1.trim(), dlg.text2.trim(), dlg.check2);
@@ -243,7 +243,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 				s1 = s2 = old.getName();
 			boolean isWsp = (old.entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
 			dlg = new ExpDialog(usercomp.getShell(), false,
-					"Edit", s1, s2, cfg, //$NON-NLS-1$
+					UIMessages.getString("AbstractExportTab.3"), s1, s2, cfg, //$NON-NLS-1$
 					id2name(old.setting.getCompatibleLanguageIds(), names_l),
 					id2name(old.setting.getCompatibleContentTypeIds(), names_t),
 					getKind(), names_ls, names_ts, null, isWsp); 

@@ -40,6 +40,8 @@ public abstract class AbstractPropertyDialog extends Dialog {
 	
 	public AbstractPropertyDialog(Shell _parent, String title) {
 		super(_parent, 0);
+		this.getStyle();
+		
 		parent = _parent;
 		this.setText(title);
 	}
@@ -59,7 +61,7 @@ public abstract class AbstractPropertyDialog extends Dialog {
 	}
 	
 	public boolean open () {
-	 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+	 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE);
 	 		shell.setText(getText());
 	 		createDialogArea(shell);
 	 		

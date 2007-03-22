@@ -6,4 +6,4 @@ Bundle-Version: 4.0.0.qualifier
 Bundle-ClassPath: cdt_win32.jar
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.cdt.core;bundle-version="[4.0.0,5.0.0)"
-Bundle-Localization: fragment
+Bundle-Localization: plugin

@@ -56,7 +56,16 @@ Contributors:
          </enabledWhen>
       </page>
 
-        <page
+      <page
+            name="%PropertyPage.ServerLauncherSettings" 
+            class="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage"
+            id="org.eclipse.rse.ui.propertypages.serverLauncherPropertyPage">
+            <filter name="serverLaunchPP" value="true"/>
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem"/>
+         </enabledWhen>
+      </page>
+      <page
             name="%PropertyPage.Service"
             class="org.eclipse.rse.shells.ui.propertypages.ShellServicesPropertyPage"
             id="org.eclipse.rse.shells.ui.propertypages.ShellServicesPropertyPage">

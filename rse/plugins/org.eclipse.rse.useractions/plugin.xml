@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+<!-- ============================================ -->
+<!-- Define Workbench Properties Pages            -->
+<!-- ============================================ -->
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.rse.useractions.ui.uda.SystemUDActionElement"
+            name="%PropertyPage.TeamViewUserActionNode"
+            class="org.eclipse.rse.useractions.ui.propertypages.SystemTeamViewUserActionPropertyPage"
+            id="org.eclipse.rse.ui.SystemTeamViewUserActionPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.useractions.ui.compile.teamview.SystemTeamViewCompileTypeNode"
+            name="%PropertyPage.TeamViewCompileTypeNode"
+            class="org.eclipse.rse.useractions.ui.propertypages.SystemTeamViewCompileTypePropertyPage"
+            id="org.eclipse.rse.ui.SystemTeamViewCompileTypePropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.useractions.ui.compile.teamview.SystemTeamViewCompileCommandNode"
+            name="%PropertyPage.TeamViewCompileCommandNode"
+            class="org.eclipse.rse.useractions.ui.propertypages.SystemTeamViewCompileCommandPropertyPage"
+            id="com.ibm.etools.systems.SystemTeamViewCompileCommandPropertyPage">
+      </page>
+
+ 
+      
+   </extension>
+</plugin>

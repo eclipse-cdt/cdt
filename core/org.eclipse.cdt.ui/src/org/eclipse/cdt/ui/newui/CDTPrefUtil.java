@@ -19,11 +19,16 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 public class CDTPrefUtil {
-	public static final String KEY_UNSUPP  = "wizard.default.show.unsupported";  //$NON-NLS-1$
-	public static final String KEY_OTHERS  = "wizard.default.group.others";  //$NON-NLS-1$
+	// boolean keys (KEY_NO-s are to be inverted !)
+	public static final String KEY_NOSUPP  = "wizard.show.unsupported.disable";  //$NON-NLS-1$
+	public static final String KEY_OTHERS  = "wizard.group.others.enable";  //$NON-NLS-1$
+	public static final String KEY_NOMNG  = "properties.manage.config.disable"; //$NON-NLS-1$
+	public static final String KEY_MULTI  = "properties.multi.config.enable"; //$NON-NLS-1$
+	public static final String KEY_DTREE  = "properties.data.hierarchy.enable"; //$NON-NLS-1$
+	public static final String KEY_NOSAVE  = "properties.save.position.disable"; //$NON-NLS-1$
+	// string keys
 	public static final String KEY_PREFTC  = "wizard.preferred.toolchains";  //$NON-NLS-1$
-	public static final String KEY_MANAGE  = "properties.manage.config.button"; //$NON-NLS-1$
-	
+
 	public static final String NULL = "NULL"; //$NON-NLS-1$
 	private static final IPreferenceStore pref = CUIPlugin.getDefault().getPreferenceStore();
 	private static final String DELIMITER = " "; //$NON-NLS-1$

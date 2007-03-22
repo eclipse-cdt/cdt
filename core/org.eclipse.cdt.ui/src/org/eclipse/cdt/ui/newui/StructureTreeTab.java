@@ -776,4 +776,9 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			}
 		});
 	}
+	
+	// This page can be displayed if it's permitted in prefs
+	public boolean canBeVisible() {
+		return CDTPrefUtil.getBool(CDTPrefUtil.KEY_DTREE);
+	}
 }

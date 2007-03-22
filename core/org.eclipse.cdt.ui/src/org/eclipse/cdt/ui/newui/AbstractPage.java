@@ -101,9 +101,6 @@ implements
 		IPreferencePageContainer, // dynamic pages
 		ICPropertyProvider // utility methods for tabs
 {
-	// All(Multiple) configuration support is now disabled 
-	private static final boolean ENABLE_MULTI_CFG = false;
-
 	private static ArrayList pages = new ArrayList(5);
 	private static ICResourceDescription resd = null;
 	private static ICConfigurationDescription[] cfgDescs = null;
@@ -111,7 +108,6 @@ implements
 	private static ICProjectDescription prjd = null;
 	private static int cfgIndex = 0;
 	protected static boolean saveDone  = false;
-//	private static boolean doneOK = false;
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME = "tab"; //$NON-NLS-1$
@@ -252,7 +248,7 @@ implements
 	  	
 		configSelector.setLayoutData(gd);
 		
-		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_MANAGE)) {
+		if (!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG)) {
 			manageButton = new Button(configGroup, SWT.PUSH);
 			manageButton.setText(UIMessages.getString("AbstractPage.12")); //$NON-NLS-1$
 			gd = new GridData(GridData.END);
@@ -471,7 +467,7 @@ implements
 			if (cfgDescs[i].isActive()) cfgIndex = i;
 		}
 		// Handling of All/Multiple configurations can be disabled
-		if (ENABLE_MULTI_CFG) {
+		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI)) {
 			if (cfgDescs.length > 1) // "All cfgs" - shown if at least 2 cfgs available
 				configSelector.add(UIMessages.getString("AbstractPage.4")); //$NON-NLS-1$
 			if (cfgDescs.length > 2)// "Multi cfgs" - shown if at least 3 cfgs available
@@ -508,6 +504,8 @@ implements
 	
 	protected void handleResize(boolean visible) {
 		if (pages.size() > 1) return; // do not duplicate
+		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSAVE)) return;
+		
 		IProject prj = getProject();
 		if (prj == null) return; // preferences. Do not process. 
 		QualifiedName WIDTH  = new QualifiedName(prj.getName(),".property.page.width"); //$NON-NLS-1$

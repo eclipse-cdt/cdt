@@ -281,13 +281,13 @@ public class CConfigWizardPage extends MBSCustomPage {
 			NewModelProjectWizard nmWizard = (NewModelProjectWizard)wizard;
 			IProject newProject = nmWizard.getProject(true);
 			if (newProject != null) {
-				boolean oldManage = CDTPrefUtil.getBool(CDTPrefUtil.KEY_MANAGE);
+				boolean oldManage = CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG);
 				// disable manage configurations button
-				CDTPrefUtil.setBool(CDTPrefUtil.KEY_MANAGE, false);
+				CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, true);
 				try {
 					PreferencesUtil.createPropertyDialogOn(wizard.getContainer().getShell(), newProject, propertyId, null, null).open();
 				} finally {
-					CDTPrefUtil.setBool(CDTPrefUtil.KEY_MANAGE, oldManage);
+					CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, oldManage);
 				}
 			}
 		}

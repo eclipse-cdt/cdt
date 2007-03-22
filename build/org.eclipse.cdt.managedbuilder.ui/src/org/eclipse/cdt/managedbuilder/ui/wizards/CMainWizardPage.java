@@ -171,7 +171,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 				}} );
 
 	        // restore settings from preferences
-			show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_UNSUPP));
+			show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));
 	    }
 	    
 	    /**

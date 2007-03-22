@@ -9,9 +9,10 @@
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.managedbuilder.ui.properties;
+package org.eclipse.cdt.managedbuilder.ui.preferences;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.AbstractPrefPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
 

@@ -8,10 +8,13 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.properties;
+package org.eclipse.cdt.managedbuilder.ui.preferences;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.ui.properties.AbstractCBuildPropertyTab;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.PageLayout;
 import org.eclipse.cdt.managedbuilder.ui.wizards.CMainWizardPage;
 import org.eclipse.cdt.managedbuilder.ui.wizards.ICWizardHandler;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;

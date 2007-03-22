@@ -695,6 +695,11 @@
             class="org.eclipse.cdt.ui.newui.PrefPage_Vars"
             id="org.eclipse.cdt.ui.preferences.VariablesPrefPage"
             name="%varsPrefName"/>
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.ui.newui.PrefPage_PropertyPage"
+            id="org.eclipse.cdt.ui.preferences.PropertyPageSettings"
+            name="%propSettingsPrefName"/>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"

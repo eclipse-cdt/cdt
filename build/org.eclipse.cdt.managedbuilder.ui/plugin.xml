@@ -90,13 +90,13 @@
       <page
             name="%MakeBuildPref.name"
             category="org.eclipse.cdt.managedbuilder.ui.preferences.WizardPreferences"
-            class="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"
+            class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
             id="org.eclipse.cdt.managedbuilder.ui.preferences.BuildPreferences">
       </page>
       <page
             name="%NewCDTWizardPref.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTWizard"
+            class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"
             id="org.eclipse.cdt.managedbuilder.ui.preferences.WizardPreferences">
       </page>
    </extension>
@@ -324,12 +324,12 @@
            name="%Output.location"
            weight="009"           
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
-     <!--tab
+     <tab
            class="org.eclipse.cdt.ui.newui.StructureTreeTab"
            icon="icons/obj16/hierarchy.gif"
            name="%Data.hierarchy"
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
-           weight="012"/-->
+           weight="012"/>
      <tab
            class="org.eclipse.cdt.ui.newui.EnvironmentTab"
            icon="icons/obj16/environment.gif"
@@ -392,34 +392,40 @@
            class="org.eclipse.cdt.ui.newui.BinaryParsTab"
            name="%Binary.parsers"
            icon="icons/obj16/bin_obj.gif"
-           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"
+           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
            name="%Error.parsers"
            icon="icons/obj16/error_obj.gif"
-           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"
+           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.DiscoveryTab"
            icon="icons/elcl16/discovery.gif"
            name="%Discovery.options"
-           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"
+           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.BuilderSettingsTab"
            icon="icons/obj16/build_settings.gif"
            name="%Builder.settings"
-           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTProject"/>
+           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"/>
 
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.properties.PreferredToolchainsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.preferences.PreferredToolchainsTab"
            name="%Preferred.toolchains"
-           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTWizard"/>
+           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
      <tab
-           class="org.eclipse.cdt.managedbuilder.ui.properties.WizardDefaultsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.preferences.WizardDefaultsTab"
            name="%Wizard.defaults"
-           parent="org.eclipse.cdt.managedbuilder.ui.properties.PrefPage_NewCDTWizard"/>
+           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
+
+     <tab
+           class="org.eclipse.cdt.ui.newui.PropertyPageDefsTab"
+           name="%PropertyPage.defaults"
+           parent="org.eclipse.cdt.ui.newui.PrefPage_PropertyPage"/>
+
 
   </extension>   
 

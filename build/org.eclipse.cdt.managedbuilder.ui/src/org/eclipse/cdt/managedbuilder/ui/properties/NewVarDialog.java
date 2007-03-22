@@ -25,6 +25,7 @@ import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -84,7 +85,7 @@ public class NewVarDialog extends Dialog {
 
 	// Widgets
 	private Composite fContainer;
-	private Combo fMacroNameEdit;
+	private CCombo fMacroNameEdit;
 	private Label fMacroValueLabel;
 	private Text fMacroValueEdit;
 	private Button fBrowseButton;
@@ -131,8 +132,7 @@ public class NewVarDialog extends Dialog {
 		nameLabel.setText(Messages.getString("NewVarDialog.0")); //$NON-NLS-1$
 		nameLabel.setLayoutData(new GridData());
 		
-//		fMacroNameEdit = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		fMacroNameEdit = new Combo(comp, SWT.SINGLE | SWT.DROP_DOWN);
+		fMacroNameEdit = new CCombo(comp, SWT.BORDER);
 		fMacroNameEdit.setItems(getMacroNames());
 		fMacroNameEdit.setFont(comp.getFont());
 		gd = new GridData(GridData.FILL_HORIZONTAL);

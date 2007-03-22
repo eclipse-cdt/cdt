@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -33,7 +33,7 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 
 	protected List computeCompletionProposals(
 			CContentAssistInvocationContext cContext,
-			ASTCompletionNode completionNode, String prefix)
+			IASTCompletionNode completionNode, String prefix)
 			throws CoreException {
 		
 		boolean handleHelp = false;

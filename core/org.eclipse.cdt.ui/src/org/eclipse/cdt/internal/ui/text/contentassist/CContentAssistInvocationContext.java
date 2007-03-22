@@ -18,7 +18,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
@@ -47,7 +47,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	private boolean fTUComputed= false;
 	private int fParseOffset= -1;
 	private boolean fParseOffsetComputed= false;
-	private ASTCompletionNode fCN= null;
+	private IASTCompletionNode fCN= null;
 	private boolean fCNComputed= false;
 	private IIndex fIndex = null;
 	private int fContextInfoPosition;
@@ -104,7 +104,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		return unit == null ? null : unit.getCProject();
 	}
 		
-	public ASTCompletionNode getCompletionNode() {
+	public IASTCompletionNode getCompletionNode() {
 		if (fCNComputed) return fCN;
 		
 		fCNComputed = true;

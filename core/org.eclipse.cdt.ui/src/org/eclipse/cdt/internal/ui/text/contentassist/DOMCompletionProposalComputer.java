@@ -20,10 +20,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -75,7 +75,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	
 	protected List computeCompletionProposals(
 			CContentAssistInvocationContext context,
-			ASTCompletionNode completionNode, String prefix) {
+			IASTCompletionNode completionNode, String prefix) {
 
 		List proposals = new ArrayList();
 		
@@ -138,7 +138,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 	private void addMacroProposals(CContentAssistInvocationContext context, String prefix, List proposals) {
 		char[] prefixChars= prefix.toCharArray();
-		ASTCompletionNode completionNode = context.getCompletionNode();
+		IASTCompletionNode completionNode = context.getCompletionNode();
 		IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
 		if (macros != null)
 			for (int i = 0; i < macros.length; ++i)

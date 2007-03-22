@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.parser.ParseError;
 
 /**
  * Interface for an AST source code parser.
@@ -49,11 +50,11 @@ public interface ISourceCodeParser {
     public boolean encounteredError();
 
     /**
-     * Compute an {@link ASTCompletionNode} for code completion.
+     * Compute an {@link IASTCompletionNode} for code completion.
      * @return a completion node or <code>null</code> if none could be computed
      * 
      * @throws ParseError  if parsing has been cancelled or for other reasons
      */
-    public ASTCompletionNode getCompletionNode();
+    public IASTCompletionNode getCompletionNode();
     
 }

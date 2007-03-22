@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IParserConfiguration;
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -171,17 +171,17 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		return parser.parse();
     }
 
-	public ASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
+	public IASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
             ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
         return getCompletionNode(fileToParse.getFullPath().toOSString(), project, offset, fileCreator);
     }
     
-    public ASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
+    public IASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
             ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
         return getCompletionNode(fileToParse.getLocation().toOSString(), fileToParse, offset, fileCreator);
     }
     
-    public ASTCompletionNode getCompletionNode(String filename, IResource infoProvider, int offset,
+    public IASTCompletionNode getCompletionNode(String filename, IResource infoProvider, int offset,
             ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
 		// Get the scanner info
 		IScannerInfo scanInfo = null;
@@ -223,10 +223,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		
 		// Run the parse and return the completion node
 		parser.parse();
-		ASTCompletionNode node = parser.getCompletionNode();
-		if (node != null) {
-			node.count = scanner.getCount();
-		}
+		IASTCompletionNode node = parser.getCompletionNode();
 		return node;
 	}
 	

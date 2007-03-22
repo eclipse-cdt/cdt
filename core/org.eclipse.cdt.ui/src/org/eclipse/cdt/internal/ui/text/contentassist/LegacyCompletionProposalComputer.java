@@ -24,13 +24,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.ITextViewer;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 
 /**
- * A proposal computer for handling the legacy extension from the
- * completionContributors extension point.
+ * A proposal computer for handling the legacy extensions from the
+ * <tt>org.eclipse.cdt.core.completionContributors</tt> extension point.
  * 
  * @since 4.0
  */
@@ -44,8 +45,12 @@ public class LegacyCompletionProposalComputer extends ParsingBasedProposalComput
 
 	protected List computeCompletionProposals(
 			CContentAssistInvocationContext context,
-			ASTCompletionNode completionNode, String prefix) throws CoreException {
+			IASTCompletionNode completionNode, String prefix) throws CoreException {
 		
+		if (!(completionNode instanceof ASTCompletionNode)) {
+			// unsupported IASTCompletionNode implementation
+			return Collections.EMPTY_LIST;
+		}
 		if (context.isContextInformationStyle()) {
 			// context information cannot be supported by completionContributors
 			return Collections.EMPTY_LIST;
@@ -70,7 +75,9 @@ public class LegacyCompletionProposalComputer extends ParsingBasedProposalComput
 				if (!(contribObject instanceof ICompletionContributor))
 					continue;
 				ICompletionContributor contributor = (ICompletionContributor)contribObject;
-				contributor.contributeCompletionProposals(viewer, offset, workingCopy, completionNode, prefix, proposals);
+				contributor.contributeCompletionProposals(viewer, offset,
+						workingCopy, (ASTCompletionNode) completionNode,
+						prefix, proposals);
 			}
 		}
 		

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 
@@ -42,7 +42,7 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 			if (context instanceof CContentAssistInvocationContext) {
 				CContentAssistInvocationContext cContext = (CContentAssistInvocationContext) context;
 				
-				ASTCompletionNode completionNode = cContext.getCompletionNode();
+				IASTCompletionNode completionNode = cContext.getCompletionNode();
 				if (completionNode == null) return Collections.EMPTY_LIST;
 				String prefix = completionNode.getPrefix();
 				if (prefix == null) {
@@ -60,7 +60,7 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 	
 	protected abstract List computeCompletionProposals(
 			CContentAssistInvocationContext context,
-			ASTCompletionNode completionNode,
+			IASTCompletionNode completionNode,
 			String prefix) throws CoreException;
 	
 	public List computeContextInformation(

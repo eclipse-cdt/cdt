@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -97,7 +97,7 @@ public abstract class AbstractCPPLanguage extends AbstractLanguage implements IC
 		return ast;
 	}
 
-	public ASTCompletionNode getCompletionNode(CodeReader reader, IScannerInfo scanInfo,
+	public IASTCompletionNode getCompletionNode(CodeReader reader, IScannerInfo scanInfo,
 			ICodeReaderFactory fileCreator, IIndex index, IParserLogService log, int offset) throws CoreException {
 		IScanner scanner= createScanner(reader, scanInfo, fileCreator, log);
 		scanner.setContentAssistMode(offset);
@@ -106,10 +106,7 @@ public abstract class AbstractCPPLanguage extends AbstractLanguage implements IC
 
 		// Run the parse and return the completion node
 		parser.parse();
-		ASTCompletionNode node= parser.getCompletionNode();
-		if (node != null) {
-			node.count= scanner.getCount();
-		}
+		IASTCompletionNode node= parser.getCompletionNode();
 		return node;
 	}
 

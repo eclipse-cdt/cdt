@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.prefix;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 
 public class BasicCompletionTest extends CompletionTestBase {
 
-	private void testVar(ASTCompletionNode node) throws Exception {
+	private void testVar(IASTCompletionNode node) throws Exception {
 		IASTName[] names = node.getNames();
 		assertEquals(1, names.length);
 		IBinding[] bindings = names[0].getCompletionContext().findBindings(
@@ -44,7 +44,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 		code.append("void func2() { fu");
 		
 		// C++
-		ASTCompletionNode node = getGPPCompletionNode(code.toString());
+		IASTCompletionNode node = getGPPCompletionNode(code.toString());
 		IASTName[] names = node.getNames();
 		// There are three names, one as an expression, one that isn't connected, one as a declaration
 		assertEquals(3, names.length);
@@ -82,7 +82,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 		code.append("bl");
 		
 		// C++
-		ASTCompletionNode node = getGPPCompletionNode(code.toString());
+		IASTCompletionNode node = getGPPCompletionNode(code.toString());
 		IASTName[] names = node.getNames();
 		assertEquals(2, names.length);
 		assertNull(names[0].getTranslationUnit());

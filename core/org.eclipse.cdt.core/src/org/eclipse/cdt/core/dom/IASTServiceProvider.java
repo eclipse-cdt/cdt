@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -95,7 +95,7 @@ public interface IASTServiceProvider {
      * @return syntactical parse tree
      * @throws UnsupportedDialectException
      */
-    public ASTCompletionNode getCompletionNode( IFile fileToParse, int offset, ICodeReaderFactory fileCreator) throws UnsupportedDialectException;
+    public IASTCompletionNode getCompletionNode( IFile fileToParse, int offset, ICodeReaderFactory fileCreator) throws UnsupportedDialectException;
     
     /**
      * Returns a parse tree that represents the content provided as parameters.
@@ -107,6 +107,6 @@ public interface IASTServiceProvider {
      * @return syntactical parse tree
      * @throws UnsupportedDialectException
      */
-    public ASTCompletionNode getCompletionNode( IStorage fileToParse, IProject project, int offset, ICodeReaderFactory fileCreator) throws UnsupportedDialectException;
+    public IASTCompletionNode getCompletionNode( IStorage fileToParse, IProject project, int offset, ICodeReaderFactory fileCreator) throws UnsupportedDialectException;
     
 }

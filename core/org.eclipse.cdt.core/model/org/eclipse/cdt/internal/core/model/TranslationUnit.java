@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
@@ -750,7 +750,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
-	public ASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException {
+	public IASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException {
 		ICodeReaderFactory codeReaderFactory;
 		if (index != null && (style & (ITranslationUnit.AST_SKIP_INDEXED_HEADERS | ITranslationUnit.AST_SKIP_ALL_HEADERS)) != 0) {
 			ICodeReaderFactory fallbackFactory;

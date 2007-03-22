@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
@@ -147,7 +148,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * 
      * @see org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser#getCompletionNode()
      */
-    public ASTCompletionNode getCompletionNode() {
+    public IASTCompletionNode getCompletionNode() {
         return completionNode;
     }
 

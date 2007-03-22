@@ -9,7 +9,7 @@
  * IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.internal.core.dom.InternalASTServiceProvider;
@@ -139,14 +139,14 @@ public class CDOM implements IASTServiceProvider {
         return defaultService.getTranslationUnit(fileToParse, fileCreator, configuration );
     }
     
-    public ASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
+    public IASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
             ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
         //TODO - At this time, we purely delegate blindly
         //In the future, we may need to delegate based upon context provided 
         return defaultService.getCompletionNode(fileToParse, offset, fileCreator);
     }
 
-    public ASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
+    public IASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
             ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
         //TODO - At this time, we purely delegate blindly
         //In the future, we may need to delegate based upon context provided 

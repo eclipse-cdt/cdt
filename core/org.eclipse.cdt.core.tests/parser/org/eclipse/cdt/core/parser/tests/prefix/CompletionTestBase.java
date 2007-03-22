@@ -15,7 +15,7 @@ import java.util.Comparator;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -44,7 +44,7 @@ public class CompletionTestBase extends TestCase {
 
     private static final IParserLogService NULL_LOG = new NullLogService();
 
-	protected ASTCompletionNode getCompletionNode(String code, ParserLanguage lang, boolean useGNUExtensions) throws ParserException {
+	protected IASTCompletionNode getCompletionNode(String code, ParserLanguage lang, boolean useGNUExtensions) throws ParserException {
         CodeReader codeReader = new CodeReader(code.toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
         IScannerExtensionConfiguration configuration = null;
@@ -84,11 +84,11 @@ public class CompletionTestBase extends TestCase {
 		return parser.getCompletionNode();
     }
 
-	protected ASTCompletionNode getGPPCompletionNode(String code) throws ParserException {
+	protected IASTCompletionNode getGPPCompletionNode(String code) throws ParserException {
 		return getCompletionNode(code, ParserLanguage.CPP, true);
 	}
 	
-	protected ASTCompletionNode getGCCCompletionNode(String code) throws ParserException {
+	protected IASTCompletionNode getGCCCompletionNode(String code) throws ParserException {
 		return getCompletionNode(code, ParserLanguage.C, true);
 	}
 	

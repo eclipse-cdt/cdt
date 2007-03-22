@@ -16,19 +16,10 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.IToken;
 
 /**
- * This class represents the node that would occur at the point of a context
- * completion.
- * 
- * This node may contain the prefix text of an identifer up to the point. If
- * there is no prefix, the completion occurred at the point where a new token
- * would have begun.
- * 
- * The node points to the parent node where this node, if replaced by a proper
- * node, would reside in the tree.
  * 
  * @author Doug Schaefer
  */
-public class ASTCompletionNode {
+public class ASTCompletionNode implements IASTCompletionNode {
 
 	private IToken completionToken;
 
@@ -36,8 +27,6 @@ public class ASTCompletionNode {
 	
 	private IASTTranslationUnit translationUnit;
 
-	// used for debug
-	public int count;
 	
 	/**
 	 * Only constructor.
@@ -59,38 +48,29 @@ public class ASTCompletionNode {
 		names.add(name);
 	}
 
-	/**
-	 * If the point of completion was at the end of a potential identifier, this
-	 * string contains the text of that identifier.
-	 * 
-	 * @return the prefix text up to the point of completion
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTCompletionNode#getPrefix()
 	 */
 	public String getPrefix() {
 		return completionToken.getType() != IToken.tEOC ? completionToken.getImage() : ""; //$NON-NLS-1$
 	}
 
-	/**
-	 * Get the length of the completion point.
-	 * 
-	 * @return length of completion token
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTCompletionNode#getLength()
 	 */
 	public int getLength() {
 		return completionToken.getLength();
 	}
 
-	/**
-	 * Get a list of names that fit in this context.
-	 * 
-	 * @return array of IASTName's
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTCompletionNode#getNames()
 	 */
 	public IASTName[] getNames() {
 		return (IASTName[]) names.toArray(new IASTName[names.size()]);
 	}
 
-	/**
-	 * Get the translation unit for this completion
-	 * 
-	 * @return the translation unit
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTCompletionNode#getTranslationUnit()
 	 */
 	public IASTTranslationUnit getTranslationUnit() {
 		return translationUnit;

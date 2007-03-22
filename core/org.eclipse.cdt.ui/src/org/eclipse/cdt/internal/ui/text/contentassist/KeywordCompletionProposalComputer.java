@@ -21,7 +21,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -37,7 +37,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 
 	protected List computeCompletionProposals(
 			CContentAssistInvocationContext context,
-			ASTCompletionNode completionNode, String prefix)
+			IASTCompletionNode completionNode, String prefix)
 			throws CoreException {
 
 		// No prefix, no completions
@@ -82,7 +82,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 	 * @param context  the content assist invocation context
 	 * @return <code>false</code> if the given invocation context looks like a field reference
 	 */
-	private boolean isValidContext(ASTCompletionNode completionNode) {
+	private boolean isValidContext(IASTCompletionNode completionNode) {
 		IASTName[] names = completionNode.getNames();
 		for (int i = 0; i < names.length; ++i) {
 			IASTName name = names[i];

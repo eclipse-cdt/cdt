@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
- * The ICProjectDescription is the roo element for obtaining the CDT project settings
+ * The ICProjectDescription is the root element for obtaining the CDT project settings
  * it can be obtained by the {@link CoreModel#getProjectDescription(IProject, boolean)} call
  * @see CoreModel#getProjectDescription(IProject)
  * @see CoreModel#getProjectDescription(IProject, boolean) 

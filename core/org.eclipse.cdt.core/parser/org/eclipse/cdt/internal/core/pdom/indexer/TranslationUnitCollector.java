@@ -21,12 +21,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 final class TranslationUnitCollector implements ICElementVisitor {
-	private final Collection fTUs;
+	private final Collection fSources;
+	private final Collection fHeaders;
 	private final boolean fAllFiles;
 	private final IProgressMonitor fProgressMonitor;
 
-	public TranslationUnitCollector(Collection tus, boolean allFiles, IProgressMonitor pm) {
-		fTUs = tus;
+	public TranslationUnitCollector(Collection sources, Collection headers, boolean allFiles, IProgressMonitor pm) {
+		fSources= sources;
+		fHeaders= headers;
 		fAllFiles = allFiles;
 		fProgressMonitor= pm;
 	}
@@ -40,11 +42,11 @@ final class TranslationUnitCollector implements ICElementVisitor {
 			ITranslationUnit tu = (ITranslationUnit)element;
 			if (tu.isSourceUnit()) {
 				if (fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource())) {
-					fTUs.add(tu);
+					fSources.add(tu);
 				}
 			}
-			else if (tu.isHeaderUnit()) {
-				fTUs.add(tu);
+			else if (fHeaders != null && tu.isHeaderUnit()) {
+				fHeaders.add(tu);
 			}
 			return false;
 		case ICElement.C_CCONTAINER:

@@ -118,10 +118,11 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 
 	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
 		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
-		List list= new ArrayList();
-		TranslationUnitCollector collector= new TranslationUnitCollector(list, allFiles, monitor);
+		List sources= new ArrayList();
+		List headers= allFiles ? sources : null;
+		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, allFiles, monitor);
 		project.accept(collector);
-		ITranslationUnit[] tus= (ITranslationUnit[]) list.toArray(new ITranslationUnit[list.size()]);
+		ITranslationUnit[] tus= (ITranslationUnit[]) sources.toArray(new ITranslationUnit[sources.size()]);
 		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (fDelegate instanceof PDOMIndexerTask) {
 			((PDOMIndexerTask) fDelegate).setCheckTimestamps(fCheckTimestamps);

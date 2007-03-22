@@ -123,7 +123,7 @@ public class PDOMResourceDeltaTask implements IPDOMIndexerTask {
 	}
 
 	private void collectSources(ICContainer container, Collection sources, IProgressMonitor pm) throws CoreException {
-		container.accept(new TranslationUnitCollector(sources, fAllFiles, pm));
+		container.accept(new TranslationUnitCollector(sources, sources, fAllFiles, pm));
 	}
 
 	public void run(IProgressMonitor monitor) {

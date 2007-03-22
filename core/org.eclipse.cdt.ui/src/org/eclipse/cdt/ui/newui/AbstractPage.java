@@ -453,10 +453,8 @@ implements
 		// Do nothing if widget not created yet.
 		if (configSelector == null)	return;
 
-		// if project changed, force re-read cfg.
-		ICProjectDescription _prjDesc = CoreModel.getDefault().getProjectDescription(getProject());
-		if (prjd == null || prjd.getProject() != _prjDesc.getProject()) {
-			prjd = _prjDesc;
+		if (prjd == null) {
+			prjd = CoreModel.getDefault().getProjectDescription(getProject());
 			cfgDescs = null;
 			cfgIndex = 0;
 		}

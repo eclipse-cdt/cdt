@@ -29,6 +29,8 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
@@ -56,7 +58,7 @@ public class IndexFactory {
 		boolean addDependent=    (options & ADD_DEPENDENT) != 0;
 		boolean skipProvided= (options & SKIP_PROVIDED) != 0;
 		
-		IndexProviderManager m = ((PDOMManager)CCorePlugin.getPDOMManager()).getIndexProviderManager();
+		IndexProviderManager m = CCoreInternals.getPDOMManager().getIndexProviderManager();
 		HashMap map= new HashMap();
 		Collection selectedProjects= getProjects(projects, addDependencies, addDependent, map, new Integer(1));
 		
@@ -68,10 +70,13 @@ public class IndexFactory {
 				fragments.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
 				
 				if(!skipProvided) {
-					ICConfigurationDescription activeCfg= CoreModel.getDefault().getProjectDescription(cproject.getProject()).getActiveConfiguration();
-					IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
-					for(int i=0; i<pFragments.length; i++) {
-						fragments.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+					ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
+					if(pd!=null) {
+						ICConfigurationDescription activeCfg= pd.getActiveConfiguration();
+						IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
+						for(int i=0; i<pFragments.length; i++) {
+							fragments.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+						}
 					}
 				}
 			}
@@ -94,10 +99,13 @@ public class IndexFactory {
 					fragments.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
 				}
 				if(!skipProvided) {
-					ICConfigurationDescription activeCfg= CoreModel.getDefault().getProjectDescription(cproject.getProject()).getActiveConfiguration();
-					IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
-					for(int i=0; i<pFragments.length; i++) {
-						fragments.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+					ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
+					if(pd!=null) {
+						ICConfigurationDescription activeCfg= pd.getActiveConfiguration();
+						IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
+						for(int i=0; i<pFragments.length; i++) {
+							fragments.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+						}
 					}
 				}
 			}
@@ -168,7 +176,8 @@ public class IndexFactory {
 	}
 
 	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
-// mstodo to support dependent projects: Collection selectedProjects= getSelectedProjects(new ICProject[]{project}, false);
+		// mstodo to support dependent projects: Collection selectedProjects= getSelectedProjects(new ICProject[]{project}, false);
+		IndexProviderManager m = CCoreInternals.getPDOMManager().getIndexProviderManager();
 		
 		Collection selectedProjects= Collections.singleton(project);
 		Map readOnlyFrag= new LinkedHashMap();
@@ -178,11 +187,13 @@ public class IndexFactory {
 			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(p);
 			if (pdom != null) {
 				fragments.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
-				IndexProviderManager m = ((PDOMManager)CCorePlugin.getPDOMManager()).getIndexProviderManager();
-				ICConfigurationDescription activeCfg= CoreModel.getDefault().getProjectDescription(p.getProject()).getActiveConfiguration();
-				IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
-				for(int i=0; i<pFragments.length; i++) {
-					readOnlyFrag.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+				ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(p.getProject(), false);
+				if(pd!=null) {
+					ICConfigurationDescription activeCfg= pd.getActiveConfiguration();
+					IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
+					for(int i=0; i<pFragments.length; i++) {
+						readOnlyFrag.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+					}
 				}
 			}
 		}

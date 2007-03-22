@@ -31,6 +31,9 @@ import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFolder;
@@ -58,9 +61,9 @@ import org.eclipse.core.runtime.Path;
 public class ExternalExportProjectProvider extends AbstractExportProjectProvider implements IExportProjectProvider {
 	private static final String ORG_ECLIPSE_CDT_CORE_INDEX_EXPORT_DATESTAMP = "org.eclipse.cdt.core.index.export.datestamp"; //$NON-NLS-1$
 	private static final String CONTENT = "content"; //$NON-NLS-1$
-	protected static final String ARG_SOURCE = "-source"; //$NON-NLS-1$
-	protected static final String ARG_INCLUDE = "-include"; //$NON-NLS-1$
-	protected static final String ARG_FRAGMENT_ID = "-id"; //$NON-NLS-1$
+	public static final String OPT_SOURCE = "-source"; //$NON-NLS-1$
+	public static final String OPT_INCLUDE = "-include"; //$NON-NLS-1$
+	public static final String OPT_FRAGMENT_ID = "-id"; //$NON-NLS-1$
 
 	private IFolder content;
 	private String fragmentId;
@@ -75,21 +78,21 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 */
 	public ICProject createProject() throws CoreException {
 		// -source
-		File source= new File(getSingleString(ARG_SOURCE));
+		File source= new File(getSingleString(OPT_SOURCE));
 		if(!source.exists()) {
 			fail(MessageFormat.format(Messages.ExternalContentPEM_LocationToIndexNonExistent, new Object[] {source}));
 		}
 
 		// -include
 		List includeFiles= new ArrayList();
-		if(isPresent(ARG_INCLUDE)) {
-			includeFiles.addAll(getParameters(ARG_INCLUDE));				
+		if(isPresent(OPT_INCLUDE)) {
+			includeFiles.addAll(getParameters(OPT_INCLUDE));				
 		}
 
 		// -id
-		fragmentId= getSingleString(ARG_FRAGMENT_ID);
+		fragmentId= getSingleString(OPT_FRAGMENT_ID);
 
-		return createCProject("__"+System.currentTimeMillis(), source, IPDOMManager.ID_FAST_INDEXER, includeFiles); //$NON-NLS-1$			
+		return createCCProject("__"+System.currentTimeMillis(), source, includeFiles); //$NON-NLS-1$
 	}
 
 	/**
@@ -109,10 +112,9 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 * @return a new project
 	 * @throws CoreException
 	 */
-	private ICProject createCProject(
+	private ICProject createCCProject(
 			final String projectName,
 			final File location,
-			final String indexerID,
 			final List includeFiles
 	) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
@@ -158,19 +160,29 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 						(IPathEntry[]) entries.toArray(new IPathEntry[includeFiles.size()]),
 						new NullProgressMonitor()
 				);
+				
+				ICProjectDescription pd= CoreModel.getDefault().createProjectDescription(cproject.getProject(), false); // create the description
+				newCfg(pd, project.getName(), "cfg1"); //$NON-NLS-1$
+				CoreModel.getDefault().setProjectDescription(cproject.getProject(), pd, true, new NullProgressMonitor());
+				
 
 				newProject[0]= cproject;
+				
+				IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, Boolean.TRUE.toString());
+				IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
 			}
 		}, null);
-
-		if (indexerID != null) {
-			IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, Boolean.TRUE.toString());
-			IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEXER_ID, indexerID);
-		}
 
 		return newProject[0];
 	}
 
+	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
+		CDefaultConfigurationData data= new CDefaultConfigurationData(project+"."+config, project+" "+config+" name", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		data.initEmptyData();
+		String ID= CCorePlugin.PLUGIN_ID + ".defaultConfigDataProvider"; //$NON-NLS-1$
+		return des.createConfiguration(ID, data);		
+	}
+	
 	/*
 	 * This should be a platform/CDT API
 	 */

@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.export.ExternalExportProjectProvider;
 import org.eclipse.cdt.core.index.export.IExportProjectProvider;
 import org.eclipse.core.runtime.CoreException;
@@ -39,9 +40,10 @@ import org.eclipse.equinox.app.IApplicationContext;
 public class GeneratePDOMApplication implements IApplication {
 	private static final String EXPORT_PROJECT_PROVIDER = "ExportProjectProvider"; //$NON-NLS-1$
 	private static final String DEFAULT_PROJECT_PROVIDER = ExternalExportProjectProvider.class.getName();
-	private static final String OPT_PROJECTPROVIDER= "-pprovider"; //$NON-NLS-1$
-	private static final String OPT_TARGET= "-target"; //$NON-NLS-1$
-	private static final String OPT_QUIET= "-quiet"; //$NON-NLS-1$
+	public static final String OPT_PROJECTPROVIDER= "-pprovider"; //$NON-NLS-1$
+	public static final String OPT_TARGET= "-target"; //$NON-NLS-1$
+	public static final String OPT_QUIET= "-quiet"; //$NON-NLS-1$
+	public static final String OPT_INDEXER_ID= "-indexer"; //$NON-NLS-1$
 
 	private static Map/*<String,IProjectForExportManager>*/ projectInitializers;
 
@@ -49,7 +51,8 @@ public class GeneratePDOMApplication implements IApplication {
 	 * Starts this application
 	 */
 	public Object start(IApplicationContext context) throws CoreException {
-		Map arguments= CLIUtil.parseToMap(Platform.getApplicationArgs());
+		String[] appArgs= (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+		Map arguments= CLIUtil.parseToMap(appArgs);
 		output(Messages.GeneratePDOMApplication_Initializing);
 
 		setupCLIProgressProvider();
@@ -64,6 +67,16 @@ public class GeneratePDOMApplication implements IApplication {
 		String target= (String) CLIUtil.getArg(arguments, OPT_TARGET, 1).get(0); 
 		boolean quiet= arguments.get(OPT_QUIET)!=null;
 
+		String indexerID= IPDOMManager.ID_FAST_INDEXER;
+		String[] indexerIDs= (String[]) arguments.get(OPT_INDEXER_ID);
+		if(indexerIDs!=null) {
+			if(indexerIDs.length==1) {
+				indexerID= indexerIDs[0];
+			} else if(indexerIDs.length>1) {
+				fail(MessageFormat.format(Messages.GeneratePDOMApplication_InvalidIndexerID, new Object[] {OPT_INDEXER_ID}));
+			}
+		}
+		
 		if(!quiet) {
 			System.setProperty(IPDOMIndexerTask.TRACE_ACTIVITY, Boolean.TRUE.toString());
 			System.setProperty(IPDOMIndexerTask.TRACE_PROBLEMS, Boolean.TRUE.toString());
@@ -72,12 +85,11 @@ public class GeneratePDOMApplication implements IApplication {
 
 		IExportProjectProvider pprovider = getExportProjectProvider(pproviderFQN);
 		if(pprovider==null) {
-			output(MessageFormat.format(Messages.GeneratePDOMApplication_CouldNotFindInitializer, new Object[]{pproviderFQN}));
-			return null;
+			fail(MessageFormat.format(Messages.GeneratePDOMApplication_CouldNotFindInitializer, new Object[]{pproviderFQN}));
 		}
 		File targetLocation = new File(target);
 
-		GeneratePDOM generate = new GeneratePDOM(pprovider,	Platform.getApplicationArgs(), targetLocation);
+		GeneratePDOM generate = new GeneratePDOM(pprovider,	appArgs, targetLocation, indexerID);
 		output(Messages.GeneratePDOMApplication_GenerationStarts);
 		generate.run();
 		output(Messages.GeneratePDOMApplication_GenerationEnds);
@@ -92,6 +104,10 @@ public class GeneratePDOMApplication implements IApplication {
 		// do nothing
 	}
 
+	private void fail(String message) throws CoreException {
+		throw new CoreException(CCorePlugin.createStatus(message));
+	}
+	
 	/**
 	 * Returns the IExportProjectProvider registed in the plug-in registry under the
 	 * specified fully qualified class name
@@ -109,19 +125,15 @@ public class GeneratePDOMApplication implements IApplication {
 				IExtension extension = extensions[i];
 				IConfigurationElement[] ce = extension.getConfigurationElements();
 
-				IExportProjectProvider pfem = null;
 				for(int j=0; j<ce.length; j++) {
 					if(ce[j].getName().equals(EXPORT_PROJECT_PROVIDER)) {
 						try {
-							pfem = (IExportProjectProvider) ce[j].createExecutableExtension("class"); //$NON-NLS-1$
+							IExportProjectProvider epp = (IExportProjectProvider) ce[j].createExecutableExtension("class"); //$NON-NLS-1$
+							projectInitializers.put(epp.getClass().getName(), epp);
 						} catch(CoreException cee) {
 							CCorePlugin.log(cee);
 						}
-						break;
 					}
-				}
-				if(pfem!=null) {
-					projectInitializers.put(pfem.getClass().getName(), pfem);
 				}
 			}
 		}

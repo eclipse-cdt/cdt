@@ -15,11 +15,13 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.pdom.export.messages"; //$NON-NLS-1$
 	public static String GeneratePDOM_GenericGenerationFailed;
+	public static String GeneratePDOM_NullLocationConverter;
 	public static String GeneratePDOM_ProjectProviderReturnedNullCProject;
 	public static String GeneratePDOMApplication_CouldNotFindInitializer;
 	public static String GeneratePDOMApplication_GenerationEnds;
 	public static String GeneratePDOMApplication_GenerationStarts;
 	public static String GeneratePDOMApplication_Initializing;
+	public static String GeneratePDOMApplication_InvalidIndexerID;
 	public static String GeneratePDOMApplication_UsingDefaultProjectProvider;
 	static {
 		// initialize resource bundle

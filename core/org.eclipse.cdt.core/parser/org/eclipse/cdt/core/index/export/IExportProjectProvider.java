@@ -41,7 +41,8 @@ public interface IExportProjectProvider {
 	public void setApplicationArguments(String[] arguments);
 	
 	/**
-	 * Creates, configures and returns a project for the indexer to index
+	 * Creates, configures and returns a project for the indexer to index. This routine should
+	 * not itself index the project, as a reindex will be performed by the framework.
 	 * May not return null.
 	 * @return
 	 */

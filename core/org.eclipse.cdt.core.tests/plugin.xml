@@ -32,6 +32,18 @@
       <ReadOnlyPDOMProvider
             class="org.eclipse.cdt.core.internal.index.provider.test.DummyProvider1">
       </ReadOnlyPDOMProvider>
+      <ExportProjectProvider
+            class="org.eclipse.cdt.internal.pdom.tests.GeneratePDOMApplicationTest$TestProjectProvider1">
+      </ExportProjectProvider>
+      <ExportProjectProvider
+            class="org.eclipse.cdt.internal.pdom.tests.GeneratePDOMApplicationTest$TestProjectProvider2">
+      </ExportProjectProvider>
+      <ExportProjectProvider
+            class="org.eclipse.cdt.internal.pdom.tests.GeneratePDOMApplicationTest$TestProjectProvider3">
+      </ExportProjectProvider>
+      <ExportProjectProvider
+            class="org.eclipse.cdt.internal.pdom.tests.GeneratePDOMApplicationTest$TestProjectProvider4">
+      </ExportProjectProvider>
    </extension>
 
 </plugin>

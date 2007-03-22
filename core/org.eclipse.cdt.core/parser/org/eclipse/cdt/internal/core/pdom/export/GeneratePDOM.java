@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.index.export.IExportProjectProvider;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -37,21 +38,33 @@ public class GeneratePDOM implements ISafeRunnable {
 	protected IExportProjectProvider pm;
 	protected String[] applicationArguments;
 	protected File targetLocation;
+	protected String indexerID;
 
-	public GeneratePDOM(IExportProjectProvider pm, String[] applicationArguments, File targetLocation) {
-		this.pm = pm;
+	public GeneratePDOM(IExportProjectProvider pm, String[] applicationArguments, File targetLocation, String indexerID) {
+		this.pm= pm;
 		this.applicationArguments= applicationArguments;
-		this.targetLocation = targetLocation;
+		this.targetLocation= targetLocation;
+		this.indexerID= indexerID;
 	}
 
 	public final void run() throws CoreException {
 		pm.setApplicationArguments(applicationArguments);
 		final ICProject cproject = pm.createProject();
 		if(cproject==null) {
-			throw new CoreException(CCorePlugin.createStatus(Messages.GeneratePDOM_ProjectProviderReturnedNullCProject));
+			fail(MessageFormat.format(Messages.GeneratePDOM_ProjectProviderReturnedNullCProject,
+					new Object [] {pm.getClass().getName()}));
 		}
-		CCorePlugin.getIndexManager().joinIndexer(Integer.MAX_VALUE, new NullProgressMonitor());
+		
 		IIndexLocationConverter converter= pm.getLocationConverter(cproject);
+		if(converter==null) {
+			fail(MessageFormat.format(Messages.GeneratePDOM_NullLocationConverter,
+					new Object [] {pm.getClass().getName()}));
+		}
+		
+		// index the project
+		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, indexerID);
+		CCorePlugin.getIndexManager().joinIndexer(Integer.MAX_VALUE, new NullProgressMonitor());
+		
 		try {
 			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
 			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter);
@@ -77,5 +90,9 @@ public class GeneratePDOM implements ISafeRunnable {
 	public void handleException(Throwable exception) {
 		// subclass for custom behaviour
 		CCorePlugin.log(exception);
+	}
+	
+	private void fail(String message) throws CoreException {
+		throw new CoreException(CCorePlugin.createStatus(message));
 	}
 }

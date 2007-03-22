@@ -1,21 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.2"?>
+<?eclipse version="3.0"?>
 <plugin>
-
-   <extension
-         point="org.eclipse.ui.importWizards">
+   
+<!-- ========================================================================= -->
+<!-- Remote File System import and export wizards.                             -->
+<!-- ========================================================================= -->
+   <extension point="org.eclipse.ui.importWizards">
+      <wizard
+            name="%RemoteFileSystemImportWizard.label"
+            icon="icons/full/etool16/file_import.gif"
+            class="org.eclipse.rse.files.importexport.files.RemoteImportWizard"
+            id="org.eclipse.rse.files.importexport.fileImportWizard">
+         <description>
+            %RemoteFileSystemImportWizard.description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
    </extension>
+   
    <extension
          point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            nameFilter="*.rimpfd"
+            id="org.eclipse.rse.files.importexport.runFileImport">
+         <action
+               label="%RemoteFileImportAction.label"
+               tooltip="%RemoteFileImportAction.tooltip"
+               class="org.eclipse.rse.files.importexport.files.RemoteFileImportActionDelegate"
+               menubarPath="additions"
+               enablesFor="+"
+               id="importRemoteFiles">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            nameFilter="*.rimpfd"
+            id="org.eclipse.rse.files.importexport.openFileImport">
+         <action
+               label="%OpenRemoteFileImport.label"
+               tooltip="%OpenRemoteFileImport.tooltip"
+               class="org.eclipse.rse.files.importexport.files.RemoteFileOpenImportWizardActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="openRemoteFileImport">
+         </action>
+      </objectContribution>
    </extension>
+   
    <extension
          point="org.eclipse.ui.exportWizards">
+      <wizard
+            name="%RemoteFileSystemExportWizard.label"
+            icon="icons/full/etool16/file_export.gif" 
+            class="org.eclipse.rse.files.importexport.files.RemoteExportWizard"
+            id="org.eclipse.rse.files.importexport.fileExportWizard">
+         <description>
+            %RemoteFileSystemExportWizard.description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
    </extension>
+   
    <extension
          point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            nameFilter="*.rexpfd"
+            id="org.eclipse.rse.files.importexport.runFileExport">
+         <action
+               label="%RemoteFileExportAction.label"
+               tooltip="%RemoteFileExportAction.tooltip"
+               class="org.eclipse.rse.files.importexport.files.RemoteFileExportActionDelegate"
+               menubarPath="additions"
+               enablesFor="+"
+               id="exportRemoteFiles">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            nameFilter="*.rexpfd"
+            id="org.eclipse.rse.files.importexport.openFileExport">
+         <action
+               label="%OpenRemoteFileExport.label"
+               tooltip="%OpenRemoteFileExport.tooltip"
+               class="org.eclipse.rse.files.importexport.files.RemoteFileOpenExportWizardActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="openRemoteFileExport">
+         </action>
+      </objectContribution>
    </extension>
+   
    <extension
          point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"   
+            id="org.eclipse.rse.files.importexport.projectImportExport">
+         <filter
+               name="isDirectory"
+               value="true">
+         </filter>
+            
+         <action
+               label="%ImportToProject.label"
+               tooltip="%ImportToProject.tooltip"
+               class="org.eclipse.rse.files.importexport.files.RemoteFileImportToProjectActionDelegate"
+               menubarPath="group.importexport"
+               enablesFor="1"
+               id="importToProject">
+         </action>
+         
+         <action
+               label="%ExportFromProject.label"
+               tooltip="%ExportFromProject.tooltip"
+               class="org.eclipse.rse.files.importexport.files.RemoteFileExportFromProjectActionDelegate"
+               menubarPath="group.importexport"
+               enablesFor="1"
+               id="exportFromProject">
+         </action>
+      </objectContribution>
    </extension>
-
+   
 </plugin>

@@ -117,11 +117,11 @@ if [ -f package.count -a "$FILES" != "" ]; then
       cd $HOME/downloads-tm/testUpdates/bin
       cvs update
       ./mkTestUpdates.sh
-      #Update the signedUpdates site
-      echo "Refreshing signedUpdates site"
-      cd $HOME/downloads-tm/signedUpdates/bin
-      cvs update
-      ./mkTestUpdates.sh
+      ##Update the signedUpdates site
+      #echo "Refreshing signedUpdates site"
+      #cd $HOME/downloads-tm/signedUpdates/bin
+      #cvs update
+      #./mkTestUpdates.sh
     fi
   fi
   

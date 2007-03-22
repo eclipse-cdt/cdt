@@ -76,15 +76,17 @@ if [ ! -f eclipse/plugins/org.junit_3.8.2/junit.jar ]; then
 fi
 
 # checkout the basebuilder
-#if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.core.runtime_3.3.100.v20061204.jar ]; then
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.update.core_3.2.100.200702211317.jar ]; then
+#baseBuilderTag=M5_33
+#if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.update.core_3.2.100.200702211317.jar ]; then
+baseBuilderTag=v20070321
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.jdt.core.contrib.converter_1.1.2.200703120901.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder
   else
     echo "Getting basebuilder from CVS..."
   fi
-  cvs -Q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse co -r M5_33 org.eclipse.releng.basebuilder
+  cvs -Q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse co -r ${baseBuilderTag} org.eclipse.releng.basebuilder
 fi
 if [ ! -f org.eclipse.releng.basebuilder/startup.jar ]; then
   curdir2=`pwd`

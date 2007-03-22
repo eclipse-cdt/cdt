@@ -58,5 +58,9 @@ public abstract class AbstractPrefPage extends AbstractPage
 	public void init(IWorkbench workbench) {}
 	public ICResourceDescription getResDesc() { return null; }
 	public void performApply() { performOk(); }
+	public boolean performOk() { 
+		forEach(ICPropertyTab.OK, null);
+		return true; 
+	}
 	abstract protected String getHeader(); 
 }

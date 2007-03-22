@@ -110,6 +110,7 @@ implements
 	private static ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
 	private static ICProjectDescription prjd = null;
 	private static int cfgIndex = 0;
+	protected static boolean saveDone  = false;
 //	private static boolean doneOK = false;
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
@@ -139,7 +140,6 @@ implements
 	protected boolean isFolder  = false;
 	protected boolean isFile    = false;
 	protected boolean isMulti   = false;
-	protected static int saveCounter = 0;
 	
 	// tabs
 	protected TabFolder folder;
@@ -183,7 +183,7 @@ implements
 		// reset static values before new session 
 		if (pages.size() == 0) {
 			prjd = null;    // force getting new descriptors
-			saveCounter = 0; // needs in performOK();
+			saveDone = false; // needs in performOK();
 		}
 		// register current page 
 		if (!pages.contains(this)) pages.add(this);
@@ -387,75 +387,47 @@ implements
 		}
 	}
 	
-	/**
-	 * Saves ALL current changes in ALL affected configurations.
-	 * Called after "OK" button pressed.
-	 * 
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
-	public boolean performOk() {
-		// this part is to be performed by every page 
-		if (!noContentOnPage && displayedConfig) {
-			doInform();
-		}
-		// checks whether it's a last page
-		if (++saveCounter < pages.size()) return true;
-	
-		// this part is to be performed once while OK pressed.
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
-				try { 
-					doSave(monitor);
-				} catch (CoreException e) { }
-				if (!isForPrefs())
-					updateViews(internalElement);
-			}
-		};
-		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
-		try {
-			new ProgressMonitorDialog(getShell()).run(false, true, op);
-		} catch (InvocationTargetException e) {
-			Throwable e1 = e.getTargetException();
-			CUIPlugin.errorDialog(getShell(), 
-					UIMessages.getString("AbstractPage.8"),  //$NON-NLS-1$
-					UIMessages.getString("AbstractPage.9"), e1, true); //$NON-NLS-1$
-			return false;
-		} catch (InterruptedException e) {}
-		return true;
+    public boolean performCancel() {
+		if (! noContentOnPage && displayedConfig) forEach(ICPropertyTab.CANCEL);
+        return true;
+    }
+	public void performDefaults() {
+		if (! noContentOnPage && displayedConfig) forEach(ICPropertyTab.DEFAULTS);
 	}
-
-	/**
-	 * Action performed upon every page while OK pressed
-	 * Normally, all tabs are informed about this action
-	 */
-	protected void doInform() {
-		forEach(ICPropertyTab.OK, null);
-	}
-	
-	/**
-	 * Action performed once while OK pressed
-	 * Assume that all pages are already informed.
-	 * @param monitor
-	 * @throws CoreException
-	 */
-	protected void doSave(IProgressMonitor monitor) throws CoreException {
-		CoreModel.getDefault().setProjectDescription(getProject(), prjd, true, monitor);
-	}
-	
+    public void performApply() { performSave(false); }
+    public boolean performOk() { return performSave(true); }
     /**
-     * Apply changes for all tabs but for given page & current cfg only.
-	 * Called after "Apply" button pressed.
+     * The same code used to perform OK and Apply 
+     * @param forOk - true means OK, false - Apply
      */
-    public void performApply() {
-		if (noContentOnPage || !displayedConfig) return;
+    private boolean performSave(boolean forOk)	{
+    	final boolean finalOk = forOk;
+		if (noContentOnPage || !displayedConfig) return true;
+		if (forOk && saveDone) return true; // do not duplicate 
+		
 		// perform in separate thread
 		final ICProjectDescription local_prjd = CoreModel.getDefault().getProjectDescription(prjd.getProject());
 		ICConfigurationDescription c = local_prjd.getConfigurationById(resd.getConfiguration().getId());
-		final ICResourceDescription local_cfgd = getResDesc(c); 
+		final ICResourceDescription local_cfgd = getResDesc(c);
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				// ask all tabs to store changes in cfg
-				forEach(ICPropertyTab.APPLY, local_cfgd);
+				if (finalOk) { // OK
+					saveDone = true;
+					ICConfigurationDescription[] olds = prjd.getConfigurations();
+					for (int i=0; i<olds.length; i++) {
+						resd = getResDesc(olds[i]);
+						ICResourceDescription r = getResDesc(local_prjd.getConfigurationById(olds[i].getId()));
+						for (int j=0; j<pages.size(); j++) {
+							AbstractPage ap = (AbstractPage)pages.get(j);
+							if (ap.displayedConfig) {
+								ap.forEach(ICPropertyTab.UPDATE, resd);
+							    ap.forEach(ICPropertyTab.APPLY, r);
+							}
+						}
+					}
+				} else // Apply
+					forEach(ICPropertyTab.APPLY, local_cfgd);
 				try {
 					CoreModel.getDefault().setProjectDescription(getProject(), local_prjd);
 				} catch (CoreException e) {
@@ -471,27 +443,12 @@ implements
 			Throwable e1 = e.getTargetException();
 			CUIPlugin.errorDialog(getShell(), 
 					UIMessages.getString("AbstractPage.8"),  //$NON-NLS-1$
-					UIMessages.getString("AbstractPage.9"), e1, true); //$NON-NLS-1$ 
+					UIMessages.getString("AbstractPage.9"), e1, true); //$NON-NLS-1$
+			return false;
 		} catch (InterruptedException e) {}
+		return true;
     }
 
-    /**
-     * Inform all pages. Nothing to save
-     */
-    public boolean performCancel() {
-		if (! noContentOnPage && displayedConfig)
-			forEach(ICPropertyTab.CANCEL);
-        return true;
-    }
-
-    /**
-     * Ask all pages to set default values to current cfg   
-     */
-	public void performDefaults() {
-		if (! noContentOnPage && displayedConfig)
-			forEach(ICPropertyTab.DEFAULTS);
-	}
-	
 	private void populateConfigurations() {
 		// Do nothing if widget not created yet.
 		if (configSelector == null)	return;
@@ -679,6 +636,13 @@ implements
 		if (displayedConfig) forEach(ICPropertyTab.DISPOSE);
 		handleResize(false); // save page size 
 		if (pages.contains(this)) pages.remove(this);
+		// clear static variables
+		if (pages.size() == 0) {
+			prjd = null;
+			resd = null;
+			cfgDescs = null;
+			multiCfgs = null;
+		}
 	} 
 	
 	/**

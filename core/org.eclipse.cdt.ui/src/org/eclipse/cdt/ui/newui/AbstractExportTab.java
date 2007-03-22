@@ -326,7 +326,7 @@ outer:
 		c2.removeExternalSettings();
 		ICExternalSetting[] v = c1.getExternalSettings();
 		for (int i=0; i<v.length; i++)
-			cfg.createExternalSetting(v[i].getCompatibleLanguageIds(), 
+			c2.createExternalSetting(v[i].getCompatibleLanguageIds(), 
 				v[i].getCompatibleContentTypeIds(),
 				v[i].getCompatibleExtensions(), v[i].getEntries()); 
 	}

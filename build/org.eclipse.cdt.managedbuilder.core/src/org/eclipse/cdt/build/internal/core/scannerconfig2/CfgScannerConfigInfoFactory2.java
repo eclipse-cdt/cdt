@@ -48,12 +48,16 @@ public class CfgScannerConfigInfoFactory2 {
 	private static final QualifiedName CONTAINER_INFO_PROPERTY = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "ScannerConfigBuilderInfo2Container"); //$NON-NLS-1$
 
 	private static class ContainerInfo{
-		ICProjectDescription fDes;
+		int fCode;
 		IScannerConfigBuilderInfo2Set fContainer;
 		
 		ContainerInfo(ICProjectDescription des, IScannerConfigBuilderInfo2Set container){
-			this.fDes = des;
+			this.fCode = des.hashCode();
 			this.fContainer = container;
+		}
+		
+		public boolean matches(ICProjectDescription des){
+			return des.hashCode() == fCode;
 		}
 	}
 	private static class CfgInfo implements ICfgScannerConfigBuilderInfo2Set {
@@ -101,7 +105,7 @@ public class CfgScannerConfigInfoFactory2 {
 						ICProjectDescription projDes = cfgDes.getProjectDescription();
 						if(projDes != null){
 							ContainerInfo cInfo = (ContainerInfo)projDes.getSessionProperty(CONTAINER_INFO_PROPERTY);
-							if(cInfo != null && cInfo.fDes == projDes){
+							if(cInfo != null && cInfo.matches(projDes)){
 								fContainer = cInfo.fContainer;
 							} else {
 								fContainer = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
@@ -295,7 +299,7 @@ public class CfgScannerConfigInfoFactory2 {
 	public static void save(BuildConfigurationData data, ICProjectDescription des, ICProjectDescription baseDescription, boolean force) throws CoreException{
 		ContainerInfo info = (ContainerInfo)des.getSessionProperty(CONTAINER_INFO_PROPERTY);
 		if(info != null){
-			if(info.fDes == baseDescription){
+			if(info.matches(baseDescription)){
 				IScannerConfigBuilderInfo2Set baseContainer = info.fContainer;
 				baseContainer.save();
 			}

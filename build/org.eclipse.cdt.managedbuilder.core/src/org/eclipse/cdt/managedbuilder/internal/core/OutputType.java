@@ -919,5 +919,8 @@ public class OutputType extends BuildObject implements IOutputType {
 		return calc.isOutputTypeEnabled(tool, this);
 	}
 
-
+	public boolean hasCustomSettings(){
+		//TODO:
+		return false;
+	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroContextInfo;
@@ -129,19 +130,16 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 		IConfiguration cfg = fCfgData.getConfiguration();
 		if(((Configuration)cfg).isPreference())
 			return null;
-		IProject project = cfg.getOwner().getProject();
-		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project);
-		if(des != null){
-			ICConfigurationDescription cfgDes = des.getConfigurationById(cfg.getId());
-			if(cfgDes != null){
-				return new ContributorMacroContextInfo(mngr,
-						cfgDes, 
-						BuildMacroProvider.CONTEXT_CONFIGURATION,
-						cfg);
-			}
+		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+		if(cfgDes != null){
+			return new ContributorMacroContextInfo(mngr,
+					cfgDes, 
+					BuildMacroProvider.CONTEXT_CONFIGURATION,
+					cfg);
 		}
 		return null;
 	}
+	
 	public ICdtVariable[] getVariables(ICdtVariableManager provider) {
 		ContributorMacroContextInfo info = createContextInfo(provider);
 		if(info != null)

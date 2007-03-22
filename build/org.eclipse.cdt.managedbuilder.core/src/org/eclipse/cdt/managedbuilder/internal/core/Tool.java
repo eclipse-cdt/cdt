@@ -150,10 +150,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private boolean rebuildState;
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator;
 	
-	private HashMap typeToDataMap = new HashMap();
+	private HashMap typeToDataMap = new HashMap(2);
 	private boolean fDataMapInited;
 	private List identicalList;
-	private HashMap discoveredInfoMap = new HashMap();
+	private HashMap discoveredInfoMap = new HashMap(2);
 	private String scannerConfigDiscoveryProfileId;
 
 	/*
@@ -443,9 +443,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		super.copyChildren(tool);
 		//  Clone the children
 		if (tool.inputTypeList != null) {
+			discoveredInfoMap = (HashMap)tool.discoveredInfoMap.clone();
 			Iterator iter = tool.getInputTypeList().listIterator();
 			while (iter.hasNext()) {
 				InputType inputType = (InputType) iter.next();
+				PathInfoCache cache = (PathInfoCache)discoveredInfoMap.remove(getTypeKey(inputType));
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
 				String subName;
@@ -458,6 +460,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				}
 				InputType newInputType = new InputType(this, subId, subName, inputType);
 				addInputType(newInputType);
+				if(cache != null){
+					discoveredInfoMap.put(getTypeKey(newInputType), cache);
+				}
 			}
 		}
 		if (tool.outputTypeList != null) {
@@ -3936,5 +3941,87 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				id = tc.getScannerConfigDiscoveryProfileId();
 		}
 		return id;
+	}
+	
+	public boolean hasCustomSettings(){
+		if(superClass == null)
+			return true;
+		
+		if(super.hasCustomSettings())
+			return true;
+
+		if(inputTypeList != null && inputTypeList.size() != 0){
+			InputType inType;
+			for(Iterator iter = inputTypeList.iterator(); iter.hasNext();){
+				inType = (InputType)iter.next();
+				if(inType.hasCustomSettings())
+					return true;
+			}
+		}
+		
+		if(outputTypeList != null && outputTypeList.size() != 0){
+			OutputType outType;
+			for(Iterator iter = outputTypeList.iterator(); iter.hasNext();){
+				outType = (OutputType)iter.next();
+				if(outType.hasCustomSettings())
+					return true;
+			}
+		}
+		//envVarBuildPathList;
+		//  Managed Build model attributes
+//		unusedChildren;
+//		isAbstract;
+		Tool superTool = (Tool)superClass;
+		
+		if(command != null && !command.equals(superTool.getToolCommand()))
+			return true;
+		
+		//inputExtensions;
+		//interfaceExtensions; //(header extensions)
+		//natureFilter;
+		//outputExtensions;
+		//outputFlag;
+		//outputPrefix;
+		if(errorParserIds != null && !errorParserIds.equals(superTool.getErrorParserIds()))
+			return true;
+
+		
+		if(commandLinePattern != null && !commandLinePattern.equals(superTool.getCommandLinePattern()))
+			return true;
+
+		//versionsSupported;
+		//convertToId;
+		//advancedInputCategory;
+		if(customBuildStep != null && customBuildStep.booleanValue() != superTool.getCustomBuildStep())
+			return true;
+		
+		if(announcement != null && !announcement.equals(superTool.getAnnouncement()))
+			return true;
+		//commandLineGeneratorElement
+		//commandLineGenerator
+		//dependencyGeneratorElement
+		//dependencyGenerator
+		//iconPathURL;
+		//pathconverterElement
+		//optionPathConverter
+		//supportedProperties
+		//supportsManagedBuild
+		//isTest;
+		//  Miscellaneous
+		//isExtensionTool
+		//isDirty
+		//resolved
+		//previousMbsVersionConversionElement
+		//currentMbsVersionConversionElement
+		//rebuildState
+		//booleanExpressionCalculator
+		
+		//typeToDataMap
+		//fDataMapInited;
+		//identicalList;
+		if(discoveredInfoMap != null && discoveredInfoMap.size() != 0)
+			return true;
+		//scannerConfigDiscoveryProfileId
+		return false;
 	}
 }

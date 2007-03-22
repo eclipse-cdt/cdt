@@ -743,4 +743,20 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		}
 		return requires;
 	}
+	
+	boolean hasCustomSettings(){
+		if(superClass == null)
+			return true;
+		
+		if(optionList != null && optionList.size() != 0){
+			Option option;
+			for(Iterator iter = optionList.iterator(); iter.hasNext();){
+				option = (Option)iter.next();
+				if(option.hasCustomSettings())
+					return true;
+			}
+		}
+		
+		return false;
+	}
 }

@@ -134,4 +134,10 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 	public IPath getPath() {
 		return ResourceDescriptionHolder.normalizePath(super.getPath());
 	}
+
+	public boolean hasCustomSettings() {
+		return true;
+	}
+	
+	
 }

@@ -86,4 +86,8 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 	public IPath getPath() {
 		return ResourceDescriptionHolder.normalizePath(super.getPath());
 	}
+
+	public boolean hasCustomSettings() {
+		return true;
+	}
 }

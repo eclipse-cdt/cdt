@@ -338,8 +338,10 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 			if(fCfgCache != null){
 				if(fCfgCache.isInitializing())
 					fCfgSpecSettings = fCfgCache.getSpecSettings();
-				else
+				else {
 					fCfgSpecSettings = new CConfigurationSpecSettings(this, fCfgCache.getSpecSettings());
+					fCfgCache = null;
+				}
 			} else {
 				fCfgSpecSettings = new CConfigurationSpecSettings(this, (ICStorageElement)null);
 			}
@@ -348,6 +350,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		} else if( fCfgSpecSettings.getConfigurarion() != this){
 			if(!fCfgCache.isInitializing()){
 				fCfgSpecSettings = new CConfigurationSpecSettings(this, fCfgCache.getSpecSettings());
+				fCfgCache = null;
 			}
 		}
 		return fCfgSpecSettings;

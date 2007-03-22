@@ -106,7 +106,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		fRootFolderData = copyFolderData(baseRootFolderData.getPath(), baseRootFolderData, clone);
 		addRcData(fRootFolderData);
 
-		CResourceData[] rcDatas = base.getResourceDatas();
+		CResourceData[] rcDatas = filterRcDatasToCopy(base);
 
 		for(int i = 0; i < rcDatas.length; i++){
 			CResourceData rcData = rcDatas[i];
@@ -118,6 +118,10 @@ public class CDefaultConfigurationData extends CConfigurationData {
 			else if(rcData instanceof CFileData)
 				addRcData(copyFileData(rcData.getPath(), (CFileData)rcData, clone));
 		}
+	}
+	
+	protected CResourceData[] filterRcDatasToCopy(CConfigurationData base){
+		return base.getResourceDatas();
 	}
 
 	protected CFolderData copyFolderData(IPath path, CFolderData base, boolean clone){

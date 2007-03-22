@@ -472,4 +472,8 @@ public class BuildLanguageData extends CLanguageData {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	void clearCachedData(){
+		fKindToEntryStore.clear(); 
+	}
 }

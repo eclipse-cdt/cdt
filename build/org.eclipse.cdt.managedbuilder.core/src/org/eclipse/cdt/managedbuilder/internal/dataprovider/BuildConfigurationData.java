@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
@@ -24,14 +25,15 @@ import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 public class BuildConfigurationData extends CConfigurationData {
-	private IConfiguration fCfg;
+	private Configuration fCfg;
 	private BuildVariablesContributor fCdtVars;
 	public BuildConfigurationData(IConfiguration cfg){
-		fCfg = cfg;
+		fCfg = (Configuration)cfg;
 	}
 	
 	public IConfiguration getConfiguration(){
@@ -128,5 +130,23 @@ public class BuildConfigurationData extends CConfigurationData {
 		if(fCdtVars == null)
 			fCdtVars = new BuildVariablesContributor(this);
 		return fCdtVars;
+	}
+	
+	void clearCachedData(){
+		fCfg.clearCachedData();
+		CResourceData[] datas = getResourceDatas();
+		CResourceData data;
+		BuildLanguageData lData;
+		BuildLanguageData[] lDatas;
+
+		
+		for(int i = 0; i < datas.length; i++){
+			data = datas[i];
+			if(data.getType() == ICSettingBase.SETTING_FOLDER){
+				((BuildFolderData)data).clearCachedData();
+			} else {
+				((BuildFileData)data).clearCachedData();
+			}
+		}
 	}
 }

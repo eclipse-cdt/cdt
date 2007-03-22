@@ -88,7 +88,7 @@ class CProjectInfo extends OpenableInfo {
 		char[][] exclusionPatterns = null;
 //		try {
 //			entries = cproject.getResolvedPathEntries();
-			CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(project);
+			CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
 			if(des != null){
 				ICConfigurationDescription cfg = des.getIndexConfiguration();
 				if(cfg != null){

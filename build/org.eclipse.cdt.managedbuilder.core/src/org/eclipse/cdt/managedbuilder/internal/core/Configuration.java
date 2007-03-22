@@ -2789,6 +2789,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		cfgScannerInfo = info;
 	}
 	
+	public void clearCachedData(){
+		cfgScannerInfo = null;
+	}
+	
 	public boolean isPreference(){
 		return isPreferenceConfig;
 	}

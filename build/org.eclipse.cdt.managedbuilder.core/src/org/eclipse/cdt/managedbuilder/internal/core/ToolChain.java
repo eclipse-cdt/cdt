@@ -357,6 +357,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 
 		nonInternalBuilderId = toolChain.nonInternalBuilderId;
 		
+		discoveredInfo = toolChain.discoveredInfo;
+		
 		//  Clone the children in superclass
 		boolean copyIds = toolChain.getId().equals(id);
 		super.copyChildren(toolChain);
@@ -2620,5 +2622,23 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	public boolean isPreferenceToolChain(){
 		IToolChain tch = ManagedBuildManager.getRealToolChain(this);
 		return tch != null && tch.getId().equals(ConfigurationDataProvider.PREF_TC_ID);
+	}
+	
+	public boolean hasCustomSettings(){
+		if(superClass == null)
+			return true;
+	
+		if(super.hasCustomSettings())
+			return true;
+		
+		if(toolList != null && toolList.size() != 0){
+			Tool tool;
+			for(Iterator iter = toolList.iterator(); iter.hasNext();){
+				tool = (Tool)iter.next();
+				if(tool.hasCustomSettings())
+					return true;
+			}
+		}
+		return false;
 	}
 }

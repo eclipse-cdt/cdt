@@ -1852,4 +1852,8 @@ public class InputType extends BuildObject implements IInputType {
 		return false;
 	}
 
+	public boolean hasCustomSettings(){
+		//TODO:
+		return false;
+	}
 }

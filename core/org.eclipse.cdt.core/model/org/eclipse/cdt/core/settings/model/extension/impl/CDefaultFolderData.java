@@ -159,5 +159,7 @@ public class CDefaultFolderData extends CFolderData {
 
 	}
 
-
+	public boolean hasCustomSettings() {
+		return false;
+	}
 }

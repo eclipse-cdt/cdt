@@ -2054,4 +2054,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 	}
 
+	public boolean hasCustomSettings(){
+		if(superClass == null)
+			return true;
+		
+		if(value != null && !value.equals(superClass.getValue())){
+			return true;
+		}
+		
+		return false;
+	}
 }

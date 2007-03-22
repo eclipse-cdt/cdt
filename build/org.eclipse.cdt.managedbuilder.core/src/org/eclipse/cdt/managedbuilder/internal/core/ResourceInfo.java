@@ -462,4 +462,5 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	abstract void resolveProjectReferences(boolean onLoad);
 
+	abstract public boolean hasCustomSettings();
 }

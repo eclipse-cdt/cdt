@@ -13,12 +13,13 @@ package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.core.runtime.IPath;
 
 public class BuildFileData extends CFileData {
-	private IFileInfo fFileInfo;
+	private ResourceConfiguration fFileInfo;
 	public BuildFileData(IFileInfo fileInfo){
-		fFileInfo = fileInfo;
+		fFileInfo = (ResourceConfiguration)fileInfo;
 	}
 	
 	public IFileInfo getFileInfo(){
@@ -62,6 +63,16 @@ public class BuildFileData extends CFileData {
 		if(datas.length > 0)
 			return datas[0];
 		return null;
+	}
+
+	public boolean hasCustomSettings() {
+		return fFileInfo.hasCustomSettings();
+	}
+	
+	void clearCachedData(){
+		BuildLanguageData lData = (BuildLanguageData)getLanguageData();
+		if(lData != null)
+			lData.clearCachedData();
 	}
 
 }

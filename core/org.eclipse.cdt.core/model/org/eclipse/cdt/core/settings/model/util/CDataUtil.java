@@ -30,8 +30,11 @@ import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.extension.CFileData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
+import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -319,6 +322,19 @@ public class CDataUtil {
 		}
 		return null;
 	}
-
-
+	
+	public static PathSettingsContainer createRcDataHolder(CConfigurationData data){
+		PathSettingsContainer h = PathSettingsContainer.createRootContainer();
+		
+		h.setValue(data.getRootFolderData());
+		CResourceData[] rcDatas = data.getResourceDatas();
+		CResourceData rcData;
+		PathSettingsContainer child;
+		for(int i = 0; i < rcDatas.length; i++){
+			rcData = rcDatas[i];
+			child = h.getChildContainer(rcData.getPath(), true, true);
+			child.setValue(rcData);
+		}
+		return h;
+	}
 }

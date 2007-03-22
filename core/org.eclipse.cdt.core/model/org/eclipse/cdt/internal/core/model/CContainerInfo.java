@@ -70,7 +70,7 @@ public class CContainerInfo extends OpenableInfo {
 
 //			IPathEntry[] entries = cproject.getResolvedPathEntries();
 			ICSourceEntry[] entries = null;
-			CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(cproject.getProject());
+			CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(cproject.getProject(), false);
 			if(des != null){
 				ICConfigurationDescription cfg = des.getIndexConfiguration();
 				if(cfg != null){

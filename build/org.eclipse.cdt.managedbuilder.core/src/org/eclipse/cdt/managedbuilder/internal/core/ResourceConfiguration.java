@@ -971,4 +971,18 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			tool.resolveProjectReferences(onLoad);
 		}
 	}
+
+	public boolean hasCustomSettings() {
+		if(toolList != null && toolList.size() != 0){
+			Tool tool;
+			for(Iterator iter = toolList.iterator(); iter.hasNext();){
+				tool = (Tool)iter.next();
+				if(tool.hasCustomSettings())
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	
 }

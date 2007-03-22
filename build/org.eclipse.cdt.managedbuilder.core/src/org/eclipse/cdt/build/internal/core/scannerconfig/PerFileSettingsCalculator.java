@@ -654,29 +654,31 @@ public class PerFileSettingsCalculator {
 		}
 	}
 	
-	private IRcSettingInfo[] mapFileDiscoveredInfo(IProject project, CConfigurationData data, RcSetSettings rcSet, Map map){
-		IResource rc;
+	private IRcSettingInfo[] mapFileDiscoveredInfo(IProject project, CConfigurationData data, RcSetSettings rcSet, PathFilePathInfo[] pfpis){
+//		IResource rc;
 		PathInfo pInfo;
-		Map.Entry entry;
 		IPath projRelPath;
 		CResourceData rcData;
 //		RcSetSettings dataSetting;
-		List list = new ArrayList(map.size());
+		List list = new ArrayList(pfpis.length);
 		RcSettingInfo rcInfo;
 		LangSettingInfo lInfo;
 		CLanguageData lData;
 		ArrayList tmpList;
+		PathFilePathInfo pfpi;
 		
-		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-			entry = (Map.Entry)iter.next();
-			rc = (IResource)entry.getKey();
-			pInfo = (PathInfo)entry.getValue();
+		for(int i = 0; i < pfpis.length; i++){
+			pfpi = pfpis[i];
+			projRelPath = pfpi.fPath;
+			pInfo = pfpi.fInfo;
 			if(pInfo.isEmpty())
 				continue;
 
-			switch(rc.getType()){
-			case IResource.FILE:
-				projRelPath = rc.getProjectRelativePath();
+			if(projRelPath.segmentCount() == 0)
+				continue;
+//			switch(rc.getType()){
+//			case IResource.FILE:
+//				projRelPath = rc.getProjectRelativePath();
 //				dataSetting = rcSet.getChild(projRelPath, false); 
 //				rcData = dataSetting.fRcData;
 				rcData = rcSet.getChild(projRelPath, false).fRcData;
@@ -723,8 +725,8 @@ public class PerFileSettingsCalculator {
 
 				}
 
-				break;
-			}
+//				break;
+//			}
 		}
 		return (RcSettingInfo[])list.toArray(new RcSettingInfo[list.size()]);
 	}
@@ -732,7 +734,8 @@ public class PerFileSettingsCalculator {
 	public IRcSettingInfo[] getSettingInfos(IProject project, CConfigurationData data, IDiscoveredPathManager.IPerFileDiscoveredPathInfo2 discoveredInfo, boolean fileDataMode){
 		if(fileDataMode){
 			RcSetSettings rcSettings = createRcSetInfo(data);
-			return mapFileDiscoveredInfo(project, data, rcSettings, discoveredInfo.getPathInfoMap());
+			PathFilePathInfo pInfos[] = createOrderedInfo(discoveredInfo.getPathInfoMap());
+			return mapFileDiscoveredInfo(project, data, rcSettings, pInfos);
 		}
 		RcSetSettings settings = createRcSetSettings(data, discoveredInfo);
 		return createInfos(data, settings);
@@ -981,13 +984,13 @@ public class PerFileSettingsCalculator {
 		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
 			entry = (Map.Entry)iter.next();
 			rc = (IResource)entry.getKey();
-			path = rc.getFullPath();
+			path = rc.getProjectRelativePath();
 			int segCount = path.segmentCount();
-			if(segCount < 1)
-				continue;
+//			if(segCount < 1)
+//				continue;
 
-			path = path.removeFirstSegments(1);
-			segCount--;
+//			path = path.removeFirstSegments(1);
+//			segCount--;
 			
 			info = (PathInfo)entry.getValue();
 			storedInfo = (PathInfo)infoMap.get(info);

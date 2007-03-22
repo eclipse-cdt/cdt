@@ -438,4 +438,12 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		mProj.removeConfiguration(cfg.getId());
 	}
 
+	public void dataCached(ICConfigurationDescription cfgDes,
+			CConfigurationData data,
+			IProgressMonitor monitor) {
+		BuildConfigurationData cfgData = (BuildConfigurationData)data;
+		((Configuration)cfgData.getConfiguration()).setConfigurationDescription(null);
+		cfgData.clearCachedData();
+	}
+
 }

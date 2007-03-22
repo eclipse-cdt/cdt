@@ -68,4 +68,15 @@ public abstract class CConfigurationDataProvider {
 			ICConfigurationDescription baseDescription,
 			CConfigurationData baseData,
 			IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * called to notify that the configuration data was cached
+	 * implementors can do any necessary cleaning, etc.
+	 * Default implementation is empty
+	 * 
+	 * @param cfgDes
+	 * @param data
+	 */
+	public void dataCached(ICConfigurationDescription cfgDes, CConfigurationData data, IProgressMonitor monitor){
+	}
 }

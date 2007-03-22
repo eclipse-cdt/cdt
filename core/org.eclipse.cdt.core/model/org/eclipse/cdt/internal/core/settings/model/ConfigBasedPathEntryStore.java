@@ -99,9 +99,10 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	}
 
 	public IPathEntry[] getRawPathEntries() throws CoreException {
-		PathEntryCollector cr = getCollector(fProject);
+		ICConfigurationDescription cfg = getIndexCfg(fProject);
+		PathEntryCollector cr = getCollector(fProject, cfg);
 		if(cr != null){
-			List list = cr.getEntries(null, PathEntryTranslator.INCLUDE_USER);
+			List list = cr.getEntries(null, PathEntryTranslator.INCLUDE_USER, cfg);
 			list.add(CoreModel.newContainerEntry(ConfigBasedPathEntryContainer.CONTAINER_PATH));
 			return (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
 		}
@@ -109,9 +110,10 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	}
 
 	public void setRawPathEntries(IPathEntry[] entries) throws CoreException {
-		PathEntryCollector cr = getCollector(fProject);
+		ICConfigurationDescription cfg = getIndexCfg(fProject);
+		PathEntryCollector cr = getCollector(fProject, cfg);
 		if(cr != null){
-			List sysList = cr.getEntries(null, PathEntryTranslator.INCLUDE_BUILT_INS);
+			List sysList = cr.getEntries(null, PathEntryTranslator.INCLUDE_BUILT_INS, cfg);
 			List usrList = new ArrayList(entries.length);
 			for(int i = 0; i < entries.length; i++){
 				if(entries[i].getEntryKind() != IPathEntry.CDT_CONTAINER)
@@ -155,7 +157,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 					ICConfigurationDescription oldIndexCfg = oldDes.getIndexConfiguration();
 					PathEntryCollector oldCr = getCachedCollector(oldIndexCfg);
 					if(oldCr != null)
-						oldCrEntries = oldCr.getEntries(PathEntryTranslator.INCLUDE_BUILT_INS);
+						oldCrEntries = oldCr.getEntries(PathEntryTranslator.INCLUDE_BUILT_INS, oldIndexCfg);
 				}
 				if(des != null){
 					//TODO: smart delta handling
@@ -165,8 +167,9 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 					}
 					
 					if(oldCrEntries != null){
-						PathEntryCollector newCr = getCollector(des);
-						IPathEntry[] newCrEntries = newCr.getEntries(PathEntryTranslator.INCLUDE_BUILT_INS);
+						ICConfigurationDescription newIndexCfg = des.getIndexConfiguration();
+						PathEntryCollector newCr = getCollector(fProject, newIndexCfg);
+						IPathEntry[] newCrEntries = newCr.getEntries(PathEntryTranslator.INCLUDE_BUILT_INS, newIndexCfg);
 						if(!Arrays.equals(oldCrEntries, newCrEntries)){
 							CModelManager manager = CModelManager.getDefault();
 							ICProject cproject = manager.create(project);
@@ -187,19 +190,31 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		}
 	}
 	
-	private static PathEntryCollector getCollector(ICProjectDescription des){
-		ICConfigurationDescription cfgDes = ((CProjectDescription)des).getIndexConfiguration();
+//	private static PathEntryCollector getCollector(ICProjectDescription des){
+//		ICConfigurationDescription cfgDes = ((CProjectDescription)des).getIndexConfiguration();
+//		if(cfgDes != null){
+//			PathEntryCollector cr = getCachedCollector(cfgDes);
+//			if(cr == null){
+//				cr = PathEntryTranslator.collectEntries(des.getProject(), cfgDes);
+//				setCachedCollector(cfgDes, cr);
+//			}
+//			return cr;
+//		}
+//		return null;
+//	}
+
+	private static PathEntryCollector getCollector(IProject project, ICConfigurationDescription cfgDes){
 		if(cfgDes != null){
 			PathEntryCollector cr = getCachedCollector(cfgDes);
 			if(cr == null){
-				cr = PathEntryTranslator.collectEntries(des.getProject(), cfgDes);
+				cr = PathEntryTranslator.collectEntries(project, cfgDes);
 				setCachedCollector(cfgDes, cr);
 			}
 			return cr;
 		}
 		return null;
 	}
-	
+
 	private static PathEntryCollector getCachedCollector(ICConfigurationDescription cfgDes){
 		return (PathEntryCollector)cfgDes.getSessionProperty(PATH_ENTRY_COLLECTOR_PROPERTY_NAME);
 	}
@@ -208,11 +223,16 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		cfgDes.setSessionProperty(PATH_ENTRY_COLLECTOR_PROPERTY_NAME, cr);
 	}
 
-	public static PathEntryCollector getCollector(IProject project){
-		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
-		if(des != null)
-			return getCollector(des);
-		return null;
+//	public static PathEntryCollector getCollector(IProject project){
+//		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
+//		if(des != null)
+//			return getCollector(des);
+//		return null;
+//	}
+	
+	private static ICConfigurationDescription getIndexCfg(IProject project){
+		CProjectDescription des = (CProjectDescription)CCorePlugin.getDefault().getProjectDescription(project, false);
+		return des.getIndexConfiguration();
 	}
 	
 	public static IPathEntry[] getContainerEntries(IProject project){
@@ -223,9 +243,10 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	}
 
 	public static IPathEntry[] getContainerEntries(ICProjectDescription des){
-		PathEntryCollector cr = getCollector(des);
+		ICConfigurationDescription cfg = ((CProjectDescription)des).getIndexConfiguration();
+		PathEntryCollector cr = getCollector(des.getProject(), cfg);
 		if(cr != null)
-			return cr.getEntries(PathEntryTranslator.INCLUDE_BUILT_INS);
+			return cr.getEntries(PathEntryTranslator.INCLUDE_BUILT_INS, cfg);
 		return new IPathEntry[0];
 	}
 

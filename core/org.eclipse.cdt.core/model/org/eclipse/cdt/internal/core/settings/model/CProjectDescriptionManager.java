@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
+import org.eclipse.cdt.core.settings.model.extension.CFileData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
@@ -70,8 +71,11 @@ import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
+import org.eclipse.cdt.core.settings.model.util.IPathSettingsContainerVisitor;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
+import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
+import org.eclipse.cdt.core.settings.model.util.PatternNameMap;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
 import org.eclipse.cdt.internal.core.model.CElementDelta;
@@ -1488,7 +1492,19 @@ public class CProjectDescriptionManager {
 		CConfigurationDataProvider provider = getProvider(des);
 		return provider.applyConfiguration(des, baseDescription, base, monitor);
 	}
-	
+
+	void notifyCached(ICConfigurationDescription des, CConfigurationData data, IProgressMonitor monitor) {
+		if(monitor == null)
+			monitor = new NullProgressMonitor();
+
+		try {
+			CConfigurationDataProvider provider = getProvider(des);
+			provider.dataCached(des, data, monitor);
+		} catch (CoreException e){
+			CCorePlugin.log(e);
+		}
+	}
+
 	void removeData(ICConfigurationDescription des, CConfigurationData data, IProgressMonitor monitor) throws CoreException{
 		if(monitor == null)
 			monitor = new NullProgressMonitor();
@@ -3134,4 +3150,141 @@ public class CProjectDescriptionManager {
 		}
 		return ((ICFileDescription)rcDes).getLanguageSetting();
 	}
+
+	static private HashMap createExtSetToLDataMap(IProject project, CLanguageData[] lDatas){
+		HashMap map = new HashMap();
+		
+		for(int i = 0; i < lDatas.length; i++){
+			CLanguageData lData = lDatas[i];
+			String[] exts = CDataUtil.getSourceExtensions(project, lData);
+			HashSet set = new HashSet(Arrays.asList(exts));
+			map.put(set, lData);
+		}
+		
+		return map;
+	}
+	
+	static boolean removeNonCustomSettings(IProject project, CConfigurationData data){
+		if(true)
+			return false;
+		PathSettingsContainer cr = CDataUtil.createRcDataHolder(data);
+		PathSettingsContainer[] crs = cr.getChildren(false);
+		PathSettingsContainer child, parent;
+		CResourceData childRcData;
+		boolean modified = false;
+		for(int i = 0; i < crs.length; i++){
+			child = crs[i];
+			childRcData = (CResourceData)child.getValue();
+			if(childRcData.getType() == ICSettingBase.SETTING_FOLDER){
+				CResourceData parentRcData = null;
+				for(parent = child.getParentContainer(); 
+					(parentRcData = (CResourceData)parent.getValue()).getType() != ICSettingBase.SETTING_FOLDER;
+					parent = parent.getParentContainer());
+				if(!settingsCustomized(project, (CFolderData)parentRcData, (CFolderData)childRcData)){
+					try {
+						data.removeResourceData(childRcData);
+						modified = true;
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
+				}
+			} else {
+				parent = child.getParentContainer();
+				if(!settingsCustomized(project, (CResourceData)parent.getValue(), (CFileData)childRcData)){
+					try {
+						data.removeResourceData(childRcData);
+						modified = true;
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
+				}
+			}
+			
+		}
+		return modified;
+	}
+	
+	static boolean settingsCustomized(IProject project, CFolderData parent, CFolderData child){
+		if(baseSettingsCustomized(parent, child))
+			return true;
+
+		CLanguageData[] childLDatas = child.getLanguageDatas();
+		CLanguageData[] parentLDatas = parent.getLanguageDatas();
+		
+		if(childLDatas.length != parentLDatas.length)
+			return true;
+		
+		if(childLDatas.length != 0){
+			HashMap parentMap = createExtSetToLDataMap(project, parentLDatas);
+			HashMap childMap = createExtSetToLDataMap(project, childLDatas);
+			CLanguageData parentLData, childLData;
+			for(Iterator iter = parentMap.entrySet().iterator(); iter.hasNext();){
+				Map.Entry entry = (Map.Entry)iter.next();
+				childLData = (CLanguageData)childMap.get(entry.getKey());
+				if(childLData == null)
+					return true;
+				
+				parentLData = (CLanguageData)entry.getValue();
+				if(!langDatasEqual(parentLData, childLData))
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+	static boolean settingsCustomized(IProject project, CResourceData parent, CFileData child){
+		if(baseSettingsCustomized(parent, child))
+			return true;
+
+		CLanguageData lData = child.getLanguageData();
+
+		if(parent.getType() == ICSettingBase.SETTING_FOLDER){
+			CFolderData foParent = (CFolderData)parent;
+
+			IPath childPath = child.getPath();
+			String fileName = childPath.lastSegment();
+			if(PatternNameMap.isPatternName(fileName))
+				return true;
+			
+			CLanguageData parentLangData = CDataUtil.findLanguagDataForFile(fileName, project, foParent);
+			
+			return !langDatasEqual(lData, parentLangData);
+		} 
+		
+		CFileData fiParent = (CFileData)parent;
+		CLanguageData parentLangData = fiParent.getLanguageData();
+		return !langDatasEqual(lData, parentLangData);
+	}
+	
+	static boolean langDatasEqual(CLanguageData lData1, CLanguageData lData2){
+		if(lData1 == null)
+			return lData2 == null;
+		
+		if(lData2 == null)
+			return false;
+
+		int kinds[] = KindBasedStore.getLanguageEntryKinds();
+		int kind;
+		for(int i = 0; i < kinds.length; i++){
+			kind = kinds[i];
+			ICLanguageSettingEntry entries1[] = lData1.getEntries(kind);
+			ICLanguageSettingEntry entries2[] = lData2.getEntries(kind);
+			if(!Arrays.equals(entries1, entries2))
+				return false;
+		}
+		
+		return true;
+	}
+	
+	private static boolean baseSettingsCustomized(CResourceData parent, CResourceData child){
+		if(parent.isExcluded() != child.isExcluded())
+			return true;
+		
+		if(child.hasCustomSettings())
+			return true;
+		
+		return false;
+	}
+
 }

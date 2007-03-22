@@ -13,12 +13,13 @@ package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.core.runtime.IPath;
 
 public class BuildFolderData extends CFolderData {
-	private IFolderInfo fFolderInfo;
+	private FolderInfo fFolderInfo;
 	public BuildFolderData(IFolderInfo folderInfo){
-		fFolderInfo = folderInfo;
+		fFolderInfo = (FolderInfo)folderInfo;
 	}
 	
 	public IFolderInfo getFolderInfo(){
@@ -71,5 +72,16 @@ public class BuildFolderData extends CFolderData {
 			String[] extensions) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public boolean hasCustomSettings() {
+		return fFolderInfo.hasCustomSettings();
+	}
+	
+	void clearCachedData(){
+		CLanguageData[] lDatas = getLanguageDatas();
+		for(int i = 0; i < lDatas.length; i++){
+			((BuildLanguageData)lDatas[i]).clearCachedData();
+		}
 	}
 }

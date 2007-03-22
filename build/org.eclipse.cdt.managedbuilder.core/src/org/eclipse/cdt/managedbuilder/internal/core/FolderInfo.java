@@ -1231,6 +1231,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 //		rebuildNeeded = true;
 	}
 	
-	
-
+	public boolean hasCustomSettings(){
+		return toolChain.hasCustomSettings();
+	}
 }

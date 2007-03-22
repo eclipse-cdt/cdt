@@ -123,4 +123,8 @@ public class CDefaultFileData extends CFileData {
 			fFactory.setModified(fLanguageData, false);
 	}
 
+	public boolean hasCustomSettings() {
+		return false;
+	}
+
 }

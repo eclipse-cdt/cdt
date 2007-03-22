@@ -906,7 +906,16 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			ILaunchConfiguration launchConfig = getLaunch().getLaunchConfiguration();
 			if ( launchConfig.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT ) ) {
 				String mainSymbol = launchConfig.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
-				ICDILocation location = getCDITarget().createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$
+				ICDILocation location = null;
+				// See if the expression is a numeric address
+				try {
+					IAddress address = getAddressFactory().createAddress(mainSymbol);
+					location = getCDITarget().createAddressLocation( address.getValue() );
+				} catch (NumberFormatException nfexc) {
+					// OK, expression is not a simple, absolute numeric value; keep trucking and try to resolve as expression
+					location = getCDITarget().createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$	
+				}
+				
 				setInternalTemporaryBreakpoint( location );
 			}
 		}

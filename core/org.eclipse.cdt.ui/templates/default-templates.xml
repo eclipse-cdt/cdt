@@ -61,7 +61,8 @@
 }</template>
 <template name="main" description="%mainMethod" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.main" enabled="true">int main(int argc, char **argv) {
 	${cursor}
-}</template>
+}
+</template>
 <template name="class" description="%classDeclaration" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.class" enabled="true">class ${name} {
 	${cursor}
 private:

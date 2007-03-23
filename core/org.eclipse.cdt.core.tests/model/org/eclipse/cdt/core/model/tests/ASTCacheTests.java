@@ -51,9 +51,8 @@ public class ASTCacheTests extends BaseTestCase {
 		public void run() {
 			while (!fStopped) {
 				try {
-					Thread.sleep(500);
+					Thread.sleep(200);
 					fCache.aboutToBeReconciled(fTU);
-					IASTTranslationUnit ast;
 					synchronized (this) {
 						notifyAll();
 					}
@@ -131,7 +130,8 @@ public class ASTCacheTests extends BaseTestCase {
 	public void testASTCache() throws Exception {
 		checkActiveElement();
 		checkSingleThreadAccess();
-		checkAccessWithBackgroundReconciler();
+		checkAccessWithSequentialReconciler();
+		checkAccessWithConcurrentReconciler();
 	}
 	
 	private void checkActiveElement() throws Exception {
@@ -161,15 +161,15 @@ public class ASTCacheTests extends BaseTestCase {
 		assertNotNull(ast);
 	}
 
-	private void checkAccessWithBackgroundReconciler() throws Exception {
+	private void checkAccessWithSequentialReconciler() throws Exception {
 		ASTCache cache= new ASTCache();
 		cache.setActiveElement(fTU1);
 		MockReconciler reconciler1= new MockReconciler(fTU1, cache);
 		MockReconciler reconciler2= null;
 		try {
 			assertFalse(cache.isReconciling(fTU1));
-			reconciler1.start();
 			synchronized (reconciler1) {
+				reconciler1.start();
 				reconciler1.wait();
 			}
 			IASTTranslationUnit ast;
@@ -180,13 +180,52 @@ public class ASTCacheTests extends BaseTestCase {
 			// change active element
 			cache.setActiveElement(fTU2);
 			reconciler2= new MockReconciler(fTU2, cache);
-			reconciler2.start();
 			synchronized (reconciler2) {
+				reconciler2.start();
 				reconciler2.wait();
 			}
 			ast= cache.getAST(fTU2, fIndex, true, null);
 			assertNotNull(ast);
 			assertSame(ast, reconciler2.fAST);
+		} finally {
+			reconciler1.fStopped= true;
+			reconciler1.join(1000);
+			if (reconciler2 != null) {
+				reconciler2.fStopped= true;
+				reconciler2.join(1000);
+			}
+		}
+	}
+
+	private void checkAccessWithConcurrentReconciler() throws Exception {
+		ASTCache cache= new ASTCache();
+		MockReconciler reconciler1= new MockReconciler(fTU1, cache);
+		MockReconciler reconciler2= new MockReconciler(fTU2, cache);
+		reconciler1.start();
+		Thread.sleep(100);
+		reconciler2.start();
+		try {
+			for (int i= 0; i < 10; i++) {
+				IASTTranslationUnit ast;
+				cache.setActiveElement(fTU1);
+				ast= cache.getAST(fTU1, fIndex, false, null);
+				if (ast != null) {
+					assertSame(ast, reconciler1.fAST);
+				}
+				ast= cache.getAST(fTU1, fIndex, true, null);
+				assertNotNull(ast);
+				assertEquals("void foo1() {}", ast.getDeclarations()[0].getRawSignature());
+				
+				// change active element
+				cache.setActiveElement(fTU2);
+				ast= cache.getAST(fTU1, fIndex, false, null);
+				if (ast != null) {
+					assertSame(ast, reconciler2.fAST);
+				}
+				ast= cache.getAST(fTU2, fIndex, true, null);
+				assertNotNull(ast);
+				assertEquals("void foo2() {}", ast.getDeclarations()[0].getRawSignature());
+			}
 		} finally {
 			reconciler1.fStopped= true;
 			reconciler1.join(1000);

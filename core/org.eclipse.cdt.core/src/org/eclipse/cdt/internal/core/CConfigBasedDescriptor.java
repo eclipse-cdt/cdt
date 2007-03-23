@@ -300,7 +300,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 
 	public void saveProjectData() throws CoreException {
-		CConfigBasedDescriptorManager.getInstance().reconsile(this, fCfgDes.getProjectDescription());
+		if(CConfigBasedDescriptorManager.getInstance().reconsile(this, fCfgDes.getProjectDescription()))
+			fIsDirty = true;
 		
 		checkApply();
 	}

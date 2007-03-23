@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.editor.asm;
 
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
@@ -32,8 +33,8 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	/**
 	 * Constructor for AsmSourceViewerConfiguration
 	 */
-	public AsmSourceViewerConfiguration(AsmTextTools tools) {
-		super();
+	public AsmSourceViewerConfiguration(AsmTextTools tools, IPreferenceStore store) {
+		super(store);
 		fAsmTextTools = tools;
 	}
 

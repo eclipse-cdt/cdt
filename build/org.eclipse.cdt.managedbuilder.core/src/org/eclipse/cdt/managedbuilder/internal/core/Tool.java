@@ -81,8 +81,6 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
-import com.sun.rsasign.l;
-
 /**
  * Represents a tool that can be invoked during a build.
  * Note that this class implements IOptionCategory to represent the top

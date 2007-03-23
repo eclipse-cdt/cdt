@@ -45,6 +45,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
 import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -55,6 +56,11 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -429,12 +435,41 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 				throw new InterruptedException();
 			}
 			
-			fCurrCProject.setRawPathEntries(fNewEntries, new SubProgressMonitor(monitor, 2));
+			if(CCorePlugin.getDefault().isNewStyleProject(fCurrCProject.getProject())){
+				ICSourceEntry newEntry = new CSourceEntry(folder, null, 0); 
+				ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(fCurrCProject.getProject(), true);
+				addEntryToAllCfgs(des, newEntry, fIsProjectAsSourceFolder);
+				CCorePlugin.getDefault().setProjectDescription(fCurrCProject.getProject(), des, false, new SubProgressMonitor(monitor, 2));
+			} else {
+				fCurrCProject.setRawPathEntries(fNewEntries, new SubProgressMonitor(monitor, 2));
+			}
 	
 			fCreatedRoot= fCurrCProject.findSourceRoot(folder);
 		} finally {
 			monitor.done();
 		}
+	}
+	
+	private void addEntryToAllCfgs(ICProjectDescription des, ICSourceEntry entry, boolean removeProj) throws WriteAccessException, CoreException{
+		ICConfigurationDescription cfgs[] = des.getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			ICConfigurationDescription cfg = cfgs[i];
+			ICSourceEntry[] entries = cfg.getSourceEntries();
+			entries = addEntry(entries, entry, removeProj);
+			cfg.setSourceEntries(entries);
+		}
+	}
+	
+	private ICSourceEntry[] addEntry(ICSourceEntry[] entries, ICSourceEntry entry, boolean removeProj){
+		Set set = new HashSet();
+		for(int i = 0; i < entries.length; i++){
+			if(removeProj && new Path(entries[i].getValue()).segmentCount() == 0)
+				continue;
+			
+			set.add(entries[i]);
+		}
+		set.add(entry);
+		return (ICSourceEntry[])set.toArray(new ICSourceEntry[set.size()]);
 	}
 	
 	// ------------- choose dialogs

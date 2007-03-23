@@ -3165,8 +3165,6 @@ public class CProjectDescriptionManager {
 	}
 	
 	static boolean removeNonCustomSettings(IProject project, CConfigurationData data){
-		if(true)
-			return false;
 		PathSettingsContainer cr = CDataUtil.createRcDataHolder(data);
 		PathSettingsContainer[] crs = cr.getChildren(false);
 		PathSettingsContainer child, parent;

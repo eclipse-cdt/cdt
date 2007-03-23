@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
@@ -71,12 +72,14 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitExpressions= true;
 			shouldVisitStatements= true;
 			shouldVisitDeclSpecifiers= true;
+			shouldVisitDeclarators= true;
 		}
 		
 		/** The semantic token */
 		private SemanticToken fToken= new SemanticToken();
 		private String fFilePath;
 		private IPositionConverter fPositionTracker;
+		private int fMinLocation;
 		
 		/**
 		 * @param filePath
@@ -85,6 +88,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		public PositionCollector(String filePath, IPositionConverter positionTracker) {
 			fFilePath= filePath;
 			fPositionTracker= positionTracker;
+			fMinLocation= -1;
 		}
 
 		/*
@@ -99,6 +103,14 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					visit(macroDef.getName());
 				}
 			}
+			// TODO visit macro expansions
+//			IASTName[] macroExps= tu.getMacroExpansions();
+//			for (int i= 0; i < macroExps.length; i++) {
+//				IASTName macroExp= macroExps[i];
+//				if (fFilePath.equals(macroExp.getContainingFilename())) {
+//					visitMacroExpansion(macroExp);
+//				}
+//			}
 			return super.visit(tu);
 		}
 
@@ -126,6 +138,16 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 
 		/*
+		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
+		 */
+		public int visit(IASTDeclarator declarator) {
+			if (checkForMacro(declarator)) {
+				return PROCESS_SKIP;
+			}
+			return PROCESS_CONTINUE;
+		}
+		
+		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
 		public int visit(IASTExpression expression) {
@@ -148,8 +170,11 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTName)
 		 */
-		public int visit(IASTName node) {
-			if (visitNode(node)) {
+		public int visit(IASTName name) {
+			if (checkForMacro(name)) {
+				return PROCESS_SKIP;
+			}
+			if (visitNode(name)) {
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
@@ -160,10 +185,17 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (nodeLocations.length == 1 && nodeLocations[0] instanceof IASTMacroExpansion) {
 				IASTNodeLocation useLocation= getMinFileLocation(nodeLocations);
 				if (useLocation != null) {
+					final int useOffset = useLocation.getNodeOffset();
+					if (useOffset <= fMinLocation) {
+						// performance: we had that macro expansion already
+						return true;
+					}
+					fMinLocation= useOffset;
+					// TLETODO This does not work correctly for nested macro substitutions
 					IASTPreprocessorMacroDefinition macroDef= ((IASTMacroExpansion)nodeLocations[0]).getMacroDefinition();
 					IASTNodeLocation defLocation= macroDef.getName().getFileLocation();
 					if (defLocation != null) {
-						IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useLocation.getNodeOffset(), defLocation.getNodeLength());
+						IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useOffset, defLocation.getNodeLength());
 						if (macroNode != null && visitMacro(macroNode, defLocation.getNodeLength())) {
 							return true;
 						}

@@ -172,5 +172,20 @@ public interface IIndexFragment {
 	 * @throws CoreException
 	 * @see IIndexFragment#PROPERTY_FRAGMENT_ID
 	 */
-	public String getProperty(String propertyName) throws CoreException;	
+	public String getProperty(String propertyName) throws CoreException;
+
+	/**
+	 * Resets the counters for cache-hits and cache-misses.
+	 */
+	void resetCacheCounters();
+	
+	/**
+	 * Returns cache hits since last reset of counters.
+	 */
+	long getCacheHits();
+	
+	/**
+	 * Returns cache misses since last reset of counters.
+	 */
+	long getCacheMisses();
 }

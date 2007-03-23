@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,4 +58,19 @@ public interface IWritableIndex extends IIndex {
 	 * Releases a write lock, reestablishing a certain amount of read locks.
 	 */
 	void releaseWriteLock(int establishReadLockCount);
+	
+	/**
+	 * Resets the counters for cache-hits
+	 */
+	void resetCacheCounters();
+	
+	/**
+	 * Returns cache hits since last reset of counters.
+	 */
+	long getCacheHits();
+	
+	/**
+	 * Returns cache misses since last reset of counters.
+	 */
+	long getCacheMisses();
 }

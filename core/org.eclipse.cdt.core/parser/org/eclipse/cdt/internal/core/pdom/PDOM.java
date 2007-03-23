@@ -693,5 +693,17 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	public void close() throws CoreException {
 		fLinkageIDCache.clear();
 		db.close();
+	}
+
+	public long getCacheHits() {
+		return db.getCacheHits();
+	}
+
+	public long getCacheMisses() {
+		return db.getCacheMisses();
+	}
+
+	public void resetCacheCounters() {
+		db.resetCacheCounters();
 	}		
 }

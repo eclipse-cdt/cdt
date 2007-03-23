@@ -66,6 +66,8 @@ public class Database {
 	
 	private long malloced;
 	private long freed;
+	private long cacheHits;
+	private long cacheMisses;
 	private ChunkCache fCache;
 	
 	// public for tests only, you shouldn't need these
@@ -164,6 +166,7 @@ public class Database {
 		Chunk chunk = chunks[index];		
 		if (chunk != null && chunk.fWritable == fWritable) {
 			chunk.fCacheHitFlag= true;
+			cacheHits++;
 			return chunk;
 		}
 		
@@ -172,7 +175,11 @@ public class Database {
 		synchronized(fCache) {
 			chunk= chunks[index];
 			if (chunk == null) {
+				cacheMisses++;
 				chunk = chunks[index] = new Chunk(this, index);
+			}
+			else {
+				cacheHits++;
 			}
 			fCache.add(chunk, fWritable);
 			return chunk;
@@ -456,5 +463,17 @@ public class Database {
 				chunk.flush();
 			}
 		}
+	}
+	
+	public void resetCacheCounters() {
+		cacheHits= cacheMisses= 0;
+	}
+	
+	public long getCacheHits() {
+		return cacheHits;
+	}
+	
+	public long getCacheMisses() {
+		return cacheMisses;
 	}
 }

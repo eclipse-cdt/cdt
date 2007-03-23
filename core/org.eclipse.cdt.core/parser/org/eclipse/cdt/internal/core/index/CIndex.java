@@ -461,4 +461,26 @@ public class CIndex implements IIndex {
 			return flatten(result);
 		}
 	}
+	
+	public long getCacheHits() {
+		long result= 0;
+		for (int i = 0; i < fFragments.length; i++) {
+			result+= fFragments[i].getCacheHits();
+		}
+		return result;
+	}
+
+	public long getCacheMisses() {
+		long result= 0;
+		for (int i = 0; i < fFragments.length; i++) {
+			result+= fFragments[i].getCacheMisses();
+		}
+		return result;
+	}
+
+	public void resetCacheCounters() {
+		for (int i = 0; i < fFragments.length; i++) {
+			fFragments[i].resetCacheCounters();
+		}
+	}
 }

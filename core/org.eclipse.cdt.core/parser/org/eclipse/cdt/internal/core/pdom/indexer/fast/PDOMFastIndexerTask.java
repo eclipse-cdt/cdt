@@ -100,11 +100,12 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 			CCorePlugin.log(e);
 		} catch (InterruptedException e) {
 		}
-		traceEnd(start);
+		traceEnd(start, index);
 	}
 
 	private void setupIndexAndReaderFactory() throws CoreException {
 		this.index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
+		this.index.resetCacheCounters();
 		this.fIflCache = new HashMap/*<String,IIndexFileLocation>*/();
 		this.fCodeReaderFactory = new IndexBasedCodeReaderFactory(index, fIflCache);
 	}

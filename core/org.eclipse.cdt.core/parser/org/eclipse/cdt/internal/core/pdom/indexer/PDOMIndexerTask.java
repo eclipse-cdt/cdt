@@ -275,7 +275,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 	}
 
-	protected void traceEnd(long start) {
+	protected void traceEnd(long start, IWritableIndex index) {
 		if (checkDebugOption(IPDOMIndexerTask.TRACE_STATISTICS, TRUE)) {
 			IndexerProgress info= getProgressInformation();
 			String name= getClass().getName();
@@ -300,7 +300,16 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					+ fStatistics.fReferenceCount + " references, " //$NON-NLS-1$
 					+ fStatistics.fErrorCount + " errors, " //$NON-NLS-1$
 					+ fStatistics.fProblemBindingCount + "(" + nf.format(problemPct) + ") problems.");  //$NON-NLS-1$ //$NON-NLS-2$
+			
+			if (index != null) {
+				long misses= index.getCacheMisses();
+				long hits= index.getCacheHits();
+				long tries= misses+hits;
+				double missPct= tries==0 ? 0.0 : (double) misses / (double) tries;
+				System.out.println(name + " Cache: " //$NON-NLS-1$
+					+ hits + " hits, "  //$NON-NLS-1$
+					+ misses + "(" + nf.format(missPct)+ ") misses."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	}
-
 }

@@ -101,11 +101,12 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 			CCorePlugin.log(e);
 		} catch (InterruptedException e) {
 		}
-		traceEnd(start);
+		traceEnd(start, fIndex);
 	}
 
 	private void setupIndex() throws CoreException {
 		fIndex = ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
+		fIndex.resetCacheCounters();
 	}
 
 	private void registerTUsInReaderFactory(Collection/*<ITranslationUnit>*/ sources)

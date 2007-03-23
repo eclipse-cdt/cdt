@@ -172,7 +172,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		if (canExport) {
 			ICLanguageSettingEntry ent = (ICLanguageSettingEntry)(table.getItem(index).getData());
 			if (ent.isBuiltIn() || ent.isReadOnly()) canEdit = false;
-			if (/*ent.isBuiltIn() || */ent.isReadOnly()) canDelete = false;
+			if (ent.isReadOnly()) canDelete = false;
 		}
     	boolean canMoveUp = canDelete && index > 0;
     	boolean canMoveDown = canDelete && (index < table.getItemCount() - 1); 
@@ -346,7 +346,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		case 2: // delete
 			if (n == -1) return;
 			old = (ICLanguageSettingEntry)(table.getItem(n).getData());
-			if (old.isReadOnly() /*|| old.isBuiltIn()*/) return;
+			if (old.isReadOnly()) return;
 			incs.remove(old);
 			lang.setSettingEntries(getKind(), incs);
 			update();
@@ -409,7 +409,13 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		}
 	}
 	protected void performDefaults() {
-		lang.setSettingEntries(getKind(), (List)null);
+		TreeItem[] tis = langTree.getItems();
+		for (int i=0; i<tis.length; i++) {
+			Object ob = tis[i].getData();
+			if (ob != null && ob instanceof ICLanguageSetting) {
+				((ICLanguageSetting)ob).setSettingEntries(getKind(), (List)null);
+			}
+		}
 		updateData(this.getResDesc());
 	}
 	

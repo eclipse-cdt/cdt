@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     QNX Software System
  *     Sergey Prigogin, Google - https://bugs.eclipse.org/bugs/show_bug.cgi?id=13221
  *     Ed Swartz (Nokia)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -97,22 +99,35 @@ public class OpenIncludeAction extends Action {
 						info = provider.getScannerInformation(proj);
 					}
 					if (info != null) {
-						// search in system includes
-						String[] includePaths = info.getIncludePaths();
-						findFile(includePaths, includeName, filesFound);
-					}
-					if (filesFound.size() == 0) {
-						// search in local includes
-						if (info != null) {
-							IExtendedScannerInfo scanInfo = new ExtendedScannerInfo(info);
-							String[] localIncludePaths = scanInfo.getLocalIncludePath();
-							findFile(localIncludePaths, includeName, filesFound);
-						}
+						IExtendedScannerInfo scanInfo = new ExtendedScannerInfo(info);
 						
-						if (filesFound.size() == 0) {
-							// Fall back and search the project
-							findFile(proj, new Path(includeName), filesFound);
+						boolean isSystemInclude = include instanceof IInclude 
+							&& ((IInclude) include).isStandard();
+						
+						if (!isSystemInclude) {
+							// search in current directory
+							IPath location= ((IInclude)include).getTranslationUnit().getLocation();
+							if (location != null) {
+								String currentDir= location.removeLastSegments(1).toOSString();
+								findFile(new String[] { currentDir }, includeName, filesFound);
+							}
+							if (filesFound.isEmpty()) {
+								// search in "..." include directories
+								String[] localIncludePaths = scanInfo.getLocalIncludePath();
+								findFile(localIncludePaths, includeName, filesFound);
+							}
 						}
+	
+						if (filesFound.isEmpty()) {
+							// search in <...> include directories
+							String[] includePaths = scanInfo.getIncludePaths();
+							findFile(includePaths, includeName, filesFound);
+						}
+					}
+					
+					if (filesFound.isEmpty()) {
+						// Fall back and search the project
+						findFile(proj, new Path(includeName), filesFound);
 					}
 				}
 			}

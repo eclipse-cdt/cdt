@@ -54,7 +54,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstanceScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -243,7 +243,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		} else if (binding instanceof ICPPSpecialization) {
 			try {
 				IScope scope = binding.getScope();
-				if (scope instanceof CPPClassInstanceScope)
+				if (scope instanceof CPPClassSpecializationScope)
 					return true;
 			} catch (DOMException e) {
 			}
@@ -284,7 +284,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 				pdomBinding = new PDOMCPPClassTemplatePartialSpecialization(
 						pdom, parent,
 						(ICPPClassTemplatePartialSpecialization) binding,
-						(PDOMCPPClassTemplate) pdomSpecialized);
+						pdomSpecialized);
 			} else if (binding instanceof ICPPField && pdomSpecialized instanceof PDOMCPPField) {
 				pdomBinding = new PDOMCPPFieldSpecialization(pdom, parent,
 						(ICPPField) binding, (PDOMCPPField) pdomSpecialized);

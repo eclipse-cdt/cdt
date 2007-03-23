@@ -10,6 +10,7 @@
  * Markus Schorn (Wind River Systems)
  * IBM Corporation
  * Andrew Ferguson (Symbian)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui;
@@ -33,8 +34,10 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
@@ -98,6 +101,8 @@ public class IndexLabelProvider extends LabelProvider {
 					PDOMNode parent = ((PDOMNode)element).getParentNode();
 					PDOMNode grandParent = parent != null ? parent.getParentNode() : null;
 					boolean showArgs = parentOfSpec == null || grandParent == null || !parentOfSpec.equals(grandParent);
+					showArgs = showArgs && ((element instanceof ICPPClassType || element instanceof ICPPFunction)
+							&& !(element instanceof ICPPTemplateDefinition)); 
 					
 					StringBuffer buffer = null;
 					buffer = new StringBuffer("Spec: "); //$NON-NLS-1$

@@ -84,18 +84,28 @@ public class CMainTab extends CLaunchConfigurationTab {
 	private final boolean fWantsTerminalOption;
 	protected Button fTerminalButton;
 
+	private final boolean dontCheckProgram;
+	
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private String filterPlatform = EMPTY_STRING;
 
+	public static final int WANTS_TERMINAL = 1;
+	public static final int DONT_CHECK_PROGRAM = 2;
+	
 	public CMainTab() {
-		this(false);
+		this(0);
 	}
 
 	public CMainTab(boolean terminalOption) {
-		fWantsTerminalOption = terminalOption;
+		this(terminalOption ? WANTS_TERMINAL : 0);
 	}
 
+	public CMainTab(int flags) {
+		fWantsTerminalOption = (flags & WANTS_TERMINAL) != 0;
+		dontCheckProgram = (flags & DONT_CHECK_PROGRAM) != 0;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -176,7 +186,6 @@ public class CMainTab extends CLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProgText.setLayoutData(gd);
 		fProgText.addModifyListener(new ModifyListener() {
-
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -184,7 +193,6 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		fSearchButton = createPushButton(mainComp, LaunchMessages.getString("CMainTab.Search..."), null); //$NON-NLS-1$
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
-
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -194,7 +202,6 @@ public class CMainTab extends CLaunchConfigurationTab {
 		Button fBrowseForBinaryButton;
 		fBrowseForBinaryButton = createPushButton(mainComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
 		fBrowseForBinaryButton.addSelectionListener(new SelectionAdapter() {
-
 			public void widgetSelected(SelectionEvent evt) {
 				handleBinaryBrowseButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -512,37 +519,39 @@ public class CMainTab extends CLaunchConfigurationTab {
 			return false;
 		}
 
-		name = fProgText.getText().trim();
-		if (name.length() == 0) {
-			setErrorMessage(LaunchMessages.getString("CMainTab.Program_not_specified")); //$NON-NLS-1$
-			return false;
-		}
-		if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
-			setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
-			return false;
-		}
-		IPath exePath = new Path(name);
-		if (!exePath.isAbsolute()) {
-			if (!project.getFile(name).exists()) {
+		if (!dontCheckProgram) {
+			name = fProgText.getText().trim();
+			if (name.length() == 0) {
+				setErrorMessage(LaunchMessages.getString("CMainTab.Program_not_specified")); //$NON-NLS-1$
+				return false;
+			}
+			if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 				return false;
 			}
-			exePath = project.getFile(name).getLocation();
-		} else {
-			if (!exePath.toFile().exists()) {
-				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+			IPath exePath = new Path(name);
+			if (!exePath.isAbsolute()) {
+				if (!project.getFile(name).exists()) {
+					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+					return false;
+				}
+				exePath = project.getFile(name).getLocation();
+			} else {
+				if (!exePath.toFile().exists()) {
+					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+					return false;
+				}
+			}
+			try {
+				if (!isBinary(project, exePath)) {
+					setErrorMessage(LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
+					return false;
+				}
+			} catch (CoreException e) {
+				LaunchUIPlugin.log(e);
+				setErrorMessage(e.getLocalizedMessage());
 				return false;
 			}
-		}
-		try {
-			if (!isBinary(project, exePath)) {
-				setErrorMessage(LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
-				return false;
-			}
-		} catch (CoreException e) {
-			LaunchUIPlugin.log(e);
-			setErrorMessage(e.getLocalizedMessage());
-			return false;
 		}
 		
 		return true;

@@ -7,7 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
- * /
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on May 2, 2005
@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -35,7 +34,6 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		implements ICPPClassTemplate, ICPPInternalClassTemplate {
 
 	private ObjectMap instances = null;
-	private ICPPClassTemplatePartialSpecialization [] partialSpecializations = null;
 	
 	/**
 	 * @param specialized
@@ -50,11 +48,9 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate#getPartialSpecializations()
 	 */
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
-		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.trim( ICPPClassTemplatePartialSpecialization.class, partialSpecializations );
-		return partialSpecializations;
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+		return ((ICPPClassTemplate) getSpecializedBinding()).getPartialSpecializations();
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition#getTemplateParameters()
@@ -119,6 +115,6 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	}
 
 	public void addPartialSpecialization( ICPPClassTemplatePartialSpecialization spec ){
-		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.append( ICPPClassTemplatePartialSpecialization.class, partialSpecializations, spec );
+		//should not occur
 	}
 }

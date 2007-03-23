@@ -39,7 +39,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstanceScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -158,23 +158,15 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return null;
 	}
 	
-	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
-		PDOMNode node;
-		
+	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {		
 		if (type instanceof IPointerType)
-			node = new PDOMPointerType(pdom, parent, (IPointerType)type);
+			return new PDOMPointerType(pdom, parent, (IPointerType)type);
 		else if (type instanceof IArrayType) 
-			node= new PDOMArrayType(pdom, parent, (IArrayType) type);
+			return new PDOMArrayType(pdom, parent, (IArrayType) type);
 		else if (type instanceof IQualifierType)
-			node = new PDOMQualifierType(pdom, parent, (IQualifierType)type);
+			return new PDOMQualifierType(pdom, parent, (IQualifierType)type);
 		else
-			node = null;
-		
-		if(node!=null) {
-			parent.addChild(node);
-		}
-		
-		return node;
+			return null;
 	}
 
 	public abstract IBTreeComparator getIndexComparator();
@@ -254,8 +246,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		else {
 			IBinding scopeBinding = null;
-			if (scope instanceof CPPClassInstanceScope) {
-				scopeBinding = ((CPPClassInstanceScope)scope).getClassType();
+			if (scope instanceof CPPClassSpecializationScope) {
+				scopeBinding = ((CPPClassSpecializationScope)scope).getClassType();
 			} else {
 				IName scopeName = scope.getScopeName();		
 				if (scopeName instanceof IASTName) {

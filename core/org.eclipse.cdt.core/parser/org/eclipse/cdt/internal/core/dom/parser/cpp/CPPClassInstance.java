@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Mar 28, 2005
@@ -29,14 +30,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
  */
 public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPPInternalBinding {
-	private CPPClassInstanceScope instanceScope;
+	private CPPClassSpecializationScope instanceScope;
 	
 	/**
 	 * @param decl
@@ -53,16 +53,15 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	public ICPPBase[] getBases() throws DOMException {
 		ICPPClassType cls = (ICPPClassType) getSpecializedBinding();
 		if( cls != null ){
-			ICPPBase [] bases = cls.getBases();
-			for (int i = 0; i < bases.length; i++) {
-				IBinding T = bases[i].getBaseClass();
-				if( T instanceof ICPPTemplateTypeParameter && argumentMap.containsKey( T ) ){
-					IType t = (IType) argumentMap.get( T );
-					if( t instanceof ICPPClassType )
-						((CPPBaseClause)bases[i]).setBaseClass( (ICPPClassType) argumentMap.get(T) );
-				}
+			ICPPBase [] bindings = cls.getBases();
+			for (int i = 0; i < bindings.length; i++) {
+    		    IBinding base = bindings[i].getBaseClass();
+    		    if (base instanceof IType) {
+    		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
+    		    	((CPPBaseClause)bindings[i]).setBaseClass((ICPPClassType)specBase);
+    		    }
 			}
-			return bases;
+			return bindings;
 		}
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
@@ -119,7 +118,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
 	public ICPPConstructor[] getConstructors() throws DOMException {
-		CPPClassInstanceScope scope = (CPPClassInstanceScope) getCompositeScope();
+		CPPClassSpecializationScope scope = (CPPClassSpecializationScope) getCompositeScope();
 		if( scope.isFullyCached() )
 			return scope.getConstructors();
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
@@ -145,7 +144,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	 */
 	public IScope getCompositeScope() {
 		if( instanceScope == null ){
-			instanceScope = new CPPClassInstanceScope( this );
+			instanceScope = new CPPClassSpecializationScope( this );
 		}
 		return instanceScope;
 	}

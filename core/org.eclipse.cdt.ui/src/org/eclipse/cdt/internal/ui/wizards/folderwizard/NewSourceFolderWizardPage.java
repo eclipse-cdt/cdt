@@ -463,7 +463,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 	private ICSourceEntry[] addEntry(ICSourceEntry[] entries, ICSourceEntry entry, boolean removeProj){
 		Set set = new HashSet();
 		for(int i = 0; i < entries.length; i++){
-			if(removeProj && new Path(entries[i].getValue()).segmentCount() == 0)
+			if(removeProj && new Path(entries[i].getValue()).segmentCount() == 1)
 				continue;
 			
 			set.add(entries[i]);

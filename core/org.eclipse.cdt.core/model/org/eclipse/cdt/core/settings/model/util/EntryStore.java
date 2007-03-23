@@ -63,9 +63,9 @@ public class EntryStore {
 		return (ICLanguageSettingEntry[])result.toArray(new ICLanguageSettingEntry[result.size()]);
 	}
 	
-	public boolean containsEntries(int kind){
-		List list = getEntriesList(kind);
-		return list != null && list.size() != 0;
+	public boolean containsEntriesList(int kind){
+		List list = getEntriesList(kind, false);
+		return list != null;
 	}
 
 	public ICLanguageSettingEntry[] getEntries(int kind){

@@ -3556,12 +3556,25 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return null;
 	}
 */	
+	private static final boolean TEST_CONSISTANCE = false;
+
 	public static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes){
+		return getConfigurationForDescription(cfgDes, TEST_CONSISTANCE);
+	}
+
+	public static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes, boolean checkConsistance){
 		if(cfgDes == null)
 			return null;
 		CConfigurationData cfgData = cfgDes.getConfigurationData();
-		if(cfgData instanceof BuildConfigurationData)
-			return ((BuildConfigurationData)cfgData).getConfiguration();
+		if(cfgData instanceof BuildConfigurationData){
+			IConfiguration cfg = ((BuildConfigurationData)cfgData).getConfiguration();
+			if(checkConsistance){
+				if(cfgDes != getDescriptionForConfiguration(cfg, false)){
+					throw new IllegalStateException();
+				}
+			}
+			return cfg;
+		}
 		return null;
 	}
 	
@@ -3641,8 +3654,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return 0;
 	}
 	public static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg){
+		return getDescriptionForConfiguration(cfg, TEST_CONSISTANCE);
+	}
+
+	private static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg, boolean checkConsistance){
 		ICConfigurationDescription des = ((Configuration)cfg).getConfigurationDescription();
 		if(des == null){
+			if(checkConsistance)
+				throw new IllegalStateException();
 			if(((Configuration)cfg).isPreference()){
 				try {
 					des = CCorePlugin.getDefault().getPreferenceConfiguration(CFG_DATA_PROVIDER_ID);
@@ -3655,6 +3674,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				if(projDes != null){
 					des = projDes.getConfigurationById(cfg.getId());
 				}
+			}
+		}
+		if(checkConsistance){
+			if(cfg != getConfigurationForDescription(des, false)){
+				throw new IllegalStateException();
 			}
 		}
 		return des;

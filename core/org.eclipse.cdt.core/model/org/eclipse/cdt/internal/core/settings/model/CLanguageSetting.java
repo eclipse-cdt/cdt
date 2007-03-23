@@ -309,7 +309,7 @@ public class CLanguageSetting extends CDataProxy implements
 
 //		int kinds[] = KindBasedStore.getSupportedKinds();
 		for(int i = 0; i < kinds.length; i++){
-			ICLanguageSettingEntry sortedEntries[] = store.containsEntries(kinds[i]) ? store.getEntries(kinds[i]) : null;
+			ICLanguageSettingEntry sortedEntries[] = store.containsEntriesList(kinds[i]) ? store.getEntries(kinds[i]) : null;
 			if((kind & kinds[i]) != 0)
 				data.setEntries(kinds[i], sortedEntries);
 		}

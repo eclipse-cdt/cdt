@@ -290,11 +290,13 @@ public class CLanguageSetting extends CDataProxy implements
 		EntryStore store = new EntryStore();
 //		KindBasedStore nameSetStore = new KindBasedStore();
 		int eKind;
-		for(Iterator iter = list.iterator(); iter.hasNext();){
-			ICLanguageSettingEntry entry = (ICLanguageSettingEntry)iter.next();
-			eKind = entry.getKind();
-			if((kind & eKind) != 0 && (data.getSupportedEntryKinds() & eKind) != 0){
-				store.addEntry(entry);
+		if(list != null){
+			for(Iterator iter = list.iterator(); iter.hasNext();){
+				ICLanguageSettingEntry entry = (ICLanguageSettingEntry)iter.next();
+				eKind = entry.getKind();
+				if((kind & eKind) != 0 && (data.getSupportedEntryKinds() & eKind) != 0){
+					store.addEntry(entry);
+				}
 			}
 		}
 		
@@ -307,7 +309,7 @@ public class CLanguageSetting extends CDataProxy implements
 
 //		int kinds[] = KindBasedStore.getSupportedKinds();
 		for(int i = 0; i < kinds.length; i++){
-			ICLanguageSettingEntry sortedEntries[] = store.getEntries(kinds[i]);
+			ICLanguageSettingEntry sortedEntries[] = store.containsEntries(kinds[i]) ? store.getEntries(kinds[i]) : null;
 			if((kind & kinds[i]) != 0)
 				data.setEntries(kinds[i], sortedEntries);
 		}

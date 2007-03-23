@@ -26,9 +26,9 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
-import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
@@ -45,6 +45,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.NotificationManager;
+import org.eclipse.cdt.managedbuilder.internal.core.SettingsChangeEvent;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -420,13 +421,19 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return cfgDes.getSessionProperty(CFG_PERSISTED_PROPERTY) != null;
 	}
 
-	public void optionChanged(IResourceInfo rcInfo, IHoldsOptions holder, IOption option, Object oldValue) {
-		BuildLanguageData datas[] = (BuildLanguageData[])rcInfo.getCLanguageDatas();
-		for(int i = 0; i < datas.length; i++){
-			datas[i].optionChanged(option, oldValue);
+	public void settingsChanged(SettingsChangeEvent event) {
+		BuildLanguageData datas[] = (BuildLanguageData[])event.getRcInfo().getCLanguageDatas();
+		IOption option = event.getOption();
+		
+		try {
+			int type = option.getValueType();
+			for(int i = 0; i < datas.length; i++){
+				datas[i].optionsChanged(type);
+			}
+		} catch (BuildException e) {
+			ManagedBuilderCorePlugin.log(e);
 		}
 	}
-
 
 	public void removeConfiguration(ICConfigurationDescription des,
 			CConfigurationData data,

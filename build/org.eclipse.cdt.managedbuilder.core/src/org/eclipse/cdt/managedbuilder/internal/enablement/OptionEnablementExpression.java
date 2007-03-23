@@ -313,6 +313,12 @@ public class OptionEnablementExpression extends AndExpression{
 				case IOption.LIBRARY_PATHS:
 				case IOption.LIBRARY_FILES:
 				case IOption.MACRO_FILES:
+				case IOption.UNDEF_INCLUDE_PATH:
+				case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+				case IOption.UNDEF_INCLUDE_FILES:
+				case IOption.UNDEF_LIBRARY_PATHS:
+				case IOption.UNDEF_LIBRARY_FILES:
+				case IOption.UNDEF_MACRO_FILES:
 					//TODO: add String list value support
 					adjusted = false;
 					break;

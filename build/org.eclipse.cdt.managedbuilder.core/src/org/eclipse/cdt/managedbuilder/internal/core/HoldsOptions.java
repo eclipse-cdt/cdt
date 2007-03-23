@@ -248,10 +248,17 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#removeOption(IOption)
 	 */
 	public void removeOption(IOption option) {
+		if(option.getParent() != this)
+			throw new IllegalArgumentException();
+		
 		getOptionList().remove(option);
 		getOptionMap().remove(option.getId());
 		setDirty(true);
 		setRebuildState(true);
+		
+		if(!isExtensionElement()){
+			NotificationManager.getInstance().optionRemoved(getParentResourceInfo(), this, option);
+		}
 	}
 	
 	/* (non-Javadoc)

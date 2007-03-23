@@ -201,6 +201,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								optType == IOption.LIBRARY_FILES ||
 								optType == IOption.MACRO_FILES) {
 							inputs = (List)option.getValue();
+							tool.filterValues(optType, inputs);
 						}
 						for (int j=0; j<inputs.size(); j++) {
 							String inputName = (String)inputs.get(j);
@@ -385,6 +386,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								optType == IOption.LIBRARY_PATHS ||
 								optType == IOption.LIBRARY_FILES ||
 								optType == IOption.MACRO_FILES) {
+							//TODO: do we need to do anything with undefs here?
 							//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative 
 							//  to top build directory relative
 							String[] paths = new String[itEnumeratedInputs.size()];
@@ -539,6 +541,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								optType == IOption.LIBRARY_FILES ||
 								optType == IOption.MACRO_FILES) {
 							outputs = (List)option.getValue();
+							tool.filterValues(optType, outputs);
 							// Add outputPrefix to each if necessary
 							if (outputPrefix.length() > 0) {
 								for (int j=0; j<outputs.size(); j++) {

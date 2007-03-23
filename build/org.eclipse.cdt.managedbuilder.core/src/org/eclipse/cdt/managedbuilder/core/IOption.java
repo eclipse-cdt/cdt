@@ -29,6 +29,13 @@ public interface IOption extends IBuildObject {
 	public static final int LIBRARY_PATHS = 9;
 	public static final int LIBRARY_FILES = 10;
 	public static final int MACRO_FILES = 11;
+
+	public static final int UNDEF_INCLUDE_PATH = -INCLUDE_PATH;
+	public static final int UNDEF_PREPROCESSOR_SYMBOLS = -PREPROCESSOR_SYMBOLS;
+	public static final int UNDEF_INCLUDE_FILES = -INCLUDE_FILES;
+	public static final int UNDEF_LIBRARY_PATHS = -LIBRARY_PATHS;
+	public static final int UNDEF_LIBRARY_FILES = -LIBRARY_FILES;
+	public static final int UNDEF_MACRO_FILES = -MACRO_FILES;
 	
 	// Browse type
 	public static final int BROWSE_NONE = 0;
@@ -69,6 +76,13 @@ public interface IOption extends IBuildObject {
 	public static final String TYPE_LIB_FILES = "libFiles"; //$NON-NLS-1$
 	public static final String TYPE_INC_FILES = "includeFiles"; //$NON-NLS-1$
 	public static final String TYPE_SYMBOL_FILES = "symbolFiles"; //$NON-NLS-1$
+	public static final String TYPE_UNDEF_INC_PATH = "undefIncludePath"; //$NON-NLS-1$
+	public static final String TYPE_UNDEF_DEFINED_SYMBOLS = "undefDefinedSymbols"; //$NON-NLS-1$
+	public static final String TYPE_UNDEF_LIB_PATHS = "undefLibPaths"; //$NON-NLS-1$
+	public static final String TYPE_UNDEF_LIB_FILES = "undefLibFiles"; //$NON-NLS-1$
+	public static final String TYPE_UNDEF_INC_FILES = "undefIncludeFiles"; //$NON-NLS-1$
+	public static final String TYPE_UNDEF_SYMBOL_FILES = "undefSymbolFiles"; //$NON-NLS-1$
+	
 	public static final String VALUE = "value"; //$NON-NLS-1$
 	public static final String VALUE_TYPE = "valueType"; //$NON-NLS-1$
 	public static final String VALUE_HANDLER = "valueHandler"; //$NON-NLS-1$

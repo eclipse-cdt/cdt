@@ -53,7 +53,9 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildLanguageData;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.EntryStorage;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildfileMacroSubstitutor;
@@ -78,6 +80,8 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+
+import com.sun.rsasign.l;
 
 /**
  * Represents a tool that can be invoked during a build.
@@ -1903,9 +1907,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 									optType == IOption.INCLUDE_FILES ||
 									optType == IOption.LIBRARY_PATHS ||
 									optType == IOption.LIBRARY_FILES ||
-									optType == IOption.MACRO_FILES) {
+									optType == IOption.MACRO_FILES
+									) {
 								List inputNames = (List)option.getValue();
+								filterValues(optType, inputNames);
 								for (int j=0; j<inputNames.size(); j++) {
+									
 									inputs.add(Path.fromOSString((String)inputNames.get(j)));
 								}
 							}
@@ -2581,7 +2588,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				case IOption.LIBRARY_PATHS :
 				case IOption.LIBRARY_FILES :
 				case IOption.MACRO_FILES :
-				{
+				case IOption.UNDEF_INCLUDE_FILES :
+				case IOption.UNDEF_LIBRARY_PATHS :
+				case IOption.UNDEF_LIBRARY_FILES :
+				case IOption.UNDEF_MACRO_FILES :				{
 						String listCmd = option.getCommand();
 						IMacroContextInfo info = provider.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
 								new FileContextData(inputFileLocation, outputFileLocation, option, this));
@@ -2599,7 +2609,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					}
 					break;
 					
-				case IOption.INCLUDE_PATH :{
+				case IOption.INCLUDE_PATH :
+				case IOption.UNDEF_INCLUDE_PATH :{
 					String incCmd = option.getCommand();
 					IMacroContextInfo info = provider.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
 							new FileContextData(inputFileLocation, outputFileLocation, option, this));
@@ -2617,7 +2628,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				}
 					break;
 	
-				case IOption.PREPROCESSOR_SYMBOLS :{
+				case IOption.PREPROCESSOR_SYMBOLS :
+				case IOption.UNDEF_PREPROCESSOR_SYMBOLS :{
 					String defCmd = option.getCommand();
 					IMacroContextInfo info = provider.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
 							new FileContextData(inputFileLocation, outputFileLocation, option, this));
@@ -4023,5 +4035,48 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return true;
 		//scannerConfigDiscoveryProfileId
 		return false;
+	}
+	
+	public IOption[] getOptionsOfType(int type){
+		IOption options[] = getOptions();
+		List list = new ArrayList();
+		for(int i = 0; i < options.length; i++){
+			try {
+				if(options[i].getValueType() == type){
+					list.add(options[i]);
+				}
+			} catch (BuildException e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
+		}
+		return (Option[])list.toArray(new Option[list.size()]);
+	}
+	
+	public void filterValues(int type, List values){
+		if(values.size() == 0)
+			return;
+		
+		int opType = Option.getOppositeType(type);
+		if(opType != 0){
+			IOption opOptions[] = getOptionsOfType(opType);
+			Set filterSet = new HashSet();
+			for(int i = 0; i < opOptions.length; i++){
+				List opList = (List)opOptions[i].getValue();
+				filterSet.addAll(opList);
+			}
+			
+			if(filterSet.size() != 0){
+				Object oVal;
+				for(int i = 0; i < values.size(); i++){
+					oVal = values.get(i);
+					if(type == IOption.PREPROCESSOR_SYMBOLS){
+						String[] nameVal = EntryStorage.macroNameValueFromValue((String)oVal);
+						oVal = nameVal[0];
+					}
+					if(filterSet.contains(oVal))
+						values.remove(i);
+				}
+			}
+		}
 	}
 }

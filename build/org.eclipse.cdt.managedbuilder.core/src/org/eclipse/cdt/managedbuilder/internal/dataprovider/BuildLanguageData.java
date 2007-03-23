@@ -36,6 +36,7 @@ public class BuildLanguageData extends CLanguageData {
 	private ITool fTool;
 	private IInputType fInputType;
 	private KindBasedStore fKindToOptionArrayStore = new KindBasedStore();
+	private KindBasedStore fKindToUndefOptionArrayStore = new KindBasedStore();
 	private static final IOption[] EMPTY_OPTION_ARRAY = new IOption[0];
 	private boolean fOptionStoreInited;
 //	private Map fKindToEntryArrayMap = new HashMap();
@@ -95,20 +96,20 @@ public class BuildLanguageData extends CLanguageData {
 		return starage;
 	}
 	
-	private void optionsChanged(int kind, IOption option, Object oldValue){
+	private void notifyOptionsChangeForKind(int kind){
 		fOptionStoreInited = false;
 		EntryStorage storage = getEntryStorage(kind);
 		if(storage != null)
-			storage.optionsChanged(option, oldValue);
+			storage.optionsChanged();
 	}
 	
-	public void optionChanged(IOption option, Object oldValue){
-		try {
-			int kind = ManagedBuildManager.optionTypeToEntryKind(option.getValueType());
-			if(kind != 0)
-				optionsChanged(kind, option, oldValue);
-		} catch (BuildException e) {
-		}
+	public void optionsChanged(int type){
+		int kind = ManagedBuildManager.optionTypeToEntryKind(type);
+		if(kind == 0)
+			kind = ManagedBuildManager.optionUndefTypeToEntryKind(type);
+		
+		if(kind != 0)
+			notifyOptionsChangeForKind(kind);
 	}
 	
 	private ProfileInfoProvider getDiscoveredInfoProvider(){
@@ -306,12 +307,23 @@ public class BuildLanguageData extends CLanguageData {
 	}
 	
 	private KindBasedStore getKindToOptionArrayStore(){
-		if(!fOptionStoreInited){
-			calculateKindToOptionArrayStore();
-			fOptionStoreInited = true;
-		}
+		initOptionStores();
 		return fKindToOptionArrayStore;
 	}
+
+	private void initOptionStores(){
+		if(!fOptionStoreInited){
+			calculateKindToOptionArrayStore();
+			calculateKindToUndefOptionArrayStore();
+			fOptionStoreInited = true;
+		}
+	}
+
+	private KindBasedStore getKindToUndefOptionArrayStore(){
+		initOptionStores();
+		return fKindToUndefOptionArrayStore;
+	}
+
 	private void calculateKindToOptionArrayStore(){
 		fKindToOptionArrayStore.clear();
 		IOption options[] = fTool.getOptions();
@@ -339,6 +351,41 @@ public class BuildLanguageData extends CLanguageData {
 				info.setInfo(EMPTY_OPTION_ARRAY);
 			}
 		}
+	}
+	
+	private void calculateKindToUndefOptionArrayStore(){
+		fKindToUndefOptionArrayStore.clear();
+		IOption options[] = fTool.getOptions();
+		for(int i = 0; i < options.length; i++){
+			IOption option = options[i];
+			try {
+				int type = option.getValueType();
+				int entryKind = ManagedBuildManager.optionUndefTypeToEntryKind(type);
+				if(entryKind != 0){
+					getOptionList(fKindToUndefOptionArrayStore, entryKind).add(option);
+				}
+			} catch (BuildException e) {
+			}
+		}
+		
+		IKindBasedInfo infos[] = fKindToUndefOptionArrayStore.getContents();
+		IKindBasedInfo info;
+		for(int i = 0; i < infos.length; i++){
+			info = infos[i];
+			List list = (List)info.getInfo();
+			if(list != null){
+				IOption[] opts = (IOption[])list.toArray(new IOption[list.size()]);
+				info.setInfo(opts);
+			} else {
+				info.setInfo(EMPTY_OPTION_ARRAY);
+			}
+		}
+	}
+
+
+	IOption[] getUndefOptionsForKind(int entryKind){
+		KindBasedStore store = getKindToUndefOptionArrayStore();
+		return (IOption[])store.get(entryKind);
 	}
 
 	IOption[] getOptionsForKind(int entryKind){

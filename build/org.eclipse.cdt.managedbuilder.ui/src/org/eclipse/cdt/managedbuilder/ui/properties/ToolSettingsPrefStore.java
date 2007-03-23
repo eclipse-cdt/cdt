@@ -289,6 +289,12 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 					case IOption.LIBRARY_PATHS:
 					case IOption.LIBRARY_FILES:
 					case IOption.MACRO_FILES:
+					case IOption.UNDEF_INCLUDE_PATH:
+					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+					case IOption.UNDEF_INCLUDE_FILES:
+					case IOption.UNDEF_LIBRARY_PATHS:
+					case IOption.UNDEF_LIBRARY_FILES:
+					case IOption.UNDEF_MACRO_FILES:
 						if(value instanceof String){
 							String val[] = parseString((String)value);
 							newOption = rcInfo.setOption(holder,option,val);

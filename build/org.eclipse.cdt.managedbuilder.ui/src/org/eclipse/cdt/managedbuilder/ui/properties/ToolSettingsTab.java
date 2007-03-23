@@ -486,6 +486,12 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					case IOption.LIBRARY_PATHS:
 					case IOption.LIBRARY_FILES:
 					case IOption.MACRO_FILES:
+					case IOption.UNDEF_INCLUDE_PATH:
+					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+					case IOption.UNDEF_INCLUDE_FILES:
+					case IOption.UNDEF_LIBRARY_PATHS:
+					case IOption.UNDEF_LIBRARY_FILES:
+					case IOption.UNDEF_MACRO_FILES:
 						String[] data = (String[])((List)option.getValue()).toArray(new String[0]);
 						setOption = ManagedBuildManager.setOption(fInfo, holder, option, data);
 						break;

@@ -160,7 +160,12 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						case IOption.LIBRARY_PATHS:
 						case IOption.LIBRARY_FILES:
 						case IOption.MACRO_FILES:
-						{
+						case IOption.UNDEF_INCLUDE_PATH:
+						case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+						case IOption.UNDEF_INCLUDE_FILES:
+						case IOption.UNDEF_LIBRARY_PATHS:
+						case IOption.UNDEF_LIBRARY_FILES:
+						case IOption.UNDEF_MACRO_FILES:						{
 							fieldEditor = new FileListControlFieldEditor(optId, opt.getName(), opt.getToolTip(), fieldEditorParent, opt.getBrowseType());
 						} break;
 						
@@ -268,6 +273,12 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					case IOption.LIBRARY_PATHS:
 					case IOption.LIBRARY_FILES:
 					case IOption.MACRO_FILES:
+					case IOption.UNDEF_INCLUDE_PATH:
+					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+					case IOption.UNDEF_INCLUDE_FILES:
+					case IOption.UNDEF_LIBRARY_PATHS:
+					case IOption.UNDEF_LIBRARY_FILES:
+					case IOption.UNDEF_MACRO_FILES:	
 						String[] listVal = (String[])((List)clonedOption.getValue()).toArray(new String[0]);
 						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, listVal);	
 						
@@ -412,6 +423,12 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					case IOption.LIBRARY_PATHS:
 					case IOption.LIBRARY_FILES:
 					case IOption.MACRO_FILES:
+					case IOption.UNDEF_INCLUDE_PATH:
+					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+					case IOption.UNDEF_INCLUDE_FILES:
+					case IOption.UNDEF_LIBRARY_PATHS:
+					case IOption.UNDEF_LIBRARY_FILES:
+					case IOption.UNDEF_MACRO_FILES:
 						if(fe instanceof FileListControlFieldEditor){
 							String val[] =((FileListControlFieldEditor)fe).getStringListValue();
 							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);

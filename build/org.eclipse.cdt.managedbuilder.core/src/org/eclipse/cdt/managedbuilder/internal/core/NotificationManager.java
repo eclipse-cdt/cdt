@@ -32,13 +32,31 @@ public class NotificationManager /*implements ISettingsChangeListener */{
 		return fInstance;
 	}
 
+	public void optionRemoved(IResourceInfo rcInfo, IHoldsOptions holder, IOption option) {
+		SettingsChangeEvent event = createOptionRemovedEvent(rcInfo, holder, option);
+		notifyListeners(event);
+	}
+
 	public void optionChanged(IResourceInfo rcInfo, IHoldsOptions holder, IOption option, Object oldValue) {
-		for(Iterator iter = fListeners.iterator(); iter.hasNext();){
-			ISettingsChangeListener listener = (ISettingsChangeListener)iter.next();
-			listener.optionChanged(rcInfo, holder, option, oldValue);
+		SettingsChangeEvent event = createOptionChangedEvent(rcInfo, holder, option, oldValue);
+		notifyListeners(event);
+	}
+	
+	private void notifyListeners(SettingsChangeEvent event){
+		ISettingsChangeListener listeners[] = (ISettingsChangeListener[])fListeners.toArray(new ISettingsChangeListener[fListeners.size()]); 
+		for(int i = 0; i < listeners.length; i++){
+			listeners[i].settingsChanged(event);
 		}
 	}
 	
+	private static SettingsChangeEvent createOptionChangedEvent(IResourceInfo rcInfo, IHoldsOptions holder, IOption option, Object oldValue){
+		return new SettingsChangeEvent(SettingsChangeEvent.CHANGED, rcInfo, holder, option, oldValue);
+	}
+
+	private static SettingsChangeEvent createOptionRemovedEvent(IResourceInfo rcInfo, IHoldsOptions holder, IOption option){
+		return new SettingsChangeEvent(SettingsChangeEvent.REMOVED, rcInfo, holder, option, null);
+	}
+
 	public void subscribe(ISettingsChangeListener listener){
 //		synchronized (this) {
 			fListeners.add(listener);

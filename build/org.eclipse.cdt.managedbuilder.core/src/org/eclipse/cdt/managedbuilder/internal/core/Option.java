@@ -242,6 +242,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					case LIBRARY_PATHS:
 					case LIBRARY_FILES:
 					case MACRO_FILES:
+					case UNDEF_INCLUDE_PATH:
+					case UNDEF_PREPROCESSOR_SYMBOLS:
+					case UNDEF_INCLUDE_FILES:
+					case UNDEF_LIBRARY_PATHS:
+					case UNDEF_LIBRARY_FILES:
+					case UNDEF_MACRO_FILES:
 						if (option.value != null) {
 							value = new ArrayList((ArrayList)option.value);
 						}
@@ -513,6 +519,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				case LIBRARY_PATHS:
 				case LIBRARY_FILES:
 				case MACRO_FILES:
+				case UNDEF_INCLUDE_PATH:
+				case UNDEF_PREPROCESSOR_SYMBOLS:
+				case UNDEF_INCLUDE_FILES:
+				case UNDEF_LIBRARY_PATHS:
+				case UNDEF_LIBRARY_FILES:
+				case UNDEF_MACRO_FILES:
 					//  Note:  These string-list options do not load either the "value" or 
 					//         "defaultValue" attributes.  Instead, the ListOptionValue children
 					//         are loaded in the value field.
@@ -628,6 +640,18 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return INCLUDE_FILES;
 		else if (valueTypeStr.equals(TYPE_SYMBOL_FILES))
 			return MACRO_FILES;
+		else if (valueTypeStr.equals(TYPE_UNDEF_INC_PATH))
+			return UNDEF_INCLUDE_PATH;
+		else if (valueTypeStr.equals(TYPE_UNDEF_DEFINED_SYMBOLS))
+			return UNDEF_PREPROCESSOR_SYMBOLS;
+		else if (valueTypeStr.equals(TYPE_UNDEF_LIB_PATHS))
+			return UNDEF_LIBRARY_PATHS;
+		else if (valueTypeStr.equals(TYPE_UNDEF_LIB_FILES))
+			return UNDEF_LIBRARY_FILES;
+		else if (valueTypeStr.equals(TYPE_UNDEF_INC_FILES))
+			return UNDEF_INCLUDE_FILES;
+		else if (valueTypeStr.equals(TYPE_UNDEF_SYMBOL_FILES))
+			return UNDEF_MACRO_FILES;
 		else {
 			// TODO:  This was the CDT 2.0 default - should we keep it?
 			return PREPROCESSOR_SYMBOLS;
@@ -697,6 +721,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				case LIBRARY_PATHS:
 				case LIBRARY_FILES:
 				case MACRO_FILES:
+				case UNDEF_INCLUDE_PATH:
+				case UNDEF_PREPROCESSOR_SYMBOLS:
+				case UNDEF_INCLUDE_FILES:
+				case UNDEF_LIBRARY_PATHS:
+				case UNDEF_LIBRARY_FILES:
+				case UNDEF_MACRO_FILES:
 					if (value != null) {
 						ArrayList stringList = (ArrayList)value;
 						ListIterator iter = stringList.listIterator();
@@ -773,6 +803,24 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					break;
 				case MACRO_FILES:
 					str = TYPE_SYMBOL_FILES;
+					break;
+				case UNDEF_INCLUDE_PATH:
+					str = TYPE_UNDEF_INC_PATH;
+					break;
+				case UNDEF_PREPROCESSOR_SYMBOLS:
+					str = TYPE_UNDEF_DEFINED_SYMBOLS;
+					break;
+				case UNDEF_INCLUDE_FILES:
+					str = TYPE_UNDEF_INC_FILES;
+					break;
+				case UNDEF_LIBRARY_PATHS:
+					str = TYPE_UNDEF_LIB_PATHS;
+					break;
+				case UNDEF_LIBRARY_FILES:
+					str = TYPE_UNDEF_LIB_FILES;
+					break;
+				case UNDEF_MACRO_FILES:
+					str = TYPE_UNDEF_SYMBOL_FILES;
 					break;
 				default:
 					//  TODO; is this a problem...
@@ -1335,6 +1383,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					case LIBRARY_PATHS:
 					case LIBRARY_FILES:
 					case MACRO_FILES:
+					case UNDEF_INCLUDE_PATH:
+					case UNDEF_PREPROCESSOR_SYMBOLS:
+					case UNDEF_INCLUDE_FILES:
+					case UNDEF_LIBRARY_PATHS:
+					case UNDEF_LIBRARY_FILES:
+					case UNDEF_MACRO_FILES:
 						val = new ArrayList();
 						break;
 					default:
@@ -1516,6 +1570,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			|| getValueType() == LIBRARY_PATHS
 			|| getValueType() == LIBRARY_FILES
 			|| getValueType() == MACRO_FILES
+			|| getValueType() == UNDEF_INCLUDE_PATH
+			|| getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
+			|| getValueType() == UNDEF_INCLUDE_FILES
+			|| getValueType() == UNDEF_LIBRARY_PATHS
+			|| getValueType() == UNDEF_LIBRARY_FILES
+			|| getValueType() == UNDEF_MACRO_FILES
 			  )) {
 			// Just replace what the option reference is holding onto
 			if(value == null)
@@ -1773,6 +1833,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					case LIBRARY_PATHS:
 					case LIBRARY_FILES:
 					case MACRO_FILES:
+					case UNDEF_INCLUDE_PATH:
+					case UNDEF_PREPROCESSOR_SYMBOLS:
+					case UNDEF_INCLUDE_FILES:
+					case UNDEF_LIBRARY_PATHS:
+					case UNDEF_LIBRARY_FILES:
+					case UNDEF_MACRO_FILES:
 						//  Note:  These string-list options do not load either the "value" or 
 						//         "defaultValue" attributes.  Instead, the ListOptionValue children
 						//         are loaded in the value field.
@@ -2063,5 +2129,35 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		
 		return false;
+	}
+	
+	public static int getOppositeType(int type){
+		switch(type){
+		case INCLUDE_PATH:
+			return UNDEF_INCLUDE_PATH;
+		case PREPROCESSOR_SYMBOLS:
+			return UNDEF_PREPROCESSOR_SYMBOLS;
+		case INCLUDE_FILES:
+			return UNDEF_INCLUDE_FILES;
+		case LIBRARY_PATHS:
+			return UNDEF_LIBRARY_PATHS;
+		case LIBRARY_FILES:
+			return UNDEF_LIBRARY_FILES;
+		case MACRO_FILES:
+			return UNDEF_MACRO_FILES;
+		case UNDEF_INCLUDE_PATH:
+			return INCLUDE_PATH;
+		case UNDEF_PREPROCESSOR_SYMBOLS:
+			return PREPROCESSOR_SYMBOLS;
+		case UNDEF_INCLUDE_FILES:
+			return INCLUDE_FILES;
+		case UNDEF_LIBRARY_PATHS:
+			return LIBRARY_PATHS;
+		case UNDEF_LIBRARY_FILES:
+			return LIBRARY_FILES;
+		case UNDEF_MACRO_FILES:
+			return MACRO_FILES;
+		}
+		return 0;
 	}
 }

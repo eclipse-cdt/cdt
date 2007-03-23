@@ -51,7 +51,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
-import org.eclipse.cdt.managedbuilder.internal.core.ResourceInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
@@ -2975,6 +2975,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 									optType == IOption.LIBRARY_PATHS ||
 									optType == IOption.LIBRARY_FILES ||
 									optType == IOption.MACRO_FILES) {
+								//TODO: do we need to do anything with undefs here?
 								//  Note that the path(s) must be translated from project relative 
 								//  to top build directory relative
 								String[] paths = new String[allRes.size()];
@@ -3135,6 +3136,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 								optType == IOption.LIBRARY_FILES ||
 								optType == IOption.MACRO_FILES) {
 							outputList = (List)option.getValue();
+							((Tool)tool).filterValues(optType, outputList);
 							// Add outputPrefix to each if necessary
 							if (outputPrefix.length() > 0) {
 								for (int j=0; j<outputList.size(); j++) {

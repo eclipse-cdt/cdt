@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
-import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
-import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
 public interface ISettingsChangeListener {
-	void optionChanged(IResourceInfo rcInfo, IHoldsOptions holder, IOption option, Object oldValue);
+	void settingsChanged(SettingsChangeEvent event);
 }

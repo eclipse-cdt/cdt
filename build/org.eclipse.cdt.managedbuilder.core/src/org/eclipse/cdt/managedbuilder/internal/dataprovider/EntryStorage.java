@@ -12,7 +12,9 @@ package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -54,7 +56,7 @@ public class EntryStorage {
 		return fKind;
 	}
 	
-	void optionsChanged(IOption option, Object oldValue){
+	void optionsChanged(){
 		fUserValuesInited = false;
 	}
 	
@@ -83,6 +85,14 @@ public class EntryStorage {
 		
 		IOption options[] = fLangData.getOptionsForKind(fKind);
 		ITool tool = fLangData.getTool();
+		for(int i = 0; i < options.length; i++){
+			IOption option = options[i];
+			if(option.getParent() == tool){
+				tool.removeOption(option);
+			}
+		}
+		
+		options = fLangData.getUndefOptionsForKind(fKind);
 		for(int i = 0; i < options.length; i++){
 			IOption option = options[i];
 			if(option.getParent() == tool){
@@ -126,22 +136,42 @@ public class EntryStorage {
 		
 		SettingLevel level = fSettings.getLevels()[0];
 		ICLanguageSettingEntry usrEntries[] = level.getEntries();
-		IOption options[] = fLangData.getOptionsForKind(fKind);
-		if(options.length > 0){
-			IOption option = options[0];
-			String optValue[] = new String[usrEntries.length]; 
-			for(int i = 0; i < usrEntries.length; i++){
-				ICLanguageSettingEntry entry = usrEntries[i];
-				optValue[i] = entryValueToOption(entry);
+		if(usrEntries.length != 0){
+			IOption options[] = fLangData.getOptionsForKind(fKind);
+			if(options.length > 0){
+				IOption option = options[0];
+				String optValue[] = new String[usrEntries.length]; 
+				for(int i = 0; i < usrEntries.length; i++){
+					ICLanguageSettingEntry entry = usrEntries[i];
+					optValue[i] = entryValueToOption(entry);
+				}
+				
+				ITool tool = fLangData.getTool();
+				IResourceInfo rcInfo = tool.getParentResourceInfo();
+				IOption newOption = ManagedBuildManager.setOption(rcInfo, tool, option, optValue);
+				options = fLangData.getOptionsForKind(fKind);
+				for(int i = 0; i < options.length; i++){
+					if(options[i] != newOption)
+						ManagedBuildManager.setOption(rcInfo, tool, option, new String[0]);
+				}
 			}
-			
-			ITool tool = fLangData.getTool();
-			IResourceInfo rcInfo = tool.getParentResourceInfo();
-			IOption newOption = ManagedBuildManager.setOption(rcInfo, tool, option, optValue);
-			options = fLangData.getOptionsForKind(fKind);
-			for(int i = 0; i < options.length; i++){
-				if(options[i] != newOption)
-					ManagedBuildManager.setOption(rcInfo, tool, option, new String[0]);
+		}
+		
+		if(level.containsOverrideInfo()){
+			IOption options[] = fLangData.getUndefOptionsForKind(fKind);
+			if(options.length != 0){
+				Set set = level.getOverrideSet();
+				IOption option = options[0];
+				String[] optValue = (String[])set.toArray(new String[set.size()]);
+				
+				ITool tool = fLangData.getTool();
+				IResourceInfo rcInfo = tool.getParentResourceInfo();
+				IOption newOption = ManagedBuildManager.setOption(rcInfo, tool, option, optValue);
+				options = fLangData.getUndefOptionsForKind(fKind);
+				for(int i = 0; i < options.length; i++){
+					if(options[i] != newOption)
+						ManagedBuildManager.setOption(rcInfo, tool, option, new String[0]);
+				}
 			}
 		}
 	}
@@ -169,6 +199,7 @@ public class EntryStorage {
 			
 			dEntries = getUserDiscoveredEntries();
 			addEntries(levels[0], dEntries);
+			levels[0].fOverrideSet = getUserUndefinedStringSet(); 
 			
 			fSettings.adjustOverrideState();
 ////			fDiscoveredEntries.clear();
@@ -228,27 +259,36 @@ public class EntryStorage {
 		SettingsSet settings = new SettingsSet(3);
 		SettingLevel levels[] = settings.getLevels();
 		
+		boolean override = isDiscoveredEntriesOverridable(); 
+		int readOnlyFlag = override ? 0 : ICSettingEntry.READONLY;
 		levels[0].setFlagsToClear(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
 		levels[0].setFlagsToSet(0);
 		levels[0].setReadOnly(false);
+		levels[0].setOverrideSupported(override);
 
 		levels[1].setFlagsToClear(ICSettingEntry.BUILTIN);
-		levels[1].setFlagsToSet(ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
+		levels[1].setFlagsToSet(readOnlyFlag | ICSettingEntry.RESOLVED);
 		levels[1].setReadOnly(true);
+		levels[1].setOverrideSupported(false);
 
 		levels[2].setFlagsToClear(0);
-		levels[2].setFlagsToSet(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN | ICSettingEntry.RESOLVED);
+		levels[2].setFlagsToSet(readOnlyFlag | ICSettingEntry.BUILTIN | ICSettingEntry.RESOLVED);
 		levels[2].setReadOnly(true);
+		levels[2].setOverrideSupported(false);
 
 		return settings;
 	}
 	
-	private boolean isDiscoveredEntriesReadOnly(){
-		if(fKind == ICLanguageSettingEntry.MACRO){
-			return fLangData.getOptionsForKind(fKind).length != 0;
-		}
-		return true;
+	private boolean isDiscoveredEntriesOverridable(){
+//		if(!needUndef())
+//			return false;
+		
+		return fLangData.getUndefOptionsForKind(fKind).length != 0;
 	}
+	
+//	private boolean needUndef(){
+//		return fKind != ICLanguageSettingEntry.MACRO;
+//	}
 	
 //	private void initUserValues(){
 //		IOption options[] = fLangData.getOptionsForKind(fKind);
@@ -279,6 +319,22 @@ public class EntryStorage {
 //		}
 //	}
 	
+	private HashSet getUserUndefinedStringSet(){
+		HashSet set = null;
+		IOption options[] = fLangData.getUndefOptionsForKind(fKind);
+		if(options.length > 0){
+			for(int i = 0; i < options.length; i++){
+				IOption option = options[i];
+				List list = (List)option.getValue();
+				if(list.size() != 0){
+					if(set == null)
+						set = new HashSet();
+					set.addAll(list);
+				}
+			}
+		}
+		return set;
+	}
 	private DiscoveredEntry[] getUserDiscoveredEntries(){
 		IOption options[] = fLangData.getOptionsForKind(fKind);
 		if(options.length > 0){
@@ -403,7 +459,7 @@ public class EntryStorage {
 		
 	}
 
-	private String[] macroNameValueFromValue(String value){
+	public static String[] macroNameValueFromValue(String value){
 		String nv[] = new String[2];
 		int index = value.indexOf('=');
 		if(index > 0){

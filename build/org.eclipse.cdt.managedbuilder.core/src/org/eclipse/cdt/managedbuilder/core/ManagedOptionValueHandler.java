@@ -119,6 +119,7 @@ public class ManagedOptionValueHandler implements
 					}
 					break;
 				case IOption.INCLUDE_PATH:
+				case IOption.UNDEF_INCLUDE_PATH:
 					if (Arrays.equals(option.getIncludePaths(), (String[])defaultValue)) {
 						return true;
 					}
@@ -129,6 +130,7 @@ public class ManagedOptionValueHandler implements
 					}
 					break;
 				case IOption.PREPROCESSOR_SYMBOLS:
+				case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
 					if (Arrays.equals(option.getDefinedSymbols(), (String[])defaultValue)) {
 						return true;
 					}
@@ -147,6 +149,10 @@ public class ManagedOptionValueHandler implements
 				case IOption.LIBRARY_PATHS:
 				case IOption.LIBRARY_FILES:
 				case IOption.MACRO_FILES:
+				case IOption.UNDEF_INCLUDE_FILES:
+				case IOption.UNDEF_LIBRARY_PATHS:
+				case IOption.UNDEF_LIBRARY_FILES:
+				case IOption.UNDEF_MACRO_FILES:
 				default:
 					if (Arrays.equals(option.getBasicStringListValue(), (String[])defaultValue)) {
 						return true;

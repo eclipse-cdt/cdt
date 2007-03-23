@@ -863,6 +863,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 							&& option.getValueType() != IOption.LIBRARY_PATHS
 							&& option.getValueType() != IOption.LIBRARY_FILES
 							&& option.getValueType() != IOption.MACRO_FILES
+							&& option.getValueType() != IOption.UNDEF_INCLUDE_PATH
+							&& option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS
+							&& option.getValueType() != IOption.UNDEF_INCLUDE_FILES
+							&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
+							&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
+							&& option.getValueType() != IOption.UNDEF_MACRO_FILES
 							)) {
 				return;
 			}
@@ -890,6 +896,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					&& option.getValueType() != IOption.LIBRARY_PATHS
 					&& option.getValueType() != IOption.LIBRARY_FILES
 					&& option.getValueType() != IOption.MACRO_FILES
+					&& option.getValueType() != IOption.UNDEF_INCLUDE_PATH
+					&& option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS
+					&& option.getValueType() != IOption.UNDEF_INCLUDE_FILES
+					&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
+					&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
+					&& option.getValueType() != IOption.UNDEF_MACRO_FILES
 					))
 				return;
 		} catch (BuildException e){
@@ -919,6 +931,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				&& option.getValueType() != IOption.LIBRARY_PATHS
 				&& option.getValueType() != IOption.LIBRARY_FILES
 				&& option.getValueType() != IOption.MACRO_FILES
+				&& option.getValueType() != IOption.UNDEF_INCLUDE_PATH
+				&& option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS
+				&& option.getValueType() != IOption.UNDEF_INCLUDE_FILES
+				&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
+				&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
+				&& option.getValueType() != IOption.UNDEF_MACRO_FILES
 					)) {
 				return;
 			}
@@ -3566,6 +3584,26 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 		return 0;
 	}
+	
+	public static int optionUndefTypeToEntryKind(int type){
+		switch(type){
+		case IOption.UNDEF_INCLUDE_PATH:
+			return ICLanguageSettingEntry.INCLUDE_PATH;
+		case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+			return ICLanguageSettingEntry.MACRO;
+		case IOption.UNDEF_INCLUDE_FILES:
+			return ICLanguageSettingEntry.INCLUDE_FILE;
+		case IOption.UNDEF_LIBRARY_PATHS:
+			return ICLanguageSettingEntry.LIBRARY_PATH;
+		case IOption.UNDEF_LIBRARY_FILES:
+			return ICLanguageSettingEntry.LIBRARY_FILE;
+		case IOption.UNDEF_MACRO_FILES:
+			return ICLanguageSettingEntry.MACRO_FILE;
+//		case IOption.LIBRARIES:
+//			return ICLanguageSettingEntry.LIBRARY_PATH;
+		}
+		return 0;
+	}
 
 	public static int entryKindToOptionType(int kind){
 		switch(kind){
@@ -3585,6 +3623,23 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return 0;
 	}
 	
+	public static int entryKindToUndefOptionType(int kind){
+		switch(kind){
+		case ICLanguageSettingEntry.INCLUDE_PATH:
+			return IOption.UNDEF_INCLUDE_PATH;
+		case ICLanguageSettingEntry.INCLUDE_FILE:
+			return IOption.UNDEF_INCLUDE_FILES;
+		case ICLanguageSettingEntry.MACRO:
+			return IOption.UNDEF_PREPROCESSOR_SYMBOLS;
+		case ICLanguageSettingEntry.MACRO_FILE:
+			return IOption.UNDEF_MACRO_FILES;
+		case ICLanguageSettingEntry.LIBRARY_PATH:
+			return IOption.UNDEF_LIBRARY_PATHS;//TODO IOption.LIBRARIES;
+		case ICLanguageSettingEntry.LIBRARY_FILE:
+			return IOption.UNDEF_LIBRARY_FILES;
+		}
+		return 0;
+	}
 	public static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg){
 		ICConfigurationDescription des = ((Configuration)cfg).getConfigurationDescription();
 		if(des == null){

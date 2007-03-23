@@ -137,7 +137,12 @@ public class OptionReference implements IOption {
 			case LIBRARY_PATHS:
 			case LIBRARY_FILES:
 			case MACRO_FILES:
-
+			case UNDEF_INCLUDE_PATH:
+			case UNDEF_PREPROCESSOR_SYMBOLS:
+			case UNDEF_INCLUDE_FILES:
+			case UNDEF_LIBRARY_PATHS:
+			case UNDEF_LIBRARY_FILES:
+			case UNDEF_MACRO_FILES:
 				List valueList = new ArrayList();
 				NodeList nodes = element.getElementsByTagName(LIST_VALUE);
 				for (int i = 0; i < nodes.getLength(); ++i) {
@@ -205,6 +210,12 @@ public class OptionReference implements IOption {
 				case LIBRARY_PATHS:
 				case LIBRARY_FILES:
 				case MACRO_FILES:
+				case UNDEF_INCLUDE_PATH:
+				case UNDEF_PREPROCESSOR_SYMBOLS:
+				case UNDEF_INCLUDE_FILES:
+				case UNDEF_LIBRARY_PATHS:
+				case UNDEF_LIBRARY_FILES:
+				case UNDEF_MACRO_FILES:
 					List valueList = new ArrayList();
 					IManagedConfigElement[] valueElements = element.getChildren(LIST_VALUE);
 					for (int i = 0; i < valueElements.length; ++i) {
@@ -258,6 +269,12 @@ public class OptionReference implements IOption {
 			case LIBRARY_PATHS:
 			case LIBRARY_FILES:
 			case MACRO_FILES:
+			case UNDEF_INCLUDE_PATH:
+			case UNDEF_PREPROCESSOR_SYMBOLS:
+			case UNDEF_INCLUDE_FILES:
+			case UNDEF_LIBRARY_PATHS:
+			case UNDEF_LIBRARY_FILES:
+			case UNDEF_MACRO_FILES:
 				ArrayList stringList = (ArrayList)value;
 				ListIterator iter = stringList.listIterator();
 				while (iter.hasNext()) {
@@ -651,7 +668,14 @@ public class OptionReference implements IOption {
 			|| getValueType() == INCLUDE_FILES
 			|| getValueType() == LIBRARY_PATHS
 			|| getValueType() == LIBRARY_FILES
-			|| getValueType() == MACRO_FILES) {
+			|| getValueType() == MACRO_FILES
+			|| getValueType() == UNDEF_INCLUDE_PATH
+			|| getValueType() == UNDEF_PREPROCESSOR_SYMBOLS
+			|| getValueType() == UNDEF_INCLUDE_FILES
+			|| getValueType() == UNDEF_LIBRARY_PATHS
+			|| getValueType() == UNDEF_LIBRARY_FILES
+			|| getValueType() == UNDEF_MACRO_FILES
+			) {
 			// Just replace what the option reference is holding onto 
 			this.value = new ArrayList(Arrays.asList(value));
 		}

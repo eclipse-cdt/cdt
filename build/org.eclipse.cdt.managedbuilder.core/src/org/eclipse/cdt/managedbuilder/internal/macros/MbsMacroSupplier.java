@@ -923,6 +923,30 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
 						fStringListValue = option.getBasicStringListValue();
 						break;
+					case IOption.UNDEF_INCLUDE_PATH:
+						fType = IBuildMacro.VALUE_PATH_DIR_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
+					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+						fType = IBuildMacro.VALUE_TEXT_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
+					case IOption.UNDEF_INCLUDE_FILES:
+						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
+					case IOption.UNDEF_LIBRARY_PATHS:
+						fType = IBuildMacro.VALUE_PATH_DIR_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
+					case IOption.UNDEF_LIBRARY_FILES:
+						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
+					case IOption.UNDEF_MACRO_FILES:
+						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
 					}
 					if(fStringValue != null)
 						fStringValue = CdtVariableResolver.resolveToString(fStringValue,new IncludeDefaultsSubstitutor(fParentOptionContextData));

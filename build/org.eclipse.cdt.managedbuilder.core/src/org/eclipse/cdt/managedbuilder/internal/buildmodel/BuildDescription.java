@@ -1113,7 +1113,13 @@ public class BuildDescription implements IBuildDescription {
 								optType == IOption.INCLUDE_FILES ||
 								optType == IOption.LIBRARY_PATHS ||
 								optType == IOption.LIBRARY_FILES ||
-								optType == IOption.MACRO_FILES) {
+								optType == IOption.MACRO_FILES ||
+								optType == IOption.UNDEF_INCLUDE_PATH ||
+								optType == IOption.UNDEF_PREPROCESSOR_SYMBOLS ||
+								optType == IOption.UNDEF_INCLUDE_FILES ||
+								optType == IOption.UNDEF_LIBRARY_PATHS ||
+								optType == IOption.UNDEF_LIBRARY_FILES ||
+								optType == IOption.UNDEF_MACRO_FILES) {
 							List outputList = (List)option.getValue();
 							// Add outputPrefix to each if necessary
 							if(outputList != null && outputList.size() > 0){
@@ -1419,7 +1425,13 @@ public class BuildDescription implements IBuildDescription {
 								optType == IOption.INCLUDE_FILES ||
 								optType == IOption.LIBRARY_PATHS ||
 								optType == IOption.LIBRARY_FILES ||
-								optType == IOption.MACRO_FILES
+								optType == IOption.MACRO_FILES ||
+								optType == IOption.UNDEF_INCLUDE_PATH ||
+								optType == IOption.UNDEF_PREPROCESSOR_SYMBOLS ||
+								optType == IOption.UNDEF_INCLUDE_FILES ||
+								optType == IOption.UNDEF_LIBRARY_PATHS ||
+								optType == IOption.UNDEF_LIBRARY_FILES ||
+								optType == IOption.UNDEF_MACRO_FILES
 								) {
 							inputs = (List)option.getValue();
 						}

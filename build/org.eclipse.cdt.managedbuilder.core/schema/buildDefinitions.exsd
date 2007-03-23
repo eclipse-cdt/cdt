@@ -1213,6 +1213,18 @@ Additional special types exist to flag options of special relevance to the build
                   </enumeration>
                   <enumeration value="libFiles">
                   </enumeration>
+                  <enumeration value="undefIncludePath">
+                  </enumeration>
+                  <enumeration value="undefDefinedSymbols">
+                  </enumeration>
+                  <enumeration value="undefLibPaths">
+                  </enumeration>
+                  <enumeration value="undefLibFiles">
+                  </enumeration>
+                  <enumeration value="undefIncludeFiles">
+                  </enumeration>
+                  <enumeration value="undefSymbolFiles">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>

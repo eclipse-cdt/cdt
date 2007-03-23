@@ -573,7 +573,13 @@ public class BuildStep implements IBuildStep {
 							optType == IOption.INCLUDE_FILES ||
 							optType == IOption.LIBRARY_PATHS ||
 							optType == IOption.LIBRARY_FILES ||
-							optType == IOption.MACRO_FILES){
+							optType == IOption.MACRO_FILES ||
+							optType == IOption.UNDEF_INCLUDE_PATH ||
+							optType == IOption.UNDEF_PREPROCESSOR_SYMBOLS ||
+							optType == IOption.UNDEF_INCLUDE_FILES ||
+							optType == IOption.UNDEF_LIBRARY_PATHS ||
+							optType == IOption.UNDEF_LIBRARY_FILES ||
+							optType == IOption.UNDEF_MACRO_FILES){
 						//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative 
 						//  to top build directory relative
 						String[] paths = new String[bRcs.length];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -303,6 +303,13 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				if (reference != null)
 					buf.append(reference);
 				buf.append('}');
+				int bound= c.offset > 200 ? c.offset - 200 : CHeuristicScanner.UNBOUND;
+				int bracePos = scanner.findOpeningPeer(c.offset - 1, bound, '{', '}');
+				if (bracePos != CHeuristicScanner.NOT_FOUND) {
+					if (scanner.looksLikeCompositeTypeDefinitionBackward(bracePos, bound)) {
+						buf.append(';');
+					}
+				}
 			}
 			// insert extra line upon new line between two braces
 			else if (c.offset > start && contentStart < lineEnd && d.getChar(contentStart) == '}') {

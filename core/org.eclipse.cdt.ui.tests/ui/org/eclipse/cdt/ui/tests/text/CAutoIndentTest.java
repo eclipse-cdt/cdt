@@ -65,6 +65,18 @@ public class CAutoIndentTest extends TestCase {
 			return (IAutoEditStrategy)fStrategyMap.get(contentType);
 		}
 
+		/**
+		 * Empties the document, and returns the caret to the origin (0,0)
+		 */
+		public void reset() {
+			try {
+				goTo(0,0);
+				fDoc.set("");
+			} catch(BadLocationException ble) {
+				fail(ble.getMessage());
+			}
+		}
+		
 		public void type(String text) throws BadLocationException {
 			for (int i = 0; i < text.length(); ++i) {
 				type(text.charAt(i));
@@ -396,4 +408,84 @@ public class CAutoIndentTest extends TestCase {
 		assertEquals("\t// int f;", tester.getLine(0)); //$NON-NLS-1$
 	}
 
+	/**
+	 * Tests brackets with semi-colons are inserted in the appropriate
+	 * contexts
+	 * @throws BadLocationException
+	 */
+	public void testBracketWithSemiColonInsertion() throws BadLocationException {
+		AutoEditTester tester = createAutoEditTester(); 
+		String[] kw= new String[] {"class", "union", "struct", "enum"};
+		String[] kw_inh= new String[] {"class", "union", "struct", "enum"};
+
+		for(int i=0; i<kw.length; i++) {
+			tester.reset();
+
+			tester.type("\n\n\n "+kw[i]+" A {\n"); //$NON-NLS-1$
+			assertEquals("\n\n\n "+kw[i]+" A {\n\t \n };", tester.fDoc.get()); //$NON-NLS-1$
+		}
+		
+		for(int i=0; i<kw.length; i++) {
+			tester.reset();
+
+			tester.type(kw[i]+" A {\n"); //$NON-NLS-1$
+			assertEquals(kw[i]+" A {\n\t\r\n};", tester.fDoc.get()); //$NON-NLS-1$
+		}
+		
+		for(int i=0; i<kw.length; i++) {		
+			tester.reset();
+
+			tester.type("\n\n\n "+kw[i]+" A {\n"); //$NON-NLS-1$
+			assertEquals("\n\n\n "+kw[i]+" A {\n\t \n };", tester.fDoc.get()); //$NON-NLS-1$
+		}
+		
+		for(int i=0; i<kw.length; i++) {		
+			tester.reset();
+
+			tester.type("\n// foo\n\n\n//bar\n\n"); //$NON-NLS-1$
+			tester.goTo(2,0);
+			tester.type(kw[i]+" A {\n"); //$NON-NLS-1$
+			assertEquals("\n// foo\n"+kw[i]+" A {\n\t\n};\n\n//bar\n\n", tester.fDoc.get()); //$NON-NLS-1$
+		}
+
+		// this tests for a sensible behaviour for enums, although the
+		// code generated is invalid, its the user entered part that is
+		// the problem
+		for(int i=0; i<kw.length; i++) {		
+			tester.reset();
+
+			tester.type("\n\n\n"+kw[i]+" A\n:\npublic B\n,\npublic C\n{\n"); //$NON-NLS-1$
+			assertEquals("\n\n\n"+kw[i]+" A\n:\n\tpublic B\n\t,\n\tpublic C\n\t{\n\t\n\t};", tester.fDoc.get()); //$NON-NLS-1$
+		}
+		
+		for(int i=0; i<kw.length; i++) {		
+			tester.reset();
+
+			tester.type("\n// foo\n\n\n//bar\n\n"); //$NON-NLS-1$
+			tester.goTo(2,0);
+			tester.type(kw[i]+" /* for(int i=0; i<100; i++) {} */\nA \n{\n"); //$NON-NLS-1$
+			assertEquals("\n// foo\n"+kw[i]+" /* for(int i=0; i<100; i++) {} */\nA \n{\n\t\n};\n\n//bar\n\n", tester.fDoc.get()); //$NON-NLS-1$
+		}		
+	}
+	
+	/**
+	 * Tests that brackets are inserted (without semi-colons) in appropriate
+	 * contexts
+	 * @throws BadLocationException
+	 */
+	public void testBracketInsertion() throws BadLocationException {
+		AutoEditTester tester = createAutoEditTester();
+		
+		tester.type("for (;;) {\n");
+		assertEquals("for (;;) {\n\t\r\n}", tester.fDoc.get()); //$NON-NLS-1$
+		
+		tester.reset();
+		tester.type("for /*class*/ (;;) {\n"); //$NON-NLS-1$
+		assertEquals("for /*class*/ (;;) {\n\t\r\n}", tester.fDoc.get()); //$NON-NLS-1$	
+		
+		tester.reset();
+		tester.type("for (;;) /*class*/ {\n"); //$NON-NLS-1$
+		assertEquals("for (;;) /*class*/ {\n\t\r\n}", tester.fDoc.get()); //$NON-NLS-1$
+	}
 }
+

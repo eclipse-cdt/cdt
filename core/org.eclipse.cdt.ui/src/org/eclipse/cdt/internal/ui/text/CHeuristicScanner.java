@@ -479,6 +479,8 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenCLASS;
 				if ("while".equals(s)) //$NON-NLS-1$
 					return TokenWHILE;
+				if ("union".equals(s)) //$NON-NLS-1$
+					return TokenUNION;
 				break;
 			case 6:
 				if ("delete".equals(s)) //$NON-NLS-1$
@@ -499,6 +501,8 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenDEFAULT;
 				if ("private".equals(s)) //$NON-NLS-1$
 					return TokenPRIVATE;
+				if ("virtual".equals(s)) //$NON-NLS-1$
+					return TokenVIRTUAL;
 				break;
 			case 9:
 				if ("protected".equals(s)) //$NON-NLS-1$
@@ -867,17 +871,17 @@ public final class CHeuristicScanner implements Symbols {
 	 * <code>true</code> if <code>start</code> is at the following positions (|):
 	 * 
 	 * <pre>
-	 *  new new std::vector&lt;std::string&gt;|(10)
-	 *  new new str_vector |(10)
-	 *  new new / * comment * / str_vector |(10)
+	 *  new std::vector&lt;std::string&gt;|(10)
+	 *  new str_vector |(10)
+	 *  new / * comment * / str_vector |(10)
 	 * </pre>
 	 * 
 	 * but not the following:
 	 * 
 	 * <pre>
-	 *  new new std::vector&lt;std::string&gt;(10)|
-	 *  new new std::vector&lt;std::string&gt;|(10)
-	 *  new new vector (10)|
+	 *  new std::vector&lt;std::string&gt;(10)|
+	 *  new std::vector&lt;std::string&gt;|(10)
+	 *  new vector (10)|
 	 *  vector |(10)
 	 * </pre>
 	 * 
@@ -907,8 +911,8 @@ public final class CHeuristicScanner implements Symbols {
 
 	/**
 	 * Returns <code>true</code> if the document, when scanned backwards from <code>start</code>
-	 * appears to contain a field reference, i.e. a (optional) name preceded by a <code>.</code> or <code>-&gt;</code>
-	 * The <code>start</code> must be before the operator.
+	 * appears to contain a field reference, i.e. a (optional) name preceded by a <code>.</code> 
+	 * or <code>-&gt;</code> or <code>::</code>.
 	 * 
 	 * @param start the position after the field reference operator.
 	 * @param bound the first position in <code>fDocument</code> to not consider any more, with
@@ -928,7 +932,129 @@ public final class CHeuristicScanner implements Symbols {
 			if (token == Symbols.TokenMINUS) {
 				return true;
 			}
+		} else if (token == Symbols.TokenCOLON) {
+			token= previousToken(getPosition(), bound);
+			if (token == Symbols.TokenCOLON) {
+				return true;
+			}
 		}
 		return false;
 	}
+	
+	/**
+	 * Returns <code>true</code> if the document, when scanned backwards from <code>start</code>
+	 * appears to be a composite type (class, struct, union) or enum definition. Examples:
+	 * 
+	 * <pre>
+	 * class A {
+	 * struct A {
+	 * class A : B {
+	 * class A : virtual public B, protected C&lt;T&gt; {
+	 * enum E {
+	 * </pre>
+	 * 
+	 * @param start the position of the opening brace.
+	 * @param bound the first position in <code>fDocument</code> to not consider any more, with
+	 *        <code>bound</code> &lt; <code>start</code>, or <code>UNBOUND</code>
+	 * @return <code>true</code> if the current position looks like a composite type definition
+	 */
+	public boolean looksLikeCompositeTypeDefinitionBackward(int start, int bound) {
+		int token= previousToken(start - 1, bound);
+		if (token == Symbols.TokenIDENT) {
+			token= previousToken(getPosition(), bound);
+			switch (token) {
+			case Symbols.TokenCLASS:
+			case Symbols.TokenSTRUCT:
+			case Symbols.TokenUNION:
+			case Symbols.TokenENUM:
+				return true; // no base-clause
+			default:
+				// backtrack
+				token= previousToken(start - 1, bound);
+				break;
+			}
+		}
+		// match base-clause
+		if (token == Symbols.TokenGREATERTHAN) {
+			findOpeningPeer(getPosition(), bound, '<', '>');
+			token= previousToken(getPosition(), bound);
+			if (token != Symbols.TokenLESSTHAN) {
+				return false;
+			}
+			token= previousToken(getPosition(), bound);
+		}
+		outer: while (token == Symbols.TokenIDENT) {// type name or base type
+			token= previousToken(getPosition(), bound);
+			// match nested-name-specifier
+			while (token == Symbols.TokenCOLON) { // colon of qualification
+				token= previousToken(getPosition(), bound);
+				if (token != Symbols.TokenCOLON) { // second colon of qualification
+					break outer;
+				}
+				token= previousToken(getPosition(), bound);
+				if (token != Symbols.TokenIDENT) // qualification name?
+					break;
+				token= previousToken(getPosition(), bound);
+			}
+			switch (token) {
+			case Symbols.TokenVIRTUAL:
+				token= previousToken(getPosition(), bound);
+				/* fallthrough */
+			case Symbols.TokenPUBLIC:
+			case Symbols.TokenPROTECTED:
+			case Symbols.TokenPRIVATE:
+				token= previousToken(getPosition(), bound);
+				if (token == Symbols.TokenVIRTUAL) {
+					token= previousToken(getPosition(), bound);
+				}
+				if (token == Symbols.TokenCOMMA) {
+					token= previousToken(getPosition(), bound);
+					if (token == Symbols.TokenGREATERTHAN) {
+						findOpeningPeer(getPosition(), bound, '<', '>');
+						token= previousToken(getPosition(), bound);
+						if (token != Symbols.TokenLESSTHAN) {
+							return false;
+						}
+						token= previousToken(getPosition(), bound);
+					}
+					continue; // another base type
+				}
+				if (token != Symbols.TokenCOLON) // colon after class def identifier
+					return false;
+				/* fallthrough */
+			case Symbols.TokenCOLON:
+				token= previousToken(getPosition(), bound);
+				break outer;
+			case Symbols.TokenCOMMA:
+				token= previousToken(getPosition(), bound);
+				if (token == Symbols.TokenGREATERTHAN) {
+					findOpeningPeer(getPosition(), bound, '<', '>');
+					token= previousToken(getPosition(), bound);
+					if (token != Symbols.TokenLESSTHAN) {
+						return false;
+					}
+					token= previousToken(getPosition(), bound);
+				}
+				continue; // another base type
+			case Symbols.TokenIDENT:
+				break outer;
+			default:
+				return false;
+			}
+		}
+		if (token != Symbols.TokenIDENT) {
+			return false;
+		}
+		token= previousToken(getPosition(), bound);
+		switch (token) {
+		case Symbols.TokenCLASS:
+		case Symbols.TokenSTRUCT:
+		case Symbols.TokenUNION:
+		case Symbols.TokenENUM:  // enum is actually not valid here
+			return true;
+		default:
+			return false;
+		}
+	}
+
 }

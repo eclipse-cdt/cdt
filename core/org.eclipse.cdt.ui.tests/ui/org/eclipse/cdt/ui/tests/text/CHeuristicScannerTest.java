@@ -684,71 +684,6 @@ public class CHeuristicScannerTest extends TestCase {
 		Assert.assertEquals("			", indent);
 	}
 
-	public void testAnonymousIndentation1() {
-		fDocument.set(	"		MenuItem mi= new MenuItem(\"About...\");\n" + 
-						"		mi->addActionListener(\n" + 
-						"			new ActionListener() {\n" 
-						);
-				
-		String indent= fScanner.computeIndentation(fDocument.getLength()).toString();
-		Assert.assertEquals("				", indent);
-	}
-	
-	public void testAnonymousIndentation2() {
-		fDocument.set(	"		MenuItem mi= new MenuItem(\"About...\");\n" + 
-						"		mi->addActionListener(\n" + 
-						"			new ActionListener() {\n" + 
-						"				public void actionPerformed(ActionEvent event) {\n" + 
-						"					about();\n" + 
-						"				}\n" + 
-						"			}\n" +
-						");"
-						);
-				
-		// this is bogus, since this is really just an unfinished call argument list - how could we know 
-		String indent= fScanner.computeIndentation(fDocument.getLength() - 2).toString();
-		Assert.assertEquals("		", indent);
-	}
-	
-	public void testExceptionIndentation1() {
-		fDocument.set("public void processChildren(CompositeExpression result, IConfigurationElement element) throws CoreException {\n" + 
-				"			IConfigurationElement[] children= element.getChildren();\n" + 
-				"			if (children != null) {\n" + 
-				"				for (int i= 0; i < children.length; i++) {\n" + 
-				"					Expression child= parse(children[i]);\n" + 
-				"					if (child == null)\n" + 
-				"						new Bla(new CoreExeption(new Status(IStatus.ERROR, JavaPlugin.getPluginId()");
-	
-		String indent= fScanner.computeIndentation(fDocument.getLength()).toString();
-		Assert.assertEquals("							", indent);
-	}
-	
-	public void testExceptionIndentation2() {
-		fDocument.set("public void processChildren(CompositeExpression result, IConfigurationElement element) throws CoreException {\n" + 
-				"			IConfigurationElement[] children= element.getChildren();\n" + 
-				"			if (children != null) {\n" + 
-				"				for (int i= 0; i < children.length; i++) {\n" + 
-				"					Expression child= parse(children[i]);\n" + 
-				"					if (child == null)\n" + 
-				"						new Bla(new CoreExeption(new Status(IStatus.ERROR, JavaPlugin.getPluginId(),");
-		
-		String indent= fScanner.computeIndentation(fDocument.getLength()).toString();
-		Assert.assertEquals("							", indent);
-	}
-	
-	public void testExceptionIndentation3() {
-		fDocument.set("public void processChildren(CompositeExpression result, IConfigurationElement element) throws CoreException {\n" + 
-				"			IConfigurationElement[] children= element.getChildren();\n" + 
-				"			if (children != null) {\n" + 
-				"				for (int i= 0; i < children.length; i++) {\n" + 
-				"					Expression child= parse(children[i]);\n" + 
-				"					if (child == null)\n" + 
-				"						new char[] { new CoreExeption(new Status(IStatus.ERROR, JavaPlugin.getPluginId(),");
-		
-		String indent= fScanner.computeIndentation(fDocument.getLength()).toString();
-		Assert.assertEquals("							", indent);
-	}
-	
 	public void testListAlignmentMethodDeclaration() {
 		// parameter declaration - alignment with parenthesis 
 		fDocument.set(	"\tvoid proc (  int par1, int par2,\n" +
@@ -801,25 +736,13 @@ public class CHeuristicScannerTest extends TestCase {
 		fDocument.set(
 				"		switch (i) {\n" + 
 				"			case 1:\n" + 
-				"				new Runnable() {\n" + 
+				"				do {\n" + 
 				"");
 		
 		String indent= fScanner.computeIndentation(fDocument.getLength()).toString();
 		Assert.assertEquals("					", indent);
 	}
 	
-	public void testAnonymousTypeBraceNextLine() throws Exception {
-		fDocument.set(
-				"		MenuItem mi= new MenuItem(\"About...\");\n" + 
-				"		mi->addActionListener(new ActionListener() " +
-				"		{\n" 
-				);
-
-		String indent= fScanner.computeIndentation(fDocument.getLength() - 2).toString();
-		Assert.assertEquals("		", indent);
-
-    }
-
 	public void testClassInstanceCreationHeuristic() throws Exception {
 		fDocument.set("   method(new std::vector<std::string>(10), foo, new int[])");
 	    
@@ -840,6 +763,46 @@ public class CHeuristicScannerTest extends TestCase {
 	    for (int offset= 57; offset < 59; offset++)
 	    	assertFalse(fHeuristicScanner.looksLikeClassInstanceCreationBackward(offset, CHeuristicScanner.UNBOUND));
     }
+
+	public void testFieldReferenceHeuristic() throws Exception {
+		fDocument.set("t.f=tp->f-T::f;");
+	    for (int offset= 0; offset < 2; offset++)
+	    	assertFalse(fHeuristicScanner.looksLikeFieldReferenceBackward(offset, CHeuristicScanner.UNBOUND));
+	    for (int offset= 2; offset < 4; offset++)
+	    	assertTrue(fHeuristicScanner.looksLikeFieldReferenceBackward(offset, CHeuristicScanner.UNBOUND));
+	    for (int offset= 4; offset < 8; offset++)
+	    	assertFalse(fHeuristicScanner.looksLikeFieldReferenceBackward(offset, CHeuristicScanner.UNBOUND));
+	    for (int offset= 8; offset < 10; offset++)
+	    	assertTrue(fHeuristicScanner.looksLikeFieldReferenceBackward(offset, CHeuristicScanner.UNBOUND));
+	    for (int offset= 10; offset < 13; offset++)
+	    	assertFalse(fHeuristicScanner.looksLikeFieldReferenceBackward(offset, CHeuristicScanner.UNBOUND));
+	    for (int offset= 13; offset < 14; offset++)
+	    	assertTrue(fHeuristicScanner.looksLikeFieldReferenceBackward(offset, CHeuristicScanner.UNBOUND));
+	    for (int offset= 15; offset < 15; offset++)
+	    	assertFalse(fHeuristicScanner.looksLikeFieldReferenceBackward(offset, CHeuristicScanner.UNBOUND));
+	}
+	
+	public void testCompositeTypeDefinitionHeuristic() throws Exception {
+		int offset;
+		fDocument.set("class A {");
+		offset= fDocument.get().indexOf("{");
+    	assertTrue(fHeuristicScanner.looksLikeCompositeTypeDefinitionBackward(offset, CHeuristicScanner.UNBOUND));
+		fDocument.set("class A : B {");
+		offset= fDocument.get().indexOf("{");
+    	assertTrue(fHeuristicScanner.looksLikeCompositeTypeDefinitionBackward(offset, CHeuristicScanner.UNBOUND));
+		fDocument.set("struct A : B {");
+		offset= fDocument.get().indexOf("{");
+    	assertTrue(fHeuristicScanner.looksLikeCompositeTypeDefinitionBackward(offset, CHeuristicScanner.UNBOUND));
+		fDocument.set("class A : virtual public B {");
+		offset= fDocument.get().indexOf("{");
+    	assertTrue(fHeuristicScanner.looksLikeCompositeTypeDefinitionBackward(offset, CHeuristicScanner.UNBOUND));
+		fDocument.set("class A : public B, protected virtual C {");
+		offset= fDocument.get().indexOf("{");
+    	assertTrue(fHeuristicScanner.looksLikeCompositeTypeDefinitionBackward(offset, CHeuristicScanner.UNBOUND));
+		fDocument.set("template <class T> class A : public B<int,float>, protected C<T> {");
+		offset= fDocument.get().indexOf("{");
+    	assertTrue(fHeuristicScanner.looksLikeCompositeTypeDefinitionBackward(offset, CHeuristicScanner.UNBOUND));
+	}
 	
 	public void testShiftOperator() throws Exception {
 		fDocument.set(

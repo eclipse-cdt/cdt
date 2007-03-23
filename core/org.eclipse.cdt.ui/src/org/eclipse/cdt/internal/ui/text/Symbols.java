@@ -54,6 +54,8 @@ public interface Symbols {
 	int TokenDELETE= 1027; 
 	int TokenCLASS= 1028;
 	int TokenSTRUCT= 1029;
-	int TokenENUM= 1030;
+	int TokenUNION= 1030;
+	int TokenENUM= 1031;
+	int TokenVIRTUAL= 1032;
 	int TokenIDENT= 2000;
 }

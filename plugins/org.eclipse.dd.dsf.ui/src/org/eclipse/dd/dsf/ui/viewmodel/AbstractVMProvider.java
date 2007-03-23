@@ -543,11 +543,11 @@ abstract public class AbstractVMProvider implements IVMProvider
 
     class HasElementsUpdate extends ViewerUpdate implements IHasChildrenUpdate {
 
-        final private GetDataDone<Boolean> fDone;
+        final private GetDataDone<Boolean> fHasElemsDone;
         
         HasElementsUpdate(IHasChildrenUpdate clientUpdate, GetDataDone<Boolean> done) {
             super(clientUpdate, done);
-            fDone = done;
+            fHasElemsDone = done;
         }
         
         @Override
@@ -556,24 +556,24 @@ abstract public class AbstractVMProvider implements IVMProvider
         }
 
         public void setHasChilren(boolean hasChildren) {
-            fDone.setData(hasChildren);
+            fHasElemsDone.setData(hasChildren);
         }
 
         @Override
         public void done() {
-            assert fDone.getData() != null || !fDone.getStatus().isOK();
+            assert fHasElemsDone.getData() != null || !fHasElemsDone.getStatus().isOK();
             super.done();            
         }
     }
 
     class ElementsCountUpdate extends ViewerUpdate implements IChildrenCountUpdate {
-        final private GetDataDone<Integer> fDone;
+        final private GetDataDone<Integer> fCountDone;
         final private TreePath fElementPath;
         
         ElementsCountUpdate(IViewerUpdate clientUpdate, GetDataDone<Integer> done, TreePath elementPath) {
             super(clientUpdate, done);
             fElementPath = elementPath;
-            fDone = done;
+            fCountDone = done;
         }
 
         @Override
@@ -582,12 +582,12 @@ abstract public class AbstractVMProvider implements IVMProvider
         }
 
         public void setChildCount(int count) {
-            fDone.setData(count);
+            fCountDone.setData(count);
         }
         
         @Override
         public void done() {
-            assert fDone.getData() != null || !fDone.getStatus().isOK();
+            assert fCountDone.getData() != null || !fCountDone.getStatus().isOK();
             super.done();
         }
 

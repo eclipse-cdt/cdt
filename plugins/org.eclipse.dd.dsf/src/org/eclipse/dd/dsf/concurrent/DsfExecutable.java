@@ -43,7 +43,6 @@ public class DsfExecutable {
         assert ASSERTIONS_ENABLED = true;
         DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
                 Platform.getDebugOption("org.eclipse.dd.dsf/debug/executor")); //$NON-NLS-1$
-        assert ASSERTIONS_ENABLED = true;
     }  
     
     /** 

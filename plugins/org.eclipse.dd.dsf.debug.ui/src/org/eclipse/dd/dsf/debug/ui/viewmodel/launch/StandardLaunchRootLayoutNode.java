@@ -39,7 +39,7 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
     implements IVMRootLayoutNode
 {
     public static class LaunchesEvent {
-        public enum Type { ADDED, REMOVED, CHANGED, TERMINATED };
+        public enum Type { ADDED, REMOVED, CHANGED, TERMINATED }
         public final ILaunch[] fLaunches;
         public final Type fType;
         
@@ -88,6 +88,7 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
         return flags | super.getDeltaFlags(e);
     }
 
+    @Override
     public void createDelta(Object event, final GetDataDone<IModelDelta> done) {
         /*
          * Create the root of the delta.  Since the launch object is not at the 
@@ -121,7 +122,7 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
                 new Done() { 
                     public void run() {
                         if (isDisposed()) return;
-                        if (propagateError(getExecutor(), done, "Failed to create delta.")); //$NON-NLS-1$
+                        if (propagateError(getExecutor(), done, "Failed to create delta.")) return; //$NON-NLS-1$
                         done.setData(viewRootDelta);
                         getExecutor().execute(done);
                     }

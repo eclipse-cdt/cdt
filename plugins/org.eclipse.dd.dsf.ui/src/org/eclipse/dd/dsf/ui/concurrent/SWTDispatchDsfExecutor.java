@@ -31,7 +31,8 @@ public class SWTDispatchDsfExecutor extends DefaultDsfExecutor
 	{
 		return new Callable<V>()
 		{
-			public V call() throws Exception
+			@SuppressWarnings("unchecked")
+            public V call() throws Exception
 			{
 				final Object[] v = new Object[1];
 				final Throwable[] e = new Throwable[1];

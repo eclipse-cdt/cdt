@@ -51,14 +51,18 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
             fProcess = process;
         }
         
+        @Override
         public IVMLayoutNode getLayoutNode() { return StandardProcessLayoutNode.this; }        
-        @SuppressWarnings("unchecked") public Object getAdapter(Class adapter) { 
+        @Override
+        @SuppressWarnings("unchecked")
+        public Object getAdapter(Class adapter) { 
             Object vmcAdapter = super.getAdapter(adapter);
             if (vmcAdapter != null) {
                 return vmcAdapter;
             }
             return fProcess.getAdapter(adapter); 
         }
+        @Override
         public String toString() { return "IProcess " + fProcess.toString(); } //$NON-NLS-1$
 
         public String getAttribute(String key) { return fProcess.getAttribute(key); }
@@ -71,9 +75,11 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
         public boolean isTerminated() { return fProcess.isTerminated(); }
         public void terminate() throws DebugException { fProcess.terminate(); }
         
+        @Override
         public boolean equals(Object other) { 
             return other instanceof VMC && fProcess.equals(((VMC)other).fProcess);
         }
+        @Override
         public int hashCode() { return fProcess.hashCode(); }
     }
 
@@ -132,7 +138,7 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
     }
 
     // @see org.eclipse.dd.dsf.ui.viewmodel.IViewModelLayoutNode#retrieveLabel(org.eclipse.dd.dsf.ui.viewmodel.IVMContext, org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor)
-    public void updateLabel(IVMContext vmc, ILabelRequestMonitor result, String[] columns) {
+    public void updateLabel(@SuppressWarnings("unused")IVMContext vmc, ILabelRequestMonitor result, @SuppressWarnings("unused") String[] columns) {
         
         /*
          * The implementation of IAdapterFactory that uses this node should not
@@ -198,7 +204,7 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
         parent.addNode(new VMC((IProcess)event.getSource()), IModelDelta.STATE);
     }
 
-    protected void handleCreate(DebugEvent event, VMDelta parent) {
+    protected void handleCreate(@SuppressWarnings("unused") DebugEvent event, @SuppressWarnings("unused") VMDelta parent) {
         // do nothing - Launch change notification handles this
     }
 

@@ -68,7 +68,8 @@ abstract public class AbstractVMRootLayoutNode extends AbstractVMLayoutNode impl
      * There is no use case for a root node implementing this method, but its 
      * easier to just impelemnt it for sake of uniformity of model.
      */
-    public void updateLabel(IVMContext vmc, ILabelUpdate update) {
+    public void updateLabel(@SuppressWarnings("unused")
+    IVMContext vmc, ILabelUpdate update) {
         update.done();
     }
     
@@ -88,7 +89,7 @@ abstract public class AbstractVMRootLayoutNode extends AbstractVMLayoutNode impl
             new Done() { 
                 public void run() {
                     if (isDisposed()) return;
-                    if (propagateError(getExecutor(), done, "Failed to create delta.")); //$NON-NLS-1$
+                    if (propagateError(getExecutor(), done, "Failed to create delta.")) return; //$NON-NLS-1$
                     done.setData(rootDelta);
                     getExecutor().execute(done);
                 }

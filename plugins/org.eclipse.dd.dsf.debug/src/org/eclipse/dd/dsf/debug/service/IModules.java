@@ -75,10 +75,12 @@ public interface IModules extends IDMService {
             this.fOffset = offset;
         }
 
+        @Override
         public int hashCode() {
             return fModule.hashCode() + fSection.hashCode() + fOffset.intValue();
         }
 
+        @Override
         public boolean equals(Object o) {
             if (!(o instanceof ModuleSectionOffset)) return false;
             ModuleSectionOffset mso = (ModuleSectionOffset)o;

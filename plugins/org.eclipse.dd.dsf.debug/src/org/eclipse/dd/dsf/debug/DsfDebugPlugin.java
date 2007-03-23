@@ -42,7 +42,8 @@ public class DsfDebugPlugin extends Plugin {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext context) throws Exception {
+	@Override
+    public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
         DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.dsf.debug.debug.service/debug"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -52,7 +53,8 @@ public class DsfDebugPlugin extends Plugin {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext context) throws Exception {
+	@Override
+    public void stop(BundleContext context) throws Exception {
 		fgPlugin = null;
         fgBundleContext = null;
 		super.stop(context);

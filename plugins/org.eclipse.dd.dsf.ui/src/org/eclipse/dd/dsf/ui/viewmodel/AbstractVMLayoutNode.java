@@ -412,32 +412,32 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
     }
     
     protected class ElementsCountUpdate extends ViewerUpdate implements IChildrenCountUpdate {
-        private final GetDataDone<Integer> fDone;
+        private final GetDataDone<Integer> fElementCountDone;
         
         public ElementsCountUpdate(GetDataDone<Integer> done, IModelDelta delta) {
             super(done, delta);
-            fDone = done;
+            fElementCountDone = done;
         }
 
         public void setChildCount(int numChildren) {
-            fDone.setData(numChildren);
+            fElementCountDone.setData(numChildren);
         }
     }
 
     protected class ElementsUpdate extends ViewerUpdate implements IChildrenUpdate {
         private final List<Object> fChildren = new ArrayList<Object>();
-        private GetDataDone<List<Object>> fDone;
+        private GetDataDone<List<Object>> fElementUpdateDone;
         
         public ElementsUpdate(GetDataDone<List<Object>> done, IModelDelta delta) {
             super(done, delta);
-            fDone = done;
-            fDone.setData(fChildren);
+            fElementUpdateDone = done;
+            fElementUpdateDone.setData(fChildren);
         }
 
         public ElementsUpdate(GetDataDone<List<Object>> done, TreePath path) {
             super(done, path);
-            fDone = done;
-            fDone.setData(fChildren);
+            fElementUpdateDone = done;
+            fElementUpdateDone.setData(fChildren);
         }
 
         public int getOffset() {

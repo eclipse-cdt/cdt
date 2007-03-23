@@ -127,7 +127,8 @@ public class VMDelta extends ModelDelta {
 	 * @param flags change flags for child
 	 * @return newly created child delta
 	 */
-	public VMDelta addNode(Object element, int flags) {
+	@Override
+    public VMDelta addNode(Object element, int flags) {
 		VMDelta node = new VMDelta(element, flags);
 		node.setParent(this);
 		addDelta(node);
@@ -144,6 +145,7 @@ public class VMDelta extends ModelDelta {
 	 * @param flags change flags
 	 * @return newly created child delta
 	 */
+    @Override
     public VMDelta addNode(Object element, Object replacement, int flags) {
         VMDelta node = new VMDelta(element, replacement, flags);
         node.setParent(this);
@@ -160,6 +162,7 @@ public class VMDelta extends ModelDelta {
      * @param flags change flags
      * @return newly created child delta
      */
+    @Override
     public VMDelta addNode(Object element, int index, int flags) {
         VMDelta node = new VMDelta(element, index, flags);
         node.setParent(this);
@@ -177,6 +180,7 @@ public class VMDelta extends ModelDelta {
      * @param numChildren the number of children the element has
      * @return newly created child delta
      */
+    @Override
     public VMDelta addNode(Object element, int index, int flags, int numChildren) {
         VMDelta node = new VMDelta(element, index, flags, numChildren);
         node.setParent(this);
@@ -300,6 +304,7 @@ public class VMDelta extends ModelDelta {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#getChildCount()
      */
+    @Override
     public int getChildCount() {
         return fChildCount;
     }
@@ -307,10 +312,12 @@ public class VMDelta extends ModelDelta {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#accept(org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor)
      */
+    @Override
     public void accept(IModelDeltaVisitor visitor) {
         doAccept(visitor, 0);
     }
     
+    @Override
     protected void doAccept(IModelDeltaVisitor visitor, int depth) {
         if (visitor.visit(this, depth)) {
             ModelDelta[] childDeltas = getChildDeltas();

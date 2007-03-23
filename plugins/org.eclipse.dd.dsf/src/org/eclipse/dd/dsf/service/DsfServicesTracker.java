@@ -55,6 +55,7 @@ public class DsfServicesTracker {
             fFilter = filter;
         }
         
+        @Override
         public boolean equals(Object other) {
             // I guess this doesn't have to assume fFilter can be null, but oh well.
             return other instanceof ServiceKey &&
@@ -64,6 +65,7 @@ public class DsfServicesTracker {
                     (fFilter != null && fFilter.equals(((ServiceKey)other).fFilter))); 
         }
         
+        @Override
         public int hashCode() {
             return (fClassName == null ? 0 : fClassName.hashCode()) + (fFilter == null ? 0 : fFilter.hashCode());
         }

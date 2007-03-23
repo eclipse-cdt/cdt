@@ -79,6 +79,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
          * The IAdaptable implementation.  If the adapter is the DM context, 
          * return the context, otherwise delegate to IDMContext.getAdapter().
          */
+        @Override
         @SuppressWarnings("unchecked")
         public Object getAdapter(Class adapter) {
             Object superAdapter = super.getAdapter(adapter);
@@ -91,6 +92,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
             }
         }
         
+        @Override
         public boolean equals(Object other) {
             if (!(other instanceof AbstractDMVMLayoutNode.DMVMContext)) return false;
             DMVMContext otherVmc = (DMVMContext)other;
@@ -98,10 +100,12 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
                    fDmc.equals(otherVmc.fDmc);
         }
         
+        @Override
         public int hashCode() {
             return AbstractDMVMLayoutNode.this.hashCode() + fDmc.hashCode(); 
         }
      
+        @Override
         public String toString() {
             return fDmc.toString();
         }
@@ -134,6 +138,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
     }
      
     
+    @Override
     public void dispose() {
         fServicesTracker.dispose();
         super.dispose();
@@ -339,7 +344,8 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
      * @see IElementLabelProvider
      * @see IColumnPresentationFactoryAdapter
      */
-    protected void fillColumnLabel(IDMContext<V> dmContext, V dmData, String columnId, int idx, ILabelUpdate update) {
+    protected void fillColumnLabel(@SuppressWarnings("unused") IDMContext<V> dmContext, @SuppressWarnings("unused") V dmData,
+                                   @SuppressWarnings("unused") String columnId, int idx, ILabelUpdate update) {
         update.setLabel("", idx); //$NON-NLS-1$
     }
 
@@ -347,12 +353,12 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
     public int getDeltaFlags(Object e) {
         int flags = 0;
         if (e instanceof IDMEvent) {
-            flags = getNodeDeltaFlagsForDMEvent((IDMEvent)e);
+            flags = getNodeDeltaFlagsForDMEvent((IDMEvent<?>)e);
         } 
         return flags | super.getDeltaFlags(e);
     }
     
-    protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
+    protected int getNodeDeltaFlagsForDMEvent(@SuppressWarnings("unused") IDMEvent<?> e) {
         return IModelDelta.NO_CHANGE;
     }
     
@@ -364,7 +370,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
             if (DsfSession.isSessionActive(getSession().getId())) {
                 getSession().getExecutor().execute(new DsfRunnable() {
                     public void run() {
-                        buildDeltaForDMEvent((IDMEvent)e, parentDelta, nodeOffset, done);
+                        buildDeltaForDMEvent((IDMEvent<?>)e, parentDelta, nodeOffset, done);
                     }
                 });
             } else {

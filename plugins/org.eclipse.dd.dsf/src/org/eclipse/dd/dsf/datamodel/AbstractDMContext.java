@@ -103,6 +103,7 @@ abstract public class AbstractDMContext<V extends IDMData> extends PlatformObjec
      * session is equally important. 
      * @see org.eclipse.runtime.IAdapterManager 
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Object getAdapter(Class adapterType) {
         Object retVal = null;

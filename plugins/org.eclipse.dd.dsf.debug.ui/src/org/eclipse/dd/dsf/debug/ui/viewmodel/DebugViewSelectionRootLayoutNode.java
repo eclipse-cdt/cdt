@@ -86,7 +86,7 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
             boolean potentialMatchFound = false;
             boolean matchFound = false;
             
-            IDMContext<?> eventDmc = ((IDMEvent)event).getDMContext();
+            IDMContext<?> eventDmc = ((IDMEvent<?>)event).getDMContext();
             for (IDMContext<?> eventDmcAncestor : DMContexts.toList(eventDmc)) {
                 IDMContext<?> inputDmcAncestor = DMContexts.getAncestorOfType(inputDmc, eventDmcAncestor.getClass()); 
                 if (inputDmcAncestor != null) {
@@ -129,7 +129,10 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
             IStructuredSelection structSelection = (IStructuredSelection)selection; 
             if (structSelection.getFirstElement() instanceof DMVMContext) 
             {
-                return ((DMVMContext)structSelection.getFirstElement()).getDMC();
+                // Correct cast: (AbstractDMVMLayoutNode<?>.DMVMContext) breaks the javac compiler
+                @SuppressWarnings("unchecked")
+                DMVMContext vmc = (DMVMContext)structSelection.getFirstElement();
+                return vmc.getDMC();
             }
         }
         return null;

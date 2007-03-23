@@ -20,6 +20,7 @@ class StackTraceWrapper {
     
     StackTraceWrapper(StackTraceElement[] elements) { fStackTraceElements = elements; }
     
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(fStackTraceElements.length * 30);
         for (int i = 0; i < fStackTraceElements.length && i < 10; i++) {

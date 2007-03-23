@@ -284,6 +284,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
                         abortExecution(getStatus());
                     }
                 }
+                @Override
                 public String toString() {
                     return "DsfSequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
@@ -335,7 +336,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
                     } else {
                         abortRollBack(getStatus());
                     }
-                };
+                }
                 @Override
                 public String toString() {
                     return "DsfSequence \"" + fTaskName + "\", result for rolling back step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -450,10 +451,12 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
             return (state & (STATE_FINISHED | STATE_CANCELLED | STATE_ABORTED)) != 0;
         }
 
+        @Override
         protected int tryAcquireShared(int ignore) {
             return doIsDone()? 1 : -1;
         }
 
+        @Override
         protected boolean tryReleaseShared(int ignore) {
             return true; 
         }

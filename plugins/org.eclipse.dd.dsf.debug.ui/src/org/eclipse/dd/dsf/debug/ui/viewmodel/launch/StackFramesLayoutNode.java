@@ -190,6 +190,7 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
         update.setLabel(label.toString(), 0);
     }
 
+    @Override
     protected void handleFailedUpdate(IViewerUpdate update) {
         if (update instanceof ILabelUpdate) {
             // Avoid repainting the label if it's not available.  This only slows
@@ -280,7 +281,7 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
             return;
         }          
 
-        IRunControl.IResumedDMEvent resumedEvent = (IRunControl.IResumedDMEvent)e; 
+        IRunControl.IResumedDMEvent resumedEvent = e; 
         if (resumedEvent.getReason() != StateChangeReason.STEP) {
             // Refresh the list of stack frames only if the run operation is not a step.  Also, clear the list
             // of cached frames.

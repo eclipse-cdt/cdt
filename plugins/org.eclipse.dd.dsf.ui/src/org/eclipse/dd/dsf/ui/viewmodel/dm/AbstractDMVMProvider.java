@@ -80,6 +80,7 @@ abstract public class AbstractDMVMProvider extends AbstractVMProvider
     }    
 
     /** Called to dispose the provider. */ 
+    @Override
     public void dispose() {
         try {
             getSession().getExecutor().execute(new Runnable() {

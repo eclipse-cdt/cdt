@@ -101,10 +101,12 @@ abstract public class DsfQuery<V> extends DsfRunnable
             return (state & (STATE_DONE | STATE_CANCELLED)) != 0;
         }
 
+        @Override
         protected int tryAcquireShared(int ignore) {
             return doIsDone()? 1 : -1;
         }
 
+        @Override
         protected boolean tryReleaseShared(int ignore) {
             return true; 
         }

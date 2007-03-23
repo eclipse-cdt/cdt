@@ -195,10 +195,12 @@ public class DsfSession
             fFilter = filter;
         }
         
+        @Override
         public boolean equals(Object other) {
             return other instanceof ListenerEntry && fListener.equals(((ListenerEntry)other).fListener);
         }
         
+        @Override
         public int hashCode() { return fListener.hashCode(); }
     }
 
@@ -278,6 +280,7 @@ public class DsfSession
     public void dispatchEvent(final Object event, final Dictionary serviceProperties) {
         getExecutor().submit(new DsfRunnable() { 
             public void run() { doDispatchEvent(event, serviceProperties);}
+            @Override
             public String toString() { return "Event: " + event + ", from service " + serviceProperties; }  //$NON-NLS-1$ //$NON-NLS-2$
             });
     }
@@ -317,11 +320,13 @@ public class DsfSession
         return fAdapters.get(adapterType);
     }
     
+    @Override
     @ThreadSafe
     public boolean equals(Object other) {
         return other instanceof DsfSession && fId.equals(((DsfSession)other).fId);
     }
     
+    @Override
     @ThreadSafe
     public int hashCode() { return fId.hashCode(); }
 
@@ -340,11 +345,12 @@ public class DsfSession
                         return ((IDsfService)o1.fListener).getStartupNumber() - ((IDsfService)o2.fListener).getStartupNumber();
                     }
                     return 1;
-                };
+                }
                 
+                @Override
                 public boolean equals(Object obj) {
                     return obj == this;
-                };
+                }
             });
 
         // Build a list of listeners and methods that are registered for this event class.

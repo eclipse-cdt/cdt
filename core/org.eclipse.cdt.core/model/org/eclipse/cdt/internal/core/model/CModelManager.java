@@ -1181,14 +1181,14 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		// stop the binary runner for this project
 		removeBinaryRunner(project);
 		// stop indexing jobs for this project
-		CCoreInternals.getPDOMManager().deleteProject(create(project), delta);
+		CCoreInternals.getPDOMManager().deleteProject(create(project));
 	}
 
 	private void closing(IProject project, IResourceDelta delta) {
 		// stop the binary runner for this project
 		removeBinaryRunner(project);
 		// stop indexing jobs for this project
-		CCoreInternals.getPDOMManager().removeProject(create(project));
+		CCoreInternals.getPDOMManager().closeProject(create(project));
 	}
 
 }

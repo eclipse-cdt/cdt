@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -25,6 +26,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
+import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -91,7 +93,7 @@ public class PDOMBugsTest extends BaseTestCase {
 		IIndexLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tmp, cvr);
 		
-		IWritableIndexFragment pdom = new WritablePDOM(tmp, cvr);
+		IWritableIndexFragment pdom = new WritablePDOM(tmp, cvr, new ChunkCache());
 		pdom.acquireReadLock();
 		try {
 			String id= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);

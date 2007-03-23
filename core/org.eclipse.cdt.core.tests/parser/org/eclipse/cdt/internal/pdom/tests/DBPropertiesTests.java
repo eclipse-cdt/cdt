@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -17,6 +18,7 @@ import java.util.Properties;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -35,7 +37,7 @@ public class DBPropertiesTests extends BaseTestCase {
 	protected void setUp() throws Exception {
 		dbLoc = File.createTempFile("test", "db");
 		dbLoc.deleteOnExit();
-		db = new Database(dbLoc);
+		db = new Database(dbLoc, new ChunkCache(), 0);
 	}
 	
 	protected void tearDown() throws Exception {

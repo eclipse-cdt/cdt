@@ -42,8 +42,9 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		defaultOptionsMap.put(CCorePreferenceConstants.TRANSLATION_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAG); 
 		defaultOptionsMap.put(CCorePreferenceConstants.TRANSLATION_TASK_PRIORITIES, CCorePreferenceConstants.DEFAULT_TASK_PRIORITY); 
 		defaultOptionsMap.put(CCorePreferenceConstants.CODE_FORMATTER, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER); 
-                
-		
+		defaultOptionsMap.put(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT, CCorePreferenceConstants.DEFAULT_INDEX_DB_CACHE_SIZE_PCT); 
+		defaultOptionsMap.put(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, CCorePreferenceConstants.DEFAULT_MAX_INDEX_DB_CACHE_SIZE_MB); 
+
 		// Store default values to default preferences
 	 	IEclipsePreferences defaultPreferences = ((IScopeContext) new DefaultScope()).getNode(CCorePlugin.PLUGIN_ID);
 		for (Iterator iter = defaultOptionsMap.entrySet().iterator(); iter.hasNext();) {

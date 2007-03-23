@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -36,8 +37,13 @@ import org.eclipse.core.runtime.CoreException;
 public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter) throws CoreException {
-		super(dbPath, locationConverter);
+		this(dbPath, locationConverter, ChunkCache.getSharedInstance());
 	}
+	
+	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache) throws CoreException {
+		super(dbPath, locationConverter, cache);
+	}
+
 	public IIndexFragmentFile addFile(IIndexFileLocation location) throws CoreException {
 		return super.addFile(location);
 	}

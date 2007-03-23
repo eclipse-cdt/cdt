@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
@@ -49,6 +50,7 @@ import org.eclipse.cdt.internal.core.index.IndexFactory;
 import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
+import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -59,7 +61,6 @@ import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -70,10 +71,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -154,6 +158,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		// the model listener is attached outside of the job in
 		// order to avoid a race condition where its not noticed
 		// that new projects are being created
+		initializeDatabaseCache();
+
 		final CoreModel model = CoreModel.getDefault();
 		model.addElementChangedListener(fCModelListener);
 		
@@ -162,6 +168,32 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			IProject project = projects[i];
 			addProject(project);
 		}
+	}
+
+	private void initializeDatabaseCache() {
+		adjustCacheSize();
+		CCorePlugin.getDefault().getPluginPreferences().addPropertyChangeListener(
+			new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					String prop= event.getProperty();
+					if (prop.equals(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT) || 
+							prop.equals(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB)) {
+						adjustCacheSize();
+					}
+				}
+			}
+		);
+	}
+
+	protected void adjustCacheSize() {
+		final Preferences prefs= CCorePlugin.getDefault().getPluginPreferences();
+		int cachePct= prefs.getInt(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT);
+		int cacheMax= prefs.getInt(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB);
+		cachePct= Math.max(1, Math.min(50, cachePct));   // 1%-50%
+		cacheMax= Math.max(1, cacheMax);                 // >= 1mb
+		long m1= Runtime.getRuntime().maxMemory()/100L * cachePct;
+		long m2= Math.min(m1, cacheMax * 1024L * 1024L);
+		ChunkCache.getSharedInstance().setMaxSize(m2);
 	}
 
 	public IndexProviderManager getIndexProviderManager() {
@@ -527,28 +559,53 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 		}
 	}
-	
-	public void removeProject(ICProject project) {
+
+	public void deleteProject(ICProject cproject) {
+		removeProject(cproject, true);
+	}
+
+	public void closeProject(ICProject cproject) {
+		removeProject(cproject, false);
+	}
+
+
+	private void removeProject(ICProject project, final boolean delete) {
 		IPDOMIndexer indexer= getIndexer(project);
 		if (indexer != null) {
 			stopIndexer(indexer);
 		}
     	unregisterPreferenceListener(project);
-	}
+    	WritablePDOM pdom= null;
+    	synchronized (fProjectToPDOM) {
+			IProject rproject= project.getProject();
+    		pdom = (WritablePDOM) fProjectToPDOM.remove(rproject);  		
+    	}
 
-	public void deleteProject(ICProject cproject, IResourceDelta delta) {
-		// Project is about to be deleted. Stop all indexing tasks for it
-		IPDOMIndexer indexer = getIndexer(cproject);
-		if (indexer != null) {
-			stopIndexer(indexer);
-		}
-		unregisterPreferenceListener(cproject);
-
-		// remove entry for project from PDOM map
-		synchronized (fProjectToPDOM) {
-			IProject project= cproject.getProject();
-			fProjectToPDOM.remove(project);
-		}
+    	if (pdom != null) {
+    		final WritablePDOM finalpdom= pdom;
+    		Job job= new Job(Messages.PDOMManager_ClosePDOMJob) {
+    			protected IStatus run(IProgressMonitor monitor) {
+        			try {
+        				finalpdom.acquireWriteLock();
+        				try {
+        					finalpdom.close();
+        					if (delete) {
+        						finalpdom.getDB().getLocation().delete();
+        					}
+        				} catch (CoreException e) {
+        					CCorePlugin.log(e);
+        				}
+        				finally {
+        					finalpdom.releaseWriteLock();
+        				}
+        			} catch (InterruptedException e) {
+        			}
+    				return Status.OK_STATUS;
+    			}
+    		};
+    		job.setSystem(true);
+    		job.schedule();
+    	}
 	}
 
 	private void stopIndexer(IPDOMIndexer indexer) {
@@ -872,23 +929,26 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 			// overwrite internal location representations
 			final WritablePDOM newPDOM = new WritablePDOM(targetLocation, pdom.getLocationConverter());
-			
-			newPDOM.acquireWriteLock();
 			try {
-				List notConverted= newPDOM.rewriteLocations(newConverter);
-				
-				// remove content where converter returns null
-				for(Iterator i = notConverted.iterator(); i.hasNext(); ) {
-					PDOMFile file = (PDOMFile) i.next();
-					file.clear();
+				newPDOM.acquireWriteLock();
+				try {
+					List notConverted= newPDOM.rewriteLocations(newConverter);
+
+					// remove content where converter returns null
+					for(Iterator i = notConverted.iterator(); i.hasNext(); ) {
+						PDOMFile file = (PDOMFile) i.next();
+						file.clear();
+					}
+
+					// ensure fragment id has a sensible value, in case callee's do not
+					// overwrite their own values
+					String oldId= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+					newPDOM.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, "exported."+oldId); //$NON-NLS-1$
+				} finally {
+					newPDOM.releaseWriteLock();
 				}
-				
-				// ensure fragment id has a sensible value, in case callee's do not
-				// overwrite their own values
-				String oldId= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-				newPDOM.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, "exported."+oldId); //$NON-NLS-1$
 			} finally {
-				newPDOM.releaseWriteLock();
+				newPDOM.close();
 			}
 		} catch(IOException ioe) {
 			throw new CoreException(CCorePlugin.createStatus(ioe.getMessage()));

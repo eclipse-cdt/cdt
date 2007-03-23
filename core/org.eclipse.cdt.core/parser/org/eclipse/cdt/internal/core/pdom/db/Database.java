@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,9 @@ package org.eclipse.cdt.internal.core.pdom.db;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.ref.ReferenceQueue;
-import java.util.HashSet;
-import java.util.Set;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -61,10 +61,12 @@ public class Database {
 
 	private final File location;
 	private final RandomAccessFile file;
-	Chunk[] toc;
+	private boolean fWritable= false;
+	private Chunk[] chunks;
 	
 	private long malloced;
 	private long freed;
+	private ChunkCache fCache;
 	
 	// public for tests only, you shouldn't need these
 	public static final int VERSION_OFFSET = 0;
@@ -78,32 +80,36 @@ public class Database {
 	
 	public static final int MAX_SIZE = CHUNK_SIZE - 4; // Room for overhead
 		
-	public Database(File location) throws CoreException {
+	public Database(File location, ChunkCache cache, int version) throws CoreException {
 		try {
 			this.location = location;
 			this.file = new RandomAccessFile(location, "rw"); //$NON-NLS-1$
+			fCache= cache;
 			
 			// Allocate chunk table, make sure we have at least one
 			long nChunks = file.length() / CHUNK_SIZE;
+			chunks = new Chunk[(int)nChunks];
 			if (nChunks == 0) {
-				file.seek(0);
-				file.write(new byte[CHUNK_SIZE]); // the header chunk
-				++nChunks;
+				setWritable();
+				createNewChunk();
+				setVersion(version);
+				setReadOnly();
 			}
-			
-			toc = new Chunk[(int)nChunks];
-			toc[0] = new Chunk(file, 0);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
 	
-	public int getVersion() {
-		return toc[0].getInt(0);
+	public FileChannel getChannel() {
+		return file.getChannel();
 	}
 	
-	public void setVersion(int version) {
-		toc[0].putInt(0, version);
+	public int getVersion() throws CoreException {
+		return getChunk(0).getInt(0);
+	}
+	
+	public void setVersion(int version) throws CoreException {
+		getChunk(0).putInt(0, version);
 	}
 
 	/**
@@ -111,93 +117,66 @@ public class Database {
 	 * @throws CoreException
 	 */
 	public void clear(long timeout) throws CoreException {
-		// Clear out the memory headers
-		toc[0].clear(4, DATA_AREA - 4);
+		int version= getVersion();
+		removeChunksFromCache();
 		
-		if (!truncate(timeout)) {
-			// Truncation timed out so the database size couldn't be changed.
-			// The best we can do is mark all chunks as unallocated blocks.
+		// clear out memory headers
+		Chunk header= getChunk(0);
+		setVersion(version);
+		header.clear(4, DATA_AREA - 4);
+		chunks = new Chunk[] {header};
 
-			// Since the block list grows at the head, add all non-header
-			// chunks backwards to ensure list of blocks is ordered first
-			// to last.
-			for (int block = (toc.length - 1) * CHUNK_SIZE; block > 0; block -= CHUNK_SIZE) {
-				addBlock(getChunk(block), CHUNK_SIZE, block); 
-			}
+		try {
+			getChannel().truncate(CHUNK_SIZE);
+		}
+		catch (IOException e) {
+			CCorePlugin.log(e);
 		}
 		malloced = freed = 0;
 	}
-	
-	/**
-	 * Truncate the database as small as possible to reclaim disk space.
-	 * This method returns false if truncation does not succeed within the
-	 * given timeout period (in milliseconds).  A timeout of 0 will cause
-	 * this method to block until the database is successfully truncated.
-	 *  
-	 * @param timeout maximum amount of milliseconds to wait before giving up;
-	 *                0 means wait indefinitely.
-	 * @return true if truncation succeeds; false if the operation times out.
-	 * @throws CoreException if an IO error occurs during truncation
-	 */
-	private boolean truncate(long timeout) throws CoreException {
-		// Queue all the chunks to be reclaimed.  
-		ReferenceQueue queue = new ReferenceQueue();
-		Set references = new HashSet();
-		int totalChunks = toc.length;
-		for (int i = 0; i < toc.length; i++) {
-			if (toc[i] != null) {
-				toc[i].reclaim(queue, references);
-				toc[i] = null;
+
+	private void removeChunksFromCache() {
+		synchronized (fCache) {
+			for (int i = 0; i < chunks.length; i++) {
+				Chunk chunk= chunks[i];
+				if (chunk != null) {
+					fCache.remove(chunk);
+					chunks[i]= null;
+				}
 			}
-		}
-		
-		System.gc();
-		try {
-			// Wait for each chunk to be reclaimed.
-			int totalReclaimed = references.size();
-			while (totalReclaimed > 0) {
-				queue.remove(timeout);
-				totalReclaimed--;
-			}
-			
-			// Truncate everything but the header chunk.
-			try {
-				file.getChannel().truncate(CHUNK_SIZE);
-				// Reinitialize header chunk.
-				toc = new Chunk[] { new Chunk(file, 0) }; 
-				return true;
-			} catch (IOException e) {
-				// Bug 168420:
-				// Truncation failed so we'll reuse the existing
-				// file.
-				toc = new Chunk[totalChunks];
-				toc[0] = new Chunk(file, 0); 
-				return false;
-			}
-		}
-		catch (InterruptedException e) {
-			// Truncation took longer than we wanted, so we'll
-			// reinitialize the header chunk and leave the file
-			// size alone.
-			toc[0] = new Chunk(file, 0);
-			return false;
 		}
 	}
 	
+	
 	/**
 	 * Return the Chunk that contains the given offset.
-	 * 
-	 * @param offset
-	 * @return
+	 * @throws CoreException 
 	 */
 	public Chunk getChunk(int offset) throws CoreException {
 		int index = offset / CHUNK_SIZE;
-		Chunk chunk = toc[index];
-		if (chunk == null) {
-			chunk = toc[index] = new Chunk(file, index * CHUNK_SIZE);
+		
+		// for performance reasons try to find chunk and mark it without
+		// synchronizing. This means that we might pick up a chunk that
+		// has been paged out, which is ok.
+		// Furthermore the hitflag may not be seen by the clock-alorithm,
+		// which might lead to the eviction of a chunk. With the next
+		// cache failure we are in sync again, though.
+		Chunk chunk = chunks[index];		
+		if (chunk != null && chunk.fWritable == fWritable) {
+			chunk.fCacheHitFlag= true;
+			return chunk;
 		}
 		
-		return chunk;
+		// here is the safe code that has to be performed if we cannot
+		// get ahold of the chunk.
+		synchronized(fCache) {
+			chunk= chunks[index];
+			if (chunk == null) {
+				chunk = chunks[index] = new Chunk(this, index);
+			}
+			fCache.add(chunk, fWritable);
+			return chunk;
+		}
 	}
 
 	/**
@@ -229,11 +208,10 @@ public class Database {
 		// get the block
 		Chunk chunk;
 		if (freeblock == 0) {
-			// Out of memory, allocate a new chunk
-			int i = createChunk();
-			chunk = toc[i];
-			freeblock = i * CHUNK_SIZE;
+			// allocate a new chunk
+			freeblock= createNewChunk();
 			blocksize = CHUNK_SIZE;
+			chunk = getChunk(freeblock);
 		} else {
 			chunk = getChunk(freeblock);
 			removeBlock(chunk, blocksize, freeblock);
@@ -254,28 +232,27 @@ public class Database {
 		return freeblock + 4;
 	}
 	
-	private int createChunk() throws CoreException {
+	private int createNewChunk() throws CoreException {
 		try {
-			Chunk[] oldtoc = toc;
+			Chunk[] oldtoc = chunks;
 			int n = oldtoc.length;
 			int offset = n * CHUNK_SIZE;
 			file.seek(offset);
 			file.write(new byte[CHUNK_SIZE]);
-			toc = new Chunk[n + 1];
-			System.arraycopy(oldtoc, 0, toc, 0, n);
-			toc[n] = new Chunk(file, offset);
-			return n;
+			chunks = new Chunk[n + 1];
+			System.arraycopy(oldtoc, 0, chunks, 0, n);
+			return offset;
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
 	
-	private int getFirstBlock(int blocksize) {
-		return toc[0].getInt((blocksize / MIN_SIZE) * INT_SIZE);
+	private int getFirstBlock(int blocksize) throws CoreException {
+		return getChunk(0).getInt((blocksize / MIN_SIZE) * INT_SIZE);
 	}
 	
-	private void setFirstBlock(int blocksize, int block) {
-		toc[0].putInt((blocksize / MIN_SIZE) * INT_SIZE, block);
+	private void setFirstBlock(int blocksize, int block) throws CoreException {
+		getChunk(0).putInt((blocksize / MIN_SIZE) * INT_SIZE, block);
 	}
 	
 	private void removeBlock(Chunk chunk, int blocksize, int block) throws CoreException {
@@ -321,53 +298,43 @@ public class Database {
 	}
 
 	public void putByte(int offset, byte value) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		chunk.putByte(offset, value);
+		getChunk(offset).putByte(offset, value);
 	}
 	
 	public byte getByte(int offset) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		return chunk.getByte(offset);
+		return getChunk(offset).getByte(offset);
 	}
 	
 	public void putInt(int offset, int value) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		chunk.putInt(offset, value);
+		getChunk(offset).putInt(offset, value);
 	}
 	
 	public int getInt(int offset) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		return chunk.getInt(offset);
+		return getChunk(offset).getInt(offset);
 	}
 
 	public void putShort(int offset, short value) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		chunk.putShort(offset, value);
+		getChunk(offset).putShort(offset, value);
 	}
 	
 	public short getShort(int offset) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		return chunk.getShort(offset);
+		return getChunk(offset).getShort(offset);
 	}
 
 	public void putLong(int offset, long value) throws CoreException {
-		Chunk chunk= getChunk(offset);
-		chunk.putLong(offset, value);
+		getChunk(offset).putLong(offset, value);
 	}
 	
 	public long getLong(int offset) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		return chunk.getLong(offset);
+		return getChunk(offset).getLong(offset);
 	}
 
 	public void putChar(int offset, char value) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		chunk.putChar(offset, value);
+		getChunk(offset).putChar(offset, value);
 	}
 
 	public char getChar(int offset) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		return chunk.getChar(offset);
+		return getChunk(offset).getChar(offset);
 	}
 	
 	public IString newString(String string) throws CoreException {
@@ -392,15 +359,15 @@ public class Database {
 			return new ShortString(this, offset);
 	}
 	
-	public int getNumChunks() {
-		return toc.length;
+	public int getChunkCount() {
+		return chunks.length;
 	}
 
 	public void reportFreeBlocks() throws CoreException {
-		System.out.println("Allocated size: " + toc.length * CHUNK_SIZE); //$NON-NLS-1$
+		System.out.println("Allocated size: " + chunks.length * CHUNK_SIZE); //$NON-NLS-1$
 		System.out.println("malloc'ed: " + malloced); //$NON-NLS-1$
 		System.out.println("free'd: " + freed); //$NON-NLS-1$
-		System.out.println("wasted: " + (toc.length * CHUNK_SIZE - (malloced - freed))); //$NON-NLS-1$
+		System.out.println("wasted: " + (chunks.length * CHUNK_SIZE - (malloced - freed))); //$NON-NLS-1$
 		System.out.println("Free blocks"); //$NON-NLS-1$
 		for (int bs = MIN_SIZE; bs <= CHUNK_SIZE; bs += MIN_SIZE) {
 			int count = 0;
@@ -413,15 +380,23 @@ public class Database {
 				System.out.println("Block size: " + bs + "=" + count); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+		
 	/**
-	 * Closes the database, releasing the file lock. This is public for testing purposes only. 
+	 * Closes the database. 
 	 * <p>
 	 * The behaviour of any further calls to the Database is undefined
 	 * @throws IOException
+	 * @throws CoreException 
 	 */
-	public void close() throws IOException {
-		file.close();
+	public void close() throws CoreException {
+		setReadOnly();
+		removeChunksFromCache();
+		chunks= new Chunk[0];
+		try {
+			file.close();
+		} catch (IOException e) {
+			throw new CoreException(new DBStatus(e));
+		}
 	}
 	
 	/**
@@ -429,5 +404,57 @@ public class Database {
      */
 	public File getLocation() {
 		return location;
+	}
+
+	/**
+	 * Called from any thread via the cache, protected by {@link #fCache}.
+	 */
+	void releaseChunk(Chunk chunk) {
+		if (!chunk.fWritable)
+			chunks[chunk.fSequenceNumber]= null;
+	}
+
+	/**
+	 * Returns the cache used for this database.
+	 * @since 4.0
+	 */
+	public ChunkCache getChunkCache() {
+		return fCache;
+	}
+
+	public void setWritable() {
+		fWritable= true;
+	}
+
+	public void setReadOnly() throws CoreException {
+		if (fWritable) {
+			fWritable= false;
+			flushDirtyChunks();
+		}
+	}
+	
+	public void flushDirtyChunks() throws CoreException {
+		ArrayList dirtyChunks= new ArrayList();
+		synchronized (fCache) {
+			for (int i = 0; i < chunks.length; i++) {
+				Chunk chunk= chunks[i];
+				if (chunk != null && chunk.fWritable) {
+					chunk.fWritable= false;
+					if (chunk.fCacheIndex < 0) {
+						chunks[i]= null;
+					}
+					if (chunk.fDirty) {
+						dirtyChunks.add(chunk);
+					}
+				}
+			}
+		}
+		
+		if (!dirtyChunks.isEmpty()) {
+			for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
+				Chunk chunk = (Chunk) it.next();
+				chunk.flush();
+			}
+		}
 	}
 }

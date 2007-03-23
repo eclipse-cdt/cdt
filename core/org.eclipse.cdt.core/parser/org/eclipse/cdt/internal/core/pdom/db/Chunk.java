@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,113 +13,111 @@
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel.MapMode;
-import java.util.Set;
+import java.nio.ByteBuffer;
 
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- *
+ * Caches the content of a piece of the database.
  */
-public class Chunk {
+final class Chunk {
+	final private ByteBuffer fBuffer;
 
-	private MappedByteBuffer buffer;
+	final Database fDatabase;
+	final int fSequenceNumber;
 	
-	// Cache info
-	private Database db;
-	int index;
-	
-	Chunk(RandomAccessFile file, int offset) throws CoreException {
+	boolean fCacheHitFlag= false;
+	boolean fDirty= false;
+	boolean fWritable= false;
+	int fCacheIndex= -1;
+		
+	Chunk(Database db, int sequenceNumber) throws CoreException {
+		fDatabase= db;
+		fBuffer= ByteBuffer.allocate(Database.CHUNK_SIZE);
+		fSequenceNumber= sequenceNumber;
 		try {
-			index = offset / Database.CHUNK_SIZE;
-			buffer = file.getChannel().map(MapMode.READ_WRITE, offset, Database.CHUNK_SIZE);
+			fDatabase.getChannel().read(fBuffer, fSequenceNumber*Database.CHUNK_SIZE);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
+	
+	void flush() throws CoreException {
+		try {
+			fBuffer.position(0);
+			fDatabase.getChannel().write(fBuffer, fSequenceNumber*Database.CHUNK_SIZE);
+		} catch (IOException e) {
+			throw new CoreException(new DBStatus(e));
+		}
+		fDirty= false;
+	}
 
 	public void putByte(int offset, byte value) {
-		buffer.put(offset % Database.CHUNK_SIZE, value);
+		fDirty= true;
+		fBuffer.put(offset % Database.CHUNK_SIZE, value);
 	}
 	
 	public byte getByte(int offset) {
-		return buffer.get(offset % Database.CHUNK_SIZE);
+		return fBuffer.get(offset % Database.CHUNK_SIZE);
 	}
 	
 	public byte[] getBytes(int offset, int length) {
 		byte[] bytes = new byte[length];
-		buffer.position(offset % Database.CHUNK_SIZE);
-		buffer.get(bytes, 0, length);
+		fBuffer.position(offset % Database.CHUNK_SIZE);
+		fBuffer.get(bytes, 0, length);
 		return bytes;
 	}
 	
 	public void putBytes(int offset, byte[] bytes) {
-		buffer.position(offset % Database.CHUNK_SIZE);
-		buffer.put(bytes, 0, bytes.length);
+		fDirty= true;
+		fBuffer.position(offset % Database.CHUNK_SIZE);
+		fBuffer.put(bytes, 0, bytes.length);
 	}
 	
 	public void putInt(int offset, int value) {
-		buffer.putInt(offset % Database.CHUNK_SIZE, value);
+		fDirty= true;
+		fBuffer.putInt(offset % Database.CHUNK_SIZE, value);
 	}
 	
 	public int getInt(int offset) {
-		return buffer.getInt(offset % Database.CHUNK_SIZE);
+		return fBuffer.getInt(offset % Database.CHUNK_SIZE);
 	}
 
 	public void putShort(int offset, short value) {
-		buffer.putShort(offset % Database.CHUNK_SIZE, value);
+		fDirty= true;
+		fBuffer.putShort(offset % Database.CHUNK_SIZE, value);
 	}
 	
 	public short getShort(int offset) {
-		return buffer.getShort(offset % Database.CHUNK_SIZE);
+		return fBuffer.getShort(offset % Database.CHUNK_SIZE);
 	}
 
 	public long getLong(int offset) {
-		return buffer.getLong(offset % Database.CHUNK_SIZE);
+		return fBuffer.getLong(offset % Database.CHUNK_SIZE);
 	}
 
 	public void putLong(int offset, long value) {
-		buffer.putLong(offset % Database.CHUNK_SIZE, value);
+		fDirty= true;
+		fBuffer.putLong(offset % Database.CHUNK_SIZE, value);
 	}
 	
 	public void putChar(int offset, char value) {
-		buffer.putChar(offset % Database.CHUNK_SIZE, value);
+		fDirty= true;
+		fBuffer.putChar(offset % Database.CHUNK_SIZE, value);
 	}
 	
 	public char getChar(int offset) {
-		return buffer.getChar(offset % Database.CHUNK_SIZE);
+		return fBuffer.getChar(offset % Database.CHUNK_SIZE);
 	}
 
 	public void getCharArray(int offset, char[] result) {
-		buffer.position(offset % Database.CHUNK_SIZE);
-		buffer.asCharBuffer().get(result);
+		fBuffer.position(offset % Database.CHUNK_SIZE);
+		fBuffer.asCharBuffer().get(result);
 	}
 	
 	void clear(int offset, int length) {
-		buffer.position(offset % Database.CHUNK_SIZE);
-		buffer.put(new byte[length]);
-	}
-	
-	/**
-	 * Allow this Chunk to be reclaimed.  Objects allocated by thus Chunk
-	 * may be registered with a ReferenceQueue to allow for notification
-	 * on deallocation.  References registered with the queue are added to
-	 * the Set references.
-	 * 
-	 * @param queue ReferenceQueue to register allocated objects with, or
-	 *              null if notification is not required.
-	 * @param references Populated with references which were registered
-	 *                   with the queue.
-	 */
-	void reclaim(ReferenceQueue queue, Set references) {
-		if (queue != null) {
-			references.add(new WeakReference(buffer, queue));
-		}
-		buffer = null;
+		fDirty= true;
+		fBuffer.position(offset % Database.CHUNK_SIZE);
+		fBuffer.put(new byte[length]);
 	}
 }

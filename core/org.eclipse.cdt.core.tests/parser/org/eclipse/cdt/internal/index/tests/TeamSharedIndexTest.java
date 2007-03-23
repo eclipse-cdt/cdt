@@ -90,7 +90,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 
 	private ICProject recreateProject(final String prjName) throws Exception {
 		final boolean[] changed= {false};
-		IElementChangedListener waitListener= new IElementChangedListener() {
+		final IElementChangedListener listener = new IElementChangedListener() {
 			public void elementChanged(ElementChangedEvent event) {
 				synchronized (changed) {
 					changed[0]= true;
@@ -98,23 +98,27 @@ public class TeamSharedIndexTest extends IndexTestBase {
 				}
 			}
 		};
-		CoreModel.getDefault().addElementChangedListener(waitListener);
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProject prjHandle= workspace.getRoot().getProject(prjName);
-		workspace.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IProjectDescription desc= IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(prjName);
-				prjHandle.create(desc, NPM);
-				prjHandle.open(0, NPM);
-			}
-		}, null);
-		synchronized(changed) {
-			if (!changed[0]) {
-				changed.wait(INDEXER_WAIT_TIME);
-				assertTrue(changed[0]);
+		CoreModel.getDefault().addElementChangedListener(listener);
+		try {
+			final IProject prjHandle= workspace.getRoot().getProject(prjName);
+			workspace.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IProjectDescription desc= IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(prjName);
+					prjHandle.create(desc, NPM);
+					prjHandle.open(0, NPM);
+				}
+			}, null);
+			synchronized(changed) {
+				if (!changed[0]) {
+					changed.wait(INDEXER_WAIT_TIME);
+					assertTrue(changed[0]);
+				}
 			}
 		}
-		CoreModel.getDefault().removeElementChangedListener(waitListener);
+		finally {
+			CoreModel.getDefault().removeElementChangedListener(listener);
+		}
 		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
 		return CoreModel.getDefault().create(workspace.getRoot().getProject(prjName));
 	}

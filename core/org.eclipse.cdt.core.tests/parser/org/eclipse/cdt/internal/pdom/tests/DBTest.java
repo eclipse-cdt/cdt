@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems
+ * Copyright (c) 2005, 2007 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -19,6 +20,7 @@ import junit.framework.Test;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
+import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -32,9 +34,10 @@ public class DBTest extends BaseTestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		db = new Database(getTestDir().append(getName()+System.currentTimeMillis()+".dat").toFile());
+		db = new Database(getTestDir().append(getName()+System.currentTimeMillis()+".dat").toFile(),
+				new ChunkCache(), 0);
 	}
-	
+		
 	public static Test suite() {
 		return suite(DBTest.class);
 	}
@@ -48,9 +51,11 @@ public class DBTest extends BaseTestCase {
 	}
 	
 	protected void tearDown() throws Exception {
+		db.close();
 		if(!db.getLocation().delete()) {
 			db.getLocation().deleteOnExit();
 		}
+		db= null;
 	}
 	
 	public void testBlockSizeAndFirstBlock() throws Exception {
@@ -118,7 +123,7 @@ public class DBTest extends BaseTestCase {
 		// Tests inserting and retrieving strings
 		File f = getTestDir().append("testStrings.dat").toFile();
 		f.delete();
-		final Database db = new Database(f);
+		final Database db = new Database(f, new ChunkCache(), 0);
 
 		String[] names = {
 				"ARLENE",

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2007 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Symbian - Initial implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -22,6 +23,7 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
+import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -50,7 +52,7 @@ public class BTreeTests extends BaseTestCase {
 	// and invoke it multiple times per Junit test
 	protected void init(int degree) throws Exception {
 		dbFile = File.createTempFile("pdomtest", "db");
-		db = new Database(dbFile);
+		db = new Database(dbFile, new ChunkCache(), 0);
 		rootRecord = Database.DATA_AREA;
 		comparator = new BTMockRecordComparator();
 		btree = new BTree(db, rootRecord, degree, comparator);

@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -48,6 +47,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
+import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -114,23 +114,22 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private IIndexLocationConverter locationConverter;
 	
 	public PDOM(File dbPath, IIndexLocationConverter locationConverter) throws CoreException {
-		loadDatabase(dbPath);
+		this(dbPath, locationConverter, ChunkCache.getSharedInstance());
+	}
+	
+	public PDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache) throws CoreException {
+		loadDatabase(dbPath, cache);
 		this.locationConverter = locationConverter;
 	}
 
-	private void loadDatabase(File dbPath) throws CoreException {
+	private void loadDatabase(File dbPath, ChunkCache cache) throws CoreException {
 		fPath= dbPath;
-		boolean exists= fPath.exists();
-		db = new Database(fPath);
+		db = new Database(fPath, cache, VERSION);
+		fileIndex= null;	// holds on to the database, so clear it.
 
-		if (exists) {
-			int version= db.getVersion();
-			if (version == VERSION) {
-				readLinkages();
-			}
-		}
-		else {
-			db.setVersion(VERSION);
+		int version= db.getVersion();
+		if (version == VERSION) {
+			readLinkages();
 		}
 	}
 
@@ -138,9 +137,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return locationConverter;
 	}
 
-	public boolean versionMismatch() {
+	public boolean versionMismatch() throws CoreException {
 		if (db.getVersion() != VERSION) {
-			db.setVersion(VERSION);
 			return true;
 		} else
 			return false;
@@ -231,8 +229,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		// Zero out the File Index and Linkages
 		clearFileIndex();
 		
+		db.setVersion(VERSION);
 		db.putInt(PROPERTIES, 0);
-		
 		db.putInt(LINKAGES, 0);
 		fLinkageIDCache.clear();
 	}
@@ -242,10 +240,10 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		fLinkageIDCache.clear();
 		try {
 			db.close();
-		} catch (IOException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		loadDatabase(file);
+		loadDatabase(file, db.getChunkCache());
 		oldFile.delete();
 	}		
 
@@ -541,6 +539,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			while (lockCount != 0 || waitingReaders > 0)
 				mutex.wait();
 			--lockCount;
+			db.setWritable();
 		}
 	}
 
@@ -549,6 +548,11 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public void releaseWriteLock(int establishReadLocks) {
+		try {
+			db.setReadOnly();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 		assert lockCount == -1;
 		lastWriteAccess= System.currentTimeMillis();
 		synchronized (mutex) {
@@ -684,5 +688,10 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	public String getProperty(String propertyName) throws CoreException {
 		return new DBProperties(db, PROPERTIES).getProperty(propertyName);
+	}
+
+	public void close() throws CoreException {
+		fLinkageIDCache.clear();
+		db.close();
 	}		
 }

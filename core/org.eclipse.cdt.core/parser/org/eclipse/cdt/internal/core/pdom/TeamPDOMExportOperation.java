@@ -96,8 +96,13 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			
 			// create checksums
 			PDOM pdom= new PDOM(tmpPDOM, converter);
-			monitor.setTaskName(Messages.Checksums_taskComputeChecksums);
-			createChecksums(fProject, pdom, tmpChecksums, subMonitor(monitor, 94));
+			try {
+				monitor.setTaskName(Messages.Checksums_taskComputeChecksums);
+				createChecksums(fProject, pdom, tmpChecksums, subMonitor(monitor, 94));
+			}
+			finally {
+				pdom.close();
+			}
 			
 			// create archive
 			createArchive(tmpPDOM, tmpChecksums);
@@ -143,11 +148,6 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		}
 		finally {
 			pdom.releaseReadLock();
-			try {
-				pdom.getDB().close();
-			} catch (IOException e) {
-				CCorePlugin.log(e);
-			}
 		}
 		int i=0;
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();

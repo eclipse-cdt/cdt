@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -44,5 +45,24 @@ public class CCorePreferenceConstants {
 	 * Default code formatter
 	 */
 	public static final String DEFAULT_CODE_FORMATTER = CCorePlugin.PLUGIN_ID + ".defaultCodeFormatter"; //$NON-NLS-1$
+
+	/**
+	 * Cache size for the index in percentage of max memory.
+	 */
+	public static final String INDEX_DB_CACHE_SIZE_PCT = CCorePlugin.PLUGIN_ID + ".indexDBCacheSizePct"; //$NON-NLS-1$
+
+	/**
+	 * Default cache size of the index-db in percentage of max memory.
+	 */
+	public static final String DEFAULT_INDEX_DB_CACHE_SIZE_PCT = "10"; //$NON-NLS-1$
+
+	/**
+	 * Absolute maximum size of the index-db in megabytes.
+	 */
+	public static final String MAX_INDEX_DB_CACHE_SIZE_MB = CCorePlugin.PLUGIN_ID + ".maxIndexDBCacheSizeMB"; //$NON-NLS-1$
 	
+	/**
+	 * Default absolute maximum size of the index-db in megabytes.
+	 */
+	public static final String DEFAULT_MAX_INDEX_DB_CACHE_SIZE_MB = "64"; //$NON-NLS-1$
 }

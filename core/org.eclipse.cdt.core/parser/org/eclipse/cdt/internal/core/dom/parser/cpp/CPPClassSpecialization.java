@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -76,8 +75,15 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	 */
 	public ICPPBase[] getBases() throws DOMException {
 		if( getDefinition() == null ){
-			IASTNode node = (getDeclarations() != null && getDeclarations().length > 0) ? getDeclarations()[0] : null;
-			return new ICPPBase [] { new CPPBaseClause.CPPBaseProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+			ICPPBase[] bindings = ((ICPPClassType)getSpecializedBinding()).getBases();
+			for (int i = 0; i < bindings.length; i++) {
+    		    IBinding base = bindings[i].getBaseClass();
+    		    if (base instanceof IType) {
+    		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
+    		    	((CPPBaseClause)bindings[i]).setBaseClass((ICPPClassType)specBase);
+    		    }
+			}
+			return bindings;
         }
 		
 		ICPPASTBaseSpecifier[] bases = getCompositeTypeSpecifier().getBaseSpecifiers();
@@ -151,11 +157,6 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
 	public ICPPConstructor[] getConstructors() throws DOMException {
-        if( getDefinition() == null ){
-        	IASTNode node = (getDeclarations() != null && getDeclarations().length > 0) ? getDeclarations()[0] : null;
-        	return new ICPPConstructor [] { new CPPConstructor.CPPConstructorProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
-        }
-		
 		IScope scope = getCompositeScope();
 		if (scope instanceof CPPClassSpecializationScope) {
 			if (ASTInternal.isFullyCached(scope))
@@ -244,10 +245,6 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	}
 
 	public ICPPMethod[] getConversionOperators() {
-		if( getDefinition() == null ){
-			IASTNode node = (getDeclarations() != null && getDeclarations().length > 0) ? getDeclarations()[0] : null;
-			return new ICPPMethod[] { new CPPMethod.CPPMethodProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
-        }
 		try {
 			ICPPMethod [] result = null;
 			

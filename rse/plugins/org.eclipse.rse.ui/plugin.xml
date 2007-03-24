@@ -122,7 +122,7 @@ Contributors:
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.eclipse.rse.core.RemoteSystemsProject">
+               class="org.eclipse.rse.internal.core.RemoteSystemsProject">
          </run>
       </runtime>
    </extension>

@@ -53,7 +53,7 @@ public class RSECorePlugin extends Plugin {
 	 * @return the persistence manager currently in use for RSE
 	 */
 	public static IRSEPersistenceManager getThePersistenceManager() {
-		return getDefault().getPersistenceManager();
+		return getDefault() != null ? getDefault().getPersistenceManager() : null;
 	}
 	
 	/**

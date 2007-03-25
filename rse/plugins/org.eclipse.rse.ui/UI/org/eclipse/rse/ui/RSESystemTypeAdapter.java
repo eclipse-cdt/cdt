@@ -37,6 +37,7 @@ import org.eclipse.rse.model.Host;
 import org.eclipse.rse.ui.actions.SystemClearAllPasswordsAction;
 import org.eclipse.rse.ui.actions.SystemWorkOfflineAction;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardDescriptor;
+import org.eclipse.ui.IViewPart;
 import org.osgi.framework.Bundle;
 
 /**
@@ -250,8 +251,28 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	}
 	
 	/**
+	 * Called from <code>SystemViewPart#fillLocalToolBar(boolean)</code> to allow dynamic system
+	 * type providers to customize the RSE standard toolbar structure regarding their needs.
+	 * <p>
+	 * <b>Note:</b> This method is called for each system type. If a single system type adapter
+	 *              is associated with multiple system types, this method is called multiple times.
+	 *              Overriders must check if the required groups are added to the toolbar already
+	 *              and must avoid to add them multiple times!
+	 *   
+	 * @param view The view to customize. Must be not <code>null</code>.
+	 */
+	public void addCustomToolbarGroups(IViewPart view) {
+		// The static standard RSE system types have no custom toolbar groups.
+	}
+	
+	/**
 	 * Called from {@link org.eclipse.rse.internal.ui.view.SystemView#createStandardGroups(IMenuManager)} to allow dynamic system
 	 * type providers to customize the RSE standard menu structure regarding their needs.
+	 * <p>
+	 * <b>Note:</b> This method is called for each system type. If a single system type adapter
+	 *              is associated with multiple system types, this method is called multiple times.
+	 *              Overriders must check if the required groups are added to the menu already
+	 *              and must avoid to add them multiple times!  
 	 * 
 	 * @param menu The menu manager. Must be not <code>null</code>.
 	 */

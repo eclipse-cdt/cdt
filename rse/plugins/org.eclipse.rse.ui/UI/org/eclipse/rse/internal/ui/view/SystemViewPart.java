@@ -44,6 +44,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
@@ -62,6 +64,7 @@ import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemResources;
@@ -631,12 +634,21 @@ public class SystemViewPart
 		toggleLinkingAction.setImageDescriptor(getNavigatorImageDescriptor(ISystemIconConstants.ICON_IDE_LINKTOEDITOR_ID)); 
 		toggleLinkingAction.setHoverImageDescriptor(getNavigatorImageDescriptor(ISystemIconConstants.ICON_IDE_LINKTOEDITOR_ID)); 
 		toolBarMgr.add(toggleLinkingAction);
-		
-	
 
 		IMenuManager menuMgr = actionBars.getMenuManager();
 		populateSystemViewPulldownMenu(menuMgr, getShell(), showConnectionActions, this, systemView);
+
+		// [179181] [api] [api] Dynamic system type provider need a hook to add dynamic system type specific toolbar groups.
+		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		for (int i = 0; i < systemTypes.length; i++) {
+			IRSESystemType systemType = systemTypes[i];
+			Object adapter = systemType.getAdapter(IRSESystemType.class);
+			if (adapter instanceof RSESystemTypeAdapter) {
+				((RSESystemTypeAdapter)adapter).addCustomToolbarGroups(this);
+			}
+		}
 	}
+	
 	/**
 	 * Pulldown the local toolbar menu with actions
 	 */

@@ -27,6 +27,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
@@ -182,13 +183,15 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	private List fBufferListeners= new ArrayList(3);
 	private IStatus fStatus;
 
-	private IPath fLocation;
+	final private IPath fLocation;
+	final private LocationKind fLocationKind;
 
 	
 	public DocumentAdapter(IOpenable owner, IFile file) {
 		fOwner= owner;
 		fFile= file;
 		fLocation= file.getFullPath();
+		fLocationKind= LocationKind.IFILE;
 
 		initialize();			
 	}
@@ -196,20 +199,20 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	public DocumentAdapter(IOpenable owner, IPath location) {
 		fOwner= owner;
 		fLocation= location;
+		fLocationKind= LocationKind.LOCATION;
 		
 		initialize();			
 	}
 
 	private void initialize() {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		IPath location= fLocation;
 		try {
-			manager.connect(location, new NullProgressMonitor());
-			fTextFileBuffer= manager.getTextFileBuffer(location);
+			manager.connect(fLocation, fLocationKind, new NullProgressMonitor());
+			fTextFileBuffer= manager.getTextFileBuffer(fLocation, fLocationKind);
 			fDocument= fTextFileBuffer.getDocument();
 		} catch (CoreException x) {
 			fStatus= x.getStatus();
-			fDocument= manager.createEmptyDocument(location);
+			fDocument= manager.createEmptyDocument(fLocation, fLocationKind);
 			if (fDocument instanceof ISynchronizable)
 				((ISynchronizable)fDocument).setLockObject(new Object());
 		}
@@ -287,7 +290,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		if (fTextFileBuffer != null) {
 			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 			try {
-				manager.disconnect(fTextFileBuffer.getLocation(), new NullProgressMonitor());
+				manager.disconnect(fLocation, fLocationKind, new NullProgressMonitor());
 			} catch (CoreException x) {
 				// ignore
 			}

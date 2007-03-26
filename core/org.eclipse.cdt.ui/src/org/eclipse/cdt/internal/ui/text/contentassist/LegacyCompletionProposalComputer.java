@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 
 /**
  * A proposal computer for handling the legacy extensions from the
@@ -43,6 +42,9 @@ public class LegacyCompletionProposalComputer extends ParsingBasedProposalComput
 	public LegacyCompletionProposalComputer() {
 	}
 
+	/**
+	 * @deprecated this is for backwards compatibility, only.
+	 */
 	protected List computeCompletionProposals(
 			CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix) throws CoreException {
@@ -72,9 +74,9 @@ public class LegacyCompletionProposalComputer extends ParsingBasedProposalComput
 				if (!"contributor".equals(element.getName())) //$NON-NLS-1$
 					continue;
 				Object contribObject = element.createExecutableExtension("class"); //$NON-NLS-1$
-				if (!(contribObject instanceof ICompletionContributor))
+				if (!(contribObject instanceof org.eclipse.cdt.ui.text.contentassist.ICompletionContributor))
 					continue;
-				ICompletionContributor contributor = (ICompletionContributor)contribObject;
+				org.eclipse.cdt.ui.text.contentassist.ICompletionContributor contributor = (org.eclipse.cdt.ui.text.contentassist.ICompletionContributor)contribObject;
 				contributor.contributeCompletionProposals(viewer, offset,
 						workingCopy, (ASTCompletionNode) completionNode,
 						prefix, proposals);

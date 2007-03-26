@@ -48,6 +48,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -382,8 +383,52 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	protected void init() {
 		_setList = new ArrayList();
 		busyCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
-		//setUseHashlookup(true); // new for our 2nd release. Attempt to fix 38 minutes to refresh for 15K elements
-
+		
+		setUseHashlookup(true); // new for our 2nd release. Attempt to fix 38 minutes to refresh for 15K elements
+		setComparer(new IElementComparer() 
+		 {
+		      public boolean equals(Object a, Object b) 
+		      {
+		          if(a==b) return true;
+		          if(a==null || b==null) return false;
+		          if(a.equals(b)) return true;
+		 
+		          ISystemViewElementAdapter identa= null;
+		          if(a instanceof IAdaptable) {
+		              identa = (ISystemViewElementAdapter)
+		                 ((IAdaptable)a).getAdapter(ISystemViewElementAdapter.class);
+		          }
+		          if(identa != null) {
+		              ISystemViewElementAdapter identb = null;
+		               if(b instanceof IAdaptable) {
+		                  identb = (ISystemViewElementAdapter)
+		                     ((IAdaptable)b).getAdapter(ISystemViewElementAdapter.class);
+		              }
+		              if (identb != null){
+		            	  if(identa.getAbsoluteName(a).equals(identb.getAbsoluteName(b))) return true;
+		              }
+		          }
+		          
+		          return false;
+		      }
+		      
+		      public int hashCode(Object element) 
+		      {
+		          ISystemViewElementAdapter ident=null;
+		          if(element instanceof IAdaptable) {
+		              ident = (ISystemViewElementAdapter)
+		                  ((IAdaptable)element).getAdapter(ISystemViewElementAdapter.class);
+		              if(ident!=null) {
+		                  String absName = ident.getAbsoluteName(element);
+		                  if(absName!=null) return absName.hashCode();
+		                  return ident.hashCode();
+		              }
+		          }
+		          return element.hashCode();
+		      }
+		    });
+		
+		
 		// set content provider
 		SystemViewLabelAndContentProvider lcProvider = new SystemViewLabelAndContentProvider();
 		setLabelAndContentProvider(lcProvider);
@@ -3733,6 +3778,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	protected Widget internalFindReferencedItem(Widget parent, Object element, int searchLimit) {
 		previousItem = null;
 		searchDepth = 0;
+		//System.out.println("recursiveInternalFindReferencedItem");
 		return recursiveInternalFindReferencedItem(parent, element, searchLimit);
 	}
 
@@ -3764,7 +3810,9 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			++searchDepth;
 			int oldDepth = searchDepth;
 			Item[] items = getChildren(parent);
-			for (int i = 0; (i < items.length); i++) {
+			for (int i = 0; (i < items.length); i++) 
+			{
+				//System.out.println("recursiveInternalFindReferencedItem");
 				Widget o = recursiveInternalFindReferencedItem(items[i], element, searchLimit);
 				if (o != null) return o;
 				searchDepth = oldDepth;
@@ -3826,6 +3874,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			//findAllRemoteItemReferences(remoteObjectName, null, subsystem, matches);
 			match = internalFindFirstRemoteItemReference(remoteObjectName, null, subsystem);
 		else {
+
+			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, null, subsystem, matches);    	  
 			match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, null, subsystem);
 			if (debugRemote) System.out.println("Returning " + match + " from findFirstRemoteItemReference(1,2,3)"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -3855,6 +3905,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			match = internalFindFirstRemoteItemReference(remoteObjectName, remoteObject, subsystem);
 		else {
 			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, remoteObject, subsystem, matches); 
+			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem);
 			if (debugRemote) System.out.println("Returning " + match + " from findFirstRemoteItemReference(1,2)"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -3894,6 +3945,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		if (roots == null) return matches;
 		if (matches == null) matches = new Vector();
 		for (int idx = 0; idx < roots.length; idx++) {
+			//System.out.println("recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);");
 			matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
 		}
 		return matches;
@@ -3917,7 +3969,10 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		if (roots == null) return matches;
 		if (matches == null) matches = new Vector();
 		for (int idx = 0; idx < roots.length; idx++)
+		{
+			System.out.println("2:recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);");					
 			matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
+		}
 		return matches;
 	}
 
@@ -3942,6 +3997,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			System.out.println("Inside internalFindFirstRemoteItemReference for searchString: " + searchString + ", subsystem null? " + (subsystem == null) + ", nbr roots = " + roots.length); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		for (int idx = 0; (match == null) && (idx < roots.length); idx++) {
+			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(roots[idx], searchString, elementObject, subsystem);
 			if (debugRemote) System.out.println("...Inside internalFindFirstRemoteItemReference. Result of searching root " + idx + ": " + roots[idx].getText() + ": " + match); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
@@ -4007,6 +4063,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		// recurse over children	    
 		Item[] items = getChildren(parent);
 		for (int i = 0; (i < items.length); i++) {
+			System.out.println("3:recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, occurrences);");
+					
 			if (!items[i].isDisposed()) occurrences = recursiveFindAllRemoteItemReferences(items[i], elementName, elementObject, subsystem, occurrences);
 		}
 		return occurrences;
@@ -4072,6 +4130,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		Item[] items = getChildren(parent);
 		Item match = null;
 		for (int i = 0; (match == null) && (i < items.length); i++) {
+			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			if (!items[i].isDisposed()) match = recursiveFindFirstRemoteItemReference(items[i], elementName, elementObject, subsystem);
 		}
 		return match;
@@ -4091,8 +4150,12 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		Item[] roots = tree.getItems();
 		if (roots == null) return matches;
 		if (matches == null) matches = new Vector();
-		for (int idx = 0; idx < roots.length; idx++)
+
+		for (int idx = 0; idx < roots.length; idx++){
+			// DKM
+			//System.out.println("recursiveFindAllRemoteItemFilterReferences");
 			matches = recursiveFindAllRemoteItemFilterReferences(roots[idx], elementName, subsystem, matches);
+		}
 		return matches;
 
 	}
@@ -4175,6 +4238,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		// recurse over children	    
 		Item[] items = getChildren(parent);
 		for (int i = 0; (i < items.length); i++) {
+			//System.out.println("recursiveFindAllRemoteItemFilterReferences");
 			occurrences = recursiveFindAllRemoteItemFilterReferences(items[i], elementName, subsystem, occurrences);
 		}
 		return occurrences;

@@ -1243,23 +1243,23 @@ public class CoreModel {
 				if(lSetting != null){
 					ICLanguageSettingEntry[] entries = lSetting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 					if(entries.length != 0)
-						return true;
+						return false;
 					
 					entries = lSetting.getSettingEntries(ICLanguageSettingEntry.MACRO);
 					if(entries.length != 0)
-						return true;
+						return false;
 
 					entries = lSetting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_FILE);
 					if(entries.length != 0)
-						return true;
+						return false;
 					
 					entries = lSetting.getSettingEntries(ICLanguageSettingEntry.MACRO_FILE);
 					if(entries.length != 0)
-						return true;
+						return false;
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	private static boolean oldIsScannerInformationEmpty(IResource resource) {

@@ -1030,20 +1030,19 @@ public class CCorePlugin extends Plugin {
 //	}
 
 	/**
-	 * Helper function, returning the contenttype for a filename
-	 * Same as: <p><p>
+	 * Helper function, returning the content type for a filename
+	 * Same as: <pre>
 	 * 	getContentType(null, filename)
-	 * <br>
-	 * @param project
-	 * @param name
-	 * @return
+	 * </pre>
+	 * @param filename
+	 * @return the content type found, or <code>null</code>
 	 */
 	public static IContentType getContentType(String filename) {
 		return CContentTypes.getContentType(null, filename);
 	}
 	
 	/**
-	 * Returns the content type for a filename. The method respects project
+	 * Returns the content type for a filename. The method respects
 	 * project specific content type definitions. The lookup prefers case-
 	 * sensitive matches over the others.
 	 * @param project a project with possible project specific settings. Can be <code>null</code>

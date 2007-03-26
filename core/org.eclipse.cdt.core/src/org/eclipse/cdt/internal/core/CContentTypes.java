@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,9 @@ public class CContentTypes {
 	 * Implementation for {@link CCorePlugin#getContentType(IProject, String)}.
 	 */
 	public static IContentType getContentType(IProject project, String filename) {
+		if (filename == null) {
+			return null;
+		}
 		IContentTypeMatcher matcher= null;
 		IScopeContext scopeCtx= null;
 		boolean preferCpp= true;

@@ -425,7 +425,8 @@ public class PathEntryUtil {
 		IProject project = cProject.getProject();
 		IPath path = entry.getPath();
 		if (entry.getEntryKind() != IPathEntry.CDT_PROJECT &&
-				entry.getEntryKind() != IPathEntry.CDT_CONTAINER) {
+				entry.getEntryKind() != IPathEntry.CDT_CONTAINER
+				&& entry.getEntryKind() != IPathEntry.CDT_OUTPUT) {
 			if (!isValidWorkspacePath(project, path)) {
 				return new CModelStatus(
 						ICModelStatusConstants.INVALID_PATHENTRY,

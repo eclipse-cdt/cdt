@@ -30,8 +30,8 @@ import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTListComparator;
-import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.newui.PrefPage_Abstract;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 import org.eclipse.core.runtime.CoreException;
@@ -441,7 +441,6 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		// get variables
 		ICdtVariable[] _vars = mgr.getVariables(cfgd);
 		if (_vars == null) return;
-		
 		if (cfgd == null) {
 			if (fShowSysMacros) {
 				List lst = new ArrayList(_vars.length);
@@ -521,9 +520,10 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	}
 	
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
-		if (cfgd != null) // only for project, not for prefs 
-			fUserSupplier.setMacros(fUserSupplier.getMacros(CONTEXT, src), CONTEXT, dst);
-		else if (vars != null)
+		if (cfgd != null) {// only for project, not for prefs 
+			ICdtVariable[] vs = fUserSupplier.getMacros(CONTEXT, src.getConfiguration());
+			fUserSupplier.setMacros(vs, CONTEXT, dst.getConfiguration());
+		} else if (vars != null)
 			fUserSupplier.storeWorkspaceVariables(true);
 	}
 

@@ -28,7 +28,7 @@ public abstract class NewCCProjectWizard extends NewCProjectWizard {
 	}
 
 	public NewCCProjectWizard(String title, String description) {
-		super();
+		super(title, description);
 		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
 	}
 

@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -738,18 +739,22 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	public IToolChain changeToolChain(IToolChain newSuperClass, String Id, String name) throws BuildException{
-		IConfigurationElement el = getToolChainConverterElement(newSuperClass);
-		ToolChain oldToolChain = toolChain;
-		ITool oldTools[] = oldToolChain.getTools();
+		IToolChain curReal = ManagedBuildManager.getRealToolChain(toolChain);
+		IToolChain newReal = ManagedBuildManager.getRealToolChain(newSuperClass);
 		
-		if(el != null){
-			updateToolChainWithConverter(el, newSuperClass, Id, name);
-		} else {
-			updateToolChainWithProperties(newSuperClass, Id, name);
+		if(newReal != curReal){
+			ToolChain oldToolChain = toolChain;
+			IConfigurationElement el = getToolChainConverterElement(newSuperClass);
+			ITool oldTools[] = oldToolChain.getTools();
+			
+			if(el != null){
+				updateToolChainWithConverter(el, newSuperClass, Id, name);
+			} else {
+				updateToolChainWithProperties(newSuperClass, Id, name);
+			}
+			
+			BuildSettingsUtil.disconnectDepentents(getParent(), oldTools);
 		}
-		
-		BuildSettingsUtil.disconnectDepentents(getParent(), oldTools);
-		
 		return toolChain;
 	}
 		
@@ -796,7 +801,37 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return null;
 	}
 	
+	private ITool[][] checkDups(ITool[] removed, ITool[] added){
+		LinkedHashMap removedMap = createRealMap(removed);
+		LinkedHashMap addedMap = createRealMap(added);
+		LinkedHashMap rmCopy = (LinkedHashMap)removedMap.clone();
+		
+		removedMap.keySet().removeAll(addedMap.keySet());
+		addedMap.keySet().removeAll(rmCopy.keySet());
+		ITool[][] result = new Tool[2][];
+		result[0] = (Tool[])removedMap.values().toArray(new Tool[removedMap.size()]);
+		result[1] = (Tool[])addedMap.values().toArray(new Tool[addedMap.size()]);
+		return result;
+	}
+	
+	private LinkedHashMap createRealMap(ITool[] tools){
+		LinkedHashMap map = new LinkedHashMap();
+		for(int i = 0; i < tools.length; i++){
+			Tool realTool = (Tool)ManagedBuildManager.getRealTool(tools[i]);
+			Object key = realTool.getMatchKey();
+			map.put(key, tools[i]);
+		}
+		
+		return map;
+	}
+	
 	public void modifyToolChain(ITool[] removed, ITool[] added){
+		ITool[][] checked = checkDups(removed, added);
+		removed = checked[0];
+		added = checked[1];
+		if(added.length == 0 && removed.length == 0)
+			return;
+		
 		List remainingRemoved = new ArrayList();
 		List remainingAdded = new ArrayList();
 		Map converterMap = calculateConverterTools(removed, added, remainingRemoved, remainingAdded);

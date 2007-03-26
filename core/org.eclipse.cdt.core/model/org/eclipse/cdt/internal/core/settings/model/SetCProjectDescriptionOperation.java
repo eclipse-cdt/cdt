@@ -53,9 +53,12 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		}
 
 		CProjectDescription fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el);
-		mngr.setDescriptionApplying(project, fNewDescriptionCache);
-		fNewDescriptionCache.applyDatas();
-		mngr.clearDescriptionApplying(project);
+		try {
+			mngr.setDescriptionApplying(project, fNewDescriptionCache);
+			fNewDescriptionCache.applyDatas();
+		} finally {
+			mngr.clearDescriptionApplying(project);
+		}
 		
 		
 		ICDescriptionDelta delta = mngr.createDelta(fNewDescriptionCache, fOldDescriptionCache);
@@ -71,6 +74,9 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		}
 
 		mngr.setLoaddedDescription(project, fNewDescriptionCache, true);
+		
+		fSetDescription.switchToCachedAppliedData(fNewDescriptionCache);
+		
 		CompositeWorkspaceRunnable runnable = new CompositeWorkspaceRunnable(SettingsModelMessages.getString("SetCProjectDescriptionOperation.0")); //$NON-NLS-1$
 		
 		try {

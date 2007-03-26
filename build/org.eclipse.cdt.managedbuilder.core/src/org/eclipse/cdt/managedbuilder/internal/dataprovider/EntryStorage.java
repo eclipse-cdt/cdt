@@ -37,13 +37,13 @@ import org.eclipse.cdt.managedbuilder.internal.dataprovider.SettingsSet.SettingL
 
 public class EntryStorage {
 	private int fKind;
-	private SettingsSet fSettings;
+//	private SettingsSet fSettings;
 //	private EntryListMap fDiscoveredEntries = new EntryListMap();
 //	private EntryListMap fUserEntries = new EntryListMap();
 //	private ICLanguageSettingEntry fEntries[];
 	private BuildLanguageData fLangData;
-	private boolean fCacheInited;
-	private boolean fUserValuesInited;
+//	private boolean fCacheInited;
+//	private boolean fUserValuesInited;
 	
 	private static final String EMPTY_STRING = new String();
 
@@ -57,15 +57,15 @@ public class EntryStorage {
 	}
 	
 	void optionsChanged(){
-		fUserValuesInited = false;
+//		fUserValuesInited = false;
 	}
 	
 	public List getEntries(List list){
-		initCache();
+		SettingsSet settings = initCache();
 		if(list == null)
 			list = new ArrayList();
 		
-		ICLanguageSettingEntry entries[] = fSettings.getEntries();
+		ICLanguageSettingEntry entries[] = settings.getEntries();
 		list.addAll(Arrays.asList(entries));
 //		for(Iterator iter = fUserEntries.getIterator(); iter.hasNext();){
 //			EntryInfo info = (EntryInfo)iter.next();
@@ -102,7 +102,7 @@ public class EntryStorage {
 	}
 	
 	private void resetCache(){
-		fCacheInited = false;
+//		fCacheInited = false;
 	}
 
 	public void setEntries(ICLanguageSettingEntry entries[]){
@@ -110,9 +110,9 @@ public class EntryStorage {
 			resetDefaults();
 			return;
 		}
-		initCache();
+		SettingsSet settings = initCache();
 		
-		fSettings.applyEntries(entries);
+		settings.applyEntries(entries);
 //		ArrayList userList = new ArrayList();
 //		Map discoveredMap = fDiscoveredEntries.getEntryInfoMap();
 //		boolean discoveredReadOnly = isDiscoveredEntriesReadOnly();
@@ -134,7 +134,7 @@ public class EntryStorage {
 //			info.makeOverridden(false);
 //		}
 		
-		SettingLevel level = fSettings.getLevels()[0];
+		SettingLevel level = settings.getLevels()[0];
 		IOption options[] = fLangData.getOptionsForKind(fKind);
 		if(options.length != 0){
 			ICLanguageSettingEntry usrEntries[] = level.getEntries();
@@ -174,7 +174,7 @@ public class EntryStorage {
 		}
 	}
 	
-	private void initCache(){
+	private SettingsSet initCache(){
 //		if(fCacheInited){
 //			if(!fUserValuesInited){
 //				for(Iterator iter = fDiscoveredEntries.getIterator(); iter.hasNext();){
@@ -186,9 +186,9 @@ public class EntryStorage {
 //			}
 //			
 //		} else {
-			fSettings = createEmptySettings();
-			SettingLevel levels[] = fSettings.getLevels();
-			fCacheInited = true;
+			SettingsSet settings = createEmptySettings();
+			SettingLevel levels[] = settings.getLevels();
+//			fCacheInited = true;
 			DiscoveredEntry[] dEntries = fLangData.getDiscoveredEntryValues(fKind);
 			addEntries(levels[2], dEntries);
 			
@@ -199,7 +199,9 @@ public class EntryStorage {
 			addEntries(levels[0], dEntries);
 			levels[0].fOverrideSet = getUserUndefinedStringSet(); 
 			
-			fSettings.adjustOverrideState();
+			settings.adjustOverrideState();
+			
+			return settings;
 ////			fDiscoveredEntries.clear();
 //			boolean readOnly = isDiscoveredEntriesReadOnly();
 //			if(dEntries.length != 0){

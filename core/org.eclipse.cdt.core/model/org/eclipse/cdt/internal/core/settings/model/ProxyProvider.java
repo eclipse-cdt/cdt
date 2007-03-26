@@ -125,4 +125,10 @@ public class ProxyProvider implements IProxyProvider {
 			fProxiesCached = true;
 		}
 	}
+
+	public void invalidateCache() {
+		fProxiesCached = false;
+	}
+	
+	
 }

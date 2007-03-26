@@ -449,7 +449,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			CConfigurationData data,
 			IProgressMonitor monitor) {
 		BuildConfigurationData cfgData = (BuildConfigurationData)data;
-		((Configuration)cfgData.getConfiguration()).setConfigurationDescription(null);
+		((Configuration)cfgData.getConfiguration()).setConfigurationDescription(cfgDes);
 		cfgData.clearCachedData();
 	}
 

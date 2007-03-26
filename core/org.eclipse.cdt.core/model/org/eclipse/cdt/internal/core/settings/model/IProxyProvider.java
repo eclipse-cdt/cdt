@@ -29,6 +29,8 @@ public interface IProxyProvider {
 	CDataProxy[] getCachedProxies();
 	
 	void cacheValues();
+	
+	void invalidateCache();
 /*
 	CDataProxy[] getProxies(Class arrayElClass);
 

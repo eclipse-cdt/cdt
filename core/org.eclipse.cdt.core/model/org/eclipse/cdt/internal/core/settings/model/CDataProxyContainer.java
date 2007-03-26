@@ -94,10 +94,13 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 		if(provider == null)
 			throw new IllegalStateException();
 
+		provider.invalidateCache();
+
 		CDataProxy proxies[] = provider.getCachedProxies();
 		for(int i = 0; i < proxies.length; i++){
 			proxies[i].setRescan(true);
 		}
+		
 	}
 
 	public ICSettingObject getChildSettingById(String id) {

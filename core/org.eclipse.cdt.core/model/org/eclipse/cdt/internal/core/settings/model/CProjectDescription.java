@@ -15,8 +15,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
@@ -27,6 +31,7 @@ import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 
 public class CProjectDescription implements ICProjectDescription, ICDataProxyContainer {
@@ -434,5 +439,23 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 
 	public void removeStorage(String id) throws CoreException {
 		getStorageBase().removeStorage(id);
+	}
+	
+	void switchToCachedAppliedData(CProjectDescription appliedCache){
+		if(fIsReadOnly)
+			return;
+		
+		ICConfigurationDescription[] cfgs = appliedCache.getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			CConfigurationDescriptionCache cfgCache = (CConfigurationDescriptionCache)cfgs[i];
+			CConfigurationDescription des = (CConfigurationDescription)getChildSettingById(cfgCache.getId());
+			if(des != null){
+				des.setData(cfgCache);
+//				ICResourceDescription rcDes = des.getResourceDescription(new Path("dd"), false);
+//				rcDes = des.getResourceDescription(new Path("dd"), false);
+//				ICBuildSetting bs = des.getBuildSetting();
+//				ICLanguageSetting lss[] = ((ICFolderDescription)rcDes).getLanguageSettings();
+			}
+		}
 	}
 }

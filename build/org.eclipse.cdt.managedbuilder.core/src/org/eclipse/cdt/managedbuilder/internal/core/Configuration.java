@@ -2707,12 +2707,20 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(newBuilder.getParent() == tc){
 			newCfgBuilder = (Builder)newBuilder;
 		} else {
-			IBuilder extBuilder = newBuilder;
-			for(;extBuilder != null && !extBuilder.isExtensionElement(); extBuilder = extBuilder.getSuperClass());
-			if(extBuilder == null)
-				extBuilder = newBuilder;
-			newCfgBuilder = new Builder(tc, extBuilder, id, name, false);
-			newCfgBuilder.copySettings(cur, allBuildSettings);
+			IBuilder curReal = ManagedBuildManager.getRealBuilder(cur);
+			IBuilder newReal = ManagedBuildManager.getRealBuilder(newBuilder);
+			if(newReal != curReal){
+				IBuilder extBuilder = newBuilder;
+				for(;extBuilder != null && !extBuilder.isExtensionElement(); extBuilder = extBuilder.getSuperClass());
+				if(extBuilder == null)
+					extBuilder = newBuilder;
+				
+				newCfgBuilder = new Builder(tc, extBuilder, id, name, false);
+				newCfgBuilder.copySettings(cur, allBuildSettings);
+			}
+		}
+		
+		if(newCfgBuilder != null){
 			tc.setBuilder(newCfgBuilder);
 		}
 	}

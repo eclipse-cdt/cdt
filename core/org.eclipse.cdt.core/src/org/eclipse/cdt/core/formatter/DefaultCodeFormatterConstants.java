@@ -102,26 +102,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see #createAlignmentValue(boolean, int, int)
 //	 */
 //	public static final String FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_arguments_in_allocation_expression";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of arguments in enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_arguments_in_enum_constant"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ENUM_CONSTANT = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_arguments_in_enum_constant";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of arguments in explicit constructor call
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_arguments_in_explicit_constructor_call"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_EXPLICIT_CONSTRUCTOR_CALL = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_arguments_in_explicit_constructor_call";	 //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of arguments in method invocation
@@ -132,16 +112,6 @@ public class DefaultCodeFormatterConstants {
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_arguments_in_method_invocation";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of arguments in qualified allocation expression
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_arguments_in_qualified_allocation_expression"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_QUALIFIED_ALLOCATION_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_arguments_in_qualified_allocation_expression";	 //$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option for alignment of assignment
@@ -182,16 +152,6 @@ public class DefaultCodeFormatterConstants {
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_conditional_expression";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of enum constants
-//	 *     - option id:        "org.eclipse.cdt.core.formatter.alignment_for_enum_constants"
-//	 *     - possible values:  values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:          createAlignmentValue(false, WRAP_NO_SPLIT, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_enum_constants";	 //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of expressions in array initializer
@@ -212,16 +172,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see #createAlignmentValue(boolean, int, int)
 //	 */
 //	public static final String FORMATTER_ALIGNMENT_FOR_MULTIPLE_FIELDS = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_multiple_fields";//$NON-NLS-1$	
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of parameters in constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_parameters_in_constructor_declaration"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_CONSTRUCTOR_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_parameters_in_constructor_declaration";	 //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of parameters in method declaration
@@ -252,16 +202,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see #createAlignmentValue(boolean, int, int)
 //	 */
 //	public static final String FORMATTER_ALIGNMENT_FOR_SUPERCLASS_IN_TYPE_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_superclass_in_type_declaration";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of throws clause in constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_throws_clause_in_constructor_declaration"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_CONSTRUCTOR_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_throws_clause_in_constructor_declaration";	 //$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option for alignment of throws clause in method declaration
@@ -354,11 +294,10 @@ public class DefaultCodeFormatterConstants {
 //	 * </pre>
 //	 */
 //	public static final String FORMATTER_BLANK_LINES_BETWEEN_TYPE_DECLARATIONS = CCorePlugin.PLUGIN_ID + ".formatter.blank_lines_between_type_declarations";	//$NON-NLS-1$
-
 	/**
 	 * <pre>
 	 * FORMATTER / Option to position the braces of array initializer
-	 *     - option id:         "org.eclipse.cdt.core.formatter.brace_position_for_annotation_array_initializer"
+	 *     - option id:         "org.eclipse.cdt.core.formatter.brace_position_for_array_initializer"
 	 *     - possible values:   { END_OF_LINE, NEXT_LINE, NEXT_LINE_SHIFTED, NEXT_LINE_ON_WRAP }
 	 *     - default:           END_OF_LINE
 	 * </pre>
@@ -395,32 +334,6 @@ public class DefaultCodeFormatterConstants {
 	 * @see #NEXT_LINE_ON_WRAP
 	 */
 	public static final String FORMATTER_BRACE_POSITION_FOR_BLOCK_IN_CASE = CCorePlugin.PLUGIN_ID + ".formatter.brace_position_for_block_in_case";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to position the braces of a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.brace_position_for_constructor_declaration"
-//	 *     - possible values:   { END_OF_LINE, NEXT_LINE, NEXT_LINE_SHIFTED, NEXT_LINE_ON_WRAP }
-//	 *     - default:           END_OF_LINE
-//	 * </pre>
-//	 * @see #END_OF_LINE
-//	 * @see #NEXT_LINE
-//	 * @see #NEXT_LINE_SHIFTED
-//	 * @see #NEXT_LINE_ON_WRAP
-//	 */
-//	public static final String FORMATTER_BRACE_POSITION_FOR_CONSTRUCTOR_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.brace_position_for_constructor_declaration";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to position the braces of an enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.brace_position_for_enum_constant"
-//	 *     - possible values:   { END_OF_LINE, NEXT_LINE, NEXT_LINE_SHIFTED, NEXT_LINE_ON_WRAP }
-//	 *     - default:           END_OF_LINE
-//	 * </pre>
-//	 * @see #END_OF_LINE
-//	 * @see #NEXT_LINE
-//	 * @see #NEXT_LINE_SHIFTED
-//	 * @see #NEXT_LINE_ON_WRAP
-//	 */
-//	public static final String FORMATTER_BRACE_POSITION_FOR_ENUM_CONSTANT = CCorePlugin.PLUGIN_ID + ".formatter.brace_position_for_enum_constant";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to position the braces of an enum declaration
@@ -577,17 +490,6 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.continuation_indentation_for_array_initializer";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to indent body declarations compare to its enclosing enum constant header
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_body_declarations_compare_to_enum_constant_header"
-//	 *     - possible values:   { TRUE, FALSE }
-//	 *     - default:           TRUE
-//	 * </pre>
-//	 * @see #TRUE
-//	 * @see #FALSE
-//	 */
-//	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ENUM_CONSTANT_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.indent_body_declarations_compare_to_enum_constant_header";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
 //	 * FORMATTER / Option to indent body declarations compare to its enclosing enum declaration header
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_body_declarations_compare_to_enum_declaration_header"
 //	 *     - possible values:   { TRUE, FALSE }
@@ -707,7 +609,6 @@ public class DefaultCodeFormatterConstants {
 	 * @see #FALSE
 	 */
 	public static final String FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH = CCorePlugin.PLUGIN_ID + ".formatter.indent_switchstatements_compare_to_switch";	//$NON-NLS-1$
-
 	/**
 	 * <pre>
 	 * FORMATTER / Option to specify the equivalent number of spaces that represents one indentation 
@@ -720,19 +621,6 @@ public class DefaultCodeFormatterConstants {
 	 * @see #FORMATTER_TAB_CHAR
 	 */
 	public static final String FORMATTER_INDENTATION_SIZE = CCorePlugin.PLUGIN_ID + ".formatter.indentation.size"; //$NON-NLS-1$
-
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a new line after an annotation
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_after_annotation"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_ANNOTATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_after_annotation";//$NON-NLS-1$
-//
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a new line after the opening brace in an array initializer
@@ -833,17 +721,6 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_NEW_LINE_IN_EMPTY_BLOCK = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_in_empty_block";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a new line in an empty enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_in_empty_enum_constant"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_NEW_LINE_IN_EMPTY_ENUM_CONSTANT = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_in_empty_enum_constant";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a new line in an empty enum declaration
@@ -953,7 +830,7 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#INSERT
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
-	public static final String FORMATTER_INSERT_SPACE_AFTER_CLOSING_PAREN_IN_CAST = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_closing_paren_in_cast"; //$NON-NLS-1$
+//	public static final String FORMATTER_INSERT_SPACE_AFTER_CLOSING_PAREN_IN_CAST = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_closing_paren_in_cast"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space after colon in a case statement when a opening brace follows the colon
@@ -978,17 +855,6 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_INSERT_SPACE_AFTER_COLON_IN_CONDITIONAL = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_colon_in_conditional"; //$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space after colon in a for statement
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_colon_in_for"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COLON_IN_FOR = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_colon_in_for";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
 //	 * FORMATTER / Option to insert a space after the colon in a labeled statement
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_colon_in_labeled_statement"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -998,28 +864,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_AFTER_COLON_IN_LABELED_STATEMENT = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_colon_in_labeled_statement"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in an allocation expression
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_allocation_expression"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ALLOCATION_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_allocation_expression"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in annotation
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_annotation"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ANNOTATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_annotation"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space after the comma in an array initializer
@@ -1033,39 +877,6 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_array_initializer"; //$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in the parameters of a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_constructor_declaration_parameters"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_CONSTRUCTOR_DECLARATION_PARAMETERS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_constructor_declaration_parameters"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in the exception names in a throws clause of a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_constructor_declaration_throws"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_CONSTRUCTOR_DECLARATION_THROWS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_constructor_declaration_throws"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in the arguments of an enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_enum_constant_arguments"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ENUM_CONSTANT_ARGUMENTS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_enum_constant_arguments"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
 //	 * FORMATTER / Option to insert a space after the comma in enum declarations
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_enum_declarations"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -1075,28 +886,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ENUM_DECLARATIONS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_enum_declarations"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in the arguments of an explicit constructor call
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_explicitconstructorcall_arguments"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_EXPLICIT_CONSTRUCTOR_CALL_ARGUMENTS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_explicitconstructorcall_arguments"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in the increments of a for statement
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_for_increments"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INCREMENTS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_for_increments"; //$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space after the comma in the initializations of a for statement
@@ -1176,15 +965,15 @@ public class DefaultCodeFormatterConstants {
 //	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_PARAMETERIZED_TYPE_REFERENCE = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_parameterized_type_reference"; //$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in superinterfaces names of a type header
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_superinterfaces"
+//	 * FORMATTER / Option to insert a space after the comma in base type names of a type header
+//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_base_types"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 //	 *     - default:           INSERT
 //	 * </pre>
 //	 * @see CCorePlugin#INSERT
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_SUPERINTERFACES = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_superinterfaces"; //$NON-NLS-1$
+//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_BASE_TYPES = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_base_types"; //$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space after the comma in type arguments
@@ -1286,17 +1075,6 @@ public class DefaultCodeFormatterConstants {
 //	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACKET_IN_ARRAY_REFERENCE = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_bracket_in_array_reference";//$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space after the opening parenthesis in annotation
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_opening_paren_in_annotation"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_ANNOTATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_paren_in_annotation"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
 //	 * FORMATTER / Option to insert a space after the opening parenthesis in a cast expression
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_opening_paren_in_cast"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -1317,28 +1095,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_CATCH = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_paren_in_catch"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the opening parenthesis in a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_opening_paren_in_constructor_declaration"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_CONSTRUCTOR_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_paren_in_constructor_declaration";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the opening parenthesis in enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_opening_paren_in_enum_constant"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_ENUM_CONSTANT = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_paren_in_enum_constant"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space after the opening parenthesis in a for statement
@@ -1484,17 +1240,6 @@ public class DefaultCodeFormatterConstants {
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_ASSIGNMENT_OPERATOR = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_assignment_operator";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space before at in annotation type declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_at_in_annotation_type_declaration"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_AT_IN_ANNOTATION_TYPE_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_at_in_annotation_type_declaration";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
 //	 * FORMATTER / Option to insert a space before an binary operator
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_binary_operator"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -1572,17 +1317,6 @@ public class DefaultCodeFormatterConstants {
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACKET_IN_ARRAY_REFERENCE = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_bracket_in_array_reference";//$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space before the closing parenthesis in annotation
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_closing_paren_in_annotation"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_ANNOTATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_paren_in_annotation";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
 //	 * FORMATTER / Option to insert a space before the closing parenthesis in a cast expression
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_closing_paren_in_cast"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -1603,28 +1337,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_CATCH = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_paren_in_catch";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before the closing parenthesis in a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_closing_paren_in_constructor_declaration"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_CONSTRUCTOR_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_paren_in_constructor_declaration";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before the closing parenthesis in enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_closing_paren_in_enum_constant"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_ENUM_CONSTANT = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_paren_in_enum_constant";	//$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space before the closing parenthesis in a for statement
@@ -1757,17 +1469,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ALLOCATION_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_allocation_expression";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before comma in annotation
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_annotation"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ANNOTATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_annotation";	//$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space before comma in an array initializer
@@ -1781,39 +1482,6 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_array_initializer";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space before comma in the parameters of a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_constructor_declaration_parameters"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_CONSTRUCTOR_DECLARATION_PARAMETERS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_constructor_declaration_parameters";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before comma in the exception names of the throws clause of a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_constructor_declaration_throws"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_CONSTRUCTOR_DECLARATION_THROWS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_constructor_declaration_throws";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before comma in the arguments of enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_enum_constant_arguments"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ENUM_CONSTANT_ARGUMENTS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_enum_constant_arguments";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
 //	 * FORMATTER / Option to insert a space before comma in enum declarations
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_enum_declarations"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -1823,28 +1491,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ENUM_DECLARATIONS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_enum_declarations";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before comma in the arguments of an explicit constructor call
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_explicitconstructorcall_arguments"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_EXPLICIT_CONSTRUCTOR_CALL_ARGUMENTS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_explicitconstructorcall_arguments";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before comma in the increments of a for statement
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_for_increments"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INCREMENTS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_for_increments";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space before comma in the initializations of a for statement
@@ -1924,15 +1570,15 @@ public class DefaultCodeFormatterConstants {
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_PARAMETERIZED_TYPE_REFERENCE = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_parameterized_type_reference";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space before comma in the superinterfaces names in a type header
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_superinterfaces"
+//	 * FORMATTER / Option to insert a space before comma in the base type names in a type header
+//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_base_types"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 //	 *     - default:           DO_NOT_INSERT
 //	 * </pre>
 //	 * @see CCorePlugin#INSERT
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_SUPERINTERFACES = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_superinterfaces";	//$NON-NLS-1$
+//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_BASE_TYPES = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_base_types";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space before comma in type arguments
@@ -2001,17 +1647,6 @@ public class DefaultCodeFormatterConstants {
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_ANGLE_BRACKET_IN_TYPE_PARAMETERS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_angle_bracket_in_type_parameters";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space before the opening brace in an annotation type declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_brace_in_annotation_type_declaration"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_ANNOTATION_TYPE_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_brace_in_annotation_type_declaration"; 	//$NON-NLS-1$
-//	/**
-//	 * <pre>
 //	 * FORMATTER / Option to insert a space before the opening brace in an anonymous type declaration
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_brace_in_anonymous_type_declaration"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -2043,28 +1678,6 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_BLOCK = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_brace_in_block";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before the opening brace in a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_brace_in_constructor_declaration"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_CONSTRUCTOR_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_brace_in_constructor_declaration";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before the opening brace in an enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_brace_in_enum_constant"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_ENUM_CONSTANT = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_brace_in_enum_constant";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space before the opening brace in an enum declaration
@@ -2155,28 +1768,6 @@ public class DefaultCodeFormatterConstants {
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACKET_IN_ARRAY_TYPE_REFERENCE = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_bracket_in_array_type_reference";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
-//	 * FORMATTER / Option to insert a space before the opening parenthesis in annotation
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_paren_in_annotation"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_ANNOTATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_paren_in_annotation";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before the opening parenthesis in annotation type member declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_paren_in_annotation_type_member_declaration"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_ANNOTATION_TYPE_MEMBER_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_paren_in_annotation_type_member_declaration";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
 //	 * FORMATTER / Option to insert a space before the opening parenthesis in a catch
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_paren_in_catch"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -2186,28 +1777,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_CATCH = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_paren_in_catch";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before the opening parenthesis in a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_paren_in_constructor_declaration"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_CONSTRUCTOR_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_paren_in_constructor_declaration";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before the opening parenthesis in enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_paren_in_enum_constant"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_ENUM_CONSTANT = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_paren_in_enum_constant";	//$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space before the opening parenthesis in a for statement
@@ -2397,39 +1966,6 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_BRACKETS_IN_ARRAY_ALLOCATION_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_between_empty_brackets_in_array_allocation_expression";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space between empty parenthesis in an annotation type member declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_between_empty_parens_in_annotation_type_member_declaration"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_ANNOTATION_TYPE_MEMBER_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_between_empty_parens_in_annotation_type_member_declaration";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space between empty parenthesis in a constructor declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_between_empty_parens_in_constructor_declaration"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_CONSTRUCTOR_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_between_empty_parens_in_constructor_declaration";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space between empty parenthesis in enum constant
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_between_empty_parens_in_enum_constant"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_ENUM_CONSTANT = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_between_empty_parens_in_enum_constant";	//$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space between empty parenthesis in a method declaration

@@ -391,7 +391,9 @@ implements
 		if (! noContentOnPage && displayedConfig) forEach(ICPropertyTab.DEFAULTS);
 	}
     public void performApply() { performSave(false); }
-    public boolean performOk() { return performSave(true); }
+    public boolean performOk() {
+    	return performSave(true); 
+    }
     /**
      * The same code used to perform OK and Apply 
      * @param forOk - true means OK, false - Apply
@@ -410,6 +412,12 @@ implements
 				// ask all tabs to store changes in cfg
 				if (finalOk) { // OK
 					saveDone = true;
+					for (int j=0; j<pages.size(); j++) {
+						AbstractPage ap = (AbstractPage)pages.get(j);
+						if (ap.displayedConfig) {
+							ap.forEach(ICPropertyTab.OK, null);
+						}
+					}
 					ICConfigurationDescription[] olds = prjd.getConfigurations();
 					for (int i=0; i<olds.length; i++) {
 						resd = getResDesc(olds[i]);

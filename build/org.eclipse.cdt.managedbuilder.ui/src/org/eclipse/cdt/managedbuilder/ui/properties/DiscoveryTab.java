@@ -54,11 +54,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
     private static final String NAMESPACE = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
     private static final String POINT = "DiscoveryProfilePage"; //$NON-NLS-1$
-//    private static final String NAMESPACE = "org.eclipse.cdt.managedbuilder.ui"; //$NON-NLS-1$
-//    private static final String POINT = "DiscoveryProfileUI"; //$NON-NLS-1$
     protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
     private static final String PROFILE_PAGE = "profilePage"; //$NON-NLS-1$
-//    private static final String PROFILE_PATTERN = "profilePattern"; //$NON-NLS-1$
     private static final String PROFILE_ID = "profileId"; //$NON-NLS-1$
     private static final String PROFILE_NAME = "name"; //$NON-NLS-1$
     private static final String SC_GROUP_LABEL = PREFIX + ".scGroup.label"; //$NON-NLS-1$
@@ -83,7 +80,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     private IScannerConfigBuilderInfo2 buildInfo;
     private CfgInfoContext iContext;
     private List pagesList = null;
-    private List profilesList = null;
+    private List visibleProfilesList = null;
     private IPath configPath;
     private AbstractDiscoveryPage[] realPages;
 	protected SashForm sashForm;
@@ -169,7 +166,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         profileComboBox.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
             	int x = profileComboBox.getSelectionIndex();
-            	String s = (String)profilesList.get(x); 
+            	String s = (String)visibleProfilesList.get(x); 
             	buildInfo.setSelectedProfileId(s);
                 handleDiscoveryProfileChanged();
             }
@@ -254,27 +251,24 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         scProblemReportingEnabledButton.setSelection(buildInfo.isProblemReportingEnabled());
 
         profileComboBox.removeAll();
-        profilesList = buildInfo.getProfileIdList();
-
+        List profilesList = buildInfo.getProfileIdList();
         Collections.sort(profilesList, CDTListComparator.getInstance());
-        
+        visibleProfilesList = new ArrayList(profilesList.size());
         realPages = new AbstractDiscoveryPage[profilesList.size()];
         Iterator it = profilesList.iterator();
         int counter = 0;
         int pos = 0;
-        
         String savedId = buildInfo.getSelectedProfileId();
-        
         while (it.hasNext()) {
             String profileId = (String)it.next();
- 			if (!cbi.isProfileSupported(iContext, profileId)) continue; 
-            
+ 			if (!cbi.isProfileSupported(iContext, profileId)) 
+ 				continue; 
+ 			visibleProfilesList.add(profileId);
             String profileName = getProfileName(profileId);
             profileComboBox.add(profileName);
-            if (profileId.equals(savedId)) pos = counter;
-
+            if (profileId.equals(savedId)) 
+            	pos = counter;
             buildInfo.setSelectedProfileId(profileId); // needs to create page
-            
     		for (Iterator it2 = pagesList.iterator(); it2.hasNext(); ) {
     			DiscoveryProfilePageConfiguration p = (DiscoveryProfilePageConfiguration)it2.next();
     			if (p != null) {
@@ -290,10 +284,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     		}
     		counter ++;
         }
-        buildInfo.setSelectedProfileId(savedId);
-        if (profileComboBox.getItemCount() > 0) profileComboBox.select(pos);
-    	enableAllControls(); 
-        handleDiscoveryProfileChanged();
+       buildInfo.setSelectedProfileId(savedId);
+       if (profileComboBox.getItemCount() > 0) 
+    	   profileComboBox.select(pos);
+       enableAllControls(); 
+       handleDiscoveryProfileChanged();
  	}
  	
 	private void handleDiscoveryProfileChanged() {
@@ -361,7 +356,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     }
 
 	public void performApply(ICResourceDescription src,ICResourceDescription dst) {
- 		ICfgScannerConfigBuilderInfo2Set cbi1 =
+		ICfgScannerConfigBuilderInfo2Set cbi1 =
  			CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(getCfg(src.getConfiguration()));
  		ICfgScannerConfigBuilderInfo2Set cbi2 =
  			CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(getCfg(dst.getConfiguration()));
@@ -377,14 +372,29 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  				try { 
  					cbi2.applyInfo(ic, bi1);
  				} catch (CoreException e) {
-// 					System.out.println(Messages.getString("DiscoveryTab.15") + e.getLocalizedMessage()); //$NON-NLS-1$
+ 					System.out.println(Messages.getString("DiscoveryTab.15") + e.getLocalizedMessage()); //$NON-NLS-1$
  				}
  			} else {
-// 				System.out.println(Messages.getString("DiscoveryTab.16")); //$NON-NLS-1$
+ 				System.out.println(Messages.getString("DiscoveryTab.16")); //$NON-NLS-1$
  			}
  		}
 	}
 	
+	protected void performOK() {
+		if (buildInfo == null) 
+			return;
+        String savedId = buildInfo.getSelectedProfileId();
+		for (int i=0; i<realPages.length; i++) {
+			if (realPages != null && realPages[i] != null) {
+				String s = (String)visibleProfilesList.get(i);
+				buildInfo.setSelectedProfileId(s);
+				realPages[i].performApply();
+				realPages[i].setVisible(false);
+			}
+		}
+        buildInfo.setSelectedProfileId(savedId);
+	}
+
 	public boolean canBeVisible() {
 		if (page.isForProject() || page.isForPrefs()) return true;
 		// Hide this page for folders and files 
@@ -402,22 +412,6 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	public IProject getProject() { return page.getProject(); }
 	public ICConfigurationDescription getConfiguration() { return getResDesc().getConfiguration(); }
 
-	protected void performOK() {
-		if (buildInfo == null) 
-			return;
-        String savedId = buildInfo.getSelectedProfileId();
-		for (int i=0; i<realPages.length; i++) {
-			if (realPages != null && realPages[i] != null) {
-				String s = (String)profilesList.get(i);
-				buildInfo.setSelectedProfileId(s);
-				realPages[i].performApply();
-				realPages[i].setVisible(false);
-			}
-		}
-        buildInfo.setSelectedProfileId(savedId);
-	}
-	
-	
 	protected void performDefaults() {
  		cbi.setPerRcTypeDiscovery(true);
  		Iterator it = cbi.getInfoMap().keySet().iterator();

@@ -42,8 +42,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
@@ -100,8 +100,7 @@ public class CHViewPart extends ViewPart {
     // widgets
     private PageBook fPagebook;
     private Composite fViewerPage;
-    private Composite fInfoPage;
-    private Text fInfoText;
+    private Label fInfoText;
 
     // treeviewer
     private CHContentProvider fContentProvider;
@@ -141,7 +140,7 @@ public class CHViewPart extends ViewPart {
 
     public void setMessage(String msg) {
         fInfoText.setText(msg);
-        fPagebook.showPage(fInfoPage);
+        fPagebook.showPage(fInfoText);
         fShowsMessage= true;
         updateDescription();
         updateActionEnablement();
@@ -304,12 +303,7 @@ public class CHViewPart extends ViewPart {
     }
     
     private void createInfoPage() {
-        fInfoPage = new Composite(fPagebook, SWT.NULL);
-        fInfoPage.setLayoutData(new GridData(GridData.FILL_BOTH));
-        fInfoPage.setSize(100, 100);
-        fInfoPage.setLayout(new FillLayout());
-
-        fInfoText= new Text(fInfoPage, SWT.WRAP | SWT.READ_ONLY); 
+    	fInfoText = new Label(fPagebook, SWT.TOP | SWT.LEFT | SWT.WRAP);
     }
 
     private void initDragAndDrop() {
@@ -317,7 +311,7 @@ public class CHViewPart extends ViewPart {
         Transfer[] localSelectionTransfer= new Transfer[] {
         		LocalSelectionTransfer.getTransfer()
         };
-        DropTarget dropTarget = new DropTarget(fPagebook, DND.DROP_COPY);
+        DropTarget dropTarget = new DropTarget(fPagebook, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK | DND.DROP_DEFAULT);
         dropTarget.setTransfer(localSelectionTransfer);
         dropTarget.addDropListener(dropListener);
     }

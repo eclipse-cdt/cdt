@@ -177,6 +177,7 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.show.tooltip"</code>).
 	 *
 	 * @since 3.1.1
+	 * @deprecated Use {@link ITextEditorActionDefinitionIds#SHOW_INFORMATION} instead.
 	 */
-	public static final String SHOW_TOOLTIP = "org.eclipse.cdt.ui.edit.text.c.show.tooltip"; //$NON-NLS-1$
+	public static final String SHOW_TOOLTIP = ITextEditorActionDefinitionIds.SHOW_INFORMATION;
 }

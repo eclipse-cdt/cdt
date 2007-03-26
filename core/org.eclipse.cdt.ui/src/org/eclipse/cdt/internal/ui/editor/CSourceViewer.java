@@ -14,13 +14,10 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextPresentationListener;
@@ -34,6 +31,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -43,7 +41,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor.ITextConverter;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 
 /**
@@ -59,9 +56,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
     private IInformationPresenter fOutlinePresenter;
     /** Presents type hierarchy. */
     private IInformationPresenter fHierarchyPresenter;
-
-    private List fTextConverters;
-	private boolean fIgnoreTextConverters= false;
 
 	/**
 	 * This viewer's foreground color.
@@ -306,7 +300,19 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 			initializeViewerColors();
 		}
 	}
-	
+
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewer#createControl(org.eclipse.swt.widgets.Composite, int)
+	 */
+	protected void createControl(Composite parent, int styles) {
+
+		// Use LEFT_TO_RIGHT unless otherwise specified.
+		if ((styles & SWT.RIGHT_TO_LEFT) == 0 && (styles & SWT.LEFT_TO_RIGHT) == 0)
+			styles |= SWT.LEFT_TO_RIGHT;
+			
+		super.createControl(parent, styles);
+	}
+
 	/*
      * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
 	 */
@@ -322,16 +328,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
             case SHOW_HIERARCHY:
             	fHierarchyPresenter.showInformation();
             	return;
-			case UNDO:
-				fIgnoreTextConverters= true;
-				super.doOperation(operation);
-				fIgnoreTextConverters= false;
-				return;
-			case REDO:
-				fIgnoreTextConverters= true;
-				super.doOperation(operation);
-				fIgnoreTextConverters= false;
-				return;
 		}
 		super.doOperation(operation);
 	}
@@ -348,33 +344,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
         }
         return super.canDoOperation(operation);
     }
-
-	public void addTextConverter(ITextConverter textConverter) {
-		if (fTextConverters == null) {
-			fTextConverters = new ArrayList(1);
-			fTextConverters.add(textConverter);
-		} else if (!fTextConverters.contains(textConverter))
-			fTextConverters.add(textConverter);
-	}
-
-	public void removeTextConverter(ITextConverter textConverter) {
-		if (fTextConverters != null) {
-			fTextConverters.remove(textConverter);
-			if (fTextConverters.size() == 0)
-				fTextConverters = null;
-		}
-	}
-
-	/*
-	 * @see TextViewer#customizeDocumentCommand(DocumentCommand)
-	 */
-	protected void customizeDocumentCommand(DocumentCommand command) {
-		super.customizeDocumentCommand(command);
-		if (!fIgnoreTextConverters && fTextConverters != null) {
-			for (Iterator e = fTextConverters.iterator(); e.hasNext();)
-				((ITextConverter) e.next()).customizeDocumentCommand(getDocument(), command);
-		}
-	}
 
 	/**
 	 * Prepend given listener to the list of presentation listeners

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Stack;
 
@@ -35,41 +34,33 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultLineTracker;
-import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension2;
-import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.ITextViewerExtension7;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IFormattingContext;
-import org.eclipse.jface.text.information.IInformationProvider;
-import org.eclipse.jface.text.information.IInformationProviderExtension;
-import org.eclipse.jface.text.information.IInformationProviderExtension2;
-import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.link.ILinkedModeListener;
 import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedModeUI;
@@ -78,16 +69,11 @@ import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.link.LinkedModeUI.ExitFlags;
 import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationHover;
-import org.eclipse.jface.text.source.IAnnotationHoverExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
-import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.ISourceViewerExtension3;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
@@ -137,9 +123,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ITextEditorDropTargetListener;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
-import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextNavigationAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
@@ -171,7 +155,6 @@ import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.corext.util.SimplePositionTracker;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -181,7 +164,6 @@ import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
 import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
-import org.eclipse.cdt.internal.ui.actions.JoinLinesAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
@@ -194,7 +176,6 @@ import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.CWordIterator;
 import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
-import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
@@ -207,10 +188,6 @@ import org.eclipse.cdt.internal.ui.util.CUIHelp;
  * C specific text editor.
  */
 public class CEditor extends TextEditor implements ISelectionChangedListener, IReconcilingParticipant, ICReconcilingListener {
-
-	interface ITextConverter {
-		void customizeDocumentCommand(IDocument document, DocumentCommand command);
-	}
 
 	class AdaptedSourceViewer extends CSourceViewer  {
 
@@ -247,16 +224,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			}
 
 			super.doOperation(operation);
-		}
-
-		public void updateIndentationPrefixes() {
-			SourceViewerConfiguration configuration= getSourceViewerConfiguration();
-			String[] types= configuration.getConfiguredContentTypes(this);
-			for (int i= 0; i < types.length; i++) {
-				String[] prefixes= configuration.getIndentPrefixes(this, types[i]);
-				if (prefixes != null && prefixes.length > 0)
-					setIndentPrefixes(prefixes, types[i]);
-			}
 		}
 
 		/*
@@ -309,80 +276,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, preferences);
 
 			return context;
-		}
-	}
-
-	static class TabConverter implements ITextConverter {
-		private int fTabRatio;
-		private ILineTracker fLineTracker;
-		
-		public TabConverter() {
-		}
-		
-		public void setNumberOfSpacesPerTab(int ratio) {
-			fTabRatio = ratio;
-		}
-		
-		public void setLineTracker(ILineTracker lineTracker) {
-			fLineTracker = lineTracker;
-		}
-		
-		private int insertTabString(StringBuffer buffer, int offsetInLine) {
-			
-			if (fTabRatio == 0)
-				return 0;
-				
-			int remainder = offsetInLine % fTabRatio;
-			remainder = fTabRatio - remainder;
-			for (int i = 0; i < remainder; i++)
-				buffer.append(' ');
-			return remainder;
-		}
-		
-		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
-			String text = command.text;
-			if (text == null)
-				return;
-				
-			int index = text.indexOf('\t');
-			if (index > -1) {
-				StringBuffer buffer = new StringBuffer();
-				
-				fLineTracker.set(command.text);
-				int lines = fLineTracker.getNumberOfLines();
-				
-				try {
-					for (int i = 0; i < lines; i++) {
-						int offset = fLineTracker.getLineOffset(i);
-						int endOffset = offset + fLineTracker.getLineLength(i);
-						String line = text.substring(offset, endOffset);
-						
-						int position = 0;
-						if (i == 0) {
-							IRegion firstLine = document.getLineInformationOfOffset(command.offset);
-							position = command.offset - firstLine.getOffset();	
-						}
-						
-						int length = line.length();
-						for (int j = 0; j < length; j++) {
-							char c = line.charAt(j);
-							if (c == '\t') {
-								int oldPosition = position;
-								position += insertTabString(buffer, position);
-								if (command.caretOffset > command.offset + oldPosition) {
-									command.caretOffset += position - oldPosition - 1;
-								}
-							} else {
-								buffer.append(c);
-								++position;
-							}
-						}
-					}
-						
-					command.text = buffer.toString();
-				} catch (BadLocationException x) {
-				}
-			}
 		}
 	}
 
@@ -771,310 +664,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		}
 	}
 	
- 	/**
-	 * Information provider used to present focusable information shells.
-	 * 
-	 * @since 3.1.1
-	 */
-	private static final class InformationProvider implements
-			IInformationProvider, IInformationProviderExtension,
-			IInformationProviderExtension2 {
-
-		private IRegion fHoverRegion;
-		private Object fHoverInfo;
-		private IInformationControlCreator fControlCreator;
-
-		InformationProvider(IRegion hoverRegion, Object hoverInfo,
-				IInformationControlCreator controlCreator) {
-			fHoverRegion = hoverRegion;
-			fHoverInfo = hoverInfo;
-			fControlCreator = controlCreator;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer,
-		 *      int)
-		 */
-		public IRegion getSubject(ITextViewer textViewer, int invocationOffset) {
-			return fHoverRegion;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer,
-		 *      org.eclipse.jface.text.IRegion)
-		 */
-		public String getInformation(ITextViewer textViewer, IRegion subject) {
-			return fHoverInfo.toString();
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer,
-		 *      org.eclipse.jface.text.IRegion)
-		 */
-		public Object getInformation2(ITextViewer textViewer, IRegion subject) {
-			return fHoverInfo;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
-		 */
-		public IInformationControlCreator getInformationPresenterControlCreator() {
-			return fControlCreator;
-		}
-	}
-
-	/**
-	 * This action behaves in two different ways: If there is no current text
-	 * hover, the tooltip is displayed using information presenter. If there is
-	 * a current text hover, it is converted into a information presenter in
-	 * order to make it sticky.
-	 * 
-	 * @since 3.1.1
-	 */
-	class InformationDispatchAction extends TextEditorAction {
-
-		/** The wrapped text operation action. */
-		private final TextOperationAction fTextOperationAction;
-
-		/**
-		 * Creates a dispatch action.
-		 * 
-		 * @param resourceBundle
-		 *            the resource bundle
-		 * @param prefix
-		 *            the prefix
-		 * @param textOperationAction
-		 *            the text operation action
-		 */
-		public InformationDispatchAction(ResourceBundle resourceBundle,
-				String prefix, final TextOperationAction textOperationAction) {
-			super(resourceBundle, prefix, CEditor.this);
-			if (textOperationAction == null)
-				throw new IllegalArgumentException();
-			fTextOperationAction = textOperationAction;
-		}
-
-		/*
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
-		public void run() {
-
-			ISourceViewer sourceViewer = getSourceViewer();
-			if (sourceViewer == null) {
-				fTextOperationAction.run();
-				return;
-			}
-
-			if (sourceViewer instanceof ITextViewerExtension4) {
-				ITextViewerExtension4 extension4 = (ITextViewerExtension4) sourceViewer;
-				if (extension4.moveFocusToWidgetToken())
-					return;
-			}
-
-			if (sourceViewer instanceof ITextViewerExtension2) {
-				// does a text hover exist?
-				ITextHover textHover = ((ITextViewerExtension2) sourceViewer)
-						.getCurrentTextHover();
-				if (textHover != null
-						&& makeTextHoverFocusable(sourceViewer, textHover))
-					return;
-			}
-
-			if (sourceViewer instanceof ISourceViewerExtension3) {
-				// does an annotation hover exist?
-				IAnnotationHover annotationHover = ((ISourceViewerExtension3) sourceViewer)
-						.getCurrentAnnotationHover();
-				if (annotationHover != null
-						&& makeAnnotationHoverFocusable(sourceViewer,
-								annotationHover))
-					return;
-			}
-
-			// otherwise, just display the tooltip
-			// fTextOperationAction.run();
-		}
-
-		/**
-		 * Tries to make a text hover focusable (or "sticky").
-		 * 
-		 * @param sourceViewer
-		 *            the source viewer to display the hover over
-		 * @param textHover
-		 *            the hover to make focusable
-		 * @return <code>true</code> if successful, <code>false</code>
-		 *         otherwise
-		 */
-		private boolean makeTextHoverFocusable(ISourceViewer sourceViewer,
-				ITextHover textHover) {
-			Point hoverEventLocation = ((ITextViewerExtension2) sourceViewer)
-					.getHoverEventLocation();
-			int offset = computeOffsetAtLocation(sourceViewer,
-					hoverEventLocation.x, hoverEventLocation.y);
-			if (offset == -1)
-				return false;
-
-			try {
-				IRegion hoverRegion = textHover.getHoverRegion(sourceViewer,
-						offset);
-				if (hoverRegion == null)
-					return false;
-
-				String hoverInfo = textHover.getHoverInfo(sourceViewer,
-						hoverRegion);
-
-				IInformationControlCreator controlCreator = null;
-				if (textHover instanceof IInformationProviderExtension2)
-					controlCreator = ((IInformationProviderExtension2) textHover)
-							.getInformationPresenterControlCreator();
-
-				IInformationProvider informationProvider = new InformationProvider(
-						hoverRegion, hoverInfo, controlCreator);
-
-				fInformationPresenter.setOffset(offset);
-				fInformationPresenter
-						.setAnchor(AbstractInformationControlManager.ANCHOR_BOTTOM);
-				fInformationPresenter.setMargins(6, 6); // default values from
-														// AbstractInformationControlManager
-				String contentType = TextUtilities.getContentType(sourceViewer
-						.getDocument(), ICPartitions.C_PARTITIONING, offset,
-						true);
-				fInformationPresenter.setInformationProvider(
-						informationProvider, contentType);
-				fInformationPresenter.showInformation();
-
-				return true;
-
-			} catch (BadLocationException e) {
-				return false;
-			}
-		}
-
-		/**
-		 * Tries to make an annotation hover focusable (or "sticky").
-		 * 
-		 * @param sourceViewer
-		 *            the source viewer to display the hover over
-		 * @param annotationHover
-		 *            the hover to make focusable
-		 * @return <code>true</code> if successful, <code>false</code>
-		 *         otherwise
-		 */
-		private boolean makeAnnotationHoverFocusable(
-				ISourceViewer sourceViewer, IAnnotationHover annotationHover) {
-			IVerticalRulerInfo info = getVerticalRuler();
-			int line = info.getLineOfLastMouseButtonActivity();
-			if (line == -1)
-				return false;
-
-			try {
-
-				// compute the hover information
-				Object hoverInfo;
-				if (annotationHover instanceof IAnnotationHoverExtension) {
-					IAnnotationHoverExtension extension = (IAnnotationHoverExtension) annotationHover;
-					ILineRange hoverLineRange = extension.getHoverLineRange(
-							sourceViewer, line);
-					if (hoverLineRange == null)
-						return false;
-					final int maxVisibleLines = Integer.MAX_VALUE; // allow any
-																	// number of
-																	// lines
-																	// being
-																	// displayed,
-																	// as we
-																	// support
-																	// scrolling
-					hoverInfo = extension.getHoverInfo(sourceViewer,
-							hoverLineRange, maxVisibleLines);
-				} else {
-					hoverInfo = annotationHover
-							.getHoverInfo(sourceViewer, line);
-				}
-
-				// hover region: the beginning of the concerned line to place
-				// the control right over the line
-				IDocument document = sourceViewer.getDocument();
-				int offset = document.getLineOffset(line);
-				String contentType = TextUtilities.getContentType(document,
-						ICPartitions.C_PARTITIONING, offset, true);
-
-				IInformationControlCreator controlCreator = null;
-
-				/*
-				 * XXX: This is a hack to avoid API changes at the end of 3.2,
-				 * and should be fixed for 3.3, see:
-				 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=137967
-				 */
-				if ("org.eclipse.jface.text.source.projection.ProjectionAnnotationHover".equals(annotationHover.getClass().getName())) { //$NON-NLS-1$
-					controlCreator = new IInformationControlCreator() {
-						public IInformationControl createInformationControl(
-								Shell shell) {
-							int shellStyle = SWT.RESIZE | SWT.TOOL
-									| getOrientation();
-							int style = SWT.V_SCROLL | SWT.H_SCROLL;
-							return new SourceViewerInformationControl(shell,
-									shellStyle, style);
-						}
-					};
-
-				} else {
-					if (annotationHover instanceof IInformationProviderExtension2)
-						controlCreator = ((IInformationProviderExtension2) annotationHover)
-								.getInformationPresenterControlCreator();
-					else if (annotationHover instanceof IAnnotationHoverExtension)
-						controlCreator = ((IAnnotationHoverExtension) annotationHover)
-								.getHoverControlCreator();
-				}
-
-				IInformationProvider informationProvider = new InformationProvider(
-						new Region(offset, 0), hoverInfo, controlCreator);
-
-				fInformationPresenter.setOffset(offset);
-				fInformationPresenter
-						.setAnchor(AbstractInformationControlManager.ANCHOR_RIGHT);
-				fInformationPresenter.setMargins(4, 0); // AnnotationBarHoverManager
-														// sets (5,0), minus
-														// SourceViewer.GAP_SIZE_1
-				fInformationPresenter.setInformationProvider(
-						informationProvider, contentType);
-				fInformationPresenter.showInformation();
-
-				return true;
-
-			} catch (BadLocationException e) {
-				return false;
-			}
-		}
-
-		// modified version from TextViewer
-		private int computeOffsetAtLocation(ITextViewer textViewer, int x, int y) {
-
-			StyledText styledText = textViewer.getTextWidget();
-			IDocument document = textViewer.getDocument();
-
-			if (document == null)
-				return -1;
-
-			try {
-				int widgetOffset = styledText.getOffsetAtLocation(new Point(x,
-						y));
-				Point p = styledText.getLocationAtOffset(widgetOffset);
-				if (p.x > x)
-					widgetOffset--;
-
-				if (textViewer instanceof ITextViewerExtension5) {
-					ITextViewerExtension5 extension = (ITextViewerExtension5) textViewer;
-					return extension.widgetOffset2ModelOffset(widgetOffset);
-				} else {
-					IRegion visibleRegion = textViewer.getVisibleRegion();
-					return widgetOffset + visibleRegion.getOffset();
-				}
-			} catch (IllegalArgumentException e) {
-				return -1;
-			}
-		}
-	}
-	
 	/**
 	 * Text navigation action to navigate to the next sub-word.
 	 *
@@ -1434,13 +1023,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		}
 	}
 	
-
-	/**
-	 * The information provider used to present focusable information
-	 * shells.
-	 */
-	private InformationPresenter fInformationPresenter;
-	
 	/**
 	 * The editor selection changed listener.
 	 * 
@@ -1468,9 +1050,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 
 	/** The bracket inserter. */
 	private BracketInserter fBracketInserter = new BracketInserter();
-
-	/** The editor's tab converter */
-	private TabConverter fTabConverter;
 
 	/** Listener to annotation model changes that updates the error tick in the tab image */
 	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
@@ -1699,8 +1278,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			/*
 			 * Ignore tab setting since we rely on the formatter preferences.
 			 * We do this outside the try-finally block to avoid that EDITOR_TAB_WIDTH
-			 * is handled by the sub-class (AbstractDecoratedTextEditor).
+			 * is handled by the base-class (AbstractDecoratedTextEditor).
 			 */
+			return;
+		}
+		if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS.equals(property)) {
+			// Ignore spaces-for-tab setting since we rely on the formatter preferences.
 			return;
 		}
 
@@ -1725,10 +1308,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 				}
 
 				if (SPACES_FOR_TABS.equals(property)) {
-					if (isTabConversionEnabled())
-						startTabConversion();
+					if (isTabsToSpacesConversionEnabled())
+						installTabsToSpacesConverter();
 					else
-						stopTabConversion();
+						uninstallTabsToSpacesConverter();
 					return;
 				}
 				
@@ -1743,12 +1326,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 					} else {
 						removeActionActivationCode("IndentOnTab"); //$NON-NLS-1$
 					}
-				}
-
-				if (CODE_FORMATTER_TAB_SIZE.equals(property)) {
-					asv.updateIndentationPrefixes();
-					if (fTabConverter != null)
-						fTabConverter.setNumberOfSpacesPerTab(getTabSize());
 				}
 
 				// Not implemented ... for the future.
@@ -1768,6 +1345,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 						fProjectionModelUpdater.install(this, asv);
 					}
 					return;
+				}
+
+				if (CODE_FORMATTER_TAB_SIZE.equals(property) && isTabsToSpacesConversionEnabled()) {
+					uninstallTabsToSpacesConverter();
+					installTabsToSpacesConverter();
 				}
 
 				if (DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE.equals(property)
@@ -2073,6 +1655,43 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		return (this == service.getActivePart());
 	}
 
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#installTabsToSpacesConverter()
+	 * @since 4.0
+	 */
+	protected void installTabsToSpacesConverter() {
+		ISourceViewer sourceViewer= getSourceViewer(); 
+		SourceViewerConfiguration config= getSourceViewerConfiguration();
+		if (config != null && sourceViewer instanceof ITextViewerExtension7) {
+			int tabWidth= config.getTabWidth(sourceViewer);
+			TabsToSpacesConverter tabToSpacesConverter= new TabsToSpacesConverter();
+			tabToSpacesConverter.setNumberOfSpacesPerTab(tabWidth);
+			IDocumentProvider provider= getDocumentProvider();
+			if (provider instanceof CDocumentProvider) {
+				CDocumentProvider cProvider= (CDocumentProvider) provider;
+				tabToSpacesConverter.setLineTracker(cProvider.createLineTracker(getEditorInput()));
+			} else
+				tabToSpacesConverter.setLineTracker(new DefaultLineTracker());
+			((ITextViewerExtension7)sourceViewer).setTabsToSpacesConverter(tabToSpacesConverter);
+			updateIndentPrefixes();
+		}
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#isTabsToSpacesConversionEnabled()
+	 * @since 4.0
+	 */
+	protected boolean isTabsToSpacesConversionEnabled() {
+		ICElement element= getInputCElement();
+		ICProject project= element == null ? null : element.getCProject();
+		String option;
+		if (project == null)
+			option= CCorePlugin.getOption(SPACES_FOR_TABS);
+		else
+			option= project.getOption(SPACES_FOR_TABS, true);
+		return CCorePlugin.SPACE.equals(option);
+	}
+
     /**
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
@@ -2136,8 +1755,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener = null;
 		}
-
-		stopTabConversion();
 		
 		super.dispose();
 	}
@@ -2184,21 +1801,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 
 		fFoldingGroup = new FoldingActionGroup(this, getSourceViewer());
 
-		// Sticky hover support
-		ResourceAction resAction = new TextOperationAction(CEditorMessages.getResourceBundle(), "ShowToolTip.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
-		ResourceAction resAction2 = new InformationDispatchAction(CEditorMessages.getResourceBundle(), "ShowToolTip.", (TextOperationAction) resAction); //$NON-NLS-1$
-		resAction2.setActionDefinitionId(ICEditorActionDefinitionIds.SHOW_TOOLTIP);
-		setAction("ShowToolTip", resAction2); //$NON-NLS-1$
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(resAction2, ICHelpContextIds.SHOW_TOOLTIP_ACTION);
-		
 		// Default text editing menu items
 		IAction action= new GotoMatchingBracketAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);				
 		setAction(GotoMatchingBracketAction.GOTO_MATCHING_BRACKET, action);
-		
-		action = new JoinLinesAction(CEditorMessages.getResourceBundle(), "JoinLines.", this); //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.JOIN_LINES);
-		setAction("Join Lines", action); //$NON-NLS-1$
 		
 		action = new ToggleCommentAction(CEditorMessages.getResourceBundle(), "ToggleComment.", this); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_COMMENT);
@@ -2364,51 +1970,33 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	}
 
 	/**
-     * Determines is folding enabled.
+     * Determines if folding is enabled.
 	 * @return <code>true</code> if folding is enabled, <code>false</code> otherwise.
 	 */
 	boolean isFoldingEnabled() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 
+	/*
+	 * @see org.eclipse.ui.part.WorkbenchPart#getOrientation()
+	 * @since 4.0
+	 */
+	public int getOrientation() {
+		// C/C++ editors are always left to right by default
+		return SWT.LEFT_TO_RIGHT;
+	}
 
-	/**
-	 * The <code>AbstractTextEditor</code> implementation of this 
-	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
-	 * source viewer. Subclasses may extend.
-	 * 
-	 * We attach our own mouseDown listener on the menu bar, 
-	 * and our own listener for cursor/key/selection events to update cursor position in
-	 * status bar.
-
-     * @param parent Parent composite of the control.
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 	
-		// Sticky hover support
-		IInformationControlCreator informationControlCreator = new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell shell) {
-				boolean cutDown = false;
-				int style = cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
-				return new DefaultInformationControl(shell, SWT.RESIZE
-						| SWT.TOOL, style, new HTMLTextPresenter(cutDown));
-			}
-		};
-
-		fInformationPresenter = new InformationPresenter(informationControlCreator);
-		fInformationPresenter.setSizeConstraints(60, 10, true, true);
-		fInformationPresenter.install(getSourceViewer());
-		fInformationPresenter.setDocumentPartitioning(ICPartitions.C_PARTITIONING);
-				
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);
 
 		fEditorSelectionChangedListener = new EditorSelectionChangedListener();
 		fEditorSelectionChangedListener.install(getSelectionProvider());
 		
-		if (isTabConversionEnabled())
-			startTabConversion();
-
 		if (isSemanticHighlightingEnabled())
 			installSemanticHighlighting();
 			
@@ -2608,55 +2196,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			SourceViewerConfiguration configuration = getSourceViewerConfiguration();
 			((ToggleCommentAction)action).configure(sourceViewer, configuration);
 		}
-	}
-
-	private void configureTabConverter() {
-		if (fTabConverter != null) {
-			IDocumentProvider provider = getDocumentProvider();
-			if (provider instanceof CDocumentProvider) {
-				CDocumentProvider prov = (CDocumentProvider) provider;
-				fTabConverter.setLineTracker(prov.createLineTracker(getEditorInput()));
-			} else {
-				fTabConverter.setLineTracker(new DefaultLineTracker());
-			}
-		}
-	}
-
-	private int getTabSize() {
-		ICElement element = getInputCElement();
-		ICProject project = element == null ? null : element.getCProject();
-		return CodeFormatterUtil.getTabWidth(project);
-	}
-
-	private void startTabConversion() {
-		if (fTabConverter == null) {
-			fTabConverter= new TabConverter();
-			configureTabConverter();
-			fTabConverter.setNumberOfSpacesPerTab(getTabSize());
-			AdaptedSourceViewer asv= (AdaptedSourceViewer) getSourceViewer();
-			asv.addTextConverter(fTabConverter);
-			asv.updateIndentationPrefixes();
-		}
-	}
-
-	private void stopTabConversion() {
-		if (fTabConverter != null) {
-			AdaptedSourceViewer asv= (AdaptedSourceViewer) getSourceViewer();
-			asv.removeTextConverter(fTabConverter);
-			asv.updateIndentationPrefixes();
-			fTabConverter= null;
-		}
-	}
-
-	private boolean isTabConversionEnabled() {
-		ICElement element= getInputCElement();
-		ICProject project= element == null ? null : element.getCProject();
-		String option;
-		if (project == null)
-			option= CCorePlugin.getOption(SPACES_FOR_TABS);
-		else
-			option= project.getOption(SPACES_FOR_TABS, true);
-		return CCorePlugin.SPACE.equals(option);
 	}
 
 	/*

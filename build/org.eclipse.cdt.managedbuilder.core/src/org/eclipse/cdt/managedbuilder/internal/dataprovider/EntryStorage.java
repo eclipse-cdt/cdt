@@ -135,44 +135,42 @@ public class EntryStorage {
 //		}
 		
 		SettingLevel level = fSettings.getLevels()[0];
-		ICLanguageSettingEntry usrEntries[] = level.getEntries();
-		if(usrEntries.length != 0){
-			IOption options[] = fLangData.getOptionsForKind(fKind);
-			if(options.length > 0){
-				IOption option = options[0];
-				String optValue[] = new String[usrEntries.length]; 
+		IOption options[] = fLangData.getOptionsForKind(fKind);
+		if(options.length != 0){
+			ICLanguageSettingEntry usrEntries[] = level.getEntries();
+			IOption option = options[0];
+			String optValue[] = new String[usrEntries.length]; 
+			if(usrEntries.length != 0){
 				for(int i = 0; i < usrEntries.length; i++){
 					ICLanguageSettingEntry entry = usrEntries[i];
 					optValue[i] = entryValueToOption(entry);
 				}
-				
-				ITool tool = fLangData.getTool();
-				IResourceInfo rcInfo = tool.getParentResourceInfo();
-				IOption newOption = ManagedBuildManager.setOption(rcInfo, tool, option, optValue);
-				options = fLangData.getOptionsForKind(fKind);
-				for(int i = 0; i < options.length; i++){
-					if(options[i] != newOption)
-						ManagedBuildManager.setOption(rcInfo, tool, option, new String[0]);
-				}
+			}
+
+			ITool tool = fLangData.getTool();
+			IResourceInfo rcInfo = tool.getParentResourceInfo();
+			IOption newOption = ManagedBuildManager.setOption(rcInfo, tool, option, optValue);
+			options = fLangData.getOptionsForKind(fKind);
+			for(int i = 0; i < options.length; i++){
+				if(options[i] != newOption)
+					ManagedBuildManager.setOption(rcInfo, tool, option, new String[0]);
 			}
 		}
-		
-		if(level.containsOverrideInfo()){
-			IOption options[] = fLangData.getUndefOptionsForKind(fKind);
-			if(options.length != 0){
-				Set set = level.getOverrideSet();
-				IOption option = options[0];
-				String[] optValue = (String[])set.toArray(new String[set.size()]);
-				
-				ITool tool = fLangData.getTool();
-				IResourceInfo rcInfo = tool.getParentResourceInfo();
-				IOption newOption = ManagedBuildManager.setOption(rcInfo, tool, option, optValue);
-				options = fLangData.getUndefOptionsForKind(fKind);
-				for(int i = 0; i < options.length; i++){
-					if(options[i] != newOption)
-						ManagedBuildManager.setOption(rcInfo, tool, option, new String[0]);
-				}
+
+		options = fLangData.getUndefOptionsForKind(fKind);
+		if(options.length != 0){
+			Set set = level.containsOverrideInfo() ? level.getOverrideSet() : null;
+			String[] optValue = set != null ? (String[])set.toArray(new String[set.size()]) : new String[0];
+			IOption option = options[0];
+			ITool tool = fLangData.getTool();
+			IResourceInfo rcInfo = tool.getParentResourceInfo();
+			IOption newOption = ManagedBuildManager.setOption(rcInfo, tool, option, optValue);
+			options = fLangData.getUndefOptionsForKind(fKind);
+			for(int i = 0; i < options.length; i++){
+				if(options[i] != newOption)
+					ManagedBuildManager.setOption(rcInfo, tool, option, new String[0]);
 			}
+
 		}
 	}
 	

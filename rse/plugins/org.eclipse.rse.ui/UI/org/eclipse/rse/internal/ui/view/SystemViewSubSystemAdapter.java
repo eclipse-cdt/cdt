@@ -25,6 +25,7 @@ import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IServiceSubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
@@ -148,7 +149,17 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	public String getAbsoluteName(Object element)
 	{
 		ISubSystem ss = (ISubSystem)element;
-		return ss.getSystemProfileName() + "." + ss.getHostAliasName() + "." + ss.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		// DKM - using type instead of name
+		if (ss instanceof IServiceSubSystem)
+		{
+			return ss.getSystemProfileName() + "." + ss.getHostAliasName() + "." + ((IServiceSubSystem)ss).getServiceType(); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		else
+		{
+			return ss.getSystemProfileName() + "." + ss.getHostAliasName() + "." + ss.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
 	}		
 	/**
 	 * Return the type label for this object

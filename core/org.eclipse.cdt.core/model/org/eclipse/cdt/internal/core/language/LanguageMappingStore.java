@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.language.LanguageMappingConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Document;
@@ -25,15 +26,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class LanguageMappingStore {
-	private static final String LANGUAGE_MAPPING_ID = "org.eclipse.cdt.core.language.mapping";
+	private static final String LANGUAGE_MAPPING_ID = "org.eclipse.cdt.core.language.mapping"; //$NON-NLS-1$
 
-	private static final String PROJECT_MAPPINGS = "project-mappings";
+	private static final String PROJECT_MAPPINGS = "project-mappings"; //$NON-NLS-1$
 
-	private static final String PROJECT_MAPPING = "project-mapping";
+	private static final String PROJECT_MAPPING = "project-mapping"; //$NON-NLS-1$
 
-	private static final String ATTRIBUTE_CONTENT_TYPE = "content-type";
+	private static final String ATTRIBUTE_CONTENT_TYPE = "content-type"; //$NON-NLS-1$
 
-	private static final String ATTRIBUTE_LANGUAGE = "language";
+	private static final String ATTRIBUTE_LANGUAGE = "language"; //$NON-NLS-1$
 
 	private IProject fProject;
 

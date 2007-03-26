@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.language.LanguageMappingConfiguration;
 import org.eclipse.cdt.internal.core.CContentTypes;
-import org.eclipse.cdt.internal.core.language.LanguageMappingConfiguration;
 import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
 import org.eclipse.cdt.internal.core.model.LanguageDescriptor;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -385,7 +385,7 @@ public class LanguageManager {
 	 */
 	public ILanguage getLanguageForFile(String fullPathToFile, IProject project) throws CoreException {
 		if (project == null)
-			throw new IllegalArgumentException("project must not be null in call to LanguageManager.getLanguageForFile(String, IProject)");
+			throw new IllegalArgumentException("project must not be null in call to LanguageManager.getLanguageForFile(String, IProject)"); //$NON-NLS-1$
 		
 		IContentType contentType = CContentTypes.getContentType(project, fullPathToFile);
 		

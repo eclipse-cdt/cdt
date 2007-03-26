@@ -36,9 +36,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.LanguageMappingConfiguration;
 import org.eclipse.cdt.core.model.LanguageManager;
 
-import org.eclipse.cdt.internal.core.language.LanguageMappingConfiguration;
 
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 

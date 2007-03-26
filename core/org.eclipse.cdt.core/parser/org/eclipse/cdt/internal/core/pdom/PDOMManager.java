@@ -200,6 +200,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		return manager;
 	}
 
+	/**
+	 * Returns the pdom for the project. The call to the method may cause 
+	 * opening the database. In case there is a version mismatch the data
+	 * base is cleared, in case it does not exist it is created. In any
+	 * case a pdom ready to use is returned.
+	 * @throws CoreException
+	 */
 	public IPDOM getPDOM(ICProject project) throws CoreException {
 		synchronized (fProjectToPDOM) {
 			IProject rproject = project.getProject();
@@ -227,16 +234,30 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 
 			if (pdom == null) {
+				boolean fromScratch= false;
 				if (dbName == null) {
 					dbName = createNewDatabaseName(project);
 					dbFile= fileFromDatabaseName(dbName);
 					storeDatabaseName(rproject, dbName);
+					fromScratch= true;
 				}
 			
-				boolean newPDOM= !dbFile.exists();
-				pdom = new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject));
-				if(newPDOM) {
+				pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject));
+				if (pdom.versionMismatch() || fromScratch) {
+					try {
+						pdom.acquireWriteLock();
+					} catch (InterruptedException e) {
+						throw new CoreException(CCorePlugin.createStatus(Messages.PDOMManager_creationOfIndexInterrupted, e));
+					}
+					if (fromScratch) {
+						pdom.setCreatedFromScratch(true);
+					}
+					else {
+						pdom.clear();
+						pdom.setClearedBecauseOfVersionMismatch(true);
+					}
 					writeProjectPDOMProperties(pdom, rproject);
+					pdom.releaseWriteLock();
 				}
 				pdom.addListener(this);
 			}
@@ -367,24 +388,22 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		IProject prj= project.getProject();
 		try {
 			synchronized (fIndexerMutex) {
-				PDOM pdom= (PDOM) getPDOM(project);
+				WritablePDOM pdom= (WritablePDOM) getPDOM(project);
 				Properties props= IndexerPreferences.getProperties(prj);
 				IPDOMIndexer indexer= createIndexer(project, getIndexerId(project), props);
 
-				boolean performImport= false;
-				boolean rebuild= false;
-				if (!IPDOMManager.ID_NO_INDEXER.equals(indexer.getID()) && pdom.isEmpty()) {
-					performImport= true;
-				}
-				else if (pdom.versionMismatch()) {
-					rebuild= true;
-				}
-				
-				if (!performImport) {
-					registerIndexer(project, indexer);
-					if (rebuild) {
-						enqueue(new PDOMRebuildTask(indexer));
+				boolean rebuild= 
+					pdom.isClearedBecauseOfVersionMismatch() ||
+					pdom.isCreatedFromScratch();
+				if (rebuild) {
+					if (IPDOMManager.ID_NO_INDEXER.equals(indexer.getID())) {
+						rebuild= false;
 					}
+					pdom.setClearedBecauseOfVersionMismatch(false);
+					pdom.setCreatedFromScratch(false);
+				}
+				if (!rebuild) {
+					registerIndexer(project, indexer);
 					return;
 				}
 			}

@@ -122,12 +122,11 @@ public class Database {
 		int version= getVersion();
 		removeChunksFromCache();
 		
-		// clear out memory headers
+		// clear the first chunk.
 		Chunk header= getChunk(0);
+		header.clear(0, CHUNK_SIZE);
 		setVersion(version);
-		header.clear(4, DATA_AREA - 4);
 		chunks = new Chunk[] {header};
-
 		try {
 			getChannel().truncate(CHUNK_SIZE);
 		}

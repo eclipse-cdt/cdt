@@ -17,6 +17,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.pdom.messages"; //$NON-NLS-1$
 	public static String Checksums_taskComputeChecksums;
 	public static String PDOMManager_ClosePDOMJob;
+	public static String PDOMManager_creationOfIndexInterrupted;
 	public static String PDOMManager_ExistingFileCollides;
 	public static String PDOMManager_indexMonitorDetail;
 	public static String PDOMManager_JoinIndexerTask;

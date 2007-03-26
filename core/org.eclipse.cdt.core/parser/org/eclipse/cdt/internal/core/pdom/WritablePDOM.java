@@ -34,7 +34,9 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
 
-public class WritablePDOM extends PDOM implements IWritableIndexFragment {
+public class WritablePDOM extends PDOM implements IWritableIndexFragment {	
+	private boolean fClearedBecauseOfVersionMismatch= false;
+	private boolean fCreatedFromScratch= false;
 
 	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance());
@@ -124,5 +126,21 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		}
 
 		return notConverted;
+	}
+
+	boolean isClearedBecauseOfVersionMismatch() {
+		return fClearedBecauseOfVersionMismatch;
+	}
+
+	void setClearedBecauseOfVersionMismatch(boolean clearedBecauseOfVersionMismatch) {
+		fClearedBecauseOfVersionMismatch = clearedBecauseOfVersionMismatch;
+	}
+
+	boolean isCreatedFromScratch() {
+		return fCreatedFromScratch;
+	}
+
+	void setCreatedFromScratch(boolean createdFromScratch) {
+		fCreatedFromScratch = createdFromScratch;
 	}
 }

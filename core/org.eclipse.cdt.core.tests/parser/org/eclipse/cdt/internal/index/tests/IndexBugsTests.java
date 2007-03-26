@@ -16,6 +16,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
@@ -44,7 +47,9 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -53,10 +58,12 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -531,6 +538,48 @@ public class IndexBugsTests extends BaseTestCase {
 			IBasicType btype= (IBasicType) type;
 			assertTrue(IBasicType.t_int != btype.getType());
 			assertEquals(IBasicType.t_float, btype.getType());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	
+	/*
+	 * Linked headers, referenced via include <> syntax are missed
+	 */
+	public void _test179322() throws Exception {
+		String baseDir= FileLocator.toFileURL(FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path("/resources/indexTests/bugs/179322"), null)).getFile();
+		IFolder content= fCProject.getProject().getFolder("content");
+		content.createLink(new Path(baseDir), IResource.NONE, null);
+
+		// Setup path entries
+		List entries= new ArrayList(Arrays.asList(CoreModel.getRawPathEntries(fCProject)));
+		entries.add(
+				CoreModel.newIncludeEntry(fCProject.getPath(),
+						null, content.getLocation(), true));
+		entries.add(
+				CoreModel.newIncludeEntry(fCProject.getPath(),
+						null, content.getLocation(), false));
+		entries.add(CoreModel.newSourceEntry(content.getProjectRelativePath()));
+		fCProject.setRawPathEntries(
+				(IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]),
+				new NullProgressMonitor()
+		);
+		
+		CCorePlugin.getIndexManager().reindex(fCProject);
+		CCorePlugin.getIndexManager().joinIndexer(10000, NPM);
+		
+		fIndex.acquireReadLock();
+		try {
+			IBinding[] bindings= fIndex.findBindings(Pattern.compile(".*"), true, IndexFilter.ALL, NPM);
+			assertEquals(2, bindings.length);
+			
+			int b= bindings[0].getName().equals("A") ? 1 : 0;
+			assertTrue(bindings[0] instanceof ICPPClassType);
+			assertTrue(bindings[1] instanceof ICPPClassType);
+			assertTrue(((ICPPClassType)bindings[1-b]).getBases().length==0);
+			assertTrue(((ICPPClassType)bindings[b]).getBases().length==1);
 		}
 		finally {
 			fIndex.releaseReadLock();

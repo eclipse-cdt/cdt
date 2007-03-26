@@ -125,7 +125,7 @@ public class EntryStore {
 	}
 
 	public void storeEntries(int kind, ICLanguageSettingEntry[] entries){
-		List newList = new ArrayList();
+		List newList = new ArrayList(entries.length);
 		newList.addAll(Arrays.asList(entries));
 		if(fPreserveReadOnly){
 			List oldList = getEntriesList(kind, false);

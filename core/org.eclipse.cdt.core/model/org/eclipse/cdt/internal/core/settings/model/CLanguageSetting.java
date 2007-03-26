@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.EntryStore;
+import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.core.resources.IProject;
 
 public class CLanguageSetting extends CDataProxy implements
@@ -257,11 +258,20 @@ public class CLanguageSetting extends CDataProxy implements
 //		KindBasedStore nameSetStore = new KindBasedStore();
 		int eKind;
 		if(entries != null){
-			for(int i = 0; i < entries.length; i++){
-				ICLanguageSettingEntry entry = entries[i];
-				eKind = entry.getKind();
-				if((kind & eKind) != 0 && (data.getSupportedEntryKinds() & eKind) != 0){
-					store.addEntry(entry);
+			if(entries.length != 0){
+				for(int i = 0; i < entries.length; i++){
+					ICLanguageSettingEntry entry = entries[i];
+					eKind = entry.getKind();
+					if((kind & eKind) != 0 && (data.getSupportedEntryKinds() & eKind) != 0){
+						store.addEntry(entry);
+					}
+				}
+			} else {
+				int kinds[] = KindBasedStore.getLanguageEntryKinds();
+				for(int i = 0; i < kinds.length; i++){
+					if((kinds[i] & kind) != 0){
+						store.storeEntries(kinds[i], new ICLanguageSettingEntry[0]);
+					}
 				}
 			}
 		} 
@@ -290,12 +300,22 @@ public class CLanguageSetting extends CDataProxy implements
 		EntryStore store = new EntryStore();
 //		KindBasedStore nameSetStore = new KindBasedStore();
 		int eKind;
+		
 		if(list != null){
-			for(Iterator iter = list.iterator(); iter.hasNext();){
-				ICLanguageSettingEntry entry = (ICLanguageSettingEntry)iter.next();
-				eKind = entry.getKind();
-				if((kind & eKind) != 0 && (data.getSupportedEntryKinds() & eKind) != 0){
-					store.addEntry(entry);
+			if(list.size() != 0){
+				for(Iterator iter = list.iterator(); iter.hasNext();){
+					ICLanguageSettingEntry entry = (ICLanguageSettingEntry)iter.next();
+					eKind = entry.getKind();
+					if((kind & eKind) != 0 && (data.getSupportedEntryKinds() & eKind) != 0){
+						store.addEntry(entry);
+					}
+				}
+			} else {
+				int kinds[] = KindBasedStore.getLanguageEntryKinds();
+				for(int i = 0; i < kinds.length; i++){
+					if((kinds[i] & kind) != 0){
+						store.storeEntries(kinds[i], new ICLanguageSettingEntry[0]);
+					}
 				}
 			}
 		}

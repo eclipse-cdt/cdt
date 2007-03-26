@@ -3562,7 +3562,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return getConfigurationForDescription(cfgDes, TEST_CONSISTANCE);
 	}
 
-	public static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes, boolean checkConsistance){
+	private static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes, boolean checkConsistance){
 		if(cfgDes == null)
 			return null;
 		CConfigurationData cfgData = cfgDes.getConfigurationData();

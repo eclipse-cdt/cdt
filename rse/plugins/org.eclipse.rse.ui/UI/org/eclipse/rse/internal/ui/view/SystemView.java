@@ -3778,7 +3778,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	protected Widget internalFindReferencedItem(Widget parent, Object element, int searchLimit) {
 		previousItem = null;
 		searchDepth = 0;
-		//System.out.println("recursiveInternalFindReferencedItem");
+		System.out.println("recursiveInternalFindReferencedItem");
 		return recursiveInternalFindReferencedItem(parent, element, searchLimit);
 	}
 
@@ -3812,7 +3812,6 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			Item[] items = getChildren(parent);
 			for (int i = 0; (i < items.length); i++) 
 			{
-				//System.out.println("recursiveInternalFindReferencedItem");
 				Widget o = recursiveInternalFindReferencedItem(items[i], element, searchLimit);
 				if (o != null) return o;
 				searchDepth = oldDepth;
@@ -3875,10 +3874,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			match = internalFindFirstRemoteItemReference(remoteObjectName, null, subsystem);
 		else {
 
-			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, null, subsystem, matches);    	  
 			match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, null, subsystem);
-			if (debugRemote) System.out.println("Returning " + match + " from findFirstRemoteItemReference(1,2,3)"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		//if (matches.size() > 0)
 		//  return (Item)matches.elementAt(0);
@@ -3905,9 +3902,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			match = internalFindFirstRemoteItemReference(remoteObjectName, remoteObject, subsystem);
 		else {
 			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, remoteObject, subsystem, matches); 
-			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
+			System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem);
-			if (debugRemote) System.out.println("Returning " + match + " from findFirstRemoteItemReference(1,2)"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		//if (matches.size() > 0)
@@ -3934,20 +3930,29 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		if (element instanceof String)
 			searchString = (String) element;
 		else {
-			if (elementObject == null) elementObject = element;
+			if (elementObject == null) 
+				elementObject = element;
 			ISystemViewElementAdapter adapter = getViewAdapter(element);
-			if (adapter == null) return matches;
+			if (adapter == null) 
+				return matches;
 			subsystem = adapter.getSubSystem(element);
 			searchString = adapter.getAbsoluteName(element);
 		}
 		Tree tree = getTree();
 		Item[] roots = tree.getItems();
-		if (roots == null) return matches;
-		if (matches == null) matches = new Vector();
-		for (int idx = 0; idx < roots.length; idx++) {
-			//System.out.println("recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);");
-			matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
+		if (roots == null) 
+			return matches;
+		if (matches == null) 
+			matches = new Vector();
+		
+		// try new map lookup method - won't work in cases of rename
+		if (!mappedFindAllRemoteItemReferences(elementObject, matches)){ 
+			for (int idx = 0; idx < roots.length; idx++) {
+				System.out.println("recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);");
+				matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
+			}
 		}
+		
 		return matches;
 	}
 
@@ -3967,11 +3972,14 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		Tree tree = getTree();
 		Item[] roots = tree.getItems();
 		if (roots == null) return matches;
-		if (matches == null) matches = new Vector();
-		for (int idx = 0; idx < roots.length; idx++)
-		{
-			System.out.println("2:recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);");					
-			matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
+		if (matches == null) 
+			matches = new Vector();
+
+		// try new map lookup method - won't work in cases of rename
+		if (!mappedFindAllRemoteItemReferences(elementObject, matches)){
+			for (int idx = 0; idx < roots.length; idx++){
+				matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
+			}
 		}
 		return matches;
 	}
@@ -3992,22 +4000,39 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	protected Item internalFindFirstRemoteItemReference(String searchString, Object elementObject, ISubSystem subsystem) {
 		Item[] roots = getTree().getItems();
 		if ((roots == null) || (roots.length == 0)) return null;
-		Item match = null;
-		if (debugRemote) {
-			System.out.println("Inside internalFindFirstRemoteItemReference for searchString: " + searchString + ", subsystem null? " + (subsystem == null) + ", nbr roots = " + roots.length); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
+		
+		// use map first
+		Item match = mappedFindFirstRemoteItemReference(elementObject);
+		
 		for (int idx = 0; (match == null) && (idx < roots.length); idx++) {
-			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
+			System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(roots[idx], searchString, elementObject, subsystem);
 			if (debugRemote) System.out.println("...Inside internalFindFirstRemoteItemReference. Result of searching root " + idx + ": " + roots[idx].getText() + ": " + match); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		if (debugRemote) {
-			System.out.println("...Inside internalFindFirstRemoteItemReference. Returning " + match); //$NON-NLS-1$
-			if (match != null) System.out.println("......set bp here"); //$NON-NLS-1$
-		}
+
 		return match;
 	}
 
+	protected Item mappedFindFirstRemoteItemReference(Object elementObject)
+	{
+		return (Item)findItem(elementObject);
+	}
+	
+	protected boolean mappedFindAllRemoteItemReferences(Object elementObject, Vector occurrences)
+	{				
+		Widget[] items = findItems(elementObject);
+		if (items.length > 0)
+		{
+			for (int i = 0; i < items.length; i++)
+			{
+				occurrences.add(items[i]);
+			}
+			return true;
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Recursively tries to find all references to a remote object.
 	 * @param parent the parent item at which to start the search.
@@ -4063,12 +4088,14 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		// recurse over children	    
 		Item[] items = getChildren(parent);
 		for (int i = 0; (i < items.length); i++) {
-			System.out.println("3:recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, occurrences);");
 					
 			if (!items[i].isDisposed()) occurrences = recursiveFindAllRemoteItemReferences(items[i], elementName, elementObject, subsystem, occurrences);
 		}
 		return occurrences;
 	}
+	
+
+
 
 	/**
 	 * Recursively tries to find the first references to a remote object.
@@ -4130,7 +4157,6 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		Item[] items = getChildren(parent);
 		Item match = null;
 		for (int i = 0; (match == null) && (i < items.length); i++) {
-			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			if (!items[i].isDisposed()) match = recursiveFindFirstRemoteItemReference(items[i], elementName, elementObject, subsystem);
 		}
 		return match;
@@ -4149,11 +4175,10 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		Tree tree = getTree();
 		Item[] roots = tree.getItems();
 		if (roots == null) return matches;
-		if (matches == null) matches = new Vector();
+		if (matches == null) 
+			matches = new Vector();
 
 		for (int idx = 0; idx < roots.length; idx++){
-			// DKM
-			//System.out.println("recursiveFindAllRemoteItemFilterReferences");
 			matches = recursiveFindAllRemoteItemFilterReferences(roots[idx], elementName, subsystem, matches);
 		}
 		return matches;
@@ -4185,7 +4210,6 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		if (rawData instanceof ISystemFilterReference) {
 			ISystemFilterReference filterRef = (ISystemFilterReference) rawData;
 			if (filterRef.getReferencedFilter().isPromptable()) return occurrences;
-			if (debugRemote) System.out.println("Testing filter: " + filterRef.getReferencedFilter().getName()); //$NON-NLS-1$
 			ISubSystem fss = (ISubSystem) filterRef.getProvider();
 			if (fss != null) // should never happen!!
 			{
@@ -4238,7 +4262,6 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		// recurse over children	    
 		Item[] items = getChildren(parent);
 		for (int i = 0; (i < items.length); i++) {
-			//System.out.println("recursiveFindAllRemoteItemFilterReferences");
 			occurrences = recursiveFindAllRemoteItemFilterReferences(items[i], elementName, subsystem, occurrences);
 		}
 		return occurrences;

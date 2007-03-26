@@ -7,8 +7,9 @@ Bundle-Version: 0.9.0.qualifier
 Bundle-Activator: org.eclipse.dd.dsf.debug.DsfDebugPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.debug.core, 
- org.eclipse.dd.dsf
+ org.eclipse.debug.core,
+ org.eclipse.dd.dsf,
+ org.eclipse.cdt.core
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.dd.dsf.debug.service,
  org.eclipse.dd.dsf.debug.service.command

@@ -12,6 +12,7 @@ package org.eclipse.dd.dsf.debug.service;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;

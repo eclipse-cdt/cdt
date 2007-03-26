@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.LinkedList;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -44,6 +46,8 @@ public class PDOMCPPNamespace extends PDOMBinding
 	private static final int INDEX_OFFSET = PDOMBinding.RECORD_SIZE + 0;
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
+
+	private String[] qualifiedName;
 	
 	public PDOMCPPNamespace(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
@@ -88,7 +92,23 @@ public class PDOMCPPNamespace extends PDOMBinding
 	}
 
 	public String[] getQualifiedName() throws DOMException {
-		throw new PDOMNotImplementedError();
+		if (qualifiedName == null) {
+			LinkedList namelist = new LinkedList();
+			namelist.addFirst(getName());
+	
+			try {
+				PDOMNode parent = getParentNode();
+				while (parent instanceof PDOMCPPNamespace) {
+					namelist.addFirst(((PDOMCPPNamespace)parent).getName());
+					parent = parent.getParentNode();
+				}
+			} catch (CoreException e) {
+			}
+		
+			qualifiedName = (String[])namelist.toArray(new String[namelist.size()]);
+		}
+		
+		return qualifiedName;
 	}
 
 	public char[][] getQualifiedNameCharArray() throws DOMException {
@@ -142,8 +162,14 @@ public class PDOMCPPNamespace extends PDOMBinding
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		try {
 			if (name instanceof ICPPASTQualifiedName) {
-				IASTName lastName = ((ICPPASTQualifiedName)name).getLastName();
-				return lastName != null ? lastName.resolveBinding() : null;
+				String[] myname = getQualifiedName();
+				IASTName[] names = ((ICPPASTQualifiedName)name).getNames();
+				if (myname.length != names.length - 1 || names.length < 2)
+					return null;
+				for (int i = 0; i < myname.length; ++i)
+					if (!myname[i].equals(new String(names[i].toCharArray())))
+						return null;
+				name = names[names.length - 2]; // or myname.length - 1
 			}
 			IASTNode parent = name.getParent();
 			if (parent instanceof ICPPASTQualifiedName) {

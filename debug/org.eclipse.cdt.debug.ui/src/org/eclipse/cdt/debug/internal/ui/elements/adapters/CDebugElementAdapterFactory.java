@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
  
 /**
  * Comment for .
@@ -31,7 +31,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 
 	private static IElementLabelProvider fgModuleLabelProvider = new ModuleLabelProvider();
     private static IElementContentProvider fgModuleContentProvider = new ModuleContentProvider();
-	private static IModelProxyFactoryAdapter fgModuleProxyFactory = new ModuleProxyFactory();
+	private static IModelProxyFactory fgModuleProxyFactory = new ModuleProxyFactory();
     private static IElementMementoProvider fgModuleMementoProvider = new ModuleMementoProvider();
 
 	/* (non-Javadoc)
@@ -60,7 +60,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 				return fgModuleContentProvider;
 			}
 		}
-		if ( adapterType.equals( IModelProxyFactoryAdapter.class ) ) {
+		if ( adapterType.equals( IModelProxyFactory.class ) ) {
 			if ( adaptableObject instanceof IModuleRetrieval ) {
 				return fgModuleProxyFactory;
 			}
@@ -80,7 +80,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 		return new Class[] {
 				IElementLabelProvider.class,
 				IElementContentProvider.class,
-				IModelProxyFactoryAdapter.class,
+				IModelProxyFactory.class,
         		IElementMementoProvider.class,
 			};
 	}

@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.model.ASTCache;
@@ -75,28 +74,23 @@ public class ASTCacheTests extends BaseTestCase {
 		super(name);
 	}
 
-	// {source1.cpp}
-	// void foo1() {}
-	// void bar1() {}
-
-	// {source2.cpp}
-	// void foo2() {}
-	// void bar2() {}
-
 	public static Test suite() {
 		TestSuite suite= new TestSuite(ASTCacheTests.class);
 		return suite;
 	}
 
+	private final String SOURCE1= "void foo1() {}"; //$NON-NLS-1$
+	private final String SOURCE2= "void foo2() {}"; //$NON-NLS-1$
+
 	public void setUp() throws Exception {
 		super.setUp();
 		fProject= createProject("ASTCacheTest");
 		assertNotNull(fProject);
-		IFile file1= createFile(fProject.getProject(), "source1.cpp", readTaggedComment("source1.cpp"));
+		IFile file1= createFile(fProject.getProject(), "source1.cpp", SOURCE1);
 		assertNotNull(file1);
 		fTU1= CProjectHelper.findTranslationUnit(fProject, file1.getName());
 		assertNotNull(fTU1);
-		IFile file2= createFile(fProject.getProject(), "source2.cpp", readTaggedComment("source2.cpp"));
+		IFile file2= createFile(fProject.getProject(), "source2.cpp", SOURCE2);
 		assertNotNull(file2);
 		fTU2= CProjectHelper.findTranslationUnit(fProject, file2.getName());
 		assertNotNull(fTU2);
@@ -117,10 +111,6 @@ public class ASTCacheTests extends BaseTestCase {
 
 	protected ICProject createProject(final String name) throws CoreException {
 		return CProjectHelper.createCProject(name, null, IPDOMManager.ID_FAST_INDEXER);
-	}
-
-	protected String readTaggedComment(String tag) throws Exception {
-		return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "model", getClass(), tag);
 	}
 
 	protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {

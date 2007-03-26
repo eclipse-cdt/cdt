@@ -808,6 +808,15 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		
 		removedMap.keySet().removeAll(addedMap.keySet());
 		addedMap.keySet().removeAll(rmCopy.keySet());
+		
+		if(removedMap.size() != 0){
+			LinkedHashMap curMap = createRealMap(getTools());
+			for(Iterator iter = removedMap.keySet().iterator(); iter.hasNext();){
+				Object key = iter.next();
+				if(!curMap.containsKey(key))
+					iter.remove();
+			}
+		}
 		ITool[][] result = new Tool[2][];
 		result[0] = (Tool[])removedMap.values().toArray(new Tool[removedMap.size()]);
 		result[1] = (Tool[])addedMap.values().toArray(new Tool[addedMap.size()]);

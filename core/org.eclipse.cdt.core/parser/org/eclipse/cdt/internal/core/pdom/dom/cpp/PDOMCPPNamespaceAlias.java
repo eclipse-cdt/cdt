@@ -36,7 +36,8 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements
 	throws CoreException {
 		super(pdom, parent, alias.getNameCharArray());
 		PDOMBinding namespace = getLinkageImpl().adaptBinding(alias.getBinding());
-		pdom.getDB().putInt(record + NAMESPACE_BINDING, namespace.getRecord());
+		pdom.getDB().putInt(record + NAMESPACE_BINDING, 
+				namespace != null ? namespace.getRecord() : 0);
 	}
 
 	public PDOMCPPNamespaceAlias(PDOM pdom, int record) {

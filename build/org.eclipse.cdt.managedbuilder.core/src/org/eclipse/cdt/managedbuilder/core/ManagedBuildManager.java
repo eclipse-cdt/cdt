@@ -3556,7 +3556,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return null;
 	}
 */	
-	private static final boolean TEST_CONSISTANCE = true;
+	private static final boolean TEST_CONSISTANCE = false;
 
 	public static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes){
 		return getConfigurationForDescription(cfgDes, TEST_CONSISTANCE);
@@ -3660,8 +3660,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg, boolean checkConsistance){
 		ICConfigurationDescription des = ((Configuration)cfg).getConfigurationDescription();
 		if(des == null){
-//			if(checkConsistance)
-//				throw new IllegalStateException();
+			if(checkConsistance)
+				throw new IllegalStateException();
 			if(((Configuration)cfg).isPreference()){
 				try {
 					des = CCorePlugin.getDefault().getPreferenceConfiguration(CFG_DATA_PROVIDER_ID);

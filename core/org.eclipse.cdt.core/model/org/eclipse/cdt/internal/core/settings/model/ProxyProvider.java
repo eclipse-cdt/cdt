@@ -128,6 +128,10 @@ public class ProxyProvider implements IProxyProvider {
 
 	public void invalidateCache() {
 		fProxiesCached = false;
+		CDataProxy[] proxies = fCache.getCachedProxies();
+		for(int i = 0; i < proxies.length; i++){
+			proxies[i].doClearData();
+		}
 	}
 	
 	

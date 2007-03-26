@@ -103,6 +103,11 @@ public abstract class CDataProxy implements ICSettingObject {
 		fId = data.getId();
 		fData = data;
 	}
+	
+	void doClearData(){
+		fData = null;
+		setRescan(true);
+	}
 
 	protected void checkUpdate(boolean write){
 		if((write && !containsWritableData()) 

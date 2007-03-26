@@ -18,12 +18,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.eclipse.jface.layout.TableColumnAdapter;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -87,9 +86,8 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 
 		Composite tableParent = new Composite(composite, SWT.NONE);
 		tableParent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		tableParent.setLayout(new FillLayout());
-
-		fTable = new Table(tableParent, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+		
+		fTable = new Table(tableParent, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		fTable.setHeaderVisible(true);
 		fTable.setLinesVisible(true);
 
@@ -101,12 +99,12 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 		languageColumn
 				.setText(PreferencesMessages.ProjectLanguagesPropertyPage_languageColumn);
 
-		TableColumnAdapter columnAdapter = new TableColumnAdapter(fTable);
-		columnAdapter.addColumnData(new ColumnWeightData(1,
+		TableColumnLayout layout = new TableColumnLayout();
+		layout.setColumnData(contentTypeColumn, new ColumnWeightData(1,
 				MINIMUM_COLUMN_WIDTH, true));
-		columnAdapter.addColumnData(new ColumnWeightData(1,
+		layout.setColumnData(languageColumn, new ColumnWeightData(1,
 				MINIMUM_COLUMN_WIDTH, true));
-		tableParent.addControlListener(columnAdapter);
+		tableParent.setLayout(layout);
 
 		Composite buttons = new Composite(composite, SWT.NONE);
 		buttons.setLayout(new GridLayout());

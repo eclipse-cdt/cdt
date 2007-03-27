@@ -348,7 +348,7 @@
            name="%Error.parsers"
            weight="007"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
-.
+
 	 <!-- Export settings page -->
 	      <tab
            class="org.eclipse.cdt.ui.newui.ExpIncludeTab"

@@ -25,8 +25,6 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemSignonInformation;
-import org.eclipse.rse.model.ISystemRegistryUI;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * This is a base class to make it easier to create connector service classes.
@@ -320,7 +318,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 		} else {
 			int whereToUpdate = IRSEUserIdConstants.USERID_LOCATION_HOST;
 			IHost host = subsystem.getHost();
-			ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
+			ISystemRegistry sr = RSECorePlugin.getDefault().getSystemRegistry();
 			sr.updateHost(host, host.getSystemType(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
 		}
 	}

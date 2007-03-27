@@ -11,13 +11,9 @@
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentContributor;
-import org.eclipse.cdt.core.settings.model.COutputEntry;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.runtime.IPath;
@@ -28,7 +24,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 public class BuildBuildData extends CBuildData {
 	private Builder fBuilder;
 	private Configuration fCfg;
-	private BuildEnvironmentContributor fEnvContibutor;
+//	private BuildEnvironmentContributor fEnvContibutor;
 	public BuildBuildData(IBuilder builder){
 		fBuilder = (Builder)builder;
 		fCfg = (Configuration)fBuilder.getParent().getParent();
@@ -81,9 +77,10 @@ public class BuildBuildData extends CBuildData {
 	}
 
 	public IEnvironmentContributor getBuildEnvironmentContributor() {
-		if(fEnvContibutor == null)
-			fEnvContibutor = new BuildEnvironmentContributor(this);
-		return fEnvContibutor;
+//		if(fEnvContibutor == null)
+//			fEnvContibutor = new BuildEnvironmentContributor(this);
+//		return fEnvContibutor;
+		return new BuildEnvironmentContributor(this);
 	}
 	
 	public IBuilder getBuilder(){

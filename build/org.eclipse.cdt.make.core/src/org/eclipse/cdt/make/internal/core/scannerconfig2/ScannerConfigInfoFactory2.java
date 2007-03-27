@@ -1033,7 +1033,8 @@ public class ScannerConfigInfoFactory2 {
 			child = doc.createElement(BUILD_OUTPUT_PROVIDER);
 			grandchild = doc.createElement(OPEN_ACTION);
 			grandchild.setAttribute(ENABLED, Boolean.toString(po.buildOutputFileActionEnabled));
-			grandchild.setAttribute(FILE_PATH, po.buildOutputFilePath);
+			if(po.buildOutputFilePath != null)
+				grandchild.setAttribute(FILE_PATH, po.buildOutputFilePath);
 			child.appendChild(grandchild);
 			grandchild = doc.createElement(PARSER);
 			grandchild.setAttribute(ENABLED, Boolean.toString(po.buildOutputParserEnabled));
@@ -1061,12 +1062,15 @@ public class ScannerConfigInfoFactory2 {
 					if (providerKind.equals(ScannerConfigProfile.ScannerInfoProvider.RUN)) {
 						grandchild = doc.createElement(RUN_ACTION); 
 						grandchild.setAttribute(USE_DEFAULT, Boolean.toString(ppo.providerRunUseDefault)); 
-						grandchild.setAttribute(COMMAND, ppo.providerRunCommand);
-						grandchild.setAttribute(ARGUMENTS, ppo.providerRunArguments);
+						if(ppo.providerRunCommand != null)
+							grandchild.setAttribute(COMMAND, ppo.providerRunCommand);
+						if(ppo.providerRunArguments != null)
+							grandchild.setAttribute(ARGUMENTS, ppo.providerRunArguments);
 					}
 					else if (providerKind.equals(ScannerConfigProfile.ScannerInfoProvider.OPEN)) {
 						grandchild = doc.createElement(OPEN_ACTION); 
-						grandchild.setAttribute(FILE_PATH, ppo.providerOpenFilePath);
+						if(ppo.providerOpenFilePath != null)
+							grandchild.setAttribute(FILE_PATH, ppo.providerOpenFilePath);
 					}
 					child.appendChild(grandchild);
 					// parser

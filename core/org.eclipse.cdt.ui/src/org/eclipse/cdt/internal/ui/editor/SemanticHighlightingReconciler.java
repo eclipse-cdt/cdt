@@ -193,12 +193,16 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					fMinLocation= useOffset;
 					// TLETODO This does not work correctly for nested macro substitutions
 					IASTPreprocessorMacroDefinition macroDef= ((IASTMacroExpansion)nodeLocations[0]).getMacroDefinition();
+					final int macroLength;
 					IASTNodeLocation defLocation= macroDef.getName().getFileLocation();
 					if (defLocation != null) {
-						IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useOffset, defLocation.getNodeLength());
-						if (macroNode != null && visitMacro(macroNode, defLocation.getNodeLength())) {
-							return true;
-						}
+						macroLength= defLocation.getNodeLength();
+					} else {
+						macroLength= macroDef.getName().toCharArray().length;
+					}
+					IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useOffset, macroLength);
+					if (macroNode != null && visitMacro(macroNode, macroLength)) {
+						return true;
 					}
 				}
 			}

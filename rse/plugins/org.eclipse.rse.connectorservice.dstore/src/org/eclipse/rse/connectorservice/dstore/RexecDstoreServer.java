@@ -440,7 +440,7 @@ public class RexecDstoreServer implements IServerLauncher
 			rxOut.flush();
 
 			// send userid and password on rexec socket
-			rxOut.writeBytes(signonInfo.getUserid());
+			rxOut.writeBytes(signonInfo.getUserId());
 			rxOut.writeByte(0); // send null terminator
 			rxOut.writeBytes(signonInfo.getPassword());
 			rxOut.writeByte(0); // send null terminator

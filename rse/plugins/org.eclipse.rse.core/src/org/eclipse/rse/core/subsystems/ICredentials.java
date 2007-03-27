@@ -10,4 +10,9 @@
 package org.eclipse.rse.core.subsystems;
 
 public interface ICredentials {
+	
+	String getPassword();
+	
+	String getUserId();
+	
 }

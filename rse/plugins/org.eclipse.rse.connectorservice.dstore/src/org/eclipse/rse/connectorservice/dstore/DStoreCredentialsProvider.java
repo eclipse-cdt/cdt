@@ -25,7 +25,7 @@ public class DStoreCredentialsProvider extends StandardCredentialsProvider {
 	 */
 	public boolean supportsPassword() {
 		boolean result = super.supportsPassword();
-		IHost host = getHost();
+		IHost host = getConnectorService().getHost();
 		String systemType = host.getSystemType();
 		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
 			result = false;
@@ -38,7 +38,7 @@ public class DStoreCredentialsProvider extends StandardCredentialsProvider {
 	 */
 	public boolean supportsUserId() {
 		boolean result = super.supportsUserId();
-		IHost host = getHost();
+		IHost host = getConnectorService().getHost();
 		String systemType = host.getSystemType();
 		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
 			result = false;

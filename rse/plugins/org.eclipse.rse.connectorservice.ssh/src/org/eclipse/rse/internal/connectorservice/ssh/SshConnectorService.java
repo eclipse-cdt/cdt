@@ -294,9 +294,9 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
         //session.setTimeout(getSshTimeoutInMillis());
         session.setTimeout(0); //never time out on the session
         String password=""; //$NON-NLS-1$
-        SystemSignonInformation ssi = getPasswordInformation();
+        SystemSignonInformation ssi = getSignonInformation();
         if (ssi!=null) {
-        	password = getPasswordInformation().getPassword();
+        	password = getSignonInformation().getPassword();
         }
         session.setPassword(password);
         MyUserInfo userInfo = new MyUserInfo(user, password);
@@ -352,7 +352,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 				//TODO MOB - keep the session to avoid NPEs in services (disables gc for the session!)
 				// session = null;
 				// DKM - no need to clear uid cache
-				clearPassword(false); // clear in-memory password
+				clearPassword(false, true); // clear in-memory password
 				//clearUserIdCache(); // Clear any cached local user IDs
 			}
 		}
@@ -706,14 +706,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		return false;
 	}
 
-	/**
-	 * @return false
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
-	 */
-	public boolean requiresPassword() {
-		return false;
-	}
-	
 	protected ICredentialsProvider getCredentialsProvider() {
 		if (credentialsProvider == null) {
 			credentialsProvider = new SshCredentialsProvider(this);

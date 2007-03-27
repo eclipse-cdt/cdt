@@ -332,7 +332,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				notifyDisconnection();
 				clientConnection = null;
 				// DKM - no need to clear uid cache
-				clearPassword(false); // clear in-memory password
+				clearPassword(false, true); // clear in-memory password
 				//clearUserIdCache(); // Clear any cached local user IDs
 				sysInfo = null;
 				installInfo = null;
@@ -528,7 +528,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				monitor.subTask(cmsg.getLevelOneText());	
 			}
 			
-			SystemSignonInformation info = getPasswordInformation();
+			SystemSignonInformation info = getSignonInformation();
 			
 			// GC: - if failed to get a connection in another way, try
 			// starting the datastore server with rexec
@@ -597,7 +597,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			// should be the same as the one stored in the password info (and for Windows
 			// this will be the temp remoteuser userid.
 			//launchStatus = clientConnection.launchServer(getLocalUserId(), getPassword(getPasswordInformation()));
-			SystemSignonInformation info = getPasswordInformation();
+			SystemSignonInformation info = getSignonInformation();
 			if (info == null)
 			{
 				System.out.println("password info = null!");
@@ -632,17 +632,20 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				// If password has expired and must be changed
 				if (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
 				{
-					NewPasswordInfo newPasswordInfo = null;
+					SystemSignonInformation oldCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
+					SystemSignonInformation newCredentials = null;
 					while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
 					{
-						newPasswordInfo = promptForNewPassword(isPasswordExpired(launchMsg) ? RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_EXPIRED) : RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_INVALID));
-						launchStatus = changePassword(clientConnection, getPasswordInformation(), serverLauncher, monitor, newPasswordInfo.newPassword);
+						String messageId = isPasswordExpired(launchMsg) ? ISystemMessages.MSG_VALIDATE_PASSWORD_EXPIRED : ISystemMessages.MSG_VALIDATE_PASSWORD_INVALID;
+						SystemMessage message = RSEUIPlugin.getPluginMessage(messageId);
+						getCredentialsProvider().repairCredentials(message);
+						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
+						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
 						launchMsg = launchStatus.getMessage();
 					}
-					if (newPasswordInfo != null) 
+					if (newCredentials != null) 
 					{
-						setPassword(info.getUserid(), newPasswordInfo.newPassword, newPasswordInfo.savePassword);
-						info = getPasswordInformation();
+						info = newCredentials;
 					}
 					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
 					{
@@ -757,7 +760,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		// server launcher type is unknown
 		else
 		{
-			SystemSignonInformation info = getPasswordInformation();
+			SystemSignonInformation info = getSignonInformation();
 			connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
 			if (!connectStatus.isConnected() && !clientConnection.isKnownStatus(connectStatus.getMessage()))
 			{
@@ -935,7 +938,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				{
 					if (launchFailed)
 				    {
-				        clearPassword(true);
+				        clearPassword(true, true);
 				    }
 				
 					// Display error message
@@ -978,22 +981,38 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				// If password has expired and must be changed
 				else if (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
 				{
-					NewPasswordInfo newPasswordInfo = null;
+					SystemSignonInformation oldCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
+					SystemSignonInformation newCredentials = null;
 					while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
 					{
-						newPasswordInfo = promptForNewPassword(isPasswordExpired(launchMsg) ? RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_EXPIRED) : RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_INVALID));
-						launchStatus = changePassword(clientConnection, getPasswordInformation(), serverLauncher, monitor, newPasswordInfo.newPassword);
+						String messageId = isPasswordExpired(launchMsg) ? ISystemMessages.MSG_VALIDATE_PASSWORD_EXPIRED : ISystemMessages.MSG_VALIDATE_PASSWORD_INVALID;
+						SystemMessage message = RSEUIPlugin.getPluginMessage(messageId);
+						getCredentialsProvider().repairCredentials(message);
+						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
+						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
 						launchMsg = launchStatus.getMessage();
-					}
-					if (newPasswordInfo != null) 
-					{
-						setPassword(getPasswordInformation().getUserid(), newPasswordInfo.newPassword, newPasswordInfo.savePassword);
 					}
 					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
 					{
 						internalConnect(monitor);
 						return;
 					}
+//					NewPasswordInfo newPasswordInfo = null;
+//					while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
+//					{
+//						newPasswordInfo = promptForNewPassword(isPasswordExpired(launchMsg) ? RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_EXPIRED) : RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_INVALID));
+//						launchStatus = changePassword(clientConnection, getPasswordInformation(), serverLauncher, monitor, newPasswordInfo.newPassword);
+//						launchMsg = launchStatus.getMessage();
+//					}
+//					if (newPasswordInfo != null) 
+//					{
+//						setPassword(getPasswordInformation().getUserid(), newPasswordInfo.newPassword, newPasswordInfo.savePassword);
+//					}
+//					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
+//					{
+//						internalConnect(monitor);
+//						return;
+//					}
 				}
 				else if (launchMsg != null)
 				{					
@@ -1050,7 +1069,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			{
 				if (launchFailed)
 			    {
-			        clearPassword(true);
+			        clearPassword(true, true);
 			    }
 				
 				DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);
@@ -1188,7 +1207,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	 */
 	 protected ConnectionStatus launchServer(ClientConnection clientConnection, SystemSignonInformation info, int daemonPort, IProgressMonitor monitor, int timeout)
 	 {
-	     return clientConnection.launchServer(info.getUserid(), info.getPassword(), daemonPort, timeout);
+	     return clientConnection.launchServer(info.getUserId(), info.getPassword(), daemonPort, timeout);
 	 }
 
 	 /*

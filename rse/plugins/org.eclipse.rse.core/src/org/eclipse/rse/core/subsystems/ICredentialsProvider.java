@@ -9,18 +9,38 @@
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+
 public interface ICredentialsProvider {
 	
-	boolean supportsPassword();
+	void acquireCredentials(boolean reacquire) throws InterruptedException;
 	
-	boolean supportsUserId();
+	void clearCredentials();
+	
+	void clearPassword();
+	
+	ICredentials getCredentials();
+	
+	String getUserId();
+	
+	boolean isSuppressed();
+	
+	void repairCredentials(SystemMessage message)throws InterruptedException;
 	
 	boolean requiresPassword();
 	
 	boolean requiresUserId();
 	
-	void acquireCredentials(boolean reacquire);
+	void setPassword(String password);
 	
-	void clearCredentials();
+	void setSuppressed(boolean suppressed);
+	
+	void setUserId(String userId);
+	
+	boolean supportsPassword();
+	
+	boolean supportsUserId();
+	
+	IConnectorService getConnectorService();
 	
 }

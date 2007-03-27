@@ -134,7 +134,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 					return ((SystemSignonInformation) element).getSystemType();
 					
 				case 2:
-					return ((SystemSignonInformation) element).getUserid();
+					return ((SystemSignonInformation) element).getUserId();
 			}
 			
 			// Should never get here
@@ -281,7 +281,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 				SystemPasswordPersistencePrompt dialog = new SystemPasswordPersistencePrompt(getShell(), SystemResources.RESID_PREF_SIGNON_CHANGE_DIALOG_TITLE, passwords, true);
 				int index = pwdTable.getSelectionIndex();
 				SystemSignonInformation info = (SystemSignonInformation) passwords.get(index);
-				dialog.setInputData(info.getSystemType(), info.getHostname(), info.getUserid());
+				dialog.setInputData(info.getSystemType(), info.getHostname(), info.getUserId());
 				if (dialog.open() == Window.OK)
 				{
 					// Remove old and add new
@@ -368,7 +368,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 										system = subsystems[k].getConnectorService();
 										if (system != null)
 										{
-											system.clearPassword(false);
+											system.clearPassword(false, true);
 										}
 									}
 								}

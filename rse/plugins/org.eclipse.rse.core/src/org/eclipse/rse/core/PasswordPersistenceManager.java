@@ -150,7 +150,7 @@ public class PasswordPersistenceManager {
 	 */
 	public void remove(SystemSignonInformation info)
 	{
-		remove(info.getSystemType(), info.getHostname(), info.getUserid());
+		remove(info.getSystemType(), info.getHostname(), info.getUserId());
 	}	
 	
 	/**
@@ -247,11 +247,11 @@ public class PasswordPersistenceManager {
 		// Convert userid to upper case if required
 		if (!isUserIDCaseSensitive(systemtype))
 		{
-			info.setUserid(info.getUserid().toUpperCase());
+			info.setUserId(info.getUserId().toUpperCase());
 		}
 
 		String hostname = info.getHostname();
-		String userid = info.getUserid();
+		String userid = info.getUserId();
 		Map passwords = getPasswordMap(systemtype);
 		String passwordKey = getPasswordKey(hostname, userid);
 	

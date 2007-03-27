@@ -98,7 +98,7 @@ public class SystemClearAllPasswordsAction extends SystemBaseAction {
 	    			
 	    			// clear userid/password from memory and fire event
 	    			//DKM and disk now
-	    			system.clearPassword(true);
+	    			system.clearPassword(true, true);
 	    			RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(ss, 
 	    					ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, 
 	    					ss.getHost()));

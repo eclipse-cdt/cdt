@@ -71,7 +71,7 @@ public class SystemClearPasswordAction extends SystemBaseAction
 		ISubSystem ss = (ISubSystem)getFirstSelection();
 		try {
 			IConnectorService system = ss.getConnectorService();
-			system.clearPassword(true);
+			system.clearPassword(true, true);
 			RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(ss, 
 					ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, 
 					ss.getHost()));

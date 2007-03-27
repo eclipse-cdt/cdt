@@ -119,11 +119,6 @@ public interface IConnectorService extends IRSEModelObject {
 	public String getHostType();
 
 	/**
-	 * @return the name of this connector service
-	 */
-	public String getName();
-
-	/**
 	 * Sets the host used by this connector service.
 	 * @param host 
 	 */
@@ -183,24 +178,6 @@ public interface IConnectorService extends IRSEModelObject {
 	public boolean supportsPassword();
 
 	/**
-	 * Reports if this connector service requires a user id.
-	 * Returns true in default implementation.
-	 * Typically used to indicate if a login dialog can allow an empty user id.
-	 * Must be ignored if supportsUserId() is false.
-	 * @return true or false to indicate if the connector service requires a user id.
-	 */
-	public boolean requiresUserId();
-
-	/**
-	 * Determines if a password is required for this connector service.
-	 * Must be ignored if {@link #supportsPassword()} returns false.
-	 * The default implementation of this interface should return true.
-	 * @return true if the connector service requires a password, 
-	 * false if a password may be empty.
-	 */
-	public boolean requiresPassword();
-
-	/**
 	 * @return the userId that will be used by this connector when
 	 * establishing its connection.
 	 */
@@ -213,6 +190,10 @@ public interface IConnectorService extends IRSEModelObject {
 	 */
 	public void setUserId(String userId);
 
+	public void saveUserId();
+
+	public void removeUserId();
+
 	/**
 	 * Sets the password used by this connector service.
 	 * Can be used if the connector service acquires a password by some external
@@ -220,17 +201,23 @@ public interface IConnectorService extends IRSEModelObject {
 	 * @param matchingUserId The user id to be associated with this password.
 	 * @param password the password
 	 * @param persist true if the password is to be persisted for later use.
+	 * @param propagate true if this password should be propagated to related connector services.
 	 */
-	public void setPassword(String matchingUserId, String password, boolean persist);
-
+	public void setPassword(String matchingUserId, String password, boolean persist, boolean propagate);
+	
+	public void savePassword();
+	
+	public void removePassword();
+	
 	/**
 	 * Clear password held by this service and optionally 
 	 * clear its persistent form. 
 	 * Called when user uses the property dialog to 
 	 * change his userId.  
-	 * @param onDisk if true, clears the persistent form of the password 
+	 * @param persist if true, clears the persistent form of the password 
+	 * @param propagate true if this password should be cleared in related connector services.
 	 */
-	public void clearPassword(boolean onDisk);
+	public void clearPassword(boolean persist, boolean propagate);
 
 	/**
 	 * @param onDisk retrieve the persistent form of the password.

@@ -55,11 +55,11 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
-	public void clearPassword(boolean clearDiskCache) {
+	public void clearPassword(boolean clearDiskCache, boolean propagate) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			conServ.clearPassword(clearDiskCache);
+			conServ.clearPassword(clearDiskCache, propagate);
 		}
 	}
 
@@ -370,24 +370,6 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
-	public boolean requiresPassword() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.requiresPassword();
-		}
-		return false;
-	}
-
-	public boolean requiresUserId() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.requiresUserId();
-		}
-		return false;
-	}
-
 	public void reset() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -421,11 +403,11 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 	}
 
 	public void setPassword(String matchingUserId, String password,
-			boolean persist) {
+			boolean persist, boolean propagate) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			conServ.setPassword(matchingUserId, password, persist);
+			conServ.setPassword(matchingUserId, password, persist, propagate);
 		}
 	}
 
@@ -515,8 +497,39 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return false;
 	}
+	
+	public void saveUserId() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			conServ.saveUserId();
+		}
+	}
+	
+	public void removeUserId() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			conServ.removeUserId();
+		}
+	}
 
+	public void savePassword() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			conServ.savePassword();
+		}
+	}
 
+	public void removePassword() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			conServ.removePassword();
+		}
+	}
+	
 	public boolean wasRestored() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)

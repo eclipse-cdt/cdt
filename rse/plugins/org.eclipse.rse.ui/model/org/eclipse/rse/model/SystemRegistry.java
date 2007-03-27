@@ -2549,7 +2549,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 						{
 							subsystems[idx].getConnectorService().clearCredentials();
 						}
-						subsystems[idx].getConnectorService().clearPassword(false);
+						subsystems[idx].getConnectorService().clearPassword(false, true);
 					}
 					catch (Exception exc)
 					{

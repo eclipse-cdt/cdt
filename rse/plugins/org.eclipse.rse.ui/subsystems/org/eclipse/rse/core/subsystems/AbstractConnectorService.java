@@ -13,35 +13,19 @@
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
-
 package org.eclipse.rse.core.subsystems;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemSignonInformation;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.logging.Logger;
-import org.eclipse.rse.logging.LoggerFactory;
 import org.eclipse.rse.model.ISystemRegistryUI;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.dialogs.ICredentialsValidator;
-import org.eclipse.rse.ui.dialogs.ISystemPasswordPromptDialog;
-import org.eclipse.rse.ui.dialogs.SystemChangePasswordDialog;
-import org.eclipse.rse.ui.dialogs.SystemPasswordPromptDialog;
-import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-
 
 /**
  * This is a base class to make it easier to create connector service classes.
@@ -72,83 +56,43 @@ import org.eclipse.ui.PlatformUI;
  * </ul>
  * 
  * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
- */ 
-public abstract class AbstractConnectorService extends SuperAbstractConnectorService implements IRSEUserIdConstants
-{
-
-    private String _userId;
-    private transient SystemSignonInformation _passwordInfo;
-    protected Shell shell;
-	// dy:  March 24, 2003 Added _suppressSignonPrompt flag to suppress prompting the
-	// user to signon if they already cancelled signon.  Then intent is to allows tools
-	// writers to prevent multiple signon prompts during a "transaction" if the user cancel 
-	// the first signon prompt
-	private boolean _suppressSignonPrompt = false;
-
-
-	public AbstractConnectorService(String name, String description, IHost host, int port)
-	{
+ */
+public abstract class AbstractConnectorService extends SuperAbstractConnectorService implements IRSEUserIdConstants {
+	public AbstractConnectorService(String name, String description, IHost host, int port) {
 		super(name, description, host, port);
-	}	
+	}
 
-	
-    /**
+	/**
 	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
 	 * Returns the active userId if we are connected.
 	 * If not it returns the userId for the primary subsystem ignoring the 
 	 * cached userId.
 	 */
 	final public String getUserId() {
-		String result = null;
-		if (supportsUserId()) {
-			result = getLocalUserId();
-			if (result == null) {
-				result = getSubSystemUserId();
-			}
-		}
-		return result;
+		return getCredentialsProvider().getUserId();
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Return the userId for this connector service. If there is none
-	 * set for this service then it is retrieved from the primary subsystem.
-	 */
-	final protected String getLocalUserId() {
-		return _userId;
-	}
-	
-	/**
-	 * @return the userId from the primary subsystem.
-	 */
-	private String getSubSystemUserId() {
-		ISubSystem ss = getPrimarySubSystem();
-		String result = ss.getUserId();
-		return result;
-	}
-    
-    /* (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setUserId(java.lang.String)
 	 */
-	final public void setUserId(String newId) 
-	{
-		
-		if (_userId == null || !_userId.equals(newId)) {
-			_userId = newId;
+	final public void setUserId(String newId) {
+		ICredentialsProvider provider = getCredentialsProvider();
+		String oldUserId = provider.getUserId();
+		if (oldUserId == null || oldUserId.equals(newId)) {
+			updateDefaultUserId(getPrimarySubSystem(), getUserId());
+			provider.setUserId(newId);
 			setDirty(true);
 		}
 	}
-    
-    /**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Clear internal userId. Called when user uses the property dialog to 
-	 * change his userId. By default, sets internal userId value to null so that on
-	 * the next call to getUserId() it is requeried from subsystem. 
-	 * Also clears the password.
-	 */
-	final public void clearCredentials() {
-		_userId = null;
-		clearPassword(false);
+
+	public final void saveUserId() {
+		ICredentialsProvider provider = getCredentialsProvider();
+		String userId = provider.getUserId();
+		updateDefaultUserId(getPrimarySubSystem(), userId);
+	}
+
+	public final void removeUserId() {
+		updateDefaultUserId(getPrimarySubSystem(), null);
 	}
 
 	/**
@@ -156,22 +100,18 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * Clear internal password cache. Called when user uses the property dialog to 
 	 * change his userId.  
 	 * 
-	 * @param onDisk if this is true, clear the password from the disk cache as well
+	 * @param persist if this is true, clear the password from the disk cache as well
 	 * @see #clearCredentials()
 	 */
-	final public void clearPassword(boolean onDisk) {
-		setPasswordInformation(null);
-		String userId = getUserId();
-		if (onDisk) {
-			//  now get rid of userid/password from disk
-			String systemType = getHostType();
-			String hostName = getHostName();
-			if (userId != null)
-				PasswordPersistenceManager.getInstance().remove(systemType, hostName, userId);
+	final public void clearPassword(boolean persist, boolean propagate) {
+		ICredentialsProvider provider = getCredentialsProvider();
+		provider.clearPassword();
+		if (persist) {
+			removePassword();
 		}
-		if (sharesCredentials()) {
-			// clear this uid/password with other ISystems in connection
-			clearPasswordForOtherSystemsInConnection(userId, onDisk);
+		if (sharesCredentials() && propagate) {
+			String userId = provider.getUserId();
+			clearPasswordForOtherSystemsInConnection(userId, false);
 		}
 	}
 
@@ -184,9 +124,9 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * @return true if the password is known, false otherwise.
 	 */
 	final public boolean hasPassword(boolean onDisk) {
-		boolean cached = (getPasswordInformation() != null);
+		SystemSignonInformation signonInformation = getSignonInformation();
+		boolean cached = (signonInformation != null && signonInformation.getPassword() != null);
 		if (!cached && onDisk) {
-			//  now check if cached on disk
 			String systemType = getHostType();
 			String hostName = getHostName();
 			String userId = getUserId();
@@ -196,530 +136,191 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 		}
 		return cached;
 	}
-    
-    /* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresPassword()
-	 */
-	public boolean requiresPassword() {
-		return true;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresUserId()
-	 */
-	public boolean requiresUserId() {
-		return true;
-	}
-
 
 	/**
-	 * <i>Do not override.</i>
-	 * Sets the signon information for this connector service.
-	 * The search order for the password is as follows:</p>
-	 * <ol>
-	 * <li>First check if the password is already known by this connector service and that it is still valid.
-	 * <li>If password not known then look in the password store and verify that it is still valid.
-	 * <li>If a valid password is not found then prompt the user.
-	 * </ol>
-	 * Must be run in the UI thread. 
-	 * Can be null if the password is known to exist in either this class or in the password store.
-	 * @param forcePrompt if true then present the prompt even if the password was found and is valid.
-	 * @throws InterruptedException if user is prompted and user cancels that prompt or if isSuppressSignonPrompt is true.
+	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
+	 * Set the password if you got it from somewhere
+	 * @param userId the user for which to set the password
+	 * @param password the password to set for this userId
+	 * @param persist true if the password is to be persisted, 
+	 * false if its persistent form is to be removed.
+	 * @param propagate if the password should be propagated to related connector services.
 	 */
-	public void acquireCredentials(boolean forcePrompt) throws InterruptedException {
-		// dy:  March 24, 2003:  check if prompting is temporarily suppressed by a tool
-		// vendor, this should only be suppressed if the user cancelled a previous signon
-		// dialog (or some other good reason)
-		if (isSuppressed()) {
-			throw new InterruptedException();
+	public final void setPassword(String userId, String password, boolean persist, boolean propagate) {
+		if (getPrimarySubSystem().forceUserIdToUpperCase()) {
+			userId = userId.toUpperCase();
 		}
-	
-		ISubSystem subsystem = getPrimarySubSystem();
-		IHost host = subsystem.getHost();
-		String hostName = host.getHostName();
-		String hostType = host.getSystemType();
-		boolean savePassword = false;
-		if (_passwordInfo == null) {
-			_passwordInfo = new SystemSignonInformation(hostName, null, null, hostType);
+		ICredentialsProvider provider = getCredentialsProvider();
+		String myUserId = provider.getUserId();
+		IHost host = getHost();
+		if (host.compareUserIds(userId, myUserId)) {
+			provider.setPassword(password);
 		}
-		if (supportsUserId()) {
-			String userId = getUserId();
-			if (_passwordInfo.getUserid() == null) {
-				_passwordInfo.setUserid(userId);
-			}
-			boolean sameUserId = host.compareUserIds(userId, _passwordInfo.getUserid());
-			boolean sameHost = hostName.equalsIgnoreCase(_passwordInfo.getHostname());
-			if (!(sameHost && sameUserId)) {
-				_passwordInfo.setPassword(null);
-				_passwordInfo.setUserid(userId);
-			}
+		if (sharesCredentials() && propagate) {
+			updatePasswordForOtherSystemsInConnection(userId, password, persist);
 		}
-		if (supportsPassword()) {
-			if (_passwordInfo.getPassword() == null) {
-				PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
-				String userId = _passwordInfo.getUserid();
-				SystemSignonInformation savedPasswordInformation = ppm.find(hostType, hostName, userId);
-				if (savedPasswordInformation != null) {
-					_passwordInfo = savedPasswordInformation;
-					savePassword = true;
-				}
-			}
-		}
-		ICredentialsValidator validator = getSignonValidator();
-		boolean signonValid = true;
-		if (validator != null) {
-			SystemMessage m =  validator.validate(_passwordInfo);
-			signonValid = (m == null);
-		}
-	
-		// If we ran into an invalid password we need to tell the user.
-		// DWD refactor - want to move this to a pluggable class so that this can be moved to core.
-		// DWD not sure this is necessary, shouldn't this message show up on the password prompt itself?
-		if (!signonValid) {
-	   		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
-	   		msg.makeSubstitution(getLocalUserId(), getHostName());
-	   		SystemMessageDialog dialog = new SystemMessageDialog(shell, msg);
-	   		dialog.open();
-		}
-		if (shell == null)
-		{
-			try
-			{
-				shell = SystemBasePlugin.getActiveWorkbenchShell();
-			}
-			catch (Exception e)
-			{
-				shell = new Shell();
-			}
-		}
-			
-		if (supportsPassword() || supportsUserId()) 
-		{
-			if (shell == null)
-			{
-				try
-				{
-					shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-				}
-				catch (Exception e)
-				{
-					shell = new Shell();
-				}
-			}
-			if (shell != null) {
-				boolean passwordNeeded = supportsPassword() && _passwordInfo.getPassword() == null;
-				boolean userIdNeeded = supportsUserId() && _passwordInfo.getUserid() == null;
-				if (passwordNeeded || userIdNeeded || forcePrompt) {
-					ISystemPasswordPromptDialog dialog = getPasswordPromptDialog(shell);
-					if (dialog != null) {
-						dialog.setSystemInput(this);
-						dialog.setSignonValidator(getSignonValidator());
-						if (supportsUserId()) {
-							dialog.setUserIdValidator(getUserIdValidator());
-						}
-						if (supportsPassword()) {
-							String password = _passwordInfo.getPassword();
-							dialog.setSavePassword(savePassword);
-							dialog.setPassword(password);
-							dialog.setPasswordValidator(getPasswordValidator());
-						}
-			    	  	try {
-			  	        	dialog.open();
-			    	  	} catch (Exception e) {
-			    	  		logException(e);
-			    	  	}
-			    	  	if (dialog.wasCancelled()) {
-			    	  		_passwordInfo = null;
-			    	  		throw new InterruptedException();
-			    	  	}
-			    	  	String userId = dialog.getUserId();
-			    	  	boolean userIdChanged = dialog.getIsUserIdChanged();
-			    	  	boolean saveUserId = dialog.getIsUserIdChangePermanent();
-			    	  	String password = dialog.getPassword();
-			    	  	savePassword = dialog.getIsSavePassword();
-				    	if (supportsUserId() && userIdChanged) {
-				      		if (saveUserId) {
-			            		updateDefaultUserId(subsystem, userId);
-				      		} else {
-				      			setUserId(userId);
-				        		_passwordInfo.setUserid(userId);
-				      		}
-				    	}
-				    	if (supportsPassword()) {
-					    	setPassword(userId, password, savePassword);
-					    	if (sharesCredentials()) {
-					    	    updatePasswordForOtherSystemsInConnection(userId, password, savePassword);
-					    	}
-				    	}
-					}
-				}
-			}
+		if (persist) {
+			savePassword();
+		} else {
+			removePassword();
 		}
 	}
 
-
-	protected void clearPasswordForOtherSystemsInConnection(String uid, boolean fromDisk)
-    {
-    	if (uid != null)
-    	{
-	        IHost connection = getHost();
-	        ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
-	        ISubSystem[] subsystems = registry.getSubSystems(connection);
-	        
-	        List uniqueSystems = new ArrayList();
-	        for (int i = 0; i < subsystems.length; i++)
-	        {
-	            IConnectorService system = subsystems[i].getConnectorService();
-	            if (system != this && system.inheritsCredentials())
-	            {
-	                if (!uniqueSystems.contains(system))
-	                {
-	                    uniqueSystems.add(system);
-	                }
-	            }
-	        }
-	        
-	        for (int s = 0; s < uniqueSystems.size(); s++)
-	        {
-	            IConnectorService system = (IConnectorService)uniqueSystems.get(s);
-	            if (system.hasPassword(fromDisk))
-	            {
-	                system.clearPassword(fromDisk);
-	            }            
-	        }
-    	}
-    }
-    
-    
-    protected void updatePasswordForOtherSystemsInConnection(String uid, String password, boolean persistPassword)
-    {
-        IHost connection = getPrimarySubSystem().getHost();
-        ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
-        ISubSystem[] subsystems = registry.getSubSystems(connection);
-        
-        List uniqueSystems = new ArrayList();
-        for (int i = 0; i < subsystems.length; i++)
-        {
-            IConnectorService system = subsystems[i].getConnectorService();
-            if (system != this && system.inheritsCredentials())
-            {
-                if (!uniqueSystems.contains(system))
-                {
-                    uniqueSystems.add(system);
-                }
-            }
-        }
-        
-        for (int s = 0; s < uniqueSystems.size(); s++)
-        {
-            IConnectorService system = (IConnectorService)uniqueSystems.get(s);
-            if (!system.isConnected() && !system.hasPassword(false))
-            {
-                if (system.getPrimarySubSystem().forceUserIdToUpperCase())
-                {
-                    system.setPassword(uid.toUpperCase(), password.toUpperCase(), persistPassword);
-                }
-                else
-                {
-                    system.setPassword(uid, password, persistPassword);
-                }
-            }            
-        }
-    }
-    
-    /**
-	 * Change the default user Id value in the SubSystem if it is non-null, else
-	 * update it in the Connection object
-	 */
-	private void updateDefaultUserId(ISubSystem subsystem, String userId) {
-		String ssLocalUserId = subsystem.getLocalUserId(); 
-		if (ssLocalUserId != null) { // defect 42709
-			ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration(); 
-			ssc.updateSubSystem(subsystem, true, userId, false, 0);
-		} else { // it seems intuitive to update the connection object. defect 42709. Phil
-			int whereToUpdate = IRSEUserIdConstants.USERID_LOCATION_HOST;
-			IHost conn = subsystem.getHost();
-			ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
-			sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(), conn.getDescription(), userId, whereToUpdate);
+	public final void savePassword() {
+		ICredentialsProvider provider = getCredentialsProvider();
+		ICredentials credentials = provider.getCredentials();
+		if (credentials instanceof SystemSignonInformation) {
+			SystemSignonInformation signonInformation = (SystemSignonInformation) credentials;
+			PasswordPersistenceManager.getInstance().add(signonInformation, true, true);
 		}
 	}
 
-    /**
-	 * <i>A default implementation is supplied, but can be overridden if desired.</i><br>
-	 * Instantiates and returns the dialog to prompt for the userId and password.
-	 * <p>
-	 * By default returns an instance of SystemPasswordPromptDialog. Calls forcePasswordToUpperCase() to decide whether the user Id and password should be folded to uppercase.
-	 * <p>
-	 * Calls {@link #getUserIdValidator()} and {@link #getPasswordValidator()} to set the validators. These return null by default by you can override them.
-	 * <p>
-	 * Before calling open() on the dialog, the getPassword(Shell) method that calls this will call setSystemInput(this).
-	 * <p>
-	 * After return, it will call wasCancelled() and getUserId(), getIsUserIdChanged(), getIsUserIdChangePermanent() and getPassword().
-	 * <p>
-	 * 
-	 * @return An instance of a dialog class that implements the ISystemPasswordPromptDialog interface
-	 */
-    protected final ISystemPasswordPromptDialog getPasswordPromptDialog(Shell shell)
-    {
-    	  ISystemPasswordPromptDialog dlg = new SystemPasswordPromptDialog(shell, requiresUserId(), requiresPassword());
-    	  dlg.setForceToUpperCase(forcePasswordToUpperCase());
-  	      dlg.setUserIdValidator(getUserIdValidator());
-  	      dlg.setPasswordValidator(getPasswordValidator());
-  	      dlg.setSignonValidator(getSignonValidator());
-    	  return dlg;
-    }
+	public final void removePassword() {
+		ICredentialsProvider provider = getCredentialsProvider();
+		String systemType = getHostType();
+		String hostName = getHostName();
+		String userId = provider.getUserId();
+		PasswordPersistenceManager.getInstance().remove(systemType, hostName, userId);
+	}
 
-    /**
+	/**
+	 * This connection method wrappers the others (internal connect) so that registered subsystems 
+	 * can be notified and initialized after a connect
+	 * Previous implementations that overrode this method should now change
+	 * their connect() method to internalConnect()
+	 */
+	public final void connect(IProgressMonitor monitor) throws Exception {
+		internalConnect(monitor);
+		intializeSubSystems(monitor);
+	}
+
+	/**
+	 * Disconnects from the remote system.
+	 * <p>
+	 * You must override
+	 * if <code>subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties</code> 
+	 * returns false.
+	 * <p>
+	 * If the subsystem supports server launch
+	 * the default behavior is to use the same remote server
+	 * launcher created in <code>connect()</code> and call <code>disconnect()</code>.
+	 * <p>
+	 * This is called, by default, from the <code>disconnect()</code>
+	 * method of the subsystem.
+	 * @see IServerLauncher#disconnect()
+	 */
+	public final void disconnect(IProgressMonitor monitor) throws Exception {
+		internalDisconnect(monitor);
+		unintializeSubSystems(monitor);
+		clearPassword(false, true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isSuppressed()
+	 */
+	public final boolean isSuppressed() {
+		return getCredentialsProvider().isSuppressed();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setSuppressed(boolean)
+	 */
+	public final void setSuppressed(boolean suppressed) {
+		getCredentialsProvider().setSuppressed(suppressed);
+	}
+
+	public final void acquireCredentials(boolean reacquire) throws InterruptedException {
+		getCredentialsProvider().acquireCredentials(reacquire);
+	}
+
+	/**
+	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
+	 * Clear internal userId. Called when user uses the property dialog to 
+	 * change his userId. By default, sets internal userId value to null so that on
+	 * the next call to getUserId() it is requeried from subsystem. 
+	 * Also clears the password.
+	 */
+	final public void clearCredentials() {
+		getCredentialsProvider().clearCredentials();
+		setDirty(true);
+	}
+
+	/**
 	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
 	 * @return the password information for the primary subsystem of this
 	 * connector service. Assumes it has been set by the subsystem at the 
 	 * time the subsystem acquires the connector service.
 	 */
-	final protected SystemSignonInformation getPasswordInformation() {
-		return _passwordInfo;
+	final protected SystemSignonInformation getSignonInformation() {
+		SystemSignonInformation result = null;
+		ICredentialsProvider provider = getCredentialsProvider();
+		ICredentials credentials = provider.getCredentials();
+		result = (SystemSignonInformation) credentials;
+		return result;
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-	 * Sets the password information for this system's subsystem.
-	 * @param passwordInfo the password information object
-	 */
-	final protected void setPasswordInformation(SystemSignonInformation passwordInfo) {
-		_passwordInfo = passwordInfo;
-		if (passwordInfo != null) {
-			_userId = passwordInfo.getUserid();
-		}
-	}            
-    
-    /**
-	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-	 * Set the password if you got it from somewhere
-	 * @param matchingUserId the user for which to set the password
-	 * @param password the password to set for this userid
-	 * @param persist true if the password is to be persisted as well
-	 */
-	public void setPassword(String matchingUserId, String password, boolean persist) {
-		if (getPrimarySubSystem().forceUserIdToUpperCase()) {
-			matchingUserId = matchingUserId.toUpperCase();
-		}
-		SystemSignonInformation tempPasswordInfo = new SystemSignonInformation(getHostName(), matchingUserId, password, getHostType());
-		setPasswordInformation(tempPasswordInfo);
-		if (persist) { // if password should be persisted, then add to disk
-			PasswordPersistenceManager.getInstance().add(tempPasswordInfo, true, true);
-		} else { // otherwise, remove from both memory and disk
-			String systemType = getHostType();
-			String hostName = getHostName();
-			PasswordPersistenceManager.getInstance().remove(systemType, hostName, _userId);
-		}
-	}
-    
-    /**
-     * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-     * Should passwords be folded to uppercase?
-     * By default, returns: 
-     *   <pre><code>getSubSystem().forceUserIdToUpperCase()</code></pre>
-     */
-    protected boolean forcePasswordToUpperCase()
-    {
-    	return getPrimarySubSystem().forceUserIdToUpperCase();
-    }
-    
-	/**
-     * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-     * Get the userId input validator to use in the password dialog prompt.
-     * <p>
-     * By default, returns </p>
-     *   <pre><code>getSubSystem().getParentSubSystemConfiguration().getUserIdValidator()</code></pre>
-     */
-    final public ISystemValidator getUserIdValidator()
-    {
-  		ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
-		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-    	return adapter.getUserIdValidator(ssFactory);
-    }
-
-    /**
-     * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-     * Get the password input validator to use in the password dialog prompt.
-     * <p>
-     * By default, returns:</p>
-     *   <pre><code>getSubSystem().getParentSubSystemConfiguration().getPasswordValidator()</code></pre>
-     */
-    final public ISystemValidator getPasswordValidator()
-    {
-    	ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
-		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-    	return adapter.getPasswordValidator(ssFactory);
-    }
-
-    /**
-     * <i>Optionally overridable, not implemented by default.</i><br>
-     * Get the signon validator to use in the password dialog prompt.
-     * By default, returns null.
-     */
-    public ICredentialsValidator getSignonValidator()
-    {
-    	return null;
-    }
-
-    
-    /**
-     * This connection method wrappers the others (internal connect) so that registered subsystems 
-     * can be notified and initialized after a connect
-     * Previous implementations that overrode this method should now change
-     * their connect() method to internalConnect()
-     */
-    public final void connect(IProgressMonitor monitor) throws Exception
-    {
-    	internalConnect(monitor);
-    	intializeSubSystems(monitor);
-    }
-    
-    //    protected void internalConnect(IProgressMonitor monitor) throws Exception
-//    { 
-//    	if (supportsServerLaunchProperties())
-//    	{
-//    		IServerLauncher starter = getRemoteServerLauncher();
-//    		starter.setSignonInformation(getPasswordInformation());
-//    		starter.setServerLauncherProperties(getRemoteServerLauncherProperties());
-//			launchResult = null;
-//    		if (!starter.isLaunched())
-//    		{ 
-//				try {
-//					launchResult = starter.launch(monitor);		
-//				} catch (Exception exc) {
-//					throw new java.lang.reflect.InvocationTargetException(exc);				
-//				}				
-//    		}
-//			connectResult = null;
-//			try {
-//				connectResult = starter.connect(monitor, getConnectPort());		
-//			} catch (Exception exc) {
-//				throw new java.lang.reflect.InvocationTargetException(exc);				
-//			}				    		
-//    	}
-//    }
-    /**
-     * Disconnects from the remote system.
-     * <p>
-     * You must override
-     * if <code>subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties</code> 
-     * returns false.
-     * <p>
-     * If the subsystem supports server launch
-     * the default behavior is to use the same remote server
-     * launcher created in <code>connect()</code> and call <code>disconnect()</code>.
-	 * <p>
-	 * This is called, by default, from the <code>disconnect()</code>
-	 * method of the subsystem.
-	 * @see IServerLauncher#disconnect()
-     */
-    public final void disconnect(IProgressMonitor monitor) throws Exception
-    {
-    	internalDisconnect(monitor);
-		unintializeSubSystems(monitor);
-		clearPassword(false);
-    }
-    
-    /**
-	 * Returns the suppressSignonPrompt flag.  If this is set to true then the user
-	 * will not be prompted to signon, instead an InterruptedException will be thrown 
-	 * by the promptForPassword method.
-	 * 
-	 * @return boolean
-	 */
-	public boolean isSuppressed()
-	{
-		return _suppressSignonPrompt;
-	}
-
-	/**
-	 * Sets the suppressSignonPrompt flag.  Tool writers can use this to temporarily
-	 * disable the user from being prompted to signon.  This would cause the promptForPassword
-	 * method to throw an InterruptedException instead of prompting.  The intent of this
-	 * method is to allow tool writeres to prevent multiple signon prompts during a 
-	 * set period of time (such as a series of related communication calls) if the user
-	 * cancels the first prompt.  <b>It is the callers responsability to set this value 
-	 * back to false when the tool no longer needs to suppress the signon prompt or all
-	 * other tools sharing this connection will be affected.</b>
-	 * 
-	 * @param suppressSignonPrompt
-	 */
-	public void setSuppressed(boolean suppressSignonPrompt)
-	{
-		_suppressSignonPrompt = suppressSignonPrompt;
-	}
-
-	private void logException(Throwable t) {
-		Logger log = LoggerFactory.getLogger(RSEUIPlugin.getDefault());
-		log.logError("Unexpected exception", t); //$NON-NLS-1$
-	}
-	
-	public NewPasswordInfo promptForNewPassword(SystemMessage prompt) throws InterruptedException
-	{
-		ShowPromptForNewPassword msgAction = new ShowPromptForNewPassword(prompt);
-		Display.getDefault().syncExec(msgAction);
-		if (msgAction.isCancelled()) throw new InterruptedException();
-		return new NewPasswordInfo(msgAction.getNewPassword(), msgAction.isSavePassword());
-	} 
-	
-	private class ShowPromptForNewPassword implements Runnable
-	{
-		private SystemMessage _msg;
-		private String newPassword;
-		private boolean savePassword;
-		private boolean cancelled = false;
-		
-		public ShowPromptForNewPassword(SystemMessage msg)
-		{
-			_msg = msg;
-		}
-		
-		public void run()
-		{
-			SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(SystemBasePlugin.getActiveWorkbenchShell(), getHostName(), getUserId(), _msg);
-    	  	// Check if password was saved, if so preselect the save checkbox
-			if (getLocalUserId() != null)
-			{
-				dlg.setSavePassword(PasswordPersistenceManager.getInstance().passwordExists(getHostType(), getHostName(), getLocalUserId()));
+	private void updatePasswordForOtherSystemsInConnection(String uid, String password, boolean persist) {
+		IHost connection = getPrimarySubSystem().getHost();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISubSystem[] subsystems = registry.getSubSystems(connection);
+		List uniqueSystems = new ArrayList();
+		for (int i = 0; i < subsystems.length; i++) {
+			IConnectorService cs = subsystems[i].getConnectorService();
+			if (cs != this && cs.inheritsCredentials()) {
+				if (!uniqueSystems.contains(cs)) {
+					uniqueSystems.add(cs);
+				}
 			}
-			dlg.open();
-			if (dlg.wasCancelled())
-			{
-				cancelled = true;
-				return;
+		}
+		for (int s = 0; s < uniqueSystems.size(); s++) {
+			IConnectorService system = (IConnectorService) uniqueSystems.get(s);
+			if (!system.isConnected() && !system.hasPassword(false)) {
+				if (system.getPrimarySubSystem().forceUserIdToUpperCase()) {
+					uid = uid.toUpperCase();
+					password = password.toUpperCase();
+				}
+				system.setPassword(uid, password, false, false);
 			}
-			newPassword = dlg.getNewPassword();
-			savePassword = dlg.getIsSavePassword();
-			return;
-		}
-		
-		public boolean isCancelled()
-		{
-			return cancelled;
-		}
-		
-		public String getNewPassword()
-		{
-			return newPassword;
-		}
-		
-		public boolean isSavePassword()
-		{
-			return savePassword;
 		}
 	}
-	
-	public class NewPasswordInfo
-	{
-		public String newPassword;
-		public boolean savePassword;
-		
-		public NewPasswordInfo(String newPW, boolean savePW)
-		{
-			newPassword = newPW;
-			savePassword = savePW;	
+
+	private void clearPasswordForOtherSystemsInConnection(String uid, boolean persist) {
+		if (uid != null) {
+			IHost connection = getHost();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISubSystem[] subsystems = registry.getSubSystems(connection);
+			List uniqueSystems = new ArrayList();
+			for (int i = 0; i < subsystems.length; i++) {
+				IConnectorService system = subsystems[i].getConnectorService();
+				if (system != this && system.inheritsCredentials()) {
+					if (!uniqueSystems.contains(system)) {
+						uniqueSystems.add(system);
+					}
+				}
+			}
+			for (int s = 0; s < uniqueSystems.size(); s++) {
+				IConnectorService system = (IConnectorService) uniqueSystems.get(s);
+				if (system.hasPassword(persist)) {
+					system.clearPassword(persist, false);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Change the default user Id value in the SubSystem if it is non-null, else
+	 * update it in the Connection object
+	 */
+	private void updateDefaultUserId(ISubSystem subsystem, String userId) {
+		String ssLocalUserId = subsystem.getLocalUserId();
+		if (ssLocalUserId != null) {
+			ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration();
+			ssc.updateSubSystem(subsystem, true, userId, false, 0);
+		} else {
+			int whereToUpdate = IRSEUserIdConstants.USERID_LOCATION_HOST;
+			IHost host = subsystem.getHost();
+			ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+			sr.updateHost(null, host, host.getSystemType(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
 		}
 	}
 }

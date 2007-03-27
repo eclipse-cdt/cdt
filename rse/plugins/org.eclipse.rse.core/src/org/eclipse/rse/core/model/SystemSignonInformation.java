@@ -29,7 +29,7 @@ import org.eclipse.rse.core.subsystems.ICredentials;
 public final class SystemSignonInformation implements ICredentials {
 
 	private String _hostname;
-	private String _userid;
+	private String _userId;
 	private String _systemType;
 	private String _password;
 
@@ -44,7 +44,7 @@ public final class SystemSignonInformation implements ICredentials {
 	 */
 	public SystemSignonInformation(String hostname, String userid, String systemType) {
 		_hostname = hostname;//RSEUIPlugin.getQualifiedHostName(hostname).toUpperCase();
-		_userid = userid;
+		_userId = userid;
 		_systemType = systemType;
 	}
 
@@ -53,7 +53,7 @@ public final class SystemSignonInformation implements ICredentials {
 	 */
 	public SystemSignonInformation(String hostname, String userid, String password, String systemType) {
 		_hostname = hostname;//RSEUIPlugin.getQualifiedHostName(hostname).toUpperCase();
-		_userid = userid;
+		_userId = userid;
 		_password = password;
 		_systemType = systemType;
 	}
@@ -78,8 +78,8 @@ public final class SystemSignonInformation implements ICredentials {
 	 * Returns the userid for the remote system
 	 * @return String
 	 */
-	public String getUserid() {
-		return _userid;
+	public String getUserId() {
+		return _userId;
 	}
 
 	/**
@@ -114,10 +114,10 @@ public final class SystemSignonInformation implements ICredentials {
 
 	/**
 	 * Sets the userid.
-	 * @param userid The userid to set
+	 * @param userId The userid to set
 	 */
-	public void setUserid(String userid) {
-		_userid = userid;
+	public void setUserId(String userId) {
+		_userId = userId;
 	}
 
 }

@@ -183,12 +183,12 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		
 		if (change)
 		{
-			if (exists(signonInfo.getHostname(), signonInfo.getUserid(), signonInfo.getSystemType()))
+			if (exists(signonInfo.getHostname(), signonInfo.getUserId(), signonInfo.getSystemType()))
 			{
 				if (!signonInfo.getSystemType().equals(originalSystemType) ||
 					!signonInfo.getHostname().equalsIgnoreCase(originalHostname) ||
 				    //!signonInfo.getHostname().equalsIgnoreCase(RSEUIPlugin.getQualifiedHostName(originalHostname)) ||
-				    !signonInfo.getUserid().equals(originalUserid))
+				    !signonInfo.getUserId().equals(originalUserid))
 				{
 					// User changed hostname, systemtype or userid and the change conflicts with an existing entry
 					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_EXISTS); 
@@ -203,7 +203,7 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		else
 		{
 			// Adding a new entry, make sure it doesn't already exist
-			if (exists(signonInfo.getHostname(), signonInfo.getUserid(), signonInfo.getSystemType()))
+			if (exists(signonInfo.getHostname(), signonInfo.getUserId(), signonInfo.getSystemType()))
 			{
 				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_EXISTS); 
 				msg.makeSubstitution(sUserID, sHostName);
@@ -234,11 +234,11 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 			{
 				if (!manager.isUserIDCaseSensitive(info.getSystemType()))
 				{
-					found = userID.equalsIgnoreCase(info.getUserid());	
+					found = userID.equalsIgnoreCase(info.getUserId());	
 				}
 				else
 				{
-					found = userID.equals(info.getUserid());
+					found = userID.equals(info.getUserId());
 				}
 			}
 		}

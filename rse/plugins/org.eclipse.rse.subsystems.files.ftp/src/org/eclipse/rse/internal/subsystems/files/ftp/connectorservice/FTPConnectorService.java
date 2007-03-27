@@ -65,9 +65,9 @@ public class FTPConnectorService extends AbstractConnectorService
 			_propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}	
 		
-		SystemSignonInformation info = getPasswordInformation();
+		SystemSignonInformation info = getSignonInformation();
 		_ftpService.setHostName(info.getHostname());
-		_ftpService.setUserId(info.getUserid());
+		_ftpService.setUserId(info.getUserId());
 		_ftpService.setPassword(info.getPassword());
 		_ftpService.setPortNumber(getPort());
 		_ftpService.setLoggingStream(getLoggingStream(info.getHostname(),getPort()));

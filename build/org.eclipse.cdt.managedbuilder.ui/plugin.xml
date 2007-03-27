@@ -348,11 +348,7 @@
            name="%Error.parsers"
            weight="007"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
-     <tab
-           class="org.eclipse.cdt.ui.newui.LanguagesTab"
-           name="(Single) Languages"
-           parent="org.eclipse.cdt.ui.newui.Page_Languages"
-           />
+.
 	 <!-- Export settings page -->
 	      <tab
            class="org.eclipse.cdt.ui.newui.ExpIncludeTab"

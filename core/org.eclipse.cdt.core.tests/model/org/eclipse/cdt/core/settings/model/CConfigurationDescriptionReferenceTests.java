@@ -118,8 +118,7 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
 		CDefaultConfigurationData data= new CDefaultConfigurationData(project+"."+config, project+" "+config+" name", null);
 		data.initEmptyData();
-		String ID= CCorePlugin.PLUGIN_ID + ".defaultConfigDataProvider";
-		return des.createConfiguration(ID, data);		
+		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);		
 	}
 		
 	public void testConfigurationDescriptionReference() throws CoreException {

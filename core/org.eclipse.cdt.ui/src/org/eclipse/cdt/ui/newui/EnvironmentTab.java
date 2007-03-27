@@ -336,9 +336,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		IEnvironmentVariable[] v = ce.getVariables(dst);
 		for (int i=0; i<v.length; i++) ce.removeVariable(v[i].getName(), dst);
 		v = ce.getVariables(src);
-		for (int i=0; i<v.length; i++) 
-			ce.addVariable(v[i].getName(), v[i].getValue(), 
-					v[i].getOperation(), v[i].getDelimiter(), dst);
+		for (int i=0; i<v.length; i++) {
+			if (ce.isUserVariable(src, v[i]))
+					ce.addVariable(v[i].getName(), v[i].getValue(), 
+							v[i].getOperation(), v[i].getDelimiter(), dst);
+		}
 	}
 
 	/**

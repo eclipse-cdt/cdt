@@ -354,7 +354,7 @@ public class CPPVisitor {
 		}
         try {
             binding = scope.getBinding( elabType.getName(), false );
-            if( binding == null || !(binding instanceof ICPPClassType) ){
+            if( !(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType) ){
     			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum ){
 					if( template )
 	            		binding = new CPPClassTemplate( name );
@@ -362,7 +362,7 @@ public class CPPVisitor {
 						binding = new CPPClassType( name );
     				ASTInternal.addName( scope,  elabType.getName() );
     			}
-    		} else if( binding instanceof ICPPInternalBinding ){
+    		} else {
     			((ICPPInternalBinding)binding).addDeclaration( elabType );
     		}
         } catch ( DOMException e ) {

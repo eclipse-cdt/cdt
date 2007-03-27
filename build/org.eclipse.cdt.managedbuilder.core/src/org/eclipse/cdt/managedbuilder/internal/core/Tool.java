@@ -3603,11 +3603,16 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 
 	public boolean isEnabled() {
+		return isEnabled(getParentResourceInfo());
+	}
+
+	public boolean isEnabled(IResourceInfo rcInfo) {
+
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
 		if(calc == null)
 			return true;
 		
-		return calc.isToolUsedInCommandLine(getParentResourceInfo(), this);
+		return calc.isToolUsedInCommandLine(rcInfo, this);
 	}
 
 	public boolean matches(ITool tool){

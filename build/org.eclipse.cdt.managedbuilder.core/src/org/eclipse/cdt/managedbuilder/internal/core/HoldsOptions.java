@@ -249,7 +249,8 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 */
 	public void removeOption(IOption option) {
 		if(option.getParent() != this)
-			throw new IllegalArgumentException();
+			return;
+//			throw new IllegalArgumentException();
 		
 		getOptionList().remove(option);
 		getOptionMap().remove(option.getId());

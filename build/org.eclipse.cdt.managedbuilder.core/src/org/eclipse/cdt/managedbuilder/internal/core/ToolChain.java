@@ -1019,6 +1019,21 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 					tools = newTools;
 				}
 			}
+			
+			if(!isExtensionToolChain){
+				for(int i = 0; i < tools.length; i++){
+					if(tools[i].getParent() != this){
+						ArrayList list = new ArrayList(Arrays.asList(tools));
+						for(int k = 0; k < list.size(); k++){
+							if(((ITool)list.get(k)).getParent() != this){
+								list.remove(k);
+							}
+						}
+						tools = (ITool[])list.toArray(new ITool[list.size()]);
+						break;
+					}
+				}
+			}
 		} else {
 			tools = new ITool[getToolList().size()];
 			Iterator iter = getToolList().listIterator();

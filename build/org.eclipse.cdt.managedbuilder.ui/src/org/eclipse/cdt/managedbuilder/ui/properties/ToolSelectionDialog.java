@@ -235,7 +235,8 @@ public class ToolSelectionDialog extends Dialog {
 					s = s + Messages.getString("ToolSelectionDialog.11");  //$NON-NLS-1$
 				}
 				errorLabel.setText(s);
-				getButton(IDialogConstants.OK_ID).setEnabled(false);
+				if(getButton(IDialogConstants.OK_ID) != null)
+					getButton(IDialogConstants.OK_ID).setEnabled(false);
 			}
 		}
 	}

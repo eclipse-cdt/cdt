@@ -4063,6 +4063,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 		return realTool;
 	}
+	
+	public static IToolChain getExtensionToolChain(IToolChain tc){
+		IToolChain extTc = tc;
+		for(;extTc != null && !extTc.isExtensionElement(); extTc= extTc.getSuperClass());
+		return extTc;
+	}
 
 	public static IToolChain getRealToolChain(IToolChain tc){
 		IToolChain extTc = tc;

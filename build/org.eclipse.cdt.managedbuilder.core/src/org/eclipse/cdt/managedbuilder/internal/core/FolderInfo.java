@@ -255,7 +255,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 	}
 
-	public static ITool[] filtereTools(ITool localTools[], IManagedProject manProj) {
+	public ITool[] filtereTools(ITool localTools[], IManagedProject manProj) {
 //		ITool[] localTools = toolChain.getTools();
 //		IManagedProject manProj = getParent().getManagedProject();
 		if (manProj == null) {
@@ -265,8 +265,8 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		IProject project = (IProject)manProj.getOwner();
 		Vector tools = new Vector(localTools.length);
 		for (int i = 0; i < localTools.length; i++) {
-			ITool tool = localTools[i];
-			if(!tool.isEnabled())
+			Tool tool = (Tool)localTools[i];
+			if(!tool.isEnabled(this))
 				continue;
 			
 			try {
@@ -743,6 +743,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		IToolChain newReal = ManagedBuildManager.getRealToolChain(newSuperClass);
 		
 		if(newReal != curReal){
+			IToolChain extTc = ManagedBuildManager.getExtensionToolChain(newSuperClass); 
+			if(extTc != null)
+				newSuperClass = extTc; 
 			ToolChain oldToolChain = toolChain;
 			IConfigurationElement el = getToolChainConverterElement(newSuperClass);
 			ITool oldTools[] = oldToolChain.getTools();
@@ -802,18 +805,22 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 	
 	private ITool[][] checkDups(ITool[] removed, ITool[] added){
-		LinkedHashMap removedMap = createRealMap(removed);
-		LinkedHashMap addedMap = createRealMap(added);
+		LinkedHashMap removedMap = createRealToExtToolMap(removed, false);
+		LinkedHashMap addedMap = createRealToExtToolMap(added, true);
 		LinkedHashMap rmCopy = (LinkedHashMap)removedMap.clone();
 		
 		removedMap.keySet().removeAll(addedMap.keySet());
 		addedMap.keySet().removeAll(rmCopy.keySet());
 		
 		if(removedMap.size() != 0){
-			LinkedHashMap curMap = createRealMap(getTools());
-			for(Iterator iter = removedMap.keySet().iterator(); iter.hasNext();){
-				Object key = iter.next();
-				if(!curMap.containsKey(key))
+			LinkedHashMap curMap = createRealToExtToolMap(getTools(), false);
+			for(Iterator iter = removedMap.entrySet().iterator(); iter.hasNext();){
+				Map.Entry entry = (Map.Entry)iter.next();
+				Object key = entry.getKey();
+				Object curTool = curMap.get(key);
+				if(curTool != null)
+					entry.setValue(curTool);
+				else
 					iter.remove();
 			}
 		}
@@ -823,12 +830,14 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return result;
 	}
 	
-	private LinkedHashMap createRealMap(ITool[] tools){
+	private LinkedHashMap createRealToExtToolMap(ITool[] tools, boolean extValues){
 		LinkedHashMap map = new LinkedHashMap();
 		for(int i = 0; i < tools.length; i++){
 			Tool realTool = (Tool)ManagedBuildManager.getRealTool(tools[i]);
 			Object key = realTool.getMatchKey();
-			map.put(key, tools[i]);
+			ITool toolValue = extValues ? ManagedBuildManager.getExtensionTool(tools[i]) : tools[i];
+			if(toolValue != null)
+				map.put(key, toolValue);
 		}
 		
 		return map;
@@ -1040,29 +1049,32 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	
 	private ITool[] calculateToolsArray(ITool[] removed, ITool[] added){
 		ITool tools[] = getTools();
-		Map map = calcExtToolIdToToolMap(tools);
-		Map removedMap = calcExtToolIdToToolMap(removed);
-		for(Iterator iter = removedMap.keySet().iterator(); iter.hasNext();){
-			map.remove(iter.next());
-		}
-		map.putAll(calcExtToolIdToToolMap(added));
+		LinkedHashMap map = createRealToExtToolMap(tools, false);
+		LinkedHashMap removedMap = createRealToExtToolMap(removed, false);
+		map.keySet().removeAll(removedMap.keySet());
+//		
+//		for(Iterator iter = removedMap.keySet().iterator(); iter.hasNext();){
+//			map.remove(iter.next());
+//		}
+		map.putAll(createRealToExtToolMap(added, true));
+		
 		
 		return (ITool[])map.values().toArray(new ITool[map.size()]);
 	}
 	
-	private Map calcExtToolIdToToolMap(ITool tools[]){
-		Map map = new HashMap();
-		for(int i = 0; i < tools.length; i++){
-			ITool tool = tools[i];
-			ITool extTool = ManagedBuildManager.getExtensionTool(tool);
-			if(extTool == null)
-				extTool = tool;
-			
-			map.put(extTool.getId(), tool);
-		}
-		
-		return map;
-	}
+//	private Map calcExtToolIdToToolMap(ITool tools[]){
+//		Map map = new HashMap();
+//		for(int i = 0; i < tools.length; i++){
+//			ITool tool = tools[i];
+//			ITool extTool = ManagedBuildManager.getExtensionTool(tool);
+//			if(extTool == null)
+//				extTool = tool;
+//			
+//			map.put(extTool.getId(), tool);
+//		}
+//		
+//		return map;
+//	}
 	
 	private ITool[][] calculateConflictingTools(ITool[] newTools){
 		HashSet set = new HashSet();
@@ -1108,6 +1120,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 	
 	public IModificationStatus getToolChainModificationStatus(ITool[] removed, ITool[] added){
+		ITool[][] checked = checkDups(removed, added);
+		removed = checked[0];
+		added = checked[1];
 //		Map converterMap = calculateConverterTools(removed, added, null, null);
 		ITool newTools[] = calculateToolsArray(removed, added);
 		ITool[][] conflicting = calculateConflictingTools(filtereTools(newTools, getParent().getManagedProject()));

@@ -25,12 +25,12 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
+import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.model.RSEModelResources;
-import org.eclipse.rse.model.Host;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 
 

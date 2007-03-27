@@ -17,7 +17,7 @@
  *                          - Moved to package org.eclipse.rse.model for being extendable.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 
 import java.util.Locale;
 
@@ -25,10 +25,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
-import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemHostPool;
-import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 

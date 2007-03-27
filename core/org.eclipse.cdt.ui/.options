@@ -3,9 +3,6 @@ org.eclipse.cdt.ui/debug=true
 # Reports contentAssist activity
 org.eclipse.cdt.ui/debug/contentassist=false
 
-# Prints debug information related to the AST provider
-org.eclipse.cdt.ui/debug/ASTProvider=false
-
 # Enables all semantic highlighting types
 org.eclipse.cdt.ui/debug/SemanticHighlighting=false
 

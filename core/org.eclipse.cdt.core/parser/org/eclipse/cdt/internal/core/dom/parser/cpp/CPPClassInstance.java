@@ -56,7 +56,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 			ICPPBase [] bindings = cls.getBases();
 			for (int i = 0; i < bindings.length; i++) {
     		    IBinding base = bindings[i].getBaseClass();
-    		    if (base instanceof IType) {
+    		    if (bindings[i] instanceof CPPBaseClause && base instanceof IType) {
     		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
     		    	((CPPBaseClause)bindings[i]).setBaseClass((ICPPClassType)specBase);
     		    }

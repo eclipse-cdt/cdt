@@ -573,6 +573,19 @@ public class CPPVisitor {
 			    }
 			} 
 			
+			if (binding instanceof IIndexBinding) {
+				ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
+				if (templateDecl != null) {
+					ICPPASTTemplateParameter[] params = templateDecl.getTemplateParameters();
+					for (int i = 0; i < params.length; i++) {
+						IASTName paramName = CPPTemplates.getTemplateParameterName(params[i]);
+						paramName.setBinding(null);
+						//unsetting the index bindings so that they
+						//can be re-resolved with normal bindings
+					}
+				}
+			}
+			
 			if( scope instanceof ICPPClassScope ){
 				if( isConstructor( scope, declarator) )
 					binding = template ? (ICPPConstructor)  new CPPConstructorTemplate( name )

@@ -573,6 +573,8 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPNamespaceAlias(pdom, record);
 		case CPPBASICTYPE:
 			return new PDOMCPPBasicType(pdom, record);
+		case CPPPARAMETER:
+			return new PDOMCPPParameter(pdom, record);
 		case CPPENUMERATION:
 			return new PDOMCPPEnumeration(pdom, record);
 		case CPPENUMERATOR:

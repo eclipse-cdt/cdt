@@ -382,8 +382,9 @@ public class CPPTemplates {
 			}
 		}
 		
-		if( spec != null ){
-			((ICPPInternalBinding)spec).addDefinition( id );
+		if (spec != null) {
+			if( spec instanceof ICPPInternalBinding )
+				((ICPPInternalBinding)spec).addDefinition( id );
 			return spec;
 		}
 		
@@ -435,11 +436,11 @@ public class CPPTemplates {
 		    
 		    ICPPSpecialization spec = null;
 		    if( parent.getParent() instanceof ICPPASTExplicitTemplateInstantiation ){
-		    	spec = ((ICPPInternalTemplate)function).getInstance( (IType[])map_types[1] );
+		    	spec = ((ICPPInternalTemplateInstantiator)function).getInstance( (IType[])map_types[1] );
 		    	if( spec == null )
 		    		spec = (ICPPSpecialization) CPPTemplates.createInstance( scope, function, (ObjectMap)map_types[0], (IType[])map_types[1] );
 		    } else {
-		    	spec = ((ICPPInternalTemplate)function).getInstance( (IType[])map_types[1] );
+		    	spec = ((ICPPInternalTemplateInstantiator)function).getInstance( (IType[])map_types[1] );
 		    	if( spec == null ) {
 		    		if( function instanceof ICPPConstructor )
 		    			spec = new CPPConstructorSpecialization( function, scope, (ObjectMap) map_types[0] );
@@ -449,12 +450,15 @@ public class CPPTemplates {
 						spec = new CPPFunctionSpecialization( function, scope, (ObjectMap) map_types[0] );
 		    	}
 				
-				if( parent instanceof IASTSimpleDeclaration )
-					((ICPPInternalBinding)spec).addDeclaration( name );
-				else if( parent instanceof IASTFunctionDefinition )
-					((ICPPInternalBinding)spec).addDefinition( name );
+		    	if (spec instanceof ICPPInternalBinding) {
+					if( parent instanceof IASTSimpleDeclaration )
+						((ICPPInternalBinding)spec).addDeclaration( name );
+					else if( parent instanceof IASTFunctionDefinition )
+						((ICPPInternalBinding)spec).addDefinition( name );	
+		    	}
 		    }
-		    ((ICPPInternalTemplate)function).addSpecialization( (IType[]) map_types[1], spec );
+		    if (function instanceof ICPPInternalTemplate)
+		    	((ICPPInternalTemplate)function).addSpecialization( (IType[]) map_types[1], spec );
 		    return spec;
 		}
 		//TODO problem?
@@ -1275,14 +1279,14 @@ public class CPPTemplates {
 		//Using the transformed parameter list, perform argument deduction against the other
 		//function template
 		IType [] args = createArgsForFunctionTemplateOrdering( f1 );
-		ICPPFunction function = (ICPPFunction) ((ICPPInternalTemplate)f1).instantiate( args );
+		ICPPFunction function = (ICPPFunction) ((ICPPInternalTemplateInstantiator)f1).instantiate( args );
 		
 		ObjectMap m1 = null;
 		if( function != null )
 			m1 = deduceTemplateArguments( f2, function.getType().getParameterTypes() );
 		
 		args = createArgsForFunctionTemplateOrdering( f2 );
-		function = (ICPPFunction) ((ICPPInternalTemplate)f2).instantiate( args );
+		function = (ICPPFunction) ((ICPPInternalTemplateInstantiator)f2).instantiate( args );
 		
 		ObjectMap m2 = null;
 		if( function != null )

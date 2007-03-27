@@ -450,6 +450,12 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		if(fIsModified)
 			return true;
 		
+		if(fMacros != null && fMacros.isDirty())
+			return true;
+		
+		if(fEnvironment != null && fEnvironment.isDirty())
+			return true;
+		
 		return fExtSettingsProvider.isModified();
 	}
 	

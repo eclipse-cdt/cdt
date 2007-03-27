@@ -23,6 +23,7 @@ import java.util.Locale;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemHostPool;
@@ -30,7 +31,6 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * Default implementation of the <code>IHost</code> interface.
@@ -115,7 +115,7 @@ public class Host extends RSEModelObject implements IHost {
 	 * Return all the connector services provided for this host
 	 */
 	public IConnectorService[] getConnectorServices() {
-		return RSEUIPlugin.getTheSystemRegistry().getConnectorServices(this);
+		return RSECorePlugin.getDefault().getSystemRegistry().getConnectorServices(this);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class Host extends RSEModelObject implements IHost {
 	 * Just a shortcut to {@link org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(IHost)} 
 	 */
 	public ISubSystem[] getSubSystems() {
-		return RSEUIPlugin.getTheSystemRegistry().getSubSystems(this);
+		return RSECorePlugin.getDefault().getSystemRegistry().getSubSystems(this);
 	}
 
 	/**
@@ -543,7 +543,7 @@ public class Host extends RSEModelObject implements IHost {
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#commit()
 	 */
 	public boolean commit() {
-		return RSEUIPlugin.getThePersistenceManager().commit(this);
+		return RSECorePlugin.getThePersistenceManager().commit(this);
 	}
 
 }

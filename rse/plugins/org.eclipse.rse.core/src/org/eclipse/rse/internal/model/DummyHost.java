@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.internal.model;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;

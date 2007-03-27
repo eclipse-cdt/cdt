@@ -19,7 +19,7 @@ import java.util.Hashtable;
 import java.util.Set;
 
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.model.DummyHost;
+import org.eclipse.rse.internal.model.DummyHost;
 
 
 /**

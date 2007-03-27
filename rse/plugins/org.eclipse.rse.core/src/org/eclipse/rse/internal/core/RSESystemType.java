@@ -113,8 +113,10 @@ public class RSESystemType extends PlatformObject implements IRSESystemType {
 	 * @see org.eclipse.rse.core.IRSESystemType#getLabel()
 	 */
 	public String getLabel() {
-		// fallback to the id if the label should be null.
-		if (label == null) return getId();
+		// For default RSE system types, the UI label is equal to the
+		// name. Therefor, fallback to the name if the label is not
+		// explicitly set.
+		if (label == null) return getName();
 		return label;
 	}
 

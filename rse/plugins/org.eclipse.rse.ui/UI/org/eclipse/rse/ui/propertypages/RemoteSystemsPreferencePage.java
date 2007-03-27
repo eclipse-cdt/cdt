@@ -95,15 +95,15 @@ public class RemoteSystemsPreferencePage
 	{
 		IPreferenceStore coreStore = new PreferencesMapper(RSECorePlugin.getDefault().getPluginPreferences());
 
-		List systemTypeNames = new ArrayList();
+		List systemTypeLabels = new ArrayList();
 		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
-		for (int i = 0; i < systemTypes.length; i++) systemTypeNames.add(systemTypes[i].getName());
+		for (int i = 0; i < systemTypes.length; i++) systemTypeLabels.add(systemTypes[i].getLabel());
 
 		// DEFAULT SYSTEM TYPE		
 		SystemComboBoxFieldEditor systemTypeEditor = new SystemComboBoxFieldEditor(
 			IRSEPreferenceNames.SYSTEMTYPE,
 			SystemResources.RESID_PREF_SYSTEMTYPE_PREFIX_LABEL,
-			(String[])systemTypeNames.toArray(new String[systemTypeNames.size()]),
+			(String[])systemTypeLabels.toArray(new String[systemTypeLabels.size()]),
 			true, // readonly
 			getFieldEditorParent()
 		);

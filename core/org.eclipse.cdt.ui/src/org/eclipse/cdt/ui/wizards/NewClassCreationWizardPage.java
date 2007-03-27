@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     protected IFile fCreatedSourceFile = null;
     protected IFile fCreatedHeaderFile = null;
     protected ICElement fCreatedClass = null;
-
+    
+    /**
+     * This flag isFirstTime is used to keep a note
+     * that the class creation wizard has just been 
+     * created.
+     */
+    private boolean isFirstTime = false;
     /**
      * the default method stubs
      */
@@ -203,7 +209,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fHeaderFileStatus = STATUS_OK;
 		fSourceFileStatus = STATUS_OK;
 		fLastFocusedField = 0;
-
+		
+		isFirstTime = true;
+		
 		updateNamespaceEnableState();
 		updateFileGroupEnableState();
 	}
@@ -1335,6 +1343,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             fNamespaceStatus = namespaceChanged();
         }
         if (fieldChanged(fields, CLASS_NAME_ID)) {
+        	if( isFirstTime ) {
+        		isFirstTime = false;
+        		return;
+        	}
             fClassNameStatus = classNameChanged();
         }
         if (fieldChanged(fields, BASE_CLASSES_ID)) {

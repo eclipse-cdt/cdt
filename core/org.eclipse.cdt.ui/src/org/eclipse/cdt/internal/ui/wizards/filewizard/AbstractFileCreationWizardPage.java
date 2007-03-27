@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
@@ -78,6 +79,13 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	private IStatus fNewFileStatus;
 	private final IStatus STATUS_OK = new StatusInfo();
 	
+	/**
+     * This flag isFirstTime is used to keep a note
+     * that the file creation wizard has just been 
+     * created.
+     */
+    private boolean isFirstTime = false;
+	
 	public AbstractFileCreationWizardPage(String name) {
 		super(name);
 
@@ -94,6 +102,9 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		fSourceFolderStatus = STATUS_OK;
 		fNewFileStatus = STATUS_OK;
 		fLastFocusedField = 0;
+		
+		isFirstTime = true;
+		
 	}
 	
 	// -------- UI Creation ---------
@@ -415,7 +426,11 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 			fSourceFolderStatus = sourceFolderChanged();
 	    }
 	    if (fieldChanged(fields, NEW_FILE_ID)) {
-			fNewFileStatus = fileNameChanged();
+	    	if( isFirstTime ){
+	    		isFirstTime = false;
+	    		return;
+	    	}
+	    	fNewFileStatus = fileNameChanged();
 	    }
 		doStatusUpdate();
 	}

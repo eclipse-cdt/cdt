@@ -15,8 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.local;
-import javax.security.auth.login.CredentialExpiredException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;

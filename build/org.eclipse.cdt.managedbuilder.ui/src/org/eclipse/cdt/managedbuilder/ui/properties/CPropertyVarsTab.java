@@ -243,7 +243,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	public void buttonPressed(int index){
 		switch(index){
 		case 0:{
-			NewVarDialog dlg = new NewVarDialog(usercomp.getShell(), null, cfgd);
+			NewVarDialog dlg = new NewVarDialog(usercomp.getShell(), null, cfgd, mgr.getVariables(cfgd));
 			if(dlg.open() == Dialog.OK){
 				ICdtVariable macro = dlg.getDefinedMacro();
 				if(canCreate(macro)) {
@@ -265,7 +265,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		case 1:{
 			ICdtVariable _vars[] = getSelectedUserMacros();
 			if(_vars != null && _vars.length == 1){
-				NewVarDialog dlg = new NewVarDialog(usercomp.getShell() ,_vars[0], cfgd);
+				NewVarDialog dlg = new NewVarDialog(usercomp.getShell() ,_vars[0], cfgd, mgr.getVariables(cfgd));
 				if(dlg.open() == Dialog.OK){
 					ICdtVariable macro = dlg.getDefinedMacro();
 					if(canCreate(macro)) {

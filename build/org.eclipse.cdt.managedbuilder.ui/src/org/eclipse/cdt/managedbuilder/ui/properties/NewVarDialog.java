@@ -93,10 +93,10 @@ public class NewVarDialog extends Dialog {
 	private Composite fListEditorContainier;
 	
 	private FileListControl fListEditor;
-	ICConfigurationDescription cfgd;
-	
+	private ICConfigurationDescription cfgd;
+	private ICdtVariable[] vars; 
 
-	public NewVarDialog(Shell parentShell, ICdtVariable editedMacro, ICConfigurationDescription _cfgd) {
+	public NewVarDialog(Shell parentShell, ICdtVariable editedMacro, ICConfigurationDescription _cfgd, ICdtVariable[] _vars) {
 		super(parentShell);
 		cfgd = _cfgd;
 		if(editedMacro != null)
@@ -104,6 +104,7 @@ public class NewVarDialog extends Dialog {
 		else
 			fTitle = UIMessages.getString(TITLE_NEW);
 		fEditedMacro = editedMacro;
+		vars = _vars;
 	}
 
 	/* (non-Javadoc)
@@ -239,10 +240,9 @@ public class NewVarDialog extends Dialog {
 		// fListEditor.setContext(fMacrosBlock.getContextInfo());
 
 		if(fEditedMacro != null){
-			loadMacroSettings(fEditedMacro,true);
+			loadVar(fEditedMacro);
 			fMacroNameEdit.setEnabled(false);
 		}
-
 		return comp;
 	}
 	
@@ -250,18 +250,13 @@ public class NewVarDialog extends Dialog {
 	 * get the names to be displayed in the var Name combo.
 	 */
 	private String[] getMacroNames(){
-		IBuildMacro macros[] = null;
-		//TODO: 
-		//fMacrosBlock.getSystemMacros(true);
 		String names[] = null;
-		if(macros == null || macros.length == 0)
+		if(vars == null || vars.length == 0)
 			names = new String[0];
 		else{
-			names = new String[macros.length];
-			for(int i = 0; i < macros.length; i++){
-				names[i] = macros[i].getName();
-			}
-	
+			names = new String[vars.length];
+			for(int i = 0; i < vars.length; i++)
+				names[i] = vars[i].getName();
 			final Collator collator = Collator.getInstance();
 			Arrays.sort(names, new Comparator() {
 	            public int compare(final Object a, final Object b) {
@@ -271,7 +266,6 @@ public class NewVarDialog extends Dialog {
 	            }
 	        });
 		}
-		
 		return names;
 	}
 
@@ -319,55 +313,48 @@ public class NewVarDialog extends Dialog {
 	 */
 	private void handleMacroNameSelection(){
 		int index = fMacroNameEdit.getSelectionIndex();
-		if(index == -1)
-			loadMacroSettings(null);
-		else
-			loadMacroSettings(fMacroNameEdit.getItem(index));
+		if (index != -1) 
+			loadVarSettings(fMacroNameEdit.getItem(index));
 	}
 	
-	private void loadMacroSettings(String name){
-		IBuildMacro macro = null;
-		// TODO:
-		// fMacrosBlock.getSystemMacro(name,true);
-		if(macro != null)
-			loadMacroSettings(macro,false);
+	private void loadVarSettings(String name) {
+		ICdtVariable v = null;
+		for (int i=0; i<vars.length; i++) {
+			if (vars[i].getName().equals(name)) { 
+				v = vars[i]; 
+				break;
+			}
+		}
+		if(v != null)
+			loadVar(v);
 		else
-			loadMacroSettings(name,IBuildMacro.VALUE_TEXT,EMPTY_STRING);
+			loadVar(name,IBuildMacro.VALUE_TEXT,EMPTY_STRING);
 	}
 	
-	private void loadMacroSettings(String name,
-			int type,
-			String value[]){
+	private void loadVar(String name, int type, String value[]){
 		setSelectedType(type);
 		setSelectedMacroName(notNull(name));
 		fListEditor.setList(value);
-
 		updateWidgetState();
 	}
 	
-	private void loadMacroSettings(String name,
-					int type,
-					String value){
-
+	private void loadVar(String name,	int type, String value){
 		setSelectedType(type);
 		setSelectedMacroName(notNull(name));
 		fMacroValueEdit.setText(notNull(value));
-
 		updateWidgetState();
-
 	}
 	
 	/*
 	 * loads all the dialog fields with the variable settings
 	 */
-	private void loadMacroSettings(ICdtVariable var, boolean isUser){
+	private void loadVar(ICdtVariable var){
 		try{
 			if(CdtVariableResolver.isStringListVariable(var.getValueType()))
-				loadMacroSettings(var.getName(),var.getValueType(),var.getStringListValue());
+				loadVar(var.getName(),var.getValueType(),var.getStringListValue());
 			else
-				loadMacroSettings(var.getName(),var.getValueType(),var.getStringValue());
-		}catch(CdtVariableException e){
-		}
+				loadVar(var.getName(),var.getValueType(),var.getStringValue());
+		}catch(CdtVariableException e){}
 	}
 
 	/*
@@ -510,16 +497,11 @@ public class NewVarDialog extends Dialog {
 	private void handleMacroNameModified(){
 		String name = getSelectedVarName();
 		if(fTypedName == null || !fTypedName.equals(name)){
-			loadMacroSettings(name);
+			loadVarSettings(name);
 		}
 	}
 	
-	/*
-	 * called when the macro value is modified
-	 */
-	private void handleMacroValueModified(){
-
-	}
+	private void handleMacroValueModified(){}
 	
 	/*
 	 * called when the operation is modified

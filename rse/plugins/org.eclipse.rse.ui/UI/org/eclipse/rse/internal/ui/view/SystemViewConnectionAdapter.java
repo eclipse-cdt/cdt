@@ -633,13 +633,13 @@ public class SystemViewConnectionAdapter
 	    }
 	    else if (property.equals(ISystemPropertyConstants.P_HOSTNAME))
 	    {
-		  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-		                      original_hostName, conn.getDescription(), conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
+		  sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), original_hostName,
+		                      conn.getDescription(), conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    }
 	    else if (property.equals(ISystemPropertyConstants.P_DESCRIPTION))
 	    {
-		  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-		                      conn.getHostName(), original_description, conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
+		  sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(),
+		                      original_description, conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    }
     }   
     /**
@@ -652,8 +652,8 @@ public class SystemViewConnectionAdapter
     	  //whereToUpdate = USERID_LOCATION_DEFAULT_SYSTEMTYPE;
     	String userId = data.getLocalValue(); // will be "" if !data.getIsLocal(), which results in wiping out local override
 	    ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();    	
-		sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-		                      conn.getHostName(), conn.getDescription(), userId, whereToUpdate);
+		sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(),
+		                      conn.getDescription(), userId, whereToUpdate);
     }
     
     /**
@@ -679,8 +679,8 @@ public class SystemViewConnectionAdapter
 	    	// defect  57739
 	    	if (!((String)value).equalsIgnoreCase(conn.getHostName()))
 	    	{
-	    		sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-		                      (String)value, conn.getDescription(), conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
+	    		sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), (String)value,
+		                      conn.getDescription(), conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    		changed_hostName = true;
 	    	}
 	    }
@@ -690,8 +690,8 @@ public class SystemViewConnectionAdapter
 	    	// defect  57739
 	    	if (!((String)value).equalsIgnoreCase(conn.getDescription()))
 	    	{
-			  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-			                      conn.getHostName(), (String)value, conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);		  
+			  sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(),
+			                      (String)value, conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);		  
 			  changed_description = true;		                      
 	    	}
 	    }

@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemSignonInformation;
@@ -261,7 +262,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 
 	private void updatePasswordForOtherSystemsInConnection(String uid, String password, boolean persist) {
 		IHost connection = getPrimarySubSystem().getHost();
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
 		ISubSystem[] subsystems = registry.getSubSystems(connection);
 		List uniqueSystems = new ArrayList();
 		for (int i = 0; i < subsystems.length; i++) {
@@ -287,7 +288,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	private void clearPasswordForOtherSystemsInConnection(String uid, boolean persist) {
 		if (uid != null) {
 			IHost connection = getHost();
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
 			ISubSystem[] subsystems = registry.getSubSystems(connection);
 			List uniqueSystems = new ArrayList();
 			for (int i = 0; i < subsystems.length; i++) {
@@ -319,8 +320,8 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 		} else {
 			int whereToUpdate = IRSEUserIdConstants.USERID_LOCATION_HOST;
 			IHost host = subsystem.getHost();
-			ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
-			sr.updateHost(null, host, host.getSystemType(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
+			ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
+			sr.updateHost(host, host.getSystemType(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
 		}
 	}
 }

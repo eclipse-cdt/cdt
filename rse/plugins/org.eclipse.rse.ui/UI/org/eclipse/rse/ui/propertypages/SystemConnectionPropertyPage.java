@@ -88,9 +88,9 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		{
 		  IHost conn = (IHost)getElement();
 		  ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
-		  sr.updateHost( getShell(),conn,conn.getSystemType(),form.getConnectionName(),
-		                       form.getHostName(), form.getConnectionDescription(),
-		                       form.getDefaultUserId(), form.getUserIdLocation() );
+		  sr.updateHost( conn,conn.getSystemType(),form.getConnectionName(),form.getHostName(),
+		                       form.getConnectionDescription(), form.getDefaultUserId(),
+		                       form.getUserIdLocation() );
 
 		  
 		  boolean offlineSelection = form.isWorkOffline();

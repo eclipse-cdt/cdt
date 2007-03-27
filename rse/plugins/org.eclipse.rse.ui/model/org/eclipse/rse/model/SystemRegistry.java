@@ -2495,7 +2495,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
 	 *   that tells us where to set the user Id
 	 */
-	public void updateHost(Shell shell, IHost conn, String systemType, String connectionName, String hostName, String description, String defaultUserId, int defaultUserIdLocation)
+	public void updateHost(IHost conn, String systemType, String connectionName, String hostName, String description, String defaultUserId, int defaultUserIdLocation)
 	{
 		lastException = null;
 		boolean connectionNameChanged = !connectionName.equalsIgnoreCase(conn.getAliasName());

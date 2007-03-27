@@ -107,7 +107,8 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	 * {@link #createAST(ITranslationUnit, IProgressMonitor)}, 
 	 * {@link #needToUpdate(IIndexFileLocation)}, 
 	 * {@link #addSymbols(IASTTranslationUnit, IWritableIndex, int, IProgressMonitor)}
-	 * {@link #postAddToIndex(IIndexFileLocation, IIndexFile)} and
+	 * {@link #postAddToIndex(IIndexFileLocation, IIndexFile)},
+	 * {@link #getLastModified(IIndexFileLocation)} and
 	 * {@link #findLocation(String)}
 	 * @since 4.0
 	 */

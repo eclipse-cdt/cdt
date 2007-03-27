@@ -83,7 +83,8 @@ abstract public class PDOMWriter {
 	 * Extracts symbols from the given ast and adds them to the index. It will
 	 * make calls to 	  
 	 * {@link #needToUpdate(IIndexFileLocation)},
-	 * {@link #postAddToIndex(IIndexFileLocation, IIndexFile)} and
+	 * {@link #postAddToIndex(IIndexFileLocation, IIndexFile)},
+	 * {@link #getLastModified(IIndexFileLocation)} and
 	 * {@link #findLocation(String)} to obtain further information.
 	 * @since 4.0
 	 */
@@ -253,7 +254,7 @@ abstract public class PDOMWriter {
 		} else {
 			file= index.addFile(location);
 		}
-		file.setTimestamp(EFS.getStore(location.getURI()).fetchInfo().getLastModified());
+		file.setTimestamp(getLastModified(location));
 		ArrayList[] lists= (ArrayList[]) symbolMap.get(location);
 		if (lists != null) {
 			ArrayList list= lists[0];
@@ -292,5 +293,16 @@ abstract public class PDOMWriter {
 			fInfo.fCompletedSources+= completedSources;
 			fInfo.fTotalSourcesEstimate+= totalEstimate;
 		}
+	}
+	
+	/**
+	 * Obtains the timestamp of an index file location.
+	 * @param location the location for which the timestamp is obtained.
+	 * @return the timestamp.
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	protected long getLastModified(IIndexFileLocation location) throws CoreException {
+		return EFS.getStore(location.getURI()).fetchInfo().getLastModified();
 	}
 }

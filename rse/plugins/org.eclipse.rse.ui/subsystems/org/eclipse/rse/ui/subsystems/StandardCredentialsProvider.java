@@ -12,6 +12,7 @@ package org.eclipse.rse.ui.subsystems;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.SystemSignonInformation;
+import org.eclipse.rse.core.subsystems.AbstractCredentialsProvider;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ICredentials;
 import org.eclipse.rse.core.subsystems.ICredentialsProvider;
@@ -49,7 +50,7 @@ import org.eclipse.ui.PlatformUI;
  * This class is may be subclassed. Typically to provide connector service
  * specific prompting.
  */
-public class StandardCredentialsProvider implements ICredentialsProvider {
+public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	
 	private class PromptForCredentials implements Runnable {
 		private boolean canceled = false;
@@ -60,7 +61,7 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 	
 		public void run() {
 			ISystemPasswordPromptDialog dialog = getPasswordPromptDialog(getShell());
-			dialog.setSystemInput(connectorService);
+			dialog.setSystemInput(getConnectorService());
 			dialog.setForceToUpperCase(forcePasswordToUpperCase());
 			dialog.setSignonValidator(getSignonValidator());
 			if (supportsUserId()) {
@@ -98,7 +99,7 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 		}
 	
 		public void run() {
-			SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(getShell(), connectorService.getHostName(), getUserId(), message);
+			SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(getShell(), getConnectorService().getHostName(), getUserId(), message);
 			dlg.setSavePassword(savePassword);
 			dlg.open();
 			canceled = dlg.wasCancelled();
@@ -109,15 +110,13 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 		}
 	
 	}
-	private IConnectorService connectorService = null;
 	private String userId = null;
 	private String password = null;
-	private boolean suppressed = false;
 	private boolean savePassword = false;
 	private boolean saveUserId = false;
 
 	public StandardCredentialsProvider(IConnectorService connectorService) {
-		this.connectorService = connectorService;
+		super(connectorService);
 	}
 
 	/**
@@ -144,7 +143,7 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 		String hostType = host.getSystemType();
 		savePassword = false;
 		if (supportsUserId()) {
-			boolean sameHost = hostName.equalsIgnoreCase(connectorService.getHostName());
+			boolean sameHost = hostName.equalsIgnoreCase(getConnectorService().getHostName());
 			if (!sameHost) {
 				clearCredentials();
 			}
@@ -170,7 +169,7 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 		// Not sure this is necessary, shouldn't this message show up on the password prompt itself?
 		if (!signonValid) {
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
-			msg.makeSubstitution(userId, connectorService.getHostName());
+			msg.makeSubstitution(userId, getConnectorService().getHostName());
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
 			dialog.open();
 		}
@@ -180,12 +179,12 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 			if (passwordNeeded || userIdNeeded || reacquire) {
 				promptForCredentials();
 				if (savePassword) {
-					connectorService.savePassword();
+					getConnectorService().savePassword();
 				} else {
-					connectorService.removePassword();
+					getConnectorService().removePassword();
 				}
 				if (saveUserId) {
-					connectorService.saveUserId();
+					getConnectorService().saveUserId();
 				}
 			}
 		}
@@ -205,12 +204,8 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 		password = null;
 	}
 
-	public IConnectorService getConnectorService() {
-		return connectorService;
-	}
-
 	public ICredentials getCredentials() {
-		IHost host = connectorService.getHost();
+		IHost host = getConnectorService().getHost();
 		String hostName = host.getHostName();
 		String systemType = host.getSystemType();
 		SystemSignonInformation result = new SystemSignonInformation(hostName, userId, password, systemType);
@@ -232,13 +227,6 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 		return userId;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isSuppressed()
-	 */
-	public final boolean isSuppressed() {
-		return suppressed;
-	}
-
 	public void repairCredentials(SystemMessage prompt) throws InterruptedException {
 		promptForNewPassword(prompt);
 	}
@@ -266,22 +254,16 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 		if (getPrimarySubSystem().forceUserIdToUpperCase()) {
 			matchingUserId = matchingUserId.toUpperCase();
 		}
-		SystemSignonInformation signonInformation = new SystemSignonInformation(connectorService.getHostName(), matchingUserId, password, connectorService.getHostType());
+		IConnectorService cs = getConnectorService();
+		String systemType = cs.getHostType();
+		String hostName = cs.getHostName();
+		SystemSignonInformation signonInformation = new SystemSignonInformation(hostName, matchingUserId, password, systemType);
 		setSignonInformation(signonInformation);
 		if (persist) { // if password should be persisted, then add to disk
 			PasswordPersistenceManager.getInstance().add(signonInformation, true, true);
 		} else { // otherwise, remove from both memory and disk
-			String systemType = connectorService.getHostType();
-			String hostName = connectorService.getHostName();
 			PasswordPersistenceManager.getInstance().remove(systemType, hostName, userId);
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setSuppressed(boolean)
-	 */
-	public final void setSuppressed(boolean suppressed) {
-		this.suppressed = suppressed;
 	}
 
 	/* (non-Javadoc)
@@ -344,7 +326,7 @@ public class StandardCredentialsProvider implements ICredentialsProvider {
 	}
 
 	private ISubSystem getPrimarySubSystem() {
-		return connectorService.getPrimarySubSystem();
+		return getConnectorService().getPrimarySubSystem();
 	}
 
 	private Shell getShell() {

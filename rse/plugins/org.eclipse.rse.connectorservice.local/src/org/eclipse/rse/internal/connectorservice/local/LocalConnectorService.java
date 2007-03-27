@@ -33,7 +33,7 @@ import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 public class LocalConnectorService extends AbstractConnectorService
 {
 	
-	private ICredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+	private ICredentialsProvider credentialsProvider = new BasicCredentialsProvider(this);
 		
 	/**
 	 * Constructor when we don't have a subsystem yet.

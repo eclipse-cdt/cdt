@@ -42,7 +42,7 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 	
 	private boolean fIsConnected = false;
 	private DaytimeService fDaytimeService;
-	private ICredentialsProvider fCredentialsProvider = new BasicCredentialsProvider();
+	private ICredentialsProvider fCredentialsProvider = new BasicCredentialsProvider(this);
 
 	public DaytimeConnectorService(IHost host) {
 		super(DaytimeResources.Daytime_Connector_Name, DaytimeResources.Daytime_Connector_Description, host, 13);

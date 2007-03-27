@@ -20,7 +20,7 @@ import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 public class TestSubSystemConnectorService extends AbstractConnectorService {
 
 	private boolean connected = false;
-	private ICredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+	private ICredentialsProvider credentialsProvider = new BasicCredentialsProvider(this);
 
 	/**
 	 * Constructor.

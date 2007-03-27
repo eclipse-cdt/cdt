@@ -18,7 +18,12 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
  * <p>
  * This class is not meant to be subclassed.
  */
-public class BasicCredentialsProvider implements ICredentialsProvider {
+public class BasicCredentialsProvider extends AbstractCredentialsProvider {
+	
+	public BasicCredentialsProvider(IConnectorService connectorService) {
+		super(connectorService);
+	}
+	
 	public void acquireCredentials(boolean reacquire) {
 	}
 
@@ -26,26 +31,17 @@ public class BasicCredentialsProvider implements ICredentialsProvider {
 	}
 
 	public void clearPassword() {
-		// TODO Auto-generated method stub
 	}
 
 	public ICredentials getCredentials() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public String getUserId() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public boolean isSuppressed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public void repairCredentials(SystemMessage message) throws InterruptedException {
-		// TODO Auto-generated method stub
 	}
 
 	public boolean requiresPassword() {
@@ -57,15 +53,9 @@ public class BasicCredentialsProvider implements ICredentialsProvider {
 	}
 
 	public void setPassword(String password) {
-		// TODO Auto-generated method stub
-	}
-
-	public void setSuppressed(boolean suppressed) {
-		// TODO Auto-generated method stub
 	}
 
 	public void setUserId(String userId) {
-		// TODO Auto-generated method stub
 	}
 
 	public boolean supportsPassword() {
@@ -76,8 +66,4 @@ public class BasicCredentialsProvider implements ICredentialsProvider {
 		return false;
 	}
 
-	public IConnectorService getConnectorService() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

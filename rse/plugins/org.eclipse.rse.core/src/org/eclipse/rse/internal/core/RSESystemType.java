@@ -154,4 +154,11 @@ public class RSESystemType extends PlatformObject implements IRSESystemType {
 	public String[] getSubsystemConfigurationIds() {
 		return subsystemConfigurationIds;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getLabel() + " (" + getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

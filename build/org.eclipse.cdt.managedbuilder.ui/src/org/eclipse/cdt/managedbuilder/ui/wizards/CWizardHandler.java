@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -55,7 +56,10 @@ import org.eclipse.swt.widgets.TableItem;
 public class CWizardHandler implements ICWizardHandler {
 	private static final Image IMG0 = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_EMPTY);
 	private static final Image IMG1 = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_PREFERRED);
-
+	private static final String PROPERTY = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$
+	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
+	
+	
 	private static final String head = Messages.getString("CWizardHandler.0"); //$NON-NLS-1$
 	private static final String tooltip = 
 		Messages.getString("CWizardHandler.1")+ //$NON-NLS-1$
@@ -185,6 +189,8 @@ public class CWizardHandler implements ICWizardHandler {
 
 		cfgs = CfgHolder.unique(cfgs);
 		
+		ICConfigurationDescription active = null;
+		
 		for(int i = 0; i < cfgs.length; i++){
 			String id = ManagedBuildManager.calculateChildId(cfgs[i].cfg.getId(), null);
 			Configuration config = new Configuration(mProj, (Configuration)cfgs[i].cfg, id, false, true);
@@ -199,7 +205,14 @@ public class CWizardHandler implements ICWizardHandler {
 			String s = project.getName();
 			config.setName(cfgs[i].name);
 			config.setArtifactName(s);
+			
+			IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
+			if (b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))
+				active = cfgDes;
+			else if (active == null) // select at least first configuration 
+				active = cfgDes; 
 		}
+		if (active != null) active.setActive();
 		coreModel.setProjectDescription(project, des);
 	}
 

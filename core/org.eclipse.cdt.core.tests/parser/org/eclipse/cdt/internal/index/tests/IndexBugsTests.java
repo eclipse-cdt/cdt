@@ -16,9 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
@@ -47,9 +44,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -87,6 +82,8 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 	
 	protected void tearDown() throws CoreException {
+		TestScannerProvider.sIncludeFiles= TestScannerProvider.sIncludes=
+			TestScannerProvider.sMacroFiles= null;
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}
@@ -208,61 +205,51 @@ public class IndexBugsTests extends BaseTestCase {
 
 	public void test164360_1() throws Exception {
 		waitForIndexer();
-		try {
-			IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
-			TestScannerProvider.sIncludeFiles= new String[]{include.getLocation().toOSString()};
-			IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164360.cpp", "");
-			TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
+		TestScannerProvider.sIncludeFiles= new String[]{include.getLocation().toOSString()};
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164360.cpp", "");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
 
-			fIndex.acquireReadLock();
-			try {
-				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
-				assertNotNull(ifile);
-				IIndexInclude[] includes= ifile.getIncludes();
-				assertEquals(1, includes.length);
-				IIndexInclude i= includes[0];
-				assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
-				assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
-				assertEquals(true, i.isSystemInclude());
-				assertEquals(0, i.getNameOffset());
-				assertEquals(0, i.getNameLength());
-			}
-			finally {
-				fIndex.releaseReadLock();
-			}
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(1, includes.length);
+			IIndexInclude i= includes[0];
+			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
+			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
+			assertEquals(true, i.isSystemInclude());
+			assertEquals(0, i.getNameOffset());
+			assertEquals(0, i.getNameLength());
 		}
 		finally {
-			TestScannerProvider.sIncludeFiles= null;
+			fIndex.releaseReadLock();
 		}
 	}
 
 	public void test164360_2() throws Exception {
 		waitForIndexer();
-		try {
-			IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
-			TestScannerProvider.sMacroFiles= new String[]{include.getLocation().toOSString()};
-			IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164360.cpp", "");
-			TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
+		TestScannerProvider.sMacroFiles= new String[]{include.getLocation().toOSString()};
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164360.cpp", "");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
 
-			fIndex.acquireReadLock();
-			try {
-				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
-				assertNotNull(ifile);
-				IIndexInclude[] includes= ifile.getIncludes();
-				assertEquals(1, includes.length);
-				IIndexInclude i= includes[0];
-				assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
-				assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
-				assertEquals(true, i.isSystemInclude());
-				assertEquals(0, i.getNameOffset());
-				assertEquals(0, i.getNameLength());
-			}
-			finally {
-				fIndex.releaseReadLock();
-			}
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(1, includes.length);
+			IIndexInclude i= includes[0];
+			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
+			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
+			assertEquals(true, i.isSystemInclude());
+			assertEquals(0, i.getNameOffset());
+			assertEquals(0, i.getNameLength());
 		}
 		finally {
-			TestScannerProvider.sMacroFiles= null;
+			fIndex.releaseReadLock();
 		}
 	}
 
@@ -549,24 +536,26 @@ public class IndexBugsTests extends BaseTestCase {
 	 * Linked headers, referenced via include <> syntax are missed
 	 */
 	public void _test179322() throws Exception {
+		
 		String baseDir= FileLocator.toFileURL(FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path("/resources/indexTests/bugs/179322"), null)).getFile();
 		IFolder content= fCProject.getProject().getFolder("content");
 		content.createLink(new Path(baseDir), IResource.NONE, null);
-
-		// Setup path entries
-		List entries= new ArrayList(Arrays.asList(CoreModel.getRawPathEntries(fCProject)));
-		entries.add(
-				CoreModel.newIncludeEntry(fCProject.getPath(),
-						null, content.getLocation(), true));
-		entries.add(
-				CoreModel.newIncludeEntry(fCProject.getPath(),
-						null, content.getLocation(), false));
-		entries.add(CoreModel.newSourceEntry(content.getProjectRelativePath()));
-		fCProject.setRawPathEntries(
-				(IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]),
-				new NullProgressMonitor()
-		);
+//		List entries= new ArrayList(Arrays.asList(CoreModel.getRawPathEntries(fCProject)));
+//		entries.add(
+//				CoreModel.newIncludeEntry(fCProject.getPath(),
+//						null, content.getLocation(), true));
+//		entries.add(
+//				CoreModel.newIncludeEntry(fCProject.getPath(),
+//						null, content.getLocation(), false));
+//		entries.add(CoreModel.newSourceEntry(content.getProjectRelativePath()));
+//		fCProject.setRawPathEntries(
+//				(IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]),
+//				new NullProgressMonitor()
+//		);
 		
+		TestScannerProvider.sIncludes= new String[] {
+				content.getLocation().toString()
+		};
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		CCorePlugin.getIndexManager().joinIndexer(10000, NPM);
 		

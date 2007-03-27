@@ -596,6 +596,8 @@
                value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
          </filter>
          <enabledWhen>
+            <and>
+               <test property="org.eclipse.cdt.ui.toolEditEnabled" value="" />
             <or>
 		     <instanceof value="org.eclipse.core.resources.IProject"/>
 		     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
@@ -611,7 +613,8 @@
 	         	<instanceof value="org.eclipse.cdt.core.model.ITranslationUnit"/>
     	        <test property="org.eclipse.cdt.ui.isSource" value="" />
 	         </and>	
-		    </or>          
+		    </or>
+		    </and>          
          </enabledWhen>
       </page>
   </extension>

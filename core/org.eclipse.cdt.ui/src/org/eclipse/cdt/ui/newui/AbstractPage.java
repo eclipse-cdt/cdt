@@ -199,7 +199,8 @@ implements
 		if (!checkElement()) {
 			s = UIMessages.getString("AbstractPage.0"); //$NON-NLS-1$
 		} else if (!isApplicable()) {
-			s = UIMessages.getString("AbstractPage.1"); //$NON-NLS-1$
+			return null;
+//			s = UIMessages.getString("AbstractPage.1"); //$NON-NLS-1$
 		} else if (!isCDTProject(getProject())) {
 			s = UIMessages.getString("AbstractPage.2"); //$NON-NLS-1$
 		}

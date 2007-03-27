@@ -19,20 +19,23 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  * Checks whether given object is a source file.
  */
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
-	private static final String KEY = "isSource"; //$NON-NLS-1$
+	private static final String KEY_SRC = "isSource"; //$NON-NLS-1$
+	private static final String KEY_TOOL = "toolEditEnabled"; //$NON-NLS-1$
 	
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
-		if (!KEY.equals(property)) return false;
-		
-		if (receiver instanceof ITranslationUnit) {
-			return ((ITranslationUnit)receiver).isSourceUnit();
+		if (KEY_SRC.equals(property)) {
+			if (receiver instanceof ITranslationUnit) {
+				return ((ITranslationUnit)receiver).isSourceUnit();
+			}
+			else if (receiver instanceof IFile) {
+				IFile file = (IFile)receiver;
+				return CoreModel.isValidSourceUnitName(file.getProject(), file.getName());
+			}
+		} else if (KEY_TOOL.equals(property)) {
+			return CDTPrefUtil.getBool(CDTPrefUtil.KEY_TOOLM);
 		}
-		else if (receiver instanceof IFile) {
-			IFile file = (IFile)receiver;
-			return CoreModel.isValidSourceUnitName(file.getProject(), file.getName());
-		}
-		else return false;
+		return false;
 	}
 
 }

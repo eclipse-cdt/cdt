@@ -31,6 +31,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
 public class ToolChainEditTab extends AbstractCBuildPropertyTab {
+	
+	private static final String NO_TC = Messages.getString("StdProjectTypeHandler.0");  //$NON-NLS-1$
 	private static final IToolChain[] r_tcs = ManagedBuildManager.getRealToolChains();
 	private static final IBuilder[]    r_bs = ManagedBuildManager.getRealBuilders();
 	private static final ITool[]    r_tools = ManagedBuildManager.getRealTools();
@@ -39,6 +41,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private Button b_dispCompatible;
 	private Combo  c_toolchain;
 	private Combo  c_builder;
+	private Button button_edit;
 	
 	private IBuilder[] v_bs;
 	private IToolChain[] v_tcs;
@@ -51,10 +54,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, false));
-
 		b_dispCompatible = setupCheck(usercomp, Messages.getString("ToolChainEditTab.0"), 2, GridData.BEGINNING); //$NON-NLS-1$
-		
-		
+
 		setupLabel(usercomp, Messages.getString("ToolChainEditTab.1"), 2, GridData.BEGINNING); //$NON-NLS-1$
 		c_toolchain = new Combo(usercomp, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -64,10 +65,14 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				if (fi != null) {
 					int x = c_toolchain.getSelectionIndex();
-					IToolChain tc = v_tcs[x];
-					if (tc == null) return;
 					try {
-						fi.changeToolChain(tc, ManagedBuildManager.calculateChildId(tc.getId(), null), tc.getUniqueRealName());
+						if (NO_TC.equals(c_toolchain.getItem(x))) {
+							fi.changeToolChain(null, null, null);
+						} else {
+							IToolChain tc = v_tcs[x];
+							if (tc == null) return;
+							fi.changeToolChain(tc, ManagedBuildManager.calculateChildId(tc.getId(), null), tc.getUniqueRealName());
+					}
 					} catch (BuildException be) {}
 					updateData();
 				}
@@ -97,13 +102,13 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		gd.grabExcessHorizontalSpace = true;
 		text.setLayoutData(gd);
 		
-		Button b = new Button(g, SWT.PUSH);
+		button_edit = new Button(g, SWT.PUSH);
 		GridData gdb = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 		gdb.grabExcessHorizontalSpace = false;
 		gdb.horizontalAlignment = SWT.FILL;
 		gdb.widthHint = 80;
-		b.setLayoutData(gdb);
-		b.addSelectionListener(new SelectionAdapter() {
+		button_edit.setLayoutData(gdb);
+		button_edit.addSelectionListener(new SelectionAdapter() {
 	        public void widgetSelected(SelectionEvent event) {
 	    		ToolSelectionDialog d = new ToolSelectionDialog(usercomp.getShell());
 	    		d.all = v_tools;
@@ -119,8 +124,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	    		}
 	        }});
 
-		b.setLayoutData(new GridData(GridData.END));
-		b.setText(Messages.getString("ToolChainEditTab.4")); //$NON-NLS-1$
+		button_edit.setLayoutData(new GridData(GridData.END));
+		button_edit.setText(Messages.getString("ToolChainEditTab.4")); //$NON-NLS-1$
 	}
 	public void updateData(ICResourceDescription rcfg) {
 		cfg = getCfg(rcfg.getConfiguration());
@@ -137,9 +142,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		v_tools = new ITool[r_tools.length];
 		
 		IToolChain tc = null;
-		if (fi != null) {
+		if (fi != null)
 			tc = ManagedBuildManager.getRealToolChain(fi.getToolChain());
-		}
 		
 		int cnt = 0;
 		int pos = -1;
@@ -154,10 +158,26 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			if (r_tcs[i].equals(tc)) pos = cnt;
 			cnt++;
 		}
-		if (pos != -1)
+		// "No toolchain" is enabled for Make projects only.
+		if (!cfg.getBuilder().isManagedBuildOn())
+			c_toolchain.add(NO_TC);
+		if (pos != -1) {
 			c_toolchain.select(pos);
-		else
-			c_toolchain.setText(EMPTY_STR);
+			c_builder.setEnabled(true);
+			button_edit.setEnabled(true);
+		}
+		else {
+			if (cfg.getBuilder().isManagedBuildOn()) {
+				c_toolchain.setText(EMPTY_STR); // unprobable case
+			} else {
+				try {
+					fi.changeToolChain(null, null, null);
+				} catch (BuildException e) {}
+				c_toolchain.select(c_toolchain.getItemCount() - 1);
+			}
+			c_builder.setEnabled(false);
+			button_edit.setEnabled(false);
+		}
 		
 		IBuilder b = ManagedBuildManager.getRealBuilder(cfg.getBuilder());
 		cnt = 0;

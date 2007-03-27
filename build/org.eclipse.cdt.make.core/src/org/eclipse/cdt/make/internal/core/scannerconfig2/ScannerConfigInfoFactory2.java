@@ -124,8 +124,12 @@ public class ScannerConfigInfoFactory2 {
 				MakeCorePlugin.log(e);
 			}
 		}
-		
+
 		public void save() throws CoreException {
+			save(false);
+		}
+
+		public void save(boolean serializeDescriptor) throws CoreException {
 			if (isDirty()) {
 				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 				Element sc = descriptor.getProjectData(SCANNER_CONFIG);
@@ -162,6 +166,9 @@ public class ScannerConfigInfoFactory2 {
 					p.store(el);
 					sc.appendChild(el);
 				}
+				
+				if(serializeDescriptor)
+					descriptor.saveProjectData();
 				
 				fIsDirty = false;
 			}
@@ -1080,7 +1087,7 @@ public class ScannerConfigInfoFactory2 {
          */
         public synchronized void save() throws CoreException {
         	if(isDirty){
-        		container.save();
+        		container.save(true);
         		isDirty = false;
         	}
 //            if (store()) {

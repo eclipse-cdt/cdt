@@ -53,12 +53,10 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -525,50 +523,6 @@ public class IndexBugsTests extends BaseTestCase {
 			IBasicType btype= (IBasicType) type;
 			assertTrue(IBasicType.t_int != btype.getType());
 			assertEquals(IBasicType.t_float, btype.getType());
-		}
-		finally {
-			fIndex.releaseReadLock();
-		}
-	}
-	
-	
-	/*
-	 * Linked headers, referenced via include <> syntax are missed
-	 */
-	public void _test179322() throws Exception {
-		
-		String baseDir= FileLocator.toFileURL(FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path("/resources/indexTests/bugs/179322"), null)).getFile();
-		IFolder content= fCProject.getProject().getFolder("content");
-		content.createLink(new Path(baseDir), IResource.NONE, null);
-//		List entries= new ArrayList(Arrays.asList(CoreModel.getRawPathEntries(fCProject)));
-//		entries.add(
-//				CoreModel.newIncludeEntry(fCProject.getPath(),
-//						null, content.getLocation(), true));
-//		entries.add(
-//				CoreModel.newIncludeEntry(fCProject.getPath(),
-//						null, content.getLocation(), false));
-//		entries.add(CoreModel.newSourceEntry(content.getProjectRelativePath()));
-//		fCProject.setRawPathEntries(
-//				(IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]),
-//				new NullProgressMonitor()
-//		);
-		
-		TestScannerProvider.sIncludes= new String[] {
-				content.getLocation().toString()
-		};
-		CCorePlugin.getIndexManager().reindex(fCProject);
-		CCorePlugin.getIndexManager().joinIndexer(10000, NPM);
-		
-		fIndex.acquireReadLock();
-		try {
-			IBinding[] bindings= fIndex.findBindings(Pattern.compile(".*"), true, IndexFilter.ALL, NPM);
-			assertEquals(2, bindings.length);
-			
-			int b= bindings[0].getName().equals("A") ? 1 : 0;
-			assertTrue(bindings[0] instanceof ICPPClassType);
-			assertTrue(bindings[1] instanceof ICPPClassType);
-			assertTrue(((ICPPClassType)bindings[1-b]).getBases().length==0);
-			assertTrue(((ICPPClassType)bindings[b]).getBases().length==1);
 		}
 		finally {
 			fIndex.releaseReadLock();

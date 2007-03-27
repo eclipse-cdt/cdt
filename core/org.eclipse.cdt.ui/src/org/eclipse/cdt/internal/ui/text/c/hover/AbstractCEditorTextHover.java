@@ -23,14 +23,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.editors.text.EditorsUI;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
 
@@ -44,15 +40,6 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover,
 
 	private IEditorPart fEditor;
 
-	/* Mapping key to action */
-	private IBindingService fBindingService;
-	
-	// initialization block, called during constructor call
-	{
-		fBindingService = (IBindingService) PlatformUI.getWorkbench()
-				.getAdapter(IBindingService.class);
-	}
-	
 	/*
 	 * @see ICEditorTextHover#setEditor(IEditorPart)
 	 */
@@ -112,20 +99,7 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover,
 	 * @since 3.0
 	 */
 	protected String getTooltipAffordanceString() {
-
-		if (fBindingService == null
-				|| !CUIPlugin.getDefault().getPreferenceStore().getBoolean(
-						PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE))
-			return null;
-
-		String keySequence = fBindingService
-				.getBestActiveBindingFormattedFor(ICEditorActionDefinitionIds.SHOW_TOOLTIP);
-		if (keySequence == null)
-			return null;
-
-		return CHoverMessages
-				.getFormattedString(
-						"CTextHover.makeStickyHint", keySequence == null ? "" : keySequence); //$NON-NLS-1$ //$NON-NLS-2$
+		return EditorsUI.getTooltipAffordanceString();
 	}
 
 }

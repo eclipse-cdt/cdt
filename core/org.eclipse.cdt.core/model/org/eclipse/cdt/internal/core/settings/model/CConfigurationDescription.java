@@ -147,9 +147,9 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		}
 	}
 	
-	public CConfigurationDescriptionCache getCache(){
-		return fCfgCache;
-	}
+//	public CConfigurationDescriptionCache getCache(){
+//		return fCfgCache;
+//	}
 	
 	public String getId() {
 		String id = super.getId();

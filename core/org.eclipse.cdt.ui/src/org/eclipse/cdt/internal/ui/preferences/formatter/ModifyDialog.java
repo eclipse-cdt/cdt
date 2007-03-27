@@ -25,8 +25,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,6 +48,8 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage.IModificationListener;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.util.Messages;
@@ -57,21 +57,22 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 
-public abstract class ModifyDialog extends StatusDialog {
+public abstract class ModifyDialog extends StatusDialog implements IModificationListener {
     
     /**
      * The keys to retrieve the preferred area from the dialog settings.
      */
-    private static final String DS_KEY_PREFERRED_WIDTH= CUIPlugin.PLUGIN_ID + "formatter_page.modify_dialog.preferred_width"; //$NON-NLS-1$
-    private static final String DS_KEY_PREFERRED_HEIGHT= CUIPlugin.PLUGIN_ID + "formatter_page.modify_dialog.preferred_height"; //$NON-NLS-1$
-    private static final String DS_KEY_PREFERRED_X= CUIPlugin.PLUGIN_ID + "formatter_page.modify_dialog.preferred_x"; //$NON-NLS-1$
-    private static final String DS_KEY_PREFERRED_Y= CUIPlugin.PLUGIN_ID + "formatter_page.modify_dialog.preferred_y"; //$NON-NLS-1$
+    private static final String DS_KEY_PREFERRED_WIDTH= "modify_dialog.preferred_width"; //$NON-NLS-1$
+    private static final String DS_KEY_PREFERRED_HEIGHT= "modify_dialog.preferred_height"; //$NON-NLS-1$
+    private static final String DS_KEY_PREFERRED_X= "modify_dialog.preferred_x"; //$NON-NLS-1$
+    private static final String DS_KEY_PREFERRED_Y= "modify_dialog.preferred_y"; //$NON-NLS-1$
+    
     
     /**
      * The key to store the number (beginning at 0) of the tab page which had the 
      * focus last time.
      */
-    private static final String DS_KEY_LAST_FOCUS= CUIPlugin.PLUGIN_ID + "formatter_page.modify_dialog.last_focus"; //$NON-NLS-1$ 
+    private static final String DS_KEY_LAST_FOCUS= "modify_dialog.last_focus"; //$NON-NLS-1$
     
     private static final int APPLAY_BUTTON_ID= IDialogConstants.CLIENT_ID;
     private static final int SAVE_BUTTON_ID= IDialogConstants.CLIENT_ID + 1;
@@ -119,7 +120,7 @@ public abstract class ModifyDialog extends StatusDialog {
 	}
 
 	protected abstract void addPages(Map values);
-	
+
 	public void create() {
 		super.create();
 		int lastFocusNr= 0;
@@ -221,12 +222,12 @@ public abstract class ModifyDialog extends StatusDialog {
 	    
 	public boolean close() {
 		final Rectangle shell= getShell().getBounds();
-		
+
 		fDialogSettings.put(fKeyPreferredWidth, shell.width);
 		fDialogSettings.put(fKeyPreferredHight, shell.height);
 		fDialogSettings.put(fKeyPreferredX, shell.x);
 		fDialogSettings.put(fKeyPreferredY, shell.y);
-		
+
 		return super.close();
 	}
 	
@@ -257,7 +258,7 @@ public abstract class ModifyDialog extends StatusDialog {
 		fProfileManager.setSelected(fProfile);
 		doValidate();
 	}
-
+	
 	private void saveButtonPressed() {
 		Profile selected= new CustomProfile(fProfileNameField.getText(), new HashMap(fWorkingValues), fProfile.getVersion(), fProfileManager.getProfileVersioner().getProfileKind());
 		
@@ -306,9 +307,8 @@ public abstract class ModifyDialog extends StatusDialog {
 		data.widthHint= layout.horizontalSpacing;
 		label.setLayoutData(data);
 		super.createButtonsForButtonBar(parent);
-    }
-    
-	
+	}
+
 	protected final void addTabPage(String title, ModifyDialogTabPage tabPage) {
 		final TabItem tabItem= new TabItem(fTabFolder, SWT.NONE);
 		applyDialogFont(tabItem.getControl());
@@ -325,19 +325,14 @@ public abstract class ModifyDialog extends StatusDialog {
 	protected void updateButtonsEnableState(IStatus status) {
 	    super.updateButtonsEnableState(status);
 	    if (fApplyButton != null && !fApplyButton.isDisposed()) {
-			fApplyButton.setEnabled(!status.matches(IStatus.ERROR));
+	    	fApplyButton.setEnabled(hasChanges() && !status.matches(IStatus.ERROR));
 		}
 	    if (fSaveButton != null && !fSaveButton.isDisposed()) {
 	    	fSaveButton.setEnabled(!validateProfileName().matches(IStatus.ERROR));
 	    }
 	}
-
-	private void doValidate() {
-    	if (!hasChanges()) {
-    		updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "", null)); //$NON-NLS-1$
-    		return;
-    	}
-    	
+	
+    private void doValidate() {
     	IStatus status= validateProfileName();
     	if (status.matches(IStatus.ERROR)) {
     		updateStatus(status);
@@ -381,6 +376,9 @@ public abstract class ModifyDialog extends StatusDialog {
     }
 
 	private boolean hasChanges() {
+		if (!fProfileNameField.getText().trim().equals(fProfile.getName()))
+			return true;
+		
 		Iterator iter= fProfile.getSettings().entrySet().iterator();
 		for (;iter.hasNext();) {
 			Map.Entry curr= (Map.Entry) iter.next();
@@ -390,4 +388,5 @@ public abstract class ModifyDialog extends StatusDialog {
 		}
 		return false;
 	}
+	
 }

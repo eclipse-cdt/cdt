@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,8 +42,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
@@ -52,6 +50,14 @@ import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 public abstract class ModifyDialogTabPage {
 	
+	public interface IModificationListener {
+
+		void updateStatus(IStatus status);
+
+		void valuesModified();
+
+    }
+
 	/**
 	 * This is the default listener for any of the Preference
 	 * classes. It is added by the respective factory methods and
@@ -142,7 +148,7 @@ public abstract class ModifyDialogTabPage {
 	/**
 	 * Wrapper around a checkbox and a label. 
 	 */	
-	protected final class CheckboxPreference extends Preference {
+	protected class ButtonPreference extends Preference {
 		private final String[] fValues;
 		private final Button fCheckbox;
 		
@@ -154,16 +160,17 @@ public abstract class ModifyDialogTabPage {
 		 * @param key The key to store the values.
 		 * @param values An array of two elements indicating the values to store on unchecked/checked.
 		 * @param text The label text for this Preference.
+		 * @param style SWT style flag for the button
 		 */
-		public CheckboxPreference(Composite composite, int numColumns,
+		public ButtonPreference(Composite composite, int numColumns,
 								  Map preferences, String key, 
-								  String [] values, String text) {
+								  String [] values, String text, int style) {
 		    super(preferences, key);
 		    if (values == null || text == null) 
 		        throw new IllegalArgumentException(FormatterMessages.ModifyDialogTabPage_error_msg_values_text_unassigned); 
 			fValues= values;
 
-			fCheckbox= new Button(composite, SWT.CHECK);
+			fCheckbox= new Button(composite, style);
 			fCheckbox.setText(text);
 			fCheckbox.setLayoutData(createGridData(numColumns, GridData.FILL_HORIZONTAL, SWT.DEFAULT));
 			fCheckbox.setFont(composite.getFont());
@@ -197,11 +204,28 @@ public abstract class ModifyDialogTabPage {
 			return fValues[1].equals(getPreferences().get(getKey()));
 		}
 		
+		public void setChecked(boolean checked) {
+			getPreferences().put(getKey(), checked ? fValues[1] : fValues[0]);
+			updateWidget();
+			checkboxChecked(checked);	
+		}
+		
 		public Control getControl() {
 			return fCheckbox;
 		}
 	}
 	
+	protected final class CheckboxPreference extends ButtonPreference {
+		public CheckboxPreference(Composite composite, int numColumns, Map preferences, String key, String[] values, String text) {
+	        super(composite, numColumns, preferences, key, values, text, SWT.CHECK);
+        }
+	}
+	
+	protected final class RadioPreference extends ButtonPreference {
+		public RadioPreference(Composite composite, int numColumns, Map preferences, String key, String[] values, String text) {
+	        super(composite, numColumns, preferences, key, values, text, SWT.RADIO);
+        }	
+	}
 	
 	/**
 	 * Wrapper around a Combo box.
@@ -437,7 +461,7 @@ public abstract class ModifyDialogTabPage {
 	 */
 	protected final static class DefaultFocusManager extends FocusAdapter {
 		
-		private final static String PREF_LAST_FOCUS_INDEX= CUIPlugin.PLUGIN_ID + "formatter_page.modify_dialog_tab_page.last_focus_index"; //$NON-NLS-1$ 
+		private final static String PREF_LAST_FOCUS_INDEX= "formatter_page.modify_dialog_tab_page.last_focus_index"; //$NON-NLS-1$ 
 		
 		private final IDialogSettings fDialogSettings;
 		
@@ -502,24 +526,6 @@ public abstract class ModifyDialogTabPage {
 	 * when they are created.
 	 */
 	protected final DefaultFocusManager fDefaultFocusManager;
-	
-	
-	
-	/**
-	 * Constant array for boolean selection 
-	 */
-	protected static String[] FALSE_TRUE = {
-		DefaultCodeFormatterConstants.FALSE,
-		DefaultCodeFormatterConstants.TRUE
-	};	
-	
-    /**
-     * Constant array for insert / not_insert. 
-     */
-    protected static String[] DO_NOT_INSERT_INSERT = {
-        CCorePlugin.DO_NOT_INSERT,
-        CCorePlugin.INSERT
-    };
 
 	/**
 	 * A pixel converter for layout calculations
@@ -535,15 +541,15 @@ public abstract class ModifyDialogTabPage {
 	/**
 	 * The modify dialog where we can display status messages.
 	 */
-	private final ModifyDialog fModifyDialog;
+	private final IModificationListener fModifyListener;
 
 
 	/*
 	 * Create a new <code>ModifyDialogTabPage</code>
 	 */
-	public ModifyDialogTabPage(ModifyDialog modifyDialog, Map workingValues) {
+	public ModifyDialogTabPage(IModificationListener modifyListener, Map workingValues) {
 		fWorkingValues= workingValues;
-		fModifyDialog= modifyDialog;
+		fModifyListener= modifyListener;
 		fDefaultFocusManager= new DefaultFocusManager();
 	}
 	
@@ -652,7 +658,7 @@ public abstract class ModifyDialogTabPage {
 	protected abstract void doUpdatePreview();
 	
 	protected void notifyValuesModified() {
-		fModifyDialog.valuesModified();
+		fModifyListener.valuesModified();
 	}
     /**
      * Each tab page should remember where its last focus was, and reset it
@@ -673,7 +679,7 @@ public abstract class ModifyDialogTabPage {
      * @param status Status describing the current page error state
      */
 	protected void updateStatus(IStatus status) {
-	    fModifyDialog.updateStatus(status);
+		fModifyListener.updateStatus(status);
 	}
 	
 	/*
@@ -787,6 +793,16 @@ public abstract class ModifyDialogTabPage {
 		return pref;
 	}
 	
+	protected RadioPreference createRadioPref(Composite composite, int numColumns, String name, String key,
+			String [] values) {
+		final RadioPreference pref= new RadioPreference(composite, numColumns, 
+				fWorkingValues, key, values, name);
+		fDefaultFocusManager.add(pref);
+		pref.addObserver(fUpdater);
+		return pref;
+	}
+	
+
 	/*
 	 * Create a nice javadoc comment for some string.
 	 */

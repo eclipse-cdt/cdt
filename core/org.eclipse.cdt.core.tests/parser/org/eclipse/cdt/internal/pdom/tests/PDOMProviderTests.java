@@ -28,11 +28,13 @@ import org.eclipse.cdt.core.index.provider.IPDOMDescriptor;
 import org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.index.provider.ReadOnlyPDOMProviderBridge;
+import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -211,5 +213,71 @@ public class PDOMProviderTests extends PDOMTestBase {
 			});
 			assertEquals(3, bindings.length);
 		}
+	}
+	
+	/*
+	 * see bugzilla 178998
+	 */
+	public void testVersionMismatchOfExternalPDOM() throws Exception {
+		final File tempPDOM= File.createTempFile("foo", "bar");
+		
+		
+		{
+			ICProject cproject= CProjectHelper.createCCProject("foo"+System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
+			CCorePlugin.getIndexManager().joinIndexer(3000, NPM);
+			ResourceContainerRelativeLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
+			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tempPDOM, cvr);
+			CProjectHelper.delete(cproject);
+			
+			// mimic a pdom with superceded version
+			WritablePDOM wpdom= new WritablePDOM(tempPDOM, cvr);
+			wpdom.acquireWriteLock();
+			try {
+				wpdom.getDB().setVersion(1);	
+			} finally {
+				wpdom.releaseWriteLock();
+				wpdom.close();
+			}
+		}
+
+		final URI baseURI= new File("c:/ExternalSDK/").toURI();
+		final ICProject cproject2= CProjectHelper.createCCProject("baz"+System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+		TestSourceReader.createFile(cproject2.getProject(), new Path("/source.cpp"), "namespace X { class A {}; }\n\n");
+		CCorePlugin.getIndexManager().joinIndexer(3000, NPM);
+
+		IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
+		ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(
+				new IReadOnlyPDOMProvider() {
+					public IPDOMDescriptor[] getDescriptors(
+							ICConfigurationDescription config) {
+						return new IPDOMDescriptor[] {
+								new IPDOMDescriptor() {
+									public IIndexLocationConverter getIndexLocationConverter() {
+										return new URIRelativeLocationConverter(baseURI);
+									}
+
+									public IPath getLocation() {
+										return new Path(tempPDOM.getAbsolutePath());
+									}
+
+								}
+						};
+					}
+					public boolean providesFor(ICProject project)
+					throws CoreException {
+						return cproject2.equals(project);
+					}
+				}
+		));
+		
+		setExpectedNumberOfLoggedNonOKStatusObjects(1); // (this applies to the entire test duration)
+		
+		for(int i=0; i<3; i++) {
+			// try several times in order to test the status is logged only once
+			ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(cproject2.getProject(), false);
+			assertEquals(0, ipm.getProvidedIndexFragments(pd.getActiveConfiguration()).length);
+		}
+
 	}
 }

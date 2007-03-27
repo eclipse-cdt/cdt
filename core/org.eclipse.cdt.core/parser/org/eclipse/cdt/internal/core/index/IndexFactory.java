@@ -67,7 +67,7 @@ public class IndexFactory {
 			ICProject cproject = (ICProject) iter.next();
 			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
 			if (pdom != null) {
-				fragments.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
+				safeAddFragment(fragments, pdom);
 				
 				if(!skipProvided) {
 					ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
@@ -75,7 +75,7 @@ public class IndexFactory {
 						ICConfigurationDescription activeCfg= pd.getActiveConfiguration();
 						IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
 						for(int i=0; i<pFragments.length; i++) {
-							fragments.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+							safeAddFragment(fragments, pFragments[i]);
 						}
 					}
 				}
@@ -95,16 +95,14 @@ public class IndexFactory {
 			for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
 				ICProject cproject = (ICProject) iter.next();
 				IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
-				if (pdom != null) {
-					fragments.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
-				}
+				safeAddFragment(fragments, pdom);
 				if(!skipProvided) {
 					ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
 					if(pd!=null) {
 						ICConfigurationDescription activeCfg= pd.getActiveConfiguration();
 						IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
 						for(int i=0; i<pFragments.length; i++) {
-							fragments.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+							safeAddFragment(fragments, pFragments[i]);
 						}
 					}
 				}
@@ -186,13 +184,13 @@ public class IndexFactory {
 			ICProject p = (ICProject) iter.next();
 			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(p);
 			if (pdom != null) {
-				fragments.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
+				safeAddFragment(fragments, (IIndexFragment) pdom);
 				ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(p.getProject(), false);
 				if(pd!=null) {
 					ICConfigurationDescription activeCfg= pd.getActiveConfiguration();
 					IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
 					for(int i=0; i<pFragments.length; i++) {
-						readOnlyFrag.put(pFragments[i].getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pFragments[i]);
+						safeAddFragment(readOnlyFrag, pFragments[i]);
 					}
 				}
 			}
@@ -203,10 +201,7 @@ public class IndexFactory {
 		
 		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
 			ICProject cproject = (ICProject) iter.next();
-			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
-			if (pdom != null) {
-				readOnlyFrag.put(pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID), pdom);
-			}
+			safeAddFragment(readOnlyFrag, (IIndexFragment) fPDOMManager.getPDOM(cproject));
 		}
 				
 		if (fragments.isEmpty()) {
@@ -218,5 +213,30 @@ public class IndexFactory {
 		Collection roPdoms= readOnlyFrag.values();
 		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]),
 				(IIndexFragment[]) roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
+	}
+	
+	/**
+	 * Add an entry for the specified fragment. This copes with problems occuring when reading
+	 * the fragment ID.
+	 * @param id2fragment the map to add the entry to
+	 * @param fragment the fragment or null (which will result in no action)
+	 */
+	private void safeAddFragment(Map id2fragment, IIndexFragment fragment) {
+		if(fragment!=null) {
+			try {
+				fragment.acquireReadLock();
+				try {
+					String id= fragment.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+					id2fragment.put(id, fragment);
+				} finally {
+					fragment.releaseReadLock();
+				}
+
+			} catch(CoreException ce) {
+				CCorePlugin.log(ce);
+			} catch(InterruptedException ie) {
+				CCorePlugin.log(ie);
+			}
+		}
 	}
 }

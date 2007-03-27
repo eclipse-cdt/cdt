@@ -38,7 +38,7 @@ public class BaseTestCase extends TestCase {
 
 	private boolean fExpectFailure= false;
 	private int fBugnumber= 0;
-	private boolean allowsCoreLogErrors= false;
+	private int fExpectedLoggedNonOK= 0;
 	
 	public BaseTestCase() {
 		super();
@@ -111,16 +111,19 @@ public class BaseTestCase extends TestCase {
 		try {
 			super.runBare();
 			
-			if(!allowsCoreLogErrors && !statusLog.isEmpty()) {
-				StringBuffer msg= new StringBuffer("Non-OK Status was logged to CCorePlugin: \n");
+			if(statusLog.size()!=fExpectedLoggedNonOK) {
+				StringBuffer msg= new StringBuffer("Expected number ("+fExpectedLoggedNonOK+") of ");
+				msg.append("non-OK status objects differs from actual ("+statusLog.size()+").\n");
 				Throwable cause= null;
-				for(Iterator i= statusLog.iterator(); i.hasNext(); ) {
-					IStatus status= (IStatus) i.next();
-					if(cause==null) {
-						cause= status.getException();
+				if(!statusLog.isEmpty()) {
+					for(Iterator i= statusLog.iterator(); i.hasNext(); ) {
+						IStatus status= (IStatus) i.next();
+						if(cause==null) {
+							cause= status.getException();
+						}
+						Throwable t= status.getException();
+						msg.append("\t"+status.getMessage()+" "+(t!=null?t.getMessage():"")+"\n");
 					}
-					Throwable t= status.getException();
-					msg.append("\t"+status.getMessage()+" "+(t!=null?t.getMessage():"")+"\n");
 				}
 				AssertionFailedError afe= new AssertionFailedError(msg.toString());
 				afe.initCause(cause);
@@ -168,10 +171,12 @@ public class BaseTestCase extends TestCase {
     /**
      * The last value passed to this method in the body of a testXXX method
      * will be used to determine whether or not the presence of non-OK status objects
-     * in the log should fail the test.
+     * in the log should fail the test. If the logged number of non-OK status objects
+     * differs from the last value passed, the test is failed. If this method is not called
+     * at all, the expected number defaults to zero.
      * @param value
      */
-    public void setAllowCCorePluginLogErrors(boolean value) {
-    	allowsCoreLogErrors= value;
+    public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
+    	fExpectedLoggedNonOK= count;
     }
 }

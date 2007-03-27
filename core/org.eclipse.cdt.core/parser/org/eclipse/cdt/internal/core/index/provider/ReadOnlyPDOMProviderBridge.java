@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -37,7 +38,10 @@ public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
 
 		if(descs!=null) {
 			for(int i=0; i<descs.length; i++) {
-				preresult.add(PDOMCache.getInstance().getPDOM(descs[i].getLocation(), descs[i].getIndexLocationConverter()));
+				PDOM pdom= PDOMCache.getInstance().getPDOM(descs[i].getLocation(), descs[i].getIndexLocationConverter()); 
+				if(pdom!=null) {
+					preresult.add(pdom);
+				}
 			}
 		}
 

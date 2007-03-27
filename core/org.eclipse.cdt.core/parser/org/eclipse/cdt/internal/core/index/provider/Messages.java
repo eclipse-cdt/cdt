@@ -16,6 +16,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.index.provider.messages"; //$NON-NLS-1$
 	public static String IndexProviderManager_0;
 	public static String OfflinePDOMProviderBridge_UnsupportedUsage;
+	public static String PDOMCache_VersionTooOld;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

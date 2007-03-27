@@ -125,11 +125,11 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		
 		String fid= wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 		assertNotNull(fid);
-		assertEquals(ACME_SDK_ID, fid); // check for default export id
+		assertEquals(ACME_SDK_ID, fid); // check for custom export id
 		
 		String sdkVer= wpdom.getProperty(SDK_VERSION);
 		assertNotNull(sdkVer);
-		assertEquals("4.0.1", sdkVer); // check for default export id
+		assertEquals("4.0.1", sdkVer); // check for custom property value
 	}
 	
 	public void testExternalExportProjectProvider_BadCmdLine1() throws Exception {
@@ -190,7 +190,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		
 		String fid= wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 		assertNotNull(fid);
-		assertEquals("hello.world", fid); // check for default export id
+		assertEquals("hello.world", fid); // check for id passed on command-line
 		
 		assertTrue(stateCount[0] == 2);
 	}

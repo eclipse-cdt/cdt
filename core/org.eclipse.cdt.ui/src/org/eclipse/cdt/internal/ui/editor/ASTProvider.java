@@ -314,8 +314,7 @@ public final class ASTProvider {
 			PlatformUI.getWorkbench().removeWindowListener(fActivationListener);
 			fActivationListener= null;
 		}
-
-		fCache.disposeAST();
+		fCache.setActiveElement(null);
 	}
 
 	/*

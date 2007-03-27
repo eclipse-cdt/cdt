@@ -87,7 +87,7 @@ public class SCJobsUtil {
                     ISafeRunnable runnable = new ISafeRunnable() {
 
                         public void run() {
-                            esiProvider.invokeProvider(monitor, project, providerId, buildInfo, collector);
+                            esiProvider.invokeProvider(monitor, project, context, providerId, buildInfo, collector, null);
                             rc.set(true);
                         }
             

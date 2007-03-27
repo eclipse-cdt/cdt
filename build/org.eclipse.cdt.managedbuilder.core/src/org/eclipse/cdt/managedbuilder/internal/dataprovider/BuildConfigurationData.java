@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IPath;
 
 public class BuildConfigurationData extends CConfigurationData {
 	private Configuration fCfg;
-	private BuildVariablesContributor fCdtVars;
+//	private BuildVariablesContributor fCdtVars;
 	public BuildConfigurationData(IConfiguration cfg){
 		fCfg = (Configuration)cfg;
 	}
@@ -127,17 +127,18 @@ public class BuildConfigurationData extends CConfigurationData {
 	}
 
 	public ICdtVariablesContributor getBuildVariablesContributor() {
-		if(fCdtVars == null)
-			fCdtVars = new BuildVariablesContributor(this);
-		return fCdtVars;
+//		if(fCdtVars == null)
+//			fCdtVars = new BuildVariablesContributor(this);
+//		return fCdtVars;
+		return new BuildVariablesContributor(this);
 	}
 	
 	void clearCachedData(){
 		fCfg.clearCachedData();
 		CResourceData[] datas = getResourceDatas();
 		CResourceData data;
-		BuildLanguageData lData;
-		BuildLanguageData[] lDatas;
+//		BuildLanguageData lData;
+//		BuildLanguageData[] lDatas;
 
 		
 		for(int i = 0; i < datas.length; i++){

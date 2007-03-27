@@ -19,19 +19,17 @@ import java.util.Map;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -77,10 +75,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private ToolListContentProvider listprovider;
 		private Object propertyObject;
 		
-		private boolean defaultNeeded;
-		
 		private IResourceInfo fInfo;
-		
 		
 		public void createControls(Composite par)  {
 			super.createControls(par);
@@ -365,9 +360,6 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			return null;
 		}
 		
-		public void removeValues(String id) {
-		}
-
 		private void handleOptionSelection() {
 			// Get the selection from the tree list
 			if (optionList == null) return;
@@ -418,64 +410,42 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			selectedElement = null;
 			handleOptionSelection();
 			setDirty(true);
-			defaultNeeded = true;
 		}
 
 		/*
 		 *  (non-Javadoc)
 		 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(IProgressMonitor)
 		 */
-		public void performApply(IProgressMonitor monitor) throws CoreException {
-			if(defaultNeeded){
-				if(propertyObject instanceof IFile)
-					ManagedBuildManager.resetResourceConfiguration(page.getProject(), getCfg().getResourceConfiguration(((IFile)propertyObject).getFullPath().toOSString()));
-				else
-					ManagedBuildManager.resetConfiguration(page.getProject(), getCfg());
-				defaultNeeded = false;
+		private void copyHoldsOptions(IHoldsOptions src, IHoldsOptions dst, IResourceInfo res){
+			if(src instanceof ITool) {
+				ITool t1 = (ITool)src;
+				ITool t2 = (ITool)dst;
+				if (t1.getCustomBuildStep()) return; 
+				t2.setToolCommand(t1.getToolCommand());
+				t2.setCommandLinePattern(t1.getCommandLinePattern());
 			}
-			saveConfig();
-			setDirty(false);
-		}
-		
-		private void saveHoldsOptions(IHoldsOptions holder){
-			if(holder instanceof ITool && ((ITool)holder).getCustomBuildStep())
-				return;
-			if(holder instanceof ITool) {
-				String currentValue = ((ITool)holder).getToolCommand();
-				if (!(currentValue.equals(((ITool)holder).getToolCommand()))) {
-					((ITool)holder).setToolCommand(((ITool)holder).getToolCommand());
-						fInfo.setRebuildState(true);
-				}
-				currentValue = ((ITool)holder).getCommandLinePattern();
-				if (!(currentValue.equals(((ITool)holder).getCommandLinePattern()))) {
-					((ITool)holder).setCommandLinePattern(((ITool)holder).getCommandLinePattern());
-					fInfo.setRebuildState(true);
-				}
-			}
-			IOption options[] = holder.getOptions();
-			for(int i = 0; i < options.length; i++) {
-				saveOption(options[i], holder);
+			IOption op1[] = src.getOptions();
+			IOption op2[] = dst.getOptions();
+			for(int i = 0; i < op1.length; i++) {
+				setOption(op1[i], op2[i], dst, res);
 			}
 		}
 
-		private void saveOption(IOption option, IHoldsOptions holder){
-//			IResourceInfo info = fCfg;
+		private void setOption(IOption op1, IOption op2, IHoldsOptions dst, IResourceInfo res){
 			try {
-				IOption setOption = null;
-				// Transfer value from preference store to options
-				switch (option.getValueType()) {
+				switch (op1.getValueType()) {
 					case IOption.BOOLEAN :
-						boolean boolVal = option.getBooleanValue();
-						setOption = ManagedBuildManager.setOption(fInfo, holder, option, boolVal);
+						boolean boolVal = op1.getBooleanValue();
+						ManagedBuildManager.setOption(res, dst, op2, boolVal);
 						break;
 					case IOption.ENUMERATED :
-						String enumVal = option.getStringValue();
-						String enumId = option.getEnumeratedId(enumVal);
+						String enumVal = op1.getStringValue();
+						String enumId = op1.getEnumeratedId(enumVal);
 						String out = (enumId != null && enumId.length() > 0) ? enumId : enumVal;
-						setOption = ManagedBuildManager.setOption(fInfo, holder, option, out);
+						ManagedBuildManager.setOption(res, dst, op2, out);
 						break;
 					case IOption.STRING :
-						setOption = ManagedBuildManager.setOption(fInfo, holder, option, option.getStringValue());
+						ManagedBuildManager.setOption(res, dst, op2, op1.getStringValue());
 						break;
 					case IOption.STRING_LIST :
 					case IOption.INCLUDE_PATH :
@@ -492,29 +462,14 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:
-						String[] data = (String[])((List)option.getValue()).toArray(new String[0]);
-						setOption = ManagedBuildManager.setOption(fInfo, holder, option, data);
+						String[] data = (String[])((List)op1.getValue()).toArray(new String[0]);
+						ManagedBuildManager.setOption(res, dst, op2, data);
 						break;
 					default :
 						break;
 				}
-
-				// Call an MBS CallBack function to inform that Settings related to Apply/OK button 
-				// press have been applied.
-				if (setOption == null) setOption = option;
 			} catch (BuildException e) {
 			} catch (ClassCastException e) {
-			}
-
-		}
-
-		private void saveConfig(){
-			IToolChain tc = fInfo.getParent().getToolChain();
-			saveHoldsOptions(tc);
-			
-			ITool tools[] = fInfo.getParent().getFilteredTools();
-			for(int i = 0; i < tools.length; i++){
-				saveHoldsOptions(tools[i]);
 			}
 		}
 		
@@ -634,8 +589,22 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		setValues();
 	}
 
-	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
-		
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
+		IResourceInfo ri1 = getResCfg(src);
+		IResourceInfo ri2 = getResCfg(dst);
+		copyHoldsOptions(ri1.getParent().getToolChain(), ri2.getParent().getToolChain(), ri2);
+		ITool[] t1, t2;
+		if (ri1 instanceof IFolderInfo){
+			t1 = ((IFolderInfo)ri1).getFilteredTools();
+			t2 = ((IFolderInfo)ri2).getFilteredTools();
+		} else if (ri1 instanceof IFileInfo) {
+			t1 = ((IFileInfo)ri1).getToolsToInvoke();
+			t2 = ((IFileInfo)ri2).getToolsToInvoke();
+		} else return;
+		if (t1.length != t2.length) return; // not our case
+		for (int i=0; i<t1.length; i++)
+			copyHoldsOptions(t1[i], t2[i], ri2);
+		setDirty(false);
 	}
 
 	// IPreferencePageContainer methods

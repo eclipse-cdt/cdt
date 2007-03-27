@@ -657,43 +657,24 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	}
 
 	public void remove(ICConfigExtensionReference ext) throws CoreException {
-//		boolean fireEvent = false;
-//		synchronized (this) {
-			CConfigExtensionReference extensions[] = (CConfigExtensionReference[])getExtMap().get(ext.getExtensionPoint());
-			for (int i = 0; i < extensions.length; i++) {
-				if (extensions[i] == ext) {
-//					System.arraycopy(extensions, i, extensions, i + 1, extensions.length - 1 - i);
-					System.arraycopy(extensions, i + 1, extensions, i, extensions.length - 1 - i);
-					if (extensions.length > 1) {
-						CConfigExtensionReference[] newExtensions = new CConfigExtensionReference[extensions.length - 1];
-						System.arraycopy(extensions, 0, newExtensions, 0, newExtensions.length);
-						getExtMap().put(ext.getExtensionPoint(), newExtensions);
-					} else {
-						getExtMap().remove(ext.getExtensionPoint());
-					}
-//					updateOnDisk();
-//					if (!isInitializing) {
-//						fireEvent = true;
-//					}
-				}
-			}
-//		}
-//		if (fireEvent) {
-//			fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
-//		}
+		doRemove(ext);
+		
+		fIsModified = true;
 	}
 
-	private void doRemove(String extensionPoint) throws CoreException {
+	private boolean doRemove(String extensionPoint) throws CoreException {
 //		boolean fireEvent = false;
 //		synchronized (this) {
 			CConfigExtensionReference extensions[] = (CConfigExtensionReference[])getExtMap().get(extensionPoint);
 			if (extensions != null) {
 				getExtMap().remove(extensionPoint);
+				return true;
 //				updateOnDisk();
 //				if (!isInitializing) {
 //					fireEvent = true;
 //				}
 			}
+			return false;
 //		}
 //		if (fireEvent) {
 //			fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
@@ -702,9 +683,12 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 
 	public void remove(String extensionPoint) throws CoreException {
 		
-		doRemove(extensionPoint);
+		boolean changed = doRemove(extensionPoint);
 		
 		checkReconsile(extensionPoint, false);
+		
+		if(changed)
+			fIsModified = true;
 	}
 
 	CExtensionInfo getInfo(CConfigExtensionReference cProjectExtension) {
@@ -890,5 +874,30 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			refsMap.put(refs[i].getID(), refs[i]);
 		}
 		return refsMap;
+	}
+	
+	boolean extRefSettingsEqual(CConfigurationSpecSettings other){
+		if(fExtMap == null || fExtMap.size() == 0)
+			return other.fExtMap == null || other.fExtMap.size() == 0;
+		if(other.fExtMap == null || other.fExtMap.size() == 0)
+			return false;
+		
+		if(fExtMap.size() != other.fExtMap.size())
+			return false;
+		
+		for(Iterator iter = fExtMap.entrySet().iterator(); iter.hasNext();){
+			Map.Entry entry = (Map.Entry)iter.next();
+			ICConfigExtensionReference[] thisRefs = (ICConfigExtensionReference[])entry.getValue();
+			ICConfigExtensionReference[] otherRefs = (ICConfigExtensionReference[])other.fExtMap.get(entry.getKey());
+			if(thisRefs.length != otherRefs.length)
+				return false;
+			
+			Map map = createRefMap(thisRefs);
+			map.entrySet().removeAll(createRefMap(otherRefs).entrySet());
+			if(map.size() != 0)
+				return false;
+		}
+		
+		return true;
 	}
 }

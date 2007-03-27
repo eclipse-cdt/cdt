@@ -1962,7 +1962,8 @@ public class CProjectDescriptionManager {
 
 	public CProjectDescriptionDelta createDelta(ICConfigurationDescription newCfg, ICConfigurationDescription oldCfg){
 		CProjectDescriptionDelta delta = new CProjectDescriptionDelta(newCfg, oldCfg);
-		
+		IInternalCCfgInfo newInfo = (IInternalCCfgInfo)newCfg;
+		IInternalCCfgInfo oldInfo = (IInternalCCfgInfo)oldCfg;
 		if(delta.getDeltaKind() == ICDescriptionDelta.CHANGED){
 			ICFolderDescription[] foDess = newCfg.getFolderDescriptions();
 			for(int i = 0; i < foDess.length; i++){
@@ -2056,6 +2057,16 @@ public class CProjectDescriptionManager {
 					}
 				}
 			}
+			
+			try {
+				CConfigurationSpecSettings newSettings = newInfo.getSpecSettings();
+				CConfigurationSpecSettings oldSettings = oldInfo.getSpecSettings();
+				if(!newSettings.extRefSettingsEqual(oldSettings))
+					delta.addChangeFlags(ICDescriptionDelta.EXT_REF);
+			} catch (CoreException e){
+				CCorePlugin.log(e);
+			}
+
 			
 			ExternalSettingsManager.getInstance().calculateCfgExtSettingsDelta(delta);
 			

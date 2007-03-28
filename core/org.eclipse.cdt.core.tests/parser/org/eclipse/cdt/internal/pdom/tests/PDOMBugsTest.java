@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.core.resources.IResource;
@@ -91,7 +92,8 @@ public class PDOMBugsTest extends BaseTestCase {
 		
 		File tmp= new File(System.getProperty("java.io.tmpdir")+"/temp"+System.currentTimeMillis()+".pdom");
 		IIndexLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
-		CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tmp, cvr);
+		final PDOMManager pdomManager = CCoreInternals.getPDOMManager();
+		pdomManager.exportProjectPDOM(cproject, tmp, cvr);
 		
 		IWritableIndexFragment pdom = new WritablePDOM(tmp, cvr, new ChunkCache());
 		pdom.acquireReadLock();
@@ -99,19 +101,20 @@ public class PDOMBugsTest extends BaseTestCase {
 			String id= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 			assertNotNull("Exported pdom ID is null", id);
 			
-			String id2= ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			String id2= ((PDOM)pdomManager.getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 			assertNotNull("Project pdom ID is null", id2);
 			assertFalse("Project pdom ID equals export PDOM id", id2.equals(id));
 			
-			CCoreInternals.getPDOMManager().reindex(cproject);
+			pdomManager.reindex(cproject);
+			assertTrue(pdomManager.joinIndexer(4000, new NullProgressMonitor()));
 			
 			String id3= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-			assertNotNull("Reindexed project pdom ID is null", id3);
-			assertEquals("Reindexex project pdom ID equals exported pdom ID", id, id3);
+			assertNotNull("Exported pdom ID is null after project reindex", id3);
+			assertEquals("Exported pdom ID hasChanged during reindex", id, id3);
 			
-			String id4= ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-			assertNotNull("Exported pdom ID is null after project reindex", id4);
-			assertFalse("Exported pdom ID equals project pdom ID after reindex", id4.equals(id));
+			String id4= ((PDOM)pdomManager.getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			assertNotNull("Reindexed project pdom ID is null", id4);
+			assertFalse("Reindexex project pdom ID equals exported pdom ID", id4.equals(id));
 		} finally {
 			pdom.releaseReadLock();
 		}

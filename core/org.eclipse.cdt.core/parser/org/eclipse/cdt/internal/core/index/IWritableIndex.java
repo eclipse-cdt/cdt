@@ -73,4 +73,10 @@ public interface IWritableIndex extends IIndex {
 	 * Returns cache misses since last reset of counters.
 	 */
 	long getCacheMisses();
+
+	/**
+	 * Returns the primary writable fragment, or <code>null</code> if there is 
+	 * no writable fragment.
+	 */
+	IWritableIndexFragment getPrimaryWritableFragment();
 }

@@ -423,8 +423,14 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		                  if(absName!=null) return absName.hashCode();
 		                  return ident.hashCode();
 		              }
+		          }		          
+		          if (element != null) // adding check because I hit a null exception here once at startup
+		        	  return element.hashCode();
+		          else
+		          {		        	  
+		        	  //System.out.println("null element");
+		        	  return 0;
 		          }
-		          return element.hashCode();
 		      }
 		    });
 		

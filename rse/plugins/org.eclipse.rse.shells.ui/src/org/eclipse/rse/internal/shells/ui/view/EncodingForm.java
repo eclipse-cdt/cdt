@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui.view;
+package org.eclipse.rse.internal.shells.ui.view;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;

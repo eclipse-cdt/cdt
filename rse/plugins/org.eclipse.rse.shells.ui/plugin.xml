@@ -23,7 +23,7 @@ Contributors:
             name="%View.RemoteCommands"
             icon="icons/full/cview16/commands_view.gif"
             category="org.eclipse.rse.ui.view"
-            class="org.eclipse.rse.shells.ui.view.SystemCommandsViewPart"
+            class="org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewPart"
             id="org.eclipse.rse.shells.ui.view.commandsView">
       </view>
     </extension>
@@ -37,7 +37,7 @@ Contributors:
 
       <page
             name="%PropertyPage.EnvVariables"
-            class="org.eclipse.rse.shells.ui.propertypages.EnvironmentVariablesPropertyPage"
+            class="org.eclipse.rse.internal.shells.ui.propertypages.EnvironmentVariablesPropertyPage"
             id="org.eclipse.rse.shells.ui.propertypages.EnvironmentVariablesPropertyPage">
             <!--
             <filter name="envVarPP" value="true"/>
@@ -49,7 +49,7 @@ Contributors:
       
       <page
             name="%PropertyPage.ShellSettings"
-            class="org.eclipse.rse.shells.ui.propertypages.SystemShellPropertyPage"
+            class="org.eclipse.rse.internal.shells.ui.propertypages.SystemShellPropertyPage"
             id="org.eclipse.rse.shells.ui.propertypages.SystemShellPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem"/>
@@ -67,7 +67,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.Service"
-            class="org.eclipse.rse.shells.ui.propertypages.ShellServicesPropertyPage"
+            class="org.eclipse.rse.internal.shells.ui.propertypages.ShellServicesPropertyPage"
             id="org.eclipse.rse.shells.ui.propertypages.ShellServicesPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem"/>

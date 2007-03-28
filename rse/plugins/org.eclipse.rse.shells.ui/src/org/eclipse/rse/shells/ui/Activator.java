@@ -19,8 +19,8 @@ package org.eclipse.rse.shells.ui;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.shells.ui.view.ShellServiceSubSystemConfigurationAdapterFactory;
-import org.eclipse.rse.shells.ui.view.SystemViewOutputAdapterFactory;
+import org.eclipse.rse.internal.shells.ui.view.ShellServiceSubSystemConfigurationAdapterFactory;
+import org.eclipse.rse.internal.shells.ui.view.SystemViewOutputAdapterFactory;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 

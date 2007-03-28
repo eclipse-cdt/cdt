@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui.view;
+package org.eclipse.rse.internal.shells.ui.view;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -34,6 +34,9 @@ import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.ShellResources;
+import org.eclipse.rse.shells.ui.view.CommandEntryViewerConfiguration;
+import org.eclipse.rse.shells.ui.view.SystemCommandEditor;
+import org.eclipse.rse.shells.ui.view.SystemCommandsView;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.model.RemoteOutput;

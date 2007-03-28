@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui.view;
+package org.eclipse.rse.internal.shells.ui.view;
 
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.ui.IWorkbenchPage;
@@ -32,10 +32,8 @@ public class SystemCommandsUI
     // singleton instance
     private static SystemCommandsUI instance;
     private static SystemCommandsViewPart _viewPart;
-    private static SystemBuildErrorViewPart _errorPart;
-
+ 
     public static final String COMMANDS_VIEW_ID = SystemCommandsViewPart.ID;
-	public static final String BUILD_ERROR_VIEW_ID = SystemBuildErrorViewPart.ID;
 
     private SystemCommandsUI()
     {
@@ -56,21 +54,7 @@ public class SystemCommandsUI
         return instance;
     }
 
-	public SystemBuildErrorViewPart activateBuildErrorView()
-	   {
-		   try
-		   {
-	        	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			   _errorPart = (SystemBuildErrorViewPart) page.showView(SystemCommandsUI.BUILD_ERROR_VIEW_ID);
-			   page.bringToTop(_errorPart);
-		   }
-		   catch (PartInitException e)
-		   {
-			   SystemBasePlugin.logError("Can not open build error view", e); //$NON-NLS-1$
-		   }
-
-		   return _errorPart;
-	   }
+	
 	   
     public SystemCommandsViewPart activateCommandsView()
     {
@@ -89,10 +73,7 @@ public class SystemCommandsUI
         return _viewPart;
     }
     
-    public static SystemBuildErrorViewPart getBuildErrorView()
-    {
-        return _errorPart;
-    }
+
     
     public static SystemCommandsViewPart getCommandsView()
     {

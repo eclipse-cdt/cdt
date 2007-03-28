@@ -14,13 +14,15 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui;
+package org.eclipse.rse.internal.shells.ui;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISubSystemConfigurationCategories;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
+import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.subsystems.files.core.model.ISystemRemoteCommand;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;

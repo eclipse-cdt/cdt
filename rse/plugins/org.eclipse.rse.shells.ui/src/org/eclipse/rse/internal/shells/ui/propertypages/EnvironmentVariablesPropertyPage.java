@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui.propertypages;
+package org.eclipse.rse.internal.shells.ui.propertypages;
 
 
 

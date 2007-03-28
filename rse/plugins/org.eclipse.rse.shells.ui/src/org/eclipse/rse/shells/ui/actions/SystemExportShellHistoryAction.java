@@ -18,8 +18,8 @@ package org.eclipse.rse.shells.ui.actions;
 
 import java.io.FileWriter;
 
+import org.eclipse.rse.internal.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.shells.ui.ShellResources;
-import org.eclipse.rse.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;

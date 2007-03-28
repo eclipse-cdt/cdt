@@ -14,9 +14,11 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui.view;
+package org.eclipse.rse.internal.shells.ui.view;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.rse.shells.ui.view.SystemCommandsView;
+import org.eclipse.rse.shells.ui.view.TabFolderLayout;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;

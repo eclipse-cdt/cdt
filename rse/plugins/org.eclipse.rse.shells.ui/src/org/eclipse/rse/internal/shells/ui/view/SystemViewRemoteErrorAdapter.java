@@ -14,10 +14,11 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui.view;
+package org.eclipse.rse.internal.shells.ui.view;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
+import org.eclipse.rse.shells.ui.view.SystemViewRemoteOutputAdapter;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;

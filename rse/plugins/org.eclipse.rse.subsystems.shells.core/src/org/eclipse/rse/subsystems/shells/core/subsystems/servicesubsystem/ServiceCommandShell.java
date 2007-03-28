@@ -16,12 +16,12 @@
 
 package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
 
+import org.eclipse.rse.internal.subsystems.shells.core.ShellStrings;
 import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefreshJob;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
 import org.eclipse.rse.services.shells.SimpleHostOutput;
-import org.eclipse.rse.subsystems.shells.core.ShellStrings;
 import org.eclipse.rse.subsystems.shells.core.model.RemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.model.RemoteError;
 import org.eclipse.rse.subsystems.shells.core.model.RemoteOutput;

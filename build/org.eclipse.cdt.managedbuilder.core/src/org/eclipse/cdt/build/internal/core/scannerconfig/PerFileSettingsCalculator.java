@@ -141,9 +141,10 @@ public class PerFileSettingsCalculator {
 		}
 		
 		public List[] getLists(){
-			List list = new ArrayList(fMaxIndex);
+			int size = fMaxIndex + 1;
+			List list = new ArrayList(size);
 			List l;
-			for(int i = 0; i < fMaxIndex; i++){
+			for(int i = 0; i < size; i++){
 				l = fStore[i];
 				if(l != null)
 					list.add(l);

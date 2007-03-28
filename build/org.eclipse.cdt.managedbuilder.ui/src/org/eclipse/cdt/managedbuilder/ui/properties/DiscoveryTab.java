@@ -27,6 +27,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTListComparator;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
@@ -372,10 +373,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  				try { 
  					cbi2.applyInfo(ic, bi1);
  				} catch (CoreException e) {
- 					System.out.println(Messages.getString("DiscoveryTab.15") + e.getLocalizedMessage()); //$NON-NLS-1$
+ 					CUIPlugin.getDefault().log(e);
  				}
  			} else {
- 				System.out.println(Messages.getString("DiscoveryTab.16")); //$NON-NLS-1$
+ 				CUIPlugin.getDefault().logErrorMessage(Messages.getString("DiscoveryTab.7")); //$NON-NLS-1$
  			}
  		}
 	}

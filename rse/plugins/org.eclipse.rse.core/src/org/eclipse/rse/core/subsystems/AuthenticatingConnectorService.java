@@ -1,24 +1,8 @@
-/********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
- * Initial Contributors:
- * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
- * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
- * Contributors:
- * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
- ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -26,38 +10,11 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 
-/**
- * This is a base class to make it easier to create connector service classes.
- * <p>
- * An {@link org.eclipse.rse.core.subsystems.IConnectorService} object
- * is returned from a subsystem object via getConnectorService(), and
- * it is used to represent the live connection to a particular subsystem.
- * <p>
- * You must override/implement
- * <ul>
- * <li>isConnected
- * <li>internalConnect
- * <li>internalDisconnect
- * </ul>
- * You should override:
- * <ul>
- * <li>reset 
- * <li>getVersionReleaseModification
- * <li>getHomeDirectory
- * <li>getTempDirectory
- * </ul>
- * You can override:
- * <ul>
- * <li>supportsUserId
- * <li>requiresUserId
- * <li>supportsPassword
- * <li>requiresPassword
- * </ul>
- * 
- * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
- */
-public abstract class AbstractConnectorService extends SuperAbstractConnectorService implements IRSEUserIdConstants {
-	public AbstractConnectorService(String name, String description, IHost host, int port) {
+public abstract class AuthenticatingConnectorService extends SuperAbstractConnectorService {
+	
+	protected ICredentialsProvider credentialsProvider = null;
+
+	public AuthenticatingConnectorService(String name, String description, IHost host, int port) {
 		super(name, description, host, port);
 	}
 
@@ -67,26 +24,21 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * If not it returns the userId for the primary subsystem ignoring the 
 	 * cached userId.
 	 */
-	final public String getUserId() {
-		return getCredentialsProvider().getUserId();
+	public final String getUserId() {
+		return credentialsProvider.getUserId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setUserId(java.lang.String)
-	 */
-	final public void setUserId(String newId) {
-		ICredentialsProvider provider = getCredentialsProvider();
-		String oldUserId = provider.getUserId();
+	public final void setUserId(String newId) {
+		String oldUserId = credentialsProvider.getUserId();
 		if (oldUserId == null || oldUserId.equals(newId)) {
 			updateDefaultUserId(getPrimarySubSystem(), getUserId());
-			provider.setUserId(newId);
+			credentialsProvider.setUserId(newId);
 			setDirty(true);
 		}
 	}
 
 	public final void saveUserId() {
-		ICredentialsProvider provider = getCredentialsProvider();
-		String userId = provider.getUserId();
+		String userId = credentialsProvider.getUserId();
 		updateDefaultUserId(getPrimarySubSystem(), userId);
 	}
 
@@ -102,14 +54,13 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * @param persist if this is true, clear the password from the disk cache as well
 	 * @see #clearCredentials()
 	 */
-	final public void clearPassword(boolean persist, boolean propagate) {
-		ICredentialsProvider provider = getCredentialsProvider();
-		provider.clearPassword();
+	public final void clearPassword(boolean persist, boolean propagate) {
+		credentialsProvider.clearPassword();
 		if (persist) {
 			removePassword();
 		}
 		if (sharesCredentials() && propagate) {
-			String userId = provider.getUserId();
+			String userId = credentialsProvider.getUserId();
 			clearPasswordForOtherSystemsInConnection(userId, false);
 		}
 	}
@@ -122,7 +73,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * false if the check should be made for a password in memory only.
 	 * @return true if the password is known, false otherwise.
 	 */
-	final public boolean hasPassword(boolean onDisk) {
+	public final boolean hasPassword(boolean onDisk) {
 		SystemSignonInformation signonInformation = getSignonInformation();
 		boolean cached = (signonInformation != null && signonInformation.getPassword() != null);
 		if (!cached && onDisk) {
@@ -149,11 +100,10 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 		if (getPrimarySubSystem().forceUserIdToUpperCase()) {
 			userId = userId.toUpperCase();
 		}
-		ICredentialsProvider provider = getCredentialsProvider();
-		String myUserId = provider.getUserId();
+		String myUserId = credentialsProvider.getUserId();
 		IHost host = getHost();
 		if (host.compareUserIds(userId, myUserId)) {
-			provider.setPassword(password);
+			credentialsProvider.setPassword(password);
 		}
 		if (sharesCredentials() && propagate) {
 			updatePasswordForOtherSystemsInConnection(userId, password, persist);
@@ -166,8 +116,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	}
 
 	public final void savePassword() {
-		ICredentialsProvider provider = getCredentialsProvider();
-		ICredentials credentials = provider.getCredentials();
+		ICredentials credentials = credentialsProvider.getCredentials();
 		if (credentials instanceof SystemSignonInformation) {
 			SystemSignonInformation signonInformation = (SystemSignonInformation) credentials;
 			PasswordPersistenceManager.getInstance().add(signonInformation, true, true);
@@ -175,61 +124,26 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	}
 
 	public final void removePassword() {
-		ICredentialsProvider provider = getCredentialsProvider();
 		String systemType = getHostType();
 		String hostName = getHostName();
-		String userId = provider.getUserId();
+		String userId = credentialsProvider.getUserId();
 		PasswordPersistenceManager.getInstance().remove(systemType, hostName, userId);
 	}
 
-	/**
-	 * This connection method wrappers the others (internal connect) so that registered subsystems 
-	 * can be notified and initialized after a connect
-	 * Previous implementations that overrode this method should now change
-	 * their connect() method to internalConnect()
-	 */
-	public final void connect(IProgressMonitor monitor) throws Exception {
-		internalConnect(monitor);
-		intializeSubSystems(monitor);
-	}
-
-	/**
-	 * Disconnects from the remote system.
-	 * <p>
-	 * You must override
-	 * if <code>subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties</code> 
-	 * returns false.
-	 * <p>
-	 * If the subsystem supports server launch
-	 * the default behavior is to use the same remote server
-	 * launcher created in <code>connect()</code> and call <code>disconnect()</code>.
-	 * <p>
-	 * This is called, by default, from the <code>disconnect()</code>
-	 * method of the subsystem.
-	 * @see IServerLauncher#disconnect()
-	 */
-	public final void disconnect(IProgressMonitor monitor) throws Exception {
-		internalDisconnect(monitor);
-		unintializeSubSystems(monitor);
+	protected final void postDisconnect() {
 		clearPassword(false, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isSuppressed()
-	 */
 	public final boolean isSuppressed() {
-		return getCredentialsProvider().isSuppressed();
+		return credentialsProvider.isSuppressed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setSuppressed(boolean)
-	 */
 	public final void setSuppressed(boolean suppressed) {
-		getCredentialsProvider().setSuppressed(suppressed);
+		credentialsProvider.setSuppressed(suppressed);
 	}
 
 	public final void acquireCredentials(boolean reacquire) throws InterruptedException {
-		getCredentialsProvider().acquireCredentials(reacquire);
+		credentialsProvider.acquireCredentials(reacquire);
 	}
 
 	/**
@@ -239,8 +153,8 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * the next call to getUserId() it is requeried from subsystem. 
 	 * Also clears the password.
 	 */
-	final public void clearCredentials() {
-		getCredentialsProvider().clearCredentials();
+	public final void clearCredentials() {
+		credentialsProvider.clearCredentials();
 		setDirty(true);
 	}
 
@@ -250,10 +164,9 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * connector service. Assumes it has been set by the subsystem at the 
 	 * time the subsystem acquires the connector service.
 	 */
-	final protected SystemSignonInformation getSignonInformation() {
+	protected final SystemSignonInformation getSignonInformation() {
 		SystemSignonInformation result = null;
-		ICredentialsProvider provider = getCredentialsProvider();
-		ICredentials credentials = provider.getCredentials();
+		ICredentials credentials = credentialsProvider.getCredentials();
 		result = (SystemSignonInformation) credentials;
 		return result;
 	}
@@ -322,4 +235,35 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 			sr.updateHost(host, host.getSystemType(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
 		}
 	}
+
+	/**
+	 * Returns true if this connector service can share it's credentials
+	 * with other connector services in this host.
+	 * This default implementation will always return true.
+	 * Override if necessary.
+	 * @return true
+	 */
+	public boolean sharesCredentials() {
+	    return true;
+	}
+
+	/**
+	 * Returns true if this connector service can inherit the credentials of
+	 * other connector services in this host.
+	 * This default implementation always returns true. 
+	 * Override if necessary.
+	 * @return true
+	 */
+	public boolean inheritsCredentials() {
+	    return true;
+	}
+
+	protected final void setCredentialsProvider(ICredentialsProvider credentialsProvider) {
+		this.credentialsProvider = credentialsProvider;
+	}
+	
+	protected final ICredentialsProvider getCredentialsProvider() {
+		return credentialsProvider;
+	}
+	
 }

@@ -13,14 +13,11 @@ package org.eclipse.rse.tests.internal.testsubsystem;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.subsystems.AbstractConnectorService;
-import org.eclipse.rse.core.subsystems.BasicCredentialsProvider;
-import org.eclipse.rse.core.subsystems.ICredentialsProvider;
+import org.eclipse.rse.core.subsystems.BasicConnectorService;
 
-public class TestSubSystemConnectorService extends AbstractConnectorService {
+public class TestSubSystemConnectorService extends BasicConnectorService {
 
 	private boolean connected = false;
-	private ICredentialsProvider credentialsProvider = new BasicCredentialsProvider(this);
 
 	/**
 	 * Constructor.
@@ -54,10 +51,4 @@ public class TestSubSystemConnectorService extends AbstractConnectorService {
 		connected = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SuperAbstractConnectorService#getCredentialsProvider()
-	 */
-	protected ICredentialsProvider getCredentialsProvider() {
-		return credentialsProvider;
-	}
 }

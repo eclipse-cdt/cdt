@@ -37,5 +37,21 @@ public abstract class AbstractCredentialsProvider implements ICredentialsProvide
 	public final void setSuppressed(boolean suppressed) {
 		this.suppressed = suppressed;
 	}
+	
+	protected final boolean supportsUserId() {
+		return connectorService.supportsUserId();
+	}
+	
+	protected final boolean requiresUserId() {
+		return connectorService.requiresUserId();
+	}
+	
+	protected final boolean supportsPassword() {
+		return connectorService.supportsPassword();
+	}
+	
+	protected final boolean requiresPassword() {
+		return connectorService.requiresPassword();
+	}
 
 }

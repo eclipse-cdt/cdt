@@ -2531,7 +2531,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	/**
 	 * Return the {@link org.eclipse.rse.core.subsystems.IConnectorService IConnectorService} object that represents the live connection for this system.
 	 * This must return an object that implements {@link IConnectorService}. A good starting point for that
-	 *  is the base class {@link AbstractConnectorService}.
+	 *  is the base class {@link SuperAbstractConnectorService}.
 	 * <p>If you only have a single subsystem class, you may override this method to return the
 	 *  IConnectorService object that manages the connect/disconnect actions. If, on the other hand,
 	 *  you have multiple subsystem classes that desire to share a single IConnectorService connection,

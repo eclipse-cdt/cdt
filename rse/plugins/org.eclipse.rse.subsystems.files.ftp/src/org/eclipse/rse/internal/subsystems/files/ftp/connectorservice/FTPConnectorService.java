@@ -26,12 +26,10 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.model.SystemSignonInformation;
-import org.eclipse.rse.core.subsystems.AbstractConnectorService;
-import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 import org.eclipse.rse.internal.services.files.ftp.FTPService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
-import org.eclipse.rse.ui.subsystems.StandardCredentialsProvider;
+import org.eclipse.rse.ui.subsystems.AbstractConnectorService;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.MessageConsole;
@@ -42,7 +40,6 @@ public class FTPConnectorService extends AbstractConnectorService
 {
 	protected FTPService _ftpService;
 	private IPropertySet _propertySet;
-	private ICredentialsProvider credentialsProvider = null;
 	
 	public FTPConnectorService(IHost host, int port)
 	{		
@@ -105,13 +102,6 @@ public class FTPConnectorService extends AbstractConnectorService
 	protected void internalDisconnect(IProgressMonitor monitor)
 	{
 		_ftpService.disconnect();
-	}
-	
-	protected ICredentialsProvider getCredentialsProvider() {
-		if (credentialsProvider == null) {
-			credentialsProvider = new StandardCredentialsProvider(this);
-		}
-		return credentialsProvider;
 	}
 	
 		public boolean isConnected() 

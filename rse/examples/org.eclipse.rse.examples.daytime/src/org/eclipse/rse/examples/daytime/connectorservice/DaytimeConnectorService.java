@@ -23,9 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.subsystems.AbstractConnectorService;
-import org.eclipse.rse.core.subsystems.BasicCredentialsProvider;
-import org.eclipse.rse.core.subsystems.ICredentialsProvider;
+import org.eclipse.rse.core.subsystems.BasicConnectorService;
 import org.eclipse.rse.examples.daytime.DaytimeResources;
 import org.eclipse.rse.examples.daytime.service.DaytimeService;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
@@ -38,11 +36,10 @@ import org.eclipse.rse.examples.daytime.service.IDaytimeService;
  * here. We basically keep a local "connected" flag only, so to make sure that
  * the remote host is only accessed when the user explicitly requested so. 
  */
-public class DaytimeConnectorService extends AbstractConnectorService {
+public class DaytimeConnectorService extends BasicConnectorService {
 	
 	private boolean fIsConnected = false;
 	private DaytimeService fDaytimeService;
-	private ICredentialsProvider fCredentialsProvider = new BasicCredentialsProvider(this);
 
 	public DaytimeConnectorService(IHost host) {
 		super(DaytimeResources.Daytime_Connector_Name, DaytimeResources.Daytime_Connector_Description, host, 13);
@@ -77,8 +74,4 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 		fIsConnected = false;
 	}
 	
-	protected ICredentialsProvider getCredentialsProvider() {
-		return fCredentialsProvider;
-	}
-
 }

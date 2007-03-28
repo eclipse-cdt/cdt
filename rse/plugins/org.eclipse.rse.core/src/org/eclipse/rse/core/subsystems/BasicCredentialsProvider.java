@@ -44,26 +44,10 @@ public class BasicCredentialsProvider extends AbstractCredentialsProvider {
 	public void repairCredentials(SystemMessage message) throws InterruptedException {
 	}
 
-	public boolean requiresPassword() {
-		return false;
-	}
-
-	public boolean requiresUserId() {
-		return false;
-	}
-
 	public void setPassword(String password) {
 	}
 
 	public void setUserId(String userId) {
-	}
-
-	public boolean supportsPassword() {
-		return false;
-	}
-
-	public boolean supportsUserId() {
-		return false;
 	}
 
 }

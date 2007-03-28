@@ -350,4 +350,8 @@ public interface IConnectorService extends IRSEModelObject {
 	 */
 	IServerLauncher getRemoteServerLauncher();
 
+	boolean requiresPassword();
+
+	boolean requiresUserId();
+
 }

@@ -15,31 +15,23 @@ public interface ICredentialsProvider {
 	
 	void acquireCredentials(boolean reacquire) throws InterruptedException;
 	
+	void repairCredentials(SystemMessage message)throws InterruptedException;
+
 	void clearCredentials();
-	
-	void clearPassword();
 	
 	ICredentials getCredentials();
 	
+	void clearPassword();
+
+	void setPassword(String password);
+
+	void setUserId(String userId);
+
 	String getUserId();
 	
 	boolean isSuppressed();
 	
-	void repairCredentials(SystemMessage message)throws InterruptedException;
-	
-	boolean requiresPassword();
-	
-	boolean requiresUserId();
-	
-	void setPassword(String password);
-	
 	void setSuppressed(boolean suppressed);
-	
-	void setUserId(String userId);
-	
-	boolean supportsPassword();
-	
-	boolean supportsUserId();
 	
 	IConnectorService getConnectorService();
 	

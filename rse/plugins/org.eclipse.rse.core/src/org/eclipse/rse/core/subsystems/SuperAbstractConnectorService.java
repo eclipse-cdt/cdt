@@ -333,44 +333,42 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 		return getPort();
 	}
 
+	/**
+	 * This connection method wrappers the others (internal connect) so that registered subsystems 
+	 * can be notified and initialized after a connect
+	 * Previous implementations that overrode this method should now change
+	 * their connect() method to internalConnect()
+	 */
+	public final void connect(IProgressMonitor monitor) throws Exception {
+		internalConnect(monitor);
+		intializeSubSystems(monitor);
+	}
+
+	/**
+	 * Disconnects from the remote system.
+	 * <p>
+	 * You must override
+	 * if <code>subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties</code> 
+	 * returns false.
+	 * <p>
+	 * If the subsystem supports server launch
+	 * the default behavior is to use the same remote server
+	 * launcher created in <code>connect()</code> and call <code>disconnect()</code>.
+	 * <p>
+	 * This is called, by default, from the <code>disconnect()</code>
+	 * method of the subsystem.
+	 * @see IServerLauncher#disconnect()
+	 */
+	public final void disconnect(IProgressMonitor monitor) throws Exception {
+		internalDisconnect(monitor);
+		unintializeSubSystems(monitor);
+		postDisconnect();
+	}
+
 	protected abstract void internalConnect(IProgressMonitor monitor) throws Exception;
 
 	protected abstract void internalDisconnect(IProgressMonitor monitor) throws Exception;
-	
-	protected abstract ICredentialsProvider getCredentialsProvider();
 
-	/**
-	 * Returns true if this connector service can share it's credentials
-	 * with other connector services in this host.
-	 * This default implementation will always return true.
-	 * Override if necessary.
-	 * @return true
-	 */
-	public boolean sharesCredentials() {
-	    return true;
-	}
-
-	/**
-	 * Returns true if this connector service can inherit the credentials of
-	 * other connector services in this host.
-	 * This default implementation always returns true. 
-	 * Override if necessary.
-	 * @return true
-	 */
-	public boolean inheritsCredentials() {
-	    return true;
-	}
-
-	public final boolean supportsPassword() {
-		ICredentialsProvider cp = getCredentialsProvider();
-		boolean result = cp.supportsPassword();
-		return result;
-	}
-
-	public final boolean supportsUserId() {
-		ICredentialsProvider cp = getCredentialsProvider();
-		boolean result = cp.supportsUserId();
-		return result;
-	}
+	protected abstract void postDisconnect();
 		
 }

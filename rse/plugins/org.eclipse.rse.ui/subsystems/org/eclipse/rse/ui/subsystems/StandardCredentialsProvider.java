@@ -18,7 +18,6 @@ import org.eclipse.rse.core.subsystems.ICredentials;
 import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.SuperAbstractConnectorService;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
@@ -43,7 +42,7 @@ import org.eclipse.ui.PlatformUI;
  * It uses a {@link PasswordPersistenceManager} to store the passwords in the
  * keychain keyed by {@link IHost} and possibly by {@link ISubSystemConfiguration}.
  * <p>
- * This is suitable for use by subclasses of {@link SuperAbstractConnectorService}
+ * This is suitable for use by subclasses of {@link AbstractConnectorService}
  * that wish to provide prompting and persistence for userids and passwords when
  * connecting.
  * <p>
@@ -231,14 +230,6 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		promptForNewPassword(prompt);
 	}
 
-	public boolean requiresPassword() {
-		return true;
-	}
-
-	public boolean requiresUserId() {
-		return true;
-	}
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -273,14 +264,6 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		if (userId == null || !userId.equals(newId)) {
 			userId = newId;
 		}
-	}
-
-	public boolean supportsPassword() {
-		return true;
-	}
-
-	public boolean supportsUserId() {
-		return true;
 	}
 
 	/**

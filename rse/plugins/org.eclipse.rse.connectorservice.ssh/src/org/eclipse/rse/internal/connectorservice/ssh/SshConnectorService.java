@@ -54,10 +54,8 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemSignonInformation;
-import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.services.RemoteUtil;
@@ -65,6 +63,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.subsystems.AbstractConnectorService;
 
 /** 
  * Create SSH connections.
@@ -76,7 +75,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	private static JSch jsch=new JSch();
     private Session session;
     private SessionLostHandler fSessionLostHandler;
-    private ICredentialsProvider credentialsProvider = null;
 
 	public SshConnectorService(IHost host) {
 		//TODO the port parameter doesnt really make sense here since
@@ -705,12 +703,13 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		}
 		return false;
 	}
-
-	protected ICredentialsProvider getCredentialsProvider() {
-		if (credentialsProvider == null) {
-			credentialsProvider = new SshCredentialsProvider(this);
-		}
-		return credentialsProvider;
+	
+	public boolean requiresPassword() {
+		return false;
+	}
+	
+	public boolean requiresUserId() {
+		return false;
 	}
 
 }

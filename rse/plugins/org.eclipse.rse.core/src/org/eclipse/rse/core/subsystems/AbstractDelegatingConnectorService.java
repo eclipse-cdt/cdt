@@ -538,5 +538,23 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return false;
 	}
+	
+	public boolean requiresPassword() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.requiresPassword();
+		}
+		return false;
+	}
+	
+	public boolean requiresUserId() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.requiresUserId();
+		}
+		return false;
+	}
 
 }

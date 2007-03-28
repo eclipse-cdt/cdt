@@ -17,10 +17,8 @@
 package org.eclipse.rse.internal.connectorservice.local;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.subsystems.AbstractConnectorService;
-import org.eclipse.rse.core.subsystems.BasicCredentialsProvider;
+import org.eclipse.rse.core.subsystems.BasicConnectorService;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
-import org.eclipse.rse.core.subsystems.ICredentialsProvider;
  
 /**
  * System class required by the remote systems framework.
@@ -28,11 +26,9 @@ import org.eclipse.rse.core.subsystems.ICredentialsProvider;
  * Since we don't really have such a thing for local files, this
  * is pretty well empty.
  */
-public class LocalConnectorService extends AbstractConnectorService
+public class LocalConnectorService extends BasicConnectorService
 {
-	
-	private ICredentialsProvider credentialsProvider = new BasicCredentialsProvider(this);
-		
+			
 	/**
 	 * Constructor when we don't have a subsystem yet.
 	 * Call setSubSystem after. 
@@ -45,7 +41,7 @@ public class LocalConnectorService extends AbstractConnectorService
 	
 	
 	/**
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#disconnect(IProgressMonitor)
+	 * @see org.eclipse.rse.ui.subsystems.AbstractConnectorService#disconnect(IProgressMonitor)
 	 */
 	protected void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
@@ -98,8 +94,4 @@ public class LocalConnectorService extends AbstractConnectorService
     	return System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
     }
     
-    protected ICredentialsProvider getCredentialsProvider() {
-    	return credentialsProvider;
-    }
-
 }

@@ -19,9 +19,7 @@ package samples.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.subsystems.AbstractConnectorService;
-import org.eclipse.rse.core.subsystems.BasicCredentialsProvider;
-import org.eclipse.rse.core.subsystems.ICredentialsProvider;
+import org.eclipse.rse.core.subsystems.BasicConnectorService;
 
 import samples.RSESamplesPlugin;
 
@@ -29,10 +27,9 @@ import samples.RSESamplesPlugin;
  * Our system class that manages connecting to, and disconnecting from,
  * our remote server-side code.
  */
-public class DeveloperConnectorService extends AbstractConnectorService {
+public class DeveloperConnectorService extends BasicConnectorService {
 
 	private boolean connected = false;
-	private ICredentialsProvider credentialsProvider = new BasicCredentialsProvider(this);
 
 	/**
 	 * Constructor for DeveloperConnectorService.
@@ -73,9 +70,4 @@ public class DeveloperConnectorService extends AbstractConnectorService {
 		// pretend. Normally, we'd disconnect from our remote server-side code here
 		connected=false;
 	}
-	
-	protected ICredentialsProvider getCredentialsProvider() {
-		return credentialsProvider;
-	}
-
 }

@@ -25,34 +25,17 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.RSEModelObject;
 
 /**
- * This is a base class to make it easier to create connector service classes.
+ * This is a base class to make it easier to create connector services.
  * <p>
  * An {@link org.eclipse.rse.core.subsystems.IConnectorService} object
  * is returned from a subsystem object via getConnectorService(), and
- * it is used to represent the live connection to a particular subsystem.
+ * it is used to maintain the connection to a particular set of subsystems.
  * <p>
- * You must override/implement
- * <ul>
- * <li>isConnected
- * <li>internalConnect
- * <li>internalDisconnect
- * <li>getCredentialsProvider
- * </ul>
- * You should override:
- * <ul>
- * <li>reset 
- * <li>getVersionReleaseModification
- * <li>getHomeDirectory
- * <li>getTempDirectory
- * </ul>
- * You can override:
- * <ul>
- * <li>supportsUserId
- * <li>requiresUserId
- * <li>supportsPassword
- * <li>requiresPassword
- * </ul>
- * 
+ * This class implements the protocol for much of the 
+ * standard bookkeeping for connector services including
+ * server launchers (if none are required), event handling,
+ * hosts, ports, addresses, descriptions, and registered subsystems.
+ * Subclasses must concern themselves with actually authenticating and connecting.
  */ 
 public abstract class AbstractConnectorService extends RSEModelObject implements IConnectorService {
 
@@ -66,14 +49,15 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	private boolean _usingSSL;
 
 	/**
-	 * The result of calling launch in the server launcher object, in the connect method  
+	 * Construct a new connector service. This should be called during the construction
+	 * of any subclasses.
+	 * @param name The name of the connector service.
+	 * @param description A description of the connector service.
+	 * @param host The host associated with this connector service. A host may have multiple
+	 * connector services.
+	 * @param port The port associated with this connector service if this connector service
+	 * is IP based. If not IP based this can be used for some other purpose.
 	 */
-	protected Object launchResult;
-	/**
-	 * The result of calling connect in the server launcher object, in the connect method
-	 */
-	protected Object connectResult;
-
 	public AbstractConnectorService(String name, String description, IHost host, int port) {
 		_name = name;
 		_description = description;
@@ -81,6 +65,9 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		_port = port;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isServerLaunchTypeEnabled(org.eclipse.rse.core.subsystems.ISubSystem, org.eclipse.rse.core.subsystems.ServerLaunchType)
+	 */
 	public final boolean isServerLaunchTypeEnabled(ISubSystem subsystem, ServerLaunchType serverLaunchType) {
 		IServerLauncher sl = getRemoteServerLauncher();
 		if (sl instanceof RemoteServerLauncher) {
@@ -90,22 +77,43 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 			return subsystem.getSubSystemConfiguration().supportsServerLaunchType(serverLaunchType);
 	}
 	
+	/**
+	 * @return null, may be overriden
+	 * @see IConnectorService#getRemoteServerLauncher()
+	 */
 	public IServerLauncher getRemoteServerLauncher() {
 		return null;
 	}
 
+	/**
+	 * @return false, may be overriden
+	 * @see IConnectorService#supportsRemoteServerLaunching()
+	 */
 	public boolean supportsRemoteServerLaunching() {
 		return false;
 	}
 
+	/**
+	 * @return false, may be overriden
+	 * @see IConnectorService#supportsServerLaunchProperties()
+	 */
 	public boolean supportsServerLaunchProperties() {
 		return false;
 	}
 	
+	/**
+	 * @return null, may be overriden
+	 * @see IConnectorService#getRemoteServerLauncherProperties()
+	 */
 	public IServerLauncherProperties getRemoteServerLauncherProperties() {
 		return null;
 	}
 
+	/**
+	 * Do nothing, may be overriden
+	 * @param newRemoteServerLauncher the server launcher properties
+	 * @see IConnectorService#setRemoteServerLauncherProperties(IServerLauncherProperties)
+	 */
 	public void setRemoteServerLauncherProperties(IServerLauncherProperties newRemoteServerLauncher) {
 	}
 
@@ -113,9 +121,8 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		return getRemoteServerLauncherProperties() != null;
 	}
 
-	/**
-	 * <i>Fully implemented, no need to override.</i><br>
-	 * @see IConnectorService#addCommunicationsListener(ICommunicationsListener)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#addCommunicationsListener(org.eclipse.rse.core.subsystems.ICommunicationsListener)
 	 */
 	public final void addCommunicationsListener(ICommunicationsListener listener) {
 		if (!commListeners.contains(listener)) {
@@ -123,9 +130,8 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}
 	}
 
-	/**
-	 * <i>Fully implemented, no need to override.</i><br>
-	 * @see IConnectorService#removeCommunicationsListener(ICommunicationsListener)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#removeCommunicationsListener(org.eclipse.rse.core.subsystems.ICommunicationsListener)
 	 */
 	public final void removeCommunicationsListener(ICommunicationsListener listener) {
 		commListeners.remove(listener);		
@@ -143,25 +149,37 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}							
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHost()
+	 */
 	public final IHost getHost() {
 		return _host;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setHost(org.eclipse.rse.core.model.IHost)
+	 */
 	public final void setHost(IHost host) {
 		_host = host;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.RSEModelObject#getDescription()
+	 */
 	public final String getDescription() {
 		return _description;
 	}
 
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEModelObject#getName()
 	 */
 	public final String getName() {
 		return _name;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setPort(int)
+	 */
 	public final void setPort(int port) {
 		if (port != _port)
 		{
@@ -170,10 +188,16 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getPort()
+	 */
 	public final int getPort() {
 		return _port;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getPrimarySubSystem()
+	 */
 	public final ISubSystem getPrimarySubSystem() {
 		if (_primarySubSystem == null)
 		{
@@ -190,8 +214,8 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		return _primarySubSystem;
 	}
 
-	/**
-	 * Set the subsystem, when its not known at constructor time
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#registerSubSystem(org.eclipse.rse.core.subsystems.ISubSystem)
 	 */
 	public final void registerSubSystem(ISubSystem ss) {
 		if (!_registeredSubSystems.contains(ss))
@@ -200,56 +224,52 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}   	
 	}
 
-	/**
-	 * Removes the subsystem from teh list
-	 * @param ss
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#deregisterSubSystem(org.eclipse.rse.core.subsystems.ISubSystem)
 	 */
 	public final void deregisterSubSystem(ISubSystem ss) {
 		_registeredSubSystems.remove(ss);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#commit()
+	 */
 	public final boolean commit() {
 		return RSECorePlugin.getThePersistenceManager().commit(getHost());
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Returns the system type for this connection:<br> <code>getSubSystem().getSystemConnection().getSystemType()</code>
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHostType()
 	 */
 	public final String getHostType() {
 		return getHost().getSystemType();
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Returns the host name for the connection this system's subsystem is associated with:</br>
-	 * <code>getSubSystem().getSystemConnection().getHostName()</code>
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHostName()
 	 */
 	public final String getHostName() {
 		return getHost().getHostName();
 	}
 
-	/**
-	 * Return the version, release, modification of the remote system,
-	 * if connected, if applicable and if available. Else return null. It
-	 * is up to each subsystem to decide how to interpret what is returned.
-	 * This implementation returns the empty string.
-	 * <p>
-	 * This is used to show the VRM in the property sheet 
-	 * when the subsystem is selected.
-	 * <p>
-	 * Up to each implementer to decide if this will be cached.
-	 * <p>
-	 * @return an empty string
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getVersionReleaseModification()
 	 */
 	public String getVersionReleaseModification() {
 		return ""; //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getSubSystems()
+	 */
 	public final ISubSystem[] getSubSystems() {
 		return (ISubSystem[])_registeredSubSystems.toArray(new ISubSystem[_registeredSubSystems.size()]);
 	}
 
+	/**
+	 * Initialize any subsystems just after connecting to the host.
+	 * @param monitor a progress monitor to report progress of initialization.
+	 */
 	protected final void intializeSubSystems(IProgressMonitor monitor) {
 		for (int i = 0; i < _registeredSubSystems.size(); i++)
 		{
@@ -258,6 +278,10 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}
 	}
 
+	/**
+	 * Uninitialize any subsystem just after disconnecting from the host.
+	 * @param monitor a progress monitor used to track uninitialization progress.
+	 */
 	protected final void unintializeSubSystems(IProgressMonitor monitor) {
 		for (int i = 0; i < _registeredSubSystems.size(); i++)
 		{
@@ -266,23 +290,44 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}
 	}
 
+	/**
+	 * Send the event to notify listeners of a disconnection.
+	 * Used by the framework and should
+	 * usually not be invoked by concrete subclasses.
+	 */
 	protected final void notifyDisconnection() {
 		 // Fire comm event to signal state changed
 		if (!isConnected()) fireCommunicationsEvent(CommunicationsEvent.AFTER_DISCONNECT);
 	}
 
+	/**
+	 * Send the event to notify listeners of a connection.
+	 * Used by the framework and should
+	 * usually not be invoked by concrete subclasses.
+	 */
 	protected final void notifyConnection() {
 		if (isConnected()) fireCommunicationsEvent(CommunicationsEvent.AFTER_CONNECT);
 	}
 
+	/**
+	 * Send the event to notify listeners of a connection establishment error.
+	 * Used by the framework and should
+	 * usually not be invoked by concrete subclasses.
+	 */
 	protected final void notifyError() {
 		fireCommunicationsEvent(CommunicationsEvent.CONNECTION_ERROR);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isUsingSSL()
+	 */
 	public final boolean isUsingSSL() {
 		return _usingSSL;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setIsUsingSSL(boolean)
+	 */
 	public final void setIsUsingSSL(boolean flag) {
 		if (_usingSSL != flag)
 		{
@@ -292,10 +337,10 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	}
 
 	/**
-	 * Return the temp directory of the remote system for the current user,
+	 * Returns the temp directory of the remote system for the current user,
 	 * if available. This implementation returns the empty string.
-	 * Up to each implementer to decide how to implement, and if this will be cached.
 	 * @return an empty string
+	 * @see IConnectorService#getTempDirectory()
 	 */
 	public String getTempDirectory() {
 		return ""; //$NON-NLS-1$
@@ -304,71 +349,111 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	/**
 	 * Returns the home directory of the remote system for the current user,
 	 * if available. This implementation returns the empty string.
-	 * Up to each implementer to decide how to implement, and if this will be cached.
 	 * @return an empty string
+	 * @see IConnectorService#getHomeDirectory()
 	 */
 	public String getHomeDirectory() {
 		return ""; //$NON-NLS-1$
 	}
 
 	/**
-	 * <i>Optionally override if you add any instance variables.</i><br>
-	 * The following is called whenever a system is redefined or disconnected.
-	 * Each subsystem needs to be informed so it can clear out any expansions, etc.
-	 * By default it does nothing.
-	 * Override if you have an internal object that must be nulled out.
-	 * If overridden you should call super.reset();
+	 * Reset the connector service state if a connector service is redefined
+	 * or disconnected.
+	 * Each subsystem needs to be informed so it can clear out any expansions.
+	 * This implementation does nothing.
+	 * Implementations should override and call {@link #reset()} 
+	 * if there is internal state to reset.
+	 * @see IConnectorService#reset()
 	 */
 	public void reset() {
 	}
 
 	/**
-	 * Return the port to use for connecting to the remote server, once it is running.
-	 * By default, this is the subsystem's port property, via {@link #getPort()}.
+	 * This implementation returns the connector service's port property.
 	 * Override if appropriate. 
-	 * <br> This is called by the default implementation of {@link #connect(IProgressMonitor)}, if
-	 * subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties() is true.
+	 * <br> This is called by the default implementation of
+	 * {@link #connect(IProgressMonitor)}, 
+	 * if #supportsServerLaunchProperties() is true.
+	 * @return the port used for connecting to the target
 	 */
 	protected int getConnectPort() {
 		return getPort();
 	}
 
 	/**
-	 * This connection method wrappers the others (internal connect) so that registered subsystems 
-	 * can be notified and initialized after a connect
-	 * Previous implementations that overrode this method should now change
-	 * their connect() method to internalConnect()
+	 * Connects to the target system.
+	 * Calls {@link #internalConnect(IProgressMonitor)}
+	 * @param monitor a monitor for progress monitoring and cancelation.
+	 * @throws Exception if the connect fails
 	 */
 	public final void connect(IProgressMonitor monitor) throws Exception {
+		preConnect();
 		internalConnect(monitor);
 		intializeSubSystems(monitor);
+		postConnect();
 	}
 
 	/**
-	 * Disconnects from the remote system.
-	 * <p>
-	 * You must override
-	 * if <code>subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties</code> 
-	 * returns false.
-	 * <p>
-	 * If the subsystem supports server launch
-	 * the default behavior is to use the same remote server
-	 * launcher created in <code>connect()</code> and call <code>disconnect()</code>.
-	 * <p>
-	 * This is called, by default, from the <code>disconnect()</code>
-	 * method of the subsystem.
-	 * @see IServerLauncher#disconnect()
+	 * Disconnects from the target system.
+	 * Calls {@link #internalDisconnect(IProgressMonitor)}
+	 * and {@link #postDisconnect()}
+	 * @throws Exception if the disconnect fails 
 	 */
 	public final void disconnect(IProgressMonitor monitor) throws Exception {
+		preDisconnect();
 		internalDisconnect(monitor);
 		unintializeSubSystems(monitor);
 		postDisconnect();
 	}
 
+	/**
+	 * Performs the actual connection to the target system.
+	 * @param monitor for cancelation and progress reporting
+	 * @throws Exception if connection does not succeed
+	 */
 	protected abstract void internalConnect(IProgressMonitor monitor) throws Exception;
 
+	/**
+	 * Performs the actual disconnection from the target system.
+	 * @param monitor for cancelation and progress reporting
+	 * @throws Exception if disconnection does not succeed
+	 */
 	protected abstract void internalDisconnect(IProgressMonitor monitor) throws Exception;
 
-	protected abstract void postDisconnect();
-		
+	/**
+	 * Performs any cleanup required after disconnecting.
+	 * This implementation does nothing.
+	 * May be overridden.
+	 * If overridden, invoke via super.
+	 */
+	protected void postDisconnect() {
+	}
+	
+	/**
+	 * Performs any tasks required immediately prior to disconnecting.
+	 * This implementation does nothing.
+	 * May be overridden.
+	 * If overridden, invoke via super.
+	 */
+	protected void preDisconnect() {
+	}
+	
+	/**
+	 * Performs any tasks required immediately prior to connecting.
+	 * This implementation does nothing.
+	 * May be overridden.
+	 * If overridden, invoke via super.
+	 */
+	protected void preConnect() {
+	}
+	
+	/**
+	 * Performs any tasks required immediately after connecting.
+	 * This implementation does nothing.
+	 * May be overridden.
+	 * If overridden, invoke via super.
+	 */
+	protected void postConnect() {
+	}
+
 }

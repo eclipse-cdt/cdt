@@ -162,23 +162,20 @@ public interface IConnectorService extends IRSEModelObject {
 
 	/**
 	 * Reports if this connector service can use a user identifier.
-	 * Returns true in default implementation.
 	 * Typically used to indicate if a login dialog needs to be presented when connecting.
 	 * @return true if and only if the connector service can use a user id.
 	 */
 	public boolean supportsUserId();
 
 	/**
-	 * Determines if this connector service understand the concept of a
-	 * password.
-	 * The default implementation of this interface should return true.
+	 * Determines if this connector service understand the concept of a password.
 	 * @return true if the connector service can use a password, 
 	 * false if a password is irrelevant.
 	 */
 	public boolean supportsPassword();
 
 	/**
-	 * @return the userId that will be used by this connector when
+	 * @return the user id that will be used by this connector when
 	 * establishing its connection.
 	 */
 	public String getUserId();
@@ -190,8 +187,16 @@ public interface IConnectorService extends IRSEModelObject {
 	 */
 	public void setUserId(String userId);
 
+	/**
+	 * Causes the user id known to the connector service, if any, to be
+	 * persisted.
+	 */
 	public void saveUserId();
 
+	/**
+	 * Causes the persisted (default) user id known to this 
+	 * connector service, if any, to be forgotten.
+	 */
 	public void removeUserId();
 
 	/**
@@ -205,8 +210,16 @@ public interface IConnectorService extends IRSEModelObject {
 	 */
 	public void setPassword(String matchingUserId, String password, boolean persist, boolean propagate);
 	
+	/**
+	 * Causes the password known to this connector service, if any, to be 
+	 * persisted.
+	 */
 	public void savePassword();
 	
+	/**
+	 * Causes the persisted password known to this connector service, if any, to 
+	 * be forgotten.
+	 */
 	public void removePassword();
 	
 	/**
@@ -220,14 +233,14 @@ public interface IConnectorService extends IRSEModelObject {
 	public void clearPassword(boolean persist, boolean propagate);
 
 	/**
-	 * @param onDisk retrieve the persistent form of the password.
-	 * @return true if password is currently known to this service.
+	 * @param persistent also check for the persistent form of the password.
+	 * @return true if a password is currently known to this connector service.
 	 */
-	public boolean hasPassword(boolean onDisk);
+	public boolean hasPassword(boolean persistent);
 
 	/**
 	 * Returns true if this system can inherit the credentials of
-	 * from the connection (Host).
+	 * from the other connector services in this host.
 	 * @return true if it can inherit the credentials, false otherwise
 	 */
 	public boolean inheritsCredentials();
@@ -273,7 +286,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * <p>
 	 * The intent is to allow tool writers to prevent multiple 
 	 * attempts to acquire credentials during a set period of time.
-	 * <b>It is the callers responsibility to set this value 
+	 * <b>It is the responsibility of the caller to set this value 
 	 * back to false when the tool no longer needs to suppress
 	 * acquisition credentials.</b>
 	 * 
@@ -333,7 +346,8 @@ public interface IConnectorService extends IRSEModelObject {
 
 	/**
 	 * @return true if the connector service supports the concept of remote
-	 * server launch properties. This will always return false {@link #supportsRemoteServerLaunching()}
+	 * server launch properties.
+	 * This will always return false {@link #supportsRemoteServerLaunching()}
 	 * is false. 
 	 */
 	boolean supportsServerLaunchProperties();
@@ -345,13 +359,21 @@ public interface IConnectorService extends IRSEModelObject {
 	boolean supportsRemoteServerLaunching();
 	
 	/**
-	 * @return the server launcher. Will be null unless {@link #supportsRemoteServerLaunching()} 
-	 * is true.
+	 * @return the server launcher. Will be null unless
+	 * {@link #supportsRemoteServerLaunching()} is true.
 	 */
 	IServerLauncher getRemoteServerLauncher();
 
+	/**
+	 * @return true if this connector service supports passwords and 
+	 * requires a password to connect to its target system.
+	 */
 	boolean requiresPassword();
 
+	/**
+	 * @return true if this connector service understands the concept of a 
+	 * user id and requires one to connect to its target system.
+	 */
 	boolean requiresUserId();
 
 }

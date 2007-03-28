@@ -21,13 +21,25 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 {
 
 	protected IHost _host;
+
+	/**
+	 * Creates a new delegating connector service for a particular host.
+	 * Should be invoked from the constructor for any concrete subclasses.
+	 * @param host The host associated with this connector service.
+	 */
 	public AbstractDelegatingConnectorService(IHost host)
 	{
 		_host = host;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IDelegatingConnectorService#getRealConnectorService()
+	 */
 	public abstract IConnectorService getRealConnectorService();
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#addCommunicationsListener(org.eclipse.rse.core.subsystems.ICommunicationsListener)
+	 */
 	public void addCommunicationsListener(ICommunicationsListener listener) 
 	{
 		IConnectorService conServ = getRealConnectorService();
@@ -37,6 +49,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertySetContainer#addPropertySet(org.eclipse.rse.core.model.IPropertySet)
+	 */
 	public boolean addPropertySet(IPropertySet set) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -46,6 +61,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertySetContainer#addPropertySets(org.eclipse.rse.core.model.IPropertySet[])
+	 */
 	public boolean addPropertySets(IPropertySet[] sets) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -55,6 +73,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#clearPassword(boolean, boolean)
+	 */
 	public void clearPassword(boolean clearDiskCache, boolean propagate) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -63,6 +84,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#clearCredentials()
+	 */
 	public void clearCredentials() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -71,6 +95,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#commit()
+	 */
 	public boolean commit() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -80,6 +107,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void connect(IProgressMonitor monitor) throws Exception {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -88,6 +118,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertySetContainer#createPropertySet(java.lang.String)
+	 */
 	public IPropertySet createPropertySet(String name) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -97,6 +130,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertySetContainer#createPropertySet(java.lang.String, java.lang.String)
+	 */
 	public IPropertySet createPropertySet(String name, String description) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -106,6 +142,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#deregisterSubSystem(org.eclipse.rse.core.subsystems.ISubSystem)
+	 */
 	public void deregisterSubSystem(ISubSystem ss) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -114,6 +153,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#disconnect(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void disconnect(IProgressMonitor monitor) throws Exception {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -122,6 +164,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEModelObject#getDescription()
+	 */
 	public String getDescription() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -131,6 +176,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHomeDirectory()
+	 */
 	public String getHomeDirectory() 
 	{
 		IConnectorService conServ = getRealConnectorService();
@@ -141,11 +189,17 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHost()
+	 */
 	public IHost getHost() 
 	{
 		return _host;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHostName()
+	 */
 	public String getHostName() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -155,6 +209,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHostType()
+	 */
 	public String getHostType() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -164,6 +221,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEModelObject#getName()
+	 */
 	public String getName() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -173,6 +233,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getPort()
+	 */
 	public int getPort() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -182,6 +245,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getPrimarySubSystem()
+	 */
 	public ISubSystem getPrimarySubSystem() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -191,6 +257,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertySetContainer#getPropertySet(java.lang.String)
+	 */
 	public IPropertySet getPropertySet(String name) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -200,6 +269,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertySetContainer#getPropertySets()
+	 */
 	public IPropertySet[] getPropertySets() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -209,6 +281,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getRemoteServerLauncher()
+	 */
 	public IServerLauncher getRemoteServerLauncher() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -218,6 +293,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getRemoteServerLauncherProperties()
+	 */
 	public IServerLauncherProperties getRemoteServerLauncherProperties() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -227,6 +305,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getSubSystems()
+	 */
 	public ISubSystem[] getSubSystems() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -236,6 +317,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getTempDirectory()
+	 */
 	public String getTempDirectory() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -245,6 +329,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getUserId()
+	 */
 	public String getUserId() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -254,6 +341,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getVersionReleaseModification()
+	 */
 	public String getVersionReleaseModification() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -263,6 +353,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#hasPassword(boolean)
+	 */
 	public boolean hasPassword(boolean onDisk) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -272,6 +365,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#hasRemoteServerLauncherProperties()
+	 */
 	public boolean hasRemoteServerLauncherProperties() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -281,6 +377,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#inheritsCredentials()
+	 */
 	public boolean inheritsCredentials() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -290,6 +389,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isConnected()
+	 */
 	public boolean isConnected() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -299,6 +401,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#isDirty()
+	 */
 	public boolean isDirty() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -308,6 +413,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isServerLaunchTypeEnabled(org.eclipse.rse.core.subsystems.ISubSystem, org.eclipse.rse.core.subsystems.ServerLaunchType)
+	 */
 	public boolean isServerLaunchTypeEnabled(ISubSystem subsystem,
 			ServerLaunchType serverLaunchType) {
 		IConnectorService conServ = getRealConnectorService();
@@ -318,6 +426,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isSuppressed()
+	 */
 	public boolean isSuppressed() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -327,6 +438,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isUsingSSL()
+	 */
 	public boolean isUsingSSL() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -336,6 +450,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#acquireCredentials(boolean)
+	 */
 	public void acquireCredentials(boolean forcePrompt)
 			throws InterruptedException {
 		IConnectorService conServ = getRealConnectorService();
@@ -345,6 +462,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#registerSubSystem(org.eclipse.rse.core.subsystems.ISubSystem)
+	 */
 	public void registerSubSystem(ISubSystem ss) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -353,6 +473,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#removeCommunicationsListener(org.eclipse.rse.core.subsystems.ICommunicationsListener)
+	 */
 	public void removeCommunicationsListener(ICommunicationsListener listener) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -361,6 +484,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertySetContainer#removePropertySet(java.lang.String)
+	 */
 	public boolean removePropertySet(String name) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -370,6 +496,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#reset()
+	 */
 	public void reset() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -378,6 +507,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#setDirty(boolean)
+	 */
 	public void setDirty(boolean flag) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -386,6 +518,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setHost(org.eclipse.rse.core.model.IHost)
+	 */
 	public void setHost(IHost host) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -394,6 +529,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setIsUsingSSL(boolean)
+	 */
 	public void setIsUsingSSL(boolean flag) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -402,6 +540,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setPassword(java.lang.String, java.lang.String, boolean, boolean)
+	 */
 	public void setPassword(String matchingUserId, String password,
 			boolean persist, boolean propagate) {
 		IConnectorService conServ = getRealConnectorService();
@@ -411,6 +552,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setPort(int)
+	 */
 	public void setPort(int port) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -419,6 +563,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setRemoteServerLauncherProperties(org.eclipse.rse.core.subsystems.IServerLauncherProperties)
+	 */
 	public void setRemoteServerLauncherProperties(
 			IServerLauncherProperties value) {
 		IConnectorService conServ = getRealConnectorService();
@@ -428,6 +575,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setSuppressed(boolean)
+	 */
 	public void setSuppressed(boolean suppressSignonPrompt) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -436,6 +586,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setUserId(java.lang.String)
+	 */
 	public void setUserId(String userId) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -444,6 +597,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#setWasRestored(boolean)
+	 */
 	public void setWasRestored(boolean flag) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -452,6 +608,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#sharesCredentials()
+	 */
 	public boolean sharesCredentials() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -461,6 +620,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsPassword()
+	 */
 	public boolean supportsPassword() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -470,6 +632,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsRemoteServerLaunching()
+	 */
 	public boolean supportsRemoteServerLaunching() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -479,6 +644,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsServerLaunchProperties()
+	 */
 	public boolean supportsServerLaunchProperties() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -489,6 +657,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 	}
 
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsUserId()
+	 */
 	public boolean supportsUserId() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -498,6 +669,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#saveUserId()
+	 */
 	public void saveUserId() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -506,6 +680,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#removeUserId()
+	 */
 	public void removeUserId() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -514,6 +691,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#savePassword()
+	 */
 	public void savePassword() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -522,6 +702,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#removePassword()
+	 */
 	public void removePassword() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -530,6 +713,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#wasRestored()
+	 */
 	public boolean wasRestored() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -539,6 +725,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresPassword()
+	 */
 	public boolean requiresPassword() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -548,6 +737,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresUserId()
+	 */
 	public boolean requiresUserId() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)

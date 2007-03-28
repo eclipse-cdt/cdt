@@ -13,7 +13,15 @@
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
+/**
+ * A delegating connector service forwards all requests for infomation
+ * to another connector service. 
+ */
 public interface IDelegatingConnectorService extends IConnectorService 
 {
+	/**
+	 * @return the connector service that this connector service will
+	 * forward requests to.
+	 */
 	public IConnectorService getRealConnectorService();
 }

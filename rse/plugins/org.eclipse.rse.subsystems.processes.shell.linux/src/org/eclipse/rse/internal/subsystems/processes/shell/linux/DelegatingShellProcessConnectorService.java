@@ -20,14 +20,25 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 
+/**
+ * This class delegates the connector service requests for the linux process 
+ * subsystem to the connector service of the shell subsystem.
+ */
 public class DelegatingShellProcessConnectorService extends AbstractDelegatingConnectorService 
 {
 	private IConnectorService _realService;
+
+	/**
+	 * @param host the linux host that is the target for this connector service.
+	 */
 	public DelegatingShellProcessConnectorService(IHost host) 
 	{
 		super(host);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.AbstractDelegatingConnectorService#getRealConnectorService()
+	 */
 	public IConnectorService getRealConnectorService()
 	{
 		if (_realService != null)

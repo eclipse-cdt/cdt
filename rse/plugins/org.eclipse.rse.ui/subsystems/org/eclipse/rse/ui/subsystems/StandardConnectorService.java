@@ -16,59 +16,85 @@
 package org.eclipse.rse.ui.subsystems;
 
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.AuthenticatingConnectorService;
+import org.eclipse.rse.core.subsystems.ICredentials;
+
 
 /**
- * This is a base class to make it easier to create connector service classes.
- * <p>
- * An {@link org.eclipse.rse.core.subsystems.IConnectorService} object
- * is returned from a subsystem object via getConnectorService(), and
- * it is used to represent the live connection to a particular subsystem.
- * <p>
- * You must override/implement
- * <ul>
- * <li>isConnected
- * <li>internalConnect
- * <li>internalDisconnect
- * </ul>
- * You should override:
- * <ul>
- * <li>reset 
- * <li>getVersionReleaseModification
- * <li>getHomeDirectory
- * <li>getTempDirectory
- * </ul>
- * You can override:
- * <ul>
- * <li>supportsUserId
- * <li>requiresUserId
- * <li>supportsPassword
- * <li>requiresPassword
- * </ul>
- * 
- * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
+ * A standard connector service is an authenticating connector service
+ * (see {@link AuthenticatingConnectorService}) that understand and prompts for
+ * user ids and passwords. It uses a standard credentials provider 
+ * (see {@link StandardCredentialsProvider}) to do so.
  */
 public abstract class StandardConnectorService extends AuthenticatingConnectorService {
 	
+	/**
+	 * Construct a standard connector service. This also constructs
+	 * and uses a standard credentials provider.
+	 * @param name the name of the connector service
+	 * @param description the description of the connector service
+	 * @param host the host associated with this connector service
+	 * @param port the port used by this connector service, if IP based
+	 */
 	public StandardConnectorService(String name, String description, IHost host, int port) {
 		super(name, description, host, port);
 		setCredentialsProvider(new StandardCredentialsProvider(this));
 	}
 	
+	/**
+	 * Indicates if this connector service understands passwords.
+	 * This implementation always returns true.
+	 * Override if necessary.
+	 * @return true
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsPassword()
+	 */
 	public boolean supportsPassword() {
 		return true;
 	}
 	
+	/**
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresPassword()
+	 * Indicates if this connector service requires a password.
+	 * This implementation always returns true.
+	 * Override if necessary.
+	 * @return true
+	 */
 	public boolean requiresPassword() {
 		return true;
 	}
 	
+	/**
+	 * Indicates if this connector service understands user ids.
+	 * This implementation always returns true.
+	 * Override if necessary.
+	 * @return true
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsUserId()
+	 */
 	public boolean supportsUserId() {
 		return true;
 	}
 	
+	/**
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresUserId()
+	 * Indicates if this connector service requires a user id.
+	 * This implementation always returns true.
+	 * Override if necessary.
+	 * @return true
+	 */
 	public boolean requiresUserId() {
 		return true;
+	}
+
+	/**
+	 * @return the SystemSignonInformation constructed from the
+	 * credentials provider.
+	 */
+	protected final SystemSignonInformation getSignonInformation() {
+		SystemSignonInformation result = null;
+		ICredentials credentials = credentialsProvider.getCredentials();
+		result = (SystemSignonInformation) credentials;
+		return result;
 	}
 	
 }

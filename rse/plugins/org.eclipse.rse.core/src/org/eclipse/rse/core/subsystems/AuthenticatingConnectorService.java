@@ -10,24 +10,43 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 
+/**
+ * An authenticating connector service understands the concept of credentials
+ * (see {@link ICredentials})
+ * and possibly the concepts of user id and password. It contains a 
+ * credentials provider ({@link ICredentialsProvider}) and provides a 
+ * framework under which authentication can take place during connections.
+ */
 public abstract class AuthenticatingConnectorService extends AbstractConnectorService {
 	
 	protected ICredentialsProvider credentialsProvider = null;
 
+	/**
+	 * Constructs an authenticating connector service.
+	 * @param name The name of the connector service
+	 * @param description The description of the connector service
+	 * @param host The host associated with this connector service
+	 * @param port The port this connector service will use when connecting if it uses IP.
+	 */
 	public AuthenticatingConnectorService(String name, String description, IHost host, int port) {
 		super(name, description, host, port);
 	}
 
 	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Returns the active userId if we are connected.
-	 * If not it returns the userId for the primary subsystem ignoring the 
-	 * cached userId.
+	 * Obtains the user id, if it understand the concept of user id, from
+	 * its credentials provider.
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getUserId()
+	 * @return the user id or null if not available or not supported.
 	 */
 	public final String getUserId() {
 		return credentialsProvider.getUserId();
 	}
 
+	/**
+	 * Sets the default user id for use by the credentials provider.
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setUserId(java.lang.String)
+	 * @param newId the id to be used by the credentials provider.
+	 */
 	public final void setUserId(String newId) {
 		String oldUserId = credentialsProvider.getUserId();
 		if (oldUserId == null || oldUserId.equals(newId)) {
@@ -37,22 +56,23 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#saveUserId()
+	 */
 	public final void saveUserId() {
 		String userId = credentialsProvider.getUserId();
 		updateDefaultUserId(getPrimarySubSystem(), userId);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#removeUserId()
+	 */
 	public final void removeUserId() {
 		updateDefaultUserId(getPrimarySubSystem(), null);
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Clear internal password cache. Called when user uses the property dialog to 
-	 * change his userId.  
-	 * 
-	 * @param persist if this is true, clear the password from the disk cache as well
-	 * @see #clearCredentials()
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#clearPassword(boolean, boolean)
 	 */
 	public final void clearPassword(boolean persist, boolean propagate) {
 		credentialsProvider.clearPassword();
@@ -65,17 +85,12 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		}
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Return true if password is currently saved either here or in its persisted
-	 * form.
-	 * @param onDisk true if the check should be made for a persisted form as well, 
-	 * false if the check should be made for a password in memory only.
-	 * @return true if the password is known, false otherwise.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#hasPassword(boolean)
 	 */
 	public final boolean hasPassword(boolean onDisk) {
-		SystemSignonInformation signonInformation = getSignonInformation();
-		boolean cached = (signonInformation != null && signonInformation.getPassword() != null);
+		ICredentials credentials = credentialsProvider.getCredentials();
+		boolean cached = (credentials != null && credentials.getPassword() != null);
 		if (!cached && onDisk) {
 			String systemType = getHostType();
 			String hostName = getHostName();
@@ -87,14 +102,8 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		return cached;
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-	 * Set the password if you got it from somewhere
-	 * @param userId the user for which to set the password
-	 * @param password the password to set for this userId
-	 * @param persist true if the password is to be persisted, 
-	 * false if its persistent form is to be removed.
-	 * @param propagate if the password should be propagated to related connector services.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setPassword(java.lang.String, java.lang.String, boolean, boolean)
 	 */
 	public final void setPassword(String userId, String password, boolean persist, boolean propagate) {
 		if (getPrimarySubSystem().forceUserIdToUpperCase()) {
@@ -115,6 +124,9 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#savePassword()
+	 */
 	public final void savePassword() {
 		ICredentials credentials = credentialsProvider.getCredentials();
 		if (credentials instanceof SystemSignonInformation) {
@@ -123,6 +135,9 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#removePassword()
+	 */
 	public final void removePassword() {
 		String systemType = getHostType();
 		String hostName = getHostName();
@@ -130,45 +145,43 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		PasswordPersistenceManager.getInstance().remove(systemType, hostName, userId);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#postDisconnect()
+	 */
 	protected final void postDisconnect() {
 		clearPassword(false, true);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#isSuppressed()
+	 */
 	public final boolean isSuppressed() {
 		return credentialsProvider.isSuppressed();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setSuppressed(boolean)
+	 */
 	public final void setSuppressed(boolean suppressed) {
 		credentialsProvider.setSuppressed(suppressed);
 	}
 
+	/**
+	 * Acquires the credentials by delegating the request to the 
+	 * credentials provider.
+	 * @param reacquire if true will cause the credentials to be reobtained if necessary.
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#acquireCredentials(boolean)
+	 */
 	public final void acquireCredentials(boolean reacquire) throws InterruptedException {
 		credentialsProvider.acquireCredentials(reacquire);
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Clear internal userId. Called when user uses the property dialog to 
-	 * change his userId. By default, sets internal userId value to null so that on
-	 * the next call to getUserId() it is requeried from subsystem. 
-	 * Also clears the password.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#clearCredentials()
 	 */
 	public final void clearCredentials() {
 		credentialsProvider.clearCredentials();
 		setDirty(true);
-	}
-
-	/**
-	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-	 * @return the password information for the primary subsystem of this
-	 * connector service. Assumes it has been set by the subsystem at the 
-	 * time the subsystem acquires the connector service.
-	 */
-	protected final SystemSignonInformation getSignonInformation() {
-		SystemSignonInformation result = null;
-		ICredentials credentials = credentialsProvider.getCredentials();
-		result = (SystemSignonInformation) credentials;
-		return result;
 	}
 
 	private void updatePasswordForOtherSystemsInConnection(String uid, String password, boolean persist) {
@@ -239,9 +252,10 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 	/**
 	 * Returns true if this connector service can share it's credentials
 	 * with other connector services in this host.
-	 * This default implementation will always return true.
+	 * This implementation will always return true.
 	 * Override if necessary.
 	 * @return true
+	 * @see IConnectorService#sharesCredentials()
 	 */
 	public boolean sharesCredentials() {
 	    return true;
@@ -250,18 +264,29 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 	/**
 	 * Returns true if this connector service can inherit the credentials of
 	 * other connector services in this host.
-	 * This default implementation always returns true. 
+	 * This implementation always returns true. 
 	 * Override if necessary.
 	 * @return true
+	 * @see IConnectorService#inheritsCredentials()
 	 */
 	public boolean inheritsCredentials() {
 	    return true;
 	}
 
+	/**
+	 * Sets the credentials provider used by this connector service.
+	 * This should be invoked once immediately during the construction of the 
+	 * connector service.
+	 * @param credentialsProvider the credentials provider to be used
+	 * by this connector service.
+	 */
 	protected final void setCredentialsProvider(ICredentialsProvider credentialsProvider) {
 		this.credentialsProvider = credentialsProvider;
 	}
 	
+	/**
+	 * @return the credentials provider that is being used by this connector service.
+	 */
 	protected final ICredentialsProvider getCredentialsProvider() {
 		return credentialsProvider;
 	}

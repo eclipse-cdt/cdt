@@ -22,9 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
@@ -41,7 +39,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -59,6 +56,7 @@ import org.eclipse.core.runtime.Path;
  * </ul>
  */
 public class ExternalExportProjectProvider extends AbstractExportProjectProvider implements IExportProjectProvider {
+	private static final String PREBUILT_PROJECT_OWNER = "org.eclipse.cdt.core.index.export.prebuiltOwner"; //$NON-NLS-1$
 	private static final String ORG_ECLIPSE_CDT_CORE_INDEX_EXPORT_DATESTAMP = "org.eclipse.cdt.core.index.export.datestamp"; //$NON-NLS-1$
 	private static final String CONTENT = "content"; //$NON-NLS-1$
 	public static final String OPT_SOURCE = "-source"; //$NON-NLS-1$
@@ -107,7 +105,6 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 * Convenience method for creating a cproject
 	 * @param projectName the name for the new project
 	 * @param location the absolute path of some external content
-	 * @param indexerID the indexer to use
 	 * @param includeFiles a list of include paths to add to the project scanner
 	 * @return a new project
 	 * @throws CoreException
@@ -122,50 +119,41 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 
 		ws.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IWorkspaceRoot root = ws.getRoot();
-
-				IProject project = root.getProject(projectName);
-				if (!project.exists()) {
-					project.create(NPM);
-				} else {
-					project.refreshLocal(IResource.DEPTH_INFINITE, NPM);
-				}
-				if (!project.isOpen()) {
-					project.open(NPM);
-				}
-				if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-					addNatureToProject(project, CProjectNature.C_NATURE_ID, NPM);
-				}
-				if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-					addNatureToProject(project, CCProjectNature.CC_NATURE_ID, NPM);
-				}
-
-				ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
-
+				IWorkspace workspace= ResourcesPlugin.getWorkspace();
+				IProject project= workspace.getRoot().getProject("__prebuilt_index_temp__"+System.currentTimeMillis()); //$NON-NLS-1$
+				IProjectDescription description = workspace.newProjectDescription(project.getName());
+				CCorePlugin.getDefault().createCProject(description, project, NPM, PREBUILT_PROJECT_OWNER);
+				CCorePlugin.getDefault().convertProjectFromCtoCC(project, NPM);
+				ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project, true); 
+				newCfg(pd, project.getName(), "config"); //$NON-NLS-1$
+								
+				CoreModel.getDefault().setProjectDescription(project, pd, true, new NullProgressMonitor());
+				
+				ICProject cproject= CCorePlugin.getDefault().getCoreModel().create(project);
+				
 				// External content appears under a linked folder
 				content= cproject.getProject().getFolder(CONTENT);
 				content.createLink(new Path(location.getAbsolutePath()), IResource.NONE, null);
 
 				// Setup path entries
 				List entries= new ArrayList(Arrays.asList(CoreModel.getRawPathEntries(cproject)));
+
+				// pre-include files
 				for(Iterator j= includeFiles.iterator(); j.hasNext(); ) {
-					entries.add(
-							CoreModel.newIncludeFileEntry(
-									cproject.getProject().getFullPath(),
-									new Path((String) j.next())
-							));
+					String path= (String) j.next(); 
+					entries.add(CoreModel.newIncludeFileEntry(project.getFullPath(), new Path(path)));
 				}
+				
+				// content directory is a source root
 				entries.add(CoreModel.newSourceEntry(content.getProjectRelativePath()));
-				cproject.setRawPathEntries(
-						(IPathEntry[]) entries.toArray(new IPathEntry[includeFiles.size()]),
+				
+				// any additional entries
+				entries.addAll(getAdditionalRawEntries());
+				
+				cproject.setRawPathEntries((IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]),
 						new NullProgressMonitor()
 				);
-				
-				ICProjectDescription pd= CoreModel.getDefault().createProjectDescription(cproject.getProject(), false); // create the description
-				newCfg(pd, project.getName(), "cfg1"); //$NON-NLS-1$
-				CoreModel.getDefault().setProjectDescription(cproject.getProject(), pd, true, new NullProgressMonitor());
-				
-
+			
 				newProject[0]= cproject;
 				
 				IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, Boolean.TRUE.toString());
@@ -175,27 +163,22 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 
 		return newProject[0];
 	}
+	
+	/**
+	 * Get additional raw entries (above those added as part of the ExternalExportProjectProvider functionality)
+	 * @return a list of additional entries to add to the project
+	 */
+	protected List getAdditionalRawEntries() {
+		List entries= new ArrayList();
+		entries.add(CoreModel.newIncludeEntry(content.getProjectRelativePath(), null, content.getLocation(), true));
+		return entries;
+	}
 
 	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
 		CDefaultConfigurationData data= new CDefaultConfigurationData(project+"."+config, project+" "+config+" name", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		data.initEmptyData();
-		String ID= CCorePlugin.PLUGIN_ID + ".defaultConfigDataProvider"; //$NON-NLS-1$
-		return des.createConfiguration(ID, data);		
+		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);		
 	}
-	
-	/*
-	 * This should be a platform/CDT API
-	 */
-	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
-		IProjectDescription description = proj.getDescription();
-		String[] prevNatures = description.getNatureIds();
-		String[] newNatures = new String[prevNatures.length + 1];
-		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length] = natureId;
-		description.setNatureIds(newNatures);
-		proj.setDescription(description, monitor);
-	}
-
 
 	/*
 	 * (non-Javadoc)

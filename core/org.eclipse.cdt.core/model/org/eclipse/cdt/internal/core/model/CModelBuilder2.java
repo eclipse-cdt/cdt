@@ -629,8 +629,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			kind= (isTemplate) ? ICElement.C_TEMPLATE_CLASS_DECLARATION : ICElement.C_CLASS_DECLARATION;
 			type= Keywords.CLASS;
 			break;
+		case IASTElaboratedTypeSpecifier.k_enum:
+			// do we need a C_ENUM_DECLARATION?
+			kind= ICElement.C_CLASS_DECLARATION;
+			type= Keywords.ENUM;
+			break;
 		default:
-			kind= ICElement.C_CLASS;
+			kind= ICElement.C_CLASS_DECLARATION;
 			type= ""; //$NON-NLS-1$
 			break;
 		}

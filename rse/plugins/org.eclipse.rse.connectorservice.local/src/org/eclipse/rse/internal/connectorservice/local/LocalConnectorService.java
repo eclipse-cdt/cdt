@@ -40,8 +40,8 @@ public class LocalConnectorService extends BasicConnectorService
 	
 	
 	
-	/**
-	 * @see org.eclipse.rse.ui.subsystems.AbstractConnectorService#disconnect(IProgressMonitor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SuperAbstractConnectorService#internalDisconnect(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
@@ -51,8 +51,8 @@ public class LocalConnectorService extends BasicConnectorService
  		notifyDisconnection();
 	}
 	
-	/**
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(IProgressMonitor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SuperAbstractConnectorService#internalConnect(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void internalConnect(IProgressMonitor monitor) throws Exception
 	{

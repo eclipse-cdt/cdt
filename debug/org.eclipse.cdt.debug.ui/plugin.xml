@@ -3,6 +3,7 @@
 <plugin>
 
      <extension-point id="CDebuggerPage" name="%CDebuggerPage" schema="schema/CDebuggerPage.exsd"/>
+     <extension-point id="breakpointActionPage" name="%BreakpointActionPage" schema="schema/BreakpointActionPage.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -350,7 +351,8 @@
                id="org.eclipse.cdt.debug.ui.actions.popup.RunToLine">
          </action>
       </viewerContribution>
-      <objectContribution
+     
+ <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICVariable"
             id="org.eclipse.cdt.debug.ui.CVariableActions">
          <menu
@@ -967,12 +969,23 @@
             id="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler">
       </statusHandler>
    </extension>
+ 
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
             class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointPropertyPage"
             id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"
             name="%CommonBreakpointPage.label">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
+            </adapt>
+         </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.cdt.debug.ui.breakpointactions.ActionsPropertyPage"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.actions"
+            name="%BreakpointActionsPage.label">
          <enabledWhen>
             <adapt
                   type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
@@ -1185,7 +1198,9 @@
             adaptableType="org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-      </factory>   </extension>
+      </factory>
+
+   </extension>
    <extension
          point="org.eclipse.ui.themes">
       <fontDefinition
@@ -1276,6 +1291,92 @@
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor"
             id="org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor">
       </editor>
+   </extension>
+<!-- Breakpoint Action UI -->
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%BreakpointActionsPrefPage.label"
+            class="org.eclipse.cdt.debug.ui.breakpointactions.ActionsPreferencePage"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.ActionsPreferencePage"
+            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.debug.ui.breakpointactions.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+ <extension
+         point="org.eclipse.cdt.debug.core.BreakpointActionType">
+      <actionType
+            name="%SoundAction.name"
+            class="org.eclipse.cdt.debug.ui.breakpointactions.SoundAction"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.SoundAction">
+      </actionType>      
+   </extension>
+ <extension
+         point="org.eclipse.cdt.debug.core.BreakpointActionType">
+      <actionType
+            name="%LogAction.name"
+            class="org.eclipse.cdt.debug.ui.breakpointactions.LogAction"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.LogAction">
+      </actionType>      
+   </extension>
+ <extension
+         point="org.eclipse.cdt.debug.core.BreakpointActionType">
+      <actionType
+            name="%ResumeAction.name"
+            class="org.eclipse.cdt.debug.ui.breakpointactions.ResumeAction"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.ResumeAction">
+      </actionType>      
+   </extension>
+<extension
+         point="org.eclipse.cdt.debug.core.BreakpointActionType">
+      <actionType
+            name="%ExternalToolAction.name"
+            class="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction">
+      </actionType>      
+   </extension>
+
+ <extension
+         point="org.eclipse.cdt.debug.ui.breakpointActionPage">
+      <actionPage
+             class="org.eclipse.cdt.debug.ui.breakpointactions.SoundActionPage"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.SoundActionPage"
+            actionType="org.eclipse.cdt.debug.ui.breakpointactions.SoundAction">
+      </actionPage>      
+   </extension>
+
+ <extension
+         point="org.eclipse.cdt.debug.ui.breakpointActionPage">
+      <actionPage
+            class="org.eclipse.cdt.debug.ui.breakpointactions.LogActionPage"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.LogActionPage"
+            actionType="org.eclipse.cdt.debug.ui.breakpointactions.LogAction">
+      </actionPage>      
+   </extension>
+
+<extension
+         point="org.eclipse.cdt.debug.ui.breakpointActionPage">
+      <actionPage
+            class="org.eclipse.cdt.debug.ui.breakpointactions.ResumeActionPage"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.ResumeActionPage"
+            actionType="org.eclipse.cdt.debug.ui.breakpointactions.ResumeAction">
+      </actionPage>      
+   </extension>
+
+<extension
+         point="org.eclipse.cdt.debug.ui.breakpointActionPage">
+      <actionPage
+            class="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolActionPage"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolActionPage"
+            actionType="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction">
+      </actionPage>      
    </extension>
    <extension
          point="org.eclipse.ui.startup">

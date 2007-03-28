@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Stefan Bylund (Enea, steby@enea.se) - patch for bug 155464
+ *     Ken Ryall (Nokia) - Support for breakpoint actions (bug 118308)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
@@ -29,7 +32,6 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
@@ -678,8 +680,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		if ( reason instanceof ICDIEndSteppingRange ) {
 			handleEndSteppingRange( (ICDIEndSteppingRange)reason );
 		}
-		else if ( reason instanceof ICDIBreakpoint ) {
-			handleBreakpointHit( (ICDIBreakpoint)reason );
+		else if ( reason instanceof ICDIBreakpointHit ) {
+			handleBreakpointHit( (ICDIBreakpointHit)reason );
 		}
 		else if ( reason instanceof ICDISignalReceived ) {
 			handleSuspendedBySignal( (ICDISignalReceived)reason );
@@ -726,7 +728,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		fireSuspendEvent( DebugEvent.STEP_END );
 	}
 
-	private void handleBreakpointHit( ICDIBreakpoint breakpoint ) {
+	private void handleBreakpointHit( ICDIBreakpointHit breakpointHit ) {
+		IBreakpoint platformBreakpoint = ((CDebugTarget)getDebugTarget()).getBreakpointManager().getBreakpoint(breakpointHit.getBreakpoint());
+		if (platformBreakpoint != null)
+			CDebugCorePlugin.getDefault().getBreakpointActionManager().executeActions(platformBreakpoint, this);
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}
 
@@ -925,8 +930,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			if ( reason instanceof ICDIEndSteppingRange ) {
 				handleEndSteppingRange( (ICDIEndSteppingRange)reason );
 			}
-			else if ( reason instanceof ICDIBreakpoint ) {
-				handleBreakpointHit( (ICDIBreakpoint)reason );
+			else if ( reason instanceof ICDIBreakpointHit ) {
+				handleBreakpointHit( (ICDIBreakpointHit)reason );
 			}
 			else if ( reason instanceof ICDISignalReceived ) {
 				handleSuspendedBySignal( (ICDISignalReceived)reason );

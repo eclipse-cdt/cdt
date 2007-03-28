@@ -7,6 +7,7 @@ Bundle-Activator: org.eclipse.cdt.debug.core.CDebugCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.debug.core,
+ org.eclipse.cdt.debug.core.breakpointactions,
  org.eclipse.cdt.debug.core.cdi,
  org.eclipse.cdt.debug.core.cdi.event,
  org.eclipse.cdt.debug.core.cdi.model,

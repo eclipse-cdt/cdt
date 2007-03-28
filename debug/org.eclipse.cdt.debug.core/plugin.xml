@@ -3,6 +3,7 @@
 <plugin>
 
      <extension-point id="CDebugger" name="%CDebugger.name" schema="schema/CDebugger.exsd"/>
+     <extension-point id="BreakpointActionType" name="%BreakpointAction" schema="schema/BreakpointAction.exsd"/>
 
    <extension
          id="cBreakpointMarker"
@@ -179,5 +180,20 @@
             id="org.eclipse.cdt.debug.core.containerType.absolutePath"
             name="%containerName.absolutePath"/>
    </extension>
+ 
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionAdapterFactory"
+            adaptableType="org.eclipse.cdt.debug.internal.core.model.CThread">
+         <adapter
+               type="org.eclipse.cdt.debug.core.breakpointactions.ILogActionEnabler">
+         </adapter>
+         <adapter
+               type="org.eclipse.cdt.debug.core.breakpointactions.IResumeActionEnabler">
+         </adapter>
+       </factory>
 
+   </extension>
+ 
 </plugin>

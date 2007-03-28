@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Ken Ryall (Nokia) - Support for breakpoint actions (bug 118308)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -16,6 +17,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
@@ -68,6 +71,13 @@ public class CDebugCorePlugin extends Plugin {
 	 * Breakpoint listener list.
 	 */
 	private ListenerList fBreakpointListeners;
+	
+	/**
+	 * Breakpoint action manager.
+	 */
+	private BreakpointActionManager breakpointActionManager;
+	
+	public static final String BREAKPOINT_ACTION_SIMPLE_ID = "BreakpointActionType"; //$NON-NLS-1$
 	
 	/**
 	 * Dummy source lookup director needed to manage common source containers.
@@ -312,6 +322,8 @@ public class CDebugCorePlugin extends Plugin {
 	 * @return the list of breakpoint listeners registered with this plugin
 	 */
 	public Object[] getCBreakpointListeners() {
+		if (fBreakpointListeners == null)
+			return new Object[0];
 		return fBreakpointListeners.getListeners();
 	}
 
@@ -393,4 +405,11 @@ public class CDebugCorePlugin extends Plugin {
 			fDebugConfigurations = null;
 		}
 	}
+	
+	public BreakpointActionManager getBreakpointActionManager() {
+		if (breakpointActionManager == null)
+			breakpointActionManager = new BreakpointActionManager();
+		return breakpointActionManager;
+	}
+
 }

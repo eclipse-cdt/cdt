@@ -2127,7 +2127,7 @@ abstract class BaseScanner implements IScanner {
         int textend = textstart - 1;
         int varArgDefinitionInd = -1;
 
-        boolean encounteredMultilineComment = false;
+        boolean encounteredComment = false;
         boolean usesVarArgInDefinition = false;
         while (bufferPos[bufferStackPos] + 1 < limit
                 && buffer[bufferPos[bufferStackPos] + 1] != '\n') {
@@ -2146,7 +2146,7 @@ abstract class BaseScanner implements IScanner {
             if (arglist != null && !skipOverNonWhiteSpace(true)) {
                 ++bufferPos[bufferStackPos]; //advances us to the #
                 if (skipOverWhiteSpace())
-                    encounteredMultilineComment = true;
+                    encounteredComment = true;
 
                 boolean isArg = false;
                 if (bufferPos[bufferStackPos] + 1 < limit) {
@@ -2195,7 +2195,7 @@ abstract class BaseScanner implements IScanner {
             }
             textend = bufferPos[bufferStackPos];
             if (skipOverWhiteSpace())
-                encounteredMultilineComment = true;
+                encounteredComment = true;
         }
 
         int textlen = textend - textstart + 1;
@@ -2208,8 +2208,8 @@ abstract class BaseScanner implements IScanner {
 //            System.out.println(countIt);
         }
 
-        if (encounteredMultilineComment)
-            text = removeMultilineCommentFromBuffer(text);
+        if (encounteredComment)
+            text = removeCommentFromBuffer(text);
         text = removedEscapedNewline(text, 0, text.length);
 
         IMacro result = null;
@@ -2333,16 +2333,22 @@ abstract class BaseScanner implements IScanner {
      * @param text
      * @return
      */
-    protected char[] removeMultilineCommentFromBuffer(char[] text) {
+    protected char[] removeCommentFromBuffer(char[] text) {
         char[] result = new char[text.length];
         Arrays.fill(result, ' ');
         int resultCount = 0;
+        // either a single-line or multi-line comment was found
         for (int i = 0; i < text.length; ++i) {
-            if (text[i] == '/' && (i + 1 < text.length) && text[i + 1] == '*') {
-                i += 2;
-                while (i < text.length
-                        && !(text[i] == '*' && i + 1 < text.length && text[i + 1] == '/'))
-                    ++i;
+            if (text[i] == '/' && (i + 1 < text.length) && (text[i + 1] == '*' || text[i + 1] == '/')) {
+            	if (text[i + 1] == '/') {
+            		// done
+            		break;
+            	} else {
+	                i += 2;
+	                while (i < text.length
+	                        && !(text[i] == '*' && i + 1 < text.length && text[i + 1] == '/'))
+	                    ++i;
+            	}
                 ++i;
             } else
                 result[resultCount++] = text[i];
@@ -2619,7 +2625,7 @@ abstract class BaseScanner implements IScanner {
         //		if( pos > 0 && pos < limit && buffer[pos] == '\n')
         //			return false;
 
-        boolean encounteredMultiLineComment = false;
+        boolean encounteredComment = false;
         while (++bufferPos[bufferStackPos] < limit) {
             pos = bufferPos[bufferStackPos];
             switch (buffer[pos]) {
@@ -2632,7 +2638,8 @@ abstract class BaseScanner implements IScanner {
                     if (buffer[pos + 1] == '/') {
                         // C++ comment, skip rest of line
                         skipToNewLine(true);
-                        return false;
+                        encounteredComment = true;
+                        return encounteredComment;
                     } else if (buffer[pos + 1] == '*') {
                         // C comment, find closing */
                         for (bufferPos[bufferStackPos] += 2; bufferPos[bufferStackPos] < limit; ++bufferPos[bufferStackPos]) {
@@ -2640,7 +2647,7 @@ abstract class BaseScanner implements IScanner {
                             if (buffer[pos] == '*' && pos + 1 < limit
                                     && buffer[pos + 1] == '/') {
                                 ++bufferPos[bufferStackPos];
-                                encounteredMultiLineComment = true;
+                                encounteredComment = true;
                                 break;
                             }
                         }
@@ -2665,10 +2672,10 @@ abstract class BaseScanner implements IScanner {
 
             // fell out of switch without continuing, we're done
             --bufferPos[bufferStackPos];
-            return encounteredMultiLineComment;
+            return encounteredComment;
         }
         --bufferPos[bufferStackPos];
-        return encounteredMultiLineComment;
+        return encounteredComment;
     }
 
     protected int indexOfNextNonWhiteSpace(char[] buffer, int start, int limit) {

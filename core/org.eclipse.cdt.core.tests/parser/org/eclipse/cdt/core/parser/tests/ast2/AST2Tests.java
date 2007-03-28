@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
@@ -3526,4 +3527,56 @@ public class AST2Tests extends AST2BaseTest {
     	StringBuffer sb= getContents(1)[0];
     	parse(sb.toString(), ParserLanguage.C, false, false);
     }
+    
+    /**
+     * Bug in not removing single-line comments from macros.
+     * @throws Exception
+     */
+	public void testMacroCommentsBug_177154() throws Exception {
+		// simple case
+		String simple = 
+			"#define LIT 1  // my value\r\n" + 
+			"int func(int x) {\r\n" + 
+			"}\r\n" + 
+			"int main() {\r\n" + 
+			"  return func(LIT);   // fails to parse\r\n" + 
+			"}\r\n"; 
+		
+    	IASTTranslationUnit tu = parse( simple, ParserLanguage.CPP, true, true );
+
+    	// actual reduced test case, plus extra cases
+    	String text =
+    		"#define KBOOT		1 //0x00000002\r\n" + 
+    		"#define KBOOT2	 /* value */	1  /* another */ //0x00000002\r\n" + 
+    		"#define KBOOT3	 /* value \r\n" +
+    		" multi line\r\n"+
+    		" comment */	1  \\\r\n"+
+    		"/* another */ + \\\r\n"+
+    		"2 //0x00000002\r\n" + 
+    		"#define DEBUGNUM(x) (KDebugNum(x))\r\n" + 
+    		"bool KDebugNum(int aBitNum);\r\n" + 
+    		"#define __KTRACE_OPT(a,p) {if((DEBUGNUM(a)))p;}\r\n" +
+    		"void fail();\r\n"+
+    		"void test() {\r\n"+
+    		"__KTRACE_OPT(KBOOT,fail());\r\n" + 
+    		"__KTRACE_OPT(KBOOT2,fail());\r\n" + 
+    		"}\r\n"
+    		;
+    	
+    	// essential test: this code should be parseable
+    	tu = parse( text, ParserLanguage.CPP, true, true );
+
+    	// verify macros
+    	IASTPreprocessorMacroDefinition[] macroDefinitions = tu.getMacroDefinitions();
+    	assertEquals(5, macroDefinitions.length);
+    	assertEquals("1", macroDefinitions[0].getExpansion());
+    	assertEquals("1", macroDefinitions[1].getExpansion());
+    	// regression test for #64268 and #71733 which also handle comments
+    	assertEquals("1   + 2", macroDefinitions[2].getExpansion());
+    	assertEquals("(KDebugNum(x))", macroDefinitions[3].getExpansion());
+    	assertEquals("{if((DEBUGNUM(a)))p;}", macroDefinitions[4].getExpansion());
+    	
+    	// TODO: exhaustive macro testing
+	}
+
 }

@@ -63,12 +63,12 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.subsystems.AbstractConnectorService;
+import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 
 /** 
  * Create SSH connections.
  */
-public class SshConnectorService extends AbstractConnectorService implements ISshSessionProvider
+public class SshConnectorService extends StandardConnectorService implements ISshSessionProvider
 {
 	private static final int SSH_DEFAULT_PORT = 22;
 	private static final int CONNECT_DEFAULT_TIMEOUT = 60; //seconds

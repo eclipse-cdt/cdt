@@ -48,9 +48,9 @@ import org.eclipse.rse.core.subsystems.AuthenticatingConnectorService;
  * 
  * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
  */
-public abstract class AbstractConnectorService extends AuthenticatingConnectorService {
+public abstract class StandardConnectorService extends AuthenticatingConnectorService {
 	
-	public AbstractConnectorService(String name, String description, IHost host, int port) {
+	public StandardConnectorService(String name, String description, IHost host, int port) {
 		super(name, description, host, port);
 		setCredentialsProvider(new StandardCredentialsProvider(this));
 	}

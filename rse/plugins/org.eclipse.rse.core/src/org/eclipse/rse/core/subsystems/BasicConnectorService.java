@@ -47,7 +47,7 @@ import org.eclipse.rse.core.model.IHost;
  * 
  * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
  */
-public abstract class BasicConnectorService extends SuperAbstractConnectorService {
+public abstract class BasicConnectorService extends AbstractConnectorService {
 	
 	public BasicConnectorService(String name, String description, IHost host, int port) {
 		super(name, description, host, port);

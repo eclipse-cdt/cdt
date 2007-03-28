@@ -67,7 +67,7 @@ import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.actions.DisplayHidableSystemMessageAction;
 import org.eclipse.rse.ui.actions.DisplaySystemMessageAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.subsystems.AbstractConnectorService;
+import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
@@ -80,7 +80,7 @@ import org.osgi.framework.Version;
  * The universal subsystems are based on datastore technology so we use that
  * to do the connection.
  */
-public class DStoreConnectorService extends AbstractConnectorService implements IDataStoreProvider
+public class DStoreConnectorService extends StandardConnectorService implements IDataStoreProvider
 {
 	private ClientConnection clientConnection = null;
 	private ConnectionStatusListener _connectionStatusListener = null;

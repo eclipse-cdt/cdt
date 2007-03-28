@@ -42,7 +42,7 @@ import org.eclipse.ui.PlatformUI;
  * It uses a {@link PasswordPersistenceManager} to store the passwords in the
  * keychain keyed by {@link IHost} and possibly by {@link ISubSystemConfiguration}.
  * <p>
- * This is suitable for use by subclasses of {@link AbstractConnectorService}
+ * This is suitable for use by subclasses of {@link StandardConnectorService}
  * that wish to provide prompting and persistence for userids and passwords when
  * connecting.
  * <p>

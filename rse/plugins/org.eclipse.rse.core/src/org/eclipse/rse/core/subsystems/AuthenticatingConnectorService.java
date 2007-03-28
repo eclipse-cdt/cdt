@@ -10,7 +10,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 
-public abstract class AuthenticatingConnectorService extends SuperAbstractConnectorService {
+public abstract class AuthenticatingConnectorService extends AbstractConnectorService {
 	
 	protected ICredentialsProvider credentialsProvider = null;
 

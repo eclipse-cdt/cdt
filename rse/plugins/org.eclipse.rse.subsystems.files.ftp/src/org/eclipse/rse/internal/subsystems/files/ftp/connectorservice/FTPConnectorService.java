@@ -29,14 +29,14 @@ import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.internal.services.files.ftp.FTPService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
-import org.eclipse.rse.ui.subsystems.AbstractConnectorService;
+import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.MessageConsole;
 
 
 
-public class FTPConnectorService extends AbstractConnectorService 
+public class FTPConnectorService extends StandardConnectorService 
 {
 	protected FTPService _ftpService;
 	private IPropertySet _propertySet;

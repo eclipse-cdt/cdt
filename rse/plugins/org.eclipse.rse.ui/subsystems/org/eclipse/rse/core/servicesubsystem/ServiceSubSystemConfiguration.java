@@ -27,7 +27,7 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.SuperAbstractConnectorService;
+import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
@@ -54,7 +54,7 @@ import org.eclipse.swt.widgets.Shell;
  * This class is typically used together with:</p>
  * <ul>
  *   <li>{@link org.eclipse.rse.core.servicesubsystem.ServiceSubSystem} for the subsystem
- *   <li>{@link SuperAbstractConnectorService} for the connector service
+ *   <li>{@link AbstractConnectorService} for the connector service
  *   <li>{@link AbstractConnectorServiceManager} for the connector service manager
  *   <li>{@link org.eclipse.rse.core.subsystems.AbstractResource} for the individual remote resources
  * </ul>
@@ -63,7 +63,7 @@ import org.eclipse.swt.widgets.Shell;
  * this class, and ignore the hundreds in {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration}
  * 
  * @see org.eclipse.rse.core.servicesubsystem.ServiceSubSystem
- * @see SuperAbstractConnectorService
+ * @see AbstractConnectorService
  * @see AbstractConnectorServiceManager
  */
 

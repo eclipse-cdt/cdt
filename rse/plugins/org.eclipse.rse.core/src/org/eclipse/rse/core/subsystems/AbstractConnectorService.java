@@ -54,7 +54,7 @@ import org.eclipse.rse.core.model.RSEModelObject;
  * </ul>
  * 
  */ 
-public abstract class SuperAbstractConnectorService extends RSEModelObject implements IConnectorService {
+public abstract class AbstractConnectorService extends RSEModelObject implements IConnectorService {
 
 	private Vector commListeners = new Vector(5);
 	private ISubSystem _primarySubSystem = null;
@@ -74,7 +74,7 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 	 */
 	protected Object connectResult;
 
-	public SuperAbstractConnectorService(String name, String description, IHost host, int port) {
+	public AbstractConnectorService(String name, String description, IHost host, int port) {
 		_name = name;
 		_description = description;
 		_host = host;

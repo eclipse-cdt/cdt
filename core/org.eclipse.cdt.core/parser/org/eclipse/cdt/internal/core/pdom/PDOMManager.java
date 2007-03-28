@@ -80,6 +80,7 @@ import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 
@@ -91,6 +92,8 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
  * @author Doug Schaefer
  */
 public class PDOMManager implements IWritableIndexManager, IListener {
+
+	private static final String SETTINGS_FOLDER_NAME = ".settings"; //$NON-NLS-1$
 
 	private static final class PerInstanceSchedulingRule implements ISchedulingRule {
 		public boolean contains(ISchedulingRule rule) {
@@ -534,7 +537,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 			private void syncronizeProjectSettings(IProject project, IProgressMonitor monitor) {
 				try {
-					IFolder settings= project.getFolder(".settings");  //$NON-NLS-1$
+					IFolder settings= project.getFolder(SETTINGS_FOLDER_NAME);  
 					settings.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
@@ -546,7 +549,17 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				return family == PDOMManager.this;
 			}
 		};
-		addProject.setRule(project); 
+		// in case a team provider does not implement a rule-factory, the
+		// platform makes a pessimistic choice and locks the workspace. We
+		// have to check for that.
+		ISchedulingRule rule= project.getWorkspace().getRuleFactory().refreshRule(project.getFolder(SETTINGS_FOLDER_NAME));
+		if (project.contains(rule)) {
+			rule= project;
+		}
+		else if (!rule.contains(project)) {
+			rule= new MultiRule(new ISchedulingRule[] {rule, project});
+		}	
+		addProject.setRule(rule); 
 		addProject.setSystem(true);
 		addProject.schedule();
 	}
@@ -597,7 +610,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     	WritablePDOM pdom= null;
     	synchronized (fProjectToPDOM) {
 			IProject rproject= project.getProject();
-    		pdom = (WritablePDOM) fProjectToPDOM.remove(rproject);  		
+    		pdom = (WritablePDOM) fProjectToPDOM.remove(rproject);
+    		if (pdom != null) {
+    			fFileToProject.remove(pdom.getDB().getLocation());
+    		}
     	}
 
     	if (pdom != null) {

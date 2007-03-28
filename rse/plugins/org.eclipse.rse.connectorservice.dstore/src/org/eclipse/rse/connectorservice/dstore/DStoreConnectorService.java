@@ -193,8 +193,10 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		}
 		else
 		{
-			SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  sysInfo node not found", null); //$NON-NLS-1$
-			SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  miner data = " + envMinerData, null); //$NON-NLS-1$
+			// at connect time, the info node is not guaranteed to be present, so this gets logged a lot
+			// it doesn't cause any functional problems, so I'm commenting this out
+			//SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  sysInfo node not found", null); //$NON-NLS-1$
+			//SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  miner data = " + envMinerData, null); //$NON-NLS-1$
 			propertyValue = ""; //$NON-NLS-1$
 		}
 

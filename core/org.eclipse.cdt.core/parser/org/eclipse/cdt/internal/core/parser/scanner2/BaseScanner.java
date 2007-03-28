@@ -3165,6 +3165,11 @@ abstract class BaseScanner implements IScanner {
             } else
                 argend = skipOverMacroArg();
 
+            // correct argend when reaching limit, (bug 179383)
+            if (argend==limit) {
+            	argend--;
+            }
+            
             char[] arg = EMPTY_CHAR_ARRAY;
             int arglen = argend - argstart + 1;
             if (arglen > 0) {

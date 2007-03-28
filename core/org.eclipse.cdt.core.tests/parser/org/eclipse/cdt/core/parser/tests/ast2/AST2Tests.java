@@ -143,7 +143,7 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append( "int (*zzz2) (char); \n" ); //$NON-NLS-1$
         buffer.append( "int ((*zzz3)) (char); \n" ); //$NON-NLS-1$
         buffer.append( "int (*(zzz4)) (char); \n" ); //$NON-NLS-1$
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C ); 
         CNameCollector col = new CNameCollector();
         tu.accept(col);
         assertNoProblemBindings( col );
@@ -151,7 +151,7 @@ public class AST2Tests extends AST2BaseTest {
     
     protected IASTTranslationUnit parseAndCheckBindings( String code ) throws Exception
     {
-        IASTTranslationUnit tu = parse( code, ParserLanguage.C ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( code, ParserLanguage.C ); 
         CNameCollector col = new CNameCollector();
         tu.accept(col);
         assertNoProblemBindings( col );
@@ -1983,7 +1983,7 @@ public class AST2Tests extends AST2BaseTest {
     }
 
     public void testMoregetDeclarationsInAST1() throws Exception {
-        StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+        StringBuffer buffer = new StringBuffer(); 
         buffer.append("struct S {\n"); //$NON-NLS-1$
         buffer.append(" int a;\n"); //$NON-NLS-1$
         buffer.append(" int b;\n"); //$NON-NLS-1$
@@ -2025,7 +2025,7 @@ public class AST2Tests extends AST2BaseTest {
     }
 
     public void testMoregetDeclarationsInAST2() throws Exception {
-        StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+        StringBuffer buffer = new StringBuffer(); 
         buffer.append(" struct S { \n"); //$NON-NLS-1$
         buffer.append(" int a; \n"); //$NON-NLS-1$
         buffer.append(" int b; \n"); //$NON-NLS-1$
@@ -2061,7 +2061,7 @@ public class AST2Tests extends AST2BaseTest {
     }
 
     public void testMoregetDeclarationsInAST3() throws Exception {
-        StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+        StringBuffer buffer = new StringBuffer(); 
         buffer.append(" typedef struct S { \n"); //$NON-NLS-1$
         buffer.append(" int a; \n"); //$NON-NLS-1$
         buffer.append(" int b; \n"); //$NON-NLS-1$
@@ -2154,7 +2154,7 @@ public class AST2Tests extends AST2BaseTest {
         StringBuffer buffer = new StringBuffer("int f() {}\n"); //$NON-NLS-1$
         buffer.append("int *f2() {}\n"); //$NON-NLS-1$
         buffer.append("int (* f3())() {}\n"); //$NON-NLS-1$
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C); 
 
         IASTFunctionDefinition def1 = (IASTFunctionDefinition) tu
                 .getDeclarations()[0];
@@ -2525,7 +2525,7 @@ public class AST2Tests extends AST2BaseTest {
     }
 
     public void testBug80978() throws Exception {
-        StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+        StringBuffer buffer = new StringBuffer(); 
         buffer.append("int y ( int [ const *] );"); //$NON-NLS-1$
         ICASTArrayModifier mod = (ICASTArrayModifier) ((IASTArrayDeclarator) ((IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) parse(
                 buffer.toString(), ParserLanguage.C).getDeclarations()[0])
@@ -3516,5 +3516,14 @@ public class AST2Tests extends AST2BaseTest {
         params= ((IASTStandardFunctionDeclarator) func.getDeclarator()).getParameters();
         binding= params[0].getDeclarator().getName().resolveBinding();
         assertEquals(7, tu.getReferences(binding).length);
+    }
+    
+	//  #define MAC(x) x
+	//  void func() {
+	//     MAC(");
+	//  }
+    public void testBug179383() throws ParserException, IOException {
+    	StringBuffer sb= getContents(1)[0];
+    	parse(sb.toString(), ParserLanguage.C, false, false);
     }
 }

@@ -286,6 +286,7 @@
       	id="org.eclipse.cdt.build.core.settings.holder.libs"
 	  	supportsManagedBuild="false"
       	name="holder for library settings"
+      	errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser"
       	isSystem="true">
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.libpaths"
@@ -343,6 +344,7 @@
       	id="org.eclipse.cdt.build.core.settings.holder"
 	  	supportsManagedBuild="false"
       	name="holder for includes and symbols settings"
+      	errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser"
       	isSystem="true">
       	<inputType
              id="org.eclipse.cdt.build.core.settings.holder.inType">

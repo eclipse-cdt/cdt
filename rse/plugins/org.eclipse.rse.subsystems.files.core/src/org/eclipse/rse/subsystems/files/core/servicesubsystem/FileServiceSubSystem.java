@@ -22,6 +22,7 @@ package org.eclipse.rse.subsystems.files.core.servicesubsystem;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -914,5 +915,21 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		
 		return encoding;
+	}
+
+	/**
+	 * Defers to the file service.
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#getInputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
+		return getFileService().getInputStream(monitor, remoteParent, remoteFile, isBinary);
+	}
+
+	/**
+	 * Defers to the file service.
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#getOutputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
+		return getFileService().getOutputStream(monitor, remoteParent, remoteFile, isBinary);
 	}
 }

@@ -18,6 +18,7 @@
 package org.eclipse.rse.subsystems.files.core.subsystems;
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.util.List;
 
@@ -48,7 +49,7 @@ import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
  * @lastgen interface RemoteFileSubSystem extends SubSystem {}
  */
 
-public interface IRemoteFileSubSystem extends ISubSystem{
+public interface IRemoteFileSubSystem extends ISubSystem {
 
     // ----------------------
     // HELPER METHODS...
@@ -400,8 +401,7 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 
 	/**
 	 * Copy a set of remote files or folders to a new target parent folder. Precondition: Sources and target must all be on the same system!
-	 * 
-	 * @param sourceFolderOrFiles The file or folder to copy
+	 * @param sourceFolderOrFile The file or folder to copy
 	 * @param targetFolder The folder to copy to. 
 	 * @return false true iff all copies succeeded
 	 */
@@ -724,4 +724,28 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	 *          no address can be resolved.
 	 */
 	public InetAddress getLocalAddress();
+	
+	/**
+	 * Gets the input stream to access the contents a remote file. Clients should close the input stream when done.
+	 * @param remoteParent the absolute path of the parent.
+	 * @param remoteFile the name of the remote file.
+	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
+	 * @return the input stream to access the contents of the remote file.
+	 * @param monitor the progress monitor.
+	 * @throws SystemMessageException if an error occurs. 
+	 * @since 2.0
+	 */
+	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
+	
+	/**
+	 * Gets the output stream to write to a remote file. Clients should close the output stream when done.
+	 * @param remoteParent the absolute path of the parent.
+	 * @param remoteFile the name of the remote file.
+	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
+	 * @return the input stream to access the contents of the remote file.
+	 * @param monitor the progress monitor.
+	 * @throws SystemMessageException if an error occurs.
+	 * @since 2.0
+	 */
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
 }

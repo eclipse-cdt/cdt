@@ -23,7 +23,9 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -66,6 +68,7 @@ import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
+import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCore;
@@ -76,7 +79,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 /**
  * Specialization for file subsystem factories.
  * It is subclassed via use of a Rose model and MOF/EMF, or better yet 
- *  by subclassing {@link org.eclipse.rse.core.servicesubsystem.impl.FileServiceSubSystem}.
+ *  by subclassing {@link FileServiceSubSystem}.
  * <p>
  * For your convenience, there is built-in name filtering support. To use it,
  * call:
@@ -431,7 +434,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 
 	/**
 	 * Resolves filter strings.
-     * The default implementation of this simply calls {@link #internalResolveFilterString(IProgressMontior, String)}.
+     * The default implementation of this simply calls {@link #internalResolveFilterString(IProgressMonitor, String)}.
      * If the result for each filter string is a SystemMessage (e.g. an error), then the messages are returned.
      * If the result for any filter string is not a message (i.e. an array of children), then the children are returned,
      * and the messages are not. This avoids mixing chuldren as a result of successful resolution of a filter string with
@@ -1143,7 +1146,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * when there is separate filters for both folder names and filter names.
 	 * @param includeFilesOrFolders A constant from {@link org.eclipse.rse.core.subsystems.IFileConstants}
 	 * @param folderNameFilter The pattern to filter the folder names by. Can be null to include all folders
-	 * @param nameFilter The pattern to filter the file names by. Can be null to include all files
+	 * @param fileNameFilter The pattern to filter the file names by. Can be null to include all files
 	 */
 	protected void setListValues(int includeFilesOrFolders, String folderNameFilter, String fileNameFilter)
 	{
@@ -1767,5 +1770,21 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	public String getRemoteEncoding() {
 		return System.getProperty("file.encoding"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * The default implementation returns <code>null</code>. Subclasses should override if necessary.
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getInputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
+		return null;
+	}
+	
+	/**
+	 * The default implementation returns <code>null</code>. Subclasses should override if necessary.
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getOutputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
+		return null;
 	}
 }

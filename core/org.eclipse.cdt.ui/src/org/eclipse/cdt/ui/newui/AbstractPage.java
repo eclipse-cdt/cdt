@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -120,6 +121,11 @@ implements
 
 	private static final Object NOT_NULL = new Object();
 	public static final String EMPTY_STR = "";  //$NON-NLS-1$
+	
+	private static final int SAVE_MODE_OK = 1;
+	private static final int SAVE_MODE_APPLY = 2;
+	private static final int SAVE_MODE_APPLYOK = 3;
+	
 	/*
 	 * Dialog widgets
 	 */
@@ -391,34 +397,62 @@ implements
 	public void performDefaults() {
 		if (! noContentOnPage && displayedConfig) forEach(ICPropertyTab.DEFAULTS);
 	}
-    public void performApply() { performSave(false); }
+    public void performApply() { performSave(SAVE_MODE_APPLY); }
+    
+    /**
+     * There are 2 ways to perform OK for CDT property pages.
+     * 1st (default): 
+     *   All pages use the same editable copy of ICProjectDescription.
+     *   When OK occurs, this object is simply set.
+     *   
+     * 2nd:  
+     *   When OK occurs, each page must copy its data to new instance
+     *   of ICProjectDescription, like it occurs during Apply event.
+     *   It allows to avoid collisions with other property pages, 
+     *   which do not share ICProjectDescription instance.
+     *   But some changes may be saved wrong if they are affected
+     *   by data from another property pages (Discovery options etc).
+
+     *   To enable 2nd mode, just create the following file:
+     *   <workspace>/.metadata/.plugins/org.eclipse.cdt.ui/apply_mode
+     */
+    
     public boolean performOk() {
-    	return performSave(true); 
+    	File f = CUIPlugin.getDefault().getStateLocation().append("apply_mode").toFile(); //$NON-NLS-1$
+    	if (f.exists()) 
+        	return performSave(SAVE_MODE_APPLYOK); 
+        else 
+        	return performSave(SAVE_MODE_OK); 
+        	
     }
     /**
      * The same code used to perform OK and Apply 
-     * @param forOk - true means OK, false - Apply
      */
-    private boolean performSave(boolean forOk)	{
-    	final boolean finalOk = forOk;
+    private boolean performSave(int mode)	{
+    	final int finalMode = mode;
 		if (noContentOnPage || !displayedConfig) return true;
-		if (forOk && saveDone) return true; // do not duplicate 
+		if ((mode == SAVE_MODE_OK || mode == SAVE_MODE_APPLYOK) && saveDone) return true; // do not duplicate
 		
-		// perform in separate thread
-		final ICProjectDescription local_prjd = CoreModel.getDefault().getProjectDescription(prjd.getProject());
-		ICConfigurationDescription c = local_prjd.getConfigurationById(resd.getConfiguration().getId());
-		final ICResourceDescription local_cfgd = getResDesc(c);
+		final boolean needs = (mode != SAVE_MODE_OK);
+		final ICProjectDescription local_prjd = needs ? CoreModel.getDefault().getProjectDescription(prjd.getProject()) : null;
+		ICConfigurationDescription c = needs ? local_prjd.getConfigurationById(resd.getConfiguration().getId()) : null;
+		final ICResourceDescription local_cfgd = needs ? getResDesc(c) : null;
+
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			
+			private void sendOK() {
+				for (int j=0; j<pages.size(); j++) {
+					AbstractPage ap = (AbstractPage)pages.get(j);
+					if (ap.displayedConfig) ap.forEach(ICPropertyTab.OK, null);
+				}
+			}
+			
 			public void run(IProgressMonitor monitor) {
 				// ask all tabs to store changes in cfg
-				if (finalOk) { // OK
+				switch (finalMode) {
+				case SAVE_MODE_APPLYOK:
 					saveDone = true;
-					for (int j=0; j<pages.size(); j++) {
-						AbstractPage ap = (AbstractPage)pages.get(j);
-						if (ap.displayedConfig) {
-							ap.forEach(ICPropertyTab.OK, null);
-						}
-					}
+					sendOK();
 					ICConfigurationDescription[] olds = prjd.getConfigurations();
 					for (int i=0; i<olds.length; i++) {
 						resd = getResDesc(olds[i]);
@@ -431,10 +465,17 @@ implements
 							}
 						}
 					}
-				} else // Apply
+					break;
+				case SAVE_MODE_APPLY:
 					forEach(ICPropertyTab.APPLY, local_cfgd);
+					break;
+				case SAVE_MODE_OK:
+					saveDone = true;
+					sendOK();
+					break;
+				} // end switch
 				try {
-					CoreModel.getDefault().setProjectDescription(getProject(), local_prjd);
+					CoreModel.getDefault().setProjectDescription(getProject(), needs ? local_prjd : prjd);
 				} catch (CoreException e) {
 					System.out.println(UIMessages.getString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
 				}

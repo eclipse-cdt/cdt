@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,11 @@ import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2Set;
+import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
@@ -78,6 +83,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     private Group scGroup;
     
     private ICfgScannerConfigBuilderInfo2Set cbi;
+    private Map baseInfoMap;
     private IScannerConfigBuilderInfo2 buildInfo;
     private CfgInfoContext iContext;
     private List pagesList = null;
@@ -185,6 +191,13 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  		configPath = rcfg.getPath();
  		IConfiguration cfg = getCfg(rcfg.getConfiguration());
  		cbi = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
+ 		if(baseInfoMap == null){
+			try {
+				IScannerConfigBuilderInfo2Set baseCbi = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
+				baseInfoMap = baseCbi.getInfoMap();
+			} catch (CoreException e) {
+			}
+ 		}
  		updateData();
  	}
  	
@@ -243,7 +256,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  	private void handleToolSelected() {
 		if (resTable.getSelectionCount() == 0) return;
 		
-		performOK();
+		performOK(false);
 		
 		TableItem ti = resTable.getSelection()[0];
 		buildInfo = (IScannerConfigBuilderInfo2)ti.getData("info"); //$NON-NLS-1$
@@ -379,9 +392,16 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  				CUIPlugin.getDefault().logErrorMessage(Messages.getString("DiscoveryTab.7")); //$NON-NLS-1$
  			}
  		}
+ 		
+ 		clearChangedDiscoveredInfos(); 		
 	}
 	
 	protected void performOK() {
+		performOK(true);
+	}
+
+	private void performOK(boolean ok) {
+
 		if (buildInfo == null) 
 			return;
         String savedId = buildInfo.getSelectedProfileId();
@@ -394,6 +414,58 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			}
 		}
         buildInfo.setSelectedProfileId(savedId);
+        
+        if(ok)
+        	clearChangedDiscoveredInfos();
+	}
+	
+	private void clearChangedDiscoveredInfos(){
+ 		List changedContexts = checkChanges();
+ 		for(int i = 0; i < changedContexts.size(); i++){
+ 			InfoContext c = (InfoContext)changedContexts.get(i);
+ 			MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(c.getProject(), c);
+ 		}
+	}
+
+	private List checkChanges(){
+		if(cbi == null || baseInfoMap == null)
+			return new ArrayList(0);
+		
+		Map cfgInfoMap = cbi.getInfoMap();
+		HashMap baseCopy = new HashMap(baseInfoMap);
+		List list = new ArrayList();
+		for(Iterator iter = cfgInfoMap.entrySet().iterator(); iter.hasNext();){
+			Map.Entry entry = (Map.Entry)iter.next();
+			CfgInfoContext cic = (CfgInfoContext)entry.getKey();
+			InfoContext c = cic.toInfoContext();
+			if(c == null)
+				continue;
+			
+			IScannerConfigBuilderInfo2 changed = (IScannerConfigBuilderInfo2)entry.getValue();
+			IScannerConfigBuilderInfo2 old = (IScannerConfigBuilderInfo2)baseCopy.remove(c);
+			
+			if(old == null){
+				list.add(c);
+			} else if(!settingsEqual(changed, old)){
+				list.add(c);
+			}
+		}
+		
+		if(baseCopy.size() != 0){
+			list.addAll(baseCopy.keySet());
+		}
+		
+		return list;
+	}
+	
+	private boolean settingsEqual(IScannerConfigBuilderInfo2 info1, IScannerConfigBuilderInfo2 info2){
+		if(!info1.getSelectedProfileId().equals(info2.getSelectedProfileId()))
+			return false;
+		
+		//TODO:
+		//check other settings;
+		
+		return true;
 	}
 
 	public boolean canBeVisible() {

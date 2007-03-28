@@ -3897,17 +3897,22 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	 * @return TreeItem hit if found
 	 */
 	public Item findFirstRemoteItemReference(Object remoteObject, Item parentItem) {
+		
+		Item match = mappedFindFirstRemoteItemReference(remoteObject);
+		if (match != null)
+			return match;
+		
 		//Vector matches = new Vector();
 		ISystemViewElementAdapter adapter = getViewAdapter(remoteObject);
 		if (adapter == null) return null;
-		Item match = null;
+		
 		ISubSystem subsystem = adapter.getSubSystem(remoteObject);
 		String remoteObjectName = adapter.getAbsoluteName(remoteObject);
 		if (parentItem == null)
 			//findAllRemoteItemReferences(remoteObjectName, remoteObject, subsystem, matches);
 			match = internalFindFirstRemoteItemReference(remoteObjectName, remoteObject, subsystem);
 		else {
-			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, remoteObject, subsystem, matches); 
+			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, remoteObject, subsystem, matches); 			
 			System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem);
 		}

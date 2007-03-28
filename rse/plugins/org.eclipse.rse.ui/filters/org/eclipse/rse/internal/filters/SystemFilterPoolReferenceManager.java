@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.filters;
+package org.eclipse.rse.internal.filters;
 
 import java.util.Vector;
 
@@ -35,8 +35,6 @@ import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.filters.SystemFilter;
-import org.eclipse.rse.internal.filters.SystemFilterPoolReference;
 import org.eclipse.rse.internal.references.SystemPersistableReferenceManager;
 
 /**

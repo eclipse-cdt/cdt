@@ -14,12 +14,8 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.model;
+package org.eclipse.rse.core.model;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.IPropertySet;
-import org.eclipse.rse.core.model.ISystemHostPool;
-import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 

@@ -74,7 +74,6 @@ import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
 
-
 public class FTPService extends AbstractFileService implements IFileService, IFTPService
 {
 	private FTPClient _ftpClient;
@@ -90,7 +89,76 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private OutputStream _ftpLoggingOutputStream;
 	private IPropertySet _ftpPropertySet;
 	private Exception _exception;
+	
+	private class FTPBufferedInputStream extends BufferedInputStream {
+		
+		private FTPClient client;
+		
+		/**
+		 * Creates a BufferedInputStream and saves its argument, the input stream, for later use. An internal buffer array is created.
+		 * @param in the underlying input stream.
+		 * @param client the FTP client.
+		 */
+		public FTPBufferedInputStream(InputStream in, FTPClient client) {
+			super(in);
+			this.client = client;
+		}
 
+		/**
+		 * Creates a BufferedInputStream  and saves its argument, the input stream, for later use. An internal buffer array of the given size is created.
+		 * @param in the underlying input stream.
+		 * @param size the buffer size.
+		 * @param client the FTP client.
+		 */
+		public FTPBufferedInputStream(InputStream in, int size, FTPClient client) {
+			super(in, size);
+			this.client = client;
+		}
+
+		/**
+		 * Closes the underlying input stream and completes the FTP transaction.
+		 * @see java.io.BufferedInputStream#close()
+		 */
+		public void close() throws IOException {
+			super.close();
+			client.completePendingCommand();
+		}
+	}
+	
+	private class FTPBufferedOutputStream extends BufferedOutputStream {
+		
+		private FTPClient client;
+		
+		/**
+		 * Creates a new buffered output stream to write data to the specified underlying output stream with a default 512-byte buffer size.
+		 * @param out the underlying output stream.
+		 * @param client the FTP client.
+		 */
+		public FTPBufferedOutputStream(OutputStream out, FTPClient client) {
+			super(out);
+			this.client = client;
+		}
+
+		/**
+		 * Creates a new buffered output stream to write data to the specified underlying output stream with the specified buffer size.
+		 * @param out the underlying output stream.
+		 * @param size the buffer size.
+		 * @param client the FTP client.
+		 */
+		public FTPBufferedOutputStream(OutputStream out, int size, FTPClient client) {
+			super(out, size);
+			this.client = client;
+		}
+
+		/**
+		 * Closes the underlying output stream and completes the FTP transaction.
+		 * @see java.io.FilterOutputStream#close()
+		 */
+		public void close() throws IOException {
+			super.close();
+			client.completePendingCommand();
+		}
+	}
 	
 	/**
 	 * Set a IPropertySet containing pairs of keys and values with 
@@ -1103,7 +1171,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
 			}
 			
-			stream = ftpClient.retrieveFileStream(remoteFile);
+			stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
 		}
 		catch (Exception e) {			
 			throw new RemoteFileIOException(e);
@@ -1143,7 +1211,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
 			}
 			
-			stream = ftpClient.storeFileStream(remoteFile);
+			stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
 		}
 		catch (Exception e) {
 			throw new RemoteFileIOException(e);

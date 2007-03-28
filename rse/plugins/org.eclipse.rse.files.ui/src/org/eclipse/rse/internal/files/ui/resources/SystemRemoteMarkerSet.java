@@ -14,7 +14,9 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.internal.files.ui.resources;
+
+import org.eclipse.rse.files.ui.resources.ISystemRemoteMarkerSetElement;
 
 /**
  * This class represents a set of markers.

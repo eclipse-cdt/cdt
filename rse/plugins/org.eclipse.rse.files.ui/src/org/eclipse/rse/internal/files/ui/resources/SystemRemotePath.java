@@ -14,7 +14,9 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.internal.files.ui.resources;
+
+import org.eclipse.rse.files.ui.resources.ISystemRemotePath;
 
 /**
  * A default implementation of a remote path.

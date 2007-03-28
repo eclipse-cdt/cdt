@@ -14,14 +14,18 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.internal.files.ui.widgets;
+import java.util.ArrayList;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.filters.SystemFilterSimple;
+import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
@@ -29,31 +33,56 @@ import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
+import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.validators.ValidatorArchiveName;
+import org.eclipse.rse.ui.validators.ValidatorFileName;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 
 /**
- * @author mjberger
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * A dialog to select or enter archive files.
  */
-public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm 
+public class CombineForm extends SystemSelectRemoteFileOrFolderForm 
 {
 
-	private String fileName;	 
+	protected Text fileNameText;
+	protected Combo fileTypeCombo;
+	protected Label nameAndTypeLabel;
+	protected String fileName, fileType, initialFileName;
+	protected ValidatorFileName validator;
+	protected ValidatorArchiveName arcvalidator;
+	protected boolean prePop;	
+	protected String nameAndTypePrompt = ""; //$NON-NLS-1$
+	protected String[] disallowedExtensions;
 	 
    /**
 	* Constructor for ExtractToForm
 	*/
-   public ExtractToForm(ISystemMessageLine msgLine, Object caller, boolean fileMode) 
+   public CombineForm(ISystemMessageLine msgLine, Object caller, boolean fileMode) 
    {
 	   super(msgLine, caller, fileMode);
+	   validator = new ValidatorFileName();
+	   arcvalidator = new ValidatorArchiveName();
+	   prePop = false;
+   }
+   
+   public CombineForm(ISystemMessageLine msgLine, Object caller, boolean fileMode, boolean prePopSelection) 
+   {
+	   super(msgLine, caller, fileMode);
+		
+	   validator = new ValidatorFileName();
+	   arcvalidator = new ValidatorArchiveName();
+	   prePop = prePopSelection;
    }
 	
    /**
@@ -65,27 +94,101 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
    {
 	   Control control = super.createContents(shell, parent);
 		
-//	   Composite composite = SystemWidgetHelpers.createComposite(parent, 2);
-//	   SystemWidgetHelpers.createLabel(composite, SystemResources.RESID_NEWFILE_NAME_ROOT_LABEL);
-//	   fileNameText = SystemWidgetHelpers.createTextField(composite, null);
+	   Composite composite = SystemWidgetHelpers.createComposite(parent, 1);
+	   
+		nameAndTypeLabel = SystemWidgetHelpers.createLabel(composite, nameAndTypePrompt);
+	   Composite subcomp1 = SystemWidgetHelpers.createComposite(composite, 2);
+	   fileNameText = SystemWidgetHelpers.createLabeledTextField(
+		   subcomp1, null, FileResources.RESID_COMBINE_NAME_LABEL, FileResources.RESID_COMBINE_NAME_TOOLTIP);
+	   fileTypeCombo = SystemWidgetHelpers.createLabeledReadonlyCombo(subcomp1, null, FileResources.RESID_COMBINE_TYPE_LABEL, FileResources.RESID_COMBINE_TYPE_TOOLTIP);
+	   
+	   String[] allowedExtensions = getAllowedArchiveExtensions();
+	   
+	   if (allowedExtensions != null && allowedExtensions.length != 0) {
+	   		fileTypeCombo.setItems(allowedExtensions);
+	   		fileTypeCombo.select(0);
+	   		fileType = fileTypeCombo.getText();
+	   }
 
-//	   fileNameText = SystemWidgetHelpers.createLabeledTextField(
-//		   composite, null, RSEUIPlugin.getResourceBundle(), ISystemConstants.RESID_EXTRACTTO_NAME_ROOT);
-			
-			
-//	   fileNameText.addModifyListener(new ModifyListener() {
-//		   public void modifyText(ModifyEvent e) {
-//			   fileName = fileNameText.getText();
-//			   setPageComplete();
-//		   }
-//	   });
+	   fileNameText.addModifyListener(new ModifyListener() {
+		
+		public void modifyText(ModifyEvent e) {
+			   fileName = fileNameText.getText();
+			   setPageComplete();
+			   if (fileName.indexOf(".") != -1) //$NON-NLS-1$
+			   {
+			   		SystemMessage isValidMsg = arcvalidator.validate(fileName);
+			   		if (isValidMsg == null)
+			   		{
+			   			int i = fileName.lastIndexOf("."); //$NON-NLS-1$
+						fileType = fileName.substring(i+1);
+			   			fileTypeCombo.setText(fileType);
+			   		}
+			   }
+		   }
+	   });
+		
+	   fileTypeCombo.addModifyListener(new ModifyListener() {
+		
+		public void modifyText(ModifyEvent e) {
+				fileType = fileTypeCombo.getText();
+				setPageComplete();
+			}
+		});
 					
-//	   if (fileName != null)
-//	   {
-//		   fileNameText.setText(fileName);
-//	   }
+	   if (fileName != null)
+	   {
+		   fileNameText.setText(fileName);
+	   }
 		
 	   return control;
+   }
+   
+   protected String[] getAllowedArchiveExtensions() {
+   	
+   		String[] allExtensions = ArchiveHandlerManager.getInstance().getRegisteredExtensions();
+   		
+   		ArrayList list = new ArrayList();
+   		
+   		for (int i = 0; i < allExtensions.length; i++) {
+   			
+   			String extension = allExtensions[i];
+   			
+   			boolean keep = true;
+   			
+   			for (int j = 0; j < disallowedExtensions.length; j++) {
+   				
+   				if (disallowedExtensions[j].toLowerCase().equals(extension)) {
+   					
+   					keep = false;
+   					break;
+   				}
+   			}
+   			
+   			if (keep) {
+   				list.add(extension);
+   			}
+   		}
+   		
+   		String[] allowedExtensions = new String[list.size()];
+   		
+   		for (int i = 0; i < list.size(); i++) {
+   			allowedExtensions[i] = (String)(list.get(i));
+   		}
+   		
+   		return allowedExtensions;
+   }
+   
+   public String[] getDisallowedArchiveExtensions() {
+   		return disallowedExtensions;
+   }
+   
+   /**
+    * Sets the extensions to disallow.
+    * @param extensions the archive extensions that will not be allowed.
+    */
+   public void setDisallowedArchiveExtensions(String[] extensions) {
+   		this.disallowedExtensions = extensions;
    }
 	
    /**
@@ -97,55 +200,65 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
    public boolean verify() 
    {
 	   // This method added by Phil to issue warning msg for existing member
-	   //System.out.println("Inside verify");
 	   boolean ok = super.verify();
-/*	   if (ok)
+	   
+	   if (ok)
 	   {
-		   IRemoteFile file = (IRemoteFile) getSelectedObject();
+		   /*
+		   IRemoteFile file = (IRemoteFile)getSelectedObject();
+		   
 		   IRemoteFile saveasFile = null;
+		   
 		   try
 		   {
-			   saveasFile = file.getParentRemoteFileSubSystem().getRemoteFileObject(file, fileName);
+			   saveasFile = file.getParentRemoteFileSubSystem().getRemoteFileObject(file, getFileName());
 		   }
 		   catch (Exception e)
 		   {
 		   }
-			
-		   //System.out.println("...saveasMbr null? "+ (saveasMbr==null));
-		   if (saveasFile != null && saveasFile.exists())
-		   {
-			   SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UPLOAD_FILE_EXISTS);
-			   msg.makeSubstitution(fileName);
-			   SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
-			   ok = dlg.openQuestionNoException();
-		   }
-		   
-	   }*/
+		   */
+	   }
 	   return ok;
    }
 
    public boolean isPageComplete()
-   {
-	   /*
-	   String errMsg = null; //validator.isValid(fileName);
-		
-	   if (errMsg != null)
-	   {
-		   setErrorMessage(errMsg);
-		   return false;			
-	   }
-	   else
-	   */
-	   {
-		   if (valid) clearErrorMessage();
-			return valid;
-	   }
-		
+   {   	
+   	String nameToCheck = null;
+   	
+   	if (fileName == null) {
+   		nameToCheck = ""; //$NON-NLS-1$
+   	}
+   	else {
+   		nameToCheck = fileName;
+   	}
+   	
+   	SystemMessage errMsg = validator.validate(nameToCheck);
+   	
+   	if (errMsg != null)
+   	{
+   		setErrorMessage(errMsg);
+   		return false;			
+   	}
+   	else
+   	{
+   		clearErrorMessage();
+   	}
+   	
+   	return fileTypeCombo != null && 
+	fileTypeCombo.getText().length() > 0 &&
+	fileNameText != null && 
+	fileNameText.getText().length() > 0 && 
+	super.isPageComplete();
    }
 	
-   public String getFileName()
-   {
-	   return fileName;
+   public String getFileName() {
+   	
+   		if (fileName.endsWith("." + fileType)) { //$NON-NLS-1$
+   			return fileName;
+   		}
+   		else {
+	   		return fileName + "." + fileType; //$NON-NLS-1$
+   		}
    }
 	
    /**
@@ -175,32 +288,26 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
    public void selectionChanged(SelectionChangedEvent e)
    {
 	   super.selectionChanged(e);
-		valid = true;
+	   clearErrorMessage();
 	   ISelection selection = e.getSelection();
-	   Object selectedObject = getFirstSelection(selection);
+	   Object selectedObject = getFirstSelection(e.getSelection());
 	   if (selectedObject != null && selectedObject instanceof IRemoteFile)
 	   {
 		   IRemoteFile remoteFile = (IRemoteFile)selectedObject;
-			fileName = remoteFile.getName();
-			if (remoteFile.isRoot())
-			{
-				if (fileName.endsWith("\\")) fileName = fileName.substring(0,2); //$NON-NLS-1$
-			}
+		
 		   ISystemRemoteElementAdapter remoteAdapter = getRemoteAdapter(selectedObject);			
 		   if ((remoteAdapter != null))
 		   {
-
-			   Object parentFile = remoteFile;
-    							
-			   remoteAdapter = getRemoteAdapter(parentFile); 
-			   if (remoteAdapter != null)
-			   {
-				   String fullPath = remoteAdapter.getAbsoluteName(parentFile);
-				   setNameText(fullPath);		    	   	
-				   outputObjects = new Object[] {parentFile};
-				
+				Object parentFile = remoteFile;
+				   		    		   				
+				remoteAdapter = getRemoteAdapter(parentFile); 
+				if (remoteAdapter != null)
+				{
+					String fullPath = remoteAdapter.getAbsoluteName(parentFile);
+					setNameText(fullPath);		    	   	
+					outputObjects = new Object[] {parentFile};
+					setPageComplete();
 					SystemMessage selectionMsg = null;
-				  
 				  if (selectionValidator != null) 
 					selectionMsg = selectionValidator.isValid(outputConnection, getSelections(selection), getRemoteAdapters(selection));
 
@@ -208,17 +315,12 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
 				  {
 					valid = false;
 					setErrorMessage(selectionMsg);
+					setPageComplete();
 				  }
-				   setPageComplete();
-			   }
-	   	   }
-	   }
-		else if (selectedObject != null)
-	   {
-		   valid = false;
-		   setPageComplete();
-	   }
-   }
+			    }
+			}
+		}
+	}
 
 	public void setPreSelection(IRemoteFile selection)
 	{
@@ -234,9 +336,26 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
 			{
 				super.setPreSelection(parentFile);
 			}
-		
-			fileName = parentFile.getName();
 		}
+		if (prePop)
+		{
+			String file = selection.getName();
+			int i = file.lastIndexOf("."); //$NON-NLS-1$
+			if (i == -1)
+			{
+				fileName = file;
+				fileType = ""; //$NON-NLS-1$
+			}
+			else
+			{
+				fileName = file.substring(0,i);
+				fileType = selection.getExtension();
+			}
+		}
+		else
+		{
+			fileName = ""; //$NON-NLS-1$
+		}		
 	}
 
 	/**
@@ -320,5 +439,14 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
 		inputProvider.setFilterString(null); // undo what ctor did
 		inputProvider.setQuickFilters(filters);
 	}
-
+	
+	public void setPrePopSelection(boolean prePopSelection)
+	{
+		prePop = prePopSelection;
+	}
+	
+	public void setNameAndTypePrompt(String prompt)
+	{
+		nameAndTypePrompt = prompt;
+	}
 }

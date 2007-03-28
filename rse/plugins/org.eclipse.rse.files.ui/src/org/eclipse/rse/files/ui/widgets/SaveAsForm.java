@@ -14,12 +14,11 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.files.ui.widgets;
 
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.files.ui.FileResources;
-import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.ISystemMessages;

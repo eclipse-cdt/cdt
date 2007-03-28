@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.internal.files.ui.resources;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,6 +37,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.files.ui.resources.ISystemMountPathMapper;
+import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.ui.RSEUIPlugin;

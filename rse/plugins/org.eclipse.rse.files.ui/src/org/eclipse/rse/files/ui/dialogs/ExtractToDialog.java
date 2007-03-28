@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2003, 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,22 +14,19 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
-import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
+package org.eclipse.rse.files.ui.dialogs;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
+import org.eclipse.rse.internal.files.ui.widgets.ExtractToForm;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
-/**
- * Dialog used to select a file based on a dialog similar to the SaveAs
- */
-public class FileSelectionDialog
-	extends SystemSelectRemoteFileOrFolderDialog
-	implements ISaveAsDialog
-{
+public class ExtractToDialog extends SystemSelectRemoteFileOrFolderDialog {
 
 
-	private FileSelectionForm form;
+	
+	private ExtractToForm form;
 	
 	/**
 	 * Constructor
@@ -37,45 +34,38 @@ public class FileSelectionDialog
 	 * @param shell The shell to hang the dialog off of
 	 * 
 	 */
-	protected FileSelectionDialog(Shell shell)
+	public ExtractToDialog(Shell shell)
 	{
 		super(shell, false);
-	}
+		setHelp(RSEUIPlugin.HELPPREFIX + "exdi0000"); //$NON-NLS-1$
+	}	
 	/**
 	 * Constructor when you want to supply your own title.
 	 * 
 	 * @param shell The shell to hang the dialog off of
 	 * @param title The title to give the dialog
 	 */
-	protected FileSelectionDialog(Shell shell, String title)
+	public ExtractToDialog(Shell shell, String title)
 	{
-		super(shell, title, true);
+		super(shell, title, false);
+		setHelp(RSEUIPlugin.HELPPREFIX + "exdi0000"); //$NON-NLS-1$
 	}
-
-	public static FileSelectionDialog getFileSelectionDialog(
-		Shell shell,
-		String title)
-	{
-		return new FileSelectionDialog(shell, title);
-	}
-
-	public static FileSelectionDialog getFileSelectionDialog(Shell shell)
-	{
-		return new FileSelectionDialog(shell);
-	}
-
+		
 	protected SystemSelectRemoteFileOrFolderForm getForm(boolean fileMode)
 	{
-		form = new FileSelectionForm(getMessageLine(), this, fileMode);
+		form = new ExtractToForm(getMessageLine(), this, fileMode);
 		super.getForm(fileMode);
 		return form;
 	}
-	/**
- 	 * Return file name specified
- 	 * @return File name
- 	 */
-	public String getFileName()
+    
+	public Object getOutputObject()
 	{
-		return form.getFileName();
-	}	
+		IRemoteFile file = (IRemoteFile) super.getOutputObject();
+		if (file.exists())
+		{
+			return file;
+		}
+    	return null;
+	}
+    
 }

@@ -14,11 +14,13 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.internal.files.ui.resources;
 
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.files.ui.resources.ISystemRemoteManager;
+import org.eclipse.rse.files.ui.resources.ISystemRemotePath;
 
 /**
  * This class manages remote resources.

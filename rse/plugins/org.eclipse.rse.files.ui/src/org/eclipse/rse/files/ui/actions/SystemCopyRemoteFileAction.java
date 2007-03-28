@@ -32,7 +32,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
-import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
+import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;

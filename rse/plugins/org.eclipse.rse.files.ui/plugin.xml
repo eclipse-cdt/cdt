@@ -241,7 +241,7 @@ Contributors:
          point="org.eclipse.rse.ui.mountPathMappers">
       <mountPathMapper
             name="DefaultMountPathMapper"
-            class="org.eclipse.rse.files.ui.resources.DefaultMountPathMapper"
+            class="org.eclipse.rse.internal.files.ui.resources.DefaultMountPathMapper"
             id="org.eclipse.rse.core.resources.defaultmountpathmapper">
       </mountPathMapper>
    </extension>

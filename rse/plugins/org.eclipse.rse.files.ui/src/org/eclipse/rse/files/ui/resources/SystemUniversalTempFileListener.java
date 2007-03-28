@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.actions.SystemUploadConflictAction;
+import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;

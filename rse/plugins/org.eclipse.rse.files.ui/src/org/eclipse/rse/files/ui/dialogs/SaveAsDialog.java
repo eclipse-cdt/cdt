@@ -14,9 +14,9 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.files.ui.dialogs;
 
-import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
+import org.eclipse.rse.files.ui.widgets.SaveAsForm;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.swt.widgets.Shell;

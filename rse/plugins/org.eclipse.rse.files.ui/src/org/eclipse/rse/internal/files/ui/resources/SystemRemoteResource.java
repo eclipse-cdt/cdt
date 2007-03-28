@@ -14,11 +14,14 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.internal.files.ui.resources;
 
 import java.io.File;
 
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.rse.files.ui.resources.ISystemRemoteMarker;
+import org.eclipse.rse.files.ui.resources.ISystemRemotePath;
+import org.eclipse.rse.files.ui.resources.ISystemRemoteResource;
 
 /**
  * This class is the internal implementation of the ISystemRemoteResource interface.

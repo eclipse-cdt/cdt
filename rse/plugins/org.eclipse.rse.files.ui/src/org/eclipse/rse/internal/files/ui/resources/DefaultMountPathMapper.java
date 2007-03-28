@@ -14,20 +14,33 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.internal.files.ui.resources;
 
-import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.files.ui.resources.ISystemMountPathMapper;
 
-public interface ISaveAsDialog {
+public class DefaultMountPathMapper implements ISystemMountPathMapper
+{
 
-
+	public boolean handlesMappingFor(String hostname, String remotePath)
+	{
+		return false;
+	}
 	
-   public Object getOutputObject();
-   
-   public void setMultipleSelectionMode(boolean mode);
-   
-   public int open();
-   
-   public void setPreSelection(IRemoteFile selection);
-
+	public String getActualHostFor(String hostname, String remotePath)
+	{
+		return hostname;
+	}
+	
+	public String getWorkspaceMappingFor(String hostname, String remotePath)
+	{
+		return remotePath;
+	}
+	
+	/**
+	 * Returns the remote path.  
+	 */
+	public String getMountedMappingFor(String hostname, String remotePath)
+	{
+		return remotePath;
+	}
 }

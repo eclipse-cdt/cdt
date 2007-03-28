@@ -29,7 +29,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.FileResources;
-import org.eclipse.rse.files.ui.resources.AddToArchiveDialog;
+import org.eclipse.rse.files.ui.dialogs.AddToArchiveDialog;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;

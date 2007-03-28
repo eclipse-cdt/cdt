@@ -37,7 +37,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
-import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
+import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;

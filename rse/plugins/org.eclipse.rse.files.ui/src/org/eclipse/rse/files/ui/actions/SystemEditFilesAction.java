@@ -24,7 +24,7 @@ import org.eclipse.rse.files.ui.resources.ISystemRemoteEditConstants;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
-import org.eclipse.rse.files.ui.view.DownloadJob;
+import org.eclipse.rse.internal.files.ui.view.DownloadJob;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.actions.SystemBaseAction;

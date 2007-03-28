@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.wizards;
+package org.eclipse.rse.internal.files.ui.wizards;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.files.ui.FileResources;
@@ -26,8 +26,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.rse.ui.validators.ValidatorFolderName;
-import org.eclipse.rse.ui.validators.ValidatorUniqueString;
+import org.eclipse.rse.ui.validators.ValidatorFileName;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -38,19 +37,19 @@ import org.eclipse.swt.widgets.Text;
 
 
 /**
- * Default main page of the "New Folder" wizard.
+ * Default main page of the "New File" wizard.
  * This page asks for the following information:
  * <ul>
  *   <li>New File name
  * </ul> 
  */
 
-public class SystemNewFolderWizardMainPage 
+public class SystemNewFileWizardMainPage 
  	   extends AbstractSystemWizardPage
 {  
 
 	protected String fileNameStr; 
-	protected Text folderName, connectionName, newfolderName;
+	protected Text folderName, connectionName, fileName;
 	protected Combo folderNames;
 	protected SystemMessage errorMessage;
 	protected ISystemValidator nameValidator;
@@ -61,13 +60,10 @@ public class SystemNewFolderWizardMainPage
 	/**
 	 * Constructor.
 	 */
-	public SystemNewFolderWizardMainPage(Wizard wizard, IRemoteFile[] parentFolders)
+	public SystemNewFileWizardMainPage(Wizard wizard, IRemoteFile[] parentFolders)
 	{
-		super(wizard, "NewFolder",  //$NON-NLS-1$
-				FileResources.RESID_NEWFOLDER_PAGE1_TITLE, 
-				FileResources.RESID_NEWFOLDER_PAGE1_DESCRIPTION);
-	//	nameValidator = new ValidatorProfileName(RSEUIPlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());
-	    nameValidator = new ValidatorUniqueString(allnames, true);
+		super(wizard, "NewFile",  //$NON-NLS-1$
+  		      FileResources.RESID_NEWFILE_PAGE1_TITLE,  FileResources.RESID_NEWFILE_PAGE1_DESCRIPTION);
 	    this.parentFolders = parentFolders; 
 	}
 
@@ -83,22 +79,22 @@ public class SystemNewFolderWizardMainPage
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);	
 
         // Connection name
-		connectionName = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, FileResources.RESID_NEWFOLDER_CONNECTIONNAME_LABEL, FileResources.RESID_NEWFOLDER_CONNECTIONNAME_TIP);
+		connectionName = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, FileResources.RESID_NEWFILE_CONNECTIONNAME_LABEL, FileResources.RESID_NEWFILE_CONNECTIONNAME_TIP);
 		
 		//labelConnectionName.	
 
         // FolderName		
-        if (parentFolders.length == 1)
-	      folderName = SystemWidgetHelpers.createLabeledTextField(composite_prompts,null, FileResources.RESID_NEWFOLDER_FOLDER_LABEL, FileResources.RESID_NEWFOLDER_FOLDER_TIP);
-	    else
-	      folderNames = SystemWidgetHelpers.createLabeledReadonlyCombo(composite_prompts, null, FileResources.RESID_NEWFOLDER_FOLDER_LABEL, FileResources.RESID_NEWFOLDER_FOLDER_TIP);	      
+        if ((parentFolders == null) || (parentFolders.length == 1))
+	      folderName = SystemWidgetHelpers.createLabeledTextField(composite_prompts,null, FileResources.RESID_NEWFILE_FOLDER_LABEL,  FileResources.RESID_NEWFILE_FOLDER_TIP);		
+	    else     
+	      folderNames = SystemWidgetHelpers.createLabeledReadonlyCombo(composite_prompts, null, FileResources.RESID_NEWFILE_FOLDER_LABEL, FileResources.RESID_NEWFILE_FOLDER_TIP);
 	
-		// New Folder Name
-		newfolderName = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, FileResources.RESID_NEWFOLDER_NAME_LABEL,  FileResources.RESID_NEWFOLDER_NAME_TOOLTIP);
+		// File Name
+		fileName = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, FileResources.RESID_NEWFILE_NAME_LABEL, FileResources.RESID_NEWFILE_NAME_TOOLTIP);
 		
 		initializeInput();
 		
-		newfolderName.addModifyListener(
+		fileName.addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					validateNameInput();
@@ -106,7 +102,7 @@ public class SystemNewFolderWizardMainPage
 			}
 		);			
     		
-		SystemWidgetHelpers.setCompositeHelp(composite_prompts, RSEUIPlugin.HELPPREFIX+ISystemMessages.NEW_FOLDER_WIZARD);	
+		SystemWidgetHelpers.setCompositeHelp(composite_prompts, RSEUIPlugin.HELPPREFIX+ISystemMessages.NEW_FILE_WIZARD);	
 		
 		return composite_prompts;		
 
@@ -118,7 +114,7 @@ public class SystemNewFolderWizardMainPage
 	 */
 	protected Control getInitialFocusControl()
 	{
-        return newfolderName;
+        return fileName;
 	}
 	
 	/**
@@ -127,11 +123,12 @@ public class SystemNewFolderWizardMainPage
 	protected void initializeInput()
 	{
 		connectionName.setEditable(false);
-        nameValidator = new ValidatorFolderName();
-		if (parentFolders == null)
+        nameValidator = new ValidatorFileName();
+        		
+		if ((parentFolders == null) || (parentFolders.length == 0))
 		{
 		    folderName.setEditable(false);
-		    newfolderName.setEditable(false);
+		    fileName.setEditable(false); // why do we do this??
 		    setPageComplete(false);
 		    return;
 		}
@@ -141,8 +138,8 @@ public class SystemNewFolderWizardMainPage
 
 		if (folderName != null)
 		{
-		   folderName.setText(parentFolders[0].getAbsolutePath());	
-		   folderName.setEditable(false);	
+		    folderName.setText(parentFolders[0].getAbsolutePath());	
+		    folderName.setEditable(false);
 		}
 		else
 		{
@@ -151,7 +148,7 @@ public class SystemNewFolderWizardMainPage
 			   names[idx] = parentFolders[idx].getAbsolutePath();
 			folderNames.setItems(names);
 			folderNames.select(0);
-		}
+		}		
 	}
 	
   	/**
@@ -159,15 +156,14 @@ public class SystemNewFolderWizardMainPage
 	 * The default implementation delegates the request to an <code>ISystemValidator</code> object.
 	 * If the <code>ISystemValidator</code> reports an error the error message is displayed
 	 * in the Dialog's message line.
-	 * 
 	 */	
 	protected SystemMessage validateNameInput() 
 	{	
 		errorMessage = null;
 		this.clearErrorMessage();
 	//	this.setDescription(SystemResources.RESID_NEWFILE_PAGE1_DESCRIPTION));		
-	    if (nameValidator != null)	    
-	      errorMessage= nameValidator.validate(newfolderName.getText());
+	    if (nameValidator != null)
+	      errorMessage= nameValidator.validate(fileName.getText());
 	    if (errorMessage != null)
 		  setErrorMessage(errorMessage);		
 		setPageComplete(errorMessage==null);
@@ -184,6 +180,7 @@ public class SystemNewFolderWizardMainPage
 	 */
 	public boolean performFinish() 
 	{
+		
 	    return true;
 	}
     
@@ -194,9 +191,9 @@ public class SystemNewFolderWizardMainPage
 	 * Return user-entered new file name.
 	 * Call this after finish ends successfully.
 	 */
-	public String getfolderName()
+	public String getfileName()
 	{
-		return newfolderName.getText();
+		return fileName.getText();
 	}    
 	/**
 	 * Return the parent folder selected by the user
@@ -219,7 +216,8 @@ public class SystemNewFolderWizardMainPage
 	 */
 	public boolean isPageComplete()
 	{
-		return (errorMessage==null) && (newfolderName.getText().trim().length()>0);
+		return (errorMessage==null) && (fileName.getText().trim().length()>0);
 	}
 	
+
 }

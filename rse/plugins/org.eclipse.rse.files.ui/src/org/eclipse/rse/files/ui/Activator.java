@@ -24,10 +24,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
-import org.eclipse.rse.files.ui.view.RemoteFileSubSystemConfigurationAdapterFactory;
-import org.eclipse.rse.files.ui.view.SystemViewFileAdapterFactory;
-import org.eclipse.rse.files.ui.view.SystemViewSearchResultAdapterFactory;
-import org.eclipse.rse.files.ui.view.SystemViewSearchResultSetAdapterFactory;
+import org.eclipse.rse.internal.files.ui.view.RemoteFileSubSystemConfigurationAdapterFactory;
+import org.eclipse.rse.internal.files.ui.view.SystemViewFileAdapterFactory;
+import org.eclipse.rse.internal.files.ui.view.SystemViewSearchResultAdapterFactory;
+import org.eclipse.rse.internal.files.ui.view.SystemViewSearchResultSetAdapterFactory;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.wizards;
+package org.eclipse.rse.internal.files.ui.wizards;
 
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;

@@ -14,13 +14,14 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.view;
+package org.eclipse.rse.internal.files.ui.view;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -71,7 +72,7 @@ public class DownloadJob extends Job
 	 */
 	public DownloadJob(ISystemEditableRemoteObject editable, boolean systemEditor)
 	{
-		super("Download"); //$NON-NLS-1$
+		super(FileResources.RESID_FILES_DOWNLOAD);
 		_editable = editable;
 		_systemEditor = systemEditor;
 	}

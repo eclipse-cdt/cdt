@@ -14,34 +14,24 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.view;
+package org.eclipse.rse.internal.files.ui.view;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.services.search.IHostSearchResultSet;
-import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.view.AbstractSystemRemoteAdapterFactory;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.ui.IActionFilter;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 
 /**
  * This factory maps requests for an adapter object from a given
- * element object. A search results adapter factory maps a search 
- * results object to a search results adapter.
+ *  element object. This is for the universal file system.
  */
-public class SystemViewSearchResultSetAdapterFactory implements IAdapterFactory 
+public class SystemViewFileAdapterFactory extends AbstractSystemRemoteAdapterFactory
 {
-	private SystemViewRemoteSearchResultSetAdapter outputAdapter = new SystemViewRemoteSearchResultSetAdapter();
+	private SystemViewRemoteFileAdapter fileAdapter = new SystemViewRemoteFileAdapter();
 	
-	/**
-	 * @see IAdapterFactory#getAdapterList()
-	 */
-	public Class[] getAdapterList() 
-	{
-	    return new Class[] {ISystemViewElementAdapter.class, ISystemRemoteElementAdapter.class, IPropertySource.class, IWorkbenchAdapter.class, IActionFilter.class};		
-	}
 	/**
 	 * Called by our plugin's startup method to register our adaptable object types 
 	 * with the platform. We prefer to do it here to isolate/encapsulate all factory
@@ -49,7 +39,7 @@ public class SystemViewSearchResultSetAdapterFactory implements IAdapterFactory
 	 */
 	public void registerWithManager(IAdapterManager manager)
 	{
-	    manager.registerAdapters(this, IHostSearchResultSet.class);
+	    manager.registerAdapters(this, IRemoteFile.class);
 	}
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -57,11 +47,9 @@ public class SystemViewSearchResultSetAdapterFactory implements IAdapterFactory
 	public Object getAdapter(Object adaptableObject, Class adapterType) 
 	{
 	    Object adapter = null;
-	    
-	    if (adaptableObject instanceof IHostSearchResultSet) {
-	    	adapter = outputAdapter;
-	    }
-	  
+	    if (adaptableObject instanceof IRemoteFile)
+	      adapter = fileAdapter;
+
 	    if ((adapter != null) && (adapterType == IPropertySource.class))
 	    {	
 	        ((ISystemViewElementAdapter)adapter).setPropertySourceInput(adaptableObject);
@@ -72,4 +60,6 @@ public class SystemViewSearchResultSetAdapterFactory implements IAdapterFactory
 	    }	      	    
 		return adapter;
 	}
+	
+
 }

@@ -24,11 +24,8 @@ Export-Package: org.eclipse.rse.files.ui,
  org.eclipse.rse.files.ui.actions,
  org.eclipse.rse.files.ui.compare,
  org.eclipse.rse.files.ui.dialogs,
- org.eclipse.rse.files.ui.propertypages,
  org.eclipse.rse.files.ui.resources,
- org.eclipse.rse.files.ui.view,
  org.eclipse.rse.files.ui.widgets,
- org.eclipse.rse.files.ui.wizards,
  org.eclipse.rse.internal.files.ui.search;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

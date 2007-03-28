@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.view;
+package org.eclipse.rse.internal.files.ui.view;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.NumberFormat;

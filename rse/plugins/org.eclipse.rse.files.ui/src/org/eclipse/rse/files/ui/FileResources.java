@@ -22,6 +22,8 @@ public class FileResources extends NLS
 {
 	private static String BUNDLE_NAME = "org.eclipse.rse.files.ui.FileResources";  //$NON-NLS-1$
 
+	public static String RESID_FILES_DOWNLOAD;
+	
 	public static String RESID_FILES_PREFERENCES_BUFFER;
 	public static String RESID_FILES_PREFERENCES_DOWNLOAD_BUFFER_SIZE_LABEL;
 	public static String RESID_FILES_PREFERENCES_UPLOAD_BUFFER_SIZE_LABEL;

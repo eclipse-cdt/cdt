@@ -22,14 +22,14 @@ Contributors:
       <page
             name="%PreferencePage.UniversalFiles"
             category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
-            class="org.eclipse.rse.files.ui.propertypages.UniversalPreferencePage"
+            class="org.eclipse.rse.internal.files.ui.propertypages.UniversalPreferencePage"
             id="org.eclipse.rse.files.ui.UniversalFilesPreferences">
       </page>
 
       <page
             name="%PreferencePage.Cache"
             category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
-            class="org.eclipse.rse.files.ui.propertypages.SystemCachePreferencePage"
+            class="org.eclipse.rse.internal.files.ui.propertypages.SystemCachePreferencePage"
             id="org.eclipse.rse.core.ui.preferences.SystemCachePreferencePage">
       </page>
    </extension>
@@ -44,7 +44,7 @@ Contributors:
          point="org.eclipse.ui.propertyPages">
       <page 
             name="%RemotePropertyPage.File.Info"
-            class="org.eclipse.rse.files.ui.propertypages.SystemFilePropertyPage"
+            class="org.eclipse.rse.internal.files.ui.propertypages.SystemFilePropertyPage"
             id="org.eclipse.rse.files.PropertyPage">
            <enabledWhen>
              <instanceof value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
@@ -79,7 +79,7 @@ Contributors:
       
        <page
             name="%PropertyPage.Service"
-            class="org.eclipse.rse.files.ui.propertypages.FileServicesPropertyPage"
+            class="org.eclipse.rse.internal.files.ui.propertypages.FileServicesPropertyPage"
             id="org.eclipse.rse.files.ui.propertypages.FileServicesPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem"/>

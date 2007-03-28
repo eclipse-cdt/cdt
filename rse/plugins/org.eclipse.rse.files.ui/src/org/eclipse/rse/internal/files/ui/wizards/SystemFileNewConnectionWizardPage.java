@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.wizards;
+package org.eclipse.rse.internal.files.ui.wizards;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;

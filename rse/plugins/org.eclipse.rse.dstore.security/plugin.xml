@@ -22,7 +22,7 @@ Contributors:
       <page
             name="%PreferencePage.SSL"
             category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
-            class="org.eclipse.rse.dstore.security.preference.UniversalSecurityPreferencePage"
+            class="org.eclipse.rse.internal.dstore.security.preference.UniversalSecurityPreferencePage"
             id="org.eclipse.rse.dstore.security.preference.UniversalSecurityPreferencePage">
       </page>
    </extension>
@@ -31,7 +31,7 @@ Contributors:
       <keystoreProvider
          id="org.eclipse.rse.dstore.security.UniversalKeystoreProvider"
          name="%KeystoreProviderName"
-         class="org.eclipse.rse.dstore.security.UniversalKeystoreProvider">
+         class="org.eclipse.rse.internal.dstore.security.UniversalKeystoreProvider">
       </keystoreProvider>
    </extension>
    

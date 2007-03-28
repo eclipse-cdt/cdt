@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2005, 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,26 +14,21 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.processes.ui.view;
+package org.eclipse.rse.internal.processes.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
+import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
+import org.eclipse.rse.ui.view.AbstractSystemRemoteAdapterFactory;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 
-public class RemoteProcessSubSystemConfigurationAdapterFactory implements IAdapterFactory
+public class SystemViewProcessAdapterFactory extends AbstractSystemRemoteAdapterFactory
 {
-
-	private ISubSystemConfigurationAdapter ssFactoryAdapter = new RemoteProcessSubSystemConfigurationAdapter();
+	private SystemViewRemoteProcessAdapter processAdapter = new SystemViewRemoteProcessAdapter();
 	
-	/**
-	 * @see IAdapterFactory#getAdapterList()
-	 */
-	public Class[] getAdapterList() 
-	{
-	    return new Class[] {ISubSystemConfigurationAdapter.class};		
-	}
 	/**
 	 * Called by our plugin's startup method to register our adaptable object types 
 	 * with the platform. We prefer to do it here to isolate/encapsulate all factory
@@ -41,7 +36,7 @@ public class RemoteProcessSubSystemConfigurationAdapterFactory implements IAdapt
 	 */
 	public void registerWithManager(IAdapterManager manager)
 	{
-		manager.registerAdapters(this, IRemoteProcessSubSystemConfiguration.class);
+	    manager.registerAdapters(this, IRemoteProcess.class);
 	}
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -49,11 +44,17 @@ public class RemoteProcessSubSystemConfigurationAdapterFactory implements IAdapt
 	public Object getAdapter(Object adaptableObject, Class adapterType) 
 	{
 	    Object adapter = null;
-	    if (adaptableObject instanceof IRemoteProcessSubSystemConfiguration)
-	    	adapter = ssFactoryAdapter;
-	      	    
+	    if (adaptableObject instanceof IRemoteProcess)
+	      adapter = processAdapter;
+
+	    if ((adapter != null) && (adapterType == IPropertySource.class))
+	    {	
+	        ((ISystemViewElementAdapter)adapter).setPropertySourceInput(adaptableObject);
+	    }		
+	    else if (adapter == null)
+	    {
+	    	SystemBasePlugin.logWarning("No adapter found for object of type: " + adaptableObject.getClass().getName()); //$NON-NLS-1$
+	    }	      	    
 		return adapter;
 	}
-
-
 }

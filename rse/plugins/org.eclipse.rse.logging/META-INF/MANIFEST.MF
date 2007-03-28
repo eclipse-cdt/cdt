@@ -9,8 +9,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.logging;x-internal:=true,
- org.eclipse.rse.logging,
- org.eclipse.rse.logging.performance,
- org.eclipse.rse.logging.ui
+ org.eclipse.rse.logging
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

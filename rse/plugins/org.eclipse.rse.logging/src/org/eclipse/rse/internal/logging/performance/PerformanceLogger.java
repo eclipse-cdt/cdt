@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.logging.performance;
+package org.eclipse.rse.internal.logging.performance;
 
 import java.io.BufferedWriter;
 import java.io.File;

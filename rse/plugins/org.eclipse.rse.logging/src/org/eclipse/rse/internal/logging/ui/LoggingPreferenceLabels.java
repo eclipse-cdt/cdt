@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - 148434 Better F1 help.
  ********************************************************************************/
-package org.eclipse.rse.logging.ui;
+package org.eclipse.rse.internal.logging.ui;
 
 import org.eclipse.osgi.util.NLS;
 

@@ -48,7 +48,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.Service"
-            class="org.eclipse.rse.processes.ui.propertypages.ProcessServicesPropertyPage"
+            class="org.eclipse.rse.internal.processes.ui.propertypages.ProcessServicesPropertyPage"
             id="org.eclipse.rse.processes.ui.propertypages.ProcessServicesPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem"/>

@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.processes.ui.actions;
 
-import org.eclipse.rse.processes.ui.SystemProcessFilterStringEditPane;
+import org.eclipse.rse.internal.processes.ui.SystemProcessFilterStringEditPane;
 import org.eclipse.rse.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.ui.filters.actions.SystemChangeFilterAction;
 import org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog;

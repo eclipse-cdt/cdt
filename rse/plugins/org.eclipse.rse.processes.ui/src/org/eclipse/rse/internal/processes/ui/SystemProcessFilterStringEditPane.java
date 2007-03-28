@@ -14,14 +14,16 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.processes.ui;
+package org.eclipse.rse.internal.processes.ui;
 
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.processes.ui.view.SystemProcessStatesContentProvider;
+import org.eclipse.rse.internal.processes.ui.view.SystemProcessStatesContentProvider;
+import org.eclipse.rse.processes.ui.ProcessesPlugin;
+import org.eclipse.rse.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;

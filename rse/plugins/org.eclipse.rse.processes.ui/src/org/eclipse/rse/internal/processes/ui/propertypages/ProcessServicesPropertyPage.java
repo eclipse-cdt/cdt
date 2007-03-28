@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.processes.ui.propertypages;
+package org.eclipse.rse.internal.processes.ui.propertypages;
 
 import java.util.ArrayList;
 import java.util.List;

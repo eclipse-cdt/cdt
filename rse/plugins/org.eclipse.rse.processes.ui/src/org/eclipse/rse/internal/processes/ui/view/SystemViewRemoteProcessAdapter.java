@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.processes.ui.view;
+package org.eclipse.rse.internal.processes.ui.view;
 
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -29,6 +29,8 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.processes.ui.ProcessesPlugin;
 import org.eclipse.rse.processes.ui.actions.SystemKillProcessAction;
+import org.eclipse.rse.processes.ui.view.ISystemProcessPropertyConstants;
+import org.eclipse.rse.processes.ui.view.SystemProcessesViewResources;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteTypes;

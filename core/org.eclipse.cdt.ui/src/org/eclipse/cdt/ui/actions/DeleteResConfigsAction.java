@@ -57,6 +57,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		objects = null;
+		outData = null;
 		
 		if (!selection.isEmpty()) {
 	    	// case for context menu

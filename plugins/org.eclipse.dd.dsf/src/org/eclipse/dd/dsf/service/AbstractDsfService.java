@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
-import org.eclipse.dd.dsf.concurrent.Done;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -66,16 +66,16 @@ abstract public class AbstractDsfService
     
     public int getStartupNumber() { return fStartupNumber; }
     
-    public void initialize(Done done) {
+    public void initialize(RequestMonitor rm) {
         fTracker = new DsfServicesTracker(getBundleContext(), fSession.getId());
         fStartupNumber = fSession.getAndIncrementServiceStartupCounter();
-        getExecutor().submit(done);
+        rm.done();
     }
         
-    public void shutdown(Done done) {
+    public void shutdown(RequestMonitor rm) {
         fTracker.dispose();
         fTracker = null;
-        getExecutor().submit(done);
+        rm.done();
     }
 
     /** Returns the session object for this service */

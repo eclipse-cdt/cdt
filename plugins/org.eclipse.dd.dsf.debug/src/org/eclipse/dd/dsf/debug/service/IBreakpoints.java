@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -44,7 +44,7 @@ public interface IBreakpoints extends IDsfService {
     
     public interface IBreakpointHitEvent extends IBreakpointDMEvent {}
     
-    public void getAllBreakpoints(IExecutionDMContext execDmc, GetDataDone<IBreakpointDMContext[]> done);
-    public void getBreakpoints(IExecutionDMContext execDmc, IBreakpoint platformBp, GetDataDone<IBreakpointDMContext[]> done);
+    public void getAllBreakpoints(IExecutionDMContext execDmc, DataRequestMonitor<IBreakpointDMContext[]> rm);
+    public void getBreakpoints(IExecutionDMContext execDmc, IBreakpoint platformBp, DataRequestMonitor<IBreakpointDMContext[]> rm);
 }
 

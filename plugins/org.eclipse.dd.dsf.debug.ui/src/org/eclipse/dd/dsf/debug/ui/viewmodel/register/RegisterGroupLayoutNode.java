@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
@@ -38,14 +38,16 @@ public class RegisterGroupLayoutNode extends AbstractDMVMLayoutNode<IRegisterGro
         if (execDmc != null) {
             getServicesTracker().getService(IRegisters.class).getRegisterGroups(
                 execDmc, null,
-                new GetDataDone<IRegisterGroupDMContext[]>() { public void run() {
-                    if (!getStatus().isOK()) {
+                new DataRequestMonitor<IRegisterGroupDMContext[]>(getSession().getExecutor(), null) { 
+                    @Override
+                    public void handleCompleted() {
+                        if (!getStatus().isOK()) {
+                            update.done();
+                            return;
+                        }
+                        fillUpdateWithVMCs(update, getData());
                         update.done();
-                        return;
-                    }
-                    fillUpdateWithVMCs(update, getData());
-                    update.done();
-                }}); 
+                    }}); 
         } else {
             handleFailedUpdate(update);
         }          

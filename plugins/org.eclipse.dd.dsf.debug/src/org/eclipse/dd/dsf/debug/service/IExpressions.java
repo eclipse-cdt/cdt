@@ -13,7 +13,7 @@ package org.eclipse.dd.dsf.debug.service;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -78,16 +78,16 @@ public interface IExpressions extends IDMService {
     /**
      * Retrieves the sub-expressions of the given expression.
      * @param exprCtx Expression context to evaluate.
-     * @param done The return parameter is an Iterable because it's possible 
+     * @param rm The return parameter is an Iterable because it's possible 
      * that the sub-expressions as members of an array which could be very large.    
      */
-    void getSubExpressions(IExpressionDMContext exprCtx, GetDataDone<Iterable<IExpressionDMContext>> done);
+    void getSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor<Iterable<IExpressionDMContext>> rm);
     
     /**
      * For object oriented languages, this method returns the expressions 
      * representing base types of the given expression type.
      * @param exprContext
-     * @param done
+     * @param rm Request completion monitor.
      */
-    void getBaseExpressions(IExpressionDMContext exprContext, GetDataDone<IExpressionDMContext[]> done);
+    void getBaseExpressions(IExpressionDMContext exprContext, DataRequestMonitor<IExpressionDMContext[]> rm);
 }

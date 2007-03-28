@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
@@ -81,21 +81,23 @@ public interface IOS extends IDMService {
      * Retrieves list of OS object types.
      * @param os OS context.
      * @param parent Optional parent type.
-     * @param done Return token.
+     * @param rm Request completion monitor.
      */
-    public void getObjectTypes(IOSDMContext os, IObjectTypeDMContext parent, GetDataDone<IObjectTypeDMContext[]> done);
+    public void getObjectTypes(IOSDMContext os, IObjectTypeDMContext parent, DataRequestMonitor<IObjectTypeDMContext[]> rm);
     
     /**
      * Retrieves list of OS objects for given type.
      * @param os OS context.
      * @param type The object type.
      * @param parent Optional parent of the requested objects.
-     * @param done Return token.
+     * @param rm Request completion monitor.
      */
-    public void getObjects(IOSDMContext os, IObjectTypeDMContext type, IObjectDMContext parent, GetDataDone<IObjectDMContext[]> done);
+    public void getObjects(IOSDMContext os, IObjectTypeDMContext type, IObjectDMContext parent, DataRequestMonitor<IObjectDMContext[]> rm);
     
     /**
      * Attaches the debugger to given OS object context.
+     * @param objectDmc Data Model Context of the OS object to attach to.
+     * @param rm Request completion monitor.
      */
-    public void attachDebuggerToObject(IObjectDMContext objectDmc, Done done);
+    public void attachDebuggerToObject(IObjectDMContext objectDmc, RequestMonitor requestMonitor);
 }

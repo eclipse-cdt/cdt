@@ -12,7 +12,7 @@ package org.eclipse.dd.dsf.debug.service;
 
 import java.math.BigInteger;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -134,16 +134,16 @@ public interface IModules extends IDMService {
     /** 
      * Retreives the list of modules loaded in given symbol context. 
      */ 
-    void getModules(ISymbolDMContext symCtx, GetDataDone<IModuleDMContext[]> done);
+    void getModules(ISymbolDMContext symCtx, DataRequestMonitor<IModuleDMContext[]> rm);
 
     /**
      * Calculates the line numbers corresponding to the given address. 
      */
-    void calcLineInfo(ISymbolDMContext symCtx, IAddress address, GetDataDone<LineInfo[]> done);
+    void calcLineInfo(ISymbolDMContext symCtx, IAddress address, DataRequestMonitor<LineInfo[]> rm);
     
     /**
      * Calculates the addresses corresponding to the given source file location.
      */
-    void calcAddressInfo(ISymbolDMContext symCtx, String file, int line, int col, GetDataDone<AddressRange[]> done);
+    void calcAddressInfo(ISymbolDMContext symCtx, String file, int line, int col, DataRequestMonitor<AddressRange[]> rm);
 
 }

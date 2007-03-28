@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -24,9 +23,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
-import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.DoneCollector;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.DsfUIPlugin;
@@ -131,7 +131,7 @@ abstract public class AbstractVMProvider implements IVMProvider
     /**
      * Convenience method to access the View Model's executor.
      */
-    public Executor getExecutor() { return fVMAdapter.getExecutor(); }
+    public DsfExecutor getExecutor() { return fVMAdapter.getExecutor(); }
     
 
     public void update(IHasChildrenUpdate[] updates) {
@@ -175,13 +175,14 @@ abstract public class AbstractVMProvider implements IVMProvider
             final IHasChildrenUpdate update = updates[i];
             for (int j = 0; j < node.getChildLayoutNodes().length; j++) 
             {
-                final DoneCollector<GetDataDone<Boolean>> hasChildrenDoneCollector = 
-                    new DoneCollector<GetDataDone<Boolean>>() { 
-                        public void run() {
-                            // Status is OK, only if all dones are OK. 
+                final MultiRequestMonitor<DataRequestMonitor<Boolean>> hasChildrenMultiRequestMon = 
+                    new MultiRequestMonitor<DataRequestMonitor<Boolean>>(getExecutor(), null) { 
+                        @Override
+                        protected void handleCompleted() {
+                            // Status is OK, only if all request monitors are OK. 
                             if (getStatus().isOK()) { 
                                 boolean isContainer = false;
-                                for (GetDataDone<Boolean> hasElementsDone : getDones().keySet()) {
+                                for (DataRequestMonitor<Boolean> hasElementsDone : getRequestMonitors().keySet()) {
                                     isContainer |= hasElementsDone.getStatus().isOK() &&
                                                    hasElementsDone.getData().booleanValue();
                                 }
@@ -193,11 +194,13 @@ abstract public class AbstractVMProvider implements IVMProvider
                 
                 elementsUpdates[j][i] = new HasElementsUpdate(
                     update,
-                    hasChildrenDoneCollector.add(new GetDataDone<Boolean>() {
-                        public void run() {
-                            hasChildrenDoneCollector.doneDone(this);
-                        }
-                    }));
+                    hasChildrenMultiRequestMon.add(
+                        new DataRequestMonitor<Boolean>(getExecutor(), null) {
+                            @Override
+                            protected void handleCompleted() {
+                                hasChildrenMultiRequestMon.requestMonitorDone(this);
+                            }
+                        }));
             }
         }
             
@@ -213,8 +216,9 @@ abstract public class AbstractVMProvider implements IVMProvider
 
             getChildrenCountsForNode(
                 update, update.getElementPath(),
-                new GetDataDone<Integer[]>() {
-                    public void run() {
+                new DataRequestMonitor<Integer[]>(getExecutor(), null) {
+                    @Override
+                    protected void handleCompleted() {
                         if (getStatus().isOK()) {
                             int numChildren = 0;
                             for (Integer count : getData()) {
@@ -234,8 +238,9 @@ abstract public class AbstractVMProvider implements IVMProvider
         for (final IChildrenUpdate update : updates) {
             getChildrenCountsForNode(
                 update, update.getElementPath(), 
-                new GetDataDone<Integer[]>() {
-                    public void run() {
+                new DataRequestMonitor<Integer[]>(getExecutor(), null) {
+                    @Override
+                    protected void handleCompleted() {
                         if (!getStatus().isOK()) {
                             update.done();
                             return;
@@ -247,16 +252,16 @@ abstract public class AbstractVMProvider implements IVMProvider
     }
     
 
-    private void getChildrenCountsForNode(IViewerUpdate update, TreePath elementPath, final GetDataDone<Integer[]> done) {
+    private void getChildrenCountsForNode(IViewerUpdate update, TreePath elementPath, final DataRequestMonitor<Integer[]> rm) {
         if (isDisposed()) return;
         
         // Get the VM Context for last element in path.  
         final IVMLayoutNode layoutNode = getLayoutNodeObject(update.getElement());
         if (layoutNode == null) {
             // Stale update. Just ignore.
-            done.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, 
-                                      "Stale update.", null));   //$NON-NLS-1$
-            getExecutor().execute(done);
+            rm.setStatus(new Status(
+                IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Stale update.", null));   //$NON-NLS-1$
+            rm.done();
             return;
         }        
 
@@ -265,21 +270,25 @@ abstract public class AbstractVMProvider implements IVMProvider
         // If parent element's layout node has no children, just mark done and 
         // return.
         if (childNodes.length == 0) {
-            done.setData(new Integer[0]);
-            getExecutor().execute(done);
+            rm.setData(new Integer[0]);
+            rm.done();
             return;
         }
 
         
         // Get the mapping of all the counts.
         final Integer[] counts = new Integer[childNodes.length]; 
-        final DoneCollector<Done> childrenCountDoneCollector = 
-            new DoneCollector<Done>() { 
-                public void run() {
-                    if (fDisposed) return;
-                    if (propagateError(getExecutor(), done, "")) return; //$NON-NLS-1$
-                    done.setData(counts);
-                    getExecutor().execute(done);
+        final MultiRequestMonitor<RequestMonitor> childrenCountMultiReqMon = 
+            new MultiRequestMonitor<RequestMonitor>(getExecutor(), rm) { 
+                @Override
+                protected void handleCompleted() {
+                    if (!fDisposed) super.handleCompleted();
+                }
+
+                @Override
+                protected void handleOK() {
+                    rm.setData(counts);
+                    rm.done();
                 }
             };
         
@@ -288,15 +297,19 @@ abstract public class AbstractVMProvider implements IVMProvider
             childNodes[i].updateElementCount(
                 new ElementsCountUpdate(
                     update,  
-                    childrenCountDoneCollector.add(new GetDataDone<Integer>() {
-                        public void run() {
-                            if (getStatus().isOK()) {
-                                assert getData() != null;
+                    childrenCountMultiReqMon.add(
+                        new DataRequestMonitor<Integer>(getExecutor(), null) {
+                            @Override
+                            protected void handleOK() {
                                 counts[nodeIndex] = getData();
-                            } 
-                            childrenCountDoneCollector.doneDone(this);
-                        }
-                    }), 
+                            }
+                            
+                            @Override
+                            protected void handleCompleted() {
+                                super.handleCompleted();
+                                childrenCountMultiReqMon.requestMonitorDone(this);
+                            }
+                        }), 
                     elementPath)
                 );
         }
@@ -309,10 +322,12 @@ abstract public class AbstractVMProvider implements IVMProvider
             if (!update.isCanceled()) update.done();
         }        
 
-        // Create the done collector to mark update when querying all children nodes is finished.
-        final DoneCollector<Done> elementsDoneCollector = 
-            new DoneCollector<Done>() { 
-                public void run() {
+        // Create the multi request monitor to mark update when querying all 
+        // children nodes is finished.
+        final MultiRequestMonitor<RequestMonitor> elementsMultiRequestMon = 
+            new MultiRequestMonitor<RequestMonitor>(getExecutor(), null) { 
+                @Override
+                protected void handleCompleted() {
                     if (!update.isCanceled()) update.done();
                 }
             };
@@ -336,9 +351,10 @@ abstract public class AbstractVMProvider implements IVMProvider
                 layoutNodes[i].updateElements(
                     new ElementsUpdate(
                         update,  
-                        elementsDoneCollector.add(new Done() { 
-                            public void run() {
-                                elementsDoneCollector.doneDone(this);
+                        elementsMultiRequestMon.add(new RequestMonitor(getExecutor(), null) { 
+                            @Override
+                            protected void handleCompleted() {
+                                elementsMultiRequestMon.requestMonitorDone(this);
                             }
                         }),
                         nodeStartIdx, elementsStartIdx, elementsEndIdx - elementsStartIdx)
@@ -347,7 +363,7 @@ abstract public class AbstractVMProvider implements IVMProvider
         }
         
         // Guard against invalid queries.
-        if (elementsDoneCollector.getDones().isEmpty()) {
+        if (elementsMultiRequestMon.getRequestMonitors().isEmpty()) {
             update.done();
         }
 
@@ -510,12 +526,11 @@ abstract public class AbstractVMProvider implements IVMProvider
     class ViewerUpdate implements IViewerUpdate {
         
 		private IStatus fStatus;
-        private boolean fDoneInvoked = false;
-        final private Done fDone;
+        final private RequestMonitor fRequestMonitor;
         final protected IViewerUpdate fClientUpdate;
         
-        public ViewerUpdate(IViewerUpdate clientUpdate, Done done) {
-            fDone = done;
+        public ViewerUpdate(IViewerUpdate clientUpdate, RequestMonitor requestMonitor) {
+            fRequestMonitor = requestMonitor;
             fClientUpdate = clientUpdate;
         }
 
@@ -531,10 +546,8 @@ abstract public class AbstractVMProvider implements IVMProvider
         }
 
         public void done() { 
-            assert !fDoneInvoked;
-            fDoneInvoked = true;
             try {
-                getExecutor().execute(fDone);
+                fRequestMonitor.done();
             } catch (RejectedExecutionException e) { // Ignore
             }
         }
@@ -543,11 +556,11 @@ abstract public class AbstractVMProvider implements IVMProvider
 
     class HasElementsUpdate extends ViewerUpdate implements IHasChildrenUpdate {
 
-        final private GetDataDone<Boolean> fHasElemsDone;
+        final private DataRequestMonitor<Boolean> fHasElemsRequestMonitor;
         
-        HasElementsUpdate(IHasChildrenUpdate clientUpdate, GetDataDone<Boolean> done) {
-            super(clientUpdate, done);
-            fHasElemsDone = done;
+        HasElementsUpdate(IHasChildrenUpdate clientUpdate, DataRequestMonitor<Boolean> rm) {
+            super(clientUpdate, rm);
+            fHasElemsRequestMonitor = rm;
         }
         
         @Override
@@ -556,24 +569,24 @@ abstract public class AbstractVMProvider implements IVMProvider
         }
 
         public void setHasChilren(boolean hasChildren) {
-            fHasElemsDone.setData(hasChildren);
+            fHasElemsRequestMonitor.setData(hasChildren);
         }
 
         @Override
         public void done() {
-            assert fHasElemsDone.getData() != null || !fHasElemsDone.getStatus().isOK();
+            assert fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.getStatus().isOK();
             super.done();            
         }
     }
 
     class ElementsCountUpdate extends ViewerUpdate implements IChildrenCountUpdate {
-        final private GetDataDone<Integer> fCountDone;
+        final private DataRequestMonitor<Integer> fCountRequestMonitor;
         final private TreePath fElementPath;
         
-        ElementsCountUpdate(IViewerUpdate clientUpdate, GetDataDone<Integer> done, TreePath elementPath) {
-            super(clientUpdate, done);
+        ElementsCountUpdate(IViewerUpdate clientUpdate, DataRequestMonitor<Integer> rm, TreePath elementPath) {
+            super(clientUpdate, rm);
             fElementPath = elementPath;
-            fCountDone = done;
+            fCountRequestMonitor = rm;
         }
 
         @Override
@@ -582,12 +595,12 @@ abstract public class AbstractVMProvider implements IVMProvider
         }
 
         public void setChildCount(int count) {
-            fCountDone.setData(count);
+            fCountRequestMonitor.setData(count);
         }
         
         @Override
         public void done() {
-            assert fCountDone.getData() != null || !fCountDone.getStatus().isOK();
+            assert fCountRequestMonitor.getData() != null || !fCountRequestMonitor.getStatus().isOK();
             super.done();
         }
 
@@ -598,8 +611,8 @@ abstract public class AbstractVMProvider implements IVMProvider
         private final int fOffset;
         private final int fLength;
         
-        ElementsUpdate(IChildrenUpdate clientUpdate, Done done, int clientOffset, int offset, int length) {
-            super(clientUpdate, done);
+        ElementsUpdate(IChildrenUpdate clientUpdate, RequestMonitor requestMonitor, int clientOffset, int offset, int length) {
+            super(clientUpdate, requestMonitor);
             fClientOffset = clientOffset;
             fOffset = offset;
             fLength = length;

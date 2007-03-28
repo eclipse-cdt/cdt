@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -100,16 +100,16 @@ public interface IRegisters extends IDMService {
      * Retrieves the list of register groups.
      * @param execCtx Execution DMC, this is required.
      * @param frameCtx Stack frame DMC, this is optional and may be null.
-     * @param done Return token.
+     * @param rm Request completion monitor.
      */
-    void getRegisterGroups(IRunControl.IExecutionDMContext execCtx, IStack.IFrameDMContext frameCtx, GetDataDone<IRegisterGroupDMContext[]> done);
+    void getRegisterGroups(IRunControl.IExecutionDMContext execCtx, IStack.IFrameDMContext frameCtx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
     
     /** Retrieves list of sub-groups of given register group. */
-    void getRegisterSubGroups(IRegisterGroupDMContext groupCtx, GetDataDone<IRegisterGroupDMContext[]> done);
+    void getRegisterSubGroups(IRegisterGroupDMContext groupCtx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
     
     /** Retrieves registers in given register group. */
-    void getRegisters(IRegisterGroupDMContext groupCtx, GetDataDone<IRegisterDMContext[]> done);
+    void getRegisters(IRegisterGroupDMContext groupCtx, DataRequestMonitor<IRegisterDMContext[]> rm);
     
     /** Retrieves bit fields for given register */
-    void getBitFields(IRegisterDMContext regCtx, GetDataDone<IBitFieldDMContext[]> done);
+    void getBitFields(IRegisterDMContext regCtx, DataRequestMonitor<IBitFieldDMContext[]> rm);
 }

@@ -13,7 +13,7 @@ package org.eclipse.dd.dsf.service;
 import java.util.Dictionary;
 
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
-import org.eclipse.dd.dsf.concurrent.Done;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 
 /**
@@ -107,15 +107,15 @@ public interface IDsfService {
      * logic, if this service depends on other services, the implementaion should 
      * assume that these services are already present, and if they are not, the 
      * initializaiton should fail.  
-     * @param done callback to be submitted when the initialization is complete
+     * @param requestMonitor callback to be submitted when the initialization is complete
      */
-    void initialize(Done done);
+    void initialize(RequestMonitor requestMonitor);
     
     /**
      * Performs shutdown and de-registration of the given service.    
-     * @param done callback to be submitted when shutdown is complete
+     * @param requestMonitor callback to be submitted when shutdown is complete
      */
-    void shutdown(Done done);
+    void shutdown(RequestMonitor requestMonitor);
     
     /**
      * Returns the startup order number of this service among services in the same session.

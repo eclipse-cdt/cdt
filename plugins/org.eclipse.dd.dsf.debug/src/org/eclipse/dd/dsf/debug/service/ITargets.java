@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -41,12 +41,12 @@ public interface ITargets extends IDMService {
 
     public interface ICoreStateChangedDMEvent extends IDMEvent<ICoreDMContext> {}
 
-    public void getTargets(GetDataDone<ITargetDMContext> done);
-    public void getCores(ITargetDMContext target, GetDataDone<ICoreDMContext> done);
+    public void getTargets(DataRequestMonitor<ITargetDMContext> requestMonitor);
+    public void getCores(ITargetDMContext target, DataRequestMonitor<ICoreDMContext> requestMonitor);
     
-    public void connectTarget(ITargetDMContext targetDmc, Done done);
-    public void disconnectTarget(ITargetDMContext targetDmc, Done done);
-    public void connectCore(ITargetDMContext targetDmc, Done done);
-    public void disconnectCore(ITargetDMContext targetDmc, Done done);
+    public void connectTarget(ITargetDMContext targetDmc, RequestMonitor requestMonitor);
+    public void disconnectTarget(ITargetDMContext targetDmc, RequestMonitor requestMonitor);
+    public void connectCore(ITargetDMContext targetDmc, RequestMonitor requestMonitor);
+    public void disconnectCore(ITargetDMContext targetDmc, RequestMonitor requestMonitor);
     
 }

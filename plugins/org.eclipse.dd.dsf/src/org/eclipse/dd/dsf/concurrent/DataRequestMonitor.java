@@ -10,26 +10,32 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.concurrent;
 
+
 /**
- * Asynchronous method callback which returns a data object (in addition to
- * the base class's getStatus().  
- * @param <V>
+ * Request monitor that allows data to be returned to the request initiator.
+ * 
+ * @param V The type of the data object that this monitor handles. 
  */
-public abstract class GetDataDone<V> extends Done {
+public abstract class DataRequestMonitor<V> extends RequestMonitor {
+
     /** Data object reference */
     private V fData; 
     
+    public DataRequestMonitor(DsfExecutor executor, RequestMonitor parentRequestMonitor) {
+        super(executor, parentRequestMonitor);
+    }
+
     /** 
      * Sets the data object to specified value.  To be called by the 
      * asynchronous method implementor.
      * @param data Data value to set.
      */
-    public void setData(V data) { fData = data; }
+    public synchronized void setData(V data) { fData = data; }
     
     /**
      * Returns the data value, null if not set.
      */
-    public V getData() { return fData; }
+    public synchronized V getData() { return fData; }
     
     @Override
     public String toString() { 
@@ -38,5 +44,5 @@ public abstract class GetDataDone<V> extends Done {
         } else {
             return super.toString();
         }
-    }
+    }    
 }

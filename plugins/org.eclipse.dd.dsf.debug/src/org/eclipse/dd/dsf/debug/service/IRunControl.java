@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -86,7 +86,7 @@ public interface IRunControl extends IDMService
     /**
      * Returns execution contexts belonging to the given container context.
      */
-    public void getExecutionContexts(IContainerDMContext c, GetDataDone<IExecutionDMContext[]> done);
+    public void getExecutionContexts(IContainerDMContext c, DataRequestMonitor<IExecutionDMContext[]> rm);
 
     /*
      * Run control commands.  They all require the IExecutionContext object on 
@@ -95,12 +95,12 @@ public interface IRunControl extends IDMService
     boolean canResume(IExecutionDMContext context);
     boolean canSuspend(IExecutionDMContext context);
     boolean isSuspended(IExecutionDMContext context);
-    void resume(IExecutionDMContext context, Done done);
-    void suspend(IExecutionDMContext context, Done done);
+    void resume(IExecutionDMContext context, RequestMonitor requestMonitor);
+    void suspend(IExecutionDMContext context, RequestMonitor requestMonitor);
     public enum StepType { STEP_OVER, STEP_INTO, STEP_RETURN };
     boolean isStepping(IExecutionDMContext context);
     boolean canStep(IExecutionDMContext context);
-    void step(IExecutionDMContext context, StepType stepType, Done done);
+    void step(IExecutionDMContext context, StepType stepType, RequestMonitor requestMonitor);
     boolean canInstructionStep(IExecutionDMContext context);
-    void instructionStep(IExecutionDMContext context, StepType stepType, Done done);
+    void instructionStep(IExecutionDMContext context, StepType stepType, RequestMonitor requestMonitor);
 }

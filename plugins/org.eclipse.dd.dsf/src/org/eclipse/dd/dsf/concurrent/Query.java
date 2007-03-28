@@ -30,12 +30,19 @@ import org.eclipse.core.runtime.CoreException;
  * @see java.util.concurrent.Callable
  */
 @ThreadSafe
-abstract public class DsfQuery<V> extends DsfRunnable 
+abstract public class Query<V> extends DsfRunnable 
     implements Future<V> 
 {
     /** The synchronization object for this query */
-    final Sync fSync = new Sync();
+    private final Sync fSync = new Sync();
 
+    /** The executor that is used to complete the asynchronous operation of this query */ 
+    private final DsfExecutor fExecutor;
+    
+    public Query(DsfExecutor executor) {
+        fExecutor = executor;
+    }
+    
     public V get() throws InterruptedException, ExecutionException { return fSync.doGet(); }
 
     public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
@@ -59,13 +66,14 @@ abstract public class DsfQuery<V> extends DsfRunnable
         fSync.doSetException(t);
     }        
     
-    abstract protected void execute(GetDataDone<V> done);
+    abstract protected void execute(DataRequestMonitor<V> rm);
     
     public void run() {
         if (fSync.doRun()) {
             try {
-                execute(new GetDataDone<V>() {
-                    public void run() {
+                execute(new DataRequestMonitor<V>(fExecutor, null) {
+                    @Override
+                    public void handleCompleted() {
                         if (getStatus().isOK()) fSync.doSet(getData());
                         else fSync.doSetException(new CoreException(getStatus()));
                     }

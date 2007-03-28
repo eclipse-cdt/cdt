@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.datamodel;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
@@ -27,11 +27,16 @@ public interface IDMService extends IDsfService, IDMData {
      * service are changed. 
      */
     IDMContext<?> getServiceContext();
-    
+
+    /**
     /**
      * Retrieves model data object for given context.  This method makes it
      * un-necessary for every model service to declare a separate method 
      * for retrieving model data of specific type.
+     * 
+     * @param <V> The Data Model Data type that is to be retrieved.
+     * @param dmc Data Model Context for the data model data object to be retrieved.
+     * @param rm Request completion monitor to be filled in with the Data Model Data.
      */
-    <V extends IDMData> void getModelData(IDMContext<V> dmc, GetDataDone<V> done);
+    <V extends IDMData> void getModelData(IDMContext<V> dmc, DataRequestMonitor<V> rm);
 }

@@ -13,13 +13,12 @@ package org.eclipse.dd.dsf.ui.viewmodel;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
+import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.IDsfService;
@@ -41,7 +40,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 @SuppressWarnings("restriction")
 abstract public class AbstractVMAdapter implements IVMAdapter
 {
-    private final ExecutorService fExecutor;
+    private final DsfExecutor fExecutor;
     private boolean fDisposed;
 
     private final Map<IPresentationContext, IVMProvider> fViewModelProviders = 
@@ -64,7 +63,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
      * and the layout nodes.
      * @return
      */
-    public Executor getExecutor() {
+    public DsfExecutor getExecutor() {
         return fExecutor;
     }
     

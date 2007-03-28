@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
 /**
@@ -30,11 +30,11 @@ public interface IVMRootLayoutNode extends IVMLayoutNode{
     public Object getRootObject();
     
     /**
-     * Version of the {@link IVMLayoutNode#buildDelta(Object, ViewModelDelta, org.eclipse.dd.dsf.concurrent.Done)}
+     * Version of the {@link IVMLayoutNode#buildDelta(Object, ViewModelDelta, org.eclipse.dd.dsf.concurrent.RequestMonitor)}
      * method, which creates and returns the root node of the delta.  It does 
      * not require a parent object for the delta, as this is the root node. 
      * @param event Event to process.
-     * @param done Result notification, contains the root of the delta.
+     * @param rm Result notification, contains the root of the delta.
      */
-    public void createDelta(Object event, GetDataDone<IModelDelta> done);
+    public void createDelta(Object event, DataRequestMonitor<IModelDelta> rm);
 }

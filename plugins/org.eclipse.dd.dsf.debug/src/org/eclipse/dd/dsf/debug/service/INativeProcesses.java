@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -50,33 +50,35 @@ public interface INativeProcesses extends IDMService {
 
     /**
      * Retrieves the current list of processes running on target.
+     * @param rm Request completion monitor, to be filled in with array of process contexts.
      */
-    void getRunningProcesses(GetDataDone<IProcessDMContext[]> done);
+    void getRunningProcesses(DataRequestMonitor<IProcessDMContext[]> rm);
     
     /**
      * Attaches debugger to the given process.
      */
-    void attachDebuggerToProcess(IProcessDMContext procCtx, Done done);
+    void attachDebuggerToProcess(IProcessDMContext procCtx, RequestMonitor requestMonitor);
     
     /**
      * Starts a new process.
      * @param file Process image to use for the new process.
-     * @param done Return token with the process context.
+     * @param rm Request completion monitor, to be filled in with the process context.
      */
-    void runNewProcess(String file, GetDataDone<IProcessDMContext> done);
+    void runNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm);
     
     /**
      * Starts a new process with debugger attached.
      * @param file Process image to use for the new process.
-     * @param done Return token with the process context.
+     * @param rm Request completion monitor, to be willed in with the process context.
      */
-    void debugNewProcess(String file, GetDataDone<IProcessDMContext> done);
+    void debugNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm);
 
     /**
      * Retrieves the list of processes which are currently under
      * debugger control.
+     * @param rm Request completion monitor.
      */
-    void getProcessesBeingDebugged(GetDataDone<IProcessDMContext[]> done);
+    void getProcessesBeingDebugged(DataRequestMonitor<IProcessDMContext[]> rm);
     
     /** 
      * Returns a thread context for given run control execution context.
@@ -88,14 +90,14 @@ public interface INativeProcesses extends IDMService {
     /**
      * Checks whether the given process or thread can be terminated.
      * @param thread Thread or process to terminate.
-     * @param done Return token.
+     * @param rm Return token.
      */
-    void canTerminate(IThreadDMContext thread, GetDataDone<Boolean> done);
+    void canTerminate(IThreadDMContext thread, DataRequestMonitor<Boolean> rm);
 
     /**
      * Terminates the selected process or thread.
      * @param thread Thread or process to terminate.
-     * @param done Return token.
+     * @param rm Request completion monitor, indicates success or failure.
      */
-    void terminate(IThreadDMContext thread, Done done);
+    void terminate(IThreadDMContext thread, RequestMonitor requestMonitor);
 }

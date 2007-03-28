@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service.command;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
@@ -23,10 +23,10 @@ public interface ICommandControl extends IDsfService{
      * Adds the specified command to the queue of commands to be processed. 
      *   
      * @param command Specific command to be processed
-     * @param done Completion notification handler
+     * @param rm Request completion monitor
      * @return None
      */
-    <V extends ICommandResult> void queueCommand(ICommand<V> command, GetDataDone<V> done);
+    <V extends ICommandResult> void queueCommand(ICommand<V> command, DataRequestMonitor<V> rm);
     
     /**
      * Removes the specified command from the processor queue.

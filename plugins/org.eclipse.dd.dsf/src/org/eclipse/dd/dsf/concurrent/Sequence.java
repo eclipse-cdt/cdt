@@ -33,13 +33,13 @@ import org.eclipse.dd.dsf.DsfPlugin;
  * because for example result of one command is used as input into another 
  * command.  The typical DSF pattern of solving this problem is the following:
  * <li> 
- * <br> 1. original caller passes a Done callback to a method and invokes it
+ * <br> 1. original caller passes a RequestMonitor callback to a method and invokes it
  * <br> 2. the method is executed by a subsystem
  * <br> 3. when the method is finished it calls another method and passes 
  * the original callback to it
  * <br> 4. steps 2-3 are repeated number of times
  * <br> 5. when the last method in a chain is executed, it submits the original
- * Done callback
+ * RequestMonitor callback
  * </li>
  * <p>
  * This pattern is very useful in itself, but it proves very difficult to follow
@@ -49,40 +49,40 @@ import org.eclipse.dd.dsf.DsfPlugin;
  * this problem by containing this pattern in a single class. 
  */
 @ThreadSafe
-abstract public class DsfSequence extends DsfRunnable implements Future<Object> {
+abstract public class Sequence extends DsfRunnable implements Future<Object> {
 
     /**
      * The abstract class that each step has to implement.  
      */
     abstract public static class Step {
-        private DsfSequence fSequence;
+        private Sequence fSequence;
         
         /**
          * Sets the sequence that this step belongs to.  It is only accessible 
          * by the sequence itself, and is not meant to be called by sequence
          * sub-classes. 
          */
-        void setSequence(DsfSequence sequence) { fSequence = sequence; }
+        void setSequence(Sequence sequence) { fSequence = sequence; }
         
         /** Returns the sequence that this step is running in. */
-        public DsfSequence getSequence() { return fSequence; }
+        public Sequence getSequence() { return fSequence; }
         
         /** 
          * Executes the next step.  Overriding classes should perform the 
          * work in this method.
-         * @param done Result token to submit to executor when step is finished.
+         * @param rm Result token to submit to executor when step is finished.
          */
-        public void execute(Done done) {
-            getSequence().getExecutor().execute(done);
+        public void execute(RequestMonitor rm) {
+            rm.done();
         }
 
         /** 
          * Roll back gives the step implementation a chance to undo the 
          * operation that was performed by execute().
-         * @param done Result token to submit to executor when rolling back the step is finished.
+         * @param rm Result token to submit to executor when rolling back the step is finished.
          */
-        public void rollBack(Done done) { 
-            getSequence().getExecutor().execute(done);
+        public void rollBack(RequestMonitor rm) { 
+            rm.done();
         }
         
         /** 
@@ -107,7 +107,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
      * thread.  Otherwise, the {@link Future#get()} method is the appropriate
      * method of retrieving the result. 
      */
-    final private Done fDone;
+    final private RequestMonitor fRequestMonitor;
     
     /** Status indicating the success/failure of the test.  Used internally only. */
     @ConfinedToDsfExecutor("getExecutor") 
@@ -127,13 +127,13 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
     
     
     /** Convenience constructor with limited arguments. */
-    public DsfSequence(DsfExecutor executor) {
+    public Sequence(DsfExecutor executor) {
         this(executor, new NullProgressMonitor(), "", "", null); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /** Convenience constructor with limited arguments. */
-    public DsfSequence(DsfExecutor executor, Done done) {
-        this(executor, new NullProgressMonitor(), "", "", done); //$NON-NLS-1$ //$NON-NLS-2$
+    public Sequence(DsfExecutor executor, RequestMonitor rm) {
+        this(executor, new NullProgressMonitor(), "", "", rm); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -147,13 +147,12 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
      * @param Result that will be submitted to executor when sequence is finished.  Can be null if calling from 
      * non-executor thread and using {@link Future#get()} method to wait for the sequence result. 
      */
-
-    public DsfSequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName, Done done) {
+    public Sequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName, RequestMonitor rm) {
         fExecutor = executor;
         fProgressMonitor = pm;
         fTaskName = taskName;
         fRollbackTaskName = rollbackTaskName;
-        fDone = done;
+        fRequestMonitor = rm;
     }
 
     /** 
@@ -173,11 +172,9 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
     public DsfExecutor getExecutor() { return fExecutor; }
     
     /**
-     * Returns the Done callback that is registered with the Sequence
-     * @param doneQC callback that will be submitted when sequence completes, 
-     * null if there is no callback configured
+     * Returns the RequestMonitor callback that is registered with the Sequence
      */
-    public Done getDone() { return fDone; }
+    public RequestMonitor getRequestMonitor() { return fRequestMonitor; }
     
     /**
      * The get method blocks until sequence is complete, but always returns null.
@@ -270,9 +267,10 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
         // Proceed with executing next step.
         fCurrentStepIdx = nextStepIndex;
         try {
-            getSteps()[fCurrentStepIdx].execute(new Done() {
+            getSteps()[fCurrentStepIdx].execute(new RequestMonitor(fExecutor, null) {
                 final private int fStepIdx = fCurrentStepIdx;
-                public void run() {
+                @Override
+                public void handleCompleted() {
                     // Check if we're still the correct step.
                     assert fStepIdx == fCurrentStepIdx;
                     
@@ -286,7 +284,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
                 }
                 @Override
                 public String toString() {
-                    return "DsfSequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    return "Sequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
             });
         } catch(Throwable t) {
@@ -298,7 +296,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
              */ 
             abortExecution(new Status(
                 IStatus.ERROR, DsfPlugin.PLUGIN_ID, 0, 
-                "Unhandled exception when executing DsfSequence " + this + ", step #" + fCurrentStepIdx,  //$NON-NLS-1$ //$NON-NLS-2$
+                "Unhandled exception when executing Sequence " + this + ", step #" + fCurrentStepIdx,  //$NON-NLS-1$ //$NON-NLS-2$
                 t));
             
             /*
@@ -323,9 +321,10 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
         // Proceed with rolling back given step.
         fCurrentStepIdx = stepIdx;
         try {
-            getSteps()[fCurrentStepIdx].rollBack(new Done() {
+            getSteps()[fCurrentStepIdx].rollBack(new RequestMonitor(fExecutor, null) {
                 final private int fStepIdx = fCurrentStepIdx;
-                public void run() {
+                @Override
+                public void handleCompleted() {
                     // Check if we're still the correct step.
                     assert fStepIdx == fCurrentStepIdx;
              
@@ -339,7 +338,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
                 }
                 @Override
                 public String toString() {
-                    return "DsfSequence \"" + fTaskName + "\", result for rolling back step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    return "Sequence \"" + fTaskName + "\", result for rolling back step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }                
             });
         } catch(Throwable t) {
@@ -351,7 +350,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
              */ 
             abortRollBack(new Status(
                 IStatus.ERROR, DsfPlugin.PLUGIN_ID, 0, 
-                "Unhandled exception when rolling back DsfSequence " + this + ", step #" + fCurrentStepIdx,  //$NON-NLS-1$ //$NON-NLS-2$
+                "Unhandled exception when rolling back Sequence " + this + ", step #" + fCurrentStepIdx,  //$NON-NLS-1$ //$NON-NLS-2$
                 t));
             
             /*
@@ -371,8 +370,8 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
             fProgressMonitor.subTask(fRollbackTaskName);
         }
         fStatus = new Status(IStatus.CANCEL, DsfPlugin.PLUGIN_ID, -1, "Sequence \"" + fTaskName + "\" cancelled.", null); //$NON-NLS-1$ //$NON-NLS-2$
-        if (fDone != null) {
-            fDone.setStatus(fStatus);
+        if (fRequestMonitor != null) {
+            fRequestMonitor.setStatus(fStatus);
         }
 
         /* 
@@ -395,8 +394,8 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
             fProgressMonitor.subTask(fRollbackTaskName);
         }
         fStatus = error;
-        if (fDone != null) {
-            fDone.setStatus(error);
+        if (fRequestMonitor != null) {
+            fRequestMonitor.setStatus(error);
         }
         fSync.doAbort(new CoreException(error));
         
@@ -424,15 +423,15 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
         newStatus.merge(fStatus);
         fStatus = newStatus;
 
-        if (fDone != null) {
-            fDone.setStatus(newStatus);
+        if (fRequestMonitor != null) {
+            fRequestMonitor.setStatus(newStatus);
         }
         
         finish();
     }
     
     private void finish() {
-        if (fDone != null) getExecutor().submit(fDone);
+        if (fRequestMonitor != null) fRequestMonitor.done();
         fSync.doFinish();
     }
 

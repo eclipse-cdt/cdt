@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
@@ -89,7 +89,7 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
     }
 
     @Override
-    public void createDelta(Object event, final GetDataDone<IModelDelta> done) {
+    public void createDelta(Object event, final DataRequestMonitor<IModelDelta> rm) {
         /*
          * Create the root of the delta.  Since the launch object is not at the 
          * root of the view, create the delta with the path to the launch, then
@@ -115,21 +115,21 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
         } 
         
         // Call the child nodes to generate their delta.
-        final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltaFlags(event);
+        Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltaFlags(event);
         if (childNodeDeltas.size() != 0) {
             callChildNodesToBuildDelta(
                 childNodeDeltas, rootDelta, event, 
-                new Done() { 
-                    public void run() {
+                new RequestMonitor(getExecutor(), rm) { 
+                    @Override
+                    public void handleOK() {
                         if (isDisposed()) return;
-                        if (propagateError(getExecutor(), done, "Failed to create delta.")) return; //$NON-NLS-1$
-                        done.setData(viewRootDelta);
-                        getExecutor().execute(done);
+                        rm.setData(viewRootDelta);
+                        rm.done();
                     }
                 });
         } else {
-            done.setData(viewRootDelta);
-            getExecutor().execute(done);
+            rm.setData(viewRootDelta);
+            rm.done();
         }
     }
     

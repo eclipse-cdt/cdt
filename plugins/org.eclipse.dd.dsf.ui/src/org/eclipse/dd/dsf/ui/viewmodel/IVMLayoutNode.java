@@ -11,7 +11,7 @@
 package org.eclipse.dd.dsf.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
-import org.eclipse.dd.dsf.concurrent.Done;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -90,7 +90,7 @@ public interface IVMLayoutNode
      * for the given event.  
      * @param event Event to process.
      * @return IModelDelta flags
-     * @see #buildDelta(Object, VMDelta, int, Done)
+     * @see #buildDelta(Object, VMDelta, int, RequestMonitor)
      * @see IModelDelta
      */
     public int getDeltaFlags(Object event);
@@ -120,10 +120,10 @@ public interface IVMLayoutNode
      * data to.
      * @param nodeOffset The offset of the first element in this node.  This offset
      * depends on the elements returned by the siblings of this layout node.
-     * @param done Return token, which notifies the caller that the calculation is
+     * @param requestMonitor Return token, which notifies the caller that the calculation is
      * complete.
      */
-    public void buildDelta(Object event, VMDelta parent, int nodeOffset, Done done);
+    public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor);
     
     /**
      * Releases the resources held by this node.

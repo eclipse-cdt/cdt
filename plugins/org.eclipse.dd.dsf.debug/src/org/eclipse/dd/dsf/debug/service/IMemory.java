@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.Done;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
@@ -37,11 +37,11 @@ public interface IMemory extends IDsfService {
 
     /**  Writes the given value to the given memory location. */
     public void setMemory(IMemoryContext memCtx, IAddress addr, 
-                          int word_size, byte[] buf, int offs, int size, int mode, Done done);
+                          int word_size, byte[] buf, int offs, int size, int mode, RequestMonitor requestMonitor);
 
     /** Reads memory at the given location */
     public void getMemory(IMemoryContext memCtx, IAddress addr, 
-                          int word_size, byte[] buf, int offs, int size, int mode, Done done);
+                          int word_size, byte[] buf, int offs, int size, int mode, RequestMonitor requestMonitor);
 
     /**
      * Fill target memory with given pattern.
@@ -50,6 +50,6 @@ public interface IMemory extends IDsfService {
      * there was an error.
      */
     public void fillMemory(IMemoryContext memCtx, IAddress addr,
-                           int word_size, byte[] value, int size, int mode, Done done);
+                           int word_size, byte[] value, int size, int mode, RequestMonitor requestMonitor);
     
 }

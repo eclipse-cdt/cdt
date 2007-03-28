@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 
@@ -49,10 +49,10 @@ public interface ISourceLookup extends IDsfService {
     /**
      * Retrieves the host source object for given debugger path string.
      */
-    void getSource(ISourceLookupContext srcCtx, String debuggerPath, boolean searchDuplicates, GetDataDone<ISourceLookupResult[]> done);
+    void getSource(ISourceLookupContext srcCtx, String debuggerPath, boolean searchDuplicates, DataRequestMonitor<ISourceLookupResult[]> rm);
     
     /**
      * Retrieves the debugger path string(s) for given host source object.
      */
-    void getDebuggerPath(ISourceLookupContext srcCtx, Object source, boolean searchDuplicates, GetDataDone<IDebuggerPathLookupResult[]> done);
+    void getDebuggerPath(ISourceLookupContext srcCtx, Object source, boolean searchDuplicates, DataRequestMonitor<IDebuggerPathLookupResult[]> rm);
 }

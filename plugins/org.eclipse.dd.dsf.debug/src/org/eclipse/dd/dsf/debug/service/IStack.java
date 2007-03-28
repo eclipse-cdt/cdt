@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
@@ -65,7 +65,7 @@ public interface IStack extends IDMService {
      * Retrieves list of stack frames for the given execution context.  Request
      * will fail if the stack frame data is not available.
      */
-    void getFrames(IRunControl.IExecutionDMContext execContext, GetDataDone<IFrameDMContext[]> done);
+    void getFrames(IRunControl.IExecutionDMContext execContext, DataRequestMonitor<IFrameDMContext[]> rm);
     
     /**
      * Retrieves the top stack frame for the given execution context.  
@@ -74,17 +74,17 @@ public interface IStack extends IDMService {
      * is often included in the stopped event.  Also for some UI functionality, 
      * such as setpping, only top stack frame is often needed. 
      * @param execContext
-     * @param done
+     * @param rm
      */
-    void getTopFrame(IRunControl.IExecutionDMContext execContext, GetDataDone<IFrameDMContext> done);
+    void getTopFrame(IRunControl.IExecutionDMContext execContext, DataRequestMonitor<IFrameDMContext> rm);
     
     /**
      * Retrieves variables which were arguments to the stack frame's function.
      */
-    void getArguments(IFrameDMContext frameCtx, GetDataDone<IVariableDMContext[]> done);
+    void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
     
     /**
      * Retrieves variables local to the stack frame.
      */
-    void getLocals(IFrameDMContext frameCtx, GetDataDone<IVariableDMContext[]> done);
+    void getLocals(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
 }

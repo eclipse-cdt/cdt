@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -47,8 +47,8 @@ public interface ISymbols extends IDMService {
     /**
      * Retrieves the list of symbols.
      * @param symCtx Symbols context to retrieve symbols for.
-     * @param done Return token.  The return value is an iterator (rather than 
+     * @param rm Request completion monitor.  The return value is an iterator (rather than 
      * array) since there could be a very large number of symbols returned.
      */
-    public void getSymbols(IModules.ISymbolDMContext symCtx, GetDataDone<Iterable<ISymbolObjectDMContext>> done);
+    public void getSymbols(IModules.ISymbolDMContext symCtx, DataRequestMonitor<Iterable<ISymbolObjectDMContext>> rm);
 }

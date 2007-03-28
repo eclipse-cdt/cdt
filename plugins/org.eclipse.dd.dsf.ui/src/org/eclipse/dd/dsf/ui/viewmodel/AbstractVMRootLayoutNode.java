@@ -12,8 +12,8 @@ package org.eclipse.dd.dsf.ui.viewmodel;
 
 import java.util.Map;
 
-import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
@@ -77,7 +77,7 @@ abstract public class AbstractVMRootLayoutNode extends AbstractVMLayoutNode impl
      * Default implementation creates a delta assuming that the root layout node
      * is the input object into the view.  
      */
-    public void createDelta(Object event, final GetDataDone<IModelDelta> done) {
+    public void createDelta(Object event, final DataRequestMonitor<IModelDelta> rm) {
         final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltaFlags(event);
         assert childNodeDeltas.size() != 0 : "Caller should make sure that there are deltas for given event."; //$NON-NLS-1$
 
@@ -86,12 +86,16 @@ abstract public class AbstractVMRootLayoutNode extends AbstractVMLayoutNode impl
 
         callChildNodesToBuildDelta(
             childNodeDeltas, rootDelta, event, 
-            new Done() { 
-                public void run() {
-                    if (isDisposed()) return;
-                    if (propagateError(getExecutor(), done, "Failed to create delta.")) return; //$NON-NLS-1$
-                    done.setData(rootDelta);
-                    getExecutor().execute(done);
+            new RequestMonitor(getExecutor(), rm) { 
+                @Override
+                protected void handleCompleted() {
+                    if (!isDisposed()) super.handleCompleted();
+                }
+
+                @Override
+                public void handleOK() {
+                    rm.setData(rootDelta);
+                    rm.done();
                 }
             });
     }

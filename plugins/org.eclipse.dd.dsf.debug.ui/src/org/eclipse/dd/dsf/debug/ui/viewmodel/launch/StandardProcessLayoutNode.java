@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.launch;
 
-import org.eclipse.dd.dsf.concurrent.Done;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
@@ -121,7 +121,7 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
         update.done();
     }
 
-    // @see org.eclipse.dd.dsf.ui.viewmodel.IViewModelLayoutNode#hasElements(org.eclipse.dd.dsf.ui.viewmodel.IVMContext, org.eclipse.dd.dsf.concurrent.GetDataDone)
+    // @see org.eclipse.dd.dsf.ui.viewmodel.IViewModelLayoutNode#hasElements(org.eclipse.dd.dsf.ui.viewmodel.IVMContext, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
     public void updateHasElements(IHasChildrenUpdate[] updates) {
         for (IHasChildrenUpdate update : updates) {
             ILaunch launch = findLaunch(update.getElementPath());
@@ -180,7 +180,7 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
     }
     
     @Override
-    public void buildDelta(Object e, VMDelta parent, int nodeOffset, Done done) {
+    public void buildDelta(Object e, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
         if (e instanceof DebugEvent && ((DebugEvent)e).getSource() instanceof IProcess) {
             DebugEvent de = (DebugEvent)e;
             if (de.getKind() == DebugEvent.CHANGE) {
@@ -192,11 +192,11 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
             }
             /*
              * No other node should need to process events related to process.
-             * Therefore, just invoke done, without calling super.buildDelta().
+             * Therefore, just invoke the request monitor without calling super.buildDelta().
              */
-            getExecutor().execute(done);
+            requestMonitor.done();
         } else {
-            super.buildDelta(e, parent, nodeOffset, done);
+            super.buildDelta(e, parent, nodeOffset, requestMonitor);
         }
     }
     

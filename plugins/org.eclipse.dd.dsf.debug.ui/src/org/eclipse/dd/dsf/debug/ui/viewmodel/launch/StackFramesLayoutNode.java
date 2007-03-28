@@ -12,8 +12,8 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.launch;
 
 import java.util.List;
 
-import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -74,8 +74,9 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
         
         getServicesTracker().getService(IStack.class).getFrames(
             execDmc, 
-            new GetDataDone<IFrameDMContext[]>() { 
-                public void run() {
+            new DataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), null) { 
+                @Override
+                public void handleCompleted() {
                     if (!getStatus().isOK()) {
                         // Failed to retrieve frames.  If we are stepping, we 
                         // might still be able to retrieve just the top stack 
@@ -100,7 +101,7 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
      * Retrieves teh list of VMC elements for a full stack trace, but with only 
      * the top stack frame being retrieved from the service.  The rest of the 
      * frames are retrieved from the cache or omitted.  
-     * @see #getElements(IVMContext, GetDataDone)
+     * @see #getElements(IVMContext, DataRequestMonitor)
      */
     private void getElementsTopStackFrameOnly(final IChildrenUpdate update) {
         final IExecutionDMContext execDmc = findDmcInPath(update.getElementPath(), IExecutionDMContext.class);
@@ -111,25 +112,28 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
 
         getServicesTracker().getService(IStack.class).getTopFrame(
             execDmc, 
-            new GetDataDone<IFrameDMContext>() { public void run() {
-                if (!getStatus().isOK()) {
-                    handleFailedUpdate(update);
-                    return;
-                }
-                
-                IVMContext topFrameVmc = new DMVMContext(getData());
-                
-                update.setChild(topFrameVmc, 0);
-                // If there are old frames cached, use them and only substitute the top frame object. Otherwise, create
-                // an array of VMCs with just the top frame.
-                if (fCachedOldFrameVMCs != null && fCachedOldFrameVMCs.length >= 1) {
-                    fCachedOldFrameVMCs[0] = topFrameVmc;
-                    for (int i = 0; i < fCachedOldFrameVMCs.length; i++) update.setChild(fCachedOldFrameVMCs[i], i);
-                } else {
+            new DataRequestMonitor<IFrameDMContext>(getSession().getExecutor(), null) { 
+                @Override
+                public void handleCompleted() {
+                    if (!getStatus().isOK()) {
+                        handleFailedUpdate(update);
+                        return;
+                    }
+                    
+                    IVMContext topFrameVmc = new DMVMContext(getData());
+                    
                     update.setChild(topFrameVmc, 0);
+                    // If there are old frames cached, use them and only substitute the top frame object. Otherwise, create
+                    // an array of VMCs with just the top frame.
+                    if (fCachedOldFrameVMCs != null && fCachedOldFrameVMCs.length >= 1) {
+                        fCachedOldFrameVMCs[0] = topFrameVmc;
+                        for (int i = 0; i < fCachedOldFrameVMCs.length; i++) update.setChild(fCachedOldFrameVMCs[i], i);
+                    } else {
+                        update.setChild(topFrameVmc, 0);
+                    }
+                    update.done();
                 }
-                update.done();
-            }});
+            });
     }
     
     @Override
@@ -220,25 +224,25 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
     }
 
     @Override
-    protected void buildDeltaForDMEvent(final IDMEvent<?> e, final VMDelta parent, final int nodeOffset, final Done done) {
+    protected void buildDeltaForDMEvent(final IDMEvent<?> e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
-            buildDeltaForSuspendedEvent((IRunControl.ISuspendedDMEvent)e, parent, nodeOffset, done);
+            buildDeltaForSuspendedEvent((IRunControl.ISuspendedDMEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof IRunControl.IResumedDMEvent) {
-            buildDeltaForResumedEvent((IRunControl.IResumedDMEvent)e, parent, nodeOffset, done);
+            buildDeltaForResumedEvent((IRunControl.IResumedDMEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof IStepQueueManager.ISteppingTimedOutEvent) {
-            buildDeltaForSteppingTimedOutEvent((IStepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, done);
+            buildDeltaForSteppingTimedOutEvent((IStepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
         } else {
             // Call super-class to build sub-node delta's.
-            super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+            super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
         }
     }
     
-    private void buildDeltaForSuspendedEvent(final IRunControl.ISuspendedDMEvent e, final VMDelta parent, final int nodeOffset, final Done done) {
+    private void buildDeltaForSuspendedEvent(final IRunControl.ISuspendedDMEvent e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
         IStack stackService = getServicesTracker().getService(IStack.class);
         if (stackService == null || runControlService == null) {
             // Required services have not initialized yet.  Ignore the event.
-            super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+            super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
             return;
         }          
         
@@ -255,8 +259,9 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
         // Retrieve the list of stack frames, and mark the top frame to be selected.  
         getElementsTopStackFrameOnly(
             new ElementsUpdate(
-                new GetDataDone<List<Object>>() { 
-                    public void run() {
+                new DataRequestMonitor<List<Object>>(getSession().getExecutor(), null) { 
+                    @Override
+                    public void handleCompleted() {
                         if (getStatus().isOK() && getData().size() != 0) {
                             parent.addNode( getData().get(0), IModelDelta.SELECT | IModelDelta.STATE);
                             // If second frame is available repaint it, so that a "..." appears.  This gives a better
@@ -266,18 +271,18 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
                             }
                         }                        
                         // Even in case of errors, call super-class to complete building of the delta.
-                        StackFramesLayoutNode.super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+                        StackFramesLayoutNode.super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
                     }
                 },
                 parent)
             );
     }
     
-    private void buildDeltaForResumedEvent(final IRunControl.IResumedDMEvent e, final VMDelta parent, final int nodeOffset, final Done done) {
+    private void buildDeltaForResumedEvent(final IRunControl.IResumedDMEvent e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         IStack stackService = getServicesTracker().getService(IStack.class);
         if (stackService == null) {
             // Required services have not initialized yet.  Ignore the event.
-            super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+            super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
             return;
         }          
 
@@ -288,12 +293,12 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
             parent.addFlags(IModelDelta.CONTENT);
             fCachedOldFrameVMCs = null;
         }
-        super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+        super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
     }
 
-    private void buildDeltaForSteppingTimedOutEvent(final IStepQueueManager.ISteppingTimedOutEvent e, final VMDelta parent, final int nodeOffset, final Done done) {
+    private void buildDeltaForSteppingTimedOutEvent(final IStepQueueManager.ISteppingTimedOutEvent e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         // Repaint the stack frame images to have the running symbol.
         parent.addFlags(IModelDelta.CONTENT);
-        super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+        super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
     }
 }

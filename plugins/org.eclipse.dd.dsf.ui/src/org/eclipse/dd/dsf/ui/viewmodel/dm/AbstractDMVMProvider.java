@@ -13,7 +13,7 @@ package org.eclipse.dd.dsf.ui.viewmodel.dm;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -120,16 +120,19 @@ abstract public class AbstractDMVMProvider extends AbstractVMProvider
     
                     IVMRootLayoutNode rootLayoutNode = getRootLayoutNode();
                     if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != 0) {
-                        rootLayoutNode.createDelta(event, new GetDataDone<IModelDelta>() {
-                            public void run() {
-                                if (getStatus().isOK()) {
-                                    getModelProxy().fireModelChangedNonDispatch(getData());
+                        rootLayoutNode.createDelta(
+                            event, 
+                            new DataRequestMonitor<IModelDelta>(getExecutor(), null) {
+                                @Override
+                                public void handleCompleted() {
+                                    if (getStatus().isOK()) {
+                                        getModelProxy().fireModelChangedNonDispatch(getData());
+                                    }
                                 }
-                            }
-                            @Override public String toString() {
-                                return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + AbstractDMVMProvider.this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                            }
-                        });
+                                @Override public String toString() {
+                                    return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + AbstractDMVMProvider.this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                }
+                            });
                     }
                 }});
         } catch (RejectedExecutionException e) {

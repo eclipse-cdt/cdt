@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
-import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
@@ -48,8 +48,9 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
         
         getServicesTracker().getService(IRegisters.class).getRegisters(
             execDmc,
-            new GetDataDone<IRegisterDMContext[]>() { 
-                public void run() {
+            new DataRequestMonitor<IRegisterDMContext[]>(getSession().getExecutor(), null) { 
+                @Override
+                public void handleCompleted() {
                     if (!getStatus().isOK()) {
                         handleFailedUpdate(update);
                         return;
@@ -93,7 +94,7 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
     }
 
     @Override
-    protected void buildDeltaForDMEvent(IDMEvent<?> e, VMDelta parent, int nodeOffset, Done done) {
+    protected void buildDeltaForDMEvent(IDMEvent<?> e, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that the whole register group has changed.
             parent.addFlags(IModelDelta.CONTENT);
@@ -101,6 +102,6 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
         if (e instanceof IRegisters.IRegisterChangedDMEvent) {
             parent.addNode( new DMVMContext(((IRegisters.IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         } 
-        super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+        super.buildDeltaForDMEvent(e, parent, nodeOffset, requestMonitor);
     }
 }

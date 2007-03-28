@@ -16,9 +16,9 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.concurrent.Done;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -198,8 +198,9 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
             
             updateElementsInSessionThread(
                 new ElementsUpdate( 
-                    new GetDataDone<List<Object>>() {
-                        public void run() {
+                    new DataRequestMonitor<List<Object>>(getSession().getExecutor(), null) {
+                        @Override
+                        protected void handleCompleted() {
                             if (!checkUpdate(update)) return;
                             if (getStatus().isOK()) {
                                 update.setHasChilren(getData().size() != 0);
@@ -232,8 +233,9 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
     protected void updateElementCountInSessionThread(final IChildrenCountUpdate update) {
         updateElementsInSessionThread(
             new ElementsUpdate( 
-                new GetDataDone<List<Object>>() {
-                    public void run() {
+                new DataRequestMonitor<List<Object>>(getSession().getExecutor(), null) {
+                    @Override
+                    protected void handleCompleted() {
                         if (!checkUpdate(update)) return;
                         if (getStatus().isOK()) {
                             update.setChildCount(getData().size());
@@ -296,8 +298,9 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
             
             ((IDMService)getServicesTracker().getService(null, vmc.getDMC().getServiceFilter())).getModelData(
                 dmc, 
-                new GetDataDone<V>() { 
-                    public void run() {
+                new DataRequestMonitor<V>(getSession().getExecutor(), null) { 
+                    @Override
+                    protected void handleCompleted() {
                         /*
                          * Check that the request was evaluated and data is still
                          * valid.  The request could fail if the state of the 
@@ -363,22 +366,22 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
     }
     
     @Override
-    public void buildDelta(final Object e, final VMDelta parentDelta, final int nodeOffset, final Done done) {
+    public void buildDelta(final Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
         if (e instanceof IDMEvent) {
             // Call handler for Data Model events.  But check to make sure 
             // that session is still active.
             if (DsfSession.isSessionActive(getSession().getId())) {
                 getSession().getExecutor().execute(new DsfRunnable() {
                     public void run() {
-                        buildDeltaForDMEvent((IDMEvent<?>)e, parentDelta, nodeOffset, done);
+                        buildDeltaForDMEvent((IDMEvent<?>)e, parentDelta, nodeOffset, requestMonitor);
                     }
                 });
             } else {
                 if (isDisposed()) return;
-                getExecutor().execute(done);
+                requestMonitor.done();
             }
         } else {
-            super.buildDelta(e, parentDelta, nodeOffset, done);
+            super.buildDelta(e, parentDelta, nodeOffset, requestMonitor);
         }
     }
     
@@ -387,7 +390,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
      * a context of the type tracked by this node, then this base implementation
      * will only create a delta node for this one element.  
      */
-    protected void buildDeltaForDMEvent(final IDMEvent<?> event, final VMDelta parentDelta, final int nodeOffset, final Done done) {
+    protected void buildDeltaForDMEvent(final IDMEvent<?> event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
         IDMContext<V> dmc = DMContexts.getAncestorOfType(event.getDMContext(), fDMCClassType);
         
         if (dmc != null) {
@@ -397,7 +400,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
             final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltaFlags(event);
             if (childNodeDeltas.size() == 0) {
                 // There are no child nodes with deltas, just return to parent.
-                getExecutor().execute(done);
+                requestMonitor.done();
                 return;
             }            
     
@@ -416,15 +419,16 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
                 // Calculate the index of this node by retrieving all the 
                 // elements and then finding the DMC that the event is for.  
                 updateElements(new ElementsUpdate(
-                    new GetDataDone<List<Object>>() {
-                        public void run() {
+                    new DataRequestMonitor<List<Object>>(getExecutor(), null) {
+                        @Override
+                        protected void handleCompleted() {
                             if (isDisposed()) return;
     
                             // Check for an empty list of elements.  If it's empty then we 
                             // don't have to call the children nodes, so return here.
                             // No need to propagate error, there's no means or need to display it.
                             if (!getStatus().isOK()) {
-                                getExecutor().execute(done);
+                                requestMonitor.done();
                                 return;
                             }
                             
@@ -435,23 +439,23 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
                             }                            
                             if (i == getData().size()) {
                                 // Element not found, no need to generate the delta.
-                                getExecutor().execute(done);
+                                requestMonitor.done();
                             }
                             
                             VMDelta delta = parentDelta.addNode(vmc, nodeOffset + i, IModelDelta.NO_CHANGE);
-                            callChildNodesToBuildDelta(childNodeDeltas, delta, event, done);
+                            callChildNodesToBuildDelta(childNodeDeltas, delta, event, requestMonitor);
                         }
                     }, 
                     parentDelta));        
             } else {
                 VMDelta delta = parentDelta.addNode(vmc, IModelDelta.NO_CHANGE);
-                callChildNodesToBuildDelta(childNodeDeltas, delta, event, done);
+                callChildNodesToBuildDelta(childNodeDeltas, delta, event, requestMonitor);
             }            
         } else {
             // The for this node was not found in the event.  Call the 
             // super-class to resort to the default behavior which may add a 
             // delta node for every element in this node.
-            super.buildDelta(event, parentDelta, nodeOffset, done);
+            super.buildDelta(event, parentDelta, nodeOffset, requestMonitor);
         }
     }
     

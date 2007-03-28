@@ -92,7 +92,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     }  
 
     /** 
-     * This map is used by DsfRunnable/DsfQuery/DsfCallable to track by which executor
+     * This map is used by DsfRunnable/Query/DsfCallable to track by which executor
      * an executable object was created.
      * <br>Note: Only used when tracing. 
      */

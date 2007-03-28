@@ -29,13 +29,13 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.SystemMessageObject;
+import org.eclipse.rse.internal.ui.actions.SystemNewConnectionAction;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.rse.ui.view.ISystemViewRunnableObject;
 import org.eclipse.swt.widgets.Shell;
 

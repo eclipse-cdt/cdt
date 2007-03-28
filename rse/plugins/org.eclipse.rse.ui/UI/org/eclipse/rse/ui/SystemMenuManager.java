@@ -19,18 +19,18 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.rse.internal.ui.actions.SystemCascadingBrowseWithAction;
+import org.eclipse.rse.internal.ui.actions.SystemCascadingCompareWithAction;
+import org.eclipse.rse.internal.ui.actions.SystemCascadingExpandToAction;
+import org.eclipse.rse.internal.ui.actions.SystemCascadingNewAction;
+import org.eclipse.rse.internal.ui.actions.SystemCascadingOpenWithAction;
+import org.eclipse.rse.internal.ui.actions.SystemCascadingRemoteServersAction;
+import org.eclipse.rse.internal.ui.actions.SystemCascadingReplaceWithAction;
+import org.eclipse.rse.internal.ui.actions.SystemCascadingViewAction;
+import org.eclipse.rse.internal.ui.actions.SystemCascadingWorkWithAction;
+import org.eclipse.rse.internal.ui.actions.SystemSeparatorAction;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
-import org.eclipse.rse.ui.actions.SystemCascadingBrowseWithAction;
-import org.eclipse.rse.ui.actions.SystemCascadingCompareWithAction;
-import org.eclipse.rse.ui.actions.SystemCascadingExpandToAction;
-import org.eclipse.rse.ui.actions.SystemCascadingNewAction;
-import org.eclipse.rse.ui.actions.SystemCascadingOpenWithAction;
-import org.eclipse.rse.ui.actions.SystemCascadingRemoteServersAction;
-import org.eclipse.rse.ui.actions.SystemCascadingReplaceWithAction;
-import org.eclipse.rse.ui.actions.SystemCascadingViewAction;
-import org.eclipse.rse.ui.actions.SystemCascadingWorkWithAction;
-import org.eclipse.rse.ui.actions.SystemSeparatorAction;
 
 /**
  * Override/wrapper of JFace MenuManager so we can redirect any

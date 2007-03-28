@@ -42,7 +42,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.files.ui.actions.SystemDownloadConflictAction;
+import org.eclipse.rse.internal.files.ui.actions.SystemDownloadConflictAction;
 import org.eclipse.rse.internal.files.ui.resources.SystemFileNameHelper;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;

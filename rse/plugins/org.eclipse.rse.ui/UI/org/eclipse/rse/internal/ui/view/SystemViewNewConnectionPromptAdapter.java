@@ -16,10 +16,10 @@
 
 package org.eclipse.rse.internal.ui.view;
 
+import org.eclipse.rse.internal.ui.actions.SystemRunAction;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.actions.SystemRunAction;
 import org.eclipse.swt.widgets.Shell;
 
 

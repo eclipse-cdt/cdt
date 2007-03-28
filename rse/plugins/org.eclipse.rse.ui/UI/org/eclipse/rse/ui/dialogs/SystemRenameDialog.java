@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Dialog for renaming multiple resources.
  * <p>
- * This is a re-usable dialog that you can use  directly, or via the {@link org.eclipse.rse.ui.actions.SystemCommonRenameAction}
+ * This is a re-usable dialog that you can use  directly, or via the {@link org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction}
  *  action. 
  * <p>
  * To use this dialog, you must call setInputObject with a StructuredSelection of the objects to be renamed.
@@ -83,7 +83,7 @@ import org.eclipse.swt.widgets.Text;
  * are queriable via {@link #getNewNames()}, after testing that {@link #wasCancelled()} is false. The array entries
  * will match the input order.
  * 
- * @see org.eclipse.rse.ui.actions.SystemCommonRenameAction
+ * @see org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction
  */
 public class SystemRenameDialog extends SystemPromptDialog 
                                 implements ISystemPropertyConstants,

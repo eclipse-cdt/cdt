@@ -26,12 +26,12 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.internal.ui.actions.SystemStartCommunicationsDaemonAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.DisplaySystemMessageAction;
-import org.eclipse.rse.ui.actions.SystemStartCommunicationsDaemonAction;
 import org.eclipse.swt.widgets.Display;
 
  

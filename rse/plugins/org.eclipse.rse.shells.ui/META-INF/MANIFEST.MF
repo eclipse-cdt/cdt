@@ -21,9 +21,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.core,
  org.eclipse.rse.ui
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.rse.internal.shells.ui.propertypages,
+Export-Package: org.eclipse.rse.internal.shells.ui.actions,
+ org.eclipse.rse.internal.shells.ui.propertypages,
  org.eclipse.rse.shells.ui,
- org.eclipse.rse.shells.ui.actions,
  org.eclipse.rse.shells.ui.view
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -44,14 +44,14 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * Dialog for confirming resource deletion. 
  * <p>
- * This is a re-usable dialog that you can use  directly, or via the {@link org.eclipse.rse.ui.actions.SystemCommonDeleteAction}
+ * This is a re-usable dialog that you can use  directly, or via the {@link org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction}
  *  action. It asks the user to confirm the deletion of the input selection.
  * <p>If the input objects do not adapt to {@link org.eclipse.rse.ui.view.ISystemViewElementAdapter} or 
  *  {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter}, then they should implement the 
  *  interface {@link org.eclipse.rse.ui.dialogs.ISystemTypedObject} so that their type can be
  *  displayed in this delete confirmation dialog.
  * 
- * @see org.eclipse.rse.ui.actions.SystemCommonDeleteAction
+ * @see org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction
  */
 public class SystemDeleteDialog extends SystemPromptDialog 
                                 implements ISystemPropertyConstants,

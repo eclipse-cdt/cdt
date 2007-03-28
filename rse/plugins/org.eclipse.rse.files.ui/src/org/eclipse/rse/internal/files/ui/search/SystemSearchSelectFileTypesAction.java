@@ -18,7 +18,7 @@
 package org.eclipse.rse.internal.files.ui.search;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.rse.files.ui.actions.SystemSelectFileTypesAction;
+import org.eclipse.rse.internal.files.ui.actions.SystemSelectFileTypesAction;
 import org.eclipse.swt.widgets.Shell;
 
 

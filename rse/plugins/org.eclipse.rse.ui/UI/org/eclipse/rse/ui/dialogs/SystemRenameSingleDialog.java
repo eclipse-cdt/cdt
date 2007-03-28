@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * Dialog for renaming a single resource. Used when only one item selected.
  * <p>
- * This is a re-usable dialog that you can use  directly, or via the {@link org.eclipse.rse.ui.actions.SystemCommonRenameAction}
+ * This is a re-usable dialog that you can use  directly, or via the {@link org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction}
  *  action. 
  * <p>
  * To use this dialog, you must call setInputObject with a StructuredSelection of the objects to be renamed.
@@ -70,7 +70,7 @@ import org.eclipse.swt.widgets.Widget;
  * This dialog does not do the actual renames. Rather, it will return the user-typed new name. This is
  * queriable via {@link #getNewName()}, after testing that {@link #wasCancelled()} is false. 
  * 
- * @see org.eclipse.rse.ui.actions.SystemCommonRenameAction
+ * @see org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction
  */
 public class SystemRenameSingleDialog extends SystemPromptDialog 
                                 implements ISystemPropertyConstants,

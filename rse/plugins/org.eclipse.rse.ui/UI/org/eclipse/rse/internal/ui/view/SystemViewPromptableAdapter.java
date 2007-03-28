@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.internal.ui.actions.SystemRunAction;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.SystemMenuManager;
-import org.eclipse.rse.ui.actions.SystemRunAction;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.swt.widgets.Shell;
 

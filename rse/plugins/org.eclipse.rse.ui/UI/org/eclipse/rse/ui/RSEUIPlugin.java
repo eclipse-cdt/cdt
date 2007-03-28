@@ -48,6 +48,8 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
+import org.eclipse.rse.internal.ui.actions.SystemDynamicPopupMenuExtensionManager;
+import org.eclipse.rse.internal.ui.actions.SystemShowPreferencesPageAction;
 import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapterFactory;
 import org.eclipse.rse.internal.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewResourceAdapterFactory;
@@ -60,8 +62,6 @@ import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.rse.ui.actions.ISystemDynamicPopupMenuExtension;
-import org.eclipse.rse.ui.actions.SystemDynamicPopupMenuExtensionManager;
-import org.eclipse.rse.ui.actions.SystemShowPreferencesPageAction;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 

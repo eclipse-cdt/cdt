@@ -1766,6 +1766,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getRemoteEncoding()
 	 */
 	public String getRemoteEncoding() {
-		return System.getProperty("file.encoding");
+		return System.getProperty("file.encoding"); //$NON-NLS-1$
 	}
 }

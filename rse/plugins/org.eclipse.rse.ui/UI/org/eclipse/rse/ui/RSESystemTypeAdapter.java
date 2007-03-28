@@ -34,6 +34,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.internal.ui.RSEAdapter;
 import org.eclipse.rse.ui.actions.SystemClearAllPasswordsAction;
 import org.eclipse.rse.ui.actions.SystemWorkOfflineAction;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardDescriptor;
@@ -156,7 +157,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	/**
 	 * Returns the description of the system type if the object passed in is of type <code>IRSESystemType</code>.
 	 * Otherwise, returns the value of the parent implementation.
-	 * @see org.eclipse.rse.ui.RSEAdapter#getDescription(java.lang.Object)
+	 * @see org.eclipse.rse.internal.ui.RSEAdapter#getDescription(java.lang.Object)
 	 */
 	public String getDescription(Object object) {
 

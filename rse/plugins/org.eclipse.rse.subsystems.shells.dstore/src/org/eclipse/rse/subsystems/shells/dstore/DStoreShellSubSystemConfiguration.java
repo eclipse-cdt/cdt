@@ -22,6 +22,7 @@ import org.eclipse.rse.connectorservice.dstore.DStoreConnectorServiceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.subsystems.shells.dstore.DStoreServiceCommandShell;
 import org.eclipse.rse.services.dstore.IDStoreService;
 import org.eclipse.rse.services.dstore.shells.DStoreShellService;
 import org.eclipse.rse.services.shells.IHostShell;
@@ -30,7 +31,6 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IServiceCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystemConfiguration;
-import org.eclipse.rse.subsystems.shells.dstore.model.DStoreServiceCommandShell;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**

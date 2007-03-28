@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.shells.dstore;singleton:=true
 Bundle-Version: 2.0.0.qualifier
-Bundle-Activator: org.eclipse.rse.subsystems.shells.dstore.Activator
+Bundle-Activator: org.eclipse.rse.internal.subsystems.shells.dstore.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -19,6 +19,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.subsystems.files.core
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
-Export-Package: org.eclipse.rse.subsystems.shells.dstore,
- org.eclipse.rse.subsystems.shells.dstore.model
+Export-Package: org.eclipse.rse.subsystems.shells.dstore
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

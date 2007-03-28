@@ -21,6 +21,7 @@ import org.eclipse.rse.connectorservice.dstore.DStoreConnectorServiceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.subsystems.processes.dstore.DStoreProcessAdapter;
 import org.eclipse.rse.services.dstore.IDStoreService;
 import org.eclipse.rse.services.dstore.processes.DStoreProcessService;
 import org.eclipse.rse.services.processes.IProcessService;

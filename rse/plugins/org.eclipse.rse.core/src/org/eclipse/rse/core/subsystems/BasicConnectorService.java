@@ -47,11 +47,10 @@ import org.eclipse.rse.core.model.IHost;
  * 
  * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
  */
-public abstract class BasicConnectorService extends AuthenticatingConnectorService {
+public abstract class BasicConnectorService extends SuperAbstractConnectorService {
 	
 	public BasicConnectorService(String name, String description, IHost host, int port) {
 		super(name, description, host, port);
-		setCredentialsProvider(new BasicCredentialsProvider(this));
 	}
 	
 	public boolean supportsPassword() {
@@ -68,6 +67,59 @@ public abstract class BasicConnectorService extends AuthenticatingConnectorServi
 	
 	public boolean requiresUserId() {
 		return false;
+	}
+	
+	public void acquireCredentials(boolean refresh) throws InterruptedException {
+	}
+	
+	public void clearCredentials() {
+	}
+	
+	public void clearPassword(boolean persist, boolean propagate) {
+	}
+	
+	public String getUserId() {
+		return null;
+	}
+	
+	public boolean hasPassword(boolean onDisk) {
+		return false;
+	}
+	
+	public boolean inheritsCredentials() {
+		return false;
+	}
+	
+	public boolean isSuppressed() {
+		return false;
+	}
+	
+	protected void postDisconnect() {
+	}
+	
+	public void removePassword() {
+	}
+	
+	public void removeUserId() {
+	}
+	
+	public void savePassword() {
+	}
+	
+	public void saveUserId() {
+	}
+	
+	public void setPassword(String matchingUserId, String password, boolean persist, boolean propagate) {
+	}
+	
+	public boolean sharesCredentials() {
+		return false;
+	}
+
+	public void setSuppressed(boolean suppress) {
+	}
+
+	public void setUserId(String userId) {
 	}
 	
 }

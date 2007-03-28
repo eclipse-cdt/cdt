@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.rse.files.ui.SystemFileTreeAndListGroup;
 import org.eclipse.rse.files.ui.actions.SystemSelectFileTypesAction;
+import org.eclipse.rse.internal.files.ui.widgets.SystemFileTreeAndListGroup;
 import org.eclipse.rse.internal.ui.view.SystemViewLabelAndContentProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;

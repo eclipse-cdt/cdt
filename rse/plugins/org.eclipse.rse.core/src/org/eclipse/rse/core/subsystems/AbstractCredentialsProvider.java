@@ -22,34 +22,61 @@ public abstract class AbstractCredentialsProvider implements ICredentialsProvide
 	private IConnectorService connectorService = null;
 	private boolean suppressed = false;
 	
+	/**
+	 * Create a credentials provider for a particular connector service.
+	 * Subclasses should implement their own constuctors but invoke this constructor
+	 * in them.
+	 * @param connectorService the associatated connector service.
+	 */
 	public AbstractCredentialsProvider(IConnectorService connectorService) {
 		this.connectorService = connectorService;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#getConnectorService()
+	 */
 	public final IConnectorService getConnectorService() {
 		return connectorService;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#isSuppressed()
+	 */
 	public final boolean isSuppressed() {
 		return suppressed;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#setSuppressed(boolean)
+	 */
 	public final void setSuppressed(boolean suppressed) {
 		this.suppressed = suppressed;
 	}
 	
+	/**
+	 * @return true if the associated connector service supports user ids.
+	 */
 	protected final boolean supportsUserId() {
 		return connectorService.supportsUserId();
 	}
 	
+	/**
+	 * @return true if the associated connector service requires a user id.
+	 */
 	protected final boolean requiresUserId() {
 		return connectorService.requiresUserId();
 	}
 	
+	/**
+	 * @return true if the associated connector service supports a password.
+	 */
 	protected final boolean supportsPassword() {
 		return connectorService.supportsPassword();
 	}
 	
+	/**
+	 * @return true if the associated connector service requires a password.
+	 */
 	protected final boolean requiresPassword() {
 		return connectorService.requiresPassword();
 	}

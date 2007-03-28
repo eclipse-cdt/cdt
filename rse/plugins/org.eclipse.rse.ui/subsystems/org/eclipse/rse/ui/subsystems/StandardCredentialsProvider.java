@@ -15,7 +15,6 @@ import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.AbstractCredentialsProvider;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ICredentials;
-import org.eclipse.rse.core.subsystems.ICredentialsProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
@@ -35,8 +34,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * The {@link StandardCredentialsProvider} is an implementation of
- * {@link ICredentialsProvider} that provides for the prompting of a userid
+ * The {@link StandardCredentialsProvider} is an extension of
+ * {@link AbstractCredentialsProvider} that provides for the prompting of a userid
  * and password.
  * <p>
  * It uses a {@link PasswordPersistenceManager} to store the passwords in the
@@ -50,14 +49,22 @@ import org.eclipse.ui.PlatformUI;
  * specific prompting.
  */
 public class StandardCredentialsProvider extends AbstractCredentialsProvider {
-	
+	/**
+	 * A runnable that will actually perform the prompting.
+	 */
 	private class PromptForCredentials implements Runnable {
 		private boolean canceled = false;
-	
+
+		/**
+		 * @return true if prompting was canceled.
+		 */
 		public boolean isCanceled() {
 			return canceled;
 		}
-	
+
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
 		public void run() {
 			ISystemPasswordPromptDialog dialog = getPasswordPromptDialog(getShell());
 			dialog.setSystemInput(getConnectorService());
@@ -85,18 +92,23 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 			}
 		}
 	}
+
+	/**
+	 * A runnable that will prompt for a new password. Typically used when 
+	 * a password has expired.
+	 */
 	private class PromptForNewPassword implements Runnable {
 		private SystemMessage message;
 		private boolean canceled = false;
-	
+
 		public PromptForNewPassword(SystemMessage message) {
 			this.message = message;
 		}
-	
+
 		public boolean isCancelled() {
 			return canceled;
 		}
-	
+
 		public void run() {
 			SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(getShell(), getConnectorService().getHostName(), getUserId(), message);
 			dlg.setSavePassword(savePassword);
@@ -107,32 +119,41 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 				savePassword = dlg.getIsSavePassword();
 			}
 		}
-	
 	}
+
 	private String userId = null;
 	private String password = null;
 	private boolean savePassword = false;
 	private boolean saveUserId = false;
 
+	/**
+	 * Creates a standard credentials provider for a connector service. 
+	 * @param connectorService the connector service associated with this 
+	 * provider.
+	 * @see IConnectorService
+	 */
 	public StandardCredentialsProvider(IConnectorService connectorService) {
 		super(connectorService);
 	}
 
 	/**
 	 * <i>Do not override.</i>
-	 * Sets the signon information for this connector service.
+	 * Acquires the credentials (userid and password) for this connector service.
 	 * The search order for the password is as follows:</p>
 	 * <ol>
-	 * <li>First check if the password is already known by this connector service and that it is still valid.
-	 * <li>If password not known then look in the password store and verify that it is still valid.
-	 * <li>If a valid password is not found then prompt the user.
+	 * <li>First check if the password is already known by this
+	 * connector service and that it is still valid.
+	 * <li>If password not known then look in the password
+	 * store and verify that it is still valid.
+	 * <li>If a valid password is not found or is to be reacquired
+	 * then prompt the user
 	 * </ol>
-	 * Must be run in the UI thread. 
-	 * Can be null if the password is known to exist in either this class or in the password store.
-	 * @param reacquire if true then present the prompt even if the password was found and is valid.
-	 * @throws InterruptedException if user is prompted and user cancels that prompt or if isSuppressSignonPrompt is true.
+	 * @param reacquire if true then present the prompt even
+	 * if the password was found and is valid.
+	 * @throws InterruptedException if user is prompted and user
+	 * cancels that prompt or if {@link #isSuppressed()} is true.
 	 */
-	public void acquireCredentials(boolean reacquire) throws InterruptedException {
+	public final void acquireCredentials(boolean reacquire) throws InterruptedException {
 		if (isSuppressed()) {
 			throw new InterruptedException();
 		}
@@ -189,21 +210,25 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		}
 	}
 
-	public void clearCredentials() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#clearCredentials()
+	 */
+	public final void clearCredentials() {
 		password = null;
 		userId = null;
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Clear internal password cache. Called when user uses the property dialog to 
-	 * change his userId.  
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#clearPassword()
 	 */
 	final public void clearPassword() {
 		password = null;
 	}
 
-	public ICredentials getCredentials() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#getCredentials()
+	 */
+	public final ICredentials getCredentials() {
 		IHost host = getConnectorService().getHost();
 		String hostName = host.getHostName();
 		String systemType = host.getSystemType();
@@ -211,11 +236,8 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		return result;
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Returns the active userId if we are connected.
-	 * If not it returns the userId for the primary subsystem ignoring the 
-	 * cached userId.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#getUserId()
 	 */
 	final public String getUserId() {
 		if (supportsUserId()) {
@@ -225,12 +247,18 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		}
 		return userId;
 	}
-	
-	public void repairCredentials(SystemMessage prompt) throws InterruptedException {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#repairCredentials(org.eclipse.rse.services.clientserver.messages.SystemMessage)
+	 */
+	public final void repairCredentials(SystemMessage prompt) throws InterruptedException {
 		promptForNewPassword(prompt);
 	}
 
-	public void setPassword(String password) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#setPassword(java.lang.String)
+	 */
+	public final void setPassword(String password) {
 		this.password = password;
 	}
 
@@ -269,7 +297,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	/**
 	 * <i>A default implementation is supplied, but can be overridden if desired.</i><br>
 	 * Instantiates and returns the dialog to prompt for the userId and password.
-	 * @return An instance of a dialog class that implements the ISystemPasswordPromptDialog interface
+	 * @return An instance of a dialog class that implements {@link ISystemPasswordPromptDialog}
 	 */
 	protected ISystemPasswordPromptDialog getPasswordPromptDialog(Shell shell) {
 		ISystemPasswordPromptDialog dlg = new SystemPasswordPromptDialog(shell, requiresUserId(), requiresPassword());
@@ -278,30 +306,18 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 
 	/**
 	 * <i>Optionally overridable, not implemented by default.</i><br>
-	 * Get the signon validator to use in the password dialog prompt.
-	 * By default, returns null.
+	 * Get the credentails validator to use to validate the credentials as entered
+	 * in the dialog. This should only do a local validation.
+	 * @return null indicating that no signon validator exists.
 	 */
 	protected ICredentialsValidator getSignonValidator() {
 		return null;
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-	 * Should passwords be folded to uppercase?
-	 * By default, returns: 
-	 *   <pre><code>getSubSystem().forceUserIdToUpperCase()</code></pre>
-	 */
 	private boolean forcePasswordToUpperCase() {
 		return getPrimarySubSystem().forceUserIdToUpperCase();
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-	 * Get the password input validator to use in the password dialog prompt.
-	 * <p>
-	 * By default, returns:</p>
-	 *   <pre><code>getSubSystem().getParentSubSystemConfiguration().getPasswordValidator()</code></pre>
-	 */
 	private ISystemValidator getPasswordValidator() {
 		ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
 		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
@@ -317,22 +333,12 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		return shell;
 	}
 
-	/**
-	 * @return the userId from the primary subsystem.
-	 */
 	private String getSubSystemUserId() {
 		ISubSystem ss = getPrimarySubSystem();
 		String result = ss.getUserId();
 		return result;
 	}
 
-	/**
-	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-	 * Get the userId input validator to use in the password dialog prompt.
-	 * <p>
-	 * By default, returns </p>
-	 *   <pre><code>getSubSystem().getParentSubSystemConfiguration().getUserIdValidator()</code></pre>
-	 */
 	private ISystemValidator getUserIdValidator() {
 		ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
 		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
@@ -352,7 +358,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 			throw new InterruptedException();
 		}
 	}
-	
+
 	private void promptForNewPassword(SystemMessage prompt) throws InterruptedException {
 		PromptForNewPassword runnable = new PromptForNewPassword(prompt);
 		Display.getDefault().syncExec(runnable);
@@ -360,12 +366,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 			throw new InterruptedException();
 		}
 	}
-	
-	/**
-	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-	 * Sets the password information for this system's subsystem.
-	 * @param signonInfo the password information object
-	 */
+
 	private void setSignonInformation(SystemSignonInformation signonInfo) {
 		password = signonInfo.getPassword();
 		userId = signonInfo.getUserId();

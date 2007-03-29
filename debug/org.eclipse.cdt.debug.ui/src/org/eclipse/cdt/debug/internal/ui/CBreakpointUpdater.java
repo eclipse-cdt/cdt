@@ -106,7 +106,8 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 			public void run() {
 				for ( int i = 0; i < breakpoints.length; ++i ) {
 					try {
-						((ICBreakpoint)breakpoints[i]).decrementInstallCount();
+						if ( ((ICBreakpoint)breakpoints[i]).decrementInstallCount() == 0 )
+							DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoints[i] );
 					}
 					catch( CoreException e ) {
 						// ensureMarker throws this exception 

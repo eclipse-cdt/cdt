@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2006 Wind River Systems, Inc.
+# Copyright (c) 2006, 2007 Wind River Systems, Inc.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0 
 # which accompanies this distribution, and is available at 
@@ -151,7 +151,7 @@ fi
 if [ ! -d testUpdates ]; then
   ln -s /home/data/httpd/download.eclipse.org/dsdp/tm/testUpdates testUpdates
 fi
-if [ ! -d udpates ]; then
+if [ ! -d updates ]; then
   ln -s /home/data/httpd/download.eclipse.org/dsdp/tm/updates updates
 fi
 if [ ! -d staging ]; then

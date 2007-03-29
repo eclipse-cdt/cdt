@@ -22,6 +22,7 @@ import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2Set;
@@ -459,15 +460,41 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 	
 	private boolean settingsEqual(IScannerConfigBuilderInfo2 info1, IScannerConfigBuilderInfo2 info2){
-		if(!info1.getSelectedProfileId().equals(info2.getSelectedProfileId()))
+		if(!CDataUtil.objectsEqual(info1.getSelectedProfileId(), info2.getSelectedProfileId()))
 			return false;
-		
-		//TODO:
-		//check other settings;
-		
+		if (!CDataUtil.objectsEqual(info1.getBuildOutputFilePath(), info2.getBuildOutputFilePath()))
+			return false;
+		if (!CDataUtil.objectsEqual(info1.getContext(), info2.getContext()))
+			return false;
+		if (!CDataUtil.objectsEqual(info1.getSelectedProfileId(), info2.getSelectedProfileId()))
+			return false;
+		if (info1.isAutoDiscoveryEnabled() != info2.isAutoDiscoveryEnabled() ||
+			info1.isBuildOutputFileActionEnabled() != info2.isBuildOutputFileActionEnabled() ||
+			info1.isBuildOutputParserEnabled() != info2.isBuildOutputParserEnabled() ||
+			info1.isProblemReportingEnabled() != info2.isProblemReportingEnabled())
+			return false;
+		if (!listEqual(info1.getProfileIdList(), info2.getProfileIdList()))
+			return false;
+		if (!listEqual(info1.getProviderIdList(), info2.getProviderIdList()))
+			return false;
 		return true;
 	}
 
+	private boolean listEqual(List l1, List l2) {
+		if (l1 == null && l2 == null) return true;
+		if (l2 == null || l2 == null) return false;
+		if (l1.size() != l2.size()) return false;
+		// both lists have items in the same order ?
+		// since it's most probable, try it first.
+		if (l1.equals(l2)) return true;
+		// order may differ...
+		Iterator it = l1.iterator();
+		while (it.hasNext())
+			if (!l2.contains(it.next())) return false;
+		return true;
+	}
+	
+	
 	public boolean canBeVisible() {
 		if (page.isForProject() || page.isForPrefs()) return true;
 		// Hide this page for folders and files 

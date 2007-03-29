@@ -14,13 +14,15 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.filters.dialogs;
+package org.eclipse.rse.internal.ui.filters.dialogs;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolSelectionValidator;
 import org.eclipse.rse.core.filters.ISystemFilterPoolWrapper;
 import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.rse.ui.filters.dialogs.ISystemNewFilterWizardConfigurator;
+import org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
 import org.eclipse.swt.events.ModifyEvent;

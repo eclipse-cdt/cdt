@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.filters.dialogs;
 
-import org.eclipse.rse.ui.filters.SystemFilterDialogInterface;
+import org.eclipse.rse.internal.ui.filters.SystemFilterDialogInterface;
 import org.eclipse.rse.ui.wizards.ISystemWizard;
 
 

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.filters;
+package org.eclipse.rse.internal.ui.filters;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -23,11 +23,11 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.rse.internal.ui.actions.SystemSubMenuManager;
+import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterWorkWithFilterPoolsDialog;
 import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.ISystemAction;
-import org.eclipse.rse.ui.filters.dialogs.SystemFilterWorkWithFilterPoolsDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;

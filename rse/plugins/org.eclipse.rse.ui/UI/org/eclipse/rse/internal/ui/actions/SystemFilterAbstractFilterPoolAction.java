@@ -29,10 +29,10 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInputs;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
-import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInputs;
-import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInterface;
 import org.eclipse.swt.widgets.Shell;
 
 

@@ -33,6 +33,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolWrapper;
 import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.filters.dialogs.SystemNewFilterWizardNamePage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;

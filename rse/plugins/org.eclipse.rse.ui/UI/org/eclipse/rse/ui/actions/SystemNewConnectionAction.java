@@ -14,7 +14,7 @@
  * Uwe Stieber (Wind River) - Set action id for identification from plugin.xml menu extensions.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.actions;
+package org.eclipse.rse.ui.actions;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,7 +36,6 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.actions.SystemBaseWizardAction;
 import org.eclipse.rse.ui.wizards.newconnection.RSEMainNewConnectionWizard;
 import org.eclipse.swt.widgets.Shell;
 

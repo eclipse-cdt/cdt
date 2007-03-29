@@ -23,12 +23,12 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.dialogs.SystemSimpleSelectDialog;
-import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInterface;
 import org.eclipse.rse.ui.filters.SystemFilterUIHelpers;
 import org.eclipse.swt.widgets.Shell;
 

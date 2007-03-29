@@ -14,13 +14,12 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.filters.dialogs;
-import org.eclipse.rse.internal.ui.actions.SystemFilterAbstractFilterAction;
+package org.eclipse.rse.internal.ui.filters.dialogs;
+import org.eclipse.rse.internal.ui.actions.SystemFilterAbstractFilterPoolAction;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogOutputs;
 import org.eclipse.rse.ui.dialogs.SystemWizardDialog;
-import org.eclipse.rse.ui.filters.SystemFilterDialogInterface;
-import org.eclipse.rse.ui.filters.SystemFilterDialogOutputs;
 import org.eclipse.swt.widgets.Shell;
-
 
 
 /**
@@ -28,48 +27,57 @@ import org.eclipse.swt.widgets.Shell;
  * common wizard action class, and get data out.
  * This is deferred to the actual wizard, which in turn defers to the wizard's first page.
  */
-public class SystemFilterWizardDialog 
+public class SystemFilterPoolWizardDialog 
        extends SystemWizardDialog 
-       implements SystemFilterDialogInterface
+       implements SystemFilterPoolDialogInterface
 {
-	
     // all ctors are from parent...
 	/**
 	 * Constructor
 	 */
-	public SystemFilterWizardDialog(Shell shell, ISystemFilterWizard wizard)
+	public SystemFilterPoolWizardDialog(Shell shell, SystemFilterPoolWizardInterface wizard)
 	{
 		super(shell, wizard);
 	}
 	/**
 	 * Constructor two. Use when you have an input object at instantiation time.
 	 */
-	public SystemFilterWizardDialog(Shell shell, ISystemFilterWizard wizard, Object inputObject)
+	public SystemFilterPoolWizardDialog(Shell shell, SystemFilterPoolWizardInterface wizard, Object inputObject)
 	{
 		super(shell,wizard,inputObject);
 	}
   
     /**
-     * Return wrapped filter wizard
+     * Return wrapped filter pool wizard
      */
-    public ISystemFilterWizard getFilterWizard()
+    public SystemFilterPoolWizardInterface getFilterPoolWizard()
     {
-    	return (ISystemFilterWizard)getWizard();
+    	return (SystemFilterPoolWizardInterface)getWizard();
     }
       
     /**
-     * Return an object containing user-specified information pertinent to filter actions
+     * Return an object containing user-specified information pertinent to filter pool actions
      */
-    public SystemFilterDialogOutputs getFilterDialogOutputs()
+    public SystemFilterPoolDialogOutputs getFilterPoolDialogOutputs()
     {
-    	return getFilterWizard().getFilterDialogOutputs();
+    	return getFilterPoolWizard().getFilterPoolDialogOutputs();
     }
 	
 	/**
 	 * Allow base action to pass instance of itself for callback to get info
 	 */
-    public void setFilterDialogActionCaller(SystemFilterAbstractFilterAction caller)
+    public void setFilterPoolDialogActionCaller(SystemFilterAbstractFilterPoolAction caller)
     {
-    	getFilterWizard().setFilterDialogActionCaller(caller);
+    	getFilterPoolWizard().setFilterPoolDialogActionCaller(caller);
     }
+    
+    /**
+     * Set the help context id for this wizard
+     */
+    public void setHelpContextId(String id)
+    {
+    	super.setHelp(id);
+    }
+    
+    
 }

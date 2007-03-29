@@ -14,20 +14,14 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.filters;
-//import org.eclipse.rse.core.ui.actions.*;
-import org.eclipse.rse.core.filters.ISystemFilter;
-
+package org.eclipse.rse.internal.ui.filters.dialogs;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
+import org.eclipse.rse.ui.wizards.ISystemWizard;
 
 /**
- * A class capturing the attributes commonly returned by dialogs that
- * work with filters.
+ * An interface for filter pool wizards to implement
  */
-public class SystemFilterDialogOutputs 
+public interface SystemFilterPoolWizardInterface 
+       extends ISystemWizard, SystemFilterPoolDialogInterface
 {
-
-
-	public String filterName;
-	public String filterPoolName;	
-    public ISystemFilter newFilter;
 }

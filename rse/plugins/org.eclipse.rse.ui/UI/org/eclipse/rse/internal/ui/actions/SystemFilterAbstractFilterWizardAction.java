@@ -18,10 +18,10 @@ package org.eclipse.rse.internal.ui.actions;
 
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.rse.internal.ui.filters.SystemFilterDialogInterface;
+import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterWizardDialog;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.filters.SystemFilterDialogInterface;
 import org.eclipse.rse.ui.filters.dialogs.ISystemFilterWizard;
-import org.eclipse.rse.ui.filters.dialogs.SystemFilterWizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
 

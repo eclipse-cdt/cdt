@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.internal.ui.actions;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.rse.internal.ui.filters.SystemFilterDialogInputs;
+import org.eclipse.rse.internal.ui.filters.SystemFilterDialogInterface;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
-import org.eclipse.rse.ui.filters.SystemFilterDialogInputs;
-import org.eclipse.rse.ui.filters.SystemFilterDialogInterface;
 import org.eclipse.swt.widgets.Shell;
 
 

@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.ui.filters.dialogs;
 
+
 /**
  * Much of the new filter wizard is configurable, especially with respect to translated strings.
  * While there exists setters and overridable methods for most of it, sometimes that gets overwhelming.

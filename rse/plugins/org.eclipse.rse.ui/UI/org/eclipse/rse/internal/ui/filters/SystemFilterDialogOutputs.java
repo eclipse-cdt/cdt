@@ -14,18 +14,20 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.filters;
+package org.eclipse.rse.internal.ui.filters;
+//import org.eclipse.rse.core.ui.actions.*;
+import org.eclipse.rse.core.filters.ISystemFilter;
+
+
 /**
- * A class capturing the attributes commonly needed by dialogs that
+ * A class capturing the attributes commonly returned by dialogs that
  * work with filters.
  */
-public class SystemFilterDialogInputs 
+public class SystemFilterDialogOutputs 
 {
 
 
-	public String title;
-	public String prompt;	
-	public String filterNamePrompt;
-	public String filterNameTip;	
-	public Object preSelectObject;
+	public String filterName;
+	public String filterPoolName;	
+    public ISystemFilter newFilter;
 }

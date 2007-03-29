@@ -14,23 +14,13 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.filters;
-//import org.eclipse.rse.core.*;
-import org.eclipse.rse.core.filters.ISystemFilterPool;
+package org.eclipse.rse.internal.ui.filters;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 
-
-
-/**
- * A class capturing the attributes commonly returned by dialogs that
- * work with filter pools.
- */
-public class SystemFilterPoolDialogOutputs 
+public interface SystemFilterPoolManagerUIProvider 
 {
-
-
-	public String filterPoolName;
-	public String filterPoolManagerName;	
-    public SystemSimpleContentElement filterPoolTreeRoot;	
-    public ISystemFilterPool newPool;
+    public ISystemFilterPoolManager[] getFilterPoolManagers();
+	public SystemSimpleContentElement getTreeModel();    
+	public SystemSimpleContentElement getTreeModelPreSelection(SystemSimpleContentElement root);
 }

@@ -19,10 +19,10 @@ package org.eclipse.rse.internal.ui.actions;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
+import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterPoolWizardDialog;
+import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterPoolWizardInterface;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInterface;
-import org.eclipse.rse.ui.filters.dialogs.SystemFilterPoolWizardDialog;
-import org.eclipse.rse.ui.filters.dialogs.SystemFilterPoolWizardInterface;
 import org.eclipse.swt.widgets.Shell;
 
 

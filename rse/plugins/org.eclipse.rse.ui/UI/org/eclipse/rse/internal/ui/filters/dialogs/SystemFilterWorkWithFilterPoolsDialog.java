@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.filters.dialogs;
+package org.eclipse.rse.internal.ui.filters.dialogs;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,6 +39,10 @@ import org.eclipse.rse.internal.ui.actions.SystemFilterCopyFilterPoolAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterMoveFilterPoolAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterNewFilterPoolAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterWorkWithFilterPoolsRefreshAllAction;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogOutputs;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolManagerUIProvider;
+import org.eclipse.rse.internal.ui.filters.SystemFilterWorkWithFilterPoolsTreeViewer;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
@@ -50,11 +54,7 @@ import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentProvider;
-import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInterface;
-import org.eclipse.rse.ui.filters.SystemFilterPoolDialogOutputs;
-import org.eclipse.rse.ui.filters.SystemFilterPoolManagerUIProvider;
 import org.eclipse.rse.ui.filters.SystemFilterUIHelpers;
-import org.eclipse.rse.ui.filters.SystemFilterWorkWithFilterPoolsTreeViewer;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.ValidatorFilterPoolName;

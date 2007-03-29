@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.filters;
+package org.eclipse.rse.internal.ui.filters;
 import org.eclipse.rse.internal.ui.actions.SystemFilterAbstractFilterPoolAction;
 
 

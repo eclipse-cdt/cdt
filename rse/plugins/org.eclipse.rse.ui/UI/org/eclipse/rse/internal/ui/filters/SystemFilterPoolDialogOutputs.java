@@ -14,22 +14,23 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.filters;
-import org.eclipse.rse.internal.ui.actions.SystemFilterAbstractFilterAction;
+package org.eclipse.rse.internal.ui.filters;
+//import org.eclipse.rse.core.*;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
+
 
 
 /**
- * Common interface for dialogs or wizards that work with filters.
+ * A class capturing the attributes commonly returned by dialogs that
+ * work with filter pools.
  */
-public interface SystemFilterDialogInterface 
+public class SystemFilterPoolDialogOutputs 
 {
-	/**
-	 * Allow base action to pass instance of itself for callback to get info
-	 */
-    public void setFilterDialogActionCaller(SystemFilterAbstractFilterAction caller);
-    /**
-     * Return an object containing user-specified information pertinent to filter pool actions
-     */
-    public SystemFilterDialogOutputs getFilterDialogOutputs();    
-    
+
+
+	public String filterPoolName;
+	public String filterPoolManagerName;	
+    public SystemSimpleContentElement filterPoolTreeRoot;	
+    public ISystemFilterPool newPool;
 }

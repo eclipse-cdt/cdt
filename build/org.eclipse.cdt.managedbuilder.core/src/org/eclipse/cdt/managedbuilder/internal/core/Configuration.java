@@ -1948,28 +1948,28 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				}
 			}
 			
-			if(newBuilder == null){
-				IBuilder builders[] = ManagedBuildManager.getRealBuilders();
-				IBuilder tmpB = null;
-				for(int i = 0; i < builders.length; i++){
-					IBuilder b = builders[i];
-					if(b.isInternalBuilder())
-						continue;
-
-					
-					if(isBuilderCompatible(b)){
-						newBuilder = b;
-						break;
-					} else if(!checkCompatibility){
-						tmpB = b;
-					}
-				}
-				
-				if(newBuilder == null){
-					if(tmpB != null)
-						newBuilder = tmpB;
-				}
-			}
+//			if(newBuilder == null){
+//				IBuilder builders[] = ManagedBuildManager.getRealBuilders();
+//				IBuilder tmpB = null;
+//				for(int i = 0; i < builders.length; i++){
+//					IBuilder b = builders[i];
+//					if(b.isInternalBuilder())
+//						continue;
+//
+//					
+//					if(isBuilderCompatible(b)){
+//						newBuilder = b;
+//						break;
+//					} else if(!checkCompatibility){
+//						tmpB = b;
+//					}
+//				}
+//				
+//				if(newBuilder == null){
+//					if(tmpB != null)
+//						newBuilder = tmpB;
+//				}
+//			}
 
 		}
 

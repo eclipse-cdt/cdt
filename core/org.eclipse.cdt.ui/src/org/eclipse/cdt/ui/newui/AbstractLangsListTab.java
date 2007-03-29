@@ -43,6 +43,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
+import org.eclipse.cdt.core.model.ILanguageDescriptor;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
@@ -281,7 +283,18 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			for (int i=0; i<ls.length; i++) {
 				if ((ls[i].getSupportedEntryKinds() & getKind()) != 0) {
 					TreeItem t = new TreeItem(langTree, SWT.NONE);
-					t.setText(0, ls[i].getName());
+					String s = ls[i].getLanguageId();
+					if (s != null && !s.equals(EMPTY_STR)) {
+						// Bug #178033: get language name via LangManager.
+						ILanguageDescriptor ld = LanguageManager.getInstance().getLanguageDescriptor(s);
+						if (ld == null)
+							s = null;
+						else
+							s = ld.getName();
+					}
+					if (s == null || s.equals(EMPTY_STR))
+						s = "[" + ls[i].getName() + "]";  //$NON-NLS-1$ //$NON-NLS-2$
+					t.setText(0, s);
 					t.setData(ls[i]);
 					if (firstItem == null) { 
 						firstItem = t;

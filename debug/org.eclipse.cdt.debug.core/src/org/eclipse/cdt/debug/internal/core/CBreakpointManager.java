@@ -39,6 +39,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDICreatedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIExecutableReloadedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2;
@@ -362,6 +363,10 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					if ( source instanceof ICDIBreakpoint )
 						handleBreakpointMovedEvent( (ICDIBreakpointMovedEvent) event );
 				}
+				else if ( event instanceof ICDIExecutableReloadedEvent ) {
+					if ( source instanceof ICDITarget )
+						handleExecutableReloadedEvent( (ICDIExecutableReloadedEvent) event );
+				}
 				else if ( event instanceof ICDIBreakpointProblemEvent ) {
 					if ( source instanceof ICDIBreakpoint )
 						handleBreakpointProblemEvent( (ICDIBreakpointProblemEvent) event );
@@ -515,6 +520,23 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			} catch (CoreException e) {}
 		}
 		
+	}
+
+	private void handleExecutableReloadedEvent( ICDIExecutableReloadedEvent reloadedEvent )
+	{
+		ArrayList uninstalledCBplist = new ArrayList();
+		
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints = manager.getBreakpoints( CDIDebugModel.getPluginIdentifier() );
+		
+		for (int i = 0; i < breakpoints.length; i++) {
+			if (breakpoints[i] instanceof ICBreakpoint && (getBreakpointMap().getCDIBreakpoint((ICBreakpoint) breakpoints[i]) == null))
+			{
+				uninstalledCBplist.add(breakpoints[i]);					
+			}
+		}
+
+		setBreakpointsOnTarget((IBreakpoint[]) uninstalledCBplist.toArray(new IBreakpoint[uninstalledCBplist.size()]));
 	}
 
 	private void handleBreakpointProblemEvent( ICDIBreakpointProblemEvent problemEvent )

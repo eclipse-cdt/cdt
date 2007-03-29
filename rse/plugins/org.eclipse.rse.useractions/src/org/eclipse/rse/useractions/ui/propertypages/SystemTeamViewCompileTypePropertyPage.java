@@ -10,7 +10,7 @@ package org.eclipse.rse.useractions.ui.propertypages;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.rse.useractions.UserActionsResources;

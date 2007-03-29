@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
-import org.eclipse.rse.ui.SystemPropertyResources;
+import org.eclipse.rse.internal.ui.SystemPropertyResources;
 /**
  * This class captures the data needed to populate a
  * InheritableTextCellEditor.

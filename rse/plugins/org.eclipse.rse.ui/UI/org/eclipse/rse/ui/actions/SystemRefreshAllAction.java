@@ -19,12 +19,12 @@ import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
 

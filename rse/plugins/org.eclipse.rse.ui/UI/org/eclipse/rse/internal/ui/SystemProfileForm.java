@@ -20,7 +20,6 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;

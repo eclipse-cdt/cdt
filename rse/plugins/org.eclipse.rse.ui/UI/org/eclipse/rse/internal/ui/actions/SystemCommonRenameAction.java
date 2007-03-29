@@ -17,11 +17,11 @@
 package org.eclipse.rse.internal.ui.actions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemRenameTarget;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemRenameDialog;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;

@@ -38,6 +38,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.dialogs.ISystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;

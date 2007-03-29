@@ -20,10 +20,10 @@ import java.util.List;
 
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.model.SystemSignonInformation;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;

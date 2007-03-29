@@ -18,9 +18,9 @@ package org.eclipse.rse.ui.dialogs;
 
 
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemPageCompleteListener;
 import org.eclipse.rse.ui.SystemBaseForm;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.widgets.SystemSelectConnectionForm;

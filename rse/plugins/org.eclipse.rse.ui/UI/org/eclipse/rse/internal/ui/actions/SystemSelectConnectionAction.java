@@ -18,7 +18,7 @@ package org.eclipse.rse.internal.ui.actions;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemSelectConnectionDialog;
 import org.eclipse.swt.widgets.Shell;

@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.ui.dialogs;
 
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ArmEvent;

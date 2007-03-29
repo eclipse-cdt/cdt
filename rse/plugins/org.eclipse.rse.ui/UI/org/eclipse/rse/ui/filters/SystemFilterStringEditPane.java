@@ -19,10 +19,10 @@ import java.util.Vector;
 
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;

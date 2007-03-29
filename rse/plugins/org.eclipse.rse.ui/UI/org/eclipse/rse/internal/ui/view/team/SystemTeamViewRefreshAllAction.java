@@ -18,10 +18,10 @@ package org.eclipse.rse.internal.ui.view.team;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemResourceManager;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
 

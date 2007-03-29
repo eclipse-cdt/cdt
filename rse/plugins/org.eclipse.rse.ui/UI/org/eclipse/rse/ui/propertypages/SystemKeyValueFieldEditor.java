@@ -21,8 +21,8 @@ import java.util.StringTokenizer;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorSpecialChar;

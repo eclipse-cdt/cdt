@@ -23,8 +23,8 @@ import java.util.StringTokenizer;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.rse.ui.GenericMessages;
-import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.internal.ui.GenericMessages;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;

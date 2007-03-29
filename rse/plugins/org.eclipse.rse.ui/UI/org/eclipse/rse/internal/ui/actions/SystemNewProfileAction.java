@@ -17,11 +17,11 @@
 package org.eclipse.rse.internal.ui.actions;
 
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamView;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseWizardAction;
 import org.eclipse.rse.ui.wizards.SystemNewProfileWizard;
 import org.eclipse.swt.widgets.Shell;

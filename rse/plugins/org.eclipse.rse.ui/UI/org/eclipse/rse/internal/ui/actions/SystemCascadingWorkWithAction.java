@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.internal.ui.actions;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
 
 

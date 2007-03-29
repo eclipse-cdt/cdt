@@ -48,6 +48,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemDynamicPopupMenuExtensionManager;
 import org.eclipse.rse.internal.ui.actions.SystemShowPreferencesPageAction;
 import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapterFactory;

@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;

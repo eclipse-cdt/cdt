@@ -18,10 +18,10 @@ package org.eclipse.rse.ui.filters.dialogs;
 
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemPageCompleteListener;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.filters.ISystemChangeFilterPaneEditPaneSupplier;
 import org.eclipse.rse.ui.filters.SystemChangeFilterPane;

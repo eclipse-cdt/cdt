@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.ui.dialogs;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemResolveFilterStringAPIProviderImpl;
 import org.eclipse.rse.internal.ui.view.SystemViewForm;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

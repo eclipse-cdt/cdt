@@ -17,11 +17,11 @@
 package org.eclipse.rse.internal.ui.actions;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemResourceListener;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;

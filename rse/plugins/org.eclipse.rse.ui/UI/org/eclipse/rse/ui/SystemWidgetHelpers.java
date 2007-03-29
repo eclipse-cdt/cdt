@@ -25,6 +25,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
 import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
 import org.eclipse.rse.ui.widgets.SystemHostCombo;

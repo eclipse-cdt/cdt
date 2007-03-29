@@ -18,7 +18,7 @@ package org.eclipse.rse.internal.ui.view;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.rse.ui.GenericMessages;
+import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;

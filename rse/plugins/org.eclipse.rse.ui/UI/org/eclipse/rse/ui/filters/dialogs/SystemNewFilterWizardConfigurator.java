@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.ui.filters.dialogs;
 
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 
 /**
  * Much of the new filter wizard is configurable, especially with respect to translated strings.

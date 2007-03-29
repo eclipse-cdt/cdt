@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.widgets.services;
 
-import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.internal.ui.SystemResources;
 
 
 public class RootServiceElement extends ServiceElement

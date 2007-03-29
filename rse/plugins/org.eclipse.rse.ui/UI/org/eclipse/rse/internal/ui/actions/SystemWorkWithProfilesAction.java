@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewPart;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
 

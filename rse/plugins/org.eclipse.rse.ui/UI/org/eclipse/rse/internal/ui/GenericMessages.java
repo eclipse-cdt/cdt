@@ -14,13 +14,13 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui;
+package org.eclipse.rse.internal.ui;
 
 import org.eclipse.osgi.util.NLS;
 
 public class GenericMessages extends NLS
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.ui.GenericMessages";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.ui.GenericMessages";//$NON-NLS-1$
 
 	public static String ResourceNavigator_goto;
 	

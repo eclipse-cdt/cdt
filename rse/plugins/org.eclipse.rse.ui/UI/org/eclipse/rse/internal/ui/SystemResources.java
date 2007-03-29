@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui;
+package org.eclipse.rse.internal.ui;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -24,7 +24,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class SystemResources extends NLS 
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.ui.SystemResources";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.ui.SystemResources";//$NON-NLS-1$
 
 	// Buttons
 	// *** NOT GOOD TO USE BUTTONS. BETTER TO USE ACTIONS WITH THEIR

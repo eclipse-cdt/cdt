@@ -36,6 +36,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -43,7 +44,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemConnectionForm;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 
 

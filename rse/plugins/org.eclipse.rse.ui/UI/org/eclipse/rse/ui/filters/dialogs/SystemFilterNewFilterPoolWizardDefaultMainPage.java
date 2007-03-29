@@ -17,8 +17,8 @@
 package org.eclipse.rse.ui.filters.dialogs;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.filters.SystemFilterPoolDialogOutputs;
 import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;

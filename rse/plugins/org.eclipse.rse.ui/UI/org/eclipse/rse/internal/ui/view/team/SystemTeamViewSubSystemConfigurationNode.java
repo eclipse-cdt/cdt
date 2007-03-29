@@ -22,7 +22,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.internal.ui.SystemResources;
 
 
 /**

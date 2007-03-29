@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui;
+package org.eclipse.rse.ui;
 /**
  * This massager folds the input text into either uppercase or lowercase,
  *  but ONLY for those portions of the string that are not inside delimiters. 

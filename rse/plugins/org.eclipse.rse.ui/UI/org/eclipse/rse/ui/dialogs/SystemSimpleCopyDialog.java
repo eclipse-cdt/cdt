@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.ISystemCopyTargetSelectionCallback;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;

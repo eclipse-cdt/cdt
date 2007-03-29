@@ -14,9 +14,8 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui;
+package org.eclipse.rse.ui;
 
-import org.eclipse.rse.ui.ISystemMassager;
 
 /**
  * This massager will take a string an add quotes to it by

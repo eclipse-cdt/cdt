@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.internal.ui.widgets;
 
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.SystemBaseForm;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.swt.widgets.Button;

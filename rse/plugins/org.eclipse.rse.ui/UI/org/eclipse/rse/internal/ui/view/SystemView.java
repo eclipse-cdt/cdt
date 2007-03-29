@@ -84,6 +84,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCascadingGoToAction;
 import org.eclipse.rse.internal.ui.actions.SystemCollapseAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
@@ -114,7 +115,6 @@ import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemPreferencesManager;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -3913,7 +3913,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			match = internalFindFirstRemoteItemReference(remoteObjectName, remoteObject, subsystem);
 		else {
 			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, remoteObject, subsystem, matches); 			
-			System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
+			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem);
 		}
 

@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
+import org.eclipse.rse.internal.ui.SystemPropertyResources;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
-import org.eclipse.rse.ui.SystemPropertyResources;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;

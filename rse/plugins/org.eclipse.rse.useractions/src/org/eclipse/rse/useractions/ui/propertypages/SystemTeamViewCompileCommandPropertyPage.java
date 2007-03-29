@@ -12,9 +12,9 @@ package org.eclipse.rse.useractions.ui.propertypages;
  *******************************************************************************/
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.rse.useractions.UserActionsResources;

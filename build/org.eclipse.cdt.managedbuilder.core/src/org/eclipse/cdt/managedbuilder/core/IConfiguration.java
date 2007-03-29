@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
@@ -46,6 +47,7 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	
 	public static final String BUILD_PROPERTIES = "buildProperties"; //$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE = "buildArtefactType"; //$NON-NLS-1$
 	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
 
 	
@@ -620,4 +622,8 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	boolean isBuilderCompatible(IBuilder builder);
 	
 	void changeBuilder(IBuilder newBuilder, String id, String name);
+	
+	IBuildPropertyValue getBuildArtefactType();
+	
+	void setBuildArtefactType(String id) throws BuildException;
 }

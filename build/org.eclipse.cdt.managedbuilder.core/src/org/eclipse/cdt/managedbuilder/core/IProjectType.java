@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
 
@@ -52,6 +53,7 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	public static final String PROJECT_ENVIRONMENT_SUPPLIER = "projectEnvironmentSupplier";			//$NON-NLS-1$
 	public static final String PROJECT_MACRO_SUPPLIER = "projectMacroSupplier";			//$NON-NLS-1$
 	public static final String BUILD_PROPERTIES = "buildProperties"; //$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE = "buildArtefactType"; //$NON-NLS-1$
 
 	
 	/**
@@ -191,4 +193,6 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	public boolean checkForMigrationSupport();
 	
 	public String getNameAttribute();
+	
+	public IBuildPropertyValue getBuildArtefactType();
 }

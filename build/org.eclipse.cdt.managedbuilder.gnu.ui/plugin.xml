@@ -1975,7 +1975,7 @@
       <projectType      
             isAbstract="false"     
             isTest="false"
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
             id="cdt.managedbuild.target.gnu.exe">
          <configuration
                name="%ConfigName.Dbg"
@@ -2092,7 +2092,7 @@
       <projectType      
             isAbstract="false"     
             isTest="false"
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="cdt.managedbuild.target.gnu.so">
          <configuration
                name="%ConfigName.Dbg"
@@ -2240,7 +2240,7 @@
           
       <projectType 
             isTest="false"
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             isAbstract="false"
             id="cdt.managedbuild.target.gnu.lib">                        
          <configuration
@@ -2371,7 +2371,7 @@
 		</configuration>
 
       <projectType 
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
             id="cdt.managedbuild.target.gnu.cygwin.exe"
             isTest="false"
             isAbstract="false">                                  
@@ -2488,7 +2488,7 @@
       </projectType>              
          
       <projectType                  
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="cdt.managedbuild.target.gnu.cygwin.so"
             isAbstract="false"
             isTest="false">            
@@ -2637,7 +2637,7 @@
       </projectType>
                        
       <projectType 
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             id="cdt.managedbuild.target.gnu.cygwin.lib"
             isTest="false"
             isAbstract="false">            
@@ -2769,7 +2769,7 @@
 		</configuration>
 
       <projectType
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
             id="cdt.managedbuild.target.gnu.mingw.exe"
             isAbstract="false"
             isTest="false"
@@ -2879,7 +2879,7 @@
       </projectType>              
          
       <projectType
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="cdt.managedbuild.target.gnu.mingw.so"
             isAbstract="false"
             isTest="false"
@@ -3021,7 +3021,7 @@
       </projectType>
                        
       <projectType
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             id="cdt.managedbuild.target.gnu.mingw.lib"
             isAbstract="false"
             isTest="false"
@@ -3147,7 +3147,7 @@
       <projectType 
             id="cdt.managedbuild.target.macosx.exe"
             isTest="false"
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
             isAbstract="false">
          <configuration
                name="%ConfigName.Dbg"
@@ -3263,7 +3263,7 @@
             
       <projectType             
             id="cdt.managedbuild.target.macosx.so"
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             isTest="false"
             isAbstract="false">            
          <configuration
@@ -3427,7 +3427,7 @@
       </projectType>
       
       <projectType            
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             id="cdt.managedbuild.target.macosx.lib"
             isTest="false"
 			isAbstract="false">
@@ -3557,7 +3557,7 @@
 		</configuration>
       
       <projectType      
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
             isAbstract="false"     
             isTest="false"
             id="cdt.managedbuild.target.gnu.solaris.exe">
@@ -3610,7 +3610,7 @@
       <projectType      
             isAbstract="false"     
             isTest="false"
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="cdt.managedbuild.target.gnu.solaris.so">
          <configuration
                name="%ConfigName.Dbg"
@@ -3660,7 +3660,7 @@
           
       <projectType 
             isTest="false"
-            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             isAbstract="false"
             id="cdt.managedbuild.target.gnu.solaris.lib">                        
          <configuration

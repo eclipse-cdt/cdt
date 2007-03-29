@@ -247,6 +247,19 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		String props = element.getAttribute(BUILD_PROPERTIES);
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
+		
+		String artType = element.getAttribute(BUILD_ARTEFACT_TYPE);
+		if(artType != null){
+			if(buildProperties == null)
+				buildProperties = new BuildObjectProperties(this, this);
+			
+			try {
+				buildProperties.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artType, true);
+			} catch (CoreException e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
+		}
+
 		if(projectType != null && projectType.buildProperties != null){
 			if(buildProperties == null){
 				buildProperties = new BuildObjectProperties(projectType.buildProperties, this, this);
@@ -765,6 +778,19 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		String props = element.getAttribute(BUILD_PROPERTIES);
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
+		
+		String artType = element.getAttribute(BUILD_ARTEFACT_TYPE);
+		if(artType != null){
+			if(buildProperties == null)
+				buildProperties = new BuildObjectProperties(this, this);
+			
+			try {
+				buildProperties.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artType, true);
+			} catch (CoreException e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
+		}
+
 
 		if (element.getAttribute(IConfiguration.PARENT) != null) {
 			// See if the parent belongs to the same project
@@ -835,6 +861,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(buildProperties != null)
 			element.setAttribute(BUILD_PROPERTIES, buildProperties.toString());
 
+		IBuildProperty prop = buildProperties.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
+		if(prop != null){
+			IBuildPropertyValue val = prop.getValue();
+			element.setAttribute(BUILD_ARTEFACT_TYPE, val.getId());
+		}
+		
 		if (parent != null)
 			element.setAttribute(IConfiguration.PARENT, parent.getId());
 		
@@ -2843,11 +2875,22 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return isPreferenceConfig;
 	}
 	
-//	public boolean isPerFileDiscoveryCache(){
-//		return isPerFileDiscoveryCache;
-//	}
-//	
-//	public void setPerFileDiscoveryCache(boolean perFile){
-//		isPerFileDiscoveryCache = perFile;
-//	}
+	public IBuildPropertyValue getBuildArtefactType() {
+		IBuildObjectProperties props = findBuildProperties();
+		if(props != null){
+			IBuildProperty prop = props.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
+			if(prop != null)
+				return prop.getValue();
+		}
+		return null;
+	}
+	
+	public void setBuildArtefactType(String id) throws BuildException {
+		IBuildObjectProperties props = getBuildProperties();
+		try {
+			props.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, id);
+		} catch (CoreException e){
+			throw new BuildException(e.getLocalizedMessage());
+		}
+	}
 }

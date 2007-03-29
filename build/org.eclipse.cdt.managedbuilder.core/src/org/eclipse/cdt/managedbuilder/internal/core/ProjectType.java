@@ -27,6 +27,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
 import org.eclipse.core.runtime.CoreException;
@@ -168,6 +169,18 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
 
+		String artType = element.getAttribute(BUILD_ARTEFACT_TYPE);
+		if(artType != null){
+			if(buildProperties == null)
+				buildProperties = new BuildObjectProperties(this, this);
+			
+			try {
+				buildProperties.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artType, true);
+			} catch (CoreException e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
+		}
+			
 
 		// Get the unused children, if any
 		unusedChildren = element.getAttribute(UNUSED_CHILDREN); 
@@ -758,5 +771,15 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 				return true;
 		}
 		return false;
+	}
+
+	public IBuildPropertyValue getBuildArtefactType() {
+		IBuildObjectProperties props = findBuildProperties();
+		if(props != null){
+			IBuildProperty prop = props.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
+			if(prop != null)
+				return prop.getValue();
+		}
+		return null;
 	}
 }

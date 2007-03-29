@@ -13,9 +13,6 @@ package org.eclipse.cdt.managedbuilder.internal.buildproperties;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
-import org.eclipse.cdt.managedbuilder.core.IInputType;
-import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -74,9 +71,14 @@ public class BuildProperty implements IBuildProperty{
 	}
 	
 	public String toString(){
+		return toString(fType.toString(), fValue.toString());
+	}
+	
+	public static String toString(String type, String value){
 		StringBuffer buf = new StringBuffer();
-		buf.append(fType.toString()).append(BuildPropertyManager.PROPERTY_VALUE_SEPARATOR).append(fValue.toString());
+		buf.append(type).append(BuildPropertyManager.PROPERTY_VALUE_SEPARATOR).append(value);
 		return buf.toString();
+	
 	}
 
 /*	public Object clone() {

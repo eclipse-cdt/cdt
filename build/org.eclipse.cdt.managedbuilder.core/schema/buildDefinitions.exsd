@@ -150,6 +150,19 @@ property type-value pairs are specified in the type_id=value_id format.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="buildArtefactType" type="string">
+            <annotation>
+               <documentation>
+                  the attribute specified the Build Artefact Type. can contain the value id of the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; build property. Default values contributed with the build system are 
+&quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot; - represents executable,
+&quot;org.eclipse.cdt.build.core.buildArtefactType.staticLib&quot; - represents static library,
+&quot;org.eclipse.cdt.build.core.buildArtefactType.sharedLib&quot; - represents dynamic library
+Custom values can be contributed via the &quot;org.eclipse.cdt.managedbuilder.core.buildProperties&quot; extension point. See the description of that extension point for more detail. 
+
+Specifying this attribute is fully equivalent to specifying the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; via tne buildProperties attribute. The buildArtefactType attribute, the &quot;buildArtefactType&quot; attribute value takes precedence over the artefact type specified via the &quot;buildProperties&quot; attribute
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -296,6 +309,19 @@ property type-value pairs are specified in the type_id=value_id format.
                <documentation>
                   Specifies the comma-separated list of build property type - value pairs defined for this configuration.
 property type-value pairs are specified in the type_id=value_id format.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="buildArtefactType" type="string">
+            <annotation>
+               <documentation>
+                  the attribute specified the Build Artefact Type. can contain the value id of the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; build property. Default values contributed with the build system are 
+&quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot; - represents executable,
+&quot;org.eclipse.cdt.build.core.buildArtefactType.staticLib&quot; - represents static library,
+&quot;org.eclipse.cdt.build.core.buildArtefactType.sharedLib&quot; - represents dynamic library
+Custom values can be contributed via the &quot;org.eclipse.cdt.managedbuilder.core.buildProperties&quot; extension point. See the description of that extension point for more detail. 
+
+Specifying this attribute is fully equivalent to specifying the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; via tne buildProperties attribute. The buildArtefactType attribute, the &quot;buildArtefactType&quot; attribute value takes precedence over the artefact type specified via the &quot;buildProperties&quot; attribute
                </documentation>
             </annotation>
          </attribute>

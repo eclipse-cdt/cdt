@@ -32,8 +32,10 @@ import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -193,6 +195,18 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		String props = element.getAttribute(BUILD_PROPERTIES);
 		if(props != null && props.length() != 0)
 			buildProperties = new BuildObjectProperties(props, this, this);
+
+		String artType = element.getAttribute(BUILD_ARTEFACT_TYPE);
+		if(artType != null){
+			if(buildProperties == null)
+				buildProperties = new BuildObjectProperties(this, this);
+			
+			try {
+				buildProperties.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artType, true);
+			} catch (CoreException e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
+		}
 
 		return true;
 	}

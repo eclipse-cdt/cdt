@@ -64,13 +64,28 @@ public class BuildProperties implements IBuildProperties {
 	void addProperty(IBuildProperty property){
 		fPropertiesMap.put(property.getPropertyType().getId(), property);
 	}
-	
+
 	public IBuildProperty setProperty(String propertyId, String propertyValue) throws CoreException {
-		IBuildProperty property = BuildPropertyManager.getInstance().createProperty(propertyId, propertyValue);
-		
-		addProperty(property);
-		
-		return property;
+		return setProperty(propertyId, propertyValue, false);
+	}
+
+	public IBuildProperty setProperty(String propertyId, String propertyValue, boolean force) throws CoreException {
+		try {
+			IBuildProperty property = BuildPropertyManager.getInstance().createProperty(propertyId, propertyValue);
+			
+			addProperty(property);
+			
+			return property;
+		} catch (CoreException e){
+			if(force){
+				if(fInexistentProperties == null)
+					fInexistentProperties = new ArrayList(1);
+				
+				fInexistentProperties.add(BuildProperty.toString(propertyId, propertyValue));
+				fInexistentProperties.trimToSize();
+			}
+			throw e;
+		}
 	}
 	
 	public IBuildProperty removeProperty(String id){

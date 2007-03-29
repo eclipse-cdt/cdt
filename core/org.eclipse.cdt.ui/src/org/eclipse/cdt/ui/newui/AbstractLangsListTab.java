@@ -293,7 +293,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 							s = ld.getName();
 					}
 					if (s == null || s.equals(EMPTY_STR))
-						s = "[" + ls[i].getName() + "]";  //$NON-NLS-1$ //$NON-NLS-2$
+						s = ls[i].getName();
 					t.setText(0, s);
 					t.setData(ls[i]);
 					if (firstItem == null) { 

@@ -159,7 +159,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			cnt++;
 		}
 		// "No toolchain" is enabled for Make projects only.
-		if (!cfg.getBuilder().isManagedBuildOn())
+		if (!b_dispCompatible.getSelection() && 
+			!cfg.getBuilder().isManagedBuildOn())
 			c_toolchain.add(NO_TC);
 		if (pos != -1) {
 			c_toolchain.select(pos);

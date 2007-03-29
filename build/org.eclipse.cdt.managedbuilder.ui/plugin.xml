@@ -541,7 +541,7 @@
          </enabledWhen>
       </page>
       
-      <page
+      <!--page
             class="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
             id="org.eclipse.ui.propertypages.project.ref16"
             name="%CDTExpPathSymbolsProperty.name"
@@ -556,7 +556,7 @@
 		     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
 		    </or>          
          </enabledWhen>
-      </page>
+      </page-->
 
       <page
             class="org.eclipse.cdt.ui.newui.Page_BuildSettings"

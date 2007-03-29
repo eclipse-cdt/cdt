@@ -27,16 +27,31 @@
 curdir=`pwd`
 
 # prepare the base Eclipse installation in folder "eclipse"
-if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070202.jar ]; then
-  ## Eclipse Platform 3.3M5
-  #wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz"
-  #tar xfvz eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
-  #rm eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
-  # Eclipse SDK 3.3M5: Need the SDK because EMF needs JDT (somehow)
+if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070316.jar ]; then
+  curdir2=`pwd`
+  if [ -h eclipse ]; then
+    if [ -d eclipse-3.3m6 ]; then
+      rm -rf eclipse-3.3m6
+    fi
+    mkdir eclipse-3.3m6
+    cd eclipse-3.3m6
+  elif [ -d eclipse ]; then
+    rm -rf eclipse
+  fi
+  ## Eclipse Platform 3.3M6
+  #wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/eclipse-platform-3.3M6-linux-gtk-ppc.tar.gz"
+  #tar xfvz eclipse-platform-3.3M6-linux-gtk-ppc.tar.gz
+  #rm eclipse-platform-3.3M6-linux-gtk-ppc.tar.gz
+  # Eclipse SDK 3.3M6: Need the SDK because EMF needs JDT (somehow)
   echo "Getting Eclipse SDK..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz"
-  tar xfvz eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz
-  rm eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/eclipse-SDK-3.3M6-linux-gtk-ppc.tar.gz"
+  tar xfvz eclipse-SDK-3.3M6-linux-gtk-ppc.tar.gz
+  rm eclipse-SDK-3.3M6-linux-gtk-ppc.tar.gz
+  cd "${curdir2}"
+  if [ -h eclipse ]; then
+    rm eclipse
+    ln -s eclipse-3.3m6/eclipse eclipse
+  fi
 fi
 if [ ! -f eclipse/startup.jar ]; then
   curdir2=`pwd`
@@ -70,16 +85,16 @@ fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-test-framework-3.3M5.zip"
-  unzip -o eclipse-test-framework-3.3M5.zip
-  rm eclipse-test-framework-3.3M5.zip
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/eclipse-test-framework-3.3M6.zip"
+  unzip -o eclipse-test-framework-3.3M6.zip
+  rm eclipse-test-framework-3.3M6.zip
 fi
 
 # checkout the basebuilder
-#baseBuilderTag=M5_33
-#if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.update.core_3.2.100.200702211317.jar ]; then
-baseBuilderTag=v20070321
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.jdt.core.contrib.converter_1.1.2.200703120901.jar ]; then
+#baseBuilderTag=v20070321
+#if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.jdt.core.contrib.converter_1.1.2.200703120901.jar ]; then
+baseBuilderTag=M6_33
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.3.0.v20070323-1600.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder

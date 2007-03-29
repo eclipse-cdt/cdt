@@ -26,9 +26,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.rse.core,
  org.eclipse.rse.ui
-Export-Package: org.eclipse.rse.internal.processes.ui.dialogs,
- org.eclipse.rse.internal.processes.ui.propertypages,
- org.eclipse.rse.internal.processes.ui.view,
+Export-Package: org.eclipse.rse.internal.processes.ui;x-internal:=true,
+ org.eclipse.rse.internal.processes.ui.dialogs;x-internal:=true,
+ org.eclipse.rse.internal.processes.ui.propertypages;x-internal:=true,
+ org.eclipse.rse.internal.processes.ui.view;x-internal:=true,
  org.eclipse.rse.processes.ui,
  org.eclipse.rse.processes.ui.actions,
  org.eclipse.rse.processes.ui.view

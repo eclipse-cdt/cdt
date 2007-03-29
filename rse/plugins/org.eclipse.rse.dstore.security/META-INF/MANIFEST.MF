@@ -20,3 +20,8 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Export-Package: org.eclipse.rse.internal.dstore.security;x-internal:=true,
+ org.eclipse.rse.internal.dstore.security.preference;x-internal:=true,
+ org.eclipse.rse.internal.dstore.security.util;x-internal:=true,
+ org.eclipse.rse.internal.dstore.security.widgets;x-internal:=true,
+ org.eclipse.rse.internal.dstore.security.wizards;x-internal:=true

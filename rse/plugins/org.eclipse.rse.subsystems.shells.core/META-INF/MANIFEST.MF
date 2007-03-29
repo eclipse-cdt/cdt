@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.ui,
  org.eclipse.rse.core
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.rse.internal.subsystems.shells.servicesubsystem;x-internal:=true,
+Export-Package: org.eclipse.rse.internal.subsystems.shells.core;x-internal:=true,
+ org.eclipse.rse.internal.subsystems.shells.servicesubsystem;x-internal:=true,
  org.eclipse.rse.internal.subsystems.shells.subsystems;x-internal:=true,
  org.eclipse.rse.subsystems.shells.core.model,
  org.eclipse.rse.subsystems.shells.core.subsystems,

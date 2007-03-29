@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
@@ -31,9 +32,9 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.references.SystemPersistableReferencingObject;
-import org.eclipse.rse.model.SystemRegistry;
 
 /**
  * A reference to a filter pool. A reference may be "resolved" or "unresolved".
@@ -154,7 +155,8 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 				Matcher m = p.matcher(filterPoolName);
 				if (m.find()) {
 					String profileName = m.group(1);
-					ISystemProfile profile = SystemRegistry.getSystemRegistry().getSystemProfile(profileName);
+					ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
+					ISystemProfile profile = registry.getSystemProfile(profileName);
 					if (profile != null) {
 						ISystemFilterPool[] pools = profile.getFilterPools();
 						for (int i = 0; i < pools.length && filterPool == null; i++) {

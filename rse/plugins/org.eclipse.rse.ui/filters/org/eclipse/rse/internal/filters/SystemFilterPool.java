@@ -953,8 +953,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
       // FIXME  SystemFilterImpl.initMOF(); // to be safe
         
         ISystemFilterPool pool = null;
-        SystemFilterPool poolImpl = null;
         /* FIXME
+        SystemFilterPool poolImpl = null;
         switch(savePolicy)
         {
            case SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL:
@@ -996,11 +996,11 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
              }  
              break;        	
         }   
-        */
         if (poolImpl != null)
         {        
           poolImpl.initialize(name,savePolicy,namingPolicy);
         }
+        */
         return pool;
     }
     

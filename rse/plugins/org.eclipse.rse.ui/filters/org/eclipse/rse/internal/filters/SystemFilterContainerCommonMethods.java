@@ -19,9 +19,9 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.logging.Logger;
 
 
 /**
@@ -111,7 +111,7 @@ public class SystemFilterContainerCommonMethods
         if (exists)
         {
           String msg = "Error creating filter: aliasName " + aliasName + " is not unique"; // no need to xlate, internal only //$NON-NLS-1$ //$NON-NLS-2$
-		  SystemBasePlugin.logError(msg);
+		  RSECorePlugin.getDefault().getLogger().logError(msg, null);
           return null;
         }
         newFilter = internalCreateSystemFilter(parentPool, aliasName, filterStrings);
@@ -148,10 +148,9 @@ public class SystemFilterContainerCommonMethods
           //}
         } catch (Exception e)
         {
-			SystemBasePlugin.logError("Error creating filter: " + e.getClass().getName() + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-           SystemBasePlugin.logError("...Alias name.: " + aliasName); //$NON-NLS-1$
-		  
-           //e.printStackTrace();
+        	Logger logger = RSECorePlugin.getDefault().getLogger(); 
+        	logger.logError("Error creating filter: " + e.getClass().getName() + ": " + e.getMessage(), null); //$NON-NLS-1$ //$NON-NLS-2$
+        	logger.logError("...Alias name.: " + aliasName, null); //$NON-NLS-1$
         }    	
     	return newFilter;
     }
@@ -437,7 +436,7 @@ public class SystemFilterContainerCommonMethods
      * @param filters Vector list
      * @param filter SystemFilter object to update
      * @param newName new name to give filter
-     * @param newString new strings to give filter
+     * @param newStrings new strings to give filter
      */
     public void updateSystemFilter(Vector filters, ISystemFilter filter, String newName, String[] newStrings)
     {
@@ -450,7 +449,7 @@ public class SystemFilterContainerCommonMethods
      * @param filters java.util.List list
      * @param filter SystemFilter object to update
      * @param newName new name to give filter
-     * @param newString new strings to give filter
+     * @param newStrings new strings to give filter
      */
     public void updateSystemFilter(java.util.List filters, ISystemFilter filter, String newName, String[] newStrings)
     {

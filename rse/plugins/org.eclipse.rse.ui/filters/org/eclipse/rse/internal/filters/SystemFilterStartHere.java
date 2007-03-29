@@ -110,7 +110,7 @@ public class SystemFilterStartHere
      *   SystemFilterPoolReferenceManagerProvider interface, and pass "this" for this parameter.
      *   Given any filter framework object, it is possible to retrieve the caller's
      *   object via the getProvider method call.
-     * @param relatedPoolManagers The managers that own the master list of filter pools that 
+     * @param relatedPoolMgrProvider The manager provider that own the master list of filter pools that 
      *   this manager will contain references to.
      * @param name the name of the filter pool reference manager. This is not currently 
      *   used, but you may find a use for it. 

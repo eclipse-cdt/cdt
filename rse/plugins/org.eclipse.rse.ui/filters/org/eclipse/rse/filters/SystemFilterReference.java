@@ -246,7 +246,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
      * Create a single filter refererence to a given filter. 
      * If there already is a reference to this filter, it is returned.
      * If not, a new reference is created and appended to the end of the existing filter reference array.
-     * @see #getExistingSystemFilterReference(ISystemFilter)
+     * @see #getExistingSystemFilterReference(ISubSystem, ISystemFilter)
      */
     public ISystemFilterReference getSystemFilterReference(ISubSystem subSystem, ISystemFilter filter)
     {
@@ -256,7 +256,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
     /**
      * Return an existing reference to a given system filter. 
      * If no reference currently exists to this filter, returns null.
-     * @see #getSystemFilterReference(ISystemFilter)
+     * @see #getSystemFilterReference(ISubSystem, ISystemFilter)
      */
     public ISystemFilterReference getExistingSystemFilterReference(ISubSystem subSystem, ISystemFilter filter)
     {

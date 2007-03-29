@@ -71,7 +71,6 @@ import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
-import org.eclipse.cdt.core.settings.model.util.IPathSettingsContainerVisitor;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
@@ -3150,12 +3149,15 @@ public class CProjectDescriptionManager {
 			map.remove(project);
 	}
 	
-	static ICLanguageSetting getLanguageSettingForFile(ICConfigurationDescription cfgDes, IPath path){
+	static ICLanguageSetting getLanguageSettingForFile(ICConfigurationDescription cfgDes, IPath path, boolean ignoreExcludeStatus){
 		int segCount = path.segmentCount(); 
 		if(segCount == 0)
 			return null;
 		
 		ICResourceDescription rcDes = cfgDes.getResourceDescription(path, false);
+		if(!ignoreExcludeStatus && rcDes.isExcluded())
+			return null;
+		
 		if(rcDes.getType() == ICSettingBase.SETTING_FOLDER){
 			return ((ICFolderDescription)rcDes).getLanguageSettingForFile(path.lastSegment());
 		}

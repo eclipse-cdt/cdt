@@ -206,7 +206,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		IRcSettingInfo[] rcInfos = calculator.getSettingInfos(cInfo.fLoadContext.getConfiguration().getOwner().getProject(), data, info, true);
 		
 		CResourceData rcDatas[] = data.getResourceDatas();
-		Map rcDataMap = new HashMap(rcDatas.length);
+		Map rcDataMap = new HashMap();
 		CResourceData rcData;
 		for(int i = 0; i < rcDatas.length; i++){
 			rcData = rcDatas[i];
@@ -214,14 +214,24 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		}
 		
 		IRcSettingInfo rcInfo;
-		
+		IPath path; 
+		boolean rootSettingFound = false;
+		boolean fileSettingFound = false;
 		for(int i = 0; i < rcInfos.length; i++){
 			rcInfo = rcInfos[i];
 			rcData = rcInfo.getResourceData();
+			path = rcData.getPath();
+			if(path.segmentCount() != 0)
+				fileSettingFound = true;
+			else
+				rootSettingFound = true;
 			
-			rcDataMap.remove(rcData.getPath());
+			rcDataMap.remove(path);
 			cache(cInfo, rcInfo);
 		}
+		
+		if(rootSettingFound && fileSettingFound)
+			data.getRootFolderData().setExcluded(true);
 		
 		if(!rcDataMap.isEmpty()){
 			CResourceData tmpRcData;

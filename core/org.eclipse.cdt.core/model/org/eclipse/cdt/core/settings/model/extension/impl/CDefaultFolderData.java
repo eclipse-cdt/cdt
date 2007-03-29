@@ -51,12 +51,12 @@ public class CDefaultFolderData extends CFolderData {
 	
 	protected void copyDataFrom(CFolderData base, boolean clone){
 		if(base != null){
-			fIsExcluded = base.isExcluded();
-			
 			CLanguageData lDatas[] = base.getLanguageDatas();
 			for(int i = 0; i < lDatas.length; i++){
 				fLanguageDatas.add(copyLanguageData(lDatas[i], clone));
 			}
+			
+			fIsExcluded = base.isExcluded();
 		}
 	}
 

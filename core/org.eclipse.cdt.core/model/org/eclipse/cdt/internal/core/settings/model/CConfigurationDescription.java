@@ -476,7 +476,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		IPath entryPath;
 		IPath paths[];
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
-		cr.setValue(Boolean.TRUE);
+		cr.setValue(Boolean.valueOf(getRootFolderDescription().isExcluded()));
 		Set srcPathSet = new HashSet();
 		IProject project = fIsPreference ? null : getProjectDescription().getProject();
 		IPath projPath = project != null ? project.getFullPath() : null;
@@ -542,9 +542,9 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 				if(rcDes.isExcluded())
 					rcDes.setExcluded(false);
 			} else {
-				if((rcDes.getType() == ICSettingBase.SETTING_FILE
+				if(/*(rcDes.getType() == ICSettingBase.SETTING_FILE
 						|| !((ICFolderDescription)rcDes).isRoot())
-						   && !rcDes.isExcluded())
+						   &&*/ !rcDes.isExcluded())
 					rcDes.setExcluded(true);
 			}
 		}
@@ -729,7 +729,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		return data.isInitializing();
 	}
 
-	public ICLanguageSetting getLanguageSettingForFile(IPath path) {
-		return CProjectDescriptionManager.getLanguageSettingForFile(this, path);
+	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExcludeStatus) {
+		return CProjectDescriptionManager.getLanguageSettingForFile(this, path, ignoreExcludeStatus);
 	}
 }

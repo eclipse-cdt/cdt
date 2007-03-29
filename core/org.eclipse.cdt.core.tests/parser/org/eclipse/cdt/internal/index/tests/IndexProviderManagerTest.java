@@ -446,7 +446,7 @@ class MockConfig implements ICConfigurationDescription {
 	public void removeStorage(String id) throws CoreException {
 	}
 
-	public ICLanguageSetting getLanguageSettingForFile(IPath path) {
+	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus) {
 		return null;
 	}
 }

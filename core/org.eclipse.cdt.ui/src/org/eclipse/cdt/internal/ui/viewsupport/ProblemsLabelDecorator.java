@@ -388,7 +388,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 				if (cf[i].isActive()) {
 					ICResourceDescription out = cf[i].getResourceDescription(path, true);
 					if (out != null) result |= TICK_CONFIGURATION;
-					out = cf[i].getResourceDescription(path, false);
+//					out = cf[i].getResourceDescription(path, false);
 					if (out != null && out.isExcluded()) result |= TICK_EXCLUDE;
 				}
 			}

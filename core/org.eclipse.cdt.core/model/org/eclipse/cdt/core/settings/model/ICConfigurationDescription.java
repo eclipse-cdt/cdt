@@ -360,5 +360,5 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @param path - file project relative path
 	 * @return ICLanguageSetting or null if not found
 	 */
-	ICLanguageSetting getLanguageSettingForFile(IPath path);
+	ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus);
 }

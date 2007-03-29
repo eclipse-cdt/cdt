@@ -47,7 +47,6 @@ import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 
 public class CConfigurationDescriptionCache extends CDefaultConfigurationData
@@ -442,8 +441,8 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		fInitializing = false;
 	}
 	
-	public ICLanguageSetting getLanguageSettingForFile(IPath path) {
-		return CProjectDescriptionManager.getLanguageSettingForFile(this, path);
+	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExcludeStatus) {
+		return CProjectDescriptionManager.getLanguageSettingForFile(this, path, ignoreExcludeStatus);
 	}
 
 	protected CResourceData[] filterRcDatasToCopy(CConfigurationData base) {

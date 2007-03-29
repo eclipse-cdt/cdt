@@ -251,9 +251,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 	
 	private boolean internalSetExclude(boolean excluded){
-		if(excluded && isRoot())
-			return isExcluded;
-
+//		if(excluded/* && isRoot()*/)
+//			return isExcluded;
 		return isExcluded = excluded;
 	}
 

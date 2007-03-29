@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
@@ -675,8 +676,46 @@ public class PerFileSettingsCalculator {
 			if(pInfo.isEmpty())
 				continue;
 
-			if(projRelPath.segmentCount() == 0)
+			if(projRelPath.segmentCount() == 0){
+				CFolderData rootData = (CFolderData)rcSet.fRcData;
+				CLanguageData lDatas[] = rootData.getLanguageDatas();
+				IPath[] incPaths = pInfo.getIncludePaths();
+				IPath[] quotedIncPaths = pInfo.getQuoteIncludePaths();
+				IPath[] incFiles = pInfo.getIncludeFiles();
+				IPath[] macroFiles = pInfo.getMacroFiles();
+				Map symbolMap = pInfo.getSymbols();
+				int kinds = 0;
+
+				if(incPaths.length != 0 || quotedIncPaths.length != 0)
+					kinds |= ICLanguageSettingEntry.INCLUDE_PATH;
+				if(incFiles.length != 0)
+					kinds |= ICLanguageSettingEntry.INCLUDE_FILE;
+				if(macroFiles.length != 0)
+					kinds |= ICLanguageSettingEntry.MACRO_FILE;
+				if(symbolMap.size() != 0)
+					kinds |= ICLanguageSettingEntry.MACRO;
+				
+				rcInfo = null;
+				for(int k = 0; k < lDatas.length; k++){
+					lData = lDatas[k];
+					if((lData.getSupportedEntryKinds() & kinds) == 0)
+						continue;
+					
+					if(rcInfo == null){
+						rcInfo = new RcSettingInfo(rootData);
+						tmpList = new ArrayList(lDatas.length - k);
+						rcInfo.fLangInfoList = tmpList;
+					}
+					
+					lInfo = new LangSettingInfo(lData, pInfo);
+					rcInfo.add(lInfo);
+				}
+
+				if(rcInfo != null)
+					list.add(rcInfo);
+
 				continue;
+			}
 //			switch(rc.getType()){
 //			case IResource.FILE:
 //				projRelPath = rc.getProjectRelativePath();

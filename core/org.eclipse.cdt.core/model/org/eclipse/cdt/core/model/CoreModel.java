@@ -1239,7 +1239,7 @@ public class CoreModel {
 				if(!mngr.isNewStyleCfg(indexCfg)){
 					return oldIsScannerInformationEmpty(resource);
 				}
-				ICLanguageSetting lSetting = indexCfg.getLanguageSettingForFile(resource.getProjectRelativePath());
+				ICLanguageSetting lSetting = indexCfg.getLanguageSettingForFile(resource.getProjectRelativePath(), false);
 				if(lSetting != null){
 					ICLanguageSettingEntry[] entries = lSetting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 					if(entries.length != 0)

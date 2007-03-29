@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.internal.files.ui.actions;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.dialogs.CombineDialog;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;

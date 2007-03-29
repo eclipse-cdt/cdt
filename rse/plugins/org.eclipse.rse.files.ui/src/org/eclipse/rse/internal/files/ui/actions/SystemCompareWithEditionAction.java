@@ -17,7 +17,7 @@
 package org.eclipse.rse.internal.files.ui.actions;
 
 import org.eclipse.compare.internal.ICompareContextIds;
-import org.eclipse.rse.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.swt.widgets.Shell;
 
 

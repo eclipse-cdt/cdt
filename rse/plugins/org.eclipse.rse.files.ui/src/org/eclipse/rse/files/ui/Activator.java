@@ -35,7 +35,8 @@ import org.osgi.framework.BundleContext;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class Activator extends AbstractUIPlugin {
+public class Activator extends AbstractUIPlugin
+{
 
 	//The shared instance.
 	private static Activator plugin;
@@ -149,4 +150,5 @@ public class Activator extends AbstractUIPlugin {
 	 {
 		 return svsraf;
 	 }
+
 }

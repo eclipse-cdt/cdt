@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.rse.shells.ui.ShellResources;
+import org.eclipse.rse.internal.shells.ui.ShellResources;
 import org.eclipse.rse.ui.SystemBaseForm;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.swt.SWT;

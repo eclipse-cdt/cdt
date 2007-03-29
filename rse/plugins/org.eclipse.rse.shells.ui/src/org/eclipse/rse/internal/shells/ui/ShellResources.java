@@ -14,13 +14,13 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui;
+package org.eclipse.rse.internal.shells.ui;
 
 import org.eclipse.osgi.util.NLS;
 
 public class ShellResources extends NLS 
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.shells.ui.ShellResources"; //$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.shells.ui.ShellResources"; //$NON-NLS-1$
 
 	public static String RESID_SHELL_PROPERTYPAGE_TITLE;
 	public static String RESID_SHELL_PROPERTYPAGE_DESCRIPTION;

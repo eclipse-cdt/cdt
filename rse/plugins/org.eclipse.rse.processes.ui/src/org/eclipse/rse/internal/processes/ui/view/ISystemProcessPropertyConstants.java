@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.processes.ui.view;
+package org.eclipse.rse.internal.processes.ui.view;
 
 public interface ISystemProcessPropertyConstants
 {

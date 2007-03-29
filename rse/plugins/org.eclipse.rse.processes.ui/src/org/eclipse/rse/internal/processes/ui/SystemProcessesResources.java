@@ -14,13 +14,13 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.processes.ui;
+package org.eclipse.rse.internal.processes.ui;
 
 import org.eclipse.osgi.util.NLS;
 
 public class SystemProcessesResources extends NLS
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.processes.ui.SystemProcessesResources";  //$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.processes.ui.SystemProcessesResources";  //$NON-NLS-1$
 		
 	// -------------------------
 	// ACTIONS...

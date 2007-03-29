@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.processes.ui.actions;
+package org.eclipse.rse.internal.processes.ui.actions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,12 +30,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.internal.processes.ui.dialogs.SystemKillDialog;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.processes.ui.ProcessesPlugin;
-import org.eclipse.rse.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;

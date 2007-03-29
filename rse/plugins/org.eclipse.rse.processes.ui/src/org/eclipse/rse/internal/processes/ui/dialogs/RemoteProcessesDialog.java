@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
-import org.eclipse.rse.processes.ui.SystemProcessesResources;
+import org.eclipse.rse.internal.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;

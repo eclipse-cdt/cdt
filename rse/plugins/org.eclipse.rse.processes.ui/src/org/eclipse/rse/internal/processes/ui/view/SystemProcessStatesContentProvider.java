@@ -20,7 +20,6 @@ import java.util.HashMap;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.processes.ui.view.SystemProcessesViewResources;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 
 

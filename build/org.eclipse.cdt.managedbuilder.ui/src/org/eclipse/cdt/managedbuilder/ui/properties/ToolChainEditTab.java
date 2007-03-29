@@ -170,9 +170,9 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			if (cfg.getBuilder().isManagedBuildOn()) {
 				c_toolchain.setText(EMPTY_STR); // unprobable case
 			} else {
-				try {
-					fi.changeToolChain(null, null, null);
-				} catch (BuildException e) {}
+//				try {
+//					fi.changeToolChain(null, null, null);
+//				} catch (BuildException e) {}
 				c_toolchain.select(c_toolchain.getItemCount() - 1);
 			}
 			c_builder.setEnabled(false);

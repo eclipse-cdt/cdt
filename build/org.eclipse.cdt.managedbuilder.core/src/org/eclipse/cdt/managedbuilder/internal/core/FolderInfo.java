@@ -739,6 +739,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	public IToolChain changeToolChain(IToolChain newSuperClass, String Id, String name) throws BuildException{
+		if(newSuperClass == null)
+			newSuperClass = ManagedBuildManager.getExtensionToolChain(ConfigurationDataProvider.PREF_TC_ID);
+		
 		IToolChain curReal = ManagedBuildManager.getRealToolChain(toolChain);
 		IToolChain newReal = ManagedBuildManager.getRealToolChain(newSuperClass);
 		

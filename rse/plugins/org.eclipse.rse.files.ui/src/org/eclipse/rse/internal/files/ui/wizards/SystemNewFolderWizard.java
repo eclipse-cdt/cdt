@@ -19,7 +19,7 @@ package org.eclipse.rse.internal.files.ui.wizards;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
-import org.eclipse.rse.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;

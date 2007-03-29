@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.widgets;
-import org.eclipse.rse.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.swt.events.ModifyEvent;

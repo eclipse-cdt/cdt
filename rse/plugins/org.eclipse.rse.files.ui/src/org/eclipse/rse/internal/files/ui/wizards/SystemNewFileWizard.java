@@ -23,7 +23,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;

@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class FileResources extends NLS 
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.files.ui.FileResources";  //$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.files.ui.FileResources";  //$NON-NLS-1$
 
 	public static String RESID_FILES_DOWNLOAD;
 	

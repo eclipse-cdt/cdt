@@ -17,7 +17,7 @@
 package org.eclipse.rse.internal.files.ui.wizards;
 
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.rse.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;

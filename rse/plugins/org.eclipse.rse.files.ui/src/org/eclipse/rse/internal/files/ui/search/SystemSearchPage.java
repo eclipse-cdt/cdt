@@ -32,7 +32,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.ui.view.search.SystemSearchUI;
 import org.eclipse.rse.internal.ui.view.search.SystemSearchViewPart;
 import org.eclipse.rse.services.clientserver.SystemSearchString;

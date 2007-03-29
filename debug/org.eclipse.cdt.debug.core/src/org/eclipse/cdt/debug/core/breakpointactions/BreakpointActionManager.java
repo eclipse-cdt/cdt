@@ -85,6 +85,15 @@ public class BreakpointActionManager {
 		getBreakpointActions().remove(action);
 	}
 
+	public boolean breakpointHasActions(IBreakpoint breakpoint) {
+		if (breakpoint != null) {
+			IMarker marker = breakpoint.getMarker();
+			String actionNames = marker.getAttribute(BREAKPOINT_ACTION_ATTRIBUTE, ""); //$NON-NLS-1$
+			return actionNames.length() > 0;
+		}
+		return false;
+	}
+	
 	public void executeActions(IBreakpoint breakpoint, IAdaptable context) {
 
 		if (breakpoint != null) {

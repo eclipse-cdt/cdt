@@ -56,6 +56,8 @@ public class CDebugImages {
 	public static final String IMG_OVRS_BREAKPOINT_INSTALLED_DISABLED = NAME_PREFIX + "installed_ovr_disabled.gif"; //$NON-NLS-1$
 	public static final String IMG_OVRS_BREAKPOINT_CONDITIONAL = NAME_PREFIX + "conditional_ovr.gif"; //$NON-NLS-1$
 	public static final String IMG_OVRS_BREAKPOINT_CONDITIONAL_DISABLED = NAME_PREFIX + "conditional_ovr_disabled.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_BREAKPOINT_WITH_ACTIONS = NAME_PREFIX + "actions_ovr.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_BREAKPOINT_WITH_ACTIONS_DISABLED = NAME_PREFIX + "actions_ovr_disabled.gif"; //$NON-NLS-1$
 	public static final String IMG_OVRS_ADDRESS_BREAKPOINT = NAME_PREFIX + "address_ovr.gif"; //$NON-NLS-1$
 	public static final String IMG_OVRS_ADDRESS_BREAKPOINT_DISABLED = NAME_PREFIX + "address_ovr_disabled.gif"; //$NON-NLS-1$
 	public static final String IMG_OVRS_FUNCTION_BREAKPOINT = NAME_PREFIX + "function_ovr.gif"; //$NON-NLS-1$
@@ -140,6 +142,8 @@ public class CDebugImages {
 	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_INSTALLED_DISABLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_INSTALLED_DISABLED );
 	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_CONDITIONAL = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_CONDITIONAL );
 	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_CONDITIONAL_DISABLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_CONDITIONAL_DISABLED );
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_WITH_ACTIONS = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_WITH_ACTIONS );
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_WITH_ACTIONS_DISABLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_WITH_ACTIONS_DISABLED );
 	public static final ImageDescriptor DESC_OVRS_ADDRESS_BREAKPOINT = createManaged( T_OVR, IMG_OVRS_ADDRESS_BREAKPOINT );
 	public static final ImageDescriptor DESC_OVRS_ADDRESS_BREAKPOINT_DISABLED = createManaged( T_OVR, IMG_OVRS_ADDRESS_BREAKPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OVRS_FUNCTION_BREAKPOINT = createManaged( T_OVR, IMG_OVRS_FUNCTION_BREAKPOINT );

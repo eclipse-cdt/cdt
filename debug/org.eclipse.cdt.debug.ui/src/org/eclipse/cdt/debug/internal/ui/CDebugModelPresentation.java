@@ -17,6 +17,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
@@ -474,6 +475,9 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	private ImageDescriptor[] computeBreakpointOverlays( ICBreakpoint breakpoint ) {
 		ImageDescriptor[] overlays = new ImageDescriptor[]{ null, null, null, null };
 		try {
+			if ( CDebugCorePlugin.getDefault().getBreakpointActionManager().breakpointHasActions(breakpoint) ) {
+				overlays[OverlayImageDescriptor.BOTTOM_RIGHT] = (breakpoint.isEnabled()) ? CDebugImages.DESC_OVRS_BREAKPOINT_WITH_ACTIONS : CDebugImages.DESC_OVRS_BREAKPOINT_WITH_ACTIONS_DISABLED;
+			}
 			if ( breakpoint.isConditional() ) {
 				overlays[OverlayImageDescriptor.TOP_LEFT] = (breakpoint.isEnabled()) ? CDebugImages.DESC_OVRS_BREAKPOINT_CONDITIONAL : CDebugImages.DESC_OVRS_BREAKPOINT_CONDITIONAL_DISABLED;
 			}

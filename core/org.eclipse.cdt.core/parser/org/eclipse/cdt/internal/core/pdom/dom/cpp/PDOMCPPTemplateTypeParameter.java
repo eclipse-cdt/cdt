@@ -14,9 +14,12 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.index.IIndexInternalTemplateParameter;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  */
 class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
-		ICPPTemplateTypeParameter, IType {
+		ICPPTemplateTypeParameter, IIndexType, IIndexInternalTemplateParameter {
 
 	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE + 0;	
 	
@@ -98,6 +101,10 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
 			CCorePlugin.log(e);
 		}
 		return null;
+	}
+	
+	public ICPPBinding getParameterOwner() throws CoreException {
+		return (ICPPBinding) getParentBinding();
 	}
 	
 	public Object clone() { fail();return null; }

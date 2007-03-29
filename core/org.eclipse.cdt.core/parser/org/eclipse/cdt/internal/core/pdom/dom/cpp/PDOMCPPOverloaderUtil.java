@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.index.IIndexInternalTemplateParameter;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -91,8 +91,8 @@ public class PDOMCPPOverloaderUtil {
 			}
 			if (qualifyTemplateParameters && types[i] instanceof ICPPTemplateParameter) {
 				ICPPBinding parent = null;
-				if (types[i] instanceof PDOMNode) {
-					parent = (ICPPBinding)((PDOMNode)types[i]).getParentNode();
+				if (types[i] instanceof IIndexInternalTemplateParameter) {
+					parent = ((IIndexInternalTemplateParameter)types[i]).getParameterOwner();
 				} else {
 					IName parentName = ((ICPPTemplateParameter)types[i]).getScope().getScopeName();
 					if (parentName instanceof IASTName) {
@@ -105,7 +105,7 @@ public class PDOMCPPOverloaderUtil {
 					String sig = getSignature(parent);
 					if (sig != null)
 						buffer.append(sig);
-					buffer.append("::");
+					buffer.append("::"); //$NON-NLS-1$
 				}
 				buffer.append(((ICPPTemplateParameter)types[i]).getName());
 			} else {

@@ -24,10 +24,14 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -35,6 +39,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -95,7 +103,9 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 	public IType getCompositeType(IIndexType rtype) throws DOMException {
 		IType result;
 
-		if(rtype instanceof ICPPClassType) {
+		if(rtype instanceof ICPPSpecialization) {
+			result = (IIndexType) getCompositeBinding((IIndexFragmentBinding) rtype);
+		} else if(rtype instanceof ICPPClassType) {
 			result = (ICPPClassType) getCompositeBinding((IIndexFragmentBinding) rtype);
 		} else if(rtype instanceof ITypedef) {
 			result = new CompositeCPPTypedef(this, (ICPPBinding) rtype);
@@ -113,6 +123,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 			result = new CompositeArrayType((IArrayType) rtype, this);
 		} else if(rtype == null) {
 			result = null;
+		} else if(rtype instanceof ICPPTemplateTypeParameter) {
+			result = (IIndexType) getCompositeBinding((IIndexFragmentBinding) rtype);
 		} else if(rtype instanceof IBasicType) {
 			result = rtype; // no context required its a leaf with no way to traverse upward
 		} else {
@@ -141,6 +153,54 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 		try {
 			if(binding==null) {
 				result = null;
+			} else if (binding instanceof ICPPTemplateDefinition) {
+				if(binding instanceof ICPPClassTemplate) {
+					return new CompositeCPPClassTemplate(this, (ICPPClassType) binding);
+				} else if (binding instanceof ICPPFunctionTemplate) {
+					return new CompositeCPPFunctionTemplate(this, (ICPPFunction) binding);
+				} else {
+					throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			} else if(binding instanceof ICPPSpecialization) {
+				if(binding instanceof ICPPTemplateInstance) {
+					if(binding instanceof ICPPDeferredTemplateInstance) {
+						if(binding instanceof ICPPClassType) {
+							return new CompositeCPPDeferredClassInstance(this, (ICPPClassType) binding);
+						} else if(binding instanceof ICPPFunction) {
+							return new CompositeCPPDeferredFunctionInstance(this, (ICPPFunction) binding);
+						} else {
+							throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+					} else {
+						if(binding instanceof ICPPClassType) {
+							return new CompositeCPPClassInstance(this, (ICPPClassType) binding);
+						} if(binding instanceof ICPPFunction) {
+							return new CompositeCPPFunctionInstance(this, (ICPPFunction) binding);
+						} else {
+							throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+					}
+				} else {
+					if(binding instanceof ICPPClassType) {
+						if(binding instanceof ICPPClassTemplatePartialSpecialization) {
+							return new CompositeCPPClassTemplatePartialSpecialization(this, (ICPPClassTemplatePartialSpecialization) binding);
+						} else {
+							return new CompositeCPPClassSpecialization(this, (ICPPClassType) binding);
+						}
+					} if(binding instanceof ICPPConstructor) {
+						return new CompositeCPPConstructorSpecialization(this, (ICPPConstructor) binding);						
+					} if(binding instanceof ICPPMethod) {
+						return new CompositeCPPMethodSpecialization(this, (ICPPMethod) binding);
+					} if(binding instanceof ICPPFunction) {
+						return new CompositeCPPFunctionSpecialization(this, (ICPPFunction) binding);
+					} if(binding instanceof ICPPField) {
+						return new CompositeCPPField(this, (ICPPField) binding);
+					} if(binding instanceof ICPPParameter) {
+						return new CompositeCPPParameter(this, (ICPPParameter) binding);
+					} else {
+						throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				}
 			} else if(binding instanceof ICPPParameter) {
 				result = new CompositeCPPParameter(this, (ICPPParameter) binding);
 			} else if(binding instanceof ICPPField) {
@@ -168,6 +228,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 				result = new CompositeCPPEnumerator(this, (IEnumerator) binding);
 			} else if(binding instanceof ITypedef) {
 				result = new CompositeCPPTypedef(this, (ICPPBinding) binding);
+			} else if(binding instanceof ICPPTemplateTypeParameter) {
+				result = new CompositeCPPTemplateTypeParameter(this, (ICPPTemplateTypeParameter) binding);
 			} else {
 				throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 			}

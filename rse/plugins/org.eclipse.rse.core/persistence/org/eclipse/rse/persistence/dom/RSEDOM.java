@@ -29,7 +29,7 @@ public class RSEDOM extends RSEDOMNode {
 	 * Recommended for serializable objects. This should be updated if there is a schema change. 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Job saveJob = null;
+	private transient Job saveJob = null;
 	private transient ISystemProfile _profile;
 
 	public RSEDOM(ISystemProfile profile) {

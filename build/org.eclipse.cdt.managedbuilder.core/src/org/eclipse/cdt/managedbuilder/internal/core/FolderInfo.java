@@ -739,11 +739,25 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	public IToolChain changeToolChain(IToolChain newSuperClass, String Id, String name) throws BuildException{
-		if(newSuperClass == null)
+		boolean usePrefTc = false;
+		if(newSuperClass == null){
 			newSuperClass = ManagedBuildManager.getExtensionToolChain(ConfigurationDataProvider.PREF_TC_ID);
+			usePrefTc = true;
+		}
+		
+		if(newSuperClass == null)
+			return toolChain;
 		
 		IToolChain curReal = ManagedBuildManager.getRealToolChain(toolChain);
 		IToolChain newReal = ManagedBuildManager.getRealToolChain(newSuperClass);
+		
+		if(Id == null){
+			Id = ManagedBuildManager.calculateChildId(newSuperClass.getId(), null);
+		}
+		
+		if(name == null){
+			name = newSuperClass.getName();
+		}
 		
 		if(newReal != curReal){
 			IToolChain extTc = ManagedBuildManager.getExtensionToolChain(newSuperClass); 
@@ -756,7 +770,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			if(el != null){
 				updateToolChainWithConverter(el, newSuperClass, Id, name);
 			} else {
-				updateToolChainWithProperties(newSuperClass, Id, name);
+				updateToolChainWithProperties(usePrefTc ? null : newSuperClass, Id, name);
 			}
 			
 			BuildSettingsUtil.disconnectDepentents(getParent(), oldTools);
@@ -768,15 +782,58 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		ToolChain oldTc = (ToolChain)getToolChain();
 		if(newSuperClass != null) {
 			createToolChain(newSuperClass, Id, name, false);
+			
+			// For each option/option category child of the tool-chain that is
+			// the child of the selected configuration element, create an option/
+			// option category child of the cloned configuration's tool-chain element
+			// that specifies the original tool element as its superClass.
+			toolChain.createOptions(newSuperClass);
+
+			// For each tool element child of the tool-chain that is the child of 
+			// the selected configuration element, create a tool element child of 
+			// the cloned configuration's tool-chain element that specifies the 
+			// original tool element as its superClass.
+			String subId;
+			ITool[] tools = newSuperClass.getTools();
+			for (int i=0; i<tools.length; i++) {
+			    Tool toolChild = (Tool)tools[i];
+			    subId = ManagedBuildManager.calculateChildId(toolChild.getId(),null);
+			    toolChain.createTool(toolChild, subId, toolChild.getName(), false);
+			}
+			
+//			ITargetPlatform tpBase = oldTc.getTargetPlatform();
+//			ITargetPlatform extTp = tpBase;
+//			for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass());
+//			
+//			TargetPlatform tp;
+//			if(extTp != null){
+//				int nnn = ManagedBuildManager.getRandomNumber();
+//				subId = extTp.getId() + "." + nnn;		//$NON-NLS-1$
+////				subName = tpBase.getName();
+//				tp = new TargetPlatform(toolChain, subId, tpBase.getName(), (TargetPlatform)tpBase);
+//			} else {
+//				subId = ManagedBuildManager.calculateChildId(getId(), null);
+//				String subName = tpBase != null ? tpBase.getName() : ""; //$NON-NLS-1$
+//				tp = new TargetPlatform(toolChain, null, subId, subName, false);
+//			}
+//
+//			toolChain.setTargetPlatform(tp);
 		} else {
 			Configuration cfg = ConfigurationDataProvider.getClearPreference(null);
 			ToolChain prefTch = (ToolChain)cfg.getRootFolderInfo().getToolChain();
 			
 			toolChain = new ToolChain(this, ManagedBuildManager.calculateChildId(prefTch.getSuperClass().getId(), null), prefTch.getName(), new HashMap(), (ToolChain)prefTch);
 		}
-		toolChain.propertiesChanged();
+		
+		if(isRoot()){
+			Builder oldBuilder  = (Builder)oldTc.getBuilder();
+			Builder newBuilder = (Builder)getParent().getEditableBuilder();
+			newBuilder.copySettings(oldBuilder, false);
+		}
 
 		//TODO: copy includes, symbols, etc.
+
+		toolChain.propertiesChanged();
 	}
 	
 	void updateToolChainWithConverter(IConfigurationElement el, IToolChain newSuperClass, String Id, String name) throws BuildException{

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.actions;
+package org.eclipse.rse.ui.actions;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -22,7 +22,6 @@ import java.util.Date;
 import org.eclipse.rse.internal.ui.view.SystemDecoratingLabelProvider;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;

@@ -98,7 +98,8 @@ public class RemoteCMainTab extends CMainTab {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				"org.eclipse.rse.internal.remotecdt.launchgroup"); //$NON-NLS-1$
 
-		LaunchUIPlugin.setDialogShell(parent.getShell());
+		////No more needed according to https://bugs.eclipse.org/bugs/show_bug.cgi?id=178832 
+		//LaunchUIPlugin.setDialogShell(parent.getShell());
     }
 
 	/*

@@ -16,13 +16,6 @@
 
 package org.eclipse.rse.logging;
 
-import java.net.URL;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
@@ -32,8 +25,6 @@ import org.osgi.framework.BundleContext;
 public class RemoteSystemsLoggingPlugin extends Plugin {
 
 	private static RemoteSystemsLoggingPlugin singleton;
-	private ResourceBundle resourceBundle;
-	public static Logger out = null;
 
 	/**
 	 * Constructor.
@@ -50,51 +41,17 @@ public class RemoteSystemsLoggingPlugin extends Plugin {
 		return singleton;
 	}
 
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getResourceString(String key) {
-		try {
-			ResourceBundle bundle = RemoteSystemsLoggingPlugin.getDefault().getResourceBundle();
-			return bundle.getString(key);
-		} catch (Exception e) {
-			out.logError("could not get resource string for: " + key, e);  //$NON-NLS-1$
-			return key;
-		}
-	}
-
-	/**
-	 * Returns the plugin's resource bundle.
-	 */
-	public ResourceBundle getResourceBundle() {
-		if (resourceBundle == null) {
-			try {
-				IPath path = new Path("$nl$/RemoteSystemsLogging.properties"); //$NON-NLS-1$
-				URL url = FileLocator.find(getBundle(), path, null);
-				resourceBundle = new PropertyResourceBundle(url.openStream());
-			} catch (Exception x) {
-				resourceBundle = null;
-				out.logInfo("RemoteSystemsLoggingPlugin - unable to log resourcebundle"); //$NON-NLS-1$
-			}
-		}
-		return resourceBundle;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		out = LoggerFactory.getLogger(this);
-		out.logInfo("loading RemoteSystemsLoggingPlugin class."); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		LoggerFactory.freeLogger(this);
 		super.stop(context);
 	}
 }

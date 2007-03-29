@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.rse.internal.logging.LogListener;
 
 /**
  * Generic Logger class for handling Remote Systems logging and tracing.<br>
@@ -81,11 +82,41 @@ public class Logger implements IPropertyChangeListener {
 	 */
 	public static final boolean DEBUG = false;
 
+	/**
+	 * Name of the key that controls the logging level.<br>
+	 * (value is "debug_level").
+	 */
+	public static final String DEBUG_LEVEL = "debug_level"; //$NON-NLS-1$
+	/**
+	 * Set debug_level to this value to get Error messages.<br>
+	 * (value is 0).
+	 */
+	public static final int LOG_ERROR = 0;
+	/**
+	 * Set debug_level to this value to get Warning messages.<br>
+	 * (value is 1).
+	 */
+	public static final int LOG_WARNING = 1;
+	/**
+	 * Set debug_level to this value to get Information messages.<br>
+	 * (value is 2).
+	 */
+	public static final int LOG_INFO = 2;
+	/**
+	 * Set debug_level to this value to get Debug messages.<br>
+	 * (value is 3).
+	 */
+	public static final int LOG_DEBUG = 3;
+
 	private ILog systemsPluginLog = null;
-	private RemoteSystemLogListener logListener = null;
+
+	private LogListener logListener = null;
+
 	private String pluginId = null;
+
 	private Plugin systemPlugin = null;
-	private int debug_level = IRemoteSystemsLogging.LOG_ERROR;
+
+	private int debug_level = Logger.LOG_ERROR;
 
 	/**
 	 * Creates a new Logger. Invoked by the LoggerFactory.
@@ -100,18 +131,12 @@ public class Logger implements IPropertyChangeListener {
 		initialize();
 	}
 
-	/**
-	 * Initialize the Logger. The logger uses an ILog from the platform for this particular plugin, and
-	 * establishes a listener on that log to format the items placed in the log. 
-	 */
-	private void initialize() {
-		systemsPluginLog = systemPlugin.getLog();
-		logListener = new RemoteSystemLogListener(systemPlugin);
-		systemsPluginLog.addLogListener(logListener);
-		Preferences store = systemPlugin.getPluginPreferences();
-		debug_level = store.getInt(IRemoteSystemsLogging.DEBUG_LEVEL);
-		store.addPropertyChangeListener(this);
-		store.addPropertyChangeListener(logListener);
+	public synchronized void freeResources() {
+		logListener.freeResources();
+	}
+
+	public synchronized int getDebugLevel() {
+		return debug_level;
 	}
 
 	/**
@@ -130,7 +155,7 @@ public class Logger implements IPropertyChangeListener {
 	 * need to be localized to proper local.<br>
 	 */
 	public synchronized void logDebugMessage(String className, String message) {
-		if (Logger.DEBUG && debug_level >= IRemoteSystemsLogging.LOG_DEBUG) {
+		if (Logger.DEBUG && debug_level >= Logger.LOG_DEBUG) {
 			MultiStatus debugStatus = new MultiStatus(pluginId, IStatus.OK, className, null);
 			Status infoStatus = new Status(IStatus.OK, pluginId, IStatus.OK, message, null);
 			debugStatus.add(infoStatus);
@@ -145,7 +170,7 @@ public class Logger implements IPropertyChangeListener {
 	 * @param ex the exception that caused the condition, may be null.
 	 */
 	public synchronized void logError(String message, Throwable ex) {
-		if (debug_level >= IRemoteSystemsLogging.LOG_ERROR) {
+		if (debug_level >= Logger.LOG_ERROR) {
 			if (message == null) message = ""; //$NON-NLS-1$
 			Status errorStatus = new Status(IStatus.ERROR, pluginId, IStatus.OK, message, ex);
 			systemsPluginLog.log(errorStatus);
@@ -167,7 +192,7 @@ public class Logger implements IPropertyChangeListener {
 	 * ie: Resource.getString() should already have been called
 	 */
 	public synchronized void logInfo(String message, Throwable ex) {
-		if (debug_level >= IRemoteSystemsLogging.LOG_INFO) {
+		if (debug_level >= Logger.LOG_INFO) {
 			if (message == null) message = ""; //$NON-NLS-1$
 			Status infoStatus = new Status(IStatus.INFO, pluginId, IStatus.OK, message, ex);
 			systemsPluginLog.log(infoStatus);
@@ -189,23 +214,11 @@ public class Logger implements IPropertyChangeListener {
 	 * ie: Resource.getString() should already have been called
 	 */
 	public synchronized void logWarning(String message, Throwable ex) {
-		if (debug_level >= IRemoteSystemsLogging.LOG_WARNING) {
+		if (debug_level >= Logger.LOG_WARNING) {
 			if (message == null) message = ""; //$NON-NLS-1$
 			Status warningStatus = new Status(IStatus.WARNING, pluginId, IStatus.OK, message, ex);
 			systemsPluginLog.log(warningStatus);
 		}
-	}
-
-	public synchronized void setDebugLevel(int level) {
-		debug_level = level;
-	}
-
-	public synchronized int getDebugLevel() {
-		return debug_level;
-	}
-
-	public synchronized void freeResources() {
-		logListener.freeResources();
 	}
 
 	/**
@@ -213,7 +226,25 @@ public class Logger implements IPropertyChangeListener {
 	 */
 	public synchronized void propertyChange(PropertyChangeEvent event) {
 		Preferences prefs = systemPlugin.getPluginPreferences();
-		debug_level = prefs.getInt(IRemoteSystemsLogging.DEBUG_LEVEL);
+		debug_level = prefs.getInt(Logger.DEBUG_LEVEL);
+	}
+
+	public synchronized void setDebugLevel(int level) {
+		debug_level = level;
+	}
+
+	/**
+	 * Initialize the Logger. The logger uses an ILog from the platform for this particular plugin, and
+	 * establishes a listener on that log to format the items placed in the log. 
+	 */
+	private void initialize() {
+		systemsPluginLog = systemPlugin.getLog();
+		logListener = new LogListener(systemPlugin);
+		systemsPluginLog.addLogListener(logListener);
+		Preferences store = systemPlugin.getPluginPreferences();
+		debug_level = store.getInt(Logger.DEBUG_LEVEL);
+		store.addPropertyChangeListener(this);
+		store.addPropertyChangeListener(logListener);
 	}
 
 }

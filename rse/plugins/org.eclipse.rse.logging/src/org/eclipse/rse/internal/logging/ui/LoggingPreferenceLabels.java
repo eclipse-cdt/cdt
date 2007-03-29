@@ -13,10 +13,9 @@ import org.eclipse.osgi.util.NLS;
 
 public class LoggingPreferenceLabels extends NLS {
 
-	private static String BUNDLE_NAME = "org.eclipse.rse.logging.ui.LoggingPreferenceLabels";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.logging.ui.LoggingPreferenceLabels";//$NON-NLS-1$
 
-	public static String LOGGING_PREFERENCE_PAGE_TOPLABEL1;
-	public static String LOGGING_PREFERENCE_PAGE_TOPLABEL2;
+	public static String LOGGING_PREFERENCE_PAGE_TOPLABEL;
 	public static String LOGGING_PREFERENCE_PAGE_ERRORS_ONLY; 
 	public static String LOGGING_PREFERENCE_PAGE_WARNINGS_ERRORS;
 	public static String LOGGING_PREFERENCE_PAGE_INFO_DEBUG;

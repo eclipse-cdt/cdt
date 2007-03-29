@@ -18,7 +18,7 @@ package org.eclipse.rse.internal.logging;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.rse.logging.IRemoteSystemsLogging;
+import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.RemoteSystemsLoggingPlugin;
 
 /**
@@ -38,6 +38,6 @@ public class LoggingPreferenceInitializer extends AbstractPreferenceInitializer 
 	 */
 	public void initializeDefaultPreferences() {
 		Preferences prefs = RemoteSystemsLoggingPlugin.getDefault().getPluginPreferences();
-		prefs.setDefault(IRemoteSystemsLogging.DEBUG_LEVEL, IRemoteSystemsLogging.LOG_ERROR);
+		prefs.setDefault(Logger.DEBUG_LEVEL, Logger.LOG_ERROR);
 	}
 }

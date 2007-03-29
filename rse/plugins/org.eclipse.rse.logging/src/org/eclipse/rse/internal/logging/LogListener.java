@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.logging;
+package org.eclipse.rse.internal.logging;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 /**
  * Log Listener is a sink for messages coming from Logger.
  */
-class RemoteSystemLogListener implements ILogListener, IPropertyChangeListener {
+public class LogListener implements ILogListener, IPropertyChangeListener {
 
 	private PrintWriter log = null;
 	private File outputFile = null;
@@ -41,7 +41,7 @@ class RemoteSystemLogListener implements ILogListener, IPropertyChangeListener {
 	 * Create a new log listener for a plugin.
 	 * @param plugin The plugin for which to create a log listener.
 	 */
-	public RemoteSystemLogListener(Plugin plugin) {
+	public LogListener(Plugin plugin) {
 		IPath path = plugin.getStateLocation().addTrailingSeparator().append(".log"); //$NON-NLS-1$
 		outputFile = path.toFile();
 		if ((outputFile != null) && (outputFile.exists())) {

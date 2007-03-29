@@ -9,7 +9,7 @@
  * Ewa Matejska (PalmSource)
  *******************************************************************************/
 
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.internal.remotecdt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class RemoteCDebuggerTab extends CDebuggerTab {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-			"org.eclipse.rse.remotecdt.launchgroup"); //$NON-NLS-1$
+			"org.eclipse.rse.internal.remotecdt.launchgroup"); //$NON-NLS-1$
 	}
 
 	static final private String REMOTE_GDB_DEBUGGER_NAME = "remote gdb/mi"; //$NON-NLS-1$

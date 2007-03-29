@@ -16,7 +16,7 @@ Martin Oberhuber (Wind River) - fix 158529: Migrate docs to HTML / TOC format
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-            delegate="org.eclipse.rse.remotecdt.RemoteRunLaunchDelegate"
+            delegate="org.eclipse.rse.internal.remotecdt.RemoteRunLaunchDelegate"
             public="true"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
             name="C/C++ Remote Application"
@@ -35,7 +35,7 @@ Martin Oberhuber (Wind River) - fix 158529: Migrate docs to HTML / TOC format
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            class="org.eclipse.rse.remotecdt.RemoteLaunchConfigurationTabGroup"
+            class="org.eclipse.rse.internal.remotecdt.RemoteLaunchConfigurationTabGroup"
             helpContextId="org.eclipse.rse.remotecdt.launchgroup"
             id="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
             type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">

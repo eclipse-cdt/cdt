@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.internal.remotecdt;
 import org.eclipse.cdt.launch.ui.CArgumentsTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;

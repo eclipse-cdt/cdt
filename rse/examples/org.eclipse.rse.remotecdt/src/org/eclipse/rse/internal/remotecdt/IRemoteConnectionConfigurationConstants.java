@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.internal.remotecdt;
 
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.debug.core.DebugPlugin;

@@ -9,7 +9,7 @@
  * Ewa Matejska (PalmSource)
  *******************************************************************************/
 
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.internal.remotecdt;
 
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.launch.ui.CMainTab;
@@ -96,7 +96,7 @@ public class RemoteCMainTab extends CMainTab {
 		});
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-				"org.eclipse.rse.remotecdt.launchgroup"); //$NON-NLS-1$
+				"org.eclipse.rse.internal.remotecdt.launchgroup"); //$NON-NLS-1$
 
 		LaunchUIPlugin.setDialogShell(parent.getShell());
     }

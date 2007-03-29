@@ -8,12 +8,12 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
  *******************************************************************************/
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.internal.remotecdt;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.rse.remotecdt.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.rse.internal.remotecdt.messages"; //$NON-NLS-1$
 
 	public static String Gdbserver_name_textfield_label;
 

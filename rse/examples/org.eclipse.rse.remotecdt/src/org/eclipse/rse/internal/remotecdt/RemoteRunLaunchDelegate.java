@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.internal.remotecdt;
 
 import java.io.File;
 
@@ -294,6 +294,6 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	}
 	
 	protected String getPluginID() {
-		return "org.eclipse.rse.remotecdt"; //$NON-NLS-1$
+		return "org.eclipse.rse.internal.remotecdt"; //$NON-NLS-1$
 	}
 }

@@ -11,7 +11,7 @@
  * Referenced GDBDebuggerPage code to write this.
  *******************************************************************************/
 
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.internal.remotecdt;
 
 import org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage;
 import org.eclipse.core.runtime.CoreException;

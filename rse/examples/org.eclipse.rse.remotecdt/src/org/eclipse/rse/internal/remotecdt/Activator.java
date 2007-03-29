@@ -9,7 +9,7 @@
  * Ewa Matejska (PalmSource)
  *******************************************************************************/
 
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.internal.remotecdt;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;

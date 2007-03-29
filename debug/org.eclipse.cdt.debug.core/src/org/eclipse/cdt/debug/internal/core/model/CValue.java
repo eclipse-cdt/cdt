@@ -98,6 +98,7 @@ public class CValue extends AbstractCValue {
 				}
 				catch( CDIException e ) {
 					setStatus( ICDebugElementStatus.ERROR, e.getMessage() );
+					fValueString = e.getLocalizedMessage();
 				}
 			}
 		}

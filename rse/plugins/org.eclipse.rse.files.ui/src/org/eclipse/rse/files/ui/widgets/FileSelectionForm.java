@@ -14,8 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.files.ui.widgets;
-import org.eclipse.rse.files.ui.widgets.SaveAsForm;
+package org.eclipse.rse.files.ui.widgets;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 
 /**

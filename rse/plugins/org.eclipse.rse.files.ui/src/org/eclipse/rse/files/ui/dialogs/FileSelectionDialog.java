@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.dialogs;
+import org.eclipse.rse.files.ui.widgets.FileSelectionForm;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
-import org.eclipse.rse.internal.files.ui.widgets.FileSelectionForm;
 import org.eclipse.swt.widgets.Shell;
 
 

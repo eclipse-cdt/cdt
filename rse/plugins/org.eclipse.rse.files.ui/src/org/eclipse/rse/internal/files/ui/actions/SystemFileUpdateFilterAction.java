@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
-import org.eclipse.rse.internal.files.ui.widgets.SystemFileFilterStringEditPane;
+import org.eclipse.rse.files.ui.widgets.SystemFileFilterStringEditPane;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.ui.filters.actions.SystemChangeFilterAction;

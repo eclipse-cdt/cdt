@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.files.ui.widgets;
+package org.eclipse.rse.files.ui.widgets;
 
 import java.util.Vector;
 
@@ -25,8 +25,6 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.files.ui.widgets.SystemFileWidgetHelpers;
-import org.eclipse.rse.files.ui.widgets.SystemRemoteFolderCombo;
 import org.eclipse.rse.internal.files.ui.actions.SystemSelectFileTypesAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;

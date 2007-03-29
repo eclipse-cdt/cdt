@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
@@ -60,8 +61,14 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	* @see IAdaptable#getAdapter(Class)
 	*/
 	public Object getAdapter(Class adapter) {
-		if (ILocationProvider.class.equals(adapter))
-			return this;
+		if (ILocationProvider.class.equals(adapter)) {
+			// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=180003
+			// see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=179982
+			if (location != null) {
+				return this;
+			}
+			return null;
+		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 

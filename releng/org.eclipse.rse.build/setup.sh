@@ -29,13 +29,13 @@ curdir=`pwd`
 # prepare the base Eclipse installation in folder "eclipse"
 if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070316.jar ]; then
   curdir2=`pwd`
-  if [ -h eclipse ]; then
-    if [ -d eclipse-3.3m6 ]; then
-      rm -rf eclipse-3.3m6
+  if [ ! -d eclipse -o -h eclipse ]; then
+    if [ -d eclipse-3.3M6-linux-gtk-ppc ]; then
+      rm -rf eclipse-3.3M6-linux-gtk-ppc
     fi
-    mkdir eclipse-3.3m6
-    cd eclipse-3.3m6
-  elif [ -d eclipse ]; then
+    mkdir eclipse-3.3M6-linux-gtk-ppc
+    cd eclipse-3.3M6-linux-gtk-ppc
+  else
     rm -rf eclipse
   fi
   ## Eclipse Platform 3.3M6
@@ -48,9 +48,11 @@ if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070316.jar ]; then
   tar xfvz eclipse-SDK-3.3M6-linux-gtk-ppc.tar.gz
   rm eclipse-SDK-3.3M6-linux-gtk-ppc.tar.gz
   cd "${curdir2}"
-  if [ -h eclipse ]; then
-    rm eclipse
-    ln -s eclipse-3.3m6/eclipse eclipse
+  if [ ! -d eclipse -o -h eclipse ]; then
+    if [ -e eclipse ]; then 
+      rm eclipse
+    fi
+    ln -s eclipse-3.3M6-linux-gtk-ppc/eclipse eclipse
   fi
 fi
 if [ ! -f eclipse/startup.jar ]; then
@@ -143,25 +145,32 @@ fi
 if [ ! -d working/build ]; then
   mkdir -p working/build
 fi
-if [ ! -e publish ]; then
+if [ ! -d publish ]; then
   ln -s /home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops publish
 fi
-if [ ! -e testUpdates ]; then
+if [ ! -d testUpdates ]; then
   ln -s /home/data/httpd/download.eclipse.org/dsdp/tm/testUpdates testUpdates
 fi
-if [ ! -e udpates ]; then
+if [ ! -d udpates ]; then
   ln -s /home/data/httpd/download.eclipse.org/dsdp/tm/updates updates
 fi
-if [ ! -e staging ]; then
+if [ ! -d staging ]; then
   ln -s /home/data/httpd/download-staging.priv/dsdp/tm staging
 fi
 
 # create symlinks as needed
-ln -s org.eclipse.rse.build/bin/doit_irsbuild.sh .
-ln -s org.eclipse.rse.build/bin/doit_nightly.sh .
+if [ ! -h doit_irsbuild.sh ]; then
+  ln -s org.eclipse.rse.build/bin/doit_irsbuild.sh .
+fi
+if [ ! -h doit_nightly.sh ]; then
+  ln -s org.eclipse.rse.build/bin/doit_nightly.sh .
+fi
+if [ ! -e setup.sh ]; then
+  ln -s org.eclipse.rse.build/bin/setup.sh .
+fi
 chmod a+x doit_irsbuild.sh doit_nightly.sh
 cd org.eclipse.rse.build
-chmod a+x build.pl build.rb go.sh nightly.sh
+chmod a+x build.pl build.rb go.sh nightly.sh setup.sh
 cd ..
 
 echo "Your build environment is now created."

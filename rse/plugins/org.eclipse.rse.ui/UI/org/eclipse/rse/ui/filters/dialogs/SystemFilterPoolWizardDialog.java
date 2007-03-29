@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.filters.dialogs;
+import org.eclipse.rse.internal.ui.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.rse.ui.dialogs.SystemWizardDialog;
 import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInterface;
 import org.eclipse.rse.ui.filters.SystemFilterPoolDialogOutputs;
-import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.swt.widgets.Shell;
 
 

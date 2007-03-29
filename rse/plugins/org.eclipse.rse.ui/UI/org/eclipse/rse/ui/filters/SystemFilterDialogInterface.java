@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.filters;
-import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterAction;
+import org.eclipse.rse.internal.ui.actions.SystemFilterAbstractFilterAction;
 
 
 /**

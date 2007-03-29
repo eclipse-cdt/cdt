@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.widgets;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.dialogs.SystemWorkWithHistoryDialog;
 import org.eclipse.rse.ui.SystemPreferencesManager;
-import org.eclipse.rse.ui.dialogs.SystemWorkWithHistoryDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;

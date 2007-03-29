@@ -17,8 +17,8 @@
 package org.eclipse.rse.internal.ui.actions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.ui.dialogs.SystemResolveFilterStringDialog;
 import org.eclipse.rse.ui.actions.SystemTestFilterStringAction;
-import org.eclipse.rse.ui.dialogs.SystemResolveFilterStringDialog;
 import org.eclipse.swt.widgets.Shell;
 
 

@@ -18,10 +18,10 @@ package org.eclipse.rse.internal.filters;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
-import org.eclipse.rse.ui.SystemResources;
 
 
 /**
@@ -134,7 +134,7 @@ public class SystemFilterContainerCommonMethods
         {
           newFilter = new SystemFilter();
         	  // FIXME getMOFfactory().createSystemFilter();
-    	  newFilter.setRelease(SystemResources.CURRENT_RELEASE);
+    	  newFilter.setRelease(RSECorePlugin.CURRENT_RELEASE);
           newFilter.setName(aliasName);
           newFilter.setParentFilterPool(parentPool);
           if (filterStrings != null)

@@ -23,6 +23,7 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterConstants;
@@ -35,7 +36,6 @@ import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
 import org.eclipse.rse.filters.SystemFilterSimple;
 import org.eclipse.rse.internal.references.SystemReferencedObject;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -1365,7 +1365,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	
 	public boolean commit()
 	{
-		return RSEUIPlugin.getThePersistenceManager().commit(this);
+		return RSECorePlugin.getThePersistenceManager().commit(this);
 	}
 	
 }

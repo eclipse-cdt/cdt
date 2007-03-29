@@ -53,6 +53,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.SameShellProvider;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
@@ -1134,7 +1135,7 @@ public class SystemTeamViewPart
 		}
 
 		// We record the current release for future in case anything significant changes from release to release
-		memento.putString(TAG_RELEASE, SystemResources.CURRENT_RELEASE_NAME);
+		memento.putString(TAG_RELEASE, RSECorePlugin.CURRENT_RELEASE_NAME);
 		
 		/*
 		String inputMemento = memento.getString("factoryID"); // see IWorkbenchWindow ... this is only clue I can figure out!

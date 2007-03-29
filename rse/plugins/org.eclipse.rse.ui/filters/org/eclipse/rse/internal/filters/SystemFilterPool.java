@@ -22,6 +22,7 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -34,8 +35,6 @@ import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
 import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.internal.references.SystemPersistableReferencedObject;
-import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 
 
 /**
@@ -306,7 +305,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	{
     	  try
     	  {
-             pool = (SystemFilterPool)RSEUIPlugin.getThePersistenceManager().restoreFilterPool(name);
+             pool = (SystemFilterPool)RSECorePlugin.getThePersistenceManager().restoreFilterPool(name);
     	  }
     	  catch (Exception exc) // real error trying to restore, versus simply not found.
     	  {
@@ -336,7 +335,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     {
     	ISystemFilterPool pool = new SystemFilterPool();
     		// FIXME SystemFilterImpl.initMOF().createSystemFilterPool();
-    	pool.setRelease(SystemResources.CURRENT_RELEASE);
+    	pool.setRelease(RSECorePlugin.CURRENT_RELEASE);
     	return (SystemFilterPool)pool;    	
     }
 
@@ -1322,7 +1321,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	
 	public boolean commit()
 	{
-		return RSEUIPlugin.getThePersistenceManager().commit(this);
+		return RSECorePlugin.getThePersistenceManager().commit(this);
 	}
 
 }

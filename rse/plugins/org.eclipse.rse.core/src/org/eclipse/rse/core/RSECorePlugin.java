@@ -34,6 +34,16 @@ import org.osgi.framework.BundleContext;
  */
 public class RSECorePlugin extends Plugin {
 
+	/**
+	 * Current release as a number (multiplied by 10). E.g. 30 is for release 3.0.
+	 */
+	public static final int CURRENT_RELEASE = 100; // updated to new release
+
+	/**
+	 * Current release as a string.
+	 */
+	public static final String CURRENT_RELEASE_NAME = "1.0.0";  //$NON-NLS-1$
+
 	private static RSECorePlugin plugin = null; // the singleton instance of this plugin
 	private Logger logger = null;
 	private ISystemRegistry _registry = null;

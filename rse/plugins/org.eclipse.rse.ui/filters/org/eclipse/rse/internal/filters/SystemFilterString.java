@@ -18,6 +18,7 @@ package org.eclipse.rse.internal.filters;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -27,7 +28,6 @@ import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.internal.references.SystemReferencedObjectHelper;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -290,7 +290,7 @@ public class SystemFilterString extends RSEModelObject implements ISystemFilterS
 	
 	public boolean commit() 
 	{
-		return RSEUIPlugin.getThePersistenceManager().commit(getParentSystemFilter());
+		return RSECorePlugin.getThePersistenceManager().commit(getParentSystemFilter());
 	}
 
 }

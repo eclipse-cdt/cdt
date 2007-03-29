@@ -75,7 +75,6 @@ import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
@@ -972,7 +971,7 @@ public class SystemViewPart
 		}
 
 		// We record the current release for future in case anything significant changes from release to release
-		memento.putString(TAG_RELEASE, SystemResources.CURRENT_RELEASE_NAME);
+		memento.putString(TAG_RELEASE, RSECorePlugin.CURRENT_RELEASE_NAME);
 
 		// We record the current preferences for show filter string and show filter pools.
 		// We do this to ensure the states match on restore. If they don't we will be in trouble

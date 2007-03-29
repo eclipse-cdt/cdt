@@ -40,6 +40,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.core.SystemResourceManager;
@@ -111,7 +112,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	/**
 	 * Current release as a string. Eg "5.0"
 	 */
-	private static final String CURRENT_RELEASE_NAME = SystemResources.CURRENT_RELEASE_NAME; //"5.1.2"; // Historical from when part of iSeries.
+	private static final String CURRENT_RELEASE_NAME = RSECorePlugin.CURRENT_RELEASE_NAME; //"5.1.2"; // Historical from when part of iSeries.
 
 	/**
 	 * Constructor
@@ -631,7 +632,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			if (!docRelease.equals(CURRENT_RELEASE_NAME)) {
 				//System.out.println("Doing migration from "+docRelease+" to " + ISystemConstants.CURRENT_RELEASE_NAME + "...");
 				boolean migrationDone = doMigration(profile, docRelease);
-				docroot.setAttribute(RELEASE_ATTR, SystemResources.CURRENT_RELEASE_NAME);
+				docroot.setAttribute(RELEASE_ATTR, RSECorePlugin.CURRENT_RELEASE_NAME);
 				if (migrationDone) {
 					setChanged(profile); // is this the right thing to do?
 					saveUserData(profile);

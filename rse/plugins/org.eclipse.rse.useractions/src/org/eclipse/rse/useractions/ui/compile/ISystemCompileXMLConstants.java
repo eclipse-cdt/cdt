@@ -1,6 +1,6 @@
 package org.eclipse.rse.useractions.ui.compile;
 
-import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.core.RSECorePlugin;
 
 /**
  * Constants used in the persistence of the compile commands, into an xml file
@@ -23,7 +23,7 @@ public interface ISystemCompileXMLConstants {
 	/**
 	 * Current version number for the compile framework
 	 */
-	public static final String VERSION_VALUE = SystemResources.CURRENT_RELEASE_NAME; // changed from "5.1.0" by Phil
+	public static final String VERSION_VALUE = RSECorePlugin.CURRENT_RELEASE_NAME; // changed from "5.1.0" by Phil
 	/**
 	 * The name of the copyright element (tag) holding the copyright value. That element is named "copyright".
 	 */

@@ -113,7 +113,7 @@ public class SystemAdapterHelpers {
 	/**
 	 * For pathpath access to our adapters for non-local objects in our model. Exploits the knowledge we use singleton adapters.
 	 */
-	public SystemViewAdapterFactory getSystemViewAdapterFactory() {
+	public static SystemViewAdapterFactory getSystemViewAdapterFactory() {
 		return RSEUIPlugin.getDefault().getSystemViewAdapterFactory();
 	}
 }

@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.language.LanguageMappingConfiguration;
+import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Document;
@@ -42,14 +42,14 @@ public class LanguageMappingStore {
 		fProject = project;
 	}
 	
-	public LanguageMappingConfiguration decodeMappings() throws CoreException {
-		LanguageMappingConfiguration config = new LanguageMappingConfiguration();
+	public ProjectLanguageConfiguration decodeMappings() throws CoreException {
+		ProjectLanguageConfiguration config = new ProjectLanguageConfiguration();
 		ICDescriptor descriptor = getProjectDescription();
 		Element rootElement = descriptor.getProjectData(LANGUAGE_MAPPING_ID);
 		if (rootElement == null) {
 			return config;
 		}
-		config.setProjectMappings(decodeProjectMappings(rootElement));
+		config.setContentTypeMappings(decodeProjectMappings(rootElement));
 		return config;
 	}
 	
@@ -73,11 +73,11 @@ public class LanguageMappingStore {
 		return decodedMappings;
 	}
 
-	public void storeMappings(LanguageMappingConfiguration config) throws CoreException {
+	public void storeMappings(ProjectLanguageConfiguration config) throws CoreException {
 		ICDescriptor descriptor = getProjectDescription();
 		Element rootElement = descriptor.getProjectData(LANGUAGE_MAPPING_ID);
 		clearChildren(rootElement);
-		addProjectMappings(config.getProjectMappings(), rootElement);
+		addProjectMappings(config.getContentTypeMappings(), rootElement);
 		descriptor.saveProjectData();
 	}
 

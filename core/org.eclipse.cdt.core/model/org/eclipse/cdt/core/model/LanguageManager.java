@@ -8,6 +8,8 @@
  * Contributors:
  *     QNX - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
+ *     		- Language managment feature (see Bugzilla 151850)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.model;
@@ -22,7 +24,8 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.language.LanguageMappingConfiguration;
+import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
+import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
 import org.eclipse.cdt.internal.core.model.LanguageDescriptor;
@@ -36,6 +39,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentType;
@@ -62,6 +66,7 @@ public class LanguageManager {
 	private boolean fIsFullyCached;
 	private HashMap fIdToLanguageDescriptorCache;//= new HashMap();
 	private HashMap fContentTypeToDescriptorListCache;
+	private ListenerList fLanguageChangeListeners = new ListenerList(ListenerList.IDENTITY);
 
 	public static LanguageManager getInstance() {
 		if (instance == null)
@@ -320,6 +325,10 @@ public class LanguageManager {
 		return result[0];
 	}
 	
+	/**
+	 * Returns all of the languages registered with the <code>Platform</code>.
+	 * @return all of the languages registered with the <code>Platform</code>.
+	 */
 	public ILanguage[] getRegisteredLanguages() {
 		cacheAllLanguages();
 		ILanguage[] languages = new ILanguage[fLanguageCache.size()];
@@ -357,25 +366,68 @@ public class LanguageManager {
 		fIsFullyCached = true;
 	}
 	
-	public LanguageMappingConfiguration getLanguageMappingConfiguration(IProject project) throws CoreException {
-		LanguageMappingConfiguration mappings = (LanguageMappingConfiguration) fLanguageConfigurationCache.get(project);
-		if (mappings != null) {
-			return mappings;
-		}
-		
-		LanguageMappingStore store = new LanguageMappingStore(project);
-		mappings = store.decodeMappings();
-		fLanguageConfigurationCache.put(project, mappings);
-		return mappings;
-	}
-	
-	public void storeLanguageMappingConfiguration(IProject project) throws CoreException {
-		LanguageMappingConfiguration mappings = (LanguageMappingConfiguration) fLanguageConfigurationCache.get(project);
-		LanguageMappingStore store = new LanguageMappingStore(project);
-		store.storeMappings(mappings);
+	/**
+	 * Returns the language configuration for the workspace.
+	 * @return
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public WorkspaceLanguageConfiguration getWorkspaceLanguageConfiguration() throws CoreException {
+		// TODO: Implement this.
+		return new WorkspaceLanguageConfiguration();
 	}
 	
 	/**
+	 * Saves the workspace language configuration to persistent storage and notifies
+	 * all <code>ILanguageMappingChangeListeners</code> of changes. 
+	 * @param affectedContentTypes
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public void storeWorkspaceLanguageConfiguration(IContentType[] affectedContentTypes) throws CoreException {
+		// TODO: Implement this.
+	}
+	
+	/**
+	 * Returns the language configuration for the given project.
+	 * @param project
+	 * @return
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public ProjectLanguageConfiguration getLanguageConfiguration(IProject project) throws CoreException {
+		synchronized (this) {
+			ProjectLanguageConfiguration mappings = (ProjectLanguageConfiguration) fLanguageConfigurationCache.get(project);
+			if (mappings != null) {
+				return mappings;
+			}
+			
+			LanguageMappingStore store = new LanguageMappingStore(project);
+			mappings = store.decodeMappings();
+			fLanguageConfigurationCache.put(project, mappings);
+			return mappings;
+		}
+	}
+	
+	/**
+	 * Saves the language configuration for the given project to persistent
+	 * storage and notifies all <code>ILanguageMappingChangeListeners</code>
+	 * of changes. 
+	 * @param project
+	 * @param affectedContentTypes
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public void storeLanguageMappingConfiguration(IProject project, IContentType[] affectedContentTypes) throws CoreException {
+		ProjectLanguageConfiguration mappings = (ProjectLanguageConfiguration) fLanguageConfigurationCache.get(project);
+		LanguageMappingStore store = new LanguageMappingStore(project);
+		store.storeMappings(mappings);
+		
+		// TODO: Notify listeners that the language mappings have changed.
+	}
+	
+	/**
+	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @since 4.0
 	 * @return an ILanguage representing the language to be used for the given file
 	 * @param fullPathToFile the full path to the file for which the language is requested
@@ -396,37 +448,25 @@ public class LanguageManager {
 		
 		String contentTypeID = contentType.getId();
 		
-		// TODO: other mappings would go here
-		
-		// Project-level mappings
-		LanguageMappingConfiguration mappings = getLanguageMappingConfiguration(project);
-		if (mappings != null) {
-			String id = (String) mappings.getProjectMappings().get(contentTypeID);
-			if (id != null) {
-				return getLanguage(id);
-			}
-		}
-		
-		// Content type mappings
-		return getLanguageForContentTypeID(contentTypeID);
+		return computeLanguage(project, fullPathToFile, contentTypeID);
 	}
 
 	/**
-	 * @since 4.0
+	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @return an ILanguage representing the language to be used for the given file
 	 * @param pathToFile the path to the file for which the language is requested.
 	 * The path can be either workspace or project relative.
 	 * @param project the project that this file should be parsed in context of.  This field is optional and may
 	 * be set to null.  If the project is null then this method tries to determine the project context via workspace APIs.
 	 * @throws CoreException
-	 * * TODO:  implement other mapping levels besides project level and content type level 
+	 * @since 4.0
 	 */
 	public ILanguage getLanguageForFile(IPath pathToFile, IProject project) throws CoreException {
 		return getLanguageForFile(pathToFile, project, null);
 	}
 	
 	/**
-	 * @since 4.0
+	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @return an ILanguage representing the language to be used for the given file
 	 * @param pathToFile the path to the file for which the language is requested.
 	 * The path can be either workspace or project relative.
@@ -434,7 +474,7 @@ public class LanguageManager {
 	 * be set to null.  If the project is null then this method tries to determine the project context via workspace APIs.
 	 * @param contentTypeID id of the content type, may be <code>null</code>.
 	 * @throws CoreException
-	 * * TODO:  implement other mapping levels besides project level and content type level 
+	 * @since 4.0
 	 */
 	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, String contentTypeID) throws CoreException {
 		if (project == null) {
@@ -452,27 +492,15 @@ public class LanguageManager {
 			contentTypeID= ct.getId();
 		}
 								
-		// TODO: other mappings would go here
-		
-		// Project-level mappings
-		LanguageMappingConfiguration mappings = getLanguageMappingConfiguration(project);
-		if (mappings != null) {
-			String id = (String) mappings.getProjectMappings().get(contentTypeID);
-			if (id != null) {
-				return getLanguage(id);
-			}
-		}
-		
-		// Content type mappings
-		return getLanguageForContentTypeID(contentTypeID);
+		return computeLanguage(project, pathToFile.toPortableString(), contentTypeID);
 	}
 
 	/**
-	 * @since 4.0
+	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @return an ILanguage representing the language to be used for the given file
 	 * @param file the file for which the language is requested
 	 * @throws CoreException
-	 * TODO:  implement other mapping levels besides project level and content type level 
+	 * @since 4.0
 	 */
 	public ILanguage getLanguageForFile(IFile file) throws CoreException {
 		return getLanguageForFile(file, null);
@@ -480,12 +508,12 @@ public class LanguageManager {
 	
 	
 	/**
-	 * @since 4.0
+	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @return an ILanguage representing the language to be used for the given file
 	 * @param file the file for which the language is requested
 	 * @param contentTypeID id of the content type, may be <code>null</code>.
 	 * @throws CoreException
-	 * TODO:  implement other mapping levels besides project level and content type level 
+	 * @since 4.0
 	 */
 	public ILanguage getLanguageForFile(IFile file, String contentTypeId) throws CoreException {
 		IProject project = file.getProject();
@@ -499,19 +527,89 @@ public class LanguageManager {
 			contentTypeId= contentType.getId();
 		}
 		
-		// TODO: other mappings would go here
-		
-		// Project-level mappings
-		LanguageMappingConfiguration mappings = getLanguageMappingConfiguration(project);
+		return computeLanguage(project, file.getProjectRelativePath().toPortableString(), contentTypeId);
+	}
+	
+	private ILanguage computeLanguage(IProject project, String filePath, String contentTypeId) throws CoreException {
+		ProjectLanguageConfiguration mappings = getLanguageConfiguration(project);
 		if (mappings != null) {
-			String id = (String) mappings.getProjectMappings().get(contentTypeId);
+			// File-level mappings 
+			String id = mappings.getLanguageForFile(filePath);
+			if (id != null) {
+				return getLanguage(id);
+			}
+		
+			// Project-level mappings
+			id = mappings.getLanguageForContentType(contentTypeId);
 			if (id != null) {
 				return getLanguage(id);
 			}
 		}
 		
+		// Workspace mappings
+		WorkspaceLanguageConfiguration workspaceMappings = getWorkspaceLanguageConfiguration();
+		String id = workspaceMappings.getLanguageForContentType(contentTypeId);
+		if (id != null) {
+			return getLanguage(id);
+		}
+			
 		// Content type mappings
 		return getLanguageForContentTypeID(contentTypeId);
 	}
+	
+	/**
+	 * Adds a listener that will be notified of changes in language mappings.
+	 * 
+	 * @param listener the ILanguageMappingChangeListener to add
+	 */
+	public void registerLanguageChangeListener(ILanguageMappingChangeListener listener) {
+		fLanguageChangeListeners.add(listener);
+	}
+	
+	/**
+	 * Removes a language mapping change listener.
+	 * 
+	 * @param listener the ILanguageMappingChangeListener to remove.
+	 */
+	public void unregisterLanguageChangeListener(ILanguageMappingChangeListener listener) {
+		fLanguageChangeListeners.remove(listener);
+	}
+	
+	/**
+	 * Notifies all language mappings change listeners of a change in the mappings.
+	 * 
+	 * @param event the ILanguageMappingsChange event to be broadcast.
+	 */
+	public void notifyLanguageChangeListeners(ILanguageMappingChangeEvent event) {
+		Object[] listeners = fLanguageChangeListeners.getListeners();
+		
+		for (int i= 0; i < listeners.length; i++) {
+			ILanguageMappingChangeListener listener = (ILanguageMappingChangeListener) listeners[i];
+			listener.handleLanguageMappingChangeEvent(event);
+		}
+	}
 
+	/**
+	 * Saves the language configuration for the given file to persistent
+	 * storage and notifies all <code>ILanguageMappingChangeListeners</code>
+	 * of changes. 
+	 * @param file
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public void storeLanguageMappingConfiguration(IFile file) throws CoreException {
+		IProject project = file.getProject();
+		synchronized (this) {
+			ProjectLanguageConfiguration mappings = (ProjectLanguageConfiguration) fLanguageConfigurationCache.get(project);
+			LanguageMappingStore store = new LanguageMappingStore(project);
+			store.storeMappings(mappings);
+		}
+		
+		// Notify listeners that the language mappings have changed.
+		LanguageMappingChangeEvent event = new LanguageMappingChangeEvent();
+		event.setType(LanguageMappingChangeEvent.TYPE_FILE);
+		event.setProject(project);
+		event.setFile(file);
+		notifyLanguageChangeListeners(event);
+	}
 }

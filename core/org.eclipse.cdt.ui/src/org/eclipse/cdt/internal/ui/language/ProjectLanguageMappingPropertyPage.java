@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
@@ -36,7 +37,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.language.LanguageMappingConfiguration;
+import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.model.LanguageManager;
 
 
@@ -45,7 +46,7 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 
 	private static final int MINIMUM_COLUMN_WIDTH = 150;
-	private LanguageMappingConfiguration fMappings;
+	private ProjectLanguageConfiguration fMappings;
 	private Table fTable;
 	private HashMap fContentTypeNamesToIDsMap;
 
@@ -118,14 +119,14 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 			public void handleEvent(Event event) {
 				ContentTypeMappingDialog dialog = new ContentTypeMappingDialog(
 						getShell());
-				dialog.setContentTypeFilter(fMappings.getProjectMappings()
+				dialog.setContentTypeFilter(fMappings.getContentTypeMappings()
 						.keySet());
 				dialog.setBlockOnOpen(true);
 
 				if (dialog.open() == Window.OK) {
 					String contentType = dialog.getContentTypeID();
 					String language = dialog.getLanguageID();
-					fMappings.addProjectMapping(contentType, language);
+					fMappings.addContentTypeMapping(contentType, language);
 					refreshMappings();
 				}
 			}
@@ -141,7 +142,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 				
 				for (int i = 0; i < selection.length; i++) {
 					fMappings
-							.removeProjectMapping((String) fContentTypeNamesToIDsMap
+							.removeContentTypeMapping((String) fContentTypeNamesToIDsMap
 									.get(selection[i].getText(0)));
 				}
 				
@@ -155,7 +156,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 
 	private void refreshMappings() {
 		fTable.removeAll();
-		Iterator mappings = fMappings.getProjectMappings().entrySet()
+		Iterator mappings = fMappings.getContentTypeMappings().entrySet()
 				.iterator();
 
 		IContentTypeManager contentTypeManager = Platform
@@ -179,20 +180,21 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 	private void fetchMappings() {
 		try {
 			fMappings = LanguageManager.getInstance()
-					.getLanguageMappingConfiguration(getProject());
+					.getLanguageConfiguration(getProject());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 	}
 
 	protected void performDefaults() {
-		fMappings = new LanguageMappingConfiguration();
+		fMappings = new ProjectLanguageConfiguration();
 	}
 
 	public boolean performOk() {
 		try {
+			IContentType[] affectedContentTypes = null;
 			LanguageManager.getInstance().storeLanguageMappingConfiguration(
-					getProject());
+					getProject(), affectedContentTypes);
 			return true;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

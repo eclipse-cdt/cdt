@@ -21,7 +21,6 @@ package org.eclipse.rse.subsystems.files.core.subsystems;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -60,11 +58,8 @@ import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IClientServerConstants;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
-import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.services.files.RemoteFileIOException;
-import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
@@ -1195,261 +1190,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		}
 		return match;
 	}
-
-	/**
-		 * Copy a file or folder to a new target parent folder.
-		 * 
-		 * @param sourceFolderOrFile The file or folder to copy
-		 * @param targetFolder The folder to copy to. No guarantee it is on the same system, so be sure to check getSystemConnection()!
-		 * @param newName The new name for the copied file or folder
-		 * @return false true iff the copy succeeded
-		 */
-//		public boolean copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-//		{
-//			return false;
-//		}
-
-
-
-	/**
-		 * Get the remote file and save it locally. The file is saved in the encoding
-		 * of the operating system.
-		 * @param source remote file that represents the file to be obtained
-		 * @param destination the absolute path of the local file
-		 * @param monitor the progress monitor
-		 */
-	public void download(IRemoteFile source, String destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		download(source, destination, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
-	}
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * specified.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the absolute path of the local file
-	 * @param encoding the encoding of the local file
-	 * @param monitor the progress monitor
-	 */
-//	public void copy(IRemoteFile source, String destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-//	{
-//		return;
-//	}
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in UTF-8 encoding.
-	 * This is a recommended method to use for file transfer
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the absolute path of the local file
-	 * @param monitor the progress monitor
-	 */
-	public void downloadUTF8(IRemoteFile source, String destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		download(source, destination, SystemEncodingUtil.ENCODING_UTF_8, monitor);
-	}
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * of the operating system.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param monitor the progress monitor
-	 */
-	public void download(IRemoteFile source, File destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		download(source, destination.getAbsolutePath(), monitor);
-	}
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * specified.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param encoding the encoding of the local file
-	 * @param monitor the progress monitor
-	 */
-	public void download(IRemoteFile source, File destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		download(source, destination.getAbsolutePath(), encoding, monitor);
-	}
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in UTF-8 encoding.
-	 * This is a recommended method to use for file transfer
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param monitor the progress monitor
-	 */
-	public void downloadUTF8(IRemoteFile source, File destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		downloadUTF8(source, destination.getAbsolutePath(), monitor);
-	}
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * of the operating system.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param monitor the progress monitor
-	 */
-	public void download(IRemoteFile source, IFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		download(source, destination.getLocation().makeAbsolute().toOSString(), monitor);
-	}
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * specified.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param encoding the encoding of the local file
-	 * @param monitor the progress monitor
-	 */
-	public void download(IRemoteFile source, IFile destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		download(source, destination.getLocation().makeAbsolute().toOSString(), encoding, monitor);
-	}
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in UTF-8 encoding.
-	 * This is a recommended method to use for file transfer
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param monitor the progress monitor
-	 */
-	public void downloadUTF8(IRemoteFile source, IFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		downloadUTF8(source, destination.getLocation().makeAbsolute().toOSString(), monitor);
-	}
-
-	/**
-		 * Put the local copy of the remote file back to the remote location. The file
-		 * is assumed to be in the encoding of the local operating system
-		 * @param source the absolute path of the local copy
-		 * @param destination remote file that represents the file on the server
-		 * @param monitor the progress monitor
-		 */
-	public void upload(String source, IRemoteFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		upload(source, destination, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
-		destination.markStale(true);
-	}
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding specified
-	 * @param source the absolute path of the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param encoding the encoding of the local copy
-	 * @param monitor the progress monitor
-	 */
-	
-//	public void copy(String source, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-//	{
-//		return;
-//	}
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system
-	 * @param source the absolute path of the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void upload(String source, String destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		upload(source, SystemEncodingUtil.ENCODING_UTF_8, destination, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
-	}
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The local file
-	 * must be in UTF-8 encoding.
-	 * @param source the absolute path of the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void uploadUTF8(String source, IRemoteFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		upload(source, destination, SystemEncodingUtil.ENCODING_UTF_8, monitor);
-		destination.markStale(true);
-	}
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void upload(File source, IRemoteFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		upload(source.getAbsolutePath(), destination, monitor);
-	}
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding specified
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param encoding the encoding of the local copy
-	 * @param monitor the progress monitor
-	 */
-	public void upload(File source, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		upload(source.getAbsolutePath(), destination, encoding, monitor);
-		destination.markStale(true);
-	}
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The local file
-	 * must be in UTF-8 encoding.
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void uploadUTF8(File source, IRemoteFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		uploadUTF8(source.getAbsolutePath(), destination, monitor);
-	}
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void upload(IFile source, IRemoteFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		upload(source.getLocation().makeAbsolute().toOSString(), destination, monitor);
-	}
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding specified
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param encoding the encoding of the local copy
-	 * @param monitor the progress monitor
-	 */
-	public void upload(IFile source, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		upload(source.getLocation().makeAbsolute().toOSString(), destination, encoding, monitor);
-	}
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The local file
-	 * must be in UTF-8 encoding.
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void uploadUTF8(IFile source, IRemoteFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
-	{
-		uploadUTF8(source.getLocation().makeAbsolute().toOSString(), destination, monitor);
-	}
-
-
 
 	/**
 	  * helper method to run an external command

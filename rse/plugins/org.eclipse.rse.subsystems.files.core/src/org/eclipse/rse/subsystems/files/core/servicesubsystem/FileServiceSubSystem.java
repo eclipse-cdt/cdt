@@ -551,25 +551,6 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 	}
 
-	public void upload(InputStream stream, long totalBytes, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
-	{
-		String remoteParentPath = destination.getParentPath();
-		String remoteFileName = destination.getName();
-		String hostEncoding = getRemoteEncoding(); // default host encoding
-		boolean isBinary = isBinary(encoding, hostEncoding, destination.getAbsolutePath());
-		try
-		{
-			getFileService().upload(monitor, stream, remoteParentPath, remoteFileName, isBinary, hostEncoding);
-		}
-		catch (SystemMessageException e)
-		{
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-		}
-	}
-
-	
-
 	public boolean copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
 	{
 		IFileService service = getFileService();

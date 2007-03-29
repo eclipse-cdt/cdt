@@ -32,6 +32,7 @@ import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -102,7 +103,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 try
                 {                    	
                     // copy temp file to remote system
-                    fs.uploadUTF8(_tempFile, _saveasFile, monitor);
+                    fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _saveasFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
                  
                     // set original time stamp to 0 so that file will be overwritten next download
                     SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
@@ -137,7 +138,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 	            SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
 	            	
                  // download remote version
-                 fs.downloadUTF8(_remoteFile, _tempFile, monitor);
+                 fs.download(_remoteFile, _tempFile.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, monitor);
 
                  properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
 					//properties.setRemoteFileTimeStamp(-1);                
@@ -177,7 +178,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             {
             	IRemoteFileSubSystem fs = _remoteFile.getParentRemoteFileSubSystem();
             	SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
-                fs.uploadUTF8(_tempFile, _remoteFile, monitor);
+                fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _remoteFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
                 _remoteFile.markStale(true);
                 _remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath());
                 properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());

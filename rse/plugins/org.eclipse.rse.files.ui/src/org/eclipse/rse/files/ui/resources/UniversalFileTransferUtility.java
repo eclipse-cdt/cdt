@@ -166,7 +166,7 @@ public class UniversalFileTransferUtility
 		    // copy remote file to workspace
 			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
 			listener.addIgnoreFile(tempFile);
-		    srcFS.download(srcFileOrFolder, tempFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
+		    srcFS.download(srcFileOrFolder, tempFile.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, monitor);
 		    listener.removeIgnoreFile(tempFile);
 		    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
 		    {
@@ -1387,7 +1387,7 @@ public class UniversalFileTransferUtility
 			newPath = newTargetParent.getAbsolutePath() + targetFS.getSeparator() + destinationArchive.getName();
 			
 			// copy local zip to remote
-			targetFS.upload(destinationArchive.getAbsolutePath(), newPath, monitor);
+			targetFS.upload(destinationArchive.getAbsolutePath(), SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
 			IRemoteFile remoteArchive = targetFS.getRemoteFileObject(newPath);
 			
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_EXTRACT);
@@ -1545,7 +1545,7 @@ public class UniversalFileTransferUtility
 			
 			// DKM - use parent folder as dest
 			dest = new File(targetResource.getParent().getLocation().toOSString() + File.separator + name);
-			sourceFS.download(cpdest, dest, monitor);
+			sourceFS.download(cpdest, dest.getAbsolutePath(), System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
 			
 			
 			ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(dest);

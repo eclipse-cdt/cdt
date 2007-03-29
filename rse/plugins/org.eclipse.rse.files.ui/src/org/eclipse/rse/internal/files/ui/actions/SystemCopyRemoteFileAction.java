@@ -35,6 +35,7 @@ import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -252,8 +253,8 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		
 				String tempFile = path.toString();
 
-	   			srcFS.download(srcFileOrFolder, tempFile, null);	
-		   		targetFS.upload(tempFile, newPath, null);	
+	   			srcFS.download(srcFileOrFolder, tempFile, SystemEncodingUtil.ENCODING_UTF_8, null);	
+		   		targetFS.upload(tempFile, SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), null);	 //$NON-NLS-1$
    			}
    			else
    			{

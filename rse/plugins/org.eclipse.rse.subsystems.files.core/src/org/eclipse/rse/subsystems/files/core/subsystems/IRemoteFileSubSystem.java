@@ -16,7 +16,7 @@
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
-import java.io.File;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -406,19 +406,6 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @return false true iff all copies succeeded
 	 */
 	public boolean copyBatch(IRemoteFile[] sourceFolderOrFile, IRemoteFile targetFolder, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * of the operating system. Two exceptions: if the remote file is binary, encoding does not apply.
-	 * If the remote file is a XML file, then it will be copied to local in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification. 
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the absolute path of the local file
-	 * @param monitor the progress monitor
-	 */
-	public void download(IRemoteFile source, String destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
 	
 	/**
 	 * Get the remote file and save it locally. The file is saved in the encoding
@@ -430,114 +417,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param encoding the encoding of the local file
 	 * @param monitor the progress monitor
 	 */
-	public void download(IRemoteFile source, String destination, String encoding,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in UTF-8 encoding.
-	 * Two exceptions: if the remote file is binary, encoding does not apply.
-	 * If the remote file is a XML file, then it will be copied to local in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * This is a recommended method to use for file transfer.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the absolute path of the local file
-	 * @param monitor the progress monitor
-	 */
-	public void downloadUTF8(IRemoteFile source, String destination,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * of the operating system. Two exceptions: if the remote file is binary, encoding does not apply.
-	 * If the remote file is a XML file, then it will be copied to local in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param monitor the progress monitor
-	 */
-	public void download(IRemoteFile source, File destination,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * specified. Two exceptions: if the remote file is binary, encoding does not apply.
-	 * If the remote file is a XML file, then it will be copied to local in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param encoding the encoding of the local file
-	 * @param monitor the progress monitor
-	 */
-	public void download(IRemoteFile source, File destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in UTF-8 encoding.
-	 * Two exceptions: if the remote file is binary, encoding does not apply.
-	 * If the remote file is a XML file, then it will be copied to local in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * This is a recommended method to use for file transfer.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param monitor the progress monitor
-	 */
-	public void downloadUTF8(IRemoteFile source, File destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * of the operating system. Two exceptions: if the remote file is binary, encoding does not apply.
-	 * If the remote file is a XML file, then it will be copied to local in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param monitor the progress monitor
-	 */
-	public void download(IRemoteFile source, IFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * specified. Two exceptions: if the remote file is binary, encoding does not apply.
-	 * If the remote file is a XML file, then it will be copied to local in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param encoding the encoding of the local file
-	 * @param monitor the progress monitor
-	 */
-	public void download(IRemoteFile source, IFile destination, String encoding,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-
-
-	/**
-	 * Get the remote file and save it locally. The file is saved in UTF-8 encoding.
-	 * Two exceptions: if the remote file is binary, encoding does not apply.
-	 * If the remote file is a XML file, then it will be copied to local in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * This is a recommended method to use for file transfer.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the local file
-	 * @param monitor the progress monitor
-	 */
-	public void downloadUTF8(IRemoteFile source, IFile destination,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	// End of methods to download remote files from the server
-	
-	
-	// Beginning of methods to upload local files to the server
-	
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source the absolute path of the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void upload(String source, IRemoteFile destination,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
+	public void download(IRemoteFile source, String destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
 	
 	/**
 	 * Put the local copy of the remote file back to the remote location. The file
@@ -551,30 +431,6 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param monitor the progress monitor
 	 */
 	public void upload(String source, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	/**
-	 * Put local data to a remote location. The local data is assumed to be in the encoding specified.
-	 * @param stream the input stream containing the local data.
-	 * @param totalBytes the total number of bytes in the stream, or -1 if unknown. If -1 is specified, then the progress monitor must be <code>null</code>.
-	 * @param destination remote file that represents the file on the server. 
-	 * @param encoding the encoding of the local data, or <code>null</code> to specify binary.
-	 * @param monitor the progress monitor.
-	 * @throws RemoteFileSecurityException
-	 * @throws RemoteFileIOException
-	 */
-	public void upload(InputStream stream, long totalBytes, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException; 
-
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source the absolute path of the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void upload(String source, String destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
 
 	/**
 	 * Put the local copy of the remote file back to the remote location. The file
@@ -588,96 +444,6 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param rmtEncoding the encoding of the remote file.
 	 */
 	public void upload(String source, String srcEncoding, String remotePath, String rmtEncoding,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	/**
-	 * Put the local copy of the remote file back to the remote location. The local file
-	 * must be in UTF-8 encoding.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source the absolute path of the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void uploadUTF8(String source, IRemoteFile destination,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void upload(File source, IRemoteFile destination,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding specified.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param encoding the encoding of the local copy
-	 * @param monitor the progress monitor
-	 */
-	public void upload(File source, IRemoteFile destination, String encoding,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Put the local copy of the remote file back to the remote location. The local file
-	 * must be in UTF-8 encoding.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void uploadUTF8(File source, IRemoteFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void upload(IFile source, IRemoteFile destination,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding specified
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param encoding the encoding of the local copy
-	 * @param monitor the progress monitor
-	 */
-	public void upload(IFile source, IRemoteFile destination, String encoding,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	
-	/**
-	 * Put the local copy of the remote file back to the remote location. The local file
-	 * must be in UTF-8 encoding.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
-	 * @param source the local copy
-	 * @param destination remote file that represents the file on the server
-	 * @param monitor the progress monitor
-	 */
-	public void uploadUTF8(IFile source, IRemoteFile destination,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
 	
 	/**
 	 * @generated This field/method will be replaced during code generation 

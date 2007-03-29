@@ -26,6 +26,7 @@ import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -229,7 +230,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				try
 				{
 					// upload our pending changes to the remote file
-					fs.uploadUTF8(tempFile, remoteFile,monitor);
+					fs.upload(tempFile.getLocation().makeAbsolute().toOSString(), remoteFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
 				}
 
 				catch (RemoteFileSecurityException e)

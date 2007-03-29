@@ -111,10 +111,8 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			super("Download"); // TODO - need to externalize //$NON-NLS-1$
 		}
 
-
-		
 		/**
-		 * @see WorkspaceModifyOperation#execute(IProgressMonitor)
+		 * 
 		 */
 		protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException
 		{
@@ -600,7 +598,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			return false;	
 		}
 		
-		subsystem.downloadUTF8(remoteFile, localPath, monitor);
+		subsystem.download(remoteFile, localPath, SystemEncodingUtil.ENCODING_UTF_8, monitor);
 		if (monitor.isCanceled())
 		{
 			return false;
@@ -676,7 +674,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			subsystem.connect();
 		}
 
-		subsystem.uploadUTF8(localPath, remoteFile, null);
+		subsystem.upload(localPath, remoteFile, SystemEncodingUtil.ENCODING_UTF_8, null);
 
 		// update timestamp
 		IFile file = getLocalResource();

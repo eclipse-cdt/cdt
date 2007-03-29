@@ -84,6 +84,7 @@ import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.StringCompare;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -2167,7 +2168,7 @@ public class SystemViewRemoteFileAdapter
 									String newPath = newPathBuf.toString();
 
 									monitor.subTask(copyMessage.getLevelOneText());
-									targetFS.upload(srcFileOrFolder.getAbsolutePath(), newPath, monitor);
+									targetFS.upload(srcFileOrFolder.getAbsolutePath(), SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
 
 									result = targetFS.getRemoteFileObject(targetFolder, name);
 									return result;

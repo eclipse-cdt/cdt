@@ -1511,20 +1511,4 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	public String getRemoteEncoding() {
 		return System.getProperty("file.encoding"); //$NON-NLS-1$
 	}
-	
-	/**
-	 * The default implementation returns <code>null</code>. Subclasses should override if necessary.
-	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getInputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		return null;
-	}
-	
-	/**
-	 * The default implementation returns <code>null</code>. Subclasses should override if necessary.
-	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getOutputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		return null;
-	}
 }

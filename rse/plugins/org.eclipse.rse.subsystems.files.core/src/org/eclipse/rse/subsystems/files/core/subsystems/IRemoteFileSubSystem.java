@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
@@ -492,7 +491,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	public InetAddress getLocalAddress();
 	
 	/**
-	 * Gets the input stream to access the contents a remote file. Clients should close the input stream when done.
+	 * Gets the input stream to access the contents a remote file. Clients should close the input stream when done. Implementations should not return <code>null</code>.
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
 	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
@@ -504,7 +503,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
-	 * Gets the output stream to write to a remote file. Clients should close the output stream when done.
+	 * Gets the output stream to write to a remote file. Clients should close the output stream when done. Implementations should not return <code>null</code>.
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
 	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.

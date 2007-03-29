@@ -54,6 +54,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
+import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -464,7 +465,44 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	
 			String tcId = ManagedBuildManager.calculateChildId(tCh.getId(), null);
 	
-			createToolChain(tCh, tcId, tCh.getId(), false);
+			IToolChain newChain = createToolChain(tCh, tcId, tCh.getId(), false);
+			
+			// For each option/option category child of the tool-chain that is
+			// the child of the selected configuration element, create an option/
+			// option category child of the cloned configuration's tool-chain element
+			// that specifies the original tool element as its superClass.
+			newChain.createOptions(tCh);
+
+			// For each tool element child of the tool-chain that is the child of 
+			// the selected configuration element, create a tool element child of 
+			// the cloned configuration's tool-chain element that specifies the 
+			// original tool element as its superClass.
+			String subId;
+			ITool[] tools = tCh.getTools();
+			for (int i=0; i<tools.length; i++) {
+			    Tool toolChild = (Tool)tools[i];
+			    subId = ManagedBuildManager.calculateChildId(toolChild.getId(),null);
+			    newChain.createTool(toolChild, subId, toolChild.getName(), false);
+			}
+			
+			ITargetPlatform tpBase = tCh.getTargetPlatform();
+			ITargetPlatform extTp = tpBase;
+			for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass());
+			
+			TargetPlatform tp;
+			if(extTp != null){
+				int nnn = ManagedBuildManager.getRandomNumber();
+				subId = extTp.getId() + "." + nnn;		//$NON-NLS-1$
+//				subName = tpBase.getName();
+				tp = new TargetPlatform(newChain, subId, tpBase.getName(), (TargetPlatform)tpBase);
+			} else {
+				subId = ManagedBuildManager.calculateChildId(getId(), null);
+				String subName = ""; //$NON-NLS-1$
+				tp = new TargetPlatform((ToolChain)newChain, null, subId, subName, false);
+			}
+
+			((ToolChain)newChain).setTargetPlatform(tp);
+
 			
 	//		if(cloneChildren){
 				//copy expand build macros setting

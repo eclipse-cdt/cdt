@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Ling Wang, Nokia - Bug 179425
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -237,7 +238,12 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	public static void targetRequestFailed( String message, CDIException e ) throws DebugException {
-		requestFailed( MessageFormat.format( "Target request failed: {0}.", new String[]{ message } ), e, DebugException.TARGET_REQUEST_FAILED ); //$NON-NLS-1$
+		String format = "Target request failed: {0}";   //$NON-NLS-1$
+		// Append a period only when incoming message does not end with one.  
+		if ( !message.endsWith( "." ) ) //$NON-NLS-1$
+			format += "."; //$NON-NLS-1$
+
+		requestFailed( MessageFormat.format( format, new String[] { message } ), e, DebugException.TARGET_REQUEST_FAILED );
 	}
 
 	/**
@@ -260,7 +266,12 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	public static void targetRequestFailed( String message, Throwable e ) throws DebugException {
-		throwDebugException( MessageFormat.format( "Target request failed: {0}.", new String[]{ message } ), DebugException.TARGET_REQUEST_FAILED, e ); //$NON-NLS-1$
+		String format = "Target request failed: {0}";   //$NON-NLS-1$
+		// Append a period only when incoming message does not end with one.  
+		if ( !message.endsWith( "." ) ) //$NON-NLS-1$
+			format += "."; //$NON-NLS-1$
+
+		throwDebugException( MessageFormat.format( format, new String[]{ message } ), DebugException.TARGET_REQUEST_FAILED, e );
 	}
 
 	/**

@@ -527,7 +527,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return map;
 	}
 
-	private void checkPropertiesModificationCompatibility(IBuildPropertiesRestriction r, Map unspecifiedRequiredProps, Map unspecifiedProps, Set undefinedSet){
+	private boolean checkPropertiesModificationCompatibility(IBuildPropertiesRestriction r, Map unspecifiedRequiredProps, Map unspecifiedProps, Set undefinedSet){
 		IBuildObjectProperties props = null;
 		IConfiguration cfg = getParent();
 		if(cfg != null){
@@ -537,7 +537,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		unspecifiedProps.clear();
 		unspecifiedRequiredProps.clear();
 
-		if(props != null){
+		if(props != null && props.getSupportedTypeIds().length != 0){
 			String[] requiredIds = props.getRequiredTypeIds();
 			
 			IBuildPropertyType[] supportedTypes = props.getSupportedTypes();
@@ -550,7 +550,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				Map propsMap = propsToMap(ps);
 				getUnsupportedProperties(propsMap, r, unspecifiedProps, undefinedSet);
 			}
+			return unspecifiedRequiredProps.size() == 0;
 		}
+		return false;
 	}
 
 	private void getUnsupportedProperties(Map props, IBuildPropertiesRestriction restriction, Map unsupported, Set inexistent){
@@ -650,16 +652,15 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		checkPropertiesModificationCompatibility(r, unspecifiedRequiredProps, unspecifiedProps, undefinedSet);
 	}
 
-	public void checkPropertiesModificationCompatibility(IToolChain tc, Map unspecifiedRequiredProps, Map unspecifiedProps, Set undefinedSet){
-		checkPropertiesModificationCompatibility((IBuildPropertiesRestriction)tc, unspecifiedRequiredProps, unspecifiedProps, undefinedSet);
+	public boolean checkPropertiesModificationCompatibility(IToolChain tc, Map unspecifiedRequiredProps, Map unspecifiedProps, Set undefinedSet){
+		return checkPropertiesModificationCompatibility((IBuildPropertiesRestriction)tc, unspecifiedRequiredProps, unspecifiedProps, undefinedSet);
 	}
 
 	public boolean isPropertiesModificationCompatible(IToolChain tc){
 		Map requiredMap = new HashMap();
 		Map unsupportedMap = new HashMap();
 		Set undefinedSet = new HashSet();
-		checkPropertiesModificationCompatibility(tc, requiredMap, unsupportedMap, undefinedSet);
-		if(requiredMap.size() != 0)
+		if(!checkPropertiesModificationCompatibility(tc, requiredMap, unsupportedMap, undefinedSet))
 			return false;
 		
 		return true;

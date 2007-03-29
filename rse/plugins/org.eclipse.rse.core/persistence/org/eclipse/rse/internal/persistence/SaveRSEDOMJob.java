@@ -29,7 +29,7 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
 /**
  * The SaveRSEDOMJob is a workspace job that belongs to the family 
  * {@link RSECorePlugin#getThePersistenceManager()}. It is used to 
- * same a DOM to the workspace. A DOM corresponds to a profile.
+ * save a DOM to the workspace. A DOM corresponds to a profile.
  */
 public class SaveRSEDOMJob extends WorkspaceJob {
 

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
@@ -87,7 +88,7 @@ class RemoteExporter {
 	 */
 	protected void writeFile(IFile file, IPath destinationPath) throws IOException, CoreException, RemoteFileSecurityException, RemoteFileException {
 		IRemoteFileSubSystem rfss = RemoteFileUtility.getFileSubSystem((IHost) as400);
-		rfss.upload(file.getLocation().makeAbsolute().toOSString(), destinationPath.toString(), null);
+		rfss.upload(file.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, destinationPath.toString(), System.getProperty("file.encoding"), null); //$NON-NLS-1$
 	}
 
 	/**

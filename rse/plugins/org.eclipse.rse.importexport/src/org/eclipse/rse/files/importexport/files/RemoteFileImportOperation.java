@@ -465,7 +465,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 			{
 				encoding = "Cp" + encoding.substring(2); //$NON-NLS-1$
 			}
-			rfss.download(((UniFilePlus) fileObject).remoteFile, targetResource, encoding, null);
+			rfss.download(((UniFilePlus) fileObject).remoteFile, targetResource.getLocation().makeAbsolute().toOSString(), encoding, null);
 			try {
 				// refresh workspace with just added resource
 				targetResource.refreshLocal(IResource.DEPTH_ZERO, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));

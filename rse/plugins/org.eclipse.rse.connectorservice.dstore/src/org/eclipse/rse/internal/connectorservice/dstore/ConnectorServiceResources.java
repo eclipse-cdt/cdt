@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class ConnectorServiceResources extends NLS
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.connectorservice.dstore.ConnectorServiceResources";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.connectorservice.dstore.ConnectorServiceResources";//$NON-NLS-1$
 
 	public static String DStore_ConnectorService_Label;
 	public static String DStore_ConnectorService_Description;

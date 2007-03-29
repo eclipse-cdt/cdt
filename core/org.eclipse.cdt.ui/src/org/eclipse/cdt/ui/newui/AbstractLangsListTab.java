@@ -214,6 +214,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		
 		langCol = new TreeColumn(langTree, SWT.NONE);
 		langCol.setText(UIMessages.getString("AbstractLangsListTab.1")); //$NON-NLS-1$
+		langCol.setWidth(200);
 		langCol.setResizable(false);
 		return langTree;
 	}
@@ -270,7 +271,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	 * Refreshes languages list and calls table refresh.
 	 */
 	public void updateData(ICResourceDescription cfg) {
-		if (cfg == null) return;
+		if (cfg == null || !canBeVisible()) return;
 		updateExport();
 		langTree.removeAll();
 		TreeItem firstItem = null;

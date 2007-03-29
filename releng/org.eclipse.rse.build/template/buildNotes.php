@@ -23,7 +23,7 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>TM 2.0M5 <b>requires Eclipse 3.3M5</b>. Platform Runtime is the minimum
+<li>TM 2.0M6 <b>requires Eclipse 3.3M6</b>. Platform Runtime is the minimum
   requirement for dstore and ftp. Terminal-ssh and RSE-ssh also require the
   <b>CVS Client Runtime</b> (The dependency on CVS Client Runtime should go away
   again with M6 by resolving <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175686">bug 175686</a>).</li>

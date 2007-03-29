@@ -47,23 +47,23 @@
 </table>
 <table>
   <tbody>
-    <tr><td><b>TM 2.0M5 requires 
-    	<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5eh-200702220951/index.php">
-         Eclipse 3.3M5</a> or later.
+    <tr><td><b>TM 2.0M6 requires 
+    	<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php">
+         Eclipse 3.3M6</a> or later.
     </b></td></tr>
     <tr><td>
       We recommend installing
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5eh-200702220951/index.php#EclipseSDK">eclipse-SDK</a>. 
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#EclipseSDK">eclipse-SDK</a>. 
         If you do not want JDT, PDE and the developer docs, please install 
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5eh-200702220951/index.php#PlatformRuntime">eclipse-platform</a> together with
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5eh-200702220951/index.php#CVSRuntime">eclipse-CVS-Client</a>.
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#PlatformRuntime">eclipse-platform</a> together with
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#CVSRuntime">eclipse-CVS-Client</a>.
     </td></tr> 
     <tr><td>
       Prerequisites for other add-ons (like CDT, EMF) should be retrieved from the
       <a href="http://download.eclipse.org/europa/releases/">Europa Discovery Site</a>.
     </td></tr> 
     <tr><td>
-      Earlier versions (e.g. Eclipse 3.2.x, Eclipse 3.3M4) will <b>not</b> work!
+      Earlier versions (e.g. Eclipse 3.2.x, Eclipse 3.3M5) will <b>not</b> work!
     </td></tr> 
   </tbody>
 </table>
@@ -116,11 +116,12 @@
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-terminal-@buildId@.zip">TM-terminal-@buildId@.zip</a></td>
         <td>
 			A stand-alone ANSI / vt102 terminal emulator widget and view (with minor 
-			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal/README.txt?root=DSDP_Project&view=markup">
+			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal/README.txt?revision=1.3&root=DSDP_Project&view=markup">
 			limitations</a>). Includes pluggable connectors 
 			for serial line (through RXTX, see the 
-			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=markup">
-			installation notes</a>), ssh and telnet. Includes Source.
+			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?revision=1.4&root=DSDP_Project&view=markup">
+			installation notes</a> and 
+			  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175336">bug 175336</a>), ssh and telnet. Includes Source.
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>

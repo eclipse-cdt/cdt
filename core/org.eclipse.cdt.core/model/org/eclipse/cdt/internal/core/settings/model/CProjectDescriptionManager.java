@@ -573,6 +573,7 @@ public class CProjectDescriptionManager {
 				if(convertedDes != null){
 ///					ICConfigurationDescription activeCfg = convertedDes.getActiveConfiguration();
 					checkHandleActiveCfgChange(convertedDes, null, eDes, new NullProgressMonitor());
+					des = convertedDes;
 //					if(activeCfg != null){
 //						checkBuildSystemChange(project, eDes, activeCfg.getBuildSystemId(), null, new NullProgressMonitor());
 //			//			if(convertedDes != null)

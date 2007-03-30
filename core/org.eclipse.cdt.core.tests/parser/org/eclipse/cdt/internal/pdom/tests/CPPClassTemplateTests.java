@@ -64,12 +64,14 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		CCorePlugin.getIndexManager().reindex(cproject);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 		pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		pdom.acquireReadLock();
 	}
 	
 	protected void tearDown() throws Exception {
 		if(pdom!=null) {
-			pdom.releaseWriteLock();
+			pdom.releaseReadLock();
 		}
+		pdom= null;
 		cproject.getProject().delete(true, NPM);
 	}
 	

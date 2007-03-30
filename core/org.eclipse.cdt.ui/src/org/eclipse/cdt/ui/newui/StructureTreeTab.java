@@ -781,4 +781,6 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 	public boolean canBeVisible() {
 		return CDTPrefUtil.getBool(CDTPrefUtil.KEY_DTREE);
 	}
+
+	protected void updateButtons() {} // Do nothing. No buttons to update.
 }

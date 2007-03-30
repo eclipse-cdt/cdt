@@ -246,4 +246,5 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	protected void performDefaults() {
 		updateData();
 	}
+	protected void updateButtons() {} // Do nothing. No buttons to update.
 }

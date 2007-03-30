@@ -76,4 +76,5 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) { performOK(); }
 	protected void updateData(ICResourceDescription cfg) {}  // Do nothing. Data is read once after creation
+	protected void updateButtons() {} // Do nothing. No buttons to update
 }

@@ -112,7 +112,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
   	    
 	    table.addSelectionListener(new SelectionAdapter() {
 	    	public void widgetSelected(SelectionEvent e) {
-	    		setButtons();
+	    		updateButtons();
 	    	}
 	    	public void widgetDefaultSelected(SelectionEvent e) {
 	    		if (buttonIsEnabled(1) && table.getSelectionIndex() != -1)
@@ -141,7 +141,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
      * Updates state of add/edit/delete buttons
      * Called when table selection changes.
      */
-    protected void setButtons() {
+    protected void updateButtons() {
     	int i = table.getSelectionIndex();
 		boolean x = i != -1;
 		boolean y = x;
@@ -175,7 +175,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		ICExternalSetting[] vals = cfg.getExternalSettings();
 		if (vals == null || vals.length == 0) {
 			tv.setInput(null);
-			setButtons();
+			updateButtons();
 			return;
 		}
 		for (int i=0; i<vals.length; i++) {
@@ -190,7 +190,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		tv.setInput(lst.toArray(new Object[lst.size()]));
 		if (table.getItemCount() > x) table.select(x);
 		else if (table.getItemCount() > 0) table.select(0);
-		setButtons();
+		updateButtons();
 	}
 
 	/**

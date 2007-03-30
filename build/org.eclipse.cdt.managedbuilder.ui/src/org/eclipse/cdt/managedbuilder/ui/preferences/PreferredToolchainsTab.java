@@ -139,4 +139,5 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 		h_selected.handleSelection();
 	}
 	protected void updateData(ICResourceDescription cfg) {}
+	protected void updateButtons() {} // Do nothing. No buttons to update.
 }

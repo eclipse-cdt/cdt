@@ -156,5 +156,5 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		else
 			return false;
 	}
-	
+	protected void updateButtons() {} // Do nothing. No buttons to update.
 }

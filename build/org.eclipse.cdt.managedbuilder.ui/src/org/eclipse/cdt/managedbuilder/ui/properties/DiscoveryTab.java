@@ -522,4 +522,5 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  		}
  		updateData();
 	}
+	protected void updateButtons() {} // Do nothing. No buttons to update.
 }

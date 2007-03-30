@@ -154,7 +154,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	 * Edit: enabled if 1 element selected (entry or filter)
 	 * Delete: enabled if selected element is entry
 	 */
-	private void updateButtons() {
+	protected void updateButtons() {
 		TreeItem[] sel = tree.getTree().getSelection();
     	buttonSetEnabled(2, sel.length == 1);
     	buttonSetEnabled(3, sel.length > 0 && sel[0].getData() instanceof _Entry);

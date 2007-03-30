@@ -189,5 +189,6 @@ public class RefsTab extends AbstractCPropertyTab {
 		getResDesc().getConfiguration().setReferenceInfo(new HashMap());
 		initData();
 	}
+	protected void updateButtons() {} // Do nothing. No buttons to update.
 }
 

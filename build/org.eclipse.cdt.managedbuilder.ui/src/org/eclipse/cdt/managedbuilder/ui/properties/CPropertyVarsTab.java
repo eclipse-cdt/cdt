@@ -220,7 +220,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		updateButtons();
 	}
 	
-	private void updateButtons() {
+	protected void updateButtons() {
 		Object[] obs = ((IStructuredSelection)tv.getSelection()).toArray();
 		boolean canEdit = false;
 		boolean canDel  = false;

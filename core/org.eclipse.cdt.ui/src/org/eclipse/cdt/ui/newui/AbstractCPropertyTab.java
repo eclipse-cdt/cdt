@@ -214,6 +214,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected abstract void performApply(ICResourceDescription src, ICResourceDescription dst);
 	protected abstract void performDefaults();
 	protected abstract void updateData(ICResourceDescription cfg);
+	protected abstract void updateButtons();
 	protected void performCancel() {}
 	protected void performOK() {}
 

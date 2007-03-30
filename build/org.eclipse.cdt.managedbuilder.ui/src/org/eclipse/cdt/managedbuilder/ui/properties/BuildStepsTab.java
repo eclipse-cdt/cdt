@@ -371,4 +371,5 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		}
 		update();
 	}
+	protected void updateButtons() {} // Do nothing. No buttons to update.
 }

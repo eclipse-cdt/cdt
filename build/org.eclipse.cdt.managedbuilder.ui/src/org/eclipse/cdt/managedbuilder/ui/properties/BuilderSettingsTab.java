@@ -88,7 +88,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		c_builderType.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
 				cfg.enableInternalBuilder(c_builderType.getSelectionIndex() == 1);
-		    	setState();
+		    	updateButtons();
 		 }});
 		
 		b_useDefault = setupCheck(g1, Messages.getString("BuilderSettingsTab.4"), 3, GridData.BEGINNING); //$NON-NLS-1$
@@ -135,7 +135,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_parallelOpt.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
 				cfg.setParallelDef(b_parallelOpt.getSelection());
-				setState();
+				updateButtons();
 		 }});
 		
 		b_parallelNum= new Button(c2, SWT.RADIO);
@@ -145,7 +145,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_parallelNum.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
 				cfg.setParallelDef(!b_parallelNum.getSelection());
-				setState();
+				updateButtons();
 		 }});
 
 		parallelProcesses = new Spinner(c2, SWT.BORDER);
@@ -154,7 +154,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		parallelProcesses.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
 				cfg.setParallelNumber(parallelProcesses.getSelection());
-				setState();
+				updateButtons();
 			}
 		});
 
@@ -211,14 +211,14 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		try {
 			bld.setManagedBuildOn(enable);
 			page.informPages(MANAGEDBUILDSTATE, null);
-			setState();
+			updateButtons();
 		} catch (CoreException ex) {}
 	}
 	
 	/**
 	 * sets widgets states
 	 */
-	void setState() {
+	protected void updateButtons() {
 		bld = cfg.getEditableBuilder();
 		
 		b_genMakefileAuto.setEnabled(cfg.supportsBuild(true));
@@ -353,7 +353,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	
     public void checkPressed(SelectionEvent e) {
     	checkPressed((Button)e.widget);
-    	setState();
+    	updateButtons();
     }
 	
 	void checkPressed(Button b) {	
@@ -412,7 +412,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		IConfiguration icfg = getCfg(cfgd.getConfiguration());
 		if (!(icfg instanceof Configuration)) return;
 		cfg = (Configuration)icfg;
-		setState();
+		updateButtons();
 	}
 
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {

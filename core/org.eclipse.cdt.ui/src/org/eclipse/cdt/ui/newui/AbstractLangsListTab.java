@@ -165,7 +165,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
      * Updates state for all buttons
      * Called when table selection changes.
      */
-    public void updateButtons() {
+    protected void updateButtons() {
     	int index = table.getSelectionIndex();
     	boolean canAdd = langTree.getItemCount() > 0;
 		boolean canExport = index != -1;

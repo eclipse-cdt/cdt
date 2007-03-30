@@ -125,6 +125,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	private String password = null;
 	private boolean savePassword = false;
 	private boolean saveUserId = false;
+	private boolean acquiring = false;
 
 	/**
 	 * Creates a standard credentials provider for a connector service. 
@@ -198,6 +199,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 			boolean userIdNeeded = supportsUserId() && userId == null;
 			if (passwordNeeded || userIdNeeded || reacquire) {
 				promptForCredentials();
+				acquiring = true;
 				if (savePassword) {
 					getConnectorService().savePassword();
 				} else {
@@ -206,6 +208,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 				if (saveUserId) {
 					getConnectorService().saveUserId();
 				}
+				acquiring = false;
 			}
 		}
 	}
@@ -214,15 +217,19 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#clearCredentials()
 	 */
 	public final void clearCredentials() {
-		password = null;
-		userId = null;
+		if (!acquiring) {
+			password = null;
+			userId = null;
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#clearPassword()
 	 */
 	final public void clearPassword() {
-		password = null;
+		if (!acquiring) {
+			password = null;
+		}
 	}
 
 	/* (non-Javadoc)

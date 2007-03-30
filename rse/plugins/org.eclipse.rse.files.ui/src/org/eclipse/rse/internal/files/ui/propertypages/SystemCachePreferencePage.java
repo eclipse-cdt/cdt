@@ -177,6 +177,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 		Text warning = new Text(parent, SWT.READ_ONLY);
 //		SystemWidgetHelpers.createReadonlyTextField(parent);
+		warning.setBackground(parent.getBackground());
 		warning.setText(FileResources.RESID_PREF_CACHE_CLEAR_WARNING_DESCRIPTION);
 
 		(new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);

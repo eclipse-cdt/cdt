@@ -30,6 +30,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
@@ -335,7 +336,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		
 		IHostFile[] results = getFilesAndFolders(monitor, parentPath, fileNameFilter); 
 
-		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
+		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results, showHidden);
 		if (parent != null)
 			parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
 		return farr;
@@ -373,7 +375,10 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		{
 			
 		}
-		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
+		
+		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results, showHidden);
+		
 		if (parent != null)
 			parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
 		return farr;
@@ -409,7 +414,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		catch (SystemMessageException e)
 		{			
 		}
-		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
+		
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
+		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results, showHidden);
 		if (parent != null)
 			parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
 		return farr;
@@ -426,7 +433,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		{
 			
 		}
-		IRemoteFile[] results = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, roots);
+		
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
+		IRemoteFile[] results = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, roots, showHidden);
 		return results;
 	}
 	

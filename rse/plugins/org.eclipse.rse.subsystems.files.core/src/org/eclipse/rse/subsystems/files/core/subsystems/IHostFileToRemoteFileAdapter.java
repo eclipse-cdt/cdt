@@ -23,6 +23,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 
 public interface IHostFileToRemoteFileAdapter
 {
-	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes);
+	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes, boolean includeHidden);
 	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile node);
 }

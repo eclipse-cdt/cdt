@@ -21,24 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.rse.internal.services.ssh.files.SftpHostFile;
-import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class SftpFileAdapter implements IHostFileToRemoteFileAdapter {
 
-	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) {
-		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
+	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes, boolean includeHidden) {
 
 		List results = new ArrayList();
 		if (nodes!=null) {
 			for (int i = 0; i < nodes.length; i++) {
 				SftpHostFile node = (SftpHostFile)nodes[i];
-				if (showHidden || !node.isHidden()) {
+				if (includeHidden || !node.isHidden()) {
 					IRemoteFile remoteFile = new SftpRemoteFile(ss, context, parent, node);
 					results.add(remoteFile);
 					ss.cacheRemoteFile(remoteFile);

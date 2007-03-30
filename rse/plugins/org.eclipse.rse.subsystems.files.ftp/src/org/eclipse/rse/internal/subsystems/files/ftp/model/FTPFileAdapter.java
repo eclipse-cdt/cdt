@@ -21,27 +21,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.rse.internal.services.files.ftp.FTPHostFile;
-import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public class FTPFileAdapter implements IHostFileToRemoteFileAdapter
 {
 	
-	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) 
+	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes, boolean includeHidden) 
 	{
-		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
-
 		List results = new ArrayList();
 		for (int i = 0; i < nodes.length; i++) 
 		{
 			FTPHostFile node = (FTPHostFile)nodes[i];
-			if (showHidden || !node.isHidden())
+			if (includeHidden || !node.isHidden())
 			{
 				IRemoteFile ftpFile = new FTPRemoteFile(ss, context, parent, node);
 				results.add(ftpFile);

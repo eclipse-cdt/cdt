@@ -655,7 +655,13 @@ public class DOMScanner extends BaseScanner {
 
 
         public final IToken getNext() { return next; }
-        public void setNext(IToken t) { next = t; }
+    	public void setNext(IToken t) {
+    		// guard against endless loop
+    		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=180172
+    		assert t != this : "Token recursion"; //$NON-NLS-1$
+    		if (t != this) 
+    			next = t;
+    	}
         
         /* (non-Javadoc)
          * @see org.eclipse.cdt.core.parser.ITokenDuple#contains(org.eclipse.cdt.core.parser.ITokenDuple)

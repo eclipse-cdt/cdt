@@ -2337,9 +2337,11 @@ abstract class BaseScanner implements IScanner {
         char[] result = new char[text.length];
         Arrays.fill(result, ' ');
         int resultCount = 0;
+        boolean insideString= false;
+        boolean backslash= false;
         // either a single-line or multi-line comment was found
         for (int i = 0; i < text.length; ++i) {
-            if (text[i] == '/' && (i + 1 < text.length) && (text[i + 1] == '*' || text[i + 1] == '/')) {
+            if (!insideString && (text[i] == '/' && (i + 1 < text.length) && (text[i + 1] == '*' || text[i + 1] == '/'))) {
             	if (text[i + 1] == '/') {
             		// done
             		break;
@@ -2350,9 +2352,17 @@ abstract class BaseScanner implements IScanner {
 	                    ++i;
             	}
                 ++i;
-            } else
+            } else {
+            	if (insideString && !backslash && text[i] == '\\') {
+            		backslash= true;
+            	} else {
+            		backslash= false;
+            	}
+            	if (!backslash && text[i] == '"') {
+            		insideString= !insideString;
+            	}
                 result[resultCount++] = text[i];
-
+            }
         }
         return CharArrayUtils.trim(result);
     }

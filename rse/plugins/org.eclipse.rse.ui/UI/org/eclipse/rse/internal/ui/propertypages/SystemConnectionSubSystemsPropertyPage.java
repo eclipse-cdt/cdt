@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.propertypages;
+package org.eclipse.rse.internal.ui.propertypages;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
@@ -30,6 +30,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.ISystemMessageLineTarget;
+import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.SWT;

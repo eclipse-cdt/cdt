@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.propertypages;
+package org.eclipse.rse.internal.ui.propertypages;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.rse.ui.RSEUIPlugin;

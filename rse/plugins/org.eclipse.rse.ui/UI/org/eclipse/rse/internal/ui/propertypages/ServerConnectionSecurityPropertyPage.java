@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.propertypages;
+package org.eclipse.rse.internal.ui.propertypages;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
@@ -25,6 +25,8 @@ import org.eclipse.rse.internal.ui.widgets.ServerConnectionSecurityForm;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.rse.ui.propertypages.ISystemConnectionWizardPropertyPage;
+import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 

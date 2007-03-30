@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.propertypages;
+package org.eclipse.rse.internal.ui.propertypages;
 
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
@@ -23,6 +23,9 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.ISystemVerifyListener;
+import org.eclipse.rse.ui.propertypages.ISystemConnectionWizardErrorUpdater;
+import org.eclipse.rse.ui.propertypages.ISystemConnectionWizardPropertyPage;
+import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;

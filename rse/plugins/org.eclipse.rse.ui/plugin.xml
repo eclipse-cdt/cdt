@@ -149,13 +149,13 @@ Contributors:
          point="org.eclipse.ui.preferencePages">
       <page
             name="%PreferencePage.RemoteSystems"
-            class="org.eclipse.rse.ui.propertypages.RemoteSystemsPreferencePage"
+            class="org.eclipse.rse.internal.ui.propertypages.RemoteSystemsPreferencePage"
             id="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage">
       </page>
       <page
             name="%PreferencePage.Logging"
             category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
-            class="org.eclipse.rse.ui.propertypages.SystemLoggingPreferencePage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemLoggingPreferencePage"
             id="org.eclipse.rse.ui.LoggingPreferences">
       </page>
       <page
@@ -167,14 +167,14 @@ Contributors:
       <page
             name="%PreferencePage.Communications"
             category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
-            class="org.eclipse.rse.ui.propertypages.SystemCommunicationsPreferencePage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemCommunicationsPreferencePage"
             id="org.eclipse.rse.ui.preferences.SystemCommunicationsPreferencePage">
       </page>
    </extension>
    
    <extension
          point="org.eclipse.core.runtime.preferences">
-      <initializer class="org.eclipse.rse.ui.propertypages.SystemPreferenceInitializer"/>   
+      <initializer class="org.eclipse.rse.internal.ui.propertypages.SystemPreferenceInitializer"/>   
    </extension>
    
 <!-- predefine known system types -->
@@ -233,7 +233,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.Connection"
-            class="org.eclipse.rse.ui.propertypages.SystemConnectionPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemConnectionPropertyPage"
             id="org.eclipse.rse.SystemPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.core.model.IHost"/>
@@ -249,7 +249,7 @@ Contributors:
       -->
       <page
             name="%PropertyPage.Connection.ConnectorServices"
-            class="org.eclipse.rse.ui.propertypages.SystemConnectorServicesPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemConnectorServicesPropertyPage"
             id="org.eclipse.rse.ui.propertypages.SystemConnectorServicesPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.core.model.IHost"/>
@@ -257,7 +257,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.FilterPool"
-            class="org.eclipse.rse.ui.propertypages.SystemFilterPoolPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemFilterPoolPropertyPage"
             id="org.eclipse.rse.SystemFilterPoolPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.core.filters.ISystemFilterPool"/>
@@ -265,7 +265,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.Reference"
-            class="org.eclipse.rse.ui.propertypages.SystemFilterPoolReferencePropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemFilterPoolReferencePropertyPage"
             id="org.eclipse.rse.SystemFilterPoolReferencePropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.core.filters.ISystemFilterPoolReference"/>
@@ -273,7 +273,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.ReferencedFilterPool"
-            class="org.eclipse.rse.ui.propertypages.SystemFilterPoolPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemFilterPoolPropertyPage"
             id="org.eclipse.rse.SystemFilterPoolReferencePropertyPage2">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.core.filters.ISystemFilterPoolReference"/>
@@ -281,7 +281,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.Filter"
-            class="org.eclipse.rse.ui.propertypages.SystemFilterPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemFilterPropertyPage"
             id="org.eclipse.rse.SystemFilterPropertyPage">
          <enabledWhen>
          	<or>
@@ -292,7 +292,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.ChangeFilter"
-            class="org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage"
             id="org.eclipse.rse.SystemChangeFilterPropertyPage">
             <filter name="showChangeFilterStringPropertyPage" value="true"/>
          <enabledWhen>
@@ -304,7 +304,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.FilterString"
-            class="org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemFilterStringPropertyPage"
             id="org.eclipse.rse.SystemFilterStringPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.core.filters.ISystemFilterString"/>
@@ -320,7 +320,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.Profile"
-            class="org.eclipse.rse.ui.propertypages.SystemTeamViewProfilePropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemTeamViewProfilePropertyPage"
             id="org.eclipse.rse.SystemProfilePropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.core.model.ISystemProfile"/>
@@ -328,7 +328,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.TeamViewSubSystemFactoryNode"
-            class="org.eclipse.rse.ui.propertypages.SystemTeamViewSubSystemConfigurationPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.SystemTeamViewSubSystemConfigurationPropertyPage"
             id="org.eclipse.rse.SystemTeamViewSubSystemFactoryPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode"/>

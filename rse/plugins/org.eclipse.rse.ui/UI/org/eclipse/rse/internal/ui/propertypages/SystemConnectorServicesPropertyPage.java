@@ -14,10 +14,11 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.propertypages;
+package org.eclipse.rse.internal.ui.propertypages;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.rse.ui.widgets.services.ConnectorServiceElement;
 import org.eclipse.rse.ui.widgets.services.ConnectorServicesForm;
 import org.eclipse.rse.ui.widgets.services.RootServiceElement;

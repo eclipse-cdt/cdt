@@ -15,7 +15,7 @@
  *                     - created and used PreferencesMapper
  ********************************************************************************/
 
-package org.eclipse.rse.ui.propertypages;
+package org.eclipse.rse.internal.ui.propertypages;
 
 
 import java.util.ArrayList;
@@ -36,6 +36,9 @@ import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.rse.ui.propertypages.SystemBooleanFieldEditor;
+import org.eclipse.rse.ui.propertypages.SystemComboBoxFieldEditor;
+import org.eclipse.rse.ui.propertypages.SystemTypeFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;

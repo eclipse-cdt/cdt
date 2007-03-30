@@ -45,7 +45,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.internal.filters.SystemFilterPoolWrapperInformation;
+import org.eclipse.rse.internal.core.filters.SystemFilterPoolWrapperInformation;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemClearPasswordAction;
 import org.eclipse.rse.internal.ui.actions.SystemConnectAction;

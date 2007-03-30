@@ -22,10 +22,10 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
+import org.eclipse.rse.core.filters.SystemFilterSimple;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.filters.SystemFilterSimple;
 import org.eclipse.rse.internal.model.SystemNewConnectionPromptObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemSelectRemoteObjectAPIProviderCaller;
@@ -219,7 +219,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	/**
 	 * Set the quick filters to be exposed to the user. These will be shown to the
 	 *  user when they expand a connection.
-	 * @see org.eclipse.rse.filters.SystemFilterSimple
+	 * @see org.eclipse.rse.core.filters.SystemFilterSimple
 	 */
 	public void setQuickFilters(ISystemFilter[] filters)
 	{

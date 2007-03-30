@@ -6,17 +6,20 @@
  * 
  * Contributors:
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
  ********************************************************************************/
 
 package org.eclipse.tm.internal.discovery.wizard;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
@@ -51,6 +54,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -108,9 +112,13 @@ public class ServiceDiscoveryWizardDisplayPage extends WizardPage {
 	private String protocolName = null;
 	private int timeOut = 500; 
 	
+	//format of serviceType attribute list of names and transports 
+	//of extension point org.eclipse.ui.subsystemConfigurations
+	private final Pattern serviceTypeFormat = Pattern.compile("_(.+)\\._(.+)"); //$NON-NLS-1$
+	
 	private Service lastSelectedService = null;
 	
-	private Vector supportedServicesType = new Vector();
+	private Hashtable supportedServicesType = new Hashtable();
 	
 	/**
 	 * Constructor for the wizard page performing and displayin the results of the service discovery
@@ -135,12 +143,36 @@ public class ServiceDiscoveryWizardDisplayPage extends WizardPage {
 		//load all service id's from the extension point registry
 		//this id will be used to filter the supported sytem types
 		
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.core","systemTypes"); //$NON-NLS-1$ //$NON-NLS-2$
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.ui","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		for (int i = 0; i < ce.length; i++) {
-			String id = ce[i].getAttribute("name"); //$NON-NLS-1$
-			if(id!=null)
-				supportedServicesType.add(id);
+			String type = ce[i].getAttribute("serviceType"); //$NON-NLS-1$
+			
+			if(type!=null)
+			{
+				String[] variants = type.split(";"); //$NON-NLS-1$
+				
+				for (int j = 0; j < variants.length; j++) {
+					Matcher match = serviceTypeFormat.matcher(variants[j]); 
+					if(match.matches())
+					{
+						String name = match.group(1);
+						String transport = match.group(2);
+						if(supportedServicesType.containsKey(name))
+						{
+							//insert new transport
+							((Vector)supportedServicesType.get(name)).add(transport);
+						}
+						else
+						{
+							//create vector with new transport
+							Vector transports = new Vector();
+							transports.add(transport);
+							supportedServicesType.put(name,transports);
+						}
+					}
+				}
+			}	
 		}
 		
 		this.query = query;
@@ -361,16 +393,51 @@ public class ServiceDiscoveryWizardDisplayPage extends WizardPage {
 
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				boolean supported = true; 
+				
 				if(element instanceof ServiceType) {
+					
+					//check if the service type is in the supported list
 					String serviceTypeName = ((ServiceType)element).getName();
-					if(!supportedServicesType.contains(serviceTypeName))
+					if(!supportedServicesType.containsKey(serviceTypeName))
 					{
 						supported = false;
 					}
+				}
+				
+				if(element instanceof Service) {
+				
+					//if the discovered transport value is not contained in the list of supported transports filter this service
+					supported = false;
+					
+					String serviceTypeName = ((ServiceType)((Service)element).eContainer()).getName();
+				
+					//check if the transport service is supported
+					Vector transports = (Vector)supportedServicesType.get(serviceTypeName);
+					Iterator it = ((Service)element).getPair().iterator();
+					while(it.hasNext())
+					{	
+						Pair pair = (Pair)it.next();
+						if(pair.getKey().equalsIgnoreCase("transport")) //$NON-NLS-1$
+						{
+								String transport = pair.getValue();
+								
+								for (int i = 0; i < transports.size(); i++) {
+									if(((String)transports.elementAt(i)).equalsIgnoreCase(transport))
+									{
+										//found a supported transport
+										supported = true;
+									}
+								}
+						}
+						
+					}
+					
 				 }
 				return supported;
-		
+				
 			}};
+			
+			
 			
 		((ContainerCheckedTreeViewer) viewerPaneTree.getViewer()).addFilter(filter);			
 		

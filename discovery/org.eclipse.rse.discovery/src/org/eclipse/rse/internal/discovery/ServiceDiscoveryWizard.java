@@ -6,19 +6,27 @@
  * 
  * Contributors:
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
  ********************************************************************************/
 
 package org.eclipse.rse.internal.discovery;
+
 
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.tm.discovery.model.Pair;
@@ -32,8 +40,8 @@ import org.eclipse.tm.internal.discovery.wizard.ServiceDiscoveryWizardMainPage;
  */
 
 public class ServiceDiscoveryWizard extends Wizard {
+	
 	private ServiceDiscoveryWizardMainPage serviceDiscoveryMainPage;
-
 	private ServiceDiscoveryWizardDisplayPage serviceDiscoveryPage = null;
 
 	/**
@@ -76,60 +84,108 @@ public class ServiceDiscoveryWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 
-		SystemRefreshAllAction systemRefreshAllAction = new SystemRefreshAllAction(null);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.ui","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$
+		IConfigurationElement[] ce = ep.getConfigurationElements();
 		
+		SystemRefreshAllAction systemRefreshAllAction = new SystemRefreshAllAction(null);
+		SystemRegistry registry = RSEUIPlugin.getDefault().getSystemRegistry();
+				
 		String[] addresses = serviceDiscoveryPage.getAddresses();
 		for (int i = 0; i < addresses.length; i++) {
 
 			String hostName = addresses[i];
 			Vector discoveredServices = serviceDiscoveryPage.getSelectedServices(addresses[i]);
-
+			Vector subSystemConfigurationVector = new Vector();
+		
 			Enumeration serviceEnumeration = discoveredServices.elements();
-
+			
+			IHost conn = null;
+			try {
+				conn = registry.createHost("Discovery", "Discovery@" + hostName, hostName, "Discovered services in "+hostName);//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$;
+			} catch (Exception e) {
+				RSEUIPlugin.getDefault().getSystemRegistry().deleteHost(conn);
+				return false;
+			} 
+			
 			while (serviceEnumeration.hasMoreElements()) {
-				IHost conn = null;
-
-				Service service = (Service) serviceEnumeration.nextElement();
-				String sysTypeString = ((ServiceType) service.eContainer()).getName();
-
-				try {
-					conn = RSEUIPlugin.getDefault().getSystemRegistry().createHost(sysTypeString, service.getName() + "@" + hostName, hostName, "Discovered "+sysTypeString+" server in "+hostName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
-					if (conn != null) {
-						//copy discovered properties to RSE models
+				Service service = (Service) serviceEnumeration.nextElement();
+				
+				//discovered service name
+				String serviceName = ((ServiceType) service.eContainer()).getName();
+				
+				//discovered transport (tcp, udp)
+				String transport = null;
+				
+				Iterator pairIterator = service.getPair().iterator();
+				while (pairIterator.hasNext()) {
+					
+					Pair pair = (Pair) pairIterator.next();
+					if(pair.getKey().equals("transport")) //$NON-NLS-1$
+					{
+						transport = pair.getValue();
+					}
+				}
+				
+				//find the SubSystemConfiguration plugin that matches the name+transport
+				for (int j = 0; j < ce.length; j++) {
+					String typesList = ce[j].getAttribute("serviceType"); //$NON-NLS-1$
+					if(typesList!=null)
+					{
+						String[] types =  typesList.split(";"); //$NON-NLS-1$
 						
-						Iterator pairIterator = service.getPair().iterator();
-						IConnectorService[] services = conn.getConnectorServices();
-						IPropertySet ps;
-						
-						while (pairIterator.hasNext()) {
-							
-							Pair pair = (Pair) pairIterator.next();
-							
-							for(int j=0; j<services.length; j++)
+						for (int k = 0; k < types.length; k++) {
+							if(types[k].equals("_"+serviceName+"._"+transport)) //$NON-NLS-1$ //$NON-NLS-2$
 							{
-									if((ps = services[j].getPropertySet(sysTypeString))==null)
-									{
-										ps = services[j].createPropertySet(sysTypeString);
-									}
-									ps.addProperty(pair.getKey(), pair.getValue());
+								ISubSystemConfiguration config = registry.getSubSystemConfiguration(ce[j].getAttribute("id")); //$NON-NLS-1$
+								IConnectorService connector = config.getConnectorService(conn);
+								IPropertySet propertySet;
+								pairIterator = service.getPair().iterator();
+								
+								while (pairIterator.hasNext()) {
 									
-									if (pair.getKey().equalsIgnoreCase(Messages.ServiceDiscoveryWizard_Port)) {
-										int port = Integer.parseInt(pair.getValue());
-										services[j].setPort(port);
+									Pair pair = (Pair) pairIterator.next();
+									
+									if((propertySet = connector.getPropertySet(Messages.ServiceDiscoveryWizard_DiscoveryPropertySet))==null) 
+									{
+										propertySet = connector.createPropertySet(Messages.ServiceDiscoveryWizard_DiscoveryPropertySet);
 									}
+									propertySet.addProperty(pair.getKey(), pair.getValue());
+								}
+								
+								subSystemConfigurationVector.add(config);
 							}
 						}
-						
-						RSEUIPlugin.getDefault().getSystemRegistry().expandHost(conn);
-					}
-				} catch (Exception e) {
-						RSEUIPlugin.getDefault().getSystemRegistry().deleteHost(conn);
-				} finally {
-					systemRefreshAllAction.run();
+					}	
+				}
+			}	
+				
+			ISubSystemConfiguration[] subSystemConfiguration = new ISubSystemConfiguration[subSystemConfigurationVector.size()];
+				
+			for (int j = 0; j < subSystemConfiguration.length; j++) {
+				subSystemConfiguration[j]=(ISubSystemConfiguration)subSystemConfigurationVector.elementAt(j);
+			}
+			
+			ISubSystem[] subSystem = registry.createSubSystems(conn, subSystemConfiguration);
+			
+			for (int j = 0; j < subSystem.length; j++) {
+				
+				
+				IConnectorService connector = subSystem[j].getConnectorService();
+				IPropertySet propertySet = connector.getPropertySet(Messages.ServiceDiscoveryWizard_DiscoveryPropertySet); 
+				if(propertySet.getProperty(Messages.ServiceDiscoveryWizard_Port)!=null)
+				{
+					int port = Integer.parseInt(propertySet.getPropertyValue(Messages.ServiceDiscoveryWizard_Port));
+					connector.setPort(port);
+					
 				}
 			}
+	
+			RSEUIPlugin.getDefault().getSystemRegistry().expandHost(conn);			
 		}
+		
+		systemRefreshAllAction.run();
+		
 		return true;
 	}
 

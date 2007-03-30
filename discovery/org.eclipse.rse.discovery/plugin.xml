@@ -9,6 +9,7 @@ available at http://www.eclipse.org/legal/epl-v10.html
   
 Contributors:
    Javier Montalvo Orus (Symbian) - initial API and implementation
+   Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
 -->
 
 <plugin>
@@ -28,14 +29,15 @@ Contributors:
   
    <extension
          point="org.eclipse.rse.core.systemTypes">
-	   <systemType id="org.eclipse.rse.systemtype.discovery"
-	          label="%DiscoverySystemLabel"
-            name="Discovery"
-			description="%DiscoverySystemDescription"
-			iconLive=""/>
+	   <systemType
+          description="%DiscoverySystemDescription"
+          id="org.eclipse.rse.systemtype.discovery"
+          label="%DiscoverySystemLabel"
+          name="Discovery"
+          />
 	</extension>
     
-    <!-- extension
+    <extension
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
             systemTypeIds="org.eclipse.rse.systemtype.discovery"
@@ -43,12 +45,12 @@ Contributors:
             description="Service Discovery Wizard"
             iconlive=""
             icon=""
-            class="org.eclipse.rse.discovery.ServiceDiscoverySubSystemConfiguration"
+            class="org.eclipse.rse.internal.discovery.ServiceDiscoverySubSystemConfiguration"
             vendor="%providerName"
             priority="100"
             id="Discovery">
       </configuration>
-      </extension -->
+      </extension>
     
 </plugin>
 

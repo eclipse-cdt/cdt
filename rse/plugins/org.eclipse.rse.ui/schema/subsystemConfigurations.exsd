@@ -160,6 +160,16 @@ Note that ServiceSubSystems that share the same service should always use the sa
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="serviceType" type="string">
+            <annotation>
+               <documentation>
+                  This optional attribute allows providing a semicolon separated list of standard names and transports expected to be used by service discovery servers to advertise this service. 
+The name is usually the keyword used by the IANA in the port number allocation (http://www.iana.org/assignments/port-numbers) or in DNS SRV service types (RFC 2782) (http://www.dns-sd.org/ServiceTypes.html).
+
+For example, this attribute could be &lt;code&gt;serviceType=&quot;_ftp._tcp;_ftp._udp&quot;&lt;/code&gt; to advertise a subsystem that supports ftp servers using tcp and udp transport.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -183,6 +193,7 @@ Note that ServiceSubSystems that share the same service should always use the sa
          class=&quot;com.acme.tools.db.DBSubSystemFactory&quot;
          category=&quot;databases&quot;
          vendor=&quot;ACME&quot;
+         serviceType=&quot;_database._tcp;_database._udp&quot;
       &gt;
      &lt;/configuration&gt;
    &lt;/extension&gt;
@@ -235,6 +246,7 @@ available at http://www.eclipse.org/legal/epl-v10.html
 Contributors:
 IBM Corporation - initial API and implementation
 Uwe Stieber (Wind River) - systemTypeIds attribute extensions
+Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
       </documentation>
    </annotation>
 

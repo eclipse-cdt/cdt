@@ -6,6 +6,8 @@
  * 
  * Contributors:
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - added transport key
+ *   Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
  ********************************************************************************/
 
 package org.eclipse.tm.internal.discovery.protocol.dnssd;
@@ -117,7 +119,7 @@ public class DNSSDProtocol implements IProtocol {
 
 	// Patterns to parse service name and service type
 	
-	private final Pattern srvPattern = Pattern.compile("^(.+)\\._(.+)._.+\\.local."); //$NON-NLS-1$
+	private final Pattern srvPattern = Pattern.compile("^(.+)\\._(.+)._(.+)\\.local."); //$NON-NLS-1$
 	private final Pattern ptrPattern = Pattern.compile("^_(.+)._.+\\.local."); //$NON-NLS-1$
 	
 	private Resource resource = null;
@@ -554,6 +556,7 @@ public class DNSSDProtocol implements IProtocol {
 
 		String serviceName = null;
 		String serviceTypeName = null;
+		String serviceTransport = null;
 		
 		// Find if we have a serviceType with this name...
 		
@@ -562,6 +565,7 @@ public class DNSSDProtocol implements IProtocol {
 			{
 				serviceName = matcher.group(1);
 				serviceTypeName = matcher.group(2);
+				serviceTransport = matcher.group(3);
 			}
 	
 		
@@ -603,6 +607,15 @@ public class DNSSDProtocol implements IProtocol {
 			service = ModelFactory.eINSTANCE.createService();
 			service.setName(recordName);
 			serviceType.getService().add(service);
+		}
+		
+		//add discovered transport
+		if(serviceTransport != null)
+		{
+			Pair transportPair = ModelFactory.eINSTANCE.createPair();
+			transportPair.setKey("transport"); //$NON-NLS-1$
+			transportPair.setValue(serviceTransport);
+			service.getPair().add(transportPair);
 		}
 		
 		//process "key=value" pairs

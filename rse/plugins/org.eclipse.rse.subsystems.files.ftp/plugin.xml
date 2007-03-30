@@ -12,8 +12,9 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-Javier Montalvo Orús (Symbian) - add Windows to list of valid FTP systems
+Javier Montalvo Orus (Symbian) - add Windows to list of valid FTP systems
 Martin Oberhuber (Wind River) - add FTP Only system type
+Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -37,7 +38,8 @@ Martin Oberhuber (Wind River) - add FTP Only system type
             class="org.eclipse.rse.subsystems.files.ftp.FTPFileSubSystemConfiguration"
             vendor="%providerName"
             priority="100"
-            id="ftp.files">
+            id="ftp.files"
+            serviceType="_ftp._tcp">
       </configuration>
       </extension>
   

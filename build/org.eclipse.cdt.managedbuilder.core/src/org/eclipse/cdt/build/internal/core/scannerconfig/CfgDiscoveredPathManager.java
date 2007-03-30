@@ -189,6 +189,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 			return getCachedPathInfo(cInfo);
 		}
 		
+		cInfo.fLoadContext.getConfiguration().getRootFolderInfo().setExclude(false);
 		Map map = baseInfo.getSymbols();
 		IPath paths[] = baseInfo.getIncludePaths();
 		

@@ -5,10 +5,10 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * {Kushal Munir} (IBM) - initial implementation.
+ * Kushal Munir (IBM) - moved to internal package
  ********************************************************************************/
 
-package org.eclipse.rse.eclipse.filesystem;
+package org.eclipse.rse.internal.eclipse.filesystem;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

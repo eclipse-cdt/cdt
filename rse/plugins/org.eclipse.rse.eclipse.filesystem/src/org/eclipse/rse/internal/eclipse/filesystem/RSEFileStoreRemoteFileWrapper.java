@@ -11,15 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Kushal Munir (IBM) - moved to internal package
  ********************************************************************************/
 
-package org.eclipse.rse.eclipse.filesystem;
+package org.eclipse.rse.internal.eclipse.filesystem;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -31,9 +28,6 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.filesystem.Policy;
-import org.eclipse.core.internal.resources.ModelObjectWriter;
-import org.eclipse.core.internal.resources.ProjectDescription;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -57,25 +51,23 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 	private IRemoteFile _remoteFile;
 	private IRemoteFileSubSystem _subSystem;
 	private IFileStore _parent;
-	public RSEFileStoreRemoteFileWrapper(IFileStore parent, IRemoteFile remoteFile)
-	{
+	
+	public RSEFileStoreRemoteFileWrapper(IFileStore parent, IRemoteFile remoteFile) {
 		_remoteFile = remoteFile;
 		_parent = parent;
 		_subSystem = _remoteFile.getParentRemoteFileSubSystem();
 	}
 	
-	public IRemoteFileSubSystem getRemoteFileSubSystem()
-	{
+	public IRemoteFileSubSystem getRemoteFileSubSystem() {
 		return _subSystem;
 	}
 	
-	public String[] childNames(int options, IProgressMonitor monitor) 
-	{
+	public String[] childNames(int options, IProgressMonitor monitor) {
 		IPreferenceStore prefStore = RSEUIPlugin.getDefault().getPreferenceStore();
-		//boolean origShowHidden = prefStore.getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
 		prefStore.setValue(ISystemFilePreferencesConstants.SHOWHIDDEN, true);
 		
 		String[] names;
+		
 		if (!_remoteFile.isStale() && _remoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
 		{
 			Object[] children = _remoteFile.getContents(RemoteChildrenContentsType.getInstance());
@@ -120,16 +112,9 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		}
 		FileInfo info = new FileInfo(getName());
 		boolean exists = _remoteFile.exists();
-		/*
-		if (_remoteFile.getName().equals(".project") && _remoteFile.getLength() == 0)
-		{
-			info.setExists(false);
-		}
-		else
-		*/
-		{
-			info.setExists(exists);
-		}
+		
+		info.setExists(exists);
+
 		if (exists)
 		{
 			info.setLastModified(_remoteFile.getLastModified());
@@ -154,6 +139,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 	{
 		return _remoteFile.getName();
 	}
+	
 	public IFileStore getParent() 
 	{
 		if (_parent == null)
@@ -181,7 +167,6 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 	{
 		if (_remoteFile.exists())
 		{
-			// IFile file = null;
 			if (_remoteFile.isFile() && _subSystem.isConnected() && _subSystem instanceof IFileServiceSubSystem)
 			{
 				IFileServiceSubSystem fileSubSystem = (IFileServiceSubSystem)_subSystem;
@@ -197,96 +182,6 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			if (_remoteFile.isDirectory()) {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "This is a directory")); //$NON-NLS-1$
 			}
-				
-/*				if (_remoteFile.getName().equals(".project") && _remoteFile.getLength() == 0) //$NON-NLS-1$
-				{
-					System.out.println("reading empty .project"); //$NON-NLS-1$
-					InputStream stream = getDummyProjectFileStream();
-					try
-					{
-						int size = stream.available();
-						_subSystem.upload(stream, size, _remoteFile, "utf8", monitor); //$NON-NLS-1$
-						_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
-						
-					}
-					catch (Exception e)
-					{						
-					}
-					//return stream;
-					
-					try
-					{
-						// only temp file has contents
-						file = (IFile)UniversalFileTransferUtility.getTempFileFor(_remoteFile);
-						if (file == null || !file.exists())
-						{
-							file.create(null, true, monitor);
-						}
-					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-					
-				}
-			
-				{
-					file = (IFile)UniversalFileTransferUtility.copyRemoteResourceToWorkspace(_remoteFile, monitor);
-
-					if (file != null && !file.isSynchronized(IResource.DEPTH_ZERO))
-					{
-						RefreshJob refresh = new RefreshJob(file, IResource.DEPTH_ZERO);
-						refresh.schedule();
-						try
-						{
-							refresh.join();
-						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-			else
-			{
-				file = (IFile)UniversalFileTransferUtility.getTempFileFor(_remoteFile);
-			}
-			if (file != null && !file.isSynchronized(IResource.DEPTH_ZERO) && !_remoteFile.getName().equals(".project")) //$NON-NLS-1$
-			{
-					RefreshJob refresh = new RefreshJob(file, IResource.DEPTH_ZERO);
-					refresh.schedule();
-					try
-					{
-						refresh.join();
-					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-			
-
-			}
-			if (file != null)
-			{
-				if (file.isSynchronized(IResource.DEPTH_ZERO))
-				{
-					return file.getContents();
-				}
-				else
-				{
-					File osFile = file.getLocation().toFile();
-					try
-					{
-						FileInputStream instream = new FileInputStream(osFile);
-						return instream;
-					}
-					catch (Exception e)
-					{
-						
-					}
-				}
-			}*/
 		}
 		return null;
 	}
@@ -297,7 +192,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		private int _depth;
 		public RefreshJob(IResource resource, int depth)
 		{
-			super("Refresh");
+			super("Refresh"); //$NON-NLS-1$
 			_resource = resource;			
 			_depth = depth;
 		}
@@ -315,25 +210,6 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			return Status.OK_STATUS;
 		}
 	}
-	
-	private InputStream getDummyProjectFileStream()
-	{
-		
-		IProjectDescription  description = new ProjectDescription();
-//		write the model to a byte array
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try {
-			new ModelObjectWriter().write(description, out);
-		} catch (IOException e) {
-			
-		}
-		byte[] newContents = out.toByteArray();
-
-		ByteArrayInputStream in = new ByteArrayInputStream(newContents);
-		
-		return in;
-	}
-	
 	
 	public URI toURI() 
 	{
@@ -370,9 +246,6 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
-		// File file = null;
-		// try {
-			// create temp file first
 		
 		try {
 			if (!_remoteFile.exists())
@@ -404,36 +277,6 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 				return null;
 			}
 		}
-			
-/*			SystemEditableRemoteFile editable = new SystemEditableRemoteFile(_remoteFile);
-			editable.download(monitor);
-			IFile localFile = editable.getLocalResource();
-			file = localFile.getLocation().toFile();
-		
-			monitor.beginTask(null, 1);
-			
-			return new FileOutputStream(file, (options & EFS.APPEND) != 0);
-		} 
-		catch (FileNotFoundException e) 
-		{
-			//checkReadOnlyParent(file, e);
-			String message;
-			String path = _remoteFile.getAbsolutePath();
-			if (file != null && file.isDirectory())
-				message = NLS.bind(Messages.notAFile, path);
-			else
-				message = NLS.bind(Messages.couldNotWrite, path);
-			Policy.error(EFS.ERROR_WRITE, message, e);
-			return null;
-		} 
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally {
-			monitor.done();
-		}
-		return null;*/
 	}
 
 	public IFileStore getChild(IPath path) 
@@ -515,49 +358,14 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 				return null;
 			}
 		}
-			
-			
-			/*if (_remoteFile.isFile() && _subSystem.isConnected())
-			{
-				file = (IResource)UniversalFileTransferUtility.copyRemoteResourceToWorkspace(_remoteFile, monitor);			
-			}
-			else
-			{
-				file = UniversalFileTransferUtility.getTempFileFor(_remoteFile);
-			}
-		//	if (!file.isSynchronized(IFile.DEPTH_ZERO))
-			//	file.refreshLocal(IFile.DEPTH_ZERO, monitor);
-			return file.getLocation().toFile();
-		}
-		else
-		{
-			if (_remoteFile.getName().equals(".project")) //$NON-NLS-1$
-			{
-				file = UniversalFileTransferUtility.getTempFileFor(_remoteFile);
-				return file.getLocation().toFile();
-			}
-			else if (_remoteFile instanceof RemoteFileEmpty)
-			{
-				try
-				{
-					return File.createTempFile(_remoteFile.getName(), "empty"); //$NON-NLS-1$
-				}
-				catch (Exception e)
-				{
-					
-				}
-			}
-		}*/
 	}
 
 	public void delete(int options, IProgressMonitor monitor) throws CoreException 
 	{
-		try
-		{
+		try {
 			_subSystem.delete(_remoteFile, monitor);
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

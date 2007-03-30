@@ -11,11 +11,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Kushal Munir (IBM) - moved to internal package.
  ********************************************************************************/
 
 
-package org.eclipse.rse.eclipse.filesystem;
+package org.eclipse.rse.internal.eclipse.filesystem;
 
 import java.net.URI;
 
@@ -29,69 +29,51 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ide.fileSystem.FileSystemContributor;
-import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 public class RSEFileSystemContributor extends FileSystemContributor {
 
 
-	public URI browseFileSystem(String initialPath, Shell shell) 
-	{
-		SystemRemoteFolderDialog dlg = new SystemRemoteFolderDialog(shell, "Select Folder");
+	public URI browseFileSystem(String initialPath, Shell shell) {
 		
+		SystemRemoteFolderDialog dlg = new SystemRemoteFolderDialog(shell, "Select Folder"); //$NON-NLS-1$
 		
-		//SystemSelectRemoteFileOrFolderDialog dlg = new SystemSelectRemoteFileOrFolderDialog(shell, "Select File", false);
-		/*
-		DirectoryDialog dialog = new DirectoryDialog(shell);
-		dialog
-				.setMessage(IDEWorkbenchMessages.ProjectLocationSelectionDialog_directoryLabel);
-	*/
-		if (!initialPath.equals(IDEResourceInfoUtils.EMPTY_STRING)) 
-		{
-			try
-			{
-			URI uri = new URI(initialPath);
-			IHost host = RSEFileSystem.getConnectionFor(uri.getHost());
-			IRemoteFileSubSystem fs = RSEFileSystem.getRemoteFileSubSystem(host);
-			dlg.setInputObject(fs.getRemoteFileObject(uri.getPath()));			
+		if (!initialPath.equals("")) { //$NON-NLS-1$
+			
+			try {
+				URI uri = new URI(initialPath);
+				IHost host = RSEFileSystem.getConnectionFor(uri.getHost());
+				IRemoteFileSubSystem fs = RSEFileSystem.getRemoteFileSubSystem(host);
+				dlg.setInputObject(fs.getRemoteFileObject(uri.getPath()));			
 			}
-			catch (Exception e)
-			{
-				
+			catch (Exception e) {
 			}
 		}
 
 		dlg.setNeedsProgressMonitor(true);
 
-	/*
-		String selectedDirectory = dialog.open();
-		if (selectedDirectory == null) {
-			return null;
-		}
-		return new File(selectedDirectory).toURI();
-		*/
-		if (dlg.open() == Window.OK)
-		{
+		if (dlg.open() == Window.OK) {
+			
 			Object selected = dlg.getSelectedObject();
-			if (selected instanceof ISystemFilterReference)
-			{
+			
+			if (selected instanceof ISystemFilterReference) {
+				
 				ISubSystem targetSubSystem = ((ISystemFilterReference)selected).getSubSystem();
 				ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
-				if (factory.supportsDropInFilters())
-				{											        
+				
+				if (factory.supportsDropInFilters()) {											        
 					selected = targetSubSystem.getTargetForFilter((ISystemFilterReference)selected);										            
 				}
 			}
+			
 			IRemoteFile file = (IRemoteFile)selected;
 			String path = file.getAbsolutePath();
 			IHost host = dlg.getSelectedConnection();
 			String hostName = host.getHostName();
-			try
-			{
+			
+			try {
 				return new URI("rse", hostName, path, null); //$NON-NLS-1$
 			}
-			catch (Exception e)
-			{
-				
+			catch (Exception e) {
 			}
 		}
 		return null;
@@ -99,12 +81,11 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 	}
 
 	public URI getURI(String string){
-		try
-		{
+		
+		try {
 			return new URI(string);
 		}
-		catch (Exception e)
-		{			
+		catch (Exception e) {			
 		}
 		return null;
 	}

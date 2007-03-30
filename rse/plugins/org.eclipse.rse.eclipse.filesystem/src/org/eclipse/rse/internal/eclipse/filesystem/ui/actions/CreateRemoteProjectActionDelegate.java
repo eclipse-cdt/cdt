@@ -12,9 +12,10 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Kushal Munir (IBM) - moved to internal package
  ********************************************************************************/
 
-package org.eclipse.rse.eclipse.filesystem.ui.actions;
+package org.eclipse.rse.internal.eclipse.filesystem.ui.actions;
 
 import java.net.URI;
 import java.util.Iterator;
@@ -32,7 +33,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.eclipse.filesystem.RSEFileSystem;
+import org.eclipse.rse.internal.eclipse.filesystem.RSEFileSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.eclipse.filesystem; singleton:=true
 Bundle-Version: 2.0.0.qualifier
-Bundle-Activator: org.eclipse.rse.eclipse.filesystem.Activator
+Bundle-Activator: org.eclipse.rse.internal.eclipse.filesystem.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -18,3 +18,5 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Export-Package: org.eclipse.rse.internal.eclipse.filesystem;x-internal:=true,
+ org.eclipse.rse.internal.eclipse.filesystem.ui.actions;x-internal:=true

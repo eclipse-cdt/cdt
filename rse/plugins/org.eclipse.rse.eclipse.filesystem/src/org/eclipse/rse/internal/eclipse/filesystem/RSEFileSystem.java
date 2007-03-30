@@ -12,9 +12,10 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * Kushal Munir (IBM) - moved to internal package
  ********************************************************************************/
 
-package org.eclipse.rse.eclipse.filesystem;
+package org.eclipse.rse.internal.eclipse.filesystem;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -36,122 +37,118 @@ public class RSEFileSystem extends FileSystem
 	private static RSEFileSystem _instance = new RSEFileSystem();
 	private HashMap _fileStoreMap;
 	
-	public RSEFileSystem()
-	{
+	public RSEFileSystem() {
+		
 		super();
 		_fileStoreMap = new HashMap();
 	}
 	
-	public static RSEFileSystem getInstance()
-	{
+	public static RSEFileSystem getInstance() {
 		return _instance;
 	}
 	
-	public boolean canDelete() 
-	{
+	public boolean canDelete() {
 		return true;
 	}
 	
-	public boolean canWrite() 
-	{
+	public boolean canWrite() {
 		return true;
 	}
 
-	public static IHost getConnectionFor(String hostName)
-	{
+	public static IHost getConnectionFor(String hostName) {
+		
 		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IHost[] connections = sr.getHosts();
 		IHost unconnected = null;
-		for (int i = 0; i < connections.length; i++)
-		{
+		
+		for (int i = 0; i < connections.length; i++) {
+			
 			IHost con = connections[i];
-			if (con.getHostName().equalsIgnoreCase(hostName))
-			{
+			
+			if (con.getHostName().equalsIgnoreCase(hostName)) {
+				
 				boolean isConnected = false;
 				IConnectorService[] connectorServices = con.getConnectorServices();
+				
 				for (int c = 0; c < connectorServices.length  && !isConnected; c++)
 				{
 					IConnectorService serv = connectorServices[c];
 					isConnected = serv.isConnected();
 				}
-				if (isConnected)
+				
+				if (isConnected) {
 					return con;
-				else
+				}
+				else {
 					unconnected = con;
+				}
 			}
 		}
+		
 		return unconnected;
 	}
 	
-	public static IRemoteFileSubSystem getRemoteFileSubSystem(IHost host)
-	{
+	public static IRemoteFileSubSystem getRemoteFileSubSystem(IHost host) {
 		return RemoteFileUtility.getFileSubSystem(host);
 	}
 	
-	public URI getURIFor(IRemoteFile file)
-	{
+	public URI getURIFor(IRemoteFile file) {
 		IFileStore fstore = FileStoreConversionUtility.convert(null, file);
 		return fstore.toURI();
 	}
 	
-	public IFileStore getStore(URI uri)
-	{
+	public IFileStore getStore(URI uri) {
+		
 		Object obj = _fileStoreMap.get(uri);
-		if (obj != null)
-		{
-			RSEFileStoreRemoteFileWrapper store = (RSEFileStoreRemoteFileWrapper)obj;
+		
+		if (obj != null) {
+			
+			// RSEFileStoreRemoteFileWrapper store = (RSEFileStoreRemoteFileWrapper)obj;
+			RSEFileStore store = (RSEFileStore)obj;
+			
 			IRemoteFileSubSystem ss = store.getRemoteFileSubSystem();
-			if (!ss.isConnected())
-			{
+			
+			if (!ss.isConnected()) {
 				
-				try
-				{
+				try {
 					ss.connect();
 				}
-				catch (Exception e)
-				{			
+				catch (Exception e) {			
 					return null;
 				}
 			}
 			return store;
 		}
-		try 
-		{
+		
+		try  {
+			
 			String path = uri.getPath();
 			String hostName = uri.getHost();
 			IHost con = getConnectionFor(hostName);
-			if (con != null)
-			{
+			
+			if (con != null) {
+				
 				IRemoteFileSubSystem fs =  getRemoteFileSubSystem(con);
-				if (fs != null)
-				{
+				
+				if (fs != null) {
 					
-					if (!fs.isConnected())
-					{
-						
-					
+					if (!fs.isConnected()) {
 						fs.getConnectorService().acquireCredentials(false);
 						fs.getConnectorService().connect(new NullProgressMonitor());
-						//fs.connect(shell);
 					}
-					if (fs.isConnected())
-					{
+					
+					if (fs.isConnected()) {
 						IFileStore fstore = FileStoreConversionUtility.convert(null, fs.getRemoteFileObject(path));
 						_fileStoreMap.put(uri, fstore);
 						return fstore;
 					}
-				
 				}
 			}
 		} 
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 			return EFS.getNullFileSystem().getStore(uri);
-	
-			//return FileStoreConversionUtility.convert(null, new RemoteFileEmpty());
 		}
 		return null;
 	}
-	
 }

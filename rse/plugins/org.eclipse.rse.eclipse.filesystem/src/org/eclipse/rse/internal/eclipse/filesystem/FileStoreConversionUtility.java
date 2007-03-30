@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,9 +12,10 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Kushal Munir (IBM) - moved to internal package
  ********************************************************************************/
 
-package org.eclipse.rse.eclipse.filesystem;
+package org.eclipse.rse.internal.eclipse.filesystem;
 
 
 
@@ -26,7 +27,8 @@ public class FileStoreConversionUtility
 {
 	public static IFileStore convert(IFileStore parent, IRemoteFile remoteFile)
 	{
-		return new RSEFileStoreRemoteFileWrapper(parent, remoteFile);
+		// return new RSEFileStoreRemoteFileWrapper(parent, remoteFile);
+		return new RSEFileStore(parent, remoteFile);
 	}
 	
 	public static IFileStore[] convert(IFileStore parent, IRemoteFile[] remoteFiles)

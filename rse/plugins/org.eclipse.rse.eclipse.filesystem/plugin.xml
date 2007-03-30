@@ -12,7 +12,7 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-{Name} (company) - description of contribution.
+Kushal Munir (IBM) - Changed paths to reflect internal packages
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -20,7 +20,7 @@ Contributors:
          id="org.eclipse.rse.eclipse.filesystem"
          point="org.eclipse.core.filesystem.filesystems">
       <filesystem scheme="rse">
-         <run class="org.eclipse.rse.eclipse.filesystem.RSEFileSystem"/>
+         <run class="org.eclipse.rse.internal.eclipse.filesystem.RSEFileSystem"/>
       </filesystem>
    </extension>
    <extension
@@ -28,7 +28,7 @@ Contributors:
          point="org.eclipse.ui.ide.filesystemSupport">
       <filesystemContributor 
        scheme="rse"
-       class="org.eclipse.rse.eclipse.filesystem.RSEFileSystemContributor"
+       class="org.eclipse.rse.internal.eclipse.filesystem.RSEFileSystemContributor"
        label="RSE">
       </filesystemContributor>
    </extension>
@@ -43,7 +43,7 @@ Contributors:
          <action
                label="Create Remote Project"
                 tooltip="%ImportToProject.tooltip"
-               class="org.eclipse.rse.eclipse.filesystem.ui.actions.CreateRemoteProjectActionDelegate"
+               class="org.eclipse.rse.internal.eclipse.filesystem.ui.actions.CreateRemoteProjectActionDelegate"
                menubarPath="group.importexport"
                enablesFor="1"
                id="importToProject">

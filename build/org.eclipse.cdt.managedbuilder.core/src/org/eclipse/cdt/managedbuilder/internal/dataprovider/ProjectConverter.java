@@ -390,6 +390,15 @@ public class ProjectConverter implements ICProjectConverter {
 //			}
 			
 			ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
+			
+			if(des == null){
+				if(throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR,
+							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+							DataProviderMessages.getString("ProjectConverter.9")));  //$NON-NLS-1$
+				return false;
+			}
+
 			ICConfigurationDescription cfgs[] = des.getConfigurations();
 			if(cfgs.length != 1){
 				if(throwExceptions)

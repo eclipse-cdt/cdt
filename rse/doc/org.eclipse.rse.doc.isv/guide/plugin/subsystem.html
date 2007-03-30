@@ -33,6 +33,9 @@ object via its ID.<li><b>vendor</b>. Your company name, shown in properties dial
 <li><b>systemTypeIds</b>. A semi-colon separated list of system type IDs which this subsystem configuration supports. When a user creates a
 connection, this configuration will only be asked to create a subsystem for connections to systems of these types. Wildcards are 
 supported; in order to register against all system types, specify a single "*".
+<li><b>serviceType</b>. An optional semi-colon separated list of names and transports that can be used to match this service with remotelly advertised services through DNS-SD or any other supported service discovery protocol.
+The name would usually be the keyword used by the <A href="http://www.iana.org/assignments/port-numbers">IANA</A>  
+or by <A href="http://www.dns-sd.org/ServiceTypes.html">DNS SRV service types (RFC 2782)</A>.
 <li><b>category</b>. A name used to categorize this subsystem's functionality. Used by the <A href="popup.html">popupMenus</A>
 and <A href="propertypage.html">propertyPages</A> extension points to allow actions and property pages to be scoped to
 resources shown in subsystems of a particular category. Multiple subsystems can have the same category.

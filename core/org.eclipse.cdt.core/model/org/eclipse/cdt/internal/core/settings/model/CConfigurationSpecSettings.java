@@ -262,6 +262,9 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		return fRootStorageElement;
 	}
 	
+	void removeConfiguration() throws CoreException{
+		CProjectDescriptionManager.getInstance().removeStorage(fCfg.getProjectDescription(), fCfg.getId());
+	}
 	private CStorage getStorageBase() throws CoreException{
 		if(fStorage == null){
 			fStorage = new CStorage((InternalXmlStorageElement)getRootStorageElement());

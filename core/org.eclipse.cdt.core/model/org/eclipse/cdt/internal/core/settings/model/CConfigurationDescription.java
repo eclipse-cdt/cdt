@@ -402,6 +402,11 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 //		} catch (CoreException e) {
 //		}
 		
+		try {
+			getSpecSettings().removeConfiguration();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 		((CProjectDescription)getProjectDescription()).configurationRemoved(this);
 		remove();
 	}

@@ -1477,6 +1477,22 @@ public class CProjectDescriptionManager {
 		return element;
 	}
 	
+	void removeStorage(ICSettingsStorage storage, String cfgId) throws CoreException{
+		ICStorageElement rootElement = storage.getStorage(MODULE_ID, false);
+		if(rootElement != null){
+			ICStorageElement children[] = rootElement.getChildren();
+
+			for(int i = 0; i < children.length; i++){
+				if(CONFIGURATION.equals(children[i].getName())
+						&& cfgId.equals(children[i].getAttribute(CConfigurationSpecSettings.ID))){
+					rootElement.removeChild(children[i]);
+					break;
+				}
+			}
+		}
+	}
+
+	
 	CConfigurationData loadData(ICConfigurationDescription des, IProgressMonitor monitor) throws CoreException{
 		if(monitor == null)
 			monitor = new NullProgressMonitor();

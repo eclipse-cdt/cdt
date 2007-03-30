@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2007 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,16 @@
  * 
  * Contributors:
  *     Texas Instruments - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Iterator;
@@ -30,7 +35,7 @@ public final class MBSCustomPageData
 
 	private IWizardPage wizardPage = null;
 
-	private Runnable operation = null;
+	private IRunnableWithProgress operation = null;
 
 	private String id = null;
 
@@ -94,6 +99,21 @@ public final class MBSCustomPageData
 	 */
 	public MBSCustomPageData(String id, IWizardPage wizardPage,
 			Runnable operation, boolean isStock)
+	{
+		this(id, wizardPage, convertRunnable(operation), isStock);
+	}
+
+	/**
+	 * Contstructs a custom page data record
+	 * 
+	 * @param id - Unique ID of the page
+	 * @param wizardPage - the IWizardPage that is displayed in the wizard
+	 * @param operation - the Runnable() that is executed during the wizard's DoRunEpilogue() method, or null if no operation is specified
+	 * @param isStock - true if the page is a stock page provided by Managed Build, false otherwise.
+	 * @since 3.0
+	 */
+	public MBSCustomPageData(String id, IWizardPage wizardPage,
+			IRunnableWithProgress operation, boolean isStock)
 	{
 
 		this.id = id;
@@ -365,13 +385,24 @@ public final class MBSCustomPageData
 	}
 
 	/**
-	 * @return the java.lang.Runnable() operation associated with this page that should be run during
+	 * @return the {@link IRunnableWithProgress} operation associated with this page that should be run during
 	 * the wizard's doRunEpilogue() method.  This operation should only be executed if in fact the page
 	 * is visible.
 	 * @since 3.0
 	 */
-	public Runnable getOperation()
+	public IRunnableWithProgress getOperation()
 	{
 		return operation;
+	}
+	
+	private static IRunnableWithProgress convertRunnable(final Runnable runnable) {
+		if (runnable == null) {
+			return null;
+		}
+		return new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				runnable.run();
+			}
+		};
 	}
 }

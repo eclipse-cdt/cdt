@@ -8,6 +8,7 @@
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *     Intel Corporation - adaptation to new project model
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 
 /**
@@ -511,7 +513,7 @@ public final class MBSCustomPageManager
 	 */
 	public static void addStockPage(IWizardPage page, String pageID)
 	{
-		MBSCustomPageData pageData = new MBSCustomPageData(pageID, page, null, true);
+		MBSCustomPageData pageData = new MBSCustomPageData(pageID, page, (IRunnableWithProgress) null, true);
 		idToPageDataMap.put(pageID, pageData);
 		pageSet.add(pageData);
 	}
@@ -668,7 +670,7 @@ public final class MBSCustomPageManager
 	 * 
 	 * @since 3.0
 	 */
-	public static Runnable[] getOperations()
+	public static IRunnableWithProgress[] getOperations()
 	{
 		Set operationSet = new LinkedHashSet();
 
@@ -694,12 +696,12 @@ public final class MBSCustomPageManager
 		
 		Iterator iterator = operationSet.iterator();
 
-		Runnable[] operations = new Runnable[operationSet.size()];
+		IRunnableWithProgress[] operations = new IRunnableWithProgress[operationSet.size()];
 
 		int k = 0;
 		while (iterator.hasNext())
 		{
-			operations[k++] = (Runnable) iterator.next();
+			operations[k++] = (IRunnableWithProgress) iterator.next();
 		}
 
 		return operations;

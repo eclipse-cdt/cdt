@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2007 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Texas Instruments - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.ui.tests;
@@ -19,8 +20,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.managedbuilder.ui.tests.util.TestToolchain;
-import org.eclipse.cdt.managedbuilder.ui.wizards.CMainWizardPage;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  *   This class is responsible for testing the functionality of the custom page manager (MBSCustomPageManager)
@@ -872,9 +873,9 @@ public class TestCustomPageManager extends TestCase
 	}
 	
 	
-	public void testOperation()
+	public void testOperation() throws Exception
 	{
-		MBSCustomPageManager.getPageData(alwaysPresentPageName).getOperation().run();
+		MBSCustomPageManager.getPageData(alwaysPresentPageName).getOperation().run(new NullProgressMonitor());
 		
 		if(testFlag != true)
 		{

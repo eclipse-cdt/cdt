@@ -13,8 +13,16 @@ package org.eclipse.cdt.managedbuilder.ui.tests;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.ui.tests.util.TestProjectType;
+import org.eclipse.cdt.managedbuilder.ui.wizards.CDTProjectWizard;
+import org.eclipse.cdt.managedbuilder.ui.wizards.CMainWizardPage;
+import org.eclipse.cdt.managedbuilder.ui.wizards.CWizardHandler;
+import org.eclipse.cdt.managedbuilder.ui.wizards.IToolChainListListener;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
+import org.eclipse.cdt.managedbuilder.ui.wizards.NewModelProjectWizard;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
@@ -22,96 +30,99 @@ import org.eclipse.ui.PlatformUI;
  * Tests for the get/setSelectedProjectType() of CProjectPlatformPage.
  * @author Elias Volanakis
  */
-public class TestCProjectPlatformPage extends TestCase {
+public class TestCProjectPlatformPage extends TestCase implements IToolChainListListener {
 
 	//TODO: migrate to the new UI functionality
-//	private NewManagedProjectWizard wizard;
-//	private TestPage page;
-//	
-//	protected void setUp() throws Exception {
-//		MBSCustomPageManager.init();
-//		MBSCustomPageManager.loadExtensions();
-//		wizard = new NewManagedProjectWizard();
-//		page = new TestPage(wizard);
-//		wizard.addPages();
-//	}
-//	
-//	protected void tearDown() throws Exception {
-//		page.dispose();
-//		page = null;
-//		wizard = null;
-//	}
-//	
-//	
-//	// testing methods
-//	//////////////////
-//	
-//	/* Test the new page, set selection, create page lifecycle. */
-//	public void testSelectedProjectType1() throws Exception {
-//		page.createControl(getShell());
-//		final IProjectType type2 = page.getSecondType();
-//		
-//		TestPage page2 = new TestPage(wizard);
-//		page2.setSelectedProjectType(type2);
-//		page2.createControl(getShell());
-//		assertEquals(type2, page2.getSelectedProjectType());
-//		page2.dispose();
-//	}
-//	
-//	/* Test the new page, create page, set selection lifecycle. */
-//	public void testSelectedProjectType2() throws Exception {
-//		// test get null
-//		assertNull(page.getSelectedProjectType());
-//		// test set null
-//		page.setSelectedProjectType(null);
-//		assertNull(page.getSelectedProjectType()); // null, since no UI created
-//
-//		// create ui
-//		page.createControl(getShell());
-//		final IProjectType type1 = page.getFirstType();
-//		
-//		// default behavior if selection set to null -> select first item 
-//		assertEquals(type1, page.getSelectedProjectType());
-//		// set 2nd element from project types list
-//		final IProjectType type2 = page.getSecondType();
-//		assertNotNull(type2);
-//		page.setSelectedProjectType(type2);
-//		assertEquals(type2, page.getSelectedProjectType());
-//	}
-//	
-//	/* 
-//	 * Tests that setting the selection to a projectType thats not on the list,
-//	 * is handled correctly.
-//	 */
-//	public void testSelectedProjectType3() throws Exception {
-//		IProjectType testType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu21.so");
-//		assertNotNull(testType);
-//		assertTrue(testType.isTestProjectType());
-//		page.setSelectedProjectType(testType);
-//		page.createControl(getShell());
-//		// no selection made
-//		assertNull(null,page.getSelectedProjectType());
-//		assertFalse(page.canFlipToNextPage());
-//	}
-//	
-//	
-//	// helping methods and classes
-//	//////////////////////////////
-//	
-//	private Shell getShell() {
-//		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-//	}
-//	
-//	class TestPage extends CProjectPlatformPage {
-//		TestPage(NewManagedProjectWizard wizard) throws Exception {
-//			super(TestCProjectPlatformPage.class.getName(), wizard);
-//		}
-//		IProjectType getFirstType() {
-//			return (IProjectType) projectTypes.get(0);
-//		}
-//		IProjectType getSecondType() {
-//			return (IProjectType) projectTypes.get(1);
-//		}
-//	}
+	private CDTProjectWizard wizard;
+	private TestPage page;
+	private boolean currentState=false;
 	
+	protected void setUp() throws Exception {
+		MBSCustomPageManager.init();
+		MBSCustomPageManager.loadExtensions();
+		wizard = new CDTProjectWizard();
+		page = new TestPage(wizard);
+		wizard.addPages();
+	}
+	
+	protected void tearDown() throws Exception {
+		page.dispose();
+		page = null;
+		wizard = null;
+	}
+	
+	
+	// testing methods
+	//////////////////
+	
+	/* Test the new page, set selection, create page lifecycle. */
+	public void testHandler1() throws Exception {
+		IProjectType pt = new TestProjectType();
+		CWizardHandler h = new CWizardHandler("name", pt, null, null, this);
+		assertEquals(0, h.getToolChainsCount());
+		/*
+		IToolchain tc = new Toolchain(new TestFolderInfo());
+		IToolChain xz;
+		tc.setId("test1");
+		h.addTc(tc);
+		// Test toolchain cannot be added
+		assertEquals(h.getToolChainsCount(), 1);
+		tc = new TestToolchain();
+		h.addTc(tc);
+		assertEquals(h.getToolChainsCount(), 2);
+		IToolChain[] tcs = h.getSelectedToolChains();
+		assertEquals(tcs.length, 33);
+		*/
+	}
+	
+	/* Test the new page, create page, set selection lifecycle. */
+	public void testProject() throws Exception {
+		
+		IPath p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+		/*
+		NewModelProjectWizard wiz = new CDTProjectWizard();
+		/*
+		String s = System.getenv("TEMP");
+		
+		System.out.println(s);
+		assertNotNull(wiz);
+		/*
+		IProject pr1 = wiz.createIProject("test1", null);
+		assertNotNull(pr1);
+		
+		IProject pr2 = wiz.createIProject("test2", p.append("test2"));
+		assertNotNull(pr2);
+		*/
+	}
+	
+	/* 
+	 * Tests that setting the selection to a projectType thats not on the list,
+	 * is handled correctly.
+	 */
+	public void testSelectedProjectType3() throws Exception {
+	}
+	
+	
+	// helping methods and classes
+	//////////////////////////////
+	
+	private Shell getShell() {
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+	}
+	
+	class TestPage extends CMainWizardPage {
+		TestPage(CDTProjectWizard wizard) throws Exception {
+			super(CMainWizardPage.class.getName(), null);
+		}
+		IProjectType getFirstType() {
+			return null; //(IProjectType) projectTypes.get(0);
+		}
+		IProjectType getSecondType() {
+			return null; //(IProjectType) projectTypes.get(1);
+		}
+	}
+
+	// methods of IToolChainListListener
+	public boolean isCurrent() { return currentState; }
+	public void toolChainListChanged(int count) {}
 }

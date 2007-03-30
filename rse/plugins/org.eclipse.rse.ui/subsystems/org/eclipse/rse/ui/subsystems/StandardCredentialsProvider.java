@@ -29,6 +29,7 @@ import org.eclipse.rse.ui.dialogs.SystemChangePasswordDialog;
 import org.eclipse.rse.ui.dialogs.SystemPasswordPromptDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.ISystemValidator;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -329,7 +330,8 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	}
 
 	private Shell getShell() {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		Display display = Display.getDefault();
+		Shell shell = new Shell(display, SWT.APPLICATION_MODAL);
 		return shell;
 	}
 

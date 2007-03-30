@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.settings.model;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -44,6 +43,8 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 	private ICProjectDescription fProjDes;
 	private ICConfigurationDescription fCfgDes;
 	private Map fIdToLanguageSettingsMap = Collections.synchronizedMap(new HashMap());
+	private String fCurrentFileDescriptionId;
+	private IScannerInfo fCurrentFileScannerInfo;
 	private static final ScannerInfo INEXISTENT_SCANNER_INFO = new ScannerInfo();
 	private boolean fInited;
 	
@@ -61,6 +62,8 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 		}
 		
 		fIdToLanguageSettingsMap.clear();
+		fCurrentFileDescriptionId = null;
+		fCurrentFileScannerInfo = null;
 	}
 
 	public IProject getProject(){
@@ -75,9 +78,10 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 			return INEXISTENT_SCANNER_INFO;
 
 		ICLanguageSetting setting = null;
+		ICResourceDescription rcDes = null;
 		if(resource.getType() != IResource.PROJECT){
 			IPath rcPath = resource.getProjectRelativePath();
-			ICResourceDescription rcDes = fCfgDes.getResourceDescription(rcPath, false);
+			rcDes = fCfgDes.getResourceDescription(rcPath, false);
 	
 			if(rcDes.getType() == ICSettingBase.SETTING_FILE){
 				setting = ((ICFileDescription)rcDes).getLanguageSetting();
@@ -92,18 +96,39 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 				}
 			}
 		}
-		return getScannerInfo(setting);
+		return getScannerInfo(rcDes, setting);
 	}
 	
-	private IScannerInfo getScannerInfo(ICLanguageSetting ls){
+	private IScannerInfo getScannerInfo(ICResourceDescription rcDes, ICLanguageSetting ls){
 		Object mapKey = ls != null ? ls.getId() : null;
 //		if(ls == null)
 //			return INEXISTENT_SCANNER_INFO;
-			
-		IScannerInfo info = (IScannerInfo)fIdToLanguageSettingsMap.get(mapKey);
+		boolean useMap = rcDes == null || rcDes.getType() == ICSettingBase.SETTING_FOLDER;
+		
+		IScannerInfo info;
+		if(useMap)
+			info = (IScannerInfo)fIdToLanguageSettingsMap.get(mapKey);
+		else {
+			if(fCurrentFileScannerInfo != null){
+				if(rcDes.getId().equals(fCurrentFileDescriptionId))
+					info = fCurrentFileScannerInfo;
+				else {
+					info = null;
+					fCurrentFileScannerInfo = null;
+					fCurrentFileDescriptionId = null;
+				}
+			} else {
+				info = null;
+			}
+		}
 		if(info == null){
 			info = createScannerInfo(ls);
-			fIdToLanguageSettingsMap.put(mapKey, info);
+			if(useMap)
+				fIdToLanguageSettingsMap.put(mapKey, info);
+			else {
+				fCurrentFileScannerInfo = info;
+				fCurrentFileDescriptionId = rcDes.getId();
+			}
 		}
 		return info;
 	}

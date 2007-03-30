@@ -32,7 +32,6 @@ import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * The {@link StandardCredentialsProvider} is an extension of

@@ -14,22 +14,30 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.propertypages;
+package org.eclipse.rse.internal.logging;
 
-import org.eclipse.rse.internal.ui.logging.LoggingPreferencePage;
-import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.logging.Logger;
 
 /**
- * The logging preference page for Remote Systems.
+ * This class initializes logging preferences.
  */
-public class SystemLoggingPreferencePage extends LoggingPreferencePage {
+public class LoggingPreferenceInitializer extends AbstractPreferenceInitializer {
 
 	/**
-	 * @see org.eclipse.rse.logging.LoggingPreferencePage#getPlugin()
+	 * Constructor.
 	 */
-	protected AbstractUIPlugin getPlugin() {
-		return RSEUIPlugin.getDefault();
+	public LoggingPreferenceInitializer() {
+		super();
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
+	 */
+	public void initializeDefaultPreferences() {
+		Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
+		prefs.setDefault(Logger.LOGGING_LEVEL, Logger.LOG_ERROR);
 	}
 }

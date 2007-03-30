@@ -7,7 +7,6 @@ Bundle-Activator: org.eclipse.rse.core.RSECorePlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
- org.eclipse.rse.logging,
  org.eclipse.rse.services
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.core,
@@ -18,9 +17,11 @@ Export-Package: org.eclipse.rse.core,
  org.eclipse.rse.internal.core;x-internal:=true,
  org.eclipse.rse.internal.core.filters;x-internal:=true,
  org.eclipse.rse.internal.core.subsystems;x-internal:=true,
+ org.eclipse.rse.internal.logging,
  org.eclipse.rse.internal.persistence;x-internal:=true,
  org.eclipse.rse.internal.persistence.dom;x-internal:=true,
  org.eclipse.rse.internal.references;x-internal:=true,
+ org.eclipse.rse.logging,
  org.eclipse.rse.persistence,
  org.eclipse.rse.persistence.dom
 Bundle-Vendor: %providerName

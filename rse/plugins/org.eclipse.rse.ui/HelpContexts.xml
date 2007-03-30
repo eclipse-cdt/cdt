@@ -967,4 +967,14 @@ From here you can manage the certificates that the RSE client uses when connecti
 </description>
 </context>
 
+<!-- RSE logging -->
+<context id="rsel0000">
+<description>This page allows you to specify the Remote System Explorer logging preferences.
+
+You can specify what severity of messages you wish to log - from informational messages, to warnings, to errors. If it is available, the debug setting provides the most detail.
+
+Messages are logged to the .log file in the .metadata folder of the workspace.
+</description>
+</context>
+
 </contexts>

@@ -90,7 +90,7 @@ public class ProtocolFactory {
 	 * Gets the IProtocol implementation of a protocol given its name
 	 * 
 	 * @param protocolName
-	 * Name of the protocolo 
+	 * Name of the protocol 
 	 * @return
 	 * IProtocol implementation of the protocol matching the given name. Null if the protocol cannot be found.
 	 * @throws CoreException

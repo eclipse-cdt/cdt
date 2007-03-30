@@ -101,6 +101,13 @@ public final class ChunkCache {
 	}
 
 	/**                                                                           
+	 * Returns the maximum size of the chunk cache in bytes.
+	 */                                                                           
+	public synchronized long getMaxSize() {
+		return (long) fPageTable.length * Database.CHUNK_SIZE;
+	}
+
+	/**                                                                           
 	 * Clears the page table and changes it to hold chunks with
 	 * maximum total memory of <code>maxSize</code>.       
 	 * @param maxSize the total size of the chunks in bytes.                
@@ -113,6 +120,7 @@ public final class ChunkCache {
 			System.arraycopy(fPageTable, 0, newTable, 0, oldLength);
 			fTableIsFull= false;
 			fPointer= oldLength;
+			fPageTable= newTable;
 		}
 		else {
 			for (int i=newLength; i<oldLength; i++) {
@@ -124,6 +132,7 @@ public final class ChunkCache {
 			System.arraycopy(fPageTable, 0, newTable, 0, newLength);
 			fTableIsFull= true;
 			fPointer= 0;
+			fPageTable= newTable;
 		}       
 	}                                                                             
 

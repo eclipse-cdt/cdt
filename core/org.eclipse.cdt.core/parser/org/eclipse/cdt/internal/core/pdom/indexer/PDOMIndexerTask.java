@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.cdt.internal.core.pdom.PDOMWriter;
+import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -307,9 +308,12 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 				long hits= index.getCacheHits();
 				long tries= misses+hits;
 				double missPct= tries==0 ? 0.0 : (double) misses / (double) tries;
-				System.out.println(name + " Cache: " //$NON-NLS-1$
-					+ hits + " hits, "  //$NON-NLS-1$
-					+ misses + "(" + nf.format(missPct)+ ") misses."); //$NON-NLS-1$ //$NON-NLS-2$
+				nf.setMinimumFractionDigits(4);
+				nf.setMaximumFractionDigits(4);
+				System.out.println(name + " Cache[" //$NON-NLS-1$
+					+ ChunkCache.getSharedInstance().getMaxSize() / 1024 / 1024 + "mb]: " + //$NON-NLS-1$
+					+ hits + " hits, "   //$NON-NLS-1$
+					+ misses + "(" + nf.format(missPct)+ ") misses.");   //$NON-NLS-1$//$NON-NLS-2$
 			}
 		}
 	}

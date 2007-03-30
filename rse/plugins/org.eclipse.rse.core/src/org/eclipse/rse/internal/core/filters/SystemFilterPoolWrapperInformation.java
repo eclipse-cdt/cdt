@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.filters;
+package org.eclipse.rse.internal.core.filters;
 
 import java.util.Vector;
 

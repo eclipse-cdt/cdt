@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.filters;
+package org.eclipse.rse.internal.core.filters;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,8 +23,8 @@ import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.SystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.filters.SystemFilterReference;
 
 
 

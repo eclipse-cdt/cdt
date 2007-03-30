@@ -14,19 +14,14 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.filters;
+package org.eclipse.rse.core.filters;
 import java.util.HashMap;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.rse.core.filters.ISystemFilter;
-import org.eclipse.rse.core.filters.ISystemFilterConstants;
-import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
-import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemContentsType;
-import org.eclipse.rse.internal.filters.SystemFilter;
+import org.eclipse.rse.internal.core.filters.SystemFilter;
 
 
 /**

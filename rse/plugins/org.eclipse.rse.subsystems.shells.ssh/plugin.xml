@@ -8,22 +8,24 @@ http://www.eclipse.org/legal/epl-v10.html
 
 Contributors: 
 Martin Oberhuber - initial API and implementation 
+Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
 -->
 <?eclipse version="3.1"?>
 <plugin>
 	<extension
 		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
-			systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.ssh"
-			name="%SshShellSubsystemName"
-			description="%SshShellSubsystemDescription"
-			iconlive="icons/full/obj16/systemcommandslive_obj.gif"
-			icon="icons/full/obj16/systemcommands_obj.gif"
-			category="shells"
-			class="org.eclipse.rse.subsystems.shells.ssh.SshShellSubSystemConfiguration"
-			vendor="%providerName"
-			priority="300"
-			id="ssh.shells">
+        category="shells"
+        class="org.eclipse.rse.subsystems.shells.ssh.SshShellSubSystemConfiguration"
+        description="%SshShellSubsystemDescription"
+        icon="icons/full/obj16/systemcommands_obj.gif"
+        iconlive="icons/full/obj16/systemcommandslive_obj.gif"
+        id="ssh.shells"
+        name="%SshShellSubsystemName"
+        priority="300"
+        serviceType="_ssh._tcp"
+        systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.ssh"
+        vendor="%providerName">
 		</configuration>
 	</extension>
 

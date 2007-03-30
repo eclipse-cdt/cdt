@@ -12,7 +12,7 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-{Name} (company) - description of contribution.
+Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -22,16 +22,17 @@ Contributors:
    <extension
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
-            systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.windows"
-            name="%Shells"
-            description="%ShellsDescription"
-            iconlive="icons/full/obj16/systemcommandslive_obj.gif"
-            icon="icons/full/obj16/systemcommands_obj.gif"
             category="shells"
             class="org.eclipse.rse.subsystems.shells.dstore.DStoreShellSubSystemConfiguration"
-            vendor="%providerName"
+            description="%ShellsDescription"
+            icon="icons/full/obj16/systemcommands_obj.gif"
+            iconlive="icons/full/obj16/systemcommandslive_obj.gif"
+            id="dstore.shells"
+            name="%Shells"
             priority="300"
-            id="dstore.shells">
+            serviceType="_dstore-shell._tcp"
+            systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.windows"
+            vendor="%providerName">
          </configuration>
 
     </extension>

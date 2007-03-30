@@ -12,7 +12,7 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-{Name} (company) - description of contribution.
+Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -25,16 +25,17 @@ Contributors:
    <extension
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
-            systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix"
-            name="%Processes"
-            description="%ProcessesDescription"
-            iconlive="icons/full/obj16/processsubsystemlive_obj.gif"
-            icon="icons/full/obj16/processsubsystem_obj.gif"
             category="processes"
             class="org.eclipse.rse.subsystems.processes.dstore.DStoreProcessSubSystemConfiguration"
-            vendor="%providerName"
+            description="%ProcessesDescription"
+            icon="icons/full/obj16/processsubsystem_obj.gif"
+            iconlive="icons/full/obj16/processsubsystemlive_obj.gif"
+            id="dstore.processes"
+            name="%Processes"
             priority="200"
-            id="dstore.processes">
+            serviceType="_dstore-proc._tcp"
+            systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix"
+            vendor="%providerName">
       </configuration>
       </extension>
   

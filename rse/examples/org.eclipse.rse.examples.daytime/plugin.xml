@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/epl-v10.html
 
 Contributors: 
 Martin Oberhuber (Wind River) - initial API and implementation 
+Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -42,16 +43,17 @@ Martin Oberhuber (Wind River) - initial API and implementation
 	<extension
 		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
-			systemTypeIds="org.eclipse.rse.examples.daytime.systemtype;org.eclipse.rse.systemtype.unix"
-			name="%DaytimeSubsystemName"
-			description="%DaytimeDescription"
-			iconlive="icons/full/obj16/daytimelive_obj.gif"
-			icon="icons/full/obj16/daytime_obj.gif"
-			category="daytime"
-			class="org.eclipse.rse.examples.daytime.subsystems.DaytimeSubSystemConfiguration"
-			vendor="%providerName"
-			priority="40000"
-			id="daytime.tcp">
+        category="daytime"
+        class="org.eclipse.rse.examples.daytime.subsystems.DaytimeSubSystemConfiguration"
+        description="%DaytimeDescription"
+        icon="icons/full/obj16/daytime_obj.gif"
+        iconlive="icons/full/obj16/daytimelive_obj.gif"
+        id="daytime.tcp"
+        name="%DaytimeSubsystemName"
+        priority="40000"
+        serviceType="_daytime._tcp"
+        systemTypeIds="org.eclipse.rse.examples.daytime.systemtype;org.eclipse.rse.systemtype.unix"
+        vendor="%providerName">
 		</configuration>
 	</extension>
 </plugin> 

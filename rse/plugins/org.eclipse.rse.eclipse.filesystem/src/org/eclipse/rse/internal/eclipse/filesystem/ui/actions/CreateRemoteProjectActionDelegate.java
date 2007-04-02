@@ -98,7 +98,7 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 		catch (CoreException e)
 		{
 			e.printStackTrace();
-			SystemBasePlugin.logError("Error creating temp project", e);
+			SystemBasePlugin.logError("Error creating temp project", e); //$NON-NLS-1$
 		}
 		catch (Exception e)
 		{

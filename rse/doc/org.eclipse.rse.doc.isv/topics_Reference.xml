@@ -36,8 +36,6 @@
 	    </topic>
 	    <topic label="Logging" href="provisional_api.html">
 	    	<topic label="org.eclipse.rse.logging" href="reference/api/org/eclipse/rse/logging/package-summary.html"/>
-			<topic label="org.eclipse.rse.logging.ui" href="reference/api/org/eclipse/rse/logging/ui/package-summary.html"/>
-			<topic label="org.eclipse.rse.logging.performance" href="reference/api/org/eclipse/rse/logging/performance/package-summary.html"/>
 	    </topic>
 		<topic label="Model and Persistence" href="provisional_api.html">
 			<topic label="org.eclipse.rse.core.model" href="reference/api/org/eclipse/rse/core/model/package-summary.html"/>

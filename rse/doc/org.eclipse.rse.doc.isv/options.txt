@@ -3,12 +3,10 @@
 -charset "iso-8859-1"
 -source 1.4
 -sourcepath "../org.eclipse.rse.connectorservice.dstore/src
-;../org.eclipse.rse.core/persistence
 ;../org.eclipse.rse.core/src
 ;../org.eclipse.rse.dstore.security/src
 ;../org.eclipse.rse.eclipse.filesystem/src
 ;../org.eclipse.rse.files.ui/src
-;../org.eclipse.rse.logging/src
 ;../org.eclipse.rse.processes.ui/src
 ;../org.eclipse.rse.services/src
 ;../org.eclipse.rse.services/clientserver
@@ -90,8 +88,6 @@ org.eclipse.rse.files.ui.widgets
 org.eclipse.rse.files.ui.wizards
 org.eclipse.rse.filters
 org.eclipse.rse.logging
-org.eclipse.rse.logging.performance
-org.eclipse.rse.logging.ui
 org.eclipse.rse.model
 org.eclipse.rse.persistence
 org.eclipse.rse.persistence.dom

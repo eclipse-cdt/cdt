@@ -51,13 +51,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.rse.logging"
-         download-size="12"
-         install-size="28"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.rse.processes.ui"
          download-size="22"
          install-size="61"

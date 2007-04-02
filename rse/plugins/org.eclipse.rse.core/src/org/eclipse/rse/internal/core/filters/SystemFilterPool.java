@@ -52,7 +52,7 @@ import org.eclipse.rse.internal.references.SystemPersistableReferencedObject;
  * @lastgen class SystemFilterPoolImpl extends SystemPersistableReferencedObjectImpl implements SystemFilterPool, SystemFilterSavePolicies, SystemFilterConstants, SystemFilterContainer, IAdaptable
  */
 public class SystemFilterPool extends SystemPersistableReferencedObject 
-       implements ISystemFilterPool, ISystemFilterSavePolicies, ISystemFilterConstants, ISystemFilterContainer, IAdaptable
+       implements ISystemFilterPool, ISystemFilterSavePolicies, ISystemFilterConstants, IAdaptable
 {
 	
 	/**

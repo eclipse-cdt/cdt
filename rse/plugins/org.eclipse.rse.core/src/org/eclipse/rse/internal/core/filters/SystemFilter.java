@@ -46,7 +46,7 @@ import org.eclipse.rse.internal.references.SystemReferencedObject;
 /** 
  * @lastgen class SystemFilterImpl extends SystemReferencedObjectImpl implements SystemFilter, SystemReferencedObject, SystemFilterContainer, IAdaptable {}
  */
-public class SystemFilter extends SystemReferencedObject implements ISystemFilter, IRSEReferencedObject, ISystemFilterContainer, IAdaptable
+public class SystemFilter extends SystemReferencedObject implements ISystemFilter, IRSEReferencedObject, IAdaptable
 {
 	
 	/**

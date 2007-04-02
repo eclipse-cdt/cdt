@@ -510,6 +510,8 @@ implements
 			if (cfgDescs == null || cfgDescs.length == 0) return;
 		}
 
+		Arrays.sort(cfgDescs, new CDTListComparator());
+		
 		// Clear and replace the contents of the selector widget
 		configSelector.removeAll();
 		for (int i = 0; i < cfgDescs.length; ++i) {

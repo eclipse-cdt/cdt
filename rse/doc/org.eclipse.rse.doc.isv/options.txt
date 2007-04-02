@@ -31,7 +31,8 @@
 ;../org.eclipse.rse.ui/subsystems
 ;../org.eclipse.rse.ui/systems"
 -d reference/api
--classpath @rt@
+-bootclasspath @rt@
+-classpath @cp@
 ;../org.eclipse.dstore.core/@dot
 ;../org.eclipse.dstore.core/bin
 ;../org.eclipse.dstore.extra/@dot

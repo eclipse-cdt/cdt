@@ -122,7 +122,8 @@
 		</condition>
 
 		<replaceregexp file="${basedir}/${optionsFile}" flags="g" match="(\r\n?|\n);" replace="${argsListDelimiter}" />
-		<replace file="${basedir}/${optionsFile}" token="@rt@" value="${bootclasspath}${argsListDelimiter}${javadoc.classpath}" />
+		<replace file="${basedir}/${optionsFile}" token="@rt@" value="${bootclasspath}" />
+		<replace file="${basedir}/${optionsFile}" token="@cp@" value="${javadoc.classpath}" />
 		<replace file="${basedir}/${optionsFile}" token="@baseLocation@" value="${safeBaseLocation}" />
 		<replace file="${basedir}/${optionsFile}" token="@javadoc.link.location@" value="${javadoc.link.location}" />
 

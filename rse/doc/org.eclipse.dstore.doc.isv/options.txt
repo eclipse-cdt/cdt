@@ -3,7 +3,8 @@
 -sourcepath "../org.eclipse.dstore.core/src
 ;../org.eclipse.dstore.extra/src"
 -d reference/api
--classpath @rt@
+-bootclasspath @rt@
+-classpath @cp@
 -breakiterator
 -use
 -splitIndex

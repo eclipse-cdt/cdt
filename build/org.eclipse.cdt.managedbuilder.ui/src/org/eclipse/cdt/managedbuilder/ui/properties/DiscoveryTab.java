@@ -71,9 +71,6 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     private static final String SC_SELECTED_PROFILE_COMBO = PREFIX + ".scGroup.selectedProfile.combo"; //$NON-NLS-1$
     private static final int DEFAULT_HEIGHT = 110;
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 20 };
-    
-    private static final String PATTERN_PER_FILE = "PerFileProfile"; //$NON-NLS-1$ 
-    private static final String PATTERN_PER_PROJ = "PerProjectProfile"; //$NON-NLS-1$ 
 
     private Table resTable;
     private Button scEnabledButton;
@@ -286,9 +283,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
             buildInfo.setSelectedProfileId(profileId); // needs to create page
     		for (Iterator it2 = pagesList.iterator(); it2.hasNext(); ) {
     			DiscoveryProfilePageConfiguration p = (DiscoveryProfilePageConfiguration)it2.next();
-    			if (p != null) {
+    			if (p != null && p.profId.equals(profileId)) {
     				AbstractDiscoveryPage pg = p.getPage();
-    				if (pg != null && p.isProfileAccepted(profileId)) {
+    				if (pg != null) {
     					realPages[counter] = pg;
     					pg.setContainer(wrapper);
     					pg.createControl(profileComp);
@@ -336,37 +333,20 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
      */
     protected static class DiscoveryProfilePageConfiguration {
         IConfigurationElement fElement;
-        private String pattern, name;
+        private String profId, name;
         
         protected DiscoveryProfilePageConfiguration(IConfigurationElement element) {
             fElement = element;
-            String s = fElement.getAttribute(PROFILE_ID);
-            // extracting pattern from Profile Id
-            // for compatibility with make.ui.
-            if (s != null && s.indexOf(PATTERN_PER_PROJ) >= 0)
-            	pattern = PATTERN_PER_PROJ;
-            else
-            	pattern = PATTERN_PER_FILE;            	
-//            pattern = fElement.getAttribute(PROFILE_PATTERN);
+            profId = fElement.getAttribute(PROFILE_ID);
             name = fElement.getAttribute(PROFILE_NAME);
         }
-        protected String getPattern() { return pattern; }
         protected String getName() {  return name; }
-
-        private boolean isProfileAccepted(String id) { 
-        	return (id.indexOf(getPattern()) > -1);
-        }
         
         private AbstractDiscoveryPage getPage() 
         {
-        	AbstractDiscoveryPage discoveryPage = null;
            	try {
-           		discoveryPage = (org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage) fElement.createExecutableExtension("class"); //$NON-NLS-1$
-           	} catch (CoreException e) {}
-            if (discoveryPage == null) {
-//               	System.out.println(Messages.getString("DiscoveryTab.13") + fElement.getAttribute("class")); //$NON-NLS-1$  //$NON-NLS-2$
-            }
-            return discoveryPage;
+           		return (AbstractDiscoveryPage) fElement.createExecutableExtension("class"); //$NON-NLS-1$
+           	} catch (CoreException e) { return null; }
         }
     }
 
@@ -493,7 +473,6 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			if (!l2.contains(it.next())) return false;
 		return true;
 	}
-	
 	
 	public boolean canBeVisible() {
 		if (page.isForProject() || page.isForPrefs()) return true;

@@ -1,9 +1,9 @@
 package org.eclipse.dd.dsf.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 
 /**
  * The View Model adapter handles the layout of a given data model within a 
@@ -14,6 +14,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactor
 @ThreadSafe
 @SuppressWarnings("restriction")
 public interface IVMAdapter
-    extends IElementContentProvider, IModelProxyFactoryAdapter, IColumnPresentationFactoryAdapter 
+    extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory 
 {
 }

@@ -33,7 +33,7 @@ import org.eclipse.dd.dsf.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
@@ -42,7 +42,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -392,11 +391,11 @@ abstract public class AbstractVMProvider implements IVMProvider
      * the tree/table, so the VMProvider must be configured to own the root element 
      * in the view in order for this setting to be effective.   
      * <p>
-     * Note: since the IColumnEditorFactoryAdapter interface is synchronous, and since
+     * Note: since the IColumnEditorFactory interface is synchronous, and since
      * column info is fairly static, this method is thread-safe, and it will
      * not be called on the executor thread.
      * 
-     * @see IColumnPresentationFactoryAdapter#createColumnPresentation(IPresentationContext, Object)
+     * @see IColumnPresentationFactory#createColumnPresentation(IPresentationContext, Object)
      */
     public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
         return null;
@@ -411,11 +410,11 @@ abstract public class AbstractVMProvider implements IVMProvider
      * the tree/table, so the VMProvider must be configured to own the root element 
      * in the view in order for this setting to be effective.   
      * <p>
-     * Note: since the IColumnEditorFactoryAdapter interface is synchronous, and since
+     * Note: since the IColumnEditorFactory interface is synchronous, and since
      * column info is fairly static, this method is thread-safe, and it will
      * not be called on the executor thread.
      * 
-     * @see IColumnEditorFactoryAdapter#getColumnEditorId(IPresentationContext, Object)
+     * @see IColumnEditorFactory#getColumnEditorId(IPresentationContext, Object)
      */
     public String getColumnPresentationId(IPresentationContext context, Object element) {
         return null;

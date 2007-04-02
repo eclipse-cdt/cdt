@@ -1,9 +1,9 @@
 package org.eclipse.dd.dsf.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
@@ -14,7 +14,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 @ThreadSafe
 @SuppressWarnings("restriction")
 public interface IVMProvider 
-    extends IElementContentProvider, IModelProxyFactoryAdapter, IColumnPresentationFactoryAdapter 
+    extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory 
 {
     /**
      * Returns the root layout node that is configured in this provider.  

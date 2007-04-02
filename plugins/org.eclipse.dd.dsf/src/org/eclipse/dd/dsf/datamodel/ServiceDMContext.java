@@ -12,11 +12,9 @@ package org.eclipse.dd.dsf.datamodel;
 
 
 /**
- * The Data Model Context representing the owner service.  The service DM Context
+ * The Data Model Context representing the owner service, which is returned by 
+ * {@link IDMService#getServiceContext()} methods.  The service DM Context
  * should be the parent of all contexts originating from the given service.
- * <p>
- * Note: there should be only one instance of ServiceContext per service, so there
- * is no need to implement the equals() methods.
  */
 public class ServiceDMContext<V extends IDMService> extends AbstractDMContext<V> {
     String fServiceDMID;
@@ -28,5 +26,15 @@ public class ServiceDMContext<V extends IDMService> extends AbstractDMContext<V>
     
     @Override
     public String toString() { return baseToString() + fServiceDMID; }
+
+    @Override
+    public boolean equals(Object obj) { 
+        return obj instanceof ServiceDMContext<?> && fServiceDMID.equals(((ServiceDMContext<?>)obj).fServiceDMID); 
+    }
+    
+    @Override
+    public int hashCode() { 
+        return fServiceDMID.hashCode(); 
+    }
 
 }

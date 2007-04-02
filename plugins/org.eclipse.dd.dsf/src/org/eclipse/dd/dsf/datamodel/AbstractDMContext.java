@@ -15,9 +15,17 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.service.DsfSession;
 
 /**
- * Base implementation of the IDMContext interface.  Most functionality here 
- * is centered around comparing DMContexts, as this is a critical to make the 
- * views work correctly.
+ * Base implementation of the IDMContext interface.  There are two pieces of 
+ * functionality here: <br>
+ * 1) The {@link #getAdapter(Class)} implementation which retrieves model
+ * adapters registered with the session. <br>
+ * 2) Methods to help compare DM Contexts.  <br>
+ * <p>
+ * Note: The {@link #equals(Object)} and {@link #hashCode()} methods are 
+ * made abstract to force the deriving classes to provide a proper 
+ * implementation.  Data Model Context objects are meant to be used as handles, 
+ * therefore a proper equals implementation is critical. 
+ * </p>
  * @param <V> Data Model data type that this context is for.
  */
 @Immutable
@@ -117,4 +125,17 @@ abstract public class AbstractDMContext<V extends IDMData> extends PlatformObjec
         return retVal;
     }
 
+    /**
+     * Deriving classes must implement proper equals and hashCode operations 
+     * based on context data.
+     */
+    @Override
+    abstract public boolean equals(Object obj);
+    
+    /**
+     * Deriving classes must implement proper equals and hashCode operations 
+     * based on context data.
+     */
+    @Override
+    abstract public int hashCode();
 }

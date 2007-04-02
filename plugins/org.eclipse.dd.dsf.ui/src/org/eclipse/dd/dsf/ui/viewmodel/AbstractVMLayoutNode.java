@@ -24,12 +24,12 @@ import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
@@ -344,7 +344,17 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         update.done();
     }
     
-    public static class AbstractVMContext implements IVMContext {
+    /**
+     * Implementation of basic View Model Context node functionality.  The main
+     * purpose of the VMC wrapper is to re-direct adapter queries to the IVMAdapter
+     * and the layout node that the given context was created by.
+     * <p> 
+     * Note: Deriving classes must override the Object.equals/hashCode methods.
+     * This is because the VMC objects are just wrappers that are created
+     * by the view model on demand, so the equals methods must use the object
+     * being wrapped by the VMC to perform a meaningful comparison.    
+     */
+    abstract public static class AbstractVMContext implements IVMContext {
         protected final IVMAdapter fVMAdapter;
         protected final IVMLayoutNode fLayoutNode;
         
@@ -359,8 +369,8 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
          * IAdapter implementation returns the IVMAdapter instance for the 
          * interfaces that are actually implemented by the VM Adapter.  These
          * should at least include {@link IElementContentProvider}, 
-         * {@link IModelProxyFactoryAdapter}, and 
-         * {@link IColumnPresentationFactoryAdapter}.
+         * {@link IModelProxyFactory}, and 
+         * {@link IColumnPresentationFactory}.
          */
         @SuppressWarnings("unchecked")
         public Object getAdapter(Class adapter) {
@@ -371,6 +381,14 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
             }
             return null;
         }
+
+        /** Deriving classes must override. */
+        @Override
+        abstract public boolean equals(Object obj);
+        
+        /** Deriving classes must override. */
+        @Override
+        abstract public int hashCode();
     }
     
     protected class ViewerUpdate implements IViewerUpdate {

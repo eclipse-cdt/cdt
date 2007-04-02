@@ -55,7 +55,7 @@ Martin Oberhuber (Wind River) - fix 158529: Migrate docs to HTML / TOC format
    <extension
          point="org.eclipse.cdt.debug.ui.CDebuggerPage">
       <debuggerPage
-            class="org.eclipse.rse.remotecdt.RemoteGDBDebuggerPage"
+            class="org.eclipse.rse.internal.remotecdt.RemoteGDBDebuggerPage"
             debuggerID="org.eclipse.rse.remotecdt.RemoteGDBDebugger"
             id="org.eclipse.rse.remotecdt.RemoteGDBDebuggerPage">
       </debuggerPage>

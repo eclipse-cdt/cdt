@@ -18,7 +18,6 @@ package org.eclipse.dstore.extra;
 
 import java.util.List;
 
-import org.eclipse.dstore.internal.extra.IElement;
 
 public interface IDataElement extends IElement
 {

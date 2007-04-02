@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.rse.internal.subsystems.files.core.AbstractLanguageUtilityFactory;
-import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtility;
+import org.eclipse.rse.subsystems.files.core.ILanguageUtility;
 import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 

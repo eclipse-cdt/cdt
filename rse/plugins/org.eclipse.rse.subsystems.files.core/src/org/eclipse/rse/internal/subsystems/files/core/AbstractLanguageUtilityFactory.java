@@ -17,6 +17,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.core;
 
+import org.eclipse.rse.subsystems.files.core.ILanguageUtility;
 import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 

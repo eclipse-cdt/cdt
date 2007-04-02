@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.internal.extra;
+package org.eclipse.dstore.extra;
  
 public interface IElement
 {

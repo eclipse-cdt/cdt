@@ -17,6 +17,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.core;
 
+import org.eclipse.rse.subsystems.files.core.ILanguageUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
 /**
@@ -57,14 +58,14 @@ public abstract class AbstractLanguageUtility implements ILanguageUtility {
 	}
 
 	/**
-	 * @see org.eclipse.rse.internal.subsystems.files.core.ILanguageUtility#getSubSystem()
+	 * @see org.eclipse.rse.subsystems.files.core.ILanguageUtility#getSubSystem()
 	 */
 	public IRemoteFileSubSystem getSubSystem() {
 		return subsystem;
 	}
 
 	/**
-	 * @see org.eclipse.rse.internal.subsystems.files.core.ILanguageUtility#getLanguage()
+	 * @see org.eclipse.rse.subsystems.files.core.ILanguageUtility#getLanguage()
 	 */
 	public String getLanguage() {
 		return language;

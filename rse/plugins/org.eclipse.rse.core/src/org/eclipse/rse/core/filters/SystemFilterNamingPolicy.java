@@ -23,7 +23,7 @@ package org.eclipse.rse.core.filters;
  * <p>
  * Subclass this and override what you wish to change.
  */
-public class SystemFilterNamingPolicy implements IRSEFilterNamingPolicy, ISystemFilterConstants {
+public class SystemFilterNamingPolicy implements IRSEFilterNamingPolicy {
 
 	protected String managerFileNamePrefix;
 	protected String poolFolderNamePrefix;

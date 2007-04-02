@@ -9,6 +9,8 @@
  *     QNX Software Systems - Initial API and implementation
  *     James Blackburn - Modified patch for 149428
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
+ *     Warren Paul (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -408,39 +410,46 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (path == null || cproject == null) {
 			return null;
 		}
+
+		final IProject project= cproject.getProject();
+		final String contentTypeId = CoreModel.getRegistedContentTypeId(project, path.lastSegment());
+
 		if (path.isAbsolute()) {
 			if (! Util.isNonZeroLengthFile(path)) {
 				return null;
 			}
+			
 			try {
 				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
 				for (int i = 0; i < includeReferences.length; i++) {
 					if (includeReferences[i].isOnIncludeEntry(path)) {
-						IProject project= cproject.getProject();
-						String id = CoreModel.getRegistedContentTypeId(project, path.lastSegment());
-						if (id == null) {
-							// happens, when a translation unit for a file on the path is created, but
-							// the content-type is not registered for any language:
-							// fallback to C or C++ Header
-							id = CoreModel.hasCCNature(project) ? CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
+						String headerContentTypeId= contentTypeId;
+						if (headerContentTypeId == null) {
+							headerContentTypeId= CoreModel.hasCCNature(project) ? CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
 						}
-						return new ExternalTranslationUnit(includeReferences[i], path, id);
+						return new ExternalTranslationUnit(includeReferences[i], path, headerContentTypeId);
 					}
 				}
 			} catch (CModelException e) {
 			}
+
+			// if the file exists and it has a known C/C++ file extension then just create
+			// an external translation unit for it.
+			if (contentTypeId != null && path.toFile().exists()) {
+				return new ExternalTranslationUnit(cproject, path, contentTypeId);
+			}
 		} else {
+			// !path.isAbsolute()
 			try {
 				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
 				for (int i = 0; i < includeReferences.length; i++) {
 					IPath includePath = includeReferences[i].getPath().append(path);
 					if (Util.isNonZeroLengthFile(includePath)) {
-						String id = CoreModel.getRegistedContentTypeId(cproject.getProject(), includePath.lastSegment());
-						if (id == null) {
-							// fallbakc to C Header
-							id = CCorePlugin.CONTENT_TYPE_CHEADER;
+						String headerContentTypeId= contentTypeId;
+						if (headerContentTypeId == null) {
+							headerContentTypeId= CoreModel.hasCCNature(project) ? CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
 						}
-						return new ExternalTranslationUnit(includeReferences[i], includePath, id);
+						return new ExternalTranslationUnit(includeReferences[i], includePath, headerContentTypeId);
 					}
 				}
 			} catch (CModelException e) {

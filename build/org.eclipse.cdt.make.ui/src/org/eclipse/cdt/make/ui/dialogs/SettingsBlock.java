@@ -70,7 +70,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_WORKBENCH_BUILD_TARGET = PREFIX + ".makeWorkbench.target"; //$NON-NLS-1$
 	private static final String MAKE_WORKBENCH_BUILD_AUTO = PREFIX + ".makeWorkbench.auto"; //$NON-NLS-1$
 	private static final String MAKE_WORKBENCH_BUILD_INCR = PREFIX + ".makeWorkbench.incremental"; //$NON-NLS-1$
-	private static final String MAKE_WORKBENCH_BUILD_FULL = PREFIX + ".makeWorkbench.full"; //$NON-NLS-1$
+//	private static final String MAKE_WORKBENCH_BUILD_FULL = PREFIX + ".makeWorkbench.full"; //$NON-NLS-1$
 	private static final String MAKE_WORKBENCH_BUILD_CLEAN = PREFIX + ".makeWorkbench.clean"; //$NON-NLS-1$
 
 	private static final String MAKE_BUILD_DIR_GROUP = PREFIX + ".makeLoc.group_label"; //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 	private static final String MAKE_BUILD_AUTO_TARGET = PREFIX + ".makeWorkbench.autoBuildTarget"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_INCREMENTAL_TARGET = PREFIX + ".makeWorkbench.incrementalBuildTarget"; //$NON-NLS-1$
-	private static final String MAKE_BUILD_FULL_TARGET = PREFIX + ".makeWorkbench.fullBuildTarget"; //$NON-NLS-1$
+//	private static final String MAKE_BUILD_FULL_TARGET = PREFIX + ".makeWorkbench.fullBuildTarget"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_CLEAN_TARGET = PREFIX + ".makeWorkbench.cleanTarget"; //$NON-NLS-1$
 
 	Button stopOnErrorButton;
@@ -367,7 +367,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.NONE);
-				dialog.setText(MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom"));
+				dialog.setText(MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom")); //$NON-NLS-1$
 				dialog.setFilterPath(getContainer().getProject().toString());
 				String directory = dialog.open();
 				if (directory != null) {

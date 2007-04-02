@@ -43,12 +43,6 @@ import org.eclipse.swt.widgets.Text;
  * @author vhirsl
  */
 public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
-    private static final String BO_PROVIDER_PARSER_ENABLED_BUTTON = PREFIX + ".boProvider.parser.enabled.button"; //$NON-NLS-1$
-    private static final String BO_PROVIDER_OPEN_LABEL = PREFIX + ".boProvider.open.label"; //$NON-NLS-1$
-    private static final String BO_PROVIDER_BROWSE_BUTTON = PREFIX + ".boProvider.browse.button"; //$NON-NLS-1$
-    private static final String BO_PROVIDER_OPEN_FILE_DIALOG = PREFIX + ".boProvider.browse.openFileDialog"; //$NON-NLS-1$
-    private static final String BO_PROVIDER_LOAD_BUTTON = PREFIX + ".boProvider.load.button"; //$NON-NLS-1$
-
     private static final String providerId = "makefileGenerator";  //$NON-NLS-1$
 
     private Button bopEnabledButton;
@@ -80,8 +74,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         ((GridLayout) profileGroup.getLayout()).makeColumnsEqualWidth = false;
 
         // Add bop enabled checkbox
-        bopEnabledButton = ControlFactory.createCheckBox(profileGroup,
-                MakeUIPlugin.getResourceString(BO_PROVIDER_PARSER_ENABLED_BUTTON));
+        bopEnabledButton = ControlFactory.createCheckBox(profileGroup, B_ENABLE);
 //        bopEnabledButton.setFont(parent.getFont());
         ((GridData)bopEnabledButton.getLayoutData()).horizontalSpan = 3;
         ((GridData)bopEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
@@ -94,13 +87,11 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         });
         
         // load label
-        Label loadLabel = ControlFactory.createLabel(profileGroup,
-                MakeUIPlugin.getResourceString(BO_PROVIDER_OPEN_LABEL));
+        Label loadLabel = ControlFactory.createLabel(profileGroup, L_OPEN);
         ((GridData) loadLabel.getLayoutData()).horizontalSpan = 2;
 
         // load button
-        bopLoadButton = ControlFactory.createPushButton(profileGroup,
-                MakeUIPlugin.getResourceString(BO_PROVIDER_LOAD_BUTTON));
+        bopLoadButton = ControlFactory.createPushButton(profileGroup, B_LOAD);
         ((GridData) bopLoadButton.getLayoutData()).minimumWidth = 120;
         bopLoadButton.addSelectionListener(new SelectionAdapter() {
             
@@ -123,8 +114,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         bopLoadButton.setEnabled(loadButtonInitialEnabled && handleModifyOpenFileText());
         
         // browse button
-        Button browseButton = ControlFactory.createPushButton(profileGroup,
-                MakeUIPlugin.getResourceString(BO_PROVIDER_BROWSE_BUTTON));
+        Button browseButton = ControlFactory.createPushButton(profileGroup, B_BROWSE);
         ((GridData) browseButton.getLayoutData()).minimumWidth = 120; 
         browseButton.addSelectionListener(new SelectionAdapter() {
 
@@ -134,7 +124,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
 
             private void handleBOPBrowseButtonSelected() {
                 FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-                dialog.setText(MakeUIPlugin.getResourceString(BO_PROVIDER_OPEN_FILE_DIALOG));
+                dialog.setText(F_OPEN);
                 String fileName = getBopOpenFileText();
                 IPath filterPath;
                 if (fileName.length() == 0 && getContainer().getProject() != null) {

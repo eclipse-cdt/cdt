@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,8 +181,8 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
         IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(MakeUIPlugin.getPluginId(), "DiscoveryProfilePage"); //$NON-NLS-1$
         IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
         for (int i = 0; i < infos.length; i++) {
-            if (infos[i].getName().equals(PROFILE_PAGE)) { //$NON-NLS-1$
-                String id = infos[i].getAttribute(PROFILE_ID); //$NON-NLS-1$
+            if (infos[i].getName().equals(PROFILE_PAGE)) {
+                String id = infos[i].getAttribute(PROFILE_ID);
                 fProfilePageMap.put(id, new DiscoveryProfilePageConfiguration(infos[i]));
             }
         }

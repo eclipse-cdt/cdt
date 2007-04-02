@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     private static final String SC_ENABLED_BUTTON = PREFIX + ".scGroup.enabled.button"; //$NON-NLS-1$
     private static final String SC_PROBLEM_REPORTING_ENABLED_BUTTON = PREFIX + ".scGroup.problemReporting.enabled.button"; //$NON-NLS-1$
     private static final String SC_SELECTED_PROFILE_COMBO = PREFIX + ".scGroup.selectedProfile.combo"; //$NON-NLS-1$
-    private static final String BO_PROVIDER_GROUP_LABEL = PREFIX + ".boProvider.group.label"; //$NON-NLS-1$
+//    private static final String BO_PROVIDER_GROUP_LABEL = PREFIX + ".boProvider.group.label"; //$NON-NLS-1$
     private static final String SC_APPLY_PROGRESS_MESSAGE = PREFIX + ".apply.progressMessage"; //$NON-NLS-1$ 
     
     private Button scEnabledButton;
@@ -72,8 +72,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     
     private boolean needsSCNature = false;
     private boolean fCreatePathContainer = false;
-    private boolean isValid = true;
-    private boolean persistedProfileChanged = false; // new persisted selected profile different than the old one
+//    private boolean isValid = true;
+//    private boolean persistedProfileChanged = false; // new persisted selected profile different than the old one
 
     /**
      * 

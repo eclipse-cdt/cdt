@@ -273,7 +273,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         String savedId = buildInfo.getSelectedProfileId();
         while (it.hasNext()) {
             String profileId = (String)it.next();
- 			if (!cbi.isProfileSupported(iContext, profileId)) 
+
+			System.out.println(profileId);
+            
+            if (!cbi.isProfileSupported(iContext, profileId)) 
  				continue; 
  			visibleProfilesList.add(profileId);
             String profileName = getProfileName(profileId);

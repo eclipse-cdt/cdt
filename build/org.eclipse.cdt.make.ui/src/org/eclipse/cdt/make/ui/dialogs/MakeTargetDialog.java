@@ -91,7 +91,7 @@ public class MakeTargetDialog extends Dialog {
 		buildCommand = target.getBuildCommand();
 		buildArguments = target.getBuildArguments();
 		targetName = target.getName();
-		targetString = target.getBuildAttribute(IMakeTarget.BUILD_TARGET, "all");
+		targetString = target.getBuildAttribute(IMakeTarget.BUILD_TARGET, "all"); //$NON-NLS-1$
 		targetBuildID = target.getTargetBuilderID();
 		runAllBuilders = target.runAllBuilders();
 	}
@@ -260,7 +260,7 @@ public class MakeTargetDialog extends Dialog {
 				if (commandText.getText().equals("")) { //$NON-NLS-1$
 					fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
 				} else {
-					fStatusLine.setErrorMessage(null); //$NON-NLS-1$
+					fStatusLine.setErrorMessage(null);
 				}
 				updateButtons();
 			}

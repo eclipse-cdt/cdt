@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,30 @@ public abstract class AbstractDiscoveryPage extends DialogPage {
     protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
     protected static final String PROFILE_GROUP_LABEL = PREFIX + ".profile.group.label"; //$NON-NLS-1$
     private static final String VARIABLES_BUTTON = PREFIX + ".common.variables.button"; //$NON-NLS-1$
+ 
+    private static final String BO_PROVIDER_PARSER_ENABLED_BUTTON = PREFIX + ".boProvider.parser.enabled.button"; //$NON-NLS-1$
+    private static final String BO_PROVIDER_OPEN_LABEL = PREFIX + ".boProvider.open.label"; //$NON-NLS-1$
+    private static final String BO_PROVIDER_BROWSE_BUTTON = PREFIX + ".boProvider.browse.button"; //$NON-NLS-1$
+    private static final String BO_PROVIDER_OPEN_FILE_DIALOG = PREFIX + ".boProvider.browse.openFileDialog"; //$NON-NLS-1$
+    private static final String BO_PROVIDER_LOAD_BUTTON = PREFIX + ".boProvider.load.button"; //$NON-NLS-1$
+    
+    private static final String SI_PROVIDER_PARSER_ENABLED_BUTTON = PREFIX + ".siProvider.parser.enabled.button"; //$NON-NLS-1$
+    private static final String SI_PROVIDER_COMMAND_LABEL = PREFIX + ".siProvider.command.label"; //$NON-NLS-1$
+    private static final String SI_PROVIDER_BROWSE_BUTTON = PREFIX + ".siProvider.browse.button"; //$NON-NLS-1$
+    private static final String SI_PROVIDER_COMMAND_DIALOG = PREFIX + ".siProvider.browse.runCommandDialog"; //$NON-NLS-1$
+    private static final String SI_PROVIDER_COMMAND_ERROR_MESSAGE= PREFIX + ".siProvider.command.errorMessage"; //$NON-NLS-1$
+    
+    protected static final String B_ENABLE = MakeUIPlugin.getResourceString(BO_PROVIDER_PARSER_ENABLED_BUTTON);
+    protected static final String L_OPEN = MakeUIPlugin.getResourceString(BO_PROVIDER_OPEN_LABEL);
+    protected static final String B_BROWSE = MakeUIPlugin.getResourceString(BO_PROVIDER_BROWSE_BUTTON);
+    protected static final String F_OPEN = MakeUIPlugin.getResourceString(BO_PROVIDER_OPEN_FILE_DIALOG);
+    protected static final String B_LOAD = MakeUIPlugin.getResourceString(BO_PROVIDER_LOAD_BUTTON);
+    
+    protected static final String SI_ENABLE = MakeUIPlugin.getResourceString(SI_PROVIDER_PARSER_ENABLED_BUTTON);
+    protected static final String SI_COMMAND = MakeUIPlugin.getResourceString(SI_PROVIDER_COMMAND_LABEL);
+    protected static final String SI_BROWSE = MakeUIPlugin.getResourceString(SI_PROVIDER_BROWSE_BUTTON);
+    protected static final String SI_DIALOG = MakeUIPlugin.getResourceString(SI_PROVIDER_COMMAND_DIALOG);
+    protected static final String SI_ERROR  = MakeUIPlugin.getResourceString(SI_PROVIDER_COMMAND_ERROR_MESSAGE);
     
     protected AbstractDiscoveryOptionsBlock fContainer; // parent
     

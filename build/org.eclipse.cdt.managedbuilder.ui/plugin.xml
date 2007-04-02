@@ -619,4 +619,31 @@
       </page>
   </extension>
   
+     <extension
+         point="org.eclipse.cdt.make.ui.DiscoveryProfilePage">
+      <profilePage
+            class="org.eclipse.cdt.make.ui.dialogs.MBSPerProjectSCDProfilePage"
+            name="%MBSPerProjectProfile.name"
+            profileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"/>
+      <profilePage
+            class="org.eclipse.cdt.make.ui.dialogs.MBSPerProjectSCDProfilePage"
+            name="%MBSPerProjectProfile.name"
+            profileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+      <profilePage
+            class="org.eclipse.cdt.make.ui.dialogs.MBSPerProjectSCDProfilePage"
+            name="%MBSPerProjectProfile.name"
+            profileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
+      <profilePage
+            class="org.eclipse.cdt.make.ui.dialogs.MBSPerProjectSCDProfilePage"
+            name="%MBSPerProjectProfile.name"
+            profileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"/>
+      <profilePage
+            class="org.eclipse.cdt.make.ui.dialogs.MBSPerProjectSCDProfilePage"
+            name="%MBSPerProjectProfile.name"
+            profileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC"/>
+      <profilePage
+            class="org.eclipse.cdt.make.ui.dialogs.MBSPerProjectSCDProfilePage"
+            name="%MBSPerProjectProfile.name"
+            profileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
+   </extension>  
 </plugin>

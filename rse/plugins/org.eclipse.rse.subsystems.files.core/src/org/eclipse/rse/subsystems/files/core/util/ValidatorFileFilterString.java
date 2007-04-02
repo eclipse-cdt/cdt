@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (WindRiver) - [cleanup] fix javadoc.
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.util;
@@ -106,9 +106,9 @@ public class ValidatorFileFilterString
     
 	/**
 	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
-	 * @param error message when entry field is empty
-	 * @param error message when value entered is not unique
-	 * @param error message when syntax is not valid
+	 * @param msg_Empty error message when entry field is empty
+	 * @param msg_NonUnique error message when value entered is not unique
+	 * @param msg_Invalid error message when syntax is not valid
 	 */
 	public void setErrorMessages(SystemMessage msg_Empty, SystemMessage msg_NonUnique, SystemMessage msg_Invalid)
 	{

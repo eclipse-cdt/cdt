@@ -13,10 +13,9 @@
  ********************************************************************************/
 package org.eclipse.rse.core.model;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.core.runtime.IStatus;
 
 public interface IRSECallback {
 
-	public void operationComplete(String operationName, ISubSystem subsystem, IProgressMonitor monitor);
+	public void done(IStatus status, Object result);
 }

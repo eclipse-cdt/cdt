@@ -1595,7 +1595,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			
 			if (_callback != null)
 			{
-				_callback.operationComplete(this.getName(), _ss, mon);
+				IStatus status = Status.OK_STATUS;
+				if (!isConnected())
+				{
+					status = Status.CANCEL_STATUS;
+				}
+				_callback.done(status, null);
 			}
     	}
     }
@@ -2345,6 +2350,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * displaying for you.
 	 * <p>
 	 * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
+	 * 
+	 * @deprecated 
 	 */
 	public void connect() throws Exception {
 		if (!isConnected()) {
@@ -2417,6 +2424,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		connect(false, callback);	
 	}
 	
+	/**
+	 * @deprecated
+	 */
 	public void connect(boolean forcePrompt) throws Exception 
 	{
 		connect(forcePrompt, null);

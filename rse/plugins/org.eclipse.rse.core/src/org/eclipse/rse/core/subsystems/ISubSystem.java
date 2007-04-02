@@ -351,8 +351,22 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 
 	/**
 	 * Connect to the remote system. Does not force a prompt for a password.
+	 * 
+	 * @deprecated
 	 */
 	public void connect() throws Exception;
+	
+	
+	/**
+	 * Connect to the remote system, optionally forcing a signon prompt even if the password
+	 * is cached in memory or on disk.
+	 * 
+	 * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
+	 * in memory.
+	 * 
+	 * @deprecated
+	 */
+	public void connect(boolean forcePrompt) throws Exception;
 	
 	
 	/**
@@ -361,15 +375,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @param monitor the process monitor
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
-	
-	/**
-	 * Connect to the remote system, optionally forcing a signon prompt even if the password
-	 * is cached in memory or on disk.
-	 * 
-	 * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
-	 * in memory.
-	 */
-	public void connect(boolean forcePrompt) throws Exception;
+
 	
 	/**
 	 * Connect to the remote system on a background job.  The callback is

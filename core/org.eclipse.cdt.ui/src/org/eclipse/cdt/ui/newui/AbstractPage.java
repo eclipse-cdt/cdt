@@ -508,9 +508,8 @@ implements
 		if (cfgDescs == null) {
 			cfgDescs = prjd.getConfigurations();
 			if (cfgDescs == null || cfgDescs.length == 0) return;
+			Arrays.sort(cfgDescs, CDTListComparator.getInstance());
 		}
-
-		Arrays.sort(cfgDescs, new CDTListComparator());
 		
 		// Clear and replace the contents of the selector widget
 		configSelector.removeAll();

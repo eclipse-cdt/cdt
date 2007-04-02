@@ -46,29 +46,33 @@ echo "Running the builder..."
 ./nightly.sh >> $log 2>&1
 tail -50 $log
 
-#update the main download and archive pages
-cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
-cvs -q update -RPd >> $log 2>&1
-chgrp dsdp-tmadmin * CVS/*
-cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
-cvs -q update -RPd >> $log 2>&1
-chgrp dsdp-tmadmin * CVS/*
+#update the main download and archive pages: build.eclipse.org only
+if [ -d /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads ]; then
+  cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
+  cvs -q update -RPd >> $log 2>&1
+  chgrp dsdp-tmadmin * CVS/*
+  cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
+  cvs -q update -RPd >> $log 2>&1
+  chgrp dsdp-tmadmin * CVS/*
 
-#Fixup permissions and group id on download.eclpse.org (just to be safe)
-chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*
-chmod -R g+w drops/${buildType}*${daystamp}*
+  #Fixup permissions and group id on download.eclpse.org (just to be safe)
+  chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*
+  chmod -R g+w drops/${buildType}*${daystamp}*
+fi
 
 #Copy latest SDK in order to give access to DOC server
 cd $HOME/ws2/publish
-FILES=`ls N${daystamp}*/RSE-SDK-N${daystamp}*.zip 2>/dev/null`
-echo "FILES=$FILES"
-if [ "$FILES" != "" ]; then
-  rm N.latest/RSE-SDK-N*.zip
-  cp N${daystamp}*/RSE-SDK-N${daystamp}*.zip N.latest
-  cd N.latest
-  mv -f RSE-SDK-N${daystamp}*.zip RSE-SDK-latest.zip
-  chgrp dsdp-tmadmin RSE-SDK-latest.zip
-  chmod g+w RSE-SDK-latest.zip
+if [ -d N.latest ]; then
+  FILES=`ls N${daystamp}*/RSE-SDK-N${daystamp}*.zip 2>/dev/null`
+  echo "FILES=$FILES"
+  if [ "$FILES" != "" ]; then
+    rm N.latest/RSE-SDK-N*.zip
+    cp N${daystamp}*/RSE-SDK-N${daystamp}*.zip N.latest
+    cd N.latest
+    mv -f RSE-SDK-N${daystamp}*.zip RSE-SDK-latest.zip
+    chgrp dsdp-tmadmin RSE-SDK-latest.zip
+    chmod g+w RSE-SDK-latest.zip
+  fi
 fi
 
 #Cleanup old nightly builds (leave only last 5 in place)

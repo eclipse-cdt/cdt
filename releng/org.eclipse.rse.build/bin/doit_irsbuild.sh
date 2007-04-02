@@ -73,17 +73,19 @@ echo "Running the builder..."
 ./nightly.sh ${mapTag} ${buildType} ${buildId} >> $log 2>&1
 tail -50 $log
 
-#update the main download and archive pages
-cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
-cvs -q update -RPd >> $log 2>&1
-chgrp dsdp-tmadmin * CVS/*
-cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
-cvs -q update -RPd >> $log 2>&1
-chgrp dsdp-tmadmin * CVS/*
+#update the main download and archive pages: build.eclipse.org only
+if [ -d /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads ]; then
+  cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
+  cvs -q update -RPd >> $log 2>&1
+  chgrp dsdp-tmadmin * CVS/*
+  cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
+  cvs -q update -RPd >> $log 2>&1
+  chgrp dsdp-tmadmin * CVS/*
 
-#Fixup permissions and group id on download.eclpse.org (just to be safe)
-chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*
-chmod -R g+w drops/${buildType}*${daystamp}*
+  #Fixup permissions and group id on download.eclpse.org (just to be safe)
+  chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*
+  chmod -R g+w drops/${buildType}*${daystamp}*
+fi
 
 #Check the publishing
 cd $HOME/ws2/publish
@@ -104,7 +106,7 @@ if [ -f package.count -a "$FILES" != "" ]; then
     ${mydir}/batch_sign.sh `pwd`
   fi
 
-  if [ ${buildType} != M ]; then
+  if [ ${buildType} != M -a -d ../N.latest ]; then
     #update the doc server
     rm -f ../N.latest/RSE-SDK-*.zip
     cp -f RSE-SDK-*.zip ../N.latest/RSE-SDK-latest.zip

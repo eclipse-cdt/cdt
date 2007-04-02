@@ -36,18 +36,22 @@ import org.osgi.service.prefs.Preferences;
  * @since 4.0
  */
 public class IndexerPreferences {
-	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
+	public static final int SCOPE_INSTANCE = 0;
+	public static final int SCOPE_PROJECT_PRIVATE = 1;
+	public static final int SCOPE_PROJECT_SHARED = 2;
+
 	public static final String KEY_INDEXER_ID= "indexerId"; //$NON-NLS-1$
 	public static final String KEY_INDEX_ALL_FILES= "indexAllFiles"; //$NON-NLS-1$
+	public static final String KEY_FILES_TO_PARSE_UP_FRONT= "filesToParseUpFront"; //$NON-NLS-1$
 	
+	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
+	private static final String DEFAULT_FILES_TO_PARSE_UP_FRONT= "stdarg.h, stddef.h, sys/types.h"; //$NON-NLS-1$
+
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String INDEXER_NODE = "indexer"; //$NON-NLS-1$
 	private static final String KEY_INDEXER_PREFS_SCOPE = "preferenceScope"; //$NON-NLS-1$
 	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
 
-	public static final int SCOPE_INSTANCE = 0;
-	public static final int SCOPE_PROJECT_PRIVATE = 1;
-	public static final int SCOPE_PROJECT_SHARED = 2;
 
 	/**
 	 * Returns the scope that is selected for the project.
@@ -267,6 +271,7 @@ public class IndexerPreferences {
 		prefs.put(KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		prefs.putBoolean(KEY_INDEX_ALL_FILES, false);
 		prefs.put(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION);
+		prefs.put(KEY_FILES_TO_PARSE_UP_FRONT, DEFAULT_FILES_TO_PARSE_UP_FRONT);
 	}
 
 	public static void addChangeListener(IProject prj, IPreferenceChangeListener pcl) {

@@ -36,17 +36,11 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	
 	private final IPDOMIndexer fIndexer;
 	private final IndexerProgress fProgress;
-	private final boolean fCheckTimestamps;
 	private volatile IPDOMIndexerTask fDelegate;
 
 	public PDOMRebuildTask(IPDOMIndexer indexer) {
-		this(indexer, false);
-	}
-
-	public PDOMRebuildTask(IPDOMIndexer indexer, boolean checkTimestamps) {
 		fIndexer= indexer;
 		fProgress= createProgress();
-		fCheckTimestamps= checkTimestamps;
 	}
 
 	private IndexerProgress createProgress() {
@@ -106,7 +100,8 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		ITranslationUnit[] tus= (ITranslationUnit[]) sources.toArray(new ITranslationUnit[sources.size()]);
 		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (fDelegate instanceof PDOMIndexerTask) {
-			((PDOMIndexerTask) fDelegate).setCheckTimestamps(fCheckTimestamps);
+			((PDOMIndexerTask) fDelegate).setCheckTimestamps(true);
+			((PDOMIndexerTask) fDelegate).setParseUpFront();
 		}
 	}
 

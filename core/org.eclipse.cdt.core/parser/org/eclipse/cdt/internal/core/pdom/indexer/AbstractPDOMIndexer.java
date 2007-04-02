@@ -25,6 +25,7 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 		
 	public AbstractPDOMIndexer() {
 		fProperties.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(false));
+		fProperties.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, ""); //$NON-NLS-1$
 	}
 
 	public ICProject getProject() {
@@ -66,5 +67,16 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 				fProperties.put(key, val);
 			}
 		}
+	}
+
+	public String[] getFilesToParseUpFront() {
+		String prefSetting= getProperty(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT);
+		if (prefSetting != null) {
+			prefSetting= prefSetting.trim();
+			if (prefSetting.length() > 0) {
+				return prefSetting.split(","); //$NON-NLS-1$
+			}
+		}
+		return new String[0];
 	}
 }

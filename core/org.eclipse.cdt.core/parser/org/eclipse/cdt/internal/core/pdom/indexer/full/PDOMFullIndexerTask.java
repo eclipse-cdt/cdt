@@ -25,7 +25,12 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
@@ -127,8 +132,7 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		return result;
 	}
 
-	protected IASTTranslationUnit createAST(ITranslationUnit tu, IProgressMonitor pm) throws CoreException,
-			InterruptedException {
+	protected IASTTranslationUnit createAST(ITranslationUnit tu, IProgressMonitor pm) throws CoreException {
 		IPath path = tu.getLocation();
 		if (path == null) {
 			return null;
@@ -140,13 +144,25 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		return tu.getAST(null, options);
 	}
 
-	protected boolean needToUpdate(IIndexFileLocation location) throws CoreException {
-		Object required= filePathsToParse.get(location);
-		if (required == null) {
-			required= MISSING;
-			filePathsToParse.put(location, required);
+	protected IASTTranslationUnit createAST(ILanguage lang,	CodeReader codeReader, IScannerInfo scanInfo, IProgressMonitor pm) throws CoreException {
+		SavedCodeReaderFactory codeReaderFactory= SavedCodeReaderFactory.getInstance();
+		IASTTranslationUnit ast= lang.getASTTranslationUnit(codeReader, scanInfo, codeReaderFactory, null, ParserUtil.getParserLogService());
+		if (pm.isCanceled()) {
+			return null;
 		}
-		return required != SKIP;
+		return ast;
+	}
+	
+	protected boolean needToUpdate(IIndexFileLocation location) throws CoreException {
+		if (super.needToUpdate(location)) {
+			Object required= filePathsToParse.get(location);
+			if (required == null) {
+				required= MISSING;
+				filePathsToParse.put(location, required);
+			}
+			return required != SKIP;
+		}
+		return false;
 	}
 
 	protected boolean postAddToIndex(IIndexFileLocation location, IIndexFile file)

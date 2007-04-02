@@ -16,6 +16,7 @@ import org.eclipse.osgi.util.NLS;
 public class DialogsMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.ui.dialogs.DialogsMessages"; //$NON-NLS-1$
 	public static String AbstractIndexerPage_indexAllFiles;
+	public static String AbstractIndexerPage_indexUpFront;
 	public static String PreferenceScopeBlock_enableProjectSettings;
 	public static String PreferenceScopeBlock_preferenceLink;
 	public static String PreferenceScopeBlock_storeWithProject;

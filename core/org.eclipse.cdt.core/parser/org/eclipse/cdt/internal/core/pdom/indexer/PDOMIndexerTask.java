@@ -11,12 +11,15 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
+import java.net.URI;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -31,29 +34,42 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.cdt.internal.core.pdom.PDOMWriter;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 
 public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexerTask {
 	private static final Object NO_CONTEXT = new Object();
 	private static final int MAX_ERRORS = 500;
 	private static final String TRUE = "true"; //$NON-NLS-1$
 	
-	private IPDOMIndexer fIndexer;
+	private AbstractPDOMIndexer fIndexer;
 	protected Map/*<IIndexFileLocation, Object>*/ fContextMap = new HashMap/*<IIndexFileLocation, Object>*/();
 	private boolean fCheckTimestamps= false;
+	private List fFilesUpFront= new ArrayList();
+	private String fDummyFileName;
+	private URI fDummyFileURI;
 
-	protected PDOMIndexerTask(IPDOMIndexer indexer) {
+	protected PDOMIndexerTask(AbstractPDOMIndexer indexer) {
 		fIndexer= indexer;
 		setShowActivity(checkDebugOption(TRACE_ACTIVITY, TRUE));
 		setShowProblems(checkDebugOption(TRACE_PROBLEMS, TRUE));
@@ -73,6 +89,10 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	
 	final public void setCheckTimestamps(boolean val) {
 		fCheckTimestamps= val;
+	}
+	
+	final public void setParseUpFront() {
+		fFilesUpFront.addAll(Arrays.asList(fIndexer.getFilesToParseUpFront()));
 	}
 	
 	/**
@@ -100,8 +120,16 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	 * @see #parseTUs(IWritableIndex, int, Collection, Collection, IProgressMonitor)
 	 * @since 4.0
 	 */
-	abstract protected IASTTranslationUnit createAST(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException;
+	abstract protected IASTTranslationUnit createAST(ITranslationUnit tu, IProgressMonitor pm) throws CoreException;
 
+	/**
+	 * Called to create the ast for pre-parsed files. May return <code>null</code>.
+	 * @throws CoreException 
+	 * @since 4.0
+	 */
+	protected IASTTranslationUnit createAST(ILanguage lang, CodeReader codeReader, IScannerInfo scanInfo, IProgressMonitor pm) throws CoreException {
+		return null;
+	}
 
 	/**
 	 * Convenience method for subclasses, parses the files calling out to the methods 
@@ -114,6 +142,11 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	 * @since 4.0
 	 */
 	protected void parseTUs(IWritableIndex index, int readlockCount, Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
+		for (Iterator iter = fFilesUpFront.iterator(); iter.hasNext();) {
+			String upfront= (String) iter.next();
+			parseUpFront(upfront, index, readlockCount, monitor);
+		}
+		
 		// sources first
 		for (Iterator iter = sources.iterator(); iter.hasNext();) {
 			if (monitor.isCanceled()) 
@@ -211,6 +244,74 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 	}
 
+	private void parseUpFront(String file, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
+		file= file.trim();
+		if (file.length() == 0) {
+			return;
+		}
+		IPath path= new Path(file);
+		try {
+			if (fShowActivity) {
+				System.out.println("Indexer: parsing " + file + " up front"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			pm.subTask(MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
+					new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()}));
+			long start= System.currentTimeMillis();
+
+			IASTTranslationUnit ast= null;
+			final IProject project = getProject().getProject();
+			IContentType ct= CContentTypes.getContentType(project, file);
+			if (ct != null) {
+				ILanguage lang = LanguageManager.getInstance().getLanguage(ct);
+				if (lang != null) {
+					IScannerInfoProvider provider= CCorePlugin.getDefault().getScannerInfoProvider(project);
+					IScannerInfo scanInfo;
+					if (provider != null) { 
+						scanInfo= provider.getScannerInformation(project);
+					}
+					else {
+						scanInfo= new ScannerInfo();
+					}
+					String code= "#include \"" + file + "\"\n"; //$NON-NLS-1$ //$NON-NLS-2$
+					if (fDummyFileName == null) {
+						fDummyFileName= project.getLocation().append("___").toString(); //$NON-NLS-1$
+						fDummyFileURI= findLocation(fDummyFileName).getURI();
+					}
+					CodeReader codeReader= new CodeReader(fDummyFileName, code.toCharArray());
+					ast= createAST(lang, codeReader, scanInfo, pm);
+				}
+			}
+				
+			fStatistics.fParsingTime += System.currentTimeMillis()-start;
+			if (ast != null) {
+				addSymbols(ast, index, readlockCount, pm);
+				updateInfo(-1, +1, 0);
+			}
+		}
+		catch (CoreException e) {
+			swallowError(path, e); 
+		}
+		catch (RuntimeException e) {
+			swallowError(path, e); 
+		}
+		catch (Error e) {
+			swallowError(path, e); 
+		}
+	}
+
+	/**
+	 * Overriders must call super.needToUpdate(). If <code>false</code> is returned
+	 * this must be passed on to their caller:
+	 * <pre>
+	 *   if (super.needToUpdate()) {
+	 *      // your code
+	 *   }
+	 *   return false;
+	 */
+	protected boolean needToUpdate(IIndexFileLocation fileLoc) throws CoreException {
+		return fDummyFileURI==null || !fDummyFileURI.equals(fileLoc.getURI());
+	}
+	
 	private void swallowError(IPath file, Throwable e) throws CoreException {
 		IStatus status= CCorePlugin.createStatus(
 				MessageFormat.format(Messages.PDOMIndexerTask_errorWhileParsing, new Object[]{file}), e);

@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 class PDOMFastIndexerTask extends PDOMIndexerTask {
 	private List fChanged = new ArrayList();
 	private List fRemoved = new ArrayList();
-	private IWritableIndex index;
+	private IWritableIndex fIndex;
 	private IndexBasedCodeReaderFactory fCodeReaderFactory;
 	private Map fIflCache;
 
@@ -59,7 +59,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 		long start = System.currentTimeMillis();
 		try {
 			setupIndexAndReaderFactory();
-			index.acquireReadLock();
+			fIndex.acquireReadLock();
 			try {
 				registerTUsInReaderFactory(fChanged);
 
@@ -68,7 +68,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 					if (monitor.isCanceled())
 						return;
 					ITranslationUnit tu = (ITranslationUnit)i.next();
-					removeTU(index, tu, 1);
+					removeTU(fIndex, tu, 1);
 					if (tu.isSourceUnit()) {
 						updateInfo(1, 0, 0);
 					}
@@ -88,26 +88,26 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 					}
 				}
 
-				parseTUs(index, 1, sources, headers, monitor);
+				parseTUs(fIndex, 1, sources, headers, monitor);
 				if (monitor.isCanceled()) {
 					return;
 				}	
 			}
 			finally {
-				index.releaseReadLock();
+				fIndex.releaseReadLock();
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		} catch (InterruptedException e) {
 		}
-		traceEnd(start, index);
+		traceEnd(start, fIndex);
 	}
 
 	private void setupIndexAndReaderFactory() throws CoreException {
-		this.index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
-		this.index.resetCacheCounters();
+		this.fIndex= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
+		this.fIndex.resetCacheCounters();
 		this.fIflCache = new HashMap/*<String,IIndexFileLocation>*/();
-		this.fCodeReaderFactory = new IndexBasedCodeReaderFactory(index, fIflCache);
+		this.fCodeReaderFactory = new IndexBasedCodeReaderFactory(fIndex, fIflCache);
 	}
 
 	private void registerTUsInReaderFactory(Collection files) throws CoreException {
@@ -128,8 +128,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 		return result;
 	}
 
-	protected IASTTranslationUnit createAST(ITranslationUnit tu, IProgressMonitor pm) throws CoreException,
-			InterruptedException {
+	protected IASTTranslationUnit createAST(ITranslationUnit tu, IProgressMonitor pm) throws CoreException {
 		IPath path = tu.getLocation();
 		if (path == null) {
 			return null;
@@ -148,8 +147,12 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 			return null;
 		}
 
+		return createAST(language, codeReader, scanner, pm);
+	}
+
+	protected IASTTranslationUnit createAST(ILanguage lang,	CodeReader codeReader, IScannerInfo scanInfo, IProgressMonitor pm) throws CoreException {
 		// get the AST in a "Fast" way
-		IASTTranslationUnit ast= language.getASTTranslationUnit(codeReader, scanner, fCodeReaderFactory, index, ParserUtil.getParserLogService());
+		IASTTranslationUnit ast= lang.getASTTranslationUnit(codeReader, scanInfo, fCodeReaderFactory, fIndex, ParserUtil.getParserLogService());
 		if (pm.isCanceled()) {
 			return null;
 		}
@@ -160,9 +163,12 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 	}
 
 	protected boolean needToUpdate(IIndexFileLocation location) throws CoreException {
-		// file is requested or is not yet indexed.
-		FileInfo info= fCodeReaderFactory.createFileInfo(location);
-		return info.isRequested() || info.fFile == null;
+		if (super.needToUpdate(location)) {
+			// file is requested or is not yet indexed.
+			FileInfo info= fCodeReaderFactory.createFileInfo(location);
+			return info.isRequested() || info.fFile == null;
+		}
+		return false;
 	}
 
 	protected boolean postAddToIndex(IIndexFileLocation path, IIndexFile file)

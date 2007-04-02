@@ -182,8 +182,10 @@ abstract public class PDOMWriter {
 				prepareInMap(symbolMap, newPath);
 				addToMap(symbolMap, 0, newPath, include);
 			}
-			stack.add(currentPath);
-			currentPath= findLocation(include.getPath());
+			if (include.isResolved()) {
+				stack.add(currentPath);
+				currentPath= findLocation(include.getPath());
+			}
 		}
 		stack.add(currentPath);
 		while (!stack.isEmpty()) {

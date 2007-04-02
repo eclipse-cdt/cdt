@@ -16,7 +16,6 @@
 
 package org.eclipse.dstore.core.model;
 
-import org.eclipse.dstore.internal.core.util.ExternalLoader;
 
 /**
  * ISchemaRegistry describes the interface that needs to be 
@@ -42,9 +41,9 @@ public interface ISchemaRegistry
 	public void extendSchema(DataStore dataStore);
 	
 	/**
-	 * Returns an <code>ExternalLoader</code> for the specified qualified class name
+	 * Returns an <code>IExternalLoader</code> for the specified qualified class name
 	 * @param qualifiedClassName the qualified class name of an external tool
 	 * @return the external loader that can load to specified class
 	 */
-	public ExternalLoader getLoaderFor(String qualifiedClassName);
+	public IExternalLoader getLoaderFor(String qualifiedClassName);
 }

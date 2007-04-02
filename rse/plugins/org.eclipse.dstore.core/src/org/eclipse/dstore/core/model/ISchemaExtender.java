@@ -17,7 +17,6 @@
 package org.eclipse.dstore.core.model;
 
 
-import org.eclipse.dstore.internal.core.util.ExternalLoader;
 
 /**
  * ISchemaExtender describes the interfaces that tool extensions
@@ -45,5 +44,5 @@ public interface ISchemaExtender
 	 * 
 	 * @return the external loader
 	 */
-    public abstract ExternalLoader getExternalLoader();     
+    public abstract IExternalLoader getExternalLoader();     
 }

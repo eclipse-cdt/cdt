@@ -19,6 +19,7 @@ package org.eclipse.dstore.internal.core.util;
 import java.util.ArrayList;
 
 import org.eclipse.dstore.core.java.RemoteClassLoader;
+import org.eclipse.dstore.core.model.IExternalLoader;
 import org.eclipse.dstore.core.util.StringCompare;
 
 
@@ -28,7 +29,7 @@ import org.eclipse.dstore.core.util.StringCompare;
  * contains a <i>load scope</i>, a list of classpaths that it's class loader is able
  * to load.
  */
-public class ExternalLoader
+public class ExternalLoader implements IExternalLoader
 {
 
 	private ClassLoader _classLoader;

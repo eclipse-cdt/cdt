@@ -26,9 +26,9 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.DataStoreSchema;
 import org.eclipse.dstore.core.model.Handler;
+import org.eclipse.dstore.core.model.IExternalLoader;
 import org.eclipse.dstore.core.model.ISchemaExtender;
-import org.eclipse.dstore.internal.core.util.ExternalLoader;
-
+ 
 /**
  * Miner is the abstact base class of all DataStore extensions).  
  * The DataStore framework knows how to load and route commands to miners
@@ -49,7 +49,7 @@ implements ISchemaExtender
 	
 	private boolean _initialized;
 	private boolean _connected;
-	private ExternalLoader _loader;
+	private IExternalLoader _loader;
 
 	protected String _name = null;
 	protected String _value = null;
@@ -190,7 +190,7 @@ implements ISchemaExtender
 		if (_value == null)
 		{
 			String name = getMinerName();
-			int indexOfValue = name.lastIndexOf("."); //$NON-NLS-1$
+			int indexOfValue = name.lastIndexOf(".");  //$NON-NLS-1$
 			_value = name.substring(indexOfValue + 1, name.length());
 		}
 		return _value;
@@ -631,12 +631,12 @@ implements ISchemaExtender
 		return _dataStore.getDescriptorRoot();
 	}
 
-	public void setExternalLoader(ExternalLoader loader)
+	public void setExternalLoader(IExternalLoader loader)
 	{
 		_loader = loader;
 	}
 
-	public ExternalLoader getExternalLoader()
+	public IExternalLoader getExternalLoader()
 	{
 		return _loader;
 	}

@@ -20,9 +20,9 @@ import java.util.ArrayList;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.model.IExternalLoader;
 import org.eclipse.dstore.core.model.ISchemaExtender;
 import org.eclipse.dstore.core.model.ISchemaRegistry;
-import org.eclipse.dstore.internal.core.util.ExternalLoader;
 
 /**
  * SchemaRegistry implements the interface for external tools to contribute their
@@ -79,12 +79,12 @@ public class SchemaRegistry implements ISchemaRegistry
 	 * @param source the qualified classname
 	 * @return the external loader for the specified classname
 	 */
-	public ExternalLoader getLoaderFor(String source)
+	public IExternalLoader getLoaderFor(String source)
 	{
 		for (int i = 0; i < _extenders.size(); i++)
 		{
 			ISchemaExtender extender = (ISchemaExtender) _extenders.get(i);
-			ExternalLoader loader = extender.getExternalLoader();
+			IExternalLoader loader = extender.getExternalLoader();
 			if (loader.canLoad(source))
 			{
 				return loader;

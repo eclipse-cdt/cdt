@@ -28,6 +28,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
+import org.eclipse.dstore.core.model.IExternalLoader;
 import org.eclipse.dstore.core.model.ISchemaExtender;
 import org.eclipse.dstore.core.model.ISchemaRegistry;
 import org.eclipse.dstore.internal.core.util.ExternalLoader;
@@ -190,7 +191,7 @@ public class MinerLoader implements ISchemaRegistry
 			// only load new miners 
 			try
 			{
-				ExternalLoader loader = getLoaderFor(name);
+				IExternalLoader loader = getLoaderFor(name);
 				if (loader != null)
 				{
 					// try to load and instantiate the miner
@@ -334,7 +335,7 @@ public class MinerLoader implements ISchemaRegistry
 	 * @param source a qualified classname
 	 * @return the loader for the specified class
 	 */
-	public ExternalLoader getLoaderFor(String source)
+	public IExternalLoader getLoaderFor(String source)
 	{
 		ExternalLoader remoteLoader = getExternalRemoteLoader();
 		

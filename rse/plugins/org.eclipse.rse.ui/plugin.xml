@@ -292,7 +292,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.ChangeFilter"
-            class="org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage"
+            class="org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage"
             id="org.eclipse.rse.SystemChangeFilterPropertyPage">
             <filter name="showChangeFilterStringPropertyPage" value="true"/>
          <enabledWhen>
@@ -304,7 +304,7 @@ Contributors:
       </page>
       <page
             name="%PropertyPage.FilterString"
-            class="org.eclipse.rse.internal.ui.propertypages.SystemFilterStringPropertyPage"
+            class="org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage"
             id="org.eclipse.rse.SystemFilterStringPropertyPage">
          <enabledWhen>
             <instanceof value="org.eclipse.rse.core.filters.ISystemFilterString"/>

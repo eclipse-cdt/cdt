@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.filters.dialogs;
-import org.eclipse.rse.internal.ui.actions.SystemFilterAbstractFilterAction;
-import org.eclipse.rse.internal.ui.filters.SystemFilterDialogInterface;
-import org.eclipse.rse.internal.ui.filters.SystemFilterDialogOutputs;
 import org.eclipse.rse.ui.dialogs.SystemWizardDialog;
+import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterAction;
 import org.eclipse.rse.ui.filters.dialogs.ISystemFilterWizard;
+import org.eclipse.rse.ui.filters.dialogs.SystemFilterDialogInterface;
+import org.eclipse.rse.ui.filters.dialogs.SystemFilterDialogOutputs;
 import org.eclipse.swt.widgets.Shell;
 
 

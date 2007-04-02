@@ -14,50 +14,54 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.actions;
+package org.eclipse.rse.ui.filters.actions;
 
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.rse.internal.ui.filters.SystemFilterDialogInterface;
-import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterWizardDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
+import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterPoolWizardDialog;
+import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterPoolWizardInterface;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.filters.dialogs.ISystemFilterWizard;
 import org.eclipse.swt.widgets.Shell;
 
 
-public abstract class SystemFilterAbstractFilterWizardAction
-	extends SystemFilterAbstractFilterAction 
+public abstract class SystemFilterAbstractFilterPoolWizardAction
+	extends SystemFilterAbstractFilterPoolAction 
 {
 
 
-    
+
 	/**
-	 * Constructor for SystemFilterAbstactFilterWizardAction
+	 * Constructor for SystemFilterAbstactFilterPoolWizardAction
 	 */
-	public SystemFilterAbstractFilterWizardAction(Shell parent, String title) 
+	public SystemFilterAbstractFilterPoolWizardAction(Shell parent, String title) 
 	{
 		super(parent, title);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);		
 	}
 
-	/**
-	 * Constructor for SystemFilterAbstactFilterWizardAction
-	 */
-	public SystemFilterAbstractFilterWizardAction(Shell parent, String label, String tooltip) 
-	{
-		super(parent, label, tooltip);
-		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);		
-	}
+	
 
 	/**
-	 * @see SystemFilterAbstractFilterAction#doOKprocessing(Object)
+	 * Constructor for SystemFilterAbstactFilterPoolWizardAction
+	 */
+	public SystemFilterAbstractFilterPoolWizardAction(Shell parent, ImageDescriptor image,
+	                                                  String label, String tooltip) 
+	{
+		super(parent, image, label, tooltip);
+		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);		
+	}
+	
+	/**
+	 * @see SystemFilterAbstractFilterPoolAction#doOKprocessing(Object)
 	 */
 	public void doOKprocessing(Object dlgValue) 
 	{
 	}
 
 	/**
-	 * @see SystemFilterAbstractFilterAction#getDialogValue(Dialog)
+	 * @see SystemFilterAbstractFilterPoolAction#getDialogValue(Dialog)
 	 */
 	protected Object getDialogValue(Dialog dlg) 
 	{
@@ -65,21 +69,19 @@ public abstract class SystemFilterAbstractFilterWizardAction
 	}
 
 	/**
-	 * @see SystemFilterAbstractFilterAction#createFilterDialog(Shell)
+	 * @see SystemFilterAbstractFilterPoolAction#createFilterPoolDialog(Shell)
 	 */
-	public SystemFilterDialogInterface createFilterDialog(Shell parent) 
+	public SystemFilterPoolDialogInterface createFilterPoolDialog(Shell parent) 
 	{
-		ISystemFilterWizard newWizard = getFilterWizard();	
-		  		
-	    SystemFilterDialogInterface dialog = 
-	        new SystemFilterWizardDialog(parent, newWizard);	    
-	        
+		SystemFilterPoolWizardInterface newWizard = getFilterPoolWizard();		    
+	    SystemFilterPoolDialogInterface dialog = 
+	        new SystemFilterPoolWizardDialog(parent, newWizard);	    
 	    return dialog;
 	}
 
 	/**
 	 * Return the wizard so we can customize it prior to showing it.
 	 */
-	public abstract ISystemFilterWizard getFilterWizard();
+	public abstract SystemFilterPoolWizardInterface getFilterPoolWizard();
 
 }

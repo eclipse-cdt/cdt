@@ -20,6 +20,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
+import org.eclipse.rse.ui.filters.dialogs.SystemFilterDialogInputs;
 
 
 

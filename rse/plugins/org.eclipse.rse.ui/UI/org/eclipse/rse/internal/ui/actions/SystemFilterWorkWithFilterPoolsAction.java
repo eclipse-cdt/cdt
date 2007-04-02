@@ -27,6 +27,7 @@ import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.filters.SystemFilterUIHelpers;
+import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.rse.ui.validators.ValidatorFilterPoolName;
 import org.eclipse.swt.widgets.Shell;
 

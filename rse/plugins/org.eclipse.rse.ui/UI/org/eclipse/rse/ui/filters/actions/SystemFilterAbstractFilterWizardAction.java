@@ -14,54 +14,50 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.actions;
+package org.eclipse.rse.ui.filters.actions;
 
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
-import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterPoolWizardDialog;
-import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterPoolWizardInterface;
+import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterWizardDialog;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
+import org.eclipse.rse.ui.filters.dialogs.ISystemFilterWizard;
+import org.eclipse.rse.ui.filters.dialogs.SystemFilterDialogInterface;
 import org.eclipse.swt.widgets.Shell;
 
 
-public abstract class SystemFilterAbstractFilterPoolWizardAction
-	extends SystemFilterAbstractFilterPoolAction 
+public abstract class SystemFilterAbstractFilterWizardAction
+	extends SystemFilterAbstractFilterAction 
 {
 
 
-
+    
 	/**
-	 * Constructor for SystemFilterAbstactFilterPoolWizardAction
+	 * Constructor for SystemFilterAbstactFilterWizardAction
 	 */
-	public SystemFilterAbstractFilterPoolWizardAction(Shell parent, String title) 
+	public SystemFilterAbstractFilterWizardAction(Shell parent, String title) 
 	{
 		super(parent, title);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);		
 	}
 
-	
-
 	/**
-	 * Constructor for SystemFilterAbstactFilterPoolWizardAction
+	 * Constructor for SystemFilterAbstactFilterWizardAction
 	 */
-	public SystemFilterAbstractFilterPoolWizardAction(Shell parent, ImageDescriptor image,
-	                                                  String label, String tooltip) 
+	public SystemFilterAbstractFilterWizardAction(Shell parent, String label, String tooltip) 
 	{
-		super(parent, image, label, tooltip);
+		super(parent, label, tooltip);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);		
 	}
-	
+
 	/**
-	 * @see SystemFilterAbstractFilterPoolAction#doOKprocessing(Object)
+	 * @see SystemFilterAbstractFilterAction#doOKprocessing(Object)
 	 */
 	public void doOKprocessing(Object dlgValue) 
 	{
 	}
 
 	/**
-	 * @see SystemFilterAbstractFilterPoolAction#getDialogValue(Dialog)
+	 * @see SystemFilterAbstractFilterAction#getDialogValue(Dialog)
 	 */
 	protected Object getDialogValue(Dialog dlg) 
 	{
@@ -69,19 +65,21 @@ public abstract class SystemFilterAbstractFilterPoolWizardAction
 	}
 
 	/**
-	 * @see SystemFilterAbstractFilterPoolAction#createFilterPoolDialog(Shell)
+	 * @see SystemFilterAbstractFilterAction#createFilterDialog(Shell)
 	 */
-	public SystemFilterPoolDialogInterface createFilterPoolDialog(Shell parent) 
+	public SystemFilterDialogInterface createFilterDialog(Shell parent) 
 	{
-		SystemFilterPoolWizardInterface newWizard = getFilterPoolWizard();		    
-	    SystemFilterPoolDialogInterface dialog = 
-	        new SystemFilterPoolWizardDialog(parent, newWizard);	    
+		ISystemFilterWizard newWizard = getFilterWizard();	
+		  		
+	    SystemFilterDialogInterface dialog = 
+	        new SystemFilterWizardDialog(parent, newWizard);	    
+	        
 	    return dialog;
 	}
 
 	/**
 	 * Return the wizard so we can customize it prior to showing it.
 	 */
-	public abstract SystemFilterPoolWizardInterface getFilterPoolWizard();
+	public abstract ISystemFilterWizard getFilterWizard();
 
 }

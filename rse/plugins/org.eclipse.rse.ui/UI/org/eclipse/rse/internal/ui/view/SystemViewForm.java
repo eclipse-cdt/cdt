@@ -31,6 +31,7 @@ import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.ISystemLongRunningRequestListener;
 import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
+import org.eclipse.rse.ui.view.SystemLongRunningRequestEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;

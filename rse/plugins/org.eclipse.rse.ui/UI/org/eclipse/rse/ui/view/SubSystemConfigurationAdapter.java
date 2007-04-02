@@ -50,7 +50,6 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemClearPasswordAction;
 import org.eclipse.rse.internal.ui.actions.SystemConnectAction;
 import org.eclipse.rse.internal.ui.actions.SystemDisconnectAction;
-import org.eclipse.rse.internal.ui.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterCascadingNewFilterPoolReferenceAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterCopyFilterAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterCopyFilterPoolAction;
@@ -64,8 +63,6 @@ import org.eclipse.rse.internal.ui.actions.SystemFilterNewFilterPoolAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterRemoveFilterPoolReferenceAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterSelectFilterPoolsAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterWorkWithFilterPoolsAction;
-import org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage;
-import org.eclipse.rse.internal.ui.propertypages.SystemFilterStringPropertyPage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -73,10 +70,13 @@ import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.filters.actions.ISystemNewFilterActionConfigurator;
 import org.eclipse.rse.ui.filters.actions.SystemChangeFilterAction;
+import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
 import org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.propertypages.ISystemSubSystemPropertyPageCoreForm;
+import org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage;
+import org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCoreForm;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorPortInput;
@@ -895,17 +895,17 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * {@link org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog} you will have to override this method
 		 * and specify the following information for the supplied page (via its setters):
 		 * <ul>
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setFilterStringValidator(org.eclipse.rse.ui.validators.ISystemValidator)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setListLabel(String, String)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setParentPoolPromptLabel(String, String)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setNamePromptLabel(String, String)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setNewListItemText(String)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setEditable(boolean)}
-		 * 	 <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setSupportsMultipleStrings(boolean)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemChangeFilterPropertyPage#setDescription(String)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setFilterStringValidator(org.eclipse.rse.ui.validators.ISystemValidator)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setListLabel(String, String)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setParentPoolPromptLabel(String, String)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setNamePromptLabel(String, String)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setNewListItemText(String)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setEditable(boolean)}
+		 * 	 <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setSupportsMultipleStrings(boolean)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setDescription(String)}
 		 * 	</ul>
 		 */
 		public void customizeChangeFilterPropertyPage(ISubSystemConfiguration factory, SystemChangeFilterPropertyPage page, ISystemFilter selectedFilter, Shell shell)
@@ -955,12 +955,12 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * {@link org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog} you will have to 
 		 * override this method and specify the following information for the supplied page (via its setters):
 		 * <ul>
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemFilterStringPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemFilterStringPropertyPage#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemFilterStringPropertyPage#setFilterStringValidator(org.eclipse.rse.ui.validators.ISystemValidator)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemFilterStringPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemFilterStringPropertyPage#setEditable(boolean)}
-		 *   <li>{@link org.eclipse.rse.internal.ui.propertypages.SystemFilterStringPropertyPage#setDescription(String)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setFilterStringValidator(org.eclipse.rse.ui.validators.ISystemValidator)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setEditable(boolean)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setDescription(String)}
 		 * </ul>
 		 */
 		public void customizeFilterStringPropertyPage(ISubSystemConfiguration factory, SystemFilterStringPropertyPage page, ISystemFilterString selectedFilterString, Shell shell)

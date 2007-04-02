@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.propertypages;
+package org.eclipse.rse.ui.propertypages;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
@@ -34,7 +34,6 @@ import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.filters.ISystemFilterStringEditPaneListener;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterString;
 import org.eclipse.swt.layout.GridData;

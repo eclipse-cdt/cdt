@@ -14,22 +14,21 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.filters;
-import org.eclipse.rse.internal.ui.actions.SystemFilterAbstractFilterAction;
-
+package org.eclipse.rse.ui.view;
+import org.eclipse.swt.widgets.Event;
 
 /**
- * Common interface for dialogs or wizards that work with filters.
+ * An event object as passed for ISystemLongRunningRequestListener methods.
  */
-public interface SystemFilterDialogInterface 
+public class SystemLongRunningRequestEvent extends Event 
 {
+	
 	/**
-	 * Allow base action to pass instance of itself for callback to get info
+	 * Constructor for SystemLongRunningRequestEvent
 	 */
-    public void setFilterDialogActionCaller(SystemFilterAbstractFilterAction caller);
-    /**
-     * Return an object containing user-specified information pertinent to filter pool actions
-     */
-    public SystemFilterDialogOutputs getFilterDialogOutputs();    
-    
+	public SystemLongRunningRequestEvent() 
+	{
+		super();
+	}
+
 }

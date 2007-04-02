@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.propertypages;
+package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
@@ -31,7 +31,6 @@ import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.filters.ISystemChangeFilterPaneEditPaneSupplier;
 import org.eclipse.rse.ui.filters.SystemChangeFilterPane;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
-import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;

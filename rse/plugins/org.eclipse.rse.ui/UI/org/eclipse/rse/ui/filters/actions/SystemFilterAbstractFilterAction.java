@@ -14,11 +14,11 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.actions;
+package org.eclipse.rse.ui.filters.actions;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.rse.internal.ui.filters.SystemFilterDialogInputs;
-import org.eclipse.rse.internal.ui.filters.SystemFilterDialogInterface;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
+import org.eclipse.rse.ui.filters.dialogs.SystemFilterDialogInputs;
+import org.eclipse.rse.ui.filters.dialogs.SystemFilterDialogInterface;
 import org.eclipse.swt.widgets.Shell;
 
 

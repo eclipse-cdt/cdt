@@ -64,7 +64,7 @@
 			</path>
 		</pathconvert>
 		<echo level="info" message="Done computing classpath."/>
-		<echo level="debug" message="Bootclasspath is: ${bootclasspath}"/>
+		<echo level="info" message="Bootclasspath is: ${bootclasspath}"/>
 		<echo level="debug" message="Classpath is: ${javadoc.classpath}"/>
 	</target>
 

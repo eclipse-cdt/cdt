@@ -160,7 +160,7 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 	private void clearProject() {
 		if (lastProjectName == null) return;
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().getProject(lastProjectName).delete(false, false, null);
+			ResourcesPlugin.getWorkspace().getRoot().getProject(lastProjectName).delete(true, true, null);
 		} catch (CoreException ignore) {}
 		newProject = null;
 		lastProjectName = null;

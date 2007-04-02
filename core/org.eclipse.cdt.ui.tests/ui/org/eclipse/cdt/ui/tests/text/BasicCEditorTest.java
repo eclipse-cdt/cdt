@@ -24,7 +24,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
@@ -35,11 +38,14 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
@@ -161,6 +167,23 @@ public class BasicCEditorTest extends BaseUITestCase {
 		children= tUnit.getChildren();
 		assertEquals(3, children.length);
 		tmpFile.delete();
+	}
+
+	public void testSyntaxHighlighting_Bug180433() throws Exception {
+		CColorManager colorMgr= CUIPlugin.getDefault().getTextTools().getColorManager();
+		colorMgr.unbindColor(ICColorConstants.PP_DIRECTIVE);
+		colorMgr.bindColor(ICColorConstants.PP_DIRECTIVE, new RGB(7,7,7));
+		final Color ppDirectiveColor= colorMgr.getColor(ICColorConstants.PP_DIRECTIVE);
+		final String file= "/ceditor/src/main.cpp";
+		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false);
+		setUpEditor(file);
+		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		String content= fDocument.get();
+		String include= "#include";
+		int includeIdx= content.indexOf(include);
+		StyleRange style= fTextWidget.getStyleRangeAtOffset(includeIdx);
+		assertSame(style.foreground, ppDirectiveColor);
 	}
 
 	/**

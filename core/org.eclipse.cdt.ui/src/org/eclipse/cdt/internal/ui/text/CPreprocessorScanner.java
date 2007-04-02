@@ -75,7 +75,6 @@ public class CPreprocessorScanner extends AbstractCScanner {
 		
 		token= getToken(ICColorConstants.PP_DIRECTIVE);
 		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), token);
-        token= getToken(ICColorConstants.C_TYPE);
 		String[] ppKeywords= fKeywords.getPreprocessorKeywords();
 		for (int i = 0; i < ppKeywords.length; i++) {
 			preprocessorRule.addWord(ppKeywords[i], token);

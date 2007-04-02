@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 168870: moved SystemPreferencesManager to a new package
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * David Dykstal (IBM) - 168870: made use of adapters on the SubSystemConfigurationProxy
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -42,7 +43,6 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.filters.SystemFilterPoolManager;
-import org.eclipse.rse.core.internal.subsystems.SubSystemConfigurationProxy;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
@@ -55,6 +55,7 @@ import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapter;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.model.SystemStartHere;
@@ -668,8 +669,26 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ImageDescriptor getImage()
 	{
-		return ((SubSystemConfigurationProxy)proxy).getImage();
+		Object adapterCandidate = Platform.getAdapterManager().getAdapter(proxy, SubSystemConfigurationProxyAdapter.class);
+		SubSystemConfigurationProxyAdapter adapter = (SubSystemConfigurationProxyAdapter) adapterCandidate;
+		ImageDescriptor result = adapter.getImageDescriptor();
+		return result;
 	}
+	
+	/**
+	 * Return image to use when this susystem is connection.
+	 * This comes from the xml "iconlive" attribute of the extension point.
+	 */
+	public ImageDescriptor getLiveImage()
+	{
+		Object adapterCandidate = Platform.getAdapterManager().getAdapter(proxy, SubSystemConfigurationProxyAdapter.class);
+		SubSystemConfigurationProxyAdapter adapter = (SubSystemConfigurationProxyAdapter) adapterCandidate;
+		ImageDescriptor result = adapter.getLiveImageDescriptor();
+		return result;
+	}
+
+
+
 	/**
 	 * Return actual graphics Image of this factory.
 	 * This is the same as calling getImage().createImage() but the resulting
@@ -693,15 +712,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			return image;
 		}
 		return null;
-	}
-
-	/**
-	 * Return image to use when this susystem is connection.
-	 * This comes from the xml "iconlive" attribute of the extension point.
-	 */
-	public ImageDescriptor getLiveImage()
-	{
-		return ((SubSystemConfigurationProxy)proxy).getLiveImage();
 	}
 
 	/**
@@ -2871,10 +2881,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 
 	/**
 	 * Get all the filter pool managers for all the profiles, active or not.
-	 * Why do this? Because we need to in order to allow cross references from
+	 * This allows cross references from
 	 * one subsystem in one profile to filter pools in any other profile.
 	 */
-	public ISystemFilterPoolManager[] restoreAllFilterPoolManagersForAllProfiles()
+	public ISystemFilterPoolManager[] getAllSystemFilterPoolManagers()
 	{
 		ISystemProfile[] profiles = SystemStartHere.getSystemProfileManager().getSystemProfiles();
 		ISystemFilterPoolManager[] allMgrs = new ISystemFilterPoolManager[profiles.length];

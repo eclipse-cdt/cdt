@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168870: move core function from UI to core
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -36,6 +36,13 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * Reset for a full refresh from disk, such as after a team synch.
 	 */
 	public void reset();
+	
+	/**
+	 * Retrieves all the filter pool managers for all the profiles, active or not.
+	 * This allows cross references from
+	 * one subsystem in one profile to filter pools in any other profile.
+	 */
+	public ISystemFilterPoolManager[] getAllSystemFilterPoolManagers();
 
 	// ---------------------------------
 	// CRITICAL METHODS...

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - systemTypeIds attribute extension and dynamic association
  *                            of system types.
+ * David Dykstal (IBM) - 168870: move core function from UI to core
  ********************************************************************************/
 
 package org.eclipse.rse.core.internal.subsystems;
@@ -25,16 +26,12 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemTypeMatcher;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
-import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.logging.Logger;
 import org.osgi.framework.Bundle;
 
 /**
@@ -62,10 +59,6 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	private String category;
 	// The subsystem configuration priority
 	private int priority;
-	// The subsystem configuration image
-	private ImageDescriptor image;
-	// The subsystem configuration live image
-	private ImageDescriptor liveImage;
 	
 	// The subsystem configuration implementation class
 	private ISubSystemConfiguration configuration = null;
@@ -96,17 +89,12 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		try {
 			if (priorityStr != null) priority = Integer.parseInt(priorityStr);
 		} catch (NumberFormatException e) {
-			SystemBasePlugin.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e); //$NON-NLS-1$ //$NON-NLS-2$
+			Logger logger = RSECorePlugin.getDefault().getLogger();
+			logger.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		if (vendor == null) vendor = "Unknown"; //$NON-NLS-1$
 		if (category == null) category = "Unknown"; //$NON-NLS-1$
-		
-		this.image = getPluginImage(element, element.getAttribute("icon")); //$NON-NLS-1$
-		if (this.image == null)	this.image = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID);
-		
-		this.liveImage = getPluginImage(element, element.getAttribute("iconlive")); //$NON-NLS-1$
-		if (this.liveImage == null) this.liveImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTIONLIVE_ID);
 		
 		systemTypeMatcher = new SystemTypeMatcher(getDeclaredSystemTypeIds());
 	}
@@ -212,19 +200,6 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		return category;
 	}
 
-	public ImageDescriptor getImage() {
-		return image;
-	}
-
-	/**
-	 * Returns the live image to use when this susystem is connection.
-	 * Comes from iconLive attribute in extension point xml.
-	 */
-	public ImageDescriptor getLiveImage() {
-		if (liveImage != null) return liveImage;
-		return getImage();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy#getPriority()
 	 */
@@ -239,21 +214,6 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		assert type != null;
 		if (systemTypeMatcher.supportsAllSystemTypes()) return true;
 		return Arrays.asList(getSystemTypes()).contains(type);
-	}
-
-	/**
-	 * Retrieve image in given plugin's directory tree, given its file name.
-	 * The file name should be relatively qualified with the subdir containing it.
-	 */
-	protected ImageDescriptor getPluginImage(IConfigurationElement element, String fileName) {
-		URL path = getDeclaringBundle().getEntry("/"); //$NON-NLS-1$
-		URL fullPathString = null;
-		try {
-			fullPathString = new URL(path, fileName);
-			return ImageDescriptor.createFromURL(fullPathString);
-		} catch (MalformedURLException e) {
-		}
-		return null;
 	}
 
 	/**
@@ -278,13 +238,8 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 					configuration.setSubSystemConfigurationProxy(this); // side effect: restores filter pools
 				}
 			} catch (Exception exc) {
-				exc.printStackTrace();
-				SystemBasePlugin.logError("Unable to start subsystem factory " + id, exc); //$NON-NLS-1$
-				org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(SystemBasePlugin.getActiveWorkbenchShell());
-				mb.setText("Unexpected Error"); //$NON-NLS-1$
-				String errmsg = "Unable to start subsystem factory " + getName() + ". See log file for details"; //$NON-NLS-1$ //$NON-NLS-2$
-				mb.setMessage(errmsg);
-				mb.open();
+				Logger logger = RSECorePlugin.getDefault().getLogger();
+				logger.logError("Unable to start subsystem factory " + id, exc); //$NON-NLS-1$
 			}
 			
 			// Attempt to restore the subsystem configuration completely.
@@ -307,14 +262,10 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	 * After a reset, restore from disk
 	 */
 	public void restore() {
-		// If the subsystem configuration implementation is based on our default
-		// implementation, we can initiate the filter pool manager restore from here.
-		if (configuration instanceof SubSystemConfiguration) {
-			try {
-					((SubSystemConfiguration)configuration).restoreAllFilterPoolManagersForAllProfiles();
-			} catch (Exception exc) {
-				SystemBasePlugin.logError("Error restoring subsystem for factory " + getName(), exc); //$NON-NLS-1$
-			}
+		try {
+			configuration.getAllSystemFilterPoolManagers();
+		} catch (Exception exc) {
+			RSECorePlugin.getDefault().getLogger().logError("Error restoring subsystem for configuration " + getName(), exc); //$NON-NLS-1$
 		}
 	}
 
@@ -343,5 +294,27 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	public String toString() {
 		return id + "." + name; //$NON-NLS-1$
 	}
-
+	
+	private URL getLocation(String fileName) {
+		URL result = null;
+		if (fileName != null) {
+			URL path = getDeclaringBundle().getEntry("/"); //$NON-NLS-1$
+			try {
+				result = new URL(path, fileName);
+			} catch (MalformedURLException e) {
+			}
+		}
+		return result;
+	}
+	
+	public URL getImageLocation() {
+		URL result = getLocation(element.getAttribute("icon")); //$NON-NLS-1$
+		return result;
+	}
+	
+	public URL getLiveImageLocation() {
+		URL result = getLocation(element.getAttribute("iconlive")); //$NON-NLS-1$
+		return result;
+	}
+	
 }

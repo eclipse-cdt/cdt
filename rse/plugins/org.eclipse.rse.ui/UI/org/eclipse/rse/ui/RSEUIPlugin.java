@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved methods to SystemPreferencesManager.
  * Uwe Stieber (Wind River) - bugfixing.
+ * David Dykstal (IBM) - 168870: move core function from UI to core
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -51,6 +52,7 @@ import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemDynamicPopupMenuExtensionManager;
 import org.eclipse.rse.internal.ui.actions.SystemShowPreferencesPageAction;
+import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapterFactory;
 import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapterFactory;
 import org.eclipse.rse.internal.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewResourceAdapterFactory;
@@ -500,6 +502,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    RSESystemTypeAdapterFactory rseSysTypeFactory = new RSESystemTypeAdapterFactory();
 	    manager.registerAdapters(rseSysTypeFactory, IRSESystemType.class);
 	    
+	    manager.registerAdapters(new SubSystemConfigurationProxyAdapterFactory(), ISubSystemConfigurationProxy.class);
+	    
 	    svaf = new SystemViewAdapterFactory();
 	    svaf.registerWithManager(manager);
 
@@ -520,8 +524,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     {
     	return svaf;
     }
-  
-	 
+    
     /**
      * Restart the whole thing after a team synchronization
      */

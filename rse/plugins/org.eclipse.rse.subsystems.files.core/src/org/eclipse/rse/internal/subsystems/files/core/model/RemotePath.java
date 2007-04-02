@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (WindRiver) - [cleanup] Fix javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core.model;
@@ -78,48 +78,56 @@ public class RemotePath implements IRemotePath {
 	}
 
 	/**
-	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#setProfileName(java.lang.String)
+	 * Set the profile name.
+	 * @param profileName the profile name.
 	 */
 	protected void setProfileName(String profileName) {
 		this.profileName = profileName;
 	}
 
 	/**
-	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#setConnectionName(java.lang.String)
+	 * Set the connection name.
+	 * @param connectionName the connection name.
 	 */
 	protected void setConnectionName(String connectionName) {
 		this.connectionName = connectionName;
 	}
 
 	/**
-	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#setAbsolutePath(java.lang.String)
+	 * Set the absolute path string below the connection.
+	 * Interpretation of this string is up to the subsystem.
+	 * @param absolutePath the absolute path string.
 	 */
 	protected void setAbsolutePath(String absolutePath) {
 		this.absolutePath = absolutePath;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#getProfileName()
 	 */
 	public String getProfileName() {
 		return profileName;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#getConnectionName()
 	 */
 	public String getConnectionName() {
 		return connectionName;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#getAbsolutePath()
 	 */
 	public String getAbsolutePath() {
 		return absolutePath;
 	}
 	
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#getFullyQualifiedPath()
 	 */
 	public String getFullyQualifiedPath() {
@@ -132,7 +140,8 @@ public class RemotePath implements IRemotePath {
 		}
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#getFileExtension()
 	 */
 	public String getFileExtension() {
@@ -159,7 +168,8 @@ public class RemotePath implements IRemotePath {
 		}
 	}
 	
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#addFileExtension(java.lang.String)
 	 */
 	public IRemotePath addFileExtension(String extension) {
@@ -177,8 +187,9 @@ public class RemotePath implements IRemotePath {
 		}
 	}
 	
-	/**
-	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#removeFileExtension(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#removeFileExtension()
 	 */
 	public IRemotePath removeFileExtension() {
 
@@ -202,14 +213,16 @@ public class RemotePath implements IRemotePath {
 		}
 	}
 	
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#isVirtual()
 	 */
 	public boolean isVirtual() {
 		return ArchiveHandlerManager.isVirtual(absolutePath);
 	}
 	
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.model.IRemotePath#toRemoteFile()
 	 */
 	public IRemoteFile toRemoteFile() {

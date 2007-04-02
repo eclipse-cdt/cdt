@@ -72,7 +72,7 @@ public interface IRemotePath {
 	 * defined as the string following the last period (".") character in the path. If this path ends
 	 * with a separator, i.e. '/' or '\\', or if it does not have an extension, then this path is returned.
 	 * The given extension should not include a leading ".".
-	 * @param the new path.
+	 * @return path with the file extension removed.
 	 */
 	public IRemotePath removeFileExtension();
 	

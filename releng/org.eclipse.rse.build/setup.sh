@@ -84,10 +84,9 @@ if [ ! -f eclipse/startup.jar ]; then
   fi
   cd ${curdir2}
 fi
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200702161600.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200703302000.jar ]; then
   # CDT 4.0.0 Runtime
   echo "Getting CDT Runtime..."
-  #wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M5/cdt-4.0.0-M5-${cdt_arch}.tar.gz"
   wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M6/cdt-4.0.0-M6-${cdt_arch}.tar.gz"
   tar xfvz cdt-4.0.0-M6-${cdt_arch}.tar.gz
   rm cdt-4.0.0-M6-${cdt_arch}.tar.gz
@@ -95,7 +94,6 @@ fi
 if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200703291501.jar ]; then
   # EMF 2.3.0 Runtime
   echo "Getting EMF Runtime..."
-  #wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200702121527/emf-sdo-runtime-2.3.0M5.zip"
   wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200703291501/emf-sdo-runtime-2.3.0M6.zip"
   unzip -o emf-sdo-runtime-2.3.0M6.zip
   rm emf-sdo-runtime-2.3.0M6.zip 

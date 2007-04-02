@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.rse.core.internal.subsystems;
+package org.eclipse.rse.internal.core.subsystems;
 
 import java.util.Comparator;
 

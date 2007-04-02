@@ -16,7 +16,7 @@
  * David Dykstal (IBM) - 168870: move core function from UI to core
  ********************************************************************************/
 
-package org.eclipse.rse.core.internal.subsystems;
+package org.eclipse.rse.internal.core.subsystems;
 
 import java.net.MalformedURLException;
 import java.net.URL;

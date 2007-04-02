@@ -33,7 +33,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
-import org.eclipse.rse.core.model.RSEModelResources;
+import org.eclipse.rse.internal.core.model.RSEModelResources;
 import org.eclipse.rse.internal.references.SystemPersistableReferencedObject;
 
 

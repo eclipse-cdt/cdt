@@ -11,7 +11,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  ********************************************************************************/
-package org.eclipse.rse.services.dstore.files;
+package org.eclipse.rse.internal.services.dstore.files;
 
 import java.io.IOException;
 import java.io.OutputStream;

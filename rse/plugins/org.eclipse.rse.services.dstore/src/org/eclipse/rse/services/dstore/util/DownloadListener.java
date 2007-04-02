@@ -28,8 +28,8 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
+import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.services.dstore.ServiceResources;
 import org.eclipse.swt.widgets.Display;
 
 public class DownloadListener implements IDomainListener,IUniversalDataStoreConstants

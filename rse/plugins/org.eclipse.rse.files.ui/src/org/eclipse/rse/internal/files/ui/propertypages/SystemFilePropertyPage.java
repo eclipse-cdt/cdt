@@ -23,10 +23,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEncodingManager;

@@ -18,9 +18,9 @@ package org.eclipse.rse.internal.subsystems.shells.dstore;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.internal.services.dstore.shell.DStoreShellOutputReader;
+import org.eclipse.rse.internal.services.dstore.shells.DStoreHostOutput;
+import org.eclipse.rse.internal.services.dstore.shells.DStoreHostShell;
 import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefreshJob;
-import org.eclipse.rse.services.dstore.shells.DStoreHostOutput;
-import org.eclipse.rse.services.dstore.shells.DStoreHostShell;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;

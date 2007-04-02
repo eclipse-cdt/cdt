@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemSelectFileTypesDialog;

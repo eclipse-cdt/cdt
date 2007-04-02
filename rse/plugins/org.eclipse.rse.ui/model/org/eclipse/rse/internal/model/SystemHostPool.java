@@ -30,7 +30,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.core.model.RSEModelResources;
+import org.eclipse.rse.internal.core.model.RSEModelResources;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 
 

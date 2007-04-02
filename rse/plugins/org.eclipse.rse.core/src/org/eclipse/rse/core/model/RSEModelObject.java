@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.core.model;
 
+import org.eclipse.rse.internal.core.model.RSEModelResources;
+
 /**
  * Provides common support for local RSE model objects
  * Extenders inherit property set support

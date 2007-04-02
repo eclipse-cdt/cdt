@@ -14,7 +14,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
-package org.eclipse.rse.core.model;
+package org.eclipse.rse.internal.core.model;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -23,7 +23,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class RSEModelResources extends NLS {
 
-	private static String BUNDLE_NAME = "org.eclipse.rse.core.model.RSEModelResources"; //$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.core.model.RSEModelResources"; //$NON-NLS-1$
 
 	public static String RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
 	public static String RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;

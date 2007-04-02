@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.dstore.processes;
+package org.eclipse.rse.internal.services.dstore.processes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +26,12 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.processes.IUniversalProcessDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.processes.UniversalProcessMiner;
+import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
-import org.eclipse.rse.services.dstore.ServiceResources;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 import org.eclipse.rse.services.processes.AbstractProcessService;
 import org.eclipse.rse.services.processes.IProcessService;

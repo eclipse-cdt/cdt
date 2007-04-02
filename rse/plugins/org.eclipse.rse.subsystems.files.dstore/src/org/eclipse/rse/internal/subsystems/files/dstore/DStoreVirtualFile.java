@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
 
-import org.eclipse.rse.services.dstore.files.DStoreVirtualHostFile;
+import org.eclipse.rse.internal.services.dstore.files.DStoreVirtualHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;

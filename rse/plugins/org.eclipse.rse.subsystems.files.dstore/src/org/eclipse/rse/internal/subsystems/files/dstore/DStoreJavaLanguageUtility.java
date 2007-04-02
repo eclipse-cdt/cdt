@@ -22,8 +22,8 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
+import org.eclipse.rse.internal.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.internal.subsystems.files.core.AbstractJavaLanguageUtility;
-import org.eclipse.rse.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 

@@ -25,8 +25,8 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+import org.eclipse.rse.internal.core.model.RSEModelResources;
 import org.eclipse.rse.internal.references.SystemReferencedObjectHelper;
 
 

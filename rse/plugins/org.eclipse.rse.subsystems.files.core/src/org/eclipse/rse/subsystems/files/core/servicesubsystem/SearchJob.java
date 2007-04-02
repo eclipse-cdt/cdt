@@ -20,10 +20,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.ISearchService;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.swt.widgets.Display;
 
 

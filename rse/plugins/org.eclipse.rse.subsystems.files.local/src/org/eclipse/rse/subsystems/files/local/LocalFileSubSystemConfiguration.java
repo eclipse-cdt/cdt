@@ -29,6 +29,7 @@ import org.eclipse.rse.internal.connectorservice.local.LocalConnectorServiceMana
 import org.eclipse.rse.internal.services.local.ILocalService;
 import org.eclipse.rse.internal.services.local.files.LocalFileService;
 import org.eclipse.rse.internal.services.local.search.LocalSearchService;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.internal.subsystems.files.local.LocalLanguageUtilityFactory;
 import org.eclipse.rse.internal.subsystems.files.local.LocalSearchResultConfiguration;
 import org.eclipse.rse.internal.subsystems.files.local.model.LocalFileAdapter;
@@ -38,7 +39,6 @@ import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
 import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;

@@ -27,7 +27,7 @@ import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.IFileConstants;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileFilterString;
 import org.eclipse.rse.ui.validators.ISystemValidator;

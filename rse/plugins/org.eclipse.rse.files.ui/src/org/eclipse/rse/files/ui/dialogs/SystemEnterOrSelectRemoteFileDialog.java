@@ -18,7 +18,7 @@ package org.eclipse.rse.files.ui.dialogs;
 
 import org.eclipse.rse.files.ui.widgets.SystemEnterOrSelectRemoteFileForm;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.swt.widgets.Shell;
 

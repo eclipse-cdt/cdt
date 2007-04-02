@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.dstore.files;
+package org.eclipse.rse.internal.services.dstore.files;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -40,6 +40,7 @@ import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalByteStreamHandler;
 import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalFileSystemMiner;
+import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
@@ -51,7 +52,6 @@ import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
-import org.eclipse.rse.services.dstore.ServiceResources;
 import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
 import org.eclipse.rse.services.files.IFileService;

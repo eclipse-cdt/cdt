@@ -14,13 +14,13 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.dstore;
+package org.eclipse.rse.internal.services.dstore;
 
 import org.eclipse.osgi.util.NLS;
 
 public class ServiceResources extends NLS
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.services.dstore.ServiceResources";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.services.dstore.ServiceResources";//$NON-NLS-1$
 
 	public static String DStore_Shell_Service_Label;
 	public static String DStore_Search_Service_Label;

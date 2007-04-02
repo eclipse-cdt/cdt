@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.dstore.processes;
+package org.eclipse.rse.internal.services.dstore.processes;
 
 
 import java.util.HashMap;

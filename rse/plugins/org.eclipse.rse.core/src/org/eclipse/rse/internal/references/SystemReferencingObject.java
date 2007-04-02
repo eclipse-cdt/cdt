@@ -17,9 +17,9 @@
 package org.eclipse.rse.internal.references;
 
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.references.IRSEReferencingObject;
+import org.eclipse.rse.internal.core.model.RSEModelResources;
 
 /**
  * A class to encapsulate the operations required of an object which

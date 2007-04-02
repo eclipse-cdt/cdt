@@ -18,9 +18,9 @@ package org.eclipse.rse.internal.core.subsystems;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
+import org.eclipse.rse.internal.core.model.RSEModelResources;
 
 
 public abstract class ServerLauncher extends RSEModelObject implements IServerLauncherProperties

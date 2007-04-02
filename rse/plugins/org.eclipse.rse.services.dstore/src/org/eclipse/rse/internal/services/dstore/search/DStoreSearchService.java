@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.dstore.search;
+package org.eclipse.rse.internal.services.dstore.search;
 
 import java.util.ArrayList;
 
@@ -23,11 +23,11 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalFileSystemMiner;
+import org.eclipse.rse.internal.services.dstore.ServiceResources;
+import org.eclipse.rse.internal.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
-import org.eclipse.rse.services.dstore.ServiceResources;
-import org.eclipse.rse.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;

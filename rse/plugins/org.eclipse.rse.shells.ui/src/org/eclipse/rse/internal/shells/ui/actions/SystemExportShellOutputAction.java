@@ -21,7 +21,7 @@ import java.io.FileWriter;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.internal.shells.ui.ShellResources;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsUI;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;

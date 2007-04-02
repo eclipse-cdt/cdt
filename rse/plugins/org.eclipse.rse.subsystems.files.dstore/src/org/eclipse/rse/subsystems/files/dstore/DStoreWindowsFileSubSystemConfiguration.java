@@ -23,7 +23,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 
 public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystemConfiguration

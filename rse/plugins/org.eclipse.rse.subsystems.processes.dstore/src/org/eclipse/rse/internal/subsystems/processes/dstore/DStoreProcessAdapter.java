@@ -19,8 +19,8 @@ package org.eclipse.rse.internal.subsystems.processes.dstore;
 import java.util.ArrayList;
 
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.rse.internal.services.dstore.processes.DStoreHostProcess;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
-import org.eclipse.rse.services.dstore.processes.DStoreHostProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IHostProcessToRemoteProcessAdapter;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext;

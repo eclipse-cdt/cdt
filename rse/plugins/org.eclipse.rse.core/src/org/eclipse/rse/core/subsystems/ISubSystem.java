@@ -24,6 +24,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IRSECallback;
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -353,11 +354,14 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 */
 	public void connect() throws Exception;
 	
+	
 	/**
 	 * Connect to the remote system from a background job
+	 * 
+	 * @param monitor the process monitor
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
-
+	
 	/**
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password
 	 * is cached in memory or on disk.
@@ -366,6 +370,28 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * in memory.
 	 */
 	public void connect(boolean forcePrompt) throws Exception;
+	
+	/**
+	 * Connect to the remote system on a background job.  The callback is
+	 * called when the connect is complete.
+	 * 
+	 * @param callback to call after connect is complete
+	 * @throws Exception
+	 */
+	public void connect(IRSECallback callback) throws Exception;
+	
+	/**
+	 * Connect to the remote system on a background job.  The callback is
+	 * called when the connect is complete.
+	 * 
+	 * @param forcePrompt forces the prompt dialog even if the password is in mem
+	 * @param callback to call after connect is complete
+	 * @throws Exception
+	 */
+	public void connect(boolean forcePrompt, IRSECallback callback) throws Exception;
+
+	
+
 
 	/**
 	 * Disconnect from the remote system.

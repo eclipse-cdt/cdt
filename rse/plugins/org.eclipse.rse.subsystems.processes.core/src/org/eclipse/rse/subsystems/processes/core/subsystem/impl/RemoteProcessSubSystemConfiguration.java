@@ -23,9 +23,9 @@ import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
+import org.eclipse.rse.internal.subsystems.processes.core.subsystem.SystemProcessesCoreResources;
 import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
-import org.eclipse.rse.subsystems.processes.core.subsystem.SystemProcessesCoreResources;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorServerPortInput;
 

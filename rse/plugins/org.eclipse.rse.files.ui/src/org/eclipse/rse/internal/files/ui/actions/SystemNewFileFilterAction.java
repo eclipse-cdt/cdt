@@ -17,7 +17,7 @@
 package org.eclipse.rse.internal.files.ui.actions;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.files.ui.widgets.SystemFileFilterStringEditPane;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;

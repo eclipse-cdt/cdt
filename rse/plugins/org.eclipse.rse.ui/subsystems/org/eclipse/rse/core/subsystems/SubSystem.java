@@ -44,6 +44,7 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IRSECallback;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -1569,10 +1570,13 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     public class ConnectJob extends SubSystemOperationJob
     {
     	private SubSystem _ss;
-    	public ConnectJob(SubSystem ss)
+    	private IRSECallback _callback;
+    	
+    	public ConnectJob(SubSystem ss, IRSECallback callback)
     	{
     		super(GenericMessages.RSESubSystemOperation_Connect_message);
     		_ss = ss;
+    		_callback = callback;
     	}
     	
     	public void performOperation(IProgressMonitor mon) throws InterruptedException, Exception
@@ -1588,6 +1592,11 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
     	    ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.connectedStatusChange(_ss, true, false);
+			
+			if (_callback != null)
+			{
+				_callback.operationComplete(this.getName(), _ss, mon);
+			}
     	}
     }
 
@@ -2357,6 +2366,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		}
 	}
 
+
+	
 	/**
 	 * Required for Bug 176603
 	 */
@@ -2400,6 +2411,17 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		}
 	}
 	
+	
+	public void connect(IRSECallback callback) throws Exception
+	{
+		connect(false, callback);	
+	}
+	
+	public void connect(boolean forcePrompt) throws Exception 
+	{
+		connect(forcePrompt, null);
+	}
+	
 	/**
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password
 	 * is cached in memory or on disk.
@@ -2411,7 +2433,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * @param forcePrompt Forces the signon prompt to be displayed even if a valid password in cached in memory
 	 * or saved on disk.
 	 */
-	public void connect(boolean forcePrompt) throws Exception {
+	public void connect(boolean forcePrompt, IRSECallback callback) throws Exception {
 		// yantzi: artemis60, (defect 53082) check that the connection has not been deleted before continuing,
 		// this is a defenisve measure to protect against code that stores a handle to subsystems but does 
 		// not do this check
@@ -2438,7 +2460,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 //dwd				((ProgressMonitorDialog) runnableContext).setCancelable(true);
 //dwd			}
 			getConnectorService().acquireCredentials(forcePrompt); // prompt for userid and password    
-			ConnectJob job = new ConnectJob(this);
+			ConnectJob job = new ConnectJob(this, callback);
 			scheduleJob(job, null);
 		}
 	}

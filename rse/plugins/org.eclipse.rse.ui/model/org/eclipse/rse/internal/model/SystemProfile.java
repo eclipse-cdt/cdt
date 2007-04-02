@@ -26,8 +26,8 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.core.model.RSEModelResources;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**

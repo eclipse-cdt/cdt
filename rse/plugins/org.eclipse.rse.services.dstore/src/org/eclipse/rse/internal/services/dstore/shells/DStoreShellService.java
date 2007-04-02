@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.dstore.shells;
+package org.eclipse.rse.internal.services.dstore.shells;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +26,10 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.command.CommandMiner;
 import org.eclipse.rse.dstore.universal.miners.environment.EnvironmentMiner;
+import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
-import org.eclipse.rse.services.dstore.ServiceResources;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;

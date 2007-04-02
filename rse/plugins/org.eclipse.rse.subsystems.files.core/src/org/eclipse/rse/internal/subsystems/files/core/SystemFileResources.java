@@ -15,14 +15,14 @@
  * {Name} (company) - description of contribution.
  *******************************************************************************/
 
-package org.eclipse.rse.subsystems.files.core;
+package org.eclipse.rse.internal.subsystems.files.core;
 
 import org.eclipse.osgi.util.NLS;
 
 
 public class SystemFileResources extends NLS 
 {
-	private static String	BUNDLE_NAME	= "org.eclipse.rse.subsystems.files.core.SystemFileResources";	//$NON-NLS-1$
+	private static String	BUNDLE_NAME	= "org.eclipse.rse.internal.subsystems.files.core.SystemFileResources";	//$NON-NLS-1$
 
 	// -------------------
 	// DEFAULT FILTERS...

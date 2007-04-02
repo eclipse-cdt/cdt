@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.dstore.rmtservice;
+package org.eclipse.rse.internal.services.dstore.rmtservice;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.model.IDataStoreProvider;

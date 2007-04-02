@@ -14,7 +14,7 @@
  * Michael Berger (IBM) - Bug 147791 - symbolic links can cause circular search.
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.filesystem;
+package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,6 +30,7 @@ import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalServerUtilities;
+import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalFileSystemMiner;
 import org.eclipse.rse.services.clientserver.SystemFileClassifier;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;

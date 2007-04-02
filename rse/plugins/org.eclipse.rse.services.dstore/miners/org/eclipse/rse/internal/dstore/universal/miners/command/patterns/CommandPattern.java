@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.command.patterns;
+package org.eclipse.rse.internal.dstore.universal.miners.command.patterns;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;

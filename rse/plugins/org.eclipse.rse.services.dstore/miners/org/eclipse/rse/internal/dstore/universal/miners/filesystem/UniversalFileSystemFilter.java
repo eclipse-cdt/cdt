@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.filesystem;
+package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;

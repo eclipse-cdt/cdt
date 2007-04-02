@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.filesystem;
+package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -30,6 +30,7 @@ import org.eclipse.dstore.core.model.IByteConverter;
 import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalServerUtilities;
+import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalFileSystemMiner;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;

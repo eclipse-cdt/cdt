@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.command;
+package org.eclipse.rse.internal.dstore.universal.miners.command;
 
 
 

@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.filesystem;
+package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;

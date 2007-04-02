@@ -38,7 +38,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  * extended by subsystem providers, by extending SubSystem. 
  * <p>
  */
-public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, IRemoteObjectResolver, ISchedulingRule, IRSEModelObject, IRSEPersistableContainer {
+public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, IRemoteObjectResolver, ISchedulingRule, IRSEModelObject {
 	// -------------------------------------
 	// Shortcut and helper methods...
 	// -------------------------------------

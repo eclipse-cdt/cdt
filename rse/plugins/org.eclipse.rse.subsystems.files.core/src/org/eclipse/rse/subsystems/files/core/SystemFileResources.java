@@ -183,9 +183,6 @@ public class SystemFileResources extends NLS
 	public static String	RESID_JOB_SEARCH_NAME;
 	public static String	RESID_JOB_DECORATEFILES_NAME;
 	
-	public static String	RESID_FTP_CONNECTORSERVICE_NAME;
-	public static String	RESID_FTP_CONNECTORSERVICE_DESCRIPTION;
-	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SystemFileResources.class);

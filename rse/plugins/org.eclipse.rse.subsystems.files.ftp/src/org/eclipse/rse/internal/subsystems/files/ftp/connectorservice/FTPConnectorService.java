@@ -15,6 +15,7 @@
  * Javier Montalvo Orus (Symbian) - Bug 161209 - Need a Log of ftp commands
  * Javier Montalvo Orus (Symbian) - Bug 169680 - [ftp] FTP files subsystem and service should use passive mode
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * Martin Oberhuber (WindRiver) - [cleanup] move FTPSubsystemResources out of core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -27,8 +28,8 @@ import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.internal.services.files.ftp.FTPService;
+import org.eclipse.rse.internal.subsystems.files.ftp.FTPSubsystemResources;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -43,7 +44,7 @@ public class FTPConnectorService extends StandardConnectorService
 	
 	public FTPConnectorService(IHost host, int port)
 	{		
-		super(SystemFileResources.RESID_FTP_CONNECTORSERVICE_NAME,SystemFileResources.RESID_FTP_CONNECTORSERVICE_DESCRIPTION, host, port);
+		super(FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_NAME,FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_DESCRIPTION, host, port);
 		_ftpService = new FTPService();
 	} 
 	

@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -180,8 +181,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			List entryList = new ArrayList();
 			ICProject cproject = celement.getCProject();
 			ArrayList resolvedListEntries = getResolvedPathEntries(cproject, false);
-			for (int i = 0; i < resolvedListEntries.size(); ++i) {
-				IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
+			IPathEntry[] pathEntries= getCachedResolvedPathEntries(resolvedListEntries, cproject);
+			for (int i = 0; i < pathEntries.length; ++i) {
+				IPathEntry entry = pathEntries[i];
 				if ((entry.getEntryKind() & IPathEntry.CDT_INCLUDE_FILE) != 0) {
 					entryList.add(entry);
 				}
@@ -208,8 +210,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			List entryList = new ArrayList();
 			ICProject cproject = celement.getCProject();
 			ArrayList resolvedListEntries = getResolvedPathEntries(cproject, false);
-			for (int i = 0; i < resolvedListEntries.size(); ++i) {
-				IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
+			IPathEntry[] pathEntries= getCachedResolvedPathEntries(resolvedListEntries, cproject);
+			for (int i = 0; i < pathEntries.length; ++i) {
+				IPathEntry entry = pathEntries[i];
 				if ((entry.getEntryKind() & IPathEntry.CDT_INCLUDE) != 0) {
 					entryList.add(entry);
 				}

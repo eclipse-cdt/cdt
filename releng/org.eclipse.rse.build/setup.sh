@@ -26,33 +26,47 @@
 
 curdir=`pwd`
 
+uname_s=`uname -s`
+uname_m=`uname -m`
+case ${uname_s}${uname_m} in
+  Linuxppc*) ep_arch=linux-gtk-ppc
+             cdt_arch=linux.ppc
+             ;;
+  Linuxx86_64*) ep_arch=linux-gtk-x86_64 
+                cdt_arch=linux.x86_64
+                ;;
+  Linuxx86*) ep_arch=linux-gtk
+             cdt_arch=linux.x86
+             ;;
+esac
+
 # prepare the base Eclipse installation in folder "eclipse"
 if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070316.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
-    if [ -d eclipse-3.3M6-linux-gtk-ppc ]; then
-      rm -rf eclipse-3.3M6-linux-gtk-ppc
+    if [ -d eclipse-3.3M6-${ep_arch} ]; then
+      rm -rf eclipse-3.3M6-${ep_arch}
     fi
-    mkdir eclipse-3.3M6-linux-gtk-ppc
-    cd eclipse-3.3M6-linux-gtk-ppc
+    mkdir eclipse-3.3M6-${ep_arch}
+    cd eclipse-3.3M6-${ep_arch}
   else
     rm -rf eclipse
   fi
   ## Eclipse Platform 3.3M6
-  #wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/eclipse-platform-3.3M6-linux-gtk-ppc.tar.gz"
-  #tar xfvz eclipse-platform-3.3M6-linux-gtk-ppc.tar.gz
-  #rm eclipse-platform-3.3M6-linux-gtk-ppc.tar.gz
+  #wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/eclipse-platform-3.3M6-${ep_arch}.tar.gz"
+  #tar xfvz eclipse-platform-3.3M6-${ep_arch}.tar.gz
+  #rm eclipse-platform-3.3M6-${ep_arch}.tar.gz
   # Eclipse SDK 3.3M6: Need the SDK because EMF needs JDT (somehow)
   echo "Getting Eclipse SDK..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/eclipse-SDK-3.3M6-linux-gtk-ppc.tar.gz"
-  tar xfvz eclipse-SDK-3.3M6-linux-gtk-ppc.tar.gz
-  rm eclipse-SDK-3.3M6-linux-gtk-ppc.tar.gz
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/eclipse-SDK-3.3M6-${ep_arch}.tar.gz"
+  tar xfvz eclipse-SDK-3.3M6-${ep_arch}.tar.gz
+  rm eclipse-SDK-3.3M6-${ep_arch}.tar.gz
   cd "${curdir2}"
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -e eclipse ]; then 
       rm eclipse
     fi
-    ln -s eclipse-3.3M6-linux-gtk-ppc/eclipse eclipse
+    ln -s eclipse-3.3M6-${ep_arch}/eclipse eclipse
   fi
 fi
 if [ ! -f eclipse/startup.jar ]; then
@@ -73,16 +87,18 @@ fi
 if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200702161600.jar ]; then
   # CDT 4.0.0 Runtime
   echo "Getting CDT Runtime..."
-  wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M5/cdt-4.0.0-M5-linux.ppc.tar.gz"
-  tar xfvz cdt-4.0.0-M5-linux.ppc.tar.gz
-  rm cdt-4.0.0-M5-linux.ppc.tar.gz
+  #wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M5/cdt-4.0.0-M5-${cdt_arch}.tar.gz"
+  wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M6/cdt-4.0.0-M6-${cdt_arch}.tar.gz"
+  tar xfvz cdt-4.0.0-M6-${cdt_arch}.tar.gz
+  rm cdt-4.0.0-M6-${cdt_arch}.tar.gz
 fi
-if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200702121527.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200703291501.jar ]; then
   # EMF 2.3.0 Runtime
   echo "Getting EMF Runtime..."
-  wget "http://download.eclipse.org//modeling/emf/emf/downloads/drops/2.3.0/S200702121527/emf-sdo-runtime-2.3.0M5.zip"
-  unzip -o emf-sdo-runtime-2.3.0M5.zip
-  rm emf-sdo-runtime-2.3.0M5.zip 
+  #wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200702121527/emf-sdo-runtime-2.3.0M5.zip"
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200703291501/emf-sdo-runtime-2.3.0M6.zip"
+  unzip -o emf-sdo-runtime-2.3.0M6.zip
+  rm emf-sdo-runtime-2.3.0M6.zip 
 fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2/junit.jar ]; then
   # Eclipse Test Framework

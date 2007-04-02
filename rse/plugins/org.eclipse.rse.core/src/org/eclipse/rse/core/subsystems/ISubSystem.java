@@ -352,6 +352,11 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Connect to the remote system. Does not force a prompt for a password.
 	 */
 	public void connect() throws Exception;
+	
+	/**
+	 * Connect to the remote system from a background job
+	 */
+	public void connect(IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password

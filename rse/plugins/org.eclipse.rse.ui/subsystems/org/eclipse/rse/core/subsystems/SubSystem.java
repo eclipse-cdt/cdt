@@ -2358,6 +2358,49 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	}
 
 	/**
+	 * Required for Bug 176603
+	 */
+	public void connect(IProgressMonitor monitor) throws Exception 
+	{				
+		if (!isConnected()) 
+		{
+			String msg = null;
+
+	        msg = SubSystemConfiguration.getConnectingMessage(getHostName(), getConnectorService().getPort());        	
+	        SystemBasePlugin.logInfo(msg);
+	        monitor.beginTask(msg, 10);
+	        
+			final Exception[] exception=new Exception[1];
+			exception[0]=null;
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					try {
+						promptForPassword();
+					} catch(Exception e) {
+						exception[0]=e;
+					}
+				}
+			});
+			
+			try {
+				getConnectorService().connect(monitor);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			if (isConnected()) {
+				final SubSystem ss = this;
+				//Notify connect status change
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						RSEUIPlugin.getTheSystemRegistry().connectedStatusChange(ss, true, false);
+					}
+				});
+			}
+			monitor.done();
+		}
+	}
+	
+	/**
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password
 	 * is cached in memory or on disk.
 	 * You do not need to override this, as it does the progress monitor and error message

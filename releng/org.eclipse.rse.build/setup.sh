@@ -160,16 +160,20 @@ if [ ! -d working/build ]; then
   mkdir -p working/build
 fi
 if [ ! -d publish ]; then
-  ln -s /home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops publish
+  D=/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops
+  if [ -d ${D} ]; then; ln -s ${D} publish; else; mkdir publish; fi
 fi
 if [ ! -d testUpdates ]; then
-  ln -s /home/data/httpd/download.eclipse.org/dsdp/tm/testUpdates testUpdates
+  D=/home/data/httpd/download.eclipse.org/dsdp/tm/testUpdates
+  if [ -d ${D} ]; then; ln -s ${D} testUpdates; else; mkdir testUpdates; fi
 fi
 if [ ! -d updates ]; then
-  ln -s /home/data/httpd/download.eclipse.org/dsdp/tm/updates updates
+  D=/home/data/httpd/download.eclipse.org/dsdp/tm/updates
+  if [ -d ${D} ]; then; ln -s ${D} updates; else; mkdir updates; fi
 fi
 if [ ! -d staging ]; then
-  ln -s /home/data/httpd/download-staging.priv/dsdp/tm staging
+  D=/home/data/httpd/download-staging.priv/dsdp/tm
+  if [ -d ${D} ]; then; ln -s ${D} staging; else; mkdir staging; fi
 fi
 
 # create symlinks as needed
@@ -179,7 +183,8 @@ fi
 if [ ! -h doit_nightly.sh ]; then
   ln -s org.eclipse.rse.build/bin/doit_nightly.sh .
 fi
-if [ ! -e setup.sh ]; then
+if [ ! -h setup.sh ]; then
+  if [ -f setup.sh ]; then; rm -f setup.sh; fi
   ln -s org.eclipse.rse.build/bin/setup.sh .
 fi
 chmod a+x doit_irsbuild.sh doit_nightly.sh

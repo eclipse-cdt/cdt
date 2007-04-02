@@ -597,7 +597,6 @@
          </filter>
          <enabledWhen>
             <and>
-               <test property="org.eclipse.cdt.ui.toolEditEnabled" value="" />
             <or>
 		     <instanceof value="org.eclipse.core.resources.IProject"/>
 		     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
@@ -606,7 +605,7 @@
 		     <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
 
 		     <and>
-	`	        <instanceof value="org.eclipse.core.resources.IFile"/>
+		        <instanceof value="org.eclipse.core.resources.IFile"/>
     	        <test property="org.eclipse.cdt.ui.isSource" value="" />
              </and>
              <and>
@@ -614,6 +613,7 @@
     	        <test property="org.eclipse.cdt.ui.isSource" value="" />
 	         </and>	
 		    </or>
+            <test property="org.eclipse.cdt.ui.toolEditEnabled" value="" />
 		    </and>          
          </enabledWhen>
       </page>

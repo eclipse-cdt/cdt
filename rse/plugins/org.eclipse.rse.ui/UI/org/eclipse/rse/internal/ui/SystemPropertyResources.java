@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class SystemPropertyResources extends NLS
 {
-	private static String BUNDLE_NAME = "org.eclipse.internal.rse.ui.SystemPropertyResources";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.ui.SystemPropertyResources";//$NON-NLS-1$
 
 //	 ------------------------------
 	// PROPERTY SHEET VALUES

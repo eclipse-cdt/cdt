@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework;
+package org.eclipse.rse.internal.tests.framework;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

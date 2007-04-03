@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework.ui;
+package org.eclipse.rse.internal.tests.framework.ui;
 
 import java.net.URL;
 import java.text.DateFormat;
@@ -31,11 +31,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.rse.internal.tests.framework.TestFrameworkPlugin;
 import org.eclipse.rse.tests.framework.AbstractTestSuiteHolder;
 import org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder;
 import org.eclipse.rse.tests.framework.ITestSuiteHolder;
 import org.eclipse.rse.tests.framework.ITestSuiteHolderListener;
-import org.eclipse.rse.tests.framework.TestFrameworkPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.rse.tests.framework.TestFrameworkPlugin;
+import org.eclipse.rse.internal.tests.framework.TestFrameworkPlugin;
 import org.osgi.framework.Bundle;
 
 /**

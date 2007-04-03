@@ -2,11 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.tests.framework;singleton:=true
-Bundle-Version: 1.0.2.qualifier
-Bundle-Activator: org.eclipse.rse.tests.framework.TestFrameworkPlugin
+Bundle-Version: 2.0.0.qualifier
+Bundle-Activator: org.eclipse.rse.internal.tests.framework.TestFrameworkPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.rse.tests.framework,
+Export-Package: org.eclipse.rse.internal.tests.framework;x-internal:=true,
+ org.eclipse.rse.internal.tests.framework.actions;x-internal:=true,
+ org.eclipse.rse.internal.tests.framework.ui;x-internal:=true,
+ org.eclipse.rse.tests.framework,
  org.eclipse.rse.tests.framework.scripting
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,

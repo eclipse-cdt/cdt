@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework.ui;
+package org.eclipse.rse.internal.tests.framework.ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;

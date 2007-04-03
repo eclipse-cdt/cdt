@@ -11,7 +11,7 @@
       </category>
       <view
             icon="icons/HolderView.gif"
-            class="org.eclipse.rse.tests.framework.ui.TestSuiteHolderView"
+            class="org.eclipse.rse.internal.tests.framework.ui.TestSuiteHolderView"
             category="org.eclipse.rse.projects.testing"
             name="%TestSuiteHolderView.view.name"
             id="org.eclipse.rse.tests.framework.HolderView">
@@ -41,7 +41,7 @@
          <action
                enablesFor="*"
                label="%SelectAllHoldersDelegate.label"
-               class="org.eclipse.rse.tests.framework.actions.SelectAllHoldersDelegate"
+               class="org.eclipse.rse.internal.tests.framework.actions.SelectAllHoldersDelegate"
                menubarPath="additions"
                id="org.eclipse.rse.tests.framework.SelectAllHolders"/>
       </viewerContribution>
@@ -51,13 +51,13 @@
          <action
                enablesFor="+"
                label="%ResetHolderDelegate.label"
-               class="org.eclipse.rse.tests.framework.actions.ResetHolderDelegate"
+               class="org.eclipse.rse.internal.tests.framework.actions.ResetHolderDelegate"
                menubarPath="additions"
                id="org.eclipse.rse.tests.framework.ResetHolder"/>
          <action
                enablesFor="+"
                label="%RunHolderDelegate.label"
-               class="org.eclipse.rse.tests.framework.actions.RunHolderDelegate"
+               class="org.eclipse.rse.internal.tests.framework.actions.RunHolderDelegate"
                menubarPath="additions"
                id="org.eclipse.rse.tests.framework.RunHolder"/>
       </objectContribution>
@@ -68,7 +68,7 @@
             id="org.eclipse.rse.tests.framework.HolderViewActions"
             targetID="org.eclipse.rse.tests.framework.HolderView">
          <action
-               class="org.eclipse.rse.tests.framework.actions.ToggleRunInBackgroundDelegate"
+               class="org.eclipse.rse.internal.tests.framework.actions.ToggleRunInBackgroundDelegate"
                icon="icons/GreenDot.gif"
                id="org.eclipse.rse.tests.framework.runInBackgroundToggle"
                label="%ToggleRunInBackgroundDelegate.label"
@@ -101,10 +101,10 @@
    <extension
          point="org.eclipse.rse.tests.framework.suites">
       <type
-            class="org.eclipse.rse.tests.framework.impl.StandardTestSuiteHolder"
+            class="org.eclipse.rse.internal.tests.framework.StandardTestSuiteHolder"
             name="standard"/>
       <type
-            class="org.eclipse.rse.tests.framework.impl.TestSuiteGeneratorHolder"
+            class="org.eclipse.rse.internal.tests.framework.TestSuiteGeneratorHolder"
             name="generated"/>
       <!--
       <type

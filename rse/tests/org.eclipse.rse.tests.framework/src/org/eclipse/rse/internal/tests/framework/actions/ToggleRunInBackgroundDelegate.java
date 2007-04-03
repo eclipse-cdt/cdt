@@ -7,12 +7,12 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework.actions;
+package org.eclipse.rse.internal.tests.framework.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.rse.tests.framework.TestFrameworkPlugin;
+import org.eclipse.rse.internal.tests.framework.TestFrameworkPlugin;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 

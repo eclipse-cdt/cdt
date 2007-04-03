@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework.actions;
+package org.eclipse.rse.internal.tests.framework.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -22,8 +22,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.internal.tests.framework.TestFrameworkPlugin;
 import org.eclipse.rse.tests.framework.AbstractTestSuiteHolder;
-import org.eclipse.rse.tests.framework.TestFrameworkPlugin;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;

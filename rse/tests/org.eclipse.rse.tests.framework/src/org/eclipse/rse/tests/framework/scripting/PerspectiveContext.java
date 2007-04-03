@@ -12,9 +12,9 @@ package org.eclipse.rse.tests.framework.scripting;
 import java.net.URL;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.tests.framework.ui.TestSuiteConsoleView;
-import org.eclipse.rse.tests.framework.ui.TestSuiteHolderView;
-import org.eclipse.rse.tests.framework.ui.TestSuiteImageView;
+import org.eclipse.rse.internal.tests.framework.ui.TestSuiteConsoleView;
+import org.eclipse.rse.internal.tests.framework.ui.TestSuiteHolderView;
+import org.eclipse.rse.internal.tests.framework.ui.TestSuiteImageView;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;

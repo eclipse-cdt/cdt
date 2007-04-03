@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework.impl;
+package org.eclipse.rse.internal.tests.framework;
 
 import junit.framework.TestSuite;
 

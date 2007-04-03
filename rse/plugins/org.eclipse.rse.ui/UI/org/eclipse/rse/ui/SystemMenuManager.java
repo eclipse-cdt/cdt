@@ -40,8 +40,7 @@ import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
  * Only exposes core set of MenuManager methods. Rest can be
  * accessed by calling getMenuManger().
  */
-public class SystemMenuManager //implements IMenuManager
-       implements ISystemContextMenuConstants
+public class SystemMenuManager 
 {
 	private IMenuManager mgr;
 	private IMenuManager newSubMenu, expandtoSubMenu, openwithSubMenu, browsewithSubMenu, comparewithSubMenu, replacewithSubMenu, workwithSubMenu, viewSubMenu, serverSubMenu;
@@ -69,8 +68,8 @@ public class SystemMenuManager //implements IMenuManager
      * Method declared on IContributionManager.
      * Add an action to this menu.
      * COMMENTED OUT TO PREVENT CALLING IT. YOU SHOULD EXPLICITLY
-     * DECIDE WHAT GROUP EACH ACTION SHOULD BE ADDED TO, SO WE FORCE
-     * YOU TO CALL APPENDTOGROUP!
+     * DECIDE WHAT ISystemContextMenuConstants.GROUP EACH ACTION SHOULD BE ADDED TO, SO WE FORCE
+     * YOU TO CALL APPENDTOISystemContextMenuConstants.GROUP!
      *
     public void add(IAction action) 
     {
@@ -143,7 +142,7 @@ public class SystemMenuManager //implements IMenuManager
 
 	/**
 	 * Add a separator.
-	 * HOPEFULLY THIS IS NEVER CALLED. RATHER, BY USING GROUPS AND DECIDING PER GROUP IF THERE
+	 * HOPEFULLY THIS IS NEVER CALLED. RATHER, BY USING ISystemContextMenuConstants.GROUPS AND DECIDING PER ISystemContextMenuConstants.GROUP IF THERE
 	 * SHOULD BE SEPARATORS, WE AVOID HARDCODING SEPARATORS LIKE THIS.
 	 */
 	public void addSeparator()
@@ -214,104 +213,104 @@ public class SystemMenuManager //implements IMenuManager
     	menuCreated = false;
     	if (groupName!=null) 
     	{
-    	  if (groupName.equals(GROUP_NEW))
+    	  if (groupName.equals(ISystemContextMenuConstants.GROUP_NEW))
     	  {
     	    if (newSubMenu == null)
     	    {
     	      newSubMenu = (new SystemCascadingNewAction()).getSubMenu();
-              mgr.appendToGroup(GROUP_NEW, newSubMenu);	    
+              mgr.appendToGroup(ISystemContextMenuConstants.GROUP_NEW, newSubMenu);	    
               menuCreated = true;
     	    }
     	    subMenu = newSubMenu;
     	  }
     	  /*
-    	  else if (groupName.equals(GROUP_GOTO))
+    	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_GOTO))
     	  {
     	    if (gotoSubMenu == null)
     	    {
     	      gotoSubMenu = (new SystemCascadingGoToAction()).getSubMenu();
-              mgr.appendToGroup(GROUP_GOTO, gotoSubMenu);	    
+              mgr.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, gotoSubMenu);	    
               menuCreated = true;
     	    }
     	    subMenu = gotoSubMenu;
     	  }
     	  */
-    	  else if (groupName.equals(GROUP_EXPANDTO))
+    	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_EXPANDTO))
     	  {
     	    if (expandtoSubMenu == null)
     	    {
     	      expandtoSubMenu = (new SystemCascadingExpandToAction()).getSubMenu();
-              mgr.appendToGroup(GROUP_EXPANDTO, expandtoSubMenu);	    
+              mgr.appendToGroup(ISystemContextMenuConstants.GROUP_EXPANDTO, expandtoSubMenu);	    
               menuCreated = true;
     	    }
     	    subMenu = expandtoSubMenu;
     	  }
-    	  else if (groupName.equals(GROUP_OPENWITH))
+    	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_OPENWITH))
     	  {
     	    if (openwithSubMenu == null)
     	    {
     	      openwithSubMenu = (new SystemCascadingOpenWithAction()).getSubMenu();
-              mgr.appendToGroup(GROUP_OPENWITH, openwithSubMenu);	    
+              mgr.appendToGroup(ISystemContextMenuConstants.GROUP_OPENWITH, openwithSubMenu);	    
               menuCreated = true;
     	    }
     	    subMenu = openwithSubMenu;
     	  }
-    	  else if (groupName.equals(GROUP_BROWSEWITH))
+    	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_BROWSEWITH))
     	  {
     	    if (browsewithSubMenu == null)
     	    {
     	      browsewithSubMenu = (new SystemCascadingBrowseWithAction()).getSubMenu();
-              mgr.appendToGroup(GROUP_BROWSEWITH, browsewithSubMenu);	    
+              mgr.appendToGroup(ISystemContextMenuConstants.GROUP_BROWSEWITH, browsewithSubMenu);	    
               menuCreated = true;
     	    }
     	    subMenu = browsewithSubMenu;
     	  }
-    	  else if (groupName.equals(GROUP_COMPAREWITH))
+    	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_COMPAREWITH))
     	  {
     	  	if (comparewithSubMenu == null)
     	  	{
     	  		comparewithSubMenu = (new SystemCascadingCompareWithAction()).getSubMenu();
-    	  		mgr.appendToGroup(GROUP_COMPAREWITH, comparewithSubMenu);
+    	  		mgr.appendToGroup(ISystemContextMenuConstants.GROUP_COMPAREWITH, comparewithSubMenu);
     	  		menuCreated = true;
     	  	}
     	  	subMenu = comparewithSubMenu;
     	  }
-		  else if (groupName.equals(GROUP_REPLACEWITH))
+		  else if (groupName.equals(ISystemContextMenuConstants.GROUP_REPLACEWITH))
 		  {
 			if (replacewithSubMenu == null)
 			{
 				replacewithSubMenu = (new SystemCascadingReplaceWithAction()).getSubMenu();
-				mgr.appendToGroup(GROUP_REPLACEWITH, replacewithSubMenu);
+				mgr.appendToGroup(ISystemContextMenuConstants.GROUP_REPLACEWITH, replacewithSubMenu);
 				menuCreated = true;
 			}
 			subMenu = replacewithSubMenu;
 		  }
-    	  else if (groupName.equals(GROUP_WORKWITH))
+    	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_WORKWITH))
     	  {
     	    if (workwithSubMenu == null)
     	    {
     	      workwithSubMenu = (new SystemCascadingWorkWithAction()).getSubMenu();
-              mgr.appendToGroup(GROUP_WORKWITH, workwithSubMenu);	    
+              mgr.appendToGroup(ISystemContextMenuConstants.GROUP_WORKWITH, workwithSubMenu);	    
               menuCreated = true;
     	    }
     	    subMenu = workwithSubMenu;
     	  }
-    	  else if (groupName.equals(GROUP_VIEWER_SETUP))
+    	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_VIEWER_SETUP))
     	  {
     	    if (viewSubMenu == null)
     	    {
     	      viewSubMenu = (new SystemCascadingViewAction()).getSubMenu();
-              mgr.appendToGroup(GROUP_VIEWER_SETUP, viewSubMenu);	    
+              mgr.appendToGroup(ISystemContextMenuConstants.GROUP_VIEWER_SETUP, viewSubMenu);	    
               menuCreated = true;
     	    }
     	    subMenu = viewSubMenu;
     	  }
-		  else if (groupName.equals(GROUP_STARTSERVER))
+		  else if (groupName.equals(ISystemContextMenuConstants.GROUP_STARTSERVER))
 		  {
 			if (serverSubMenu == null)
 			{
 				serverSubMenu = (new SystemCascadingRemoteServersAction()).getSubMenu();
-			  	mgr.appendToGroup(GROUP_STARTSERVER, serverSubMenu);	    
+			  	mgr.appendToGroup(ISystemContextMenuConstants.GROUP_STARTSERVER, serverSubMenu);	    
 			  	menuCreated = true;
 			}
 			subMenu = serverSubMenu;
@@ -327,24 +326,24 @@ public class SystemMenuManager //implements IMenuManager
     	menuCreated = false;
     	if (menuID!=null) 
     	{
-    	  	if (menuID.equals(MENU_NEW))
-    	    	groupName = GROUP_NEW;
-    	  	else if (menuID.equals(MENU_GOTO))
-    	    	groupName = GROUP_GOTO;
-    	  	else if (menuID.equals(MENU_EXPANDTO))
-    	    	groupName = GROUP_EXPANDTO;
-    	  	else if (menuID.equals(MENU_OPENWITH))
-    	    	groupName = GROUP_OPENWITH;
-    	  	else if (menuID.equals(MENU_BROWSEWITH))
-    	  		groupName = GROUP_BROWSEWITH;
-    	  	else if (menuID.equals(MENU_COMPAREWITH))
-    	  		groupName = GROUP_COMPAREWITH;
-		  	else if (menuID.equals(MENU_REPLACEWITH))
-			  	groupName = GROUP_REPLACEWITH;	
-    	  	else if (menuID.equals(MENU_WORKWITH))
-    	    	groupName = GROUP_WORKWITH; 	    
-		  	else if (menuID.equals(MENU_STARTSERVER))
-			  	groupName = GROUP_STARTSERVER; 	    
+    	  	if (menuID.equals(ISystemContextMenuConstants.MENU_NEW))
+    	    	groupName = ISystemContextMenuConstants.GROUP_NEW;
+    	  	else if (menuID.equals(ISystemContextMenuConstants.MENU_GOTO))
+    	    	groupName = ISystemContextMenuConstants.GROUP_GOTO;
+    	  	else if (menuID.equals(ISystemContextMenuConstants.MENU_EXPANDTO))
+    	    	groupName = ISystemContextMenuConstants.GROUP_EXPANDTO;
+    	  	else if (menuID.equals(ISystemContextMenuConstants.MENU_OPENWITH))
+    	    	groupName = ISystemContextMenuConstants.GROUP_OPENWITH;
+    	  	else if (menuID.equals(ISystemContextMenuConstants.MENU_BROWSEWITH))
+    	  		groupName = ISystemContextMenuConstants.GROUP_BROWSEWITH;
+    	  	else if (menuID.equals(ISystemContextMenuConstants.MENU_COMPAREWITH))
+    	  		groupName = ISystemContextMenuConstants.GROUP_COMPAREWITH;
+		  	else if (menuID.equals(ISystemContextMenuConstants.MENU_REPLACEWITH))
+			  	groupName = ISystemContextMenuConstants.GROUP_REPLACEWITH;	
+    	  	else if (menuID.equals(ISystemContextMenuConstants.MENU_WORKWITH))
+    	    	groupName = ISystemContextMenuConstants.GROUP_WORKWITH; 	    
+		  	else if (menuID.equals(ISystemContextMenuConstants.MENU_STARTSERVER))
+			  	groupName = ISystemContextMenuConstants.GROUP_STARTSERVER; 	    
 			      	    
     	  	if (groupName != null)
     	    	subMenu = getSpecialSubMenu(groupName);

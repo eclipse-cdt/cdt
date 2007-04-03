@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * This class locates matches.
  */
-public class SystemSearchStringMatchLocator implements ISystemSearchConstants {
+public class SystemSearchStringMatchLocator {
 	
 	private Reader reader;
 	private SystemSearchStringMatcher stringMatcher;
@@ -160,16 +160,16 @@ public class SystemSearchStringMatchLocator implements ISystemSearchConstants {
 		while (ch >= 0) {
 			
 			// if we get a line feed character, then we have read a line (in Unix)
-			if (ch == LF_CHAR) {
+			if (ch == ISystemSearchConstants.LF_CHAR) {
 				return 1;
 			}
 			
 			// otherwise if we get a carriage return character, then we need to check the next character
-			if (ch == CR_CHAR) {
+			if (ch == ISystemSearchConstants.CR_CHAR) {
 				ch = reader.read();
 				
 				// if the character is a line feed, then we have read a line (in Windows)
-				if (ch == LF_CHAR) {
+				if (ch == ISystemSearchConstants.LF_CHAR) {
 					return 2;
 				}
 				// otherwise, we assume we are still in the same line (i.e. a carriage return does not count as a line separator)

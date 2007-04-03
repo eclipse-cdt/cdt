@@ -108,7 +108,7 @@ public class CommandMiner extends Miner
 	private CommandMinerDescriptors _descriptors;
 	
 	
-	public Patterns getPatterns()
+	private Patterns getPatterns()
 	{
 		if (_patterns == null)
 		{

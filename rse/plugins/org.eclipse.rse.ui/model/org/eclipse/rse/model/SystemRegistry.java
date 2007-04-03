@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
  * Uwe Stieber (Wind River) - bugfixing
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.model;
@@ -255,7 +256,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		List result = new ArrayList(); 
 		for (int i = 0; i < connections.length; i++) {
 			IHost con = connections[i];
-			IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(con.getSystemType());
+			IRSESystemType sysType = con.getSystemType();
 			if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
 				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
 				// Note: System types without registered subsystems get disabled by the adapter itself!
@@ -295,7 +296,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		{
 		  for (int idx = 0; (!hasSubsystems) && (idx < subsystemFactoryProxies.length); idx++)
 		  {
-		  	 if (subsystemFactoryProxies[idx].appliesToSystemType(selectedConnection.getSystemType()) &&
+		  	 if (subsystemFactoryProxies[idx].appliesToSystemType(selectedConnection.getSystemType().getName()) &&
 		  	     subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
 		  	 {
 		  	   SubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
@@ -1239,7 +1240,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				// if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()))
+				// if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType().getName()))
 				// {
 					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
@@ -1395,7 +1396,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()) && subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
+				if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType().getName()) && subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
 				{
 					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
@@ -1772,9 +1773,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			IHost[] candidates = getHosts();
 			for (int i = 0; i < candidates.length; i++) {
 				IHost candidate = candidates[i];
-				//FIXME: If IHost.getSystemType() returns the id or the IRSESystemType
-				//       object, this comparisation must be adapted.
-				IRSESystemType candidateType = RSECorePlugin.getDefault().getRegistry().getSystemType(candidate.getSystemType());
+				IRSESystemType candidateType = candidate.getSystemType();
 				if (systemType.equals(candidateType)) {
 					connections.add(candidate);
 				}
@@ -1812,7 +1811,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		Vector v = new Vector();
 		for (int idx = 0; idx < connections.length; idx++)
 		{
-			String systemType = connections[idx].getSystemType();
+			String systemType = connections[idx].getSystemType().getName();
 			boolean match = false;
 			for (int jdx = 0; !match && (jdx < systemTypes.length); jdx++)
 				if (systemType.equals(systemTypes[jdx]))
@@ -1948,7 +1947,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			{
 				if (!v.contains(conns[idx].getHostName()))
 				{
-					if (conns[idx].getSystemType().equals(systemType))
+					if (conns[idx].getSystemType().getName().equals(systemType))
 						v.addElement(conns[idx].getHostName());
 				}
 			}

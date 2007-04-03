@@ -1,11 +1,12 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
@@ -174,7 +175,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		ISubSystem subsystem = getPrimarySubSystem();
 		IHost host = subsystem.getHost();
 		String hostName = host.getHostName();
-		String hostType = host.getSystemType();
+		String hostType = host.getSystemType().getName();
 		savePassword = false;
 		if (supportsUserId()) {
 			boolean sameHost = hostName.equalsIgnoreCase(getConnectorService().getHostName());
@@ -252,7 +253,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	public final ICredentials getCredentials() {
 		IHost host = getConnectorService().getHost();
 		String hostName = host.getHostName();
-		String systemType = host.getSystemType();
+		String systemType = host.getSystemType().getName();
 		SystemSignonInformation result = new SystemSignonInformation(hostName, userId, password, systemType);
 		return result;
 	}

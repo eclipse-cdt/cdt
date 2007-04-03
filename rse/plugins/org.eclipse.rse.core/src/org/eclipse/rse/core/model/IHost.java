@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,33 +11,33 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
 /**
- * Interface for SystemConnection objects. 
- * A SystemConnect holds information identifying a remote system. It also logically contains
- *   SubSystem objects, although this containment is achievable programmatically versus via 
- *   object oriented containment.
- * <p>
- */
-/**
- * @lastgen interface SystemConnection  {}
+ * Interface for Host (SystemConnection) objects.
+ *  
+ * An IHost holds information identifying a remote system. It also logically contains
+ * ISubSystem objects, although this containment is achievable programmatically versus via 
+ * object oriented containment.
  */
 public interface IHost extends IAdaptable, IRSEModelObject {
 	/**
 	 * Return the system profile that owns this connection
+	 * @return the profile which contains this host
 	 */
 	public ISystemProfile getSystemProfile();
 
 	/**
 	 * Return the name of the system profile that owns this connection
+	 * FIXME Check how this is different from getSystemProfile().getName()
 	 */
 	public String getSystemProfileName();
 
@@ -75,77 +75,91 @@ public interface IHost extends IAdaptable, IRSEModelObject {
 	public void clearLocalDefaultUserId();
 
 	/**
-	 * Private method called when this connection is being deleted, so
-	 * we can do any pre-death cleanup we need.
+	 * Notification method called when this connection is being deleted.
+	 * Allows doing pre-death cleanup in overriders.
 	 * <p>
 	 * What we need to do is delete our entry in the preference store for our default userId.
 	 */
 	public void deletingHost();
 
 	/**
-	 * Private method called when this connection's profile is being rename, so
-	 * we can do any pre-death cleanup we need.
+	 * Notification method called when this connection's profile is being renamed.
+	 * Allows doing pre-death cleanup in overriders.
 	 * <p>
 	 * What we need to do is rename our entry in the preference store for our default userId.
 	 */
 	public void renamingSystemProfile(String oldName, String newName);
 
 	/**
-	 * Call this to query whether the default userId is to be uppercased.
+	 * Query whether the default userId is to be uppercased.
+	 * @return <code>true</code> if the user id is to be uppercased.
 	 */
 	public boolean getForceUserIdToUpperCase();
 
 	/**
-	 * Call this to compare two userIds taking case sensitivity
+	 * Compare two userIds taking case sensitivity into account.
+	 * @param userId1 first id to compare
+	 * @param userId2 second id to compare
 	 */
 	public boolean compareUserIds(String userId1, String userId2);
 
 	/**
+	 * Get the system type.
 	 * @return The value of the SystemType attribute
 	 */
-	public String getSystemType();
+	public IRSESystemType getSystemType();
 
 	/**
+	 * Set the system type.
 	 * @param value The new value of the SystemType attribute
 	 */
-	public void setSystemType(String value);
+	public void setSystemType(IRSESystemType value);
 
 	/**
+	 * Get the unique user-visible connection name.
+	 * This is a key that is unique per connection pool.
 	 * @return The value of the AliasName attribute
-	 * The unique key for this object. Unique per connection pool
 	 */
 	public String getAliasName();
 
 	/**
+	 * Set the unique user-visible connection name.
+	 * This needs to be a key that is unique per connection pool.
 	 * @param value The new value of the AliasName attribute
 	 */
 	public void setAliasName(String value);
 
 	/**
+	 * Get the host name or IP address.
 	 * @return The value of the HostName attribute
 	 */
 	public String getHostName();
 
 	/**
+	 * Set the host name or IP address.
 	 * @param value The new value of the HostName attribute
 	 */
 	public void setHostName(String value);
 
 	/**
+	 * Return the description of this host.
 	 * @return The value of the Description attribute
 	 */
 	public String getDescription();
 
 	/**
+	 * Set the description of this host.
 	 * @param value The new value of the Description attribute
 	 */
 	public void setDescription(String value);
 
 	/**
-	 * We return the default user Id. Note that we don't store it directly in
-	 * the mof-modelled attribute, as we don't want the team to share it. Rather,
-	 * we store the actual user Id in the preference store keyed by this connection's
-	 * unique name (profile.connName) and store that key in this attribute.
+	 * Return the default user Id for this host.
+	 * 
+	 * Note that we don't store it directly in an attribute, as we don't want 
+	 * the team to share it. The actual user Id is stored in the preference 
+	 * store keyed by this connection's unique name (profile.connName) instead,
+	 * and that key is stored in this attribute.
 	 * <p>
 	 * Further, it is possible that there is no default user id. If so, this 
 	 * method will go to the preference store and will try to get the default user
@@ -168,37 +182,36 @@ public interface IHost extends IAdaptable, IRSEModelObject {
 	public void setDefaultUserId(String value);
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * Check if this host is promptable.
 	 * @return The value of the Promptable attribute
 	 */
 	boolean isPromptable();
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * Set the promptable attribute.
 	 * @param value The new value of the Promptable attribute
 	 */
 	void setPromptable(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Offline</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
-	 * Is this connection offline? If so, there is no live connection. Subsystems
-	 *  decide how much to enable while offline.
+	 * Query if this connection is offline or not. 
+	 * If so, there is no live connection. Subsystems
+	 * decide how much to enable while offline.
+	 * It is up to each subsystem to honor this flag.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Offline</em>' attribute.
 	 * @see #setOffline(boolean)
 	 */
 	boolean isOffline();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.rse.core.model.IHost#isOffline <em>Offline</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Specify if this connection is offline or not.
+	 * It is up to each subsystem to honor this flag.
+	 *  
 	 * @param value the new value of the '<em>Offline</em>' attribute.
 	 * @see #isOffline()
-	 * @generated
 	 */
 	void setOffline(boolean value);
 

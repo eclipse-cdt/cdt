@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -286,7 +286,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_HOST, host, clean);
 
 		if (clean || node.isDirty()) {
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, host.getSystemType());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, host.getSystemType().getName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_OFFLINE, getBooleanString(host.isOffline()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE, getBooleanString(host.isPromptable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_HOSTNAME, host.getHostName());

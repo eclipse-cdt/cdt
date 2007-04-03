@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui;
@@ -139,7 +140,7 @@ public class RemoteCommandHelpers
               	 
 					showInView(defaultShell, isCompile, cmdString);   
 					           	 
-					 IRemoteFileSubSystemConfiguration fileSSF = RemoteFileUtility.getFileSubSystemConfiguration(cmdSubSystem.getHost().getSystemType());
+					 IRemoteFileSubSystemConfiguration fileSSF = RemoteFileUtility.getFileSubSystemConfiguration(cmdSubSystem.getHost().getSystemType().getName());
 					 IRemoteFile pwd = ((RemoteCommandShell)defaultShell).getWorkingDirectory();
 	                if (pwd == null || !pwd.getAbsolutePath().equals(path))
 	                {

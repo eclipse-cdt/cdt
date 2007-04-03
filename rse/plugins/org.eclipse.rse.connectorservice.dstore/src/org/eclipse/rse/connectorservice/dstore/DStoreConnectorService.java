@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -1299,7 +1300,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 //		// really authenticate with the remote system and this would be deceiving 
 //		// for the end user
 //
-//		if (getPrimarySubSystem().getHost().getSystemType().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
+//		if (getPrimarySubSystem().getHost().getSystemType().getName().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
 //		{
 //			String userid = getPrimarySubSystem().getUserId();
 //			if (userid == null)
@@ -1323,7 +1324,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 //	{
 //		// For Windows we never prompt for userid / password so we don't need 
 //		// to clear the password cache
-//		if (getPrimarySubSystem().getHost().getSystemType().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
+//		if (getPrimarySubSystem().getHost().getSystemType().getName().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
 //		{
 //			return false;
 //		}
@@ -1349,7 +1350,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	public boolean supportsPassword() {
 		boolean result = super.supportsPassword();
 		IHost host = getHost();
-		String systemType = host.getSystemType();
+		String systemType = host.getSystemType().getName();
 		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
 			result = false;
 		}
@@ -1362,7 +1363,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	public boolean supportsUserId() {
 		boolean result = super.supportsUserId();
 		IHost host = getHost();
-		String systemType = host.getSystemType();
+		String systemType = host.getSystemType().getName();
 		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
 			result = false;
 		}

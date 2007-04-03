@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -63,7 +63,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public boolean isWindows() {
-		String systemTypeId = fss.getHost().getSystemType(); 
+		String systemTypeId = fss.getHost().getSystemType().getName(); 
 		if (systemTypeId.equals("Local")) { //$NON-NLS-1$
 			return System.getProperty("os.name").toLowerCase().startsWith("win"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

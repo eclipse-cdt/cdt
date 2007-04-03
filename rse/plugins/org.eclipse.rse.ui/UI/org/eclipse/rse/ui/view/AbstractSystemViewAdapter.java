@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Uwe Stieber (Wind River) - Allow to extend action filter by dynamic system type providers.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -33,7 +34,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
@@ -1438,7 +1438,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			{
 				if (!(target instanceof IHost))
 			      return false;	
-			    String connSysType = ((IHost)target).getSystemType();		
+			    String connSysType = ((IHost)target).getSystemType().getName();		
 			    for (int idx=0; idx<values.length; idx++)			
 			    {
 			    	if (connSysType.equals(values[idx]))
@@ -1448,7 +1448,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			}
 			for (int idx=0; idx<values.length; idx++)			
 			{
-			  if (ss.getHost().getSystemType().equals(values[idx]))
+			  if (ss.getHost().getSystemType().getName().equals(values[idx]))
 			    return true;
 			}
 			return false;
@@ -1509,7 +1509,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		}
 		
 		if (conn != null) {
-			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(conn.getSystemType());
+			IRSESystemType systemType = conn.getSystemType();
 			if (systemType != null) {
 				IActionFilter actionFilter = (IActionFilter)ACTION_FILTER_CACHE.get(systemType);
 				if (actionFilter == null) {

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1496,7 +1496,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IHost connection = connections[i];
 			IRemoteFileSubSystem anFS = RemoteFileUtility.getFileSubSystem(connection);
-			if ((anFS != null) && (anFS.getHost().getSystemType().equals("Local"))) //$NON-NLS-1$
+			if ((anFS != null) && (anFS.getHost().getSystemType().getName().equals("Local"))) //$NON-NLS-1$
 			{
 				return anFS;
 			}

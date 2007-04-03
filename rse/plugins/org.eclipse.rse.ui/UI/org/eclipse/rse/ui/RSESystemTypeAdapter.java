@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used RSEPreferencesManager
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -27,7 +28,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
@@ -170,7 +170,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	}
 
 	public boolean isEnableOffline(Object object) {
-		if ((object != null) && (object instanceof IRSESystemType)) {
+		if (object instanceof IRSESystemType) {
 			String property = ((IRSESystemType)object).getProperty(IRSESystemTypeConstants.ENABLE_OFFLINE);
 			if (property != null) {
 				return Boolean.valueOf(property).booleanValue();
@@ -298,7 +298,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 		assert host != null && actionClass != null;
 		// The SystemWorkOfflineAction is accepted if isEnabledOffline is returning true
 		if (actionClass.equals(SystemWorkOfflineAction.class)) {
-			return isEnableOffline(RSECorePlugin.getDefault().getRegistry().getSystemType(host.getSystemType()));
+			return isEnableOffline(host.getSystemType());
 		}
 		
 		// SystemClearAllPasswordsAction is accepted only if passwords are supported

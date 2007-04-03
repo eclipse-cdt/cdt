@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Michael Scharf (Wind River) - Fix 163844: InvalidThreadAccess in checkForCollision
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -345,7 +346,7 @@ public class UniversalFileTransferUtility
 					IResource tempFolder = null;
 									
 					if (doCompressedTransfer && doSuperTransferProperty && !srcFileOrFolder.isRoot() 
-							&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"))) //$NON-NLS-1$
+							&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().getName().equals("Local"))) //$NON-NLS-1$
 					{
 						try
 						{ 
@@ -766,7 +767,7 @@ public class UniversalFileTransferUtility
 			boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 			
 			if (doCompressedTransfer && doSuperTransferProperty && !srcFileOrFolder.isRoot() 
-					&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"))) //$NON-NLS-1$
+					&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().getName().equals("Local"))) //$NON-NLS-1$
 			{
 				try
 				{ 
@@ -869,7 +870,7 @@ public class UniversalFileTransferUtility
 		{
 			IHost connection = connections[i];
 			IRemoteFileSubSystem anFS = RemoteFileUtility.getFileSubSystem(connection);
-			if (anFS.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
+			if (anFS.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 			{
 				return anFS;
 			}
@@ -1084,7 +1085,7 @@ public class UniversalFileTransferUtility
 					}
 
 					 
-					boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"); //$NON-NLS-1$
+					boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().getName().equals("Local"); //$NON-NLS-1$
 					boolean destInArchive = (newTargetFolder instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
 					
 					if (doCompressedTransfer && doSuperTransferPreference && !destInArchive && !isTargetLocal)
@@ -1295,7 +1296,7 @@ public class UniversalFileTransferUtility
 					directory.refreshLocal(IResource.DEPTH_ONE, monitor);
 		
 				
-				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"); //$NON-NLS-1$
+				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().getName().equals("Local"); //$NON-NLS-1$
 				boolean destInArchive = (newTargetFolder  instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
 				boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 				
@@ -1702,7 +1703,7 @@ public class UniversalFileTransferUtility
 		path = path.append(separator + actualHost + separator);
 
 		String absolutePath = srcFileOrFolder.getAbsolutePath();
-		if (srcFileOrFolder.getSystemConnection().getSystemType().equals("Local")) //$NON-NLS-1$
+		if (srcFileOrFolder.getSystemConnection().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 		{
 			absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath());
 		}
@@ -1882,7 +1883,7 @@ public class UniversalFileTransferUtility
 	public static String getActualHostFor(ISubSystem subsystem, String remotePath)
 	{
 			String hostname = subsystem.getHost().getHostName();
-			if (subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
+			if (subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 			{
 				String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
 				return result;
@@ -1916,7 +1917,7 @@ public class UniversalFileTransferUtility
 	protected static boolean isRemoteFileMounted(ISubSystem subsystem, String remotePath)
 	{
 		String hostname = subsystem.getHost().getHostName();
-		if (subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
+		if (subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 		{
 			String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
 			if (!result.equals(hostname))
@@ -1940,7 +1941,7 @@ public class UniversalFileTransferUtility
 	
 	protected static String getWorkspaceRemotePath(ISubSystem subsystem, String remotePath) {
 		
-		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) { //$NON-NLS-1$
+		if (subsystem != null && subsystem.getHost().getSystemType().getName().equals("Local")) { //$NON-NLS-1$
 			return SystemRemoteEditManager.getDefault().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
 		}
 		

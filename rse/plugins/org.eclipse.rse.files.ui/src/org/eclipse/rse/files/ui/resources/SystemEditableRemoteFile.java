@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -295,7 +295,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				IHost connection = fs.getHost();
 
 				// on windows systems, we need to take into account drives and different separators
-				boolean isWindows = connection.getSystemType().equals("Local") || fs.getHost().getSystemType().equals("Windows"); //$NON-NLS-1$  //$NON-NLS-2$
+				boolean isWindows = connection.getSystemType().getName().equals("Local") || fs.getHost().getSystemType().getName().equals("Windows"); //$NON-NLS-1$  //$NON-NLS-2$
 
 				char fileSeparator = isWindows ? '\\' : '/';
 				StringBuffer tempRemotePath = new StringBuffer(""); //$NON-NLS-1$
@@ -899,7 +899,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public String getWorkspaceRemotePath(String remotePath)
 	{
-		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
+		if (subsystem != null && subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 		{
 			return SystemRemoteEditManager.getDefault().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
 		}
@@ -909,7 +909,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	public String getActualHostFor(String remotePath)
 	{
 		String hostname = subsystem.getHost().getHostName();
-		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
+		if (subsystem != null && subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 		{
 			String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
 			if (!result.equals(hostname))
@@ -1310,7 +1310,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		try
 		{
-			if (remoteFile.getSystemConnection().getSystemType().equals("Local")) //$NON-NLS-1$
+			if (remoteFile.getSystemConnection().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 			{
 				// Open local files "in-place", i.e. don't copy them to the 
 				// RemoteSystemsTempFiles project first

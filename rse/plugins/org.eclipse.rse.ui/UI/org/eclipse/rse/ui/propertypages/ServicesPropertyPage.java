@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,11 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystem;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
@@ -31,7 +32,7 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 {
 	protected ServicesForm _form;
 	protected String _hostname;
-	protected String _hosttype;
+	protected IRSESystemType _hosttype;
 	protected ServiceElement _rootElement;
 	
 	protected Control createContentArea(Composite parent)
@@ -113,7 +114,7 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 		_hostname = hostname;
 	}
 	
-	public void setSystemType(String systemType)
+	public void setSystemType(IRSESystemType systemType)
 	{
 		_hosttype = systemType;
 	}
@@ -123,7 +124,7 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 		return _hostname;
 	}
 	
-	public String getSystemType()
+	public IRSESystemType getSystemType()
 	{
 		return _hosttype;
 	}

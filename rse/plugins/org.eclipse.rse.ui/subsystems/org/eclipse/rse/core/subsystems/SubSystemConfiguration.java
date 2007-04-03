@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 168870: moved SystemPreferencesManager to a new package
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * David Dykstal (IBM) - 168870: made use of adapters on the SubSystemConfigurationProxy
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -986,7 +987,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			if (allActiveConnections != null)
 			{
 				for (int idx = 0; idx < allActiveConnections.length; idx++)
-					if (proxy.appliesToSystemType(allActiveConnections[idx].getSystemType()))
+					if (proxy.appliesToSystemType(allActiveConnections[idx].getSystemType().getName()))
 						getSubSystems(allActiveConnections[idx], force); // will load from disk if not already loaded
 			}
 			allSubSystemsRestored = true;

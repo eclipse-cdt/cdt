@@ -1,3 +1,13 @@
+/********************************************************************************
+ * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * David Dykstal (IBM) - initial API and implementation from AbstractConnectorService.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
 import java.util.ArrayList;
@@ -245,7 +255,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 			int whereToUpdate = IRSEUserIdConstants.USERID_LOCATION_HOST;
 			IHost host = subsystem.getHost();
 			ISystemRegistry sr = RSECorePlugin.getDefault().getSystemRegistry();
-			sr.updateHost(host, host.getSystemType(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
+			sr.updateHost(host, host.getSystemType().getName(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
 		}
 	}
 

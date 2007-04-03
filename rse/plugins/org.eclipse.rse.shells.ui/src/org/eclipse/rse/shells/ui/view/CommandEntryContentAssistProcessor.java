@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - fix 158766: content assist works 1st time only
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -138,7 +139,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 			if (_remoteCommand != null)
 			{
 				RemoteCmdSubSystem cmdSubsystem = (RemoteCmdSubSystem) _remoteCommand.getCommandSubSystem();
-				//String type = cmdSubsystem.getHost().getSystemType();
+				//String type = cmdSubsystem.getHost().getSystemType().getName();
 				if (cmdSubsystem.isWindows())
 				{
 					_isWindows = true;

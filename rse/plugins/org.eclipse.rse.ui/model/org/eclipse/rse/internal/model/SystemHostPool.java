@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - created and used RSEPReferencesManager
  *                     - moved SystemsPreferencesManager to a new plugin
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.model;
@@ -137,7 +138,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
            System.out.println("  AliasName.....: " + conn.getAliasName()); //$NON-NLS-1$
            System.out.println("  -----------------------------------------------------"); //$NON-NLS-1$
            System.out.println("  HostName......: " + conn.getHostName()); //$NON-NLS-1$
-           System.out.println("  SystemType....: " + conn.getSystemType()); //$NON-NLS-1$
+           System.out.println("  SystemType....: " + conn.getSystemType().getId()); //$NON-NLS-1$
            System.out.println("  Description...: " + conn.getDescription()); //$NON-NLS-1$
            System.out.println("  UserId........: " + conn.getDefaultUserId()); //$NON-NLS-1$
         }
@@ -224,7 +225,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           addHost(conn); // only record internally if saved successfully
           conn.setHostPool(this);          
           conn.setAliasName(aliasName);
-          conn.setSystemType(systemType);
+          conn.setSystemType(systemTypeObject);
           // if default userID is null, and location is in the connection we should retrieve it and use it as the initial value.
           if (defaultUserId == null && defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_HOST) {
               defaultUserId = conn.getDefaultUserId();
@@ -263,7 +264,8 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     	boolean aliasNameChanged = !aliasName.equalsIgnoreCase(conn.getAliasName());    	
     	if (aliasNameChanged)
     	  renameHost(conn,aliasName);
-    	conn.setSystemType(systemType);
+        IRSESystemType systemTypeObject = RSECorePlugin.getDefault().getRegistry().getSystemType(systemType);
+    	conn.setSystemType(systemTypeObject);
     	conn.setHostName(hostName);
     	if (defaultUserIdLocation != IRSEUserIdConstants.USERID_LOCATION_NOTSET)
     	{
@@ -437,7 +439,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
        throws Exception
     {
         IHost copy =
-            targetPool.createHost(conn.getSystemType(), aliasName,
+            targetPool.createHost(conn.getSystemType().getName(), aliasName,
                  conn.getHostName(), conn.getDescription(), conn.getLocalDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_HOST);
         return copy;
     }

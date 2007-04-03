@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.model;
@@ -278,7 +278,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	
 	protected boolean isWindows()
 	{
-		String type = getCommandSubSystem().getHost().getSystemType();
+		String type = getCommandSubSystem().getHost().getSystemType().getName();
 		
 		return (type.equals("Windows") || //$NON-NLS-1$
 				type.equals("Local") && System.getProperty("os.name").toLowerCase().startsWith("win")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

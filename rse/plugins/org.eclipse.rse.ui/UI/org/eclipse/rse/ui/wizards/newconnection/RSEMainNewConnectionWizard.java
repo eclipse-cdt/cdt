@@ -13,6 +13,7 @@
  * Contributors:
  * Javier Montalvo Orús (Symbian) - Bug 158555 - newConnectionWizardDelegates can only be used once
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -245,8 +246,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		// If there is an connection context, extract the connections
 		// system type from the connection context as use as default
 		if (connectionContext != null && connectionContext.getSystemType() != null) {
-			String systemTypeName = connectionContext.getSystemType();
-			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeName);
+			IRSESystemType systemType = connectionContext.getSystemType();
 			// if we have found the system type object, pass on to setSelection(...)!
 			if (systemType != null) setSelection(new StructuredSelection(systemType));
 		}

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -374,9 +375,9 @@ FocusListener
 						ISubSystem cmdSubSystem = adapter.getSubSystem(element);
 
 						String cdCmd = "cd " + PathUtility.enQuoteUnix(path); //$NON-NLS-1$
-						if (cmdSubSystem.getHost().getSystemType().equals("Local") //$NON-NLS-1$
+						if (cmdSubSystem.getHost().getSystemType().getName().equals("Local") //$NON-NLS-1$
 							&& System.getProperty("os.name").toLowerCase().startsWith("win") //$NON-NLS-1$ //$NON-NLS-2$
-							|| cmdSubSystem.getHost().getSystemType().equals("Windows")) //$NON-NLS-1$
+							|| cmdSubSystem.getHost().getSystemType().getName().equals("Windows")) //$NON-NLS-1$
 						{
 							cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
 						}
@@ -393,9 +394,9 @@ FocusListener
 					ISubSystem cmdSubSystem = adapter.getSubSystem(element);
 
 					String cdCmd = "cd " + PathUtility.enQuoteUnix(path);  //$NON-NLS-1$
-					if (cmdSubSystem.getHost().getSystemType().equals("Local") //$NON-NLS-1$
+					if (cmdSubSystem.getHost().getSystemType().getName().equals("Local") //$NON-NLS-1$
 						&& System.getProperty("os.name").toLowerCase().startsWith("win") //$NON-NLS-1$ //$NON-NLS-2$
-						|| cmdSubSystem.getHost().getSystemType().equals("Windows")) //$NON-NLS-1$
+						|| cmdSubSystem.getHost().getSystemType().getName().equals("Windows")) //$NON-NLS-1$
 					{
 						cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
 					}

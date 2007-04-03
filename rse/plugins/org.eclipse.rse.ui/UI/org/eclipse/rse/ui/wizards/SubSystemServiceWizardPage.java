@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -96,7 +97,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 				RSEDefaultNewConnectionWizard wizard = (RSEDefaultNewConnectionWizard)getWizard();
 				if (wizard.getStartingPage() instanceof RSEDefaultNewConnectionWizardMainPage) {
 					dummyHost = new DummyHost(((RSEDefaultNewConnectionWizardMainPage)wizard.getStartingPage()).getSystemConnectionForm().getHostName(),
-																		 wizard.getSystemType() != null ? wizard.getSystemType().getName() : null);
+																		 wizard.getSystemType());
 				}
 			}
 			

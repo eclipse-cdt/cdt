@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and Wind River Systems, Inc. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - 141803: Fix cpu usage 100% while connecting
  * David Dykstal (IBM) - 168870: moved SystemPreferencesManager to a new package
  * David Dykstal (IBM) - 168870: created and used RSEPreferencesManager
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -896,14 +897,16 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     
     /**
      * Return the system type for this connection.
+     * FIXME Return an IRSESystemType instead
+     * @deprecated
      */
     public String getSystemType()
     {
     	IHost conn = getHost();
-    	if (conn == null)
+    	if (conn == null || conn.getSystemType()==null)
     	  return null;
     	else
-    	  return conn.getSystemType();
+    	  return conn.getSystemType().getName();
     }
     /**
      * Return the host name for the connection this system's subsystem is associated with

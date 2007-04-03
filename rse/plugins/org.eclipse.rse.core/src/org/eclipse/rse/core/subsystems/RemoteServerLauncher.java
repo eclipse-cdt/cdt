@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -407,7 +408,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		
 		if ((serverScript == null) || (serverScript.length() == 0)) 
 		{
-			serverScript = "server." + getConnectorService().getHost().getSystemType().toLowerCase();  //$NON-NLS-1$
+			serverScript = "server." + getConnectorService().getHost().getSystemType().getName().toLowerCase();  //$NON-NLS-1$
 		}
 		
 		return serverScript;

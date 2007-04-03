@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -115,6 +116,8 @@ public interface IConnectorService extends IRSEModelObject {
 
 	/**
 	 * @return the system type for this connection.
+	 * //FIXME Remove this method
+	 * @deprecated use getHost().getSystemType() instead
 	 */
 	public String getHostType();
 

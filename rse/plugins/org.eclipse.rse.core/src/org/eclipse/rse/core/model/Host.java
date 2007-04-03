@@ -15,6 +15,7 @@
  *                     - moved SystemsPreferencesManager to a new plugin
  * Uwe Stieber (Wind River) - Dynamic system type provider extensions.
  *                          - Moved to package org.eclipse.rse.model for being extendable.
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -36,7 +37,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  */
 public class Host extends RSEModelObject implements IHost {
 
-
 	private boolean ucId = true;
 	private boolean userIdCaseSensitive = true;
 	private ISystemHostPool pool;
@@ -45,7 +45,7 @@ public class Host extends RSEModelObject implements IHost {
 	/**
 	 * The system type which is associated to this <code>IHost</code> object.
 	 */
-	private String systemType = null;
+	private IRSESystemType systemType = null;
 	
 	/**
 	 * The alias name of this <code>IHost</code> object.
@@ -90,43 +90,42 @@ public class Host extends RSEModelObject implements IHost {
 		_profile = profile;
 	}
 
-	/**
-	 * Set the parent connection pool this is owned by.
-	 * Connection pools are internal management objects, one per profile.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#setHostPool(org.eclipse.rse.core.model.ISystemHostPool)
 	 */
 	public void setHostPool(ISystemHostPool pool) {
 		this.pool = pool;
 		previousUserIdKey = getPreferencesKey();
 	}
 
-	/**
-	 * Set the parent connection pool this is owned by.
-	 * Connection pools are internal management objects, one per profile.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getHostPool()
 	 */
 	public ISystemHostPool getHostPool() {
 		return pool;
 	}
 
-	/**
-	 * Return all the connector services provided for this host
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getConnectorServices()
 	 */
 	public IConnectorService[] getConnectorServices() {
 		return RSECorePlugin.getDefault().getSystemRegistry().getConnectorServices(this);
 	}
 
-	/**
-	 * Return the subsystem instances under this connection.<br>
-	 * Just a shortcut to {@link org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(IHost)} 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getSubSystems()
 	 */
 	public ISubSystem[] getSubSystems() {
 		return RSECorePlugin.getDefault().getSystemRegistry().getSubSystems(this);
 	}
 
-	/**
-	 * Private method called when this connection is being deleted, so
-	 * we can do any pre-death cleanup we need.
-	 * <p>
-	 * What we need to do is delete our entry in the preference store for our default userId.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#deletingHost()
 	 */
 	public void deletingHost() {
 		String oldUserId = null;
@@ -139,11 +138,9 @@ public class Host extends RSEModelObject implements IHost {
 		}
 	}
 
-	/**
-	 * Private method called when this connection's profile is being rename, so
-	 * we can do any pre-death cleanup we need.
-	 * <p>
-	 * What we need to do is rename our entry in the preference store for our default userId.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#renamingSystemProfile(java.lang.String, java.lang.String)
 	 */
 	public void renamingSystemProfile(String oldName, String newName) {
 		String userIdValue = null;
@@ -159,15 +156,17 @@ public class Host extends RSEModelObject implements IHost {
 		previousUserIdKey = newKey;
 	}
 
-	/**
-	 * Return the system profile that owns this connection
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getSystemProfile()
 	 */
 	public ISystemProfile getSystemProfile() {
 		return _profile;
 	}
 
-	/**
-	 * Return the name of system profile that owns this connection
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getSystemProfileName()
 	 */
 	public String getSystemProfileName() {
 		if (pool == null)
@@ -203,12 +202,14 @@ public class Host extends RSEModelObject implements IHost {
 	/**
 	 * Intercept of setSystemType so we can decide if the user ID is case sensitive
 	 */
-	public void setSystemType(String systemType) {
+	public void setSystemType(IRSESystemType systemType) {
 		// defect 43219
 		if (systemType != null) {
-			boolean forceUC = systemType.equals(IRSESystemType.SYSTEMTYPE_ISERIES);
-			boolean caseSensitiveUID = systemType.equals(IRSESystemType.SYSTEMTYPE_UNIX) || systemType.equals(IRSESystemType.SYSTEMTYPE_LINUX)
-																	|| (systemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL) && !System.getProperty("os.name").toLowerCase().startsWith("windows")); //$NON-NLS-1$  //$NON-NLS-2$
+			//FIXME MOB this should be in IRSESystemType.isForceUC() / IRSESystemType.isUIDCaseSensitive()
+			String systemTypeName = systemType.getName();
+			boolean forceUC = systemTypeName.equals(IRSESystemType.SYSTEMTYPE_ISERIES);
+			boolean caseSensitiveUID = systemTypeName.equals(IRSESystemType.SYSTEMTYPE_UNIX) || systemTypeName.equals(IRSESystemType.SYSTEMTYPE_LINUX)
+																	|| (systemTypeName.equals(IRSESystemType.SYSTEMTYPE_LOCAL) && !System.getProperty("os.name").toLowerCase().startsWith("windows")); //$NON-NLS-1$  //$NON-NLS-2$
 			setForceUserIdToUpperCase(forceUC);
 			setUserIdCaseSensitive(caseSensitiveUID);
 		}
@@ -252,25 +253,14 @@ public class Host extends RSEModelObject implements IHost {
 		}
 	}
 
-	/**
-	 * Returns the default UserId for this Host.
-	 * Note that we don't store it directly in
-	 * the model, since we don't want the team to share it. Rather,
-	 * we store the actual it in the preference store keyed by 
-	 * (profileName.connectionName).
-	 * <p>
-	 * Further, it is possible that there is no default UserId. If so, this 
-	 * method will go to the preference store and will try to get the default
-	 * UserId for this connection's system type.
-	 * <p>
-	 * This is all transparent to the caller though.
-	 * <p>
-	 * @return The value of the DefaultUserId attribute
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
 	 */
 	public String getDefaultUserId() {
 		String uid = getLocalDefaultUserId();
 		if ((uid == null) || (uid.length() == 0)) {
-			uid = RSEPreferencesManager.getUserId(getSystemType()); // resolve from preferences	
+			uid = RSEPreferencesManager.getUserId(getSystemType().getName()); // resolve from preferences	
 			if ((uid != null) && ucId) uid = uid.toUpperCase();
 		}
 		return uid;
@@ -288,20 +278,17 @@ public class Host extends RSEModelObject implements IHost {
 		return uid;
 	}
 
-	/**
-	 * Return the local default user Id without resolving up the food chain.
-	 * @see #getDefaultUserId()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getLocalDefaultUserId()
 	 */
 	public String getLocalDefaultUserId() {
 		return getLocalDefaultUserId(getPreferencesKey());
 	}
 
-	/**
-	 * Clear the local default user Id so next query will return the value from
-	 * the preference store.
-	 * <p>
-	 * Same as calling setDefaultUserId(null)
-	 * @see #setDefaultUserId(String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#clearLocalDefaultUserId()
 	 */
 	public void clearLocalDefaultUserId() {
 		if (previousUserIdKey != null) RSEPreferencesManager.clearUserId(previousUserIdKey);
@@ -394,132 +381,117 @@ public class Host extends RSEModelObject implements IHost {
 		return getAliasName();
 	}
 
-	/**
-	 * This is the method required by the IAdaptable interface.
-	 * Given an adapter class type, return an object castable to the type, or
-	 *  null if this is not possible.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapterType) {
 		return Platform.getAdapterManager().getAdapter(this, adapterType);
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getSystemType()
 	 */
-	public String getSystemType() {
+	public IRSESystemType getSystemType() {
 		return systemType;
 	}
 
-	/**
-	 * Returns the alias name for this host
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEModelObject#getName()
 	 */
 	public String getName() {
 		return getAliasName();
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * The unique key for this object. Unique per connection pool
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getAliasName()
 	 */
 	public String getAliasName() {
 		return aliasName;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getHostName()
 	 */
 	public String getHostName() {
 		return hostName;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.RSEModelObject#getDescription()
 	 */
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#setDescription(java.lang.String)
 	 */
 	public void setDescription(String newDescription) {
 		setDirty(!compareStrings(description, newDescription));
 		description = newDescription;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#isPromptable()
 	 */
 	public boolean isPromptable() {
 		return promptable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#setPromptable(boolean)
 	 */
 	public void setPromptable(boolean newPromptable) {
 		setDirty(promptable != newPromptable);
 		promptable = newPromptable;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * Query if this connection is offline or not. It is up to each subsystem to honor this
-	 *  flag. 
-	 * <!-- end-user-doc -->
-	 * @generated
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#isOffline()
 	 */
 	public boolean isOffline() {
 		return offline;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * Specify if this connection is offline or not. It is up to each subsystem to honor this
-	 *  flag. 
-	 * <!-- end-user-doc -->
-	 * @generated
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#setOffline(boolean)
 	 */
 	public void setOffline(boolean newOffline) {
 		setDirty(offline != newOffline);
 		offline = newOffline;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	public void setSystemTypeGen(String newSystemType) {
-		setDirty(!compareStrings(systemType, newSystemType));
+	private void setSystemTypeGen(IRSESystemType newSystemType) {
+		setDirty( systemType==null ? (newSystemType==null) : !systemType.equals(newSystemType) );
 		systemType = newSystemType;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	public void setAliasNameGen(String newAliasName) {
+	private void setAliasNameGen(String newAliasName) {
 		setDirty(!compareStrings(aliasName, newAliasName));
 		aliasName = newAliasName;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	public void setHostNameGen(String newHostName) {
+	private void setHostNameGen(String newHostName) {
 		setDirty(!compareStrings(hostName, newHostName));
 		hostName = newHostName;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 */
-	public String getDefaultUserIdGen() {
+	private String getDefaultUserIdGen() {
 		return defaultUserId;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	public void setDefaultUserIdGen(String newDefaultUserId) {
+	private void setDefaultUserIdGen(String newDefaultUserId) {
 		setDirty(!compareStrings(defaultUserId, newDefaultUserId));
 		defaultUserId = newDefaultUserId;
 	}

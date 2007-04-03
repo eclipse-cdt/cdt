@@ -16,6 +16,7 @@
  * Uwe Stieber (Wind River) - bugfixing and reworked new connection wizard
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -270,7 +271,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 */
 	public void initializeInputFields(IHost conn, boolean updateMode) {
 		this.updateMode = updateMode;
-		defaultSystemType = conn.getSystemType();
+		defaultSystemType = conn.getSystemType().getName();
 		defaultConnectionName = conn.getAliasName();
 		defaultHostName = conn.getHostName();
 		defaultUserId = conn.getLocalDefaultUserId();

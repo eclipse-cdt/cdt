@@ -102,7 +102,9 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	}
 	
 	public boolean isIndexerEnabled(){
-	  return	makeWizardBlock.indexBlock.isIndexEnabled();
+//    isIndexEnabled() * @deprecated always returns false		
+//	  return makeWizardBlock.indexBlock.isIndexEnabled();
+	  return false;
 	}
 
 	public void setupHelpContextIds(){

@@ -44,7 +44,7 @@ import org.eclipse.rse.services.clientserver.processes.handlers.UniversalServerP
  * Miner for getting process information from a remote system.
  * @author mjberger
  */
-public class UniversalProcessMiner extends Miner implements IUniversalDataStoreConstants
+public class UniversalProcessMiner extends Miner
 {
 	
 	public static final String MINER_ID = UniversalProcessMiner.class.getName();
@@ -177,7 +177,7 @@ public class UniversalProcessMiner extends Miner implements IUniversalDataStoreC
 
 	public void load()
 	{
-		deKillInfoNode = _dataStore.createObject(_minerData, UNIVERSAL_NODE_DESCRIPTOR, "universal.killinfo"); //$NON-NLS-1$
+		deKillInfoNode = _dataStore.createObject(_minerData, IUniversalDataStoreConstants.UNIVERSAL_NODE_DESCRIPTOR, "universal.killinfo"); //$NON-NLS-1$
 		deKillInfoNode.setAttribute(DE.A_VALUE, getSignalTypes());
 		_dataStore.refresh(_minerData);
 	

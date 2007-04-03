@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 
@@ -35,7 +36,7 @@ import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConst
  * @author mjberger
  *
  */
-public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants, IAdaptable
+public class DStoreHostProcess implements IHostProcess,  IAdaptable
 {
 	public static final boolean ROOT_TRUE = true;
 	public static final boolean ROOT_FALSE = false;
@@ -120,7 +121,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
+		    String[] str = s.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 		    int tokens = str.length;
 		    if (tokens > 1)
 			{
@@ -469,7 +470,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
+		    String[] str = s.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 		    if (attIndex >= str.length) return null;
 		    if (str[attIndex] == null || str[attIndex].equals("")) return null; //$NON-NLS-1$
 		    else return str[attIndex];
@@ -494,7 +495,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
+		    String[] str = s.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 		    if (attIndex >= str.length)
 		    {
 				// SystemPlugin.logError("Error in UniversalProcessImpl.setSubAttribute: Attribute index out of bounds.");		    	
@@ -505,7 +506,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 		    for (int i = 0; i < str.length; i++)
 		    {
 		    	if (i == str.length - 1) s = s + str[i];
-		    	else s = s + str[i] + TOKEN_SEPARATOR;
+		    	else s = s + str[i] + IServiceConstants.TOKEN_SEPARATOR;
 		    }
 		    deObj.setAttribute(DE.A_VALUE, s);
 		    DataStore ds = deObj.getDataStore();

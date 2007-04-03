@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
-import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IClientServerConstants;
 import org.eclipse.rse.services.clientserver.IMatcher;
@@ -24,7 +23,7 @@ import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 
 
-public class UniversalFileSystemFilter implements java.io.FilenameFilter, IUniversalDataStoreConstants, IClientServerConstants{
+public class UniversalFileSystemFilter implements java.io.FilenameFilter {
 
 
    protected  String filter;
@@ -67,17 +66,17 @@ public class UniversalFileSystemFilter implements java.io.FilenameFilter, IUnive
          return false;
       
       if (allowDirs && allowFiles)
-         setListValues(INCLUDE_ALL, filter);
+         setListValues(IClientServerConstants.INCLUDE_ALL, filter);
       else if (allowDirs)
-         setListValues(INCLUDE_FOLDERS_ONLY, filter); 
+         setListValues(IClientServerConstants.INCLUDE_FOLDERS_ONLY, filter); 
       else if (allowFiles)
-         setListValues(INCLUDE_FILES_ONLY, filter);     
+         setListValues(IClientServerConstants.INCLUDE_FILES_ONLY, filter);     
       else
          return false;
           
       if ((matcher == null) && (folderNameMatcher == null))
     	  return true;
-      if (includeFilesOrFolders != INCLUDE_ALL)
+      if (includeFilesOrFolders != IClientServerConstants.INCLUDE_ALL)
     	  match = matcher.matches(name);
       else {
     	if (file.isFile()) {

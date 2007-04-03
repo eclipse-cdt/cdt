@@ -32,7 +32,7 @@ import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.swt.widgets.Display;
 
-public class DownloadListener implements IDomainListener,IUniversalDataStoreConstants
+public class DownloadListener implements IDomainListener
 {
 
 	private DataElement _status;
@@ -145,11 +145,11 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 												
 						
 					StringBuffer current = new StringBuffer();
-					current.append(currentLength /KB_IN_BYTES);
+					current.append(currentLength /IUniversalDataStoreConstants.KB_IN_BYTES);
 					current.append(" KB"); //$NON-NLS-1$
 					
 					StringBuffer total = new StringBuffer();
-					total.append(_totalLength / KB_IN_BYTES);
+					total.append(_totalLength / IUniversalDataStoreConstants.KB_IN_BYTES);
 					total.append(" KB"); //$NON-NLS-1$
 					
 					StringBuffer percentBuf = new StringBuffer();

@@ -30,7 +30,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 /**
  * This class is the Java language utility for universal.
  */
-public class DStoreJavaLanguageUtility extends AbstractJavaLanguageUtility implements IUniversalDataStoreConstants {
+public class DStoreJavaLanguageUtility extends AbstractJavaLanguageUtility {
 
 	/**
 	 * Constructor.
@@ -59,11 +59,11 @@ public class DStoreJavaLanguageUtility extends AbstractJavaLanguageUtility imple
 		DataElement deObj = ((DStoreHostFile)univFile.getHostFile()).getDataElement();	
 		
 		DataStore ds = deObj.getDataStore();
-		DataElement queryCmd = ds.localDescriptorQuery(deObj.getDescriptor(), C_QUERY_QUALIFIED_CLASSNAME);
+		DataElement queryCmd = ds.localDescriptorQuery(deObj.getDescriptor(), IUniversalDataStoreConstants.C_QUERY_QUALIFIED_CLASSNAME);
 
 		if (queryCmd != null) {
 			DataElement status = ds.synchronizedCommand(queryCmd, deObj, true);
-			DataElement className = ds.find(status, DE.A_TYPE, TYPE_QUALIFIED_CLASSNAME, 1);
+			DataElement className = ds.find(status, DE.A_TYPE, IUniversalDataStoreConstants.TYPE_QUALIFIED_CLASSNAME, 1);
 				
 			if (className != null && !className.equals("null")) { //$NON-NLS-1$
 				return className.getName();

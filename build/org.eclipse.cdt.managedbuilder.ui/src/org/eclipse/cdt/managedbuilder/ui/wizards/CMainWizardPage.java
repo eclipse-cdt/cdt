@@ -16,6 +16,7 @@ import java.util.TreeSet;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.managedbuilder.ui.properties.PageLayout;
+import org.eclipse.cdt.managedbuilder.ui.wizards.ProjectContentsArea.IErrorMessageReporter;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -45,11 +46,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea;
-import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter;
 
 	public class CMainWizardPage extends WizardPage implements IToolChainListListener {
 
@@ -58,7 +54,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 		public static final String CLASS_NAME = "class"; //$NON-NLS-1$
 
 		public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.NewModelProjectWizardPage"; //$NON-NLS-1$
-
+		private static final String HELP_CTX = "org.eclipse.ui.ide.new_project_wizard_page_context"; //$NON-NLS-1$
 	       // initial value stores
 	    private String initialProjectFieldValue;
 
@@ -79,7 +75,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	        }
 	    };
 
-		private ProjectContentsLocationArea locationArea;
+		private ProjectContentsArea locationArea;
 
 	    // constants
 	    private static final int SIZING_TEXT_FIELD_WIDTH = 250;
@@ -103,15 +99,13 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	        composite.setFont(parent.getFont());
 
 	        initializeDialogUnits(parent);
-
-	        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
-	                IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
+	        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, HELP_CTX);
 
 	        composite.setLayout(new GridLayout());
 	        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	        createProjectNameGroup(composite);
-	        locationArea = new ProjectContentsLocationArea(getErrorReporter(), composite);
+	        locationArea = new ProjectContentsArea(getErrorReporter(), composite);
 	        if(initialProjectFieldValue != null) {
 				locationArea.updateProjectName(initialProjectFieldValue);
 			}
@@ -180,25 +174,18 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 		 */
 		private IErrorMessageReporter getErrorReporter() {
 			return new IErrorMessageReporter(){
-				/* (non-Javadoc)
-				 * @see org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter#reportError(java.lang.String)
-				 */
 				public void reportError(String errorMessage) {
 					setErrorMessage(errorMessage);
 					boolean valid = errorMessage == null;
-					if(valid) {
-						valid = validatePage();
-					}
-					
+					if(valid) valid = validatePage();
 					setPageComplete(valid);
 				}
 			};
 		}
-
+		
 	    public IWizardPage getNextPage() {
 			if (h_selected == null || h_selected.isDummy()) // cannot continue
 				return null;
-//			MBSCustomPageManager.setPageHideStatus(next.pageID, false);
 			return next;
 	    }		
 	    /**
@@ -216,7 +203,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 
 	        // new project label
 	        Label projectLabel = new Label(projectGroup, SWT.NONE);
-	        projectLabel.setText(IDEWorkbenchMessages.WizardNewProjectCreationPage_nameLabel);
+	        projectLabel.setText(Messages.getString("CMainWizardPage.8")); //$NON-NLS-1$
 	        projectLabel.setFont(parent.getFont());
 
 	        // new project name entry field
@@ -323,12 +310,12 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	     *   <code>false</code> if at least one is invalid
 	     */
 	    protected boolean validatePage() {
-	        IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
+	        IWorkspace workspace = ResourcesPlugin.getWorkspace();
     		setMessage(null);
 
             String projectFieldContents = getProjectNameFieldValue();
 	        if (projectFieldContents.length() == 0) {
-	            setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectNameEmpty);
+	            setErrorMessage(Messages.getString("CMainWizardPage.9")); //$NON-NLS-1$
 	            return false;
 	        }
 
@@ -349,7 +336,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	        			bad = false;
 	        	}
 	        	if (bad) {
-	        		setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);
+	        		setErrorMessage(Messages.getString("CMainWizardPage.10")); //$NON-NLS-1$
 	        	    return false;
 	        	}
 	        }

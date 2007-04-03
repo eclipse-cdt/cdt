@@ -14,57 +14,57 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents a UTF-8 string.
+ * This class represents 8 byte numeric information.
  */
-public class UTF8Info extends AbstractCPInfo {
+public abstract class Abstract8ByteNumericInfo extends AbstractCPInfo {
 	
-	protected int length;
-	protected short[] bytes;
+	protected long highBytes;
+	protected long lowBytes;
 
 	/**
 	 * Constructor.
 	 * @param tag the tag.
-	 * @param length the length;
-	 * @param bytes the array of bytes with the given length.
+	 * @param highBytes high bytes.
+	 * @param lowBytes low bytes.
 	 */
-	public UTF8Info(short tag, int length, short[] bytes) {
+	public Abstract8ByteNumericInfo(short tag, long highBytes, long lowBytes) {
 		super(tag);
-		setLength(length);
-		setBytes(bytes);
+		setHighBytes(highBytes);
+		setLowBytes(lowBytes);
 	}
 	
 	/**
-	 * Returns the bytes.
-	 * @return the bytes.
+	 * Returns the high bytes.
+	 * @return the high bytes.
 	 */
-	public short[] getBytes() {
-		return bytes;
+	public long getHighBytes() {
+		return highBytes;
 	}
 	
 	/**
-	 * Sets the bytes.
-	 * @param bytes the bytes.
+	 * Sets the high bytes.
+	 * @param highBytes the high bytes.
 	 */
-	private void setBytes(short[] bytes) {
-		this.bytes = bytes;
+	private void setHighBytes(long highBytes) {
+		this.highBytes = highBytes;
 	}
 	
 	/**
-	 * Returns the length.
-	 * @return the length.
+	 * Returns the low bytes.
+	 * @return the low bytes.
 	 */
-	public int getLength() {
-		return length;
+	public long getLowBytes() {
+		return lowBytes;
 	}
-
+	
 	/**
-	 * Sets the length.
-	 * @param length the length.
+	 * Sets the low bytes.
+	 * @param lowBytes the low bytes.
 	 */
-	private void setLength(int length) {
-		this.length = length;
+	private void setLowBytes(long lowBytes) {
+		this.lowBytes = lowBytes;
 	}
 }

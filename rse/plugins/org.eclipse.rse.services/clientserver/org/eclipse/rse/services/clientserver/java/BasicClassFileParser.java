@@ -21,6 +21,25 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.rse.internal.services.clientserver.java.AbstractAttributeInfo;
+import org.eclipse.rse.internal.services.clientserver.java.AbstractCPInfo;
+import org.eclipse.rse.internal.services.clientserver.java.ClassFileUTF8Reader;
+import org.eclipse.rse.internal.services.clientserver.java.ClassInfo;
+import org.eclipse.rse.internal.services.clientserver.java.DoubleInfo;
+import org.eclipse.rse.internal.services.clientserver.java.EnhancedDataInputStream;
+import org.eclipse.rse.internal.services.clientserver.java.FieldInfo;
+import org.eclipse.rse.internal.services.clientserver.java.FieldRefInfo;
+import org.eclipse.rse.internal.services.clientserver.java.FloatInfo;
+import org.eclipse.rse.internal.services.clientserver.java.IClassFileConstants;
+import org.eclipse.rse.internal.services.clientserver.java.IntegerInfo;
+import org.eclipse.rse.internal.services.clientserver.java.InterfaceMethodRefInfo;
+import org.eclipse.rse.internal.services.clientserver.java.LongInfo;
+import org.eclipse.rse.internal.services.clientserver.java.MethodInfo;
+import org.eclipse.rse.internal.services.clientserver.java.MethodRefInfo;
+import org.eclipse.rse.internal.services.clientserver.java.NameAndTypeInfo;
+import org.eclipse.rse.internal.services.clientserver.java.StringInfo;
+import org.eclipse.rse.internal.services.clientserver.java.UTF8Info;
+
 /**
  * This is a basic class file parser that returns a package name from a class file.
  */

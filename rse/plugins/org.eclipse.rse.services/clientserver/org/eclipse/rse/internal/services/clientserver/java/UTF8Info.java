@@ -14,38 +14,57 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents class information.
+ * This class represents a UTF-8 string.
  */
-public class ClassInfo extends AbstractCPInfo {
+public class UTF8Info extends AbstractCPInfo {
 	
-	protected int nameIndex;
+	protected int length;
+	protected short[] bytes;
 
 	/**
 	 * Constructor.
 	 * @param tag the tag.
-	 * @param nameIndex the name index.
+	 * @param length the length;
+	 * @param bytes the array of bytes with the given length.
 	 */
-	public ClassInfo(short tag, int nameIndex) {
+	public UTF8Info(short tag, int length, short[] bytes) {
 		super(tag);
-		setNameIndex(nameIndex);
+		setLength(length);
+		setBytes(bytes);
 	}
 	
 	/**
-	 * Returns the name index.
-	 * @return the name index.
+	 * Returns the bytes.
+	 * @return the bytes.
 	 */
-	public int getNameIndex() {
-		return nameIndex;
+	public short[] getBytes() {
+		return bytes;
 	}
 	
 	/**
-	 * Sets the name index.
-	 * @param nameIndex the name index.
+	 * Sets the bytes.
+	 * @param bytes the bytes.
 	 */
-	private void setNameIndex(int nameIndex) {
-		this.nameIndex = nameIndex;
+	private void setBytes(short[] bytes) {
+		this.bytes = bytes;
+	}
+	
+	/**
+	 * Returns the length.
+	 * @return the length.
+	 */
+	public int getLength() {
+		return length;
+	}
+
+	/**
+	 * Sets the length.
+	 * @param length the length.
+	 */
+	private void setLength(int length) {
+		this.length = length;
 	}
 }

@@ -14,7 +14,9 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
+
+import org.eclipse.rse.services.clientserver.java.BasicClassFileParser;
 
 /**
  * This class represents various string constants, class and interface names, field names, and other constants

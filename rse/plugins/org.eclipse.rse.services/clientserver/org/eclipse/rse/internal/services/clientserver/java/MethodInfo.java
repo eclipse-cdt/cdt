@@ -14,37 +14,22 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents a string information.
+ * This class represents a method.
  */
-public class StringInfo extends AbstractCPInfo {
-	
-	protected int stringIndex;
+public class MethodInfo extends AbstractCommonInfo {
 
 	/**
 	 * Constructor.
-	 * @param tag the tag.
-	 * @param stringIndex the string index.
+	 * @param accessFlags the access flags.
+	 * @param nameIndex the name index.
+	 * @param descriptorIndex the descriptor index.
+	 * @param attributesCount the number of attributes.
+	 * @param attributes the attributes.
 	 */
-	public StringInfo(short tag, int stringIndex) {
-		super(tag);
-		setStringIndex(stringIndex);
-	}
-	
-	/**
-	 * @return the stringIndex.
-	 */
-	public int getStringIndex() {
-		return stringIndex;
-	}
-
-	/**
-	 * Sets the stringIndex.
-	 * @param stringIndex the stringIndex.
-	 */
-	private void setStringIndex(int stringIndex) {
-		this.stringIndex = stringIndex;
+	public MethodInfo(int accessFlags, int nameIndex, int descriptorIndex, int attributesCount, AbstractAttributeInfo[] attributes) {
+		super(accessFlags, nameIndex, descriptorIndex, attributesCount, attributes);
 	}
 }

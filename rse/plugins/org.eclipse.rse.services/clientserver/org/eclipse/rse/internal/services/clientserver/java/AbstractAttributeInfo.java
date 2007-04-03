@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
  * This class represents a attribute.

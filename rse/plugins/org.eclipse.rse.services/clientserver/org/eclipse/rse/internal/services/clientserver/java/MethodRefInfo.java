@@ -14,22 +14,20 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents a field.
+ * This class represents method reference information.
  */
-public class FieldInfo extends AbstractCommonInfo {
+public class MethodRefInfo extends AbstractRefInfo {
 
 	/**
 	 * Constructor.
-	 * @param accessFlags the access flags.
-	 * @param nameIndex the name index.
-	 * @param descriptorIndex the descriptor index.
-	 * @param attributesCount the number of attributes.
-	 * @param attributes the attributes.
+	 * @param tag the tag.
+	 * @param classIndex the class index.
+	 * @param nameAndTypeIndex the name and type index.
 	 */
-	public FieldInfo(int accessFlags, int nameIndex, int descriptorIndex, int attributesCount, AbstractAttributeInfo[] attributes) {
-		super(accessFlags, nameIndex, descriptorIndex, attributesCount, attributes);
+	public MethodRefInfo(short tag, int classIndex, int nameAndTypeIndex) {
+		super(tag, classIndex, nameAndTypeIndex);
 	}
 }

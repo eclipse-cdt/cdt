@@ -14,39 +14,20 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents name and type information.
+ * This class represents integer information.
  */
-public class NameAndTypeInfo extends ClassInfo {
-	
-	protected int descriptorIndex;
+public class IntegerInfo extends Abstract4ByteNumericInfo {
 
 	/**
 	 * Constructor.
 	 * @param tag the tag.
-	 * @param nameIndex the name index.
-	 * @param descriptorIndex the descriptor index.
+	 * @param bytes the bytes.
 	 */
-	public NameAndTypeInfo(short tag, int nameIndex, int descriptorIndex) {
-		super(tag, nameIndex);
-		setDescriptorIndex(descriptorIndex);
-	}
-	
-	/**
-	 * Returns the descriptor index.
-	 * @return the descriptorIndex.
-	 */
-	public int getDescriptorIndex() {
-		return descriptorIndex;
+	public IntegerInfo(short tag, long bytes) {
+		super(tag, bytes);
 	}
 
-	/**
-	 * Sets the descriptor index.
-	 * @param descriptorIndex the descriptor index.
-	 */
-	private void setDescriptorIndex(int descriptorIndex) {
-		this.descriptorIndex = descriptorIndex;
-	}
 }

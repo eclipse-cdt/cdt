@@ -107,7 +107,7 @@ public class ClassFileUtil {
 	
 	/**
 	 * Gets the qualified class name for the class represented by the given input stream.
-	 * @param classFilePath the class file path.
+	 * @param stream the input stream representing a class.
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public String getQualifiedClassName(InputStream stream) throws IOException {

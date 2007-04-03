@@ -14,19 +14,20 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents float information.
+ * This class represents long information.
  */
-public class FloatInfo extends Abstract4ByteNumericInfo {
+public class LongInfo extends Abstract8ByteNumericInfo {
 
 	/**
 	 * Constructor.
 	 * @param tag the tag.
-	 * @param bytes the bytes.
+	 * @param highBytes the high bytes.
+	 * @param lowBytes the low bytes.
 	 */
-	public FloatInfo(short tag, long bytes) {
-		super(tag, bytes);
+	public LongInfo(short tag, long highBytes, long lowBytes) {
+		super(tag, highBytes, lowBytes);
 	}
 }

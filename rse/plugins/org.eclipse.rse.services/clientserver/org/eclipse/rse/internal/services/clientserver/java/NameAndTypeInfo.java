@@ -14,20 +14,39 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents 
+ * This class represents name and type information.
  */
-public class InterfaceMethodRefInfo extends AbstractRefInfo {
+public class NameAndTypeInfo extends ClassInfo {
+	
+	protected int descriptorIndex;
 
 	/**
 	 * Constructor.
 	 * @param tag the tag.
-	 * @param classIndex the class index.
-	 * @param nameAndTypeIndex the name and type index.
+	 * @param nameIndex the name index.
+	 * @param descriptorIndex the descriptor index.
 	 */
-	public InterfaceMethodRefInfo(short tag, int classIndex, int nameAndTypeIndex) {
-		super(tag, classIndex, nameAndTypeIndex);
+	public NameAndTypeInfo(short tag, int nameIndex, int descriptorIndex) {
+		super(tag, nameIndex);
+		setDescriptorIndex(descriptorIndex);
+	}
+	
+	/**
+	 * Returns the descriptor index.
+	 * @return the descriptorIndex.
+	 */
+	public int getDescriptorIndex() {
+		return descriptorIndex;
+	}
+
+	/**
+	 * Sets the descriptor index.
+	 * @param descriptorIndex the descriptor index.
+	 */
+	private void setDescriptorIndex(int descriptorIndex) {
+		this.descriptorIndex = descriptorIndex;
 	}
 }

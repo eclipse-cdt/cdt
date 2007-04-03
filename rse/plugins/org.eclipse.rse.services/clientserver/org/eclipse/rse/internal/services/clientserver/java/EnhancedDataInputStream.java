@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -46,7 +46,7 @@ public class EnhancedDataInputStream extends DataInputStream {
      * @exception  EOFException  if this input stream reaches the end before
      *               reading four bytes.
      * @exception  IOException   if an I/O error occurs.
-     * @see        java.io.FilterInputStream#in
+     * @see        java.io.InputStream#read()
      */
 	public final long readUnsignedInt() throws IOException {
         long ch1 = in.read();

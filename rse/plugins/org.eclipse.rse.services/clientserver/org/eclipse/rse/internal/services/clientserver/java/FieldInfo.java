@@ -14,38 +14,22 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents 4 byte numeric information.
+ * This class represents a field.
  */
-public abstract class Abstract4ByteNumericInfo extends AbstractCPInfo {
-	
-	protected long bytes;
+public class FieldInfo extends AbstractCommonInfo {
 
 	/**
 	 * Constructor.
-	 * @param tag the tag.
-	 * @param bytes the bytes.
+	 * @param accessFlags the access flags.
+	 * @param nameIndex the name index.
+	 * @param descriptorIndex the descriptor index.
+	 * @param attributesCount the number of attributes.
+	 * @param attributes the attributes.
 	 */
-	public Abstract4ByteNumericInfo(short tag, long bytes) {
-		super(tag);
-		setBytes(bytes);
-	}
-	
-	/**
-	 * Returns the bytes.
-	 * @return the bytes.
-	 */
-	public long getBytes() {
-		return bytes;
-	}
-	
-	/**
-	 * Sets the bytes.
-	 * @param bytes the bytes.
-	 */
-	private void setBytes(long bytes) {
-		this.bytes = bytes;
+	public FieldInfo(int accessFlags, int nameIndex, int descriptorIndex, int attributesCount, AbstractAttributeInfo[] attributes) {
+		super(accessFlags, nameIndex, descriptorIndex, attributesCount, attributes);
 	}
 }

@@ -14,57 +14,20 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents reference information.
+ * This class represents 
  */
-public abstract class AbstractRefInfo extends AbstractCPInfo {
-	
-	protected int classIndex;
-	protected int nameAndTypeIndex;
+public class InterfaceMethodRefInfo extends AbstractRefInfo {
 
 	/**
 	 * Constructor.
 	 * @param tag the tag.
 	 * @param classIndex the class index.
-	 * @param nameAndTypeIndex  
-	 */
-	public AbstractRefInfo(short tag, int classIndex, int nameAndTypeIndex) {
-		super(tag);
-		setClassIndex(classIndex);
-		setNameAndTypeIndex(nameAndTypeIndex);
-	}
-
-	/**
-	 * Returns the class index.
-	 * @return the class index.
-	 */
-	public int getClassIndex() {
-		return classIndex;
-	}
-	
-	/**
-	 * Sets the class index.
-	 * @param classIndex the class index.
-	 */
-	private void setClassIndex(int classIndex) {
-		this.classIndex = classIndex;
-	}
-	
-	/**
-	 * Returns the name and type index.
-	 * @return the name and type index.
-	 */
-	public int getNameAndTypeIndex() {
-		return nameAndTypeIndex;
-	}
-	
-	/**
-	 * Sets the name and type index.
 	 * @param nameAndTypeIndex the name and type index.
 	 */
-	private void setNameAndTypeIndex(int nameAndTypeIndex) {
-		this.nameAndTypeIndex = nameAndTypeIndex;
+	public InterfaceMethodRefInfo(short tag, int classIndex, int nameAndTypeIndex) {
+		super(tag, classIndex, nameAndTypeIndex);
 	}
 }

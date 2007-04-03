@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.core.runtime
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.services;x-internal:=true,
  org.eclipse.rse.internal.services.clientserver.archiveutils;x-internal:=true,
+ org.eclipse.rse.internal.services.clientserver.java;x-internal:=true,
  org.eclipse.rse.internal.services.shells;x-internal:=true,
  org.eclipse.rse.services,
  org.eclipse.rse.services.clientserver,

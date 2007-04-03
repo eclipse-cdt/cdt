@@ -14,20 +14,20 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents integer information.
+ * This class represents double information.
  */
-public class IntegerInfo extends Abstract4ByteNumericInfo {
+public class DoubleInfo extends Abstract8ByteNumericInfo {
 
 	/**
 	 * Constructor.
 	 * @param tag the tag.
-	 * @param bytes the bytes.
+	 * @param highBytes the high bytes.
+	 * @param lowBytes the low bytes.
 	 */
-	public IntegerInfo(short tag, long bytes) {
-		super(tag, bytes);
+	public DoubleInfo(short tag, long highBytes, long lowBytes) {
+		super(tag, highBytes, lowBytes);
 	}
-
 }

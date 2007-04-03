@@ -14,20 +14,38 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.java;
+package org.eclipse.rse.internal.services.clientserver.java;
 
 /**
- * This class represents double information.
+ * This class represents class information.
  */
-public class DoubleInfo extends Abstract8ByteNumericInfo {
+public class ClassInfo extends AbstractCPInfo {
+	
+	protected int nameIndex;
 
 	/**
 	 * Constructor.
 	 * @param tag the tag.
-	 * @param highBytes the high bytes.
-	 * @param lowBytes the low bytes.
+	 * @param nameIndex the name index.
 	 */
-	public DoubleInfo(short tag, long highBytes, long lowBytes) {
-		super(tag, highBytes, lowBytes);
+	public ClassInfo(short tag, int nameIndex) {
+		super(tag);
+		setNameIndex(nameIndex);
+	}
+	
+	/**
+	 * Returns the name index.
+	 * @return the name index.
+	 */
+	public int getNameIndex() {
+		return nameIndex;
+	}
+	
+	/**
+	 * Sets the name index.
+	 * @param nameIndex the name index.
+	 */
+	private void setNameIndex(int nameIndex) {
+		this.nameIndex = nameIndex;
 	}
 }

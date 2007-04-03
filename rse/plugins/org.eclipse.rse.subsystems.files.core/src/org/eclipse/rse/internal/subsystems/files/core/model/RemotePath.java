@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Martin Oberhuber (WindRiver) - [cleanup] Fix javadoc
+ * Martin Oberhuber (Wind River) - [cleanup] Fix javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core.model;

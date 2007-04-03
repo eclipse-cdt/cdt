@@ -15,7 +15,7 @@
  * Javier Montalvo Orus (Symbian) - Bug 161209 - Need a Log of ftp commands
  * Javier Montalvo Orus (Symbian) - Bug 169680 - [ftp] FTP files subsystem and service should use passive mode
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
- * Martin Oberhuber (WindRiver) - [cleanup] move FTPSubsystemResources out of core
+ * Martin Oberhuber (Wind River) - [cleanup] move FTPSubsystemResources out of core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;

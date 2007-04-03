@@ -37,7 +37,7 @@ import org.eclipse.rse.services.clientserver.NamePatternMatcher;
  * To get the actual filter string back from objects of this class, just call {@link #toString()}.
  *
  */
-public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISystemProcessRemoteConstants
+public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 {
 
 	public static final String ALL = "*"; //$NON-NLS-1$
@@ -72,9 +72,9 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	protected void initStates()
 	{
 		states = new HashMap();
-		for (int i = 0; i < ALL_STATES_STR.length; i++)
+		for (int i = 0; i < ISystemProcessRemoteConstants.ALL_STATES_STR.length; i++)
 		{
-			states.put(ALL_STATES_STR[i], new Boolean(false));
+			states.put(ISystemProcessRemoteConstants.ALL_STATES_STR[i], new Boolean(false));
 		}
 	}
 
@@ -381,10 +381,10 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 
 	    if (!anystatus)
 	    {
-	    	for (int i = 0; i < ALL_STATES_STR.length; i++)
+	    	for (int i = 0; i < ISystemProcessRemoteConstants.ALL_STATES_STR.length; i++)
 	    	{
-	    		Boolean currentState = (Boolean) states.get(ALL_STATES_STR[i]);
-	    		if (currentState.booleanValue()) s = s + ALL_STATES_STR[i];
+	    		Boolean currentState = (Boolean) states.get(ISystemProcessRemoteConstants.ALL_STATES_STR[i]);
+	    		if (currentState.booleanValue()) s = s + ISystemProcessRemoteConstants.ALL_STATES_STR[i];
 	    		if (currentState.booleanValue()) s = s + ","; //$NON-NLS-1$
 	    	}
 	    	if (!s.trim().equals("")) s = s.trim(); //$NON-NLS-1$
@@ -406,34 +406,34 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	{
 		NamePatternMatcher matcher = null;
 		String[] tokens = status.split("\\|"); //$NON-NLS-1$
-		if (tokens.length < (PROCESS_ATTRIBUTES_COUNT -1)) return false;
+		if (tokens.length < (ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT -1)) return false;
 		
 		matcher = new NamePatternMatcher(gid, true, false);
-		if (!matcher.matches(tokens[PROCESS_ATTRIBUTES_INDEX_GID])) return false;
+		if (!matcher.matches(tokens[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_GID])) return false;
 			
 		matcher = new NamePatternMatcher(name, true, false);
-		if (!matcher.matches(tokens[PROCESS_ATTRIBUTES_INDEX_EXENAME])) return false;
+		if (!matcher.matches(tokens[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_EXENAME])) return false;
 
-		String state = tokens[PROCESS_ATTRIBUTES_INDEX_STATUS].trim();
+		String state = tokens[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_STATUS].trim();
 		if (!satisfiesState(state)) return false;
 		
 		if (getUsername().equals("${user.id}")) //$NON-NLS-1$
 			matcher = new NamePatternMatcher(ALL, true, false);
 		else
 			matcher = new NamePatternMatcher(getUsername(), true, false);
-		if (!matcher.matches(tokens[PROCESS_ATTRIBUTES_INDEX_USERNAME])) return false;
+		if (!matcher.matches(tokens[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_USERNAME])) return false;
 		matcher = new NamePatternMatcher(ppid, true, false);
-		if (!matcher.matches(tokens[PROCESS_ATTRIBUTES_INDEX_PPID])) return false;
+		if (!matcher.matches(tokens[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PPID])) return false;
 		matcher = new NamePatternMatcher(pid, true, false);
-		if (!matcher.matches(tokens[PROCESS_ATTRIBUTES_INDEX_PID])) return false;
+		if (!matcher.matches(tokens[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PID])) return false;
 		long vmSize = 0;
 		try
 		{
-			vmSize = Long.parseLong(tokens[PROCESS_ATTRIBUTES_INDEX_VMSIZE]);
+			vmSize = Long.parseLong(tokens[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMSIZE]);
 		}
 		catch (Exception e)
 		{
-			if (tokens[PROCESS_ATTRIBUTES_INDEX_VMSIZE].trim().equals("")) vmSize = 0; //$NON-NLS-1$
+			if (tokens[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMSIZE].trim().equals("")) vmSize = 0; //$NON-NLS-1$
 			else return false;
 		}
 		if (!(vmSize >= minVM)) return false;

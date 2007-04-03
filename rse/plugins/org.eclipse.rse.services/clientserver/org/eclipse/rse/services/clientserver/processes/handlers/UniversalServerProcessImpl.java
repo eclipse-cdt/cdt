@@ -22,27 +22,27 @@ import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConst
 /**
  * @author mjberger
  */
-public class UniversalServerProcessImpl implements IRemoteServerProcess, IServiceConstants, ISystemProcessRemoteConstants
+public class UniversalServerProcessImpl implements IRemoteServerProcess, IServiceConstants
 {
-    protected Object[] _properties = new Object[PROCESS_ATTRIBUTES_COUNT+1];
+    protected Object[] _properties = new Object[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT+1];
     
     /**
      * create a new UniversalServerProcessImpl with the default property set
      */
     public UniversalServerProcessImpl()
     {
-    	_properties[PROCESS_ATTRIBUTES_INDEX_EXENAME] = " "; //$NON-NLS-1$
-    	_properties[PROCESS_ATTRIBUTES_INDEX_GID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_PID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_PPID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_STATUS] = new String(" "); //$NON-NLS-1$
-    	_properties[PROCESS_ATTRIBUTES_INDEX_TGID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_TRACERPID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_UID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_USERNAME] = " "; //$NON-NLS-1$
-    	_properties[PROCESS_ATTRIBUTES_INDEX_VMSIZE] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_VMRSS] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_COUNT] = " "; //set the label //$NON-NLS-1$
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_EXENAME] = " "; //$NON-NLS-1$
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_GID] = new Long(-1);
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PID] = new Long(-1);
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PPID] = new Long(-1);
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_STATUS] = new String(" "); //$NON-NLS-1$
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TGID] = new Long(-1);
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TRACERPID] = new Long(-1);
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_UID] = new Long(-1);
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_USERNAME] = " "; //$NON-NLS-1$
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMSIZE] = new Long(-1);
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMRSS] = new Long(-1);
+    	_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT] = " "; //set the label //$NON-NLS-1$
     }
 
     /**
@@ -84,18 +84,18 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
     
 	public void setPid(String pid)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_PID] = getLongAttribute(pid, -1);
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PID] = getLongAttribute(pid, -1);
 	}
 
 	public void setPPid(String ppid)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_PPID] = getLongAttribute(ppid, -1);
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PPID] = getLongAttribute(ppid, -1);
 
 	}
 
 	public void setName(String name)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_EXENAME] = name;
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_EXENAME] = name;
 	}
 
 	/* (non-Javadoc)
@@ -103,52 +103,52 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 	 */
 	public String getLabel()
 	{
-		return (String) _properties[PROCESS_ATTRIBUTES_COUNT];
+		return (String) _properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT];
 	}
 	
 	public void setLabel(String label)
 	{
-		_properties[PROCESS_ATTRIBUTES_COUNT] = label;
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT] = label;
 	}
 
 	public void setState(String state)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_STATUS] = state;
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_STATUS] = state;
 	}
 
 	public void setTgid(String tgid)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_TGID] = getLongAttribute(tgid, -1);
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TGID] = getLongAttribute(tgid, -1);
 	}
 
 	public void setTracerPid(String tracerpid)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_TRACERPID] = getLongAttribute(tracerpid, -1);
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TRACERPID] = getLongAttribute(tracerpid, -1);
 	}
 
 	public void setUid(String uid)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_UID] = getLongAttribute(uid, -1);
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_UID] = getLongAttribute(uid, -1);
 	}
 
 	public void setUsername(String username)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_USERNAME] = username;
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_USERNAME] = username;
 	}
 
 	public void setGid(String gid)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_GID] = getLongAttribute(gid, -1);
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_GID] = getLongAttribute(gid, -1);
 	}
 
 	public void setVmSizeInKB(String size)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_VMSIZE] = getLongAttribute(size, 0);
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMSIZE] = getLongAttribute(size, 0);
 	}
 	
 	public void setVmRSSInKB(String size)
 	{
-		_properties[PROCESS_ATTRIBUTES_INDEX_VMRSS] = getLongAttribute(size, 0);
+		_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMRSS] = getLongAttribute(size, 0);
 	}
 	
 	/**
@@ -176,33 +176,33 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 		if (s != null && s.length() > 0)
 		{
 		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
-		    int numOfExpectedTokens = PROCESS_ATTRIBUTES_COUNT;
+		    int numOfExpectedTokens = ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT;
 		    int tokens = str.length;
 			if (tokens == numOfExpectedTokens)
 			{
 				try
 				{
-				    setPid(str[PROCESS_ATTRIBUTES_INDEX_PID]);
+				    setPid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PID]);
 					
-				    setName(str[PROCESS_ATTRIBUTES_INDEX_EXENAME]);
+				    setName(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_EXENAME]);
 					
-					setTgid(str[PROCESS_ATTRIBUTES_INDEX_TGID]);
+					setTgid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TGID]);
 					
-					setPPid(str[PROCESS_ATTRIBUTES_INDEX_PPID]);
+					setPPid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PPID]);
 										
-					setTracerPid(str[PROCESS_ATTRIBUTES_INDEX_TRACERPID]);
+					setTracerPid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TRACERPID]);
 					
-					setUid(str[PROCESS_ATTRIBUTES_INDEX_UID]);
+					setUid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_UID]);
 					
-					setUsername(str[PROCESS_ATTRIBUTES_INDEX_USERNAME]);
+					setUsername(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_USERNAME]);
 					
-					setGid(str[PROCESS_ATTRIBUTES_INDEX_GID]);
+					setGid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_GID]);
 					
-					setVmSizeInKB(str[PROCESS_ATTRIBUTES_INDEX_VMSIZE]);
+					setVmSizeInKB(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMSIZE]);
 					
-					setVmRSSInKB(str[PROCESS_ATTRIBUTES_INDEX_VMRSS]);
+					setVmRSSInKB(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMRSS]);
 					
-					setState(str[PROCESS_ATTRIBUTES_INDEX_STATUS]);
+					setState(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_STATUS]);
 					
 					setLabel(getName());
 					
@@ -217,47 +217,47 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 
 	public long getPid()
 	{
-		return ((Long)_properties[PROCESS_ATTRIBUTES_INDEX_PID]).longValue();
+		return ((Long)_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PID]).longValue();
 	}
 
 	public long getPPid()
 	{
-		return ((Long)_properties[PROCESS_ATTRIBUTES_INDEX_PPID]).longValue();
+		return ((Long)_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PPID]).longValue();
 	}
 
 	public String getName()
 	{
-		return (String) _properties[PROCESS_ATTRIBUTES_INDEX_EXENAME];
+		return (String) _properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_EXENAME];
 	}
 
 	public String getState()
 	{
-		return (String) _properties[PROCESS_ATTRIBUTES_INDEX_STATUS];
+		return (String) _properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_STATUS];
 	}
 
 	public long getTgid()
 	{
-		return ((Long)_properties[PROCESS_ATTRIBUTES_INDEX_TGID]).longValue();
+		return ((Long)_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TGID]).longValue();
 	}
 
 	public long getTracerPid()
 	{
-		return ((Long)_properties[PROCESS_ATTRIBUTES_INDEX_TRACERPID]).longValue();
+		return ((Long)_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TRACERPID]).longValue();
 	}
 
 	public long getUid()
 	{
-		return ((Long)_properties[PROCESS_ATTRIBUTES_INDEX_UID]).intValue();
+		return ((Long)_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_UID]).intValue();
 	}
 
 	public String getUsername()
 	{
-		return (String) _properties[PROCESS_ATTRIBUTES_INDEX_USERNAME];
+		return (String) _properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_USERNAME];
 	}
 
 	public long getGid()
 	{
-		return ((Long)_properties[PROCESS_ATTRIBUTES_INDEX_GID]).intValue();
+		return ((Long)_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_GID]).intValue();
 	}
 
 	public boolean isRoot()
@@ -267,12 +267,12 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 
 	public long getVmSizeInKB()
 	{
-		return ((Long)_properties[PROCESS_ATTRIBUTES_INDEX_VMSIZE]).longValue();
+		return ((Long)_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMSIZE]).longValue();
 	}
 	
 	public long getVmRSSInKB()
 	{
-		return ((Long)_properties[PROCESS_ATTRIBUTES_INDEX_VMRSS]).longValue();
+		return ((Long)_properties[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMRSS]).longValue();
 	}
 
 	/**
@@ -282,10 +282,10 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 	public String getAllProperties()
 	{
 		String properties = ""; //$NON-NLS-1$
-		for (int i = 0; i < PROCESS_ATTRIBUTES_COUNT; i++)
+		for (int i = 0; i < ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT; i++)
 		{
 			properties = properties + _properties[i].toString();
-			if (i != PROCESS_ATTRIBUTES_COUNT - 1)
+			if (i != ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT - 1)
 				properties = properties + TOKEN_SEPARATOR;
 		}
 		return properties;

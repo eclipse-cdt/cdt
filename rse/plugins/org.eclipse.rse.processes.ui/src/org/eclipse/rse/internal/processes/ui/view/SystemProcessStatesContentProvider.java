@@ -30,7 +30,7 @@ import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConst
  * @author mjberger
  *
  */
-public class SystemProcessStatesContentProvider implements ISystemProcessRemoteConstants, IStructuredContentProvider
+public class SystemProcessStatesContentProvider implements IStructuredContentProvider
 {
 	private HashMap strIndices;
 	
@@ -43,9 +43,9 @@ public class SystemProcessStatesContentProvider implements ISystemProcessRemoteC
 		// construct a mapping from unique state names to integers. Each integer
 		// is the index of the associated state name in the array of translated
 		// state name strings.
-		for (int i = 0; i < ALL_STATES_STR.length; i++)
+		for (int i = 0; i < ISystemProcessRemoteConstants.ALL_STATES_STR.length; i++)
 		{
-			strIndices.put(ALL_STATES_STR[i], new Integer(i));
+			strIndices.put(ISystemProcessRemoteConstants.ALL_STATES_STR[i], new Integer(i));
 		}
 	}
 	

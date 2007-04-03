@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.Text;
 
 
 public class SystemProcessFilterStringEditPane extends
-		SystemFilterStringEditPane implements ISystemProcessRemoteConstants
+		SystemFilterStringEditPane
 {
 	
 	// GUI widgets
@@ -406,9 +406,9 @@ public class SystemProcessFilterStringEditPane extends
 			chkStatus.setAllChecked(rffs.getAnyStatus());
 						
 			String[] stateTypes = SystemProcessStatesContentProvider.getStates();
-			for (int i = 0; i < ALL_STATES_STR.length; i++)
+			for (int i = 0; i < ISystemProcessRemoteConstants.ALL_STATES_STR.length; i++)
 			{
-				chkStatus.setChecked(stateTypes[i], rffs.getSpecificState(ALL_STATES_STR[i]));
+				chkStatus.setChecked(stateTypes[i], rffs.getSpecificState(ISystemProcessRemoteConstants.ALL_STATES_STR[i]));
 			}
 		}
 	}
@@ -685,9 +685,9 @@ public class SystemProcessFilterStringEditPane extends
 		}
 		
 		String[] stateStrings = SystemProcessStatesContentProvider.getStates();
-		for (int i = 0; i < ALL_STATES_STR.length; i++)
+		for (int i = 0; i < ISystemProcessRemoteConstants.ALL_STATES_STR.length; i++)
 		{
-			if (chkStatus.getChecked(stateStrings[i])) rpfs.setSpecificState(ALL_STATES_STR[i]);
+			if (chkStatus.getChecked(stateStrings[i])) rpfs.setSpecificState(ISystemProcessRemoteConstants.ALL_STATES_STR[i]);
 		}
 		return rpfs.toString();
 	}

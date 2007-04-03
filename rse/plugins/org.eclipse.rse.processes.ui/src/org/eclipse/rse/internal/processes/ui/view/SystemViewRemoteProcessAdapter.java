@@ -50,7 +50,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		implements ISystemViewElementAdapter, ISystemRemoteElementAdapter,
-		ISystemProcessPropertyConstants, ISystemProcessRemoteConstants
+		ISystemProcessPropertyConstants
 {	
 	private SystemCopyToClipboardAction copyClipboardAction;
 	public boolean canDrag(Object element)

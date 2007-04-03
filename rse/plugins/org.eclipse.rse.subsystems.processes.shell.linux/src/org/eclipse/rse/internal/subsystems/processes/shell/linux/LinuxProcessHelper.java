@@ -33,7 +33,7 @@ import org.eclipse.rse.services.shells.IShellService;
  * Helper class that helps to get state code and user name info most of the code
  * 
  */
-public class LinuxProcessHelper implements ISystemProcessRemoteConstants {
+public class LinuxProcessHelper {
     private HashMap stateMap;
 
     private HashMap _usernamesByUid;
@@ -48,8 +48,8 @@ public class LinuxProcessHelper implements ISystemProcessRemoteConstants {
     public LinuxProcessHelper() {
         super();
         stateMap = new HashMap();
-        for (int i = STATE_STARTING_INDEX; i < STATE_ENDING_INDEX; i++) {
-            stateMap.put(new Character(ALL_STATES[i]), ALL_STATES_STR[i]);
+        for (int i = ISystemProcessRemoteConstants.STATE_STARTING_INDEX; i < ISystemProcessRemoteConstants.STATE_ENDING_INDEX; i++) {
+            stateMap.put(new Character(ISystemProcessRemoteConstants.ALL_STATES[i]), ISystemProcessRemoteConstants.ALL_STATES_STR[i]);
         }
     }
 

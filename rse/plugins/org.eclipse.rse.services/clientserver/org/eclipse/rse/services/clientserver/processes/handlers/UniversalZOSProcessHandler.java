@@ -23,6 +23,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
+import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 
 
 public class UniversalZOSProcessHandler extends UniversalAIXProcessHandler
@@ -38,9 +39,9 @@ public class UniversalZOSProcessHandler extends UniversalAIXProcessHandler
 	{
 		super();
 		stateMap = new HashMap();
-		for (int i = STATE_ZOS_STARTING_INDEX; i < STATE_ZOS_ENDING_INDEX; i++)
+		for (int i = ISystemProcessRemoteConstants.STATE_ZOS_STARTING_INDEX; i < ISystemProcessRemoteConstants.STATE_ZOS_ENDING_INDEX; i++)
 		{
-			stateMap.put(new Character(ALL_STATES[i]), ALL_STATES_STR[i]);
+			stateMap.put(new Character(ISystemProcessRemoteConstants.ALL_STATES[i]), ISystemProcessRemoteConstants.ALL_STATES_STR[i]);
 		}
 	}
 	

@@ -37,7 +37,7 @@ import org.eclipse.rse.services.processes.AbstractProcessService;
 import org.eclipse.rse.services.processes.IProcessService;
 
 
-public class DStoreProcessService extends AbstractProcessService implements IProcessService, IUniversalProcessDataStoreConstants, ISystemProcessRemoteConstants
+public class DStoreProcessService extends AbstractProcessService implements IProcessService, IUniversalProcessDataStoreConstants
 {
 	protected IDataStoreProvider _provider;
 	protected DataElement _minerElement = null;
@@ -101,7 +101,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 				Object[] results = nested.toArray();
 	
 				String message = status.getAttribute(DE.A_VALUE);
-				if (!message.equals(PROCESS_MINER_SUCCESS))
+				if (!message.equals(ISystemProcessRemoteConstants.PROCESS_MINER_SUCCESS))
 				{
 					throw new SystemMessageException(getMessage("RSEPG1301")); //$NON-NLS-1$
 				}
@@ -210,7 +210,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 				
 				// get results
 				String message = status.getAttribute(DE.A_VALUE);
-				if (message.equals(PROCESS_MINER_SUCCESS)) return true;
+				if (message.equals(ISystemProcessRemoteConstants.PROCESS_MINER_SUCCESS)) return true;
 				else
 				{
 					SystemMessage msg = getMessage("RSEPG1300"); //$NON-NLS-1$

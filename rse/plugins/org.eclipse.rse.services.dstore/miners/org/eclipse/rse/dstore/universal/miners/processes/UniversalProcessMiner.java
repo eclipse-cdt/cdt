@@ -44,7 +44,7 @@ import org.eclipse.rse.services.clientserver.processes.handlers.UniversalServerP
  * Miner for getting process information from a remote system.
  * @author mjberger
  */
-public class UniversalProcessMiner extends Miner implements IUniversalProcessDataStoreConstants, IUniversalDataStoreConstants, ISystemProcessRemoteConstants
+public class UniversalProcessMiner extends Miner implements IUniversalProcessDataStoreConstants, IUniversalDataStoreConstants
 {
 	
 	public static final String MINER_ID = UniversalProcessMiner.class.getName();
@@ -231,7 +231,7 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 
 		_dataStore.refresh(subject);
 		status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
-		status.setAttribute(DE.A_VALUE, PROCESS_MINER_SUCCESS);
+		status.setAttribute(DE.A_VALUE, ISystemProcessRemoteConstants.PROCESS_MINER_SUCCESS);
 
 		return status;
 	}
@@ -240,7 +240,7 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 	{
 		// we need to synchronize the list of data elements with the fresh
 		// results coming back from the query
-		if (handler == null) throw new Exception(PROCESS_MINER_ERROR_NO_HANDLER);
+		if (handler == null) throw new Exception(ISystemProcessRemoteConstants.PROCESS_MINER_ERROR_NO_HANDLER);
 		SortedSet processes = handler.lookupProcesses(fsObj);
 		
 		// sort the data elements
@@ -389,7 +389,7 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 		{
 			String statusLine = subject.getValue();
 			UniversalServerProcessImpl usp = new UniversalServerProcessImpl(statusLine);
-			if (handler == null) throw new Exception(PROCESS_MINER_ERROR_NO_HANDLER);
+			if (handler == null) throw new Exception(ISystemProcessRemoteConstants.PROCESS_MINER_ERROR_NO_HANDLER);
 			IHostProcess result = handler.kill(usp, subject.getSource());
 			
 			if (result == null) _dataStore.deleteObject(subject.getParent(), subject);
@@ -408,7 +408,7 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 
 		_dataStore.refresh(subject.getParent());
 		status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
-		status.setAttribute(DE.A_VALUE, PROCESS_MINER_SUCCESS);
+		status.setAttribute(DE.A_VALUE, ISystemProcessRemoteConstants.PROCESS_MINER_SUCCESS);
 		return status;		
 	}
 

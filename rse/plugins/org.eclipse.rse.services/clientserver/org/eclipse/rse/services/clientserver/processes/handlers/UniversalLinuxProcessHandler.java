@@ -32,7 +32,7 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 
-public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceConstants, ISystemProcessRemoteConstants
+public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceConstants
 {
 
 	protected HashMap _usernamesByUid;
@@ -45,9 +45,9 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 	public UniversalLinuxProcessHandler()
 	{
 		stateMap = new HashMap();
-		for (int i = STATE_STARTING_INDEX; i < STATE_ENDING_INDEX; i++)
+		for (int i = ISystemProcessRemoteConstants.STATE_STARTING_INDEX; i < ISystemProcessRemoteConstants.STATE_ENDING_INDEX; i++)
 		{
-			stateMap.put(new Character(ALL_STATES[i]), ALL_STATES_STR[i]);
+			stateMap.put(new Character(ISystemProcessRemoteConstants.ALL_STATES[i]), ISystemProcessRemoteConstants.ALL_STATES_STR[i]);
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 	 */
 	public IHostProcess kill(IHostProcess process, String type) throws Exception
 	{
-		if (type.equals(PROCESS_SIGNAL_TYPE_DEFAULT)) type = ""; //$NON-NLS-1$
+		if (type.equals(ISystemProcessRemoteConstants.PROCESS_SIGNAL_TYPE_DEFAULT)) type = ""; //$NON-NLS-1$
 		else type = "-" + type; //$NON-NLS-1$
 		// formulate command to send kill signal
 		String cmdLine = "kill " + type + " " + process.getPid(); //$NON-NLS-1$ //$NON-NLS-2$

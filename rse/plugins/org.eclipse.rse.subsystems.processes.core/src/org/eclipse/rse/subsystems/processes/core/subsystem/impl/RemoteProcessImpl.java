@@ -22,7 +22,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
-import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
@@ -36,7 +35,7 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSyst
  * @author mjberger
  *
  */
-public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteConstants
+public class RemoteProcessImpl implements IRemoteProcess
 {
     public static final char CONNECTION_DELIMITER = ':';
 	protected IRemoteProcessContext _context;    

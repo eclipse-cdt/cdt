@@ -25,6 +25,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
+import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 
 /**
  * This class implements the IRemoteClientProcess interface by wrappering a DataElement
@@ -34,7 +35,7 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcess;
  * @author mjberger
  *
  */
-public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants, IAdaptable, org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants
+public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants, IAdaptable
 {
 	public static final boolean ROOT_TRUE = true;
 	public static final boolean ROOT_FALSE = false;
@@ -125,25 +126,25 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 			{
 				try
 				{
-				    setPid(str[PROCESS_ATTRIBUTES_INDEX_PID]);
+				    setPid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PID]);
 					
-				    setName(str[PROCESS_ATTRIBUTES_INDEX_EXENAME]);
+				    setName(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_EXENAME]);
 					
-					setTgid(str[PROCESS_ATTRIBUTES_INDEX_TGID]);
+					setTgid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TGID]);
 					
-					setPPid(str[PROCESS_ATTRIBUTES_INDEX_PPID]);
+					setPPid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_PPID]);
 					
 					if (_ppid == 0) _isRoot = true;
 										
-					setTracerPid(str[PROCESS_ATTRIBUTES_INDEX_TRACERPID]);
+					setTracerPid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_TRACERPID]);
 					
-					setUid(str[PROCESS_ATTRIBUTES_INDEX_UID]);
+					setUid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_UID]);
 					
-					setUsername(str[PROCESS_ATTRIBUTES_INDEX_USERNAME]);
+					setUsername(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_USERNAME]);
 					
-					setGid(str[PROCESS_ATTRIBUTES_INDEX_GID]);
+					setGid(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_GID]);
 					
-					setLabel(str[PROCESS_ATTRIBUTES_INDEX_EXENAME]);
+					setLabel(str[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_EXENAME]);
 			    }
 			    catch (ArrayIndexOutOfBoundsException e)
 			    {
@@ -192,7 +193,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 
 	public String getState()
 	{
-		String state = getSubAttribute(PROCESS_ATTRIBUTES_INDEX_STATUS);
+		String state = getSubAttribute(ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_STATUS);
 		if (state == null) 
 		{
 			//SystemPlugin.logError("Error in UniversalProcessImpl.getAttributes(): status of process " + getPid() + " is not given.");
@@ -279,7 +280,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 
 	protected void setState(String newState)
 	{
-		setSubAttribute(PROCESS_ATTRIBUTES_INDEX_STATUS, newState);
+		setSubAttribute(ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_STATUS, newState);
 	}
 
 	protected void setTgid(long tgid)
@@ -395,7 +396,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 	 */
 	public long getVmSizeInKB()
 	{
-		String sizeStr = getSubAttribute(PROCESS_ATTRIBUTES_INDEX_VMSIZE);
+		String sizeStr = getSubAttribute(ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMSIZE);
 		if (sizeStr == null) return 0;
 		long vmsize = 0;
 		try
@@ -415,7 +416,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 	 */
 	public long getVmRSSInKB()
 	{
-		String sizeStr = getSubAttribute(PROCESS_ATTRIBUTES_INDEX_VMRSS);
+		String sizeStr = getSubAttribute(ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMRSS);
 		if (sizeStr == null) return 0;
 		long vmrss = 0;
 		try
@@ -438,7 +439,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 	{
 		String sizeStr = ""; //$NON-NLS-1$
 		sizeStr = sizeStr + size;
-		setSubAttribute(PROCESS_ATTRIBUTES_INDEX_VMSIZE, sizeStr);
+		setSubAttribute(ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMSIZE, sizeStr);
 	}
 	
 	/**
@@ -448,7 +449,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 	{
 		String sizeStr = ""; //$NON-NLS-1$
 		sizeStr = sizeStr + size;
-		setSubAttribute(PROCESS_ATTRIBUTES_INDEX_VMRSS, sizeStr);
+		setSubAttribute(ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_INDEX_VMRSS, sizeStr);
 	}
 
 	/**

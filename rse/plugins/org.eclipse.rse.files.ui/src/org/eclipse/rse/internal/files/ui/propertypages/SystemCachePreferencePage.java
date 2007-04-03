@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 176488: adding some text for the cache limit checkbox
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -58,6 +58,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -82,8 +83,9 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 {
 
 	private Button _clearButton;
-	private Button _maxCacheCheckbox;
+	private Button _limitCacheCheckbox;
 	private Text _maxCacheSize;
+	private Label maxCacheSizeLabel;
 
 	/**
 	 * Constructor
@@ -109,28 +111,28 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	 */
 	protected Control createContents(Composite gparent)
 	{
-		Composite parent = SystemWidgetHelpers.createComposite(gparent, 1);
-
-		Composite maxComp = SystemWidgetHelpers.createComposite(parent, 2);
+		Composite parent = SystemWidgetHelpers.createComposite(gparent, 2);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		maxComp.setLayout(layout);
-		maxComp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		parent.setLayout(layout);
+		parent.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
-		_maxCacheCheckbox =
-			SystemWidgetHelpers.createCheckBox(
-				maxComp,
-				FileResources.RESID_PREF_CACHE_MAX_CACHE_SIZE_LABEL,
-				this);
-		_maxCacheCheckbox.setToolTipText(
-				FileResources.RESID_PREF_CACHE_MAX_CACHE_SIZE_TOOLTIP);
+		_limitCacheCheckbox = SystemWidgetHelpers.createCheckBox(parent, FileResources.RESID_PREF_CACHE_LIMIT_CACHE_SIZE_LABEL, this);
+		_limitCacheCheckbox.setToolTipText(FileResources.RESID_PREF_CACHE_LIMIT_CACHE_SIZE_TOOLTIP);
+		_limitCacheCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
+		((GridData)_limitCacheCheckbox.getLayoutData()).horizontalSpan = 2;
+		
+		maxCacheSizeLabel = new Label(parent, SWT.NONE);
+		maxCacheSizeLabel.setText(FileResources.RESID_PREF_CACHE_MAX_CACHE_SIZE_LABEL);
+		maxCacheSizeLabel.setToolTipText(FileResources.RESID_PREF_CACHE_MAX_CACHE_SIZE_TOOLTIP);
+		maxCacheSizeLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-		_maxCacheSize = SystemWidgetHelpers.createTextField(maxComp, this);
-		GridData gd = new GridData();
+		_maxCacheSize = new Text(parent, SWT.BORDER);
+		GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
 		gd.widthHint = 75;
 		_maxCacheSize.setLayoutData(gd);
-
 		_maxCacheSize.setTextLimit(5);
+		_maxCacheSize.setToolTipText(FileResources.RESID_PREF_CACHE_MAX_CACHE_SIZE_TOOLTIP);
 		_maxCacheSize.addVerifyListener(new VerifyListener()
 		{
 			public void verifyText(VerifyEvent e)
@@ -154,7 +156,8 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 //			clearComp,
 //			FileResources.RESID_PREF_CACHE_CLEAR_LABEL);
 		_clearButton = SystemWidgetHelpers.createPushButton(parent, FileResources.RESID_PREF_CACHE_CLEAR, this);
-		_clearButton.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		_clearButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+		((GridData)_clearButton.getLayoutData()).horizontalSpan = 2;
 		_clearButton.setToolTipText(FileResources.RESID_PREF_CACHE_CLEAR_TOOLTIP);
 //		gd = new GridData();
 //		gd.widthHint = 75;
@@ -179,6 +182,8 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 //		SystemWidgetHelpers.createReadonlyTextField(parent);
 		warning.setBackground(parent.getBackground());
 		warning.setText(FileResources.RESID_PREF_CACHE_CLEAR_WARNING_DESCRIPTION);
+		warning.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+		((GridData)warning.getLayoutData()).horizontalSpan = 2;
 
 		(new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);
 
@@ -199,7 +204,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		}
 		
 		_maxCacheSize.setText(maxCacheSizeStr);
-		_maxCacheCheckbox.setSelection(enableMaxSize);
+		_limitCacheCheckbox.setSelection(enableMaxSize);
 	}
 
 	/**
@@ -220,7 +225,9 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 
 		boolean enableMaxSize = store.getDefaultBoolean(ISystemFilePreferencesConstants.LIMIT_CACHE);
-		_maxCacheCheckbox.setSelection(enableMaxSize);
+		_limitCacheCheckbox.setSelection(enableMaxSize);
+		
+		maxCacheSizeLabel.setEnabled(enableMaxSize);
 
 		_maxCacheSize.setEnabled(enableMaxSize);
 		_maxCacheSize.setText(store.getDefaultString(ISystemFilePreferencesConstants.MAX_CACHE_SIZE));
@@ -250,7 +257,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		}
 
 		store.setValue(ISystemFilePreferencesConstants.MAX_CACHE_SIZE, size);
-		store.setValue(ISystemFilePreferencesConstants.LIMIT_CACHE, _maxCacheCheckbox.getSelection());
+		store.setValue(ISystemFilePreferencesConstants.LIMIT_CACHE, _limitCacheCheckbox.getSelection());
 
 		return super.performOk();
 	}
@@ -386,9 +393,9 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 			}
 
 		}
-		else if (e.widget == _maxCacheCheckbox)
+		else if (e.widget == _limitCacheCheckbox)
 		{
-			_maxCacheSize.setEnabled(_maxCacheCheckbox.getSelection());
+			_maxCacheSize.setEnabled(_limitCacheCheckbox.getSelection());
 		}
 	}
 

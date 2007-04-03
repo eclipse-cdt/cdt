@@ -15,6 +15,7 @@
  *                     - created and used RSEPreferencesManager
  * Uwe Stieber (Wind River) - bugfixing and reworked new connection wizard
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -75,7 +76,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * </p>
  */
 
-public class SystemConnectionForm implements Listener, IRSEUserIdConstants, SelectionListener, Runnable, IRunnableWithProgress {
+public class SystemConnectionForm implements Listener, SelectionListener, Runnable, IRunnableWithProgress {
 
 	public static final boolean CREATE_MODE = false;
 	public static final boolean UPDATE_MODE = true;

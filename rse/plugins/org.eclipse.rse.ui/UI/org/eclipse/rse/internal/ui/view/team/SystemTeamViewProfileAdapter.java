@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -48,8 +47,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  *  the Team view.
  */
 public class SystemTeamViewProfileAdapter 
-       extends AbstractSystemViewAdapter 
-       implements IRSEUserIdConstants
+       extends AbstractSystemViewAdapter
 {
 	
 	private boolean actionsCreated = false;

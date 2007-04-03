@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used RSEPreferencesManager
  * Uwe Stieber (Wind River) - Menu action contributions can be acknowlegded by system type provider
+ * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -71,8 +72,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  * Adapter for displaying SystemConnection objects in tree views.
  */
 public class SystemViewConnectionAdapter 
-       extends AbstractSystemViewAdapter 
-       implements IRSEUserIdConstants
+       extends AbstractSystemViewAdapter
 {
 	private SystemNewConnectionAction anotherConnectionAction = null;
 	//private SystemUpdateConnectionAction updateAction = null;

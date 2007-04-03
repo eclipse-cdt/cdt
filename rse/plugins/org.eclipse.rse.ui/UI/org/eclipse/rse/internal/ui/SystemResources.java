@@ -726,13 +726,7 @@ public class SystemResources extends NLS
 
 	public static String RESID_PERCONNECTION_FILTERPOOL;
 
-	// RSE Communication Perferences
-	public static String RESID_PREF_COMMUNICATIONS_TITLE;
-	public static String RESID_PREF_DAEMON_PORT_LABEL;
-	public static String RESID_PREF_DAEMON_PORT_TOOLTIP;
-	public static String RESID_PREF_DAEMON_AUTOSTART_LABEL;
-	public static String RESID_PREF_DAEMON_AUTOSTART_TOOLTIP;
-
+	// RSE Communication Preferences
 	public static String RESID_PREF_IP_ADDRESS_LABEL;
 	public static String RESID_PREF_IP_AUTO_LABEL;
 	public static String RESID_PREF_IP_AUTO_TOOLTIP;

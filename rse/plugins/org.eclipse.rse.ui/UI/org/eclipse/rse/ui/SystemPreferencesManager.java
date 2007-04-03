@@ -79,7 +79,6 @@ public class SystemPreferencesManager {
 	public static void initDefaults() {
 		migrateCorePreferences();
 		initDefaultsUI();
-		initDefaultsComm();
 		savePreferences();
 	}
 
@@ -104,17 +103,6 @@ public class SystemPreferencesManager {
 		String property = System.getProperty(propertyName);
 		boolean value = (property == null) ? defaultValue : property.equals(Boolean.toString(true));
 		return value;
-	}
-	
-	/**
-	 * Set default communications preferences
-	 */
-	private static void initDefaultsComm() {
-		RSEUIPlugin ui = RSEUIPlugin.getDefault();
-		Preferences store = ui.getPluginPreferences();
-		store.setDefault(ISystemPreferencesConstants.DAEMON_AUTOSTART, ISystemPreferencesConstants.DEFAULT_DAEMON_AUTOSTART);
-		store.setDefault(ISystemPreferencesConstants.DAEMON_PORT, ISystemPreferencesConstants.DEFAULT_DAEMON_PORT);
-		ui.savePluginPreferences();
 	}
 
 	public static boolean getShowLocalConnection() {

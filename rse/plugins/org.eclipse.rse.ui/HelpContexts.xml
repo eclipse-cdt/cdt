@@ -920,15 +920,6 @@ selected matches in that file will also be removed from the view.</description>
 </description>
 </context>
 
-<!-- General RSE communications preference page -->
-<context id="cmmp0000">
-<description>This is the RSE communications preferences page.  These preferences are not specific to any single RSE connection.  The <b>RSE communications daemon</b> can be used by local Workbench functions to listen for incoming socket requests from remote systems.  The daemon can be started and stopped from the pull down menu in the RSE's Remote Systems view.
-
-Use the start RSE communications daemon checkbox to automatically start the daemon when the Workbench is started.
-
-Use the port preference to change which local TCP/IP port the daemon uses to listen for incoming requests.  A valid TCP/IP port number must be entered.  If the port is changed and the daemon is currently running then the daemon will be stopped and restarted on the new port when the preference page is closed.</description>
-</context>
-
 <!-- file cache preference page -->
 <context id="fchp0000">
 <description>This is the RSE file cache preference page.

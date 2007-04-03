@@ -38,7 +38,6 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceListener;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
-import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
@@ -104,18 +103,9 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	        	IProject remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject();
 	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
 			    SystemResourceManager.startResourceEventListening(listener);
-
-				// Auto-start RSE communications daemon if required
-				SystemCommunicationsDaemon daemon = SystemCommunicationsDaemon.getInstance();
-				
-				if (SystemCommunicationsDaemon.isAutoStart()) {
-					daemon.startDaemon(false);
-				}
 				
 				registerDynamicPopupMenuExtensions();
 				registerKeystoreProviders();
-		
-		
 				
 				// new support to allow products to not pre-create a local connection
 				if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
@@ -615,12 +605,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	
 	    // remove workspace listener for our project
 	    SystemResourceManager.endResourceEventListening();
-	
-		// Stop RSE communications daemon if required, the stopDaemon method checks if the daemon is running or not
-		SystemCommunicationsDaemon daemon = SystemCommunicationsDaemon.getInstance();
-		daemon.stopDaemon();
-    	
-		
 		
         // call this last
         super.stop(context);

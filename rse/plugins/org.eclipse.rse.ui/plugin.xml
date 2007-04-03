@@ -164,12 +164,6 @@ Contributors:
             class="org.eclipse.rse.ui.propertypages.SignonPreferencePage"
             id="org.eclipse.rse.ui.preferences.SignonPreferencePage">
       </page>
-      <page
-            name="%PreferencePage.Communications"
-            category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
-            class="org.eclipse.rse.internal.ui.propertypages.SystemCommunicationsPreferencePage"
-            id="org.eclipse.rse.ui.preferences.SystemCommunicationsPreferencePage">
-      </page>
    </extension>
    
    <extension

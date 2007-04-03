@@ -63,7 +63,6 @@ import org.eclipse.rse.internal.ui.actions.SystemCollapseAllAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceQualifyConnectionNamesAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceRestoreStateAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceShowFilterPoolsAction;
-import org.eclipse.rse.internal.ui.actions.SystemStartCommunicationsDaemonAction;
 import org.eclipse.rse.internal.ui.actions.SystemWorkWithProfilesAction;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
@@ -696,17 +695,6 @@ public class SystemViewPart
 		SystemCascadingPreferencesAction preferencesAction = new SystemCascadingPreferencesAction(shell);
 		menuMgr.add(preferencesAction.getSubMenu());
 
-		menuMgr.add(new Separator());
-		menuMgr.add(new SystemStartCommunicationsDaemonAction(shell));
-
-		if (viewPart != null)
-		{
-			/*
-			SystemCascadingTeamAction teamAction = new SystemCascadingTeamAction(shell, viewPart);		
-			menuMgr.add(new Separator());
-			menuMgr.add(teamAction.getSubMenu());
-			*/
-		}
 		SystemViewMenuListener menuListener = new SystemViewMenuListener(true); // true says this is a persistent menu
 		if (viewPart instanceof ISystemMessageLine)
 			menuListener.setShowToolTipText(true, (ISystemMessageLine) viewPart);

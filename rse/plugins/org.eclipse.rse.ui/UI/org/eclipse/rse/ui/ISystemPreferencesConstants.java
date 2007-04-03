@@ -24,16 +24,6 @@ public interface ISystemPreferencesConstants {
 	 */
 	public static final String ROOT = "org.eclipse.rse.preferences."; //$NON-NLS-1$
 	/*
-	 * dstore preference keys
-	 */
-	public static final String DAEMON_AUTOSTART = ROOT + "daemon.autostart"; //$NON-NLS-1$
-	public static final String DAEMON_PORT = ROOT + "daemon.port"; //$NON-NLS-1$
-	/*
-	 * dstore preference default values
-	 */
-	public static final boolean DEFAULT_DAEMON_AUTOSTART = false;
-	public static final int DEFAULT_DAEMON_PORT = 4300;
-	/*
 	 * uda preference keys
 	 */
 	public static final String CASCADE_UDAS_BYPROFILE = ROOT + "uda.cascade"; //$NON-NLS-1$

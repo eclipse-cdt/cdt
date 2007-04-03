@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -86,6 +88,29 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		return language.getSelectedNames(ast, strategy.getTestData()[1].indexOf(section), len);
 	}
 	
+	/**
+	 * Matching against a length of text can return several names, we use the RawSignature to
+	 * disambiguate between them
+	 * @param section
+	 * @param rawSig
+	 * @return
+	 */
+	protected IBinding getBindingFromASTNameWithRawSignature(String section, String rawSig) {
+		IASTName[] names= findNames(section, rawSig.length());
+		List matchSignature= new ArrayList();
+		for(int i=0; i<names.length; i++) {
+			if(rawSig.equals(names[i].getRawSignature())) {
+				matchSignature.add(names[i]);
+			}
+		}
+		assertTrue("<>1 names found for \""+section+"\" with signature "+rawSig, matchSignature.size()==1);
+		IASTName aname= (IASTName) matchSignature.get(0);
+		IBinding binding = aname.resolveBinding();
+		assertNotNull("No binding for "+aname.getRawSignature(), binding);
+		assertFalse("Binding is a ProblemBinding for name "+aname.getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));
+		return aname.resolveBinding();		
+	}
+	
 	protected IBinding getBindingFromASTName(String section, int len) {
 		IASTName[] names= findNames(section, len);
 		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
@@ -151,6 +176,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		assertEquals(qn, CPPVisitor.renderQualifiedName(((ICPPClassType)ft.getParameterTypes()[index]).getQualifiedName()));
 	}
 
+	protected void assertInstance(Object o, Class c) {
+		assertNotNull(o);
+		assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+	}
+	
 	protected String readTaggedComment(final String tag) throws IOException {
 		return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "parser", getClass(), tag);
 	}
@@ -277,7 +307,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			
 			// System.out.println("Online: "+getName());
-			// ((PDOM)CCorePlugin.getIndexManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
+			// ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
 			index.acquireReadLock();
@@ -296,7 +326,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			
 			//System.out.println("Referenced: "+getName());
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
-			//((PDOM)CCorePlugin.getIndexManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
+			// ((PDOM)CCoreInternals.getPDOMManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
 			
 			return referenced;
 		}

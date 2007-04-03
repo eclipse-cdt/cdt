@@ -27,13 +27,16 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -44,7 +47,7 @@ import org.eclipse.core.runtime.CoreException;
  * additionally check that the binding obtained has characteristics as
  * expected (type,name,etc..)
  */
-public abstract class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBase {
+public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBase {
 
 	public static class SingleProject extends IndexCPPBindingResolutionTest {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
@@ -72,6 +75,56 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	public void _testSimpleFunctionTemplate() {
 		IBinding b0 = getBindingFromASTName("sanity();", 6);
 		IBinding b1 = getBindingFromASTName("left(a,b)", 4);
+	}
+	
+	// //header file
+	//
+	// template<typename T>
+	// class Foo {};
+	//
+	// class B {};
+	//
+	// template<>	
+	// class Foo<B> {};
+	
+	// Foo<B> b1; 
+	//
+	// class A {};
+	//
+	// template<>
+	// class Foo<A> {};
+	//
+	// Foo<B> b2;
+	public void _testClassSpecializationInHeader() {
+		IBinding b1a = getBindingFromASTName("Foo<B> b1;", 3);
+		IBinding b1b = getBindingFromASTNameWithRawSignature("Foo<B> b1;", "Foo<B>");
+		
+		assertInstance(b1a, ICPPClassType.class);
+		assertInstance(b1a, ICPPClassTemplate.class);
+		
+		assertInstance(b1b, ICPPClassType.class);
+		assertInstance(b1b, ICPPSpecialization.class);
+		ICPPSpecialization b1spc= (ICPPSpecialization) b1b;
+		ObjectMap b1om= b1spc.getArgumentMap();
+		assertEquals(1, b1om.keyArray().length);
+		assertInstance(b1om.getAt(0), ICPPClassType.class);
+		ICPPClassType b1pct= (ICPPClassType) b1om.getAt(0);
+		assertEquals("B", b1pct.getName());
+		
+		IBinding b2a = getBindingFromASTName("Foo<B> b2;", 3);
+		IBinding b2b = getBindingFromASTNameWithRawSignature("Foo<B> b2;", "Foo<B>");
+		
+		assertInstance(b2a, ICPPClassType.class);
+		assertInstance(b2a, ICPPClassTemplate.class);
+		
+		assertInstance(b2b, ICPPClassType.class);
+		assertInstance(b2b, ICPPSpecialization.class);
+		ICPPSpecialization b2spc= (ICPPSpecialization) b2b;
+		ObjectMap b2om= b2spc.getArgumentMap();
+		assertEquals(1, b2om.keyArray().length);
+		assertInstance(b2om.getAt(0), ICPPClassType.class);
+		ICPPClassType b2pct= (ICPPClassType) b2om.getAt(0);
+		assertEquals("B", b2pct.getName());
 	}
 
 	// // header file

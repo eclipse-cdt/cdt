@@ -26,36 +26,36 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 /**
  * Class that encapsulates ISeries IResource persistent properties.
  */
-public class SystemIFileProperties implements ISystemTextEditorConstants, ISystemRemoteEditConstants {
+public class SystemIFileProperties {
 
   
 	private static final String STRING_EMPTY = ""; //$NON-NLS-1$
 	private static final String EXPORT_KEY = "export"; //$NON-NLS-1$
 
-	private static QualifiedName _nameDirty               = new QualifiedName( STRING_EMPTY, TEMP_FILE_DIRTY            );
-	private static QualifiedName _nameReadOnly            = new QualifiedName( STRING_EMPTY, TEMP_FILE_READONLY         );
-	private static QualifiedName _nameEditorProfileType   = new QualifiedName( STRING_EMPTY, EDITOR_PROFILE_TYPE        );
-	private static QualifiedName _nameEncoding            = new QualifiedName( STRING_EMPTY, SOURCE_ENCODING_KEY        );
-	private static QualifiedName _nameHasSequenceNumbers  = new QualifiedName( STRING_EMPTY, SEQUENCE_NUMBERS_KEY       );
-	private static QualifiedName _nameRecordLength        = new QualifiedName( STRING_EMPTY, MAX_LINE_LENGTH_KEY        );
-	private static QualifiedName _nameRemoteCCSID         = new QualifiedName( STRING_EMPTY, CCSID_KEY                  );
-	private static QualifiedName _nameRemoteFileObject    = new QualifiedName( STRING_EMPTY, REMOTE_FILE_OBJECT_KEY     );
-	private static QualifiedName _nameRemoteFilePath      = new QualifiedName( STRING_EMPTY, REMOTE_FILE_PATH_KEY       );
-	private static QualifiedName _nameRemoteFileSubSystem = new QualifiedName( STRING_EMPTY, REMOTE_FILE_SUBSYSTEM_KEY  );
-	private static QualifiedName _nameRemoteFileTimeStamp = new QualifiedName( STRING_EMPTY, REMOTE_FILE_MODIFIED_STAMP );
-	private static QualifiedName _nameDownloadFileTimeStamp  = new QualifiedName( STRING_EMPTY, DOWNLOAD_FILE_MODIFIED_STAMP  );
-	private static QualifiedName _nameUsedBinaryTransfer  = new QualifiedName( STRING_EMPTY, REMOTE_FILE_BINARY_TRANSFER );
-	private static QualifiedName _nameTempCCSID           = new QualifiedName( STRING_EMPTY, TEMP_CCSID_KEY             );
-	private static QualifiedName _nameRemoteBIDILogical   = new QualifiedName( STRING_EMPTY, BIDI_LOGICAL_KEY           );
+	private static QualifiedName _nameDirty               = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.TEMP_FILE_DIRTY            );
+	private static QualifiedName _nameReadOnly            = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.TEMP_FILE_READONLY         );
+	private static QualifiedName _nameEditorProfileType   = new QualifiedName( STRING_EMPTY, ISystemTextEditorConstants.EDITOR_PROFILE_TYPE        );
+	private static QualifiedName _nameEncoding            = new QualifiedName( STRING_EMPTY, ISystemTextEditorConstants.SOURCE_ENCODING_KEY        );
+	private static QualifiedName _nameHasSequenceNumbers  = new QualifiedName( STRING_EMPTY, ISystemTextEditorConstants.SEQUENCE_NUMBERS_KEY       );
+	private static QualifiedName _nameRecordLength        = new QualifiedName( STRING_EMPTY, ISystemTextEditorConstants.MAX_LINE_LENGTH_KEY        );
+	private static QualifiedName _nameRemoteCCSID         = new QualifiedName( STRING_EMPTY, ISystemTextEditorConstants.CCSID_KEY                  );
+	private static QualifiedName _nameRemoteFileObject    = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.REMOTE_FILE_OBJECT_KEY     );
+	private static QualifiedName _nameRemoteFilePath      = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.REMOTE_FILE_PATH_KEY       );
+	private static QualifiedName _nameRemoteFileSubSystem = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.REMOTE_FILE_SUBSYSTEM_KEY  );
+	private static QualifiedName _nameRemoteFileTimeStamp = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.REMOTE_FILE_MODIFIED_STAMP );
+	private static QualifiedName _nameDownloadFileTimeStamp  = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.DOWNLOAD_FILE_MODIFIED_STAMP  );
+	private static QualifiedName _nameUsedBinaryTransfer  = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.REMOTE_FILE_BINARY_TRANSFER );
+	private static QualifiedName _nameTempCCSID           = new QualifiedName( STRING_EMPTY, ISystemTextEditorConstants.TEMP_CCSID_KEY             );
+	private static QualifiedName _nameRemoteBIDILogical   = new QualifiedName( STRING_EMPTY, ISystemTextEditorConstants.BIDI_LOGICAL_KEY           );
 
 	// for path mapping
-	private static QualifiedName _nameRemoteFileMounted = new QualifiedName( STRING_EMPTY, REMOTE_FILE_MOUNTED);
-	private static QualifiedName _nameResolvedMountedRemoteFileHost = new QualifiedName( STRING_EMPTY, RESOLVED_MOUNTED_REMOTE_FILE_HOST_KEY);
-	private static QualifiedName _nameResolvedMountedRemoteFilePath = new QualifiedName( STRING_EMPTY, RESOLVED_MOUNTED_REMOTE_FILE_PATH_KEY);
+	private static QualifiedName _nameRemoteFileMounted = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.REMOTE_FILE_MOUNTED);
+	private static QualifiedName _nameResolvedMountedRemoteFileHost = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.RESOLVED_MOUNTED_REMOTE_FILE_HOST_KEY);
+	private static QualifiedName _nameResolvedMountedRemoteFilePath = new QualifiedName( STRING_EMPTY, ISystemRemoteEditConstants.RESOLVED_MOUNTED_REMOTE_FILE_PATH_KEY);
 	
 	// local encoding qualified name
 	// NOTE: DO NOT CHANGE THIS!! This exact qualified name is used by the IBM debugger.
-	private static QualifiedName _nameLocalEncoding		  = new QualifiedName(RSEUIPlugin.getDefault().getSymbolicName(), LOCAL_ENCODING_KEY);
+	private static QualifiedName _nameLocalEncoding		  = new QualifiedName(RSEUIPlugin.getDefault().getSymbolicName(), ISystemTextEditorConstants.LOCAL_ENCODING_KEY);
 		
 	protected IResource _resource = null;
 	

@@ -20,7 +20,6 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.files.ui.resources.ISystemRemoteEditConstants;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
@@ -37,7 +36,7 @@ import org.eclipse.ui.ide.IDE;
 
 
 
-public class SystemEditFilesAction extends SystemBaseAction implements ISystemRemoteEditConstants {
+public class SystemEditFilesAction extends SystemBaseAction {
 
 	
    private IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();

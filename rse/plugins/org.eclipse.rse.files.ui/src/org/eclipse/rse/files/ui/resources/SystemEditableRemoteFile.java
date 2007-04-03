@@ -79,7 +79,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
-public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IPartListener, IResourceChangeListener, IResourceDeltaVisitor, ISystemTextEditorConstants, ISystemRemoteEditConstants
+public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IPartListener, IResourceChangeListener, IResourceDeltaVisitor
 {
 
 

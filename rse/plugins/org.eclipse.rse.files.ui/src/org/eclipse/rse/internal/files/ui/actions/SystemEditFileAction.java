@@ -19,7 +19,6 @@ package org.eclipse.rse.internal.files.ui.actions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.files.ui.resources.ISystemRemoteEditConstants;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.internal.files.ui.view.DownloadJob;
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 
-public class SystemEditFileAction extends SystemBaseAction implements ISystemRemoteEditConstants {
+public class SystemEditFileAction extends SystemBaseAction {
 
 	
 	protected String _editorId;

@@ -24,7 +24,7 @@ import java.io.OutputStream;
 /**
  * This class represents a tar file entry.
  */
-public class TarEntry implements ITarConstants, Cloneable {
+public class TarEntry implements Cloneable {
 	
 	// NOTE: Read the GNU tar specification to understand what each of the fields mean.
 	// http://www.gnu.org/software/tar/manual/html_mono/tar.html#SEC118
@@ -39,22 +39,22 @@ public class TarEntry implements ITarConstants, Cloneable {
 	// on different machines, but not between locales.
 	
 	// block header fields
-	public byte[] name = new byte[NAME_LENGTH];
-	public byte[] mode = new byte[MODE_LENGTH];
-	public byte[] uid = new byte[UID_LENGTH];
-	public byte[] gid = new byte[GID_LENGTH];
-	public byte[] size = new byte[SIZE_LENGTH];
-	public byte[] mtime = new byte[MTIME_LENGTH];
-	public byte[] chksum = new byte[CHKSUM_LENGTH];
+	public byte[] name = new byte[ITarConstants.NAME_LENGTH];
+	public byte[] mode = new byte[ITarConstants.MODE_LENGTH];
+	public byte[] uid = new byte[ITarConstants.UID_LENGTH];
+	public byte[] gid = new byte[ITarConstants.GID_LENGTH];
+	public byte[] size = new byte[ITarConstants.SIZE_LENGTH];
+	public byte[] mtime = new byte[ITarConstants.MTIME_LENGTH];
+	public byte[] chksum = new byte[ITarConstants.CHKSUM_LENGTH];
 	public byte typeflag;
-	public byte[] linkname = new byte[LINKNAME_LENGTH];
-	public byte[] magic = new byte[MAGIC_LENGTH];
-	public byte[] version = new byte[VERSION_LENGTH];
-	public byte[] uname = new byte[UNAME_LENGTH];
-	public byte[] gname = new byte[GNAME_LENGTH];
-	public byte[] devmajor = new byte[DEVMAJOR_LENGTH];
-	public byte[] devminor = new byte[DEVMINOR_LENGTH];
-	public byte[] prefix = new byte[PREFIX_LENGTH];
+	public byte[] linkname = new byte[ITarConstants.LINKNAME_LENGTH];
+	public byte[] magic = new byte[ITarConstants.MAGIC_LENGTH];
+	public byte[] version = new byte[ITarConstants.VERSION_LENGTH];
+	public byte[] uname = new byte[ITarConstants.UNAME_LENGTH];
+	public byte[] gname = new byte[ITarConstants.GNAME_LENGTH];
+	public byte[] devmajor = new byte[ITarConstants.DEVMAJOR_LENGTH];
+	public byte[] devminor = new byte[ITarConstants.DEVMINOR_LENGTH];
+	public byte[] prefix = new byte[ITarConstants.PREFIX_LENGTH];
 
 	/**
 	 * Creates a new tar entry with the specified name. Use the setter methods to
@@ -78,7 +78,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 	TarEntry(byte[] blockData) throws IOException {
 		checkNull(blockData);
 		
-		if (blockData.length != BLOCK_SIZE) {
+		if (blockData.length != ITarConstants.BLOCK_SIZE) {
 			throw new IllegalArgumentException();
 		}
 		
@@ -141,7 +141,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 	public void setName(String fileName) {
 		checkNull(fileName);
 		
-		int length = NAME_LENGTH - fileName.length();
+		int length = ITarConstants.NAME_LENGTH - fileName.length();
 		
 		// append null characters to the name
 		for (int i = 0; i < length; i++) {
@@ -223,7 +223,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 		// get the length of the string
 		int length = sizeString.length();
 		
-		int diff = SIZE_LENGTH - length - 1;
+		int diff = ITarConstants.SIZE_LENGTH - length - 1;
 		
 		// prepend the string with 0s
 		for (int i = 0; i < diff; i++) {
@@ -256,7 +256,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 		// get the length of the string
 		int length = mtimeString.length();
 		
-		int diff = MTIME_LENGTH - length - 1;
+		int diff = ITarConstants.MTIME_LENGTH - length - 1;
 		
 		// prepend the string with 0s
 		for (int i = 0; i < diff; i++) {
@@ -326,7 +326,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 	public void setUserName(String userName) {
 		checkNull(userName);
 		
-		int length = UNAME_LENGTH - userName.length();
+		int length = ITarConstants.UNAME_LENGTH - userName.length();
 		
 		// append null characters to the user name
 		for (int i = 0; i < length; i++) {
@@ -394,7 +394,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 	
 	/**
 	 * Write the fields to the given output stream.
-	 * @param out the output stream to write to.
+	 * @param outStream the output stream to write to.
 	 */
 	public void writeFields(OutputStream outStream) throws IOException {
 		outStream.write(name);
@@ -508,7 +508,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 		// get the length of the string
 		int length = sumString.length();
 		
-		int diff = CHKSUM_LENGTH - length - 2;
+		int diff = ITarConstants.CHKSUM_LENGTH - length - 2;
 		
 		// prepend the string with 0s
 		for (int i = 0; i < diff; i++) {

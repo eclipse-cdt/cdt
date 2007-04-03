@@ -27,7 +27,7 @@ import java.util.Vector;
 /**
  * This class is used to read entries from a tar file.
  */
-public class TarFile implements ITarConstants {
+public class TarFile {
 	
 	private File file;
 	private Vector blockHeaders;
@@ -170,8 +170,8 @@ public class TarFile implements ITarConstants {
 				// add header only if the size is valid
 				blockHeaders.add(header);
 				
-				int numFileBlocks = (int)(fileSize / BLOCK_SIZE);
-				numFileBlocks += (fileSize % BLOCK_SIZE) > 0 ? 1 : 0;
+				int numFileBlocks = (int)(fileSize / ITarConstants.BLOCK_SIZE);
+				numFileBlocks += (fileSize % ITarConstants.BLOCK_SIZE) > 0 ? 1 : 0;
 
 				// if the file is a symbolic link, number of blocks will be 0
 				if (header.getTypeFlag() == ITarConstants.TF_SYMLINK) {
@@ -179,7 +179,7 @@ public class TarFile implements ITarConstants {
 				}
 
 				// skip the blocks that contain file content
-				stream.skip(numFileBlocks * BLOCK_SIZE);
+				stream.skip(numFileBlocks * ITarConstants.BLOCK_SIZE);
 			}
 
 			// now read the next block
@@ -206,12 +206,12 @@ public class TarFile implements ITarConstants {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	private byte[] readBlock(InputStream stream) throws IOException {
-		byte[] blockData = new byte[BLOCK_SIZE];
+		byte[] blockData = new byte[ITarConstants.BLOCK_SIZE];
 
 		// read a block of data
 		int byteRead = 0;
 
-		for (int i = 0; i < BLOCK_SIZE; i++) {
+		for (int i = 0; i < ITarConstants.BLOCK_SIZE; i++) {
 			byteRead = stream.read();
 			
 			if (byteRead != -1) {
@@ -330,8 +330,8 @@ public class TarFile implements ITarConstants {
 				if (!header.getName().equals(entry.getName())) {
 					
 					// determine how many blocks make up the contents of the file
-					int numFileBlocks = (int)(fileSize / BLOCK_SIZE);
-					numFileBlocks += (fileSize % BLOCK_SIZE) > 0 ? 1 : 0;
+					int numFileBlocks = (int)(fileSize / ITarConstants.BLOCK_SIZE);
+					numFileBlocks += (fileSize % ITarConstants.BLOCK_SIZE) > 0 ? 1 : 0;
 
 					// if the file is a symbolic link, number of blocks will be 0
 					if (header.getTypeFlag() == ITarConstants.TF_SYMLINK) {
@@ -339,7 +339,7 @@ public class TarFile implements ITarConstants {
 					}
 
 					// skip the blocks that contain file content
-					stream.skip(numFileBlocks * BLOCK_SIZE);
+					stream.skip(numFileBlocks * ITarConstants.BLOCK_SIZE);
 				}
 				// the header name matches the entry name, so return the input stream with
 				// the data for that entry

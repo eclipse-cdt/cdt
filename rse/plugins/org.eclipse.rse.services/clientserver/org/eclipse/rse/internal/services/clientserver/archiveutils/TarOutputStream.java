@@ -23,7 +23,7 @@ import java.io.OutputStream;
  * This class implements an output stream filter for writing files in the
  * tar file format.
  */
-public class TarOutputStream extends OutputStream implements ITarConstants {
+public class TarOutputStream extends OutputStream {
 	
 	private OutputStream out;
 	private boolean isClosed;
@@ -49,7 +49,7 @@ public class TarOutputStream extends OutputStream implements ITarConstants {
 		// before closing though, write out a block of empty data
 		if (!isClosed) {
 			
-			byte[] dummy = new byte[BLOCK_SIZE];
+			byte[] dummy = new byte[ITarConstants.BLOCK_SIZE];
 			out.write(dummy);
 		
 			out.close();
@@ -94,7 +94,7 @@ public class TarOutputStream extends OutputStream implements ITarConstants {
 		entry.writeFields(out);
 		
 		// get the part of a block we need to fill
-		int diff = BLOCK_SIZE - HEADER_LENGTH;
+		int diff = ITarConstants.BLOCK_SIZE - ITarConstants.HEADER_LENGTH;
 		
 		// fill the block if we have used a part of it
 		if (diff != 0) {
@@ -116,11 +116,11 @@ public class TarOutputStream extends OutputStream implements ITarConstants {
 	public void closeEntry() throws IOException {
 		
 		// get the part of a block
-		int temp = (int)(dataCount % BLOCK_SIZE);
+		int temp = (int)(dataCount % ITarConstants.BLOCK_SIZE);
 		
 		// fill the rest of the block with dummy data if we have filled part of a block
 		if (temp != 0) {
-			int diff = BLOCK_SIZE - temp;
+			int diff = ITarConstants.BLOCK_SIZE - temp;
 			byte[] dummy = new byte[diff];
 			out.write(dummy);
 		}

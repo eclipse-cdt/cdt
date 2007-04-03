@@ -37,7 +37,7 @@ import org.eclipse.rse.services.processes.AbstractProcessService;
 import org.eclipse.rse.services.processes.IProcessService;
 
 
-public class DStoreProcessService extends AbstractProcessService implements IProcessService, IUniversalProcessDataStoreConstants
+public class DStoreProcessService extends AbstractProcessService implements IProcessService
 {
 	protected IDataStoreProvider _provider;
 	protected DataElement _minerElement = null;
@@ -74,12 +74,12 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	
 		// create filter descriptor
 		DataElement deObj;
-		deObj = ds.find(universaltemp, DE.A_NAME, UNIVERSAL_PROCESS_ROOT, 1);
-		if (deObj == null) deObj = ds.createObject(universaltemp, UNIVERSAL_PROCESS_FILTER, UNIVERSAL_PROCESS_ROOT, "", "", false); //$NON-NLS-1$ //$NON-NLS-2$
+		deObj = ds.find(universaltemp, DE.A_NAME, IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_ROOT, 1);
+		if (deObj == null) deObj = ds.createObject(universaltemp, IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_FILTER, IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_ROOT, "", "", false); //$NON-NLS-1$ //$NON-NLS-2$
 		deObj.setAttribute(DE.A_SOURCE, filter.toString());		
 
 		// query
-		DataElement queryCmd = ds.localDescriptorQuery(deObj.getDescriptor(), C_PROCESS_FILTER_QUERY_ALL);
+		DataElement queryCmd = ds.localDescriptorQuery(deObj.getDescriptor(), IUniversalProcessDataStoreConstants.C_PROCESS_FILTER_QUERY_ALL);
 
 		if (queryCmd != null)
 		{
@@ -198,7 +198,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 			}
 			
 			DataElement deObj = (DataElement) process.getObject();
-			DataElement killCmd = ds.localDescriptorQuery(deObj.getDescriptor(), C_PROCESS_KILL);
+			DataElement killCmd = ds.localDescriptorQuery(deObj.getDescriptor(), IUniversalProcessDataStoreConstants.C_PROCESS_KILL);
 			deObj.setAttribute(DE.A_SOURCE, signal);
 			
 			if (killCmd != null)
@@ -341,9 +341,9 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		{		
 			DataStore ds = getDataStore();
 
-			DataElement encodingElement = ds.createObject(null, UNIVERSAL_PROCESS_TEMP, ""); //$NON-NLS-1$
+			DataElement encodingElement = ds.createObject(null, IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_TEMP, ""); //$NON-NLS-1$
 
-			DataElement queryCmd = ds.localDescriptorQuery(encodingElement.getDescriptor(), C_PROCESS_QUERY_USERNAME);
+			DataElement queryCmd = ds.localDescriptorQuery(encodingElement.getDescriptor(), IUniversalProcessDataStoreConstants.C_PROCESS_QUERY_USERNAME);
 			DStoreStatusMonitor monitor = getStatusMonitor(ds);
 			DataElement status = ds.command(queryCmd, encodingElement, true);
 			try

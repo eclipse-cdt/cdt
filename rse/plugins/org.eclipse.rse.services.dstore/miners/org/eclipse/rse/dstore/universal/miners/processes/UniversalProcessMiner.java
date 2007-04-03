@@ -44,7 +44,7 @@ import org.eclipse.rse.services.clientserver.processes.handlers.UniversalServerP
  * Miner for getting process information from a remote system.
  * @author mjberger
  */
-public class UniversalProcessMiner extends Miner implements IUniversalProcessDataStoreConstants, IUniversalDataStoreConstants
+public class UniversalProcessMiner extends Miner implements IUniversalDataStoreConstants
 {
 	
 	public static final String MINER_ID = UniversalProcessMiner.class.getName();
@@ -92,49 +92,49 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 				
 		if (subject == null) {
 
-			UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Subject for UniversalProcessMiner command " + name + " is null", null); //$NON-NLS-1$ //$NON-NLS-2$
+			UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, "Subject for UniversalProcessMiner command " + name + " is null", null); //$NON-NLS-1$ //$NON-NLS-2$
 			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			return status;
 		}
 		
 		String subjectType = (String) subject.getElementProperty(DE.P_TYPE);
 		
-		if (name.equals(C_PROCESS_QUERY_USERNAME))
+		if (name.equals(IUniversalProcessDataStoreConstants.C_PROCESS_QUERY_USERNAME))
 		{
 			return handleQueryUserName(subject, status);
 		}
 		
-		if (subjectType.equals(UNIVERSAL_PROCESS_FILTER)) 
+		if (subjectType.equals(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_FILTER)) 
 		{
-			if (name.equals(C_PROCESS_FILTER_QUERY_ALL)) 
+			if (name.equals(IUniversalProcessDataStoreConstants.C_PROCESS_FILTER_QUERY_ALL)) 
 			{
 				status = handleQuery(subject, status);
 			} 
 			else 
 			{
-				UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Unknown filter command: " + name, null); //$NON-NLS-1$
+				UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, "Unknown filter command: " + name, null); //$NON-NLS-1$
 				status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			}
 		}
-		else if (subjectType.equals(UNIVERSAL_PROCESS_DESCRIPTOR)) 
+		else if (subjectType.equals(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_DESCRIPTOR)) 
 		{
-			if (name.equals(C_PROCESS_QUERY_ALL_PROPERTIES)) 
+			if (name.equals(IUniversalProcessDataStoreConstants.C_PROCESS_QUERY_ALL_PROPERTIES)) 
 			{
 				handleQueryJobAllProperties(subject, status);
 			}
-			else if (name.equals(C_PROCESS_KILL))
+			else if (name.equals(IUniversalProcessDataStoreConstants.C_PROCESS_KILL))
 			{
 				status = handleKill(subject, status);
 			}
 			else 
 			{
-				UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Unsupported process command: " + name, null); //$NON-NLS-1$
+				UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, "Unsupported process command: " + name, null); //$NON-NLS-1$
 				status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			}
 		}
 		else 
 		{
-			UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Unsupported subject for command: " + subject, null); //$NON-NLS-1$
+			UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, "Unsupported subject for command: " + subject, null); //$NON-NLS-1$
 			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 		}
 		
@@ -161,16 +161,16 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 		
 		// define process descriptors
 		deUniversalProcessFilter = createObjectDescriptor(schemaRoot,
-				UNIVERSAL_PROCESS_FILTER);
+				IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_FILTER);
 		deUniversalProcessObject = createObjectDescriptor(schemaRoot,
-				UNIVERSAL_PROCESS_DESCRIPTOR);
-		DataElement tempnode = createObjectDescriptor(schemaRoot, UNIVERSAL_PROCESS_TEMP);
+				IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_DESCRIPTOR);
+		DataElement tempnode = createObjectDescriptor(schemaRoot, IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_TEMP);
 		
         // define command descriptors
-		createCommandDescriptor(deUniversalProcessFilter, "Filter", C_PROCESS_FILTER_QUERY_ALL); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalProcessObject, "Kill", C_PROCESS_KILL); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalProcessObject, "ProcessQueryAllProperties", C_PROCESS_QUERY_ALL_PROPERTIES); //$NON-NLS-1$
-		createCommandDescriptor(tempnode, "QueryUsername", C_PROCESS_QUERY_USERNAME); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalProcessFilter, "Filter", IUniversalProcessDataStoreConstants.C_PROCESS_FILTER_QUERY_ALL); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalProcessObject, "Kill", IUniversalProcessDataStoreConstants.C_PROCESS_KILL); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalProcessObject, "ProcessQueryAllProperties", IUniversalProcessDataStoreConstants.C_PROCESS_QUERY_ALL_PROPERTIES); //$NON-NLS-1$
+		createCommandDescriptor(tempnode, "QueryUsername", IUniversalProcessDataStoreConstants.C_PROCESS_QUERY_USERNAME); //$NON-NLS-1$
 
 		_dataStore.refresh(schemaRoot);
 	}

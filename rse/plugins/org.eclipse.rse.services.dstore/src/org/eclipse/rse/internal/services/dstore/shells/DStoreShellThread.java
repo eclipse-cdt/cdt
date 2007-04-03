@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.services.dstore.shell;
+package org.eclipse.rse.internal.services.dstore.shells;
 
 import java.io.File;
 

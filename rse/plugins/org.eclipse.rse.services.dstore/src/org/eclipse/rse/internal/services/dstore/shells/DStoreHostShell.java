@@ -18,8 +18,6 @@ package org.eclipse.rse.internal.services.dstore.shells;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
-import org.eclipse.rse.internal.services.dstore.shell.DStoreShellOutputReader;
-import org.eclipse.rse.internal.services.dstore.shell.DStoreShellThread;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 import org.eclipse.rse.services.shells.AbstractHostShell;
 import org.eclipse.rse.services.shells.IHostShell;

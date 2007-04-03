@@ -14,12 +14,11 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.services.dstore.shell;
+package org.eclipse.rse.internal.services.dstore.shells;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
-import org.eclipse.rse.internal.services.dstore.shells.DStoreHostOutput;
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;

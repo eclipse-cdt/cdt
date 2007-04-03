@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 176488: adding some text for the cache limit checkbox
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -227,6 +227,8 @@ public class FileResources extends NLS
 	public static String RESID_PREF_CACHE_CLEAR;
 	public static String RESID_PREF_CACHE_CLEAR_LABEL;
 	public static String RESID_PREF_CACHE_CLEAR_TOOLTIP;
+	public static String RESID_PREF_CACHE_LIMIT_CACHE_SIZE_LABEL;
+	public static String RESID_PREF_CACHE_LIMIT_CACHE_SIZE_TOOLTIP;
 	public static String RESID_PREF_CACHE_MAX_CACHE_SIZE_LABEL;
 	public static String RESID_PREF_CACHE_MAX_CACHE_SIZE_DESCRIPTION;
 	public static String RESID_PREF_CACHE_MAX_CACHE_SIZE_TOOLTIP;

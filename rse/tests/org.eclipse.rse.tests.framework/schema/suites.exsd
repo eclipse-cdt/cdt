@@ -62,9 +62,6 @@
                <documentation>
                   The class of the test suite.  This must be an extension of &lt;code&gt;junit.framework.TestSuite&lt;/code&gt;.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="junit.framework.TestSuite"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">

@@ -20,7 +20,7 @@ import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 
-public class AbstractHostProcess implements IHostProcess, IServiceConstants
+public class AbstractHostProcess implements IHostProcess
 {
     protected Object[] _properties = new Object[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT+1];
     
@@ -179,7 +179,7 @@ public class AbstractHostProcess implements IHostProcess, IServiceConstants
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
+		    String[] str = s.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 		    int numOfExpectedTokens = ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT;
 		    int tokens = str.length;
 			if (tokens == numOfExpectedTokens)
@@ -292,7 +292,7 @@ public class AbstractHostProcess implements IHostProcess, IServiceConstants
 		{
 			properties = properties + _properties[i].toString();
 			if (i != ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT - 1)
-				properties = properties + TOKEN_SEPARATOR;
+				properties = properties + IServiceConstants.TOKEN_SEPARATOR;
 		}
 		return properties;
 	}

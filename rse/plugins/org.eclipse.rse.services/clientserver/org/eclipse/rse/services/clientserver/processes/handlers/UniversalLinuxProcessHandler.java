@@ -32,7 +32,7 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 
-public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceConstants
+public class UniversalLinuxProcessHandler implements ProcessHandler
 {
 
 	protected HashMap _usernamesByUid;
@@ -79,10 +79,10 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 		File procDir = new File("/proc");  //$NON-NLS-1$
 		
 		if (!procDir.exists())
-			throw new Exception(FAILED_WITH_DOES_NOT_EXIST);
+			throw new Exception(IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);
 		
 		if (!procDir.canRead())
-			throw new Exception(FAILED_WITH_SECURITY);
+			throw new Exception(IServiceConstants.FAILED_WITH_SECURITY);
 				
 		// list all subdirectories of /proc
 		File[] processes;

@@ -22,7 +22,7 @@ import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConst
 /**
  * @author mjberger
  */
-public class UniversalServerProcessImpl implements IRemoteServerProcess, IServiceConstants
+public class UniversalServerProcessImpl implements IRemoteServerProcess
 {
     protected Object[] _properties = new Object[ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT+1];
     
@@ -175,7 +175,7 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
+		    String[] str = s.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 		    int numOfExpectedTokens = ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT;
 		    int tokens = str.length;
 			if (tokens == numOfExpectedTokens)
@@ -286,7 +286,7 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 		{
 			properties = properties + _properties[i].toString();
 			if (i != ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT - 1)
-				properties = properties + TOKEN_SEPARATOR;
+				properties = properties + IServiceConstants.TOKEN_SEPARATOR;
 		}
 		return properties;
 	}

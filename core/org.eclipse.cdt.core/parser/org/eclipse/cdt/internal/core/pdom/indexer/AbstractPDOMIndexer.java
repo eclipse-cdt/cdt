@@ -26,6 +26,8 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 	public AbstractPDOMIndexer() {
 		fProperties.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(false));
 		fProperties.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, ""); //$NON-NLS-1$
+		fProperties.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(false)); 
+		fProperties.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, String.valueOf(false)); 
 	}
 
 	public ICProject getProject() {

@@ -17,13 +17,22 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
@@ -40,12 +49,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 4.0
  */
 abstract public class PDOMWriter {
+	public static int SKIP_ALL_REFERENCES= -1;
+	public static int SKIP_TYPE_REFERENCES= 1;
+	public static int SKIP_NO_REFERENCES= 0;
+	
 	protected boolean fShowActivity;
 	protected boolean fShowProblems;
 	protected IndexerStatistics fStatistics;
 	
 	private IndexerProgress fInfo= new IndexerProgress();
-
+	private int fSkipReferences= SKIP_NO_REFERENCES;
+	
 	public PDOMWriter() {
 		fStatistics= new IndexerStatistics();
 	}
@@ -56,6 +70,14 @@ abstract public class PDOMWriter {
 	
 	public void setShowProblems(boolean val) {
 		fShowProblems= val;
+	}
+	
+	/**
+	 * Determines whether references are skipped or not. Provide one of 
+	 * {@link #SKIP_ALL_REFERENCES}, {@link #SKIP_TYPE_REFERENCES} or {@link #SKIP_NO_REFERENCES}.
+	 */
+	public void setSkipReferences(int options) {
+		fSkipReferences= options;
 	}
 	
 	/**
@@ -103,14 +125,23 @@ abstract public class PDOMWriter {
 				long start= System.currentTimeMillis();
 				ArrayList names= arrayLists[2];
 				for (int j=0; j<names.size(); j++) {
-					final IASTName name = ((IASTName[]) names.get(j))[0];
+					final IASTName[] na= (IASTName[]) names.get(j);
+					final IASTName name = na[0];
 					final IBinding binding= name.resolveBinding();
 					if (binding instanceof IProblemBinding)
 						reportProblem((IProblemBinding) binding);
-					else if (name.isReference()) 
+					else if (name.isReference()) {
+						if (fSkipReferences == SKIP_TYPE_REFERENCES) {
+							if (isTypeReferenceBinding(binding) && !isInheritanceSpec(name)) {
+								na[0]= null;
+								fStatistics.fReferenceCount--;
+							}
+						}
 						fStatistics.fReferenceCount++;
-					else 
+					}
+					else {
 						fStatistics.fDeclarationCount++;
+					}
 				}
 				fStatistics.fResolutionTime += System.currentTimeMillis()-start;
 			}
@@ -127,7 +158,7 @@ abstract public class PDOMWriter {
 					IIndexFileLocation path = orderedPaths[i];
 					if (path != null) {
 						if (fShowActivity) {
-							System.out.println("Indexer: adding " + path.getURI()); //$NON-NLS-1$
+							System.out.println("Indexer: adding " + path.getURI());  //$NON-NLS-1$
 						}
 						IIndexFile file= addToIndex(index, path, symbolMap);
 						boolean wasRequested= postAddToIndex(path, file);
@@ -210,10 +241,17 @@ abstract public class PDOMWriter {
 		// names
 		ast.accept(new IndexerASTVisitor() {
 			public void visit(IASTName name, IASTName caller) {
+				if (fSkipReferences == SKIP_ALL_REFERENCES) {
+					if (name.isReference()) {
+						if (!isInheritanceSpec(name)) {
+							return;
+						}
+					}
+				}
+					
 				// assign a location to anonymous types.
 				name= PDOMASTAdapter.getAdapterIfAnonymous(name);
 				IASTFileLocation nameLoc = name.getFileLocation();
-				
 				if (nameLoc != null) {
 					IIndexFileLocation location = findLocation(nameLoc.getFileName());
 					addToMap(symbolMap, 2, location, new IASTName[]{name, caller});
@@ -223,6 +261,31 @@ abstract public class PDOMWriter {
 		return (IIndexFileLocation[]) orderedIncludes.toArray(new IIndexFileLocation[orderedIncludes.size()]);
 	}
 	
+	protected boolean isInheritanceSpec(IASTName name) {
+		IASTNode parentNode= name.getParent();
+		if (parentNode instanceof ICPPASTBaseSpecifier) {
+			return true;
+		}
+		else if (parentNode instanceof IASTDeclSpecifier) {
+			IASTDeclSpecifier ds= (IASTDeclSpecifier) parentNode;
+			return ds.getStorageClass() == IASTDeclSpecifier.sc_typedef;
+		}
+		return false;
+	}
+
+	private boolean isTypeReferenceBinding(IBinding binding) {
+		if (binding instanceof ICompositeType ||
+				binding instanceof IEnumeration ||
+				binding instanceof ITypedef ||
+				binding instanceof ICPPNamespace ||
+				binding instanceof ICPPNamespaceAlias ||
+				binding instanceof ICPPClassTemplate) {
+			return true;
+		}
+		return false;
+	}
+
+
 	private void reportProblem(IProblemBinding problem) {
 		fStatistics.fProblemBindingCount++;
 		if (fShowProblems) {
@@ -233,7 +296,6 @@ abstract public class PDOMWriter {
 			System.out.println(msg);
 		}
 	}
-
 
 	private void addToMap(Map map, int idx, IIndexFileLocation location, Object thing) {
 		List[] lists= (List[]) map.get(location);

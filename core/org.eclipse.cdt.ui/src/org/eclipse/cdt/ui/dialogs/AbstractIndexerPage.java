@@ -16,6 +16,8 @@ import java.util.Properties;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -35,6 +37,8 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
 	private Button fAllFiles;
 	private Text fFilesToParseUpFront;
+	private Button fSkipReferences;
+	private Button fSkipTypeReferences;
 
 	protected AbstractIndexerPage() {
 		super();
@@ -51,7 +55,15 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	public void createControl(Composite parent) {
 		Composite page = ControlFactory.createComposite(parent, 1);
 		fAllFiles= createAllFilesButton(page);
+		fSkipReferences= createSkipReferencesButton(page);
+		fSkipTypeReferences= createSkipTypeReferencesButton(page);
 		fFilesToParseUpFront= createParseUpFrontTextField(page);
+		
+		fSkipReferences.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateEnablement();
+			}
+		});
 		setControl(page);
 	}
 
@@ -65,10 +77,19 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			boolean indexAllFiles= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_ALL_FILES));
 			fAllFiles.setSelection(indexAllFiles);
 		}
+		if (fSkipReferences != null) {
+			boolean skipReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_ALL_REFERENCES));
+			fSkipReferences.setSelection(skipReferences);
+		}
+		if (fSkipTypeReferences != null) {
+			boolean skipTypeReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES));
+			fSkipTypeReferences.setSelection(skipTypeReferences);
+		}		
 		if (fFilesToParseUpFront != null) {
 			String files = getNotNull(properties, IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT);
 			fFilesToParseUpFront.setText(files);
 		}
+		updateEnablement();
 	}
 
 	/**
@@ -82,6 +103,12 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		}
 		if (fFilesToParseUpFront != null) {
 			props.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, fFilesToParseUpFront.getText());
+		}
+		if (fSkipReferences != null) {
+			props.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(fSkipReferences.getSelection()));
+		}
+		if (fSkipTypeReferences != null) {
+			props.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, String.valueOf(fSkipTypeReferences.getSelection()));
 		}
 		return props;
 	}
@@ -100,10 +127,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * @deprecated, never called.
-	 */
 	public void updateEnablement() {
+		if (fSkipReferences != null && fSkipTypeReferences != null) {
+			fSkipTypeReferences.setEnabled(!fSkipReferences.getSelection());
+		}
 	}
 	
 	private String getNotNull(Properties properties, String key) {
@@ -122,5 +149,13 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
 	private Button createAllFilesButton(Composite page) {
 		return ControlFactory.createCheckBox(page, INDEX_ALL_FILES);
+	}
+	
+	private Button createSkipReferencesButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipAllReferences);
+	}
+
+	private Button createSkipTypeReferencesButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipTypeReferences);
 	}
 }

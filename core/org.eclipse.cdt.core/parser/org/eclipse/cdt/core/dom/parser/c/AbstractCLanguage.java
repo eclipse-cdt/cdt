@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.c;
 
@@ -88,10 +89,15 @@ public abstract class AbstractCLanguage extends AbstractLanguage implements ICLa
 	}
 
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
-			ICodeReaderFactory codeReaderFactory, IIndex index, IParserLogService log) throws CoreException {
+			ICodeReaderFactory fileCreator, IIndex index, IParserLogService log) throws CoreException {
+		return getASTTranslationUnit(reader, scanInfo, fileCreator, index, 0, log);
+	}
+
+	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
+			ICodeReaderFactory codeReaderFactory, IIndex index, int options, IParserLogService log) throws CoreException {
 
 		IScanner scanner= createScanner(reader, scanInfo, codeReaderFactory, log);
-		ISourceCodeParser parser= createParser(scanner, log, index, false);
+		ISourceCodeParser parser= createParser(scanner, log, index, false, options);
 
 		// Parse
 		IASTTranslationUnit ast= parser.parse();
@@ -104,7 +110,7 @@ public abstract class AbstractCLanguage extends AbstractLanguage implements ICLa
 		IScanner scanner= createScanner(reader, scanInfo, fileCreator, log);
 		scanner.setContentAssistMode(offset);
 
-		ISourceCodeParser parser= createParser(scanner, log, index, true);
+		ISourceCodeParser parser= createParser(scanner, log, index, true, 0);
 
 		// Run the parse and return the completion node
 		parser.parse();
@@ -153,10 +159,20 @@ public abstract class AbstractCLanguage extends AbstractLanguage implements ICLa
 	 * @param log  the parser log service
 	 * @param index  the index to help resolve bindings
 	 * @param forCompletion  whether the parser is used for code completion
+	 * @param options for valid options see {@link AbstractLanguage#getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
 	 * @return  an instance of ISourceCodeParser
 	 */
-	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index, boolean forCompletion) {
-		ParserMode mode= forCompletion ? ParserMode.COMPLETION_PARSE : ParserMode.COMPLETE_PARSE;
+	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index, boolean forCompletion, int options) {
+		ParserMode mode= null;
+		if (forCompletion) {
+			mode= ParserMode.COMPLETION_PARSE;
+		}
+		else if ((options & OPTION_SKIP_FUNCTION_BODIES) != 0) {
+			mode= ParserMode.STRUCTURAL_PARSE;
+		}
+		else {
+			mode= ParserMode.COMPLETE_PARSE;
+		}
 		return new GNUCSourceParser(scanner, mode, log, getParserExtensionConfiguration(), index);
 	}
 

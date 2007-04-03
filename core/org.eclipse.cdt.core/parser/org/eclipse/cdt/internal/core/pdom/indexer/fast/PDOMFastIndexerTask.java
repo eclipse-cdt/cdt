@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -36,7 +36,6 @@ import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory.FileInfo;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 class PDOMFastIndexerTask extends PDOMIndexerTask {
@@ -128,31 +127,9 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 		return result;
 	}
 
-	protected IASTTranslationUnit createAST(ITranslationUnit tu, IProgressMonitor pm) throws CoreException {
-		IPath path = tu.getLocation();
-		if (path == null) {
-			return null;
-		}
-		ILanguage language = tu.getLanguage();
-		if (language == null)
-			return null;
-
-		// skip if no scanner info
-		IScannerInfo scanner= tu.getScannerInfo(getIndexAllFiles());
-		if (scanner == null) {
-			return null;
-		}
-		CodeReader codeReader = tu.getCodeReader();
-		if (codeReader == null) {
-			return null;
-		}
-
-		return createAST(language, codeReader, scanner, pm);
-	}
-
-	protected IASTTranslationUnit createAST(ILanguage lang,	CodeReader codeReader, IScannerInfo scanInfo, IProgressMonitor pm) throws CoreException {
+	protected IASTTranslationUnit createAST(AbstractLanguage lang, CodeReader codeReader, IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException {
 		// get the AST in a "Fast" way
-		IASTTranslationUnit ast= lang.getASTTranslationUnit(codeReader, scanInfo, fCodeReaderFactory, fIndex, ParserUtil.getParserLogService());
+		IASTTranslationUnit ast= lang.getASTTranslationUnit(codeReader, scanInfo, fCodeReaderFactory, fIndex, options, ParserUtil.getParserLogService());
 		if (pm.isCanceled()) {
 			return null;
 		}

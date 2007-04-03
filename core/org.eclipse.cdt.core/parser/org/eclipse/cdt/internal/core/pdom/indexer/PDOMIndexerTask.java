@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
@@ -73,6 +74,12 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		fIndexer= indexer;
 		setShowActivity(checkDebugOption(TRACE_ACTIVITY, TRUE));
 		setShowProblems(checkDebugOption(TRACE_PROBLEMS, TRUE));
+		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
+			setSkipReferences(SKIP_ALL_REFERENCES);
+		}
+		else if (checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES)) {
+			setSkipReferences(SKIP_TYPE_REFERENCES);
+		}
 	}
 
 	final public IPDOMIndexer getIndexer() {
@@ -112,28 +119,46 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	 * @since 4.0
 	 */
 	final protected boolean getIndexAllFiles() {
-		return TRUE.equals(getIndexer().getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
+		return checkProperty(IndexerPreferences.KEY_INDEX_ALL_FILES);
+	}
+
+	private boolean checkProperty(String key) {
+		return TRUE.equals(getIndexer().getProperty(key));
+	}
+
+	private IASTTranslationUnit createAST(ITranslationUnit tu, int options, IProgressMonitor pm) throws CoreException {
+		IPath path = tu.getLocation();
+		if (path == null) {
+			return null;
+		}
+		ILanguage language = tu.getLanguage();
+		if (! (language instanceof AbstractLanguage))
+			return null;
+
+		// skip if no scanner info
+		IScannerInfo scanner= tu.getScannerInfo(getIndexAllFiles());
+		if (scanner == null) {
+			return null;
+		}
+		CodeReader codeReader = tu.getCodeReader();
+		if (codeReader == null) {
+			return null;
+		}
+
+		return createAST((AbstractLanguage)language, codeReader, scanner, options, pm);
 	}
 
 	/**
-	 * Called to create the ast for a translation unit. May return <code>null</code>.
+	 * Called to create the ast for a translation unit or a pre-parsed file. 
+	 * May return <code>null</code>.
 	 * @see #parseTUs(IWritableIndex, int, Collection, Collection, IProgressMonitor)
 	 * @since 4.0
 	 */
-	abstract protected IASTTranslationUnit createAST(ITranslationUnit tu, IProgressMonitor pm) throws CoreException;
-
-	/**
-	 * Called to create the ast for pre-parsed files. May return <code>null</code>.
-	 * @throws CoreException 
-	 * @since 4.0
-	 */
-	protected IASTTranslationUnit createAST(ILanguage lang, CodeReader codeReader, IScannerInfo scanInfo, IProgressMonitor pm) throws CoreException {
-		return null;
-	}
+	abstract protected IASTTranslationUnit createAST(AbstractLanguage lang, CodeReader codeReader, IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException;
 
 	/**
 	 * Convenience method for subclasses, parses the files calling out to the methods 
-	 * {@link #createAST(ITranslationUnit, IProgressMonitor)}, 
+	 * {@link #createAST(AbstractLanguage, CodeReader, IScannerInfo, int, IProgressMonitor)}, 
 	 * {@link #needToUpdate(IIndexFileLocation)}, 
 	 * {@link #addSymbols(IASTTranslationUnit, IWritableIndex, int, IProgressMonitor)}
 	 * {@link #postAddToIndex(IIndexFileLocation, IIndexFile)},
@@ -142,9 +167,13 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	 * @since 4.0
 	 */
 	protected void parseTUs(IWritableIndex index, int readlockCount, Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
+		int options= 0;
+		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
+			options |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
+		}
 		for (Iterator iter = fFilesUpFront.iterator(); iter.hasNext();) {
 			String upfront= (String) iter.next();
-			parseUpFront(upfront, index, readlockCount, monitor);
+			parseUpFront(upfront, options, index, readlockCount, monitor);
 		}
 		
 		// sources first
@@ -157,7 +186,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 				updateInfo(0,0,-1);
 			}
 			else if (needToUpdate(ifl)) {
-				parseTU(tu, index, readlockCount, monitor);
+				parseTU(tu, options, index, readlockCount, monitor);
 			}
 		}
 
@@ -177,7 +206,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			else {
 				ITranslationUnit context= findContext(index, location);
 				if (context != null) {
-					parseTU(context, index, readlockCount, monitor);
+					parseTU(context, options, index, readlockCount, monitor);
 				}
 			}
 		}
@@ -197,7 +226,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					iter.remove();
 				}
 				else {
-					parseTU(tu, index, readlockCount, monitor);
+					parseTU(tu, options, index, readlockCount, monitor);
 				}
 			}
 		}
@@ -218,7 +247,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	}
 
 
-	private void parseTU(ITranslationUnit tu, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
+	private void parseTU(ITranslationUnit tu, int options, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= tu.getPath();
 		try {
 			if (fShowActivity) {
@@ -227,7 +256,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			pm.subTask(MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
 					new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()}));
 			long start= System.currentTimeMillis();
-			IASTTranslationUnit ast= createAST(tu, pm);
+			IASTTranslationUnit ast= createAST(tu, options, pm);
 			fStatistics.fParsingTime += System.currentTimeMillis()-start;
 			if (ast != null) {
 				addSymbols(ast, index, readlockCount, pm);
@@ -244,7 +273,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 	}
 
-	private void parseUpFront(String file, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
+	private void parseUpFront(String file, int options, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
 		file= file.trim();
 		if (file.length() == 0) {
 			return;
@@ -262,8 +291,9 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			final IProject project = getProject().getProject();
 			IContentType ct= CContentTypes.getContentType(project, file);
 			if (ct != null) {
-				ILanguage lang = LanguageManager.getInstance().getLanguage(ct);
-				if (lang != null) {
+				ILanguage l = LanguageManager.getInstance().getLanguage(ct);
+				if (l instanceof AbstractLanguage) {
+					AbstractLanguage lang= (AbstractLanguage) l;
 					IScannerInfoProvider provider= CCorePlugin.getDefault().getScannerInfoProvider(project);
 					IScannerInfo scanInfo;
 					if (provider != null) { 
@@ -278,7 +308,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 						fDummyFileURI= findLocation(fDummyFileName).getURI();
 					}
 					CodeReader codeReader= new CodeReader(fDummyFileName, code.toCharArray());
-					ast= createAST(lang, codeReader, scanInfo, pm);
+					ast= createAST(lang, codeReader, scanInfo, options, pm);
 				}
 			}
 				
@@ -387,7 +417,14 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			System.out.println(name + " " + getProject().getElementName()  //$NON-NLS-1$
 					+ " (" + info.fCompletedSources + " sources, "  //$NON-NLS-1$ //$NON-NLS-2$
 					+ info.fCompletedHeaders + " headers)"); //$NON-NLS-1$
-
+			boolean allFiles= getIndexAllFiles();
+			boolean skipRefs= checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES);
+			boolean skipTypeRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES);
+			System.out.println(name + " Options: "  //$NON-NLS-1$
+					+ "parseAllFiles=" + allFiles //$NON-NLS-1$
+					+ ",skipReferences=" + skipRefs //$NON-NLS-1$
+					+ ", skipTypeReferences=" + skipTypeRefs //$NON-NLS-1$
+					+ "."); //$NON-NLS-1$
 			System.out.println(name + " Timings: "  //$NON-NLS-1$
 					+ (System.currentTimeMillis() - start) + " total, " //$NON-NLS-1$
 					+ fStatistics.fParsingTime + " parser, " //$NON-NLS-1$

@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -35,7 +35,6 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -110,6 +109,9 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 	}
 
 	private void setupIndex() throws CoreException {
+		// there is no mechanism to clear dirty files from the cache, so flush it.
+		SavedCodeReaderFactory.getInstance().getCodeReaderCache().flush();	
+
 		fIndex = ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
 		fIndex.resetCacheCounters();
 	}
@@ -132,21 +134,9 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		return result;
 	}
 
-	protected IASTTranslationUnit createAST(ITranslationUnit tu, IProgressMonitor pm) throws CoreException {
-		IPath path = tu.getLocation();
-		if (path == null) {
-			return null;
-		}
-		int options= 0;
-		if (!getIndexAllFiles()) {
-			options |= ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO;
-		}
-		return tu.getAST(null, options);
-	}
-
-	protected IASTTranslationUnit createAST(ILanguage lang,	CodeReader codeReader, IScannerInfo scanInfo, IProgressMonitor pm) throws CoreException {
+	protected IASTTranslationUnit createAST(AbstractLanguage lang, CodeReader codeReader, IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException {
 		SavedCodeReaderFactory codeReaderFactory= SavedCodeReaderFactory.getInstance();
-		IASTTranslationUnit ast= lang.getASTTranslationUnit(codeReader, scanInfo, codeReaderFactory, null, ParserUtil.getParserLogService());
+		IASTTranslationUnit ast= lang.getASTTranslationUnit(codeReader, scanInfo, codeReaderFactory, null, options, ParserUtil.getParserLogService());
 		if (pm.isCanceled()) {
 			return null;
 		}

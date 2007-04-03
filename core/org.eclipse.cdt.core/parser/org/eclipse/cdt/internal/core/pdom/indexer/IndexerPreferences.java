@@ -43,6 +43,8 @@ public class IndexerPreferences {
 	public static final String KEY_INDEXER_ID= "indexerId"; //$NON-NLS-1$
 	public static final String KEY_INDEX_ALL_FILES= "indexAllFiles"; //$NON-NLS-1$
 	public static final String KEY_FILES_TO_PARSE_UP_FRONT= "filesToParseUpFront"; //$NON-NLS-1$
+	public static final String KEY_SKIP_ALL_REFERENCES= "skipReferences"; //$NON-NLS-1$
+	public static final String KEY_SKIP_TYPE_REFERENCES= "skipTypeReferences"; //$NON-NLS-1$
 	
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
 	private static final String DEFAULT_FILES_TO_PARSE_UP_FRONT= "stdarg.h, stddef.h, sys/types.h"; //$NON-NLS-1$
@@ -270,6 +272,8 @@ public class IndexerPreferences {
 		Preferences prefs= defaultPreferences.node(INDEXER_NODE);
 		prefs.put(KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		prefs.putBoolean(KEY_INDEX_ALL_FILES, false);
+		prefs.putBoolean(KEY_SKIP_ALL_REFERENCES, false);
+		prefs.putBoolean(KEY_SKIP_TYPE_REFERENCES, false);
 		prefs.put(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION);
 		prefs.put(KEY_FILES_TO_PARSE_UP_FRONT, DEFAULT_FILES_TO_PARSE_UP_FRONT);
 	}

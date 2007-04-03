@@ -193,17 +193,19 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMName lastName= null;
 		for (int i = 0; i < names.length; i++) {
 			IASTName[] name = names[i];
-			PDOMName caller= (PDOMName) nameCache.get(name[1]);
-			PDOMName pdomName = createPDOMName(name[0], caller);
-			if (pdomName != null) {
-				nameCache.put(name[0], pdomName);
-				if (lastName == null) {
-					setFirstName(pdomName);
+			if (name[0] != null) {
+				PDOMName caller= (PDOMName) nameCache.get(name[1]);
+				PDOMName pdomName = createPDOMName(name[0], caller);
+				if (pdomName != null) {
+					nameCache.put(name[0], pdomName);
+					if (lastName == null) {
+						setFirstName(pdomName);
+					}
+					else {
+						lastName.setNextInFile(pdomName);
+					}
+					lastName= pdomName;
 				}
-				else {
-					lastName.setNextInFile(pdomName);
-				}
-				lastName= pdomName;
 			}
 		}
 	}

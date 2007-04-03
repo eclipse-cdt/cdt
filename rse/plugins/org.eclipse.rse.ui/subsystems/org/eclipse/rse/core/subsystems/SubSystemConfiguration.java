@@ -3051,4 +3051,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		// dummy impl - not required for factories		
 	}
 
+	/**
+	 * Return true if deferred queries are supported.
+	 * By default, they are supported. Override for different behavior.
+	 * 
+	 * @return <code>true</code> if deferred queries are supported.
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#supportsDeferredQueries()
+	 */
+	public boolean supportsDeferredQueries()
+	{
+		return true;
+	}
 }

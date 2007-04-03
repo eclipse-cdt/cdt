@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -49,7 +48,7 @@ import org.eclipse.ui.dialogs.FileEditorMappingLabelProvider;
  * custom widgets allowing the user to specify the file types
  * for a named file type, in the Work With File Types dialog
  */
-public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, ISystemIconConstants, ICheckStateListener {
+public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, ICheckStateListener {
 	public static final String NO_EXTENSION_PLACEHOLDER = UDActionSubsystemFiles.NO_EXTENSION_PLACEHOLDER;
 	// gui widgets
 	private CheckboxTableViewer typesSelectionList;

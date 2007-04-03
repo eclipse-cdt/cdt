@@ -17,7 +17,6 @@
 package org.eclipse.rse.ui.filters.dialogs;
 
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
@@ -31,7 +30,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * Your best option is to subclass this and override just those things you want to change.
  */
 public class SystemNewFilterWizardConfigurator
-	implements ISystemNewFilterWizardConfigurator, ISystemIconConstants
+	implements ISystemNewFilterWizardConfigurator
 {
 	// cached attrs
 	private String pageTitle;

@@ -17,7 +17,6 @@
 package org.eclipse.rse.internal.ui.dialogs;
 
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -48,7 +47,7 @@ import org.eclipse.swt.widgets.Widget;
  * The history strings are shown in a simple list, and the user can delete
  * items from the list or re-order items in the list.
  */
-public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements ISystemIconConstants, Listener, ArmListener
+public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements  Listener, ArmListener
 {
 	private String[] historyInput;
 	private String[] historyOutput;

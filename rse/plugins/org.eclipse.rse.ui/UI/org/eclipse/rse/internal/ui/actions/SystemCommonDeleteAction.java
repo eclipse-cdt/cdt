@@ -25,7 +25,6 @@ import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemDeleteDialog;
@@ -55,7 +54,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class SystemCommonDeleteAction
        extends SystemBaseDialogAction
-       implements ISystemIconConstants
 {
 	private String promptLabel; 
 	

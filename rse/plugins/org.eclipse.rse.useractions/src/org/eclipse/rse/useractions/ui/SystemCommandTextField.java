@@ -16,7 +16,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.view.ISystemCommandTextModifyListener;
 import org.eclipse.rse.shells.ui.view.SystemCommandEditor;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMassager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -34,7 +33,7 @@ import org.eclipse.swt.widgets.Label;
  * This class encapsulates a prompt for a remote command that supports
  *  substitution variables. It is used in both compile and user action dialogs.
  */
-public class SystemCommandTextField implements ISystemIconConstants, SelectionListener {
+public class SystemCommandTextField implements SelectionListener {
 	protected SystemCommandEditor textCommand;
 	protected ISystemMassager cmdMassager;
 	protected Button insertVariableButton;

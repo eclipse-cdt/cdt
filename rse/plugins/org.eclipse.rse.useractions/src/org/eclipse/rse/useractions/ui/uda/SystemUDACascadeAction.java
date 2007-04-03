@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.actions.SystemBaseDummyAction;
@@ -29,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * A cascading menu action for "User actions->"
  */
-public class SystemUDACascadeAction extends SystemBaseSubMenuAction implements ISystemIconConstants, IMenuListener {
+public class SystemUDACascadeAction extends SystemBaseSubMenuAction implements IMenuListener {
 	private SystemUDActionSubsystem udsubsystem;
 	//private IStructuredSelection  selection;
 	private SystemWorkWithUDAsAction wwAction;

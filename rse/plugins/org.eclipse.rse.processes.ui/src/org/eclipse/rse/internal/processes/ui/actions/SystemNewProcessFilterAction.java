@@ -26,7 +26,7 @@ import org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard;
 import org.eclipse.swt.widgets.Shell;
 
 
-public class SystemNewProcessFilterAction extends SystemNewFilterAction implements ISystemIconConstants
+public class SystemNewProcessFilterAction extends SystemNewFilterAction 
 {
 	
 	/**
@@ -36,7 +36,7 @@ public class SystemNewProcessFilterAction extends SystemNewFilterAction implemen
 
 	{
 		super(shell, parentPool, SystemProcessesResources.ACTION_NEWPROCESSFILTER_LABEL, 
-		      SystemProcessesResources.ACTION_NEWPROCESSFILTER_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_NEWFILTER_ID));
+		      SystemProcessesResources.ACTION_NEWPROCESSFILTER_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTER_ID));
 		setHelp(RSEUIPlugin.HELPPREFIX+"actn0042"); //$NON-NLS-1$
 		setDialogHelp(RSEUIPlugin.HELPPREFIX+"wnfr0000");  //$NON-NLS-1$
 	}		
@@ -64,7 +64,7 @@ public class SystemNewProcessFilterAction extends SystemNewFilterAction implemen
 	{		
 		// configuration that used to only be possible via subclasses...
 		wizard.setWizardPageTitle(SystemProcessesResources.RESID_NEWPROCESSFILTER_PAGE1_TITLE);
-	  	wizard.setWizardImage(RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_NEWFILTERWIZARD_ID));
+	  	wizard.setWizardImage(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERWIZARD_ID));
 		wizard.setPage1Description(SystemProcessesResources.RESID_NEWPROCESSFILTER_PAGE1_DESCRIPTION);
 		wizard.setFilterStringEditPane(new SystemProcessFilterStringEditPane(wizard.getShell()));
 	}

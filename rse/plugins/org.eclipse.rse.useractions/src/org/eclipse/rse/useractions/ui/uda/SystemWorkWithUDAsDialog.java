@@ -15,7 +15,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.model.SystemStartHere;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -42,7 +41,7 @@ import org.eclipse.swt.widgets.Widget;
  * A dialog that allows the user to manipulate their user defined actions for a 
  *  given subsystem factory.
  */
-public class SystemWorkWithUDAsDialog extends SystemPromptDialog implements ISystemUDWorkWithDialog, ISystemIconConstants, ISystemMessages, ISystemUDAEditPaneHoster, Listener, SelectionListener,
+public class SystemWorkWithUDAsDialog extends SystemPromptDialog implements ISystemUDWorkWithDialog,ISystemMessages, ISystemUDAEditPaneHoster, Listener, SelectionListener,
 		Runnable {
 	// Changes:
 	// June 2002, Phil Coulthard: Added prompt for parent profile, similar to New Connection and New Filter Pool wizards. 

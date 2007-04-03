@@ -93,7 +93,7 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(offset("nested.cpp", "x.x") + 2, loc.getNodeOffset());
 	}
 	
-	public void failedTest147903() throws Exception {
+	public void test147903() throws Exception {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("pr147903"), false, new IndexFilter(), new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		ICPPNamespaceScope ns = ((ICPPNamespace)bindings[0]).getNamespaceScope();

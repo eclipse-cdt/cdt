@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -1127,8 +1128,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 return;
             if (flags.parm) {
                 ASTNode name = (ASTNode) d.getName();
-                if (name.getOffset() == offset && name.getLength() == length)
-                    return;
+                if (name.getOffset() == offset) {
+                	// fix for bugs 147903 and 179493
+                	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=147903
+                	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=179493
+                	if (name.getLength() == length || d instanceof IASTArrayDeclarator) {
+                		return;
+                	}
+                }
                 if (d.getInitializer() != null) {
                     ASTNode init = (ASTNode) d.getInitializer();
                     if (name.getOffset() == offset

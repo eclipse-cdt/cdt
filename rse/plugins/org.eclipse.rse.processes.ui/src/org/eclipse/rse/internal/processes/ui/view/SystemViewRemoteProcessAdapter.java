@@ -49,8 +49,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 
 public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
-		implements ISystemViewElementAdapter, ISystemRemoteElementAdapter,
-		ISystemProcessPropertyConstants
+		implements ISystemViewElementAdapter, ISystemRemoteElementAdapter
 {	
 	private SystemCopyToClipboardAction copyClipboardAction;
 	public boolean canDrag(Object element)
@@ -199,37 +198,37 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 			int idx = -1;
 
 			// pid
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_PID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PID_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_PID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PID_TOOLTIP);
 			
 			// name
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_NAME, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_NAME_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_NAME_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_NAME, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_NAME_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_NAME_TOOLTIP);
 
 			// state
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_STATE, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_STATE_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_STATE_TOOLTIP);			
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_STATE, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_STATE_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_STATE_TOOLTIP);			
 			
 			// uid
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_UID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_UID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_UID_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_UID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_UID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_UID_TOOLTIP);
 			
 			// username
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_USERNAME, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_USERNAME_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_USERNAME_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_USERNAME, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_USERNAME_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_USERNAME_TOOLTIP);
 			
 			// ppid
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_PPID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PPID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PPID_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_PPID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PPID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PPID_TOOLTIP);
 
 			// gid
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_GID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_GID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_GID_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_GID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_GID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_GID_TOOLTIP);
 
 			// tgid
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_TGID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TGID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TGID_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_TGID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TGID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TGID_TOOLTIP);
 		
 			// tracerpid
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_TRACERPID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TRACERPID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TRACERPID_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_TRACERPID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TRACERPID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TRACERPID_TOOLTIP);
 
 			// virtual memory size
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_VMSIZE, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_VMSIZE_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_VMSIZE_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_VMSIZE, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_VMSIZE_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_VMSIZE_TOOLTIP);
 
 			// virtual memory rss
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PROCESS_VMRSS, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_VMRSS_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_VMRSS_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_VMRSS, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_VMRSS_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_VMRSS_TOOLTIP);
 
 		}
 		return propertyDescriptorArray;

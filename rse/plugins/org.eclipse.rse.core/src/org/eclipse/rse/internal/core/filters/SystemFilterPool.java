@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - removing implementation of ISystemFilterSavePolicies, ISystemFilterConstants
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -27,11 +27,9 @@ import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterConstants;
-import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
-import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
 import org.eclipse.rse.internal.core.model.RSEModelResources;
 import org.eclipse.rse.internal.references.SystemPersistableReferencedObject;
@@ -52,7 +50,7 @@ import org.eclipse.rse.internal.references.SystemPersistableReferencedObject;
  * @lastgen class SystemFilterPoolImpl extends SystemPersistableReferencedObjectImpl implements SystemFilterPool, SystemFilterSavePolicies, SystemFilterConstants, SystemFilterContainer, IAdaptable
  */
 public class SystemFilterPool extends SystemPersistableReferencedObject 
-       implements ISystemFilterPool, ISystemFilterSavePolicies, ISystemFilterConstants, IAdaptable
+       implements ISystemFilterPool, IAdaptable
 {
 	
 	/**
@@ -892,8 +890,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	Vector filterNames = SystemResourceHelpers.getResourceHelpers().convertToVectorAndStrip(
     	          SystemResourceHelpers.getResourceHelpers().listFiles(folder,
     	                                                               namingPolicy.getFilterSaveFileNamePrefix(),
-    	                                                               SAVEFILE_SUFFIX),
-    	          namingPolicy.getFilterSaveFileNamePrefix(), SAVEFILE_SUFFIX);    	          		
+    	                                                               ISystemFilterConstants.SAVEFILE_SUFFIX),
+    	          namingPolicy.getFilterSaveFileNamePrefix(), ISystemFilterConstants.SAVEFILE_SUFFIX);    	          		
     	return filterNames;
     }
 

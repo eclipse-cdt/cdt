@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,16 +11,16 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - removing implementation of ISystemFilterConstants
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
-import org.eclipse.rse.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.ISystemFilterStartHere;
 import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
 import org.eclipse.rse.core.filters.SystemFilterPoolManager;
@@ -48,7 +48,7 @@ import org.eclipse.rse.logging.Logger;
  * </ul>
  */
 public class SystemFilterStartHere 
-       implements ISystemFilterConstants, ISystemFilterStartHere
+       implements ISystemFilterStartHere
 {
 	private static SystemFilterStartHere _instance;
 	public SystemFilterStartHere()
@@ -97,7 +97,7 @@ public class SystemFilterStartHere
                                                   boolean allowNestedFilters)
     {
     	return SystemFilterPoolManager.createSystemFilterPoolManager(profile, logger, caller, 
-    	             name, allowNestedFilters, SAVE_POLICY_NONE, null);
+    	             name, allowNestedFilters, ISystemFilterSavePolicies.SAVE_POLICY_NONE, null);
     }
 
 
@@ -122,7 +122,7 @@ public class SystemFilterStartHere
                                                     String name, IRSEFilterNamingPolicy namingPolicy)
     {
     	return SystemFilterPoolReferenceManager.createSystemFilterPoolReferenceManager(
-    	  caller, relatedPoolMgrProvider, null, name, SAVE_POLICY_NONE, namingPolicy);
+    	  caller, relatedPoolMgrProvider, null, name, ISystemFilterSavePolicies.SAVE_POLICY_NONE, namingPolicy);
     }
 
 

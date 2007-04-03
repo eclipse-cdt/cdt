@@ -1,17 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2006 PalmSource, Inc.
+ * Copyright (c) 2006, 2007 PalmSource, Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Ewa Matejska (PalmSource)
+ * Ewa Matejska (PalmSource) - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.rse.internal.remotecdt;
 
-import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.launch.ui.CMainTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +18,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.swt.SWT;
@@ -50,6 +52,7 @@ public class RemoteCMainTab extends CMainTab {
 	private static final boolean SKIP_DOWNLOAD_TO_REMOTE_DEFAULT = false;
 	
 	protected Button newRemoteConnectionButton;
+	protected Button remoteBrowseButton;
 	protected Label  connectionLabel;
 	protected Combo  connectionCombo;
 	protected Label remoteProgLabel;
@@ -84,7 +87,7 @@ public class RemoteCMainTab extends CMainTab {
 		
 		/* The remote binary location and skip download option */
 		createVerticalSpacer(comp, 1);
-		createTargetExePath(comp);
+		createTargetExePathGroup(comp);
 		createDownloadOption(comp);
  
 		/* If the local binary path changes, modify the remote binary location */
@@ -160,7 +163,7 @@ public class RemoteCMainTab extends CMainTab {
 		newRemoteConnectionButton = createPushButton(projComp, Messages.RemoteCMainTab_New, null);
 		newRemoteConnectionButton.addSelectionListener(new SelectionAdapter() {
 
-		public void widgetSelected(SelectionEvent evt) {
+			public void widgetSelected(SelectionEvent evt) {
 				handleNewRemoteConnectionSelected();
 				updateLaunchConfigurationDialog();
 				updateConnectionPulldown();
@@ -173,24 +176,38 @@ public class RemoteCMainTab extends CMainTab {
 	 * createTargetExePath
 	 * This creates the remote path user-editable textfield on the Main Tab.
 	 */
-	protected void createTargetExePath(Composite parent) {
+	protected void createTargetExePathGroup(Composite parent) {
 		Composite mainComp = new Composite(parent, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
+		mainLayout.numColumns = 2;
 		mainLayout.marginHeight = 0;
 		mainLayout.marginWidth = 0;
 		mainComp.setLayout(mainLayout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		mainComp.setLayoutData(gd);
+		
 		remoteProgLabel = new Label(mainComp, SWT.NONE);
 		remoteProgLabel.setText(REMOTE_PROG_LABEL_TEXT);
 		gd = new GridData();
+		gd.horizontalSpan = 2;
 		remoteProgLabel.setLayoutData(gd);
+		
 		remoteProgText = new Text(mainComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
 		remoteProgText.setLayoutData(gd);
 		remoteProgText.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		remoteBrowseButton = createPushButton(mainComp, Messages.RemoteCMainTab_Remote_Path_Browse_Button, null);
+		remoteBrowseButton.addSelectionListener( new SelectionAdapter()  {
+		
+			public void widgetSelected(SelectionEvent evt) {
+				handleRemoteBrowseSelected();
 				updateLaunchConfigurationDialog();
 			}
 		});
@@ -276,6 +293,33 @@ public class RemoteCMainTab extends CMainTab {
 		} catch (Exception e)
 		{
 			// Ignore
+		}
+	}
+	protected IHost getCurrentConnection() {
+		int currentSelection = connectionCombo.getSelectionIndex();
+		String remoteConnection =  currentSelection >= 0 ? connectionCombo.getItem(currentSelection) : null;
+		if(remoteConnection == null)
+			return null;
+		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHosts();
+		int i = 0;
+		for(i = 0; i < connections.length; i++)
+			if(connections[i].getAliasName().equals(remoteConnection))
+				break;
+		return connections[i];
+	}
+	
+	protected void handleRemoteBrowseSelected() {
+		IHost currentConnectionSelected = getCurrentConnection();
+		SystemRemoteFileDialog dlg = new SystemRemoteFileDialog(getControl().getShell(),
+					Messages.RemoteCMainTab_Remote_Path_Browse_Button_Title, currentConnectionSelected);
+		dlg.setBlockOnOpen(true);
+		if(dlg.open() == Window.OK) {
+			Object retObj = dlg.getSelectedObject();
+			if(retObj instanceof IRemoteFile) {
+				IRemoteFile selectedFile = (IRemoteFile) retObj;
+				remoteProgText.setText(selectedFile.getAbsolutePath());
+			}
+			
 		}
 	}
 	

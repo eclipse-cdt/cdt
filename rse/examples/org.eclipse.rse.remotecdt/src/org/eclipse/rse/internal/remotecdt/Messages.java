@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Martin Oberhuber (Wind River) - initial API and implementation 
+ * Martin Oberhuber (Wind River) - initial API and implementation
+ * Ewa Matejska (PalmSource) - [158783] browse button for cdt remote path
  *******************************************************************************/
 package org.eclipse.rse.internal.remotecdt;
 
@@ -24,6 +25,10 @@ public class Messages extends NLS {
 	public static String Remote_GDB_Debugger_Options;
 
 	public static String RemoteCMainTab_Program;
+
+	public static String RemoteCMainTab_Remote_Path_Browse_Button;
+
+	public static String RemoteCMainTab_Remote_Path_Browse_Button_Title;
 	public static String RemoteCMainTab_SkipDownload;
 	public static String RemoteCMainTab_ErrorNoProgram;
 	public static String RemoteCMainTab_ErrorNoConnection;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,11 +26,12 @@ import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
+
+import org.eclipse.cdt.internal.formatter.DefaultCodeFormatterOptions;
 
 import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
 import org.eclipse.cdt.internal.ui.text.CCommentAutoIndentStrategy;
@@ -228,6 +229,8 @@ public class CAutoIndentTest extends TestCase {
 		}
 	}
 
+	private HashMap fOptions;
+
 	
 	/**
 	 * @param name
@@ -242,21 +245,28 @@ public class CAutoIndentTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();  
-		shell.forceActive();
-		shell.forceFocus();
+//		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();  
+//		shell.forceActive();
+//		shell.forceFocus();
+		fOptions= CCorePlugin.getOptions();
 	}
 	
+	/*
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		CCorePlugin.setOptions(fOptions);
+		super.tearDown();
+	}
+
 	private AutoEditTester createAutoEditTester() {
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		IDocument doc = new Document();
 		textTools.setupCDocument(doc);
-		AutoEditTester tester = new AutoEditTester(doc, textTools.getDocumentPartitioning());
-		tester.setAutoEditStrategy(IDocument.DEFAULT_CONTENT_TYPE,
-				                   new CAutoIndentStrategy(textTools.getDocumentPartitioning(), null));
+		AutoEditTester tester = new AutoEditTester(doc, ICPartitions.C_PARTITIONING);
+		tester.setAutoEditStrategy(IDocument.DEFAULT_CONTENT_TYPE, new CAutoIndentStrategy(ICPartitions.C_PARTITIONING, null));
 		tester.setAutoEditStrategy(ICPartitions.C_MULTI_LINE_COMMENT, new CCommentAutoIndentStrategy());
-		tester.setAutoEditStrategy(ICPartitions.C_PREPROCESSOR,
-                new CAutoIndentStrategy(textTools.getDocumentPartitioning(), null));
+		tester.setAutoEditStrategy(ICPartitions.C_PREPROCESSOR, new CAutoIndentStrategy(ICPartitions.C_PARTITIONING, null));
 		return tester;
 	}
 
@@ -486,6 +496,23 @@ public class CAutoIndentTest extends TestCase {
 		tester.reset();
 		tester.type("for (;;) /*class*/ {\n"); //$NON-NLS-1$
 		assertEquals("for (;;) /*class*/ {\n\t\r\n}", tester.fDoc.get()); //$NON-NLS-1$
+	}
+	
+	public void testSmartPasteWhitesmiths_Bug180531() throws Exception {
+		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();
+		CCorePlugin.setOptions(new HashMap(whitesmiths.getMap()));
+		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		
+		tester.type("A::~A()\n{");
+		assertEquals("A::~A()\n    {", tester.fDoc.get());
+		tester.type("\ndelete x;");
+		assertEquals("A::~A()\n    {\n    delete x;\n    }", tester.fDoc.get());
+		
+		tester.setCaretOffset(tester.fDoc.getLength());
+		tester.type('\n');
+		String copy= tester.fDoc.get();
+		tester.paste(copy);
+		assertEquals(copy+copy, tester.fDoc.get());
 	}
 }
 

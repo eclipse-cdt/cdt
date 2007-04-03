@@ -33,6 +33,7 @@ public interface Symbols {
 	int TokenGREATERTHAN= 14;
 	int TokenDOT= 15;
 	int TokenMINUS= 16;
+	int TokenTILDE= 17;
 	int TokenIF= 109;
 	int TokenDO= 1010;
 	int TokenFOR= 1011;

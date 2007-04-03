@@ -60,6 +60,7 @@ public final class CHeuristicScanner implements Symbols {
 	private static final char RANGLE= '>';
 	private static final char DOT= '.';
 	private static final char MINUS= '-';
+	private static final char TILDE= '~';
 
 	/**
 	 * Specifies the stop condition, upon which the <code>scanXXX</code> methods will decide whether
@@ -407,6 +408,8 @@ public final class CHeuristicScanner implements Symbols {
 				return TokenDOT;
 			case MINUS:
 				return TokenMINUS;
+			case TILDE:
+				return TokenTILDE;
 		}
 
 		// else
@@ -754,8 +757,8 @@ public final class CHeuristicScanner implements Symbols {
 
 	/**
 	 * Finds the highest position in <code>fDocument</code> such that the position is &lt;= <code>position</code>
-	 * and &gt; <code>bound</code> and <code>fDocument.getChar(position) == ch</code> evaluates to <code>true</code> for at least one
-	 * ch in <code>chars</code> and the position is in the default partition.
+	 * and &gt; <code>bound</code> and <code>fDocument.getChar(position) == ch</code> evaluates to <code>true</code>
+	 * and the position is in the default partition.
 	 *
 	 * @param position the first character position in <code>fDocument</code> to be considered
 	 * @param bound the first position in <code>fDocument</code> to not consider any more, with <code>bound</code> &lt; <code>position</code>, or <code>UNBOUND</code>

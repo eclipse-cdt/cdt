@@ -213,11 +213,11 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				scanner = new CHeuristicScanner(d, fPartitioning, ICPartitions.C_PREPROCESSOR);
 			}
 			// current line
-			int line = d.getLineOfOffset(p);
+			int line = d.getLineOfOffset(c.offset);
 			int lineOffset = d.getLineOffset(line);
 
 			// make sure we don't have any leading comments etc.
-			if (d.get(lineOffset, p - lineOffset).trim().length() != 0)
+			if (d.get(lineOffset, c.offset - lineOffset).trim().length() != 0)
 				return;
 
 			// Line of last C code

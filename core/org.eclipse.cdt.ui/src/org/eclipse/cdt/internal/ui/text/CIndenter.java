@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,7 +220,7 @@ public final class CIndenter {
 				// ignore and return default
 			}
 
-			return true;
+			return false;
 		}
 
 		private int prefMethodDeclIndent() {
@@ -883,8 +883,8 @@ public final class CIndenter {
 			return matchCaseAlignment();
 		}
 
-		// the only reliable way to get case labels aligned (due to many different styles of using braces in a block)
-		// is to go for another case statement, or the scope opening brace
+		// the only reliable way to get access specifiers aligned (due to many different styles of using braces in a block)
+		// is to go for another access specifier, or the scope opening brace
 		if (matchAccessSpecifier) {
 			return matchAccessSpecifierAlignment();
 		}
@@ -1194,8 +1194,9 @@ public final class CIndenter {
 	}
 
 	/**
-	 * Returns as a reference any previous <code>switch</code> labels (<code>case</code>
-	 * or <code>default</code>) or the offset of the brace that scopes the class body.
+	 * Returns as a reference any previous access specifiers (<code>public</code>, 
+	 * <code>protected</code> or <code>default</code>) or the offset of the brace that 
+	 * scopes the class body.
 	 * Sets <code>fIndent</code> to <code>prefAccessSpecifierIndent</code> upon
 	 * a match.
 	 *
@@ -1205,7 +1206,7 @@ public final class CIndenter {
 		while (true) {
 			nextToken();
 			switch (fToken) {
-				// invalid cases: another case label or an LBRACE must come before a case
+				// invalid cases: another access specifier or an LBRACE must come before an access specifier
 				// -> bail out with the current position
 				case Symbols.TokenLPAREN:
 				case Symbols.TokenLBRACKET:
@@ -1213,14 +1214,14 @@ public final class CIndenter {
 					return fPosition;
 					
 				case Symbols.TokenLBRACE:
-					// opening brace of switch statement
+					// opening brace of class body
 					fIndent= fPrefs.prefAccessSpecifierIndent;
 					return fPosition;
 					
 				case Symbols.TokenPUBLIC:
 				case Symbols.TokenPROTECTED:
 				case Symbols.TokenPRIVATE:
-					// align with previous label
+					// align with previous access specifier
 					fIndent= 0;
 					return fPosition;
 
@@ -1634,9 +1635,7 @@ public final class CIndenter {
 	 * Returns <code>true</code> if the current tokens look like a method
 	 * declaration header (i.e. only the return type and method name). The
 	 * heuristic calls <code>nextToken</code> and expects an identifier
-	 * (method name) and a type declaration (an identifier with optional
-	 * brackets) which also covers the visibility modifier of constructors; it
-	 * does not recognize package visible constructors.
+	 * (method name) and an optional retrun type declaration.
 	 *
 	 * @return <code>true</code> if the current position looks like a method
 	 *         declaration header.
@@ -1644,10 +1643,19 @@ public final class CIndenter {
 	private boolean looksLikeMethodDecl() {
 		nextToken();
 		if (fToken == Symbols.TokenIDENT) { // method name
-			do nextToken();
-			while (skipBrackets() || skipQualifiers()); // optional brackets for array valued return types
-
-			return fToken == Symbols.TokenIDENT; // return type name
+			nextToken();
+			// check destructor tilde
+			if (fToken == Symbols.TokenTILDE) {
+				return true;
+			}
+			if (skipQualifiers()) {
+				return true;
+			}
+			// optional brackets for array valued return types
+			while (skipBrackets()) {
+				nextToken();
+			}
+			return fToken == Symbols.TokenIDENT;
 
 		}
 		return false;

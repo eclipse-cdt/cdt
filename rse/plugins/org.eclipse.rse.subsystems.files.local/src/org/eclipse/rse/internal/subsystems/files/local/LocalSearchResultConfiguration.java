@@ -20,6 +20,7 @@ package org.eclipse.rse.internal.subsystems.files.local;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.search.AbstractSearchResultConfiguration;
+import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
@@ -91,7 +92,7 @@ public class LocalSearchResultConfiguration extends AbstractSearchResultConfigur
 	public void cancel() {
 		
 		// if not running, call super
-		if (getStatus() != RUNNING) {
+		if (getStatus() != IHostSearchConstants.RUNNING) {
 			super.cancel();
 			return;
 		}

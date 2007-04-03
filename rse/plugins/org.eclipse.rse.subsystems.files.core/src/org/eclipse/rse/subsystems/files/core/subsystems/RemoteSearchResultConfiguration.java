@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.rse.services.clientserver.SystemSearchString;
+import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
@@ -48,14 +49,14 @@ public class RemoteSearchResultConfiguration implements IHostSearchResultConfigu
 	 * Constructor for a result set configuration. Sets status to <code>RUNNING</code>.
 	 * @param resultSet the parent result set.
 	 * @param searchObject the target of the search.
-	 * @param searchString the search string.
+	 * @param string the search string.
 	 */
 	public RemoteSearchResultConfiguration(IHostSearchResultSet resultSet, Object searchObject, SystemSearchString string) {
 		results = new Vector();
 		setParentResultSet(resultSet);
 		setSearchTarget(searchObject);
 		setSearchString(string);
-		setStatus(RUNNING);
+		setStatus(IHostSearchConstants.RUNNING);
 		_containedResults = new HashMap();
 	}
 	
@@ -170,7 +171,7 @@ public class RemoteSearchResultConfiguration implements IHostSearchResultConfigu
 	public void cancel() {
 		
 		// if not running, return
-		if (getStatus() != RUNNING) {
+		if (getStatus() != IHostSearchConstants.RUNNING) {
 			return;
 		}
 	}

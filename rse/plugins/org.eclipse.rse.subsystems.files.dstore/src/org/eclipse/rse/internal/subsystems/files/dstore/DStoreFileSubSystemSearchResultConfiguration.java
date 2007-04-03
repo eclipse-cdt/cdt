@@ -24,6 +24,7 @@ import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.internal.services.dstore.search.DStoreSearchResultConfiguration;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
+import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
@@ -131,7 +132,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 	{
 		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
-			setStatus(FINISHED);
+			setStatus(IHostSearchConstants.FINISHED);
 			
 			_status.getDataStore().getDomainNotifier().removeDomainListener(this);
 		}

@@ -55,7 +55,7 @@ public abstract class AbstractSearchResultConfiguration implements IHostSearchRe
 		setParentResultSet(resultSet);
 		setSearchTarget(searchObject);
 		setSearchString(string);
-		setStatus(RUNNING);
+		setStatus(IHostSearchConstants.RUNNING);
 		_searchService = searchService;
 		_containedResults = new HashMap();
 	}
@@ -184,7 +184,7 @@ public abstract class AbstractSearchResultConfiguration implements IHostSearchRe
 	public void cancel() {
 		
 		// if not running, return
-		if (getStatus() != RUNNING) {
+		if (getStatus() != IHostSearchConstants.RUNNING) {
 			return;
 		}
 	}

@@ -21,7 +21,7 @@ import org.eclipse.rse.services.clientserver.SystemSearchString;
 /**
  * An interface representing a search result configuration. 
  */
-public interface IHostSearchResultConfiguration extends IHostSearchConstants {
+public interface IHostSearchResultConfiguration {
 	
 	/**
 	 * Sets the parent result set.

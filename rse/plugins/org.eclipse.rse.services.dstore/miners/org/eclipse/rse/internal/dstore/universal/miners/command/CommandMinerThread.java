@@ -30,7 +30,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.eclipse.dstore.core.miners.miner.MinerThread;
+import org.eclipse.dstore.core.miners.MinerThread;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;

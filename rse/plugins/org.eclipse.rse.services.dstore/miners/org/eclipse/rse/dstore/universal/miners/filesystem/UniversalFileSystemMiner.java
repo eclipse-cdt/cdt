@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 
-import org.eclipse.dstore.core.miners.miner.Miner;
+import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;

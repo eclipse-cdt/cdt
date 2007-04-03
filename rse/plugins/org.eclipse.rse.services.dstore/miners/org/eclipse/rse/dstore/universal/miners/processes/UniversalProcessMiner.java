@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.dstore.core.miners.miner.Miner;
+import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;

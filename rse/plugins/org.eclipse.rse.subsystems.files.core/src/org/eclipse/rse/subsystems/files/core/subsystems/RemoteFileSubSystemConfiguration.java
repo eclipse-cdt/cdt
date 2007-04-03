@@ -495,4 +495,13 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		return isFor;
 	}
 	
+	/**
+	 * By default file subsystems support deferred queries
+	 * Override this method if not.
+	 */
+	public boolean supportsDeferredQueries()
+	{
+		return true;
+	}
+	
 }

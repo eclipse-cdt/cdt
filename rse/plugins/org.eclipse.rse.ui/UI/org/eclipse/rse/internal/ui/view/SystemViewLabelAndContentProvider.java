@@ -270,7 +270,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	{
     		  // The adapter  needs to be checked to be not null, otherwise
     		  // we run into an NPE here.
-	        if (manager != null && adapter != null && adapter.supportsDeferredQueries()) 
+	        if (manager != null && adapter != null) 
 	        {
 	        	ISubSystem ss = null;
 	        	if (object instanceof IContextObject)
@@ -281,7 +281,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	        	{
 	        		ss = adapter.getSubSystem(object);
 	        	}
-	            if (ss != null)
+	            if (ss != null && adapter.supportsDeferredQueries(ss))
 	            {
 	               // if (ss.isConnected())
 	                {

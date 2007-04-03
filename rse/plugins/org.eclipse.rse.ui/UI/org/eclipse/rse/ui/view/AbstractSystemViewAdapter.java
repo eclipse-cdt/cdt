@@ -1870,7 +1870,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * they are not supported.  Subclasses must override this to
 	 * return true if they are to support this.
 	 */
-	public boolean supportsDeferredQueries()
+	public boolean supportsDeferredQueries(ISubSystem subSys)
 	{
 	    return false;
 	}

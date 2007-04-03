@@ -213,5 +213,13 @@ public abstract class RemoteProcessSubSystemConfiguration extends
 		ISystemValidator portValidator = new ValidatorServerPortInput();
 		return portValidator;
 	}
- 
+  
+	/**
+	 * By default, this type of subsystem supports deferred queries.  
+	 * Override this method if your implementation does not.
+	 */
+	public boolean supportsDeferredQueries()
+	{
+		return true;
+	}
 }

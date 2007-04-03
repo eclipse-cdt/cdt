@@ -184,11 +184,12 @@ public abstract class RemoteCmdSubSystemConfiguration extends SubSystemConfigura
     	return ";"; //$NON-NLS-1$
     }
 
-  
-
-   
-
-
-    
-
+	/**
+	 * By default, deferred queries are not applicable to this type
+	 * of subsystem.
+	 */
+	public boolean supportsDeferredQueries()
+	{
+		return false;
+	}
 }

@@ -209,10 +209,10 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 				{
 					if (supportsDeferredQueries())
 			    	{
-				        if (manager != null && adapter.supportsDeferredQueries()) 
+				        if (manager != null) 
 				        {
 				            ISubSystem ss = adapter.getSubSystem(object);
-				            if (ss != null)
+				            if (ss != null && adapter.supportsDeferredQueries(ss))
 				            {
 				               // if (ss.isConnected())
 				                {

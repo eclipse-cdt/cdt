@@ -81,4 +81,12 @@ public class TestSubSystemConfiguration extends SubSystemConfiguration implement
 	public boolean supportsServerLaunchProperties(IHost host) {
 		return false;
 	}
+	
+	/**
+	 * By default, this type of subsystem supports deferred queries.  
+	 */
+	public boolean supportsDeferredQueries()
+	{
+		return true;
+	}
 }

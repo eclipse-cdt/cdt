@@ -134,6 +134,28 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 */
 	public boolean supportsDropInFilters();
 
+	/**
+	 * Return true if deferred queries are supported.
+	 * 
+	 * Deferred queries work such that when a filter or element
+	 * children query is made, a WorkbenchJob is started to 
+	 * perform the query in a background thread. The query can
+	 * take time to complete, but a negative side-effect of this
+	 * is that it will always take time to complete.
+	 * 
+	 * Alternative models can use asynchronous calls to populate
+	 * their model with data from the remote side, and refresh
+	 * the views when new data is in the model. Such subsystem
+	 * configurations should return <code>false</code> here.
+	 * 
+	 * The default implementation returns <code>true</code>, indicating
+	 * that deferred queries are supported for filters, and delegates
+	 * the check for model elements to the ISystemViewElementAdapter.
+	 *  
+	 * @return <code>true</code> if deferred queries are supported.
+	 */
+	public boolean supportsDeferredQueries();
+	
 	/** 
 	 * Return true if filters of this subsystem factory provide a custom implementation of drop support.  
 	 * By default, the filter reference adapter treats a drop on a filter as an update to the list of filter

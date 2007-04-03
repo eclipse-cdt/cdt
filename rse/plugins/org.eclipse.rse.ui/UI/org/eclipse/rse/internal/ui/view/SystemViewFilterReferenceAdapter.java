@@ -957,10 +957,11 @@ public class SystemViewFilterReferenceAdapter
 	
 	
 	/*
-	 * Return whether deferred queries are supported. 
+	 * Return whether deferred queries are supported.
+	 * Defer to the subsystem configuration. 
 	 */
-	public boolean supportsDeferredQueries()
+	public boolean supportsDeferredQueries(ISubSystem subSys)
 	{
-	    return true;
+	    return subSys.getSubSystemConfiguration().supportsDeferredQueries();
 	}
 }

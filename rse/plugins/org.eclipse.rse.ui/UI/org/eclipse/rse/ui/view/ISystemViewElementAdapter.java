@@ -376,7 +376,8 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 * Return whether deferred queries are supported. By default
 	 * they are not supported.  Subclasses must override this to
 	 * return true if they are to support this.
+	 * @param subSys subsystem to use for deferred queries.
 	 * @return <code>true</code> if it supports deferred queries, <code>false</code> otherwise.
 	 */
-	public boolean supportsDeferredQueries();
+	public boolean supportsDeferredQueries(ISubSystem subSys);
 }

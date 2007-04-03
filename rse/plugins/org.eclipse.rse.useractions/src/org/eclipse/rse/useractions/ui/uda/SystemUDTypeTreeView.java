@@ -16,6 +16,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Composite;
 
@@ -70,7 +71,7 @@ public class SystemUDTypeTreeView extends SystemUDBaseTreeView {
 	 * Return message for delete confirmation
 	 */
 	protected SystemMessage getDeleteConfirmationMessage() {
-		return RSEUIPlugin.getPluginMessage(MSG_CONFIRM_DELETE_USERTYPE);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONFIRM_DELETE_USERTYPE);
 	}
 
 	/**

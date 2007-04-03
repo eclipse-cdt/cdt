@@ -18,7 +18,6 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -39,7 +38,7 @@ import org.eclipse.swt.widgets.Widget;
  * A dialog that allows the user to manipulate their user defined actions for a given subsystem factory.
  * <p>
  */
-public class SystemWorkWithUDTypeDialog extends SystemPromptDialog implements ISystemUDWorkWithDialog, ISystemMessages, Listener, Runnable, ISystemUDAEditPaneHoster {
+public class SystemWorkWithUDTypeDialog extends SystemPromptDialog implements ISystemUDWorkWithDialog, Listener, Runnable, ISystemUDAEditPaneHoster {
 	protected Shell shell; // shell hosting this viewer
 	protected ResourceBundle rb;
 	protected ISubSystem subsystem;

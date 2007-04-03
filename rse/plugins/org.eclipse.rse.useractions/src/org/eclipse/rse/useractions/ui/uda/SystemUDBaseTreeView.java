@@ -50,7 +50,7 @@ import org.w3c.dom.Node;
 /**
  * Base class for tree views for both actions and types.
  */
-public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, IDoubleClickListener, ISystemMessages, ISystemUDTreeView {
+public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, IDoubleClickListener, ISystemUDTreeView {
 	protected Composite parent;
 	protected MenuManager menuMgr;
 	protected SystemUDBaseManager docManager;
@@ -394,7 +394,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	 * Return message for delete confirmation
 	 */
 	protected SystemMessage getDeleteConfirmationMessage() {
-		return RSEUIPlugin.getPluginMessage(MSG_CONFIRM_DELETE_USERACTION);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONFIRM_DELETE_USERACTION);
 	}
 
 	/**

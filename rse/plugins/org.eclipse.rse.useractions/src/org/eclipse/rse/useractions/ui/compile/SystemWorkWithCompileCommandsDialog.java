@@ -60,7 +60,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * A dialog that allows the user to work with the compile commands for the compile actions in this subsystem.
  */
-public class SystemWorkWithCompileCommandsDialog extends SystemPromptDialog implements ISystemMessages, SelectionListener, ISystemCompileCommandEditPaneListener, IMenuListener, Runnable,
+public class SystemWorkWithCompileCommandsDialog extends SystemPromptDialog implements SelectionListener, ISystemCompileCommandEditPaneListener, IMenuListener, Runnable,
 		ISystemCompileCommandEditPaneHoster {
 	protected Button applyButton, revertButton, newSrcTypeButton, rmvSrcTypeButton;
 	protected Combo profileCombo;

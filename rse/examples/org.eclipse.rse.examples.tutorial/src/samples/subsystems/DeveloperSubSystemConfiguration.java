@@ -30,7 +30,7 @@ import samples.RSESamplesPlugin;
 
 /**
  * This is our subsystem factory, which creates instances of our subsystems,
- *  and supplies the subsystem and filter actions to their popup menus.
+ * and supplies the subsystem and filter actions to their popup menus.
  */
 public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 
@@ -101,19 +101,4 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 	   	  return RSESamplesPlugin.getResourceString("property.type.devrfilter"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.model.IHost)
-	 */
-	public boolean supportsServerLaunchProperties(IHost host) {
-		return false;
-	}
-
-	/**
-	 * By default, this type of subsystem supports deferred queries.  
-	 * Override this method if your implementation does not.
-	 */
-	public boolean supportsDeferredQueries()
-	{
-		return true;
-	}
 }

@@ -49,13 +49,16 @@ import org.eclipse.ui.PlatformUI;
 
 	public class CMainWizardPage extends WizardPage implements IToolChainListListener {
 
-		public static final String EXTENSION_POINT_ID = "org.eclipse.cdt.managedbuilder.ui.CDTWizard"; //$NON-NLS-1$
-		public static final String ELEMENT_NAME = "wizard"; //$NON-NLS-1$
-		public static final String CLASS_NAME = "class"; //$NON-NLS-1$
-
 		public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.NewModelProjectWizardPage"; //$NON-NLS-1$
+
+		private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.managedbuilder.ui.CDTWizard"; //$NON-NLS-1$
+		private static final String ELEMENT_NAME = "wizard"; //$NON-NLS-1$
+		private static final String CLASS_NAME = "class"; //$NON-NLS-1$
 		private static final String HELP_CTX = "org.eclipse.ui.ide.new_project_wizard_page_context"; //$NON-NLS-1$
-	       // initial value stores
+	    // constants
+	    private static final int SIZING_TEXT_FIELD_WIDTH = 250;
+
+        // initial value stores
 	    private String initialProjectFieldValue;
 
 	    // widgets
@@ -66,19 +69,8 @@ import org.eclipse.ui.PlatformUI;
 	    private Label right_label;
    
 	    private CConfigWizardPage next;
-	    protected ICWizardHandler h_selected = null;
-
-	    private Listener nameModifyListener = new Listener() {
-	        public void handleEvent(Event e) {
-	        	setLocationForSelection();
-	            setPageComplete(validatePage());
-	        }
-	    };
-
 		private ProjectContentsArea locationArea;
-
-	    // constants
-	    private static final int SIZING_TEXT_FIELD_WIDTH = 250;
+	    protected ICWizardHandler h_selected = null;
 
 	    /**
 	     * Creates a new project creation wizard page.
@@ -218,7 +210,12 @@ import org.eclipse.ui.PlatformUI;
 	        if (initialProjectFieldValue != null) {
 				projectNameField.setText(initialProjectFieldValue);
 			}
-	        projectNameField.addListener(SWT.Modify, nameModifyListener);
+	        projectNameField.addListener(SWT.Modify, new Listener() {
+		        public void handleEvent(Event e) {
+			    	locationArea.updateProjectName(getProjectNameFieldValue());
+		            setPageComplete(validatePage());
+		        }
+		    });
 	    }
 
 	    /**
@@ -294,14 +291,6 @@ import org.eclipse.ui.PlatformUI;
 	        }
 	    }
 
-	    /**
-	     * Set the location to the default location if we are set to useDefaults.
-	     */
-	    void setLocationForSelection() {
-	    	locationArea.updateProjectName(getProjectNameFieldValue());
-	    }
-
-	  
 	    /**
 	     * Returns whether this page's controls currently all contain valid 
 	     * values.

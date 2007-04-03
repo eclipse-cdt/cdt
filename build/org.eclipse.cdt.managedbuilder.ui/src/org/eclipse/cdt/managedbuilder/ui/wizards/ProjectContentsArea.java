@@ -260,7 +260,7 @@ public class ProjectContentsArea {
 	 * 
 	 * @return String
 	 */
-	public String checkValidLocation() {
+	private String checkValidLocation() {
 		
 		if (isDefault()) return null;
 		

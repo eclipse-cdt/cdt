@@ -56,6 +56,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	{
 		super();
 	}
+	
 	/**
 	 * Tell us if this is a unix-style file system or a windows-style file system. The
 	 * default is windows.
@@ -65,6 +66,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	{
 		this.unixStyle = isUnixStyle;
 	}
+	
 	/**
 	 * Tell us if this is a unix-style file system or a windows-style file system. The
 	 * default is windows.
@@ -74,6 +76,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	{
 		return unixStyle;
 	}
+	
 	/**
 	 * Tell us if this file system is case sensitive. The default is isUnixStyle(), and so should
 	 *  rarely need to be overridden.
@@ -82,6 +85,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	{
 		return isUnixStyle();
 	}
+	
 	/**
 	 * Tell us if this subsystem factory supports targets, which are destinations for 
 	 *   pushes and builds. Normally only true for file system factories.
@@ -91,14 +95,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	{
 		return true;	
 	}
-	/**
-	 * Tell us if this subsystem factory supports server launch properties, which allow the user
-	 *  to configure how the server-side code for these subsystems are started. There is a Server
-	 *  Launch Setting property page, with a pluggable composite, where users can configure these 
-	 *  properties. 
-	 * <br> By default we return false.
-	 */
-	public abstract boolean supportsServerLaunchProperties(IHost host);
+
 	/**
 	 * Return true if subsystems of this factory support the environment variables property.
 	 * Return true to show it, return false to hide it. We return true.
@@ -200,48 +197,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
     // --------------------------------------------
     // PARENT METHODS RELATED TO WHAT WE SUPPORT...
     // --------------------------------------------
-	/**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsSubSystemConnect()
-	 */
-	public boolean supportsSubSystemConnect()
-	{
-		return true;
-	}
-    /**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#isPortEditable()
-     */
-    public boolean isPortEditable()
-    {
-    	return true;    
-    }	
-	
-	/**
-	 * We return false.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsCommands()
-	 */
-	public boolean supportsCommands()
-	{
-		return false;
-	}
-	/**
-	 * We return false.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsProperties()
-	 */
-	public boolean supportsProperties()
-	{
-		return false;
-	}
-    /**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsFilters()
-     */
-    public boolean supportsFilters()
-    {
-    	return true;
-    }
-    
+
 	/** 
 	 * Return true if filters of this subsystem factory support dropping into.
 	 */
@@ -259,15 +215,6 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		return true;
 	}
 
-    /**
-     * We return supportsFilters()
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsNestedFilters()
-     */
-    public boolean supportsNestedFilters()
-    {
-    	return supportsFilters();
-    }
-
 	/**
 	 * Return true if you support user-defined actions for the remote system objects returned from expansion of
 	 *  subsystems created by this subsystem factory.
@@ -279,8 +226,6 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		return true;
 	}
 	
-	
-
 	/**
 	 * Return true if you support user-defined/managed named file types
 	 * <p>We return true
@@ -477,11 +422,6 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		return "universal"; //$NON-NLS-1$	
 	}
 	
-	
-
-	
-
-
     /**
 	 * Determines whether this factory is responsible for the creation of subsytems of the specified type
 	 * Subsystem factories should override this to indicate which subsystems they support.
@@ -493,15 +433,6 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	{
 		boolean isFor = IRemoteFileSubSystem.class.equals(subSystemType);
 		return isFor;
-	}
-	
-	/**
-	 * By default file subsystems support deferred queries
-	 * Override this method if not.
-	 */
-	public boolean supportsDeferredQueries()
-	{
-		return true;
 	}
 	
 }

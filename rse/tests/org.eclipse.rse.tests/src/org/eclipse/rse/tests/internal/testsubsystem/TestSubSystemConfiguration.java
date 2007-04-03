@@ -75,18 +75,4 @@ public class TestSubSystemConfiguration extends SubSystemConfiguration implement
 		return "testSubSystemFilter"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.core.model.IHost)
-	 */
-	public boolean supportsServerLaunchProperties(IHost host) {
-		return false;
-	}
-	
-	/**
-	 * By default, this type of subsystem supports deferred queries.  
-	 */
-	public boolean supportsDeferredQueries()
-	{
-		return true;
-	}
 }

@@ -48,48 +48,6 @@ public abstract class RemoteProcessSubSystemConfiguration extends
     // PARENT METHODS RELATED TO WHAT WE SUPPORT...
     // --------------------------------------------
     
-	/**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsSubSystemConnect()
-	 */
-	public boolean supportsSubSystemConnect()
-	{
-		return true;
-	}
-    /**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#isPortEditable()
-     */
-    public boolean isPortEditable()
-    {
-    	return true;    
-    }	
-	
-	/**
-	 * We return false.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsCommands()
-	 */
-	public boolean supportsCommands()
-	{
-		return false;
-	}
-	/**
-	 * We return false.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsProperties()
-	 */
-	public boolean supportsProperties()
-	{
-		return false;
-	}
-    /**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsFilters()
-     */
-    public boolean supportsFilters()
-    {
-    	return true;
-    }
-
     /**
      * We return false
      * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsNestedFilters()
@@ -98,18 +56,6 @@ public abstract class RemoteProcessSubSystemConfiguration extends
     {
     	return false;
     }
-	/**
-	 * Return true if you support compile actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem factory.
-	 * <p>
-	 * By returning true, user sees a "Work with->Compile Commands..." action item in the popup menu for this
-	 *  subsystem. The action is supplied by the framework, but is populated using overridable methods in this subsystem.
-	 * <p>We return true.
-	 */
-	public boolean supportsCompileActions()
-	{
-		return false;
-	}
 
 	/**
 	 * Tell us if this subsystem factory supports server launch properties, which allow the user
@@ -123,8 +69,6 @@ public abstract class RemoteProcessSubSystemConfiguration extends
 		return true;
 	}
 	
-
-	   
     // ------------------------------------------------------
     // PARENT METHODS RELATED TO FILTERS...
     // ... ONLY INTERESTING IF supportsFilters() return true!
@@ -198,28 +142,10 @@ public abstract class RemoteProcessSubSystemConfiguration extends
 		return pool;
 	}
 	
-       
-
-    /**
-     * Return the translated string to show in the property sheet for the type property.
-     */
-    public String getTranslatedFilterTypeProperty(ISystemFilter selectedFilter)
-    {
-    	return super.getTranslatedFilterTypeProperty(selectedFilter);
-    }    
-
 	public ISystemValidator getPortValidator()
 	{
 		ISystemValidator portValidator = new ValidatorServerPortInput();
 		return portValidator;
 	}
   
-	/**
-	 * By default, this type of subsystem supports deferred queries.  
-	 * Override this method if your implementation does not.
-	 */
-	public boolean supportsDeferredQueries()
-	{
-		return true;
-	}
 }

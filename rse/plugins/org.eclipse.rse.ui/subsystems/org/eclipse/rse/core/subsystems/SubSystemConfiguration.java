@@ -217,6 +217,8 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return true if subsystem instances from this factory support getting and setting properties
 	 * <p>RETURNS FALSE BY DEFAULT.
+	 * 
+	 * @return <code>false</code> to indicate that Properties are not supported by default.
 	 */
 	public boolean supportsProperties()
 	{
@@ -228,6 +230,8 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * done for you automatically. Specifically, they
 	 * will be saved and restored for you automatically.
 	 * The default is to support filters.
+	 * 
+	 * @return <code>true</code> to indicate that Filters are supported by default.
 	 */
 	public boolean supportsFilters() {
 		return true;

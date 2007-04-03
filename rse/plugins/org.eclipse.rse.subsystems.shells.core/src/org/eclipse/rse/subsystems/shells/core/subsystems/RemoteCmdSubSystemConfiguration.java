@@ -38,14 +38,6 @@ public abstract class RemoteCmdSubSystemConfiguration extends SubSystemConfigura
 	// --------------------------------------------
     // PARENT METHODS RELATED TO WHAT WE SUPPORT...
     // --------------------------------------------
-	/**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsSubSystemConnect()
-	 */
-	public boolean supportsSubSystemConnect()
-	{
-		return true;
-	}
 	
 	/**
 	 * Return true if the subsystem supports more than one filter string
@@ -73,15 +65,6 @@ public abstract class RemoteCmdSubSystemConfiguration extends SubSystemConfigura
 		return true;
 	}
 	
-    /**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#isPortEditable()
-     */
-    public boolean isPortEditable()
-    {
-    	return true;    
-    }	
-	
 	/**
 	 * We return true.
      * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsCommands()
@@ -90,30 +73,25 @@ public abstract class RemoteCmdSubSystemConfiguration extends SubSystemConfigura
 	{
 		return true;
 	}
-	/**
-	 * We return false.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsProperties()
-	 */
-	public boolean supportsProperties()
-	{
-		return false;
-	}
+	
     /**
-     * We return true.
+     * Test if filters are supported. We return <code>false</code>.
      * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsFilters()
      */
     public boolean supportsFilters()
     {
     	return false;
     }
+    
     /**
-     * We return false
+     * Test if nested filters are supported. We return <code>false</code>.
      * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsNestedFilters()
      */
     public boolean supportsNestedFilters()
     {
     	return false;
     }
+    
 	/**
 	 * Tell us if filter strings are case sensitive. The default is false.
 	 */
@@ -121,6 +99,7 @@ public abstract class RemoteCmdSubSystemConfiguration extends SubSystemConfigura
 	{
 		return false;
 	}
+	
 	/**
 	 * Tell us if duplicate filter strings are supported. The default is true for command subsystem factories!
 	 */
@@ -161,9 +140,6 @@ public abstract class RemoteCmdSubSystemConfiguration extends SubSystemConfigura
 		return pool;
 	}
 
-    
-
-
     /**
      * Return the translated string to show in the property sheet for the type property.
      */
@@ -184,12 +160,4 @@ public abstract class RemoteCmdSubSystemConfiguration extends SubSystemConfigura
     	return ";"; //$NON-NLS-1$
     }
 
-	/**
-	 * By default, deferred queries are not applicable to this type
-	 * of subsystem.
-	 */
-	public boolean supportsDeferredQueries()
-	{
-		return false;
-	}
 }

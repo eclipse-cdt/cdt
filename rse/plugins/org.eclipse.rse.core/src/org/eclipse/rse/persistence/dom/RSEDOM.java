@@ -33,12 +33,12 @@ public class RSEDOM extends RSEDOMNode {
 	private transient ISystemProfile _profile;
 
 	public RSEDOM(ISystemProfile profile) {
-		super(null, TYPE_PROFILE, profile.getName());
+		super(null, IRSEDOMConstants.TYPE_PROFILE, profile.getName());
 		_profile = profile;
 	}
 
 	public RSEDOM(String profileName) {
-		super(null, TYPE_PROFILE, profileName);
+		super(null, IRSEDOMConstants.TYPE_PROFILE, profileName);
 		_profile = null;
 	}
 

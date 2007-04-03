@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RSEDOMNode implements IRSEDOMConstants, Serializable {
+public class RSEDOMNode implements Serializable {
 	/*
 	 * Recommended for serializable objects. This should be updated if there is a schema change. 
 	 */

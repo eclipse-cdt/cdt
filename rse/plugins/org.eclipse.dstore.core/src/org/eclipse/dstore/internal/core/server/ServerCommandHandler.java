@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
-import org.eclipse.dstore.core.miners.miner.Miner;
+import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.CommandHandler;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;

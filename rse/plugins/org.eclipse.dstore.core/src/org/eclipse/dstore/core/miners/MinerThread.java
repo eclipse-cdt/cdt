@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.miners.miner;
+package org.eclipse.dstore.core.miners;
 
 /**
  * MinerThread is a utility class used for doing threaded operations in a miner. 

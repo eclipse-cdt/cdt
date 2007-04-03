@@ -23,7 +23,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.eclipse.dstore.core.java.RemoteClassLoader;
-import org.eclipse.dstore.core.miners.miner.Miner;
+import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;

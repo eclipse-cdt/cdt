@@ -13,7 +13,7 @@ Eclipse-LazyStart: true
 Export-Package: org.eclipse.dstore.core,
  org.eclipse.dstore.core.client,
  org.eclipse.dstore.core.java,
- org.eclipse.dstore.core.miners.miner,
+ org.eclipse.dstore.core.miners,
  org.eclipse.dstore.core.model,
  org.eclipse.dstore.core.server,
  org.eclipse.dstore.core.util,

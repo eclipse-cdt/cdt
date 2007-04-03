@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.core.miners.miner;
+package org.eclipse.dstore.core.miners;
 
 import java.util.ArrayList;
 import java.util.List;

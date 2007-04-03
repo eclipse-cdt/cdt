@@ -12,13 +12,11 @@ package org.eclipse.rse.useractions.ui.compile;
  *******************************************************************************/
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMassager;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ISystemValidatorUniqueString;
 import org.eclipse.rse.ui.validators.ValidatorSourceType;
-import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -34,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
  * This class is designed so that it need not be subclassed. Rather, the mri, validation
  *  and massaging can all be configured.
  */
-public class SystemNewCompileSrcTypeDialog extends SystemPromptDialog implements ISystemMessages, ISystemPropertyConstants {
+public class SystemNewCompileSrcTypeDialog extends SystemPromptDialog {
 	// gui
 	protected Text srcTypeText;
 	// input

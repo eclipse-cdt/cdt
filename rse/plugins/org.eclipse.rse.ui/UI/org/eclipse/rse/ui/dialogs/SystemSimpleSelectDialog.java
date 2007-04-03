@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -58,8 +57,7 @@ import org.eclipse.swt.widgets.Tree;
  * @see org.eclipse.rse.ui.dialogs.SystemSimpleContentProvider
  */
 public class SystemSimpleSelectDialog extends SystemPromptDialog 
-                                implements ISystemPropertyConstants,
-                                            ICheckStateListener
+                                implements ICheckStateListener
 {
 	private String promptString;
 	//private Label prompt;

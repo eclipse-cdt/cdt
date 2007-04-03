@@ -35,7 +35,6 @@ import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ISystemValidatorUniqueString;
 import org.eclipse.rse.ui.validators.ValidatorConnectionName;
 import org.eclipse.rse.ui.validators.ValidatorUniqueString;
-import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.events.ModifyEvent;
@@ -73,7 +72,7 @@ import org.eclipse.swt.widgets.Widget;
  * @see org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction
  */
 public class SystemRenameSingleDialog extends SystemPromptDialog 
-                                implements ISystemPropertyConstants,
+                                implements 
                                            Runnable
 {
 	

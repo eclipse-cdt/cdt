@@ -58,7 +58,6 @@ import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.ValidatorFilterPoolName;
-import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -72,7 +71,7 @@ import org.eclipse.swt.widgets.Tree;
  */
 public class SystemFilterWorkWithFilterPoolsDialog 
        extends SystemPromptDialog 
-       implements ISystemPropertyConstants,
+       implements 
                   ISelectionChangedListener, 
                   ISystemDeleteTarget, ISystemRenameTarget,
                   SystemFilterPoolDialogInterface

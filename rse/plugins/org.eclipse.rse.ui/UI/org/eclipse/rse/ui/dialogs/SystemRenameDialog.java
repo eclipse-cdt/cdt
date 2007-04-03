@@ -86,7 +86,7 @@ import org.eclipse.swt.widgets.Text;
  * @see org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction
  */
 public class SystemRenameDialog extends SystemPromptDialog 
-                                implements ISystemPropertyConstants,
+                                implements 
                                            ISelectionChangedListener, 
                                            TraverseListener,
                                            ICellEditorListener, Runnable, FocusListener
@@ -132,7 +132,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 		{
 			SystemRenameTableRow row = (SystemRenameTableRow)element;
 			String value = ""; //$NON-NLS-1$
-			if (property.equals(P_TEXT))
+			if (property.equals(ISystemPropertyConstants.P_TEXT))
 			  value = row.getName();
 			else
 			  value = row.getNewName();
@@ -142,7 +142,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 
 		public boolean canModify(Object element, String property) 
 		{
-			boolean modifiable = property.equals(P_NEWNAME);
+			boolean modifiable = property.equals(ISystemPropertyConstants.P_NEWNAME);
 			if ((cellEditor != null) && (cellEditor.getControl() != null))
 			{
 			  SystemRenameTableRow row = (SystemRenameTableRow)element;				
@@ -160,7 +160,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 		{
 			SystemRenameTableRow row = (SystemRenameTableRow)(((TableItem)element).getData());			
 			//System.out.println("inside modify: " + row+"; "+property+", "+value);			
-			if (property.equals(P_NEWNAME))
+			if (property.equals(ISystemPropertyConstants.P_NEWNAME))
 			{
 			  row.setNewName((String)value);
 			  tableViewer.update(row, null);

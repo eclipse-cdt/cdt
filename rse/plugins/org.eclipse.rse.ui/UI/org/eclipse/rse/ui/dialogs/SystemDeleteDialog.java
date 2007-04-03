@@ -54,8 +54,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * @see org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction
  */
 public class SystemDeleteDialog extends SystemPromptDialog 
-                                implements ISystemPropertyConstants,
-                                           ISelectionChangedListener
+                                implements ISelectionChangedListener
 {
     private String warningMessage, warningTip;
     private String promptLabel;

@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.internal.ui.view.SystemViewForm;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 public class SystemSelectAnythingDialog extends SystemPromptDialog 
-	implements ISystemPropertyConstants, ISelectionChangedListener
+	implements ISelectionChangedListener
 {
 	private SystemViewForm _view = null;
 	private Object _selected = null;

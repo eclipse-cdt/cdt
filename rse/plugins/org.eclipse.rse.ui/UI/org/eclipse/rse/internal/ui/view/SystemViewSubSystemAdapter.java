@@ -49,7 +49,6 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  * These are children of SystemConnection objects
  */
 public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter 
-       implements ISystemPropertyConstants
 {
 	protected String translatedType;
     // for reset property support
@@ -243,10 +242,10 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	      //propertyDescriptorArray[++idx] = getPortDescriptor();
 
 	      // connected
-	      propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_IS_CONNECTED, SystemViewResources.RESID_PROPERTY_CONNECTED_LABEL, SystemViewResources.RESID_PROPERTY_CONNECTED_TOOLTIP);
+	      propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_IS_CONNECTED, SystemViewResources.RESID_PROPERTY_CONNECTED_LABEL, SystemViewResources.RESID_PROPERTY_CONNECTED_TOOLTIP);
 
           // vrm
-	      propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_VRM, SystemViewResources.RESID_PROPERTY_VRM_LABEL, SystemViewResources.RESID_PROPERTY_VRM_TOOLTIP);          
+	      propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VRM, SystemViewResources.RESID_PROPERTY_VRM_LABEL, SystemViewResources.RESID_PROPERTY_VRM_TOOLTIP);          
 		}		
 		return propertyDescriptorArray;
 	}	
@@ -361,11 +360,11 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		String name = (String)property;		
 	    ISubSystem ss = (ISubSystem)propertySourceInput;   					
-		if (name.equals(P_USERID))
+		if (name.equals(ISystemPropertyConstants.P_USERID))
           return setUserIdPropertyData(userIdData, ss);
-		else if (name.equals(P_PORT))
+		else if (name.equals(ISystemPropertyConstants.P_PORT))
 		  return getPortString(ss);
-		else if (name.equals(P_VRM))
+		else if (name.equals(ISystemPropertyConstants.P_VRM))
 		{
 			IConnectorService system = ss.getConnectorService();
 			if (system != null)
@@ -379,7 +378,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 			else
 			  return getTranslatedNotAvailable();
 		}
-		else if (name.equals(P_IS_CONNECTED))
+		else if (name.equals(ISystemPropertyConstants.P_IS_CONNECTED))
 		{
 			// yantzi: artemis 6.0, offline support
 			if (ss.getHost().isOffline())
@@ -467,9 +466,9 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		String property = (String)propertyObject;    			
 		boolean changed = false;
-	    if (property.equals(P_USERID))
+	    if (property.equals(ISystemPropertyConstants.P_USERID))
 	      changed = changed_userId;
-	    else if (property.equals(P_PORT))
+	    else if (property.equals(ISystemPropertyConstants.P_PORT))
 	      changed = changed_port && port_editable;	    
 		return changed; 
 	}	
@@ -543,12 +542,12 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
     	String property = (String)propertyObject;
 	    ISubSystem ss = (ISubSystem)propertySourceInput;
         ss.getSubSystemConfiguration();	    
-	    if (property.equals(P_USERID))
+	    if (property.equals(ISystemPropertyConstants.P_USERID))
 	    {
 		  updateUserId(ss, original_userIdData);	      
 	      changed_userId = false;
 	    }
-	    else if (property.equals(P_PORT))
+	    else if (property.equals(ISystemPropertyConstants.P_PORT))
 	    {
 	      //updatePort(ss, original_portData);
 		  updatePort(ss, original_portData);
@@ -564,12 +563,12 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	    ISubSystem ss = (ISubSystem)propertySourceInput;
         ss.getSubSystemConfiguration();
 	    //System.out.println("inside setPropVal: " + property + ", value: " + value);
-	    if (name.equals(P_USERID))
+	    if (name.equals(ISystemPropertyConstants.P_USERID))
 	    {
 		  updateUserId(ss, (SystemInheritablePropertyData)value);	      
 	      changed_userId = true;
 	    }
-	    else if (name.equals(P_PORT))
+	    else if (name.equals(ISystemPropertyConstants.P_PORT))
 	    {
 	      //System.out.println("inside setPropVal: " + property + ", value: " + value);
 		  //updatePort(ss, (SystemInheritablePropertyData)value);	      

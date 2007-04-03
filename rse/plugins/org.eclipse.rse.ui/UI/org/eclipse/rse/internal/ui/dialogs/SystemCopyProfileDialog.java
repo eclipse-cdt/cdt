@@ -28,7 +28,6 @@ import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorProfileName;
-import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Button;
@@ -40,8 +39,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Dialog for copying a system profile.
  */
-public class SystemCopyProfileDialog extends SystemPromptDialog 
-                                implements ISystemPropertyConstants
+public class SystemCopyProfileDialog extends SystemPromptDialog
 {
     private Text newName;
     private Button makeActiveCB;

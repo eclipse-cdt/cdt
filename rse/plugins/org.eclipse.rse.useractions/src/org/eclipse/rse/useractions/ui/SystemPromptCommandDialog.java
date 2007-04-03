@@ -11,10 +11,8 @@ package org.eclipse.rse.useractions.ui;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
-import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -34,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * Typically this is subclassed or configured to supply unique translated text.
  */
-public class SystemPromptCommandDialog extends SystemPromptDialog implements ISystemMessages, ISystemPropertyConstants {
+public class SystemPromptCommandDialog extends SystemPromptDialog  {
 	// gui
 	protected Text cmdText;
 	protected Label newNamePrompt;

@@ -15,9 +15,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.rse.shells.ui.view.SystemCommandEditor;
-import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -31,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Dialog used for editing command text in a resizable widget
  */
-public class SystemEditCommandDialog extends Dialog implements ISystemMessages, ISystemPropertyConstants, ISystemIconConstants {
+public class SystemEditCommandDialog extends Dialog {
 	// gui
 	protected Label newNamePrompt;
 	// input

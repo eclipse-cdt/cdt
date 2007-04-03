@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
-import org.eclipse.rse.core.references.IRSEReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.core.filters.SystemFilterContainerReferenceCommonMethods;
 import org.eclipse.rse.internal.core.filters.SystemFilterStringReference;

@@ -73,7 +73,7 @@ import org.eclipse.dstore.internal.extra.DomainNotifier;
  * 
  *
  */
-public class ClientConnection implements IDataStoreConstants
+public class ClientConnection 
 {
 
 
@@ -671,7 +671,7 @@ public class ClientConnection implements IDataStoreConstants
 				}
 		
 
-				if (status != null && !status.equals(CONNECTED))
+				if (status != null && !status.equals(IDataStoreConstants.CONNECTED))
 				{
 					result = new ConnectionStatus(false, status);
 				}
@@ -923,11 +923,11 @@ public class ClientConnection implements IDataStoreConstants
 		
 	public boolean isKnownStatus(String status)
 	{
-		return  status.equals(CONNECTED) ||
-				status.equals(AUTHENTICATION_FAILED) ||
-				status.equals(UNKNOWN_PROBLEM) ||
-				status.startsWith(SERVER_FAILURE) ||
-				status.equals(PASSWORD_EXPIRED) ||
-				status.equals(NEW_PASSWORD_INVALID);
+		return  status.equals(IDataStoreConstants.CONNECTED) ||
+				status.equals(IDataStoreConstants.AUTHENTICATION_FAILED) ||
+				status.equals(IDataStoreConstants.UNKNOWN_PROBLEM) ||
+				status.startsWith(IDataStoreConstants.SERVER_FAILURE) ||
+				status.equals(IDataStoreConstants.PASSWORD_EXPIRED) ||
+				status.equals(IDataStoreConstants.NEW_PASSWORD_INVALID);
 	}
 }

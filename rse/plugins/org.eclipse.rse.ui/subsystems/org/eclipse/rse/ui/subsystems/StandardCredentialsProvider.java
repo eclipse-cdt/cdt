@@ -9,6 +9,7 @@
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.SystemSignonInformation;
@@ -29,9 +30,11 @@ import org.eclipse.rse.ui.dialogs.SystemChangePasswordDialog;
 import org.eclipse.rse.ui.dialogs.SystemPasswordPromptDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The {@link StandardCredentialsProvider} is an extension of
@@ -66,29 +69,34 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		 * @see java.lang.Runnable#run()
 		 */
 		public void run() {
-			ISystemPasswordPromptDialog dialog = getPasswordPromptDialog(getShell());
-			dialog.setSystemInput(getConnectorService());
-			dialog.setForceToUpperCase(forcePasswordToUpperCase());
-			dialog.setSignonValidator(getSignonValidator());
-			if (supportsUserId()) {
-				dialog.setUserIdValidator(getUserIdValidator());
-			}
-			if (supportsPassword()) {
-				dialog.setSavePassword(savePassword);
-				dialog.setPassword(password);
-				dialog.setPasswordValidator(getPasswordValidator());
-			}
-			try {
-				dialog.open();
-			} catch (Exception e) {
-				logException(e);
-			}
-			canceled = dialog.wasCancelled();
-			if (!canceled) {
-				userId = dialog.getUserId();
-				password = dialog.getPassword();
-				saveUserId = dialog.getIsUserIdChangePermanent();
-				savePassword = dialog.getIsSavePassword();
+			Shell shell = getShell();
+			if (shell != null) {
+				ISystemPasswordPromptDialog dialog = getPasswordPromptDialog(shell);
+				dialog.setSystemInput(getConnectorService());
+				dialog.setForceToUpperCase(forcePasswordToUpperCase());
+				dialog.setSignonValidator(getSignonValidator());
+				if (supportsUserId()) {
+					dialog.setUserIdValidator(getUserIdValidator());
+				}
+				if (supportsPassword()) {
+					dialog.setSavePassword(savePassword);
+					dialog.setPassword(password);
+					dialog.setPasswordValidator(getPasswordValidator());
+				}
+				try {
+					dialog.open();
+				} catch (Exception e) {
+					logException(e);
+				}
+				canceled = dialog.wasCancelled();
+				if (!canceled) {
+					userId = dialog.getUserId();
+					password = dialog.getPassword();
+					saveUserId = dialog.getIsUserIdChangePermanent();
+					savePassword = dialog.getIsSavePassword();
+				}
+			} else {
+				canceled = true;
 			}
 		}
 	}
@@ -110,13 +118,18 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		}
 
 		public void run() {
-			SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(getShell(), getConnectorService().getHostName(), getUserId(), message);
-			dlg.setSavePassword(savePassword);
-			dlg.open();
-			canceled = dlg.wasCancelled();
-			if (!canceled) {
-				password = dlg.getNewPassword();
-				savePassword = dlg.getIsSavePassword();
+			Shell shell = getShell();
+			if (shell != null) {
+				SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(shell, getConnectorService().getHostName(), getUserId(), message);
+				dlg.setSavePassword(savePassword);
+				dlg.open();
+				canceled = dlg.wasCancelled();
+				if (!canceled) {
+					password = dlg.getNewPassword();
+					savePassword = dlg.getIsSavePassword();
+				}
+			} else {
+				canceled = true;
 			}
 		}
 	}
@@ -185,14 +198,15 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		if (validator != null) {
 			SystemMessage m = validator.validate(getCredentials());
 			signonValid = (m == null);
-		}
-		// If we ran into an invalid password we need to tell the user.
-		// Not sure this is necessary, shouldn't this message show up on the password prompt itself?
-		if (!signonValid) {
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
-			msg.makeSubstitution(userId, getConnectorService().getHostName());
-			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
-			dialog.open();
+			if (!signonValid) { // If we ran into an invalid stored password we need to tell the user.
+				Shell shell = getShell();
+				if (shell != null) {
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
+					msg.makeSubstitution(userId, getConnectorService().getHostName());
+					SystemMessageDialog dialog = new SystemMessageDialog(shell, msg);
+					dialog.open();
+				}
+			}
 		}
 		if (supportsPassword() || supportsUserId()) {
 			boolean passwordNeeded = supportsPassword() && password == null;
@@ -326,9 +340,9 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	}
 
 	private ISystemValidator getPasswordValidator() {
-		ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
-		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-		return adapter.getPasswordValidator(ssFactory);
+		ISubSystemConfiguration subsystemConfiguration = getPrimarySubSystem().getSubSystemConfiguration();
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) Platform.getAdapterManager().getAdapter(subsystemConfiguration, ISubSystemConfigurationAdapter.class);
+		return adapter.getPasswordValidator(subsystemConfiguration);
 	}
 
 	private ISubSystem getPrimarySubSystem() {
@@ -336,8 +350,14 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	}
 
 	private Shell getShell() {
-		Display display = Display.getDefault();
-		Shell shell = new Shell(display, SWT.APPLICATION_MODAL);
+		Shell shell = null;
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench != null) {
+			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			if (window != null) {
+				shell = window.getShell();
+			}
+		}
 		return shell;
 	}
 
@@ -348,9 +368,9 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	}
 
 	private ISystemValidator getUserIdValidator() {
-		ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
-		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
-		ISystemValidator validator = adapter.getUserIdValidator(ssFactory);
+		ISubSystemConfiguration subsystemConfiguration = getPrimarySubSystem().getSubSystemConfiguration();
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) Platform.getAdapterManager().getAdapter(subsystemConfiguration, ISubSystemConfigurationAdapter.class);
+		ISystemValidator validator = adapter.getUserIdValidator(subsystemConfiguration);
 		return validator;
 	}
 

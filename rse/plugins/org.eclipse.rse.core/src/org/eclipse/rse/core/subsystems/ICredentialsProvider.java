@@ -39,6 +39,7 @@ public interface ICredentialsProvider {
 	 * remembered credentials.
 	 * @throws InterruptedException if the acquisition of credentials is 
 	 * canceled by the user, if the provider is in suppressed state,
+	 * a resource (such as the workbench) not being available, 
 	 * or interrupted by some other means.
 	 */
 	void acquireCredentials(boolean reacquire) throws InterruptedException;
@@ -50,7 +51,9 @@ public interface ICredentialsProvider {
 	 * an expired password.
 	 * @param message the message indicating the nature of the damage that must
 	 * be repaired. For example, indicating expiration of a password.
-	 * @throws InterruptedException if the repair is canceled for some reason.
+	 * @throws InterruptedException if the repair is canceled for some reason. This could
+	 * include the inability of a credentials provider to open a dialog or a dialog being
+	 * canceled.
 	 */
 	void repairCredentials(SystemMessage message)throws InterruptedException;
 

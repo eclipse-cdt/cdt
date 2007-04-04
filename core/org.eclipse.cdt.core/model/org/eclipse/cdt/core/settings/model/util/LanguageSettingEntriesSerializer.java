@@ -164,7 +164,7 @@ public class LanguageSettingEntriesSerializer {
 		}
 	}
 	
-	static String kindToString(int kind){
+	public static String kindToString(int kind){
 		switch(kind){
 		case ICLanguageSettingEntry.INCLUDE_PATH:
 			return INCLUDE_PATH;
@@ -183,10 +183,10 @@ public class LanguageSettingEntriesSerializer {
 		case ICLanguageSettingEntry.OUTPUT_PATH:
 			return OUTPUT_PATH;
 		}
-		throw new UnsupportedOperationException();
+		throw new IllegalArgumentException();
 	}
 
-	static int stringToKind(String kind){
+	public static int stringToKind(String kind){
 		if(INCLUDE_PATH.equals(kind))
 			return ICLanguageSettingEntry.INCLUDE_PATH;
 		if(INCLUDE_FILE.equals(kind))

@@ -124,9 +124,19 @@ public class EntryStore {
 			list.add(pos ,entry);
 	}
 
+	public void addEntries(ICLanguageSettingEntry[] entries){
+		for(int i = 0; i < entries.length; i++){
+			addEntry(entries[i]);
+		}
+	}
+
 	public void storeEntries(int kind, ICLanguageSettingEntry[] entries){
-		List newList = new ArrayList(entries.length);
-		newList.addAll(Arrays.asList(entries));
+		storeEntries(kind, entries != null ? Arrays.asList(entries) : new ArrayList());
+	}
+
+	public void storeEntries(int kind, List list){
+		List newList = new ArrayList(list);
+//		newList.addAll(Arrays.asList(entries));
 		if(fPreserveReadOnly){
 			List oldList = getEntriesList(kind, false);
 			if(oldList != null){

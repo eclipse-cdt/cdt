@@ -61,6 +61,8 @@ public class ScannerConfigProfileManager {
 		try {
 			IScannerConfigBuilderInfo2Set container = createScannerConfigBuildInfo2Set(project);
 			IScannerConfigBuilderInfo2 buildInfo = container.getInfo(context);
+			if(buildInfo == null)
+				buildInfo = container.getInfo(new InfoContext(project));
 			profileId = buildInfo.getSelectedProfileId();
 		} catch (CoreException e) {
 			MakeCorePlugin.log(e);

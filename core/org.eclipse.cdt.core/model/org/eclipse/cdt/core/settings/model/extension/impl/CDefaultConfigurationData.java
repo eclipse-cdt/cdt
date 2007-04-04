@@ -125,25 +125,25 @@ public class CDefaultConfigurationData extends CConfigurationData {
 	}
 
 	protected CFolderData copyFolderData(IPath path, CFolderData base, boolean clone){
-		return fFactory.createFolderData(this, base, clone, path);
+		return fFactory.createFolderData(this, base, null, clone, path);
 	}
 	
 	
 
 	protected CFileData copyFileData(IPath path, CFileData base, boolean clone){
-		return fFactory.createFileData(this, base, null, clone, path);
+		return fFactory.createFileData(this, base, null, null, clone, path);
 	}
 
 	protected CFileData copyFileData(IPath path, CFolderData base, CLanguageData langData){
-		return fFactory.createFileData(this, base, langData, false, path);
+		return fFactory.createFileData(this, base, langData, null, false, path);
 	}
 
 	protected CTargetPlatformData copyTargetPlatformData(CTargetPlatformData base, boolean clone){
-		return fFactory.createTargetPlatformData(this, base, clone);
+		return fFactory.createTargetPlatformData(this, base, null, base.getName(), clone);
 	}
 	
 	protected CBuildData copyBuildData(CBuildData data, boolean clone){
-		return fFactory.createBuildData(this, data, clone);
+		return fFactory.createBuildData(this, data, null, data.getName(), clone);
 	}
 
 	public CFolderData createFolderData(IPath path, CFolderData base) throws CoreException{

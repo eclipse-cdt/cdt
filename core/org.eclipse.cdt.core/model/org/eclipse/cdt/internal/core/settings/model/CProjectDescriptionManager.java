@@ -45,8 +45,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguageDescriptor;
-import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
@@ -68,7 +66,6 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
@@ -1491,7 +1488,6 @@ public class CProjectDescriptionManager {
 			}
 		}
 	}
-
 	
 	CConfigurationData loadData(ICConfigurationDescription des, IProgressMonitor monitor) throws CoreException{
 		if(monitor == null)
@@ -2973,107 +2969,16 @@ public class CProjectDescriptionManager {
 		if(factory == null)
 			factory = new CDataFacroty();
 		
-		CDefaultConfigurationData data = (CDefaultConfigurationData)factory.createConfigurationdata(id, name, null, false);
-		data.initEmptyData();
-		adjustDefaultConfig(data);
-		
-		data.setModified(false);
+		CConfigurationData data = CDataUtil.createEmptyData(id, name, factory, true);
+//		CDataUtil.
+////		data.initEmptyData();
+//		
+//		CDataUtil.adjustConfig(data, factory);
+
+		factory.setModified(data, false);
 		return data;
 	}
 	
-	public CConfigurationData adjustDefaultConfig(CConfigurationData cfg){
-		LanguageManager mngr = LanguageManager.getInstance();
-		ILanguageDescriptor dess[] = mngr.getLanguageDescriptors();
-		Map map = mngr.getContentTypeIdToLanguageDescriptionsMap();
-		
-		CResourceData[] rcDatas = cfg.getResourceDatas();
-		for(int i = 0; i < rcDatas.length; i++){
-			if(rcDatas[i].getType() == ICSettingBase.SETTING_FOLDER){
-				adjustFolderData((CFolderData)rcDatas[i], dess, new HashMap(map));
-			}
-		}
-		
-		return cfg;
-	}
-
-	
-	private static void adjustFolderData(CFolderData data, ILanguageDescriptor dess[], HashMap map){
-		Map langMap = new HashMap();
-		for(int i = 0; i < dess.length; i++){
-			langMap.put(dess[i].getId(), dess[i]);
-		}
-		CLanguageData lDatas[] = data.getLanguageDatas();
-		for(int i = 0; i < lDatas.length; i++){
-			CLanguageData lData = (CLanguageData)lDatas[i];
-			String langId = lData.getLanguageId();
-			if(langId != null){
-				ILanguageDescriptor des = (ILanguageDescriptor)langMap.remove(langId);
-				adjustLanguageData(data, lData, des);
-						continue;
-			} else {
-				String[] cTypeIds = lData.getSourceContentTypeIds();
-				for(int c = 0; c < cTypeIds.length; c++){
-					String cTypeId = cTypeIds[c];
-					ILanguageDescriptor[] langs = (ILanguageDescriptor[])map.remove(cTypeId);
-					if(langs != null && langs.length != 0){
-						for(int q = 0; q < langs.length; q++){
-							langMap.remove(langs[q].getId());
-						}
-								
-						adjustLanguageData(data, lData, langs[0]);
-					}
-				}
-			}
-		}
-			
-		if(!langMap.isEmpty()){
-			addLangs(data, langMap, map);
-		}
-		
-	}
-	
-	private static CLanguageData adjustLanguageData(CFolderData data, CLanguageData lData, ILanguageDescriptor des){
-		String [] cTypeIds = des.getContentTypeIds();
-		String srcIds[] = lData.getSourceContentTypeIds();
-		
-		Set landTypes = new HashSet(Arrays.asList(cTypeIds));
-		landTypes.removeAll(Arrays.asList(srcIds));
-		
-		if(landTypes.size() != 0){
-			List srcList = new ArrayList();
-			srcList.addAll(landTypes);
-			lData.setSourceContentTypeIds((String[])srcList.toArray(new String[srcList.size()]));
-		}
-		
-		if(!des.getId().equals(lData.getLanguageId())){
-			lData.setLanguageId(des.getId());
-		}
-		return lData;
-	}
-	
-	private static void addLangs(CFolderData data, Map langMap, Map cTypeToLangMap){
-		List list = new ArrayList(langMap.values());
-		ILanguageDescriptor des;
-		while(list.size() != 0){
-			des = (ILanguageDescriptor)list.remove(list.size() - 1);
-			String[] ctypeIds = des.getContentTypeIds();
-			boolean addLang = false;
-			for(int i = 0; i < ctypeIds.length; i++){
-				ILanguageDescriptor[] langs = (ILanguageDescriptor[])cTypeToLangMap.remove(ctypeIds[i]);
-				if(langs != null && langs.length != 0){
-					addLang = true;
-					for(int q = 0; q < langs.length; q++){
-						list.remove(langs[q]);
-					}
-				}
-			}
-			
-			if(addLang){
-				data.createLanguageDataForContentTypes(des.getId(), ctypeIds);
-			}
-		}
-	}
-
 	public boolean isNewStyleIndexCfg(IProject project){
 		ICProjectDescription des = getProjectDescription(project, false);
 		if(des != null)

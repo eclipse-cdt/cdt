@@ -86,11 +86,15 @@ public class CDefaultLanguageData extends CLanguageData {
 		EntryStore store = createStore(); 
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		for(int i = 0; i < kinds.length; i++){
-			ICLanguageSettingEntry entries[] = data.getEntries(kinds[i]);
+			ICLanguageSettingEntry entries[] = getEntriesToCopy(kinds[i], data);
 			entries = processStoredEntries(entries, OP_COPY);
 			store.storeEntries(kinds[i], entries);
 		}
 		return store;
+	}
+	
+	protected ICLanguageSettingEntry[] getEntriesToCopy(int kind, CLanguageData lData){
+		return lData.getEntries(kind);
 	}
 	
 	protected ICLanguageSettingEntry[] processStoredEntries(ICLanguageSettingEntry[] entries, int op){

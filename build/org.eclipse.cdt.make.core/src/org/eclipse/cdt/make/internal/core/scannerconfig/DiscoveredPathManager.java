@@ -164,6 +164,9 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
         
         IScannerConfigBuilderInfo2Set container = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(project);
         IScannerConfigBuilderInfo2 buildInfo = container.getInfo(context);
+        if(buildInfo == null)
+        	buildInfo = container.getInfo(new InfoContext(project));
+
         if(buildInfo != null){
 	        String profileId = buildInfo.getSelectedProfileId();
 	        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().

@@ -61,7 +61,7 @@ public class CDefaultFolderData extends CFolderData {
 	}
 
 	protected CLanguageData copyLanguageData(CLanguageData base, boolean clone){
-		return fFactory.createLanguageData(fCfg, this, base, clone);
+		return fFactory.createLanguageData(fCfg, this, base, null, clone);
 	}
 	
 	public CLanguageData[] getLanguageDatas() {
@@ -104,34 +104,36 @@ public class CDefaultFolderData extends CFolderData {
 		return getId() != null;
 	}
 
-	protected CLanguageData doCreateLanguageDataForContentTypes(String languageId,
-			String[] typesIds) {
-		return fFactory.createLanguageData(fCfg, this, languageId, typesIds, true);
-	}
-
-	protected CLanguageData doCreateLanguageDataForExtensions(String languageId,
-			String[] extensions) {
-		return fFactory.createLanguageData(fCfg, this, languageId, extensions, false);
-	}
+//	protected CLanguageData doCreateLanguageDataForContentTypes(String languageId,
+//			String[] typesIds) {
+//		return fFactory.createLanguageData(fCfg, this, null, null, languageId, typesIds, true);
+//	}
+//
+//	protected CLanguageData doCreateLanguageDataForExtensions(String languageId,
+//			String[] extensions) {
+//		return fFactory.createLanguageData(fCfg, this, null, null, languageId, extensions, false);
+//	}
 	
 	public CLanguageData createLanguageDataForContentTypes(String languageId,
 			String[] typesIds) {
-		CLanguageData data = doCreateLanguageDataForContentTypes(languageId, typesIds);
-		if(data != null){
-			fLanguageDatas.add(data);
-			setModified(true);
-		}
-		return data;
+		throw new UnsupportedOperationException();
+//		CLanguageData data = doCreateLanguageDataForContentTypes(languageId, typesIds);
+//		if(data != null){
+//			fLanguageDatas.add(data);
+//			setModified(true);
+//		}
+//		return data;
 	}
 
 	public CLanguageData createLanguageDataForExtensions(String languageId,
 			String[] extensions) {
-		CLanguageData data = doCreateLanguageDataForExtensions(languageId, extensions);
-		if(data != null){
-			fLanguageDatas.add(data);
-			setModified(true);
-		}
-		return data;
+		throw new UnsupportedOperationException();
+//		CLanguageData data = doCreateLanguageDataForExtensions(languageId, extensions);
+//		if(data != null){
+//			fLanguageDatas.add(data);
+//			setModified(true);
+//		}
+//		return data;
 	}
 	
 	public boolean isModified(){

@@ -164,11 +164,13 @@ public class ScannerInfoConsoleParserFactory {
                     if (collector == null) {
                         collector = profileInstance.getScannerInfoCollector();
                     }
-					clParser.startup(currentProject, workingDirectory, collector,
-                            scBuildInfo.isProblemReportingEnabled() ? markerGenerator : null);
-					// create an output stream sniffer
-					return new ConsoleOutputSniffer(outputStream, errorStream, new 
-						IScannerInfoConsoleParser[] {clParser});
+                    if(clParser != null){
+						clParser.startup(currentProject, workingDirectory, collector,
+	                            scBuildInfo.isProblemReportingEnabled() ? markerGenerator : null);
+						// create an output stream sniffer
+						return new ConsoleOutputSniffer(outputStream, errorStream, new 
+							IScannerInfoConsoleParser[] {clParser});
+                    }
 				}
 			}
 //		} 

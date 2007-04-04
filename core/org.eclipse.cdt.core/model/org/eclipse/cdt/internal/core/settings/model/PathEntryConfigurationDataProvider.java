@@ -127,10 +127,12 @@ public class PathEntryConfigurationDataProvider extends
 			copySettingsFrom(base);
 		}
 
-		public PathEntryLanguageData(String id, String languageId,
+		public PathEntryLanguageData(String id, String name, String languageId, int kinds, 
 				String[] ids, boolean isContentTypes, EntryStore store) {
 			super(id, languageId, ids, isContentTypes);
 			fStore = store;
+			fName = name;
+			fSupportedKinds = kinds;
 		}
 
 		protected EntryStore createStore() {
@@ -157,9 +159,11 @@ public class PathEntryConfigurationDataProvider extends
 		}
 
 		public CFileData createFileData(CConfigurationData cfg,
-				CResourceData base, CLanguageData base2, boolean clone,
+				CResourceData base, CLanguageData base2, 
+				String id, boolean clone,
 				IPath path) {
-			String id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
+			if(id == null)
+				id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
 			if(base.getType() == ICSettingBase.SETTING_FILE)
 				return new PathEntryFileData(id, path, (PathEntryFileData)base, cfg, this, clone);
 			return new PathEntryFileData(id, path, (PathEntryFolderData)base,
@@ -167,14 +171,16 @@ public class PathEntryConfigurationDataProvider extends
 		}
 
 		public CFolderData createFolderData(CConfigurationData cfg,
-				CFolderData base, boolean clone, IPath path) {
-			String id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
+				CFolderData base, String id, boolean clone, IPath path) {
+			if(id == null)
+				id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
 			return new PathEntryFolderData(id, path, (PathEntryFolderData)base, cfg, this, clone);
 		}
 
 		public CLanguageData createLanguageData(CConfigurationData cfg,
-				CResourceData rcBase, CLanguageData base, boolean clone) {
-			String id = clone ? base.getId() : CDataUtil.genId(rcBase.getId());
+				CResourceData rcBase, CLanguageData base, String id, boolean clone) {
+			if(id == null)
+				id = clone ? base.getId() : CDataUtil.genId(rcBase.getId());
 			EntryStore store;
 			if(rcBase.getType() == ICSettingBase.SETTING_FOLDER)
 				store = ((PathEntryFolderData)rcBase).fStore;
@@ -184,14 +190,16 @@ public class PathEntryConfigurationDataProvider extends
 		}
 
 		public CLanguageData createLanguageData(CConfigurationData cfg,
-				CResourceData rcBase, String languageId, String[] rcTypes,
+				CResourceData rcBase, String id, String name, String languageId, int supportedEntryKinds, String[] rcTypes,
 				boolean isContentTypes) {
+			if(id == null)
+				id = CDataUtil.genId(rcBase.getId());
 			EntryStore store;
 			if(rcBase.getType() == ICSettingBase.SETTING_FOLDER)
 				store = ((PathEntryFolderData)rcBase).fStore;
 			else
 				store = ((PathEntryFileData)rcBase).fStore;
-			return new PathEntryLanguageData(CDataUtil.genId(rcBase.getId()), languageId, rcTypes, isContentTypes, store);
+			return new PathEntryLanguageData(id, name, languageId, supportedEntryKinds, rcTypes, isContentTypes, store);
 		}
 		
 	}
@@ -271,7 +279,8 @@ public class PathEntryConfigurationDataProvider extends
 		
 		CfgData data = new CfgData(des.getId(), des.getName());
 		data.initEmptyData();
-		CProjectDescriptionManager.getInstance().adjustDefaultConfig(data);
+		CDataUtil.adjustConfig(data, getDataFactory());
+		//CProjectDescriptionManager.getInstance().adjustDefaultConfig(data);
 	
 //		data.setResolveInfo(rInfo);
 		PathEntryTranslator tr = new PathEntryTranslator(project, data);

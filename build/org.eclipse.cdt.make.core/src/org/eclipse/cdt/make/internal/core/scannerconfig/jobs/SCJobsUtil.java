@@ -63,7 +63,7 @@ public class SCJobsUtil {
     public static boolean getProviderScannerInfo(final IProject project,
                                                  final IScannerConfigBuilderInfo2 buildInfo,
                                                  final IProgressMonitor monitor) {
-    	return getProviderScannerInfo(project, new InfoContext(project), buildInfo, monitor);
+    	return getProviderScannerInfo(project, buildInfo.getContext(), buildInfo, monitor);
     }
     	
     public static boolean getProviderScannerInfo(final IProject project,
@@ -114,7 +114,7 @@ public class SCJobsUtil {
     public static boolean updateScannerConfiguration(IProject project,
                                                      IScannerConfigBuilderInfo2 buildInfo,
                                                      final IProgressMonitor monitor) {
-    	return updateScannerConfiguration(project, new InfoContext(project), buildInfo, monitor);
+    	return updateScannerConfiguration(project, buildInfo.getContext(), buildInfo, monitor);
     }
 
     /**
@@ -163,7 +163,7 @@ public class SCJobsUtil {
     public static boolean readBuildOutputFile(final IProject project,
                                               final IScannerConfigBuilderInfo2 buildInfo,
                                               final IProgressMonitor monitor) {
-    	return readBuildOutputFile(project, new InfoContext(project), buildInfo, monitor);
+    	return readBuildOutputFile(project, buildInfo.getContext(), buildInfo, monitor);
     }
 
     /**

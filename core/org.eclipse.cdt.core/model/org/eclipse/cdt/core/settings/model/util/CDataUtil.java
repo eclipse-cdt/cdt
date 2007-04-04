@@ -12,13 +12,19 @@ package org.eclipse.cdt.core.settings.model.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.model.ILanguageDescriptor;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
@@ -29,16 +35,20 @@ import org.eclipse.cdt.core.settings.model.COutputEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.core.settings.model.extension.CFileData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
+import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -74,14 +84,18 @@ public class CDataUtil {
 			return o2 == null;
 		return o1.equals(o2);
 	}
-	
+
 	public static String arrayToString(String[] array, String separator){
+		return arrayToString((Object[])array, separator);
+	}
+
+	public static String arrayToString(Object[] array, String separator){
 		if(array == null)
 			return null;
 		if(array.length == 0)
 			return ""; //$NON-NLS-1$
 		if(array.length == 1)
-			return array[0];
+			return array[0].toString();
 		StringBuffer buf = new StringBuffer();
 		buf.append(array[0]);
 		for(int i = 1; i < array.length; i++){
@@ -322,7 +336,18 @@ public class CDataUtil {
 		}
 		return null;
 	}
-	
+
+	public static Map createPathRcDataMap(CConfigurationData data){
+		Map map = new HashMap();
+		CResourceData[] rcDatas = data.getResourceDatas();
+		CResourceData rcData;
+		for(int i = 0; i < rcDatas.length; i++){
+			rcData = rcDatas[i];
+			map.put(rcData.getPath(), rcData);
+		}
+		return map;
+	}
+
 	public static PathSettingsContainer createRcDataHolder(CConfigurationData data){
 		PathSettingsContainer h = PathSettingsContainer.createRootContainer();
 		
@@ -337,4 +362,130 @@ public class CDataUtil {
 		}
 		return h;
 	}
+	
+	public static CConfigurationData createEmptyData(String id, String name, CDataFacroty factory, boolean performLangAdjustment){
+		if(id == null)
+			id = genId(null);
+		
+		CConfigurationData data = factory.createConfigurationdata(id, name, null, false);
+		if(data.getRootFolderData() == null){
+			CFolderData foData = factory.createFolderData(data, null, genId(data.getId()), false, Path.EMPTY);
+			factory.link(data, foData);
+		}
+		
+		if(data.getBuildData() == null){
+			CBuildData bData = factory.createBuildData(data, null, genId(data.getId()), null, false);
+			factory.link(data, bData);
+		}
+		
+		if(data.getTargetPlatformData() == null){
+			CTargetPlatformData tpData = factory.createTargetPlatformData(data, null, genId(data.getId()), null, false);
+			factory.link(data, tpData);
+		}
+
+		if(performLangAdjustment)
+			adjustConfig(data, factory);
+		
+		return data;
+	}
+
+	public static CConfigurationData adjustConfig(CConfigurationData cfg, CDataFacroty factory){
+		LanguageManager mngr = LanguageManager.getInstance();
+		ILanguageDescriptor dess[] = mngr.getLanguageDescriptors();
+		Map map = mngr.getContentTypeIdToLanguageDescriptionsMap();
+		
+		CResourceData[] rcDatas = cfg.getResourceDatas();
+		for(int i = 0; i < rcDatas.length; i++){
+			if(rcDatas[i].getType() == ICSettingBase.SETTING_FOLDER){
+				adjustFolderData(cfg, (CFolderData)rcDatas[i], factory, dess, new HashMap(map));
+			}
+		}
+		
+		return cfg;
+	}
+
+	
+	private static void adjustFolderData(CConfigurationData cfgData, CFolderData data, CDataFacroty factory, ILanguageDescriptor dess[], HashMap map){
+		Map langMap = new HashMap();
+		for(int i = 0; i < dess.length; i++){
+			langMap.put(dess[i].getId(), dess[i]);
+		}
+		CLanguageData lDatas[] = data.getLanguageDatas();
+		for(int i = 0; i < lDatas.length; i++){
+			CLanguageData lData = (CLanguageData)lDatas[i];
+			String langId = lData.getLanguageId();
+			if(langId != null){
+				ILanguageDescriptor des = (ILanguageDescriptor)langMap.remove(langId);
+				adjustLanguageData(data, lData, des);
+						continue;
+			} else {
+				String[] cTypeIds = lData.getSourceContentTypeIds();
+				for(int c = 0; c < cTypeIds.length; c++){
+					String cTypeId = cTypeIds[c];
+					ILanguageDescriptor[] langs = (ILanguageDescriptor[])map.remove(cTypeId);
+					if(langs != null && langs.length != 0){
+						for(int q = 0; q < langs.length; q++){
+							langMap.remove(langs[q].getId());
+						}
+								
+						adjustLanguageData(data, lData, langs[0]);
+					}
+				}
+			}
+		}
+			
+		if(!langMap.isEmpty()){
+			addLangs(cfgData, data, factory, langMap, map);
+		}
+		
+	}
+	
+	private static CLanguageData adjustLanguageData(CFolderData data, CLanguageData lData, ILanguageDescriptor des){
+		String [] cTypeIds = des.getContentTypeIds();
+		String srcIds[] = lData.getSourceContentTypeIds();
+		
+		Set landTypes = new HashSet(Arrays.asList(cTypeIds));
+		landTypes.removeAll(Arrays.asList(srcIds));
+		
+		if(landTypes.size() != 0){
+			List srcList = new ArrayList();
+			srcList.addAll(landTypes);
+			lData.setSourceContentTypeIds((String[])srcList.toArray(new String[srcList.size()]));
+		}
+		
+		if(!des.getId().equals(lData.getLanguageId())){
+			lData.setLanguageId(des.getId());
+		}
+		return lData;
+	}
+	
+	private static void addLangs(CConfigurationData cfgData, CFolderData data, CDataFacroty factory, Map langMap, Map cTypeToLangMap){
+		List list = new ArrayList(langMap.values());
+		ILanguageDescriptor des;
+		while(list.size() != 0){
+			des = (ILanguageDescriptor)list.remove(list.size() - 1);
+			String[] ctypeIds = des.getContentTypeIds();
+			boolean addLang = false;
+			for(int i = 0; i < ctypeIds.length; i++){
+				ILanguageDescriptor[] langs = (ILanguageDescriptor[])cTypeToLangMap.remove(ctypeIds[i]);
+				if(langs != null && langs.length != 0){
+					addLang = true;
+					for(int q = 0; q < langs.length; q++){
+						list.remove(langs[q]);
+					}
+				}
+			}
+			
+			if(addLang){
+				CLanguageData lData = factory.createLanguageData(cfgData, data, genId(data.getId()), des.getName(), des.getId(), 
+						ICLanguageSettingEntry.INCLUDE_FILE 
+						| ICLanguageSettingEntry.INCLUDE_PATH
+						| ICLanguageSettingEntry.MACRO
+						| ICLanguageSettingEntry.MACRO_FILE,
+						ctypeIds, true);
+				factory.link(data, lData);
+			}
+		}
+	}
+
 }

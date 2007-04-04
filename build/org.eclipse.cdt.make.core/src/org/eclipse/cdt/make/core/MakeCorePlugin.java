@@ -67,7 +67,7 @@ public class MakeCorePlugin extends Plugin {
 	public static final String MAKEFILE_STYLE = PLUGIN_ID + "editor_makefile_style"; //$NON-NLS-1$
 	public static final String MAKEFILE_DIRS = PLUGIN_ID + "editor_makefile_dirs"; //$NON-NLS-1$
 
-
+	public static final String CFG_DATA_PROVIDER_ID =  PLUGIN_ID + ".configurationDataProvider";
 	private MakeTargetManager fTargetManager;
 	private DiscoveredPathManager fDiscoveryPathManager;
 	//The shared instance.

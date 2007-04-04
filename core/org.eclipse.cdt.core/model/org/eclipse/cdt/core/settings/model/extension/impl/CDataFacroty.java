@@ -13,6 +13,14 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.runtime.IPath;
 
 public class CDataFacroty {
+	private static CDataFacroty fInstance;
+	
+	public static CDataFacroty getDefault(){
+		if(fInstance == null)
+			fInstance = new CDataFacroty();
+		return fInstance;
+	}
+
 	public CConfigurationData createConfigurationdata(String id, 
 			String name, 
 			CConfigurationData base, 
@@ -25,22 +33,26 @@ public class CDataFacroty {
 		
 		return new CDefaultConfigurationData(id, name, base, this, clone);
 	}
-	
+
 	public CFolderData createFolderData(CConfigurationData cfg, 
-			CFolderData base, 
+			CFolderData base,
+			String id,
 			boolean clone, 
 			IPath path){
-		String id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
+		if(id == null)
+			id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
 		return new CDefaultFolderData(id, path, base, cfg, this, clone);
 	}
 
 	public CFileData createFileData(CConfigurationData cfg, 
 			CResourceData base,
 			CLanguageData lBase,
+			String id,
 			boolean clone, 
 			IPath path){
-		String id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
-		if(base.getType() == ICSettingBase.SETTING_FILE)
+		if(id == null)
+			id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
+		if(base != null && base.getType() == ICSettingBase.SETTING_FILE)
 			return new CDefaultFileData(id, path, (CFileData)base, cfg, this, clone);
 		return new CDefaultFileData(id, path, (CFolderData)base, lBase, cfg, this);
 	}
@@ -48,28 +60,43 @@ public class CDataFacroty {
 	public CLanguageData createLanguageData(CConfigurationData cfg, 
 			CResourceData rcBase,
 			CLanguageData base,
+			String id,
 			boolean clone){
-		String id = clone ? base.getId() : CDataUtil.genId(rcBase.getId());
+			if(id == null)
+				id = clone ? base.getId() : CDataUtil.genId(rcBase.getId());
 		return new CDefaultLanguageData(id, base);
 	}
 
 	public CLanguageData createLanguageData(CConfigurationData cfg, 
 			CResourceData rcBase,
+			String id,
+			String name,
 			String languageId,
+			int supportedEntryKinds,
 			String[] rcTypes,
 			boolean isContentTypes){
-		String id = CDataUtil.genId(rcBase.getId());
-		return new CDefaultLanguageData(id, languageId, rcTypes, isContentTypes);
+		if(id == null)
+			id = CDataUtil.genId(rcBase.getId());
+		CDefaultLanguageData lData = new CDefaultLanguageData(id, languageId, rcTypes, isContentTypes);
+		lData.fName = name;
+		lData.fSupportedKinds = supportedEntryKinds;
+		return lData;
 	}
 
-	public CBuildData createBuildData(CConfigurationData cfg, CBuildData base, boolean clone){
-		String id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
-		return new CDefaultBuildData(id, base);
+	public CBuildData createBuildData(CConfigurationData cfg, CBuildData base, String id, String name, boolean clone){
+		if(id == null)
+			id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
+		CDefaultBuildData data = new CDefaultBuildData(id, base);
+		data.fName = name;
+		return data;
 	}
 	
-	public CTargetPlatformData createTargetPlatformData(CConfigurationData cfg, CTargetPlatformData base, boolean clone){
-		String id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
-		return new CDefaultTargetPlatformData(id, base);
+	public CTargetPlatformData createTargetPlatformData(CConfigurationData cfg, CTargetPlatformData base, String id, String name, boolean clone){
+		if(id == null)
+			id = clone ? base.getId() : CDataUtil.genId(cfg.getId());
+		CDefaultTargetPlatformData tpData = new CDefaultTargetPlatformData(id, base);
+		tpData.fName = name;
+		return tpData;
 	}
 
 	public boolean isModified(CDataObject data){
@@ -112,5 +139,29 @@ public class CDataFacroty {
 			break;
 		}
 	}
-
+	
+	public void link(CDataObject parent, CDataObject child){
+		switch(parent.getType()){
+		case ICSettingBase.SETTING_CONFIGURATION:
+			switch(child.getType()){
+			case ICSettingBase.SETTING_FILE:
+			case ICSettingBase.SETTING_FOLDER:
+				((CDefaultConfigurationData)parent).addRcData((CResourceData)child);
+				break;
+			case ICSettingBase.SETTING_TARGET_PLATFORM:
+				((CDefaultConfigurationData)parent).fTargetPlatformData = (CTargetPlatformData)child;
+				break;
+			case ICSettingBase.SETTING_BUILD:
+				((CDefaultConfigurationData)parent).fBuildData = (CBuildData)child;
+				break;
+			}
+			break;
+		case ICSettingBase.SETTING_FOLDER:
+			((CDefaultFolderData)parent).fLanguageDatas.add(child);
+			break;
+		case ICSettingBase.SETTING_FILE:
+			((CDefaultFileData)parent).fLanguageData = (CLanguageData)child;
+			break;
+		}
+	}
 }

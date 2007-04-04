@@ -160,4 +160,28 @@
        file-extensions="mk"/>
    </extension> 
 
+   <extension
+         id="cfgSupportNature"
+         name="%natureCfg.name"
+         point="org.eclipse.core.resources.natures">
+      <requires-nature
+            id="org.eclipse.cdt.core.cnature">
+      </requires-nature>
+      <runtime>
+         <run
+               class="org.eclipse.cdt.make.internal.core.dataprovider.ConfigSupportNature">
+         </run>
+      </runtime>
+   </extension>
+ 
+   <extension
+         id="configurationDataProvider"
+         name="%CfgDataProvider.name"
+         point="org.eclipse.cdt.core.CConfigurationDataProvider">
+         <provider
+         	natures="org.eclipse.cdt.make.core.cfgSupportNature"
+         	class="org.eclipse.cdt.make.internal.core.dataprovider.MakeConfigurationDataProvider"
+         />
+   </extension>
+
 </plugin>

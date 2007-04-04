@@ -61,13 +61,13 @@ public class CDefaultFileData extends CFileData {
 	}
 
 	protected void copyDataFrom(CFolderData base, CLanguageData baseLanguageData){
-		fIsExcluded = base.isExcluded();
+		fIsExcluded = base != null ? base.isExcluded() : false;
 		if(baseLanguageData != null)
 			fLanguageData = copyLanguageData(baseLanguageData, false);
 	}
 
 	protected CLanguageData copyLanguageData(CLanguageData data, boolean clone){
-		return fFactory.createLanguageData(fCfg, this, data, clone);
+		return fFactory.createLanguageData(fCfg, this, data, null, clone);
 	}
 
 

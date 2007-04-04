@@ -634,9 +634,8 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		labelHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
 
 		if (!updateMode && (defaultSystemType == null)) {
-			defaultSystemType = RSEPreferencesManager.getSystemType();
-			if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
-				defaultSystemType = lastSystemType;
+			defaultSystemType = lastSystemType;
+			
 			if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
 				defaultSystemType = textSystemType.getItem(0);
 		}
@@ -900,9 +899,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		// ...selectable:
 		else {
 			if (defaultSystemType == null) {
-				defaultSystemType = RSEPreferencesManager.getSystemType();
-				if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
-					defaultSystemType = lastSystemType;
+				defaultSystemType = lastSystemType;
 			}
 			if (defaultSystemType != null) {
 				int selIdx = textSystemType.indexOf(defaultSystemType);

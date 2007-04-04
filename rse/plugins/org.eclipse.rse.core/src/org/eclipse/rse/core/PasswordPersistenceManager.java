@@ -543,11 +543,6 @@ public class PasswordPersistenceManager {
 	 */
 	public boolean isUserIDCaseSensitive(String systemType)
 	{
-		if (DEFAULT_SYSTEM_TYPE.equals(systemType))
-		{
-			systemType = RSEPreferencesManager.getSystemType();
-		}
-	
 		// First find the correct provider
 		for (int i = 0; i < systemTypes.length; i++)
 		{			

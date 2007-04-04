@@ -40,10 +40,6 @@ public class RSEPreferencesManager {
 	 * The default value for the list of active user profiles. Value is "Team".
 	 */
 	private static final String DEFAULT_ACTIVEUSERPROFILES = "Team"; //$NON-NLS-1$
-	/**
-	 * The default value for the default system type. Value is "".
-	 */
-	private static final String DEFAULT_SYSTEMTYPE = ""; //$NON-NLS-1$
 
 	/**
 	 * @return the Hashtable where the key is a string identifying a particular object, and 
@@ -208,25 +204,6 @@ public class RSEPreferencesManager {
 	}
 
 	/**
-	 * @return the system type to default when no explicit system type is available.
-	 */
-	public static String getSystemType() {
-		Preferences store = RSECorePlugin.getDefault().getPluginPreferences();
-		String result = store.getString(IRSEPreferenceNames.SYSTEMTYPE);
-		return result;
-	}
-
-	/**
-	 * Sets the system type to default when no explicit system type is available.
-	 * @param systemType the string giving the system type name.
-	 */
-	public static void setSystemType(String systemType) {
-		Preferences store = RSECorePlugin.getDefault().getPluginPreferences();
-		store.setValue(IRSEPreferenceNames.SYSTEMTYPE, systemType);
-		savePreferences();
-	}
-
-	/**
 	 * Sets if a system type is enabled.
 	 * @param systemType the system type to be enabled on this machine.
 	 * @param isEnabled the enabled state
@@ -360,7 +337,6 @@ public class RSEPreferencesManager {
 		String userProfileName = getDefaultPrivateSystemProfileName();
 		defaultProfileNames += ";" + userProfileName; //$NON-NLS-1$
 		Preferences store = RSECorePlugin.getDefault().getPluginPreferences();
-		store.setDefault(IRSEPreferenceNames.SYSTEMTYPE, RSEPreferencesManager.DEFAULT_SYSTEMTYPE);
 		store.setDefault(IRSEPreferenceNames.ACTIVEUSERPROFILES, defaultProfileNames);
 		store.setDefault(IRSEPreferenceNames.USE_DEFERRED_QUERIES, RSEPreferencesManager.DEFAULT_USE_DEFERRED_QUERIES);
 		savePreferences();

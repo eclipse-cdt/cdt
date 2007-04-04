@@ -50,8 +50,7 @@ public class SystemPreferencesManager {
 
 	private static void migrateCorePreferences() {
 		String[] keys = {
-				IRSEPreferenceNames.ACTIVEUSERPROFILES, 
-				IRSEPreferenceNames.SYSTEMTYPE, 
+				IRSEPreferenceNames.ACTIVEUSERPROFILES,  
 				IRSEPreferenceNames.USE_DEFERRED_QUERIES, 
 				IRSEPreferenceNames.USERIDPERKEY
 		};

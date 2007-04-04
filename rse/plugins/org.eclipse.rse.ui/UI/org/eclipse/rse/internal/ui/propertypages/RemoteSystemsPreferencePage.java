@@ -98,22 +98,6 @@ public class RemoteSystemsPreferencePage
 	{
 		IPreferenceStore coreStore = new PreferencesMapper(RSECorePlugin.getDefault().getPluginPreferences());
 
-		List systemTypeLabels = new ArrayList();
-		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
-		for (int i = 0; i < systemTypes.length; i++) systemTypeLabels.add(systemTypes[i].getLabel());
-
-		// DEFAULT SYSTEM TYPE		
-		SystemComboBoxFieldEditor systemTypeEditor = new SystemComboBoxFieldEditor(
-			IRSEPreferenceNames.SYSTEMTYPE,
-			SystemResources.RESID_PREF_SYSTEMTYPE_PREFIX_LABEL,
-			(String[])systemTypeLabels.toArray(new String[systemTypeLabels.size()]),
-			true, // readonly
-			getFieldEditorParent()
-		);
-		systemTypeEditor.setPreferenceStore(coreStore);
-		systemTypeEditor.setToolTipText(SystemResources.RESID_PREF_SYSTEMTYPE_PREFIX_TOOLTIP);
-		addField(systemTypeEditor);
-
         // ENABLED STATE AND DEFAULT USERID PER SYSTEM TYPE 
         systemTypesEditor = new SystemTypeFieldEditor(
             ISystemPreferencesConstants.SYSTEMTYPE_VALUES,

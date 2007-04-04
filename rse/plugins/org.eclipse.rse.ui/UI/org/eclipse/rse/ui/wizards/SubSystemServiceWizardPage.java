@@ -77,6 +77,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		
 		return control;
 	}
+	
 
 	protected ServiceElement[] getServiceElements()
 	{
@@ -207,11 +208,19 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 						ServerLauncherPropertiesServiceElement[] elements = getPropertiesServiceElement();
 						if (elements.length > 0)
 						{
-							IServerLauncherProperties properties = elements[0].getServerLauncherProperties();
+							ServerLauncherPropertiesServiceElement element = elements[0];
+							if (element.userModified())
+							{
+								IServerLauncherProperties properties = element.getServerLauncherProperties();
 						
-							IConnectorService rserv = ss.getConnectorService();
-							properties.saveToProperties();
+								IConnectorService rserv = ss.getConnectorService();
+								properties.saveToProperties();
 								rserv.setRemoteServerLauncherProperties(properties);
+							}
+							else
+							{ // just using defaults
+								
+							}
 								/*
 								PropertyElement[] properties = elements[i].getProperties();
 								for (int p = 0; p < properties.length; p++)

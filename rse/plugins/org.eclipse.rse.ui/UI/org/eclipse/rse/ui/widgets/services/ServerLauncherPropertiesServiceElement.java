@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.Image;
 public class ServerLauncherPropertiesServiceElement extends RSEModelServiceElement
 {
 	protected IServerLauncherProperties _launcherProperties;
+	private boolean _userModified = false;
 	
 	public ServerLauncherPropertiesServiceElement(IHost host, ServiceElement parent, IServerLauncherProperties launcherProperties)
 	{
@@ -56,9 +57,15 @@ public class ServerLauncherPropertiesServiceElement extends RSEModelServiceEleme
 	
 	public void childChanged(ServiceElement element)
 	{
+		_userModified = true;
 		_launcherProperties.restoreFromProperties();		
 		_launcherProperties.commit();
 		getParent().childChanged(element);
+	}
+	
+	public boolean userModified()
+	{
+		return _userModified;
 	}
 
 	public void commit()

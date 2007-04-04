@@ -157,6 +157,8 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 		return _factoryViewer.getControl();
 	}
 	
+
+	
 	private void createFactoryViewer(Composite parent)
 	{
 		// Create the table viewer.
@@ -199,23 +201,9 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 		tableTree.setToolTipText(_serviceTooltip);
 
 
-/*
-		TableLayout tableLayout = new TableLayout();
-
-		TreeColumn factoryColumn = new TreeColumn(tableTree, SWT.LEFT);
-		factoryColumn.setText("Property");
-		tableLayout.addColumnData(new ColumnPixelData(100));
-		tableTree.setLayout(tableLayout);
-		
-		TreeColumn fileServiceColumn = new TreeColumn(tableTree, SWT.LEFT);
-		fileServiceColumn.setText("Value");
-		tableLayout.addColumnData(new ColumnPixelData(120));
-	*/	
 		_serviceViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		
-		// Adjust the table viewer.
-		//String[] properties = new String[] {"STRING", "STRING"};
-		//_serviceViewer.setColumnProperties(properties);
+
 				
 		_serviceViewer.setContentProvider(new ServiceTableContentProvider());
 		_serviceViewer.setLabelProvider(new ServiceTableLabelProvider());
@@ -304,4 +292,5 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 		}
 		return description != null ? description : ""; //$NON-NLS-1$
 	}
+	
 }

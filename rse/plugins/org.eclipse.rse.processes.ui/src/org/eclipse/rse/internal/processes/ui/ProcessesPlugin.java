@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.processes.ui adapter factories
  ********************************************************************************/
 
-package org.eclipse.rse.processes.ui;
+package org.eclipse.rse.internal.processes.ui;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;

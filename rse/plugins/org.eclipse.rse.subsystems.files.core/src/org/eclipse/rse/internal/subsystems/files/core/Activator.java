@@ -15,7 +15,7 @@
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
  *******************************************************************************/
 
-package org.eclipse.rse.subsystems.files.core;
+package org.eclipse.rse.internal.subsystems.files.core;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;

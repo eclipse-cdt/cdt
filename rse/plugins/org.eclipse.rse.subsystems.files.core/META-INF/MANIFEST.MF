@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.files.core
 Bundle-Version: 2.0.0.qualifier
-Bundle-Activator: org.eclipse.rse.subsystems.files.core.Activator
+Bundle-Activator: org.eclipse.rse.internal.subsystems.files.core.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

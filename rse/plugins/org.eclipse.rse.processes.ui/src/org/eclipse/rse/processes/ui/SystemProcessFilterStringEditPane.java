@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.processes.ui.ProcessesPlugin;
 import org.eclipse.rse.internal.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.internal.processes.ui.view.SystemProcessStatesContentProvider;
 import org.eclipse.rse.internal.ui.SystemResources;

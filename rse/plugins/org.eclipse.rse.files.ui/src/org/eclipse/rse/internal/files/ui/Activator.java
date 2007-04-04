@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui;
+package org.eclipse.rse.internal.files.ui;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;

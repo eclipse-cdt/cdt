@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - [180519] declaratively register rse.shells.ui. adapter factories
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui;
+package org.eclipse.rse.internal.shells.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

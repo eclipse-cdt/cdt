@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [180562] dont implement ISystemOutputRemoteTypes
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -34,7 +34,6 @@ import org.eclipse.rse.internal.files.ui.actions.SystemRemoteFileSearchOpenWithM
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -63,7 +62,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 /**
  * Adapter class to enable the output of a search to be "live" in that it has actions and properties.
  */
-public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter, ISystemOutputRemoteTypes
+public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter
 {
 	
 	public class DelayedGotoSearchResult implements Runnable {

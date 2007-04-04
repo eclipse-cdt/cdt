@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [180562] dont implement ISystemOutputRemoteTypes
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -80,7 +80,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
  * This is the adapter for smart output from remote commands, such that they can support right click actions and such.
  */
 public class SystemViewRemoteOutputAdapter extends AbstractSystemViewAdapter 
-implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutputRemoteTypes
+implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 {
 
 
@@ -816,53 +816,53 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 			ImageDescriptor imageDescriptor = null;
 			IRemoteOutput output = (IRemoteOutput) element;
 			String type = output.getType();
-			if (type.equals(TYPE_ERROR))
+			if (type.equals(ISystemOutputRemoteTypes.TYPE_ERROR))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ERROR_ID);
 			}
-			else if (type.equals(TYPE_WARNING))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_WARNING))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_WARNING_ID);
 			}
-			else if (type.equals(TYPE_INFORMATIONAL))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_INFORMATIONAL))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_INFO_ID);
 			}
-			else if (type.equals(TYPE_DIRECTORY))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY))
 			{
 				imageDescriptor = //PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER); 
 					RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FOLDER_ID);
 			}
-			else if (type.equals(TYPE_FILE))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE))
 			{
 				imageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE); 
 					//RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILE_ID);
 			}
-			else if (type.equals(TYPE_GREP))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_GREP))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_RESULT_ID);
 			}
-			else if (type.equals(TYPE_COMMAND))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_COMMAND))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
 			}
-			else if (type.equals(TYPE_PROMPT))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_PROMPT))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
 			}
-			else if (type.equals(TYPE_PROCESS))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_PROCESS))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);
 			}
-			else if (type.equals(TYPE_ENVVAR))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_ENVVAR))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_ID);
 			}
-			else if (type.equals(TYPE_ENVVAR_LIBPATH))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_ENVVAR_LIBPATH))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_LIBPATH_ID);
 			}
-			else if (type.equals(TYPE_ENVVAR_PATH))
+			else if (type.equals(ISystemOutputRemoteTypes.TYPE_ENVVAR_PATH))
 			{
 				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_PATH_ID);
 			}
@@ -1051,7 +1051,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		if (target instanceof IRemoteOutput)
 		{
 			IRemoteOutput targetOutput = (IRemoteOutput) target;
-			if (targetOutput.getType().equals(TYPE_PROMPT))
+			if (targetOutput.getType().equals(ISystemOutputRemoteTypes.TYPE_PROMPT))
 			{
 				if (src instanceof IRemoteFile)
 				{

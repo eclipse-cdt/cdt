@@ -217,6 +217,9 @@ abstract public class PDOMWriter {
 				stack.add(currentPath);
 				currentPath= findLocation(include.getPath());
 			}
+			else if (include.isActive()) {
+				reportProblem(include);
+			}
 		}
 		stack.add(currentPath);
 		while (!stack.isEmpty()) {
@@ -286,10 +289,22 @@ abstract public class PDOMWriter {
 	}
 
 
+	private void reportProblem(IASTPreprocessorIncludeStatement problem) {
+		fStatistics.fUnresolvedIncludes++;
+		if (fShowProblems) {
+			String msg= "Indexer: unresolved include"; //$NON-NLS-1$
+			IASTFileLocation loc= problem.getFileLocation();
+			if (loc != null && loc.getFileName() != null) {
+				msg += " at " + loc.getFileName() + ": " + loc.getStartingLineNumber();  //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			System.out.println(msg);
+		}
+	}
+	
 	private void reportProblem(IProblemBinding problem) {
 		fStatistics.fProblemBindingCount++;
 		if (fShowProblems) {
-			String msg= "Indexer problem at "+ problem.getFileName() + ": " + problem.getLineNumber();  //$NON-NLS-1$//$NON-NLS-2$
+			String msg= "Indexer: problem at "+ problem.getFileName() + ": " + problem.getLineNumber();  //$NON-NLS-1$//$NON-NLS-2$
 			String pmsg= problem.getMessage();
 			if (pmsg != null && pmsg.length() > 0) 
 				msg+= "; " + problem.getMessage(); //$NON-NLS-1$

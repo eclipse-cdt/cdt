@@ -430,6 +430,10 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					+ fStatistics.fParsingTime + " parser, " //$NON-NLS-1$
 					+ fStatistics.fResolutionTime + " resolution, " //$NON-NLS-1$
 					+ fStatistics.fAddToIndexTime + " index update."); //$NON-NLS-1$
+			System.out.println(name + " Errors: " //$NON-NLS-1$
+					+ fStatistics.fUnresolvedIncludes + " unresolved includes, " //$NON-NLS-1$
+					+ fStatistics.fErrorCount + " unexpected errors."); //$NON-NLS-1$
+
 			int sum= fStatistics.fDeclarationCount+fStatistics.fReferenceCount+fStatistics.fProblemBindingCount;
 			double problemPct= sum==0 ? 0.0 : (double) fStatistics.fProblemBindingCount / (double) sum;
 			NumberFormat nf= NumberFormat.getPercentInstance();
@@ -438,7 +442,6 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			System.out.println(name + " Result: " //$NON-NLS-1$
 					+ fStatistics.fDeclarationCount + " declarations, " //$NON-NLS-1$
 					+ fStatistics.fReferenceCount + " references, " //$NON-NLS-1$
-					+ fStatistics.fErrorCount + " errors, " //$NON-NLS-1$
 					+ fStatistics.fProblemBindingCount + "(" + nf.format(problemPct) + ") problems.");  //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (index != null) {

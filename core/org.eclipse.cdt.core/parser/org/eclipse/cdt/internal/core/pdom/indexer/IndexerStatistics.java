@@ -19,4 +19,5 @@ public class IndexerStatistics {
 	public int fReferenceCount= 0;
 	public int fDeclarationCount= 0;
 	public int fProblemBindingCount= 0;
+	public int fUnresolvedIncludes= 0;
 }

@@ -67,6 +67,7 @@ public class ContentAssist2TestSuite extends TestSuite {
 		addTest(CompletionTest_VariableType_Prefix.suite());
 		
 		addTest(CompletionTests.suite());
+		addTest(CompletionTests_PlainC.suite());
 		addTest(ParameterHintTests.suite());
 	}
 }

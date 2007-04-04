@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -49,8 +50,8 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	public static final int COMPARE_REP_STRINGS = 2;
 	
 	private ICProject fCProject;
-	protected IFile fCFile;
-	private ITextEditor fEditor;
+	private IFile fCFile;
+	protected ITextEditor fEditor;
 
 	private final static Set fgAllKeywords= new HashSet();
 	
@@ -213,6 +214,14 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	 * @return  the content of the editor buffer
 	 */
 	protected String getBuffer() {
-		return EditorTestHelper.getDocument(fEditor).get();
+		return getDocument().get();
 	}
+	
+	/**
+	 * @return  the editor document
+	 */
+	protected IDocument getDocument() {
+		return EditorTestHelper.getDocument(fEditor);
+	}
+
 }

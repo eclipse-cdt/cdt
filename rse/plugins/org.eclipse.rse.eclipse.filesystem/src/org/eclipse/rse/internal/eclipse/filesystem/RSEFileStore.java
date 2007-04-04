@@ -16,7 +16,10 @@
 
 package org.eclipse.rse.internal.eclipse.filesystem;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -45,6 +48,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileContext;
+import org.eclipse.swt.widgets.Display;
 
 
 public class RSEFileStore extends FileStore implements IFileStore 
@@ -57,6 +61,71 @@ public class RSEFileStore extends FileStore implements IFileStore
 		_remoteFile = remoteFile;
 		_parent = parent;
 		_subSystem = _remoteFile.getParentRemoteFileSubSystem();
+	}
+	
+	// an input stream that wraps another input stream and closes the wrappered input stream in a runnable that is always run with the user interface thread
+	private class RSEFileStoreInputStream extends BufferedInputStream {
+		
+		/**
+		 * Creates a BufferedInputStream  and saves its argument, the input stream, for later use. An internal buffer array is created.
+		 * @param in the underlying input stream.
+		 */
+		public RSEFileStoreInputStream(InputStream in) {
+			super(in);
+		}
+
+		/**
+		 * Creates a BufferedInputStream  and saves its argument, the input stream, for later use. An internal buffer array of the given size is created.
+		 * @param in the underlying input stream.
+		 * @param size the buffer size.
+		 */
+		public RSEFileStoreInputStream(InputStream in, int size) {
+			super(in, size);
+		}
+
+		/**
+		 * @see java.io.BufferedInputStream#close()
+		 */
+		public void close() throws IOException {
+			
+			Display current = Display.getCurrent();
+			
+			if (current != null) {
+				super.close();
+			}
+		}
+	}
+	
+	private class RSEFileStoreOutputStream extends BufferedOutputStream {
+		
+		/**
+		 * Creates a new buffered output stream to write data to the specified underlying output stream with a default 512-byte buffer size.
+		 * @param out the underlying output stream.
+		 */
+		public RSEFileStoreOutputStream(OutputStream out) {
+			super(out);
+		}
+
+		/**
+		 * Creates a new buffered output stream to write data to the specified underlying output stream with the specified buffer size.
+		 * @param out the underlying output stream.
+		 * @param size the buffer size.
+		 */
+		public RSEFileStoreOutputStream(OutputStream out, int size) {
+			super(out, size);
+		}
+
+		/**
+		 * @see java.io.BufferedOutputStream#close()
+		 */
+		public void close() throws IOException {
+			
+			Display current = Display.getCurrent();
+			
+			if (current != null) {
+				super.close();
+			}
+		}
 	}
 	
 	public IRemoteFileSubSystem getRemoteFileSubSystem() {
@@ -186,7 +255,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 				IFileServiceSubSystem fileSubSystem = (IFileServiceSubSystem)_subSystem;
 				
 				try {
-					return fileSubSystem.getFileService().getInputStream(monitor, _remoteFile.getParentPath(), _remoteFile.getName(), true);
+					return new RSEFileStoreInputStream(fileSubSystem.getFileService().getInputStream(monitor, _remoteFile.getParentPath(), _remoteFile.getName(), true));
 				}
 				catch (SystemMessageException e) {
 					return null;
@@ -276,7 +345,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 			IFileServiceSubSystem fileSubSystem = (IFileServiceSubSystem)_subSystem;
 			
 			try {
-				return fileSubSystem.getFileService().getOutputStream(monitor, _remoteFile.getParentPath(), _remoteFile.getName(), true);
+				return new RSEFileStoreOutputStream(fileSubSystem.getFileService().getOutputStream(monitor, _remoteFile.getParentPath(), _remoteFile.getName(), true));
 			}
 			catch (SystemMessageException e) {
 				return null;
@@ -359,7 +428,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 				try {
 					
 					if (_remoteFile.isFile()) {
-						inputStream = fileServiceSubSystem.getFileService().getInputStream(monitor, _remoteFile.getParentRemoteFileSubSystem().getHost().getHostName(), _remoteFile.getName(), true);
+						inputStream = new RSEFileStoreInputStream(fileServiceSubSystem.getFileService().getInputStream(monitor, _remoteFile.getParentRemoteFileSubSystem().getHost().getHostName(), _remoteFile.getName(), true));
 					}
 					
 					return cache.writeToCache(_remoteFile, inputStream);

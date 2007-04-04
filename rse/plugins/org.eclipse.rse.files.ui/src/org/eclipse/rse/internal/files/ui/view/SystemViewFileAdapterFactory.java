@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,12 +11,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.view.AbstractSystemRemoteAdapterFactory;
@@ -32,15 +31,16 @@ public class SystemViewFileAdapterFactory extends AbstractSystemRemoteAdapterFac
 {
 	private SystemViewRemoteFileAdapter fileAdapter = new SystemViewRemoteFileAdapter();
 	
-	/**
-	 * Called by our plugin's startup method to register our adaptable object types 
-	 * with the platform. We prefer to do it here to isolate/encapsulate all factory
-	 * logic in this one place.
-	 */
-	public void registerWithManager(IAdapterManager manager)
-	{
-	    manager.registerAdapters(this, IRemoteFile.class);
-	}
+//	/**
+//	 * Register this factory with the Platform's Adapter Manager.
+//	 * Can be used for explicit registration, but we prefer doing it 
+//	 * declaratively in plugin.xml so this is currently not used. 
+//	 */
+//	public void registerWithManager(IAdapterManager manager)
+//	{
+//	    manager.registerAdapters(this, IRemoteFile.class);
+//	}
+	
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */

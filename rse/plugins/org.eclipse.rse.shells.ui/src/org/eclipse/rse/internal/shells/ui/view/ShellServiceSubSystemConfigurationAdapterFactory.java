@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,15 +11,13 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystemConfiguration;
 
 
@@ -35,15 +33,17 @@ public class ShellServiceSubSystemConfigurationAdapterFactory implements IAdapte
 	{
 	    return new Class[] {ISubSystemConfigurationAdapter.class};		
 	}
-	/**
-	 * Called by our plugin's startup method to register our adaptable object types 
-	 * with the platform. We prefer to do it here to isolate/encapsulate all factory
-	 * logic in this one place.
-	 */
-	public void registerWithManager(IAdapterManager manager)
-	{
-		manager.registerAdapters(this, IShellServiceSubSystemConfiguration.class);
-	}
+	
+//	/**
+//	 * Register this factory with the Platform's Adapter Manager.
+//	 * Can be used for explicit registration, but we prefer to rather do it 
+//	 * declaratively in plugin.xml so this is currently not used. 
+//	 */
+//	public void registerWithManager(IAdapterManager manager)
+//	{
+//		manager.registerAdapters(this, IShellServiceSubSystemConfiguration.class);
+//	}
+	
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */

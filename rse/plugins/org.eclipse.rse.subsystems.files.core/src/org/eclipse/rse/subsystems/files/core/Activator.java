@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core;

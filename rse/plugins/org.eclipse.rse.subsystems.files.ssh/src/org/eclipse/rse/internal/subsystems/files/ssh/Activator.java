@@ -8,15 +8,13 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Dave McKnight (IBM) - Fix bug 148971: activate files.ui on startup 
+ * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
  *******************************************************************************/
 package org.eclipse.rse.internal.subsystems.files.ssh;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
 
 /**
  * The activator class controls the plug-in life cycle

@@ -35,13 +35,11 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.core.subsystems.IRemoteContainer;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
-import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.StringComparePatternMatcher;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -87,7 +85,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     protected HashMap _contents = new HashMap();
     
     /* container properties */
-    protected boolean _isStale = false;
+    protected boolean _isStale = true;
     
     // properties
     protected HashMap properties = new HashMap();

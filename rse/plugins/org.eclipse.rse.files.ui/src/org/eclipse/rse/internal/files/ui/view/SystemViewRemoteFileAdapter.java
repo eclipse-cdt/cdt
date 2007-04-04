@@ -491,8 +491,11 @@ public class SystemViewRemoteFileAdapter
 				isOpen = atv.getExpandedState(element);
 				if (!isOpen)
 				{
-					if (!hasChildren((IAdaptable)element))
-						isOpen = true;
+					// if there are children but they are empty then we've queried this but there are no children
+					// so we have an empty open folder
+					Object[] contents = file.getContents(RemoteChildrenContentsType.getInstance());
+					if (contents != null && contents.length == 0)
+						isOpen = true;											
 				}
 			}
 			if (file.isRoot())
@@ -842,10 +845,9 @@ public class SystemViewRemoteFileAdapter
 			// check that the children are actually there			
 			//Object[] contents = file.getContents(RemoteChildrenContentsType.getInstance());
 			hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
-			if (!hasChildren && !file.isStale())
+			//if (!hasChildren && !file.isStale())
+			if (!hasChildren && file.isStale()) // there are no children, but the resource is stale, therefore it still needs to be queried
 				hasChildren = true;
-		//	if (!file.isStale() && contents != null && contents.length == 0 )
-		//		hasChildren = false;
 		}
 
 		return hasChildren;

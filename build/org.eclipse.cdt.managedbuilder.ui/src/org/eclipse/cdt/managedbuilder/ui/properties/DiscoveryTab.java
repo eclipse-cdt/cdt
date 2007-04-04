@@ -189,7 +189,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  		configPath = rcfg.getPath();
  		IConfiguration cfg = getCfg(rcfg.getConfiguration());
  		cbi = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
- 		if(baseInfoMap == null){
+ 		if(!page.isForPrefs() && baseInfoMap == null){
 			try {
 				IScannerConfigBuilderInfo2Set baseCbi = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
 				baseInfoMap = baseCbi.getInfoMap();
@@ -398,7 +398,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			}
 		}
         buildInfo.setSelectedProfileId(savedId);
-        
+        handleDiscoveryProfileChanged();
         if(ok)
         	clearChangedDiscoveredInfos();
 	}

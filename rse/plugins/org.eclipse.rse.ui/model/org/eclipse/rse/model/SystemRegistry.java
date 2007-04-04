@@ -1946,7 +1946,11 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			IHost[] conns = getHosts();
 			for (int idx = 0; idx < conns.length; idx++)
 			{
-				if (!v.contains(conns[idx].getHostName()))
+				// Note: IHost.getHostName() can return null if the connection is using
+				//       any non-IP based connectivity (serial line, JTAG, ...). Adding
+				//       null unchecked to the result list will trigger InvalidArgumentExceptions
+				//       in SystemConnectionForm.
+				if (conns[idx].getHostName() != null && !v.contains(conns[idx].getHostName()))
 				{
 					if (conns[idx].getSystemType().getName().equals(systemType))
 						v.addElement(conns[idx].getHostName());

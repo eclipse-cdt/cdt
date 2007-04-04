@@ -11,7 +11,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.services,
  org.eclipse.rse.core,
  org.eclipse.rse.subsystems.processes.core,
- org.eclipse.rse.shells.ui,
  org.eclipse.rse.subsystems.shells.core
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName

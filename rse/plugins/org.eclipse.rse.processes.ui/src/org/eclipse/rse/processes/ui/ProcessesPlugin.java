@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.processes.ui adapter factories
  ********************************************************************************/
 
 package org.eclipse.rse.processes.ui;
@@ -19,12 +19,8 @@ package org.eclipse.rse.processes.ui;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.internal.processes.ui.view.RemoteProcessSubSystemConfigurationAdapterFactory;
-import org.eclipse.rse.internal.processes.ui.view.SystemViewProcessAdapterFactory;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -39,7 +35,7 @@ public class ProcessesPlugin extends SystemBasePlugin {
 	private static ProcessesPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	private SystemViewProcessAdapterFactory svpaf;
+
 	private static SystemMessageFile messageFile = null;    
     private static SystemMessageFile defaultMessageFile = null;    
 	
@@ -61,13 +57,6 @@ public class ProcessesPlugin extends SystemBasePlugin {
 		super.start(context);
 	   	messageFile = getMessageFile("processmessages.xml"); //$NON-NLS-1$
 	   	defaultMessageFile = getDefaultMessageFile("processmessages.xml"); //$NON-NLS-1$
-
-	    IAdapterManager manager = Platform.getAdapterManager();
-		svpaf = new SystemViewProcessAdapterFactory();
-		svpaf.registerWithManager(manager);
-
-		RemoteProcessSubSystemConfigurationAdapterFactory rpssfaf = new RemoteProcessSubSystemConfigurationAdapterFactory();
-		rpssfaf.registerWithManager(manager);
 	}
 
 	/**

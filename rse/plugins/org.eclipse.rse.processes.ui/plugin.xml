@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006 IBM Corporation. All rights reserved.
+Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,10 +12,39 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-{Name} (company) - description of contribution.
+Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.processes.ui adapter factories
 -->
 <?eclipse version="3.1"?>
 <plugin>
+
+<!-- ============================================ -->
+<!-- Register Adapter Factories                   -->
+<!-- ============================================ -->
+ 
+	<extension point="org.eclipse.core.runtime.adapters">
+		<!-- IRemoteProcess --> 
+		<factory 
+				class="org.eclipse.rse.internal.processes.ui.view.SystemViewProcessAdapterFactory" 
+				adaptableType="org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess">
+            <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+			<adapter type="org.eclipse.ui.IActionFilter"/>
+			<!-- TODO Check: These are not in the adapter factories 
+			     getAdapterList() Although the adapter implements them
+			<adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier"/>
+			-->
+		</factory> 
+		<!-- IRemoteProcessSubSystemConfiguration --> 
+		<factory 
+				class="org.eclipse.rse.internal.processes.ui.view.RemoteProcessSubSystemConfigurationAdapterFactory" 
+				adaptableType="org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration">
+            <adapter type="org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter"/>
+		</factory> 
+	</extension>
 
 <!-- ============================================== -->
 <!-- Define subsystem configurations for processes...     -->
@@ -39,7 +68,7 @@ Contributors:
          point="org.eclipse.ui.propertyPages">   
       <page
             name="%PropertyPage.ServerLauncherSettings" 
-            class="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.ServerLauncherPropertyPage"
             id="org.eclipse.rse.ui.propertypages.serverLauncherPropertyPage">
             <filter name="serverLaunchPP" value="true"/>
          <enabledWhen>

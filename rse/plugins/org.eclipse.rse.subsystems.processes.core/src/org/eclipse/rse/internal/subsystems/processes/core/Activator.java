@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,12 +11,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.processes.ui adapter factories
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.core;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.subsystems.processes.core.subsystem.impl.RemoteProcessImpl;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -38,6 +40,13 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception 
 	{
 		super.start(context);
+
+		// make sure that required adapters factories are loaded 
+		//(will typically activate org.eclipse.rse.processes.ui)
+		//TODO Check that this does not fire up the UI if we want to be headless
+		Platform.getAdapterManager().loadAdapter(new RemoteProcessImpl(null,null), 
+				"org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
+		//others will be loaded automatically when the processes.ui plugin is activated
 	}
 
 	/**

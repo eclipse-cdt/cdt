@@ -16,7 +16,7 @@ Contributors:
   <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
     <factory 
        uri = "http://www.eclipse.org/tm/discovery" 
-       class = "org.eclipse.tm.discovery.provider.ModelItemProviderAdapterFactory" 
+       class = "org.eclipse.tm.internal.discovery.model.provider.ModelItemProviderAdapterFactory" 
        supportedTypes = 
          "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
           org.eclipse.emf.edit.provider.IStructuredItemContentProvider

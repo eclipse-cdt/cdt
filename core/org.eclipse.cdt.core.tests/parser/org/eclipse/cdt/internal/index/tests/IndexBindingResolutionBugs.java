@@ -160,4 +160,25 @@ public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 		assertTrue(binding instanceof ICPPVariable);
 		IScope scope= binding.getScope();
 	}
+	
+	//	class A{};
+	//
+	//	template<typename T>
+	//	T id (T t) {return t;}
+	//
+	//	template<>
+	//	A id (A a) {return a;}
+	//
+	//	int id(int x) {return x;}
+	
+	//	void foo() {
+	//		id(*new A());
+	//		id(6);
+	//	}
+	public void testBug180948() throws Exception {
+		// Main check occurs in BaseTestCase - that no ClassCastException
+		// is thrown during indexing
+		IBinding b0= getBindingFromASTName("id(*", 2);
+		IBinding b1= getBindingFromASTName("id(6", 2);
+	}
 }

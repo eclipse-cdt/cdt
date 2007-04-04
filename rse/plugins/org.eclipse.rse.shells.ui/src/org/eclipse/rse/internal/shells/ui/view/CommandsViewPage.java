@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [180562] dont implement ISystemThemeConstants 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -79,7 +80,7 @@ import org.eclipse.ui.themes.IThemeManager;
 /**
  * Class for a remote shell session on a connection
  */
-public class CommandsViewPage implements SelectionListener, ISystemThemeConstants, IPropertyChangeListener, ISelectionChangedListener, 
+public class CommandsViewPage implements SelectionListener, IPropertyChangeListener, ISelectionChangedListener, 
 FocusListener
 {
 
@@ -343,9 +344,9 @@ FocusListener
 	{
 	    //Display display = getViewer().getControl().getDisplay();
 	    IThemeManager mgr = PlatformUI.getWorkbench().getThemeManager();
-		Color bg = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_BG_COLOR);
-		Color fg = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_FG_COLOR);
-		Font fFont =mgr.getCurrentTheme().getFontRegistry().get(REMOTE_COMMANDS_VIEW_FONT);
+		Color bg = mgr.getCurrentTheme().getColorRegistry().get(ISystemThemeConstants.REMOTE_COMMANDS_VIEW_BG_COLOR);
+		Color fg = mgr.getCurrentTheme().getColorRegistry().get(ISystemThemeConstants.REMOTE_COMMANDS_VIEW_FG_COLOR);
+		Font fFont =mgr.getCurrentTheme().getFontRegistry().get(ISystemThemeConstants.REMOTE_COMMANDS_VIEW_FONT);
 	
 		_inputEntry.getControl().setBackground(bg);
 		_inputEntry.getControl().setForeground(fg);

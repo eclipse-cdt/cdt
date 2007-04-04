@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [180562] dont implement ISystemThemeConstants 
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.IThemeManager;
 
-public class SystemCommandsView extends SystemTableView implements ISystemThemeConstants, IPropertyChangeListener
+public class SystemCommandsView extends SystemTableView implements IPropertyChangeListener
 {
 	public class CommandsViewFilter extends ViewerFilter
 	{
@@ -98,9 +98,9 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 		if (table != null)
 		{
 			IThemeManager mgr = PlatformUI.getWorkbench().getThemeManager();
-			Color bg = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_BG_COLOR);
-			Color fg = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_FG_COLOR);
-			Font fFont = mgr.getCurrentTheme().getFontRegistry().get(REMOTE_COMMANDS_VIEW_FONT);
+			Color bg = mgr.getCurrentTheme().getColorRegistry().get(ISystemThemeConstants.REMOTE_COMMANDS_VIEW_BG_COLOR);
+			Color fg = mgr.getCurrentTheme().getColorRegistry().get(ISystemThemeConstants.REMOTE_COMMANDS_VIEW_FG_COLOR);
+			Font fFont = mgr.getCurrentTheme().getFontRegistry().get(ISystemThemeConstants.REMOTE_COMMANDS_VIEW_FONT);
 			table.setBackground(bg);
 			table.setForeground(fg);
 			table.setFont(fFont);
@@ -108,11 +108,11 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 			{
 				mgr.addPropertyChangeListener(this);
 			}
-			_errColor = mgr.getCurrentTheme().getColorRegistry().get(MESSAGE_ERROR_COLOR);
-			_outColor = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_FG_COLOR);
-			_infColor = mgr.getCurrentTheme().getColorRegistry().get(MESSAGE_INFORMATION_COLOR);
-			_warColor = mgr.getCurrentTheme().getColorRegistry().get(MESSAGE_WARNING_COLOR);
-			_prmColor = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_PROMPT_COLOR);
+			_errColor = mgr.getCurrentTheme().getColorRegistry().get(ISystemThemeConstants.MESSAGE_ERROR_COLOR);
+			_outColor = mgr.getCurrentTheme().getColorRegistry().get(ISystemThemeConstants.REMOTE_COMMANDS_VIEW_FG_COLOR);
+			_infColor = mgr.getCurrentTheme().getColorRegistry().get(ISystemThemeConstants.MESSAGE_INFORMATION_COLOR);
+			_warColor = mgr.getCurrentTheme().getColorRegistry().get(ISystemThemeConstants.MESSAGE_WARNING_COLOR);
+			_prmColor = mgr.getCurrentTheme().getColorRegistry().get(ISystemThemeConstants.REMOTE_COMMANDS_VIEW_PROMPT_COLOR);
 		}
 	}
 

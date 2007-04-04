@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [180562] dont implement ISystemThemeConstants 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -39,7 +39,6 @@ import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.ISystemThemeConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
@@ -77,7 +76,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 /**
  * Class for a remote shell session on a connection
  */
-public class MonitorViewPage implements SelectionListener, ISystemThemeConstants, IPropertyChangeListener, ISelectionChangedListener, Listener,
+public class MonitorViewPage implements SelectionListener, IPropertyChangeListener, ISelectionChangedListener, Listener,
 FocusListener
 {
 	private static SystemMessage _queryMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_QUERY_PROGRESS);

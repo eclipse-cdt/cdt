@@ -8,9 +8,20 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.newui;
+package org.eclipse.cdt.managedbuilder.ui.properties;
+
+import org.eclipse.cdt.ui.newui.AbstractPage;
 
 
-public class Page_Variables extends AbstractPage {
-	protected boolean isSingle() { return true; }
+/**
+ * The class have the same functionality as superclass.
+ * The only need to create it is distinguishing tabs.
+ *
+ */
+public class Page_PathAndSymb extends AbstractPage {
+
+	protected boolean isSingle() {
+		return false;
+	}
+
 }

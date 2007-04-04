@@ -90,7 +90,7 @@ Ignored for single-tab pages.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="parent" type="string" use="required">
+         <attribute name="parentId" type="string" use="required">
             <annotation>
                <documentation>
                   Class name for container page.
@@ -98,9 +98,6 @@ Usually pages are to be derived from
 org.eclipse.cdt.ui.newui.AbstractPage,
 but it is not obligatory.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">

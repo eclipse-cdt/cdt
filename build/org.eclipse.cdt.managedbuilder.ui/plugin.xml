@@ -89,16 +89,29 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="%MakeBuildPref.name"
-            category="org.eclipse.cdt.managedbuilder.ui.preferences.WizardPreferences"
+            category="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
-            id="org.eclipse.cdt.managedbuilder.ui.preferences.BuildPreferences">
-      </page>
+            id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"/>
       <page
             name="%NewCDTWizardPref.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"
-            id="org.eclipse.cdt.managedbuilder.ui.preferences.WizardPreferences">
-      </page>
+            id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Env"
+            id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Env"
+            name="%envPrefName"/>
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Vars"
+            id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Vars"
+            name="%varsPrefName"/>
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"
+            id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"
+            name="%propSettingsPrefName"/>
    </extension>
    
    <!-- Action for Project Converter in context menu -->
@@ -244,39 +257,39 @@
            icon="icons/elcl16/discovery.gif"
            name="%Discovery.options"
            weight="005"
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.ToolSettingsTab"
            icon="icons/elcl16/config-tool.gif"
            name="%Tool.settings"
            weight="001"
-           parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.BuildStepsTab"
            icon="icons/obj16/steps.gif"
            name="%Build.steps"
-           parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
            weight="002"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.ArtifactTab"
            icon="icons/obj16/artifact.gif"
            name="%Build.artifact"
-           parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
            weight="003"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.BuilderSettingsTab"
            icon="icons/obj16/build_settings.gif"
            name="%Builder.settings"
-           parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
            weight="004"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.CPropertyVarsTab"
            name="(Single) CDT Vars (macros)"
-           parent="org.eclipse.cdt.ui.newui.Page_Variables"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_Variables"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.ToolChainEditTab"
            name="(Single) Tool chain edit"
-           parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ToolChain"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_ToolChain"/>
 
 <!-- exported from CORE -->           
      <tab
@@ -284,143 +297,143 @@
            icon="icons/obj16/hfolder_obj.gif"
            name="%Includes"
            weight="001"
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
            tooltip="&quot;Includes list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.SymbolTab"
            icon="icons/obj16/define_obj.gif"
            name="%Symbols"
            weight="002"
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
            tooltip="&quot;Macros list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.LibraryTab"
            icon="icons/obj16/lib_obj.gif"
            name="%Libraries"
            weight="003"
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
            tooltip="&quot;Libraries list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.LibraryPathTab"
            icon="icons/obj16/opentype.gif"
            name="%Library.paths"
            weight="004"
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.ui.newui.RefsTab"
            icon="icons/obj16/search_ref_obj.gif"
            name="%References"
            weight="010"
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.ui.newui.CLocationSourceTab"
            icon="icons/obj16/fldr_obj.gif"
            name="%Source.location"
            weight="008"           
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.CBuildLocationOutputTab"
            icon="icons/obj16/output_folder_obj.gif"
            name="%Output.location"
            weight="009"           
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.ui.newui.StructureTreeTab"
            icon="icons/obj16/hierarchy.gif"
            name="%Data.hierarchy"
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
            weight="012"/>
      <tab
            class="org.eclipse.cdt.ui.newui.EnvironmentTab"
            icon="icons/obj16/environment.gif"
            name="%Environment"
            weight="005"
-           parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"/>
      <tab
            class="org.eclipse.cdt.ui.newui.BinaryParsTab"
            icon="icons/obj16/bin_obj.gif"
            name="%Binary.parsers"
            weight="006"
-           parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
            icon="icons/obj16/error_obj.gif"
            name="%Error.parsers"
            weight="007"
-           parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"/>
 
 	 <!-- Export settings page -->
 	      <tab
            class="org.eclipse.cdt.ui.newui.ExpIncludeTab"
            icon="icons/obj16/hfolder_obj.gif"
            name="%Includes"
-           parent="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
            tooltip="&quot;Includes list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpSymbolTab"
            icon="icons/obj16/define_obj.gif"
            name="%Symbols"
-           parent="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
            tooltip="&quot;Macros list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpLibraryTab"
            icon="icons/obj16/lib_obj.gif"
            name="%Libraries"
-           parent="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
            tooltip="&quot;Libraries list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpLibraryPathTab"
            icon="icons/obj16/opentype.gif"
            name="%Library.paths"
-           parent="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"/>
 
      <!-- tabs for Preference pages -->      
      <tab
            class="org.eclipse.cdt.ui.newui.EnvironmentTab"
            icon="icons/obj16/environment.gif"
            name="(Single) Environment"
-           parent="org.eclipse.cdt.ui.newui.PrefPage_Env"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Env"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.CPropertyVarsTab"
            name="(Single) CDT Vars (macros)"
-           parent="org.eclipse.cdt.ui.newui.PrefPage_Vars"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Vars"/>
      <tab
            class="org.eclipse.cdt.ui.newui.BinaryParsTab"
            name="%Binary.parsers"
            icon="icons/obj16/bin_obj.gif"
-           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
+           parentId="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
            name="%Error.parsers"
            icon="icons/obj16/error_obj.gif"
-           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
+           parentId="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.DiscoveryTab"
            icon="icons/elcl16/discovery.gif"
            name="%Discovery.options"
-           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
+           parentId="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.BuilderSettingsTab"
            icon="icons/obj16/build_settings.gif"
            name="%Builder.settings"
-           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject"/>
 
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.PreferredToolchainsTab"
            name="%Preferred.toolchains"
-           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.preferences.WizardDefaultsTab"
            name="%Wizard.defaults"
-           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
 
      <tab
            class="org.eclipse.cdt.ui.newui.PropertyPageDefsTab"
            name="%PropertyPage.defaults"
-           parent="org.eclipse.cdt.ui.newui.PrefPage_PropertyPage"/>
+           parentId="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"/>
 
 
   </extension>   
@@ -495,8 +508,8 @@
      <extension
          point="org.eclipse.ui.propertyPages">
         <page
-            class="org.eclipse.cdt.ui.newui.Page_Variables"
-            id="org.eclipse.ui.propertypages.project.ref10"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.Page_Variables"
+            id="org.eclipse.cdt.managedbuilder.ui.properties.Page_Variables"
             name="%CDTVariablesProperty.name"
             >
          <filter
@@ -512,8 +525,8 @@
       </page>
       
       <page
-            class="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
-            id="org.eclipse.ui.propertypages.project.ref12"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
+            id="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
             name="%CDTPathSymbolsProperty.name"
             >
          <filter
@@ -543,7 +556,7 @@
       
       <!--page
             class="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
-            id="org.eclipse.ui.propertypages.project.ref16"
+            id="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
             name="%CDTExpPathSymbolsProperty.name"
             >
          <filter
@@ -559,8 +572,8 @@
       </page-->
 
       <page
-            class="org.eclipse.cdt.ui.newui.Page_BuildSettings"
-            id="org.eclipse.ui.propertypages.project.ref13"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
+            id="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
             name="%CDTBuildProperty.name"
             >
          <filter
@@ -588,7 +601,7 @@
       </page>
       <page
             class="org.eclipse.cdt.managedbuilder.ui.properties.Page_ToolChain"
-            id="org.eclipse.ui.propertypages.project.ref14"
+            id="org.eclipse.cdt.managedbuilder.ui.properties.Page_ToolChain"
             name="%CDTToolchainProperty.name"
             >
          <filter

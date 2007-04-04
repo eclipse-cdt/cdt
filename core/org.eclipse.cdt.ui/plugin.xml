@@ -685,21 +685,6 @@
             class="org.eclipse.cdt.internal.ui.preferences.IndexerPreferencePage"
             id="org.eclipse.cdt.ui.preferences.IndexerPreferencePage"
             name="%indexerPrefName"/>
-      <page
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.ui.newui.PrefPage_Env"
-            id="org.eclipse.cdt.ui.preferences.EnvironmentPrefPage"
-            name="%envPrefName"/>
-      <page
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.ui.newui.PrefPage_Vars"
-            id="org.eclipse.cdt.ui.preferences.VariablesPrefPage"
-            name="%varsPrefName"/>
-      <page
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.ui.newui.PrefPage_PropertyPage"
-            id="org.eclipse.cdt.ui.preferences.PropertyPageSettings"
-            name="%propSettingsPrefName"/>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"

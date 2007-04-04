@@ -9,11 +9,12 @@
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.ui.newui;
+package org.eclipse.cdt.managedbuilder.ui.preferences;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.newui.AbstractPrefPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
+import org.eclipse.cdt.ui.newui.UIMessages;
 
 public class PrefPage_PropertyPage extends AbstractPrefPage {
 

@@ -8,7 +8,10 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.newui;
+package org.eclipse.cdt.managedbuilder.ui.preferences;
 
-public class PrefPage_Env extends PrefPage_Abstract {
+import org.eclipse.cdt.ui.newui.PrefPage_Abstract;
+
+public class PrefPage_Vars extends PrefPage_Abstract {
+
 }

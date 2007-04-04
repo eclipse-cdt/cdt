@@ -113,7 +113,7 @@ implements
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME = "tab"; //$NON-NLS-1$
 	public static final String CLASS_NAME = "class"; //$NON-NLS-1$
-	public static final String PARENT_NAME = "parent"; //$NON-NLS-1$
+	public static final String PARENT_NAME = "parentId"; //$NON-NLS-1$
 	public static final String IMAGE_NAME = "icon"; //$NON-NLS-1$
 	public static final String TIP_NAME = "tooltip"; //$NON-NLS-1$
 	public static final String TEXT_NAME = "name"; //$NON-NLS-1$

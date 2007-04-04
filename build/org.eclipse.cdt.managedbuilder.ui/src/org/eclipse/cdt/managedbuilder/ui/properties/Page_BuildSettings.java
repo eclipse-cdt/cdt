@@ -8,8 +8,15 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.newui;
+package org.eclipse.cdt.managedbuilder.ui.properties;
 
-public class PrefPage_Vars extends PrefPage_Abstract {
+import org.eclipse.cdt.ui.newui.AbstractPage;
 
+
+/**
+ * The class have the same functionality as superclass.
+ * The only need to create it is distinguishing tabs.
+*/
+public class Page_BuildSettings extends AbstractPage {
+	protected boolean isSingle() {	return false; }
 }

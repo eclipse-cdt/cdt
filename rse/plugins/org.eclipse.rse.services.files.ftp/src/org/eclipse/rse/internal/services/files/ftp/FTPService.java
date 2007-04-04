@@ -670,16 +670,13 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if(_downloadMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-			MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
-			
-			IHostFile remoteHostFile = getFile(null,remoteParent,remoteFile);
-			
-			FTPClient ftpClient = getFTPClient();
-			
 			try
 			{
+				MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
+				IHostFile remoteHostFile = getFile(null,remoteParent,remoteFile);
+				FTPClient ftpClient = getFTPClient();
+
 				remoteParent = adaptPath(remoteParent);
-				
 				ftpClient.changeWorkingDirectory(remoteParent);
 				
 				if (isBinary)

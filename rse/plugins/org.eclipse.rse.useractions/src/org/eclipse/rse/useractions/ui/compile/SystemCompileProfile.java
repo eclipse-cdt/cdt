@@ -1,5 +1,3 @@
-package org.eclipse.rse.useractions.ui.compile;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +7,11 @@ package org.eclipse.rse.useractions.ui.compile;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemCompileXMLConstants
  *******************************************************************************/
+
+package org.eclipse.rse.useractions.ui.compile;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
@@ -52,7 +54,7 @@ import org.w3c.dom.Text;
  *  From that, one can get a list of compile commands registered for that type, and the 
  *  last-used compile command for that type.
  */
-public abstract class SystemCompileProfile implements ISystemCompileXMLConstants {
+public abstract class SystemCompileProfile {
 	private SystemCompileManager parentManager;
 	//private SystemProfile systemProfile;	
 	private String profileName;
@@ -237,7 +239,7 @@ public abstract class SystemCompileProfile implements ISystemCompileXMLConstants
 	 * The default is "compile.xml" and need not be overridden unless you don't like that name :-).
 	 */
 	protected String getSaveFileName() {
-		return FILE_NAME;
+		return ISystemCompileXMLConstants.FILE_NAME;
 	}
 
 	/**
@@ -303,18 +305,18 @@ public abstract class SystemCompileProfile implements ISystemCompileXMLConstants
 	private Vector getTypes(Document doc) {
 		Vector types = new Vector();
 		Element root = doc.getDocumentElement();
-		String oldvrm = root.getAttribute(VERSION_ATTRIBUTE);
-		boolean oldversion = (oldvrm != null) && !oldvrm.equals(VERSION_VALUE);
-		NodeList list = doc.getElementsByTagName(TYPE_ELEMENT);
+		String oldvrm = root.getAttribute(ISystemCompileXMLConstants.VERSION_ATTRIBUTE);
+		boolean oldversion = (oldvrm != null) && !oldvrm.equals(ISystemCompileXMLConstants.VERSION_VALUE);
+		NodeList list = doc.getElementsByTagName(ISystemCompileXMLConstants.TYPE_ELEMENT);
 		if (list == null) return types;
 		for (int i = 0; i < list.getLength(); i++) {
 			Node node = list.item(i);
 			NamedNodeMap map = node.getAttributes();
 			// get the type
-			Node typeAttr = map.getNamedItem(TYPE_ATTRIBUTE);
+			Node typeAttr = map.getNamedItem(ISystemCompileXMLConstants.TYPE_ATTRIBUTE);
 			String type = typeAttr.getNodeValue();
 			// get the label of the last compile name
-			Node lastUsedAttr = map.getNamedItem(LASTUSED_ATTRIBUTE);
+			Node lastUsedAttr = map.getNamedItem(ISystemCompileXMLConstants.LASTUSED_ATTRIBUTE);
 			String lastUsed = lastUsedAttr.getNodeValue();
 			SystemCompileType newType = new SystemCompileType(this, type);
 			NodeList childList = node.getChildNodes();
@@ -322,45 +324,45 @@ public abstract class SystemCompileProfile implements ISystemCompileXMLConstants
 				Node child = childList.item(j);
 				NamedNodeMap childAttrMap = child.getAttributes();
 				// get the name of the compile name
-				Node nameAttr = childAttrMap.getNamedItem(LABEL_ATTRIBUTE);
+				Node nameAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.LABEL_ATTRIBUTE);
 				String name = nameAttr.getNodeValue();
 				// get the nature of the compile name
-				Node natureAttr = childAttrMap.getNamedItem(NATURE_ATTRIBUTE);
+				Node natureAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.NATURE_ATTRIBUTE);
 				String nature = natureAttr.getNodeValue();
 				// get the default command string
-				Node defaultAttr = childAttrMap.getNamedItem(DEFAULT_ATTRIBUTE);
+				Node defaultAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.DEFAULT_ATTRIBUTE);
 				String defaultString = (defaultAttr != null) ? defaultAttr.getNodeValue() : ""; //$NON-NLS-1$
 				// get the current string
-				Node currentAttr = childAttrMap.getNamedItem(CURRENT_ATTRIBUTE);
+				Node currentAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.CURRENT_ATTRIBUTE);
 				String currentString = currentAttr.getNodeValue();
 				// get the menu option
-				Node menuAttr = childAttrMap.getNamedItem(MENU_ATTRIBUTE);
+				Node menuAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.MENU_ATTRIBUTE);
 				String menuOption = menuAttr.getNodeValue();
 				// get the jobenv option
-				Node jobenvAttr = childAttrMap.getNamedItem(JOBENV_ATTRIBUTE);
+				Node jobenvAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.JOBENV_ATTRIBUTE);
 				String jobEnv = null;
 				if (jobenvAttr != null) jobEnv = jobenvAttr.getNodeValue();
 				// get the ordering
 				int order = j;
-				Node orderAttr = childAttrMap.getNamedItem(ORDER_ATTRIBUTE);
+				Node orderAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.ORDER_ATTRIBUTE);
 				// to ensure previous beta customers do not have problems
 				if (orderAttr != null) {
 					order = Integer.valueOf(orderAttr.getNodeValue()).intValue();
 				}
 				// get the id option
-				Node idAttr = childAttrMap.getNamedItem(ID_ATTRIBUTE);
+				Node idAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.ID_ATTRIBUTE);
 				String id = null;
 				if (idAttr != null) {
 					id = idAttr.getNodeValue();
 				}
 				// get the label editable option
-				Node labelEditableAttr = childAttrMap.getNamedItem(LABEL_EDITABLE_ATTRIBUTE);
+				Node labelEditableAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.LABEL_EDITABLE_ATTRIBUTE);
 				String labelEditable = null;
 				if (labelEditableAttr != null) {
 					labelEditable = labelEditableAttr.getNodeValue();
 				}
 				// get the label editable option
-				Node stringEditableAttr = childAttrMap.getNamedItem(STRING_EDITABLE_ATTRIBUTE);
+				Node stringEditableAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.STRING_EDITABLE_ATTRIBUTE);
 				String stringEditable = null;
 				if (stringEditableAttr != null) {
 					stringEditable = stringEditableAttr.getNodeValue();
@@ -432,7 +434,7 @@ public abstract class SystemCompileProfile implements ISystemCompileXMLConstants
 						String commandString = defaultCmds[j].getCommandWithParameters();
 						// we can pass in null for the id, because the constructor checks if id is null
 						// and if so tries to configure id automatically. This will work for IBM supplied commands.
-						cmds[j] = new SystemCompileCommand(type, null, cmdName, NATURE_IBM_VALUE, commandString, commandString, MENU_BOTH_VALUE, j);
+						cmds[j] = new SystemCompileCommand(type, null, cmdName, ISystemCompileXMLConstants.NATURE_IBM_VALUE, commandString, commandString, ISystemCompileXMLConstants.MENU_BOTH_VALUE, j);
 						type.addCompileCommandInOrder(cmds[j]);
 						String jobEnv = defaultCmds[j].getJobEnvironment();
 						if (jobEnv != null) {
@@ -503,20 +505,20 @@ public abstract class SystemCompileProfile implements ISystemCompileXMLConstants
 		try {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			Document doc = builder.getDOMImplementation().createDocument(null, ROOT_ELEMENT, null);
+			Document doc = builder.getDOMImplementation().createDocument(null, ISystemCompileXMLConstants.ROOT_ELEMENT, null);
 			// get root element and set attributes
 			Element root = doc.getDocumentElement();
-			root.setAttribute(VERSION_ATTRIBUTE, VERSION_VALUE);
+			root.setAttribute(ISystemCompileXMLConstants.VERSION_ATTRIBUTE, ISystemCompileXMLConstants.VERSION_VALUE);
 			// write the copyright info
-			Element copyright = doc.createElement(COPYRIGHT_ELEMENT);
-			Text copyrightText = doc.createTextNode(COPYRIGHT_TEXT);
+			Element copyright = doc.createElement(ISystemCompileXMLConstants.COPYRIGHT_ELEMENT);
+			Text copyrightText = doc.createTextNode(ISystemCompileXMLConstants.COPYRIGHT_TEXT);
 			copyright.appendChild(copyrightText);
 			root.appendChild(copyright);
 			// write type and compile commands for each
 			for (int i = 0; i < types.size(); i++) {
 				SystemCompileType type = (SystemCompileType) (types.get(i));
-				Element typeElement = doc.createElement(TYPE_ELEMENT);
-				typeElement.setAttribute(TYPE_ATTRIBUTE, type.getType());
+				Element typeElement = doc.createElement(ISystemCompileXMLConstants.TYPE_ELEMENT);
+				typeElement.setAttribute(ISystemCompileXMLConstants.TYPE_ATTRIBUTE, type.getType());
 				SystemCompileCommand lastUsedCompileName = type.getLastUsedCompileCommand();
 				String lastUsedName = null;
 				if (lastUsedCompileName == null) {
@@ -524,24 +526,24 @@ public abstract class SystemCompileProfile implements ISystemCompileXMLConstants
 				} else {
 					lastUsedName = lastUsedCompileName.getLabel();
 				}
-				typeElement.setAttribute(LASTUSED_ATTRIBUTE, lastUsedName);
+				typeElement.setAttribute(ISystemCompileXMLConstants.LASTUSED_ATTRIBUTE, lastUsedName);
 				Vector cmds = type.getCompileCommands();
 				for (int j = 0; j < cmds.size(); j++) {
 					SystemCompileCommand cmd = (SystemCompileCommand) (cmds.get(j));
-					Element cmdElement = doc.createElement(COMPILECOMMAND_ELEMENT);
+					Element cmdElement = doc.createElement(ISystemCompileXMLConstants.COMPILECOMMAND_ELEMENT);
 					if (cmd.getId() != null) {
-						cmdElement.setAttribute(ID_ATTRIBUTE, cmd.getId());
+						cmdElement.setAttribute(ISystemCompileXMLConstants.ID_ATTRIBUTE, cmd.getId());
 					}
-					cmdElement.setAttribute(LABEL_ATTRIBUTE, cmd.getLabel());
-					cmdElement.setAttribute(NATURE_ATTRIBUTE, cmd.getNature());
-					cmdElement.setAttribute(DEFAULT_ATTRIBUTE, cmd.getDefaultString());
-					cmdElement.setAttribute(CURRENT_ATTRIBUTE, cmd.getCurrentString());
-					cmdElement.setAttribute(MENU_ATTRIBUTE, cmd.getMenuOption());
-					cmdElement.setAttribute(ORDER_ATTRIBUTE, String.valueOf(j));
-					cmdElement.setAttribute(LABEL_EDITABLE_ATTRIBUTE, String.valueOf(cmd.isLabelEditable()));
-					cmdElement.setAttribute(STRING_EDITABLE_ATTRIBUTE, String.valueOf(cmd.isCommandStringEditable()));
+					cmdElement.setAttribute(ISystemCompileXMLConstants.LABEL_ATTRIBUTE, cmd.getLabel());
+					cmdElement.setAttribute(ISystemCompileXMLConstants.NATURE_ATTRIBUTE, cmd.getNature());
+					cmdElement.setAttribute(ISystemCompileXMLConstants.DEFAULT_ATTRIBUTE, cmd.getDefaultString());
+					cmdElement.setAttribute(ISystemCompileXMLConstants.CURRENT_ATTRIBUTE, cmd.getCurrentString());
+					cmdElement.setAttribute(ISystemCompileXMLConstants.MENU_ATTRIBUTE, cmd.getMenuOption());
+					cmdElement.setAttribute(ISystemCompileXMLConstants.ORDER_ATTRIBUTE, String.valueOf(j));
+					cmdElement.setAttribute(ISystemCompileXMLConstants.LABEL_EDITABLE_ATTRIBUTE, String.valueOf(cmd.isLabelEditable()));
+					cmdElement.setAttribute(ISystemCompileXMLConstants.STRING_EDITABLE_ATTRIBUTE, String.valueOf(cmd.isCommandStringEditable()));
 					if (cmd.getJobEnvironment() != null) {
-						cmdElement.setAttribute(JOBENV_ATTRIBUTE, cmd.getJobEnvironment());
+						cmdElement.setAttribute(ISystemCompileXMLConstants.JOBENV_ATTRIBUTE, cmd.getJobEnvironment());
 					}
 					typeElement.appendChild(cmdElement);
 				}
@@ -582,7 +584,7 @@ public abstract class SystemCompileProfile implements ISystemCompileXMLConstants
 				String commandString = defaultCmds[j].getCommandWithParameters();
 				// we can pass in null for the id, because the constructor checks if id is null
 				// and if so tries to configure id automatically. This will work for IBM supplied commands.
-				cmds[j] = new SystemCompileCommand(type, null, cmdName, NATURE_IBM_VALUE, commandString, commandString, MENU_BOTH_VALUE, j);
+				cmds[j] = new SystemCompileCommand(type, null, cmdName, ISystemCompileXMLConstants.NATURE_IBM_VALUE, commandString, commandString, ISystemCompileXMLConstants.MENU_BOTH_VALUE, j);
 				type.addCompileCommandInOrder(cmds[j]);
 				String jobEnv = defaultCmds[j].getJobEnvironment();
 				if (jobEnv != null) cmds[j].setJobEnvironment(jobEnv);

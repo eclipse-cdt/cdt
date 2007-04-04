@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemCompileXMLConstants
  *******************************************************************************/
 package org.eclipse.rse.useractions.ui.compile;
 
@@ -14,7 +15,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 
-public class SystemCompileContributor implements ISystemCompileXMLConstants {
+public class SystemCompileContributor {
 	private IConfigurationElement config;
 	private SystemCompileRemoteObjectMatcher matcher;
 
@@ -106,7 +107,7 @@ public class SystemCompileContributor implements ISystemCompileXMLConstants {
 					boolean labelExists = compileType.isLabelExists(label);
 					if (!labelExists) {
 						int numOfCommands = compileType.getNumOfCommands();
-						SystemCompileCommand command = new SystemCompileCommand(compileType, id, label, NATURE_ISV_VALUE, commandString, commandString, MENU_BOTH_VALUE, numOfCommands);
+						SystemCompileCommand command = new SystemCompileCommand(compileType, id, label, ISystemCompileXMLConstants.NATURE_ISV_VALUE, commandString, commandString, ISystemCompileXMLConstants.MENU_BOTH_VALUE, numOfCommands);
 						command.setLabelEditable(isLabelEditable);
 						command.setCommandStringEditable(isCommandStringEditable);
 						compileType.addCompileCommandInOrder(command);
@@ -121,7 +122,7 @@ public class SystemCompileContributor implements ISystemCompileXMLConstants {
 			// compile type does not exist, so add a compile type, then add the compile command to it
 			else {
 				compileType = new SystemCompileType(prf, srcType);
-				SystemCompileCommand command = new SystemCompileCommand(compileType, id, label, NATURE_ISV_VALUE, commandString, commandString, MENU_BOTH_VALUE, 0);
+				SystemCompileCommand command = new SystemCompileCommand(compileType, id, label, ISystemCompileXMLConstants.NATURE_ISV_VALUE, commandString, commandString, ISystemCompileXMLConstants.MENU_BOTH_VALUE, 0);
 				command.setLabelEditable(isLabelEditable);
 				command.setCommandStringEditable(isCommandStringEditable);
 				compileType.addCompileCommandInOrder(command);

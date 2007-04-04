@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemCompileXMLConstants
  *******************************************************************************/
 package org.eclipse.rse.useractions.ui.compile;
 
@@ -32,7 +33,7 @@ import org.eclipse.rse.useractions.ui.SystemCmdSubstVarList;
  *   <li>JobEnvironment. This is available for subsystems that need it, and they decide what to put in this attribute.
  * </ul>
  */
-public class SystemCompileCommand implements Cloneable, ISystemCompileXMLConstants, IAdaptable {
+public class SystemCompileCommand implements Cloneable, IAdaptable {
 	private SystemCompileType parentType; // reference to parent type
 	private String nature;
 	private String id;
@@ -165,21 +166,21 @@ public class SystemCompileCommand implements Cloneable, ISystemCompileXMLConstan
 	 * Indicate this is IBM supplied. This sets the nature to {#link ISystemCompileXMLConstants#NATURE_IBM_VALUE}
 	 */
 	public void setIsIBMSupplied() {
-		setNature(NATURE_IBM_VALUE);
+		setNature(ISystemCompileXMLConstants.NATURE_IBM_VALUE);
 	}
 
 	/**
 	 * Indicate this is user supplied. This sets the nature to {#link ISystemCompileXMLConstants#NATURE_USER_VALUE}
 	 */
 	public void setIsUserSupplied() {
-		setNature(NATURE_USER_VALUE);
+		setNature(ISystemCompileXMLConstants.NATURE_USER_VALUE);
 	}
 
 	/**
 	 * Indicate this is ISV supplied. This sets the nature to {#link ISystemCompileXMLConstants#NATURE_ISV_VALUE}
 	 */
 	public void setIsISVSupplied() {
-		setNature(NATURE_ISV_VALUE);
+		setNature(ISystemCompileXMLConstants.NATURE_ISV_VALUE);
 	}
 
 	/**
@@ -196,21 +197,21 @@ public class SystemCompileCommand implements Cloneable, ISystemCompileXMLConstan
 	 * Return true if this is an IBM-supplied type. If false it is user or ISV supplied.
 	 */
 	public boolean isIBMSupplied() {
-		return nature.equals(NATURE_IBM_VALUE);
+		return nature.equals(ISystemCompileXMLConstants.NATURE_IBM_VALUE);
 	}
 
 	/**
 	 * Return true if this is an user-supplied type. If false it is IBM or ISV supplied.
 	 */
 	public boolean isUserSupplied() {
-		return nature.equals(NATURE_USER_VALUE);
+		return nature.equals(ISystemCompileXMLConstants.NATURE_USER_VALUE);
 	}
 
 	/**
 	 * Return true if this is an ISV-supplied type. If false it is IBM or user supplied.
 	 */
 	public boolean isISVSupplied() {
-		return nature.equals(NATURE_ISV_VALUE);
+		return nature.equals(ISystemCompileXMLConstants.NATURE_ISV_VALUE);
 	}
 
 	/**
@@ -263,7 +264,7 @@ public class SystemCompileCommand implements Cloneable, ISystemCompileXMLConstan
 	 * Fastpath to setting the menu option to both, which is the typical case
 	 */
 	public void setMenuOptionBoth() {
-		setMenuOption(MENU_BOTH_VALUE);
+		setMenuOption(ISystemCompileXMLConstants.MENU_BOTH_VALUE);
 	}
 
 	/**
@@ -300,7 +301,7 @@ public class SystemCompileCommand implements Cloneable, ISystemCompileXMLConstan
 	 * @return true if promptable, false otherwise
 	 */
 	public boolean isPromptable() {
-		if (menuOption.equals(MENU_BOTH_VALUE) || menuOption.equals(MENU_PROMPTABLE_VALUE))
+		if (menuOption.equals(ISystemCompileXMLConstants.MENU_BOTH_VALUE) || menuOption.equals(ISystemCompileXMLConstants.MENU_PROMPTABLE_VALUE))
 			return true;
 		else
 			return false;
@@ -310,7 +311,7 @@ public class SystemCompileCommand implements Cloneable, ISystemCompileXMLConstan
 	 * Returns if it is non-promptable. Queries the value of the menuOption attribute.
 	 */
 	public boolean isNonPromptable() {
-		if (menuOption.equals(MENU_BOTH_VALUE) || menuOption.equals(MENU_NON_PROMPTABLE_VALUE))
+		if (menuOption.equals(ISystemCompileXMLConstants.MENU_BOTH_VALUE) || menuOption.equals(ISystemCompileXMLConstants.MENU_NON_PROMPTABLE_VALUE))
 			return true;
 		else
 			return false;
@@ -365,7 +366,7 @@ public class SystemCompileCommand implements Cloneable, ISystemCompileXMLConstan
 	 * If a subclass adds additional attributes, this method should be subclassed to clone those attributes.
 	 */
 	public Object clone() {
-		SystemCompileCommand clone = new SystemCompileCommand(getParentType(), getId(), getLabel(), NATURE_USER_VALUE, null, getCurrentString(), getMenuOption(), getOrder());
+		SystemCompileCommand clone = new SystemCompileCommand(getParentType(), getId(), getLabel(), ISystemCompileXMLConstants.NATURE_USER_VALUE, null, getCurrentString(), getMenuOption(), getOrder());
 		if (jobEnv != null) clone.setJobEnvironment(jobEnv);
 		return clone;
 	}

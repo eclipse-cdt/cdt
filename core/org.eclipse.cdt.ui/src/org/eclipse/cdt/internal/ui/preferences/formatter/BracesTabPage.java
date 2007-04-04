@@ -36,7 +36,9 @@ public class BracesTabPage extends ModifyDialogTabPage {
 	 */
 	private final static String PREVIEW=
 		createPreviewHeader(FormatterMessages.BracesTabPage_preview_header) + 
-		"#include <math.h>\n" + //$NON-NLS-1$
+		"#include <math.h>\n\n" + //$NON-NLS-1$
+		"int digits[]= { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };" + //$NON-NLS-1$
+		"\n\n" +  //$NON-NLS-1$
 		"class Point {" +  //$NON-NLS-1$
 		"public:" +  //$NON-NLS-1$
 		"Point(double xc, double yc) : x(xc), y(yc) {}" + //$NON-NLS-1$ 
@@ -45,11 +47,13 @@ public class BracesTabPage extends ModifyDialogTabPage {
 		"double x;" +  //$NON-NLS-1$
 		"double y;" +  //$NON-NLS-1$
 		"};" +  //$NON-NLS-1$
+		"\n\n" + //$NON-NLS-1$
 		"double Point::distance(const Point& other) const {" + //$NON-NLS-1$
 		"double dx = x - other.x;" + //$NON-NLS-1$
 		"double dy = y - other.y;" + //$NON-NLS-1$
 		"return sqrt(dx * dx + dy * dy);" + //$NON-NLS-1$
 		"}"+ //$NON-NLS-1$
+		"\n\n" +  //$NON-NLS-1$
 		"int Point::compareX(const Point& other) const {" + //$NON-NLS-1$
 		"if(x < other.x) {" + //$NON-NLS-1$
 		"return -1;" + //$NON-NLS-1$
@@ -59,6 +63,7 @@ public class BracesTabPage extends ModifyDialogTabPage {
 		"return 0;" + //$NON-NLS-1$
 		"}"+ //$NON-NLS-1$
 		"}"+ //$NON-NLS-1$
+		"\n\n" +  //$NON-NLS-1$
 		"namespace FOO {"+ //$NON-NLS-1$
 		"int foo(int bar) const {" + //$NON-NLS-1$
 		"switch(bar) {" + //$NON-NLS-1$

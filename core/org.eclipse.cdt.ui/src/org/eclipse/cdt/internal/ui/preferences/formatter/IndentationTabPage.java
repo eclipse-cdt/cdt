@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,20 +41,24 @@ public class IndentationTabPage extends ModifyDialogTabPage {
 	 */
 	private final static String PREVIEW=
 		createPreviewHeader(FormatterMessages.IndentationTabPage_preview_header) + 
-		"#include <math.h>\n" + //$NON-NLS-1$
+		"#include <math.h>\n\n" + //$NON-NLS-1$
 		"class Point {" +  //$NON-NLS-1$
 		"public:" +  //$NON-NLS-1$
 		"Point(double xc, double yc) : x(xc), y(yc) {}" + //$NON-NLS-1$ 
+		"\n\n" +  //$NON-NLS-1$
 		"double distance(const Point& other) const;" + //$NON-NLS-1$
 		"int compareX(const Point& other) const;" + //$NON-NLS-1$
 		"double x;" +  //$NON-NLS-1$
 		"double y;" +  //$NON-NLS-1$
-		"};" +  //$NON-NLS-1$
+		"};" + //$NON-NLS-1$
+		"\n\n" +  //$NON-NLS-1$
 		"double Point::distance(const Point& other) const {" + //$NON-NLS-1$
 		"double dx = x - other.x;" + //$NON-NLS-1$
 		"double dy = y - other.y;" + //$NON-NLS-1$
+		"\n\n" +  //$NON-NLS-1$
 		"return sqrt(dx * dx + dy * dy);" + //$NON-NLS-1$
 		"}"+ //$NON-NLS-1$
+		"\n\n" +  //$NON-NLS-1$
 		"int Point::compareX(const Point& other) const {" + //$NON-NLS-1$
 		"if(x < other.x) {" + //$NON-NLS-1$
 		"return -1;" + //$NON-NLS-1$
@@ -64,6 +68,7 @@ public class IndentationTabPage extends ModifyDialogTabPage {
 		"return 0;" + //$NON-NLS-1$
 		"}"+ //$NON-NLS-1$
 		"}"+ //$NON-NLS-1$
+		"\n\n" +  //$NON-NLS-1$
 		"namespace FOO {"+ //$NON-NLS-1$
 		"int foo(int bar) const {" + //$NON-NLS-1$
 		"switch(bar) {" + //$NON-NLS-1$

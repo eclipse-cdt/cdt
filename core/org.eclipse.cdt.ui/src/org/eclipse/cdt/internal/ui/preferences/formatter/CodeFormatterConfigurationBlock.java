@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,14 +71,16 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 		"/*\n* " + //$NON-NLS-1$
 		FormatterMessages.CodingStyleConfigurationBlock_preview_title + 
 		"\n*/\n" + //$NON-NLS-1$
-		"#include <math.h>\n" + //$NON-NLS-1$
+		"#include <math.h>\n\n" + //$NON-NLS-1$
 		"class Point {" +  //$NON-NLS-1$
 		"public:" +  //$NON-NLS-1$
 		"Point(double xc, double yc) : x(xc), y(yc) {}" + //$NON-NLS-1$ 
 		"double distance(const Point& other) const;" + //$NON-NLS-1$
+		"\n\n" +  //$NON-NLS-1$
 		"double x;" +  //$NON-NLS-1$
 		"double y;" +  //$NON-NLS-1$
 		"};" +  //$NON-NLS-1$
+		"\n\n" +  //$NON-NLS-1$
 		"double Point::distance(const Point& other) const {" + //$NON-NLS-1$
 		"double dx = x - other.x;" + //$NON-NLS-1$
 		"double dy = y - other.y;" + //$NON-NLS-1$

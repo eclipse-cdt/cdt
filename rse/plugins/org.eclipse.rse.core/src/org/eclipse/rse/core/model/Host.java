@@ -16,6 +16,7 @@
  * Uwe Stieber (Wind River) - Dynamic system type provider extensions.
  *                          - Moved to package org.eclipse.rse.model for being extendable.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -497,21 +498,21 @@ public class Host extends RSEModelObject implements IHost {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.RSEModelObject#setDirty(boolean)
-	 */
-	public void setDirty(boolean flag) {
-		super.setDirty(flag);
-		ISystemHostPool myPool = getHostPool();
-		if (myPool != null && flag) {
-			myPool.setDirty(true);
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#commit()
 	 */
 	public boolean commit() {
-		return RSECorePlugin.getThePersistenceManager().commit(this);
+		ISystemProfile profile = getSystemProfile();
+		boolean result = profile.commit();
+		return result;
+	}
+	
+	public IRSEPersistableContainer getPersistableParent() {
+		return _profile;
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		IConnectorService[] result = getConnectorServices();
+		return result;
 	}
 
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -23,8 +23,10 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.RSEPersistableObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
@@ -91,7 +93,7 @@ import org.eclipse.rse.persistence.IRSEPersistenceManager;
 /** 
  * @lastgen class SystemFilterPoolManagerImpl Impl implements SystemFilterPoolManager {}
  */
-public class SystemFilterPoolManager implements ISystemFilterPoolManager {
+public class SystemFilterPoolManager extends RSEPersistableObject implements ISystemFilterPoolManager {
 	private ISystemFilterPool[] poolArray = null; // cache for performance
 	private ISystemFilterPoolManagerProvider caller = null;
 	private Object poolMgrData;
@@ -102,10 +104,6 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager {
 	private boolean suspendSave = false;
 	private Logger logger = null;
 	private ISystemProfile _profile;
-
-	// persistence	
-	protected boolean _isDirty = true;
-	private boolean _wasRestored = false;
 
 	public static boolean debug = true;
 
@@ -1521,25 +1519,6 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager {
 	}
 
 	/**
-	 * Save all the filter pools to disk.     
-	 * Uses the save policy specified in this manager's factory method.
-	 */
-	public boolean commit() {
-		IRSEPersistenceManager mgr = RSECorePlugin.getThePersistenceManager();
-
-		return mgr.commit(this);
-	}
-
-	/**
-	 * Save all the filter pools to disk.     
-	 * Uses the save policy specified in this manager's factory method.
-	 */
-	public boolean commit(ISystemFilterPool pool) {
-		IRSEPersistenceManager mgr = RSECorePlugin.getThePersistenceManager();
-		return mgr.commit(pool);
-	}
-
-	/**
 	 * Restore filter pools when all are stored in one file
 	 * @param logger The logging object to log errors to
 	 * @param mgrFolder The folder containing the file to restore from.
@@ -1742,22 +1721,31 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager {
 		}
 	}
 
-	public boolean isDirty() {
-		return _isDirty;
+	/**
+	 * Save all the filter pools to disk.     
+	 * Uses the save policy specified in this manager's factory method.
+	 */
+	public boolean commit() {
+		IRSEPersistenceManager mgr = RSECorePlugin.getThePersistenceManager();
+		return mgr.commit(this);
 	}
 
-	public void setDirty(boolean flag) {
-		if (_isDirty != flag) {
-			_isDirty = flag;
-		}
+	/**
+	 * Save all the filter pools to disk.     
+	 * Uses the save policy specified in this manager's factory method.
+	 */
+	public boolean commit(ISystemFilterPool pool) {
+		boolean result = pool.commit();
+		return result;
 	}
 
-	public boolean wasRestored() {
-		return _wasRestored;
+	public IRSEPersistableContainer getPersistableParent() {
+		return _profile;
 	}
-
-	public void setWasRestored(boolean flag) {
-		_wasRestored = flag;
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		IRSEPersistableContainer[] result = getSystemFilterPools();
+		return result;
 	}
 
 }

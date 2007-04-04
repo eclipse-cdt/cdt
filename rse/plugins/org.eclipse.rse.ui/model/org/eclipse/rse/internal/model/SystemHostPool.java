@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - created and used RSEPReferencesManager
  *                     - moved SystemsPreferencesManager to a new plugin
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.internal.model;
@@ -28,6 +29,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
@@ -508,70 +510,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         invalidateCache();
     }
 
-	// -------------------------
-	// SAVE / RESTORE METHODS...
-	// -------------------------
 	/**
-	 * Save all connections to disk.
-	 * Attempts to save all of them, swallowing exceptions, then at the end throws the last exception caught.
-	 */
-	public boolean commit()
-	{
-		return RSECorePlugin.getThePersistenceManager().commit(this);
-	}
-	
-    /**
-     * Attempt to save single connection to disk.
-     */
-    public void commit(IHost connection)
-    {
-    	commit();
-     }
-
-	/**
-	 * Restore connections from disk
-	 */
-	protected void restore()
-	   throws Exception
-	{
-		//System.out.println("... . in pool.restore ");
-		
-		//FIXME 
-	}
-	
-    /**
-     * Restore a connection of a given name from disk...
-     */
-    protected IHost restore(String connectionName)  
-        throws Exception  
-    {
-    	/*FIXME
-    	//System.out.println("in SystemConnectionPoolImpl#restore for connection " + connectionName);
-        String fileName = getRootSaveFileName(connectionName);                
-        //System.out.println(".......fileName = " + fileName);
-        //System.out.println(".......folderName = " + getConnectionFolder(connectionName).getName());
-    	java.util.List ext = getMOFHelpers().restore(getConnectionFolder(connectionName),fileName);
-    	
-        // should be exactly one profile...
-        Iterator iList = ext.iterator();
-        SystemConnection connection = (SystemConnection)iList.next();        
-        if (connection != null)
-        {
-          if (!connection.getAliasName().equalsIgnoreCase(connectionName))
-          {
-            RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Incorrect alias name found in connections.xmi file for " + connectionName+". Name was reset");
-            connection.setAliasName(connectionName); // just in case!
-          }
-          internalAddConnection(connection);
-        }        
-        return connection;
-        */
-    	return null;
-    }
-
-   
-    
-    /**
      * Return the unqualified save file name with the extension .xmi
      */
     protected static String getSaveFileName(IHost connection)
@@ -596,11 +535,6 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         return fileName;    	
     }
     
-   
-
-    
-
-
 	public String toString()
     {
         if (getName() == null)
@@ -608,6 +542,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         else
           return getName();
     }
+
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 */
@@ -651,5 +586,77 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 		return result.toString();
 	}
 	
+	/**
+	 * Restore connections from disk
+	 */
+	protected void restore()
+	   throws Exception
+	{
+		//System.out.println("... . in pool.restore ");
+		
+		//FIXME 
+	}
+
+	/**
+	 * Restore a connection of a given name from disk...
+	 */
+	protected IHost restore(String connectionName)  
+	    throws Exception  
+	{
+		/*FIXME
+		//System.out.println("in SystemConnectionPoolImpl#restore for connection " + connectionName);
+	    String fileName = getRootSaveFileName(connectionName);                
+	    //System.out.println(".......fileName = " + fileName);
+	    //System.out.println(".......folderName = " + getConnectionFolder(connectionName).getName());
+		java.util.List ext = getMOFHelpers().restore(getConnectionFolder(connectionName),fileName);
+		
+	    // should be exactly one profile...
+	    Iterator iList = ext.iterator();
+	    SystemConnection connection = (SystemConnection)iList.next();        
+	    if (connection != null)
+	    {
+	      if (!connection.getAliasName().equalsIgnoreCase(connectionName))
+	      {
+	        RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Incorrect alias name found in connections.xmi file for " + connectionName+". Name was reset");
+	        connection.setAliasName(connectionName); // just in case!
+	      }
+	      internalAddConnection(connection);
+	    }        
+	    return connection;
+	    */
+		return null;
+	}
+
+	/** 
+	 * System host pools are not persisted and do not exist in the persistence hierarchy.
+	 * @return null
+	 */
+	public IRSEPersistableContainer getPersistableParent() {
+		return null;
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		return new IRSEPersistableContainer[0];
+	}
+
+	// -------------------------
+	// SAVE / RESTORE METHODS...
+	// -------------------------
+	/**
+	 * Save all connections to disk.
+	 * Attempts to save all of them, swallowing exceptions, then at the end throws the last exception caught.
+	 */
+	public boolean commit()
+	{
+		return RSECorePlugin.getThePersistenceManager().commit(this);
+	}
+
+	/**
+	 * Attempt to save single connection to disk.
+	 */
+	public void commit(IHost connection)
+	{
+		commit();
+	 }
 
 }

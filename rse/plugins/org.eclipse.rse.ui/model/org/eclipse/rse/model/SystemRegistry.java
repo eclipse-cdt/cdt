@@ -16,6 +16,7 @@
  * Uwe Stieber (Wind River) - bugfixing
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.model;
@@ -2276,7 +2277,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			Display.getDefault().syncExec(fire);
 
 		}
-		RSEUIPlugin.getThePersistenceManager().commit(conn);
+		conn.commit();
 		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list                
 	
 		
@@ -2302,7 +2303,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystems[j], null);
 		}
 		
-		RSEUIPlugin.getThePersistenceManager().commit(host);
+		host.commit();
 		return subsystems;
 	}
 	
@@ -3360,7 +3361,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public boolean saveHost(IHost conn)
 	{
-		return RSEUIPlugin.getThePersistenceManager().commit(conn);
+		return conn.commit();
 	}
 
 	/**

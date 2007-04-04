@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -24,6 +24,7 @@ import org.eclipse.rse.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterString;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.internal.core.model.RSEModelResources;
@@ -290,7 +291,16 @@ public class SystemFilterString extends RSEModelObject implements ISystemFilterS
 	
 	public boolean commit() 
 	{
-		return RSECorePlugin.getThePersistenceManager().commit(getParentSystemFilter());
+		boolean result = getParentSystemFilter().commit();
+		return result;
+	}
+	
+	public IRSEPersistableContainer getPersistableParent() {
+		return parentFilter;
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		return new IRSEPersistableContainer[0];
 	}
 
 }

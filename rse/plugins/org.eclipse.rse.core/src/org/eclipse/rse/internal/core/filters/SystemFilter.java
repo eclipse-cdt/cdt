@@ -11,19 +11,19 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterConstants;
@@ -33,6 +33,8 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.filters.SystemFilterSimple;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
 import org.eclipse.rse.internal.core.model.RSEModelResources;
 import org.eclipse.rse.internal.references.SystemReferencedObject;
@@ -1037,7 +1039,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	public void setType(String newType)
 	{
 		type = newType;
-		_isDirty = true;
+		setDirty(true);
 	}
 
 	/**
@@ -1365,7 +1367,27 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	
 	public boolean commit()
 	{
-		return RSECorePlugin.getThePersistenceManager().commit(this);
+		ISystemProfile profile = getSystemFilterPoolManager().getSystemProfile();
+		boolean result = profile.commit();
+		return result;
+	}
+	
+	public IRSEPersistableContainer getPersistableParent() {
+		IRSEPersistableContainer result = getParentFilterContainer();
+		return result;
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		List children = new ArrayList(20);
+		if (nestedFilters != null) {
+			children.addAll(nestedFilters);
+		}
+		if (filterStringVector != null) {
+			children.addAll(filterStringVector);
+		}
+		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
+		children.toArray(result);
+		return result;
 	}
 	
 }

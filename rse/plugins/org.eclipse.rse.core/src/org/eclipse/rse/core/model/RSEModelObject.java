@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -25,30 +25,6 @@ import org.eclipse.rse.internal.core.model.RSEModelResources;
  *
  */
 public abstract class RSEModelObject extends PropertySetContainer implements IRSEModelObject {
-	protected boolean _isDirty = true;
-	protected boolean _wasRestored = false;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.persistance.IRSEPersistableContainer#isDirty()
-	 */
-	public final boolean isDirty() {
-		return _isDirty;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.persistance.IRSEPersistableContainer#setDirty(boolean)
-	 */
-	public void setDirty(boolean flag) {
-		_isDirty = flag;
-	}
-
-	public final boolean wasRestored() {
-		return _wasRestored;
-	}
-
-	public final void setWasRestored(boolean flag) {
-		_wasRestored = flag;
-	}
 
 	public String getDescription() {
 		return RSEModelResources.RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;

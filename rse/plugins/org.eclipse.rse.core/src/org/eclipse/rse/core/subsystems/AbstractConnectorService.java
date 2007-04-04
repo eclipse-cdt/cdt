@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -23,6 +24,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
 
 /**
@@ -118,10 +120,13 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	public void setRemoteServerLauncherProperties(IServerLauncherProperties newRemoteServerLauncher) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#hasRemoteServerLauncherProperties()
+	 */
 	public final boolean hasRemoteServerLauncherProperties() {
 		return getRemoteServerLauncherProperties() != null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#addCommunicationsListener(org.eclipse.rse.core.subsystems.ICommunicationsListener)
 	 */
@@ -236,7 +241,23 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#commit()
 	 */
 	public final boolean commit() {
-		return RSECorePlugin.getThePersistenceManager().commit(getHost());
+		return getHost().commit();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableParent()
+	 */
+	public final IRSEPersistableContainer getPersistableParent() {
+		return _host;
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		List children = new ArrayList(20);
+		children.add(getRemoteServerLauncherProperties());
+		children.addAll(_registeredSubSystems);
+		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
+		children.toArray(result);
+		return result;
 	}
 
 	/* (non-Javadoc)

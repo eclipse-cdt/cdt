@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -31,6 +31,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -242,5 +243,24 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	public boolean commit() {
 		return false;
 		//	return RSEUIPlugin.getThePersistenceManager().commit(getProvider().);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableParent()
+	 */
+	public IRSEPersistableContainer getPersistableParent() {
+		IRSEPersistableContainer parent = null;
+		ISystemFilterPoolReferenceManagerProvider provider = getProvider();
+		if (provider instanceof IRSEPersistableContainer) {
+			parent = (IRSEPersistableContainer) provider;
+		}
+		return parent;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableChildren()
+	 */
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		return new IRSEPersistableContainer[0];
 	}
 }

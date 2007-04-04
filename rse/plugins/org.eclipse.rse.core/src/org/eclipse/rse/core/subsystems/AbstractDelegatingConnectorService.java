@@ -10,12 +10,15 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
+import org.eclipse.rse.core.model.RSEPersistableObject;
 
 public abstract class AbstractDelegatingConnectorService implements IDelegatingConnectorService 
 {
@@ -748,5 +751,53 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 		return false;
 	}
+	
+	public boolean isTainted() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.isTainted();
+		}
+		return false;
+	}
+	
+	public void setTainted(boolean flag) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			conServ.setTainted(flag);
+		}
+	}
+	
+	public IRSEPersistableContainer getPersistableParent() {
+		return getHost();
+	}
+	
+	public void beginRestore() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			conServ.beginRestore();
+		}
+	}
+	
+	public void endRestore() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			conServ.endRestore();
+		}
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.getPersistableChildren();
+		}
+		return null;
+	}
+	
+	
 
 }

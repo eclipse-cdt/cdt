@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - 168870: moved SystemPreferencesManager to a new package
  * David Dykstal (IBM) - 168870: created and used RSEPreferencesManager
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -46,6 +47,7 @@ import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSECallback;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -3221,7 +3223,19 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	
 	public boolean commit()
 	{
-		return RSEUIPlugin.getThePersistenceManager().commit(this);
+		ISystemProfile profile = getSystemProfile();
+		boolean result = profile.commit();
+		return result;
+	}
+	
+	public IRSEPersistableContainer getPersistableParent() {
+		return _host;
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		ISystemFilterPoolReferenceManager manager = getSystemFilterPoolReferenceManager();
+		IRSEPersistableContainer[] result = manager.getReferencedSystemFilterPools();
+		return result;
 	}
 	
 }

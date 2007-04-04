@@ -12,11 +12,13 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.subsystems;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
@@ -50,6 +52,14 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 	public IConnectorService getConnectorService()
 	{
 		return _connectorService;
+	}
+	
+	public IRSEPersistableContainer getPersistableParent() {
+		return _connectorService;
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		return new IRSEPersistableContainer[0];
 	}
 
 	/**
@@ -101,7 +111,7 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 
 	public boolean commit() 
 	{
-		return RSECorePlugin.getThePersistenceManager().commit(getConnectorService().getHost());
+		return getConnectorService().getHost().commit();
 	}
 	
 	

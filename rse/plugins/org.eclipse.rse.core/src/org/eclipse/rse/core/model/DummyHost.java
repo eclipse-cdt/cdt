@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -59,6 +60,8 @@ public class DummyHost extends PlatformObject implements IHost
 	{
 		return null;
 	}
+
+
 
 	public String getLocalDefaultUserId()
 	{
@@ -213,7 +216,6 @@ public class DummyHost extends PlatformObject implements IHost
 
 	public void setDirty(boolean flag)
 	{
-		//Auto-generated method stub
 	}
 
 	public boolean commit()
@@ -228,7 +230,27 @@ public class DummyHost extends PlatformObject implements IHost
 
 	public void setWasRestored(boolean flag)
 	{
-		//Auto-generated method stub
+	}
+	
+	public IRSEPersistableContainer getPersistableParent() {
+		return null;
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		return new IRSEPersistableContainer[0];
+	}
+
+	public boolean isTainted() {
+		return false;
+	}
+	
+	public void beginRestore() {
+	}
+	
+	public void endRestore() {
+	}
+
+	public void setTainted(boolean flag) {
 	}
 
 }

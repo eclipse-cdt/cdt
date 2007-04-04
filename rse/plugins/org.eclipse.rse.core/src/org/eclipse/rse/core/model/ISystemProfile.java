@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,13 +11,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 
 //
 
@@ -96,4 +97,21 @@ public interface ISystemProfile extends IRSEModelObject {
 	 * Return true if this profile is currently active for this user
 	 */
 	public boolean isActive();
+	
+	/**
+	 * Each profile is persisted by a persistence provider. This returns the instance of the 
+	 * persistence provider used for this profile. New profiles will use the default persistence
+	 * provider unless one is set by some other means.
+	 * @return The persistence provider used for saving and restoring this profile.
+	 */
+	public IRSEPersistenceProvider getPersistenceProvider();
+	
+	/**
+	 * Sets the persistence provider for the use of this profile. If this is not called then
+	 * this profile will be persisted by the default persistence provider. This will typically
+	 * be set by either a persistence persistence provider when restoring a profile or by a migration
+	 * utility when converting profiles from one form to another.
+	 * @param provider the persistence provider to use when saving this profile. 
+	 */
+	public void setPersistenceProvider(IRSEPersistenceProvider provider);
 }

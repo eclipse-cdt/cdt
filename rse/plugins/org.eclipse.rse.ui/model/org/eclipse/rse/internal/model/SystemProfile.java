@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.internal.model;
@@ -22,12 +22,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.core.model.RSEModelResources;
+import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
@@ -38,6 +40,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 {
 
 	private ISystemProfileManager mgr;
+	private IRSEPersistenceProvider provider;
 	private boolean active;
 	private String name = null;
 	private boolean defaultPrivate = false;
@@ -100,8 +103,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 			}
 		}
 		ISystemFilterPool[] allPools = new ISystemFilterPool[poolsVector.size()];
-		for (int idx=0; idx<allPools.length; idx++)
-			allPools[idx] = (ISystemFilterPool)poolsVector.elementAt(idx);
+		poolsVector.toArray(allPools);
 		return allPools;
 	}
 
@@ -197,5 +199,35 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	{
 		return RSEUIPlugin.getThePersistenceManager().commit(this);
 	}
+	
+	/**
+	 * The SystemProfile is the top of the persistence hierarchy.
+	 * @return null
+	 */
+	public IRSEPersistableContainer getPersistableParent() {
+		return null;
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		ISystemFilterPool[] pools = getFilterPools();
+		IHost[] hosts = getHosts();
+		IRSEPersistableContainer[] result = new IRSEPersistableContainer[pools.length + hosts.length];
+		System.arraycopy(pools, 0, result, 0, pools.length);
+		System.arraycopy(hosts, 0, result, pools.length, hosts.length);
+		return result;	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemProfile#getPersistenceProvider()
+	 */
+	public IRSEPersistenceProvider getPersistenceProvider() {
+		return provider;
+	}
+	
+	public void setPersistenceProvider(IRSEPersistenceProvider provider) {
+		this.provider = provider;
+	}
+	
+	
 
 }

@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * David Dykstal (IBM) - 168870: made use of adapters on the SubSystemConfigurationProxy
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -45,6 +46,7 @@ import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.filters.SystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -155,7 +157,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	protected java.util.List subSystemList = null;
 	protected java.util.List filterPoolManagerList = null;
 
-	protected boolean _isDirty;
+//	protected boolean _isDirty;
 
 	
 	/**
@@ -1919,7 +1921,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 					defaultPool.setDefault(true);
 					try
 					{
-						RSEUIPlugin.getThePersistenceManager().commit(defaultPool);
+						defaultPool.commit();
 					}
 					catch (Exception exc)
 					{
@@ -3030,29 +3032,70 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
    	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
 	}
 	
+	/**
+	 * Subsystem configurations are never persisted.
+	 * @return false
+	 */
 	public boolean isDirty()
 	{
-		return _isDirty;
+		return false;
 	}
 	
+	/**
+	 * Subsystem configurations are never marked dirty. This does nothing.
+	 */
 	public void setDirty(boolean flag)
 	{
-		_isDirty = flag;		
 	}
 
+	/**
+	 * Subsystem configurations are never persisted.
+	 * @return false
+	 */
+	public boolean isTainted()
+	{
+		return false;
+	}
+	
+	/**
+	 * Subsystem configurations are never marked dirty. This does nothing.
+	 */
+	public void setTainted(boolean flag)
+	{
+	}
 
-
+	/**
+	 * Subsystem configurations are never restored since they are not persisted.
+	 * @return false
+	 */
 	public boolean wasRestored() 
 	{
-		// factories are never restored from disk
 		return false;
 	}
 
-
-
+	/**
+	 * Subsystem configurations are never restored. This does nothing.
+	 */
 	public void setWasRestored(boolean flag) 
 	{
-		// dummy impl - not required for factories		
+	}
+	
+	/**
+	 * Subsystem configurations are not persisted.
+	 * @return null
+	 */
+	public IRSEPersistableContainer getPersistableParent() {
+		return null;
+	}
+	
+	public void beginRestore() {
+	}
+	
+	public void endRestore() {
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		return new IRSEPersistableContainer[0];
 	}
 
 	/**

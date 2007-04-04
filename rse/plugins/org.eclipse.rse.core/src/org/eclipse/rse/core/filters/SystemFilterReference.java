@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
@@ -479,11 +480,18 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
 	        cachedContents.clear();
         }
     }
-	public boolean commit() 
+
+    public boolean commit() 
 	{
-		// FIXME
 		return false;
 	}
-	
+    
+    public IRSEPersistableContainer getPersistableParent() {
+    	return null;
+    }
+    
+    public IRSEPersistableContainer[] getPersistableChildren() {
+    	return new IRSEPersistableContainer[0];
+    }
     
 }

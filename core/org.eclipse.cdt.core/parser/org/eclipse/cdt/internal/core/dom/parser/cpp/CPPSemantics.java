@@ -1038,6 +1038,7 @@ public class CPPSemantics {
 						IASTNode parent = ASTInternal.getPhysicalNodeOfScope(scope);
 						if (parent == null) {
 							IBinding[] bindings = scope.find(data.astName.toString(), data.prefixLookup);
+							bindings = appendClassType(bindings, scope, data);
 							mergeResults(data, bindings, true);
 							useASTResults = false;
 						} else {
@@ -1158,6 +1159,19 @@ public class CPPSemantics {
 		}
 	}
 
+	private static IBinding[] appendClassType(IBinding[] bindings, ICPPScope scope, CPPSemantics.LookupData data) throws DOMException {
+		if (scope instanceof ICPPClassScope) {
+			IBinding binding = ((ICPPClassScope)scope).getClassType();
+			char[] c = binding.getNameCharArray();
+			char[] n = data.astName.toCharArray();
+			if ((data.prefixLookup && CharArrayUtils.equals(c, 0, n.length, n, true))
+					|| (!data.prefixLookup && CharArrayUtils.equals(c, n))) {
+				return (IBinding[]) ArrayUtil.append(IBinding.class, bindings, binding);
+			}
+		}
+		return bindings;
+	}
+	
 	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
 		// the index cannot return the translation unit as parent scope
@@ -1213,12 +1227,12 @@ public class CPPSemantics {
 				//is circular inheritance
 				if( ! data.inheritanceChain.containsKey( parent ) ){
 					//is this name define in this scope?
-					if( data.astName != null && !data.contentAssist && ASTInternal.isFullyCached(parent) )
+					if( ASTInternal.isFullyCached(parent) && data.astName != null && !data.contentAssist )
 						inherited = parent.getBinding( data.astName, true );
-					else if (ASTInternal.getPhysicalNodeOfScope(lookIn) != null
-							&& ASTInternal.getPhysicalNodeOfScope(parent) == null)
+					else if (ASTInternal.getPhysicalNodeOfScope(parent) == null) {
 						inherited = parent.find(data.astName.toString(), data.prefixLookup);
-					else
+						inherited = appendClassType((IBinding[]) inherited, parent, data);
+					} else
 						inherited = lookupInScope( data, parent, null );
 					
 					if( inherited == null || data.contentAssist ){
@@ -1617,6 +1631,7 @@ public class CPPSemantics {
 					}
 				} else if (ASTInternal.getPhysicalNodeOfScope(temp) == null) {
 					IBinding[] bindings = temp.find(data.astName.toString(), data.prefixLookup);
+					bindings = appendClassType(bindings, temp, data);
 					if (bindings != null && bindings.length > 0) {
 						mergeResults( data, bindings, true );
 						found = true;

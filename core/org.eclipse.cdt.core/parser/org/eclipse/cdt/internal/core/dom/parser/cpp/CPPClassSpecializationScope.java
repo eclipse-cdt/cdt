@@ -17,24 +17,20 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
@@ -42,111 +38,52 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
  * @author aniefer
  */
 public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternalScope {
-	private static final char[] CONSTRUCTOR_KEY = "!!!CTOR!!!".toCharArray();  //$NON-NLS-1$
-
-	private CharArrayObjectMap bindings;
 	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
-	
-	private ICPPSpecialization specialization;
-	private boolean isFullyCached = false;
-	private boolean doneConstructors = false;
+	final private ICPPSpecialization specialization;
 	
 	/**
 	 * @param instance
 	 */
-	public CPPClassSpecializationScope(CPPClassSpecialization specialization ) {
+	public CPPClassSpecializationScope( ICPPSpecialization specialization ) {
 		this.specialization = specialization;
-	}
-	
-	/**
-	 * @param instance
-	 */
-	public CPPClassSpecializationScope(CPPClassInstance instance ) {
-		this.specialization = instance;
 	}
 
 	private ICPPClassType getOriginalClass(){
 		return (ICPPClassType) specialization.getSpecializedBinding();
 	}
-	public boolean isFullyCached(){
-		if( !isFullyCached ){
-			CPPSemantics.LookupData data = new CPPSemantics.LookupData();
-			try {
-				CPPSemantics.lookupInScope( data, this, null );
-			} catch (DOMException e) {
-			}
+	
+	private IBinding getInstance(IBinding binding) {
+		if( instanceMap.containsKey( binding ) ) {
+			return (IBinding) instanceMap.get( binding );
+		} else if (!(binding instanceof ICPPClassTemplatePartialSpecialization)) {
+			IBinding spec = CPPTemplates.createSpecialization( this, binding, specialization.getArgumentMap() );
+			if( instanceMap == ObjectMap.EMPTY_MAP )
+				instanceMap = new ObjectMap(2);
+			instanceMap.put( binding, spec );
+			return spec;
 		}
-		return true;
+		return null;
 	}
 	
-	public IBinding getBinding( IASTName name, boolean forceResolve ) {
+	public IBinding getBinding( IASTName name, boolean forceResolve ) throws DOMException {
 		char [] c = name.toCharArray();
-	    if( bindings == null )
-	        return null;
-	    
-	    if( CharArrayUtils.equals( c, specialization.getNameCharArray() ) ){
-            if (CPPClassScope.isConstructorReference( name ))
-            	c = CONSTRUCTOR_KEY;
-            else
-            	return specialization;
-        }
-	        
-	    Object cache = bindings.get( c );
-	    if( cache != null ){
-	    	int i = ( cache instanceof ObjectSet ) ? 0 : -1;
-	    	ObjectSet set = ( cache instanceof ObjectSet ) ? (ObjectSet) cache : null;
-	    	Object obj = ( set != null ) ? set.keyAt( i ) : cache;
-	    	IBinding [] bs = null;
-	    	IBinding binding = null;
-	    	while( obj != null ){
-	    		if( obj instanceof IASTName ){
-	    			IASTName n = (IASTName) obj;
-	    			if( n instanceof ICPPASTQualifiedName ){
-    					IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
-    					n = ns[ ns.length - 1 ];
-    				}
-	    			if( instanceMap.containsKey( n ) ){
-	    				binding = (IBinding) instanceMap.get( n );
-	    			} else {
-		    			binding = CPPClassScope.shouldResolve(forceResolve, n, name) ? n.resolveBinding() : n.getBinding();
-		    			if (binding instanceof ICPPClassTemplatePartialSpecialization ){
-		    			    binding = null;
-		    			}
-		    			if( binding != null ){
-		    				binding = CPPTemplates.createSpecialization( this, binding, specialization.getArgumentMap() );
-		    				if( instanceMap == ObjectMap.EMPTY_MAP )
-		    					instanceMap = new ObjectMap(2);
-			        		instanceMap.put( n, binding );
-		    			}
-	    			}
-	    		} else if( obj instanceof IBinding ){
-	    			if( instanceMap.containsKey( obj ) ){
-	    				binding = (IBinding) instanceMap.get( obj );
-	    			} else {
-	    				binding = CPPTemplates.createSpecialization( this, (IBinding) obj, specialization.getArgumentMap()  );
-	    				if( instanceMap == ObjectMap.EMPTY_MAP )
-	    					instanceMap = new ObjectMap(2);
-		        		instanceMap.put( obj, binding );
-	    			}
-	    		}
-	    		if( binding != null ){
-	    			if( i == -1 )
-	    				return binding;
-    				bs = (IBinding[]) ArrayUtil.append( IBinding.class, bs, binding );
-    				binding = null;
-	    		}
-	    		if( i != -1 && ++i < set.size() ){
-	    			obj = set.keyAt( i );
-	    		} else {
-	    			obj = null;
-	    		}
-	    	}
-	    	bs = (IBinding[]) ArrayUtil.trim( IBinding.class, bs );
-	    	if( bs.length  == 1 )
-	    		return bs[0];
-	    	return CPPSemantics.resolveAmbiguities( name, bs );
-	    }
-		return null;
+		
+	    if( CharArrayUtils.equals( c, specialization.getNameCharArray() ) )
+	    	if (!CPPClassScope.isConstructorReference( name ))
+	    		return specialization;
+
+		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
+		IScope classScope = specialized.getCompositeScope();
+		IBinding[] bindings = classScope != null ? classScope.find(name.toString()) : null;
+		
+		if (bindings == null) return null;
+    	
+		IBinding[] specs = new IBinding[0];
+		for (int i = 0; i < bindings.length; i++) {
+			specs = (IBinding[]) ArrayUtil.append(IBinding.class, specs, getInstance(bindings[i]));
+		}
+		specs = (IBinding[]) ArrayUtil.trim(IBinding.class, specs);
+    	return CPPSemantics.resolveAmbiguities( name, specs );
 	}
 
 	/* (non-Javadoc)
@@ -160,128 +97,49 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getImplicitMethods()
 	 */
 	public ICPPMethod[] getImplicitMethods() {
-		// TODO Auto-generated method stub
-		return null;
+		//implicit methods shouldn't have implicit specializations
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
 	 */
 	public IName getScopeName() {
-		return (IASTName) ((ICPPInternalBinding)specialization).getDefinition();
+		if (specialization instanceof ICPPInternalBinding)
+			return (IASTName) ((ICPPInternalBinding)specialization).getDefinition();
+		//TODO: get the scope name for non-internal bindings
+		return null;
 	}
 
-	public void addName(IASTName name) {
-		if( name instanceof ICPPASTQualifiedName )
-			return;
+	protected ICPPConstructor [] getConstructors() throws DOMException {
+		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
+		ICPPConstructor[] bindings = specialized.getConstructors();
 		
-		if( bindings == null )
-			bindings = new CharArrayObjectMap(1);		
-		char [] c = name.toCharArray();
+		if (bindings == null) return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 		
-		IASTNode parent = name.getParent();
-		if( parent instanceof IASTDeclarator && CPPVisitor.isConstructor( this, (IASTDeclarator) parent ) ){
-			c = CONSTRUCTOR_KEY;
+    	ICPPConstructor[] specs = new ICPPConstructor[0];
+		for (int i = 0; i < bindings.length; i++) {
+			specs = (ICPPConstructor[]) ArrayUtil.append(ICPPConstructor.class, specs, getInstance(bindings[i]));
 		}
-		Object o = bindings.get( c );
-		if( o != null ){
-		    if( o instanceof ObjectSet ){
-		    	((ObjectSet)o).put( name );
-		    } else {
-		    	ObjectSet temp = new ObjectSet( 2 );
-		    	temp.put( o );
-		    	temp.put( name );
-		        bindings.put( c, temp );
-		    }
-		} else {
-		    bindings.put( c, name );
-		}
-	}
-
-	protected ICPPConstructor [] getConstructors( ){
-		if( bindings == null ) 
-			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
-		
-		if( !doneConstructors ){
-			ICPPConstructor[] ctors;
-			try {
-				ctors = ((ICPPClassType)specialization.getSpecializedBinding()).getConstructors();
-				for (int i = 0; i < ctors.length; i++) {
-					addBinding( ctors[i] );
-				}
-				doneConstructors = true;
-			} catch (DOMException e) {
-			}
-		}
-		ICPPConstructor[] ctors =  CPPClassScope.getConstructors( bindings, true );
-		for (int i = 0; i < ctors.length; i++) {
-			if( instanceMap.containsKey( ctors[i] ) ){
-				ctors[i] = (ICPPConstructor) instanceMap.get( ctors[i] );
-			} else {
-				IBinding b = CPPTemplates.createSpecialization( this, ctors[i], specialization.getArgumentMap() ); 
-				if( instanceMap == ObjectMap.EMPTY_MAP )
-					instanceMap = new ObjectMap(2);
-        		instanceMap.put( ctors[i], b );
-        		ctors[i] = (ICPPConstructor) b;
-			}
-		}
-		return ctors;
+		return (ICPPConstructor[]) ArrayUtil.trim(ICPPConstructor.class, specs);
 	}
 	
 	protected ICPPMethod[] getConversionOperators() {
-		if( bindings == null ) 
-			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
 		
-		ICPPMethod [] result = null;
-		
-		Object[] values = bindings.valueArray();
-		for (int i = 0; i < values.length; i++) {
-	    	int j = ( values[i] instanceof ObjectSet ) ? 0 : -1;
-	    	ObjectSet set = ( values[i] instanceof ObjectSet ) ? (ObjectSet) values[i] : null;
-	    	Object obj = ( set != null ) ? set.keyAt( j ) : values[i];
-	    	IBinding binding = null;
-	    	while( obj != null ){
-	    		if( obj instanceof IASTName ){
-	    			IASTName n = (IASTName) obj;
-	    			if( n instanceof ICPPASTQualifiedName ){
-    					IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
-    					n = ns[ ns.length - 1 ];
-    				}
-	    			
-	    			if (n instanceof ICPPASTConversionName) {
-		    			if( instanceMap.containsKey( n ) ){
-		    				binding = (IBinding) instanceMap.get( n );
-		    			} else {
-			    			binding = n.resolveBinding();
-			    			if( binding != null ){
-			    				binding = CPPTemplates.createSpecialization( this, binding, specialization.getArgumentMap() );
-			    				if( instanceMap == ObjectMap.EMPTY_MAP )
-			    					instanceMap = new ObjectMap(2);
-				        		instanceMap.put( n, binding );
-			    			}
-		    			}
-	    			}
-	    		} 
-	    		if( binding != null ){
-    				result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
-    				binding = null;
-	    		}
-	    		if( j != -1 && ++j < set.size() ){
-	    			obj = set.keyAt( j );
-	    		} else {
-	    			obj = null;
-	    		}
-	    	}
+		if (!(specialized instanceof ICPPInternalClassType)) {
+			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
+ 		
+		ICPPMethod[] bindings = ((ICPPInternalClassType)specialized).getConversionOperators();
 		
-		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, result );
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#setFullyCached(boolean)
-	 */
-	public void setFullyCached(boolean b) {
-		isFullyCached = b;
+		if (bindings == null) return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		
+    	ICPPMethod[] specs = new ICPPMethod[0];
+		for (int i = 0; i < bindings.length; i++) {
+			specs = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, specs, getInstance(bindings[i]));
+		}
+		return (ICPPMethod[]) ArrayUtil.trim(ICPPMethod.class, specs);
 	}
 
 	/* (non-Javadoc)
@@ -303,89 +161,46 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
-	public IBinding[] find(String name) {
+	public IBinding[] find(String name) throws DOMException {
 		return find(name, false);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
-	public IBinding[] find(String name, boolean prefixLookup) {
-		if( name != null ) {}
-		return null;
+	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {		
+		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
+		IBinding[] bindings = specialized.getCompositeScope().find(name.toString(), prefixLookup);
+		
+		if (bindings == null) return null;
+		
+		IBinding[] specs = new IBinding[0];
+		for (int i = 0; i < bindings.length; i++) {
+			specs = (IBinding[]) ArrayUtil.append(IBinding.class, specs, getInstance(bindings[i]));
+		}
+    	return (IBinding[]) ArrayUtil.trim(IBinding.class, specs);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
+	 * @see org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope#isFullyCached()
 	 */
-	public IASTNode getPhysicalNode() throws DOMException {
-		ICPPClassType cls = getOriginalClass();
-		ICPPClassScope scope = (ICPPClassScope)cls.getCompositeScope();
-		
-		IASTNode node= ASTInternal.getPhysicalNodeOfScope(scope);
-		if (node != null) {
-			return node;
+	public boolean isFullyCached() throws DOMException {
+		ICPPScope origScope = (ICPPScope) getOriginalClass().getCompositeScope();
+		if (!ASTInternal.isFullyCached(origScope)) {
+			CPPSemantics.LookupData data = new CPPSemantics.LookupData();
+			try {
+				CPPSemantics.lookupInScope( data, origScope, null );
+			} catch (DOMException e) {
+			}
 		}
-		
-		IASTNode[] nds= ASTInternal.getDeclarationsOfBinding(cls);
-
-		if( nds != null && nds.length > 0 )
-			return nds[0];
-
-		return null;
-	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
-	public void removeBinding(IBinding binding) {
-	    char [] name = binding.getNameCharArray();
-	    if( ! bindings.containsKey( name ) )
-	        return;
-	    
-	    Object obj = bindings.get( name );
-	    if( obj instanceof ObjectSet ){
-	        ObjectSet set = (ObjectSet) obj;
-	        set.remove( binding );
-	        if( set.size() == 0 )
-	            bindings.remove( name, 0, name.length );
-	    } else {
-	        bindings.remove( name, 0, name.length );
-	    }
-	
-		if( instanceMap != null && instanceMap.containsKey( binding ) )
-			instanceMap.remove( binding );
-		isFullyCached = false;
-	}
-
-	public void flushCache() {
-		if( bindings != null )
-			bindings.clear();
-		isFullyCached = false;
-	}
-
-	public void addBinding(IBinding binding) {
-        if( bindings == null )
-            bindings = new CharArrayObjectMap(1);
-        char [] c = (binding instanceof ICPPConstructor) ? CONSTRUCTOR_KEY : binding.getNameCharArray();
-        Object o = bindings.get( c );
-        if( o != null ){
-            if( o instanceof ObjectSet ){
-                ((ObjectSet)o).put( binding );
-            } else {
-                ObjectSet set = new ObjectSet(2);
-                set.put( o );
-                set.put( binding );
-                bindings.put( c, set );
-            }
-        } else {
-            bindings.put( c, binding );
-        }
+		return true;
 	}
 	
-	public IBinding getInstance( IBinding binding ){
-		if( instanceMap != null && instanceMap.containsKey( binding ) )
-			return (IBinding) instanceMap.get( binding );
-		return null;
-	}
+	//this scope does not cache its own names
+	public void setFullyCached(boolean b) {}
+	public void flushCache() {}
+	public void addName(IASTName name) {}
+	public IASTNode getPhysicalNode() {return null;}
+	public void removeBinding(IBinding binding) {}
+	public void addBinding(IBinding binding) {}
 }

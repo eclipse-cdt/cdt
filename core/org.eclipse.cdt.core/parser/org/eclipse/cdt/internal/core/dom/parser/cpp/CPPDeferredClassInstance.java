@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  * @author aniefer
  */
 public class CPPDeferredClassInstance extends CPPInstance implements
-		ICPPClassType, ICPPDeferredTemplateInstance {
+		ICPPClassType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
 
 	public IType [] arguments = null;
 	public ICPPClassTemplate classTemplate = null;
@@ -160,7 +160,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 			classTemplate = (ICPPClassTemplate) argMap.get( classTemplate );
 		}
 		
-		return (IType) ((ICPPInternalTemplate)classTemplate).instantiate( newArgs );
+		return (IType) ((ICPPInternalTemplateInstantiator)classTemplate).instantiate( newArgs );
 	}
 
 	/* (non-Javadoc)

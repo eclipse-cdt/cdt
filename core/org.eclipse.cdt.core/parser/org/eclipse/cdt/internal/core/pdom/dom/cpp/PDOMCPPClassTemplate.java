@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -36,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
@@ -94,7 +94,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType implements
 		}
 	}
 	
-	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
+	public ICPPTemplateParameter[] getTemplateParameters() {
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
 			TemplateParameterCollector visitor = new TemplateParameterCollector();
@@ -186,7 +186,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType implements
 			};
 			
 			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), filter, prefixLookup, !prefixLookup);
-			acceptInHierarchy(new HashSet(), visitor);
+			accept(visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -282,7 +282,11 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType implements
 	}
 
 	public ICPPSpecialization deferredInstance(IType[] arguments) {
-		return getInstance( arguments );
+		ICPPSpecialization instance = getInstance( arguments );
+		if( instance == null ){
+			instance = new CPPDeferredClassInstance( this, arguments );
+		}
+		return instance;
 	}
 
 	private static class InstanceFinder implements IPDOMVisitor {
@@ -342,6 +346,6 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType implements
 			return ((PDOMCPPClassTemplate)template).instantiate( arguments );	
 		}
 		
-		return getInstance(arguments);
+		return CPPTemplates.instantiateTemplate(this, arguments, null);
 	}
 }

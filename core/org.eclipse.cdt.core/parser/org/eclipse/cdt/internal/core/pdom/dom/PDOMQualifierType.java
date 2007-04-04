@@ -134,11 +134,49 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 	}
 
 	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			CCorePlugin.log(e);
-			return null;
+		return new PDOMQualifierTypeClone(this);
+	}
+	
+	private static class PDOMQualifierTypeClone implements IQualifierType, ITypeContainer, IIndexType {
+		private final IQualifierType delegate;
+		private IType type = null;
+		
+		public PDOMQualifierTypeClone(IQualifierType qualifier) {
+			this.delegate = qualifier;
+		}
+		public IType getType() throws DOMException {
+			if (type == null) {
+				return delegate.getType();
+			}
+			return type;
+		}
+		public boolean isConst() throws DOMException {
+			return delegate.isConst();
+		}
+		public boolean isVolatile() throws DOMException {
+			return delegate.isVolatile();
+		}
+		public boolean isSameType(IType type) {
+		    if( type instanceof ITypedef )
+		        return type.isSameType( this );
+		    if( !( type instanceof IQualifierType ) ) 
+		        return false;
+		    
+		    IQualifierType pt = (IQualifierType) type;
+		    try {
+				if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() ) {
+					IType myType= getType();
+				    return myType != null && myType.isSameType( pt.getType() );
+				}
+			} catch (DOMException e) {
+			}
+		    return false;
+		}
+		public void setType(IType type) {
+			this.type = type;
+		}
+		public Object clone() {
+			return new PDOMQualifierTypeClone(this);
 		}
 	}
 }

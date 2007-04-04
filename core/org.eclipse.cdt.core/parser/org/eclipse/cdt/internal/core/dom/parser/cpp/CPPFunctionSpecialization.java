@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Apr 22, 2005
@@ -97,9 +98,9 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	}
 	public boolean isStatic(boolean resolveAll) {
 		//TODO resolveAll
-		ICPPInternalFunction f = (ICPPInternalFunction) getSpecializedBinding();
-		if( f != null )
-			return f.isStatic( resolveAll );
+		IBinding f = getSpecializedBinding();
+		if( f instanceof ICPPInternalFunction)
+			return ((ICPPInternalFunction)f).isStatic( resolveAll );
 		return CPPFunction.hasStorageClass( this, IASTDeclSpecifier.sc_static );
 	}
 

@@ -23,8 +23,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -33,14 +38,14 @@ import org.eclipse.core.runtime.CoreException;
  * 
  */
 class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
-		ICPPClassType, IIndexType, ICPPDeferredTemplateInstance {
+		ICPPClassType, IIndexType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
 
 	/**
 	 * The size in bytes of a PDOMCPPDeferredClassInstance record in the database.
 	 */
 	protected static final int RECORD_SIZE = PDOMCPPInstance.RECORD_SIZE + 0;
 	
-	public PDOMCPPDeferredClassInstance(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMCPPClassTemplate instantiated)
+	public PDOMCPPDeferredClassInstance(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMBinding instantiated)
 			throws CoreException {
 		super(pdom, parent, (ICPPTemplateInstance) classType, instantiated);
 	}
@@ -105,4 +110,20 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	public ICPPMethod[] getMethods() throws DOMException { fail(); return null; }
 	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
 	public Object clone() {fail();return null;}
+	
+	/**
+	 * @param argMap
+	 * @return
+	 */
+	public IType instantiate(ObjectMap argMap) {
+		IType[] arguments = getArguments();
+		
+		IType [] newArgs = new IType[ arguments.length ];
+		int size = arguments.length;
+		for( int i = 0; i < size; i++ ){
+			newArgs[i] = CPPTemplates.instantiateType( arguments[i], argMap );
+		}
+		
+		return (IType) ((ICPPInternalTemplateInstantiator)getTemplateDefinition()).instantiate( newArgs );
+	}
 }

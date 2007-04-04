@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
@@ -43,12 +41,11 @@ public class PDOMCPPClassTemplateSpecialization extends
 
 	private static final int INSTANCES = PDOMCPPClassSpecialization.RECORD_SIZE + 0;
 	private static final int SPECIALIZATIONS = PDOMCPPClassSpecialization.RECORD_SIZE + 4;
-	private static final int FIRST_PARTIAL = PDOMCPPClassSpecialization.RECORD_SIZE + 8;
 	
 	/**
 	 * The size in bytes of a PDOMCPPClassTemplateSpecialization record in the database.
 	 */
-	protected static final int RECORD_SIZE = PDOMCPPClassSpecialization.RECORD_SIZE + 12;
+	protected static final int RECORD_SIZE = PDOMCPPClassSpecialization.RECORD_SIZE + 8;
 	
 	public PDOMCPPClassTemplateSpecialization(PDOM pdom, PDOMNode parent, ICPPClassTemplate template, PDOMBinding specialized)
 			throws CoreException {
@@ -66,34 +63,9 @@ public class PDOMCPPClassTemplateSpecialization extends
 	public int getNodeType() {
 		return PDOMCPPLinkage.CPP_CLASS_TEMPLATE_SPECIALIZATION;
 	}
-	
-	private PDOMCPPClassTemplatePartialSpecialization getFirstPartial() throws CoreException {
-		int value = pdom.getDB().getInt(record + FIRST_PARTIAL);
-		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(pdom, value) : null;
-	}
-	
-	public void addPartial(PDOMCPPClassTemplatePartialSpecialization partial) throws CoreException {
-		PDOMCPPClassTemplatePartialSpecialization first = getFirstPartial();
-		partial.setNextPartial(first);
-		pdom.getDB().putInt(record + FIRST_PARTIAL, partial.getRecord());
-	}
 		
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
-		try {
-			ArrayList partials = new ArrayList();
-			for (PDOMCPPClassTemplatePartialSpecialization partial = getFirstPartial();
-					partial != null;
-					partial = partial.getNextPartial()) {
-				partials.add(partial);
-			}
-			
-			return (ICPPClassTemplatePartialSpecialization[]) partials
-					.toArray(new ICPPClassTemplatePartialSpecialization[partials
-							.size()]);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new ICPPClassTemplatePartialSpecialization[0];
-		}
+		return ((ICPPClassTemplate)getSpecializedBinding()).getPartialSpecializations();
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
@@ -162,17 +134,20 @@ public class PDOMCPPClassTemplateSpecialization extends
 			return ((PDOMCPPClassTemplate)template).instantiate( arguments );	
 		}
 		
-		return getInstance(arguments);
+		return CPPTemplates.instantiateTemplate(this, arguments, getArgumentMap());
 	}
 	
 	public void addMember(PDOMNode member) throws CoreException {
 		if (member instanceof ICPPTemplateInstance) {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + INSTANCES, getLinkageImpl());
 			list.addMember(member);
-		} else if (member instanceof ICPPSpecialization
-				&& !(member instanceof ICPPClassTemplatePartialSpecialization)) {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + SPECIALIZATIONS, getLinkageImpl());
-			list.addMember(member);
+		} else if (member instanceof ICPPSpecialization) {
+			if (this.equals(((ICPPSpecialization)member).getSpecializedBinding())) {
+				PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + SPECIALIZATIONS, getLinkageImpl());
+				list.addMember(member);
+			} else {
+				super.addMember(member);
+			}
 		} else {
 			super.addMember(member);
 		}

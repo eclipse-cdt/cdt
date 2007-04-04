@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -191,11 +192,30 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * @throws CoreException
 	 */
 	protected PDOMNode getAdaptedParent(IBinding binding, boolean createFileLocalScope, boolean addParent) throws CoreException {
+		IBinding scopeBinding = null;
+		
+		if (binding instanceof ICPPTemplateInstance) {
+			scopeBinding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
+		} else {
 		try {
 		IScope scope = binding.getScope();
 		if (scope == null) {
-			if (binding instanceof IIndexBinding) {
-				IIndexBinding ib= (IIndexBinding) binding;
+			if (binding instanceof ICPPDeferredTemplateInstance) {
+				ICPPDeferredTemplateInstance deferred = (ICPPDeferredTemplateInstance) binding;
+				ICPPTemplateDefinition template = deferred.getTemplateDefinition();
+				scope = template.getScope();
+			} 
+			
+			IIndexBinding ib = (binding instanceof IIndexBinding) ? (IIndexBinding) binding : null;
+			
+			if (ib == null && binding instanceof ICPPSpecialization) {
+				IBinding spec = ((ICPPSpecialization)binding).getSpecializedBinding();
+				if (spec instanceof IIndexBinding) {
+					ib = (IIndexBinding) spec;
+				}
+			}
+			
+			if (ib != null) {
 				// don't adapt file local bindings from other fragments to this one.
 				if (ib.isFileLocal()) {
 					return null;
@@ -204,13 +224,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				return this;
 			}
 			
-			if (binding instanceof ICPPDeferredTemplateInstance) {
-				ICPPDeferredTemplateInstance deferred = (ICPPDeferredTemplateInstance) binding;
-				ICPPTemplateDefinition template = deferred.getTemplateDefinition();
-				scope = template.getScope();
-			} else {
-				return null;
-			}
+			return null;
 		}
 		 		
 		if(scope instanceof IIndexScope) {
@@ -245,7 +259,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return this;
 		}
 		else {
-			IBinding scopeBinding = null;
 			if (scope instanceof CPPClassSpecializationScope) {
 				scopeBinding = ((CPPClassSpecializationScope)scope).getClassType();
 			} else {
@@ -254,19 +267,21 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					scopeBinding = ((IASTName) scopeName).resolveBinding();
 				}	
 			}
-			if (scopeBinding != null) {
-				PDOMBinding scopePDOMBinding = null;
-				if (addParent) {
-					scopePDOMBinding = addBinding(scopeBinding);
-				} else {
-					scopePDOMBinding = adaptBinding(scopeBinding);
-				}
-				if (scopePDOMBinding != null)
-					return scopePDOMBinding;
-			}
 		}
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
+		}
+		}
+		
+		if (scopeBinding != null) {
+			PDOMBinding scopePDOMBinding = null;
+			if (addParent) {
+				scopePDOMBinding = addBinding(scopeBinding);
+			} else {
+				scopePDOMBinding = adaptBinding(scopeBinding);
+			}
+			if (scopePDOMBinding != null)
+				return scopePDOMBinding;
 		}
 		return null;
 	}

@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Mar 11, 2005
@@ -1107,10 +1108,12 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue( B2 instanceof ICPPSpecialization );
 		assertSame( ((ICPPSpecialization)B2).getSpecializedBinding(), B );
 		
-		//we might want this to be a specialization of a specialization, but for now, this is easier
 		ICPPMethod f1 = (ICPPMethod) col.getName(20).resolveBinding();
 		assertTrue( f1 instanceof ICPPSpecialization );
-		assertSame( ((ICPPSpecialization)f1).getSpecializedBinding(), f );
+		assertTrue( ((ICPPSpecialization)f1).getSpecializedBinding() instanceof ICPPMethod );
+		ICPPMethod f2 = (ICPPMethod) ((ICPPSpecialization)f1).getSpecializedBinding();
+		assertTrue( f2 instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)f2).getSpecializedBinding(), f );
 		
 		IFunctionType ft = f1.getType();
 		assertTrue( ft.getReturnType() instanceof IBasicType );

@@ -80,7 +80,10 @@ public class CPPClassSpecialization extends CPPSpecialization implements
     		    IBinding base = bindings[i].getBaseClass();
     		    if (bindings[i] instanceof CPPBaseClause && base instanceof IType) {
     		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
-    		    	((CPPBaseClause)bindings[i]).setBaseClass((ICPPClassType)specBase);
+    		    	specBase = CPPSemantics.getUltimateType(specBase, false);
+    		    	if (specBase instanceof ICPPClassType) {
+    		    		((CPPBaseClause)bindings[i]).setBaseClass((ICPPClassType)specBase);
+    		    	}
     		    }
 			}
 			return bindings;
@@ -217,7 +220,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 			if (scope != null && scope.getClassType() == this) {
 				//explicit specialization: can use composite type specifier scope
 				specScope = scope;
-			} else if (scope != null) {
+			} else {
 				//implicit specialization: must specialize bindings in scope
 				specScope = new CPPClassSpecializationScope(this);
 			}	

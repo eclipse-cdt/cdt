@@ -34,11 +34,11 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -97,26 +97,27 @@ public class IndexLabelProvider extends LabelProvider {
 					buffer.append('>');
 					result = buffer.toString();
 				} else if (element instanceof ICPPSpecialization) {
-					PDOMNode parentOfSpec = ((PDOMNode)((ICPPSpecialization)element).getSpecializedBinding()).getParentNode();
-					PDOMNode parent = ((PDOMNode)element).getParentNode();
-					PDOMNode grandParent = parent != null ? parent.getParentNode() : null;
-					boolean showArgs = parentOfSpec == null || grandParent == null || !parentOfSpec.equals(grandParent);
-					showArgs = showArgs && ((element instanceof ICPPClassType || element instanceof ICPPFunction)
-							&& !(element instanceof ICPPTemplateDefinition)); 
+					ICPPSpecialization spec = (ICPPSpecialization) element;
 					
 					StringBuffer buffer = null;
 					buffer = new StringBuffer("Spec: "); //$NON-NLS-1$
 					buffer.append(result);
 					
-					if (showArgs) {
-						buffer.append('<');
-						ObjectMap argMap = ((ICPPSpecialization) element).getArgumentMap();
-						for (int i = 0; i < argMap.size(); i++) {
-							if (i > 0)
-								buffer.append(',');
-							buffer.append(ASTTypeUtil.getType((IType) argMap.getAt(i)));
+					if (!(spec instanceof ICPPTemplateDefinition)
+							&& spec.getSpecializedBinding() instanceof ICPPTemplateDefinition) {
+						ICPPTemplateDefinition template = (ICPPTemplateDefinition) spec.getSpecializedBinding();
+						try {
+							ICPPTemplateParameter[] params = template.getTemplateParameters();
+							buffer.append('<');
+							ObjectMap argMap = ((ICPPSpecialization) element).getArgumentMap();
+							for (int i = 0; i < params.length; i++) {
+								if (i > 0)
+									buffer.append(',');
+								buffer.append(ASTTypeUtil.getType((IType) argMap.get(params[i])));
+							}
+							buffer.append('>');
+						} catch (DOMException e) {
 						}
-						buffer.append('>');
 					}
 					
 					result = buffer.toString();

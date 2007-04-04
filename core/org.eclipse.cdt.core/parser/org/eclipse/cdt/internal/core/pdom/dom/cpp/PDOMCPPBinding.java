@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Corporation and others.
+ * Copyright (c) 2006, 2007 Symbian Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -57,7 +58,7 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 		try {
 			PDOMNode node = this;
 			while (node != null) {
-				if (node instanceof PDOMBinding) {							
+				if (node instanceof PDOMBinding && !(node instanceof ICPPTemplateInstance)) {							
 					result.add(0, ((PDOMBinding)node).getName().toCharArray());
 				}
 				node = node.getParentNode();

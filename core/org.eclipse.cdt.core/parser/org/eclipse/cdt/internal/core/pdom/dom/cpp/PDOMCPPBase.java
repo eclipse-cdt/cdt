@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -123,5 +124,31 @@ class PDOMCPPBase implements ICPPBase {
 
 	public void delete() throws CoreException {
 		pdom.getDB().free(record);
+	}
+	
+	private static class PDOMCPPBaseSpecialization implements ICPPBase {
+		private PDOMCPPBase base;
+		private IBinding baseClass;
+		
+		public PDOMCPPBaseSpecialization(PDOMCPPBase base, IBinding baseClass) {
+			this.base = base;
+			this.baseClass = baseClass;
+		}
+		public IBinding getBaseClass() throws DOMException {
+			return baseClass;
+		}
+		public IName getBaseClassSpecifierName() {
+			return base.getBaseClassSpecifierName();
+		}
+		public int getVisibility() throws DOMException {
+			return base.getVisibility();
+		}
+		public boolean isVirtual() throws DOMException {
+			return base.isVirtual();
+		}
+	}
+	
+	public ICPPBase createSpecialization(IBinding baseClass) {
+		return new PDOMCPPBaseSpecialization(this, baseClass);
 	}
 }

@@ -187,7 +187,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 		}
 	}
 
-	protected void acceptInHierarchy(Set visited, IPDOMVisitor visitor) throws CoreException {
+	private void acceptInHierarchy(Set visited, IPDOMVisitor visitor) throws CoreException {
 		if (visited.contains(this))
 			return;
 		visited.add(this);
@@ -391,7 +391,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
 		try {
 			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
-			acceptInHierarchy(new HashSet(), visitor);
+			accept(visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

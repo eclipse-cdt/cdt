@@ -690,8 +690,8 @@ public class CPPTemplates {
 			}
 		} else if( type instanceof ICPPTemplateParameter && argMap.containsKey( type ) ){
 			newType = (IType) argMap.get( type );
-		} else if( type instanceof CPPDeferredClassInstance ){
-			newType = ((CPPDeferredClassInstance)type).instantiate( argMap );
+		} else if( type instanceof ICPPInternalDeferredClassInstance ){
+			newType = ((ICPPInternalDeferredClassInstance)type).instantiate( argMap );
 		} else if( type instanceof ICPPInternalUnknown ){
 		    IBinding binding;
             try {
@@ -1145,7 +1145,7 @@ public class CPPTemplates {
 		}
 		return false;
 	}
-	static protected boolean deduceTemplateArgument( ObjectMap map, IType p, IType a ) throws DOMException {
+	static public boolean deduceTemplateArgument( ObjectMap map, IType p, IType a ) throws DOMException {
 		boolean pIsAReferenceType = ( p instanceof ICPPReferenceType );
 		p = getParameterTypeForDeduction( p );
 		a = getArgumentTypeForDeduction( a, pIsAReferenceType );

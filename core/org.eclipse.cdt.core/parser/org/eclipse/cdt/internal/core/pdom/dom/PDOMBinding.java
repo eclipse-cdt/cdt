@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -168,7 +169,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return null;
 	}
 	
-	public final IScope getScope() throws DOMException {
+	public final IScope getScope() {
 		try {
 			IBinding parent = getParentBinding(); 
 			if(parent instanceof IScope) {
@@ -224,7 +225,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		try {
 			PDOMNode node = this;
 			while (node != null) {
-				if (node instanceof PDOMBinding) {							
+				if (node instanceof PDOMBinding && !(node instanceof ICPPTemplateInstance)) {							
 					result.add(0, ((PDOMBinding)node).getName());
 				}
 				node = node.getParentNode();

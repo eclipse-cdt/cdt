@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
@@ -135,16 +137,27 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
 	}
 		
-	private static IType[] getArguments(ObjectMap argMap) {
-		IType[] args = new IType[argMap.size()];
-		for (int i = 0; i < argMap.size(); i++) {
-			args[i] = (IType) argMap.getAt(i);
+	private IType[] getArguments() {
+		if (!(this instanceof ICPPTemplateDefinition)
+				&& getSpecializedBinding() instanceof ICPPTemplateDefinition) {
+			ICPPTemplateDefinition template = (ICPPTemplateDefinition) getSpecializedBinding();
+			try {
+				ICPPTemplateParameter[] params = template.getTemplateParameters();
+				ObjectMap argMap = getArgumentMap();
+				IType[] args = new IType[argMap.size()];
+				for (int i = 0; i < argMap.size(); i++) {
+					args[i] = (IType) argMap.get(params[i]);
+				}
+				return args;
+			} catch (DOMException e) {
+			}
 		}
-		return args;
+
+		return IType.EMPTY_TYPE_ARRAY;
 	}
 	
 	public boolean matchesArguments(IType[] arguments) {
-		IType [] args = getArguments(getArgumentMap());
+		IType [] args = getArguments();
 		if( args.length == arguments.length ){
 			int i = 0;
 			for(; i < args.length; i++) {

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -56,12 +57,17 @@ public class PDOMCPPOverloaderUtil {
 			buffer.append(getTemplateArgString(partial.getArguments(), false));
 		} else if (binding instanceof ICPPSpecialization) {
 			ICPPSpecialization spec = (ICPPSpecialization) binding;
-			ObjectMap argMap = spec.getArgumentMap();
-			IType[] args = new IType[argMap.size()];
-			for (int i = 0; i < argMap.size(); i++) {
-				args[i] = (IType) argMap.getAt(i);
+			if (!(spec instanceof ICPPTemplateDefinition)
+					&& spec.getSpecializedBinding() instanceof ICPPTemplateDefinition) {
+				ICPPTemplateDefinition template = (ICPPTemplateDefinition) spec.getSpecializedBinding();
+				ICPPTemplateParameter[] params = template.getTemplateParameters();
+				ObjectMap argMap = spec.getArgumentMap();
+				IType[] args = new IType[params.length];
+				for (int i = 0; i < params.length; i++) {
+					args[i] = (IType) argMap.get(params[i]);
+				}
+				buffer.append(getTemplateArgString(args, false));	
 			}
-			buffer.append(getTemplateArgString(args, false));
 		} 
 		
 		if (binding instanceof IFunction) {

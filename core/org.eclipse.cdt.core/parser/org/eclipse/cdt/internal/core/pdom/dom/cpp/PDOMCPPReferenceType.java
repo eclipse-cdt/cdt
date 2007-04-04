@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -98,11 +99,44 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 	}
 
 	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			CCorePlugin.log(e);
-			return null;
+		return new PDOMCPPReferenceTypeClone(this);
+	}
+	
+	private static class PDOMCPPReferenceTypeClone implements ICPPReferenceType, ITypeContainer, IIndexType {
+		private final ICPPReferenceType delegate;
+		private IType type = null;
+		
+		public PDOMCPPReferenceTypeClone(ICPPReferenceType reference) {
+			this.delegate = reference;
+		}
+		public IType getType() throws DOMException {
+			if (type == null) {
+				return delegate.getType();
+			}
+			return type;
+		}
+		public boolean isSameType(IType type) {
+			if( type instanceof ITypedef )
+			    return type.isSameType(this);
+			
+			if( !( type instanceof ICPPReferenceType )) 
+			    return false;
+			
+			ICPPReferenceType rhs = (ICPPReferenceType) type;
+			try {
+				IType type1= getType();
+				if (type1 != null) {
+					return type1.isSameType(rhs.getType());
+				}
+			} catch (DOMException e) {
+			}
+			return false;
+		}
+		public void setType(IType type) {
+			this.type = type;
+		}
+		public Object clone() {
+			return new PDOMCPPReferenceTypeClone(this);
 		}
 	}
 }

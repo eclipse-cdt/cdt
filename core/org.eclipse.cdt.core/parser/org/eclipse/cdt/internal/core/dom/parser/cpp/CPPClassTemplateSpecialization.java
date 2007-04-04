@@ -103,7 +103,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		if( template instanceof IProblemBinding )
 			return template;
 		if( template != null && template instanceof ICPPClassTemplatePartialSpecialization ){
-			return ((CPPTemplateDefinition)template).instantiate( arguments );	
+			return ((ICPPInternalTemplateInstantiator)template).instantiate( arguments );	
 		}
 		
 		return CPPTemplates.instantiateTemplate( this, arguments, argumentMap );

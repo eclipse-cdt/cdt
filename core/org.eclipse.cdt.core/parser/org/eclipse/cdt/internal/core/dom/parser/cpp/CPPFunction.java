@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -496,7 +496,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     }
 
 	static public boolean hasStorageClass( ICPPInternalFunction function, int storage ){
-	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) function.getDefinition();
+		IASTNode def = function.getDefinition();
+		while (def instanceof IASTName) {
+			def = def.getParent();
+		}
+	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) def;
         ICPPASTFunctionDeclarator[] ds = (ICPPASTFunctionDeclarator[]) function.getDeclarations();
         int i = -1;
         do{

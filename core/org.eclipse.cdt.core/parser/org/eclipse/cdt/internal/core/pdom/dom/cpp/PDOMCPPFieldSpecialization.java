@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -37,7 +38,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 4;
 	
 	public PDOMCPPFieldSpecialization(PDOM pdom, PDOMNode parent,
-			ICPPField field, PDOMCPPField specialized)
+			ICPPField field, PDOMBinding specialized)
 			throws CoreException {
 		super(pdom, parent, (ICPPSpecialization) field, specialized);
 		

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -17,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -33,8 +33,10 @@ public class TemplateInstanceUtil {
 		ObjectMap result= new ObjectMap(preresult.size());
 		Object[] keys= preresult.keyArray();
 		for(int i=0; i<keys.length; i++) {
-			ICPPTemplateParameter param= (ICPPTemplateParameter) preresult.get(keys[i]);
-			result.put(keys[i], cf.getCompositeBinding((IIndexFragmentBinding)param));
+			IType type= (IType) preresult.get(keys[i]);
+			result.put(
+					cf.getCompositeBinding((IIndexFragmentBinding)keys[i]),
+					cf.getCompositeBinding((IIndexFragmentBinding)type));
 		}
 		return result;
 	}

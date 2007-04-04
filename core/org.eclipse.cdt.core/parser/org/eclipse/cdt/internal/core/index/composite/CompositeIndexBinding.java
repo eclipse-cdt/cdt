@@ -8,6 +8,7 @@
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
  * Markus Schorn (Wind River Systems)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
@@ -87,5 +88,16 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	
 	public boolean isFileLocal() throws CoreException {
 		return rbinding instanceof IIndexBinding ? ((IIndexBinding)rbinding).isFileLocal() : true;
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof IIndexFragmentBinding)
+			return rbinding.equals(obj);
+		if (obj instanceof CompositeIndexBinding)
+			return rbinding.equals(((CompositeIndexBinding)obj).rbinding);
+		
+		return super.equals(obj);
 	}
 }

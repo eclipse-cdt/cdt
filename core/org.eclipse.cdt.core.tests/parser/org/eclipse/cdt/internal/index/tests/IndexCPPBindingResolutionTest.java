@@ -72,7 +72,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//	class Int {};
 	//	Int a,b;
 	//	Int c= left(a,b);
-	public void _testSimpleFunctionTemplate() {
+	public void testSimpleFunctionTemplate() {
 		IBinding b0 = getBindingFromASTName("sanity();", 6);
 		IBinding b1 = getBindingFromASTName("left(a,b)", 4);
 	}

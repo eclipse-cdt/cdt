@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -60,7 +61,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPInstance implements IIndexType,
 	 */
 	protected static final int RECORD_SIZE = PDOMCPPInstance.RECORD_SIZE + 12;
 	
-	public PDOMCPPFunctionInstance(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMCPPFunctionTemplate instantiated)
+	public PDOMCPPFunctionInstance(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding instantiated)
 			throws CoreException {
 		super(pdom, parent, (ICPPTemplateInstance) function, instantiated);
 		

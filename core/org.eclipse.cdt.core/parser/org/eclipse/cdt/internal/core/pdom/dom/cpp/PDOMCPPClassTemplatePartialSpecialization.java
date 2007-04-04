@@ -21,13 +21,16 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -50,14 +53,10 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 	protected static final int RECORD_SIZE = PDOMCPPClassTemplate.RECORD_SIZE + 16;
 	
 	public PDOMCPPClassTemplatePartialSpecialization(PDOM pdom,
-			PDOMNode parent, ICPPClassTemplatePartialSpecialization partial, PDOMBinding primary) throws CoreException {
+			PDOMNode parent, ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplate primary) throws CoreException {
 		super(pdom, parent, partial);
 		pdom.getDB().putInt(record + PRIMARY, primary.getRecord());
-		if (primary instanceof PDOMCPPClassTemplate) {
-			((PDOMCPPClassTemplate)primary).addPartial(this);
-		} else if (primary instanceof PDOMCPPClassTemplateSpecialization) {
-			((PDOMCPPClassTemplateSpecialization)primary).addPartial(this);
-		}
+		primary.addPartial(this);
 		
 		try {
 			Integer memento = PDOMCPPOverloaderUtil.getSignatureMemento(partial);
@@ -161,7 +160,42 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 	}
 
 	public IBinding instantiate(IType[] args) {
-		return getInstance( args );
+		ICPPSpecialization instance = getInstance( args );
+		if( instance != null ){
+			return instance;
+		}
+		
+		IType [] specArgs = getArguments();
+		if( specArgs.length != args.length ){
+			return null;
+		}
+		
+		ObjectMap argMap = new ObjectMap( specArgs.length );
+		int numSpecArgs = specArgs.length;
+		for( int i = 0; i < numSpecArgs; i++ ){
+			IType spec = specArgs[i];
+			IType arg = args[i];
+			
+			//If the argument is a template parameter, we can't instantiate yet, defer for later
+			if( CPPTemplates.typeContainsTemplateParameter( arg ) ){
+				return deferredInstance( args );
+			}
+			try {
+				if( !CPPTemplates.deduceTemplateArgument( argMap,  spec, arg ) )
+					return null;
+			} catch (DOMException e) {
+				return null;
+			}
+		}
+		
+		ICPPTemplateParameter [] params = getTemplateParameters();
+		int numParams = params.length;
+		for( int i = 0; i < numParams; i++ ){
+			if( params[i] instanceof IType && !argMap.containsKey( params[i] ) )
+				return null;
+		}
+		
+		return (ICPPTemplateInstance) CPPTemplates.createInstance( (ICPPScope) getScope(), this, argMap, args );
 	}
 
 	public ObjectMap getArgumentMap() {

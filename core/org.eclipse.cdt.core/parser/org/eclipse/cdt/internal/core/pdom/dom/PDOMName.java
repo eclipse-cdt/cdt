@@ -195,6 +195,18 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		}
 	}
 
+	public String toString() {
+		try {
+			Database db = pdom.getDB();
+			int bindingRec = db.getInt(record + BINDING_REC_OFFSET);
+			PDOMBinding binding = pdom.getBinding(bindingRec);
+			return binding != null ? binding.getName() : null;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+	
 	private byte getFlags(int mask) throws CoreException {
 		return (byte) (pdom.getDB().getByte(record + FLAGS) & mask);
 	}

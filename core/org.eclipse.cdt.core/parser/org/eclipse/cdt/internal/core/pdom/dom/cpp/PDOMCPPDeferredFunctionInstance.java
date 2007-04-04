@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -28,7 +29,7 @@ class PDOMCPPDeferredFunctionInstance extends PDOMCPPFunctionInstance
 	 */
 	protected static final int RECORD_SIZE = PDOMCPPFunctionInstance.RECORD_SIZE + 0;
 	
-	public PDOMCPPDeferredFunctionInstance(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMCPPFunctionTemplate instantiated)
+	public PDOMCPPDeferredFunctionInstance(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding instantiated)
 			throws CoreException {
 		super(pdom, parent, function, instantiated);
 	}

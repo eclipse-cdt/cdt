@@ -660,6 +660,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding) throws SystemMessageException
 	{
+		boolean retValue = false;
 		
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
@@ -667,72 +668,70 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}	
 		}
 		
-		_downloadMutex.waitForLock(monitor, Long.MAX_VALUE);
-		
-		MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
-		
-		IHostFile remoteHostFile = getFile(null,remoteParent,remoteFile);
-		
-		boolean retValue = false;
-
-		FTPClient ftpClient = getFTPClient();
-		
-		try
+		if(_downloadMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-			remoteParent = adaptPath(remoteParent);
+			MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
 			
-			ftpClient.changeWorkingDirectory(remoteParent);
+			IHostFile remoteHostFile = getFile(null,remoteParent,remoteFile);
 			
-			if (isBinary)
-				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);			
-			else
-				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
+			FTPClient ftpClient = getFTPClient();
 			
-			if (!localFile.exists())
+			try
 			{
-				File localParentFile = localFile.getParentFile();
-				if (!localParentFile.exists())
+				remoteParent = adaptPath(remoteParent);
+				
+				ftpClient.changeWorkingDirectory(remoteParent);
+				
+				if (isBinary)
+					ftpClient.setFileType(FTP.BINARY_FILE_TYPE);			
+				else
+					ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
+				
+				if (!localFile.exists())
 				{
-					localParentFile.mkdirs();
+					File localParentFile = localFile.getParentFile();
+					if (!localParentFile.exists())
+					{
+						localParentFile.mkdirs();
+					}
+					localFile.createNewFile();
 				}
-				localFile.createNewFile();
-			}
-			
-			OutputStream output = new FileOutputStream(localFile);
-			InputStream input = ftpClient.retrieveFileStream(remoteFile);
-			
-			progressMonitor.init(0, remoteFile, localFile.getName(), remoteHostFile.getSize());
-			
-			byte[] buffer = new byte[4096];
-			
-			int readCount;
-			while((readCount = input.read(buffer)) > 0)
-			{
-				output.write(buffer, 0, readCount);
-				progressMonitor.count(readCount);
-				if (monitor!=null){
-					if (monitor.isCanceled()) {
-						retValue = false;
-						break;
-					}	
+				
+				OutputStream output = new FileOutputStream(localFile);
+				InputStream input = ftpClient.retrieveFileStream(remoteFile);
+				
+				progressMonitor.init(0, remoteFile, localFile.getName(), remoteHostFile.getSize());
+				
+				byte[] buffer = new byte[4096];
+				
+				int readCount;
+				while((readCount = input.read(buffer)) > 0)
+				{
+					output.write(buffer, 0, readCount);
+					progressMonitor.count(readCount);
+					if (monitor!=null){
+						if (monitor.isCanceled()) {
+							retValue = false;
+							break;
+						}	
+					}
 				}
+				
+				progressMonitor.end();
+				
+				output.flush();
+				input.close();
+				output.close();
+				
+				ftpClient.completePendingCommand();
 			}
-			
-			progressMonitor.end();
-			
-			output.flush();
-			input.close();
-			output.close();
-			
-			ftpClient.completePendingCommand();
+			catch (Exception e)
+			{			
+				throw new RemoteFileIOException(e);
+			} finally {
+				_downloadMutex.release();
+		    }
 		}
-		catch (Exception e)
-		{			
-			throw new RemoteFileIOException(e);
-		} finally {
-			_downloadMutex.release();
-	    }
-
 		return retValue;
 	}
 	

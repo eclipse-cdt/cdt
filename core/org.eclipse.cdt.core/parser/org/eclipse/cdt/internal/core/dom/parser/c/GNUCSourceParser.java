@@ -850,8 +850,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     		startCastExpression=mark();
                     		castExpression = castExpression();
                     		break;
-                    	case IToken.tEOC:
-                    		break;
+//                    	case IToken.tEOC:	// support for completion removed
+//                    		break;			// in favour of another parse tree
                     	default:
                     		needBack = true;
 //                    		throw backtrack;

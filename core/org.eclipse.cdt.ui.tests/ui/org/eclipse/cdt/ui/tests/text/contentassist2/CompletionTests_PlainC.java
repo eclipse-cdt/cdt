@@ -66,7 +66,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//void test() {
     //  int myvar;
     //  (my/*cursor*/
-	public void _testLocalVariableAfterOpeningParen_Bug180885() throws Exception {
+	public void testLocalVariableAfterOpeningParen_Bug180885() throws Exception {
 		final String[] expected= {
 				"myvar"
 		};

@@ -46,6 +46,14 @@ public class FTPConnectorService extends StandardConnectorService
 	{		
 		super(FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_NAME,FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_DESCRIPTION, host, port);
 		_ftpService = new FTPService();
+			
+		_propertySet = getPropertySet("FTP Settings"); //$NON-NLS-1$
+		
+		if(_propertySet==null)
+		{
+			_propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
+			_propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}	
 	} 
 	
 	protected void internalConnect(IProgressMonitor monitor) throws Exception

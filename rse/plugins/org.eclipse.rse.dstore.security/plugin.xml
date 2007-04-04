@@ -42,7 +42,7 @@ Contributors:
          point="org.eclipse.ui.propertyPages">
        <page 
             name="%PropertyPage.ServerConnectionSecurity"
-            class="org.eclipse.rse.ui.propertypages.ServerConnectionSecurityPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.ServerConnectionSecurityPropertyPage"
             id="org.eclipse.rse.connectionsecurity.PropertyPage">
             <filter name="serverLaunchPP" value="true"/>
          <enabledWhen>

@@ -1477,9 +1477,11 @@ public class CPPSemantics {
 		    //need binding because namespaces can be split
 		    CPPNamespace namespace = (CPPNamespace) ((ICPPASTNamespaceDefinition)parent).getName().resolveBinding();
 		    namespaceDefs = namespace.getNamespaceDefinitions();
-		    
-			nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[0].getParent()).getDeclarations();
-			namespaceIdx = 0;
+		    namespaceIdx= 0;
+		    nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
+			while (nodes.length == 0 && ++namespaceIdx < namespaceDefs.length) {
+				nodes= ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
+			}
 		} else if( parent instanceof ICPPASTFunctionDeclarator ){
 		    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
 	        nodes = dtor.getParameters();

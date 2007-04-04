@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ed Swartz (Nokia)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
@@ -220,7 +221,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append( "int (*zzz2) (char); \n" ); //$NON-NLS-1$
         buffer.append( "int ((*zzz3)) (char); \n" ); //$NON-NLS-1$
         buffer.append( "int (*(zzz4)) (char); \n" ); //$NON-NLS-1$
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         assertNoProblemBindings( col );
@@ -228,7 +229,7 @@ public class AST2CPPTests extends AST2BaseTest {
     
     protected IASTTranslationUnit parseAndCheckBindings( String code ) throws Exception
     {
-        IASTTranslationUnit tu = parse( code, ParserLanguage.CPP ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( code, ParserLanguage.CPP ); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         assertNoProblemBindings( col );
@@ -1624,7 +1625,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   f( parm );                 \n"); //$NON-NLS-1$
         buffer.append("}                             \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3327,7 +3328,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   B::i;                    \n"); //$NON-NLS-1$
         buffer.append("}                           \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3357,7 +3358,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   B () : A() {}        \n"); //$NON-NLS-1$
         buffer.append("};                      \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3368,7 +3369,7 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPConstructor A3 = (ICPPConstructor) col.getName(4).resolveBinding();
         assertSame(A3.getScope(), A1.getCompositeScope());
 
-        tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        tu = parse(buffer.toString(), ParserLanguage.CPP); 
         col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3383,7 +3384,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("};                      \n"); //$NON-NLS-1$
         buffer.append("class A;                \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3458,7 +3459,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("char& operator[](unsigned int);\n"); //$NON-NLS-1$
         buffer.append("};\n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3486,7 +3487,7 @@ public class AST2CPPTests extends AST2BaseTest {
                 .append("template <class A,B> class X<A,C> { operator int(); }; \n"); //$NON-NLS-1$
         buffer.append("template <class A,B> X<A,C>::operator int() { } \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3625,7 +3626,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   f( ( 1, 2 ) );       \n"); //$NON-NLS-1$
         buffer.append("}                       \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3661,7 +3662,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("X x;                     \n"); //$NON-NLS-1$
         buffer.append("class X {   };           \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3781,7 +3782,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   typedef I I;            \n"); //$NON-NLS-1$
         buffer.append("};                         \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3816,7 +3817,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("void f11( I i );           \n"); //$NON-NLS-1$
         buffer.append("void main(){ f a; }          \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3835,7 +3836,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("Y y;                 \n"); //$NON-NLS-1$
         buffer.append("X x = new X( y );    \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3855,7 +3856,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("int f( float );           \n"); //$NON-NLS-1$
         buffer.append("int x = f(a);             \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3875,7 +3876,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   return *this;                \n"); //$NON-NLS-1$
         buffer.append("}                               \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3898,7 +3899,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   f( \"test\" );            \n"); //$NON-NLS-1$
         buffer.append("}                            \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3914,7 +3915,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   f( g ) ;                       \n"); //$NON-NLS-1$
         buffer.append("}                                 \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3958,7 +3959,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   a = 1;                              \n"); //$NON-NLS-1$
         buffer.append("}                                      \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -3974,7 +3975,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   a;                           \n"); //$NON-NLS-1$
         buffer.append("}                               \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -4001,7 +4002,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   e->d();                             \n"); //$NON-NLS-1$
         buffer.append("}                                      \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -4030,7 +4031,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   int xCoord;               \n"); //$NON-NLS-1$
         buffer.append("};                           \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -4067,7 +4068,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("class Dummy { int v(); int d; };                \n"); //$NON-NLS-1$
         buffer.append("void Dummy::v( int ){ d++; }                    \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -4087,7 +4088,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   f( );                               \n"); //$NON-NLS-1$
         buffer.append("}                                      \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); 
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
@@ -5191,5 +5192,22 @@ public class AST2CPPTests extends AST2BaseTest {
 		name = sd.getDeclarators()[0].getName();
 		field = (IField) name.resolveBinding();
 		assertTrue(field.isStatic());
+    }
+
+    public void testBug180979() throws Exception {
+    	StringBuffer buffer = new StringBuffer( );
+    	buffer.append( "namespace nsSplit {}\r\n"); //$NON-NLS-1$
+    	buffer.append( "namespace nsSplit {void a();}\r\n"); //$NON-NLS-1$
+    	buffer.append( "void nsSplit::a() {}\r\n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, true, true );
+    	
+    	// check class
+    	IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[2];
+    	IASTDeclarator fdecl= fd.getDeclarator();
+    	IASTName name= fdecl.getName();
+    	IBinding binding= name.resolveBinding();
+    	assertTrue(binding instanceof IFunction);
+    	assertFalse(binding instanceof IProblemBinding);
     }
 }

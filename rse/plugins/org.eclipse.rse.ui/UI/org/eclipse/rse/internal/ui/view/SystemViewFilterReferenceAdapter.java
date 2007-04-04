@@ -397,7 +397,7 @@ public class SystemViewFilterReferenceAdapter
 						
 						if (allChildren == null)
 						{
-						    System.out.println("filter children == null!"); //$NON-NLS-1$
+						 //   System.out.println("filter children == null!"); //$NON-NLS-1$
 						}
 						else
 						{

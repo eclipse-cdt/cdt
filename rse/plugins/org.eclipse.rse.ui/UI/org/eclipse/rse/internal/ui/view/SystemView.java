@@ -3784,8 +3784,13 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	protected Widget internalFindReferencedItem(Widget parent, Object element, int searchLimit) {
 		previousItem = null;
 		searchDepth = 0;
-		System.out.println("recursiveInternalFindReferencedItem");
-		return recursiveInternalFindReferencedItem(parent, element, searchLimit);
+
+		Widget result = mappedFindFirstRemoteItemReference(element);
+		if (result == null)
+		{
+			result = recursiveInternalFindReferencedItem(parent, element, searchLimit);
+		}
+		return result;
 	}
 
 	/**
@@ -3959,7 +3964,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		// try new map lookup method - won't work in cases of rename
 		if (!mappedFindAllRemoteItemReferences(elementObject, matches)){ 
 			for (int idx = 0; idx < roots.length; idx++) {
-				System.out.println("recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);");
+				//System.out.println("recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);");
 				matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
 			}
 		}
@@ -4016,9 +4021,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		Item match = mappedFindFirstRemoteItemReference(elementObject);
 		
 		for (int idx = 0; (match == null) && (idx < roots.length); idx++) {
-			System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
+			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(roots[idx], searchString, elementObject, subsystem);
-			if (debugRemote) System.out.println("...Inside internalFindFirstRemoteItemReference. Result of searching root " + idx + ": " + roots[idx].getText() + ": " + match); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		return match;

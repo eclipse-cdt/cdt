@@ -17,6 +17,71 @@ Contributors:
 <?eclipse version="3.0"?>
 <plugin>
 
+<!-- ============================================ -->
+<!-- Register Adapter Factories                   -->
+<!-- ============================================ -->
+ 
+	<extension point="org.eclipse.core.runtime.adapters">
+		<!-- Remote Error --> 
+		<factory 
+			class="org.eclipse.rse.internal.shells.ui.view.SystemViewOutputAdapterFactory" 
+			adaptableType="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError">
+            <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+			<adapter type="org.eclipse.ui.IActionFilter"/>
+			<!-- TODO Check: These are not in the adapter factories 
+			     getAdapterList() Although the adapter implements them
+			<adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier"/>
+			-->
+		</factory> 
+		<!-- Remote Output --> 
+		<factory 
+			class="org.eclipse.rse.internal.shells.ui.view.SystemViewOutputAdapterFactory" 
+			adaptableType="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput">
+            <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+			<adapter type="org.eclipse.ui.IActionFilter"/>
+			<!-- TODO Check: These are not in the adapter factories 
+			     getAdapterList() Although the adapter implements them
+			<adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier"/>
+			-->
+		</factory> 
+		<!-- Remote Command Shell --> 
+		<factory 
+			class="org.eclipse.rse.internal.shells.ui.view.SystemViewOutputAdapterFactory" 
+			adaptableType="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell">
+            <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+			<adapter type="org.eclipse.ui.IActionFilter"/>
+			<!-- TODO Check: These are not in the adapter factories 
+			     getAdapterList() Although the adapter implements them
+			<adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier"/>
+			-->
+		</factory> 
+		<!-- IShellServiceSubSystemConfiguration --> 
+		<factory 
+				class="org.eclipse.rse.internal.shells.ui.view.ShellServiceSubSystemConfigurationAdapterFactory" 
+				adaptableType="org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystemConfiguration">
+            <adapter type="org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter"/>
+		</factory> 
+	</extension>
+
+
+<!-- ============================================ -->
+<!-- Register Views                               -->
+<!-- ============================================ -->
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -58,7 +123,7 @@ Contributors:
 
       <page
             name="%PropertyPage.ServerLauncherSettings" 
-            class="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.ServerLauncherPropertyPage"
             id="org.eclipse.rse.ui.propertypages.serverLauncherPropertyPage">
             <filter name="serverLaunchPP" value="true"/>
          <enabledWhen>

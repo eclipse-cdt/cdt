@@ -236,10 +236,20 @@ public class ASTStringUtil {
 		}
 		final IASTDeclarator nestedDeclarator= declarator.getNestedDeclarator();
 		if (nestedDeclarator != null) {
-			buffer.append(Keywords.cpLPAREN);
-			appendDeclaratorString(buffer, nestedDeclarator, addParams);
-			trimRight(buffer);
-			buffer.append(Keywords.cpRPAREN);
+			StringBuffer tmp= new StringBuffer();
+			appendDeclaratorString(tmp, nestedDeclarator, addParams);
+			trimRight(tmp);
+			final int tmpLength= tmp.length();
+			if (tmpLength > 0) {
+				if (tmp.charAt(0) != Keywords.cpLPAREN[0] || tmp.charAt(tmpLength-1) != Keywords.cpRPAREN[0]) {
+					buffer.append(Keywords.cpLPAREN);
+					buffer.append(tmp);
+					buffer.append(Keywords.cpRPAREN);
+				}
+				else {
+					buffer.append(tmp);
+				}
+			}
 		}
 		if (!addParams) {
 			return buffer;

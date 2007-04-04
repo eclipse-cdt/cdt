@@ -469,6 +469,21 @@ public class CPPVisitor {
 		while( declarator.getNestedDeclarator() != null )
 			declarator = declarator.getNestedDeclarator();
 
+		IASTFunctionDeclarator funcDeclarator= null;
+		IASTNode node= declarator;
+		do {
+			if (node instanceof IASTFunctionDeclarator) {
+				funcDeclarator= (IASTFunctionDeclarator) node;
+				break;
+			}
+			if (((IASTDeclarator) node).getPointerOperators().length > 0 ||
+					node.getPropertyInParent() != IASTDeclarator.NESTED_DECLARATOR) {
+				break;
+			}
+			node= node.getParent();
+		}
+		while (node instanceof IASTDeclarator);
+			
 		IASTName name = declarator.getName();
 		if( name instanceof ICPPASTQualifiedName ){
 			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
@@ -549,10 +564,10 @@ public class CPPVisitor {
                 return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray() );
 		    }
 			binding = new CPPTypedef( name );
-		} else if( declarator instanceof ICPPASTFunctionDeclarator ){
+		} else if( funcDeclarator != null ){
 			if( binding instanceof ICPPInternalBinding && binding instanceof IFunction ){
 			    IFunction function = (IFunction) binding;
-			    if( CPPSemantics.isSameFunction( function, declarator ) ){
+			    if( CPPSemantics.isSameFunction( function, funcDeclarator ) ){
 			        ICPPInternalBinding internal = (ICPPInternalBinding) function;
 			        if( parent instanceof IASTSimpleDeclaration )
 			            internal.addDeclaration( name );
@@ -587,15 +602,15 @@ public class CPPVisitor {
 			}
 			
 			if( scope instanceof ICPPClassScope ){
-				if( isConstructor( scope, declarator) )
+				if( isConstructor( scope, funcDeclarator) )
 					binding = template ? (ICPPConstructor)  new CPPConstructorTemplate( name )
-									   : new CPPConstructor( (ICPPASTFunctionDeclarator) declarator );
+									   : new CPPConstructor( (ICPPASTFunctionDeclarator) funcDeclarator );
 				else 
 					binding = template ? (ICPPMethod) new CPPMethodTemplate( name )
-							           : new CPPMethod( (ICPPASTFunctionDeclarator) declarator );
+							           : new CPPMethod( (ICPPASTFunctionDeclarator) funcDeclarator );
 			} else {
 				binding = template ? (ICPPFunction) new CPPFunctionTemplate( name )
-								   : new CPPFunction( (ICPPASTFunctionDeclarator) declarator );
+								   : new CPPFunction( (ICPPASTFunctionDeclarator) funcDeclarator );
 			}
 		} else if( parent instanceof IASTSimpleDeclaration ){
     	    IType t1 = null, t2 = null;

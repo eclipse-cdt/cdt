@@ -831,6 +831,21 @@ public class CVisitor {
 		while( declarator.getNestedDeclarator() != null )
 			declarator = declarator.getNestedDeclarator();
 		
+		IASTFunctionDeclarator funcDeclarator= null;
+		IASTNode node= declarator;
+		do {
+			if (node instanceof IASTFunctionDeclarator) {
+				funcDeclarator= (IASTFunctionDeclarator) node;
+				break;
+			}
+			if (((IASTDeclarator) node).getPointerOperators().length > 0 ||
+					node.getPropertyInParent() != IASTDeclarator.NESTED_DECLARATOR) {
+				break;
+			}
+			node= node.getParent();
+		}
+		while (node instanceof IASTDeclarator);
+			
 		ICScope scope = (ICScope) getContainingScope( parent );
 		
 		ASTNodeProperty prop = parent.getPropertyInParent();
@@ -865,19 +880,19 @@ public class CVisitor {
 				}
 			} catch (DOMException e) {
 			}
-		} else if( declarator instanceof IASTFunctionDeclarator ){
+		} else if( funcDeclarator != null ){
 			if( binding != null ) {
 			    if( binding instanceof IFunction ){
 			        IFunction function = (IFunction) binding;
 			        if( function instanceof CFunction )
-			        	((CFunction)function).addDeclarator( (IASTFunctionDeclarator) declarator );
+			        	((CFunction)function).addDeclarator( funcDeclarator );
 			        return function;
 			    }
 		        binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
 			} else if( parent instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) parent).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef)
 				binding = new CTypedef( name );
 			else
-				binding = new CFunction( (IASTFunctionDeclarator) declarator );
+				binding = new CFunction( funcDeclarator );
 		} else if( parent instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
 			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){

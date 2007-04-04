@@ -574,12 +574,22 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			return createTypeDef(parent, declSpecifier, declarator);
 		}
 		if (declarator != null) {
-			IASTDeclarator nestedDeclarator= declarator.getNestedDeclarator();
-			if (nestedDeclarator == null && declarator instanceof IASTFunctionDeclarator) {
+			if (declarator instanceof IASTFunctionDeclarator && !hasNestedPointerOperators(declarator)) {
 				return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator)declarator, isTemplate);
 			}
 		}
 		return createVariable(parent, declSpecifier, declarator, isTemplate);
+	}
+
+	private boolean hasNestedPointerOperators(IASTDeclarator declarator) {
+		declarator= declarator.getNestedDeclarator();
+		while (declarator != null) {
+			if (declarator.getPointerOperators().length > 0) {
+				return true;
+			}
+			declarator= declarator.getNestedDeclarator();
+		}
+		return false;
 	}
 
 	private void createNamespace(Parent parent, ICPPASTNamespaceDefinition declaration) throws CModelException, DOMException{

@@ -655,7 +655,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#download(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.io.File, boolean, java.lang.String)
 	 */
-	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding) throws SystemMessageException
+	public synchronized boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding) throws SystemMessageException
 	{
 		
 		if (monitor!=null){

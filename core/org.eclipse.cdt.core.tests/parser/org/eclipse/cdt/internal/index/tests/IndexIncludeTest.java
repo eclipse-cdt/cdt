@@ -18,6 +18,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -270,4 +272,46 @@ public class IndexIncludeTest extends IndexTestBase {
 		assertEquals(isSystem, include.isSystemInclude());
 	}	
 
+	public void testUpdateOfIncluded() throws Exception {
+		String content1 = "int CONTEXT_20070404(x);\n";
+		String content2 = "int CONTEXT_20070404(y);\n";
+		String content3 = "#define CONTEXT_20070404(x) ctx_20070404##x\n #include \"included_20070404.h\"\n int source_20070404;\n";
+		TestSourceReader.createFile(fProject.getProject(), "included_20070404.h", content1);
+		TestSourceReader.createFile(fProject.getProject(), "notIncluded_20070404.h", "int notIncluded_20070404\n;");
+		TestSourceReader.createFile(fProject.getProject(), "includer_20070404.cpp", content3);
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "false");
+		CCorePlugin.getIndexManager().reindex(fProject);
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			assertEquals(0, fIndex.findBindings("notIncluded_20070404".toCharArray(), IndexFilter.ALL, NPM).length);
+			assertEquals(1, fIndex.findBindings("source_20070404".toCharArray(), IndexFilter.ALL, NPM).length);
+			IBinding[] bindings= fIndex.findBindings("ctx_20070404x".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof IVariable);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+		
+		Thread.sleep(1000);
+		// now change the header and see whether it gets parsed
+		TestSourceReader.createFile(fProject.getProject(), "included_20070404.h", content2);
+		TestSourceReader.createFile(fProject.getProject(), "notIncluded_20070404.h", "int notIncluded_20070404\n;");
+		Thread.sleep(1000);
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			assertEquals(0, fIndex.findBindings("notIncluded_20070404".toCharArray(), IndexFilter.ALL, NPM).length);
+			IBinding[] bindings= fIndex.findBindings("ctx_20070404y".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof IVariable);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+		
+	}
 }

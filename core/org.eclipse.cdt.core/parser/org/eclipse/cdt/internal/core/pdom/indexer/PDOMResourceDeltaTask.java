@@ -97,13 +97,13 @@ public class PDOMResourceDeltaTask implements IPDOMIndexerTask {
 			switch (delta.getKind()) {
 			case ICElementDelta.CHANGED:
 				if ((flags & ICElementDelta.F_CONTENT) != 0 &&
-						(fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource()))) {
+						(fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource())) || tu.isHeaderUnit()) {
 					changed.add(tu);
 				}
 				break;
 			case ICElementDelta.ADDED:
 				if (!tu.isWorkingCopy() &&
-						(fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource()))) {
+						(fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource())) || tu.isHeaderUnit()) {
 					added.add(tu);
 				}
 				break;

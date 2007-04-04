@@ -286,12 +286,18 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 						return null;
 					}
 					sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
+					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+						sourceStart = nameOffset;
+					}
 				} else if (binding instanceof IEnumerator) {
 					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '{', ',' });
 					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 						return null;
 					}
 					sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
+					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+						sourceStart = nameOffset;
+					}
 				} else {
 					final int nameLine= doc.getLineOfOffset(nameOffset);
 					sourceStart= doc.getLineOffset(nameLine);
@@ -346,13 +352,23 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 						IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
 						sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
 					} else if (searchComma) {
-						int bound= Math.min(doc.getLength(), nameOffset + 100);
+						int bound;
+						if (binding instanceof IParameter) {
+							bound= scanner.findClosingPeer(nameOffset, '(', ')');
+						} else {
+							bound= scanner.findClosingPeer(nameOffset, '{', '}');
+						}
+						if (bound == CHeuristicScanner.NOT_FOUND) {
+							bound= Math.min(doc.getLength(), nameOffset + 100);
+						}
 						int comma= scanner.scanForward(nameOffset, bound, ',');
-						if (comma != CHeuristicScanner.NOT_FOUND) {
+						if (comma == CHeuristicScanner.NOT_FOUND) {
+							sourceEnd= bound;
+						} else {
 							sourceEnd= comma;
 						}
 						// expand region to include whole line if rest is white space or comment
-						int nextNonWS= scanner.findNonWhitespaceForward(sourceEnd + 1, bound);
+						int nextNonWS= scanner.findNonWhitespaceForward(sourceEnd + 1, CHeuristicScanner.UNBOUND);
 						if (doc.getLineOfOffset(nextNonWS) > doc.getLineOfOffset(sourceEnd)) {
 							IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
 							sourceEnd= lineRegion.getOffset() + lineRegion.getLength();

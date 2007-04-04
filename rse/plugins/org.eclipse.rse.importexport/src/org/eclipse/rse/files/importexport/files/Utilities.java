@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [180562][api] dont implement IRemoteImportExportConstants
  *******************************************************************************/
 package org.eclipse.rse.files.importexport.files;
 
@@ -28,9 +29,9 @@ import org.eclipse.swt.widgets.Shell;
  * A lot of these should really be provided by comm. layer, but for
  * many reasons they were not.  oh well ....
  */
-public class Utilities implements IRemoteImportExportConstants {
-	public static final String IMPORT_DESCRIPTION_EXTENSION = REMOTE_FILE_IMPORT_DESCRIPTION_FILE_EXTENSION;
-	public static final String EXPORT_DESCRIPTION_EXTENSION = REMOTE_FILE_EXPORT_DESCRIPTION_FILE_EXTENSION;
+public class Utilities {
+	public static final String IMPORT_DESCRIPTION_EXTENSION = IRemoteImportExportConstants.REMOTE_FILE_IMPORT_DESCRIPTION_FILE_EXTENSION;
+	public static final String EXPORT_DESCRIPTION_EXTENSION = IRemoteImportExportConstants.REMOTE_FILE_EXPORT_DESCRIPTION_FILE_EXTENSION;
 
 	/**
 	 * Use this method to get IRemoteFile object from SystemConnection, and path

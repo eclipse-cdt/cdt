@@ -31,9 +31,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 public class LocalFileAdapter implements IHostFileToRemoteFileAdapter
 {
 
-
-
-	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes, boolean includeHidden) 
+	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) 
 	{
 		if (nodes == null) return null;
 		
@@ -42,28 +40,25 @@ public class LocalFileAdapter implements IHostFileToRemoteFileAdapter
 		{
 			IHostFile child = nodes[i];
 			
-			if (includeHidden || !child.isHidden())
+			IRemoteFile lfile;
+			
+			if (child instanceof LocalVirtualHostFile)
 			{
-				IRemoteFile lfile;
-				if (child instanceof LocalVirtualHostFile)
-				{
-					LocalVirtualHostFile node = (LocalVirtualHostFile)child;
-					lfile = new LocalVirtualFile(ss, context, node);
-				}
-				else
-				{
-					LocalHostFile node = (LocalHostFile)child;
-					lfile = new LocalFile(ss, context, parent, node);
-				}
-				results.add(lfile);
-				ss.cacheRemoteFile(lfile);
+				LocalVirtualHostFile node = (LocalVirtualHostFile)child;
+				lfile = new LocalVirtualFile(ss, context, node);
 			}
+			else
+			{
+				LocalHostFile node = (LocalHostFile)child;
+				lfile = new LocalFile(ss, context, parent, node);
+			}
+			
+			results.add(lfile);
+			ss.cacheRemoteFile(lfile);
 		}
+		
 		return (IRemoteFile[])results.toArray(new IRemoteFile[results.size()]);
-
 	}
-
-
 
 	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile node) 
 	{

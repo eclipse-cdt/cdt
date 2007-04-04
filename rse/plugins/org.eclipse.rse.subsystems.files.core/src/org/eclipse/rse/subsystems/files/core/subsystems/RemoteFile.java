@@ -606,81 +606,20 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		return getContents(contentsType, "*"); //$NON-NLS-1$
 	}	  
 	
-	private Object[] combineAndFilterHidden(Object[] set1, Object[] set2)
+	private Object[] combine(Object[] set1, Object[] set2)
 	{
-		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
 		ArrayList result = new ArrayList(set1.length + set2.length);
+		
 		for (int i = 0; i < set1.length; i++)
-		{			
-			if (set1[1] instanceof IRemoteFile)
-			{
-				if (showHidden)
-				{
-					result.add(set1[i]);
-				}
-				else
-				{
-					if (!((IRemoteFile)set1[i]).isHidden())
-					{
-						result.add(set1[i]);
-					}
-				}
-			}
-			else
-			{
-				result.add(set1[i]);
-			}
+		{
+			result.add(set1[i]);
 		}
+		
 		for (int j = 0; j < set2.length; j++)
 		{
-			if (set2[j] instanceof IRemoteFile)
-			{
-				if (showHidden)
-				{
-					result.add(set2[j]);
-				}
-				else
-				{
-					if (!((IRemoteFile)set2[j]).isHidden())
-					{
-						result.add(set2[j]);
-					}
-				}
-			}
-			else
-			{
-				result.add(set2[j]);
-			}
+			result.add(set2[j]);
 		}
-		return result.toArray(new IRemoteFile[result.size()]);
-	}
-	
-	private Object[] filterHidden(Object[] set, boolean checkInstanceOf)
-	{
-		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
-		ArrayList result = new ArrayList(set.length);
-		for (int i = 0; i < set.length; i++)
-		{			
-			if (set[i] instanceof IRemoteFile)
-			{
-				if (showHidden)
-				{
-					result.add(set[i]);
-				}
-				else
-				{
-					if (!checkInstanceOf || set[i] instanceof IRemoteFile)
-					{
-						if (!((IRemoteFile)set[i]).isHidden())
-						{
-							result.add(set[i]);
-						}
-					}
-				}
-			}
-
-			
-		}
+		
 		return result.toArray(new IRemoteFile[result.size()]);
 	}
 	
@@ -732,7 +671,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 					Object[] folders = getContents(RemoteFolderChildrenContentsType.getInstance(), filter);
 					Object[] files = getContents(RemoteFileChildrenContentsType.getInstance(), filter);
 					
-					return combineAndFilterHidden(folders, files);
+					return combine(folders, files);
 				}
 			}
 			else if  (contentsType == RemoteFileChildrenContentsType.getInstance())
@@ -740,7 +679,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 				if (hasContents(RemoteChildrenContentsType.getInstance()))
 				{
 					Object[] filesAndFolders = getContents(RemoteChildrenContentsType.getInstance());
-					return filterHidden(getFiles(filesAndFolders), false);
+					return filesAndFolders;
 				}
 			}
 			else if (contentsType == RemoteFolderChildrenContentsType.getInstance())
@@ -748,7 +687,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 				if (hasContents(RemoteChildrenContentsType.getInstance()))
 				{
 					Object[] filesAndFolders = getContents(RemoteChildrenContentsType.getInstance());
-					return filterHidden(getFolders(filesAndFolders), false);
+					return getFolders(filesAndFolders);
 				}
 			}
 			return null;
@@ -766,7 +705,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			    contentsType == RemoteFolderChildrenContentsType.getInstance()
 			)
 			{
-				return filterHidden(filterResults, true);
+				return filterResults;
 			}
 			else
 			{

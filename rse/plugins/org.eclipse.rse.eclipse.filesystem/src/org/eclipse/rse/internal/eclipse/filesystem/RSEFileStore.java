@@ -91,7 +91,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 					filterString.setShowFiles(true);
 					filterString.setShowSubDirs(true);
 					RemoteFileContext context = new RemoteFileContext(_subSystem, _remoteFile, filterString);
-					children = fileServiceSubSystem.getHostFileToRemoteFileAdapter().convertToRemoteFiles(fileServiceSubSystem, context, _remoteFile, results, true);
+					children = fileServiceSubSystem.getHostFileToRemoteFileAdapter().convertToRemoteFiles(fileServiceSubSystem, context, _remoteFile, results);
 				}
 				else {
 					children = _subSystem.listFoldersAndFiles(_remoteFile, "*", monitor); //$NON-NLS-1$

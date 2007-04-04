@@ -29,17 +29,15 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 
 public class SftpFileAdapter implements IHostFileToRemoteFileAdapter {
 
-	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes, boolean includeHidden) {
+	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) {
 
 		List results = new ArrayList();
 		if (nodes!=null) {
 			for (int i = 0; i < nodes.length; i++) {
 				SftpHostFile node = (SftpHostFile)nodes[i];
-				if (includeHidden || !node.isHidden()) {
-					IRemoteFile remoteFile = new SftpRemoteFile(ss, context, parent, node);
-					results.add(remoteFile);
-					ss.cacheRemoteFile(remoteFile);
-				}
+				IRemoteFile remoteFile = new SftpRemoteFile(ss, context, parent, node);
+				results.add(remoteFile);
+				ss.cacheRemoteFile(remoteFile);
 			}
 		}
 		return (IRemoteFile[])results.toArray(new IRemoteFile[results.size()]);

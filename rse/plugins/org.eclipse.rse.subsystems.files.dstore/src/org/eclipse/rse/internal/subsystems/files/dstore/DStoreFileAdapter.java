@@ -47,30 +47,31 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 	}
 
 
-	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes, boolean includeHidden) 
+	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) 
 	{
 		registerFilePropertyChangeListener(ss);
 		
 		List results = new ArrayList();
+		
 		for (int i = 0; i < nodes.length; i++) 
 		{
 			DStoreHostFile node = (DStoreHostFile)nodes[i];
-			if (includeHidden || !node.isHidden())
-			{
-				IRemoteFile lfile = null;
+			
+			IRemoteFile lfile = null;
 					
-					if (node instanceof DStoreVirtualHostFile)
-					{
-						lfile = new DStoreVirtualFile(ss, context, parent, (DStoreVirtualHostFile) node);
-					}
-					else
-					{
-						lfile = new DStoreFile(ss, context, parent, node);
-					}
-				results.add(lfile);
-				ss.cacheRemoteFile(lfile);
+			if (node instanceof DStoreVirtualHostFile)
+			{
+				lfile = new DStoreVirtualFile(ss, context, parent, (DStoreVirtualHostFile) node);
 			}
+			else
+			{
+				lfile = new DStoreFile(ss, context, parent, node);
+			}
+			
+			results.add(lfile);
+			ss.cacheRemoteFile(lfile);
 		}
+		
 		return (IRemoteFile[])results.toArray(new IRemoteFile[results.size()]);
 	}
 

@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -56,6 +57,7 @@ import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterName;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -232,8 +234,24 @@ public class SystemViewFilterReferenceAdapter
 	{
 		return internalGetChildren(monitor, element);
 	}
-	
-	
+
+	/**
+	 * Gets all the children and then passes the children to the subsystem configuration adapter for filtering.
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getChildren(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.rse.ui.view.IContextObject)
+	 */
+	public Object[] getChildren(IProgressMonitor monitor, IContextObject element) {
+		Object[] children = getChildren(monitor, element.getModelObject());
+		ISubSystem subsystem = element.getSubSystem();
+		ISubSystemConfiguration configuration = subsystem.getSubSystemConfiguration();
+		Object adapter = Platform.getAdapterManager().getAdapter(configuration, ISubSystemConfigurationAdapter.class);
+		
+		if (adapter instanceof ISubSystemConfigurationAdapter) {
+			children = ((ISubSystemConfigurationAdapter)adapter).applyViewFilters(element, children);
+		}
+		
+		return children;
+	}
+
 	/*
 	 * Returns the children of the specified element.  If a monitor is passed in then 
 	 * the context is assumed to be modal and, as such, the modal version of ss.resolveFilterStrings

@@ -699,6 +699,7 @@ public class SystemViewRemoteFileAdapter
 		if (hasChildren && !file.isStale())
 		{
 			children = file.getContents(RemoteChildrenContentsType.getInstance(), filter);
+			children = filterChildren(children);
 		}
 		else
 		{
@@ -713,12 +714,13 @@ public class SystemViewRemoteFileAdapter
 			    {
 			        children = ss.resolveFilterString(new NullProgressMonitor(), file, filter);
 			    }
+			    
 				if ((children == null) || (children.length == 0))
 				{
-					//children = new SystemMessageObject[1];
-					//children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_EMPTY),
-					//                                      ISystemMessageObject.MSGTYPE_EMPTY, element);
 					children = EMPTY_LIST;
+				}
+				else {
+					children = filterChildren(children);	
 				}
 
 			}
@@ -737,6 +739,32 @@ public class SystemViewRemoteFileAdapter
 		}
 		file.markStale(false);
 		return children;
+	}
+	
+	private Object[] filterChildren(Object[] children) {
+		
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
+		
+		if (showHidden) {
+			return children;
+		}
+		else {
+			
+			ArrayList results = new ArrayList(children.length);
+		
+			for (int i = 0; i < children.length; i++) {
+			
+				if (children[i] instanceof IRemoteFile) {
+					IRemoteFile remoteFile = (IRemoteFile)(children[i]);
+				
+					if (!remoteFile.isHidden()) {
+						results.add(remoteFile);
+					}
+				}
+			}
+			
+			return results.toArray();
+		}
 	}
 	
 	/**

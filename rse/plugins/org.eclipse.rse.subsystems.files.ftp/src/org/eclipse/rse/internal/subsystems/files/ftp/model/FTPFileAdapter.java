@@ -31,18 +31,15 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 public class FTPFileAdapter implements IHostFileToRemoteFileAdapter
 {
 	
-	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes, boolean includeHidden) 
+	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) 
 	{
 		List results = new ArrayList();
 		for (int i = 0; i < nodes.length; i++) 
 		{
 			FTPHostFile node = (FTPHostFile)nodes[i];
-			if (includeHidden || !node.isHidden())
-			{
-				IRemoteFile ftpFile = new FTPRemoteFile(ss, context, parent, node);
-				results.add(ftpFile);
-				ss.cacheRemoteFile(ftpFile);
-			}
+			IRemoteFile ftpFile = new FTPRemoteFile(ss, context, parent, node);
+			results.add(ftpFile);
+			ss.cacheRemoteFile(ftpFile);
 		}
 		return (IRemoteFile[])results.toArray(new IRemoteFile[results.size()]);
 	}

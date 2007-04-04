@@ -1265,4 +1265,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			return ((SubSystemConfiguration)config).getUserIdValidator();
 		}
 
+		/**
+		 * The default implementation does not filter and simply returns the children passed in.
+		 * Subclasses should override if they want to filter objects.
+		 * @param parent the parent context.
+		 * @param children the children to filter.
+		 * @return the children after filtering.
+		 */
+		public Object[] applyViewFilters(IContextObject parent, Object[] children) {
+			return children;
+		}
 }

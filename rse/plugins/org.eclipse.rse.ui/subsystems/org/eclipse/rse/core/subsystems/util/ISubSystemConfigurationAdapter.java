@@ -36,6 +36,7 @@ import org.eclipse.rse.ui.propertypages.ISystemSubSystemPropertyPageCoreForm;
 import org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage;
 import org.eclipse.rse.ui.validators.ISystemValidator;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -295,4 +296,12 @@ public interface ISubSystemConfigurationAdapter
 	 */
 	public ISystemValidator getPortValidator(ISubSystemConfiguration confi);
 	
+	/**
+	 * Filters an array of children and returns the results. The default implementation does not filter
+	 * and simply returns the children passed in. Subclasses should override if they want to filter objects.
+	 * @param parent the parent context.
+	 * @param children the children to filter.
+	 * @return the children after filtering.
+	 */
+	public Object[] applyViewFilters(IContextObject parent, Object[] children);
 }

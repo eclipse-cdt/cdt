@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.internal.files.ui.view;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -36,10 +37,13 @@ import org.eclipse.rse.internal.files.ui.actions.SystemNewFileFilterAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemNewFolderAction;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.files.ui.wizards.SystemFileNewConnectionWizardPage;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.model.ISystemRegistryUI;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
@@ -196,6 +200,36 @@ public class RemoteFileSubSystemConfigurationAdapter extends SubSystemConfigurat
 		}
 		catch (Exception e)
 		{
+		}
+	}
+
+	/**
+	 * Checks the preference setting for hidden files and filters out hidden files if the preference setting is to not show hidden files.
+	 * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#applyViewFilters(org.eclipse.rse.ui.view.IContextObject, java.lang.Object[])
+	 */
+	public Object[] applyViewFilters(IContextObject parent, Object[] children) {
+		
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
+		
+		if (showHidden) {
+			return children;
+		}
+		else {
+			
+			ArrayList results = new ArrayList(children.length);
+		
+			for (int i = 0; i < children.length; i++) {
+			
+				if (children[i] instanceof IRemoteFile) {
+					IRemoteFile remoteFile = (IRemoteFile)(children[i]);
+				
+					if (!remoteFile.isHidden()) {
+						results.add(remoteFile);
+					}
+				}
+			}
+			
+			return results.toArray();
 		}
 	}
 }

@@ -10,7 +10,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.services,
  org.eclipse.rse.services.local,
  org.eclipse.rse.connectorservice.local,
- org.eclipse.rse.files.ui,
  org.eclipse.rse.subsystems.files.core,
  org.eclipse.rse.core,
  org.eclipse.rse.ui

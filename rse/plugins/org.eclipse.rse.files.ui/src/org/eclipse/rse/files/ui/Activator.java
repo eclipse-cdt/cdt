@@ -18,16 +18,10 @@ package org.eclipse.rse.files.ui;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
-import org.eclipse.rse.internal.files.ui.view.RemoteFileSubSystemConfigurationAdapterFactory;
-import org.eclipse.rse.internal.files.ui.view.SystemViewFileAdapterFactory;
-import org.eclipse.rse.internal.files.ui.view.SystemViewSearchResultAdapterFactory;
-import org.eclipse.rse.internal.files.ui.view.SystemViewSearchResultSetAdapterFactory;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -42,10 +36,6 @@ public class Activator extends AbstractUIPlugin
 	private static Activator plugin;
 	
 	private static SystemUniversalTempFileListener _tempFileListener;
-	
-	private SystemViewFileAdapterFactory svfaf; // for fastpath
-    private SystemViewSearchResultSetAdapterFactory svsaf; // for fastpath
-	private SystemViewSearchResultAdapterFactory svsraf; // for fastpath
 	
 	/**
 	 * The constructor.
@@ -63,33 +53,12 @@ public class Activator extends AbstractUIPlugin
 	    // refresh the remote edit project at plugin startup, to ensure
 	    // it's never closed
 		SystemRemoteEditManager.getDefault().refreshRemoteEditProject();
-		
 
-    	int eventMask = IResourceChangeEvent.POST_CHANGE;	
-    	IWorkspace ws = SystemBasePlugin.getWorkspace();
-  
-    	
-    	
-
-	    IAdapterManager manager = Platform.getAdapterManager();
-	    
-	    svfaf = new SystemViewFileAdapterFactory();	
-	    svfaf.registerWithManager(manager);	
-	
-	
-	
-	    svsaf = new SystemViewSearchResultSetAdapterFactory();	
-	    svsaf.registerWithManager(manager);	
-	    
-		svsraf = new SystemViewSearchResultAdapterFactory();	
-		svsraf.registerWithManager(manager);	
-		
-	    RemoteFileSubSystemConfigurationAdapterFactory rfssfaf = new RemoteFileSubSystemConfigurationAdapterFactory();
-	    rfssfaf.registerWithManager(manager);
-	    
 	    // universal temp file listener
 	    _tempFileListener = SystemUniversalTempFileListener.getListener();	
 	  	// add listener for temp files
+    	int eventMask = IResourceChangeEvent.POST_CHANGE;	
+    	IWorkspace ws = SystemBasePlugin.getWorkspace();
     	ws.addResourceChangeListener(_tempFileListener, eventMask);
 	}
 
@@ -104,9 +73,6 @@ public class Activator extends AbstractUIPlugin
 		ws.removeResourceChangeListener(_tempFileListener);
   	  	_tempFileListener = null;
 		plugin = null;
-		
-		
-		
 	}
 
 	/**
@@ -127,28 +93,4 @@ public class Activator extends AbstractUIPlugin
 		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.files.ui", path); //$NON-NLS-1$
 	}
 	
-	  /**
-     * For pathpath access to our adapters for remote universal file objects. Exploits the knowledge we use singleton adapters.
-     */
-    public SystemViewFileAdapterFactory getSystemViewFileAdapterFactory()
-    {
-    	return svfaf;
-    }
-
-    /**
-     * For pathpath access to our adapters for searchable result output objects. Exploits the knowledge we use singleton adapters.
-     */
-    public SystemViewSearchResultSetAdapterFactory getSystemViewSearchResultSetAdapterFactory()
-    {
-    	return svsaf;
-    }
-    
-	/**
-	  * For pathpath access to our adapters for searchable result output objects. Exploits the knowledge we use singleton adapters.
-	  */
-	 public SystemViewSearchResultAdapterFactory getSystemViewSearchResultAdapterFactory()
-	 {
-		 return svsraf;
-	 }
-
 }

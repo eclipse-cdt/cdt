@@ -17,7 +17,9 @@
 
 package org.eclipse.rse.subsystems.files.core;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -41,6 +43,15 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+
+		// make sure that required adapters factories are loaded 
+		//(will typically activate org.eclipse.rse.files.ui)
+		//TODO Check that this does not fire up the UI if we want to be headless
+		Platform.getAdapterManager().loadAdapter(new RemoteFileEmpty(), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
+		// Others (RemoteSearchResultSet, RemoteSearchResult, 
+		// RemoteFileSystemConfigurationAdapter will be available
+		// automatically once the plugin is loaded
+
 	}
 
 	/**

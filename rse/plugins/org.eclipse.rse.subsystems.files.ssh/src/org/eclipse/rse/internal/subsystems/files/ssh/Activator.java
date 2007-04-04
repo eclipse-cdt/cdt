@@ -11,9 +11,12 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.subsystems.files.ssh;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -39,9 +42,6 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
-		// make sure files.ui is activated
-		org.eclipse.rse.files.ui.Activator.getDefault();
 	}
 
 	/*

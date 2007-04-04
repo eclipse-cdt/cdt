@@ -40,8 +40,6 @@ public class Activator extends SystemBasePlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-//		 make sure files.ui is activated
-		org.eclipse.rse.files.ui.Activator.getDefault();
 	}
 
 	/**
@@ -62,7 +60,6 @@ public class Activator extends SystemBasePlugin {
 	protected void initializeImageRegistry()
 	{
 		// TODO Auto-generated method stub
-		
 	}
 
 

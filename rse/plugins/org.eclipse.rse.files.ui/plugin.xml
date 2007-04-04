@@ -12,13 +12,81 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-{Name} (company) - description of contribution.
+Martin Oberhuber (Wind River) - declaratively register adapter factories
 -->
 <?eclipse version="3.0"?>
 <plugin>
+
+<!-- ============================================ -->
+<!-- Register Adapter Factories                   -->
+<!-- ============================================ -->
  
-   <extension
-         point="org.eclipse.ui.preferencePages">
+	<extension point="org.eclipse.core.runtime.adapters">
+		<!-- Remote Files --> 
+		<factory 
+			class="org.eclipse.rse.internal.files.ui.view.SystemViewFileAdapterFactory" 
+			adaptableType="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+            <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
+			<!-- all adapter types which are subject to getAdapter() need to be registered! -->
+			<!-- just having it in AdapterFactory#getAdapterList() is not sufficient. -->
+			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+			<adapter type="org.eclipse.ui.IActionFilter"/>
+			<adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+			<!-- TODO Check: These are not in the adapter factories 
+			     getAdapterList() Although the adapter implements them
+			<adapter type="org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier"/>
+			-->
+		</factory> 
+		<!-- SearchResultSet --> 
+		<factory 
+				class="org.eclipse.rse.internal.files.ui.view.SystemViewSearchResultSetAdapterFactory" 
+				adaptableType="org.eclipse.rse.services.search.IHostSearchResultSet">
+            <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+			<adapter type="org.eclipse.ui.IActionFilter"/>
+			<!-- TODO Check: These are not in the adapter factories 
+			     getAdapterList() Although the adapter implements them
+			<adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemRemoveElementAdapter"/>
+			-->
+		</factory>
+		<!-- SearchResult --> 
+		<factory 
+				class="org.eclipse.rse.internal.files.ui.view.SystemViewSearchResultAdapterFactory" 
+				adaptableType="org.eclipse.rse.services.search.IHostSearchResult">
+            <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+			<adapter type="org.eclipse.ui.IActionFilter"/>
+			<!-- TODO Check: These are not in the adapter factories 
+			     getAdapterList() Although the adapter implements them
+			<adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier"/>
+			-->
+		</factory>
+		<!-- SubSystemConfiguration --> 
+		<factory 
+				class="org.eclipse.rse.internal.files.ui.view.RemoteFileSubSystemConfigurationAdapterFactory" 
+				adaptableType="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration">
+            <adapter type="org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter"/>
+		</factory> 
+	</extension>
+ 
+<!-- ============================================ -->
+<!-- Define Files Preference Pages                -->
+<!-- ============================================ -->
+  
+	<extension
+		point="org.eclipse.ui.preferencePages">
       <page
             name="%PreferencePage.UniversalFiles"
             category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
@@ -33,7 +101,6 @@ Contributors:
             id="org.eclipse.rse.core.ui.preferences.SystemCachePreferencePage">
       </page>
    </extension>
-   
    
    
 <!-- ============================================ -->
@@ -68,7 +135,7 @@ Contributors:
 -->
       <page
             name="%PropertyPage.ServerLauncherSettings" 
-            class="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage"
+            class="org.eclipse.rse.internal.ui.propertypages.ServerLauncherPropertyPage"
             id="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage">
             <filter name="serverLaunchPP" value="true"/>
          <enabledWhen>

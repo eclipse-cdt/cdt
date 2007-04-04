@@ -11,9 +11,9 @@
 package org.eclipse.cdt.internal.core.dom;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.IMacroCollector;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
-import org.eclipse.cdt.core.parser.IScanner;
 
 /**
  * A <code>ICodeReaderFactory</code> which creates dummy <code>CodeReader</code>s without content.
@@ -34,9 +34,9 @@ public class NullCodeReaderFactory implements ICodeReaderFactory {
 	}
 
 	/*
-	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(org.eclipse.cdt.core.parser.IScanner, java.lang.String)
+	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(org.eclipse.cdt.core.dom.ICodeReaderFactoryCallback, java.lang.String)
 	 */
-	public CodeReader createCodeReaderForInclusion(IScanner scanner, String path) {
+	public CodeReader createCodeReaderForInclusion(IMacroCollector scanner, String path) {
 		return new CodeReader(path, EMPTY_CHARS);
 	}
 

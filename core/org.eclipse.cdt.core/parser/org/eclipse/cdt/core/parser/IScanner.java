@@ -12,15 +12,23 @@ package org.eclipse.cdt.core.parser;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.IMacroCollector;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 
 /**
  * @author jcamelon
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same. Please do not use this API without
+ * consulting with the CDT team.
+ * </p>
  *
  */
-public interface IScanner {
+public interface IScanner extends IMacroCollector {
 	
 	public static final int tPOUNDPOUND = -6;
 	public static final int tPOUND      = -7;

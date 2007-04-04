@@ -15,11 +15,11 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.IMacroCollector;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
@@ -70,9 +70,9 @@ public class PartialWorkingCopyCodeReaderFactory
 	}
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
+     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(org.eclipse.cdt.core.dom.ICodeReaderFactoryCallback, java.lang.String)
      */
-    public CodeReader createCodeReaderForInclusion(IScanner scanner, String path) {
+    public CodeReader createCodeReaderForInclusion(IMacroCollector scanner, String path) {
         return cache.get( path );
     }
 

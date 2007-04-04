@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.IMacroCollector;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -35,7 +36,6 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.IMacro;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
@@ -103,7 +103,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		return ParserUtil.createReader(path, null);
 	}
 	
-	public CodeReader createCodeReaderForInclusion(IScanner scanner, String path) {
+	public CodeReader createCodeReaderForInclusion(IMacroCollector scanner, String path) {
 		// if the file is in the index, we skip it
 		File location= new File(path);
 		String canonicalPath= path;

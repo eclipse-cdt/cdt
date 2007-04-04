@@ -13,7 +13,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -70,7 +69,7 @@ public class ASTCache {
 	 */
 	private long fLastWriteOnIndex;
 	/** Inidicates whether the AST is currenty being computed */
-	private volatile boolean fIsReconciling;
+	private boolean fIsReconciling;
 
 	/**
 	 * Create a new AST cache.
@@ -133,7 +132,7 @@ public class ASTCache {
 						if (DEBUG)
 							System.out.println(DEBUG_PREFIX + getThreadName() + "waiting for AST for: " + tUnit.getElementName()); //$NON-NLS-1$ 
 						fCacheMutex.wait();
-						// Check whether active element is still valid (
+						// Check whether active element is still valid
 						if (fAST != null) {
 							if (DEBUG)
 								System.out.println(DEBUG_PREFIX + getThreadName() + "...got AST for: " + tUnit.getElementName()); //$NON-NLS-1$ 
@@ -219,25 +218,24 @@ public class ASTCache {
 	 * @param tUnit  the translation unit
 	 */
 	private void cache(IASTTranslationUnit ast, ITranslationUnit tUnit) {
-		synchronized (fCacheMutex) {
-			if (fActiveTU != null && !fActiveTU.equals(tUnit)) {
-				if (DEBUG && tUnit != null) // don't report call from disposeAST()
-					System.out.println(DEBUG_PREFIX + getThreadName() + "don't cache AST for inactive: " + toString(tUnit)); //$NON-NLS-1$ 
-				return;
-			}
-	
-			if (DEBUG && (tUnit != null || ast != null)) // don't report call from disposeAST()
-				System.out.println(DEBUG_PREFIX + getThreadName() + "caching AST: " + toString(ast) + " for: " + toString(tUnit)); //$NON-NLS-1$ //$NON-NLS-2$ 
-	
-			if (fAST != null)
-				disposeAST();
-	
-			fAST= ast;
-			fLastWriteOnIndex= fAST == null ? 0 : fAST.getIndex().getLastWriteAccess();
-	
-			// Signal AST change
-			fCacheMutex.notifyAll();
+		assert Thread.holdsLock(fCacheMutex);
+		if (fActiveTU != null && !fActiveTU.equals(tUnit)) {
+			if (DEBUG && tUnit != null) // don't report call from disposeAST()
+				System.out.println(DEBUG_PREFIX + getThreadName() + "don't cache AST for inactive: " + toString(tUnit)); //$NON-NLS-1$ 
+			return;
 		}
+
+		if (DEBUG && (tUnit != null || ast != null)) // don't report call from disposeAST()
+			System.out.println(DEBUG_PREFIX + getThreadName() + "caching AST: " + toString(ast) + " for: " + toString(tUnit)); //$NON-NLS-1$ //$NON-NLS-2$ 
+
+		if (fAST != null)
+			disposeAST();
+
+		fAST= ast;
+		fLastWriteOnIndex= fAST == null ? 0 : fAST.getIndex().getLastWriteAccess();
+
+		// Signal AST change
+		fCacheMutex.notifyAll();
 	}
 
 	/**
@@ -259,10 +257,10 @@ public class ASTCache {
 	/**
 	 * Creates a new translation unit AST.
 	 * 
-	 * @param tUnit the C element for which to create the AST
-	 * @param index for AST generation, needs to be read-locked.
-	 * @param progressMonitor the progress monitor
-	 * @return AST
+	 * @param tUnit  the translation unit for which to create the AST
+	 * @param index  the index for AST generation, needs to be read-locked.
+	 * @param progressMonitor  a progress monitor, may be <code>null</code>
+	 * @return an AST for the translation unit, or <code>null</code> if the operation was cancelled
 	 */
 	public IASTTranslationUnit createAST(final ITranslationUnit tUnit, final IIndex index, final IProgressMonitor progressMonitor) {
 		if (progressMonitor != null && progressMonitor.isCanceled())
@@ -294,14 +292,14 @@ public class ASTCache {
 	/**
 	 * Set the given translation unit as active element to cache an AST for.
 	 * 
-	 * @param tUnit
+	 * @param tUnit  the translation unit
 	 */
 	public void setActiveElement(ITranslationUnit tUnit) {
 		if (tUnit == fActiveTU) {
 			return;
 		}
-		fIsReconciling= false;
 		synchronized (fCacheMutex) {
+			fIsReconciling= false;
 			fActiveTU= tUnit;
 			cache(null, tUnit);
 		}
@@ -312,7 +310,7 @@ public class ASTCache {
 	/**
 	 * Check whether the given translation unit is the active element of this cache.
 	 * 
-	 * @param tUnit
+	 * @param tUnit  the translation unit
 	 * @return  <code>true</code>, if this cache manages the given translation unit
 	 */
 	public boolean isActiveElement(ITranslationUnit tUnit) {
@@ -325,43 +323,42 @@ public class ASTCache {
 	 * Informs that reconciling (computation of the AST) for the given element 
 	 * is about to be started.
 	 *
-	 * @param tUnit the C element
-	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#aboutToBeReconciled()
+	 * @param tUnit  the translation unit
 	 */
 	public void aboutToBeReconciled(ITranslationUnit tUnit) {
 		if (tUnit == null)
 			return;
-		if (fActiveTU == null || !fActiveTU.equals(tUnit)) {
-			return;
+		
+		synchronized (fCacheMutex) {
+			if (fActiveTU == null || !fActiveTU.equals(tUnit)) {
+				return;
+			}
+	
+			if (DEBUG)
+				System.out.println(DEBUG_PREFIX + getThreadName() + "about to reconcile: " + toString(tUnit)); //$NON-NLS-1$ 
+	
+			fIsReconciling= true;
+			cache(null, tUnit);
 		}
-
-		if (DEBUG)
-			System.out.println(DEBUG_PREFIX + getThreadName() + "about to reconcile: " + toString(tUnit)); //$NON-NLS-1$ 
-
-		fIsReconciling= true;
-		cache(null, tUnit);
 	}
 
 	/**
 	 * Informs that reconciling of the AST of the given translation unit has finished.
 	 * 
-	 * @param ast
-	 * @param tUnit
+	 * @param ast  the translation unit AST
+	 * @param tUnit  the translation unit
 	 */
 	public void reconciled(IASTTranslationUnit ast, ITranslationUnit tUnit) {
 		synchronized (fCacheMutex) {
+			if (tUnit == null || !tUnit.equals(fActiveTU)) {
+				if (DEBUG)
+					System.out.println(DEBUG_PREFIX + getThreadName() + "ignoring AST of out-dated element"); //$NON-NLS-1$
+				return;
+			}
 			if (DEBUG)
 				System.out.println(DEBUG_PREFIX + getThreadName() + "reconciled: " + toString(tUnit) + ", AST: " + toString(ast)); //$NON-NLS-1$ //$NON-NLS-2$
 
 			fIsReconciling= false;
-			if (tUnit == null || !tUnit.equals(fActiveTU)) {
-				if (DEBUG)
-					System.out.println(DEBUG_PREFIX + getThreadName() + "  ignoring AST of out-dated element"); //$NON-NLS-1$
-	
-				// Signal - threads might wait for wrong element
-				fCacheMutex.notifyAll();
-				return;
-			}
 			cache(ast, tUnit);
 		}
 	}
@@ -370,7 +367,7 @@ public class ASTCache {
 	 * Tells whether the given C element is the one
 	 * reported as currently being reconciled.
 	 *
-	 * @param tUnit the C element
+	 * @param tUnit  the translation unit
 	 * @return <code>true</code> if reported as currently being reconciled
 	 */
 	public boolean isReconciling(ITranslationUnit tUnit) {
@@ -393,21 +390,21 @@ public class ASTCache {
 	/**
 	 * Returns a string for the given C element used for debugging.
 	 *
-	 * @param cElement the translation unit AST
+	 * @param tUnit  the translation unit
 	 * @return a string used for debugging
 	 */
-	private static String toString(ICElement cElement) {
-		if (cElement == null)
+	private static String toString(ITranslationUnit tUnit) {
+		if (tUnit == null)
 			return "null"; //$NON-NLS-1$
 		else
-			return cElement.getElementName();
+			return tUnit.getElementName();
 
 	}
 
 	/**
 	 * Returns a string for the given AST used for debugging.
 	 *
-	 * @param ast the translation unit AST
+	 * @param ast  the translation unit AST
 	 * @return a string used for debugging
 	 */
 	private static String toString(IASTTranslationUnit ast) {

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemUDAConstants
  *******************************************************************************/
 package org.eclipse.rse.useractions.ui.uda;
 
@@ -84,7 +85,7 @@ import org.xml.sax.SAXParseException;
  * Architecturally, this class and the SystemXMLElementWrapper class 
  *  encapsulate all knowledge of the fact the underlying store is a xml document.
  */
-public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChangeListener, ISystemXMLElementWrapperFactory, ITreeContentProvider, ISystemUDAConstants {
+public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChangeListener, ISystemXMLElementWrapperFactory, ITreeContentProvider {
 	// state
 	protected SystemUDActionSubsystem _udas;
 	protected IFolder importCaseFolder; // Only set during Import processing
@@ -325,7 +326,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			// create root element. Eg <Actions> or <Types>
 			Element root = doc.createElement(getDocumentRootTagName());
 			// set current release as an attribute
-			root.setAttribute(RELEASE_ATTR, CURRENT_RELEASE_NAME);
+			root.setAttribute(ISystemUDAConstants.RELEASE_ATTR, CURRENT_RELEASE_NAME);
 			// assign root
 			doc.appendChild(root); // Add Root to Document
 		}
@@ -609,7 +610,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	public String getDocumentRelease(ISystemProfile profile) {
 		Document doc = getDocument(profile);
 		Element root = doc.getDocumentElement();
-		String rel = root.getAttribute(RELEASE_ATTR);
+		String rel = root.getAttribute(ISystemUDAConstants.RELEASE_ATTR);
 		if (rel == null)
 			return "4.0"; //$NON-NLS-1$
 		else
@@ -627,12 +628,12 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			// document is good. Now, check the release date stamped on it.
 			// if not the current release, then we must consider migration...	
 			Element docroot = doc.getDocumentElement();
-			String docRelease = docroot.getAttribute(RELEASE_ATTR);
+			String docRelease = docroot.getAttribute(ISystemUDAConstants.RELEASE_ATTR);
 			if ((docRelease == null) || (docRelease.length() == 0)) docRelease = "4.0"; //$NON-NLS-1$
 			if (!docRelease.equals(CURRENT_RELEASE_NAME)) {
 				//System.out.println("Doing migration from "+docRelease+" to " + ISystemConstants.CURRENT_RELEASE_NAME + "...");
 				boolean migrationDone = doMigration(profile, docRelease);
-				docroot.setAttribute(RELEASE_ATTR, RSECorePlugin.CURRENT_RELEASE_NAME);
+				docroot.setAttribute(ISystemUDAConstants.RELEASE_ATTR, RSECorePlugin.CURRENT_RELEASE_NAME);
 				if (migrationDone) {
 					setChanged(profile); // is this the right thing to do?
 					saveUserData(profile);
@@ -1353,10 +1354,10 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * @param domain - the integer representation of the domain, used to get its name and translated name
 	 */
 	protected Element createDomainElement(Document xdoc, int domain) {
-		Element element = xdoc.createElement(XE_DOMAIN);
+		Element element = xdoc.createElement(ISystemUDAConstants.XE_DOMAIN);
 		xdoc.getDocumentElement().appendChild(element);
-		element.setAttribute(XE_DOMTYPE, getActionSubSystem().mapDomainName(domain));
-		element.setAttribute(XE_DOMNAME, getActionSubSystem().mapDomainXlatedName(domain));
+		element.setAttribute(ISystemUDAConstants.XE_DOMTYPE, getActionSubSystem().mapDomainName(domain));
+		element.setAttribute(ISystemUDAConstants.XE_DOMNAME, getActionSubSystem().mapDomainXlatedName(domain));
 		return element;
 	}
 
@@ -1368,7 +1369,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 *  element. That is, if its tag name is "Domain"
 	 */
 	public static boolean isDomainElement(Element element) {
-		return (element.getTagName().equals(XE_DOMAIN));
+		return (element.getTagName().equals(ISystemUDAConstants.XE_DOMAIN));
 	}
 
 	/**
@@ -1384,7 +1385,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 *  the given untranslated domain name
 	 */
 	public static boolean domainTypeEquals(Element element, String domainName) {
-		return (element.getAttribute(XE_DOMTYPE).equals(domainName));
+		return (element.getAttribute(ISystemUDAConstants.XE_DOMTYPE).equals(domainName));
 	}
 
 	/**

@@ -1,5 +1,3 @@
-package org.eclipse.rse.useractions.ui.uda;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +7,11 @@ package org.eclipse.rse.useractions.ui.uda;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemUDAConstants
  *******************************************************************************/
+
+package org.eclipse.rse.useractions.ui.uda;
+
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -27,7 +29,7 @@ import org.w3c.dom.Text;
  * Eg, there are child classes to represent action xml elements, and
  *  type xml elements.
  */
-public abstract class SystemXMLElementWrapper implements IAdaptable, ISystemUDAConstants {
+public abstract class SystemXMLElementWrapper implements IAdaptable {
 	//parameters
 	protected Element elm;
 	private boolean isDomainElement;
@@ -54,7 +56,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable, ISystemUDAC
 	/**
 	 * The value we place in the Vendor attribute for IBM-supplied actions/types
 	 */
-	private static final String VENDOR_IBM = "IBM";
+	private static final String VENDOR_IBM = "IBM"; //$NON-NLS-1$
 
 	/**
 	 * Constructor
@@ -66,7 +68,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable, ISystemUDAC
 	public SystemXMLElementWrapper(Element elm, SystemUDBaseManager mgr, ISystemProfile profile, int domainType) {
 		super();
 		this.elm = elm;
-		this.isDomainElement = elm.getTagName().equals(XE_DOMAIN);
+		this.isDomainElement = elm.getTagName().equals(ISystemUDAConstants.XE_DOMAIN);
 		this.domainType = domainType;
 		database = mgr;
 		this.profile = profile;
@@ -134,7 +136,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable, ISystemUDAC
 	 */
 	public Element getParentDomainElement() {
 		Element parent = getParentElement();
-		if ((parent != null) && parent.getTagName().equals(XE_DOMAIN))
+		if ((parent != null) && parent.getTagName().equals(ISystemUDAConstants.XE_DOMAIN))
 			return parent;
 		else
 			return null;
@@ -172,7 +174,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable, ISystemUDAC
 	 * Return the value of this node's "Name" attribute
 	 */
 	public String getName() {
-		return elm.getAttribute(NAME_ATTR);
+		return elm.getAttribute(ISystemUDAConstants.NAME_ATTR);
 	}
 
 	/**
@@ -182,13 +184,13 @@ public abstract class SystemXMLElementWrapper implements IAdaptable, ISystemUDAC
 	 */
 	public void setName(String s) {
 		if (isIBM()) {
-			String orgName = elm.getAttribute(ORIGINAL_NAME_ATTR);
+			String orgName = elm.getAttribute(ISystemUDAConstants.ORIGINAL_NAME_ATTR);
 			if ((orgName != null) && (orgName.length() > 0)) {
 				// no need to do anything, as its already set.
 			} else
-				elm.setAttribute(ORIGINAL_NAME_ATTR, getName());
+				elm.setAttribute(ISystemUDAConstants.ORIGINAL_NAME_ATTR, getName());
 		}
-		setAttribute(NAME_ATTR, s);
+		setAttribute(ISystemUDAConstants.NAME_ATTR, s);
 		setUserChanged(true);
 	}
 
@@ -196,7 +198,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable, ISystemUDAC
 	 * For IBM-supplied elements that have been edited, returns the original IBM-supplied name
 	 */
 	public String getOriginalName() {
-		String s = elm.getAttribute(ORIGINAL_NAME_ATTR);
+		String s = elm.getAttribute(ISystemUDAConstants.ORIGINAL_NAME_ATTR);
 		if ((s == null) || (s.length() == 0))
 			return getName();
 		else
@@ -439,7 +441,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable, ISystemUDAC
 				if (sn instanceof Element) {
 					se = (Element) sn;
 					if (se.getTagName().equals(tagName)) {
-						nameList.add(se.getAttribute(NAME_ATTR));
+						nameList.add(se.getAttribute(ISystemUDAConstants.NAME_ATTR));
 					}
 				}
 			} // end for all subnodes
@@ -514,7 +516,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable, ISystemUDAC
 				Node sn = subList.item(idx);
 				if (sn instanceof Element) {
 					if (((Element) sn).getTagName().equals(tagName)) {
-						if (((Element) sn).getAttribute(NAME_ATTR).equals(searchName)) match = (Element) sn;
+						if (((Element) sn).getAttribute(ISystemUDAConstants.NAME_ATTR).equals(searchName)) match = (Element) sn;
 					}
 				}
 			} // end for all subnodes

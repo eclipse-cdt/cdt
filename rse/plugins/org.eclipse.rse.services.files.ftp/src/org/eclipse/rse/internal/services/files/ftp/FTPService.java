@@ -63,6 +63,7 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
@@ -78,6 +79,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 {
 	private FTPClient _ftpClient;
 	private FTPFile[] _ftpFiles;
+	
+	private Mutex _downloadMutex = new Mutex();
 	
 	private String _systemName;
 	private String    _userHome;
@@ -655,7 +658,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#download(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.io.File, boolean, java.lang.String)
 	 */
-	public synchronized boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding) throws SystemMessageException
+	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding) throws SystemMessageException
 	{
 		
 		if (monitor!=null){
@@ -663,6 +666,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				return false;
 			}	
 		}
+		
+		_downloadMutex.waitForLock(monitor, Long.MAX_VALUE);
 		
 		MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
 		
@@ -724,7 +729,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		catch (Exception e)
 		{			
 			throw new RemoteFileIOException(e);
-		}
+		} finally {
+			_downloadMutex.release();
+	    }
 
 		return retValue;
 	}

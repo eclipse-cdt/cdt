@@ -34,9 +34,14 @@ public class TemplateInstanceUtil {
 		Object[] keys= preresult.keyArray();
 		for(int i=0; i<keys.length; i++) {
 			IType type= (IType) preresult.get(keys[i]);
-			result.put(
+			try {
+				result.put(
 					cf.getCompositeBinding((IIndexFragmentBinding)keys[i]),
-					cf.getCompositeBinding((IIndexFragmentBinding)type));
+					cf.getCompositeType((IIndexType)type));
+			} catch(DOMException de) {
+				result.put(keys[i], type);
+				CCorePlugin.log(de);
+			}
 		}
 		return result;
 	}

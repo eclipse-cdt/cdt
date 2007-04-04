@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.CoreException;
  * additionally check that the binding obtained has characteristics as
  * expected (type,name,etc..)
  */
-public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBase {
+public abstract class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBase {
 
 	public static class SingleProject extends IndexCPPBindingResolutionTest {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}

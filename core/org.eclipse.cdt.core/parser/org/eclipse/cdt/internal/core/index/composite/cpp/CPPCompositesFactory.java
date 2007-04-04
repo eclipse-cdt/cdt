@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -86,8 +87,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 					namespaces = getNamespaces(rscope.getScopeBinding());
 				}
 				return new CompositeCPPNamespaceScope(this, namespaces);
+			} else if(rscope instanceof ICPPTemplateScope) {
+				return new CompositeCPPTemplateScope(this, (ICPPTemplateScope) rscope);
 			} else {
-				throw new CompositingNotImplementedError();
+				throw new CompositingNotImplementedError(rscope.getClass().getName());
 			}
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);

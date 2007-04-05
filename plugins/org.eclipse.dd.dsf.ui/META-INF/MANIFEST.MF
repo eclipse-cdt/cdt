@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.dd.dsf.ui
+Bundle-Name: Debug Services Framework UI
 Bundle-Vendor: Eclipse.org
 Bundle-SymbolicName: org.eclipse.dd.dsf.ui
 Bundle-Version: 0.9.0.qualifier

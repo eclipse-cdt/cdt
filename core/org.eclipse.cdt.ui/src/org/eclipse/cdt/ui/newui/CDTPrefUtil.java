@@ -29,7 +29,14 @@ public class CDTPrefUtil {
 	public static final String KEY_TOOLM  = "properties.toolchain.modification.enable"; //$NON-NLS-1$
 	// string keys
 	public static final String KEY_PREFTC  = "wizard.preferred.toolchains";  //$NON-NLS-1$
-
+	// integer keys
+	public static final String KEY_DISC_NAMES  = "properties.discovery.naming"; //$NON-NLS-1$
+		public static final int DISC_NAMING_UNIQUE_OR_BOTH = 0;
+		public static final int DISC_NAMING_UNIQUE_OR_IDS = 1;
+		public static final int DISC_NAMING_ALWAYS_BOTH = 2;
+		public static final int DISC_NAMING_ALWAYS_IDS = 3;
+		public static final int DISC_NAMING_DEFAULT = DISC_NAMING_UNIQUE_OR_BOTH;
+	
 	public static final String NULL = "NULL"; //$NON-NLS-1$
 	private static final IPreferenceStore pref = CUIPlugin.getDefault().getPreferenceStore();
 	private static final String DELIMITER = " "; //$NON-NLS-1$

@@ -35,6 +35,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTListComparator;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.resources.IProject;
@@ -267,20 +268,18 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         Collections.sort(profilesList, CDTListComparator.getInstance());
         visibleProfilesList = new ArrayList(profilesList.size());
         realPages = new AbstractDiscoveryPage[profilesList.size()];
+        String[] labels = new String[profilesList.size()];
+        String[] profiles = new String[profilesList.size()];
         Iterator it = profilesList.iterator();
         int counter = 0;
         int pos = 0;
         String savedId = buildInfo.getSelectedProfileId();
         while (it.hasNext()) {
             String profileId = (String)it.next();
-
-			System.out.println(profileId);
-            
             if (!cbi.isProfileSupported(iContext, profileId)) 
  				continue; 
  			visibleProfilesList.add(profileId);
-            String profileName = getProfileName(profileId);
-            profileComboBox.add(profileName);
+            labels[counter] = profiles[counter] = getProfileName(profileId);
             if (profileId.equals(savedId)) 
             	pos = counter;
             buildInfo.setSelectedProfileId(profileId); // needs to create page
@@ -290,6 +289,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     				AbstractDiscoveryPage pg = p.getPage();
     				if (pg != null) {
     					realPages[counter] = pg;
+    					String s = p.name;
+    					if (s != null && s.length() > 0)
+    						labels[counter] = s;
     					pg.setContainer(wrapper);
     					pg.createControl(profileComp);
     					profileComp.layout(true);
@@ -299,11 +301,70 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     		}
     		counter ++;
         }
-       buildInfo.setSelectedProfileId(savedId);
-       if (profileComboBox.getItemCount() > 0) 
-    	   profileComboBox.select(pos);
-       enableAllControls(); 
-       handleDiscoveryProfileChanged();
+        profileComboBox.setItems(normalize(labels, profiles, counter));
+        
+        buildInfo.setSelectedProfileId(savedId);
+        if (profileComboBox.getItemCount() > 0) 
+    	    profileComboBox.select(pos);
+        enableAllControls(); 
+        handleDiscoveryProfileChanged();
+ 	}
+ 	
+ 	private String[] normalize(String[] labels, String[] ids, int counter) {
+ 		int mode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_DISC_NAMES);
+		String[] tmp = new String[counter];
+ 		// Always show either Name + ID, or ID only
+ 		// These cases do not require checking for doubles.
+ 		if (mode == CDTPrefUtil.DISC_NAMING_ALWAYS_BOTH ||
+ 			mode == CDTPrefUtil.DISC_NAMING_ALWAYS_IDS){
+ 				for (int i=0; i<counter; i++) 
+ 					tmp[i] = (mode == CDTPrefUtil.DISC_NAMING_ALWAYS_IDS) ? 
+ 							ids[i] : 
+ 							combine(labels[i], ids[i]);
+ 	 		return tmp;
+ 		}
+ 		
+ 		// For not-unique names only, either display ID or name + ID
+ 		boolean doubles = false;
+ 	outer:	
+ 		// quick check for at least one double
+ 		for (int i=0; i<counter; i++) {
+ 			for (int j=0; j<counter; j++) {
+ 				// sic! i < j, to avoid repeated comparison
+ 				if (i < j && labels[i].equals(labels[j])) {
+ 					doubles = true;
+ 					break outer;
+ 				}
+ 			}
+ 		}
+ 		if (!doubles) { // all names are unique.
+ 	 		for (int i=0; i<counter; i++) 
+ 	 			tmp[i] = labels[i];
+ 		} else {
+ 	 		for (int i=0; i<counter; i++) {
+ 	 			doubles = false; 
+ 	 			for (int j=0; j<counter; j++) {
+ 	 				if (i != j && labels[i].equals(labels[j])) {
+ 	 					doubles = true;
+ 	 					break;
+ 	 				}
+ 	 			}
+ 	 			if (doubles) { 
+ 	 				if (mode == CDTPrefUtil.DISC_NAMING_UNIQUE_OR_IDS)
+ 	 					tmp[i] = ids[i];
+ 	 				else // replace with Name + Id
+ 	 					tmp[i] = combine(labels[i], ids[i]);
+ 	 			} else { // this name is unique - no changes !
+ 	 				tmp[i] = labels[i];
+ 	 			} 				
+ 			}
+ 		}
+ 		return tmp;
+ 	}
+ 	
+ 	private String combine(String s1, String s2) {
+ 		if (s1.equals(s2)) return s1;
+ 		else return s1 + " (" + s2 + ")"; //$NON-NLS-1$ //$NON-NLS-2$
  	}
  	
 	private void handleDiscoveryProfileChanged() {

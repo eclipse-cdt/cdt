@@ -429,7 +429,7 @@
            name="%Wizard.defaults"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
      <tab
-           class="org.eclipse.cdt.ui.newui.PropertyPageDefsTab"
+           class="org.eclipse.cdt.managedbuilder.ui.preferences.PropertyPageDefsTab"
            name="%PropertyPage.defaults"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"/>
   </extension>   

@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -451,6 +452,14 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getDoubleClickStrategy(ISourceViewer, String)
 	 */
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
+		if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType) ||
+				ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType))
+			return new DefaultTextDoubleClickStrategy();
+		else if (ICPartitions.C_STRING.equals(contentType) ||
+				ICPartitions.C_CHARACTER.equals(contentType))
+			return new CStringDoubleClickSelector(getConfiguredDocumentPartitioning(sourceViewer));
+		else if (ICPartitions.C_PREPROCESSOR.equals(contentType))
+			return new CStringDoubleClickSelector(getConfiguredDocumentPartitioning(sourceViewer), new CDoubleClickSelector());
 		return new CDoubleClickSelector();
 	}
 

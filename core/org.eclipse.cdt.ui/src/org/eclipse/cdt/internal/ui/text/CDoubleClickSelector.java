@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
@@ -23,111 +22,35 @@ import org.eclipse.jface.text.ITextViewer;
  */
 public class CDoubleClickSelector implements ITextDoubleClickStrategy {
 
-	protected ITextViewer fText;
-	protected int fPos;
-	protected int fStartPos;
-	protected int fEndPos;
-	private CPairMatcher fPairMatcher;
-
-
-	protected static char[] fgBrackets= {'{', '}', '(', ')', '[', ']', '"', '"'};
+	protected static char[] fgBrackets= {'{', '}', '(', ')', '[', ']', '<', '>'};
+	private CPairMatcher fPairMatcher= new CPairMatcher(fgBrackets);
 
 	public CDoubleClickSelector() {
 		super();
-		fPairMatcher= new CPairMatcher(fgBrackets);
 	}
 
-
-	/**
-	 * @see ITextDoubleClickStrategy#doubleClicked
+	/*
+	 * @see org.eclipse.jface.text.ITextDoubleClickStrategy#doubleClicked(org.eclipse.jface.text.ITextViewer)
 	 */
-	public void doubleClicked(ITextViewer text) {
-		fPos= text.getSelectedRange().x;
+	public void doubleClicked(ITextViewer textViewer) {
+		int offset= textViewer.getSelectedRange().x;
 
-
-		if (fPos < 0)
+		if (offset < 0)
 			return;
 
+		IDocument document= textViewer.getDocument();
 
-		fText= text;
-
-
-		if (!selectBracketBlock())
-			selectWord();
-		
-		fText= null;
-	}
-
-
-	protected boolean matchBracketsAt() {
-		IRegion region= fPairMatcher.match(fText.getDocument(), fPos);
-		if (region != null && region.getLength() > 0) {
-			fStartPos= region.getOffset();
-			fEndPos= fStartPos + region.getLength() - 1;
-			return true;
-		}
-		return false;
-	}
-
-
-	protected boolean matchWord() {
-		IDocument doc= fText.getDocument();
-		try {
-			int pos= fPos;
-			char c;
-
-
-			while (pos >= 0) {
-				c= doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
-				--pos;
-			}
-			fStartPos= pos;
-
-
-			pos= fPos;
-			int length= doc.getLength();
-
-
-			while (pos < length) {
-				c= doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
-				++pos;
-			}
-			fEndPos= pos;
-
-
-			return true;
-
-
-		} catch (BadLocationException x) {
-		}
-		return false;
-	}
-
-
-	protected boolean selectBracketBlock() {
-		if (matchBracketsAt()) {
-			if (fStartPos == fEndPos)
-				fText.setSelectedRange(fStartPos, 0);
-			else
-				fText.setSelectedRange(fStartPos + 1, fEndPos - fStartPos - 1);
-
-
-			return true;
-		}
-		return false;
-	}
-
-
-	protected void selectWord() {
-		if (matchWord()) {
-			if (fStartPos == fEndPos)
-				fText.setSelectedRange(fStartPos, 0);
-			else
-				fText.setSelectedRange(fStartPos + 1, fEndPos - fStartPos - 1);
+		IRegion region= fPairMatcher.match(document, offset);
+		if (region != null && region.getLength() >= 2) {
+			textViewer.setSelectedRange(region.getOffset() + 1, region.getLength() - 2);
+		} else {
+			region= selectWord(document, offset);
+			textViewer.setSelectedRange(region.getOffset(), region.getLength());
 		}
 	}
+
+	protected IRegion selectWord(IDocument document, int offset) {
+		return CWordFinder.findWord(document, offset);
+	}
+
 }

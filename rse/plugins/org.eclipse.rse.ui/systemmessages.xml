@@ -1305,10 +1305,6 @@ Contributors:
                           <LevelOne>There are no tools installed which support saving password information.</LevelOne>
                           <LevelTwo>The password information preference page is a centralized place for Workbench tools to save password information.  Each tool registers and provides its own encryption algorithm.  There are no tools installed that have registered with the password information preference page.</LevelTwo>
                     </Message>
-                    <Message ID="2201" Indicator="E">
-                          <LevelOne>The RSE communications daemon could not be started.</LevelOne>
-                          <LevelTwo>The RSE communications daemon could not be started on port %1.  Check that the port is free and restart the daemon or change the port used by the daemon using the Remote Systems -> Communications Workbench preference page.</LevelTwo>
-                    </Message>
                     
                     <Message ID="2301" Indicator="E">
                           <LevelOne>Unable to launch server on host %1.</LevelOne>

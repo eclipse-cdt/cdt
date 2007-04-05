@@ -394,8 +394,6 @@ public interface ISystemMessages
 	public static final String MSG_COMM_ENVVAR_DUPLICATE	= "RSEC2001"; //$NON-NLS-1$
 	public static final String MSG_COMM_ENVVAR_NONAME		= "RSEC2002"; //$NON-NLS-1$
 	public static final String MSG_COMM_ENVVAR_INVALIDCHAR	= "RSEC2004"; //$NON-NLS-1$
-
-	public static final String MSG_COMM_DAEMON_NOTSTARTED	= "RSEC2201"; //$NON-NLS-1$
 	
 	public static final String MSG_COMM_SERVER_NOTSTARTED	= "RSEC2301"; //$NON-NLS-1$
 	public static final String MSG_COMM_INVALID_LOGIN		= "RSEC2302"; //$NON-NLS-1$

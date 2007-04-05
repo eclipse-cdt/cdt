@@ -930,15 +930,6 @@ Click the <b>Clear Cached Files</b> button to remove all cached files. Clearing 
 </description>
 </context>
 
-<!-- RSE Communications daemon action -->
-<context id="dmna0000">
-<description>This action starts and stops the local Remote System Explorer (RSE) communications daemon.  This daemon is not directly used by individual RSE connections.  Instead it allows local Workbench functions to accept incoming socket requests from remote systems.  You can set the daemon to automatically start and configure the port used by the daemon in the Workbench preferences under Remote Systems->Communications.</description>
-<!-- FIXME need to add these htm files to user doc
-<topic href="../org.eclipse.rse.doc.user/reference/rports.htm" label="Port information for Development Studio Client" />
-<topic href="../org.eclipse.rse.doc.user/reference/rprefcom.htm" label="Preferences: communications" />
- -->
-</context>
-
 <!-- Work offline support -->
 <context id="wofa0000">
 <description>The Work Offline action toggles the connection between offline and online modes.  In offline mode information is retrieved from the cache if available and supported by the connection type.  If the action currently has a check mark beside it then the connection is offline and selecting this action will put the connection in online mode so it can be connected to the remote system.</description>

@@ -258,6 +258,11 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 		return _cwd;
 	}
 	
+	public String getContextString()
+	{
+		return _cwd.getAbsolutePath();
+	}
+	
 	/**
 	 * Get the current working directory for this command
 	 * @return the current working directory

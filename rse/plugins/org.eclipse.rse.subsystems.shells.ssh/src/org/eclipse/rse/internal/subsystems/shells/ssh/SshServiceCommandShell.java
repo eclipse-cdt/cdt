@@ -77,6 +77,11 @@ public class SshServiceCommandShell extends ServiceCommandShell
 		return null;
 
 	}
+	
+	public String getContextString()
+	{
+		return _workingDir;
+	}
 
 	public void shellOutputChanged(IHostShellChangeEvent event)
 	{

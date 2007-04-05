@@ -65,7 +65,14 @@ public interface IRemoteCommandShell
 	 */
 	public Object getContext();
 	
-
+	/**
+	 * Get the current context for this command shell as a string.  Unlike getContext(), this method
+	 * simply returns a string representation of the context (so that no query is required to get the
+	 * working directory).
+	 * @return the context as a string
+	 */
+	public String getContextString();
+	
 	/**
 	 * Return the number of output objects for this command.
 	 * @return the number of output objects

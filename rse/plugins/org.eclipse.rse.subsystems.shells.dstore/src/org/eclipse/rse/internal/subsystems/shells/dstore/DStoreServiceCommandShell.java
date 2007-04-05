@@ -24,6 +24,7 @@ import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefresh
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.model.RemoteError;
 import org.eclipse.rse.subsystems.shells.core.model.RemoteOutput;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
@@ -47,14 +48,24 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 		{
 			try
 			{
-				return getFileSubSystem().getRemoteFileObject(workingDir);
+				IRemoteFileSubSystem ss = getFileSubSystem();
+				if (ss.isConnected())
+				{
+					return ss.getRemoteFileObject(workingDir);
+				}
 			}
 			catch (Exception e)
 			{			
 			}
 		}
 		return null;
-
+	}
+	
+	public String getContextString()
+	{
+		DStoreHostShell shell = (DStoreHostShell)getHostShell();
+		DStoreShellOutputReader reader = (DStoreShellOutputReader)shell.getStandardOutputReader();
+		return reader.getWorkingDirectory();
 	}
 
 	public void shellOutputChanged(IHostShellChangeEvent event)

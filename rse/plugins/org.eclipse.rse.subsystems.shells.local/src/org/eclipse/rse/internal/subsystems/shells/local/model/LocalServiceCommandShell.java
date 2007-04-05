@@ -69,7 +69,11 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 			}
 		}
 		return null;
-
+	}
+	
+	public String getContextString()
+	{
+		return _workingDir;
 	}
 
 

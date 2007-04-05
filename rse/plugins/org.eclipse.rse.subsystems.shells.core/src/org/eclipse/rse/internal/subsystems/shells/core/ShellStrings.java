@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [181066] NLS missing messages with DAEMON and Shells
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.core;
@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class ShellStrings extends NLS 
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.subsystems.shells.core.ShellStrings"; //$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.subsystems.shells.core.ShellStrings"; //$NON-NLS-1$
 
 	public static String RESID_SHELLS_COMMAND_SHELL_LABEL;
 	public static String RSESubSystemOperation_Cancel_Shell_message;

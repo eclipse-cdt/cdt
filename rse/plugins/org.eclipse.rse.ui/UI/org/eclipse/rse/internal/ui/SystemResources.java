@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [181066] NLS missing messages with DAEMON and Shells
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -819,12 +819,6 @@ public class SystemResources extends NLS
 
 	public static String ACTION_NEWFILE_LABEL;
 	public static String ACTION_NEWFILE_TOOLTIP;
-
-	public static String ACTION_DAEMON_START_LABEL;
-	public static String ACTION_DAEMON_START_TOOLTIP;
-
-	public static String ACTION_DAEMON_STOP_LABEL;
-	public static String ACTION_DAEMON_STOP_TOOLTIP;
 
 	public static String ACTION_CASCADING_NEW_LABEL;
 	public static String ACTION_CASCADING_NEW_TOOLTIP;

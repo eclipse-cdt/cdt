@@ -22,8 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Singleton class for obtaining various information about class files. This class is not
- * intended to be subclassed by clients.
+ * Singleton class for obtaining various information about class files.
+ * <p>
+ * This class is not intended to be subclassed by clients.
  */
 public class ClassFileUtil {
 	

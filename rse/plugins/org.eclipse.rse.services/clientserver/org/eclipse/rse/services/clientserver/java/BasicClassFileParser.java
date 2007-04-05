@@ -41,8 +41,9 @@ import org.eclipse.rse.internal.services.clientserver.java.StringInfo;
 import org.eclipse.rse.internal.services.clientserver.java.UTF8Info;
 
 /**
- * This is a basic class file parser that returns a package name from a class file. This class is not
- * intended to be subclassed by clients.
+ * This is a basic class file parser that returns a package name from a class file.
+ * <p>
+ * This class is not intended to be subclassed by clients.
  */
 public class BasicClassFileParser {
 	

@@ -258,9 +258,20 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 		return _cwd;
 	}
 	
+	/**
+	 * Returns the context of this Shell as a String for persistence.
+	 * The context is typically the current working directory.
+	 * Returns an empty String if no context can be determined.
+	 *
+	 * @return The current context as String, or an empty String
+	 *     if no context exists. Never returns <code>null</code>.
+	 */
 	public String getContextString()
 	{
-		return _cwd.getAbsolutePath();
+	    if(_cwd != null) {
+	        return _cwd.getAbsolutePath();
+	    }
+	    return ""; //$NON-NLS-1$
 	}
 	
 	/**

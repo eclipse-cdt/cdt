@@ -37,7 +37,6 @@ import org.eclipse.rse.core.subsystems.IDelegatingConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
-import org.eclipse.rse.persistence.dom.IRSEDOMExporter;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.persistence.dom.RSEDOMNode;
 

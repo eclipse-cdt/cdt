@@ -42,7 +42,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemFilterNamingPolicy;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
-import org.eclipse.rse.persistence.dom.IRSEDOMImporter;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.persistence.dom.RSEDOMNode;
 import org.eclipse.rse.persistence.dom.RSEDOMNodeAttribute;

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.persistence.dom;
+package org.eclipse.rse.internal.persistence.dom;
 
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
@@ -28,6 +28,8 @@ import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.persistence.dom.RSEDOM;
+import org.eclipse.rse.persistence.dom.RSEDOMNode;
 
 public interface IRSEDOMImporter {
 

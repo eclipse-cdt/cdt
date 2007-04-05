@@ -44,13 +44,21 @@ public interface IPropertySet {
 	 * Return the description of this Property Set.
 	 * 
 	 * Note that in order to set the description, you need to call
-	 * <code>setProperty(IPropertySet.DESCRIPTION_KEY, "Description");</code>
+	 * <code>addProperty(IPropertySet.DESCRIPTION_KEY, "Description");</code>
 	 * 
 	 * @return Description of the Property Set, 
 	 * 		or <code>null</code> in case no description has been set.
 	 */
 	public String getDescription();
-
+	
+	/**
+	 * Sets the description property of the property set.
+	 * Fully equivalent to 
+	 * <code>addProperty(IPropertySet.DESCRIPTION_KEY, description);</code>
+	 * @param description the string describing this property set.
+	 */
+	public void setDescription(String description); 
+	
 	/** 
 	 * Return the {@link IProperty} associated with the given key.
 	 * 

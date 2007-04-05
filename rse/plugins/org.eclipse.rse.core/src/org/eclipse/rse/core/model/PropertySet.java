@@ -17,6 +17,7 @@
 package org.eclipse.rse.core.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,8 +63,11 @@ public class PropertySet implements IPropertySet {
 	}
 
 	public String getDescription() {
-		//FIXME it would be better to return an empty String ("") in case no description has been set.
 		return getPropertyValue(DESCRIPTION_KEY);
+	}
+	
+	public void setDescription(String description) {
+		addProperty(DESCRIPTION_KEY, description);
 	}
 
 	public String[] getPropertyKeys() {
@@ -77,10 +81,12 @@ public class PropertySet implements IPropertySet {
 	}
 
 	public void setProperties(Map map) {
-		//FIXME should clone the map!!
-		//Since the extrnal map might not be writable, or it might be
-		//modified later on
-		_properties = map;
+		_properties = new HashMap(map.size());
+		for (Iterator z = map.keySet().iterator(); z.hasNext();) {
+			String key = (String) z.next();
+			Object value = map.get(key);
+			_properties.put(key, value);
+		}
 	}
 
 	/**

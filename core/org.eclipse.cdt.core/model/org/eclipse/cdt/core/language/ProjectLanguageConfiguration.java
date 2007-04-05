@@ -158,9 +158,9 @@ public class ProjectLanguageConfiguration {
 	 * Replaces the existing file-specific language mappings with the given
 	 * mappings.  The given mappings should be between full paths
 	 * (<code>String</code>) and language ids (<code>String</code>)
-	 * @param projectMappings
+	 * @param fileMappings
 	 */
 	public void setFileMappings(Map/*<String, String>*/ fileMappings) {
-		fContentTypeMappings = new TreeMap(fileMappings);
+		fFileMappings = new TreeMap(fileMappings);
 	}
 }

@@ -1,0 +1,108 @@
+/*******************************************************************************
+ * Copyright (c) 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * IBM Corporation - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.internal.core.language;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
+import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+
+/**
+ * Resolves the effective language for various resources such as
+ * files and projects.
+ */
+public class LanguageMappingResolver {
+	public static final int DEFAULT_MAPPING = 0;
+	public static final int WORKSPACE_MAPPING = 1;
+	public static final int PROJECT_MAPPING = 2;
+	public static final int FILE_MAPPING = 3;
+	
+	/**
+	 * Returns the effective language for the file specified by the given path.
+	 * If <code>fetchAll</code> is <code>true</code> all inherited language
+	 * mappings will be returned in order of precedence.  Otherwise, only the
+	 * effective language will be returned.
+	 * 
+	 * This method will always return at least one mapping.
+	 * 
+	 * @param project the project that contains the given file
+	 * @param filePath the path to the file
+	 * @param contentTypeId the content type of the file (optional)
+	 * @param fetchAll if <code>true</code>, returns all inherited language mappings.
+	 *                 Otherwise, returns only the effective language.
+	 * @return the effective language for the file specified by the given path.
+	 * @throws CoreException
+	 */
+	public static LanguageMapping[] computeLanguage(IProject project, String filePath, String contentTypeId, boolean fetchAll) throws CoreException {
+		LanguageManager manager = LanguageManager.getInstance();
+		List inheritedLanguages = new LinkedList();
+		
+		if (project != null) {
+			ProjectLanguageConfiguration mappings = manager.getLanguageConfiguration(project);
+			
+			if (mappings != null) {
+				// File-level mappings
+				if (filePath != null) {
+					String id = mappings.getLanguageForFile(filePath);
+					if (id != null) {
+						inheritedLanguages.add(new LanguageMapping(manager.getLanguage(id), FILE_MAPPING));
+						if (!fetchAll) {
+							return createLanguageMappingArray(inheritedLanguages);
+						}
+					}
+				}
+			
+				// Project-level mappings
+				String id = mappings.getLanguageForContentType(contentTypeId);
+				if (id != null) {
+					inheritedLanguages.add(new LanguageMapping(manager.getLanguage(id), PROJECT_MAPPING));
+					if (!fetchAll) {
+						return createLanguageMappingArray(inheritedLanguages);
+					}
+				}
+			}
+		}
+		
+		// Workspace mappings
+		WorkspaceLanguageConfiguration workspaceMappings = manager.getWorkspaceLanguageConfiguration();
+		String id = workspaceMappings.getLanguageForContentType(contentTypeId);
+		if (id != null) {
+			inheritedLanguages.add(new LanguageMapping(manager.getLanguage(id), WORKSPACE_MAPPING));
+			if (!fetchAll) {
+				return createLanguageMappingArray(inheritedLanguages);
+			}
+		}
+		
+		// Platform mappings
+		IContentType contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
+		inheritedLanguages.add(new LanguageMapping(manager.getLanguage(contentType), DEFAULT_MAPPING));
+		return createLanguageMappingArray(inheritedLanguages);
+	}
+
+	private static LanguageMapping[] createLanguageMappingArray(List inheritedLanguages) {
+		LanguageMapping[] results = new LanguageMapping[inheritedLanguages.size()];
+		Iterator mappings = inheritedLanguages.iterator();
+		int i = 0;
+		while (mappings.hasNext()) {
+			LanguageMapping mapping = (LanguageMapping) mappings.next();
+			results[i] = mapping;
+			i++;
+		}
+		return results;
+	}
+}

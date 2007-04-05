@@ -65,4 +65,14 @@ public class CCorePreferenceConstants {
 	 * Default absolute maximum size of the index-db in megabytes.
 	 */
 	public static final String DEFAULT_MAX_INDEX_DB_CACHE_SIZE_MB = "64"; //$NON-NLS-1$
+	
+	/**
+	 * Workspace-wide language mappings. 
+	 */
+	public static final String WORKSPACE_LANGUAGE_MAPPINGS = CCorePlugin.PLUGIN_ID + ".workspaceLanguageMappings"; //$NON-NLS-1$
+
+	/**
+	 * Default workspace-wide language mappings.
+	 */
+	public static final String DEFAULT_WORKSPACE_LANGUAGE_MAPPINGS = ""; //$NON-NLS-1$
 }

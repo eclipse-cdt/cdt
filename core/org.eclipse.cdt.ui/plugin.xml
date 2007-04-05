@@ -685,6 +685,12 @@
             class="org.eclipse.cdt.internal.ui.preferences.IndexerPreferencePage"
             id="org.eclipse.cdt.ui.preferences.IndexerPreferencePage"
             name="%indexerPrefName"/>
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.language.WorkspaceLanguageMappingPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.LanguageMappings"
+            name="%CDTLanguagesProperty.name">
+      </page>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
@@ -1464,6 +1470,16 @@
 		     <adapt type="org.eclipse.core.resources.IProject">
 		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
 		     </adapt>         
+         </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.cdt.internal.ui.language.FileLanguageMappingPropertyPage"
+            id="org.eclipse.cdt.ui.fileLanguageMappings"
+            name="%CDTLanguagesProperty.name">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.cdt.core.model.ITranslationUnit">
+            </adapt>
          </enabledWhen>
       </page>
    </extension>

@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 

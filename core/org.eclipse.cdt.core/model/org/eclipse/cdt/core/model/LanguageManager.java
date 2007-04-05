@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.internal.core.CContentTypes;
+import org.eclipse.cdt.internal.core.language.LanguageMappingResolver;
 import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
 import org.eclipse.cdt.internal.core.model.LanguageDescriptor;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -67,6 +68,7 @@ public class LanguageManager {
 	private HashMap fIdToLanguageDescriptorCache;//= new HashMap();
 	private HashMap fContentTypeToDescriptorListCache;
 	private ListenerList fLanguageChangeListeners = new ListenerList(ListenerList.IDENTITY);
+	private WorkspaceLanguageConfiguration fWorkspaceMappings;
 
 	public static LanguageManager getInstance() {
 		if (instance == null)
@@ -373,8 +375,15 @@ public class LanguageManager {
 	 * @since 4.0
 	 */
 	public WorkspaceLanguageConfiguration getWorkspaceLanguageConfiguration() throws CoreException {
-		// TODO: Implement this.
-		return new WorkspaceLanguageConfiguration();
+		synchronized (this) {
+			if (fWorkspaceMappings != null) {
+				return fWorkspaceMappings;
+			}
+			
+			LanguageMappingStore store = new LanguageMappingStore();
+			fWorkspaceMappings = store.decodeWorkspaceMappings();
+			return fWorkspaceMappings;
+		}
 	}
 	
 	/**
@@ -385,7 +394,20 @@ public class LanguageManager {
 	 * @since 4.0
 	 */
 	public void storeWorkspaceLanguageConfiguration(IContentType[] affectedContentTypes) throws CoreException {
-		// TODO: Implement this.
+		synchronized (this) {
+			if (fWorkspaceMappings == null) {
+				return;
+			}
+			
+			LanguageMappingStore store = new LanguageMappingStore();
+			store.storeMappings(fWorkspaceMappings);
+		}
+		
+		// Notify listeners that the language mappings have changed.
+		LanguageMappingChangeEvent event = new LanguageMappingChangeEvent();
+		event.setType(LanguageMappingChangeEvent.TYPE_WORKSPACE);
+		event.setAffectedContentTypes(affectedContentTypes);
+		notifyLanguageChangeListeners(event);
 	}
 	
 	/**
@@ -402,8 +424,8 @@ public class LanguageManager {
 				return mappings;
 			}
 			
-			LanguageMappingStore store = new LanguageMappingStore(project);
-			mappings = store.decodeMappings();
+			LanguageMappingStore store = new LanguageMappingStore();
+			mappings = store.decodeMappings(project);
 			fLanguageConfigurationCache.put(project, mappings);
 			return mappings;
 		}
@@ -419,11 +441,18 @@ public class LanguageManager {
 	 * @since 4.0
 	 */
 	public void storeLanguageMappingConfiguration(IProject project, IContentType[] affectedContentTypes) throws CoreException {
-		ProjectLanguageConfiguration mappings = (ProjectLanguageConfiguration) fLanguageConfigurationCache.get(project);
-		LanguageMappingStore store = new LanguageMappingStore(project);
-		store.storeMappings(mappings);
+		synchronized (this) {
+			ProjectLanguageConfiguration mappings = (ProjectLanguageConfiguration) fLanguageConfigurationCache.get(project);
+			LanguageMappingStore store = new LanguageMappingStore();
+			store.storeMappings(project, mappings);
+		}
 		
-		// TODO: Notify listeners that the language mappings have changed.
+		// Notify listeners that the language mappings have changed.
+		LanguageMappingChangeEvent event = new LanguageMappingChangeEvent();
+		event.setType(LanguageMappingChangeEvent.TYPE_PROJECT);
+		event.setProject(project);
+		event.setAffectedContentTypes(affectedContentTypes);
+		notifyLanguageChangeListeners(event);
 	}
 	
 	/**
@@ -448,7 +477,7 @@ public class LanguageManager {
 		
 		String contentTypeID = contentType.getId();
 		
-		return computeLanguage(project, fullPathToFile, contentTypeID);
+		return LanguageMappingResolver.computeLanguage(project, fullPathToFile, contentTypeID, false)[0].language;
 	}
 
 	/**
@@ -492,7 +521,7 @@ public class LanguageManager {
 			contentTypeID= ct.getId();
 		}
 								
-		return computeLanguage(project, pathToFile.toPortableString(), contentTypeID);
+		return LanguageMappingResolver.computeLanguage(project, pathToFile.toPortableString(), contentTypeID, false)[0].language;
 	}
 
 	/**
@@ -527,34 +556,7 @@ public class LanguageManager {
 			contentTypeId= contentType.getId();
 		}
 		
-		return computeLanguage(project, file.getProjectRelativePath().toPortableString(), contentTypeId);
-	}
-	
-	private ILanguage computeLanguage(IProject project, String filePath, String contentTypeId) throws CoreException {
-		ProjectLanguageConfiguration mappings = getLanguageConfiguration(project);
-		if (mappings != null) {
-			// File-level mappings 
-			String id = mappings.getLanguageForFile(filePath);
-			if (id != null) {
-				return getLanguage(id);
-			}
-		
-			// Project-level mappings
-			id = mappings.getLanguageForContentType(contentTypeId);
-			if (id != null) {
-				return getLanguage(id);
-			}
-		}
-		
-		// Workspace mappings
-		WorkspaceLanguageConfiguration workspaceMappings = getWorkspaceLanguageConfiguration();
-		String id = workspaceMappings.getLanguageForContentType(contentTypeId);
-		if (id != null) {
-			return getLanguage(id);
-		}
-			
-		// Content type mappings
-		return getLanguageForContentTypeID(contentTypeId);
+		return LanguageMappingResolver.computeLanguage(project, file.getProjectRelativePath().toPortableString(), contentTypeId, false)[0].language;
 	}
 	
 	/**
@@ -601,8 +603,8 @@ public class LanguageManager {
 		IProject project = file.getProject();
 		synchronized (this) {
 			ProjectLanguageConfiguration mappings = (ProjectLanguageConfiguration) fLanguageConfigurationCache.get(project);
-			LanguageMappingStore store = new LanguageMappingStore(project);
-			store.storeMappings(mappings);
+			LanguageMappingStore store = new LanguageMappingStore();
+			store.storeMappings(project, mappings);
 		}
 		
 		// Notify listeners that the language mappings have changed.

@@ -216,7 +216,10 @@ public class SaveAsForm extends SystemSelectRemoteFileOrFolderForm {
 						else
 						{
 							fileName =initialFileName;
-							fileNameText.setText(fileName);
+							if (fileName != null)
+							{
+								fileNameText.setText(fileName);
+							}
 							parentFile = remoteFile;
 						}
 		    							

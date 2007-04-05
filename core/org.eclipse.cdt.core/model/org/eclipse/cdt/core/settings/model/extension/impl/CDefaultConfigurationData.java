@@ -139,11 +139,11 @@ public class CDefaultConfigurationData extends CConfigurationData {
 	}
 
 	protected CTargetPlatformData copyTargetPlatformData(CTargetPlatformData base, boolean clone){
-		return fFactory.createTargetPlatformData(this, base, null, base.getName(), clone);
+		return fFactory.createTargetPlatformData(this, base, null, base != null ? base.getName() : null, clone);
 	}
 	
 	protected CBuildData copyBuildData(CBuildData data, boolean clone){
-		return fFactory.createBuildData(this, data, null, data.getName(), clone);
+		return fFactory.createBuildData(this, data, null, data != null ? data.getName() : null, clone);
 	}
 
 	public CFolderData createFolderData(IPath path, CFolderData base) throws CoreException{

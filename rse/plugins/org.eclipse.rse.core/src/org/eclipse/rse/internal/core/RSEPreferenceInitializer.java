@@ -23,6 +23,7 @@ public class RSEPreferenceInitializer extends AbstractPreferenceInitializer {
 		
 		// the simple preferences
 		Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
+		// The ID of the default persistence provider
 		prefs.setDefault(IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER, "org.eclipse.rse.persistence.PropertyFileProvider"); //$NON-NLS-1$
 	}
 

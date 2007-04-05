@@ -90,7 +90,7 @@ Ignored for single-tab pages.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="parentId" type="string" use="required">
+         <attribute name="parent" type="string" use="required">
             <annotation>
                <documentation>
                   Class name for container page.

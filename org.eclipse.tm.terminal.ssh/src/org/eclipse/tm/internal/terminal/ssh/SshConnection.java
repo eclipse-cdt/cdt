@@ -8,36 +8,29 @@
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API 
+ *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.terminal.ITerminalControl;
 import org.eclipse.tm.terminal.Logger;
 import org.eclipse.tm.terminal.TerminalState;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
-import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Proxy;
-import com.jcraft.jsch.ProxyHTTP;
-import com.jcraft.jsch.ProxySOCKS5;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
@@ -54,151 +47,28 @@ class SshConnection extends Thread {
 	}
 
 	//----------------------------------------------------------------------
-	// <copied from org.eclipse.team.cvs.ssh2>
+	// <copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)>
 	//----------------------------------------------------------------------
-	private static String current_ssh_home = null;
-	private static String current_pkeys = ""; //$NON-NLS-1$
-	static String SSH_HOME_DEFAULT = null;
-	static {
-		String ssh_dir_name = ".ssh"; //$NON-NLS-1$
-		
-		// Windows doesn't like files or directories starting with a dot.
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			ssh_dir_name = "ssh"; //$NON-NLS-1$
-		}
-		SSH_HOME_DEFAULT = System.getProperty("user.home"); //$NON-NLS-1$
-		if (SSH_HOME_DEFAULT != null) {
-		    SSH_HOME_DEFAULT = SSH_HOME_DEFAULT + java.io.File.separator + ssh_dir_name;
-		}
-	}
 
-	private static IPreferenceStore fCvsSsh2PreferenceStore;
-    static IPreferenceStore getCvsSsh2PreferenceStore() {
-        if (fCvsSsh2PreferenceStore == null) {
-        	fCvsSsh2PreferenceStore = new ScopedPreferenceStore(new InstanceScope(),"org.eclipse.team.cvs.ssh2"); //$NON-NLS-1$
-        }
-        return fCvsSsh2PreferenceStore;
+    private static Session createSession(String username, String password, String hostname, int port, UserInfo wrapperUI, IProgressMonitor monitor) throws JSchException {
+        IJSchService service = Activator.getDefault().getJSchService();
+        if (service == null)
+        	return null;
+        Session session = service.createSession(hostname, port, username);
+        //session.setTimeout(getSshTimeoutInMillis());
+        session.setTimeout(0); //never time out on the session
+        if (password != null)
+			session.setPassword(password);
+        session.setUserInfo(wrapperUI);
+        return session;
     }
 
-	private static IPreferenceStore fCvsUIPreferenceStore;
-    static IPreferenceStore getCvsUIPreferenceStore() {
-        if (fCvsUIPreferenceStore == null) {
-        	fCvsUIPreferenceStore = new ScopedPreferenceStore(new InstanceScope(),"org.eclipse.team.cvs.ui"); //$NON-NLS-1$
-        }
-        return fCvsUIPreferenceStore;
-    }
-
-	// Load ssh prefs from Team/CVS for now.
-	// TODO do our own preference page.
-	static void loadSshPrefs(JSch jsch)
-	{
-		IPreferenceStore store = getCvsSsh2PreferenceStore();
-		String ssh_home = store.getString(ISshConstants.KEY_SSH2HOME);
-		String pkeys = store.getString(ISshConstants.KEY_PRIVATEKEY);
-
-		try {
-			if (ssh_home.length() == 0)
-				ssh_home = SSH_HOME_DEFAULT;
-
-			if (current_ssh_home == null || !current_ssh_home.equals(ssh_home)) {
-				loadKnownHosts(jsch, ssh_home);
-				current_ssh_home = ssh_home;
-				current_pkeys = ""; //$NON-NLS-1$
-			}
-
-			if (!current_pkeys.equals(pkeys)) {
-				java.io.File file;
-				String[] pkey = pkeys.split(","); //$NON-NLS-1$
-				String[] _pkey = current_pkeys.split(","); //$NON-NLS-1$
-				current_pkeys = ""; //$NON-NLS-1$
-				for (int i = 0; i < pkey.length; i++) {
-					file = new java.io.File(pkey[i]);
-					if (!file.isAbsolute()) {
-						file = new java.io.File(ssh_home, pkey[i]);
-					}
-					if (file.exists()) {
-						boolean notyet = true;
-						for (int j = 0; j < _pkey.length; j++) {
-							if (pkey[i].equals(_pkey[j])) {
-								notyet = false;
-								break;
-							}
-						}
-						if (notyet)
-							jsch.addIdentity(file.getPath());
-						if (current_pkeys.length() == 0) {
-							current_pkeys = pkey[i];
-						} else {
-							current_pkeys += ("," + pkey[i]); //$NON-NLS-1$
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-		}
-
+	static void shutdown() {
+		//TODO: Store all Jsch sessions in a pool and disconnect them on shutdown
 	}
-
-    static void loadKnownHosts(JSch jsch, String ssh_home){
-		try {
-		  java.io.File file;
-		  file=new java.io.File(ssh_home, "known_hosts"); //$NON-NLS-1$
-		  jsch.setKnownHosts(file.getPath());
-		} catch (Exception e) {
-		}
-	}
-
-    private static final String INFO_PROXY_USER = "org.eclipse.team.cvs.core.proxy.user"; //$NON-NLS-1$ 
-    private static final String INFO_PROXY_PASS = "org.eclipse.team.cvs.core.proxy.pass"; //$NON-NLS-1$ 
-
-    static Proxy loadSshProxyPrefs() {
-    	//TODO Use official Platform prefs when bug 154100 is fixed
-    	IPreferenceStore store = getCvsUIPreferenceStore();
-		boolean useProxy = store.getBoolean(ISshConstants.PREF_USE_PROXY);
-        Proxy proxy = null;
-		if (useProxy) {
-			String _type = store.getString(ISshConstants.PREF_PROXY_TYPE);
-			String _host = store.getString(ISshConstants.PREF_PROXY_HOST);
-			String _port = store.getString(ISshConstants.PREF_PROXY_PORT);
-
-			boolean useAuth = store.getBoolean(ISshConstants.PREF_PROXY_AUTH);
-			String _user = ""; //$NON-NLS-1$
-			String _pass = ""; //$NON-NLS-1$
-			
-			// Retrieve username and password from keyring.
-			if(useAuth){
-				Map authInfo = null;
-				try {
-				    URL FAKE_URL = new URL("http://org.eclipse.team.cvs.proxy.auth");//$NON-NLS-1$ 
-					authInfo = Platform.getAuthorizationInfo(FAKE_URL, "proxy", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch(MalformedURLException e) {
-					//should never happen
-				}
-				if (authInfo==null) authInfo=Collections.EMPTY_MAP;
-				_user=(String)authInfo.get(INFO_PROXY_USER);
-				_pass=(String)authInfo.get(INFO_PROXY_PASS);
-				if (_user==null) _user=""; //$NON-NLS-1$
-				if (_pass==null) _pass=""; //$NON-NLS-1$
-			}
-
-			String proxyhost = _host + ":" + _port; //$NON-NLS-1$
-			if (_type.equals(ISshConstants.PROXY_TYPE_HTTP)) {
-				proxy = new ProxyHTTP(proxyhost);
-				if (useAuth) {
-					((ProxyHTTP) proxy).setUserPasswd(_user, _pass);
-				}
-			} else if (_type.equals(ISshConstants.PROXY_TYPE_SOCKS5)) {
-				proxy = new ProxySOCKS5(proxyhost);
-				if (useAuth) {
-					((ProxySOCKS5) proxy).setUserPasswd(_user, _pass);
-				}
-			}
-		}
-		return proxy;
-    }
 
 	//----------------------------------------------------------------------
-	// </copied from org.eclipse.team.cvs.ssh2>
+	// </copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)>
 	//----------------------------------------------------------------------
 
 	public void run() {
@@ -209,15 +79,6 @@ class SshConnection extends Thread {
 			String password = fConn.getTelnetSettings().getPassword();
 			int port=fConn.getTelnetSettings().getPort();
 
-			loadSshPrefs(fConn.getJsch());
-	        Proxy proxy = loadSshProxyPrefs();
-			Session session=fConn.getJsch().getSession(user, host, port);
-	        if (proxy != null) {
-	            session.setProxy(proxy);
-	        }
-	        session.setTimeout(0); //never time out once connected
-
-			session.setPassword(password);
 			////Giving a connectionId could be the index into a local
 			////Store where passwords are stored
 			//String connectionId = host;
@@ -226,13 +87,14 @@ class SshConnection extends Thread {
 			//}
 			//UserInfo ui=new MyUserInfo(connectionId, user, password);
 			UserInfo ui=new MyUserInfo(null, user, password);
-			session.setUserInfo(ui);
 
-//			java.util.Hashtable config=new java.util.Hashtable();
-//			config.put("StrictHostKeyChecking", "no");
-//			session.setConfig(config);
+            Session session = createSession(user, password, host, port, 
+            		ui, new NullProgressMonitor());
 
-			//session.connect();
+            //java.util.Hashtable config=new java.util.Hashtable();
+            //config.put("StrictHostKeyChecking", "no");
+            //session.setConfig(config);
+            //ui.aboutToConnect();
 			session.connect(nTimeout);   // making connection with timeout.
 
 			ChannelShell channel=(ChannelShell) session.openChannel("shell"); //$NON-NLS-1$
@@ -250,7 +112,10 @@ class SshConnection extends Thread {
 			// when reading is done, we set the state to closed
 			fControl.setState(TerminalState.CLOSED);
 		} catch (JSchException e) {
-			connectFailed(e.getMessage(),e.getMessage());
+			if(e.toString().indexOf("Auth cancel")<0) {  //$NON-NLS-1$
+				//no error if user pressed cancel
+				connectFailed(e.getMessage(),e.getMessage());
+			}
 		} catch (IOException e) {
 			connectFailed(e.getMessage(),e.getMessage());
 		} finally {

@@ -36,7 +36,11 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	
 	public SystemResourceSelectionInputProvider()
 	{
-		_connection = null;
+		// choose random host
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		IHost[] hosts = registry.getHosts();
+		if (hosts != null)
+			_connection = hosts[0];
 	}
 	
 	public IHost getSystemConnection()

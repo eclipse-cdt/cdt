@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,7 +9,8 @@
  * David McKnight, David Dykstal.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - removed printlns, printStackTrace and added logging.
+ * David Dykstal (IBM) - [177882] fixed escapeValue for garbling of CJK characters
  ********************************************************************************/
 package org.eclipse.rse.internal.persistence;
 
@@ -43,6 +44,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
 import org.eclipse.rse.persistence.dom.RSEDOM;
@@ -85,6 +88,10 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private static final String AB_CONNECTOR_SERVICE = "CS"; //$NON-NLS-1$
 	private static final String AB_PROFILE = "PRF"; //$NON-NLS-1$
 
+	/* interesting character sets */
+	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._"; //$NON-NLS-1$ 
+	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ"; //$NON-NLS-1$
+	
 	private Pattern period = Pattern.compile("\\."); //$NON-NLS-1$
 	private Pattern suffixPattern = Pattern.compile("_(\\d+)$"); //$NON-NLS-1$
 	private Pattern unicodePattern = Pattern.compile("#(\\p{XDigit}+)#"); //$NON-NLS-1$
@@ -111,8 +118,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				}
 			}
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logException(e);
 		}
 		String[] result = new String[names.size()];
 		names.toArray(result);
@@ -130,7 +136,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			saveNode(dom, providerFolder, monitor);
 			if (monitor != null) monitor.done();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logException(e);
 			return false;
 		}
 		return true;
@@ -205,8 +211,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				}
 			}
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logException(e);
 		}
 	}
 
@@ -227,9 +232,6 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		String result = combine(type, name);
 		return result;
 	}
-
-	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._"; //$NON-NLS-1$
-	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ"; //$NON-NLS-1$
 
 	/**
 	 * Transforms an arbitrary name into one that can be used in any file system
@@ -350,7 +352,6 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @param monitor The progress monitor.
 	 */
 	private void writeProperties(Properties properties, String header, IFile file) {
-		//		System.out.println("writing "+file.getFullPath()+"...");
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(500);
 		PrintWriter out = new PrintWriter(outStream);
 		out.println("# " + header); //$NON-NLS-1$
@@ -361,11 +362,9 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			String key = (String) z.next();
 			String value = (String) map.get(key);
 			String keyvalue = key + "=" + escapeValue(value); //$NON-NLS-1$
-			//			System.out.println("writing "+keyvalue);
 			out.println(keyvalue);
 		}
 		out.close();
-		//		System.out.println("...wrote "+file.getFullPath());
 		ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
 		try {
 			if (!file.exists()) {
@@ -374,8 +373,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				file.setContents(inStream, true, true, null);
 			}
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logException(e);
 		}
 	}
 
@@ -439,7 +437,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				buffer.append("\\n"); //$NON-NLS-1$
 			} else if (c == '\r') {
 				buffer.append("\\r"); //$NON-NLS-1$
-			} else if ((c < '\u0020' && c > '\u007E')) {
+			} else if ((c < '\u0020' || c > '\u007E')) {
 				String cString = "0000" + Integer.toHexString(c); //$NON-NLS-1$
 				cString = cString.substring(cString.length() - 4);
 				cString = "\\u" + cString; //$NON-NLS-1$
@@ -539,13 +537,13 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		RSEDOM dom = null;
 		IFolder profileFolder = getProfileFolder(profileName);
 		if (profileFolder.exists()) {
-			//System.out.println("loading from " + profileFolder.getFullPath().toString() + "...");
 			int n = countPropertiesFiles(profileFolder);
 			if (monitor != null) monitor.beginTask(Messages.PropertyFileProvider_LoadingTaskName, n);
 			dom = (RSEDOM) loadNode(null, profileFolder, monitor);
 			if (monitor != null) monitor.done();
 		} else {
-			//System.out.println(profileFolder.getFullPath().toString() + " does not exist.");
+			String message = profileFolder.getFullPath().toString() + " does not exist."; //$NON-NLS-1$
+			getLogger().logError(message, null);
 		}
 		return dom;
 	}
@@ -572,8 +570,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 					}
 				}
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logException(e);
 			}
 		}
 		return result;
@@ -618,12 +615,10 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 					properties.load(inStream);
 					inStream.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logException(e);
 				}
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logException(e);
 			}
 		}
 		return properties;
@@ -783,8 +778,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			try {
 				folder.create(IResource.NONE, true, null);
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logException(e);
 			}
 		}
 		return folder;
@@ -827,5 +821,14 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 */
 	private String[] split(String longName, int limit) {
 		return period.split(longName, limit);
+	}
+
+	private Logger getLogger() {
+		Logger logger = RSECorePlugin.getDefault().getLogger();
+		return logger;
+	}
+
+	private void logException(Exception e) {
+		getLogger().logError("unexpected exception", e); //$NON-NLS-1$
 	}
 }

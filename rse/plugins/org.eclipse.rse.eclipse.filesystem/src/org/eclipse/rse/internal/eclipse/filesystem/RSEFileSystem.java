@@ -23,7 +23,6 @@ import java.util.HashMap;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -103,20 +102,19 @@ public class RSEFileSystem extends FileSystem
 		
 		if (obj != null) {
 			
-			// RSEFileStoreRemoteFileWrapper store = (RSEFileStoreRemoteFileWrapper)obj;
 			RSEFileStore store = (RSEFileStore)obj;
 			
-			IRemoteFileSubSystem ss = store.getRemoteFileSubSystem();
+			/*IRemoteFileSubSystem ss = store.getRemoteFileSubSystem();
 			
 			if (!ss.isConnected()) {
 				
 				try {
-					ss.connect();
+					ss.connect(new NullProgressMonitor());
 				}
 				catch (Exception e) {			
 					return null;
 				}
-			}
+			}*/
 			return store;
 		}
 		
@@ -132,15 +130,22 @@ public class RSEFileSystem extends FileSystem
 				
 				if (fs != null) {
 					
-					if (!fs.isConnected()) {
+/*					if (!fs.isConnected()) {
 						fs.getConnectorService().acquireCredentials(false);
 						fs.getConnectorService().connect(new NullProgressMonitor());
-					}
+					}*/
 					
 					if (fs.isConnected()) {
 						IFileStore fstore = FileStoreConversionUtility.convert(null, fs.getRemoteFileObject(path));
 						_fileStoreMap.put(uri, fstore);
 						return fstore;
+					}
+					else {
+						// return a handle if we're not yet connected
+						// we're not connected on workbench startup, and we are not supposed to connect
+						// if we did, we would get an exception from the credentials provider of connector service
+						// because it needs the workbench to connect
+						return new RSEFileStore(fs, path);
 					}
 				}
 			}

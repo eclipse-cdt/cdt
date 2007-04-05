@@ -24,6 +24,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSECallback;
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
@@ -158,6 +159,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *   <li>Three equals signs ("===")
 	 *   <li>Three semicolons (";;;")
 	 * </ul>
+	 * @deprecated Subsystems can now take named property sets. These should be used instead.
+	 * See {@link IPropertySet}
 	 */
 	public void setVendorAttribute(String vendorName, String attributeName, String attributeValue);
 
@@ -171,6 +174,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *   <li>Attribute name. The name of the attribute whose value is being queried.
 	 * </ul>
 	 * @return value of the attribute being queried, or null if not found
+	 * @deprecated Subsystems can now take named property sets. These should be used instead.
+	 * See {@link IPropertySet}
 	 */
 	public String getVendorAttribute(String vendorName, String attributeName);
 

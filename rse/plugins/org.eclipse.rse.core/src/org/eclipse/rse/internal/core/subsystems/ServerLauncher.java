@@ -75,7 +75,7 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated use property sets
 	 * @param vendorName
 	 * @param attributeName
 	 * @param attributeValue

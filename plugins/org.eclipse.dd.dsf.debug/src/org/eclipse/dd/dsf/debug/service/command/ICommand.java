@@ -30,7 +30,7 @@ public interface ICommand<V extends ICommandResult> {
      * 
      * @return newly created command, or null if command cannot be coalesced
      */
-    public ICommand<? extends ICommandResult> coalesceWith( ICommand<?> command );
+    public ICommand<? extends ICommandResult> coalesceWith( ICommand<? extends ICommandResult> command );
 }
 
     

@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework.scripting;
+package org.eclipse.rse.internal.tests.framework.scripting;
 
 /**
  * The Show step shows an image on the current context when run.

@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework.scripting;
+package org.eclipse.rse.internal.tests.framework.scripting;
 
 import java.util.List;
 import java.util.Vector;

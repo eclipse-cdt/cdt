@@ -8,9 +8,9 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.rse.internal.tests.framework;x-internal:=true,
  org.eclipse.rse.internal.tests.framework.actions;x-internal:=true,
+ org.eclipse.rse.internal.tests.framework.scripting;x-internal:=true,
  org.eclipse.rse.internal.tests.framework.ui;x-internal:=true,
- org.eclipse.rse.tests.framework,
- org.eclipse.rse.tests.framework.scripting
+ org.eclipse.rse.tests.framework
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.jface.text,

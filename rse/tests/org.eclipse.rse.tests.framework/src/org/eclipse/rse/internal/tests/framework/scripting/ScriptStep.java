@@ -7,7 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework.scripting;
+package org.eclipse.rse.internal.tests.framework.scripting;
 
 /**
  * A Step accomplishes a single action.  If the context is in fail mode then steps

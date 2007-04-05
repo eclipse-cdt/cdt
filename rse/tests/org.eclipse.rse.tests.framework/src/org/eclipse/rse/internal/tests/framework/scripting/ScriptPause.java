@@ -7,16 +7,16 @@
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * *******************************************************************************/
-package org.eclipse.rse.tests.framework.scripting;
+package org.eclipse.rse.internal.tests.framework.scripting;
 
 /**
- * The Tell step shows an image on the current context when run.
+ * A Pause step will stop and wait during interpretation
  */
-public class ScriptTell extends ScriptStep {
+public class ScriptPause extends ScriptStep {
 	
 	private String text;
 
-	public ScriptTell(String text, int lineNumber) {
+	public ScriptPause(String text, int lineNumber) {
 		super(lineNumber);
 		this.text = text;
 	}
@@ -25,7 +25,7 @@ public class ScriptTell extends ScriptStep {
 	 * @see org.eclipse.rse.tests.framework.scripting.ScriptStep#run(org.eclipse.rse.tests.framework.scripting.ScriptContext)
 	 */
 	public void run(ScriptContext context) {
-		context.tell(text);
+		context.pause(text);
 	}
 	
 }

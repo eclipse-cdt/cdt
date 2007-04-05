@@ -1900,7 +1900,7 @@
            class="org.eclipse.cdt.ui.newui.PropertyTester"
            namespace="org.eclipse.cdt.ui"
            properties="toolEditEnabled"
-           type="org.eclipse.core.runtime.IAdaptable"/>
+           type="java.lang.Object"/>
       <propertyTester
            id="org.eclipse.cdt.Tester1"
            class="org.eclipse.cdt.ui.newui.PropertyTester"

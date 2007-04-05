@@ -10,13 +10,9 @@
  * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API 
  *    - copied code from org.eclipse.team.cvs.ssh2/CVSSSH2Plugin (Copyright IBM)
  *******************************************************************************/
-package org.eclipse.rse.internal.connectorservice.ssh;
+package org.eclipse.tm.internal.terminal.ssh;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -26,9 +22,9 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class Activator extends Plugin {
 
-	public static final String PLUGIN_ID = "org.eclipse.rse.connectorservice.ssh"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.tm.terminal.ssh"; //$NON-NLS-1$
 	private static Activator plugin;
 
 	// ServiceTracker for IJschService
@@ -54,7 +50,7 @@ public class Activator extends AbstractUIPlugin {
 
 	public void stop(BundleContext context) throws Exception {
 		try {
-			SshConnectorService.shutdown();
+			SshConnection.shutdown();
 			tracker.close();
 		} finally {
 			plugin = null;
@@ -94,41 +90,5 @@ public class Activator extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
-
-	//<tracing code>----------------------------------------------------
-
-	private static Boolean fTracingOn = null;
-	public static boolean isTracingOn() {
-		if (fTracingOn==null) {
-			String id = plugin.getBundle().getSymbolicName();
-			String val = Platform.getDebugOption(id + "/debug"); //$NON-NLS-1$
-			if ("true".equals(val)) { //$NON-NLS-1$
-				fTracingOn = Boolean.TRUE;
-			} else {
-				fTracingOn = Boolean.FALSE;
-			}
-		}
-		return fTracingOn.booleanValue();
-	}
-	public static String getTimestamp() {
-		try {
-			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
-			return formatter.format(new Date());
-		} catch (Exception e) {
-			// If there were problems writing out the date, ignore and
-			// continue since that shouldn't stop us from logging the rest
-			// of the information
-		}
-		return Long.toString(System.currentTimeMillis());
-	}
-	public static void trace(String msg) {
-		if (isTracingOn()) {
-			String fullMsg = getTimestamp() + " | " + Thread.currentThread().getName() + " | " + msg; //$NON-NLS-1$ //$NON-NLS-2$
-			System.out.println(fullMsg);
-			System.out.flush();
-		}
-	}
-
-	//</tracing code>---------------------------------------------------
 
 }

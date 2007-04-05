@@ -8,45 +8,29 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API 
+ *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
-import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Proxy;
-import com.jcraft.jsch.ProxyHTTP;
-import com.jcraft.jsch.ProxySOCKS5;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SocketFactory;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
@@ -58,7 +42,6 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
-import org.eclipse.rse.services.RemoteUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -72,7 +55,6 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 {
 	private static final int SSH_DEFAULT_PORT = 22;
 	private static final int CONNECT_DEFAULT_TIMEOUT = 60; //seconds
-	private static JSch jsch=new JSch();
     private Session session;
     private SessionLostHandler fSessionLostHandler;
 
@@ -86,227 +68,53 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	}
 
 	//----------------------------------------------------------------------
-	// <copied from org.eclipse.team.cvs.ssh2>
+	// <copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)>
 	//----------------------------------------------------------------------
-	private static String current_ssh_home = null;
-	private static String current_pkeys = ""; //$NON-NLS-1$
-	static String SSH_HOME_DEFAULT = null;
-	static {
-		String ssh_dir_name = ".ssh"; //$NON-NLS-1$
-		
-		// Windows doesn't like files or directories starting with a dot.
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			ssh_dir_name = "ssh"; //$NON-NLS-1$
-		}
-		SSH_HOME_DEFAULT = System.getProperty("user.home"); //$NON-NLS-1$
-		if (SSH_HOME_DEFAULT != null) {
-		    SSH_HOME_DEFAULT = SSH_HOME_DEFAULT + java.io.File.separator + ssh_dir_name;
-		}
-	}
 
-	private static IPreferenceStore fCvsSsh2PreferenceStore;
-    static IPreferenceStore getCvsSsh2PreferenceStore() {
-        if (fCvsSsh2PreferenceStore == null) {
-        	fCvsSsh2PreferenceStore = new ScopedPreferenceStore(new InstanceScope(),"org.eclipse.team.cvs.ssh2"); //$NON-NLS-1$
-        }
-        return fCvsSsh2PreferenceStore;
+    private static Session createSession(String username, String password, String hostname, int port, UserInfo wrapperUI, IProgressMonitor monitor) throws JSchException {
+        IJSchService service = Activator.getDefault().getJSchService();
+        if (service == null)
+        	return null;
+        Session session = service.createSession(hostname, port, username);
+        //session.setTimeout(getSshTimeoutInMillis());
+        session.setTimeout(0); //never time out on the session
+        if (password != null)
+			session.setPassword(password);
+        session.setUserInfo(wrapperUI);
+        return session;
     }
 
-	private static IPreferenceStore fCvsUIPreferenceStore;
-    static IPreferenceStore getCvsUIPreferenceStore() {
-        if (fCvsUIPreferenceStore == null) {
-        	fCvsUIPreferenceStore = new ScopedPreferenceStore(new InstanceScope(),"org.eclipse.team.cvs.ui"); //$NON-NLS-1$
-        }
-        return fCvsUIPreferenceStore;
-    }
-
-	// Load ssh prefs from Team/CVS for now.
-	// TODO do our own preference page.
-	static void loadSshPrefs(JSch jsch)
-	{
-		IPreferenceStore store = getCvsSsh2PreferenceStore();
-		String ssh_home = store.getString(ISshConstants.KEY_SSH2HOME);
-		String pkeys = store.getString(ISshConstants.KEY_PRIVATEKEY);
-
-		try {
-			if (ssh_home.length() == 0)
-				ssh_home = SSH_HOME_DEFAULT;
-
-			if (current_ssh_home == null || !current_ssh_home.equals(ssh_home)) {
-				loadKnownHosts(jsch, ssh_home);
-				current_ssh_home = ssh_home;
-				current_pkeys = ""; //$NON-NLS-1$
-			}
-
-			if (!current_pkeys.equals(pkeys)) {
-				java.io.File file;
-				String[] pkey = pkeys.split(","); //$NON-NLS-1$
-				String[] _pkey = current_pkeys.split(","); //$NON-NLS-1$
-				current_pkeys = ""; //$NON-NLS-1$
-				for (int i = 0; i < pkey.length; i++) {
-					file = new java.io.File(pkey[i]);
-					if (!file.isAbsolute()) {
-						file = new java.io.File(ssh_home, pkey[i]);
-					}
-					if (file.exists()) {
-						boolean notyet = true;
-						for (int j = 0; j < _pkey.length; j++) {
-							if (pkey[i].equals(_pkey[j])) {
-								notyet = false;
-								break;
-							}
-						}
-						if (notyet)
-							jsch.addIdentity(file.getPath());
-						if (current_pkeys.length() == 0) {
-							current_pkeys = pkey[i];
-						} else {
-							current_pkeys += ("," + pkey[i]); //$NON-NLS-1$
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-		}
-
-	}
-
-    static void loadKnownHosts(JSch jsch, String ssh_home){
-		try {
-		  java.io.File file;
-		  file=new java.io.File(ssh_home, "known_hosts"); //$NON-NLS-1$
-		  jsch.setKnownHosts(file.getPath());
-		} catch (Exception e) {
-		}
-	}
-    
-    private static final String INFO_PROXY_USER = "org.eclipse.team.cvs.core.proxy.user"; //$NON-NLS-1$ 
-    private static final String INFO_PROXY_PASS = "org.eclipse.team.cvs.core.proxy.pass"; //$NON-NLS-1$ 
-
-    static Proxy loadSshProxyPrefs() {
-    	//TODO Use official Platform prefs when bug 154100 is fixed
-    	IPreferenceStore store = getCvsUIPreferenceStore();
-		boolean useProxy = store.getBoolean(ISshConstants.PREF_USE_PROXY);
-        Proxy proxy = null;
-		if (useProxy) {
-			String _type = store.getString(ISshConstants.PREF_PROXY_TYPE);
-			String _host = store.getString(ISshConstants.PREF_PROXY_HOST);
-			String _port = store.getString(ISshConstants.PREF_PROXY_PORT);
-
-			boolean useAuth = store.getBoolean(ISshConstants.PREF_PROXY_AUTH);
-			String _user = ""; //$NON-NLS-1$
-			String _pass = ""; //$NON-NLS-1$
-			
-			// Retrieve username and password from keyring.
-			if(useAuth){
-				Map authInfo = null;
-				try {
-				    URL FAKE_URL = new URL("http://org.eclipse.team.cvs.proxy.auth");//$NON-NLS-1$ 
-					authInfo = Platform.getAuthorizationInfo(FAKE_URL, "proxy", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch(MalformedURLException e) {
-					//should never happen
-			}
-				if (authInfo==null) authInfo=Collections.EMPTY_MAP;
-				_user=(String)authInfo.get(INFO_PROXY_USER);
-				_pass=(String)authInfo.get(INFO_PROXY_PASS);
-				if (_user==null) _user=""; //$NON-NLS-1$
-				if (_pass==null) _pass=""; //$NON-NLS-1$
-			}
-
-			String proxyhost = _host + ":" + _port; //$NON-NLS-1$
-			if (_type.equals(ISshConstants.PROXY_TYPE_HTTP)) {
-				proxy = new ProxyHTTP(proxyhost);
-				if (useAuth) {
-					((ProxyHTTP) proxy).setUserPasswd(_user, _pass);
-				}
-			} else if (_type.equals(ISshConstants.PROXY_TYPE_SOCKS5)) {
-				proxy = new ProxySOCKS5(proxyhost);
-				if (useAuth) {
-					((ProxySOCKS5) proxy).setUserPasswd(_user, _pass);
-				}
-			}
-		}
-		return proxy;
-    }
-
-	public static class SimpleSocketFactory implements SocketFactory {
-		InputStream in = null;
-		OutputStream out = null;
-		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
-			Socket socket = null;
-			socket = new Socket(host, port);
-			return socket;
-		}
-		public InputStream getInputStream(Socket socket) throws IOException {
-			if (in == null)
-				in = socket.getInputStream();
-			return in;
-		}
-		public OutputStream getOutputStream(Socket socket) throws IOException {
-			if (out == null)
-				out = socket.getOutputStream();
-			return out;
-		}
-	}
-	
-	public static class ResponsiveSocketFactory extends SimpleSocketFactory {
-		private IProgressMonitor monitor;
-		public ResponsiveSocketFactory(IProgressMonitor monitor) {
-			this.monitor = monitor;
-		}
-		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
-			Socket socket = null;
-			//Allows to cancel the socket creation operation if necessary.
-			//Waits for the timeout specified in CVS Preferences, maximum.
-			socket = RemoteUtil.createSocket(host, port, CONNECT_DEFAULT_TIMEOUT, monitor);
-			// Null out the monitor so we don't hold onto anything
-			// (i.e. the SSH2 session will keep a handle to the socket factory around
-			monitor = new NullProgressMonitor();
-			// Set the socket timeout
-			//socket.setSoTimeout(getSshTimeoutInMillis());
-			// We want blocking read() calls in ssh to never terminate
-			socket.setSoTimeout(0);
-			return socket;
-		}
+	static void shutdown() {
+		//TODO: Store all Jsch sessions in a pool and disconnect them on shutdown
 	}
 
 	//----------------------------------------------------------------------
-	// </copied from org.eclipse.team.cvs.ssh2>
+	// </copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)>
 	//----------------------------------------------------------------------
+
 
 	protected void internalConnect(IProgressMonitor monitor) throws Exception
     {
-    	//We could share the preferences from ssh2, or use RSE
-    	//ConnectorService Properties / Server Launcher Properties
-    	
-        //jsch.setKnownHosts("/home/foo/.ssh/known_hosts");
-		loadSshPrefs(jsch);
         String host = getHostName();
         String user = getUserId();
-
-        Proxy proxy = loadSshProxyPrefs();
-        session=jsch.getSession(user, host, SSH_DEFAULT_PORT);
-        if (proxy != null) {
-            session.setProxy(proxy);
-        }
-        //session.setTimeout(getSshTimeoutInMillis());
-        session.setTimeout(0); //never time out on the session
         String password=""; //$NON-NLS-1$
         SystemSignonInformation ssi = getSignonInformation();
         if (ssi!=null) {
         	password = getSignonInformation().getPassword();
         }
-        session.setPassword(password);
         MyUserInfo userInfo = new MyUserInfo(user, password);
-        session.setUserInfo(userInfo);
-        session.setSocketFactory(new ResponsiveSocketFactory(monitor));
-
-        //java.util.Hashtable config=new java.util.Hashtable();
-        //config.put("StrictHostKeyChecking", "no");
-        //session.setConfig(config);
         userInfo.aboutToConnect();
+        
         try {
-        	Activator.trace("SshConnectorService.connecting..."); //$NON-NLS-1$
+            session = createSession(user, password, host, SSH_DEFAULT_PORT, 
+            		userInfo, monitor);
+
+            //java.util.Hashtable config=new java.util.Hashtable();
+            //config.put("StrictHostKeyChecking", "no");
+            //session.setConfig(config);
+            userInfo.aboutToConnect();
+
+            Activator.trace("SshConnectorService.connecting..."); //$NON-NLS-1$
         	//wait for 60 sec maximum during connect
             session.connect(CONNECT_DEFAULT_TIMEOUT * 1000);
         	Activator.trace("SshConnectorService.connected"); //$NON-NLS-1$
@@ -314,6 +122,9 @@ public class SshConnectorService extends StandardConnectorService implements ISs
         	Activator.trace("SshConnectorService.connect failed: "+e.toString()); //$NON-NLS-1$
             if (session.isConnected())
                 session.disconnect();
+			if(e.toString().indexOf("Auth cancel")>=0) {  //$NON-NLS-1$
+				throw new OperationCanceledException();
+			}
             throw e;
         }
         userInfo.connectionMade();

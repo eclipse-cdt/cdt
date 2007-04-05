@@ -285,7 +285,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 				DataStore ds = getDataStore();
 				if (_minerElement == null || _minerElement.getDataStore() != ds)
 				{	
-					if (ds != null)
+					if (ds != null && _initializeStatus == null)
 					{				
 						_initializeStatus = ds.activateMiner(minerId);
 						/*

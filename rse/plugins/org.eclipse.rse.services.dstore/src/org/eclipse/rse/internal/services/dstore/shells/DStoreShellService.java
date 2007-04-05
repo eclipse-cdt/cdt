@@ -162,7 +162,8 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	public void uninitService(IProgressMonitor monitor)
 	{
 		super.uninitService(monitor);
-		
+		_envMinerElement = null;
+		_envMinerStatus = null;		
 	}
 	
 	protected void initMiner(IProgressMonitor monitor)
@@ -177,7 +178,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 				DataStore ds = getDataStore();
 				if (_envMinerElement == null || _envMinerElement.getDataStore() != ds)
 				{	
-					if (ds != null)
+					if (ds != null && _envMinerStatus == null)
 					{				
 						_envMinerStatus = ds.activateMiner(minerId);
 						/*

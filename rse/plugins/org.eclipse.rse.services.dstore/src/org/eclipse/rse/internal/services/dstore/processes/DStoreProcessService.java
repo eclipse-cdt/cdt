@@ -279,6 +279,8 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	{
 		_minerElement = null;
 		_procMinerStatus = null;
+		_minerElement = null;
+		_statusMonitor = null;
 	}
 	
 	public boolean isInitialized()
@@ -308,6 +310,8 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		}
 	}
 	
+
+
 	protected void initMiner(IProgressMonitor monitor)
 	{
 		DataElement fsElement = getMinerElement();
@@ -321,8 +325,8 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 				DataStore ds = getDataStore();
 				if (_minerElement == null || _minerElement.getDataStore() != ds)
 				{	
-					if (ds != null)
-					{				
+					if (ds != null && _procMinerStatus == null)
+					{			
 						_procMinerStatus = ds.activateMiner(minerId);					
 						
 					}			

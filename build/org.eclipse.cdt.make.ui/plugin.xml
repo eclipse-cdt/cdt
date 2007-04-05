@@ -458,14 +458,14 @@
            name="%Includes"
            icon="icons/obj16/hfolder_obj.gif"
            weight="001"
-           parentId="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
+           parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
            tooltip="&quot;Includes list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.SymbolTab"
            name="%Symbols"
            icon="icons/obj16/define_obj.gif"
            weight="002"
-           parentId="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
+           parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
            tooltip="&quot;Macros list&quot;"/>
 	</extension>
 

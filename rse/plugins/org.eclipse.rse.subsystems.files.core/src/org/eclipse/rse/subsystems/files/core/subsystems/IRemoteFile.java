@@ -64,37 +64,55 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
 	 * is returned from this query, in which only a couple properties are shown.
 	 */
 	public boolean showBriefPropertySet();
+	
 	/**
-	 * Get parent subsystem
+	 * Get parent subsystem.
+	 * 
+	 * @return the Subsystem holding this file.
 	 */
 	public IRemoteFileSubSystem getParentRemoteFileSubSystem();
+	
     /**
      * Return the separator character for this file system: \ or /.
      * Queries it from the subsystem factory.
+     * 
+     * @return the separator character for this file system.
      */
     public char getSeparatorChar();
+    
     /**
      * Return the separator character for this file system, as a string: "\" or "/".
      * Queries it from the subsystem factory.
+     * 
+     * @return the separator character for this file system as a String.
      */
+    
     public String getSeparator();
+    
 	/**
 	 * Return as a string the line separator for this file system
 	 * Queries it from the subsystem factory.
 	 */
 	public String getLineSeparator();
+	
     /**
      * Return the connection this remote file is from.
      */
     public IHost getSystemConnection();
+    
     /**
-     * Return the parent remote file object expanded to get this object, or null if no such parent
+     * Return the parent remote file object expanded to get this object,
+     * or <code>null</nul> if no such parent exists.
+     * 
+     * @return the parent remote file object or <code>null</code>.
      */
     public IRemoteFile getParentRemoteFile();
+    
     /**
      * Return the filter string resolved to get this object
      */
     public RemoteFileFilterString getFilterString();
+    
     /**
      * If this is a folder, it is possible that it is listed as part of a multiple filter string
      *  filter. In this case, when the folder is expanded, we want to filter the file names to 
@@ -104,10 +122,15 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
      *  same parent path as was used to produce this file. 
      */
     public RemoteFileFilterString[] getAllFilterStrings();
+    
     /**
      * Get fully qualified name: root plus path plus name. No connection name.
+     * 
+     * @return the fully qualified path for uniquely addressing this file 
+     *     on the remote host. Never returns <code>null</code>. 
      */
     public String getAbsolutePath();
+    
     /**
      * Get fully qualified connection and file name: profile.connection\path\file.
      * Note the separator character between the profile name and the connection name is always '.'
@@ -126,6 +149,7 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
      * If this object represents only a root drive, this is the same as getRoot().
      */
     public String getName();
+    
     /**
      * Get fully qualified path and name of folder containing this file or folder.
      * Returns the root and path. No file name, and no ending separator.
@@ -135,6 +159,7 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
      * Example: <code>c:\folder1\folder2\file1.ext</code> results in <code>c:\folder1\folder2</code>
      */
     public String getParentPath();
+    
     /**
      * Get fully qualified path and name of folder containing this file or folder, minus the root.
      * Returns the path. No root prefix. No file name, and no ending separator. 
@@ -143,7 +168,8 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
      * <p>
      * Example: <code>c:\folder1\folder2\file1.ext</code> results in <code>folder1\folder2</code>
      */
-    public String getParentNoRoot();    
+    public String getParentNoRoot();
+    
     /**
      * Get the root part of the name.
      * <p>
@@ -153,6 +179,7 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
      * </ul>
      */
     public String getRoot();
+    
     /**
      * Get the unqualified name of the parent directory containing this file or folder.
      * Compare this to getParent() that returns the fully qualified parent directory.
@@ -161,45 +188,53 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
      * Example: <code>c:\folder1\folder2\file1.ext</code> results in <code>folder2</code>
      */
     public String getParentName();
+    
 	/**
 	 * Return the extension part of a file name.
 	 * Eg, for abc.java, return "java"
 	 */
 	public String getExtension();
+	
     /**
      * Returns true if this represents a root folder (eg: c:\\ or /).
      */
     public boolean isRoot();
+    
     /**
      * Returns true if this represents a folder (eg: c:\\folder)
      */
     public boolean isDirectory();
+    
     /**
      * Returns true if this represents a file, versus a root or folder
      */
-    public boolean isFile();    
+    public boolean isFile();
+    
     /**
      * Returns true if this represents an archive file, versues a non-archive file
      */    
     public boolean isArchive();
     
-
     /**
      * Returns true if this is a binary file
      */
     public boolean isBinary();
+    
     /**
      * Returns true if this is a text file
      */
-    public boolean isText();    
+    public boolean isText();
+    
     /**
      * Returns true if this is a hidden file.
      */
-    public boolean isHidden();      
+    public boolean isHidden();
+    
     /**
      * Returns true if the application can read this file.
      */
     public boolean canRead();
+    
     /**
      * Returns true if the application can write to this file.
      */
@@ -209,14 +244,17 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
      * Returns true if this folder or file actually exists.
      */
     public boolean exists();
+    
     /**
      * Returns the time (in milliseconds since epoch) this file was last modified.
      */
     public long getLastModified();
+    
 	/**
 	 * Return the last modified time as a Date object.
 	 */
 	public Date getLastModifiedDate() ;
+	
     /**
      * Returns the length, in bytes, of this file.
      */

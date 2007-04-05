@@ -266,14 +266,13 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMInclude lastInclude= null;
 		for (int i = 0; i < includes.length; i++) {
 			IASTPreprocessorIncludeStatement statement = includes[i];
-			PDOMFile thisIncludes= (PDOMFile) files[i];
-			assert thisIncludes.getIndexFragment() instanceof IWritableIndexFragment;
-
-			PDOMInclude pdomInclude = new PDOMInclude(pdom, statement);
-			pdomInclude.setIncludedBy(this);
-			pdomInclude.setIncludes(thisIncludes);
-
-			thisIncludes.addIncludedBy(pdomInclude);
+			PDOMFile targetFile= (PDOMFile) files[i];
+			
+			PDOMInclude pdomInclude = new PDOMInclude(pdom, statement, this, targetFile);
+			if (targetFile != null) {
+				assert targetFile.getIndexFragment() instanceof IWritableIndexFragment;
+				targetFile.addIncludedBy(pdomInclude);
+			}
 			if (lastInclude == null) {
 				setFirstInclude(pdomInclude);
 			}
@@ -390,5 +389,18 @@ public class PDOMFile implements IIndexFragmentFile {
 	
 	public boolean hasNames() throws CoreException {
 		return getFirstName()!=null;
+	}
+
+	public void convertIncludersToUnresolved() throws CoreException {
+		// Remove the includes
+		PDOMInclude include = getFirstIncludedBy();
+		while (include != null) {
+			PDOMInclude nextInclude = include.getNextInIncludedBy();
+			include.convertToUnresolved();
+			include.setNextInIncludedBy(null);
+			include.setPrevInIncludedBy(null);
+			include = nextInclude;
+		}
+		setFirstIncludedBy(null);
 	}
 }

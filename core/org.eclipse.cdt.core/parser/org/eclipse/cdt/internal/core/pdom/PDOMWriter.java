@@ -190,43 +190,57 @@ abstract public class PDOMWriter {
 	}
 
 	private IIndexFileLocation[] extractSymbols(IASTTranslationUnit ast, final Map symbolMap) throws CoreException {
-		LinkedHashSet/*<IIndexFileLocation>*/ orderedIncludes= new LinkedHashSet/*<IIndexFileLocation>*/();
-		ArrayList/*<IIndexFileLocation>*/ stack= new ArrayList/*<IIndexFileLocation>*/();
+		LinkedHashSet/*<IIndexFileLocation>*/ orderedIFLs= new LinkedHashSet/*<IIndexFileLocation>*/();
+		ArrayList/*<IIndexFileLocation>*/ iflStack= new ArrayList/*<IIndexFileLocation>*/();
 
 
 		final IIndexFileLocation astLocation = findLocation(ast.getFilePath());
-		IIndexFileLocation currentPath = astLocation;
+		IIndexFileLocation aboveStackIFL = astLocation;
 
 		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 		for (int i= 0; i < includes.length; i++) {
-			IASTPreprocessorIncludeStatement include = includes[i];
-			IASTFileLocation sourceLoc = include.getFileLocation();
-			IIndexFileLocation newPath= sourceLoc != null ? findLocation(sourceLoc.getFileName()) : astLocation; // command-line includes
-			while (!stack.isEmpty() && !currentPath.equals(newPath)) {
-				if (needToUpdate(currentPath)) {
-					prepareInMap(symbolMap, currentPath);
-					orderedIncludes.add(currentPath);
+			final IASTPreprocessorIncludeStatement include = includes[i];
+			
+			// check if we have left a file.
+			final IASTFileLocation tmpLoc = include.getFileLocation();
+			final IIndexFileLocation nextIFL= tmpLoc != null ? findLocation(tmpLoc.getFileName()) : astLocation; // command-line includes
+			while (!aboveStackIFL.equals(nextIFL)) {
+				if (!iflStack.isEmpty()) { 
+					if (needToUpdate(aboveStackIFL)) {
+						prepareInMap(symbolMap, aboveStackIFL);
+						orderedIFLs.add(aboveStackIFL);
+					}
+					aboveStackIFL= (IIndexFileLocation) iflStack.remove(iflStack.size()-1);
 				}
-				currentPath= (IIndexFileLocation) stack.remove(stack.size()-1);
+				else {
+					assert false; // logics in parser is broken, still do something useful
+					iflStack.add(aboveStackIFL);
+					aboveStackIFL= nextIFL;
+					break;
+				}
 			}
-			if (needToUpdate(newPath)) {
-				prepareInMap(symbolMap, newPath);
-				addToMap(symbolMap, 0, newPath, include);
+			
+			// save include in map
+			if (needToUpdate(nextIFL)) {
+				prepareInMap(symbolMap, nextIFL);
+				addToMap(symbolMap, 0, nextIFL, include);
 			}
+			
+			// prepare to go into next level
 			if (include.isResolved()) {
-				stack.add(currentPath);
-				currentPath= findLocation(include.getPath());
+				iflStack.add(nextIFL);
+				aboveStackIFL= findLocation(include.getPath());
 			}
 			else if (include.isActive()) {
 				reportProblem(include);
 			}
 		}
-		stack.add(currentPath);
-		while (!stack.isEmpty()) {
-			currentPath= (IIndexFileLocation) stack.remove(stack.size()-1);
-			if (needToUpdate(currentPath)) {
-				prepareInMap(symbolMap, currentPath);
-				orderedIncludes.add(currentPath);
+		iflStack.add(aboveStackIFL);
+		while (!iflStack.isEmpty()) {
+			aboveStackIFL= (IIndexFileLocation) iflStack.remove(iflStack.size()-1);
+			if (needToUpdate(aboveStackIFL)) {
+				prepareInMap(symbolMap, aboveStackIFL);
+				orderedIFLs.add(aboveStackIFL);
 			}
 		}
 
@@ -261,7 +275,7 @@ abstract public class PDOMWriter {
 				}
 			}
 		});
-		return (IIndexFileLocation[]) orderedIncludes.toArray(new IIndexFileLocation[orderedIncludes.size()]);
+		return (IIndexFileLocation[]) orderedIFLs.toArray(new IIndexFileLocation[orderedIFLs.size()]);
 	}
 	
 	protected boolean isInheritanceSpec(IASTName name) {
@@ -345,7 +359,9 @@ abstract public class PDOMWriter {
 
 			IIndexFileLocation[] includeLocations = new IIndexFileLocation[includes.length];
 			for(int i=0; i<includes.length; i++) {
-				includeLocations[i] = findLocation(includes[i].getPath());
+				if (includes[i].isResolved()) {
+					includeLocations[i] = findLocation(includes[i].getPath());
+				}
 			}
 			index.setFileContent(file, includes, includeLocations, macros, names);
 		}

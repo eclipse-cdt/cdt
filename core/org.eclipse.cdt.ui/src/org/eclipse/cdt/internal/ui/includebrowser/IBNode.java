@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
@@ -30,7 +31,6 @@ public class IBNode implements IAdaptable {
     
     // navigation info
     private IBFile fDirectiveFile;
-    private String fDirectiveName;
     private int fDirectiveCharacterOffset;
     private int fDirectiveLength;
     private int fHashCode;
@@ -44,11 +44,11 @@ public class IBNode implements IAdaptable {
      * Creates a new node for the include browser
      */
     public IBNode(IBNode parent, IBFile represents, IBFile fileOfDirective, 
-    		String nameOfDirective, int charOffset, int length, long timestamp) {
+    		int charOffset, int length, long timestamp) {
+    	assert represents != null;
         fParent= parent;
         fRepresentedFile= represents;
         fDirectiveFile= fileOfDirective;
-        fDirectiveName= nameOfDirective;
         fDirectiveCharacterOffset= charOffset;
         fDirectiveLength= length;
         fIsRecursive= computeIsRecursive(fParent, represents.getLocation());
@@ -61,15 +61,7 @@ public class IBNode implements IAdaptable {
         if (fParent != null) {
             hashCode= fParent.hashCode() * 31;
         }
-        if (fDirectiveName != null) {
-            hashCode+= fDirectiveName.hashCode();
-        }
-        else if (fRepresentedFile != null) {
-            IIndexFileLocation ifl= fRepresentedFile.getLocation();
-            if (ifl != null) {
-                hashCode+= ifl.hashCode();
-            }
-        }
+        hashCode+= fRepresentedFile.hashCode();
         return hashCode;
     }   
 
@@ -87,8 +79,7 @@ public class IBNode implements IAdaptable {
 			return false;
 		}
 
-		return (CoreUtility.safeEquals(fRepresentedFile, rhs.fRepresentedFile) && 
-				CoreUtility.safeEquals(fDirectiveName, rhs.fDirectiveName));
+		return CoreUtility.safeEquals(fRepresentedFile, rhs.fRepresentedFile); 
 	}
     
     private boolean computeIsRecursive(IBNode parent, IIndexFileLocation ifl) {
@@ -162,7 +153,7 @@ public class IBNode implements IAdaptable {
     }
 
     public String getDirectiveName() {
-        return fDirectiveName;
+        return fRepresentedFile.getName();
     }
 
     public Object getAdapter(Class adapter) {
@@ -194,8 +185,24 @@ public class IBNode implements IAdaptable {
 		}
 		return null;
 	}
+	
+	public IIndexFileLocation getRepresentedIFL() {
+		return fRepresentedFile == null ? null : fRepresentedFile.getLocation();
+	}
 
 	public long getTimestamp() {
 		return fTimestamp;
+	}
+
+	public ICProject getCProject() {
+		ITranslationUnit tu= getRepresentedTranslationUnit();
+		if (tu != null) {
+			return tu.getCProject();
+		}
+		IBNode parent= getParent();
+		if (parent != null) {
+			return parent.getCProject();
+		}
+		return null;
 	}
 }

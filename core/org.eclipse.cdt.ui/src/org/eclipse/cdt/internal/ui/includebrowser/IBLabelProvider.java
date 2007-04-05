@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -97,7 +99,7 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
             }
         }
 
-        if (node.isActiveCode() && node.getRepresentedTranslationUnit() == null) {
+        if (node.isActiveCode() && node.getRepresentedIFL() == null) {
         	flags |= CElementImageDescriptor.WARNING;
         }
 

@@ -99,7 +99,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	 * @return a list of PDOMFiles for which the location converter returned null when queried for the new internal representation
 	 * @throws CoreException
 	 */
-	public List/*<PDOMFile>*/ rewriteLocations(final IIndexLocationConverter newConverter) throws CoreException {
+	public void rewriteLocations(final IIndexLocationConverter newConverter) throws CoreException {
 		final List pdomfiles = new ArrayList();
 		getFileIndex().accept(new IBTreeVisitor(){
 			public int compare(int record) throws CoreException {
@@ -125,7 +125,13 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 			}
 		}
 
-		return notConverted;
+
+		// remove content where converter returns null
+		for(Iterator i = notConverted.iterator(); i.hasNext(); ) {
+			PDOMFile file = (PDOMFile) i.next();
+			file.convertIncludersToUnresolved();
+			file.clear();
+		}
 	}
 
 	boolean isClearedBecauseOfVersionMismatch() {

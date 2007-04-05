@@ -234,7 +234,9 @@ public class CIndex implements IIndex {
 				IIndexInclude[] includes= file.getIncludes();
 				for (int k= 0; k < includes.length; k++) {
 					IIndexInclude include = includes[k];
-					if (handled.add(include.getIncludesLocation())) {
+					IIndexFileLocation target= include.getIncludesLocation();
+					Object key= target != null ? (Object) target : include.getName();
+					if (handled.add(key)) {
 						out.add(include);
 						if (depth != 0) {
 							IIndexFile includedByFile= resolveInclude(include);

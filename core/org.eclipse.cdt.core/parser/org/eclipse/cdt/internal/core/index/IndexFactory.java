@@ -174,7 +174,6 @@ public class IndexFactory {
 	}
 
 	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
-		// mstodo to support dependent projects: Collection selectedProjects= getSelectedProjects(new ICProject[]{project}, false);
 		IndexProviderManager m = CCoreInternals.getPDOMManager().getIndexProviderManager();
 		
 		Collection selectedProjects= Collections.singleton(project);
@@ -184,7 +183,7 @@ public class IndexFactory {
 			ICProject p = (ICProject) iter.next();
 			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(p);
 			if (pdom != null) {
-				safeAddFragment(fragments, (IIndexFragment) pdom);
+				safeAddFragment(fragments, pdom);
 				ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(p.getProject(), false);
 				if(pd!=null) {
 					ICConfigurationDescription activeCfg= pd.getActiveConfiguration();

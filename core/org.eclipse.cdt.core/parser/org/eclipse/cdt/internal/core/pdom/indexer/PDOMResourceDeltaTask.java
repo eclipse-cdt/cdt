@@ -94,23 +94,24 @@ public class PDOMResourceDeltaTask implements IPDOMIndexerTask {
 		switch (element.getElementType()) {
 		case ICElement.C_UNIT:
 			ITranslationUnit tu = (ITranslationUnit)element;
-			switch (delta.getKind()) {
-			case ICElementDelta.CHANGED:
-				if ((flags & ICElementDelta.F_CONTENT) != 0 &&
-						(fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource())) || tu.isHeaderUnit()) {
-					changed.add(tu);
-				}
-				break;
-			case ICElementDelta.ADDED:
-				if (!tu.isWorkingCopy() &&
-						(fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource())) || tu.isHeaderUnit()) {
-					added.add(tu);
-				}
-				break;
-			case ICElementDelta.REMOVED:
-				if (!tu.isWorkingCopy())
+			if (!tu.isWorkingCopy()) {
+				switch (delta.getKind()) {
+				case ICElementDelta.CHANGED:
+					if ((flags & ICElementDelta.F_CONTENT) != 0) {
+						if (fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource()) || tu.isHeaderUnit()) {
+							changed.add(tu);
+						}
+					}
+					break;
+				case ICElementDelta.ADDED:
+					if (fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource()) || tu.isHeaderUnit()) {
+						added.add(tu);
+					}
+					break;
+				case ICElementDelta.REMOVED:
 					removed.add(tu);
-				break;
+					break;
+				}
 			}
 			break;
 		case ICElement.C_CCONTAINER:

@@ -65,7 +65,9 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		
 		IIndexFragmentFile[] destFiles= new IIndexFragmentFile[includes.length];
 		for (int i = 0; i < includes.length; i++) {
-			destFiles[i]= addFile(includeLocations[i]);
+			if (includeLocations[i] != null) {
+				destFiles[i]= addFile(includeLocations[i]);
+			}
 		}
 		((IWritableIndexFragment) indexFragment).addFileContent(file, 
 				includes, destFiles, macros, names);

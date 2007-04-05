@@ -23,7 +23,6 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -51,7 +50,6 @@ import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
@@ -967,13 +965,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			try {
 				newPDOM.acquireWriteLock();
 				try {
-					List notConverted= newPDOM.rewriteLocations(newConverter);
-
-					// remove content where converter returns null
-					for(Iterator i = notConverted.iterator(); i.hasNext(); ) {
-						PDOMFile file = (PDOMFile) i.next();
-						file.clear();
-					}
+					newPDOM.rewriteLocations(newConverter);
 
 					// ensure fragment id has a sensible value, in case callee's do not
 					// overwrite their own values

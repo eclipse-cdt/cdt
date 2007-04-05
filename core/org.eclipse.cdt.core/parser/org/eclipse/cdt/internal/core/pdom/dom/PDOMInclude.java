@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,8 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -32,7 +34,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	private final PDOM pdom;
 	private final int record;
 	
-	private final int INCLUDES = 0;
+	private final int INCLUDES_FILE_OR_NAME = 0;
 	private final int INCLUDED_BY = 4;
 	private final int INCLUDES_NEXT = 8;
 	private final int INCLUDED_BY_NEXT = 12;
@@ -46,13 +48,16 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	private static final int FLAG_UNRESOLVED_INCLUDE = 4;
 	
 	private final int RECORD_SIZE = 27;
+	
+	// cached fields
+	private String fName= null;
 
 	public PDOMInclude(PDOM pdom, int record) {
 		this.pdom = pdom;
 		this.record = record;
 	}
 	
-	public PDOMInclude(PDOM pdom, IASTPreprocessorIncludeStatement include) throws CoreException {
+	public PDOMInclude(PDOM pdom, IASTPreprocessorIncludeStatement include, PDOMFile containerFile, PDOMFile targetFile) throws CoreException {
 		this.pdom = pdom;
 		this.record = pdom.getDB().malloc(RECORD_SIZE);
 		IASTName name= include.getName();
@@ -61,10 +66,13 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		if (loc != null) {
 			setNameOffsetAndLength(loc.getNodeOffset(), (short) loc.getNodeLength());
 		}
-		setFlag(encodeFlags(include));
+		
+		setFlag(encodeFlags(include, targetFile == null));
+		setIncludedBy(containerFile);
+		setIncludes(targetFile, name.toCharArray());
 	}
 	
-	private byte encodeFlags(IASTPreprocessorIncludeStatement include) {
+	private byte encodeFlags(IASTPreprocessorIncludeStatement include, boolean unresolved) {
 		byte flags= 0;
 		if (include.isSystemInclude()) {
 			flags |= FLAG_SYSTEM_INCLUDE;
@@ -72,7 +80,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		if (!include.isActive()) {
 			flags |= FLAG_INACTIVE_INCLUDE;
 		}
-		if (!include.isResolved()) {
+		if (unresolved) {
 			flags |= FLAG_UNRESOLVED_INCLUDE;
 		}
 		return flags;
@@ -83,29 +91,55 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	}
 	
 	public void delete() throws CoreException {
-		// Remove us from the includedBy chain
+		if (isResolved()) {
+			// Remove us from the includedBy chain
+			removeThisFromIncludedByChain();
+		}
+		else {
+			getNameForUnresolved().delete();
+		}
+		
+		// Delete our record
+		pdom.getDB().free(record);
+	}
+
+	private void removeThisFromIncludedByChain() throws CoreException {
 		PDOMInclude prevInclude = getPrevInIncludedBy();
 		PDOMInclude nextInclude = getNextInIncludedBy();
 		if (prevInclude != null)
 			prevInclude.setNextInIncludedBy(nextInclude);
 		else
 			((PDOMFile) getIncludes()).setFirstIncludedBy(nextInclude);
-		
+
 		if (nextInclude != null)
 			nextInclude.setPrevInIncludedBy(prevInclude);
-		
-		// Delete our record
-		pdom.getDB().free(record);
 	}
 	
+	private IString getNameForUnresolved() throws CoreException {
+		if (isResolved()) {
+			return null;
+		}
+		final Database db = pdom.getDB();
+		return db.getString(db.getInt(record + INCLUDES_FILE_OR_NAME));
+	}
+		
 	public IIndexFragmentFile getIncludes() throws CoreException {
-		int rec = pdom.getDB().getInt(record + INCLUDES);
+		if (!isResolved()) {
+			return null;
+		}
+		int rec = pdom.getDB().getInt(record + INCLUDES_FILE_OR_NAME);
 		return rec != 0 ? new PDOMFile(pdom, rec) : null;
 	}
 	
-	public void setIncludes(PDOMFile includes) throws CoreException {
-		int rec = includes != null ? includes.getRecord() : 0;
-		pdom.getDB().putInt(record + INCLUDES, rec);
+	private void setIncludes(PDOMFile includes, char[] name) throws CoreException {
+		int rec= 0;
+		if (includes == null) {
+			rec= pdom.getDB().newString(name).getRecord();
+		}
+		else {
+			rec= includes.getRecord();
+		}
+		pdom.getDB().putInt(record + INCLUDES_FILE_OR_NAME, rec);
 	}
 	
 	public IIndexFile getIncludedBy() throws CoreException {
@@ -113,7 +147,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		return rec != 0 ? new PDOMFile(pdom, rec) : null;
 	}
 	
-	public void setIncludedBy(PDOMFile includedBy) throws CoreException {
+	private void setIncludedBy(PDOMFile includedBy) throws CoreException {
 		int rec = includedBy != null ? includedBy.getRecord() : 0;
 		pdom.getDB().putInt(record + INCLUDED_BY, rec);
 	}
@@ -153,6 +187,9 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	}
 
 	public IIndexFileLocation getIncludesLocation() throws CoreException {
+		if (!isResolved()) {
+			return null;
+		}
 		return getIncludes().getLocation();
 	}
 
@@ -191,5 +228,29 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	
 	public int getNameLength() throws CoreException {
 		return pdom.getDB().getShort(record + NODE_LENGTH_OFFSET) & 0xffff;
-	}			
+	}	
+	
+	public String getName() throws CoreException {
+		if (fName == null) {
+			computeName();
+		}
+		return fName;
+	}
+
+	private void computeName() throws CoreException {
+		if (isResolved()) {
+			fName= getIncludes().getLocation().getURI().getPath();
+			fName= fName.substring(fName.lastIndexOf('/')+1);
+		}
+		else {
+			fName= getNameForUnresolved().getString();
+		}
+	}
+
+	public void convertToUnresolved() throws CoreException {
+		if (isResolved()) {
+			setIncludes(null, getName().toCharArray());
+			setFlag((byte) (getFlag() | FLAG_UNRESOLVED_INCLUDE));
+		}
+	}
 }

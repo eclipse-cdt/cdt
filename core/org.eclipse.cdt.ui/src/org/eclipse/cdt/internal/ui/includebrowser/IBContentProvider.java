@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Display;
@@ -25,7 +24,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -57,11 +56,11 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 	protected Object[] syncronouslyComputeChildren(Object parentElement) {
 		if (parentElement instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit) parentElement;
-			return new Object[] { new IBNode(null, new IBFile(tu), null, null, 0, 0, 0) };
+			return new Object[] { new IBNode(null, new IBFile(tu), null, 0, 0, 0) };
 		}
 		if (parentElement instanceof IBNode) {
 			IBNode node = (IBNode) parentElement;
-			if (node.isRecursive() || node.getRepresentedTranslationUnit() == null) {
+			if (node.isRecursive() || node.getRepresentedIFL() == null) {
 				return NO_CHILDREN;
 			}
 		}
@@ -72,14 +71,15 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 	protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
 		if (parentElement instanceof IBNode) {
 			IBNode node = (IBNode) parentElement;
-			ITranslationUnit tu= node.getRepresentedTranslationUnit();
-			if (tu == null) {
+			IIndexFileLocation ifl= node.getRepresentedIFL();
+			ICProject project= node.getCProject();
+			if (ifl == null) {
 				return NO_CHILDREN;
 			}
 			
 			IIndex index;
 			try {
-				index = CCorePlugin.getIndexManager().getIndex(tu.getCProject(), 
+				index = CCorePlugin.getIndexManager().getIndex(project, 
 						fComputeIncludedBy ? IIndexManager.ADD_DEPENDENT : IIndexManager.ADD_DEPENDENCIES);
 				index.acquireReadLock();
 			} catch (CoreException e) {
@@ -94,10 +94,10 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				IBFile targetFile= null;
 				IIndexInclude[] includes;
 				if (fComputeIncludedBy) {
-					includes= findIncludedBy(index, tu, NPM);
+					includes= findIncludedBy(index, ifl, NPM);
 				}
 				else {
-					includes= findIncludesTo(index, tu, NPM);
+					includes= findIncludesTo(index, ifl, NPM);
 					directiveFile= node.getRepresentedFile();
 				}
 				if (includes.length > 0) {
@@ -105,21 +105,20 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					for (int i = 0; i < includes.length; i++) {
 						IIndexInclude include = includes[i];
 						try {
-							IIndexFileLocation includesPath= include.getIncludesLocation();
 							if (fComputeIncludedBy) {
-								directiveFile= targetFile= new IBFile(tu.getCProject(), include.getIncludedByLocation());
+								directiveFile= targetFile= new IBFile(project, include.getIncludedByLocation());
 							}
 							else {
-								targetFile= new IBFile(tu.getCProject(), includesPath);
+								IIndexFileLocation includesPath= include.getIncludesLocation();
+								if (includesPath == null) {
+									targetFile= new IBFile(include.getName());
+								}
+								else {
+									targetFile= new IBFile(project, includesPath);
+								}
 							}
-							IPath fullPath= IndexLocationFactory.getPath(includesPath);
-							String name= "???";  //$NON-NLS-1$
-							if (fullPath != null && fullPath.segmentCount() > 0) {
-								name= fullPath.lastSegment();
-							}
-								
 							IBNode newnode= new IBNode(node, targetFile, directiveFile, 
-									name, include.getNameOffset(), 
+									include.getNameOffset(), 
 									include.getNameLength(), 
 									include.getIncludedBy().getTimestamp());
 							newnode.setIsActiveCode(include.isActive());
@@ -152,11 +151,10 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 	}
 	
 	
-	private IIndexInclude[] findIncludedBy(IIndex index, ITranslationUnit tu, IProgressMonitor pm) {
+	private IIndexInclude[] findIncludedBy(IIndex index, IIndexFileLocation ifl, IProgressMonitor pm) {
 		try {
-			IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
-			if (location != null) {
-				IIndexFile file= index.getFile(location);
+			if (ifl != null) {
+				IIndexFile file= index.getFile(ifl);
 				if (file != null) {
 					return index.findIncludedBy(file);
 				}
@@ -168,11 +166,10 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 		return new IIndexInclude[0];
 	}
 
-	public IIndexInclude[] findIncludesTo(IIndex index, ITranslationUnit tu, IProgressMonitor pm) {
+	public IIndexInclude[] findIncludesTo(IIndex index, IIndexFileLocation ifl, IProgressMonitor pm) {
 		try {
-			IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
-			if (location != null) {
-				IIndexFile file= index.getFile(location);
+			if (ifl != null) {
+				IIndexFile file= index.getFile(ifl);
 				if (file != null) {
 					return index.findIncludes(file);
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,13 @@ public interface IIndexInclude {
 	 * @throws CoreException
 	 */
 	IIndexFileLocation getIncludesLocation() throws CoreException;
+	
+	/**
+	 * Returns the simple name of the directive. This skips any leading
+	 * direcories. E.g.: for '<sys/types.h>' 'types.h' will be returned.
+	 * @throws CoreException 
+	 */
+	String getName() throws CoreException;
 
 	/**
 	 * Returns the character offset of the name of the include in its source file. The name does

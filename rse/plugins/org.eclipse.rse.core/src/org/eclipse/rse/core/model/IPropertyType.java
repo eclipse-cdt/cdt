@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,26 +11,49 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - added javadoc
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
+/**
+ * Property types are used to type instances of {@link IProperty}.  
+ */
 public interface IPropertyType {
+	
 	public static final int TYPE_STRING = 0;
 	public static final int TYPE_INTEGER = 1;
 	public static final int TYPE_ENUM = 2;
 	public static final int TYPE_BOOLEAN = 3;
 
+	/**
+	 * @return true if the property is of TYPE_STRING
+	 */
 	public boolean isString();
 
+	/**
+	 * @return true if the property is of TYPE_INTEGER
+	 */
 	public boolean isInteger();
 
+	/**
+	 * @return true if the property is of TYPE_ENUM
+	 */
 	public boolean isEnum();
 
+	/**
+	 * @return true if the property is of TYPE_BOOLEAN
+	 */
 	public boolean isBoolean();
-
+	
+	/**
+	 * @return the integer value of the property type
+	 */
 	public int getType();
 
+	/**
+	 * @return the array of values that comprise the enumeration
+	 */
 	public String[] getEnumValues();
+
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,27 +11,94 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - added javadoc
+ * David Dykstal (IBM) - [150939] added read-only attribute
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
-public interface IProperty {
+/**
+ * Properties are contained in property sets ({@link IPropertySet}) and may be associated with objects that
+ * implement {@link IPropertySetContainer}. These would typically be model objects.
+ * Properties also have a type (see {@link IPropertyType}).
+ * @see IRSEModelObject
+ */
+public interface IProperty { 
+	
+	/**
+	 * @return the name of the property.
+	 */
 	public String getKey();
-
-	public String getLabel();
-
+	
+	/**
+	 * Sets the displayable label of the property.
+	 * @param label the label for this property.
+	 */
 	public void setLabel(String label);
 
-	public void setValue(String value);
+	/**
+	 * @return the displayable label of this property
+	 */
+	public String getLabel();
 
+	/**
+	 * Sets the value of this property.
+	 * May raise a runtime exception if the new value of the property is 
+	 * not compatible with its type.
+	 * @param value the new value for this property.
+	 */
+	public void setValue(String value); 
+	
+	/**
+	 * @return the value of this property
+	 */
 	public String getValue();
 
+	/**
+	 * Sets the type of this property.
+	 * May raise an runtime exception if the value of the property is not compatible 
+	 * with the new type.
+	 * @param type
+	 */
 	public void setType(IPropertyType type);
 
+	/**
+	 * @return the type of this property
+	 */
 	public IPropertyType getType();
 
+	/**
+	 * Sets the "enabled" presentation attribute of this property.
+	 * This is an attribute that can be used to drive the presentation of this 
+	 * property and does not otherwise affect how this property can be used.
+	 * Properties are enabled by default.
+	 * @param flag true if the property is to be enabled. 
+	 */
 	public void setEnabled(boolean flag);
 
+	/**
+	 * Retrieves the "enabled" presentation attribute of this property.
+	 * This is an attribute that can be used to drive the presentation of this 
+	 * property and does not otherwise affect how this property can be used.
+	 * @return true if the property is enabled.
+	 */
 	public boolean isEnabled();
+
+	/**
+	 * Sets the "read-only" presentation attribute of this property.
+	 * This is an attribute that can be used to drive the presentation of this 
+	 * property and does not otherwise affect how this property can be used.
+	 * Properties are read-write by default.
+	 * @param flag true if the property is to be read-only.
+	 */
+	public void setReadOnly(boolean flag);
+
+	/**
+	 * Retrieves the "read-only" presentation attribute of this property.
+	 * This is an attribute that can be used to drive the presentation of this 
+	 * property and does not otherwise affect how this property can be used.
+	 * @return true if the property is read-only.
+	 */
+	public boolean isReadOnly();
+
 }

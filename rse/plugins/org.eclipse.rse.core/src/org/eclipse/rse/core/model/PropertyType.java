@@ -11,12 +11,18 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - added javadoc, minor changes
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
+/**
+ * The standard implementation of {@link IPropertyType}.
+ * The constructors are private.
+ * Use the static factory methods to return instances.
+ */
 public class PropertyType implements IPropertyType {
+
 	private int _type = 0;
 	private String[] _enumValues;
 
@@ -29,17 +35,17 @@ public class PropertyType implements IPropertyType {
 	private PropertyType(int type) {
 		_type = type;
 	}
-
+	
 	/**
-	 * Return an instance of boolean property type.
+	 * Returns an instance of boolean property type.
 	 * @return IPropertyType
 	 */
 	public static IPropertyType getBooleanPropertyType() {
 		return _booleanPropertyType;
 	}
-
+	
 	/**
-	 * Return an instance of integer property type.
+	 * Returns an instance of integer property type.
 	 * @return IPropertyType
 	 */
 	public static IPropertyType getIntegerPropertyType() {
@@ -47,7 +53,7 @@ public class PropertyType implements IPropertyType {
 	}
 
 	/**
-	 * Return an instance of string property type.
+	 * Returns an instance of string property type.
 	 * @return IPropertyType
 	 */
 	public static IPropertyType getStringPropertyType() {
@@ -55,18 +61,18 @@ public class PropertyType implements IPropertyType {
 	}
 
 	/**
-	 * Return an instance of enum property type.
+	 * Returns an instance of enum property type.
 	 * @param values String[] array of allowed enumerator values. 
 	 * @return IPropertyType
 	 */
 	public static IPropertyType getEnumPropertyType(String[] values) {
 		PropertyType type = new PropertyType(TYPE_ENUM);
-		type.setEnumValues(values);
+		type._enumValues = values;
 		return type;
 	}
 
 	/**
-	 * Return an instance of property type based on the String specification.
+	 * Returns an instance of property type based on the String specification.
 	 * This is the reverse of PropertyType.toString().
 	 * @return IPropertyType instance based on String specification.
 	 */
@@ -86,34 +92,51 @@ public class PropertyType implements IPropertyType {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertyType#getType()
+	 */
 	public int getType() {
 		return _type;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertyType#isString()
+	 */
 	public boolean isString() {
 		return _type == TYPE_STRING;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertyType#isInteger()
+	 */
 	public boolean isInteger() {
 		return _type == TYPE_INTEGER;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertyType#isEnum()
+	 */
 	public boolean isEnum() {
 		return _type == TYPE_ENUM;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertyType#isBoolean()
+	 */
 	public boolean isBoolean() {
 		return _type == TYPE_BOOLEAN;
 	}
 
-	private void setEnumValues(String[] enumValues) {
-		_enumValues = enumValues;
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IPropertyType#getEnumValues()
+	 */
 	public String[] getEnumValues() {
 		return _enumValues;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		if (isString()) {
 			return String.class.getName();

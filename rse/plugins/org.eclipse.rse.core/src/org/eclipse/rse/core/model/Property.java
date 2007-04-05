@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,17 +11,23 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - added javadoc
+ * David Dykstal (IBM) - [150939] added read-only attribute
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
+/**
+ * 
+ */
 public class Property implements IProperty {
-	protected String _name;
-	protected String _label;
-	protected String _value;
-	protected IPropertyType _type;
-	protected boolean _isEnabled;
+	
+	private String _name;
+	private String _label;
+	private String _value;
+	private IPropertyType _type;
+	private boolean _isEnabled = true;
+	private boolean _isReadOnly = false;
 
 	public Property(IProperty property) {
 		_name = property.getKey();
@@ -38,10 +44,23 @@ public class Property implements IProperty {
 		_isEnabled = isEnabled;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#getKey()
+	 */
+	public String getKey() {
+		return _name;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#setLabel(java.lang.String)
+	 */
 	public void setLabel(String label) {
 		_label = label;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#getLabel()
+	 */
 	public String getLabel() {
 		if (_label == null) {
 			return _name;
@@ -49,32 +68,60 @@ public class Property implements IProperty {
 		return _label;
 	}
 
-	public String getKey() {
-		return _name;
-	}
-
-	public String getValue() {
-		return _value;
-	}
-
-	public IPropertyType getType() {
-		return _type;
-	}
-
-	public boolean isEnabled() {
-		return _isEnabled;
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#setValue(java.lang.String)
+	 */
 	public void setValue(String value) {
 		_value = value;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#getValue()
+	 */
+	public String getValue() {
+		return _value;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#setType(org.eclipse.rse.core.model.IPropertyType)
+	 */
 	public void setType(IPropertyType type) {
 		_type = type;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#getType()
+	 */
+	public IPropertyType getType() {
+		return _type;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#setEnabled(boolean)
+	 */
 	public void setEnabled(boolean flag) {
 		_isEnabled = flag;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return _isEnabled;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#setReadOnly(boolean)
+	 */
+	public void setReadOnly(boolean flag) {
+		_isReadOnly = flag;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IProperty#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		return _isReadOnly;
 	}
 
 }

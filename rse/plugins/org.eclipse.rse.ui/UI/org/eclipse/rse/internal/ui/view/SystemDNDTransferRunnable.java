@@ -37,10 +37,8 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -648,7 +646,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				    registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, _resultTgtObjects, _target, _targetSubSystem, null, _originatingViewer);
 				}
 			}
-			registry.fireEvent(new SystemResourceChangeEvent(_target, ISystemResourceChangeEvents.EVENT_REFRESH, _target));
+
 			return Status.OK_STATUS;
 		}
 	}

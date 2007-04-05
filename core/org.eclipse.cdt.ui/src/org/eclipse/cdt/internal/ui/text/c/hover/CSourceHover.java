@@ -63,8 +63,8 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
@@ -79,14 +79,11 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.text.CCodeReader;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.util.Strings;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 /**
  * A text hover presenting the source of the element under the cursor.
@@ -124,18 +121,21 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				try {
 					IASTName[] names;
 					names = fTU.getLanguage().getSelectedNames(ast, fTextRegion.getOffset(), fTextRegion.getLength());
-					if (names != null && names.length == 1) {
-						IBinding binding= names[0].resolveBinding();
-						if (binding != null) {
-							if (binding instanceof IProblemBinding) {
-								if (DEBUG) fSource= "Cannot resolve " + new String(names[0].toCharArray()); //$NON-NLS-1$
-							} else if (binding instanceof IMacroBinding) {
-								fSource= computeSourceForMacro(ast, names[0], binding);
-							} else {
-								fSource= computeSourceForBinding(ast, binding);
-							}
-							if (fSource != null) {
-								return Status.OK_STATUS;
+					if (names != null && names.length >= 1) {
+						for (int i = 0; i < names.length; i++) {
+							IASTName name= names[i];
+							IBinding binding= name.resolveBinding();
+							if (binding != null) {
+								if (binding instanceof IProblemBinding) {
+									if (DEBUG) fSource= "Cannot resolve " + new String(name.toCharArray()); //$NON-NLS-1$
+								} else if (binding instanceof IMacroBinding) {
+									fSource= computeSourceForMacro(ast, name, binding);
+								} else {
+									fSource= computeSourceForBinding(ast, binding);
+								}
+								if (fSource != null) {
+									return Status.OK_STATUS;
+								}
 							}
 						}
 					}
@@ -228,16 +228,6 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 						return source;
 					}
 				}
-				// fallback: return signature only
-				ICElementHandle cElement= null;
-				if (names[0] instanceof IIndexName) {
-					cElement= IndexUI.getCElementForName(fTU.getCProject(), ast.getIndex(), (IIndexName)names[0]);
-				} else if (names[0] instanceof IASTName) {
-					cElement= IndexUI.getCElementForName(fTU.getCProject(), ast.getIndex(), (IASTName)names[0]);
-				}
-				if (cElement != null) {
-					return CElementLabels.getTextLabel(cElement, CElementLabels.DEFAULT_QUALIFIED);
-				}
 			}
 			return null;
 		}
@@ -261,9 +251,9 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			LocationKind locationKind= LocationKind.LOCATION;
 			if (name instanceof IASTName) {
 				IASTName astName= (IASTName)name;
-				if (astName.getContainingFilename().equals(fileName)) {
+				if (astName.getContainingFilename().equals(fileName) && fTU.getResource() != null) {
 					// reuse editor buffer for names local to the translation unit
-					location= fTU.getPath();
+					location= fTU.getResource().getFullPath();
 					locationKind= LocationKind.IFILE;
 				}
 			}
@@ -279,9 +269,17 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				IDocument doc= buffer.getDocument();
 				// expand source range to include preceding comment, if any
 				CHeuristicScanner scanner= new CHeuristicScanner(doc);
-				int commentBound;
 				if (binding instanceof IParameter) {
 					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '(', ',' });
+					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+						return null;
+					}
+					sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
+					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+						sourceStart = nameOffset;
+					}
+				} else if (binding instanceof ICPPTemplateParameter) {
+					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '<', ',' });
 					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 						return null;
 					}
@@ -301,9 +299,9 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				} else {
 					final int nameLine= doc.getLineOfOffset(nameOffset);
 					sourceStart= doc.getLineOffset(nameLine);
-					commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+					int commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';', ':' });
 					if (commentBound == CHeuristicScanner.NOT_FOUND) {
-						commentBound= -1;
+						commentBound= -1; // unbound
 					}
 					int commentStart= searchCommentBackward(doc, sourceStart, commentBound);
 					if (commentStart >= 0) {
@@ -321,15 +319,15 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 					boolean searchBrace= false;
 					boolean searchSemi= false;
 					boolean searchComma= false;
-					if (!name.isDefinition()) {
-						searchSemi= true;
-					} else if (binding instanceof ICompositeType || binding instanceof IEnumeration || binding instanceof IFunction) {
+					if (binding instanceof ICompositeType || binding instanceof IEnumeration || binding instanceof IFunction) {
 						searchBrace= true;
 					} else if (binding instanceof ICPPTemplateDefinition) {
 						searchBrace= true;
-					} else if (binding instanceof IParameter || binding instanceof IEnumerator) {
+					} else if (binding instanceof IParameter || binding instanceof IEnumerator || binding instanceof ICPPTemplateParameter) {
 						searchComma= true;
 					} else if (binding instanceof IVariable || binding instanceof ITypedef) {
+						searchSemi= true;
+					} else if (!name.isDefinition()) {
 						searchSemi= true;
 					}
 					if (searchBrace) {
@@ -355,8 +353,12 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 						int bound;
 						if (binding instanceof IParameter) {
 							bound= scanner.findClosingPeer(nameOffset, '(', ')');
-						} else {
+						} else if (binding instanceof ICPPTemplateParameter) {
+							bound= scanner.findClosingPeer(nameOffset, '<', '>');
+						} else if (binding instanceof IEnumerator) {
 							bound= scanner.findClosingPeer(nameOffset, '{', '}');
+						} else {
+							bound = CHeuristicScanner.NOT_FOUND;
 						}
 						if (bound == CHeuristicScanner.NOT_FOUND) {
 							bound= Math.min(doc.getLength(), nameOffset + 100);
@@ -373,6 +375,8 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 							IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
 							sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
 						}
+					} else {
+						
 					}
 				}
 				
@@ -460,14 +464,20 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				if (expression.length() == 0)
 					return null;
 
+				//Before trying a search lets make sure that the user is not hovering over a keyword 
+				if (selectionIsKeyword(expression))
+					return null;
+
 				String source= null;
 
-				ICElement curr = copy.getElement(expression);
-				if (curr == null) {
-					// Try with the indexer
-					source= searchInIndex(expression, hoverRegion);
-				} else {
-					source= getSourceForCElement(textViewer.getDocument(), curr);
+				// Try with the indexer
+				source= searchInIndex(hoverRegion);
+
+				if (source == null) {
+					ICElement curr = copy.getElement(expression);
+					if (curr != null) {
+						source= getSourceForCElement(textViewer.getDocument(), curr);
+					}
 				}
 				if (source == null || source.trim().length() == 0)
 					return null;
@@ -499,13 +509,13 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 	/**
 	 * Return the source for the given element including the preceding comment.
 	 * 
-	 * @param document  the document of the current editor
+	 * @param doc  the document of the current editor
 	 * @param cElement  the element to compute the source from
 	 * @return  the source or <code>null</code>
 	 * @throws CModelException 
 	 * @throws BadLocationException 
 	 */
-	private String getSourceForCElement(IDocument doc, ICElement cElement) throws CModelException, BadLocationException {
+	private static String getSourceForCElement(IDocument doc, ICElement cElement) throws CModelException, BadLocationException {
 		if (!(cElement instanceof ISourceReference)) {
 			return null;
 		}
@@ -540,10 +550,11 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		if (firstLine == 0) {
 			return -1;
 		}
-		int currentOffset= doc.getLineOffset(firstLine - 1);
+		ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, start, true);
+		int currentOffset= Math.max(doc.getLineOffset(firstLine - 1), partition.getOffset() - 1);
 		int commentOffset= -1;
 		while (currentOffset > bound) {
-			ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, currentOffset, false);
+			partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, currentOffset, true);
 			currentOffset= partition.getOffset() - 1;
 			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())) {
 				int previousCommentOffset= commentOffset;
@@ -614,11 +625,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		return source.substring(i);
 	}
 
-	private String searchInIndex(String name, IRegion textRegion) {
-		//Before trying a search lets make sure that the user is not hovering over a keyword 
-		if (selectionIsKeyword(name))
-			return null;
-
+	private String searchInIndex(IRegion textRegion) {
 		IEditorPart editor = getEditor();
 		if (editor != null) {
 			IEditorInput input= editor.getEditorInput();

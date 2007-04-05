@@ -2,7 +2,8 @@
 <feature
       id="org.eclipse.dd.dsf.examples"
       label="DSF Examples Feature"
-      version="0.9.0.qualifier">
+      version="0.9.0.qualifier"
+      provider-name="Eclipse.org">
 
    <description url="http://www.eclipse.org/dsdp/dd/">
       Device Software Development Platform Project
@@ -70,6 +71,10 @@ regulations and policies concerning the import, possession, or use, and re-expor
 
 Java and all Java-based trademarks are trademarks of Sun Microsystem
    </license>
+
+   <url>
+      <update label="Device Debug" url="http://download.eclipse.org/dsdp/dd/updates"/>
+   </url>
 
    <requires>
       <import feature="org.eclipse.dd.dsf.sdk" version="0.9.0"/>

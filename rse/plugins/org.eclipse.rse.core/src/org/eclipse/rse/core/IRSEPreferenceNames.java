@@ -35,4 +35,11 @@ public interface IRSEPreferenceNames {
 	 * As profiles are activated, deactivated, or renamed this string must be modified.
 	 */
 	public static final String ACTIVEUSERPROFILES = "activeuserprofiles"; //$NON-NLS-1$
+	
+	/**
+	 * The key of the string containing the id of the default persistence provider.
+	 * Value is "defaultPersistenceProvider".
+	 */
+	public static final String DEFAULT_PERSISTENCE_PROVIDER = "defaultPersistenceProvider"; //$NON-NLS-1$ 
+	
 }

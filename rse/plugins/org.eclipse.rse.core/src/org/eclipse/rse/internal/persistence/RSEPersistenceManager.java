@@ -27,8 +27,10 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
@@ -166,21 +168,17 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	}
 
 	/**
-	 * Retrieves the persistence provider for this workbench configuration.
-	 * Several persistence providers may be registered, but only one persistence provider can be used.
-	 * This persistence provider's identifier is specified in the org.eclipse.rse.persistenceProvider
-	 * preference and can be specified a product's config.ini file.
-	 * It is retrieved using the platform's preference service.
-	 * If no such preference exists the default "org.eclipse.rse.persistence.PropertyFileProvider"
-	 * is used.
+	 * Retrieves the default persistence provider for this workbench configuration.
+	 * Several persistence providers may be registered, but the default one is used for all
+	 * profiles that do not have one explicitly specified.
+	 * This persistence provider's identifier is specified in the org.eclipse.rse.core/defaultPersistenceProvider
+	 * preference and can be specified a product's plugin_customization.ini file.
+	 * @see IRSEPreferenceNames
 	 * @return the default IRSEPersistenceProvider for this installation.
 	 */
 	public IRSEPersistenceProvider getRSEPersistenceProvider() {
-		IPreferencesService service = Platform.getPreferencesService();
-		String qualifier = "org.eclipse.rse"; //$NON-NLS-1$
-		String preferenceName = "persistenceProvider"; //$NON-NLS-1$
-		String defaultProviderName = "org.eclipse.rse.persistence.PropertyFileProvider"; //$NON-NLS-1$
-		String providerName = service.getString(qualifier, preferenceName, defaultProviderName, null);
+		Preferences preferences = RSECorePlugin.getDefault().getPluginPreferences();
+		String providerName = preferences.getString(IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER);
 		IRSEPersistenceProvider provider = getRSEPersistenceProvider(providerName);
 		return provider;
 	}

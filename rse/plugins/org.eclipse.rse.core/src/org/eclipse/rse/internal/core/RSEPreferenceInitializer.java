@@ -9,13 +9,21 @@
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.rse.core.IRSEPreferenceNames;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 
 public class RSEPreferenceInitializer extends AbstractPreferenceInitializer {
 
 	public void initializeDefaultPreferences() {
+		// the complex preferences
 		RSEPreferencesManager.initDefaults();
+		
+		// the simple preferences
+		Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
+		prefs.setDefault(IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER, "org.eclipse.rse.persistence.PropertyFileProvider"); //$NON-NLS-1$
 	}
 
 }

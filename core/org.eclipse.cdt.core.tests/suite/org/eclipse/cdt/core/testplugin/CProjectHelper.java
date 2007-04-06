@@ -259,19 +259,23 @@ public class CProjectHelper {
 
 	/**
 	 * Attempts to find a TranslationUnit with the given name in the workspace
+	 * @throws InterruptedException 
 	 */
-	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) throws CModelException {
-		ICElement[] sourceRoots = testProject.getChildren();
-		for (int i = 0; i < sourceRoots.length; i++) {
-			ISourceRoot root = (ISourceRoot) sourceRoots[i];
-			ICElement[] myElements = root.getChildren();
-			for (int x = 0; x < myElements.length; x++) {
-				if (myElements[x].getElementName().equals(name)) {
-					if (myElements[x] instanceof ITranslationUnit) {
-						return ((ITranslationUnit) myElements[x]);
+	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) throws CModelException, InterruptedException {
+		for (int j=0; j<20; j++) {
+			ICElement[] sourceRoots = testProject.getChildren();
+			for (int i = 0; i < sourceRoots.length; i++) {
+				ISourceRoot root = (ISourceRoot) sourceRoots[i];
+				ICElement[] myElements = root.getChildren();
+				for (int x = 0; x < myElements.length; x++) {
+					if (myElements[x].getElementName().equals(name)) {
+						if (myElements[x] instanceof ITranslationUnit) {
+							return ((ITranslationUnit) myElements[x]);
+						}
 					}
 				}
 			}
+			Thread.sleep(100);
 		}
 		return null;
 	}

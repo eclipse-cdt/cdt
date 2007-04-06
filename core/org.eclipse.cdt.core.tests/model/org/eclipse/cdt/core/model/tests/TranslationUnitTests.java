@@ -16,14 +16,12 @@ import java.util.Stack;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.ExpectedStrings;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Peter Graves
@@ -87,7 +85,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * true
 	 * 
 	 */
-	public void testIsTranslationUnit() throws CoreException,
+	public void testIsTranslationUnit() throws Exception,
 			FileNotFoundException {
 		ITranslationUnit myTranslationUnit;
 
@@ -101,7 +99,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * Simple sanity tests to make sure TranslationUnit.getChildren seems to
 	 * basicly work
 	 */
-	public void testGetChildren() throws CModelException {
+	public void testGetChildren() throws Exception {
 		ITranslationUnit myTranslationUnit;
 		ICElement[] elements;
 		int x;
@@ -126,7 +124,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	/***************************************************************************
 	 * Simple sanity tests for the getElement() call
 	 */
-	public void testGetElement() throws CModelException {
+	public void testGetElement() throws Exception {
 		ITranslationUnit myTranslationUnit;
 		ICElement myElement;
 		Stack missing = new Stack();
@@ -157,7 +155,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	/***************************************************************************
 	 * Simple sanity tests for the getInclude call
 	 */
-	public void testBug23478A() throws CModelException {
+	public void testBug23478A() throws Exception {
 		IInclude myInclude;
 		int x;
 		String includes[] = { "stdio.h", "unistd.h" };
@@ -182,7 +180,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	/***************************************************************************
 	 * Simple sanity tests for the getIncludes call
 	 */
-	public void testBug23478B() throws CModelException {
+	public void testBug23478B() throws Exception {
 		IInclude myIncludes[];
 		String includes[] = { "stdio.h", "unistd.h" };
 		ExpectedStrings myExp = new ExpectedStrings(includes);
@@ -203,7 +201,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	/***************************************************************************
 	 * Simple sanity tests for the getElementAtLine() call
 	 */
-	public void testGetElementAtLine() throws CoreException {
+	public void testGetElementAtLine() throws Exception {
 		ITranslationUnit myTranslationUnit;
 		ICElement myElement;
 		Stack missing = new Stack();

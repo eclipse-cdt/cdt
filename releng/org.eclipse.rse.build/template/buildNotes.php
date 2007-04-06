@@ -24,19 +24,52 @@
 <table><tbody><tr><td>
 <ul>
 <li>TM 2.0M6 <b>requires Eclipse 3.3M6</b>. Platform Runtime is the minimum
-  requirement for core RSE and Terminal. Remotecdt requires CDT, and Discovery requires EMF.
+  requirement for core RSE and Terminal. The Team CVS feature is no longer needed for
+  SSH [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175686">175686</a>].</li>
 <li>Added a <b>milestone update site</b> for TM 2.0 milestone builds at
   <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
   "Check for updates" will automatically reference this milestone update site, so you can get milestone
   patches from there [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>].</li>
-<li>The experimental <b>EFS Feature</b> has been made official, and functionality moved
-  into RSE Core. Thusu EFS support is no separate download any more but comes with RSE.</li>
+<li><b>The experimental EFS Feature has been made official</b>, and functionality moved
+  into RSE Core. Thus EFS support is no separate download any more but comes with RSE.
+  EFS works best with SSH connections. FTP and dstore should work as well, but have not yet 
+  received the same amount of testing. For more details, see the
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170916">EFS Plan Item [170916]</a>.
+  To bring remote resources into your workspace, there are several options:<ol>
+        <li>In a normal workspace project, choose <b>"New Folder", "Advanced", "Link to folder in 
+            file system"</b>, then select the RSE file system and browse to a remote folder. This is
+            the preferred and most stable method of working with remote resources for now.
+            One big advantage of this approach is that it works for any kind of project nature,
+            including CDT, JDT etc. and can thus be used very well to test other kinds of
+            EFS integration issues to be done (along the lines of Eclipse Platform
+            <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=154126">Plan Item [154126]</a>).</li>
+        <li>Create a new project, on the location page disable "workspace", choose "rse" as file
+            system and browse to a remote folder. Works only if a .project file does not yet exist
+            at the chosen remote location. One disadvantage of this approach is that when 
+            quitting and re-starting workbench, the project will be shown closed. You need to switch
+            to the RSE perspective, then open the project on each re-start of Eclipse. This will 
+            be fixed by bug [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181460">181460</a>].</li>
+        <li>In RSE, browse to any remote folder and choose "right-click" > "Create Remote Project".
+            This will create an EFS based "plain" project with the name of the remote folder in 
+            your workspace. It will have no specific nature assigned, and creation may fail (e.g
+            when a .project file is already there; or a project of the requested name already exists).
+            This 3rd approach of creating an EFS project exists for convenience for now, and may be removed
+            in the future.</li>
+  </ol></li>
+<li><b>Copy&Paste, Drag&Drop to Project Explorer</b> are finally fixed
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153652">153652</a>].
+  Same support for Windows Explorer is still on the list
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181458">181458</a>].</li>
+<li>Lots of <b>Improved API and Flexibility</b> especially for system types, action contributions,
+  dynamic system types and the New Connection Wizard. See below for details on breaking API 
+  changes. As part of the improved New Connection Wizard,
+  the <b>Default System Type Preference has been removed</b>
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164413">164413</a>].</li>
 <li><b>Apache Commons.Net and ORO</b> are now distributed as single-jar bundles. The separate commons.net and ORO features 
 have been removed. The bundles are now directly included in the RSE FTP feature only.</li>
-<li><b>SystemRemoteResourceDialog.setPreSelection()</b> now works correctly [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174944">174944</a>].
-<li>Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-02-25&chfieldto=2007-04-08&chfield=resolution&cmdtype=doit">
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->
+<li>At least 94 bugs were fixed: use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-02-25&chfieldto=2007-04-08&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M5-200702240204/index.php">
   TM 2.0M5</a>
@@ -87,20 +120,22 @@ are the best places for you to get started.
 is to harden the APIs which were provisional by RSE 1.0. Naturally, this requires
 API changes, and especially moving lots of classes which we cannot guarantee to 
 support in the future into internal packages.</p> 
-<p>We are committed to not introducing any incompatible
-API changes on the RSE 1.0 maintenance stream (1.0.x), but we need to 
-change the API for TM 2.0 in a not backward compatible way.<br/>
-All such API changes are voted on
-by committers on the <a href="https://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
+<p>As of TM 2.0 M6, most of this work has been completed, and the list of breaking
+API changes is found below with migration info. But although we had planned for
+API freeze with M6, there are still few more cleanup changes that we would like
+to take the opportunity and bring into TM 2.0. Most of these will be made shortly
+after M6, or they will be introduced in a backward compatible manner.
+At any rate, we will avoid breaking API changes after M7, or the earlierst 
+possible integration build up to M7. But please be prepared for future changes,
+and especially take care of API marked as <b>@deprecated</b> in the Javadoc.
+Such API is prime candidate to be removed for TM 2.0.</p>
+<p><b>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&target_milestone=2.0&target_milestone=2.0+M7&target_milestone=2.0+RC1&target_milestone=2.0+RC2&target_milestone=2.0+RC3&cmdtype=doit">
+this query</a> to show the list of API changes planned or done after M6</b>. All
+such API changes are voted by committers on the 
+<a href="https://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
 dsdp-tm-dev</a> developer mailing list, and documented in a migration guide
-for future releases.</p>
-<p>Currently, we see the following areas for more potential API changes:
-<ul>
-  <li>The <tt>IConnectorService</tt> interface may be slightly modified
-   in order to allow for better UI / Non-UI separation.</li>
-  <li>Some more RSE Model classes may be moved from the UI plugin to the 
-   non-UI core plugin.</li>
-</ul>
+for future releases. Early migration information can also be found right
+in the bug reports. Look for those that are tagged [api][breaking].</p>
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
@@ -113,12 +148,50 @@ for future releases.</p>
 The following lists those API changes that are not backward compatible and require
 user attention. A short hint on what needs to change is given directly in the list.
 More information can be found in the associated bugzilla items.
-<ul><li>TM 2.0M6 API Changes
+
+<ul>
+<!--
+<li>TM 2.0M7 API Changes
 <ul>
 <li><b>Cleaned up ISystemRegistry</b> - removed or changed signature of several methods [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>].</li>
-<li><b>Renamed getAdapter(Object) -&gt; getViewAdapter(Object)</b> on several classes [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175150">175150</a>].</li>
-<li><b>Refactored IConnectorService</b> and moved to Core [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168977">168977</a>].</li>
-<li>[Just additions?] <b>Support Menu Configuration in RSESystemTypeAdapter</b> [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161195">161195</a>].</li>
+</ul></li>
+-->
+<li>TM 2.0M6 API Changes
+<ul>
+<li><b>Making more classes "internal"</b>: Lots of more packages and classes were tagged as
+  discouraged access (moved to "internal").
+  For migration, just "Organize Imports" and search for alternative ways of doing things
+  in case you end up with imports from "internal" packages.
+  For details, see [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=170922">170922</a>].</li>
+<li><b>Refactored IConnectorService</b> and moved to Core for beter UI / Non-UI separation.
+  Most notably, the concept of a CredentialsProvider was added.
+  That work is not quite complete yet, but the bulk of the work has been done. For detailed
+  migration info, see [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168977">168977</a>].</li>
+<li><b>Renamed getAdapter(Object) -&gt; getViewAdapter(Object)</b> on several classes.
+  For migration, same renaming may need to be done in client code.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175150">175150</a>].</li>
+<li><b>Dont implement constant interfaces</b> just to bring constants into namespace.
+  As an effect of this, some classes that clients can derive from do not "see" some constants any more. For
+  migration, these constants will need to be qualified with the interface that they come from.
+  For details, see 
+  [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=180562">180562</a>].</li>
+<li><b>Streams are now part of IFileService and IRemoteFileSubSystem</b>. Supporting Streams was
+  important for the EFS integration and is a more modern and flexible way to download and upload.
+  Thus Streams are now mandatory, and extenders must ensure that they implement getInputStream()
+  and getOutputStrem() properly in their own file services and subsystems.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162954">162954</a>] and
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179850">179850</a>].</li>
+<li><b>IHost.getSystemType() now returns an IRSESystemType</b> instead of a String.
+  More similar changes will follow, in order to move from system type Strings to
+  IDs and translatable / externalizable labels. For migration, client code can
+  replace <tt>getSystemType()</tt> by <tt>getSystemType().getName()</tt>.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175262">175262</a>].</li>
+<li><b>Support Menu Configuration in RSESystemTypeAdapter</b> [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161195">161195</a>].</li>
+<li><b>The RSE Communications Daemon has been removed</b> since it was never quite properly
+  supported in Open Source [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180602">180602</a>].</li>
+<li><b>The org.eclipse.rse.logging</b> plugin has been removed, functionality is now
+  in the core and UI plugins, respectively
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170920">170920</a>].</li>
 </ul></li>
 <li>TM 2.0M5 API Changes
 <ul>
@@ -161,14 +234,16 @@ Use
 	</tr>
 </table>
 <table><tbody><tr><td>
-<!--
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162993">bug 162993</a> - maj - ssh connection gets confused</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180994">bug 180994</a> - maj - Expand of filter hangs with dstore</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179939">bug 179939</a> - maj - BIDI locale: Remote text files written in Hebrow look incorrect</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179937">bug 179937</a> - maj - BIDI locale: Path and file names shown incorrectly with hebrew UTF 8 encoding
 </ul>
--->
+<!--
 <p>No major or critical bugs are known at the time of release.
+-->
 Use 
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
 for an up-to-date list of major or critical bugs.</p>

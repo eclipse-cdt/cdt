@@ -52,15 +52,14 @@
          Eclipse 3.3M6</a> or later.
     </b></td></tr>
     <tr><td>
-      We recommend installing
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#EclipseSDK">eclipse-SDK</a>. 
-        If you do not want JDT, PDE and the developer docs, please install 
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#PlatformRuntime">eclipse-platform</a> together with
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#CVSRuntime">eclipse-CVS-Client</a>.
+      For core RSE and TM-Terminal, the
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#PlatformRuntime">
+        Eclipse Platform Runtime Binary</a> is sufficient. Of course you can also use the popular
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#EclipseSDK">SDK</a>. 
     </td></tr> 
     <tr><td>
-      Prerequisites for other add-ons (like CDT, EMF) should be retrieved from the
-      <a href="http://download.eclipse.org/europa/releases/">Europa Discovery Site</a>.
+      Prerequisites for the remotecdt and discovery add-ons (CDT, EMF) can be retrieved from the
+      <a href="http://download.eclipse.org/releases/europa/">Europa Discovery Site</a>.
     </td></tr> 
     <tr><td>
       Earlier versions (e.g. Eclipse 3.2.x, Eclipse 3.3M5) will <b>not</b> work!
@@ -230,7 +229,18 @@
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
 		<font face="Arial,Helvetica" color="#FFFFFF">JUnit Plugin Tests</font></b></td>
 	</tr>
+	<tr>
+	    <td>The RSE test suite requires the JUnit plug-in, which is included in the 
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#EclipseSDK">
+        Eclipse SDK</a> or available as<br/>
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#JUnitPlugin">
+        eclipse-test-framework download</a> for users of the Eclipse Platform Runtime Binary. 
+	    </td>
+	</tr>
 </table>
+
+
+
 <table border="0" cellspacing="2" cellpadding="0" width="100%">
 	<tr>
 		<td align="RIGHT" valign="TOP" width="7%">

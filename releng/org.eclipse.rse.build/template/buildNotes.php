@@ -156,7 +156,7 @@ More information can be found in the associated bugzilla items.
 <li><b>Cleaned up ISystemRegistry</b> - removed or changed signature of several methods [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>].</li>
 </ul></li>
 -->
-<li>TM 2.0M6 API Changes
+<li>TM 2.0M6 Breaking API Changes
 <ul>
 <li><b>Making more classes "internal"</b>: Lots of more packages and classes were tagged as
   discouraged access (moved to "internal").
@@ -193,7 +193,7 @@ More information can be found in the associated bugzilla items.
   in the core and UI plugins, respectively
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170920">170920</a>].</li>
 </ul></li>
-<li>TM 2.0M5 API Changes
+<li>TM 2.0M5 Breaking API Changes
 <ul>
 <li><b>Modified Extension Point subsystemConfigurations</b> to reference system types by ID rather than
 by name. Client code needs to use the <b><i>systemTypeIds</i></b> tag now rather than <samp>systemTypes</samp>

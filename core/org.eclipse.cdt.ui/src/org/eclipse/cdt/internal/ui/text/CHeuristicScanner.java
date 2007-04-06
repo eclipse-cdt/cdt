@@ -963,7 +963,12 @@ public final class CHeuristicScanner implements Symbols {
 	 */
 	public boolean looksLikeCompositeTypeDefinitionBackward(int start, int bound) {
 		int token= previousToken(start - 1, bound);
-		if (token == Symbols.TokenIDENT) {
+		switch (token) {
+		case Symbols.TokenSTRUCT:
+		case Symbols.TokenUNION:
+		case Symbols.TokenENUM:
+			return true; // anonymous
+		case Symbols.TokenIDENT:
 			token= previousToken(getPosition(), bound);
 			switch (token) {
 			case Symbols.TokenCLASS:
@@ -974,8 +979,12 @@ public final class CHeuristicScanner implements Symbols {
 			default:
 				// backtrack
 				token= previousToken(start - 1, bound);
-				break;
 			}
+			break;
+		default:
+			// backtrack
+			token= previousToken(start - 1, bound);
+			break;
 		}
 		// match base-clause
 		if (token == Symbols.TokenGREATERTHAN) {
@@ -986,13 +995,13 @@ public final class CHeuristicScanner implements Symbols {
 			}
 			token= previousToken(getPosition(), bound);
 		}
-		outer: while (token == Symbols.TokenIDENT) {// type name or base type
+		outerWhile: while (token == Symbols.TokenIDENT) {// type name or base type
 			token= previousToken(getPosition(), bound);
 			// match nested-name-specifier
 			while (token == Symbols.TokenCOLON) { // colon of qualification
 				token= previousToken(getPosition(), bound);
 				if (token != Symbols.TokenCOLON) { // second colon of qualification
-					break outer;
+					break outerWhile;
 				}
 				token= previousToken(getPosition(), bound);
 				if (token != Symbols.TokenIDENT) // qualification name?
@@ -1027,7 +1036,7 @@ public final class CHeuristicScanner implements Symbols {
 				/* fallthrough */
 			case Symbols.TokenCOLON:
 				token= previousToken(getPosition(), bound);
-				break outer;
+				break outerWhile;
 			case Symbols.TokenCOMMA:
 				token= previousToken(getPosition(), bound);
 				if (token == Symbols.TokenGREATERTHAN) {
@@ -1040,7 +1049,7 @@ public final class CHeuristicScanner implements Symbols {
 				}
 				continue; // another base type
 			case Symbols.TokenIDENT:
-				break outer;
+				break outerWhile;
 			default:
 				return false;
 			}

@@ -426,7 +426,7 @@ public class CAutoIndentTest extends TestCase {
 	public void testBracketWithSemiColonInsertion() throws BadLocationException {
 		AutoEditTester tester = createAutoEditTester(); 
 		String[] kw= new String[] {"class", "union", "struct", "enum"};
-		String[] kw_inh= new String[] {"class", "union", "struct", "enum"};
+		String[] kw_anon= new String[] {"union", "struct", "enum"};
 
 		for(int i=0; i<kw.length; i++) {
 			tester.reset();
@@ -476,7 +476,14 @@ public class CAutoIndentTest extends TestCase {
 			tester.type(kw[i]+" /* for(int i=0; i<100; i++) {} */\nA \n{\n"); //$NON-NLS-1$
 			assertEquals("\n// foo\n"+kw[i]+" /* for(int i=0; i<100; i++) {} */\nA \n{\n\t\n};\n\n//bar\n\n", tester.fDoc.get()); //$NON-NLS-1$
 		}		
-	}
+
+		for(int i=0; i<kw_anon.length; i++) {		
+			tester.reset();
+
+			tester.type("\n\n\n"+kw_anon[i]+" {\n"); //$NON-NLS-1$
+			assertEquals("\n\n\n"+kw_anon[i]+" {\n\t\n};", tester.fDoc.get()); //$NON-NLS-1$
+		}
+}
 	
 	/**
 	 * Tests that brackets are inserted (without semi-colons) in appropriate

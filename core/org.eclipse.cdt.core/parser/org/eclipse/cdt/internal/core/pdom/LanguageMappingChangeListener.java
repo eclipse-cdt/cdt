@@ -15,9 +15,8 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeEvent;
-import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
 import org.eclipse.cdt.internal.core.model.CElementDelta;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFile;
@@ -37,7 +36,6 @@ public class LanguageMappingChangeListener implements
 	
 	public LanguageMappingChangeListener(PDOMManager manager) {
 		fManager = manager;
-		LanguageManager.getInstance().registerLanguageChangeListener(this);
 	}
 	
 	

@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -142,10 +143,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private IndexerStateEvent fIndexerStateEvent= new IndexerStateEvent();
 
 	private IElementChangedListener fCModelListener= new CModelListener(this);
+	private ILanguageMappingChangeListener fLanguageChangeListener = new LanguageMappingChangeListener(this);
 	private IndexFactory fIndexFactory= new IndexFactory(this);
     private IndexProviderManager manager = new IndexProviderManager();
 
-	private ILanguageMappingChangeListener fLanguageChangeListener = new LanguageMappingChangeListener(this);
     
 	/**
 	 * Serializes creation of new indexer, when acquiring the lock you are 
@@ -166,7 +167,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 		final CoreModel model = CoreModel.getDefault();
 		model.addElementChangedListener(fCModelListener);
-		
+		LanguageManager.getInstance().registerLanguageChangeListener(fLanguageChangeListener);
+
 		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];

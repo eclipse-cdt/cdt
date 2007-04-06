@@ -296,7 +296,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		List results = new ArrayList();
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-			    Vector vv=getChannel("SftpFileService.internalFetch").ls(parentPath); //$NON-NLS-1$
+			    Vector vv=getChannel("SftpFileService.internalFetch: "+parentPath).ls(parentPath); //$NON-NLS-1$
 			    for(int ii=0; ii<vv.size(); ii++) {
 			    	Object obj=vv.elementAt(ii);
 			    	if(obj instanceof ChannelSftp.LsEntry){
@@ -314,7 +314,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			    		}
 			    	}
 			    }
-				Activator.trace("SftpFileService.internalFetch ok"); //$NON-NLS-1$
+				Activator.trace("SftpFileService.internalFetch <--"); //$NON-NLS-1$
 			} catch(Exception e) {
 				//TODO throw new SystemMessageException.
 				//We get a "2: No such file" exception when we try to get contents

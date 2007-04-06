@@ -10,10 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
+import java.io.File;
+import java.net.URI;
+
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -21,10 +28,23 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.SourceViewer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
+import org.eclipse.cdt.core.index.URIRelativeLocationConverter;
+import org.eclipse.cdt.core.index.provider.IPDOMDescriptor;
+import org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
+import org.eclipse.cdt.internal.core.index.provider.ReadOnlyPDOMProviderBridge;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
@@ -51,12 +71,64 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 		
 		protected void setUp() throws Exception {
 			super.setUp();
+			
+			String sdkCode= 
+				"void SDKFunction();\n"+
+				"class SDKClass { public: SDKMethod(); };\n\n";
+			
+			final File sdk= createExternalSDK(sdkCode);
+			
 			fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
-						
+
+			importExternalSDK(sdk, fCProject);
+
 			fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
 			fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 			assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 100));
 			EditorTestHelper.joinBackgroundActivities();
+		}
+
+		private static void importExternalSDK(final File sdk, final ICProject associatedProject) {
+			final URI baseURI= new File("c:/ExternalSDK/").toURI();
+			IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
+			ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(
+					new IReadOnlyPDOMProvider() {
+						public IPDOMDescriptor[] getDescriptors(
+								ICConfigurationDescription config) {
+							return new IPDOMDescriptor[] {
+									new IPDOMDescriptor() {
+										public IIndexLocationConverter getIndexLocationConverter() {
+											return new URIRelativeLocationConverter(baseURI);
+										}
+
+										public IPath getLocation() {
+											return new Path(sdk.getAbsolutePath());
+										}
+
+									}
+							};
+						}
+						public boolean providesFor(ICProject project)
+						throws CoreException {
+							return associatedProject.equals(project);
+						}
+					}
+			));
+		}
+
+		private static File createExternalSDK(final String code) throws Exception {
+			final File sdk= File.createTempFile("foo", "bar");
+
+			ICProject cproject= CProjectHelper.createCCProject("foo"+System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), code);
+			CCorePlugin.getIndexManager().joinIndexer(5000, new NullProgressMonitor());
+
+			ResourceContainerRelativeLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
+			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, sdk, cvr);
+			assertTrue(sdk.exists());
+
+			CProjectHelper.delete(cproject);
+			return sdk;
 		}
 
 		protected String getTestFilename() {
@@ -139,8 +211,6 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 	protected void setUpSemanticHighlighting(String semanticHighlighting) {
 		fCurrentHighlighting= semanticHighlighting;
 		enableSemanticHighlighting(semanticHighlighting);
-//		EditorTestHelper.forceReconcile(fSourceViewer);
-//		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 500));
 		// give enough time to finish updating the highlighting positions
 		EditorTestHelper.runEventQueue(1000);
 	}

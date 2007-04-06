@@ -12,6 +12,7 @@
 
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -47,6 +48,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
@@ -164,6 +169,11 @@ public class SemanticHighlightings {
 	 * A named preference part that controls the highlighting of problems.
 	 */
 	public static final String PROBLEM="problem"; //$NON-NLS-1$
+
+	/**
+	 * A named preference part that controls the highlighting of external SDK.
+	 */
+	public static final String EXTERNAL_SDK="externalSDK"; //$NON-NLS-1$
 
 	/** Init debugging mode */
 	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/SemanticHighlighting"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -680,9 +690,12 @@ public class SemanticHighlightings {
 		public boolean consumes(SemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
+				IASTName name= (IASTName)node;
+				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
+					return false;
+				}
 				IBinding binding= token.getBinding();
-				if (binding instanceof IFunction 
-						&& !(binding instanceof ICPPMethod)) {
+				if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
 					return true;
 				}
 			}
@@ -1611,6 +1624,113 @@ public class SemanticHighlightings {
 	}
 	
 	/**
+	 * Semantic highlighting for external SDK references.
+	 */
+	private static final class ExternalSDKHighlighting extends SemanticHighlighting {
+		
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
+		 */
+		public String getPreferenceKey() {
+			return EXTERNAL_SDK;
+		}
+		
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 */
+		public RGB getDefaultTextColor() {
+			return new RGB(180, 0, 180);
+		}
+		
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
+		 */
+		public boolean isBoldByDefault() {
+			return true;
+		}
+		
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isStrikethroughByDefault()
+		 */
+		public boolean isStrikethroughByDefault() {
+			return false;
+		}
+
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
+		 */
+		public boolean isItalicByDefault() {
+			return false;
+		}
+		
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
+		 */
+		public boolean isEnabledByDefault() {
+			return true;
+		}
+		
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
+		 */
+		public String getDisplayName() {
+			return CEditorMessages.getString("SemanticHighlighting_externalSDK"); //$NON-NLS-1$
+		}
+		
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
+		 */
+		public boolean consumes(SemanticToken token) {
+			IASTNode node= token.getNode();
+			if (node instanceof IASTName) {
+				IASTName name= (IASTName)node;
+				if (name instanceof ICPPASTQualifiedName) {
+					return false;
+				}
+				if (name.isReference()) {
+					IBinding binding= token.getBinding();
+					IIndex index= token.getRoot().getIndex();
+					return isExternalSDKReference(binding, index);
+				}
+			}
+			return false;
+		}
+
+		private boolean isExternalSDKReference(IBinding binding, IIndex index) {
+			if (binding instanceof IIndexBinding && binding instanceof IFunction) {
+				// unwrap binding from composite binding
+//				IIndexBinding binding2= (IIndexBinding)binding.getAdapter(IIndexBinding.class);
+//				if (binding2 != null) {
+//					binding= binding2;
+//				}
+				try {
+					IIndexName[] defs= index.findDefinitions(binding);
+					for (int i = 0; i < defs.length; i++) {
+						IIndexFile indexFile= defs[i].getFile();
+						if (indexFile != null && indexFile.getLocation().getFullPath() != null) {
+							return false;
+						}
+					}
+					IIndexName[] decls= index.findDeclarations(binding);
+					for (int i = 0; i < defs.length; i++) {
+						IIndexFile indexFile= decls[i].getFile();
+						if (indexFile != null && indexFile.getLocation().getFullPath() != null) {
+							return false;
+						}
+					}
+					if (defs.length != 0 || decls.length != 0) {
+						return true;
+					}
+				} catch (CoreException exc) {
+					CUIPlugin.getDefault().log(exc.getStatus());
+					return false;
+				}
+			}
+			return false;
+		}
+	}
+	
+	/**
 	 * A named preference that controls the given semantic highlighting's color.
 	 *
 	 * @param semanticHighlighting the semantic highlighting
@@ -1678,6 +1798,7 @@ public class SemanticHighlightings {
 			fgSemanticHighlightings= new SemanticHighlighting[] {
 				new MacroReferenceHighlighting(),  // before all others!
 				new ProblemHighlighting(),
+				new ExternalSDKHighlighting(),
 				new ClassHighlighting(),
 				new StaticFieldHighlighting(),
 				new FieldHighlighting(),  // after all other fields

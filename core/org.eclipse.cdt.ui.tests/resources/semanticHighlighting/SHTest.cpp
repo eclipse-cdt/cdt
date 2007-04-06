@@ -121,5 +121,9 @@ label:
     FUNCTION_MACRO(0);
     if (un.unionField < st->structField) goto label;
     problemMethod();
+    // external SDK
+    SDKClass sdkClass;
+    sdkClass.SDKMethod();
+    SDKFunction();
     return 0;
 }

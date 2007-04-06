@@ -318,9 +318,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		Collections.sort(children, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				try {
-					final SourceManipulation element1= (SourceManipulation)o1;
-					final SourceManipulation element2= (SourceManipulation)o2;
-					return element1.getSourceManipulationInfo().getStartPos() - element2.getSourceManipulationInfo().getStartPos();
+					final SourceManipulationInfo info1= ((SourceManipulation)o1).getSourceManipulationInfo();
+					final SourceManipulationInfo info2= ((SourceManipulation)o2).getSourceManipulationInfo();
+					int delta= info1.getStartPos() - info2.getStartPos();
+					if (delta == 0) {
+						delta= info1.getIdStartPos() - info2.getIdStartPos();
+					}
+					return delta;
 				} catch (CModelException exc) {
 					return 0;
 				}
@@ -509,20 +513,36 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final IASTDeclSpecifier declSpecifier= declaration.getDeclSpecifier();
 		final IASTDeclarator[] declarators= declaration.getDeclarators();
 		final CElement[] elements;
-		if (declarators.length > 0) {
+		boolean isCompositeType= declSpecifier instanceof IASTCompositeTypeSpecifier || declSpecifier instanceof IASTEnumerationSpecifier;
+		if (declarators.length == 0) {
+			elements= new CElement[1];
+			final CElement element= createSimpleDeclaration(parent, declSpecifier, null, isTemplate);
+			elements[0]= element;
+		} else if (declarators.length == 1 && isCompositeType) {
+			elements= new CElement[declarators.length];
+			final IASTDeclarator declarator= declarators[0];
+			CElement element= createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+			if (element instanceof IParent) {
+				parent= (Parent)element;
+				if (!isTemplate) {
+					setBodyPosition((SourceManipulation)element, declSpecifier.getParent());
+				}
+			}
+			elements[0]= element;
+			createSimpleDeclaration(parent, declSpecifier, null, isTemplate);
+		} else {
+			if (isCompositeType) {
+				createSimpleDeclaration(parent, declSpecifier, null, isTemplate);
+			}
 			elements= new CElement[declarators.length];
 			for (int i= 0; i < declarators.length; i++) {
 				final IASTDeclarator declarator= declarators[i];
 				final CElement element= createSimpleDeclaration(parent, declSpecifier, declarator, isTemplate);
-				if (!isTemplate && element instanceof SourceManipulation && declarators.length > 1) {
+				if (!isTemplate && element instanceof SourceManipulation) {
 					setBodyPosition((SourceManipulation)element, declarator);
 				}
 				elements[i]= element;
 			}
-		} else {
-			elements= new CElement[1];
-			final CElement element= createSimpleDeclaration(parent, declSpecifier, null, isTemplate);
-			elements[0]= element;
 		}
 		return elements;
 	}
@@ -530,34 +550,22 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	private CElement createSimpleDeclaration(Parent parent, IASTDeclSpecifier declSpecifier, IASTDeclarator declarator, boolean isTemplate) throws CModelException, DOMException {
 		if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
 			if (declarator != null) {
-				// create type nested
-				CElement element= createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
-				if (element instanceof IParent) {
-					parent= (Parent)element;
-					if (!isTemplate) {
-						setBodyPosition((SourceManipulation)element, declSpecifier.getParent());
-					}
-				}
-			}
-			return createCompositeType(parent, (IASTCompositeTypeSpecifier)declSpecifier, isTemplate);
-		} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
-			if (declarator == null) {
-				return createElaboratedTypeDeclaration(parent, (IASTElaboratedTypeSpecifier)declSpecifier, isTemplate);
-			} else {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+			} else {
+				return createCompositeType(parent, (IASTCompositeTypeSpecifier)declSpecifier, isTemplate);
+			}
+		} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
+			if (declarator != null) {
+				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+			} else {
+				return createElaboratedTypeDeclaration(parent, (IASTElaboratedTypeSpecifier)declSpecifier, isTemplate);
 			}
 		} else if (declSpecifier instanceof IASTEnumerationSpecifier) {
 			if (declarator != null) {
-				// create type nested
-				CElement element= createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
-				if (element instanceof IParent) {
-					parent= (Parent)element;
-					if (!isTemplate) {
-						setBodyPosition((SourceManipulation)element, declSpecifier.getParent());
-					}
-				}
+				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+			} else {
+				return createEnumeration(parent, (IASTEnumerationSpecifier)declSpecifier);
 			}
-			return createEnumeration(parent, (IASTEnumerationSpecifier)declSpecifier);
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
 		} else if (declSpecifier instanceof IASTSimpleDeclSpecifier) {

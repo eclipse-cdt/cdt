@@ -18,7 +18,6 @@ package org.eclipse.rse.internal.eclipse.filesystem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -209,6 +208,123 @@ public class RSEFileStore extends FileStore implements IFileStore
 		return names;
 	}
 	
+	/**
+	 * @see org.eclipse.core.filesystem.provider.FileStore#childInfos(int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
+		
+		FileInfo[] infos;
+		
+		if (!_subSystem.isConnected()) {
+			
+			try {
+				_subSystem.connect(monitor);
+			}
+			catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not connect to subsystem", e)); //$NON-NLS-1$
+			}
+		}
+		
+		// at this point get the live remote file because we want to fetch the info about this file
+		try {
+			_remoteFile = _subSystem.getRemoteFileObject(_absolutePath);
+		}
+		catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get remote file", e)); //$NON-NLS-1$
+		}
+		
+		if (_remoteFile == null || !_remoteFile.exists()) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "The file store does not exist")); //$NON-NLS-1$
+		}
+		
+		if (!_remoteFile.isStale() && _remoteFile.hasContents(RemoteChildrenContentsType.getInstance()) && !(_subSystem instanceof IFileServiceSubSystem))
+		{
+			Object[] children = _remoteFile.getContents(RemoteChildrenContentsType.getInstance());
+			
+			infos = new FileInfo[children.length];
+			                
+			for (int i = 0; i < children.length; i++)
+			{
+				IRemoteFile file = (IRemoteFile)(children[i]);
+				FileInfo info = new FileInfo(file.getName());
+				
+				if (!file.exists()) {
+					info.setExists(false);
+				}
+				else {
+					info.setExists(true);
+					info.setLastModified(file.getLastModified());
+					boolean isDir = file.isDirectory();
+					info.setDirectory(isDir);
+					info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, !file.canWrite());
+					info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, file.isExecutable());
+					info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, file.isArchive());
+					info.setAttribute(EFS.ATTRIBUTE_HIDDEN, file.isHidden());
+
+					if (!isDir) {
+						info.setLength(file.getLength());
+					}
+				}
+				
+				infos[i] = info;
+			}
+		}
+		else
+		{
+			try {
+				
+				IRemoteFile[] children = null;
+				
+				if (_subSystem instanceof FileServiceSubSystem) {
+					FileServiceSubSystem fileServiceSubSystem = ((FileServiceSubSystem)_subSystem);
+					IHostFile[] results = fileServiceSubSystem.getFileService().getFilesAndFolders(monitor, _remoteFile.getAbsolutePath(), "*"); //$NON-NLS-1$
+					IRemoteFileSubSystemConfiguration config = _subSystem.getParentRemoteFileSubSystemConfiguration();
+					RemoteFileFilterString filterString = new RemoteFileFilterString(config, _remoteFile.getAbsolutePath(), "*"); //$NON-NLS-1$
+					filterString.setShowFiles(true);
+					filterString.setShowSubDirs(true);
+					RemoteFileContext context = new RemoteFileContext(_subSystem, _remoteFile, filterString);
+					children = fileServiceSubSystem.getHostFileToRemoteFileAdapter().convertToRemoteFiles(fileServiceSubSystem, context, _remoteFile, results);
+				}
+				else {
+					children = _subSystem.listFoldersAndFiles(_remoteFile, "*", monitor); //$NON-NLS-1$
+				}
+				
+				infos = new FileInfo[children.length];
+				
+				for (int i = 0; i < children.length; i++)
+				{
+					IRemoteFile file = children[i];
+					FileInfo info = new FileInfo(file.getName());
+					
+					if (!file.exists()) {
+						info.setExists(false);
+					}
+					else {
+						info.setExists(true);
+						info.setLastModified(file.getLastModified());
+						boolean isDir = file.isDirectory();
+						info.setDirectory(isDir);
+						info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, !file.canWrite());
+						info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, file.isExecutable());
+						info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, file.isArchive());
+						info.setAttribute(EFS.ATTRIBUTE_HIDDEN, file.isHidden());
+
+						if (!isDir) {
+							info.setLength(file.getLength());
+						}
+					}
+					
+					infos[i] = info;
+				}		
+			}
+			catch (SystemMessageException e) {
+				infos = new FileInfo[0];
+			}
+		}
+		
+		return infos;
+	}
+
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
 		
 		// connect if needed

@@ -145,16 +145,6 @@
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-efs-@buildId@.zip">RSE-efs-@buildId@.zip</a></td>
-        <td><small>&nbsp;</small><br/>
-			An experimental Eclipse Filesystem (EFS) provider, which
-			uses RSE contributed file services. It currently works for ssh
-			connections with limitations. See 
-			<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170916">bug 170916</a> for details. Includes Source.
-        </td>
-    </tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
 		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-examples-@buildId@.zip">RSE-examples-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>

@@ -4,8 +4,6 @@
 -source 1.4
 -sourcepath "../org.eclipse.rse.connectorservice.dstore/src
 ;../org.eclipse.rse.core/src
-;../org.eclipse.rse.dstore.security/src
-;../org.eclipse.rse.eclipse.filesystem/src
 ;../org.eclipse.rse.files.ui/src
 ;../org.eclipse.rse.processes.ui/src
 ;../org.eclipse.rse.services/src
@@ -65,19 +63,12 @@ org.eclipse.rse.core.references
 org.eclipse.rse.core.servicesubsystem
 org.eclipse.rse.core.subsystems
 org.eclipse.rse.core.subsystems.util
-org.eclipse.rse.dstore.security
-org.eclipse.rse.dstore.security.preference
-org.eclipse.rse.dstore.security.util
-org.eclipse.rse.dstore.security.widgets
-org.eclipse.rse.dstore.security.wizards
 org.eclipse.rse.dstore.universal.miners
 org.eclipse.rse.dstore.universal.miners.command
 org.eclipse.rse.dstore.universal.miners.command.patterns
 org.eclipse.rse.dstore.universal.miners.environment
 org.eclipse.rse.dstore.universal.miners.filesystem
 org.eclipse.rse.dstore.universal.miners.processes
-org.eclipse.rse.eclipse.filesystem
-org.eclipse.rse.eclipse.filesystem.ui.actions
 org.eclipse.rse.files.ui
 org.eclipse.rse.files.ui.actions
 org.eclipse.rse.files.ui.compare

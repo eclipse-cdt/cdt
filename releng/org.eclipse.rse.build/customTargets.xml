@@ -39,10 +39,6 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.efs" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.tests" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -100,12 +96,6 @@
 
 	<target name="assemble.org.eclipse.rse.examples">
 		<property name="archiveName" value="RSE-examples-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-
-	<target name="assemble.org.eclipse.rse.efs">
-		<property name="archiveName" value="RSE-efs-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

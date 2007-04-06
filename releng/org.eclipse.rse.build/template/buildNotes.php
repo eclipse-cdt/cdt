@@ -24,15 +24,13 @@
 <table><tbody><tr><td>
 <ul>
 <li>TM 2.0M6 <b>requires Eclipse 3.3M6</b>. Platform Runtime is the minimum
-  requirement for dstore and ftp. Terminal-ssh and RSE-ssh also require the
-  <b>CVS Client Runtime</b> (The dependency on CVS Client Runtime should go away
-  again with M6 by resolving <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175686">bug 175686</a>).</li>
+  requirement for core RSE and Terminal. Remotecdt requires CDT, and Discovery requires EMF.
 <li>Added a <b>milestone update site</b> for TM 2.0 milestone builds at
   <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
   "Check for updates" will automatically reference this milestone update site, so you can get milestone
   patches from there [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>].</li>
-<li><b>Qualifiers of feature names</b> are currently missing the last digit 
-  due to Platform <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176010">bug 176010</a>.</li>
+<li>The experimental <b>EFS Feature</b> has been made official, and functionality moved
+  into RSE Core. Thusu EFS support is no separate download any more but comes with RSE.</li>
 <li><b>Apache Commons.Net and ORO</b> are now distributed as single-jar bundles. The separate commons.net and ORO features 
 have been removed. The bundles are now directly included in the RSE FTP feature only.</li>
 <li><b>SystemRemoteResourceDialog.setPreSelection()</b> now works correctly [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174944">174944</a>].

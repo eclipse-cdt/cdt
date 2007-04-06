@@ -250,7 +250,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		SftpATTRS attrs = null;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				attrs = getChannel("SftpFileService.getFile").stat(remoteParent+'/'+fileName); //$NON-NLS-1$
+				attrs = getChannel("SftpFileService.getFile: "+fileName).stat(remoteParent+'/'+fileName); //$NON-NLS-1$
 				Activator.trace("SftpFileService.getFile done"); //$NON-NLS-1$
 				node = makeHostFile(remoteParent, fileName, attrs);
 			} catch(Exception e) {

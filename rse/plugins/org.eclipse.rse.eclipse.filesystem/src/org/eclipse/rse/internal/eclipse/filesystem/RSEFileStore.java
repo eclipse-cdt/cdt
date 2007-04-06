@@ -308,6 +308,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 						info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, file.isExecutable());
 						info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, file.isArchive());
 						info.setAttribute(EFS.ATTRIBUTE_HIDDEN, file.isHidden());
+						//TODO Add symbolic link attribute
 
 						if (!isDir) {
 							info.setLength(file.getLength());
@@ -318,6 +319,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 				}		
 			}
 			catch (SystemMessageException e) {
+				//TODO check whether we should not throw an exception ourselves
 				infos = new FileInfo[0];
 			}
 		}

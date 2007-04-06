@@ -5194,12 +5194,14 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(field.isStatic());
     }
 
+	// namespace nsSplit {}
+	// namespace nsSplit {
+    //    void a();
+    // }
+	// void nsSplit::a() {
+    // }
     public void testBug180979() throws Exception {
-    	StringBuffer buffer = new StringBuffer( );
-    	buffer.append( "namespace nsSplit {}\r\n"); //$NON-NLS-1$
-    	buffer.append( "namespace nsSplit {void a();}\r\n"); //$NON-NLS-1$
-    	buffer.append( "void nsSplit::a() {}\r\n"); //$NON-NLS-1$
-    	
+    	StringBuffer buffer = getContents(1)[0];
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, true, true );
     	
     	// check class

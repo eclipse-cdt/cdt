@@ -470,19 +470,19 @@ public class CPPVisitor {
 			declarator = declarator.getNestedDeclarator();
 
 		IASTFunctionDeclarator funcDeclarator= null;
-		IASTNode node= declarator;
+		IASTNode tmpNode= declarator;
 		do {
-			if (node instanceof IASTFunctionDeclarator) {
-				funcDeclarator= (IASTFunctionDeclarator) node;
+			if (tmpNode instanceof IASTFunctionDeclarator) {
+				funcDeclarator= (IASTFunctionDeclarator) tmpNode;
 				break;
 			}
-			if (((IASTDeclarator) node).getPointerOperators().length > 0 ||
-					node.getPropertyInParent() != IASTDeclarator.NESTED_DECLARATOR) {
+			if (((IASTDeclarator) tmpNode).getPointerOperators().length > 0 ||
+					tmpNode.getPropertyInParent() != IASTDeclarator.NESTED_DECLARATOR) {
 				break;
 			}
-			node= node.getParent();
+			tmpNode= tmpNode.getParent();
 		}
-		while (node instanceof IASTDeclarator);
+		while (tmpNode instanceof IASTDeclarator);
 			
 		IASTName name = declarator.getName();
 		if( name instanceof ICPPASTQualifiedName ){
@@ -534,7 +534,7 @@ public class CPPVisitor {
 			parent = param.getParent();
 			if( parent instanceof IASTStandardFunctionDeclarator ) {
 				IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator) param.getParent();
-				if( /*fDtor.getParent() instanceof IASTDeclarator ||*/ fDtor.getNestedDeclarator() != null )
+				if( hasNestedPointerOperator(fDtor) ) 
 				    return null;
 				IBinding temp = fDtor.getName().resolveBinding();
 				if( temp instanceof ICPPInternalFunction ){
@@ -643,6 +643,17 @@ public class CPPVisitor {
 		}
 		
 		return binding;
+	}
+
+	private static boolean hasNestedPointerOperator(IASTDeclarator decl) {
+		decl= decl.getNestedDeclarator();
+		while (decl != null) {
+			if (decl.getPointerOperators().length > 0) {
+				return true;
+			}
+			decl= decl.getNestedDeclarator();
+		}
+		return false;
 	}
 
 	public static boolean isConstructor( IScope containingScope, IASTDeclarator declarator ){

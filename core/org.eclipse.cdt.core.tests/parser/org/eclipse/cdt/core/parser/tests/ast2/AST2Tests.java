@@ -97,6 +97,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  * @author Doug Schaefer
  */
 public class AST2Tests extends AST2BaseTest {
+	private static ParserLanguage[] LANGUAGES= {ParserLanguage.C, ParserLanguage.CPP};
 
     public static TestSuite suite() {
     	return suite(AST2Tests.class);
@@ -3579,4 +3580,47 @@ public class AST2Tests extends AST2BaseTest {
     	// TODO: exhaustive macro testing
 	}
 
+	// void (decl)(char);
+    // void foo() {
+    //    decl('a');
+    // }
+    public void testBug181305_1() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	for (int i = 0; i < LANGUAGES.length; i++) {
+    		final ParserLanguage lang= LANGUAGES[i];
+    		IASTTranslationUnit tu = parse( buffer.toString(), lang, true, true );
+
+    		// check class
+    		IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[1];
+    		IASTCompoundStatement comp_stmt= (IASTCompoundStatement) fd.getBody();
+    		IASTExpressionStatement expr_stmt= (IASTExpressionStatement) comp_stmt.getStatements()[0];
+    		IASTFunctionCallExpression expr= (IASTFunctionCallExpression) expr_stmt.getExpression();
+    		IASTIdExpression idExpr= (IASTIdExpression) expr.getFunctionNameExpression();
+    		IBinding binding= idExpr.getName().resolveBinding();
+    		assertTrue(lang.toString(),  binding instanceof IFunction);
+    		assertFalse(lang.toString(), binding instanceof IProblemBinding);
+    	}
+    }
+
+	// void (*decl)(char);
+    // void foo() {
+    //    decl('a');
+    // }
+    public void testBug181305_2() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	for (int i = 0; i < LANGUAGES.length; i++) {
+    		final ParserLanguage lang= LANGUAGES[i];
+    		IASTTranslationUnit tu = parse( buffer.toString(), lang, true, true );
+
+    		// check class
+    		IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[1];
+    		IASTCompoundStatement comp_stmt= (IASTCompoundStatement) fd.getBody();
+    		IASTExpressionStatement expr_stmt= (IASTExpressionStatement) comp_stmt.getStatements()[0];
+    		IASTFunctionCallExpression expr= (IASTFunctionCallExpression) expr_stmt.getExpression();
+    		IASTIdExpression idExpr= (IASTIdExpression) expr.getFunctionNameExpression();
+    		IBinding binding= idExpr.getName().resolveBinding();
+    		assertTrue(lang.toString(),  binding instanceof IVariable);
+    		assertFalse(lang.toString(), binding instanceof IProblemBinding);
+    	}
+    }
 }

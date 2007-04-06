@@ -45,7 +45,7 @@ int foo(int bar) const {
  * Line Wrapping
  */
 int array[]= { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1000,
-				2000, 3000, 4000, 5000 };
+		2000, 3000, 4000, 5000 };
 int compare(int argument, int otherArgument) {
 	return argument+otherArgument > argument*otherArgument+1000000 ? 100000+50000
 			: 200000-30000;

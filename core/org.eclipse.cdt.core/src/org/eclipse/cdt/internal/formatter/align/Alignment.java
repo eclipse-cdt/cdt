@@ -349,6 +349,11 @@ public class Alignment {
 		}
 	}					
 
+	// test whether this is an 'indent-on-column' type alignment and aligns on the given column
+	public boolean isIndentOnColumn(int column) {
+		return (mode & M_INDENT_ON_COLUMN) != 0 && breakIndentationLevel == column - 1;
+	}
+
 	// reset fragment indentation/break status	
 	public void reset() {
 

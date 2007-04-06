@@ -446,7 +446,7 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 
 	private final Category fConditionalExpressionCategory= new Category(
 	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION,
-	    "int compare(int argument, int otherArgument) {return argument > argument ? 100000 : 200000;}", //$NON-NLS-1$
+	    "int compare(int argument, int argument2) {return argument > argument2 ? 100000 : 200000;}", //$NON-NLS-1$
 	    FormatterMessages.LineWrappingTabPage_conditionals
 	);
 

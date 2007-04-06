@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -161,6 +162,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		public boolean fSpaceAfterOpeningParen;
 		public boolean fSpaceBeforeClosingParen;
 		public boolean fSpaceBeforeOpeningParen;
+		public int fContinuationIndentation= -1;
 		public ListAlignment(int mode) {
 			fMode= mode;
 		}
@@ -501,7 +503,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			visit((IASTNamedTypeSpecifier)node);
 		} else {
 			formatNode(node);
-			scribe.space();
 		}
 		return PROCESS_SKIP;
 	}
@@ -899,7 +900,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		declSpec.accept(this);
 		final List declarators= Arrays.asList(node.getDeclarators());
 		if (declarators.size() > 0) {
-			if (scribe.printComment()) {
+			if (scribe.printComment() || isCompositeTypeDeclaration(declSpec)) {
 				scribe.space();
 			}
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
@@ -911,6 +912,15 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		scribe.printTrailingComment();
 		return PROCESS_SKIP;
+	}
+
+	/**
+	 * Test whether the given decl specifier is one of 'class', 'struct', 'union' or 'enum'.
+	 * @param declSpec
+	 * @return true if the decl specifier is one of 'class', 'struct', 'union' or 'enum'
+	 */
+	private boolean isCompositeTypeDeclaration(IASTDeclSpecifier declSpec) {
+		return declSpec instanceof IASTCompositeTypeSpecifier || declSpec instanceof ICASTEnumerationSpecifier;
 	}
 
 	private int visit(ICPPASTTemplateDeclaration node) {
@@ -1111,11 +1121,17 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (align.fSpaceAfterOpeningParen) {
 				scribe.space();
 			}
+			final int continuationIndentation= 
+				align.fContinuationIndentation >= 0 
+					? align.fContinuationIndentation 
+					: preferences.continuation_indentation;
 			Alignment listAlignment = scribe.createAlignment(
 					"listElements_"+align,//$NON-NLS-1$
 					align.fMode,
 					elementsLength + (addEllipsis ? 1 : 0),
-					scribe.scanner.getCurrentPosition());
+					scribe.scanner.getCurrentPosition(),
+					continuationIndentation,
+					false);
 			scribe.enterAlignment(listAlignment);
 			boolean ok = false;
 			do {
@@ -1293,20 +1309,13 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	        if (preferences.insert_space_after_opening_brace_in_array_initializer) {
 	        	scribe.space();
 	        }
-	        int indents= preferences.continuation_indentation_for_array_initializer;
-			while (indents-- > 0) {
-				scribe.indent();
-			}
-	        
+
 			final ListAlignment align= new ListAlignment(preferences.alignment_for_expressions_in_array_initializer);
 			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_array_initializer;
 			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_array_initializer;
+			align.fContinuationIndentation= preferences.continuation_indentation_for_array_initializer;
 			formatList(initializers, align, false, false);
 			
-	        indents= preferences.continuation_indentation_for_array_initializer;
-			while (indents-- > 0) {
-				scribe.unIndent();
-			}
 			if (preferences.insert_new_line_before_closing_brace_in_array_initializer) {
 				scribe.startNewLine();
 			}

@@ -744,6 +744,9 @@ public class Scribe {
 		lastNumberOfNewLines= 0;
 		printIndentationIfNecessary();
 		if (considerSpaceIfAny) {
+			if (currentAlignment != null && currentAlignment.isIndentOnColumn(column)) {
+				needSpace= true;
+			}
 			space();
 		}
 		if (pendingSpace) {
@@ -873,6 +876,9 @@ public class Scribe {
 		}
 		lastNumberOfNewLines= isNewLine ? 1 : 0;
 		needSpace= false;
+		if (currentAlignment != null) {
+			indentationLevel= currentAlignment.breakIndentationLevel;
+		}
 		scanner.resetTo(currentTokenEndPosition, scannerEndPosition - 1);
 	}
 

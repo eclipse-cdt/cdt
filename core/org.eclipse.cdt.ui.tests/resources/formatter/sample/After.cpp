@@ -26,11 +26,11 @@ const SimpleStruct simpleStruct = { 1, "mySimple", 0.1232 };
 
 const SimpleStruct array[] = { { SIZEOF( simpleStruct, num ),
 #if FOO
-				"foo"
+		"foo"
 #  else
-				"bar"
+		"bar"
 #endif
-				, 0.5 }, { SIZEOF( simpleStruct, floatNum ), "name", 1.1 } };
+		, 0.5 }, { SIZEOF( simpleStruct, floatNum ), "name", 1.1 } };
 
 //          single line outside scope
 

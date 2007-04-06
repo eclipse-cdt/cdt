@@ -134,5 +134,8 @@ namespace MyPackage
 	int main(int argc, char * argv[]) 
 	{ 
 	}
-	
 
+// https://bugs.eclipse.org/bugs/show_bug.cgi?id=180815
+struct bug180815 {
+	int i,j;
+} bug180815_var0, bug180815_var1;

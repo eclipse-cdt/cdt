@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,6 +131,17 @@ public class CModelElementsTests extends TestCase {
 		checkTemplates(namespace);
 		
 		checkArrays(tu);
+		
+		checkBug180815(tu);
+	}
+
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=180815
+	private void checkBug180815(IParent parent) throws CModelException {
+		List structs = parent.getChildrenOfType(ICElement.C_STRUCT);
+		assertEquals(1, structs.size());
+		IStructure struct= (IStructure)structs.get(0);
+		assertEquals("bug180815", struct.getElementName());
+		assertEquals(2, struct.getChildren().length);
 	}
 
 	private void checkInclude(IParent tu) throws CModelException{
@@ -397,11 +408,11 @@ public class CModelElementsTests extends TestCase {
 		
 		// struct no name
 		IStructure struct2;
-		if (IParent.class.isAssignableFrom(ITypeDef.class)) {
+		List nsTypeDefs = namespace.getChildrenOfType(ICElement.C_TYPEDEF);
+		ITypeDef td = (ITypeDef) nsTypeDefs.get(1);
+		if (td instanceof IParent) {
 			// nested in typedef decl
-			List nsTypeDefs = namespace.getChildrenOfType(ICElement.C_TYPEDEF);
-			ITypeDef td2 = (ITypeDef) nsTypeDefs.get(1);
-			struct2 = (IStructure) td2.getChildren()[0];
+			struct2 = (IStructure) ((IParent)td).getChildren()[0];
 		} else {
 			struct2 = (IStructure) nsStructs.get(1);
 		}
@@ -418,7 +429,6 @@ public class CModelElementsTests extends TestCase {
 			fail("field visibility should be public!");
 		
 		// typedefs
-		List nsTypeDefs = namespace.getChildrenOfType(ICElement.C_TYPEDEF);
 		ITypeDef td1 = (ITypeDef) nsTypeDefs.get(0);
 		assertEquals(td1.getElementName(), new String ("myStruct"));
 		checkElementOffset(td1);
@@ -428,7 +438,7 @@ public class CModelElementsTests extends TestCase {
 		assertEquals(td2.getElementName(), new String ("myTypedef"));
 		checkElementOffset(td2);
 		assertEquals(td2.getTypeName(), new String ("struct"));
-		checkLineNumbers(td2, 101, 103);
+		checkLineNumbers(td2, 103, 103);
 
 		// union
 		List nsUnions = namespace.getChildrenOfType(ICElement.C_UNION);

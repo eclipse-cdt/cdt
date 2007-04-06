@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * number of places in the tests
 	 */
 	String[] expectedStringList = { "stdio.h", "unistd.h", "func2p",
-			"globalvar", "myenum", "mystruct_t", "myunion",
+			"globalvar", "myenum", "mystruct_t", "mystruct", "myunion",
 			"mytype", "func1", "func2", "main", "func3" };
 
 	int[] expectedLines = { 12, 14, 17, 20, 23, 28, 32, 35, 42, 47, 53, 58, 65,

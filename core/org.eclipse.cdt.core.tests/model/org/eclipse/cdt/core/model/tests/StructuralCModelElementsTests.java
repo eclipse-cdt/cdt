@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -399,11 +399,11 @@ public class StructuralCModelElementsTests extends TestCase {
 		
 		// struct no name
 		IStructure struct2;
-		if (IParent.class.isAssignableFrom(ITypeDef.class)) {
+		List nsTypeDefs = namespace.getChildrenOfType(ICElement.C_TYPEDEF);
+		ITypeDef td = (ITypeDef) nsTypeDefs.get(1);
+		if (td instanceof IParent) {
 			// nested in typedef decl
-			List nsTypeDefs = namespace.getChildrenOfType(ICElement.C_TYPEDEF);
-			ITypeDef td2 = (ITypeDef) nsTypeDefs.get(1);
-			struct2 = (IStructure) td2.getChildren()[0];
+			struct2 = (IStructure) ((IParent)td).getChildren()[0];
 		} else {
 			struct2 = (IStructure) nsStructs.get(1);
 		}
@@ -420,7 +420,6 @@ public class StructuralCModelElementsTests extends TestCase {
 			fail("field visibility should be public!"); //$NON-NLS-1$
 		
 		// typedefs
-		List nsTypeDefs = namespace.getChildrenOfType(ICElement.C_TYPEDEF);
 		ITypeDef td1 = (ITypeDef) nsTypeDefs.get(0);
 		assertEquals(td1.getElementName(), new String ("myStruct")); //$NON-NLS-1$
 		checkElementOffset(td1);
@@ -430,7 +429,7 @@ public class StructuralCModelElementsTests extends TestCase {
 		assertEquals(td2.getElementName(), new String ("myTypedef")); //$NON-NLS-1$
 		checkElementOffset(td2);
 		assertEquals(td2.getTypeName(), new String ("struct")); //$NON-NLS-1$
-		checkLineNumbers(td2, 101, 103);
+		checkLineNumbers(td2, 103, 103);
 
 		// union
 		List nsUnions = namespace.getChildrenOfType(ICElement.C_UNION);

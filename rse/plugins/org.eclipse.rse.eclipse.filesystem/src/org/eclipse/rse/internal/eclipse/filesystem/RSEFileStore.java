@@ -30,14 +30,10 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IHostFile;
@@ -53,37 +49,29 @@ import org.eclipse.swt.widgets.Display;
 
 public class RSEFileStore extends FileStore implements IFileStore 
 {
-	private IRemoteFile _remoteFile;
-	private IRemoteFileSubSystem _subSystem;
 	private IFileStore _parent;
-	
-	private boolean _isHandle;
-	private String _path;
+	private IRemoteFileSubSystem _subSystem;
+	private String _absolutePath;
+	private String _name;
+	private IRemoteFile _remoteFile;
 	
 	/**
 	 * Constructor to use if the file store is a handle.
-	 * @param subSystem the subsystem.
-	 * @param absolutePath the absolutePath;
+	 * @param parent the parent.
+	 * @param name the name of the file store.
 	 */
-	public RSEFileStore(IRemoteFileSubSystem subSystem, String absolutePath) {
-		_subSystem = subSystem;
-		_path = absolutePath;
-		_isHandle = true;
-	}
-	
-	public RSEFileStore(IFileStore parent, IRemoteFile remoteFile) {
-		_remoteFile = remoteFile;
+	public RSEFileStore(RSEFileStore parent, IRemoteFileSubSystem subSystem, String parentAbsolutePath, String name) {
 		_parent = parent;
-		_subSystem = _remoteFile.getParentRemoteFileSubSystem();
-		_isHandle = false;
-	}
-	
-	/**
-	 * Returns whether the file store is just a handle.
-	 * @return <code>true</code> to indicate that the file store is just a handle, <code>false</code> otherwise.
-	 */
-	public boolean isHandle() {
-		return _isHandle;
+		_subSystem = subSystem;
+		
+		if (!parentAbsolutePath.endsWith(_subSystem.getSeparator())) {
+			_absolutePath = parentAbsolutePath + _subSystem.getSeparator() + name;
+		}
+		else {
+			_absolutePath = parentAbsolutePath + name;
+		}
+		
+		_name = name;
 	}
 	
 	// an input stream that wraps another input stream and closes the wrappered input stream in a runnable that is always run with the user interface thread
@@ -151,22 +139,30 @@ public class RSEFileStore extends FileStore implements IFileStore
 		}
 	}
 	
-	public IRemoteFileSubSystem getRemoteFileSubSystem() {
-		return _subSystem;
-	}
-	
 	public String[] childNames(int options, IProgressMonitor monitor) throws CoreException {
 		
 		String[] names;
 		
-		if (isHandle() && !_subSystem.isConnected()) {
+		if (!_subSystem.isConnected()) {
 			
 			try {
 				_subSystem.connect(monitor);
 			}
 			catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "", e)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not connect to subsystem", e)); //$NON-NLS-1$
 			}
+		}
+		
+		// at this point get the live remote file because we want to fetch the info about this file
+		try {
+			_remoteFile = _subSystem.getRemoteFileObject(_absolutePath);
+		}
+		catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get remote file", e)); //$NON-NLS-1$
+		}
+		
+		if (_remoteFile == null || !_remoteFile.exists()) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "The file store does not exist")); //$NON-NLS-1$
 		}
 		
 		if (!_remoteFile.isStale() && _remoteFile.hasContents(RemoteChildrenContentsType.getInstance()) && !(_subSystem instanceof IFileServiceSubSystem))
@@ -213,226 +209,196 @@ public class RSEFileStore extends FileStore implements IFileStore
 		return names;
 	}
 	
-	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException 
-	{	
-
-		if (isHandle() && !_subSystem.isConnected()) {
-			FileInfo info = new FileInfo(getName());
-			info.setExists(false);
-			return info;
-		}
+	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
 		
-		if (_remoteFile.isStale())
-		{
-			try
-			{
-				_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
-			}
-			catch (Exception e)
-			{				
-			}
-		}
-		
-		FileInfo info = new FileInfo(getName());
-		boolean exists = _remoteFile.exists();
-		
-		info.setExists(exists);
-
-		if (exists)
-		{
-			info.setLastModified(_remoteFile.getLastModified());
-			boolean isDir = _remoteFile.isDirectory();
-			info.setDirectory(isDir);
-			info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, !_remoteFile.canWrite());
-			info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, _remoteFile.isExecutable());
-			info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, _remoteFile.isArchive());
-			info.setAttribute(EFS.ATTRIBUTE_HIDDEN, _remoteFile.isHidden());
-
-			if (!isDir)
-			{
-				info.setLength(_remoteFile.getLength());
-			}
-		}
-		
-		info.setName(getName());
-		return info;
-	}
-	
-	public String getName() 
-	{
-		if (isHandle()) {
-			IPath path = new Path(_path);
-			return path.lastSegment();
-		}
-		else {
-			return _remoteFile.getName();
-		}
-	}
-	
-	public IFileStore getParent() 
-	{
-		if (_parent == null)
-		{
-			_parent = new RSEFileStore(null, _remoteFile.getParentRemoteFile());
-		}
-		return _parent;
-	}
-	
-	public boolean isParentOf(IFileStore other) 
-	{
-		if (other instanceof RSEFileStore)
-		{
-			RSEFileStore otherWrapper = (RSEFileStore)other;
-			RSEFileStore parent = (RSEFileStore)otherWrapper.getParent();
-			return _remoteFile == parent._remoteFile;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	public synchronized InputStream  openInputStream(int options, IProgressMonitor monitor) throws CoreException 
-	{
-		if (isHandle() && !_subSystem.isConnected()) {
+		// connect if needed
+		if (!_subSystem.isConnected()) {
 			
 			try {
 				_subSystem.connect(monitor);
 			}
 			catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "", e)); //$NON-NLS-1$
+				// throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not connect to subsystem", e)); //$NON-NLS-1$
+				FileInfo info = new FileInfo(getName());
+				info.setExists(false);
+				return info;
 			}
 		}
 		
-		if (_remoteFile.exists())
-		{
-			if (_remoteFile.isFile() && _subSystem.isConnected() && _subSystem instanceof IFileServiceSubSystem)
-			{
-				IFileServiceSubSystem fileSubSystem = (IFileServiceSubSystem)_subSystem;
-				
-				try {
-					return new RSEFileStoreInputStream(fileSubSystem.getFileService().getInputStream(monitor, _remoteFile.getParentPath(), _remoteFile.getName(), true));
-				}
-				catch (SystemMessageException e) {
-					return null;
-				}
-			}
+		// at this point get the live remote file because we want to fetch the info about this file
+		try {
+			_remoteFile = _subSystem.getRemoteFileObject(_absolutePath);
+		}
+		catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get remote file", e)); //$NON-NLS-1$
+		}
+		
+		FileInfo info = new FileInfo(getName());
+		
+		if (_remoteFile == null || !_remoteFile.exists()) {
+			info.setExists(false);
+			return info;
+		}
+		
+		info.setExists(true);
+		info.setLastModified(_remoteFile.getLastModified());
+		boolean isDir = _remoteFile.isDirectory();
+		info.setDirectory(isDir);
+		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, !_remoteFile.canWrite());
+		info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, _remoteFile.isExecutable());
+		info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, _remoteFile.isArchive());
+		info.setAttribute(EFS.ATTRIBUTE_HIDDEN, _remoteFile.isHidden());
+
+		if (!isDir) {
+			info.setLength(_remoteFile.getLength());
+		}
+		
+		return info;
+	}
+	
+	public String getName() {
+		return _name;
+	}
+	
+	public IFileStore getParent() {
+		return _parent;
+	}
+	
+	public synchronized InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException 
+	{
+		if (!_subSystem.isConnected()) {
 			
-			if (_remoteFile.isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "This is a directory")); //$NON-NLS-1$
+			try {
+				_subSystem.connect(monitor);
+			}
+			catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not connect to subsystem", e)); //$NON-NLS-1$
 			}
 		}
+		
+		// at this point get the live remote file
+		try {
+			_remoteFile = _subSystem.getRemoteFileObject(_absolutePath);
+		}
+		catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get remote file", e)); //$NON-NLS-1$
+		}
+		
+		if (_remoteFile == null || !_remoteFile.exists()) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "The file store does not exist")); //$NON-NLS-1$
+		}
+		
+		if (_remoteFile.isDirectory()) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "The file store represents a directory")); //$NON-NLS-1$
+		}
+		
+		if (_remoteFile.isFile()) {
+				
+			try {
+				return new RSEFileStoreInputStream(_subSystem.getInputStream(_remoteFile.getParentPath(), _remoteFile.getName(), true, monitor));
+			}
+			catch (SystemMessageException e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get input stream", e)); //$NON-NLS-1$
+			}
+		}
+		
 		return null;
 	}
 	
-	public class RefreshJob extends Job
-	{
-		private IResource _resource;
-		private int _depth;
-		public RefreshJob(IResource resource, int depth)
-		{
-			super("Refresh"); //$NON-NLS-1$
-			_resource = resource;			
-			_depth = depth;
-		}
+	public URI toURI() {
 		
-		public IStatus run(IProgressMonitor monitor)				
-		{
-			try
-			{
-				_resource.refreshLocal(_depth, monitor);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-			return Status.OK_STATUS;
-		}
-	}
-	
-	public URI toURI() 
-	{
-		try 
-		{
-			String path = null;
+		try {
+			String path = _absolutePath;
 			
-			if (isHandle()) {
-				path = _path;
-			}
-			else {
-				path = _remoteFile.getAbsolutePath();
-			}
-			
-			if (path.charAt(0) != '/')
-			{
+			if (path.charAt(0) != '/') {
 				path = "/" + path.replace('\\', '/'); //$NON-NLS-1$
 			}
 			
 			return new URI("rse", _subSystem.getHost().getHostName(), path, null); //$NON-NLS-1$
 		} 
-		catch (URISyntaxException e) 
-		{
+		catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}	
 	}
 
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException 
 	{
-		if (isHandle() && !_subSystem.isConnected()) {
+		if (!_subSystem.isConnected()) {
 			
 			try {
 				_subSystem.connect(monitor);
 			}
 			catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "", e)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not connect to subsystem", e)); //$NON-NLS-1$
 			}
 		}
 		
-		if (!_remoteFile.exists())
-		{
-		try
-		{
-			_subSystem.createFolder(_remoteFile);
-			_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
+		// at this point get the live remote file
+		try {
+			_remoteFile = _subSystem.getRemoteFileObject(_absolutePath);
 		}
-		catch (Exception e)
-		{			
+		catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get remote file", e)); //$NON-NLS-1$
 		}
+		
+		if (!_remoteFile.exists()) {
+			try {
+				_remoteFile = _subSystem.createFolder(_remoteFile);
+			}
+			catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "The directory could not be created", e)); //$NON-NLS-1$
+			}
+			
+			return this;
 		}
-		return this;
+		else {
+			
+			if (_remoteFile.isFile()) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "A file of that name already exists")); //$NON-NLS-1$
+			}
+			else {
+				return this;
+			}
+		}
 	}
 
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
 		
-		if (isHandle() && !_subSystem.isConnected()) {
+		if (!_subSystem.isConnected()) {
 			
 			try {
 				_subSystem.connect(monitor);
 			}
 			catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "", e)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not connect to subsystem", e)); //$NON-NLS-1$
 			}
 		}
 		
+		// at this point get the live remote file
 		try {
-			if (!_remoteFile.exists())
-			{
-				_subSystem.createFile(_remoteFile);
-				_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
-			}
+			_remoteFile = _subSystem.getRemoteFileObject(_absolutePath);
 		}
 		catch (Exception e) {
-			return null;
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get remote file", e)); //$NON-NLS-1$
 		}
-			
-		if (_remoteFile.isFile() && _subSystem instanceof FileServiceSubSystem) {
-			IFileServiceSubSystem fileSubSystem = (IFileServiceSubSystem)_subSystem;
+		
+		if (!_remoteFile.exists()) {
 			
 			try {
-				return new RSEFileStoreOutputStream(fileSubSystem.getFileService().getOutputStream(monitor, _remoteFile.getParentPath(), _remoteFile.getName(), true));
+				_remoteFile = _subSystem.createFile(_remoteFile);
+			}
+			catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not create file", e)); //$NON-NLS-1$
+			} 
+		}
+			
+		if (_remoteFile.isFile()) {
+			
+			try {
+				return new RSEFileStoreOutputStream(_subSystem.getOutputStream(_remoteFile.getParentPath(), _remoteFile.getName(), true, monitor));
 			}
 			catch (SystemMessageException e) {
-				return null;
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get output stream", e)); //$NON-NLS-1$
 			}
 		}
 		else {
@@ -445,61 +411,9 @@ public class RSEFileStore extends FileStore implements IFileStore
 			}
 		}
 	}
-
-	public IFileStore getChild(IPath path) 
-	{
-		IFileStore result = this;
-		for (int i = 0, imax = path.segmentCount(); i < imax; i++)
-		{
-			String segment = path.segment(i);
-			result = result.getChild(segment);
-		}
-		
-		return result;
-	}
 	
-	public IFileStore getChild(String name) 
-	{
-		// the remote file is a handle, so its children must also be handles
-		if (isHandle()) {
-			return new RSEFileStore(_subSystem, name);
-		}
-		
-		if (!_remoteFile.isStale() && _remoteFile.hasContents(RemoteChildrenContentsType.getInstance(), name))
-		{
-			Object[] children = _remoteFile.getContents(RemoteChildrenContentsType.getInstance(), name);
-			if (children != null && children.length > 0)
-			{
-				return FileStoreConversionUtility.convert(_parent, (IRemoteFile)children[0]);
-			}
-			else
-			{
-				// need empty one
-				try
-				{
-					IRemoteFile child = _subSystem.getRemoteFileObject(_remoteFile, name);
-					return FileStoreConversionUtility.convert(_parent, child);
-				}
-				catch (Exception e)
-				{
-					
-				}
-			}
-		}
-		else if (_remoteFile.isDirectory())
-		{
-			try
-			{
-				IRemoteFile child = _subSystem.getRemoteFileObject(_remoteFile, name);
-				return FileStoreConversionUtility.convert(_parent, child);
-			}
-			catch (Exception e)
-			{
-				
-			}
-
-		}
-		return null;
+	public IFileStore getChild(String name) {
+		return new RSEFileStore(this, _subSystem, _absolutePath, name);
 	}
 
 	public File toLocalFile(int options, IProgressMonitor monitor) throws CoreException 
@@ -509,32 +423,39 @@ public class RSEFileStore extends FileStore implements IFileStore
 		}
 		else {
 			
-			if (isHandle() && !_subSystem.isConnected()) {
+			if (!_subSystem.isConnected()) {
 				
 				try {
 					_subSystem.connect(monitor);
 				}
 				catch (Exception e) {
-					throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "", e)); //$NON-NLS-1$
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not connect to subsystem", e)); //$NON-NLS-1$
 				}
 			}
 			
-			if (_remoteFile.exists() && _subSystem instanceof IFileServiceSubSystem)
-			{
+			// at this point get the live remote file
+			try {
+				_remoteFile = _subSystem.getRemoteFileObject(_absolutePath);
+			}
+			catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get remote file", e)); //$NON-NLS-1$
+			}
+			
+			if (_remoteFile.exists()) {
+				
 				RSEFileCache cache = RSEFileCache.getInstance();
-				IFileServiceSubSystem fileServiceSubSystem = (IFileServiceSubSystem)_subSystem;
 				InputStream inputStream = null;
 				
 				try {
 					
 					if (_remoteFile.isFile()) {
-						inputStream = new RSEFileStoreInputStream(fileServiceSubSystem.getFileService().getInputStream(monitor, _remoteFile.getParentRemoteFileSubSystem().getHost().getHostName(), _remoteFile.getName(), true));
+						inputStream = new RSEFileStoreInputStream(_subSystem.getInputStream(_remoteFile.getParentRemoteFileSubSystem().getHost().getHostName(), _remoteFile.getName(), true, monitor));
 					}
 					
 					return cache.writeToCache(_remoteFile, inputStream);
 				}
 				catch (SystemMessageException e) {
-					return null;
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get input stream", e)); //$NON-NLS-1$
 				}
 			}
 			else {
@@ -545,22 +466,39 @@ public class RSEFileStore extends FileStore implements IFileStore
 
 	public void delete(int options, IProgressMonitor monitor) throws CoreException 
 	{
-		if (isHandle() && !_subSystem.isConnected()) {
+		if (!_subSystem.isConnected()) {
 			
 			try {
 				_subSystem.connect(monitor);
 			}
 			catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "", e)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not connect to subsystem", e)); //$NON-NLS-1$
 			}
 		}
 		
+		// at this point get the live remote file
 		try {
-			
-			_subSystem.delete(_remoteFile, monitor);
+			_remoteFile = _subSystem.getRemoteFileObject(_absolutePath);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get remote file", e)); //$NON-NLS-1$
+		}
+		
+		if (!_remoteFile.exists()) {
+			return;
+		}
+		else {
+			
+			try {
+				boolean success = _subSystem.delete(_remoteFile, monitor);
+				
+				if (!success) {
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not delete file")); //$NON-NLS-1$
+				}
+			}
+			catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not delete file", e)); //$NON-NLS-1$
+			}
 		}
 	}
 }

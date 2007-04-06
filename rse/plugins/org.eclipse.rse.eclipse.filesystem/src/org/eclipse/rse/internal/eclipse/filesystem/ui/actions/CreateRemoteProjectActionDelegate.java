@@ -61,7 +61,6 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 
 	private IProject createRemoteProject(IRemoteFile directory, IProgressMonitor monitor)
 	{
-	
 		IWorkspaceRoot root = SystemBasePlugin.getWorkspaceRoot();
 
 		IProject editProject = root.getProject(directory.getName());
@@ -70,39 +69,29 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 		{
 			return editProject;
 		}
-
-		if (editProject == null)
-		{
-			// log error and throw an exception
+		
+		if (editProject == null) {
+			return null;
 		}
 
 		try
 		{
-
-			
-			
 			IProjectDescription description = root.getWorkspace().newProjectDescription(directory.getName());
 			URI location = RSEFileSystem.getInstance().getURIFor(directory);
 			description.setLocationURI(location);
 
-			
-		
-			//description.setReferencedProjects(new IProject[]{SystemResourceManager.getRemoteSystemsTempFilesProject()});
 			editProject.create(description, monitor);
 			
-
 			editProject.open(monitor);
 			
 		    editProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		}
 		catch (CoreException e)
 		{
-			e.printStackTrace();
 			SystemBasePlugin.logError("Error creating temp project", e); //$NON-NLS-1$
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
 		}
 		return editProject;
 	}

@@ -18,11 +18,12 @@
 package org.eclipse.rse.internal.eclipse.filesystem;
 
 import java.net.URI;
-import java.util.HashMap;
+import java.net.URISyntaxException;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -34,12 +35,9 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 public class RSEFileSystem extends FileSystem 
 {
 	private static RSEFileSystem _instance = new RSEFileSystem();
-	private HashMap _fileStoreMap;
 	
 	public RSEFileSystem() {
-		
 		super();
-		_fileStoreMap = new HashMap();
 	}
 	
 	public static RSEFileSystem getInstance() {
@@ -92,31 +90,22 @@ public class RSEFileSystem extends FileSystem
 	}
 	
 	public URI getURIFor(IRemoteFile file) {
-		IFileStore fstore = FileStoreConversionUtility.convert(null, file);
-		return fstore.toURI();
+		String path = file.getAbsolutePath();
+		
+		if (path.charAt(0) != '/') {
+			path = "/" + path.replace('\\', '/'); //$NON-NLS-1$
+		}
+	
+		try {
+			return new URI("rse", file.getParentRemoteFileSubSystem().getHost().getHostName(), path, null); //$NON-NLS-1$
+		}
+		catch (URISyntaxException e) 
+		{
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public IFileStore getStore(URI uri) {
-		
-		Object obj = _fileStoreMap.get(uri);
-		
-		if (obj != null) {
-			
-			RSEFileStore store = (RSEFileStore)obj;
-			
-			/*IRemoteFileSubSystem ss = store.getRemoteFileSubSystem();
-			
-			if (!ss.isConnected()) {
-				
-				try {
-					ss.connect(new NullProgressMonitor());
-				}
-				catch (Exception e) {			
-					return null;
-				}
-			}*/
-			return store;
-		}
 		
 		try  {
 			
@@ -126,34 +115,22 @@ public class RSEFileSystem extends FileSystem
 			
 			if (con != null) {
 				
-				IRemoteFileSubSystem fs =  getRemoteFileSubSystem(con);
+				IRemoteFileSubSystem fs = getRemoteFileSubSystem(con);
 				
 				if (fs != null) {
-					
-/*					if (!fs.isConnected()) {
-						fs.getConnectorService().acquireCredentials(false);
-						fs.getConnectorService().connect(new NullProgressMonitor());
-					}*/
-					
-					if (fs.isConnected()) {
-						IFileStore fstore = FileStoreConversionUtility.convert(null, fs.getRemoteFileObject(path));
-						_fileStoreMap.put(uri, fstore);
-						return fstore;
-					}
-					else {
-						// return a handle if we're not yet connected
-						// we're not connected on workbench startup, and we are not supposed to connect
-						// if we did, we would get an exception from the credentials provider of connector service
-						// because it needs the workbench to connect
-						return new RSEFileStore(fs, path);
-					}
+					Path absPath = new Path(path);
+					return new RSEFileStore(null, fs, absPath.removeLastSegments(1).toString(), absPath.lastSegment());
 				}
+				else {
+					return EFS.getNullFileSystem().getStore(uri);
+				}
+			}
+			else {
+				return EFS.getNullFileSystem().getStore(uri);
 			}
 		} 
 		catch (Exception e) {
-			e.printStackTrace();
 			return EFS.getNullFileSystem().getStore(uri);
 		}
-		return null;
 	}
 }

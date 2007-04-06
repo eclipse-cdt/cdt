@@ -77,7 +77,8 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 				"class SDKClass { public: SDKMethod(); };\n\n";
 			
 			final File sdk= createExternalSDK(sdkCode);
-			
+			sdk.deleteOnExit();
+
 			fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
 
 			importExternalSDK(sdk, fCProject);

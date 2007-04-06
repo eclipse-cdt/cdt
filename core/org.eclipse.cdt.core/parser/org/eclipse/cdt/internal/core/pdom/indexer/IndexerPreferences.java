@@ -136,6 +136,13 @@ public class IndexerPreferences {
 		return props;
 	}
 	
+	public static Properties getDefaultIndexerProperties() {
+		Preferences prefs= getDefaultPreferences();
+		Properties props= new Properties();
+		addProperties(prefs, props);
+		return props;
+	}
+		
 	/**
 	 * Adds or changes indexer properties for a project.
 	 */

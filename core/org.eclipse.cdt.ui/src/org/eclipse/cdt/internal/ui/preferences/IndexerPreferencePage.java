@@ -17,12 +17,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import org.eclipse.cdt.ui.dialogs.CacheSizeBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 
@@ -30,16 +32,21 @@ public class IndexerPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage, ICOptionContainer {
 
 	private IndexerBlock fOptionBlock;
+	private CacheSizeBlock fCacheBlock;
 	
 	public IndexerPreferencePage(){
 		fOptionBlock = new IndexerBlock();
+		fCacheBlock= new CacheSizeBlock(this);
 	}
 	
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new FillLayout());
+		composite.setLayout(new GridLayout());
+		GridData gd= new GridData();
+		composite.setLayoutData(gd);
 	
 		fOptionBlock.createControl(composite);
+		fCacheBlock.createControl(composite);
 		
 		return composite;
 	}
@@ -48,6 +55,18 @@ public class IndexerPreferencePage extends PreferencePage implements
 	}
 
 	public void updateContainer() {
+		if (!fOptionBlock.isValid()) {
+			setErrorMessage(fOptionBlock.getErrorMessage());
+			setValid(false);
+		}
+		else if (!fCacheBlock.isValid()) {
+			setErrorMessage(fCacheBlock.getErrorMessage());
+			setValid(false);
+		}
+		else {
+			setErrorMessage(null);
+			setValid(true);
+		}
 	}
 
 	public IProject getProject() {
@@ -61,11 +80,13 @@ public class IndexerPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 		try {
 			fOptionBlock.performApply(new NullProgressMonitor());
+			fCacheBlock.performApply(new NullProgressMonitor());
 		} catch (CoreException e) {}
 		return true;
 	}
 	
 	public void performDefaults() {
 		fOptionBlock.performDefaults();
+		fCacheBlock.performDefaults();
 	}
 }

@@ -15,9 +15,9 @@ import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -142,10 +142,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	}
 
 	private Text createParseUpFrontTextField(Composite page) {
-		new Label(page, SWT.NONE);
-		ControlFactory.createLabel(page, DialogsMessages.AbstractIndexerPage_indexUpFront);
+		Label l= ControlFactory.createLabel(page, DialogsMessages.AbstractIndexerPage_indexUpFront);
+		((GridData) l.getLayoutData()).verticalIndent=5;
 		return ControlFactory.createTextField(page);
-	}
+	} 
 
 	private Button createAllFilesButton(Composite page) {
 		return ControlFactory.createCheckBox(page, INDEX_ALL_FILES);

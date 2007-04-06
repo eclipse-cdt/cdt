@@ -70,6 +70,7 @@ public class IndexerBlock extends AbstractCOptionPage {
     private Properties				fCurrentProperties;
 	private ControlEnableState 		fEnableState;
 	private Composite fPreferenceContent;
+	private Composite fParent;
     
     public IndexerBlock(){
 		super(INDEXER_LABEL);
@@ -113,12 +114,12 @@ public class IndexerBlock extends AbstractCOptionPage {
     }
 
     public void createControl(Composite parent) {
+		fParent= parent;
+
         Composite composite = ControlFactory.createComposite(parent, 1);
 		GridLayout layout=  ((GridLayout)composite.getLayout());
-		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-		layout.verticalSpacing= 0;
-		layout.horizontalSpacing= GridData.FILL_HORIZONTAL;
+		
 		composite.setLayoutData(null);
 		setControl(composite);
       
@@ -132,15 +133,17 @@ public class IndexerBlock extends AbstractCOptionPage {
 		}		
 
 		fPreferenceContent= ControlFactory.createComposite(composite, 1);
-		layout=  ((GridLayout)fPreferenceContent.getLayout());
+		layout=  (GridLayout)fPreferenceContent.getLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
+		GridData gd= (GridData) fPreferenceContent.getLayoutData();
+		gd.horizontalIndent= 0;
 		
         Composite isc = ControlFactory.createComposite(fPreferenceContent, 1);
         GridLayout gridLayout = ((GridLayout)isc.getLayout());
         gridLayout.makeColumnsEqualWidth= false;
 		gridLayout.marginHeight = 0;
-		gridLayout.marginTop = 5;
+		gridLayout.marginWidth= 0;
 
 		// add combo to select indexer
 		Group group= ControlFactory.createGroup(isc,INDEXER_COMBO_LABEL, 1);
@@ -159,7 +162,7 @@ public class IndexerBlock extends AbstractCOptionPage {
         initializeScope();
 		initializeIndexerCombo();
 		onPreferenceScopeChange();
-        parent.layout(true);
+        fParent.layout(true);
     }
 
 	private void enablePreferenceContent(boolean enable) {
@@ -221,6 +224,10 @@ public class IndexerBlock extends AbstractCOptionPage {
     		}
     		fCurrentProperties= props;
 		}
+		updateForNewProperties(scope);
+	}
+
+	private void updateForNewProperties(int scope) {
 		String indexerId= fCurrentProperties.getProperty(IndexerPreferences.KEY_INDEXER_ID);
 		String indexerName = getIndexerName(indexerId);
         String[] indexerList = fIndexersComboBox.getItems();
@@ -266,6 +273,7 @@ public class IndexerBlock extends AbstractCOptionPage {
                 page.setContainer(getContainer());
                 page.createControl(fIndexerPageComposite);
                 fIndexerPageComposite.layout(true);
+                fParent.layout(true);
             }
         }
         
@@ -362,9 +370,14 @@ public class IndexerBlock extends AbstractCOptionPage {
 
     public void performDefaults() {
     	fCurrentProperties= null;
-    	fPrefScopeBlock.setInstanceScope();
-    	onPreferenceScopeChange();
-    	
+    	if (fPrefScopeBlock != null) {
+    		fPrefScopeBlock.setInstanceScope();
+        	onPreferenceScopeChange();
+    	}
+    	else {
+    		fCurrentProperties= IndexerPreferences.getDefaultIndexerProperties();
+    		updateForNewProperties(IndexerPreferences.SCOPE_INSTANCE);
+    	}
     }
 
     /**

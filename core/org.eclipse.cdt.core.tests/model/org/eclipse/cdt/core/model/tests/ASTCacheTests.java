@@ -35,6 +35,8 @@ import org.eclipse.core.runtime.Path;
  * Tests for the {@link ASTCache}.
  */
 public class ASTCacheTests extends BaseTestCase {
+	private final static boolean DEBUG= false;
+	
 	private static int fgReconcilerCount;
 
 	public class MockReconciler extends Thread {
@@ -54,14 +56,18 @@ public class ASTCacheTests extends BaseTestCase {
 				try {
 					synchronized (this) {
 						fCache.aboutToBeReconciled(fTU);
+						if (DEBUG) System.out.println("about ot reconcile "+fTU.getElementName());
 						fAST= null;
 						notify();
 					}
-					Thread.sleep(100);
+					Thread.sleep(50);
+					IASTTranslationUnit ast= fCache.createAST(fTU, fIndex, null);
 					synchronized (this) {
-						fAST= fCache.createAST(fTU, fIndex, null);
+						fAST= ast;
+						if (DEBUG) System.out.println("reconciled "+fTU.getElementName());
 						fCache.reconciled(fAST, fTU);
 					}
+					Thread.sleep(50);
 				} catch (InterruptedException exc) {
 					fStopped= true;
 					break;
@@ -211,42 +217,47 @@ public class ASTCacheTests extends BaseTestCase {
 		Thread.sleep(50);
 		reconciler2.start();
 		try {
-			int cacheHits= 0;
 			int iterations= 0;
-			while (cacheHits < 4 && iterations < 10) {
+			while (iterations < 10) {
 				++iterations;
+				if (DEBUG) System.out.println("iteration="+iterations);
 				IASTTranslationUnit ast;
 				cache.setActiveElement(fTU1);
-				Thread.sleep(100);
-				ast= cache.getAST(fTU1, fIndex, false, null);
-				if (ast != null) {
-					assertSame(ast, reconciler1.fAST);
-					++cacheHits;
-				} else {
-					ast= cache.getAST(fTU1, fIndex, true, null);
-					assertNotNull(ast);
-					assertEquals("void foo1() {}", ast.getDeclarations()[0].getRawSignature());
-				}
+				Thread.sleep(50);
+				ast = waitForAST(cache, fTU1);
+				assertNotNull(ast);
+				assertEquals("void foo1() {}", ast.getDeclarations()[0].getRawSignature());
+
+				ast = waitForAST(cache, fTU2);
+				assertNotNull(ast);
+				assertEquals("void foo2() {}", ast.getDeclarations()[0].getRawSignature());
 
 				// change active element
 				cache.setActiveElement(fTU2);
-				Thread.sleep(100);
-				ast= cache.getAST(fTU1, fIndex, false, null);
-				if (ast != null) {
-					assertSame(ast, reconciler2.fAST);
-					++cacheHits;
-				} else {
-					ast= cache.getAST(fTU2, fIndex, true, null);
-					assertNotNull(ast);
-					assertEquals("void foo2() {}", ast.getDeclarations()[0].getRawSignature());
-				}
-			}
+				Thread.sleep(50);
+				ast = waitForAST(cache, fTU2);
+				assertNotNull(ast);
+				assertEquals("void foo2() {}", ast.getDeclarations()[0].getRawSignature());
+
+				ast = waitForAST(cache, fTU1);
+				assertNotNull(ast);
+				assertEquals("void foo1() {}", ast.getDeclarations()[0].getRawSignature());
+}
 		} finally {
 			reconciler1.fStopped= true;
 			reconciler1.join(1000);
 			reconciler2.fStopped= true;
 			reconciler2.join(1000);
 		}
+	}
+
+	private IASTTranslationUnit waitForAST(ASTCache cache, ITranslationUnit tUnit) {
+		if (DEBUG) System.out.println("waiting for "+tUnit.getElementName());
+		long start= System.currentTimeMillis();
+		IASTTranslationUnit ast;
+		ast= cache.getAST(tUnit, fIndex, true, null);
+		if (DEBUG) System.out.println("wait time= " + (System.currentTimeMillis() - start));
+		return ast;
 	}
 
 }

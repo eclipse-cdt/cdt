@@ -319,6 +319,7 @@ abstract public class AbstractVMProvider implements IVMProvider
         if (layoutNode == null) {
             // Stale update. Just ignore.
             if (!update.isCanceled()) update.done();
+            return;
         }        
 
         // Create the multi request monitor to mark update when querying all 

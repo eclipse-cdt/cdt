@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Tobias Schwarz (Wind River) - [181394] Include Context in getAbsoluteName() for filter and pool references
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -22,9 +22,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
@@ -37,6 +39,7 @@ import org.eclipse.rse.ui.validators.ValidatorFilterPoolName;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -112,7 +115,6 @@ public class SystemViewFilterPoolReferenceAdapter
 	{
 		return ((ISubSystem)getFilterPoolReference(element).getProvider());
 	}
-
 	
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
@@ -142,7 +144,6 @@ public class SystemViewFilterPoolReferenceAdapter
 		return getFilterPoolReference(element).getReferencedFilterPool(); // get master object
 	}
 
-	
 	/**
 	 * @param element the filter pool reference masquerading as an object
 	 * @return the label for this filter pool reference.
@@ -161,6 +162,7 @@ public class SystemViewFilterPoolReferenceAdapter
 		}
 		return result;
 	}
+	
 	/**
 	 * Return the name of this object, which may be different than the display text ({#link #getText(Object)}.
 	 * <p>
@@ -170,14 +172,22 @@ public class SystemViewFilterPoolReferenceAdapter
 	{
 		return getFilterPool(element).getName();
 	}
+	
 	/**
 	 * Return the absolute name, versus just display name, of this object
 	 */
 	public String getAbsoluteName(Object element)
 	{
-		ISystemFilterPoolReference filterPoolRef = (ISystemFilterPoolReference)element;
-		return filterPoolRef.getReferencedFilterPool().getSystemFilterPoolManager().getName() + "." + filterPoolRef.getName(); //$NON-NLS-1$
-	}			
+		//TODO consider caching the absolute name in the FilterPoolReference to avoid unnecessary String operations - the name won't ever change 
+		ISystemFilterPoolReference filterPoolRef = getFilterPoolReference(element);
+		ISystemFilterPoolReferenceManagerProvider subSystem = filterPoolRef.getProvider();
+		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(subSystem);
+		String parentAbsoluteName = (adapter != null) ?	adapter.getAbsoluteName(subSystem) : ""; //$NON-NLS-1$
+		return parentAbsoluteName + "." +  //$NON-NLS-1$
+			filterPoolRef.getReferencedFilterPool().getSystemFilterPoolManager().getName() + "." +  //$NON-NLS-1$
+			filterPoolRef.getName();
+	}
+	
 	/**
 	 * Return the type label for this object
 	 */
@@ -367,7 +377,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	public String getInputMementoHandle(Object element)
 	{
 		Object parent = getParent(element);
-		return getSystemViewElementAdapter(parent).getInputMementoHandle(parent) + MEMENTO_DELIM + getMementoHandle(element);
+		return SystemAdapterHelpers.getViewAdapter(parent, getViewer()).getInputMementoHandle(parent) + MEMENTO_DELIM + getMementoHandle(element);
 	}
 	/**
 	 * Return a short string to uniquely identify the type of resource. Eg "conn" for connection.

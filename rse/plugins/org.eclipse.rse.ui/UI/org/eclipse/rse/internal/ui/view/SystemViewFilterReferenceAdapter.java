@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
+ * Tobias Schwarz (Wind River) - [181394] Include Context in getAbsoluteName() for filter and pool references
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -27,6 +28,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
@@ -126,6 +128,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		return SubSystemHelpers.getParentSubSystemConfiguration(filter);
 	}
+	
 	/**
 	 * <i>Overridden from parent.</i><br>
 	 * Returns the subsystem that contains this object.
@@ -137,6 +140,7 @@ public class SystemViewFilterReferenceAdapter
 		else
 			return null;
 	}
+	
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * @param element The element for which an image is desired
@@ -161,6 +165,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		return (ISystemFilterReference) element; // get referenced object
 	}
+	
 	private ISystemFilter getFilter(Object element)
 	{
 		return getFilterReference(element).getReferencedFilter(); // get master object
@@ -173,6 +178,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		return getFilter(element).getName();
 	}
+	
 	/**
 	 * Return the name of this object, which may be different than the display text ({#link #getText(Object)}.
 	 * <p>
@@ -182,13 +188,17 @@ public class SystemViewFilterReferenceAdapter
 	{
 		return getFilter(element).getName();
 	}
+	
 	/**
 	 * Return the absolute name, versus just display name, of this object
 	 */
 	public String getAbsoluteName(Object element)
 	{
-		ISystemFilter filter = getFilter(element);
-		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+		//TODO consider caching the absolute name in the FilterReference to avoid unnecessary String operations - the name won't ever change 
+		ISystemFilterPoolReference filterPoolReference = getFilterReference(element).getParentSystemFilterReferencePool();
+		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(filterPoolReference);
+		String parentAbsoluteName = (adapter != null) ?	adapter.getAbsoluteName(filterPoolReference) : ""; //$NON-NLS-1$
+		return parentAbsoluteName + "." + getName(element); //$NON-NLS-1$
 	}
 
 	/**
@@ -757,14 +767,14 @@ public class SystemViewFilterReferenceAdapter
 	public String getInputMementoHandle(Object element)
 	{
 		Object parent = ((ISystemFilterReference) element).getParent(); //getParent(element); // will be filter (nested) or filter pool
-		ISystemViewElementAdapter parentAdapter = getSystemViewElementAdapter(parent);
+		ISystemViewElementAdapter parentAdapter = SystemAdapterHelpers.getViewAdapter(parent, getViewer());
 		boolean showFPs = SystemPreferencesManager.getShowFilterPools();
 		if (parent instanceof ISystemFilterPoolReference) // not a nested filter
 		{
 			if (!showFPs) // not showing the real parent in GUI?
 			{
 				parent = parentAdapter.getParent(parent); // get the subsystem parent of the filter pool reference
-				parentAdapter = getSystemViewElementAdapter(parent); // get the adapter for the subsystem parent
+				parentAdapter = SystemAdapterHelpers.getViewAdapter(parent, getViewer()); // get the adapter for the subsystem parent
 			}
 		}
 		return parentAdapter.getInputMementoHandle(parent) + MEMENTO_DELIM + getMementoHandle(element);

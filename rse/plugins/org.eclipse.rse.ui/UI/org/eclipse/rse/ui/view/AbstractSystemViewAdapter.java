@@ -1617,7 +1617,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      * optimized implementation for their models? But it's being called
      * by subclasses only anyways...
      * 
-     * @deprecated use SystemAdapterHelpers.getAdapter(o, getViewer()) instead
+     * @deprecated use SystemAdapterHelpers.getViewAdapter(o, getViewer()) instead
      */
     protected ISystemViewElementAdapter getSystemViewElementAdapter(Object o) 
     {

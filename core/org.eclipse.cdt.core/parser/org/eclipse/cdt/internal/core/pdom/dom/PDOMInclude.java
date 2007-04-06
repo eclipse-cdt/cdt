@@ -240,11 +240,11 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	private void computeName() throws CoreException {
 		if (isResolved()) {
 			fName= getIncludes().getLocation().getURI().getPath();
-			fName= fName.substring(fName.lastIndexOf('/')+1);
 		}
 		else {
 			fName= getNameForUnresolved().getString();
 		}
+		fName= fName.substring(fName.lastIndexOf('/')+1);
 	}
 
 	public void convertToUnresolved() throws CoreException {

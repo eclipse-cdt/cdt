@@ -19,9 +19,9 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/milestones"/>
+      <update label="%tmMilestoneSiteName" url="http://download.eclipse.org/dsdp/tm/updates/milestones"/>
       <!-- Discovery, too in order to get Test feature, EFS feature or CVS Client -->
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/milestones"/>
+      <discovery label="%tmMilestoneSiteName" url="http://download.eclipse.org/dsdp/tm/updates/milestones"/>
       <discovery label="%epMilestoneSiteName" url="http://download.eclipse.org/eclipse/updates/3.3milestones/site.xml"/>
    </url>
 

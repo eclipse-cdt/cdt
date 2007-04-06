@@ -416,54 +416,6 @@ public class RSEFileStore extends FileStore implements IFileStore
 		return new RSEFileStore(this, _subSystem, _absolutePath, name);
 	}
 
-	public File toLocalFile(int options, IProgressMonitor monitor) throws CoreException 
-	{
-		if (options == EFS.CACHE) {
-			return super.toLocalFile(options, monitor);
-		}
-		else {
-			
-			if (!_subSystem.isConnected()) {
-				
-				try {
-					_subSystem.connect(monitor);
-				}
-				catch (Exception e) {
-					throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not connect to subsystem", e)); //$NON-NLS-1$
-				}
-			}
-			
-			// at this point get the live remote file
-			try {
-				_remoteFile = _subSystem.getRemoteFileObject(_absolutePath);
-			}
-			catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get remote file", e)); //$NON-NLS-1$
-			}
-			
-			if (_remoteFile.exists()) {
-				
-				RSEFileCache cache = RSEFileCache.getInstance();
-				InputStream inputStream = null;
-				
-				try {
-					
-					if (_remoteFile.isFile()) {
-						inputStream = new RSEFileStoreInputStream(_subSystem.getInputStream(_remoteFile.getParentRemoteFileSubSystem().getHost().getHostName(), _remoteFile.getName(), true, monitor));
-					}
-					
-					return cache.writeToCache(_remoteFile, inputStream);
-				}
-				catch (SystemMessageException e) {
-					throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), "Could not get input stream", e)); //$NON-NLS-1$
-				}
-			}
-			else {
-				return null;
-			}
-		}
-	}
-
 	public void delete(int options, IProgressMonitor monitor) throws CoreException 
 	{
 		if (!_subSystem.isConnected()) {

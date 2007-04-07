@@ -155,9 +155,9 @@ public abstract class UpdateHandler extends Handler
 						}
 					}
 				}
-			}
-			notifyInput();
+			}			
 		}
+		notifyInput();
 	}
 	
 	/**

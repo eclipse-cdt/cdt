@@ -91,9 +91,9 @@ public abstract class CommandHandler extends Handler
 				{
 					_commands.add(command);
 				}
-			}
-			notifyInput();
+			}			
 		}
+		notifyInput();
 	}
 
 	/**

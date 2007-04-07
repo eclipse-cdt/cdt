@@ -203,6 +203,7 @@ implements ISchemaExtender
 			DataElement cmd = (DataElement)_commandQueue.remove(0);
 			command(cmd);			
 		}
+		waitForInput();
 	}
 	
 	public final void requestCommand(DataElement command)

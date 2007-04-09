@@ -187,7 +187,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		if( !(n instanceof ICPPASTFunctionDeclarator) )
 			return;
 	    updateParameterBindings( (ICPPASTFunctionDeclarator) n );
-        super.addDefinition( node );
+        super.addDefinition( n );
 	}
 	public void addDeclaration(IASTNode node) {
 	    IASTNode n = node;
@@ -196,7 +196,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		if( !(n instanceof ICPPASTFunctionDeclarator) )
 			return;
 	    updateParameterBindings( (ICPPASTFunctionDeclarator) n );
-        super.addDeclaration( node );
+        super.addDeclaration( n );
 	}
     protected void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
         IParameter [] params = null;

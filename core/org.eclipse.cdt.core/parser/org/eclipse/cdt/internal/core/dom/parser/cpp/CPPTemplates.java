@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Mar 11, 2005
@@ -347,9 +348,7 @@ public class CPPTemplates {
 			for (int i = 0; i < templateParams.length; i++) {
 				argMap.put( templateParams[i], args[i] );
 			}
-			if( template instanceof ICPPInternalTemplate ){
-				spec = ((ICPPInternalTemplate)template).getInstance( args );
-			}
+			spec = ((ICPPInternalTemplateInstantiator)template).getInstance( args );
 			if( spec == null ) {
 				ICPPScope scope = (ICPPScope) CPPVisitor.getContainingScope( id );
 				spec = new CPPClassSpecialization(binding, scope, argMap );
@@ -357,13 +356,15 @@ public class CPPTemplates {
 					((ICPPInternalTemplate)template).addSpecialization( args, (ICPPSpecialization) spec );
 				}
 			}
-			IASTNode parent = id.getParent();
-			while( !(parent instanceof IASTDeclSpecifier ) )
-				parent = parent.getParent();
-			if( parent instanceof IASTElaboratedTypeSpecifier )
-				((ICPPInternalBinding)spec).addDeclaration( id );
-			else if( parent instanceof IASTCompositeTypeSpecifier )
-				((ICPPInternalBinding)spec).addDefinition( id );
+			if (spec instanceof ICPPInternalBinding) {
+				IASTNode parent = id.getParent();
+				while( !(parent instanceof IASTDeclSpecifier ) )
+					parent = parent.getParent();
+				if( parent instanceof IASTElaboratedTypeSpecifier )
+					((ICPPInternalBinding)spec).addDeclaration( id );
+				else if( parent instanceof IASTCompositeTypeSpecifier )
+					((ICPPInternalBinding)spec).addDefinition( id );
+			}
 			return spec;
 		} 
 		//else partial specialization
@@ -1438,7 +1439,7 @@ public class CPPTemplates {
 			return null;
 		}
 		
-		IType paramType = (IType) ((ICPPInternalTemplate)template).instantiate( args );
+		IType paramType = (IType) ((ICPPInternalTemplateInstantiator)template).instantiate( args );
 		IParameter [] functionParameters = new IParameter[] { new CPPParameter( paramType ) };
 		
 		try {

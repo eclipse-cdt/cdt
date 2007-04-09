@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2061,7 +2061,7 @@ public class CPPVisitor {
 	}
 	
 	public static char [][] getQualifiedNameCharArray( IBinding binding ) {
-	    IASTName [] ns = null;
+		IName [] ns = null;
 	    try {
             ICPPScope scope = (ICPPScope) binding.getScope();
             while( scope != null ){
@@ -2078,12 +2078,12 @@ public class CPPVisitor {
                 if( scope instanceof ICPPNamespaceScope && scope.getScopeName().toCharArray().length == 0 )
                     break;
                 
-                ns = (IASTName[]) ArrayUtil.append( IASTName.class, ns, n );
+                ns = (IName[]) ArrayUtil.append( IName.class, ns, n );
                 scope = (ICPPScope) scope.getParent();
             }
         } catch ( DOMException e ) {
         }
-        ns = (IASTName[]) ArrayUtil.trim( IASTName.class, ns );
+        ns = (IName[]) ArrayUtil.trim( IName.class, ns );
         char[] [] result = new char[ ns.length + 1 ][];
         for( int i = ns.length - 1; i >= 0; i-- ){
             result[ ns.length - i - 1 ] = ns[i].toCharArray();

@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -137,7 +138,9 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			try {
 				ICPPTemplateParameter[] params = binding.getTemplateParameters();
 				for (int i = 0; i < params.length; i++) {
-					addBinding(params[i]);
+					if (params[i] != null && !(params[i] instanceof ProblemBinding)) {
+						addBinding(params[i]);
+					}
 				}
 			} catch (CoreException e) {
 			} catch (DOMException e) {
@@ -273,6 +276,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		
 		if (binding instanceof ICPPSpecialization) {
 			IBinding specialized = ((ICPPSpecialization)binding).getSpecializedBinding();
+			if (specialized == null || specialized instanceof ProblemBinding) return null;
 			PDOMBinding pdomSpecialized = addBinding(specialized);
 			if (pdomSpecialized == null) return null;
 			

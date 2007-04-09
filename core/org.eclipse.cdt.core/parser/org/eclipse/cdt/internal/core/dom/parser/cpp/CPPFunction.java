@@ -496,12 +496,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     }
 
 	static public boolean hasStorageClass( ICPPInternalFunction function, int storage ){
-		IASTNode def = function.getDefinition();
-		while (def instanceof IASTName) {
-			def = def.getParent();
-		}
-	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) def;
-        ICPPASTFunctionDeclarator[] ds = (ICPPASTFunctionDeclarator[]) function.getDeclarations();
+	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) function.getDefinition();
+	    IASTNode[] ds = (IASTNode[]) function.getDeclarations();
+
         int i = -1;
         do{
             if( dtor != null ){
@@ -517,8 +514,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
                 if( declSpec.getStorageClass() == storage )
                     return true;
             }
-            if( ds != null && ++i < ds.length )
-                dtor = ds[i];
+            if( ds != null && ++i < ds.length ) {
+            	dtor = (ICPPASTFunctionDeclarator) ds[i];
+            }
             else
                 break;
         } while( dtor != null );

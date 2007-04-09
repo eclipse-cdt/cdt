@@ -170,7 +170,7 @@ public class NewVarDialog extends Dialog {
 		gd = new GridData();
 		typeLabel.setLayoutData(gd);
 		
-		fTypeSelector = new Combo(comp, SWT.READ_ONLY|SWT.DROP_DOWN);
+		fTypeSelector = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 //		gd.widthHint = 100;

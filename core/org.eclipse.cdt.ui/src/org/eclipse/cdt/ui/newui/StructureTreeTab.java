@@ -168,7 +168,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		lb.setText(UIMessages.getString("StructureTreeTab.4")); //$NON-NLS-1$
 		lb.setLayoutData(new GridData(GridData.BEGINNING));
 		
-		combo = new Combo(usercomp, SWT.BORDER);
+		combo = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		combo.add(UIMessages.getString("ConfigDescriptionTab.0")); //$NON-NLS-1$
 		combo.add(UIMessages.getString("ConfigDescriptionTab.1")); //$NON-NLS-1$

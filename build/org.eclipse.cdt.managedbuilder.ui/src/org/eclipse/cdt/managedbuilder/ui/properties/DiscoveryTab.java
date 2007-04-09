@@ -103,7 +103,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		if (page.isForProject() || page.isForPrefs()) {
 			Group scopeGroup = setupGroup(usercomp, Messages.getString("DiscoveryTab.0"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 			scopeGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			scopeComboBox = new Combo(scopeGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+			scopeComboBox = new Combo(scopeGroup, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 			scopeComboBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			scopeComboBox.add(Messages.getString("DiscoveryTab.1")); //$NON-NLS-1$
 			scopeComboBox.add(Messages.getString("DiscoveryTab.2")); //$NON-NLS-1$
@@ -167,7 +167,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
         // Add profile combo box
         setupLabel(scGroup,UIMessages.getString(SC_SELECTED_PROFILE_COMBO), 1, GridData.BEGINNING); 
-        profileComboBox = new Combo(scGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+        profileComboBox = new Combo(scGroup, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
         profileComboBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         profileComboBox.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

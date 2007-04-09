@@ -126,7 +126,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		Group g1 = setupGroup (usercomp, Messages.getString("BuildStepsTab.4"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g1, UIMessages.getString(RCBS_APPLICABILITY), 1, GridData.BEGINNING);
 		
-		combo = new Combo(g1, SWT.BORDER);
+		combo = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		combo.setItems(rcbsApplicabilityRules);
 		combo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

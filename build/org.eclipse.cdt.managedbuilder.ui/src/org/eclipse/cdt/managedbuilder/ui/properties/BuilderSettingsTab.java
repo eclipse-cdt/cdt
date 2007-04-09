@@ -81,7 +81,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		// Builder group
 		Group g1 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.0"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g1, Messages.getString("BuilderSettingsTab.1"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		c_builderType = new Combo(g1, SWT.DROP_DOWN | SWT.BORDER);
+		c_builderType = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		setupControl(c_builderType, 2, GridData.FILL_HORIZONTAL);
 		c_builderType.add(Messages.getString("BuilderSettingsTab.2")); //$NON-NLS-1$
 		c_builderType.add(Messages.getString("BuilderSettingsTab.3")); //$NON-NLS-1$

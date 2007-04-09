@@ -57,7 +57,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		b_dispCompatible = setupCheck(usercomp, Messages.getString("ToolChainEditTab.0"), 2, GridData.BEGINNING); //$NON-NLS-1$
 
 		setupLabel(usercomp, Messages.getString("ToolChainEditTab.1"), 2, GridData.BEGINNING); //$NON-NLS-1$
-		c_toolchain = new Combo(usercomp, SWT.BORDER);
+		c_toolchain = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		c_toolchain.setLayoutData(gd);
@@ -80,7 +80,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		c_toolchain.setEnabled(!page.isForFile());
 		
 		setupLabel(usercomp, Messages.getString("ToolChainEditTab.2"), 2, GridData.BEGINNING); //$NON-NLS-1$
-		c_builder = new Combo(usercomp, SWT.BORDER);
+		c_builder = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		c_builder.setLayoutData(gd);

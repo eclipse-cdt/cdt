@@ -47,7 +47,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		Label l1 = new Label(usercomp, SWT.NONE);
 		l1.setLayoutData(new GridData(GridData.BEGINNING));
 		l1.setText(Messages.getString("ArtifactTab.0")); //$NON-NLS-1$
-		c1 = new Combo(usercomp, SWT.DROP_DOWN);
+		c1 = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		c1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		c1.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {

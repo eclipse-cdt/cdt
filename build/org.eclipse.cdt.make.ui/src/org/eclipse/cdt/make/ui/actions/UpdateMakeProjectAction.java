@@ -17,6 +17,7 @@ import java.util.Vector;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeBuilder;
@@ -37,7 +38,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -171,7 +171,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 					IMakeTargetManager manager = MakeCorePlugin.getDefault().getTargetManager();
 					String[] builder = manager.getTargetBuilders(container.getProject());
 					IMakeTarget target = manager.createTarget(container.getProject(), goal, builder[0]);
-					target.setBuildTarget(goal);
+					target.setBuildAttribute(IMakeTarget.BUILD_TARGET, goal);
 					manager.addTarget(container, target);
 					container.setPersistentProperty(qName, null);
 				}
@@ -223,11 +223,11 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 
 				String property = project[i].getPersistentProperty(qName[LOCATION]);
 				if (property != null) {
-					newInfo.setBuildCommand(new Path(property));
+					newInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, property);
 				}
 				property = project[i].getPersistentProperty(qName[FULL_ARGS]);
 				if (property != null) {
-					newInfo.setBuildArguments(property);
+					newInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, property);
 				}
 				property = project[i].getPersistentProperty(qName[STOP_ERORR]);
 				if (property != null) {

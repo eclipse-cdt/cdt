@@ -12,6 +12,6 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.ui.newui.AbstractPage;
 
-public class Page_Languages extends AbstractPage {
+public class Page_Discovery extends AbstractPage {
 	protected boolean isSingle() { return true; }
 }

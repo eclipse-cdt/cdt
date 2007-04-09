@@ -70,17 +70,25 @@
          <action
                label="%ActionMakeBuildTarget.label"
                class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
-               menubarPath="buildGroup"
+               menubarPath="org.eclipse.cdt.make.ui.menu/gm1"
                enablesFor="1"
                id="org.eclipse.cdt.make.ui.NavigatorBuildTargetAction">
          </action>
          <action
                label="%ActionMakeCreateTarget.label"
                class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
-               menubarPath="buildGroup"
+               menubarPath="org.eclipse.cdt.make.ui.menu/gm1"
                enablesFor="1"
                id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
          </action>
+         <menu
+               id="org.eclipse.cdt.make.ui.menu"
+               label="%Make.targets.menu"
+               path="buildGroup">
+            <groupMarker
+                  name="gm1">
+            </groupMarker>
+         </menu>
          <!--filter
                name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">

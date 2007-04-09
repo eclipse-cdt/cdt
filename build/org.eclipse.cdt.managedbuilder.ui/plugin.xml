@@ -671,7 +671,6 @@
                value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
          </filter>
          <enabledWhen>
-            <and>
             <or>
 		     <instanceof value="org.eclipse.core.resources.IProject"/>
 		     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
@@ -688,8 +687,6 @@
     	        <test property="org.eclipse.cdt.ui.isSource" value="" />
 	         </and>	
 		    </or>
-            <test property="org.eclipse.cdt.ui.toolEditEnabled" value="" />
-		    </and>          
          </enabledWhen>
       </page>
       <page
@@ -703,7 +700,6 @@
                value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
          </filter>
          <enabledWhen>
-            <and>
             <or>
 		     <instanceof value="org.eclipse.core.resources.IProject"/>
 		     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
@@ -720,8 +716,6 @@
     	        <test property="org.eclipse.cdt.ui.isSource" value="" />
 	         </and>	
 		    </or>
-            <test property="org.eclipse.cdt.ui.toolEditEnabled" value="" />
-		    </and>          
          </enabledWhen>
       </page>
 

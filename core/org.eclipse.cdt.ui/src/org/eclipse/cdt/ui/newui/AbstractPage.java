@@ -540,8 +540,12 @@ implements
 	
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		if (visible) handleResize(visible);
-		if (visible) displayedConfig = true;
+		if (visible) {
+			handleResize(visible);
+			displayedConfig = true;
+			if (excludeFromBuildCheck != null && resd != null)
+				excludeFromBuildCheck.setSelection(resd.isExcluded());
+		}
 
 		if (itabs.size() < 1) return;
 		

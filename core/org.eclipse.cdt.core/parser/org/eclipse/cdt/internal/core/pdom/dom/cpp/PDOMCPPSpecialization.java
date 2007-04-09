@@ -144,8 +144,8 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 			try {
 				ICPPTemplateParameter[] params = template.getTemplateParameters();
 				ObjectMap argMap = getArgumentMap();
-				IType[] args = new IType[argMap.size()];
-				for (int i = 0; i < argMap.size(); i++) {
+				IType[] args = new IType[params.length];
+				for (int i = 0; i < params.length; i++) {
 					args[i] = (IType) argMap.get(params[i]);
 				}
 				return args;
@@ -161,7 +161,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		if( args.length == arguments.length ){
 			int i = 0;
 			for(; i < args.length; i++) {
-				if( !( args[i].isSameType( arguments[i] ) ) )
+				if( args[i] == null || !( args[i].isSameType( arguments[i] ) ) )
 					break;
 			}
 			return i == args.length;

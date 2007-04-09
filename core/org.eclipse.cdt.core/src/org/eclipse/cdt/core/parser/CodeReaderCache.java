@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser;
 
 import java.io.File;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.util.ILRUCacheable;
 import org.eclipse.cdt.internal.core.util.LRUCache;
@@ -39,7 +40,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 	/**
 	 * The string used to identify this CodeReaderCache.  Mainly used for preferences.
 	 */
-	public static final String CODE_READER_BUFFER="CODE_READER_CACHE"; //$NON-NLS-1$
+	public static final String CODE_READER_BUFFER = CCorePlugin.PLUGIN_ID + ".codeReaderCache"; //$NON-NLS-1$
 	
 	/**
 	 * The default size of the cache in MB.

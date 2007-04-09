@@ -980,7 +980,7 @@
               enablesFor="+"
               id="org.eclipse.cdt.ui.buildConfigMenuAction"
               label="%BuildConfigMenuAction.label"
-              menubarPath="project/build"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm1"
               style="pulldown"
               tooltip="%BuildConfigAction.tooltip"/>
 
@@ -989,14 +989,14 @@
               enablesFor="+"
               id="org.eclipse.cdt.ui.manageConfigsAction2"
               label="%ManageConfigAction.label"
-              menubarPath="project/build"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm1"
               />
         <action
               class="org.eclipse.cdt.ui.actions.DeleteResConfigsAction"
               enablesFor="+"
               id="org.eclipse.cdt.ui.deleteConfigsAction2"
               label="%DeleteRcConfigAction.label"
-              menubarPath="project/build"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm1"
               />
         <action
               class="org.eclipse.cdt.ui.actions.ExcludeFromBuildAction"
@@ -1005,6 +1005,14 @@
               label="%ExcludeAction.label"
               menubarPath="project/build"
               />
+        <menu
+              id="org.eclipse.cdt.ui.prjmenu"
+              label="%Configurations.menu"
+              path="project/build">
+           <groupMarker
+                 name="gm1">
+           </groupMarker>
+        </menu>
      </actionSet>
      <actionSet
             label="%CElementCreationActionSet.label"

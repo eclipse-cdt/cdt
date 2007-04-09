@@ -301,11 +301,19 @@
       <actionSet
             label="%ActionSetMake.label"
             id="org.eclipse.cdt.make.ui.makeTargetActionSet">
-         <action
+            <menu
+               id="org.eclipse.cdt.make.ui.prjmenu"
+               label="%Make.Target.label"
+               path="project/additions">
+               <groupMarker
+                  name="gm1">
+               </groupMarker>
+            </menu>         
+            <action
                definitionId="org.eclipse.cdt.make.ui.targetBuildCommand"
                label="%ActionMakeBuildTarget.label"
                class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
-               menubarPath="project/additions"
+               menubarPath="project/org.eclipse.cdt.make.ui.prjmenu/gm1"
                enablesFor="1"
                id="org.eclipse.cdt.make.ui.makeTargetAction">
             <enablement>
@@ -326,7 +334,7 @@
                definitionId="org.eclipse.cdt.make.ui.targetCreateCommand"
                label="%ActionMakeCreateTarget.label"
                class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
-               menubarPath="project/additions"
+               menubarPath="project/org.eclipse.cdt.make.ui.prjmenu/gm1"
                enablesFor="1"
                id="org.eclipse.cdt.make.ui.createTargetAction">
             <enablement>

@@ -147,7 +147,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			ICPPBase[] pdomBases = ((ICPPClassType) getSpecializedBinding()).getBases();
 
 			if (pdomBases != null) {
-				ICPPBase[] result = new ICPPBase[pdomBases.length];
+				ICPPBase[] result = null;
 				
 				for (int i = 0; i < pdomBases.length; i++) {
 					PDOMCPPBase pdomBase = (PDOMCPPBase) pdomBases[i];
@@ -155,7 +155,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 					type = CPPTemplates.instantiateType(type, getArgumentMap());
 					type = CPPSemantics.getUltimateType(type, false);
 					if (type instanceof IBinding) {
-						result[i] = pdomBase.createSpecialization((IBinding)type);
+						result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result,
+								pdomBase.createSpecialization((IBinding) type));
 					}
 				}
 				
@@ -339,8 +340,42 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return null;
 	}
 	
-	//ICPPClassScope unimplemented
-	public ICPPMethod[] getImplicitMethods() { fail(); return null; }
+	private static class MethodCollector implements IPDOMVisitor {
+		private final List methods;
+		private final boolean acceptImplicit;
+		private final boolean acceptAll;
+		public MethodCollector(boolean acceptImplicit) {
+			this(acceptImplicit, true);
+		}
+		public MethodCollector(boolean acceptImplicit, boolean acceptExplicit) {
+			this.methods = new ArrayList();
+			this.acceptImplicit= acceptImplicit;
+			this.acceptAll= acceptImplicit && acceptExplicit;
+		}
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof ICPPMethod) {
+				if (acceptAll || ((ICPPMethod) node).isImplicit() == acceptImplicit) {
+					methods.add(node);
+				}
+			}
+			return false; // don't visit the method
+		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		public ICPPMethod[] getMethods() {
+			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]); 
+		}
+	}
+	
+	public ICPPMethod[] getImplicitMethods() {
+		try {
+			MethodCollector methods = new MethodCollector(true, false);
+			accept(methods);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			return new ICPPMethod[0];
+		}
+	}
 
 	public IIndexBinding getScopeBinding() {
 		return this;

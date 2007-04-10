@@ -82,7 +82,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		ICPPBase[] pdomBases = ((ICPPClassType) getTemplateDefinition()).getBases();
 
 		if (pdomBases != null) {
-			ICPPBase[] result = new ICPPBase[pdomBases.length];
+			ICPPBase[] result = null;
 			
 			for (int i = 0; i < pdomBases.length; i++) {
 				PDOMCPPBase pdomBase = (PDOMCPPBase) pdomBases[i];
@@ -90,7 +90,8 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 				type = CPPTemplates.instantiateType(type, getArgumentMap());
 				type = CPPSemantics.getUltimateType(type, false);
 				if (type instanceof IBinding) {
-					result[i] = pdomBase.createSpecialization((IBinding)type);
+					result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result,
+							pdomBase.createSpecialization((IBinding) type));
 				}
 			}
 			

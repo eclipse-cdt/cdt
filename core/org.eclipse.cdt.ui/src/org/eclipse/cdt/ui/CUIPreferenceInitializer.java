@@ -14,7 +14,6 @@ import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
-import org.eclipse.cdt.internal.ui.preferences.CParserPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CodeAssistPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage;
@@ -41,7 +40,6 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		CPluginPreferencePage.initDefaults(store);
 		BuildConsolePreferencePage.initDefaults(store);
 		CView.initDefaults(store);
-		CParserPreferencePage.initDefaults(store);
 		CEditorPreferencePage.initDefaults(store);
 		CodeAssistPreferencePage.initDefaults(store);
 		SemanticHighlightings.initDefaults(store);

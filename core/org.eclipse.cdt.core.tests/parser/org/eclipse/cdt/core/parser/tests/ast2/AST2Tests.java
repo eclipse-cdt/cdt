@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -151,13 +152,16 @@ public class AST2Tests extends AST2BaseTest {
         assertNoProblemBindings( col );
     }
     
-    protected IASTTranslationUnit parseAndCheckBindings( String code ) throws Exception
-    {
-        IASTTranslationUnit tu = parse( code, ParserLanguage.C ); 
+    protected IASTTranslationUnit parseAndCheckBindings( String code, ParserLanguage lang ) throws Exception {
+        IASTTranslationUnit tu = parse( code, lang ); 
         CNameCollector col = new CNameCollector();
         tu.accept(col);
         assertNoProblemBindings( col );
         return tu;
+    }
+    
+    protected IASTTranslationUnit parseAndCheckBindings( String code ) throws Exception {
+        return parseAndCheckBindings(code, ParserLanguage.C);
     }
     
     public void testBasicFunction() throws Exception {
@@ -3622,5 +3626,16 @@ public class AST2Tests extends AST2BaseTest {
     		assertTrue(lang.toString(),  binding instanceof IVariable);
     		assertFalse(lang.toString(), binding instanceof IProblemBinding);
     	}
+    }
+    
+    public void testBug181735() throws Exception {
+    	String code=
+    			"int (*f)(int);\n"
+			+	"int g(int n) {return n;}\n"
+			+   "int g(int n, int m) {return n;}\n"
+			+   "void foo() { f=g; }";
+    	
+    	for (int i = 0; i < LANGUAGES.length; i++)
+    		parseAndCheckBindings(code, LANGUAGES[i]);
     }
 }

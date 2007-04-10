@@ -2572,7 +2572,7 @@ public class CPPSemantics {
             return null;
         
         IASTIdExpression idExp = (IASTIdExpression) name.getParent();
-        IASTNode node = idExp.getParent();
+        IASTNode node = idExp;
         ASTNodeProperty prop = null;
         while( node != null ){
             prop = node.getPropertyInParent();

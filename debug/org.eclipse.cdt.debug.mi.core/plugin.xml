@@ -11,24 +11,21 @@
             id="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
             modes="run,core,attach"
             name="%GDBMIDebugger.name"
-            platform="*">
-      </debugger>
+            platform="*"/>
       <debugger
             platform="win32"
             name="%CygwinGDBDebugger.name"
             modes="run,core,attach"
             cpu="native"
             class="org.eclipse.cdt.debug.mi.core.CygwinGDBCDIDebugger2"
-            id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
-      </debugger>
+            id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger"/>
       <debugger
             platform="*"
             name="%GDBServer.name"
             modes="run"
             cpu="*"
             class="org.eclipse.cdt.debug.mi.core.GDBServerCDIDebugger2"
-            id="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger">
-      </debugger>
+            id="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"/>
       <debugger
             class="org.eclipse.cdt.debug.mi.core.GDBCDIDebugger2"
             cpu="native"

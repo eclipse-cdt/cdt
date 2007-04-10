@@ -3,14 +3,14 @@
 <schema targetNamespace="org.eclipse.cdt.debug.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.debug.ui" id="breakpointActionPage" name="Breakpoint Action UI Page"/>
+         <meta.schema plugin="org.eclipse.cdt.debug.ui" id="BreakpointActionPage" name="Breakpoint Action UI Page"/>
       </appInfo>
       <documentation>
          This extension point provides a mechanism for contributing UI to define and edit a breakpoint action.
       </documentation>
    </annotation>
 
-    <element name="extension">
+   <element name="extension">
       <complexType>
          <sequence>
             <element ref="actionPage"/>
@@ -34,7 +34,7 @@
                </documentation>
             </annotation>
          </attribute>
-          <attribute name="class" type="string">
+         <attribute name="class" type="string">
             <annotation>
                <documentation>
                   
@@ -50,7 +50,7 @@
          </attribute>
       </complexType>
    </element>
-   
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>

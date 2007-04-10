@@ -7,18 +7,15 @@
       <debuggerPage
             class="org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CDebugger"
-            id="org.eclipse.cdt.debug.mi.GDBDebuggerPage">
-      </debuggerPage>
+            id="org.eclipse.cdt.debug.mi.GDBDebuggerPage"/>
       <debuggerPage
             class="org.eclipse.cdt.debug.mi.internal.ui.CygwinDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CygwinCDebugger"
-            id="org.eclipse.cdt.debug.mi.CygwinDebuggerPage">
-      </debuggerPage>
+            id="org.eclipse.cdt.debug.mi.CygwinDebuggerPage"/>
       <debuggerPage
             class="org.eclipse.cdt.debug.mi.internal.ui.GDBServerDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"
-            id="org.eclipse.cdt.debug.mi.GDBServerDebuggerPage">
-      </debuggerPage>
+            id="org.eclipse.cdt.debug.mi.GDBServerDebuggerPage"/>
       <debuggerPage
             class="org.eclipse.cdt.debug.mi.internal.ui.StandardGDBDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"

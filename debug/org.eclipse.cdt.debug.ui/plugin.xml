@@ -3,7 +3,7 @@
 <plugin>
 
      <extension-point id="CDebuggerPage" name="%CDebuggerPage" schema="schema/CDebuggerPage.exsd"/>
-     <extension-point id="breakpointActionPage" name="%BreakpointActionPage" schema="schema/BreakpointActionPage.exsd"/>
+     <extension-point id="BreakpointActionPage" name="%BreakpointActionPage" schema="schema/BreakpointActionPage.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -1315,68 +1315,58 @@
       <actionType
             name="%SoundAction.name"
             class="org.eclipse.cdt.debug.ui.breakpointactions.SoundAction"
-            id="org.eclipse.cdt.debug.ui.breakpointactions.SoundAction">
-      </actionType>      
+            id="org.eclipse.cdt.debug.ui.breakpointactions.SoundAction"/>
    </extension>
  <extension
          point="org.eclipse.cdt.debug.core.BreakpointActionType">
       <actionType
             name="%LogAction.name"
             class="org.eclipse.cdt.debug.ui.breakpointactions.LogAction"
-            id="org.eclipse.cdt.debug.ui.breakpointactions.LogAction">
-      </actionType>      
+            id="org.eclipse.cdt.debug.ui.breakpointactions.LogAction"/>
    </extension>
  <extension
          point="org.eclipse.cdt.debug.core.BreakpointActionType">
       <actionType
             name="%ResumeAction.name"
             class="org.eclipse.cdt.debug.ui.breakpointactions.ResumeAction"
-            id="org.eclipse.cdt.debug.ui.breakpointactions.ResumeAction">
-      </actionType>      
+            id="org.eclipse.cdt.debug.ui.breakpointactions.ResumeAction"/>
    </extension>
-<extension
+ <extension
          point="org.eclipse.cdt.debug.core.BreakpointActionType">
       <actionType
             name="%ExternalToolAction.name"
             class="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction"
-            id="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction">
-      </actionType>      
+            id="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction"/>
    </extension>
-
  <extension
-         point="org.eclipse.cdt.debug.ui.breakpointActionPage">
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
       <actionPage
              class="org.eclipse.cdt.debug.ui.breakpointactions.SoundActionPage"
             id="org.eclipse.cdt.debug.ui.breakpointactions.SoundActionPage"
-            actionType="org.eclipse.cdt.debug.ui.breakpointactions.SoundAction">
-      </actionPage>      
+            actionType="org.eclipse.cdt.debug.ui.breakpointactions.SoundAction"/>
    </extension>
 
  <extension
-         point="org.eclipse.cdt.debug.ui.breakpointActionPage">
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
       <actionPage
             class="org.eclipse.cdt.debug.ui.breakpointactions.LogActionPage"
             id="org.eclipse.cdt.debug.ui.breakpointactions.LogActionPage"
-            actionType="org.eclipse.cdt.debug.ui.breakpointactions.LogAction">
-      </actionPage>      
+            actionType="org.eclipse.cdt.debug.ui.breakpointactions.LogAction"/>
    </extension>
 
 <extension
-         point="org.eclipse.cdt.debug.ui.breakpointActionPage">
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
       <actionPage
             class="org.eclipse.cdt.debug.ui.breakpointactions.ResumeActionPage"
             id="org.eclipse.cdt.debug.ui.breakpointactions.ResumeActionPage"
-            actionType="org.eclipse.cdt.debug.ui.breakpointactions.ResumeAction">
-      </actionPage>      
+            actionType="org.eclipse.cdt.debug.ui.breakpointactions.ResumeAction"/>
    </extension>
-
 <extension
-         point="org.eclipse.cdt.debug.ui.breakpointActionPage">
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
       <actionPage
             class="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolActionPage"
             id="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolActionPage"
-            actionType="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction">
-      </actionPage>      
+            actionType="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

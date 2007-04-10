@@ -65,6 +65,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui"; //$NON-NLS-1$
 
+	public static final String CDEBUGGER_PAGE_EXTENSION_POINT_ID = "CDebuggerPage";
+	public static final String DEBUGGER_PAGE_ELEMENT = "debuggerPage";
+	
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
 
@@ -173,11 +176,16 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	protected void initializeDebuggerPageMap() {
 		fDebuggerPageMap = new HashMap( 10 );
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( PLUGIN_ID, "CDebuggerPage" ); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( PLUGIN_ID, CDEBUGGER_PAGE_EXTENSION_POINT_ID ); //$NON-NLS-1$
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		for( int i = 0; i < infos.length; i++ ) {
-			String id = infos[i].getAttribute( "debuggerID" ); //$NON-NLS-1$
-			fDebuggerPageMap.put( id, infos[i] );
+			IConfigurationElement info = infos[i];
+			if (info.getName().equals(DEBUGGER_PAGE_ELEMENT)) {
+				String id = info.getAttribute( "debuggerID" ); //$NON-NLS-1$
+				if (id != null) {
+					fDebuggerPageMap.put( id, info );
+				}
+			}
 		}
 	}
 

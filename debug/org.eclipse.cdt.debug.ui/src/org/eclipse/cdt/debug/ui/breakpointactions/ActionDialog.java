@@ -36,7 +36,9 @@ import org.eclipse.swt.widgets.Text;
 
 public class ActionDialog extends Dialog {
 
-	public static final String BREAKPOINT_ACTION_PAGE_SIMPLE_ID = "breakpointActionPage"; //$NON-NLS-1$
+	public static final String BREAKPOINT_ACTION_PAGE_EXTENSION_POINT_ID = "BreakpointActionPage"; //$NON-NLS-1$
+	
+	public static final String ACTION_PAGE_ELEMENT = "actionPage"; //$NON-NLS-1$
 
 	private static final String ACTION_DIALOG_LAST_SELECTED = "ActionDialog.lastSelectedAction"; //$NON-NLS-1$
 
@@ -141,10 +143,13 @@ public class ActionDialog extends Dialog {
 			for (int i = 0; i < actionExtensions.length; i++) {
 				IConfigurationElement[] elements = actionExtensions[i].getConfigurationElements();
 				for (int j = 0; j < elements.length; j++) {
-					String actionTypeName = elements[j].getAttribute("name"); //$NON-NLS-1$
-					combo.add(actionTypeName);
-					if (actionTypeName.equals(lastTypeName))
-						lastSelectedActionTypeIndex = i;
+					IConfigurationElement element = elements[j];
+					if (element.getName().equals(CDebugCorePlugin.ACTION_TYPE_ELEMENT)) {
+						String actionTypeName = element.getAttribute("name"); //$NON-NLS-1$
+						combo.add(actionTypeName);
+						if (actionTypeName.equals(lastTypeName))
+							lastSelectedActionTypeIndex = i;
+					}
 				}
 			}
 
@@ -210,9 +215,12 @@ public class ActionDialog extends Dialog {
 			for (int i = 0; i < actionExtensions.length && selectedElement == null; i++) {
 				IConfigurationElement[] elements = actionExtensions[i].getConfigurationElements();
 				for (int j = 0; j < elements.length && selectedElement == null; j++) {
-					if (elementCount == selectedTypeIndex)
-						selectedElement = elements[j];
-					elementCount++;
+					IConfigurationElement element = elements[j];
+					if (element.getName().equals(CDebugCorePlugin.ACTION_TYPE_ELEMENT)) {
+						if (elementCount == selectedTypeIndex)
+							selectedElement = element;
+						elementCount++;
+					}
 				}
 			}
 
@@ -239,7 +247,7 @@ public class ActionDialog extends Dialog {
 
 	public IExtension[] getBreakpointActionPageExtensions() {
 		if (breakpointActionPageExtensions == null) {
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugUIPlugin.PLUGIN_ID, BREAKPOINT_ACTION_PAGE_SIMPLE_ID);
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugUIPlugin.PLUGIN_ID, BREAKPOINT_ACTION_PAGE_EXTENSION_POINT_ID);
 			if (point == null)
 				breakpointActionPageExtensions = new IExtension[0];
 			else {
@@ -259,9 +267,11 @@ public class ActionDialog extends Dialog {
 			for (int i = 0; i < actionExtensions.length && actionPageResult == null; i++) {
 				IConfigurationElement[] elements = actionExtensions[i].getConfigurationElements();
 				for (int j = 0; j < elements.length && actionPageResult == null; j++) {
-
-					if (elements[j].getAttribute("actionType").equals(breakpointAction.getIdentifier())) { //$NON-NLS-1$
-						actionPageResult = (IBreakpointActionPage) elements[j].createExecutableExtension("class"); //$NON-NLS-1$
+					IConfigurationElement element = elements[j];
+					if (element.getName().equals(ACTION_PAGE_ELEMENT)) {
+						if (element.getAttribute("actionType").equals(breakpointAction.getIdentifier())) { //$NON-NLS-1$
+							actionPageResult = (IBreakpointActionPage) element.createExecutableExtension("class"); //$NON-NLS-1$
+						}
 					}
 				}
 			}

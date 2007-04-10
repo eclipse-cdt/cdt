@@ -65,11 +65,13 @@ public class BreakpointActionManager {
 			for (int i = 0; i < actionExtensions.length && action == null; i++) {
 				IConfigurationElement[] elements = actionExtensions[i].getConfigurationElements();
 				for (int j = 0; j < elements.length && action == null; j++) {
-
-					if (elements[j].getAttribute("class").equals(className)) { //$NON-NLS-1$
-						action = (IBreakpointAction) elements[j].createExecutableExtension("class"); //$NON-NLS-1$
-						action.setName(name);
-						CDebugCorePlugin.getDefault().getBreakpointActionManager().addAction(action);
+					IConfigurationElement element = elements[j];
+					if (element.getName().equals(CDebugCorePlugin.ACTION_TYPE_ELEMENT)) {
+						if (element.getAttribute("class").equals(className)) { //$NON-NLS-1$
+							action = (IBreakpointAction) element.createExecutableExtension("class"); //$NON-NLS-1$
+							action.setName(name);
+							CDebugCorePlugin.getDefault().getBreakpointActionManager().addAction(action);
+						}
 					}
 				}
 			}
@@ -121,7 +123,7 @@ public class BreakpointActionManager {
 
 	public IExtension[] getBreakpointActionExtensions() {
 		if (breakpointActionExtensions == null) {
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugCorePlugin.PLUGIN_ID, CDebugCorePlugin.BREAKPOINT_ACTION_SIMPLE_ID);
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugCorePlugin.PLUGIN_ID, CDebugCorePlugin.BREAKPOINT_ACTION_EXTENSION_POINT_ID);
 			if (point == null)
 				breakpointActionExtensions = new IExtension[0];
 			else {

@@ -76,8 +76,12 @@ public class CDebugCorePlugin extends Plugin {
 	 * Breakpoint action manager.
 	 */
 	private BreakpointActionManager breakpointActionManager;
+
+	public static final String CDEBUGGER_EXTENSION_POINT_ID = "CDebugger"; //$NON-NLS-1$
+	public static final String DEBUGGER_ELEMENT = "debugger"; //$NON-NLS-1$
 	
-	public static final String BREAKPOINT_ACTION_SIMPLE_ID = "BreakpointActionType"; //$NON-NLS-1$
+	public static final String BREAKPOINT_ACTION_EXTENSION_POINT_ID = "BreakpointActionType"; //$NON-NLS-1$
+	public static final String ACTION_TYPE_ELEMENT = "actionType"; //$NON-NLS-1$	
 	
 	/**
 	 * Dummy source lookup director needed to manage common source containers.
@@ -165,13 +169,15 @@ public class CDebugCorePlugin extends Plugin {
 	}
 
 	private void initializeDebugConfiguration() {
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( getUniqueIdentifier(), "CDebugger" ); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( getUniqueIdentifier(), CDEBUGGER_EXTENSION_POINT_ID ); //$NON-NLS-1$
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		fDebugConfigurations = new HashMap( infos.length );
 		for( int i = 0; i < infos.length; i++ ) {
 			IConfigurationElement configurationElement = infos[i];
-			DebugConfiguration configType = new DebugConfiguration( configurationElement );
-			fDebugConfigurations.put( configType.getID(), configType );
+			if (configurationElement.getName().equals(DEBUGGER_ELEMENT)) {
+				DebugConfiguration configType = new DebugConfiguration( configurationElement );
+				fDebugConfigurations.put( configType.getID(), configType );
+			}
 		}
 	}
 

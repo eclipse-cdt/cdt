@@ -34,8 +34,9 @@ public class BuildTargetDialog extends Dialog {
 	TargetListViewerPart targetPart;
 	IContainer fContainer;
 
-	public BuildTargetDialog(Shell shell, IContainer container) {
-		super(shell);
+	public BuildTargetDialog(Shell parent, IContainer container) {
+		super(parent);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fContainer = container;
 		targetPart = new TargetListViewerPart(fContainer);
 	}

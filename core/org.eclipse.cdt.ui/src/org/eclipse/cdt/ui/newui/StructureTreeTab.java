@@ -352,7 +352,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "getName()", cd.getName()); //$NON-NLS-1$
 		expand(ti, "getResourceDatas()", cd.getResourceDatas()); //$NON-NLS-1$
 		update(ti, "getRootFolderData()", cd.getRootFolderData()); //$NON-NLS-1$
-		expand(ti, "getSourcePaths()", cd.getSourcePaths()); //$NON-NLS-1$
+//		expand(ti, "getSourcePaths()", cd.getSourcePaths()); //$NON-NLS-1$
 		update(ti, "getTargetPlatformData()", cd.getTargetPlatformData()); //$NON-NLS-1$
 		create(ti,"getType()",cd.getType()); //$NON-NLS-1$
 		create(ti,"isValid()",cd.isValid()); //$NON-NLS-1$
@@ -388,7 +388,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		create(ti, "getName()", bd.getName()); //$NON-NLS-1$
 		update(ti,"getPath()",bd.getPath()); //$NON-NLS-1$ 
 		create(ti,"getType()",bd.getType()); //$NON-NLS-1$
-		create(ti,"isExcluded()",bd.isExcluded()); //$NON-NLS-1$
+//		create(ti,"isExcluded()",bd.isExcluded()); //$NON-NLS-1$
 		create(ti,"isValid()",bd.isValid()); //$NON-NLS-1$
 		return ti;
 	}

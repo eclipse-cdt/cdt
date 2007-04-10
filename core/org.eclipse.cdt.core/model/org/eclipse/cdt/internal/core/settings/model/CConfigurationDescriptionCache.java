@@ -41,10 +41,12 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
@@ -57,7 +59,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	private List fChildList = new ArrayList();
 	private CConfigurationSpecSettings fSpecSettings;
 	private CConfigurationData fData;
-	private ICSourceEntry fSourceEntries[];
+	private ICSourceEntry fProjSourceEntries[];
 	private StorableCdtVariables fMacros;
 	private boolean fDataLoadded;
 	private boolean fInitializing;
@@ -346,11 +348,19 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	}
 
 	public ICSourceEntry[] getSourceEntries() {
-		if(fSourceEntries == null){
-			IPath[] paths = getSourcePaths();
-			fSourceEntries = fRcHolder.calculateSourceEntriesFromPaths(getProjectDescription().getProject(), paths);
+		initSourceEntries();
+		return (ICSourceEntry[])fProjSourceEntries.clone();
+	}
+	
+	private void initSourceEntries(){
+		if(fProjSourceEntries == null){
+			IProject project = getProject(); 
+			fProjSourceEntries = CDataUtil.adjustEntries(fSourceEntries, true, project);
 		}
-		return fSourceEntries;
+	}
+	
+	private IProject getProject(){
+		return isPreferenceConfiguration() ? null : getProjectDescription().getProject();
 	}
 
 	public void setSourceEntries(ICSourceEntry[] entries) {
@@ -451,4 +461,15 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return super.filterRcDatasToCopy(base);
 	}
 
+	boolean isExcluded(IPath path){
+//		if(path.segmentCount() == 0)
+//			return false;
+
+		initSourceEntries();
+		IProject project = getProject();
+		if(project != null)
+			path = project.getFullPath().append(path);
+		
+		return CDataUtil.isExcluded(path, fProjSourceEntries);
+	}
 }

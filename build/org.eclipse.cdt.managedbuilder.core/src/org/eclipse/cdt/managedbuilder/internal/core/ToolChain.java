@@ -994,8 +994,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				for (j = 0; j < tools.length; j++) {
 					ITool superTool = tool.getSuperClass();
 					if(superTool != null){
-						if(!superTool.isExtensionElement())
-							superTool = superTool.getSuperClass();
+						superTool = ManagedBuildManager.getExtensionTool(superTool);
+//						if(!superTool.isExtensionElement())
+//							superTool = superTool.getSuperClass();
 						
 						if(superTool != null && superTool.getId().equals(tools[j].getId())){
 							tools[j] = tool;

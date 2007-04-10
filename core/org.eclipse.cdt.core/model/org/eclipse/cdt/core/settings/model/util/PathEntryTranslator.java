@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IMacroFileEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -336,7 +338,7 @@ public class PathEntryTranslator {
 		ResourceInfo fRcInfo;
 		List fResolvedEntries;
 		KindBasedStore fLangEntries;
-		boolean fIsExcluded;
+//		boolean fIsExcluded;
 
 		private RcDesInfo(ResourceInfo rcInfo){
 			this.fRcInfo = rcInfo;
@@ -344,13 +346,13 @@ public class PathEntryTranslator {
 			fLangEntries = new KindBasedStore();
 		}
 		
-		public boolean isExcluded(){
-			return fIsExcluded;
-		}
-		
-		public void setExcluded(boolean excluded){
-			fIsExcluded = excluded;
-		}
+//		public boolean isExcluded(){
+//			return fIsExcluded;
+//		}
+//		
+//		public void setExcluded(boolean excluded){
+//			fIsExcluded = excluded;
+//		}
 		
 		public ResolvedEntry[] getResolvedEntries(){
 			return (ResolvedEntry[])fResolvedEntries.toArray(new ResolvedEntry[fResolvedEntries.size()]);
@@ -1271,184 +1273,184 @@ public class PathEntryTranslator {
 		return addPathEntries(rEntries, op);
 	}
 	
-	public static ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, PathSettingsContainer rcDatas, IPath paths[]){
-		if(paths == null || paths.length == 0)
-			paths = new IPath[]{new Path("")}; //$NON-NLS-1$
-		
-//		Set set = new HashSet(paths.length);
-		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
-		IPath pi, pj;
-		List entriesList = new ArrayList(paths.length);
-		IPath projPath = project != null ? project.getFullPath() : null;
-		
-		for(int i = 0; i < paths.length; i++){
-			pi = paths[i];
-//			set.clear();
-			cr.removeChildren();
-			cr.setValue(null);
-			for(int j = 0; j < paths.length; j++){
-				pj = paths[j];
-				if(pi != pj && pi.isPrefixOf(pj)){
-//					set.add(pj);
-					cr.getChildContainer(pj, true, true);
-				}
-			}
-			
-			PathSettingsContainer children[] = rcDatas.getDirectChildrenForPath(pi);
-			for(int k = 0; k < children.length; k++){
-				PathSettingsContainer child = children[k];
-				IPath childPath = child.getPath();
-				PathSettingsContainer parentExclusion = cr.getChildContainer(childPath, false, false);
-				IPath parentExclusionPath = parentExclusion.getPath();
-				if(parentExclusionPath.segmentCount() > 0 && !parentExclusionPath.equals(childPath) && parentExclusionPath.isPrefixOf(childPath))
-					continue;
-				
-				CResourceData rcData = (CResourceData)child.getValue();
-				if(rcData.isExcluded()){
-//					set.add(rcDes.getPath());
-					cr.getChildContainer(childPath, true, true);
-				}
-			}
-			
-			PathSettingsContainer exclusions[] = cr.getChildren(false);
-//			IPath exlusionPaths[] = new IPath[set.size()];
-			IPath exlusionPaths[] = new IPath[exclusions.length];
-//			int k = 0;
-			int segCount = pi.segmentCount();
-//			for(Iterator iter = set.iterator(); iter.hasNext(); k++) {
-//				IPath path = (IPath)iter.next();
-//				exlusionPaths[k] = path.removeFirstSegments(segCount).makeRelative();
+//	public static ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, PathSettingsContainer rcDatas, IPath paths[]){
+//		if(paths == null || paths.length == 0)
+//			paths = new IPath[]{new Path("")}; //$NON-NLS-1$
+//		
+////		Set set = new HashSet(paths.length);
+//		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
+//		IPath pi, pj;
+//		List entriesList = new ArrayList(paths.length);
+//		IPath projPath = project != null ? project.getFullPath() : null;
+//		
+//		for(int i = 0; i < paths.length; i++){
+//			pi = paths[i];
+////			set.clear();
+//			cr.removeChildren();
+//			cr.setValue(null);
+//			for(int j = 0; j < paths.length; j++){
+//				pj = paths[j];
+//				if(pi != pj && pi.isPrefixOf(pj)){
+////					set.add(pj);
+//					cr.getChildContainer(pj, true, true);
+//				}
 //			}
-			for(int k = 0; k < exlusionPaths.length; k++) {
-				exlusionPaths[k] = exclusions[k].getPath().removeFirstSegments(segCount).makeRelative();
-			}
-			if(projPath != null)
-				pi = projPath.append(pi);
-			entriesList.add(new CSourceEntry(pi, exlusionPaths, 0));
-		}
-
-		return (ICSourceEntry[])entriesList.toArray(new ICSourceEntry[entriesList.size()]);
-	}
-	
-	private IPath[] setSourceEntries(PathSettingsContainer crontainer, List res) {
-//		ICSourceEntry entry;
-		IPath entryPath;
-//		IPath paths[];
-		Set srcPathSet = new HashSet();
-		IPath projPath = fProject != null ? fProject.getFullPath() : null;
-		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
-		cr.setValue(Boolean.TRUE);
-
-//		Map exclusionMap = new HashMap();
-		
-//		HashSet pathSet = new HashSet();
-		for(Iterator iter = res.iterator(); iter.hasNext();){
-			ResolvedEntry re = (ResolvedEntry)iter.next();
-			ResourceInfo rcInfo = re.getResourceInfo();
-			entryPath = rcInfo.fRc.getFullPath();
-			if(projPath != null){
-				if(projPath.isPrefixOf(entryPath)){
-					entryPath = entryPath.removeFirstSegments(projPath.segmentCount());
-				} else {
-					continue;
-				}
-			} 
-//			else {
-//				if(entryPath.segmentCount() > 0)
-//					entryPath = entryPath.removeFirstSegments(1);
-//				else
+//			
+//			PathSettingsContainer children[] = rcDatas.getDirectChildrenForPath(pi);
+//			for(int k = 0; k < children.length; k++){
+//				PathSettingsContainer child = children[k];
+//				IPath childPath = child.getPath();
+//				PathSettingsContainer parentExclusion = cr.getChildContainer(childPath, false, false);
+//				IPath parentExclusionPath = parentExclusion.getPath();
+//				if(parentExclusionPath.segmentCount() > 0 && !parentExclusionPath.equals(childPath) && parentExclusionPath.isPrefixOf(childPath))
 //					continue;
+//				
+//				CResourceData rcData = (CResourceData)child.getValue();
+//				if(rcData.isExcluded()){
+////					set.add(rcDes.getPath());
+//					cr.getChildContainer(childPath, true, true);
+//				}
 //			}
-			if(srcPathSet.add(entryPath)){
-	//			exclusionMap.put(entryPath, Boolean.TRUE);
-				PathSettingsContainer entryCr = cr.getChildContainer(entryPath, true, true);
-				entryCr.setValue(Boolean.TRUE);
+//			
+//			PathSettingsContainer exclusions[] = cr.getChildren(false);
+////			IPath exlusionPaths[] = new IPath[set.size()];
+//			IPath exlusionPaths[] = new IPath[exclusions.length];
+////			int k = 0;
+//			int segCount = pi.segmentCount();
+////			for(Iterator iter = set.iterator(); iter.hasNext(); k++) {
+////				IPath path = (IPath)iter.next();
+////				exlusionPaths[k] = path.removeFirstSegments(segCount).makeRelative();
+////			}
+//			for(int k = 0; k < exlusionPaths.length; k++) {
+//				exlusionPaths[k] = exclusions[k].getPath().removeFirstSegments(segCount).makeRelative();
+//			}
+//			if(projPath != null)
+//				pi = projPath.append(pi);
+//			entriesList.add(new CSourceEntry(pi, exlusionPaths, 0));
+//		}
+//
+//		return (ICSourceEntry[])entriesList.toArray(new ICSourceEntry[entriesList.size()]);
+//	}
 	
-				ResourceInfo[] filters = re.getFilterInfos();
-				
-//				paths = entry.getExclusionPatterns();
-				
-				for(int j = 0; j < filters.length; j++){
-					IPath path = filters[j].fRc.getFullPath();
-					path = path.removeFirstSegments(entryPath.segmentCount());
-					PathSettingsContainer exclusion = entryCr.getChildContainer(path, true, true);
-					if(exclusion.getValue() == null)
-						exclusion.setValue(Boolean.FALSE);
-	//				if(null == exclusionMap.get(path))
-	//					exclusionMap.put(path, Boolean.FALSE);
-				}
-			}
-		}
-
-//		CConfigurationData data = getConfigurationData(true);
-//		data.setSourcePaths((IPath[])srcPathSet.toArray(new IPath[srcPathSet.size()]));
-//		ICResourceDescription rcDess[] = getResourceDescriptions();
-//		ICResourceDescription rcDes;
-		Set pathSet = new HashSet();
-		PathSettingsContainer children[] = crontainer.getChildren(true);
-		
-		for(int i = 0; i < children.length; i++){
-			PathSettingsContainer child = children[i];
-			RcDesInfo rcDesInfo = (RcDesInfo)child.getValue();
-//			rcDes = rcDess[i];
-			IPath path  = child.getPath();
-			pathSet.add(path);
-//			Boolean b = (Boolean)exclusionMap.remove(path);
-			Boolean b = (Boolean)cr.getChildContainer(path, false, false).getValue();
-			assert (b != null);
-			if(Boolean.TRUE == b) {
-				if(rcDesInfo.isExcluded())
-					rcDesInfo.setExcluded(false);
-			} else {
-				if(path.segmentCount() != 0)
-					rcDesInfo.setExcluded(true);
-			}
-		}
-		
-		PathSettingsContainer crs[] = cr.getChildren(true);
-		for(int i= 0; i < crs.length; i++){
-			PathSettingsContainer c = crs[i];
-			IPath path = c.getPath();
-			if(!pathSet.remove(path)){
-				Boolean b = (Boolean)c.getValue();
-				assert (b != null);
-				PathSettingsContainer baseCr = crontainer.getChildContainer(path, false, false); 
-				RcDesInfo baseInfo = (RcDesInfo)baseCr.getValue();
-				if(b == Boolean.TRUE){
-					if(baseInfo.isExcluded()){
-						RcDesInfo newInfo = new RcDesInfo(findResourceInfo(fProject, path, true));
-						PathSettingsContainer newCr = crontainer.getChildContainer(path, true, true);
-						newCr.setValue(newInfo);
-//						if(newInfo == null){
-//							ICResourceDescription fo = getResourceDescription(path, false);
-//							if(fo.getType() == ICSettingBase.SETTING_FILE){
-//								fo = getResourceDescription(path.removeLastSegments(1), false);
-//							}
-//							newDes = createFolderDescription(path, (ICFolderDescription)fo);
-//						}
-						newInfo.setExcluded(false);
-					}
-				} else {
-					if(!baseInfo.isExcluded()){
-//						ICResourceDescription newDes = createResourceDescription(path, base);
-						RcDesInfo newInfo = new RcDesInfo(findResourceInfo(fProject, path, true));
-						PathSettingsContainer newCr = crontainer.getChildContainer(path, true, true);
-						newCr.setValue(newInfo);
-
-//						if(newDes == null){
-//							ICResourceDescription fo = getResourceDescription(path, false);
-//							if(fo.getType() == ICSettingBase.SETTING_FILE){
-//								fo = getResourceDescription(path.removeLastSegments(1), false);
-//							}
-//							newDes = createFolderDescription(path, (ICFolderDescription)fo);
-//						}
-						newInfo.setExcluded(true);
-					}
-				}
-			}
-		}
-		return (IPath[])pathSet.toArray(new IPath[pathSet.size()]);
-	}
+//	private IPath[] setSourceEntries(PathSettingsContainer crontainer, List res) {
+////		ICSourceEntry entry;
+//		IPath entryPath;
+////		IPath paths[];
+//		Set srcPathSet = new HashSet();
+//		IPath projPath = fProject != null ? fProject.getFullPath() : null;
+//		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
+//		cr.setValue(Boolean.TRUE);
+//
+////		Map exclusionMap = new HashMap();
+//		
+////		HashSet pathSet = new HashSet();
+//		for(Iterator iter = res.iterator(); iter.hasNext();){
+//			ResolvedEntry re = (ResolvedEntry)iter.next();
+//			ResourceInfo rcInfo = re.getResourceInfo();
+//			entryPath = rcInfo.fRc.getFullPath();
+//			if(projPath != null){
+//				if(projPath.isPrefixOf(entryPath)){
+//					entryPath = entryPath.removeFirstSegments(projPath.segmentCount());
+//				} else {
+//					continue;
+//				}
+//			} 
+////			else {
+////				if(entryPath.segmentCount() > 0)
+////					entryPath = entryPath.removeFirstSegments(1);
+////				else
+////					continue;
+////			}
+//			if(srcPathSet.add(entryPath)){
+//	//			exclusionMap.put(entryPath, Boolean.TRUE);
+//				PathSettingsContainer entryCr = cr.getChildContainer(entryPath, true, true);
+//				entryCr.setValue(Boolean.TRUE);
+//	
+//				ResourceInfo[] filters = re.getFilterInfos();
+//				
+////				paths = entry.getExclusionPatterns();
+//				
+//				for(int j = 0; j < filters.length; j++){
+//					IPath path = filters[j].fRc.getFullPath();
+//					path = path.removeFirstSegments(entryPath.segmentCount());
+//					PathSettingsContainer exclusion = entryCr.getChildContainer(path, true, true);
+//					if(exclusion.getValue() == null)
+//						exclusion.setValue(Boolean.FALSE);
+//	//				if(null == exclusionMap.get(path))
+//	//					exclusionMap.put(path, Boolean.FALSE);
+//				}
+//			}
+//		}
+//
+////		CConfigurationData data = getConfigurationData(true);
+////		data.setSourcePaths((IPath[])srcPathSet.toArray(new IPath[srcPathSet.size()]));
+////		ICResourceDescription rcDess[] = getResourceDescriptions();
+////		ICResourceDescription rcDes;
+//		Set pathSet = new HashSet();
+//		PathSettingsContainer children[] = crontainer.getChildren(true);
+//		
+//		for(int i = 0; i < children.length; i++){
+//			PathSettingsContainer child = children[i];
+//			RcDesInfo rcDesInfo = (RcDesInfo)child.getValue();
+////			rcDes = rcDess[i];
+//			IPath path  = child.getPath();
+//			pathSet.add(path);
+////			Boolean b = (Boolean)exclusionMap.remove(path);
+//			Boolean b = (Boolean)cr.getChildContainer(path, false, false).getValue();
+//			assert (b != null);
+//			if(Boolean.TRUE == b) {
+//				if(rcDesInfo.isExcluded())
+//					rcDesInfo.setExcluded(false);
+//			} else {
+//				if(path.segmentCount() != 0)
+//					rcDesInfo.setExcluded(true);
+//			}
+//		}
+//		
+//		PathSettingsContainer crs[] = cr.getChildren(true);
+//		for(int i= 0; i < crs.length; i++){
+//			PathSettingsContainer c = crs[i];
+//			IPath path = c.getPath();
+//			if(!pathSet.remove(path)){
+//				Boolean b = (Boolean)c.getValue();
+//				assert (b != null);
+//				PathSettingsContainer baseCr = crontainer.getChildContainer(path, false, false); 
+//				RcDesInfo baseInfo = (RcDesInfo)baseCr.getValue();
+//				if(b == Boolean.TRUE){
+//					if(baseInfo.isExcluded()){
+//						RcDesInfo newInfo = new RcDesInfo(findResourceInfo(fProject, path, true));
+//						PathSettingsContainer newCr = crontainer.getChildContainer(path, true, true);
+//						newCr.setValue(newInfo);
+////						if(newInfo == null){
+////							ICResourceDescription fo = getResourceDescription(path, false);
+////							if(fo.getType() == ICSettingBase.SETTING_FILE){
+////								fo = getResourceDescription(path.removeLastSegments(1), false);
+////							}
+////							newDes = createFolderDescription(path, (ICFolderDescription)fo);
+////						}
+//						newInfo.setExcluded(false);
+//					}
+//				} else {
+//					if(!baseInfo.isExcluded()){
+////						ICResourceDescription newDes = createResourceDescription(path, base);
+//						RcDesInfo newInfo = new RcDesInfo(findResourceInfo(fProject, path, true));
+//						PathSettingsContainer newCr = crontainer.getChildContainer(path, true, true);
+//						newCr.setValue(newInfo);
+//
+////						if(newDes == null){
+////							ICResourceDescription fo = getResourceDescription(path, false);
+////							if(fo.getType() == ICSettingBase.SETTING_FILE){
+////								fo = getResourceDescription(path.removeLastSegments(1), false);
+////							}
+////							newDes = createFolderDescription(path, (ICFolderDescription)fo);
+////						}
+//						newInfo.setExcluded(true);
+//					}
+//				}
+//			}
+//		}
+//		return (IPath[])pathSet.toArray(new IPath[pathSet.size()]);
+//	}
 	
 	private ReferenceSettingsInfo addPathEntries(ResolvedEntry[] rEntries, int op){
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
@@ -1457,7 +1459,7 @@ public class PathEntryTranslator {
 		List outList = new ArrayList();
 		List projList = new ArrayList();
 		List exportSettingsList = new ArrayList();
-		IPath srcPaths[] = null;
+		ICSourceEntry srcEntries[] = null;
 		PathSettingsContainer child;
 		ResolvedEntry rEntry;
 		IPath projPath;
@@ -1468,7 +1470,7 @@ public class PathEntryTranslator {
 			if(toLanguageEntryKind(rEntry.fEntry.getEntryKind()) == 0){
 				switch(rEntry.fEntry.getEntryKind()){
 				case IPathEntry.CDT_SOURCE:
-					srcList.add(rEntry);
+					srcList.add(rEntry.fEntry);
 					break;
 				case IPathEntry.CDT_OUTPUT:
 					outList.add(rEntry);
@@ -1497,7 +1499,7 @@ public class PathEntryTranslator {
 		}
 		
 		if(srcList.size() != 0){
-			srcPaths = setSourceEntries(cr, srcList);
+			srcEntries = toCSourceEntries(srcList);
 		} else {
 //			srcPaths = new IPath[]{new Path("")}; //$NON-NLS-1$
 		}
@@ -1522,7 +1524,8 @@ public class PathEntryTranslator {
 		
 		//applying settings
 
-		applySourcePaths(srcPaths, op);
+		//applySourcePaths(srcPaths, op);
+		applySourceEntries(srcEntries, op);
 		applyLangSettings(cr, op);
 		
 		IPath refProjPaths[] = new IPath[projList.size()];
@@ -1550,32 +1553,50 @@ public class PathEntryTranslator {
 		return new ReferenceSettingsInfo(refProjPaths, extSettings);
 	}
 	
-	private void applySourcePaths(IPath srcPaths[], int op){
+	private static ICSourceEntry[] toCSourceEntries(List list){
+		ICSourceEntry[] entries = new ICSourceEntry[list.size()];
+		for(int i = 0; i < entries.length; i++){
+			entries[i] = toCSourceEntry((ISourceEntry)list.get(i), true);
+		}
+		return entries;
+	}
+	
+	private static ICSourceEntry toCSourceEntry(ISourceEntry entry, boolean makeProjRelative){
+		IPath path = entry.getPath();
+		if(makeProjRelative && path.isAbsolute())
+			path = path.removeFirstSegments(1);
+		return new CSourceEntry(path,
+				entry.getExclusionPatterns(), 
+				ICSettingEntry.VALUE_WORKSPACE_PATH
+				| ICSourceEntry.RESOLVED);
+	}
+
+	private void applySourceEntries(ICSourceEntry entries[], int op){
 		switch (op) {
 		case OP_ADD:
-			if(srcPaths != null){
-				IPath curPaths[] = fCfgData.getSourcePaths();
-				Set set = new HashSet();
-				set.addAll(Arrays.asList(curPaths));
-				set.addAll(Arrays.asList(srcPaths));
-				fCfgData.setSourcePaths((IPath[])set.toArray(new IPath[set.size()]));
+			if(entries != null && entries.length != 0){
+				ICSourceEntry curEntries[] = fCfgData.getSourceEntries();
+				Set set = new LinkedHashSet();
+				set.addAll(Arrays.asList(curEntries));
+				set.addAll(Arrays.asList(entries));
+				fCfgData.setSourceEntries((ICSourceEntry[])set.toArray(new ICSourceEntry[set.size()]));
 			}
 			break;
 		case OP_REMOVE:
-			if(srcPaths != null){
-				IPath curPaths[] = fCfgData.getSourcePaths();
+			if(entries != null && entries.length != 0){
+				ICSourceEntry curEntries[] = fCfgData.getSourceEntries();
 				Set set = new HashSet();
-				set.addAll(Arrays.asList(curPaths));
-				set.removeAll(Arrays.asList(srcPaths));
-				fCfgData.setSourcePaths((IPath[])set.toArray(new IPath[set.size()]));
+				set.addAll(Arrays.asList(curEntries));
+				set.removeAll(Arrays.asList(entries));
+				fCfgData.setSourceEntries((ICSourceEntry[])set.toArray(new ICSourceEntry[set.size()]));
 			}
 			break;
 		case OP_REPLACE:
 		default:
-			if(srcPaths != null){
-				fCfgData.setSourcePaths(srcPaths);
+			if(entries != null){
+				fCfgData.setSourceEntries(entries);
 			} else {
-				fCfgData.setSourcePaths(new IPath[0]);
+				fCfgData.setSourceEntries(new ICSourceEntry[0]);
 			}
 			break;
 		}		
@@ -1603,7 +1624,7 @@ public class PathEntryTranslator {
 			}
 			
 			RcDesInfo desInfo = (RcDesInfo)c.getValue();
-			rcData.setExcluded(desInfo.isExcluded());
+//			rcData.setExcluded(desInfo.isExcluded());
 			
 			applyEntries(rcData, desInfo, op);
 		}
@@ -2274,8 +2295,8 @@ public class PathEntryTranslator {
 //	public static PathEntryCollector collectEntries(IProject project, CConfigurationData data, ReferenceSettingsInfo refInfo){
 		final PathEntryCollector cr = new PathEntryCollector(project/*, des*/);
 		PathSettingsContainer rcDatas = createRcDataHolder(data);
-		IPath srcPaths[] = data.getSourcePaths();
-		ICSourceEntry sEntries[] = calculateSourceEntriesFromPaths(project, rcDatas, srcPaths);
+		ICSourceEntry sEntries[] = data.getSourceEntries();
+//		ICSourceEntry sEntries[] = calculateSourceEntriesFromPaths(project, rcDatas, srcPaths);
 		if(sEntries != null && sEntries.length != 0){
 			cr.setSourceOutputEntries(ICSettingEntry.SOURCE_PATH, sEntries);
 		}

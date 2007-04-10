@@ -26,6 +26,15 @@ public class KindBasedStore implements Cloneable {
 	private static final int INDEX_OUPUT_PATH = 7;
 	private static final int ALL_STORAGE_SIZE = 8;
 	
+	public static final int ORED_LANG_ENTRY_KINDS = 
+		ICLanguageSettingEntry.INCLUDE_PATH
+		| ICLanguageSettingEntry.INCLUDE_FILE
+		| ICLanguageSettingEntry.MACRO
+		| ICLanguageSettingEntry.MACRO_FILE
+		| ICLanguageSettingEntry.LIBRARY_PATH
+		| ICLanguageSettingEntry.LIBRARY_FILE;
+
+
 	private static final int LANG_ENTRY_KINDS[] = new int[]{
 		ICLanguageSettingEntry.INCLUDE_PATH,
 		ICLanguageSettingEntry.INCLUDE_FILE,
@@ -75,7 +84,7 @@ public class KindBasedStore implements Cloneable {
 		}
 		throw new IllegalArgumentException(UtilMessages.getString("KindBasedStore.0")); //$NON-NLS-1$
 	}
-	
+
 	public static int[] getLanguageEntryKinds(){
 		return (int[])LANG_ENTRY_KINDS.clone();
 	}

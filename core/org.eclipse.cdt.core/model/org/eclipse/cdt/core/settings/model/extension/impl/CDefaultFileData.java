@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 
 public class CDefaultFileData extends CFileData {
 	protected IPath fPath;
-	protected boolean fIsExcluded;
+//	protected boolean fIsExcluded;
 	protected String fName;
 	protected String fId;
 	protected CLanguageData fLanguageData;
@@ -57,11 +57,11 @@ public class CDefaultFileData extends CFileData {
 		if(baseLanguageData != null)
 			fLanguageData = copyLanguageData(baseLanguageData, clone);
 
-		fIsExcluded = base.isExcluded();
+//		fIsExcluded = base.isExcluded();
 	}
 
 	protected void copyDataFrom(CFolderData base, CLanguageData baseLanguageData){
-		fIsExcluded = base != null ? base.isExcluded() : false;
+//		fIsExcluded = base != null ? base.isExcluded() : false;
 		if(baseLanguageData != null)
 			fLanguageData = copyLanguageData(baseLanguageData, false);
 	}
@@ -75,16 +75,16 @@ public class CDefaultFileData extends CFileData {
 		return fPath;
 	}
 
-	public boolean isExcluded() {
-		return fIsExcluded;
-	}
+//	public boolean isExcluded() {
+//		return fIsExcluded;
+//	}
 
-	public void setExcluded(boolean excluded) {
-		if(excluded == fIsExcluded)
-			return;
-		
-		fIsExcluded = excluded;
-	}
+//	public void setExcluded(boolean excluded) {
+//		if(excluded == fIsExcluded)
+//			return;
+//		
+//		fIsExcluded = excluded;
+//	}
 
 	public void setPath(IPath path) {
 		fPath = path;

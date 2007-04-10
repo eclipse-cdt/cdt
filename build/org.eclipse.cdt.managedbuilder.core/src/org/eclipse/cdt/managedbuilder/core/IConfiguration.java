@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -50,7 +51,7 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	public static final String BUILD_ARTEFACT_TYPE = "buildArtefactType"; //$NON-NLS-1$
 	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
 
-	
+	public static final String SOURCE_ENTRIES = "sourceEntries"; //$NON-NLS-1$
 
 	
 	
@@ -586,9 +587,9 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	
 	CConfigurationData getConfigurationData();
 	
-	IPath[] getSourcePaths();
+	ICSourceEntry[] getSourceEntries();
 
-	void setSourcePaths(IPath[] paths);
+	void setSourceEntries(ICSourceEntry[] entries);
 	
 	CBuildData getBuildData();
 	

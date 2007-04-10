@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.core.model.OutputEntry;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.model.ProjectEntry;
 import org.eclipse.cdt.internal.core.model.SourceEntry;
+import org.eclipse.cdt.internal.core.settings.model.CLanguageSettingCache;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
@@ -1238,6 +1239,10 @@ public class CoreModel {
 					return oldIsScannerInformationEmpty(resource);
 				}
 				ICLanguageSetting lSetting = indexCfg.getLanguageSettingForFile(resource.getProjectRelativePath(), false);
+				if(lSetting != null && lSetting instanceof CLanguageSettingCache){
+					if(!((CLanguageSettingCache)lSetting).containsDiscoveredScannerInfo())
+						lSetting = null;
+				}
 				if(lSetting != null){
 					ICLanguageSettingEntry[] entries = lSetting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 					if(entries.length != 0)

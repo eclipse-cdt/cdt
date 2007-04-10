@@ -18,10 +18,8 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
-import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultFolderData;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -31,7 +29,7 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		ICFolderDescription, ICachedData {
 	private CConfigurationDescriptionCache fCfg;
 	private ResourceDescriptionHolder fRcDesHolder;
-	
+
 	public CFolderDescriptionCache(CFolderData base, CConfigurationDescriptionCache cfg) {
 		super(base.getId(), base.getPath(), cfg, null);
 		fCfg = cfg;
@@ -138,6 +136,8 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 	public boolean hasCustomSettings() {
 		return true;
 	}
-	
-	
+
+	public boolean isExcluded() {
+		return fCfg.isExcluded(getPath());
+	}
 }

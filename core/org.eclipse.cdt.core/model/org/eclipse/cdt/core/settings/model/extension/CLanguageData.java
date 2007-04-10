@@ -50,4 +50,8 @@ public abstract class CLanguageData extends CDataObject {
 	public abstract void setSourceContentTypeIds(String ids[]);
 
 	public abstract void setSourceExtensions(String exts[]);
+	
+	public boolean containsDiscoveredScannerInfo(){
+		return true;
+	}
 }

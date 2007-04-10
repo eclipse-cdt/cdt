@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
+import org.eclipse.cdt.make.internal.core.scannerconfig.CDataDiscoveredInfoCalculator.DiscoveredSettingInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.CDataDiscoveredInfoCalculator.ILangSettingInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.CDataDiscoveredInfoCalculator.IRcSettingInfo;
 import org.eclipse.core.runtime.IPath;
@@ -30,11 +31,13 @@ import org.eclipse.core.runtime.Path;
 
 public abstract class CDataDiscoveredInfoProcessor {
 
-	public void applyDiscoveredInfo(CConfigurationData cfgData, IRcSettingInfo[] infos){
+	public void applyDiscoveredInfo(CConfigurationData cfgData, DiscoveredSettingInfo dsIinfo){
 		Map map = CDataUtil.createPathRcDataMap(cfgData);
 		IRcSettingInfo info;
 
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
+		
+		IRcSettingInfo[] infos = dsIinfo.getRcSettingInfos();
 		
 		for(int i = 0; i < infos.length; i++){
 			info = infos[i];

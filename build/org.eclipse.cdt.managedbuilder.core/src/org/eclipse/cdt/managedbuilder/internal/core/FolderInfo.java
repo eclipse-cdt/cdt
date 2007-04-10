@@ -57,6 +57,7 @@ import org.eclipse.core.runtime.Path;
 public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	private ToolChain toolChain;
 	private boolean isExtensionElement;
+	private boolean containsDiscoveredScannerInfo = true;
 
 	public FolderInfo(FolderInfo folderInfo, String id, String resourceName, IPath path){
 		super(folderInfo, path, id, resourceName);
@@ -244,6 +245,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 			((ToolChain)newChain).setTargetPlatform(tp);
 		}
+		
+		if(isRoot())
+			containsDiscoveredScannerInfo = cloneInfo.containsDiscoveredScannerInfo;
 		
 		if(copyIds){
 			isDirty = cloneInfo.isDirty;
@@ -1353,5 +1357,16 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	
 	public boolean hasCustomSettings(){
 		return toolChain.hasCustomSettings();
+	}
+	
+	public boolean containsDiscoveredScannerInfo(){
+		if(!isRoot())
+			return true;
+		
+		return containsDiscoveredScannerInfo;
+	}
+	
+	public void setContainsDiscoveredScannerInfo(boolean contains){
+		containsDiscoveredScannerInfo = contains;
 	}
 }

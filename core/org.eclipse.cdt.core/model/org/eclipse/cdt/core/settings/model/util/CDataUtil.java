@@ -12,8 +12,12 @@ package org.eclipse.cdt.core.settings.model.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -23,6 +27,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
@@ -37,6 +42,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
@@ -487,5 +493,211 @@ public class CDataUtil {
 			}
 		}
 	}
+	
+	public static boolean isExcluded(IPath path, ICSourceEntry[] entries){
+		for(int i = 0; i < entries.length; i++){
+			if(!isExcluded(path, entries[i]))
+				return false;
+		}
+		return true;
+	}
+	
+	public static boolean isExcluded(IPath path, ICSourceEntry entry){
+		IPath entryPath = new Path(entry.getName());
+		if(!entryPath.isPrefixOf(path))
+			return true;
+		
+		if(path.segmentCount() == 0)
+			return false;
+		char[][] exclusions = entry.fullExclusionPatternChars();
+		return CoreModelUtil.isExcluded(path, exclusions);
+	}
+	
+	public static ICSourceEntry[] setExcluded(IPath path, boolean excluded, ICSourceEntry[] entries){
+		if(isExcluded(path, entries) == excluded)
+			return entries;
+		
+		ICSourceEntry[] newEntries;
+		if(excluded){
+			List includeList = new ArrayList(entries.length);
+			List excludeList = new ArrayList(entries.length);
+			
+			sortEntries(path, entries, includeList, excludeList);
+			
+			for(int i = 0; i < includeList.size(); i++){
+				ICSourceEntry oldEntry = (ICSourceEntry)includeList.get(i);
+				List tmp = new ArrayList(1);
+				tmp.add(path);
+				ICSourceEntry newEntry = addExcludePaths(oldEntry, tmp, true);
+				if(newEntry != null)
+					excludeList.add(newEntry);
+			}
+			
+			newEntries = (ICSourceEntry[])excludeList.toArray(new ICSourceEntry[excludeList.size()]);
+		} else {
+			newEntries = new ICSourceEntry[entries.length + 1];
+			System.arraycopy(entries, 0, newEntries, 0, entries.length);
+			newEntries[entries.length] = new CSourceEntry(path, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+		}
+		
+		return newEntries;
+	}
 
+	public static ICSourceEntry[] adjustEntries(ICSourceEntry entries[]){
+		return adjustEntries(entries, false, null);
+	}
+
+	private static ICSourceEntry[] getDefaultEntries(boolean absolute, IProject project){
+		ICSourceEntry entry;
+		if(absolute){
+			if(project != null)
+				entry = new CSourceEntry(project.getFullPath(), null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+			else
+				entry = new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+		} else {
+			entry = new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+		}
+		return new ICSourceEntry[]{entry};
+	}
+
+	public static ICSourceEntry[] adjustEntries(ICSourceEntry entries[], boolean makeAbsolute, IProject project){
+		if(entries == null)
+			return getDefaultEntries(makeAbsolute, project);
+		
+		ICSourceEntry ei, ej;
+		LinkedHashMap map = new LinkedHashMap();
+		for(int i = 0; i < entries.length; i++){
+			ei = entries[i];
+			List list = null;
+			for(int j = 0; j < entries.length; j++){
+				ej = entries[j];
+				if(ei == ej)
+					continue;
+				
+				IPath ejPath = new Path(ej.getName());
+				if(!isExcluded(ejPath, ei)){
+					if(list == null)
+						list = new ArrayList();
+					list.add(ejPath);
+				}
+			}
+			
+			map.put(ei, list);
+		}
+		List resultList = new ArrayList(entries.length);
+		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+			Map.Entry entry = (Map.Entry)iter.next();
+			List list = (List)entry.getValue();
+			if(list == null)
+				resultList.add(entry.getKey());
+			else {
+				ICSourceEntry se = (ICSourceEntry)entry.getKey();
+				se = addExcludePaths(se, list, true);
+				if(se != null)
+					resultList.add(se);
+			}
+		}
+		
+		if(makeAbsolute){
+			if(project != null)
+				resultList = makeAbsolute(project, resultList);
+		} else {
+			resultList = makeRelative(project, resultList);
+		}
+		return (ICSourceEntry[])resultList.toArray(new ICSourceEntry[resultList.size()]);
+	}
+
+	private static List makeRelative(IProject project, List list){
+		int size = list.size();
+		
+		for(int i = 0; i < size; i++){
+			list.set(i, makeRelative(project, (ICSourceEntry)list.get(i)));
+		}
+		return list;
+	}
+
+	private static List makeAbsolute(IProject project, List list){
+		int size = list.size();
+		
+		for(int i = 0; i < size; i++){
+			list.set(i, makeAbsolute(project, (ICSourceEntry)list.get(i)));
+		}
+		return list;
+	}
+
+	public static ICSourceEntry makeAbsolute(IProject project, ICSourceEntry entry){
+		if(project == null)
+			return entry;
+		
+		IPath path = new Path(entry.getName());
+		if(path.isAbsolute())
+			return entry;
+		
+		path = project.getFullPath().append(path);
+		
+		return new CSourceEntry(path, entry.getExclusionPatterns(), entry.getFlags());
+	}
+
+	public static ICSourceEntry makeRelative(IProject project, ICSourceEntry entry){
+		IPath path = new Path(entry.getName());
+		if(!path.isAbsolute())
+			return entry;
+		
+//		if(project != null){
+//			
+//			IPath projPath = project.getFullPath();
+//			
+//		}
+//		if(pro)
+		
+		return new CSourceEntry(path.removeFirstSegments(1).makeRelative(), entry.getExclusionPatterns(), entry.getFlags());
+	}
+
+	private static Collection removePrefix(IPath prefix, Collection paths, Collection result){
+		if(result == null)
+			result = new ArrayList(paths.size());
+		for(Iterator iter = paths.iterator(); iter.hasNext(); ){
+			IPath path = (IPath)iter.next();
+			if(prefix.isPrefixOf(path))
+				result.add(path.removeFirstSegments(prefix.segmentCount()));
+//			else
+//				result.add(path);
+		}
+		return result;
+	}
+
+	public static ICSourceEntry addExcludePaths(ICSourceEntry entry, Collection paths, boolean removePrefix){
+		IPath entryPath = new Path(entry.getName());
+		IPath[] oldExclusions = entry.getExclusionPatterns();
+//		List newExList = new ArrayList(oldExclusions.length + paths.size()); 
+		LinkedHashSet newSet = new LinkedHashSet();
+		if(removePrefix){
+			removePrefix(entryPath, paths, newSet);
+		} else {
+			newSet.addAll(paths);
+		}
+		
+		for(Iterator iter = newSet.iterator(); iter.hasNext();){
+			IPath path = (IPath)iter.next();
+			if(path.segmentCount() == 0)
+				return null;
+		}
+		
+		newSet.addAll(Arrays.asList(oldExclusions));
+		
+		IPath[] newExclusions = (IPath[])newSet.toArray(new IPath[newSet.size()]);
+		return new CSourceEntry(entry.getName(), newExclusions, entry.getFlags());
+	}
+	
+	private static void sortEntries(IPath path, ICSourceEntry[] entries, List included, List excluded){
+		for(int i = 0; i < entries.length; i++){
+			if(isExcluded(path, entries[i])){
+				if(excluded != null)
+					excluded.add(entries[i]);
+			} else {
+				if(included != null)
+					included.add(entries[i]);
+			}
+		}
+	}
 }

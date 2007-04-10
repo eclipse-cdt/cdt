@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
@@ -114,12 +115,12 @@ public class BuildConfigurationData extends CConfigurationData {
 		return fCfg.getToolChain().getTargetPlatformData();
 	}
 
-	public IPath[] getSourcePaths() {
-		return fCfg.getSourcePaths();
+	public ICSourceEntry[] getSourceEntries() {
+		return fCfg.getSourceEntries();
 	}
 
-	public void setSourcePaths(IPath[] paths) {
-		fCfg.setSourcePaths(paths);
+	public void setSourceEntries(ICSourceEntry[] entries) {
+		fCfg.setSourceEntries(entries);
 	}
 
 	public CBuildData getBuildData() {

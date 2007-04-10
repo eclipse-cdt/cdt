@@ -90,4 +90,8 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 	public boolean hasCustomSettings() {
 		return true;
 	}
+
+	public boolean isExcluded() {
+		return fCfg.isExcluded(getPath());
+	}
 }

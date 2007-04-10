@@ -51,8 +51,8 @@ public class CExternalSetting implements ICExternalSetting {
 		if(tmp != null)
 			fExtensions = tmp.split(ATTRIBUTE_EXTENSIONS);
 
-		ICLanguageSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(element);
-
+		List entriesList = LanguageSettingEntriesSerializer.loadEntriesList(element, KindBasedStore.ORED_LANG_ENTRY_KINDS);
+		ICLanguageSettingEntry[] entries = (ICLanguageSettingEntry[])entriesList.toArray(new ICLanguageSettingEntry[entriesList.size()]);
 		initEntryStore(entries);
 	}
 

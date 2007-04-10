@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
@@ -37,7 +38,7 @@ public class CDataSerializer {
 	protected static final String NAME = "name";
 	protected static final String ID = "id";
 	protected static final String DESCRIPTION = "description";
-	protected static final String SOURCE_PATHS = "sourcePaths";
+	protected static final String SOURCE_ENTRIES = "sourceEntries";
 	protected static final String PATH = "path";
 	protected static final String LANGUAGE_ID = "languageId";
 	protected static final String CONTENT_TYPE_IDS = "contentTypeIds";
@@ -48,7 +49,7 @@ public class CDataSerializer {
 	protected static final String BUILD_DATA = "buildData";
 	protected static final String TARGET_PLATFORM_DATA = "targetPlatformData";
 	protected static final String LANGUAGE_DATA = "languageData";
-	protected static final String EXCLUDED = "excluded";
+//	protected static final String EXCLUDED = "excluded";
 	protected static final String OUTPUT_ENTRIES = "outputEntries";
 	protected static final String ERROR_PARSERS = "errorParsers";
 	protected static final String BINARY_PARSERS = "binaryParsers";
@@ -78,15 +79,15 @@ public class CDataSerializer {
 		if(tmp != null)
 			data.setDescription(tmp);
 		
-		tmp = el.getAttribute(SOURCE_PATHS);
-		if(tmp != null){
-			String[] strPaths = CDataUtil.stringToArray(tmp, DELIMITER);
-			IPath[] paths = new IPath[strPaths.length];
-			for(int i = 0; i < paths.length; i++){
-				paths[i] = new Path(strPaths[i]);
-			}
-			data.setSourcePaths(paths);
-		}
+//		tmp = el.getAttribute(SOURCE_PATHS);
+//		if(tmp != null){
+//			String[] strPaths = CDataUtil.stringToArray(tmp, DELIMITER);
+//			IPath[] paths = new IPath[strPaths.length];
+//			for(int i = 0; i < paths.length; i++){
+//				paths[i] = new Path(strPaths[i]);
+//			}
+//			data.setSourcePaths(paths);
+//		}
 		
 		ICStorageElement[] children = el.getChildren();
 		ICStorageElement child;
@@ -110,6 +111,10 @@ public class CDataSerializer {
 				CTargetPlatformData tpData = loadTargetPlatformData(data, factory, child);
 				if(tpData != null)
 					factory.link(data, tpData);
+			} else if (SOURCE_ENTRIES.equals(childName)){
+				List list = LanguageSettingEntriesSerializer.loadEntriesList(child, ICSettingEntry.SOURCE_PATH);
+				ICSourceEntry[] entries = (ICSourceEntry[])list.toArray(new ICSourceEntry[list.size()]);
+				data.setSourceEntries(entries);
 			}
 		}
 		return data;
@@ -133,11 +138,11 @@ public class CDataSerializer {
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "failed to create folder data"));
 		}
 		
-		tmp = el.getAttribute(EXCLUDED);
-		if(tmp != null){
-			boolean b = Boolean.valueOf(tmp).booleanValue();
-			foData.setExcluded(b);
-		}
+//		tmp = el.getAttribute(EXCLUDED);
+//		if(tmp != null){
+//			boolean b = Boolean.valueOf(tmp).booleanValue();
+//			foData.setExcluded(b);
+//		}
 		
 		ICStorageElement[] children = el.getChildren();
 		ICStorageElement child;
@@ -171,11 +176,11 @@ public class CDataSerializer {
 		if(fiData == null)
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "failed to create file data"));
 		
-		tmp = el.getAttribute(EXCLUDED);
-		if(tmp != null){
-			boolean b = Boolean.valueOf(tmp).booleanValue();
-			fiData.setExcluded(b);
-		}
+//		tmp = el.getAttribute(EXCLUDED);
+//		if(tmp != null){
+//			boolean b = Boolean.valueOf(tmp).booleanValue();
+//			fiData.setExcluded(b);
+//		}
 		
 		ICStorageElement[] children = el.getChildren();
 		ICStorageElement child;
@@ -327,14 +332,16 @@ public class CDataSerializer {
 		setAttribute(el, NAME, data.getName());
 		setAttribute(el, DESCRIPTION, data.getDescription());
 		
-		IPath[] paths = data.getSourcePaths();
-		if(paths != null && paths.length != 0){
-			setAttribute(el, SOURCE_PATHS, CDataUtil.arrayToString(paths, DELIMITER));
-		}
+		ICSourceEntry[] entries = data.getSourceEntries();
+		ICStorageElement child = el.createChild(SOURCE_ENTRIES);
+		LanguageSettingEntriesSerializer.serializeEntries(entries, child);
+//		if(paths != null && paths.length != 0){
+//			setAttribute(el, SOURCE_PATHS, CDataUtil.arrayToString(paths, DELIMITER));
+//		}
 
 		CResourceData[] rcDatas = data.getResourceDatas();
 		CResourceData rcData;
-		ICStorageElement child;
+//		ICStorageElement child;
 		for(int i = 0; i < rcDatas.length; i++){
 			rcData = rcDatas[i];
 			if(rcData.getType() == ICSettingBase.SETTING_FILE){
@@ -368,7 +375,7 @@ public class CDataSerializer {
 			setAttribute(el, PATH, path.toString());
 		}
 
-		setAttribute(el, EXCLUDED, Boolean.valueOf(data.isExcluded()).toString());
+//		setAttribute(el, EXCLUDED, Boolean.valueOf(data.isExcluded()).toString());
 
 		CLanguageData lDatas[] = data.getLanguageDatas();
 		ICStorageElement child;
@@ -387,7 +394,7 @@ public class CDataSerializer {
 			setAttribute(el, PATH, path.toString());
 		}
 
-		setAttribute(el, EXCLUDED, Boolean.valueOf(data.isExcluded()).toString());
+//		setAttribute(el, EXCLUDED, Boolean.valueOf(data.isExcluded()).toString());
 
 		CLanguageData lData = data.getLanguageData();
 		if(lData != null){

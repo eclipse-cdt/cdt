@@ -13,17 +13,13 @@ package org.eclipse.cdt.internal.core.settings.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
-import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.util.IPathSettingsContainerVisitor;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 public class ResourceDescriptionHolder {
 	private PathSettingsContainer fPathSettingContainer;
@@ -111,64 +107,64 @@ public class ResourceDescriptionHolder {
 		return rcDess;
 	}
 	
-	public ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, IPath paths[]){
-		if(paths == null || paths.length == 0)
-			paths = new IPath[]{new Path("")}; //$NON-NLS-1$
-		
-//		Set set = new HashSet(paths.length);
-		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
-		IPath pi, pj;
-		List entriesList = new ArrayList(paths.length);
-		IPath projPath = project != null ? project.getFullPath() : null;
-		
-		for(int i = 0; i < paths.length; i++){
-			pi = paths[i];
-//			set.clear();
-			cr.removeChildren();
-			cr.setValue(null);
-			for(int j = 0; j < paths.length; j++){
-				pj = paths[j];
-				if(pi != pj && pi.isPrefixOf(pj)){
-//					set.add(pj);
-					cr.getChildContainer(pj, true, true);
-				}
-			}
-			
-			PathSettingsContainer children[] = fPathSettingContainer.getDirectChildrenForPath(pi);
-			for(int k = 0; k < children.length; k++){
-				PathSettingsContainer child = children[k];
-				IPath childPath = child.getPath();
-				PathSettingsContainer parentExclusion = cr.getChildContainer(childPath, false, false);
-				IPath parentExclusionPath = parentExclusion.getPath();
-				if(parentExclusionPath.segmentCount() > 0 && !parentExclusionPath.equals(childPath) && parentExclusionPath.isPrefixOf(childPath))
-					continue;
-				
-				ICResourceDescription rcDes = (ICResourceDescription)child.getValue();
-				if(rcDes.isExcluded()){
-//					set.add(rcDes.getPath());
-					cr.getChildContainer(childPath, true, true);
-				}
-			}
-			
-			PathSettingsContainer exclusions[] = cr.getChildren(false);
-//			IPath exlusionPaths[] = new IPath[set.size()];
-			IPath exlusionPaths[] = new IPath[exclusions.length];
-//			int k = 0;
-			int segCount = pi.segmentCount();
-//			for(Iterator iter = set.iterator(); iter.hasNext(); k++) {
-//				IPath path = (IPath)iter.next();
-//				exlusionPaths[k] = path.removeFirstSegments(segCount).makeRelative();
+//	public ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, IPath paths[]){
+//		if(paths == null || paths.length == 0)
+//			paths = new IPath[]{new Path("")}; //$NON-NLS-1$
+//		
+////		Set set = new HashSet(paths.length);
+//		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
+//		IPath pi, pj;
+//		List entriesList = new ArrayList(paths.length);
+//		IPath projPath = project != null ? project.getFullPath() : null;
+//		
+//		for(int i = 0; i < paths.length; i++){
+//			pi = paths[i];
+////			set.clear();
+//			cr.removeChildren();
+//			cr.setValue(null);
+//			for(int j = 0; j < paths.length; j++){
+//				pj = paths[j];
+//				if(pi != pj && pi.isPrefixOf(pj)){
+////					set.add(pj);
+//					cr.getChildContainer(pj, true, true);
+//				}
 //			}
-			for(int k = 0; k < exlusionPaths.length; k++) {
-				exlusionPaths[k] = exclusions[k].getPath().removeFirstSegments(segCount).makeRelative();
-			}
-			if(projPath != null)
-				pi = projPath.append(pi);
-			entriesList.add(new CSourceEntry(pi, exlusionPaths, 0));
-		}
-
-		return (ICSourceEntry[])entriesList.toArray(new ICSourceEntry[entriesList.size()]);
-	}
+//			
+//			PathSettingsContainer children[] = fPathSettingContainer.getDirectChildrenForPath(pi);
+//			for(int k = 0; k < children.length; k++){
+//				PathSettingsContainer child = children[k];
+//				IPath childPath = child.getPath();
+//				PathSettingsContainer parentExclusion = cr.getChildContainer(childPath, false, false);
+//				IPath parentExclusionPath = parentExclusion.getPath();
+//				if(parentExclusionPath.segmentCount() > 0 && !parentExclusionPath.equals(childPath) && parentExclusionPath.isPrefixOf(childPath))
+//					continue;
+//				
+//				ICResourceDescription rcDes = (ICResourceDescription)child.getValue();
+//				if(rcDes.isExcluded()){
+////					set.add(rcDes.getPath());
+//					cr.getChildContainer(childPath, true, true);
+//				}
+//			}
+//			
+//			PathSettingsContainer exclusions[] = cr.getChildren(false);
+////			IPath exlusionPaths[] = new IPath[set.size()];
+//			IPath exlusionPaths[] = new IPath[exclusions.length];
+////			int k = 0;
+//			int segCount = pi.segmentCount();
+////			for(Iterator iter = set.iterator(); iter.hasNext(); k++) {
+////				IPath path = (IPath)iter.next();
+////				exlusionPaths[k] = path.removeFirstSegments(segCount).makeRelative();
+////			}
+//			for(int k = 0; k < exlusionPaths.length; k++) {
+//				exlusionPaths[k] = exclusions[k].getPath().removeFirstSegments(segCount).makeRelative();
+//			}
+//			if(projPath != null)
+//				pi = projPath.append(pi);
+//			entriesList.add(new CSourceEntry(pi, exlusionPaths, 0));
+//		}
+//
+//		return (ICSourceEntry[])entriesList.toArray(new ICSourceEntry[entriesList.size()]);
+//	}
 	
 	public ICFolderDescription getParentFolderDescription(){
 		PathSettingsContainer parent = fPathSettingContainer.getParentContainer();

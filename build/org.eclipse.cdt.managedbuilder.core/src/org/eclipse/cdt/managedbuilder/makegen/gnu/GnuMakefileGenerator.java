@@ -30,6 +30,10 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.IPathSettingsContainerVisitor;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.internal.core.model.Util;
@@ -141,7 +145,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				fo = (IFolderInfo)rcInfo;
 			}
 			// What kind of resource change has occurred
-			if(!rcInfo.isExcluded() && isSource){
+			if(/*!rcInfo.isExcluded() && */isSource){
 				if (resource.getType() == IResource.FILE) {
 					String ext = resource.getFileExtension();
 					switch (delta.getKind()) {
@@ -242,7 +246,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				// if it has a file extension that one of the tools builds, add the sudirectory to the list
 //				boolean willBuild = false; 
 				IResourceInfo rcInfo = config.getResourceInfo(resource.getProjectRelativePath(), false);
-				if (isSource && !rcInfo.isExcluded()) {
+				if (isSource/* && !rcInfo.isExcluded()*/) {
 					boolean willBuild = false;
 					if(rcInfo instanceof IFolderInfo){
 						String ext = resource.getFileExtension();				
@@ -364,7 +368,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	// Dependency file variables
 //	private Vector dependencyMakefiles;		//  IPath's - relative to the top build directory or absolute
 	
-	private IPath srcPaths[];
+	private ICSourceEntry srcEntries[];
 	
 	
 	public GnuMakefileGenerator() {
@@ -513,12 +517,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	protected boolean isSource(IPath path){
-		path = path.makeRelative();
-		for(int i = 0; i < srcPaths.length; i++){
-			if(srcPaths[i].isPrefixOf(path))
-				return true;
-		}
-		return false;
+		return !CDataUtil.isExcluded(path, srcEntries);
+//		path = path.makeRelative();
+//		for(int i = 0; i < srcPaths.length; i++){
+//			if(srcPaths[i].isPrefixOf(path))
+//				return true;
+//		}
+//		return false;
 	}
 	
 	private class DepInfo {
@@ -1982,9 +1987,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			IResource resource = resources[i];
 			if (resource.getType() == IResource.FILE) {
 				// Check whether this resource is excluded from build
-				rcInfo = config.getResourceInfo(resource.getProjectRelativePath(), false);
-				if( (rcInfo.isExcluded()) )
+				IPath rcProjRelPath = resource.getProjectRelativePath();
+				if(!isSource(rcProjRelPath))
 					continue;
+				rcInfo = config.getResourceInfo(rcProjRelPath, false);
+//				if( (rcInfo.isExcluded()) )
+//					continue;
 				addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, 
 						folder, relativePath, resource, resource.getLocation(), rcInfo, null, false);
 			}
@@ -4658,9 +4666,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		//set the top build dir path
 		topBuildDir = project.getFolder(cfg.getName()).getFullPath();
 		
-		srcPaths = config.getSourcePaths();
-		if(srcPaths.length == 0){
-			srcPaths = new IPath[]{new Path("")}; //$NON-NLS-1$
+		srcEntries = config.getSourceEntries();
+		if(srcEntries.length == 0){
+			srcEntries = new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH)};
 		} else {
 		}
 	}

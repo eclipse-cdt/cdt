@@ -54,9 +54,9 @@ public class ProviderBasedRcDesHolder extends ResourceDescriptionHolder {
 		return super.getDirectChildren();
 	}
 
-	public ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, IPath[] paths) {
-		fProvider.cacheValues();
-		return super.calculateSourceEntriesFromPaths(project, paths);
-	}
+//	public ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, IPath[] paths) {
+//		fProvider.cacheValues();
+//		return super.calculateSourceEntriesFromPaths(project, paths);
+//	}
 	
 }

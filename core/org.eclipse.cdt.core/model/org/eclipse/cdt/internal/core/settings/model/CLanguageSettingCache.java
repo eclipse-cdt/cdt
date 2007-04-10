@@ -29,6 +29,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 	private ICResourceDescription fParent;
 	protected EntryStore fResolvedEntriesStore;
 	private String fCachedExtensions[];
+	private boolean fContainsDiscoveredScannerInfo = true;
 
 	public CLanguageSettingCache(CLanguageData base, CFolderDescriptionCache folderCache) {
 		fId = base.getId();
@@ -42,7 +43,12 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		copySettingsFrom(base);
 	}
 
-/*	public ICLanguageSettingEntry[] getResolvedSettingEntries() {
+	protected void copySettingsFrom(CLanguageData data) {
+		super.copySettingsFrom(data);
+		fContainsDiscoveredScannerInfo = data.containsDiscoveredScannerInfo();
+	}
+
+	/*	public ICLanguageSettingEntry[] getResolvedSettingEntries() {
 		// TODO Auto-generated method stub
 		return getSettingEntries();
 	}
@@ -171,4 +177,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		return entries;
 	}
 
+	public boolean containsDiscoveredScannerInfo() {
+		return fContainsDiscoveredScannerInfo;
+	}
 }

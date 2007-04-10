@@ -58,28 +58,38 @@ public class LanguageSettingEntriesSerializer {
 	
 	public static final String FLAGS_SEPARATOR = "|"; //$NON-NLS-1$
 
-	public static ICLanguageSettingEntry[] loadEntries(ICStorageElement el){
-		List list = loadEntriesList(el);
-		return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
+	public static ICSettingEntry[] loadEntries(ICStorageElement el){
+		return loadEntries(el, 0);
+	}
+
+	public static ICSettingEntry[] loadEntries(ICStorageElement el, int kindFilter){
+		List list = loadEntriesList(el, kindFilter);
+		return (ICSettingEntry[])list.toArray(new ICSettingEntry[list.size()]);
 	}
 
 	public static List loadEntriesList(ICStorageElement el){
+		return loadEntriesList(el, 0);
+	}
+
+	public static List loadEntriesList(ICStorageElement el, int kindFilter){
 		ICStorageElement children[] = el.getChildren();
 		ICStorageElement child;
 		List list = new ArrayList();
-		ICLanguageSettingEntry entry;
+		ICSettingEntry entry;
 		for(int i = 0; i < children.length; i++){
 			child = children[i];
 			if(ELEMENT_ENTRY.equals(child.getName())){
 				entry = loadEntry(child);
-				if(entry != null)
+				if(entry != null 
+						&& (kindFilter == 0
+								|| (kindFilter & entry.getKind()) != 0))
 					list.add(entry);
 			}
 		}
 		return list;
 	}
 
-	public static ICLanguageSettingEntry loadEntry(ICStorageElement el){
+	public static ICSettingEntry loadEntry(ICStorageElement el){
 		int kind = stringToKind(el.getAttribute(ATTRIBUTE_KIND));
 		if(kind == 0)
 			return null;

@@ -3211,8 +3211,8 @@ public class CProjectDescriptionManager {
 	}
 	
 	private static boolean baseSettingsCustomized(CResourceData parent, CResourceData child){
-		if(parent.isExcluded() != child.isExcluded())
-			return true;
+//		if(parent.isExcluded() != child.isExcluded())
+//			return true;
 		
 		if(child.hasCustomSettings())
 			return true;

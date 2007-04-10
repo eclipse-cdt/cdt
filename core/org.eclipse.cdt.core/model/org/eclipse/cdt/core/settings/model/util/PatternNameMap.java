@@ -23,10 +23,12 @@ import org.eclipse.cdt.core.model.CoreModelUtil;
 
 public class PatternNameMap {
 	private static final char[] SPEC_CHARS = new char[]{'*', '?'}; 
+	static final String DOUBLE_STAR_PATTERN = "**"; 
 
 	private Map fChildrenMap;
 	private Map fPatternMap;
 	private Collection fValues;
+	private boolean fContainsDoubleStar;
 
 	private static class StringCharArray {
 		private String fString;
@@ -98,9 +100,13 @@ public class PatternNameMap {
 
 			public void remove() {
 				fEntrySetIter.remove();
-				removePattern((String)fCur.getKey());
+				String name = (String)fCur.getKey();
+				if(DOUBLE_STAR_PATTERN.equals(name)){
+					fContainsDoubleStar = false;
+				} else {
+					removePattern(name);
+				}
 			}
-			
 		}
 
 		public Iterator iterator() {
@@ -128,16 +134,24 @@ public class PatternNameMap {
 		return fChildrenMap != null ? fChildrenMap.size() : 0;
 	}
 	
-	public boolean hasPatterns(){
-		return fPatternMap != null && fPatternMap.size() != 0;
+	public boolean isEmpty(){
+		return fChildrenMap == null || fChildrenMap.isEmpty();
 	}
 	
+	public boolean hasPatterns(){
+		return fContainsDoubleStar || hasPatternsMap();
+	}
+
+	public boolean hasPatternsMap(){
+		return (fPatternMap != null && fPatternMap.size() != 0);
+	}
+
 	public List getValues(String name){
 		if(fChildrenMap == null)
 			return null;
 		
 		Object val = fChildrenMap.get(name);
-		if(hasPatterns()){
+		if(hasPatternsMap()){
 			List list;
 			if(val != null){
 				list = new ArrayList(3);
@@ -167,6 +181,10 @@ public class PatternNameMap {
 		return null;
 	}
 	
+	public boolean containsDoubleStar(){
+		return fContainsDoubleStar;
+	}
+	
 	public Object put(String name, Object value){
 		if(value == null)
 			return remove(name);
@@ -181,7 +199,9 @@ public class PatternNameMap {
 		
 		fChildrenMap.put(name, value);
 		
-		if(isPatternName(name)){
+		if(DOUBLE_STAR_PATTERN.equals(name)){
+			fContainsDoubleStar = true;
+		} else if(isPatternName(name)){
 			StringCharArray strCA = new StringCharArray(name);
 			if(fPatternMap == null)
 				fPatternMap = new HashMap();
@@ -198,6 +218,9 @@ public class PatternNameMap {
 			if(fChildrenMap.size() == 0){
 				fChildrenMap = null;
 				fPatternMap = null;
+				fContainsDoubleStar = false;
+			} else if(DOUBLE_STAR_PATTERN.equals(name)){
+				fContainsDoubleStar = false;
 			} else {
 				removePattern(name);
 			}
@@ -230,6 +253,7 @@ public class PatternNameMap {
 	public void clear(){
 		fChildrenMap = null;
 		fPatternMap = null;
+		fContainsDoubleStar = false;
 	}
 	
 	public Collection values(){

@@ -12,14 +12,11 @@ package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
-import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -43,12 +40,11 @@ import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 
 public class CConfigurationDescription extends CDataProxyContainer implements ICConfigurationDescription, IProxyFactory, IInternalCCfgInfo {
@@ -471,151 +467,159 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 
 	public ICSourceEntry[] getSourceEntries() {
 		CConfigurationData data = getConfigurationData(false);
-		IPath[] srcPaths = data.getSourcePaths();
+		ICSourceEntry[] srcEntries = data.getSourceEntries();
 		IProject proj = fIsPreference ? null : getProjectDescription().getProject();
-		return getRcHolder().calculateSourceEntriesFromPaths(proj, srcPaths);
+		return CDataUtil.adjustEntries(srcEntries, true, proj);
+//		return getRcHolder().calculateSourceEntriesFromPaths(proj, srcPaths);
 	}
 
 	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException {
-		ICSourceEntry entry;
-		IPath entryPath;
-		IPath paths[];
-		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
-		cr.setValue(Boolean.valueOf(getRootFolderDescription().isExcluded()));
-		Set srcPathSet = new HashSet();
-		IProject project = fIsPreference ? null : getProjectDescription().getProject();
-		IPath projPath = project != null ? project.getFullPath() : null;
-//		Map exclusionMap = new HashMap();
-		
-//		HashSet pathSet = new HashSet();
-		
-		if(entries == null){
-			IPath pasePath = projPath != null ? projPath : Path.EMPTY;
-			entries = new ICSourceEntry[]{new CSourceEntry(pasePath, null, ICLanguageSettingEntry.RESOLVED | ICLanguageSettingEntry.VALUE_WORKSPACE_PATH)};
-		}
-
-		for(int i = 0 ; i < entries.length; i++){
-			entry = entries[i];
-			entryPath = entry.getFullPath();
-			if(projPath != null){
-				if(projPath.isPrefixOf(entryPath)){
-					entryPath = entryPath.removeFirstSegments(projPath.segmentCount());
-				} else {
-					continue;
-				}
-			} 
-//			else {
-//				if(entryPath.segmentCount() > 0)
-//					entryPath = entryPath.removeFirstSegments(1);
-//				else
-//					continue;
-//			}
-			if(srcPathSet.add(entryPath)){
-	//			exclusionMap.put(entryPath, Boolean.TRUE);
-				PathSettingsContainer entryCr = cr.getChildContainer(entryPath, true, true);
-				entryCr.setValue(Boolean.TRUE);
-	
-				
-				paths = entry.getExclusionPatterns();
-				
-				
-				for(int j = 0; j < paths.length; j++){
-					IPath path = paths[j];
-					PathSettingsContainer exclusion = entryCr.getChildContainer(path, true, true);
-					if(exclusion.getValue() == null)
-						exclusion.setValue(Boolean.FALSE);
-	//				if(null == exclusionMap.get(path))
-	//					exclusionMap.put(path, Boolean.FALSE);
-				}
-			}
-		}
-
 		CConfigurationData data = getConfigurationData(true);
-		data.setSourcePaths((IPath[])srcPathSet.toArray(new IPath[srcPathSet.size()]));
-		ICResourceDescription rcDess[] = getResourceDescriptions();
-		ICResourceDescription rcDes;
-		Set pathSet = new HashSet();
+		IProject project = fIsPreference ? null : getProjectDescription().getProject();
+		if(entries != null && entries.length == 0)
+			entries = null;
+		entries = CDataUtil.adjustEntries(entries, false, project);
+		data.setSourceEntries(entries);
 		
-		for(int i = 0; i < rcDess.length; i++){
-			rcDes = rcDess[i];
-			IPath path  = rcDes.getPath();
-			pathSet.add(path);
-//			Boolean b = (Boolean)exclusionMap.remove(path);
-			Boolean b = (Boolean)cr.getChildContainer(path, false, false).getValue();
-			assert (b != null);
-			if(Boolean.TRUE == b) {
-				if(rcDes.isExcluded())
-					rcDes.setExcluded(false);
-			} else {
-				if(/*(rcDes.getType() == ICSettingBase.SETTING_FILE
-						|| !((ICFolderDescription)rcDes).isRoot())
-						   &&*/ !rcDes.isExcluded())
-					rcDes.setExcluded(true);
-			}
-		}
-		
-		PathSettingsContainer crs[] = cr.getChildren(true);
-		for(int i= 0; i < crs.length; i++){
-			PathSettingsContainer c = crs[i];
-			IPath path = c.getPath();
-			if(!pathSet.remove(path)){
-				Boolean b = (Boolean)c.getValue();
-				assert (b != null);
-				ICResourceDescription base = getResourceDescription(path, false);
-				if(b == Boolean.TRUE){
-					if(base.isExcluded()){
-						ICResourceDescription newDes = createResourceDescription(path, base);
-						if(newDes == null){
-							ICResourceDescription fo = getResourceDescription(path, false);
-							if(fo.getType() == ICSettingBase.SETTING_FILE){
-								fo = getResourceDescription(path.removeLastSegments(1), false);
-							}
-							newDes = createFolderDescription(path, (ICFolderDescription)fo);
-						}
-						newDes.setExcluded(false);
-					}
-				} else {
-					if(!base.isExcluded()){
-						ICResourceDescription newDes = createResourceDescription(path, base);
-						if(newDes == null){
-							ICResourceDescription fo = getResourceDescription(path, false);
-							if(fo.getType() == ICSettingBase.SETTING_FILE){
-								fo = getResourceDescription(path.removeLastSegments(1), false);
-							}
-							newDes = createFolderDescription(path, (ICFolderDescription)fo);
-						}
-						newDes.setExcluded(true);
-					}
-				}
-			}
-		}
-		
+//		ICSourceEntry entry;
+//		IPath entryPath;
+//		IPath paths[];
+//		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
+//		cr.setValue(Boolean.valueOf(getRootFolderDescription().isExcluded()));
+//		Set srcPathSet = new HashSet();
+//		IProject project = fIsPreference ? null : getProjectDescription().getProject();
+//		IPath projPath = project != null ? project.getFullPath() : null;
+////		Map exclusionMap = new HashMap();
+//		
+////		HashSet pathSet = new HashSet();
+//		
+//		if(entries == null){
+//			IPath pasePath = projPath != null ? projPath : Path.EMPTY;
+//			entries = new ICSourceEntry[]{new CSourceEntry(pasePath, null, ICLanguageSettingEntry.RESOLVED | ICLanguageSettingEntry.VALUE_WORKSPACE_PATH)};
+//		}
+//
+//		for(int i = 0 ; i < entries.length; i++){
+//			entry = entries[i];
+//			entryPath = entry.getFullPath();
+//			if(projPath != null){
+//				if(projPath.isPrefixOf(entryPath)){
+//					entryPath = entryPath.removeFirstSegments(projPath.segmentCount());
+//				} else {
+//					continue;
+//				}
+//			} 
+////			else {
+////				if(entryPath.segmentCount() > 0)
+////					entryPath = entryPath.removeFirstSegments(1);
+////				else
+////					continue;
+////			}
+//			if(srcPathSet.add(entryPath)){
+//	//			exclusionMap.put(entryPath, Boolean.TRUE);
+//				PathSettingsContainer entryCr = cr.getChildContainer(entryPath, true, true);
+//				entryCr.setValue(Boolean.TRUE);
+//	
+//				
+//				paths = entry.getExclusionPatterns();
+//				
+//				
+//				for(int j = 0; j < paths.length; j++){
+//					IPath path = paths[j];
+//					PathSettingsContainer exclusion = entryCr.getChildContainer(path, true, true);
+//					if(exclusion.getValue() == null)
+//						exclusion.setValue(Boolean.FALSE);
+//	//				if(null == exclusionMap.get(path))
+//	//					exclusionMap.put(path, Boolean.FALSE);
+//				}
+//			}
+//		}
+//
+//		CConfigurationData data = getConfigurationData(true);
+//		data.setSourcePaths((IPath[])srcPathSet.toArray(new IPath[srcPathSet.size()]));
+//		ICResourceDescription rcDess[] = getResourceDescriptions();
+//		ICResourceDescription rcDes;
+//		Set pathSet = new HashSet();
+//		
+//		for(int i = 0; i < rcDess.length; i++){
+//			rcDes = rcDess[i];
+//			IPath path  = rcDes.getPath();
+//			pathSet.add(path);
+////			Boolean b = (Boolean)exclusionMap.remove(path);
+//			Boolean b = (Boolean)cr.getChildContainer(path, false, false).getValue();
+//			assert (b != null);
+//			if(Boolean.TRUE == b) {
+//				if(rcDes.isExcluded())
+//					rcDes.setExcluded(false);
+//			} else {
+//				if(/*(rcDes.getType() == ICSettingBase.SETTING_FILE
+//						|| !((ICFolderDescription)rcDes).isRoot())
+//						   &&*/ !rcDes.isExcluded())
+//					rcDes.setExcluded(true);
+//			}
+//		}
+//		
+//		PathSettingsContainer crs[] = cr.getChildren(true);
+//		for(int i= 0; i < crs.length; i++){
+//			PathSettingsContainer c = crs[i];
+//			IPath path = c.getPath();
+//			if(!pathSet.remove(path)){
+//				Boolean b = (Boolean)c.getValue();
+//				assert (b != null);
+//				ICResourceDescription base = getResourceDescription(path, false);
+//				if(b == Boolean.TRUE){
+//					if(base.isExcluded()){
+//						ICResourceDescription newDes = createResourceDescription(path, base);
+//						if(newDes == null){
+//							ICResourceDescription fo = getResourceDescription(path, false);
+//							if(fo.getType() == ICSettingBase.SETTING_FILE){
+//								fo = getResourceDescription(path.removeLastSegments(1), false);
+//							}
+//							newDes = createFolderDescription(path, (ICFolderDescription)fo);
+//						}
+//						newDes.setExcluded(false);
+//					}
+//				} else {
+//					if(!base.isExcluded()){
+//						ICResourceDescription newDes = createResourceDescription(path, base);
+//						if(newDes == null){
+//							ICResourceDescription fo = getResourceDescription(path, false);
+//							if(fo.getType() == ICSettingBase.SETTING_FILE){
+//								fo = getResourceDescription(path.removeLastSegments(1), false);
+//							}
+//							newDes = createFolderDescription(path, (ICFolderDescription)fo);
+//						}
+//						newDes.setExcluded(true);
+//					}
+//				}
+//			}
+//		}
+//		
 	}
 	
-	private ICResourceDescription createResourceDescription(IPath path, ICResourceDescription base){
-		if(fIsPreference)
-			return null;
-		IProject project = getProjectDescription().getProject();
-		IResource rc = project.findMember(path);
-		ICResourceDescription des = null;
-		if(rc != null){
-			if(rc.getType() == IResource.FILE) {
-				try {
-					des = createFileDescription(path, base);
-				} catch (WriteAccessException e) {
-				} catch (CoreException e) {
-				}
-			} else if (rc.getType() == IResource.FOLDER) {
-				try {
-					des = createFolderDescription(path, (ICFolderDescription)base);
-				} catch (WriteAccessException e) {
-				} catch (CoreException e) {
-				}
-			}
-		}
-		
-		return des;
-	}
+//	private ICResourceDescription createResourceDescription(IPath path, ICResourceDescription base){
+//		if(fIsPreference)
+//			return null;
+//		IProject project = getProjectDescription().getProject();
+//		IResource rc = project.findMember(path);
+//		ICResourceDescription des = null;
+//		if(rc != null){
+//			if(rc.getType() == IResource.FILE) {
+//				try {
+//					des = createFileDescription(path, base);
+//				} catch (WriteAccessException e) {
+//				} catch (CoreException e) {
+//				}
+//			} else if (rc.getType() == IResource.FOLDER) {
+//				try {
+//					des = createFolderDescription(path, (ICFolderDescription)base);
+//				} catch (WriteAccessException e) {
+//				} catch (CoreException e) {
+//				}
+//			}
+//		}
+//		
+//		return des;
+//	}
 
 	public Map getReferenceInfo() {
 		try {
@@ -737,4 +741,52 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExcludeStatus) {
 		return CProjectDescriptionManager.getLanguageSettingForFile(this, path, ignoreExcludeStatus);
 	}
+	
+	boolean isExcluded(IPath path){
+//		if(path.segmentCount() == 0)
+//			return false;
+		IProject project = fIsPreference ? null : getProjectDescription().getProject();
+		ICSourceEntry[] entries = getSourceEntries();
+		if(project != null)
+			path = project.getFullPath().append(path);
+		return CDataUtil.isExcluded(path, entries);
+	}
+
+	void setExcluded(IPath path, boolean exclude){
+//		if(path.segmentCount() == 0)
+//			return;
+		if(isExcluded(path) == exclude)
+			return;
+
+		IProject project = fIsPreference ? null : getProjectDescription().getProject();
+		if(project != null)
+			path = project.getFullPath().append(path);
+
+		CConfigurationData data = getConfigurationData(false);
+		ICSourceEntry[] newEntries = null;
+		if(project != null){
+			if(!(data instanceof CConfigurationDescriptionCache)){
+				ICProjectDescription roDes = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+				if(roDes != null){
+					ICConfigurationDescription roCfg = roDes.getConfigurationById(getId());
+					if(roCfg != null){
+						newEntries = roCfg.getSourceEntries();
+						if(CDataUtil.isExcluded(path, newEntries) != exclude)
+							newEntries = null;
+					}
+				}
+			}
+		}
+			
+		if(newEntries == null){
+			newEntries = CDataUtil.setExcluded(path, exclude, getSourceEntries());
+		}
+		
+		try {
+			setSourceEntries(newEntries);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
 }

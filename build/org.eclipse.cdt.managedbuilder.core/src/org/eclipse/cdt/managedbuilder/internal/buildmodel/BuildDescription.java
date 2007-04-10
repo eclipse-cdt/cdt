@@ -22,6 +22,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
@@ -59,7 +63,6 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
-import org.eclipse.cdt.managedbuilder.makegen.gnu.ManagedBuildGnuToolInfo;
 import org.eclipse.cdt.managedbuilder.pdomdepgen.PDOMDependencyGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -109,7 +112,7 @@ public class BuildDescription implements IBuildDescription {
 	private Set fToolInProcesSet = new HashSet();
 	private ITool fOrderedTools[];
 	
-	private IPath[] fSourcePaths;
+	private ICSourceEntry[] fSourceEntries;
 	
 //	private Map fExtToToolAndTypeListMap = new HashMap();
 	
@@ -519,12 +522,14 @@ public class BuildDescription implements IBuildDescription {
 	}
 	
 	protected boolean isSource(IPath path){
-		path = path.makeRelative();
-		for(int i = 0; i < fSourcePaths.length; i++){
-			if(fSourcePaths[i].isPrefixOf(path))
-				return true;
-		}
-		return false;
+		return !CDataUtil.isExcluded(path, fSourceEntries);
+//
+//		path = path.makeRelative();
+//		for(int i = 0; i < fSourcePaths.length; i++){
+//			if(fSourcePaths[i].isPrefixOf(path))
+//				return true;
+//		}
+//		return false;
 	}
 
 	
@@ -705,10 +710,10 @@ public class BuildDescription implements IBuildDescription {
 		fInfo = ManagedBuildManager.getBuildInfo(fProject);
 		fFlags = flags;
 		
-		fSourcePaths = fCfg.getSourcePaths();
-		if(fSourcePaths.length == 0){
-			fSourcePaths = new IPath[]{Path.EMPTY};
-		} 
+		fSourceEntries = fCfg.getSourceEntries();
+		if(fSourceEntries.length == 0){
+			fSourceEntries = new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH)};
+		}
 		fInputStep = createStep(null,null);
 		fOutputStep = createStep(null,null);
 	}

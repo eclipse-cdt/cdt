@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,14 +25,19 @@ import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
@@ -104,7 +110,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
     private String preannouncebuildStep; 
     private String postannouncebuildStep;   
 	private String description;
-	private IPath[] sourcePaths;
+	private ICSourceEntry[] sourceEntries;
 	private BuildObjectProperties buildProperties;
 	private boolean isTest;
 	private SupportedProperties supportedProperties;
@@ -128,6 +134,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //	private Boolean isPerResourceDiscovery;
 	private ICfgScannerConfigBuilderInfo2Set cfgScannerInfo;
 	private boolean isPreferenceConfig;
+	private List excludeList;
 	
 	//property name for holding the rebuild state
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
@@ -217,6 +224,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		// Load the children
 		IManagedConfigElement[] configElements = element.getChildren();
 		List srcPathList = new ArrayList();
+		excludeList = new ArrayList();
 		for (int l = 0; l < configElements.length; ++l) {
 			IManagedConfigElement configElement = configElements[l];
 			if (configElement.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
@@ -235,11 +243,15 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					srcPathList.add(p.getPath());
 			} else if (configElement.getName().equals(SupportedProperties.SUPPORTED_PROPERTIES)){
 				loadProperties(configElement);
+			} else if (SOURCE_ENTRIES.equals(configElement.getName())){
+				List seList = LanguageSettingEntriesSerializer.loadEntriesList(new ManagedConfigStorageElement(configElement), ICSettingEntry.SOURCE_PATH);
+				sourceEntries = (ICSourceEntry[])seList.toArray(new ICSourceEntry[seList.size()]);
 			}
 		}
 		
-		if(srcPathList.size() > 0)
-			sourcePaths = (IPath[])srcPathList.toArray(new IPath[srcPathList.size()]);
+		sourceEntries = createSourceEntries(sourceEntries, srcPathList, excludeList);
+		
+		excludeList = null;
 		
 		if(rootFolderInfo == null)
 			createRootFolderInfo();
@@ -276,6 +288,37 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 
 		setDirty(false);
+	}
+	
+	private static ICSourceEntry[] createSourceEntries(ICSourceEntry[] curEntries, List pathList, List excludeList){
+		for(int i = 0; i < excludeList.size(); i++){
+			IPath path = (IPath)excludeList.get(i);
+			if(path.segmentCount() == 0)
+				excludeList.remove(i);
+		}
+		if(pathList.size() == 0)
+			pathList.add(Path.EMPTY);
+		
+		if(pathList.size() == 1
+				&& pathList.get(0).equals(Path.EMPTY)
+				&& excludeList.size() == 0)
+			return curEntries;
+		
+		int pathSize = pathList.size();
+		Map map = new LinkedHashMap();
+
+		for(int i = 0; i < pathSize; i++){
+			IPath path = (IPath)pathList.get(i);
+			ICSourceEntry entry = (ICSourceEntry)map.get(path);
+			if(entry == null)
+				entry = new CSourceEntry(path, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+			
+			entry = CDataUtil.addExcludePaths(entry, excludeList, true);
+			if(entry != null)
+				map.put(path, entry);
+		}
+		
+		return (ICSourceEntry[])map.values().toArray(new ICSourceEntry[map.size()]);
 	}
 
 	/**
@@ -363,6 +406,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		ICStorageElement configElements[] = element.getChildren();
 		List srcPathList = new ArrayList();
+		excludeList = new ArrayList();
 		for (int i = 0; i < configElements.length; ++i) {
 			ICStorageElement configElement = configElements[i];
 			if (configElement.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
@@ -379,14 +423,17 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				SourcePath p = new SourcePath(configElement);
 				if(p.getPath() != null)
 					srcPathList.add(p.getPath());
+			} else if (SOURCE_ENTRIES.equals(configElement.getName())){
+				List seList = LanguageSettingEntriesSerializer.loadEntriesList(configElement, ICSettingEntry.SOURCE_PATH);
+				sourceEntries = (ICSourceEntry[])seList.toArray(new ICSourceEntry[seList.size()]);
 			}
 		}
 		
 		resolveProjectReferences(true);
 		
-		if(srcPathList.size() > 0)
-			sourcePaths = (IPath[])srcPathList.toArray(new IPath[srcPathList.size()]);
+		sourceEntries = createSourceEntries(sourceEntries, srcPathList, excludeList);
 
+		excludeList = null;
 		
 		PropertyManager mngr = PropertyManager.getInstance();
 		String rebuild = mngr.getProperty(this, REBUILD_STATE);
@@ -462,8 +509,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	
 			postannouncebuildStep = baseCfg.postannouncebuildStep;
 			
-			if(baseCfg.sourcePaths != null)
-				sourcePaths = (IPath[])baseCfg.sourcePaths.clone();
+			if(baseCfg.sourceEntries != null)
+				sourceEntries = (ICSourceEntry[])baseCfg.sourceEntries.clone();
 			
 	//		enableInternalBuilder(baseCfg.isInternalBuilderEnabled());
 	//		setInternalBuilderIgnoreErr(baseCfg.getInternalBuilderIgnoreErr());
@@ -618,8 +665,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if (cloneConfig.postannouncebuildStep != null) {
 			postannouncebuildStep = new String(cloneConfig.postannouncebuildStep);
 		} 
-		if(cloneConfig.sourcePaths != null)
-			sourcePaths = (IPath[])cloneConfig.sourcePaths.clone();
+		if(cloneConfig.sourceEntries != null)
+			sourceEntries = (ICSourceEntry[])cloneConfig.sourceEntries.clone();
 		
 //		enableInternalBuilder(cloneConfig.isInternalBuilderEnabled());
 //		setInternalBuilderIgnoreErr(cloneConfig.getInternalBuilderIgnoreErr());
@@ -906,12 +953,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		PropertyManager.getInstance().serialize(this);
 		
-		if(sourcePaths != null && sourcePaths.length > 0){
-			for(int i = 0; i < sourcePaths.length; i++){
-				SourcePath p = new SourcePath(sourcePaths[i]);
-				ICStorageElement el = element.createChild(SourcePath.ELEMENT_NAME);
-				p.serialize(el);
-			}
+		if(sourceEntries != null && sourceEntries.length > 0){
+			ICStorageElement el = element.createChild(SOURCE_ENTRIES);
+			LanguageSettingEntriesSerializer.serializeEntries(sourceEntries, el);
 		}
 		// I am clean now
 		isDirty = false;
@@ -2259,26 +2303,32 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return folderInfo;
 	}
 
-	public IPath[] getSourcePaths() {
-		if(sourcePaths == null){
+	public ICSourceEntry[] getSourceEntries() {
+		if(sourceEntries == null){
 			if(parent != null)
-				return parent.getSourcePaths();
-			return new IPath[]{new Path("")}; //$NON-NLS-1$
+				return parent.getSourceEntries();
+			return new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED)}; //$NON-NLS-1$
 			
 		}
-		return (IPath[])sourcePaths.clone();
+		return (ICSourceEntry[])sourceEntries.clone();
 	}
 
-	public void setSourcePaths(IPath[] paths) {
-		if(Arrays.equals(sourcePaths, paths))
+	public void setSourceEntries(ICSourceEntry[] entries) {
+		setSourceEntries(entries, true);
+	}
+
+	public void setSourceEntries(ICSourceEntry[] entries, boolean setRebuildState) {
+		if(Arrays.equals(getSourceEntries(), entries))
 			return;
-		sourcePaths = (IPath[])paths.clone();
+		sourceEntries = entries != null ? (ICSourceEntry[])entries.clone() : null;
 //		for(int i = 0; i < sourcePaths.length; i++){
 //			sourcePaths[i] = sourcePaths[i].makeRelative();
 //		}
 		exportArtifactInfo();
-		setDirty(true);
-		setRebuildState(true);
+		if(setRebuildState){
+			setDirty(true);
+			setRebuildState(true);
+		}
 	}
 
 	public void setErrorParserAttribute(String[] ids) {
@@ -2893,4 +2943,26 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			throw new BuildException(e.getLocalizedMessage());
 		}
 	}
+	
+	boolean isExcluded(IPath path){
+//		if(path.segmentCount() == 0)
+//			return false;
+		ICSourceEntry[] entries = getSourceEntries();
+		return CDataUtil.isExcluded(path, entries);
+	}
+	
+	void setExcluded(IPath path, boolean excluded){
+//		if(path.segmentCount() == 0)
+//			return;
+		if(excludeList == null) {
+			ICSourceEntry[] entries = getSourceEntries();
+			ICSourceEntry[] newEntries = CDataUtil.setExcluded(path, excluded, entries);
+			setSourceEntries(newEntries, false);
+		} else{
+			if(excluded)
+				excludeList.add(path);
+		}
+			
+	}
+
 }

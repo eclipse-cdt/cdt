@@ -37,16 +37,13 @@ public class CFileDescription extends CDataProxyContainer implements
 	}
 
 	public boolean isExcluded() {
-		CResourceData data = (CResourceData)getData(false);
-		return data.isExcluded();
+		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
+		return cfg.isExcluded(getPath());
 	}
 
 	public void setExcluded(boolean excluded) {
-		if(isExcluded() == excluded)
-			return;
-		
-		CResourceData data = (CResourceData)getData(true);
-		data.setExcluded(excluded);
+		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
+		cfg.setExcluded(getPath(), excluded);
 	}
 
 	public void setPath(IPath path) {

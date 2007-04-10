@@ -34,13 +34,13 @@ public class BuildFolderData extends CFolderData {
 		return fFolderInfo.getPath();
 	}
 
-	public boolean isExcluded() {
-		return fFolderInfo.isExcluded();
-	}
-
-	public void setExcluded(boolean excluded) {
-		fFolderInfo.setExclude(excluded);
-	}
+//	public boolean isExcluded() {
+//		return fFolderInfo.isExcluded();
+//	}
+//
+//	public void setExcluded(boolean excluded) {
+//		fFolderInfo.setExclude(excluded);
+//	}
 
 	public void setPath(IPath path) {
 		fFolderInfo.setPath(path);
@@ -84,4 +84,13 @@ public class BuildFolderData extends CFolderData {
 			((BuildLanguageData)lDatas[i]).clearCachedData();
 		}
 	}
+
+	public boolean containsScannerInfo() {
+		return fFolderInfo.containsDiscoveredScannerInfo();
+	}
+	
+	public void setContainsDiscoveredScannerInfo(boolean contains) {
+		fFolderInfo.setContainsDiscoveredScannerInfo(contains);
+	}
+
 }

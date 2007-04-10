@@ -1,5 +1,6 @@
 package org.eclipse.cdt.managedbuilder.ui.tests.util;
 
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -534,6 +535,16 @@ public class TestConfiguration implements IConfiguration {
 	}
 
 	public void setBuildArtefactType(String id) throws BuildException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public ICSourceEntry[] getSourceEntries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setSourceEntries(ICSourceEntry[] entries) {
 		// TODO Auto-generated method stub
 		
 	}

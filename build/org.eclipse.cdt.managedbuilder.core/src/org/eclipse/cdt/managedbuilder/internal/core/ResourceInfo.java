@@ -32,10 +32,10 @@ import org.eclipse.core.runtime.Path;
 public abstract class ResourceInfo extends BuildObject implements IResourceInfo {
 //	private IFolderInfo parentFolderInfo;
 //	private String parentFolderInfoId;
-	private IConfiguration config;
+	private Configuration config;
 	private IPath path;
 	boolean isDirty;
-	private boolean isExcluded;
+//	private boolean isExcluded;
 	boolean needsRebuild;
 	private ResourceInfoContainer rcInfo;
 	private CResourceData resourceData;
@@ -44,15 +44,15 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 //	private String baseToolChainId;
 
 	ResourceInfo(IConfiguration cfg, IManagedConfigElement element, boolean hasBody){
-		config = cfg;
+		config = (Configuration)cfg;
 		if(hasBody)
 			loadFromManifest(element);
 	}
 
 	ResourceInfo(IConfiguration cfg, ResourceInfo base, String id) {
-		config = cfg;
+		config = (Configuration)cfg;
 		path = normalizePath(base.path);
-		internalSetExclude(base.isExcluded);
+//		internalSetExclude(base.isExcluded);
 
 		setId(id);
 		setName(base.getName());
@@ -88,7 +88,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	ResourceInfo(IConfiguration cfg, IPath path, String id, String name) {
-		config = cfg;
+		config = (Configuration)cfg;
 		path = normalizePath(path);
 		this.path = path;
 
@@ -98,7 +98,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	ResourceInfo(IFileInfo base, IPath path, String id, String name) {
-		config = base.getParent();
+		config = (Configuration)base.getParent();
 
 		setId(id);
 		setName(name);
@@ -106,7 +106,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		path = normalizePath(path);
 		
 		this.path = path;
-		internalSetExclude(base.isExcluded());
+//		internalSetExclude(base.isExcluded());
 //		parentFolderInfoId = base.getId();
 //		parentFolderInfo = base;
 //		inheritParentInfo = false;
@@ -115,7 +115,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	ResourceInfo(FolderInfo base, IPath path, String id, String name) {
-		config = base.getParent();
+		config = (Configuration)base.getParent();
 
 		setId(id);
 		setName(name);
@@ -123,7 +123,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		path = normalizePath(path);
 		
 		this.path = path;
-		internalSetExclude(base.isExcluded());
+//		internalSetExclude(base.isExcluded());
 //		parentFolderInfoId = base.getId();
 //		parentFolderInfo = base;
 //		inheritParentInfo = base.getPath().isPrefixOf(path);
@@ -132,7 +132,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	ResourceInfo(IConfiguration cfg, ICStorageElement element, boolean hasBody){
-		config = cfg;
+		config = (Configuration)cfg;
 		if(hasBody)
 			loadFromProject(element);
 	}
@@ -165,7 +165,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		// exclude
         String excludeStr = element.getAttribute(EXCLUDE);
         if (excludeStr != null){
-    		internalSetExclude("true".equals(excludeStr)); //$NON-NLS-1$
+    		config.setExcluded(getPath(), ("true".equals(excludeStr))); //$NON-NLS-1$
         }
 	}
 
@@ -197,7 +197,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if (element.getAttribute(EXCLUDE) != null) {
 			String excludeStr = element.getAttribute(EXCLUDE);
 			if (excludeStr != null){
-				internalSetExclude("true".equals(excludeStr)); //$NON-NLS-1$
+	    		config.setExcluded(getPath(), ("true".equals(excludeStr))); //$NON-NLS-1$
 			}
 		}
 
@@ -232,7 +232,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	public boolean isExcluded() {
-		return isExcluded;
+		return config.isExcluded(getPath());
 	}
 
 	public boolean needsRebuild() {
@@ -244,17 +244,20 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	public void setExclude(boolean excluded) {
-		if (isExcluded != internalSetExclude(excluded)) {
-			setDirty(true);
-			setRebuildState(true);
-		}
+		if(isExcluded() == excluded)
+			return;
+		
+		config.setExcluded(getPath(), excluded);
+		
+		setDirty(true);
+		setRebuildState(true);
 	}
 	
-	private boolean internalSetExclude(boolean excluded){
-//		if(excluded/* && isRoot()*/)
-//			return isExcluded;
-		return isExcluded = excluded;
-	}
+//	private boolean internalSetExclude(boolean excluded){
+////		if(excluded/* && isRoot()*/)
+////			return isExcluded;
+//		return isExcluded = excluded;
+//	}
 
 	public void setPath(IPath p) {
 		p = normalizePath(p);
@@ -287,9 +290,9 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			element.setAttribute(IBuildObject.NAME, name);
 		}
 		
-		if (isExcluded) {
-			element.setAttribute(IResourceInfo.EXCLUDE, "true"); //$NON-NLS-1$
-		}
+//		if (isExcluded) {
+//			element.setAttribute(IResourceInfo.EXCLUDE, "true"); //$NON-NLS-1$
+//		}
 
 		if (path != null) {
 			element.setAttribute(IResourceInfo.RESOURCE_PATH, path.toString());

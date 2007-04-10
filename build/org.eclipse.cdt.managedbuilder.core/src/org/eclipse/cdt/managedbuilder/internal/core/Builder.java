@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.settings.model.COutputEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -560,7 +561,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
         	IManagedConfigElement child = children[i];
         	String name = child.getName();
         	if(OUTPUT_ENTRIES.equals(name)){
-        		ICLanguageSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(new ManagedConfigStorageElement(child));
+        		ICSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(new ManagedConfigStorageElement(child));
         		if(entries.length == 0){
         			outputEntries = new ICOutputEntry[0];
         		} else {
@@ -702,7 +703,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
         	ICStorageElement child = children[i];
         	String name = child.getName();
         	if(OUTPUT_ENTRIES.equals(name)){
-        		ICLanguageSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(child);
+        		ICSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(child);
         		if(entries.length == 0){
         			outputEntries = new ICOutputEntry[0];
         		} else {

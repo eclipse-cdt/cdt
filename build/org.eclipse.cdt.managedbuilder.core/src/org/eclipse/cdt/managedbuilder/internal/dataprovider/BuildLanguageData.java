@@ -15,7 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
+import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.IKindBasedInfo;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
@@ -28,6 +30,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ProfileInfoProvider.DiscoveredEntry;
@@ -522,5 +525,13 @@ public class BuildLanguageData extends CLanguageData {
 	
 	void clearCachedData(){
 		fKindToEntryStore.clear(); 
+	}
+
+	public boolean containsDiscoveredScannerInfo() {
+		IResourceInfo rcInfo = fTool.getParentResourceInfo();
+		if(rcInfo instanceof FolderInfo){
+			return ((FolderInfo)rcInfo).containsDiscoveredScannerInfo();
+		}
+		return true;
 	}
 }

@@ -44,6 +44,24 @@ public class CDataDiscoveredInfoCalculator {
 
 	private static CDataDiscoveredInfoCalculator fInstance;
 	
+	public static class DiscoveredSettingInfo{
+		private boolean fIsPerFileDiscovery;
+		private IRcSettingInfo[] fInfos;
+		
+		public DiscoveredSettingInfo(boolean isPerFileDiscovery, IRcSettingInfo[] infos){
+			fIsPerFileDiscovery = isPerFileDiscovery;
+			fInfos = infos;
+		}
+		
+		public boolean isPerFileDiscovery(){
+			return fIsPerFileDiscovery;
+		}
+		
+		public IRcSettingInfo[] getRcSettingInfos(){
+			return fInfos;
+		}
+	}
+
 	public interface IRcSettingInfo {
 		CResourceData getResourceData();
 		
@@ -1099,14 +1117,15 @@ public class CDataDiscoveredInfoCalculator {
 		return fInstance;
 	}
 	
-	public IRcSettingInfo[] getSettingInfos(IProject project, 
+	public DiscoveredSettingInfo getSettingInfos(IProject project, 
 			CConfigurationData cfgData){
 		InfoContext context = createContext(project, cfgData);
 		try {
 			IDiscoveredPathManager.IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project, context);
 			if(info instanceof IDiscoveredPathManager.IPerFileDiscoveredPathInfo2){
 				IDiscoveredPathManager.IPerFileDiscoveredPathInfo2 perFileInfo = (IDiscoveredPathManager.IPerFileDiscoveredPathInfo2)info;
-				return getSettingInfos(project, cfgData, perFileInfo, true);
+				DiscoveredSettingInfo dsInfo = new DiscoveredSettingInfo(true, getSettingInfos(project, cfgData, perFileInfo, true));
+				return dsInfo;
 			}
 			IPath[] includes = info.getIncludePaths();
 			Map symbols = info.getSymbols();
@@ -1114,11 +1133,11 @@ public class CDataDiscoveredInfoCalculator {
 			PathInfo pathInfo = new PathInfo(includes, null, symbols, null, null);
 			CFolderData rootData = cfgData.getRootFolderData();
 			IRcSettingInfo rcInfo = createRcSettingInfo(rootData, pathInfo);
-			return new IRcSettingInfo[]{rcInfo};
+			return new DiscoveredSettingInfo(false, new IRcSettingInfo[]{rcInfo});
 		} catch (CoreException e) {
 			MakeCorePlugin.log(e);
 		}
-		return new IRcSettingInfo[0];
+		return new DiscoveredSettingInfo(false, new IRcSettingInfo[0]);
 	}
 	
 	protected InfoContext createContext(IProject project, CConfigurationData data){

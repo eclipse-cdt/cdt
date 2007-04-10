@@ -30,13 +30,13 @@ public class BuildFileData extends CFileData {
 		return fFileInfo.getPath();
 	}
 
-	public boolean isExcluded() {
-		return fFileInfo.isExcluded();
-	}
-
-	public void setExcluded(boolean excluded) {
-		fFileInfo.setExclude(excluded);
-	}
+//	public boolean isExcluded() {
+//		return fFileInfo.isExcluded();
+//	}
+//
+//	public void setExcluded(boolean excluded) {
+//		fFileInfo.setExclude(excluded);
+//	}
 
 	public void setPath(IPath path) {
 		fFileInfo.setPath(path);

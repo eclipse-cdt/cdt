@@ -798,8 +798,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				tool.removeOption(opts[j]);
 			}
 		}
-		
-		setExclude(false);
+//		setExclude(false);
 	}
 
 	/* (non-Javadoc)

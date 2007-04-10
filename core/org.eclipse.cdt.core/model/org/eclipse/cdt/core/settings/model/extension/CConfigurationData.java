@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.settings.model.extension;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -48,9 +49,9 @@ public abstract class CConfigurationData extends CDataObject {
 	
 	public abstract CTargetPlatformData getTargetPlatformData();
 	
-	public abstract IPath[] getSourcePaths();
+	public abstract ICSourceEntry[] getSourceEntries();
 
-	public abstract void setSourcePaths(IPath[] paths);
+	public abstract void setSourceEntries(ICSourceEntry[] entries);
 	
 	public abstract CBuildData getBuildData();
 	

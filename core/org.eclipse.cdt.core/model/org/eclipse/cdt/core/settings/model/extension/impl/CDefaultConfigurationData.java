@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
@@ -35,7 +36,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 	protected String fId;
 	protected CTargetPlatformData fTargetPlatformData;
 	protected CBuildData fBuildData;
-	protected IPath[] fSourcePaths;
+	protected ICSourceEntry[] fSourceEntries;
 	private CDataFacroty fFactory;
 	protected boolean fIsModified;
 	
@@ -99,7 +100,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		fDescription = base.getDescription();
 		
 		fTargetPlatformData = copyTargetPlatformData(base.getTargetPlatformData(), clone);
-		fSourcePaths = base.getSourcePaths();
+		fSourceEntries = base.getSourceEntries();
 		fBuildData = copyBuildData(base.getBuildData(), clone);
 		
 		CFolderData baseRootFolderData = base.getRootFolderData();
@@ -237,15 +238,15 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		return fTargetPlatformData;
 	}
 
-	public IPath[] getSourcePaths() {
-		return fSourcePaths != null ? (IPath[])fSourcePaths.clone() : null;
+	public ICSourceEntry[] getSourceEntries() {
+		return fSourceEntries != null ? (ICSourceEntry[])fSourceEntries.clone() : null;
 	}
 
-	public void setSourcePaths(IPath[] paths) {
-		if(Arrays.equals(paths, fSourcePaths))
+	public void setSourceEntries(ICSourceEntry[] entries) {
+		if(Arrays.equals(entries, fSourceEntries))
 			return;
 		
-		fSourcePaths = paths != null ? (IPath[])paths.clone() : null;
+		fSourceEntries = entries != null ? (ICSourceEntry[])entries.clone() : null;
 		setModified(true);
 	}
 

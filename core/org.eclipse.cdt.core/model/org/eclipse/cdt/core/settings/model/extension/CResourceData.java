@@ -19,11 +19,11 @@ public abstract class CResourceData extends CDataObject {
 
 	public abstract IPath getPath();
 	
-	public abstract boolean isExcluded();
+//	public abstract boolean isExcluded();
 
 	public abstract void setPath(IPath path) ;
 	
-	public abstract void setExcluded(boolean excluded);
+//	public abstract void setExcluded(boolean excluded);
 	
 	public abstract boolean hasCustomSettings();
 }

@@ -14,12 +14,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class PathSettingsContainer {
 	private static final Object INEXISTENT_VALUE = new Object();
+	private static final String ROOY_PATH_NAME = Path.ROOT.toString();
+//	private static final boolean DEBUG = true;
 //	private static final int INIT_CHILDREN_MAP_CAPACITY = 2;
 	
 //	private Map fChildrenMap;
@@ -39,6 +42,10 @@ public class PathSettingsContainer {
 	private static final int VALUE_CHANGED = 3;
 	private static final int PATH_CHANGED = 4;
 	
+	private static class PatternSearchInfo {
+		Set fStoreSet;
+		int fNumDoubleStarEls;
+	}
 
 	public static PathSettingsContainer createRootContainer(){
 		return createRootContainer(false);
@@ -49,7 +56,7 @@ public class PathSettingsContainer {
 	}
 
 	private PathSettingsContainer(boolean pattternMode){
-		this(null, null, "", pattternMode); //$NON-NLS-1$
+		this(null, null, ROOY_PATH_NAME, pattternMode);
 	}
 	
 	private PathSettingsContainer(PathSettingsContainer root, PathSettingsContainer parent, String name, boolean patternMode){
@@ -83,7 +90,19 @@ public class PathSettingsContainer {
 		}
 		return null;
 	}
-	
+
+	private boolean isDoubleStarName(){
+		return PatternNameMap.DOUBLE_STAR_PATTERN.equals(getName());
+	}
+
+	private PathSettingsContainer getDoubleStarChild(){
+		PatternNameMap pMap = getPatternChildrenMap(false);
+		if(pMap != null){
+			return pMap.containsDoubleStar() ? (PathSettingsContainer)pMap.get(PatternNameMap.DOUBLE_STAR_PATTERN) : null;
+		}
+		return null;
+	}
+
 	private List getChildren(String name){
 		PatternNameMap pMap = getPatternChildrenMap(false);
 		if(pMap != null){
@@ -129,9 +148,13 @@ public class PathSettingsContainer {
 		PatternNameMap pMap = getPatternChildrenMap(false);
 		return pMap != null && pMap.size() != 0;
 	}
-	
+
 	public PathSettingsContainer getChildContainer(IPath path, boolean create, boolean exactPath){
-		PathSettingsContainer container = findContainer(path, create, exactPath);
+		return getChildContainer(path, create, exactPath, fIsPatternMode);
+	}
+
+	public PathSettingsContainer getChildContainer(IPath path, boolean create, boolean exactPath, boolean patternSearch){
+		PathSettingsContainer container = findContainer(path, create, exactPath, patternSearch, -1, null);
 		if(container != null && container.internalGetValue() == INEXISTENT_VALUE){
 			if(create){
 				container.internalSetValue(null);
@@ -146,6 +169,10 @@ public class PathSettingsContainer {
 
 		}
 		return container;
+	}
+	
+	static IPath toNormalizedContainerPath(IPath path){
+		return Path.ROOT.append(path);
 	}
 
 	public PathSettingsContainer[] getChildren(final boolean includeThis){
@@ -163,19 +190,45 @@ public class PathSettingsContainer {
 	}
 	
 	public PathSettingsContainer[] getChildrenForPath(IPath path, boolean includePath){
-		PathSettingsContainer cr = findContainer(path, false, true);
+		PathSettingsContainer cr = findContainer(path, false, true, fIsPatternMode, -1, null);
 		if(cr != null)
 			return cr.getChildren(includePath);
 		return new PathSettingsContainer[0];
 	}
 
 	public PathSettingsContainer[] getDirectChildrenForPath(IPath path){
-		PathSettingsContainer cr = findContainer(path, false, true);
+		PathSettingsContainer cr = findContainer(path, false, true, fIsPatternMode, -1, null);
 		if(cr != null)
 			return cr.getDirectChildren();
 		return new PathSettingsContainer[0];
 	}
-
+	
+/*	public PathSettingsContainer[] getDirectChildrenForPath(IPath path, boolean searchPatterns){
+		if(!searchPatterns)
+			return getDirectChildrenForPath(path);
+		
+		if(!isRoot() && !PatternNameMap.isPatternName(fName)){
+			return getDirectParentContainer().getDirectChildrenForPath(
+					new Path(fName).append(path), true);
+		}
+		return searchPatternsDirectChildrenForPath(path);
+	}
+	
+	private PathSettingsContainer[] searchPatternsDirectChildrenForPath(IPath path){
+		Set set = new HashSet();
+		findContainer(path, false, false, path.segmentCount(), set);
+		
+		if(DEBUG){
+			for(Iterator iter = set.iterator(); iter.hasNext();){
+				PathSettingsContainer child = (PathSettingsContainer)iter.next();
+				if(child.fValue == INEXISTENT_VALUE)
+					throw new IllegalStateException();
+			}
+		}
+		
+		return (PathSettingsContainer[])set.toArray(new PathSettingsContainer[set.size()]);
+	}
+*/
 	public PathSettingsContainer[] getDirectChildren(){
 		List list = doGetDirectChildren(null);
 		if(list == null || list.size() == 0)
@@ -292,37 +345,165 @@ public class PathSettingsContainer {
 		return fName;
 	}
 
-	private PathSettingsContainer findContainer(IPath path, boolean create, boolean exactPath){
+	private PathSettingsContainer findContainer(IPath path, boolean create, boolean exactPath, boolean patternSearch, int matchDepth, PatternSearchInfo psi){
 		PathSettingsContainer container = null;
 		if(path.segmentCount() == 0)
 			container = this;
-		else if (create || exactPath || !fIsPatternMode) {
+		else if (create || exactPath || !patternSearch || !fIsPatternMode) {
 			PathSettingsContainer child = getExacChild(path.segment(0), create);
 			if(child != null)
-				container = child.findContainer(path.removeFirstSegments(1), create, exactPath);
+				container = child.findContainer(path.removeFirstSegments(1), create, exactPath, patternSearch, stepDepth(matchDepth), psi);
 			else if(!exactPath)
 				container = this;
 		} else {
 			//looking for container using patterns in read mode (i.e. not creating new container)
-			List list = getChildren(path.segment(0));
-			if(list != null){
-				int size = list.size();
-				PathSettingsContainer child, childFound;
-				
-				for(int i = 0; i < size; i++){
-					child = (PathSettingsContainer)list.get(i);
-					childFound = child.findContainer(path.removeFirstSegments(1), false, false);
-					if(container == null)
-						container = childFound;
-					else if(container.getPath().segmentCount() < childFound.getPath().segmentCount()){
-						container = childFound;
-					}
-				}
-			}
-			if(container == null)
-				container = this;
+			if(psi == null)
+				psi = new PatternSearchInfo();
+			container = processPatterns(path, matchDepth, 0, psi);
+//			do {
+//				List list = getChildren(path.segment(0));
+//				if(list != null){
+//					int size = list.size();
+//					PathSettingsContainer child, childFound;
+//					
+//					for(int i = 0; i < size; i++){
+//						child = (PathSettingsContainer)list.get(i);
+//						if(directChildren && child.fValue != INEXISTENT_VALUE){
+//							childFound = child;
+//						} else {
+//							childFound = child.findContainer(path.removeFirstSegments(1), false, false, directChildren, storeSet);
+//						}
+//
+//						if(childFound.fValue != INEXISTENT_VALUE){
+//							if(container == null 
+//									|| container.getValue() == INEXISTENT_VALUE 
+//									|| container.getPath().segmentCount() < childFound.getPath().segmentCount()){
+//								container = childFound;
+//							}
+//							if(storeSet != null)
+//								storeSet.add(container);
+//						}
+//					}
+//				}
+//				if(container == null || storeSet != null){
+//					PathSettingsContainer dsChild = getDoubleStarChild();
+//					if(dsChild != null && !storeSet.contains(dsChild)){
+//						container = dsChild.findContainer(path, false, false, directChildren, storeSet);
+//					}
+//					
+//					if(container == null){
+//						if(isDoubleStarName()){
+//							if(path.segmentCount() != 0){
+//								path = path.removeFirstSegments(1);
+//								continue;
+//							}
+//						} else {
+//							container = this;
+//						}
+//					}
+//				}
+//				break;
+//			} while(true);
 		}
 		return container;
+	}
+	
+	static boolean pathsEqual(IPath p1, IPath p2) {
+		if (p1 == p2)
+			return true;
+
+		int i = p1.segmentCount();
+		if(i != p2.segmentCount())
+			return false;
+
+		while (--i >= 0)
+			if (!p1.segment(i).equals(p2.segment(i)))
+				return false;
+		
+		return true;
+	}
+	
+	private PathSettingsContainer processPatterns(IPath path, int matchDepth, int depth, PatternSearchInfo psi){
+		Set storeSet = psi.fStoreSet;
+		PathSettingsContainer container = null;
+		String name = path.segment(0);
+		List list = getChildren(name);
+		PathSettingsContainer child, childFound;
+		boolean exactPathFound = false;
+		if(list != null){
+			int size = list.size();
+			
+			for(int i = 0; i < size; i++){
+				child = (PathSettingsContainer)list.get(i);
+				if(matchDepth == 0 && child.fValue != INEXISTENT_VALUE){
+					childFound = child;
+				} else {
+					childFound = child.findContainer(path.removeFirstSegments(1), false, false, true, stepDepth(matchDepth), psi);
+				}
+
+				if(childFound != null  && childFound.fValue != INEXISTENT_VALUE){
+					if(!exactPathFound 
+							&& path.segmentCount() == 1
+							&& child != childFound
+							&& name.equals(childFound.fName)){
+						container = childFound;
+						exactPathFound = true;
+					} else if(container == null 
+							|| container.getValue() == INEXISTENT_VALUE 
+							|| container.getPath().segmentCount() < childFound.getPath().segmentCount()){
+						container = childFound;
+					}
+					if(storeSet != null)
+						storeSet.add(container);
+					else if(exactPathFound)
+						break;
+				}
+			}
+		}
+
+		if(!exactPathFound || storeSet != null){
+			child = getDoubleStarChild();
+			if(child != null/* && !storeSet.contains(child)*/){
+				if(matchDepth == 0 && child.fValue != INEXISTENT_VALUE){
+					childFound = child;
+				} else {
+					childFound = child.findContainer(path, false, false, true, matchDepth, psi);
+				}
+				
+				if(childFound != null && childFound.fValue != INEXISTENT_VALUE){
+					psi.fNumDoubleStarEls++;
+					if(container == null 
+							|| container.getValue() == INEXISTENT_VALUE 
+							|| container.getPath().segmentCount() < childFound.getPath().segmentCount() + depth - psi.fNumDoubleStarEls){
+						container = childFound;
+					}
+					if(storeSet != null)
+						storeSet.add(container);
+				}
+			}
+			
+			if(container == null){
+				if(isDoubleStarName()){
+					if(path.segmentCount() > 1){
+						childFound = processPatterns(path.removeFirstSegments(1), stepDepth(matchDepth), depth + 1, psi);
+						if(childFound != null && childFound.fValue != INEXISTENT_VALUE){
+							container = childFound;
+							if(storeSet != null)
+								storeSet.add(container);
+						}
+					}
+				} else if (matchDepth < 0 && fValue != INEXISTENT_VALUE){
+					container = this;
+					if(storeSet != null)
+						storeSet.add(container);
+				}
+			}
+		}
+		return container;
+	}
+	
+	private int stepDepth(int depth){
+		return depth == 0 ? depth : depth-1;
 	}
 	
 	public void accept(IPathSettingsContainerVisitor visitor){
@@ -377,7 +558,7 @@ public class PathSettingsContainer {
 			
 		}
 		
-		PathSettingsContainer newParent = fRootContainer.findContainer(path.removeLastSegments(1), true, true);
+		PathSettingsContainer newParent = fRootContainer.findContainer(path.removeLastSegments(1), true, true, false, -1, null);
 		PathSettingsContainer oldParent = fDirectParentContainer;
 		fName = path.segment(path.segmentCount()-1);
 		fPath = path;
@@ -441,5 +622,34 @@ public class PathSettingsContainer {
 	
 	private void setParent(PathSettingsContainer parent){
 		fDirectParentContainer = parent;
+	}
+
+	public String toString() {
+		return contributeToString(new StringBuffer(), 0).toString();
+	}
+	
+	private StringBuffer contributeToString(StringBuffer buf, int depth){
+		for (int i= 0; i < depth; i++) {
+			buf.append('\t');
+		}
+		buf.append('[').append(getPath()).append(']').append('\n');
+
+		PathSettingsContainer[] directChildren = getDirectChildren();
+		if(directChildren.length != 0){
+			int nextDepth = depth + 1;
+			for(int i = 0; i < directChildren.length; i++){
+				directChildren[i].contributeToString(buf, nextDepth);
+			}
+		}
+		return buf;
+	}
+	
+	static boolean hasSpecChars(IPath path){
+		int count = path.segmentCount();
+		for(int i = 0; i < count; i++){
+			if(PatternNameMap.isPatternName(path.segment(i)))
+				return true;
+		}
+		return false;
 	}
 }

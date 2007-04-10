@@ -22,14 +22,6 @@ public abstract class CFolderData extends CResourceData {
 		return ICSettingBase.SETTING_FOLDER;
 	}
 	
-//	public abstract CResourceData[] getNestedResourceDatas(int kind);
-	
-//	public abstract CResourceData getNestedResourceData(IPath path);
-	
-//	public abstract CDataObject[] getChildrenOfKind(int kind);
-
-//	public abstract CDataObject getChildById(String id);
-
 	public abstract CLanguageData[] getLanguageDatas();
 	
 	public abstract CLanguageData createLanguageDataForContentTypes(String languageId, String cTypesIds[]);

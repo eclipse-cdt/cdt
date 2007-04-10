@@ -189,7 +189,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 			return getCachedPathInfo(cInfo);
 		}
 		
-		cInfo.fLoadContext.getConfiguration().getRootFolderInfo().setExclude(false);
+		((FolderInfo)cInfo.fLoadContext.getConfiguration().getRootFolderInfo()).setContainsDiscoveredScannerInfo(true);
 		Map map = baseInfo.getSymbols();
 		IPath paths[] = baseInfo.getIncludePaths();
 		
@@ -232,7 +232,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		}
 		
 		if(rootSettingFound && fileSettingFound)
-			data.getRootFolderData().setExcluded(true);
+			((BuildFolderData)data.getRootFolderData()).setContainsDiscoveredScannerInfo(false);
 		
 		if(!rcDataMap.isEmpty()){
 			CResourceData tmpRcData;

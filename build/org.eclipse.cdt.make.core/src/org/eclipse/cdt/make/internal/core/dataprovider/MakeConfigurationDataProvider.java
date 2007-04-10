@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.settings.model.util.CDataSerializer;
 import org.eclipse.cdt.core.settings.model.util.UserAndDiscoveredEntryDataSerializer;
 import org.eclipse.cdt.make.internal.core.scannerconfig.CDataDiscoveredInfoCalculator;
 import org.eclipse.cdt.make.internal.core.scannerconfig.CDataDiscoveredInfoProcessor;
-import org.eclipse.cdt.make.internal.core.scannerconfig.CDataDiscoveredInfoCalculator.IRcSettingInfo;
+import org.eclipse.cdt.make.internal.core.scannerconfig.CDataDiscoveredInfoCalculator.DiscoveredSettingInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -65,9 +65,9 @@ public class MakeConfigurationDataProvider extends CDefaultConfigurationDataProv
 			CDataDiscoveredInfoCalculator calculator,
 			CDataDiscoveredInfoProcessor processor){
 		
-		IRcSettingInfo rcInfos[] = calculator.getSettingInfos(project, cfgData);
+		DiscoveredSettingInfo dsInfo = calculator.getSettingInfos(project, cfgData);
 		
-		processor.applyDiscoveredInfo(cfgData, rcInfos);
+		processor.applyDiscoveredInfo(cfgData, dsInfo);
 	}
 	
 	protected CDataDiscoveredInfoProcessor getInfoProcessor(){

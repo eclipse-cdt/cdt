@@ -16,8 +16,12 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * For testing PDOM binding resolution
@@ -159,6 +163,27 @@ public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 		IBinding binding= getBindingFromASTName("i;", 1);
 		assertTrue(binding instanceof ICPPVariable);
 		IScope scope= binding.getScope();
+	}
+	
+	//	template<class T, class U, class V>
+	//	class A {};
+	
+	//	template<>
+	//	class A<int, bool, double> {};
+	public void testBug180784() throws Exception {
+		IBinding b0= getBindingFromASTName("A<int, bool, double> {};", 20);
+		assertInstance(b0, ICPPSpecialization.class);
+		ICPPSpecialization s= (ICPPSpecialization) b0;
+		ObjectMap map= s.getArgumentMap();
+		IBinding b1= s.getSpecializedBinding();
+		assertInstance(b1, ICPPClassTemplate.class);
+		ICPPClassTemplate t= (ICPPClassTemplate) b1;
+		ICPPTemplateParameter[] ps = t.getTemplateParameters();
+		assertNotNull(ps);
+		assertEquals(3, ps.length);
+		assertNotNull(map.get(ps[0]));
+		assertNotNull(map.get(ps[1]));
+		assertNotNull(map.get(ps[2]));
 	}
 	
 	//	class A{};

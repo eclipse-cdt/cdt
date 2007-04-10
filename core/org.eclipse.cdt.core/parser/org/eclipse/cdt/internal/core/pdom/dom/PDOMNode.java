@@ -77,6 +77,10 @@ public abstract class PDOMNode implements IPDOMNode {
 		return super.equals(obj);
 	}
 
+	public int hashCode() {
+		return 31 * pdom.getPath().hashCode() + 41 * record;
+	}
+
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		// No children here.
 	}

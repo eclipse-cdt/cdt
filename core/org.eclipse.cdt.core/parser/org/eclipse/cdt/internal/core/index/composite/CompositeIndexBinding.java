@@ -100,4 +100,8 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		
 		return super.equals(obj);
 	}
+
+	public int hashCode() {
+		return rbinding.hashCode();
+	}
 }

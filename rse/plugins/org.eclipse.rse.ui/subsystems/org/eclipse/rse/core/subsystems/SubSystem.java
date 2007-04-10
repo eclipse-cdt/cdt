@@ -2382,8 +2382,22 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	
 	/**
 	 * Required for Bug 176603
+	 * 
+	 * @deprecated
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception 
+	{
+		connect(monitor, false);
+	}
+	
+	/**
+	 * Connect to a remote system with a monitor.
+	 * Required for Bug 176603
+	 *
+	 * @param monitor the progress monitor
+	 * @param forcePrompt indicates whether to prompt even if password is in memory
+	 */
+	public void connect(IProgressMonitor monitor, boolean forcePrompt) throws Exception 
 	{				
 		if (!isConnected()) 
 		{
@@ -2392,13 +2406,15 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	        msg = SubSystemConfiguration.getConnectingMessage(getHostName(), getConnectorService().getPort());        	
 	        SystemBasePlugin.logInfo(msg);
 	        monitor.beginTask(msg, 10);
+	        final boolean promptForPassword = forcePrompt;
 	        
 			final Exception[] exception=new Exception[1];
 			exception[0]=null;
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					try {
-						promptForPassword();
+					try 
+					{
+						promptForPassword(promptForPassword);
 					} catch(Exception e) {
 						exception[0]=e;
 					}

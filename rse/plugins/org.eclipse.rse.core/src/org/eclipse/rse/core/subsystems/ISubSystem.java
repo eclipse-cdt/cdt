@@ -27,7 +27,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSECallback;
 import org.eclipse.rse.core.model.IRSEModelObject;
-import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
@@ -378,8 +377,19 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Connect to the remote system from a background job
 	 * 
 	 * @param monitor the process monitor
+	 * 
+	 * @deprecated use connect(IProgressMonitor, boolean)
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
+
+	/**
+	 * Connect to the remote system from a background job
+	 * 
+	 * @param monitor the process monitor
+	 * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
+	 * in memory
+	 */
+	public void connect(IProgressMonitor monitor, boolean forcePrompt) throws Exception;
 
 	
 	/**

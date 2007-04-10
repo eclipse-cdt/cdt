@@ -248,7 +248,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					fromScratch= true;
 				}
 			
-				pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject));
+				pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 				if (pdom.versionMismatch() || fromScratch) {
 					try {
 						pdom.acquireWriteLock();
@@ -966,7 +966,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 
 			// overwrite internal location representations
-			final WritablePDOM newPDOM = new WritablePDOM(targetLocation, pdom.getLocationConverter());
+			final WritablePDOM newPDOM = new WritablePDOM(targetLocation, pdom.getLocationConverter(), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());			
 			try {
 				newPDOM.acquireWriteLock();
 				try {

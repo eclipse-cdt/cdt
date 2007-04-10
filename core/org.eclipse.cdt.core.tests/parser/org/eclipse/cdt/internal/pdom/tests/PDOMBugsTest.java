@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.CCoreInternals;
@@ -95,7 +96,7 @@ public class PDOMBugsTest extends BaseTestCase {
 		final PDOMManager pdomManager = CCoreInternals.getPDOMManager();
 		pdomManager.exportProjectPDOM(cproject, tmp, cvr);
 		
-		IWritableIndexFragment pdom = new WritablePDOM(tmp, cvr, new ChunkCache());
+		IWritableIndexFragment pdom = new WritablePDOM(tmp, cvr, new ChunkCache(), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		pdom.acquireReadLock();
 		try {
 			String id= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);

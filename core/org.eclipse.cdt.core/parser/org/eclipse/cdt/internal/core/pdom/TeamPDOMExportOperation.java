@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -95,7 +96,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			monitor.worked(5);
 			
 			// create checksums
-			PDOM pdom= new PDOM(tmpPDOM, converter);
+			PDOM pdom= new PDOM(tmpPDOM, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 			try {
 				monitor.setTaskName(Messages.Checksums_taskComputeChecksums);
 				createChecksums(fProject, pdom, tmpChecksums, subMonitor(monitor, 94));

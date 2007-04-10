@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.index.URIRelativeLocationConverter;
 import org.eclipse.cdt.core.index.export.ExternalExportProjectProvider;
 import org.eclipse.cdt.core.index.export.IExportProjectProvider;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -107,7 +108,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider3.class.getName()
 		});
 		assertTrue(target.exists());
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI));
+		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
 		String fid= wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
@@ -122,7 +123,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider4.class.getName()
 		});
 		assertTrue(target.exists());
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI));
+		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
 		String fid= wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
@@ -187,7 +188,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		});
 		assertTrue(target.exists());
 
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI));
+		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
 		String fid= wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
@@ -219,7 +220,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		});
 		assertTrue(target.exists());
 
-		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI));
+		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject2Content(wpdom);
 	}
 

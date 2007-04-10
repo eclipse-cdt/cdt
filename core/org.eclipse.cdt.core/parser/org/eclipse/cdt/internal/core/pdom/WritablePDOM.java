@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -38,12 +39,12 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	private boolean fClearedBecauseOfVersionMismatch= false;
 	private boolean fCreatedFromScratch= false;
 
-	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter) throws CoreException {
-		this(dbPath, locationConverter, ChunkCache.getSharedInstance());
+	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, Map linkageFactoryMappings) throws CoreException {
+		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
 	
-	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache) throws CoreException {
-		super(dbPath, locationConverter, cache);
+	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map linkageFactoryMappings) throws CoreException {
+		super(dbPath, locationConverter, cache, linkageFactoryMappings);
 	}
 
 	public IIndexFragmentFile addFile(IIndexFileLocation location) throws CoreException {

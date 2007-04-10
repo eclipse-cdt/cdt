@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -69,7 +70,7 @@ class PDOMCache {
 				}
 				if(result==null) {
 					try {
-						result = new PDOM(file, converter);
+						result = new PDOM(file, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 
 						result.acquireReadLock();
 						try {

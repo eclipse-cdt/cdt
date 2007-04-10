@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.export.IExportProjectProvider;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -67,7 +68,7 @@ public class GeneratePDOM implements ISafeRunnable {
 		
 		try {
 			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
-			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter);
+			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 
 			exportedPDOM.acquireWriteLock(0);
 			try {

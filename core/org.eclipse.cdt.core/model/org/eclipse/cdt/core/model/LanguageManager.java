@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -294,38 +295,36 @@ public class LanguageManager {
 	}
 	
 	/**
-	 * Returns a factory for the given linkage ID. The IDs are defined in {@link ILinkage}. 
-	 * @param linkageID an ID for a linkage.
-	 * @return a factory or <code>null</code>.
+	 * Returns mappings between IDs and IPDOMLinkageFactory. The IDs are defined in {@link ILinkage}. 
+	 * @return a map.
 	 * @since 4.0
 	 */
-	public IPDOMLinkageFactory getPDOMLinkageFactory(String linkageID) {
-		final IPDOMLinkageFactory[] result= new IPDOMLinkageFactory[] {null}; 
-		result[0]= (IPDOMLinkageFactory) fPDOMLinkageFactoryCache.get(linkageID);
-
-		if (result[0] == null) {
-			// read configuration
-			IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
-			for (int i = 0; result[0] == null && i < configs.length; i++) {
-				final IConfigurationElement element = configs[i];
-				if (ELEMENT_PDOM_LINKAGE_FACTORY.equals(element.getName())) {
-					if (linkageID.equals(element.getAttribute(ATTRIBUTE_ID))) {
-						SafeRunner.run(new ISafeRunnable(){
-							public void handleException(Throwable exception) {
-								CCorePlugin.log(exception);
-							}
-
-							public void run() throws Exception {
-								result[0]= (IPDOMLinkageFactory) element.createExecutableExtension(ATTRIBUTE_CLASS);
-							}}
-						);
+	public Map getPDOMLinkageFactoryMappings() {
+		if (!fPDOMLinkageFactoryCache.isEmpty())
+			return Collections.unmodifiableMap(fPDOMLinkageFactoryCache);
+		
+		fPDOMLinkageFactoryCache.clear();
+		final IPDOMLinkageFactory[] result = new IPDOMLinkageFactory[] {null};
+		
+		// read configuration
+		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		for (int i = 0; i < configs.length; i++) {
+			final IConfigurationElement element = configs[i];
+			if (ELEMENT_PDOM_LINKAGE_FACTORY.equals(element.getName())) {
+				SafeRunner.run(new ISafeRunnable(){
+					public void handleException(Throwable exception) {
+						CCorePlugin.log(exception);
 					}
-				}			
-			}
-			fPDOMLinkageFactoryCache.put(linkageID, result[0]);
-		}
-		return result[0];
-	}
+
+					public void run() throws Exception {
+						result[0] = (IPDOMLinkageFactory) element.createExecutableExtension(ATTRIBUTE_CLASS);
+					}}
+				);			
+				fPDOMLinkageFactoryCache.put(element.getAttribute(ATTRIBUTE_ID), result[0]);
+			}			
+		} 
+		return Collections.unmodifiableMap(fPDOMLinkageFactoryCache);
+	}	
 	
 	/**
 	 * Returns all of the languages registered with the <code>Platform</code>.

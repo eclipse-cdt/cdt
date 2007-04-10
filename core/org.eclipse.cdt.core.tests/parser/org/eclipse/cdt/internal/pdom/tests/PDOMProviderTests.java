@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.index.URIRelativeLocationConverter;
 import org.eclipse.cdt.core.index.provider.IPDOMDescriptor;
 import org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -231,7 +232,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 			CProjectHelper.delete(cproject);
 			
 			// mimic a pdom with superceded version
-			WritablePDOM wpdom= new WritablePDOM(tempPDOM, cvr);
+			WritablePDOM wpdom= new WritablePDOM(tempPDOM, cvr, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 			wpdom.acquireWriteLock();
 			try {
 				wpdom.getDB().setVersion(1);	

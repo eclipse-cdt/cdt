@@ -40,7 +40,6 @@ import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
@@ -114,12 +113,14 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private Map fLinkageIDCache = new HashMap();
 	private File fPath;
 	private IIndexLocationConverter locationConverter;
+	private Map fPDOMLinkageFactoryCache;
 	
-	public PDOM(File dbPath, IIndexLocationConverter locationConverter) throws CoreException {
-		this(dbPath, locationConverter, ChunkCache.getSharedInstance());
+	public PDOM(File dbPath, IIndexLocationConverter locationConverter, Map linkageFactoryMappings) throws CoreException {
+		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
 	
-	public PDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache) throws CoreException {
+	public PDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map linkageFactoryMappings) throws CoreException {
+		fPDOMLinkageFactoryCache = linkageFactoryMappings;
 		loadDatabase(dbPath, cache);
 		this.locationConverter = locationConverter;
 	}
@@ -421,7 +422,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		int record= getFirstLinkageRecord();
 		while (record != 0) {
 			String linkageID= PDOMLinkage.getId(this, record).getString();
-			IPDOMLinkageFactory factory= LanguageManager.getInstance().getPDOMLinkageFactory(linkageID);
+			IPDOMLinkageFactory factory= (IPDOMLinkageFactory) fPDOMLinkageFactoryCache.get(linkageID);
 			if (factory != null) {
 				PDOMLinkage linkage= factory.getLinkage(this, record);
 				fLinkageIDCache.put(linkageID, linkage);
@@ -438,7 +439,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		PDOMLinkage pdomLinkage= (PDOMLinkage) fLinkageIDCache.get(linkageID);
 		if (pdomLinkage == null) {
 			// Need to create it
-			IPDOMLinkageFactory factory= LanguageManager.getInstance().getPDOMLinkageFactory(linkageID);
+			IPDOMLinkageFactory factory= (IPDOMLinkageFactory) fPDOMLinkageFactoryCache.get(linkageID);			
 			if (factory != null) {
 				return factory.createLinkage(this);
 			}

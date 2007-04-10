@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
+import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
@@ -17,7 +19,10 @@ import org.eclipse.cdt.make.ui.MakeContentProvider;
 import org.eclipse.cdt.make.ui.MakeLabelProvider;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -26,12 +31,10 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -147,16 +150,47 @@ public class MakeView extends ViewPart {
 			setChecked(getSettings().getBoolean(FILTER_EMPTY_FOLDERS));
 			MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_FILTER); //$NON-NLS-1$
 			fViewer.addFilter(new ViewerFilter() {
+				//Check the make targets of the specified container, and if they don't exist, run 
+				//through the children looking for the first match that we can find that contains
+				//a make target.
+				private boolean hasMakeTargets(IFolder container) throws CoreException {
+					IMakeTarget [] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(container);
+					if(targets != null && targets.length > 0) {
+						return true;
+					}
 
+					final boolean [] haveTargets = new boolean[1];
+					haveTargets[0] = false;
+
+					IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
+						public boolean visit(IResourceProxy proxy) throws CoreException {
+							if(haveTargets[0]) {
+								return false;	//We found what we were looking for
+							}
+							if(proxy.getType() != IResource.FOLDER) {
+								return true;	//We only look at folders for content
+							}
+							IFolder folder = (IFolder) proxy.requestResource();
+							IMakeTarget [] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(folder);
+							if(targets != null && targets.length > 0) {
+								haveTargets[0] = true;
+								return false;
+							}
+							return true;		//Keep looking
+						}
+					};
+					container.accept(visitor, IResource.NONE);
+
+					return haveTargets[0];
+				}
+				
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
 					if (isChecked() && element instanceof IFolder) {
-						ITreeContentProvider provider = (ITreeContentProvider) ((ContentViewer)viewer).getContentProvider();
-						Object[] children = provider.getChildren(element);
-						for (int i = 0; i < children.length; i++) {
-							if (select(viewer, element, children[i]))
-								return true;
+						try {
+							return hasMakeTargets((IFolder)element);
+						} catch(Exception ex) {
+							return false;
 						}
-						return false;
 					}
 					return true;
 				}

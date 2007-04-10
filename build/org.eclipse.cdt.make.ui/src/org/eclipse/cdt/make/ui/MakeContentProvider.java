@@ -158,7 +158,16 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 								if (bFlatten) {
 									viewer.refresh();
 								} else {
-									viewer.refresh(event.getTarget().getContainer());
+									//We can't just call refresh on the container target that
+									//has been created since it may be that the container has
+									//been filtered out and the fiters in the viewer don't know
+									//any better how to call out to the filter selection again.
+									//Instead we walk to the root container and refresh it.
+									IContainer container = event.getTarget().getContainer();
+									while(container.getParent() != null) {
+										container = container.getParent();
+									}
+									viewer.refresh(container);
 								}
 							}
 						}

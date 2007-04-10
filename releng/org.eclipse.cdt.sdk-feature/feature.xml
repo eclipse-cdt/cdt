@@ -22,13 +22,13 @@
    </url>
 
    <includes
-         id="org.eclipse.cdt.source"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.cdt"
          version="0.0.0"
          name="%featureName"/>
+
+   <includes
+         id="org.eclipse.cdt.source"
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.cdt.sdk"

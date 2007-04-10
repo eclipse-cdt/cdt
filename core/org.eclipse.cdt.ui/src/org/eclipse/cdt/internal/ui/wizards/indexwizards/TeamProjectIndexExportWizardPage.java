@@ -23,19 +23,25 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardDataTransferPage;
@@ -72,8 +78,8 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
      */
     public TeamProjectIndexExportWizardPage(IStructuredSelection selection) {
         this("indexExportPage", selection); //$NON-NLS-1$
-        setTitle(Messages.getString("TeamProjectIndexExportWizardPage.title")); //$NON-NLS-1$
-        setDescription(Messages.getString("TeamProjectIndexExportWizardPage.description")); //$NON-NLS-1$
+        setTitle(Messages.TeamProjectIndexExportWizardPage_title); 
+        setDescription(Messages.TeamProjectIndexExportWizardPage_description); 
     }
 
     public void createControl(Composite parent) {
@@ -86,9 +92,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
         composite.setFont(parent.getFont());
 
         createResourcesGroup(composite);
-//        createButtonsGroup(composite);
         createDestinationGroup(composite);
-//        createOptionsGroup(composite);
 
         restoreWidgetValues(); 
         if (fInitialSelection != null) {
@@ -109,26 +113,81 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
      *
      * @param parent the parent control
      */
-    protected final void createResourcesGroup(Composite parent) {
+    private final void createResourcesGroup(Composite parent) {
         Composite resourcesGroup = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        resourcesGroup.setLayout(layout);
-        resourcesGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
+        resourcesGroup.setLayout(new GridLayout());
+        resourcesGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
         resourcesGroup.setFont(parent.getFont());
 
+        new Label(resourcesGroup, SWT.NONE).setText(Messages.TeamProjectIndexExportWizardPage_labelProjectTable);       
         Table table= new Table(resourcesGroup, SWT.CHECK | SWT.BORDER);
-        table.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fProjectViewer= new CheckboxTableViewer(table);
 		fProjectViewer.setContentProvider(new ListContentProvider());
 		fProjectViewer.setLabelProvider(new CElementLabelProvider());        
-        ICheckStateListener listener = new ICheckStateListener() {
+        ICheckStateListener checkListener = new ICheckStateListener() {
             public void checkStateChanged(CheckStateChangedEvent event) {
                 updateWidgetEnablements();
             }
         };
-        fProjectViewer.addCheckStateListener(listener);
+        fProjectViewer.addCheckStateListener(checkListener);
         	
+
+        // top level group
+        Composite buttonComposite = new Composite(resourcesGroup, SWT.NONE);
+        buttonComposite.setFont(parent.getFont());
+
+        GridLayout layout = new GridLayout(2, true);
+        layout.marginHeight= layout.marginWidth= 0;
+        buttonComposite.setLayout(layout);
+        buttonComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
+                | GridData.HORIZONTAL_ALIGN_FILL));
+
+
+        Button selectButton = createButton(buttonComposite,
+                IDialogConstants.SELECT_ALL_ID, Messages.TeamProjectIndexExportWizardPage_selectAll, false);
+
+        SelectionAdapter listener = new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                fProjectViewer.setAllChecked(true);
+            }
+        };
+        selectButton.addSelectionListener(listener);
+
+        Button deselectButton = createButton(buttonComposite,
+                IDialogConstants.DESELECT_ALL_ID, Messages.TeamProjectIndexExportWizardPage_deselectAll, false);
+
+        listener = new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+            	fProjectViewer.setAllChecked(false);
+            }
+        };
+        deselectButton.addSelectionListener(listener);
+
         initProjects();
+    }
+
+    private Button createButton(Composite parent, int id, String label,
+            boolean defaultButton) {
+        Button button = new Button(parent, SWT.PUSH);
+
+        GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
+        button.setLayoutData(buttonData);
+
+        button.setData(new Integer(id));
+        button.setText(label);
+        button.setFont(parent.getFont());
+
+        if (defaultButton) {
+            Shell shell = parent.getShell();
+            if (shell != null) {
+                shell.setDefaultButton(button);
+            }
+            button.setFocus();
+        }
+        button.setFont(parent.getFont());
+        setButtonLayoutData(button);
+        return button;
     }
 
     private void initProjects() {
@@ -178,33 +237,49 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
     	
     
     private void createDestinationGroup(Composite parent) {
+    	GridData gd;
         Font font = parent.getFont();
         // destination specification group
         Composite destinationSelectionGroup = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        destinationSelectionGroup.setLayout(layout);
+        destinationSelectionGroup.setLayout(new GridLayout(2, false));
         destinationSelectionGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
         destinationSelectionGroup.setFont(font);
 
         Label destinationLabel = new Label(destinationSelectionGroup, SWT.NONE);
-        destinationLabel.setText(Messages.getString("TeamProjectIndexExportWizardPage.destinationLabel")); //$NON-NLS-1$
+        destinationLabel.setText(Messages.TeamProjectIndexExportWizardPage_destinationLabel); 
         destinationLabel.setFont(font);
-
+        destinationLabel.setLayoutData(gd= new GridData());
+        gd.horizontalSpan= 2;
+        
         // destination name entry field
         fDestinationField = new Text(destinationSelectionGroup, SWT.BORDER);
         fDestinationField.addListener(SWT.Modify, this);
         fDestinationField.addListener(SWT.Selection, this);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-        fDestinationField.setLayoutData(data);
         fDestinationField.setFont(font);
+        fDestinationField.setLayoutData(gd= new GridData());
+        gd.grabExcessHorizontalSpace= true;
+        gd.horizontalAlignment= GridData.FILL;
+        gd.widthHint = SIZING_TEXT_FIELD_WIDTH;
 
-        new Label(parent, SWT.NONE); // vertical spacer
+        Button button= createButton(destinationSelectionGroup, IDialogConstants.CLIENT_ID, Messages.TeamProjectIndexExportWizardPage_variableButton, false);
+        SelectionAdapter listener = new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                onInsertVariable();
+            }
+        };
+        button.addSelectionListener(listener);
+
     }
 
+	protected void onInsertVariable() {
+		StringVariableSelectionDialog dlg= new StringVariableSelectionDialog(getShell());
+		if (dlg.open() == Window.OK) {
+			String var= dlg.getVariableExpression();
+			fDestinationField.insert(var);
+		}
+	}
 
-    public boolean finish() {
+	public boolean finish() {
         ICProject[] projectsToExport= getCheckedElements();
 
         // about to invoke the operation so save our state
@@ -223,7 +298,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
     private boolean executeExportOperation(final ICProject[] projects) {
     	final String dest= getDestinationValue();
     	final MultiStatus status= new MultiStatus(CUIPlugin.PLUGIN_ID, 
-    			0, Messages.getString("TeamProjectIndexExportWizardPage.errorWhileExporting"), null); //$NON-NLS-1$
+    			0, Messages.TeamProjectIndexExportWizardPage_errorExporting, null); 
     			
     	IRunnableWithProgress op= new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -275,7 +350,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
     protected boolean validateDestinationGroup() {
         String destinationValue = getDestinationValue();
         if (destinationValue.length() == 0) {
-            setMessage(Messages.getString("TeamProjectIndexExportWizardPage.noDestination")); //$NON-NLS-1$
+            setMessage(Messages.TeamProjectIndexExportWizardPage_destinationMessage); 
             return false;
         }
 
@@ -288,7 +363,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
     	boolean isValid = true;
         Object[] projectsToExport = getCheckedElements();
     	if (projectsToExport.length == 0){
-    		setErrorMessage(Messages.getString("TeamProjectIndexExportWizardPage.noSelection")); //$NON-NLS-1$
+    		setErrorMessage(Messages.TeamProjectIndexExportWizardPage_noProjectError); 
             isValid =  false;
     	} else {
 			setErrorMessage(null);
@@ -311,7 +386,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
 	}
 	
     protected String getErrorDialogTitle() {
-        return Messages.getString("TeamProjectIndexExportWizardPage.errorDlgTitle"); //$NON-NLS-1$
+        return Messages.TeamProjectIndexExportWizardPage_errorDlgTitle; 
     }
 
 	protected boolean allowNewContainerName() {

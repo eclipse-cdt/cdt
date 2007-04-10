@@ -47,7 +47,7 @@ public class TeamProjectIndexExportWizard extends Wizard implements IExportWizar
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
         fSelection= selection;
-        setWindowTitle(Messages.getString("TeamProjectIndexExportWizard.title")); //$NON-NLS-1$
+        setWindowTitle(Messages.TeamProjectIndexExportWizard_title);
         setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_EXPORTINDEX);
         setNeedsProgressMonitor(true);
 	}

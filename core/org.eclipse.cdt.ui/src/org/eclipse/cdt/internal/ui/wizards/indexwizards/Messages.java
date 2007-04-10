@@ -11,23 +11,31 @@
 
 package org.eclipse.cdt.internal.ui.wizards.indexwizards;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class Messages {
+public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.wizards.indexwizards.messages"; //$NON-NLS-1$
-
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
-
-	private Messages() {
+	public static String StringVariableSelectionDialog_columnArgument;
+	public static String StringVariableSelectionDialog_columnDescription;
+	public static String StringVariableSelectionDialog_message;
+	public static String StringVariableSelectionDialog_title;
+	public static String TeamProjectIndexExportWizard_title;
+	public static String TeamProjectIndexExportWizardPage_description;
+	public static String TeamProjectIndexExportWizardPage_deselectAll;
+	public static String TeamProjectIndexExportWizardPage_destinationLabel;
+	public static String TeamProjectIndexExportWizardPage_destinationMessage;
+	public static String TeamProjectIndexExportWizardPage_errorDlgTitle;
+	public static String TeamProjectIndexExportWizardPage_errorExporting;
+	public static String TeamProjectIndexExportWizardPage_labelProjectTable;
+	public static String TeamProjectIndexExportWizardPage_noProjectError;
+	public static String TeamProjectIndexExportWizardPage_selectAll;
+	public static String TeamProjectIndexExportWizardPage_title;
+	public static String TeamProjectIndexExportWizardPage_variableButton;
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	private Messages() {
 	}
 }

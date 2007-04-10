@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,23 +10,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.navigator;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
+import org.eclipse.ui.navigator.ICommonLabelProvider;
+
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+
 import org.eclipse.cdt.internal.ui.cview.CViewLabelProvider;
 import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.ProblemsLabelDecorator;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.navigator.ICommonContentExtensionSite;
-import org.eclipse.ui.navigator.ICommonLabelProvider;
 
 /**
  * A label provider suitable for the Common Navigator providing also
@@ -44,7 +44,7 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 		super(AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS,
 				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS
 						| CElementImageProvider.SMALL_ICONS);
-		addLabelDecorator(new ProblemsLabelDecorator(null));
+		addLabelDecorator(new CNavigatorProblemsLabelDecorator());
 	}
 
 	/*

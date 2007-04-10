@@ -855,7 +855,12 @@
                  name="gm1">
            </groupMarker>
         </menu>
-              
+        
+        <visibility>
+              <objectState
+                 name="projectNature"
+                 value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+        </visibility>
      </objectContribution>
    </extension>
    

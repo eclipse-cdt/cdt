@@ -299,13 +299,22 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				} else {
 					final int nameLine= doc.getLineOfOffset(nameOffset);
 					sourceStart= doc.getLineOffset(nameLine);
-					int commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';', ':' });
+					int commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
 					if (commentBound == CHeuristicScanner.NOT_FOUND) {
 						commentBound= -1; // unbound
 					}
 					int commentStart= searchCommentBackward(doc, sourceStart, commentBound);
 					if (commentStart >= 0) {
 						sourceStart= commentStart;
+					} else {
+						int nextNonWS= scanner.findNonWhitespaceForward(commentBound+1, sourceStart);
+						if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
+							int nextNonWSLine= doc.getLineOfOffset(nextNonWS);
+							int lineOffset= doc.getLineOffset(nextNonWSLine);
+							if (doc.get(lineOffset, nextNonWS - lineOffset).trim().length() == 0) {
+								sourceStart= doc.getLineOffset(nextNonWSLine);
+							}
+						}
 					}
 				}
 				// expand forward to the end of the definition/declaration
@@ -319,9 +328,11 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 					boolean searchBrace= false;
 					boolean searchSemi= false;
 					boolean searchComma= false;
-					if (binding instanceof ICompositeType || binding instanceof IEnumeration || binding instanceof IFunction) {
+					if (binding instanceof ICompositeType || binding instanceof IEnumeration) {
 						searchBrace= true;
 					} else if (binding instanceof ICPPTemplateDefinition) {
+						searchBrace= true;
+					} else if (binding instanceof IFunction && name.isDefinition()) {
 						searchBrace= true;
 					} else if (binding instanceof IParameter || binding instanceof IEnumerator || binding instanceof ICPPTemplateParameter) {
 						searchComma= true;
@@ -548,7 +559,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 	private static int searchCommentBackward(IDocument doc, int start, int bound) throws BadLocationException {
 		int firstLine= doc.getLineOfOffset(start);
 		if (firstLine == 0) {
-			return -1;
+			return 0;
 		}
 		ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, start, true);
 		int currentOffset= Math.max(doc.getLineOffset(firstLine - 1), partition.getOffset() - 1);
@@ -557,25 +568,28 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, currentOffset, true);
 			currentOffset= partition.getOffset() - 1;
 			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())) {
-				int previousCommentOffset= commentOffset;
-				commentOffset = partition.getOffset();
-				final int startLine= doc.getLineOfOffset(commentOffset);
+				final int partitionOffset= partition.getOffset();
+				final int startLine= doc.getLineOfOffset(partitionOffset);
 				final int lineOffset= doc.getLineOffset(startLine);
-				if (commentOffset == lineOffset || 
-						doc.get(lineOffset, commentOffset - lineOffset).trim().length() == 0) {
+				if (partitionOffset == lineOffset || 
+						doc.get(lineOffset, partitionOffset - lineOffset).trim().length() == 0) {
 					return lineOffset;
 				}
-				return previousCommentOffset;
+				return commentOffset;
 			} else if (ICPartitions.C_SINGLE_LINE_COMMENT.equals(partition.getType())) {
-				commentOffset = partition.getOffset();
-				final int startLine= doc.getLineOfOffset(commentOffset);
+				final int partitionOffset= partition.getOffset();
+				final int startLine= doc.getLineOfOffset(partitionOffset);
 				final int lineOffset= doc.getLineOffset(startLine);
-				if (commentOffset == lineOffset || 
-						doc.get(lineOffset, commentOffset - lineOffset).trim().length() == 0) {
+				if (partitionOffset == lineOffset || 
+						doc.get(lineOffset, partitionOffset - lineOffset).trim().length() == 0) {
+					commentOffset= lineOffset;
 					continue;
 				}
 				return commentOffset;
 			} else if (IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType())) {
+				if (doc.get(partition.getOffset(), partition.getLength()).trim().length() == 0) {
+					continue;
+				}
 				if (commentOffset >= 0) {
 					break;
 				}

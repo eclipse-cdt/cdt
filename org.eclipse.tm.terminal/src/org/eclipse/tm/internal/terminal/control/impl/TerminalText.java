@@ -1799,20 +1799,12 @@ public class TerminalText implements Runnable, ControlListener {
 
 			Point textLocation = text.getLocation();
 			textLocation.y += verticalPixelsToShrink;
-			textLocation.x += horizontalPixelsToShrink;
 			text.setLocation(textLocation);
 
 			// Restore this class instance as the ControlListener on the StyledText
 			// widget so we know when the user resizes the Terminal view.
 
 			text.addControlListener(this);
-
-			// Make sure the exposed portion of the Composite canvas behind the
-			// StyledText control matches the background color of the StyledText
-			// control.
-
-			Color textBackground = text.getBackground();
-			text.getParent().setBackground(textBackground);
 
 			// Scroll the StyledText widget to the bottommost position.
 

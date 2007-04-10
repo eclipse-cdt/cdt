@@ -831,7 +831,7 @@
               enablesFor="+"
               id="org.eclipse.cdt.ui.manageConfigsAction0"
               label="%ManageConfigAction.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm2"
               />
         <action
               class="org.eclipse.cdt.ui.actions.DeleteResConfigsAction"
@@ -853,6 +853,12 @@
               path="buildGroup">
            <groupMarker
                  name="gm1">
+           </groupMarker>
+           <separator
+                 name="sep1">
+           </separator>
+           <groupMarker
+                 name="gm2">
            </groupMarker>
         </menu>
         
@@ -994,7 +1000,7 @@
               enablesFor="+"
               id="org.eclipse.cdt.ui.manageConfigsAction2"
               label="%ManageConfigAction.label"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm1"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm2"
               />
         <action
               class="org.eclipse.cdt.ui.actions.DeleteResConfigsAction"
@@ -1003,19 +1009,18 @@
               label="%DeleteRcConfigAction.label"
               menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm1"
               />
-        <action
-              class="org.eclipse.cdt.ui.actions.ExcludeFromBuildAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.ui.excludeAction2"
-              label="%ExcludeAction.label"
-              menubarPath="project/build"
-              />
         <menu
               id="org.eclipse.cdt.ui.prjmenu"
               label="%Configurations.menu"
               path="project/build">
            <groupMarker
                  name="gm1">
+           </groupMarker>
+           <separator
+                 name="s2">
+           </separator>
+           <groupMarker
+                 name="gm2">
            </groupMarker>
         </menu>
      </actionSet>

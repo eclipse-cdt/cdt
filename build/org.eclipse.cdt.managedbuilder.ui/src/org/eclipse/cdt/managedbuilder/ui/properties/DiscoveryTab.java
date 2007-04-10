@@ -267,6 +267,16 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         List profilesList = buildInfo.getProfileIdList();
         Collections.sort(profilesList, CDTListComparator.getInstance());
         visibleProfilesList = new ArrayList(profilesList.size());
+        
+        if (realPages != null && realPages.length > 0) {
+        	for (int i=0; i<realPages.length; i++) {
+        		if (realPages[i] != null) {
+        			realPages[i].setVisible(false);
+        			realPages[i].dispose();
+        		}
+        	}
+        }
+        
         realPages = new AbstractDiscoveryPage[profilesList.size()];
         String[] labels = new String[profilesList.size()];
         String[] profiles = new String[profilesList.size()];

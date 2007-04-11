@@ -23,9 +23,12 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li><b>TM 2.0M6 was respun as TM 2.0M6a</b> in order to include the following critical fixes:<ul>
+<li><b>TM 2.0M6 was respun as TM 2.0M6a</b> in order to include the following critical fixes for EFS.<br/>
+If you do not want to use the Eclipse Filesystem (EFS) for accessing remote resources through
+your workspace, there is no need to update and you can also use 2.0M6:<ul>
   <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181917">181917</a>]
-     <b>Fix EFS running out of file descriptors</b>, fix early startup problems, improve EFS performance</li>
+     <b>Fix EFS running out of file descriptors</b>, fix EFS early startup problems,
+     improve EFS performance</li>
   <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176603">176603</a>][api]
      ISubSystem.connect(IProgressMonitor, boolean forcePrompt) required for EFS</li>
   <!--
@@ -52,7 +55,7 @@
   EFS works best with SSH connections. FTP and dstore should work as well, but have not yet 
   received the same amount of testing. For more details, see the
   <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170916">EFS Plan Item [170916]</a>.
-  To bring remote resources into your workspace, there are several options:<ol>
+  We recommend the following procedure to bring remote resources into your workspace:<ul>
         <li>In a normal workspace project, choose <b>"New Folder", "Advanced", "Link to folder in 
             file system"</b>, then select the RSE file system and browse to a remote folder. This is
             the preferred and most stable method of working with remote resources for now.
@@ -60,19 +63,11 @@
             including CDT, JDT etc. and can thus be used very well to test other kinds of
             EFS integration issues to be done (along the lines of Eclipse Platform
             <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=154126">Plan Item [154126]</a>).</li>
-        <li>Create a new project, on the location page disable "workspace", choose "rse" as file
-            system and browse to a remote folder. Works only if a .project file does not yet exist
-            at the chosen remote location. One disadvantage of this approach is that when 
-            quitting and re-starting workbench, the project will be shown closed. You need to switch
-            to the RSE perspective, then open the project on each re-start of Eclipse. This will 
-            be fixed by bug [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181460">181460</a>].</li>
-        <li>In RSE, browse to any remote folder and choose "right-click" > "Create Remote Project".
-            This will create an EFS based "plain" project with the name of the remote folder in 
-            your workspace. It will have no specific nature assigned, and creation may fail (e.g
-            when a .project file is already there; or a project of the requested name already exists).
-            This 3rd approach of creating an EFS project exists for convenience for now, and may be removed
-            in the future.</li>
-  </ol></li>
+  </ul>
+  Creating whole projects based on RSE EFS is possible as well, but there are two
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181460">Platform Bugs</a>
+  related to early reading of the remote .project file,
+  which make this approach not adviseable for now.</li>
 <li><b>Copy&Paste, Drag&Drop to Project Explorer</b> are finally fixed
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153652">153652</a>].
   Same support for Windows Explorer is still on the list

@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.index.tests;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -205,5 +207,19 @@ public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 		// is thrown during indexing
 		IBinding b0= getBindingFromASTName("id(*", 2);
 		IBinding b1= getBindingFromASTName("id(6", 2);
+	}
+	
+	
+	// void func1(void);
+	
+	//  #include "header.h"
+	//
+	//	int main(void)
+	//	{
+	//      void* v= func1;
+	//	}
+	public void testBug181735() throws DOMException {
+		IBinding b0 = getBindingFromASTName("func1;", 5);
+		assertTrue(b0 instanceof IFunction);
 	}
 }

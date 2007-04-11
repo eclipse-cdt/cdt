@@ -70,4 +70,17 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IType returnType= f0.getType().getReturnType();
 		assertTrue(returnType instanceof IBasicType);
 	}
+
+	//  void func1(void);
+	
+	//  #include "header.h"
+	//
+	//	int main(void)
+	//	{
+	//      void* v= func1;
+	//	}
+	public void _testBug181735() throws DOMException {
+		IBinding b0 = getBindingFromASTName("func1;", 5);
+		assertTrue(b0 instanceof IFunction);
+	}
 }

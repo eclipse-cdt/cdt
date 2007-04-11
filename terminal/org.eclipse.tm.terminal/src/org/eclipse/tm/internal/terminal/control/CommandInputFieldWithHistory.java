@@ -27,13 +27,31 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Manages the Command History for the command line input
  * of the terminal control.
+ * <li>
+ * <ul>Navigate with ARROW_UP,ARROW_DOWN,PAGE_UP,PAGE_DOWN
+ * <ul>ESC to cancel history editing
+ * <ul>History can be edited (by moving up and edit) but changes are 
+ * not persistent (like in bash). 
+ * </li>
  *
  */
 public class CommandInputFieldWithHistory implements ICommandInputField {
 	final List fHistory=new ArrayList();
-	private int fHistoryPos=0;
+	/**
+	 * Keeps a modifiable history while in history editing mode
+	 */
+	List fEditedHistory;
+	/**
+	 * The current position in the edit history
+	 */
+	private int fEditHistoryPos=0;
+	/**
+	 * The limit of the history.
+	 */
 	private final int fMaxSize;
-	private boolean fInHistory=false;
+	/**
+	 * The input text field.
+	 */
 	private Text fInputField;
 	public CommandInputFieldWithHistory(int maxHistorySize) {
 		fMaxSize=maxHistorySize;
@@ -43,11 +61,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 * @param line
 	 */
 	protected void pushLine(String line) {
-		// if we used the history. therefore we added the current as 0th item
-		if(fInHistory)
-			fHistory.remove(0);
-		fInHistory=false;
-		fHistoryPos=0;
+		endHistoryMode();
 		// anything to remember?
 		if(line==null || line.trim().length()==0)
 			return;
@@ -64,6 +78,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 * @param history or null
 	 */
 	public void setHistory(String history) {
+		endHistoryMode();
 		fHistory.clear();
 		if(history==null)
 			return;
@@ -94,18 +109,22 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 * if the limit is reached.
 	 */
 	public String move(String currLine, int count) {
-		if(!fInHistory) {
-			fInHistory=true;
-			fHistory.add(0,currLine);
-		} else {
-			fHistory.set(fHistoryPos,currLine);
+		if(!inHistoryMode()) {
+			fEditedHistory=new ArrayList(fHistory.size()+1);
+			fEditedHistory.add(currLine);
+			fEditedHistory.addAll(fHistory);
+			fEditHistoryPos=0;
 		}
-		if(fHistoryPos+count>=fHistory.size())
+		fEditedHistory.set(fEditHistoryPos,currLine);
+		if(fEditHistoryPos+count>=fEditedHistory.size())
 			return null;
-		if(fHistoryPos+count<0)
+		if(fEditHistoryPos+count<0)
 			return null;
-		fHistoryPos+=count;
-		return (String) fHistory.get(fHistoryPos);
+		fEditHistoryPos+=count;
+		return (String) fEditedHistory.get(fEditHistoryPos);
+	}
+	private boolean inHistoryMode() {
+		return fEditedHistory!=null;
 	}
 
 	/**
@@ -113,10 +132,18 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 * @return the string to be shown in the command line
 	 */
 	protected String escape() {
-		if(!fInHistory)
+		if(!inHistoryMode())
 			return null;
-		fHistoryPos=0;
-		return (String) fHistory.get(fHistoryPos);
+		String line= (String) fEditedHistory.get(0);
+		endHistoryMode();
+		return line;
+	}
+	/**
+	 * End history editing
+	 */
+	private void endHistoryMode() {
+		fEditedHistory=null;
+		fEditHistoryPos=0;
 	}
 	public void createControl(Composite parent,final ITerminalViewControl terminal) {
 		fInputField=new Text(parent, SWT.SINGLE|SWT.BORDER);

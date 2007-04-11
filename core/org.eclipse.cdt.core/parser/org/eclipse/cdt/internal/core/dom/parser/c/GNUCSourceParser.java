@@ -2910,10 +2910,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IToken mark = mark();
         int offset = consume().getOffset();
         IASTExpression castExpression = castExpression();
-        if( castExpression instanceof IASTLiteralExpression && ( operator == IASTUnaryExpression.op_amper || operator == IASTUnaryExpression.op_star ) )
-        {
-            backup( mark );
-            throwBacktrack( mark );
+        if( castExpression instanceof IASTLiteralExpression ) {
+        	IASTLiteralExpression lit= (IASTLiteralExpression) castExpression;
+        	if ( operator == IASTUnaryExpression.op_amper || 
+        			(operator == IASTUnaryExpression.op_star && lit.getKind() != IASTLiteralExpression.lk_string_literal) )
+        	{
+        		backup( mark );
+        		throwBacktrack( mark );
+        	}
         }
         return buildUnaryExpression(operator, castExpression, offset,
                 calculateEndOffset(castExpression));

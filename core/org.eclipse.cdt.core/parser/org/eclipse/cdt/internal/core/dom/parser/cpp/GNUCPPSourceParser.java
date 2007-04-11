@@ -5460,13 +5460,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IToken mark = mark();
         int offset = consume().getOffset();
         IASTExpression castExpression = castExpression();
-        if( castExpression instanceof IASTLiteralExpression && ( operator == IASTUnaryExpression.op_amper || operator == IASTUnaryExpression.op_star ) )
-        {
-            IASTLiteralExpression literal = (IASTLiteralExpression) castExpression;
-            if( literal.getKind() != ICPPASTLiteralExpression.lk_this )
-            {
-                backup( mark );
-                throwBacktrack( mark );
+        if (castExpression instanceof IASTLiteralExpression) {
+        	IASTLiteralExpression literal = (IASTLiteralExpression) castExpression;
+            if( literal.getKind() != ICPPASTLiteralExpression.lk_this ) {
+            	if ( operator == IASTUnaryExpression.op_amper || 
+            			(operator == IASTUnaryExpression.op_star && 
+            					literal.getKind() != IASTLiteralExpression.lk_string_literal) ) {
+            		backup( mark );
+            		throwBacktrack( mark );
+            	}
             }
         }
         return buildUnaryExpression(operator, castExpression, offset,

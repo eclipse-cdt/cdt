@@ -3638,4 +3638,13 @@ public class AST2Tests extends AST2BaseTest {
     	for (int i = 0; i < LANGUAGES.length; i++)
     		parseAndCheckBindings(code, LANGUAGES[i]);
     }
+    
+    // void test() {
+	//    const char d= *"b";
+    // }
+    public void _testBug181942() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	for (int i = 0; i < LANGUAGES.length; i++)
+    		parse( buffer.toString(), LANGUAGES[i], true, true );
+    }
 }

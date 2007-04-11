@@ -12,12 +12,15 @@
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
@@ -32,6 +35,8 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	private final IPDOMIndexer fIndexer;
 	private final IndexerProgress fProgress;
 	private volatile IPDOMIndexerTask fDelegate;
+	private boolean fCheckTimestamps= true;
+	private ArrayList fFilesAndFolders= null;
 
 	public PDOMUpdateTask(IPDOMIndexer indexer) {
 		fIndexer= indexer;
@@ -70,18 +75,35 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	
 	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
 		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
-		List list= new ArrayList();
-		TranslationUnitCollector collector= new TranslationUnitCollector(list, list, allFiles, monitor);
-		project.accept(collector);
-		ITranslationUnit[] tus= (ITranslationUnit[]) list.toArray(new ITranslationUnit[list.size()]);
+		HashSet set= new HashSet();
+		TranslationUnitCollector collector= new TranslationUnitCollector(set, set, allFiles, monitor);
+		if (fFilesAndFolders == null) {
+			project.accept(collector);
+		}
+		else {
+			for (Iterator iterator = fFilesAndFolders.iterator(); iterator.hasNext();) {
+				ICElement elem = (ICElement) iterator.next();
+				elem.accept(collector);
+			}
+		}
+		ITranslationUnit[] tus= (ITranslationUnit[]) set.toArray(new ITranslationUnit[set.size()]);
 		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (fDelegate instanceof PDOMIndexerTask) {
-			((PDOMIndexerTask) fDelegate).setCheckTimestamps(true);
+			((PDOMIndexerTask) fDelegate).setCheckTimestamps(fCheckTimestamps);
 		}
 	}
 
 
 	public synchronized IndexerProgress getProgressInformation() {
 		return fDelegate != null ? fDelegate.getProgressInformation() : fProgress;
+	}
+
+	public void setCheckTimestamps(boolean timestamps) {
+		fCheckTimestamps= timestamps;
+	}
+
+	public void setTranslationUnitSelection(List filesAndFolders) {
+		fFilesAndFolders= new ArrayList(filesAndFolders.size());
+		fFilesAndFolders.addAll(filesAndFolders);
 	}
 }

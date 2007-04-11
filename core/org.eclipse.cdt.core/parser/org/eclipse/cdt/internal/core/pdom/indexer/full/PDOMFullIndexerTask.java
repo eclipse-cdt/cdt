@@ -51,6 +51,7 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 	private IWritableIndex fIndex = null;
 	private Map filePathsToParse = new HashMap/*<IIndexFileLocation, Object>*/();
 	private Map fIflCache = new HashMap/*<String, IIndexFileLocation>*/();
+	private boolean fCheckTimestamps= false;
 
 	public PDOMFullIndexerTask(PDOMFullIndexer indexer, ITranslationUnit[] added,
 			ITranslationUnit[] changed, ITranslationUnit[] removed) {
@@ -69,14 +70,24 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 			// separate headers
 			List headers= new ArrayList();
 			List sources= fChanged;
+			int removed= 0;
 			for (Iterator iter = fChanged.iterator(); iter.hasNext();) {
 				ITranslationUnit tu = (ITranslationUnit) iter.next();
+				if (fCheckTimestamps) {
+					IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
+					IIndexFile file= fIndex.getFile(ifl);
+					if (!isOutdated(tu, file)) {
+						iter.remove();
+						removed++;
+						continue;
+					}
+				}
 				if (!tu.isSourceUnit()) {
 					headers.add(tu);
 					iter.remove();
 				}
 			}
-
+			updateInfo(0, 0, -removed);
 			registerTUsInReaderFactory(sources);
 			registerTUsInReaderFactory(headers);
 					
@@ -160,5 +171,9 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		Object required= filePathsToParse.get(location);
 		filePathsToParse.put(location, SKIP);
 		return required == REQUIRED;
+	}
+
+	public void setCheckTimestamps(boolean val) {
+		fCheckTimestamps= val;
 	}
 }

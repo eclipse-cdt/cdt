@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -59,6 +60,18 @@ public interface IIndexManager extends IPDOMManager {
 	 * @see IIndexManager#joinIndexer(int, IProgressMonitor)
 	 */
 	public final static int FOREVER= -1;
+	
+	/**
+	 * Constant for indicating to update all translation units.
+	 */
+	public final static int UPDATE_ALL= 0x1;
+
+	/**
+	 * Constant for indicating to update translation units only if their timestamp
+	 * has changed.
+	 */
+	public final static int UPDATE_CHECK_TIMESTAMPS= 0x2;
+	
 	/**
 	 * Returns the index for the given project.
 	 * @param project the project to get the index for
@@ -156,6 +169,19 @@ public interface IIndexManager extends IPDOMManager {
 	 */
 	public void reindex(ICProject project) throws CoreException;
 
+	/**
+	 * Updates the index for the given selection of translation units considering
+	 * the options supplied. The selection is defined by an array of translation
+	 * units, containers and projects. For containers and projects all recursively
+	 * nested translation units are considered.
+	 * Valid options are {@link #UPDATE_ALL} and {@link #UPDATE_CHECK_TIMESTAMPS}
+	 * @param tuSelection the translation units to update.
+	 * @param options one of {@link #UPDATE_ALL} or {@link #UPDATE_CHECK_TIMESTAMPS}.
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public void update(ICElement[] tuSelection, int options) throws CoreException;
+	
 	/**
 	 * Export index for usage within a team.
 	 * @param project a project for which the pdom is to be exported.

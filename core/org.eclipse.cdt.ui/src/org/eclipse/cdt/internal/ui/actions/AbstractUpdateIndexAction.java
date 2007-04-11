@@ -1,0 +1,76 @@
+/*******************************************************************************
+ * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
+
+package org.eclipse.cdt.internal.ui.actions;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate {
+
+	private ISelection fSelection;
+	
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+	}
+
+	public void run(IAction action) {
+		if (!(fSelection instanceof IStructuredSelection))
+			return;
+		
+		Iterator i= ((IStructuredSelection)fSelection).iterator();
+		ArrayList tuSelection= new ArrayList();
+		while (i.hasNext()) {
+			Object o= i.next();
+			if (o instanceof ICProject || o instanceof ICContainer || 
+					o instanceof ITranslationUnit) {
+				tuSelection.add(o);
+			}
+		}
+		ICElement[] tuArray= (ICElement[]) tuSelection.toArray(new ICElement[tuSelection.size()]);
+		
+		try {
+			CCorePlugin.getIndexManager().update(tuArray, getUpdateOptions());
+		}
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+	}
+
+	/**
+	 * Return the options to update the translation.
+	 * @see IIndexManager#update(ICElement[], int)
+	 * @since 4.0
+	 */
+	abstract protected int getUpdateOptions();
+
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		fSelection = selection;
+	}
+}

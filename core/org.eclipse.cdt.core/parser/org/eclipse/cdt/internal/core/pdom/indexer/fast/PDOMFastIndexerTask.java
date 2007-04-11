@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +43,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 	private IWritableIndex fIndex;
 	private IndexBasedCodeReaderFactory fCodeReaderFactory;
 	private Map fIflCache;
+	private boolean fCheckTimestamps= false;
 
 	public PDOMFastIndexerTask(PDOMFastIndexer indexer, ITranslationUnit[] added,
 			ITranslationUnit[] changed, ITranslationUnit[] removed) {
@@ -60,7 +60,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 			setupIndexAndReaderFactory();
 			fIndex.acquireReadLock();
 			try {
-				registerTUsInReaderFactory(fChanged);
+				registerTUsInReaderFactory();
 
 				Iterator i= fRemoved.iterator();
 				while (i.hasNext()) {
@@ -109,13 +109,21 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 		this.fCodeReaderFactory = new IndexBasedCodeReaderFactory(fIndex, fIflCache);
 	}
 
-	private void registerTUsInReaderFactory(Collection files) throws CoreException {
-		for (Iterator iter = files.iterator(); iter.hasNext();) {
+	private void registerTUsInReaderFactory() throws CoreException {
+		int removed= 0;
+		for (Iterator iter = fChanged.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			IIndexFileLocation location = IndexLocationFactory.getIFL(tu);
-			FileInfo info= fCodeReaderFactory.createFileInfo(location);
-			info.setRequested(true);
+			IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
+			FileInfo info= fCodeReaderFactory.createFileInfo(ifl);
+			if (fCheckTimestamps && !isOutdated(tu, info.fFile)) {
+				iter.remove();
+				removed++;
+			}
+			else {
+				info.setRequested(true);
+			}
 		}
+		updateInfo(0, 0, -removed);
 	}
 
 	protected IIndexFileLocation findLocation(String absolutePath) {
@@ -157,5 +165,9 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 			return true;
 		}
 		return false;
+	}
+
+	public void setCheckTimestamps(boolean val) {
+		fCheckTimestamps= val;
 	}
 }

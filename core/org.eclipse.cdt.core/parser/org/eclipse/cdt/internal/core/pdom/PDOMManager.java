@@ -20,9 +20,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,10 +39,13 @@ import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexerStateListener;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -1049,4 +1054,89 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	public boolean isProjectIndexed(ICProject proj) {
 		return !IPDOMManager.ID_NO_INDEXER.equals(getIndexerId(proj));
 	}
+
+	public void update(ICElement[] tuSelection, int options) throws CoreException {
+		Map projectsToElements= splitSelection(tuSelection);
+		for (Iterator i = projectsToElements.entrySet().iterator(); i
+				.hasNext();) {
+			Map.Entry entry = (Map.Entry) i.next();
+			ICProject project = (ICProject) entry.getKey();
+			List filesAndFolders = (List) entry.getValue();
+			
+			update(project, filesAndFolders, options);
+		}
+	}
+
+	/**
+	 * computes a map from projects to a collection containing the minimal
+	 * set of folders and files specifying the selection.
+	 */
+	private Map splitSelection(ICElement[] tuSelection) {
+		HashMap result= new HashMap();
+		allElements: for (int i = 0; i < tuSelection.length; i++) {
+			ICElement element = tuSelection[i];
+			if (element instanceof ICProject || element instanceof ICContainer || element instanceof ITranslationUnit) {
+				ICProject project= element.getCProject();
+				ArrayList set= (ArrayList) result.get(project);
+				if (set == null) {
+					set= new ArrayList();
+					result.put(project, set);
+				}
+				for (int j= 0; j<set.size(); j++) {
+					ICElement other= (ICElement) set.get(j);
+					if (contains(other, element)) {
+						continue allElements;
+					}
+					else if (contains(element, other)) {
+						set.set(j, element);
+						continue allElements;
+					}					
+				}
+				set.add(element);
+			}
+		}
+		return result;
+	}
+	
+	private boolean contains(final ICElement a, ICElement b) {
+		if (a.equals(b)) {
+			return true;
+		}
+		b= b.getParent();
+		if (b == null) {
+			return false;
+		}
+		return contains(a, b);
+	}
+
+	private void update(ICProject project, List filesAndFolders, int options) throws CoreException {
+		boolean all= false;
+		boolean timestamps= false;
+		if ((options & UPDATE_ALL) != 0) {
+			all= true;
+		}
+		else if ((options & UPDATE_CHECK_TIMESTAMPS) != 0) {
+			timestamps= true;
+		}
+		else {
+			throw new IllegalArgumentException();
+		}
+			
+		if (all && filesAndFolders.size() == 1 && project.equals(filesAndFolders.get(0))) {
+			reindex(project);
+		}
+		else {
+			assert !Thread.holdsLock(fProjectToPDOM);
+			synchronized (fIndexerMutex) {
+				IPDOMIndexer indexer= getIndexer(project);
+				PDOMUpdateTask task= new PDOMUpdateTask(indexer);
+				task.setCheckTimestamps(timestamps);
+				task.setTranslationUnitSelection(filesAndFolders);
+				if (indexer != null) {
+					enqueue(task);
+				}
+			}
+		}
+	}
+
 }

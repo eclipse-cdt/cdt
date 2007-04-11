@@ -716,11 +716,16 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-          adaptable="true"
+          adaptable="false"
           id="org.eclipse.cdt.ui.rebuildIndexContribution"
-          objectClass="org.eclipse.cdt.core.model.ICProject">
+          objectClass="org.eclipse.cdt.core.model.ICElement">
          <action
-             class="org.eclipse.cdt.internal.ui.indexview.RebuildIndexActionDelegate"
+             class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
+             id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
+             label="%SyncIndex.name"
+             menubarPath="org.eclipse.cdt.ui.indexmenu/gm1"/>
+         <action
+             class="org.eclipse.cdt.internal.ui.actions.RebuildIndexAction"
              id="org.eclipse.cdt.ui.rebuildIndexAction"
              label="%RebuildIndex.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/gm1"/>
@@ -732,6 +737,19 @@
                   name="gm1">
             </groupMarker>
          </menu>
+         <visibility>
+            <or>
+               <objectClass
+                     name="org.eclipse.cdt.core.model.ICProject">
+               </objectClass>
+               <objectClass
+                     name="org.eclipse.cdt.core.model.ICContainer">
+               </objectClass>
+               <objectClass
+                     name="org.eclipse.cdt.core.model.ITranslationUnit">
+               </objectClass>
+            </or>
+         </visibility>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IMarker"

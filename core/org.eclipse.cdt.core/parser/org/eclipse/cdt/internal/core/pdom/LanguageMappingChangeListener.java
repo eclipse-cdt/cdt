@@ -7,20 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeEvent;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
-import org.eclipse.cdt.internal.core.model.CElementDelta;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -32,9 +31,9 @@ import org.eclipse.core.runtime.CoreException;
 public class LanguageMappingChangeListener implements
 		ILanguageMappingChangeListener {
 
-	private PDOMManager fManager;
+	private IIndexManager fManager;
 	
-	public LanguageMappingChangeListener(PDOMManager manager) {
+	public LanguageMappingChangeListener(IIndexManager manager) {
 		fManager = manager;
 	}
 	
@@ -43,34 +42,17 @@ public class LanguageMappingChangeListener implements
 	 * @see org.eclipse.cdt.core.model.ILanguageMappingChangeListener#handleLanguageMappingChangeEvent(org.eclipse.cdt.core.model.ILanguageMappingsChangeEvent)
 	 */
 	public void handleLanguageMappingChangeEvent(ILanguageMappingChangeEvent event) {
-		IProject project = event.getProject();
-		
 		CModelManager manager = CModelManager.getDefault();
-		if(project != null) {
-			ICProject cProject = manager.getCModel().findCProject(project);
-			
-			if(cProject != null)
-				try {
-					fManager.reindex(cProject);
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
-		}
-		
 		if (event.getType() == ILanguageMappingChangeEvent.TYPE_WORKSPACE) {
 			// For now reindex all projects.
 			// TODO: This should be smarter about figuring out which projects
 			// are potentially unaffected due to project settings
 			try {
 				ICProject[] cProjects = manager.getCModel().getCProjects();
-				for(int k = 0; k < cProjects.length; k++) {
-					try {
-						fManager.reindex(cProjects[k]);
-					} catch (CoreException e) {
-						CCorePlugin.log(e);
-					}
-				}
+				fManager.update(cProjects, IIndexManager.UPDATE_ALL);
 			} catch (CModelException e) {
+				CCorePlugin.log(e);
+			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
 		} else if (event.getType() == ILanguageMappingChangeEvent.TYPE_PROJECT) {
@@ -89,10 +71,8 @@ public class LanguageMappingChangeListener implements
 			IFile file = event.getFile();
 			ICProject cProject = manager.getCModel().getCProject(file);
 			ICElement element = manager.create(file, cProject);
-			CElementDelta delta = new CElementDelta(element);
-			delta.changed(element, ICElementDelta.F_CONTENT);
 			try {
-				fManager.changeProject(cProject, delta);
+				fManager.update(new ICElement[] {element}, IIndexManager.UPDATE_ALL);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}

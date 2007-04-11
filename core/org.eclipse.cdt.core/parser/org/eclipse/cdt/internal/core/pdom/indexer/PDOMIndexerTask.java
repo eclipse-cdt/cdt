@@ -65,7 +65,6 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	
 	private AbstractPDOMIndexer fIndexer;
 	protected Map/*<IIndexFileLocation, Object>*/ fContextMap = new HashMap/*<IIndexFileLocation, Object>*/();
-	private boolean fCheckTimestamps= false;
 	private List fFilesUpFront= new ArrayList();
 	private String fDummyFileName;
 	private URI fDummyFileURI;
@@ -94,10 +93,8 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		return super.getProgressInformation();
 	}
 	
-	final public void setCheckTimestamps(boolean val) {
-		fCheckTimestamps= val;
-	}
-	
+	abstract public void setCheckTimestamps(boolean val);
+		
 	final public void setParseUpFront() {
 		fFilesUpFront.addAll(Arrays.asList(fIndexer.getFilesToParseUpFront()));
 	}
@@ -182,10 +179,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 				return;
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			final IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
-			if (fCheckTimestamps && !isOutdated(tu, ifl, index)) {
-				updateInfo(0,0,-1);
-			}
-			else if (needToUpdate(ifl)) {
+			if (needToUpdate(ifl)) {
 				parseTU(tu, options, index, readlockCount, monitor);
 			}
 		}
@@ -196,11 +190,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 				return;
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			IIndexFileLocation location = IndexLocationFactory.getIFL(tu);
-			if (fCheckTimestamps && !isOutdated(tu, location, index)) {
-				updateInfo(0,0,-1);
-				iter.remove();
-			}
-			else if (!needToUpdate(location)) {
+			if (!needToUpdate(location)) {
 				iter.remove();
 			} 
 			else {
@@ -218,11 +208,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					return;
 				ITranslationUnit tu = (ITranslationUnit) iter.next();
 				final IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
-				if (fCheckTimestamps && !isOutdated(tu, ifl, index)) {
-					updateInfo(0,0,-1);
-					iter.remove();
-				} 
-				else if (!needToUpdate(ifl)) {
+				if (!needToUpdate(ifl)) {
 					iter.remove();
 				}
 				else {
@@ -232,11 +218,16 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 	}
 	
-	private boolean isOutdated(ITranslationUnit tu, IIndexFileLocation ifl, IIndex index) throws CoreException {
+	/**
+	 * Convinience method to check whether a translation unit in the index is outdated
+	 * with respect to its timestamp.
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	final protected boolean isOutdated(ITranslationUnit tu, IIndexFile indexFile) throws CoreException {
 		boolean outofdate= true;
 		IResource res= tu.getResource();
 		if (res != null) {
-			IIndexFile indexFile= index.getFile(ifl);
 			if (indexFile != null) {
 				if (res.getLocalTimeStamp() == indexFile.getTimestamp()) {
 					outofdate= false;

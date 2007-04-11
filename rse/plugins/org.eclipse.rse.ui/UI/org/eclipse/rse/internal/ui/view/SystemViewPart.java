@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -68,6 +69,7 @@ import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
@@ -601,32 +603,35 @@ public class SystemViewPart
 		refreshAction.setSelectionProvider(systemView);
 		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 
+		// Note: Keep the group marker and separators in place! ISV's needs
+		//       them to find their places within the toolbar. Re-use as
+		//       much constants from the remote system view context menu as possible.
+		//       This in particular makes orientating and contributing via plugin.xml
+		//       much easier.
+		
 		IToolBarManager toolBarMgr = actionBars.getToolBarManager();
 		if (showConnectionActions)
 		{
+			toolBarMgr.add(new GroupMarker(ISystemContextMenuConstants.GROUP_NEW_NONCASCADING));
 			SystemNewConnectionAction newConnAction = new SystemNewConnectionAction(getShell(), false, systemView); // false implies not from popup menu
 			toolBarMgr.add(newConnAction);
 		}
 
+		toolBarMgr.add(new GroupMarker(ISystemContextMenuConstants.GROUP_BUILD));
 		refreshAction.setSelectionProvider(systemView);
 		toolBarMgr.add(refreshAction);
 
-		toolBarMgr.add(new Separator("Navigate")); //$NON-NLS-1$
+		toolBarMgr.add(new Separator(ISystemContextMenuConstants.GROUP_GOTO));
 		SystemViewPartGotoActionGroup gotoActions = new SystemViewPartGotoActionGroup(this);
 		gotoActions.fillActionBars(actionBars);
 
 		// defect 41203
-		toolBarMgr.add(new Separator());
-		
-		// DKM - changing hover image to the elcl16 one since the navigator no long has clcl16 icons
+		toolBarMgr.add(new Separator(ISystemContextMenuConstants.GROUP_EXPAND));
 		SystemCollapseAllAction collapseAllAction = new SystemCollapseAllAction(getShell());
 		collapseAllAction.setSelectionProvider(systemView);
-		// PSC ... better to encapsulate this in the SystemCollapseAllAction class
-		//collapseAllAction.setImageDescriptor(getNavigatorImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$	
-		//collapseAllAction.setHoverImageDescriptor(getNavigatorImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
-		
 		toolBarMgr.add(collapseAllAction);
 
+		toolBarMgr.add(new GroupMarker(ISystemContextMenuConstants.GROUP_VIEWER_SETUP));
 		toggleLinkingAction = new ToggleLinkingAction(this, SystemViewResources.RESID_PROPERTY_LINKINGACTION_TEXT); 
 		toggleLinkingAction.setToolTipText(SystemViewResources.RESID_PROPERTY_LINKINGACTION_TOOLTIP); 
 		toggleLinkingAction.setImageDescriptor(getNavigatorImageDescriptor(ISystemIconConstants.ICON_IDE_LINKTOEDITOR_ID)); 
@@ -636,7 +641,7 @@ public class SystemViewPart
 		IMenuManager menuMgr = actionBars.getMenuManager();
 		populateSystemViewPulldownMenu(menuMgr, getShell(), showConnectionActions, this, systemView);
 
-		// [179181] [api] [api] Dynamic system type provider need a hook to add dynamic system type specific toolbar groups.
+		// [179181] [api] Dynamic system type provider need a hook to add dynamic system type specific toolbar groups.
 		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
 		for (int i = 0; i < systemTypes.length; i++) {
 			IRSESystemType systemType = systemTypes[i];
@@ -1299,7 +1304,7 @@ public class SystemViewPart
 					// subsystem
 				case 2 :
 					index = token.indexOf('=');
-					ssfId = token.substring(0, index);
+					ssfId = index != -1 ? token.substring(0, index) : null;
 					ssName = token.substring(index + 1);
 					if (ssfId != null)
 						ssf = sr.getSubSystemConfiguration(ssfId);

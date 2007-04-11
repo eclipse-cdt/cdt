@@ -26,4 +26,6 @@ public interface ITerminalView {
 	public void onEditPaste();
 	public void onEditClearAll();
 	public void onEditSelectAll();
+	public boolean hasCommandInputField();
+	public void setCommandInputField(boolean on);
 }

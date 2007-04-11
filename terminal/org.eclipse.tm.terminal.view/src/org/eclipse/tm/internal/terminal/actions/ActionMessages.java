@@ -24,6 +24,7 @@ public class ActionMessages extends NLS {
 	}
     public static String  NEW_TERMINAL;
     public static String  CONNECT;
+    public static String  TOGGLE_COMMAND_INPUT_FIELD;
     public static String  DISCONNECT;
     public static String  SETTINGS_ELLIPSE;
     public static String  COPY;

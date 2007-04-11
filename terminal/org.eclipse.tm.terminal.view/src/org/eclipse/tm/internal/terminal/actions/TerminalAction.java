@@ -25,7 +25,10 @@ import org.eclipse.tm.internal.terminal.view.TerminalViewPlugin;
 abstract public class TerminalAction extends Action {
     protected final ITerminalView fTarget;
     public TerminalAction(ITerminalView target, String strId) {
-		super(""); //$NON-NLS-1$
+		this(target,strId,0);
+	}
+    public TerminalAction(ITerminalView target, String strId, int style) {
+		super("",style); //$NON-NLS-1$
 
 		fTarget = target;
 

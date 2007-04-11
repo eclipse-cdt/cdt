@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,13 +12,14 @@
  * 
  * Contributors:
  * Kushal Munir (IBM) - moved to internal package
+ * Martin Oberhuber (Wind River) - [181917] EFS Improvements: Avoid unclosed Streams,
+ *    - Fix early startup issues by deferring FileStore evaluation and classloading,
+ *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
+ *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.eclipse.filesystem;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -42,8 +43,10 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		RSECorePlugin.getDefault();
-		RSEUIPlugin.getDefault();
+		////We must not activate RSE plugins prematurely, since we are being 
+		////activated VERY early while the Resources plugin is not yet fully up
+		//RSECorePlugin.getDefault();
+		//RSEUIPlugin.getDefault();
 	}
 
 	/**
@@ -63,14 +66,4 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path.
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.internal.eclipse.filesystem", path); //$NON-NLS-1$
-	}
 }

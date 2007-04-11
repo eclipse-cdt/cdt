@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,10 @@
  * 
  * Contributors:
  * Kushal Munir (IBM) - moved to internal package.
+ * Martin Oberhuber (Wind River) - [181917] EFS Improvements: Avoid unclosed Streams,
+ *    - Fix early startup issues by deferring FileStore evaluation and classloading,
+ *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
+ *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  ********************************************************************************/
 
 
@@ -41,8 +45,8 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 			
 			try {
 				URI uri = new URI(initialPath);
-				IHost host = RSEFileSystem.getConnectionFor(uri.getHost());
-				IRemoteFileSubSystem fs = RSEFileSystem.getRemoteFileSubSystem(host);
+				IHost host = RSEFileStoreImpl.getConnectionFor(uri.getHost(), null);
+				IRemoteFileSubSystem fs = RSEFileStoreImpl.getRemoteFileSubSystem(host);
 				dlg.setInputObject(fs.getRemoteFileObject(uri.getPath()));			
 			}
 			catch (Exception e) {

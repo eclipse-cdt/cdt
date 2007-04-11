@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,7 +14,11 @@
  * IBM Corporation - initial API and implementation
  * Kushal Munir (IBM) - moved to internal package
  * Martin Oberhuber (Wind River) - added progress dialog 
- *     - (adapted from org.eclipse.ui.actions.CopyProjectAction, copyright IBM)
+ *    - (adapted from org.eclipse.ui.actions.CopyProjectAction, copyright IBM)
+ * Martin Oberhuber (Wind River) - [181917] EFS Improvements: Avoid unclosed Streams,
+ *    - Fix early startup issues by deferring FileStore evaluation and classloading,
+ *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
+ *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.eclipse.filesystem.ui.actions;
@@ -166,7 +170,6 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 	// (Copyright 2000, 2006 IBM Corporation and others)
 	//----------------------------------------------------------------------------
 
-	
 	private IProject createRemoteProject(IRemoteFile directory, IProgressMonitor monitor)
 	{
 		IWorkspaceRoot root = SystemBasePlugin.getWorkspaceRoot();
@@ -185,7 +188,9 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 		try
 		{
 			IProjectDescription description = root.getWorkspace().newProjectDescription(directory.getName());
-			URI location = RSEFileSystem.getInstance().getURIFor(directory);
+			String hostNameOrAddr = directory.getParentRemoteFileSubSystem().getHost().getHostName();
+			String absolutePath = directory.getAbsolutePath();
+			URI location = RSEFileSystem.getURIFor(hostNameOrAddr, absolutePath);
 			description.setLocationURI(location);
 
 			editProject.create(description, monitor);

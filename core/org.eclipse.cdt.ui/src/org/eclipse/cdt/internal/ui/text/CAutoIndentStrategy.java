@@ -595,7 +595,8 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 						return; // bail out
 
 					insertLength= subtractIndent(correct, current, addition);
-					if (l != first && temp.get(lineOffset, lineLength).trim().length() != 0) {
+					// workaround for bug 181139
+					if (/*l != first && */temp.get(lineOffset, lineLength).trim().length() != 0) {
 						isIndentDetected= true;
 						if (insertLength == 0) {
 							 // no adjustment needed, bail out

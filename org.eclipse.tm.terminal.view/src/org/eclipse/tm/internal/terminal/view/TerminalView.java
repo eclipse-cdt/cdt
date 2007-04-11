@@ -44,6 +44,8 @@ import org.eclipse.tm.internal.terminal.actions.TerminalActionNewTerminal;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionPaste;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionSelectAll;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionSettings;
+import org.eclipse.tm.internal.terminal.actions.TerminalActionToggleCommandInputField;
+import org.eclipse.tm.internal.terminal.control.CommandInputFieldWithHistory;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
@@ -63,7 +65,13 @@ import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.part.ViewPart;
 
 public class TerminalView extends ViewPart implements ITerminalView, ITerminalListener {
-    public static final String  FONT_DEFINITION = "terminal.views.view.font.definition"; //$NON-NLS-1$
+    private static final String STORE_CONNECTION_TYPE = "ConnectionType"; //$NON-NLS-1$
+
+	private static final String STORE_HAS_COMMAND_INPUT_FIELD = "HasCommandInputField"; //$NON-NLS-1$
+
+	private static final String STORE_COMMAND_INPUT_FIELD_HISTORY = "CommandInputFieldHistory"; //$NON-NLS-1$
+
+	public static final String  FONT_DEFINITION = "terminal.views.view.font.definition"; //$NON-NLS-1$
 
 	protected ITerminalViewControl fCtlTerminal;
 
@@ -85,6 +93,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 	protected TerminalAction fActionEditSelectAll;
 
+	protected TerminalAction fActionToggleCommandInputField;
+	
 	protected TerminalMenuHandlerEdit fMenuHandlerEdit;
 
 	protected TerminalPropertyChangeHandler fPropertyChangeHandler;
@@ -92,6 +102,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	protected boolean fMenuAboutToShow;
 	
 	private SettingsStore fStore;
+
+	private CommandInputFieldWithHistory fCommandInputField;
 
 	public TerminalView() {
 		Logger
@@ -265,11 +277,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	}
 
 	public void onTerminalFontChanged() {
-		fCtlTerminal.getCtlText().setFont(JFaceResources.getFont(FONT_DEFINITION));
-
-		// Tell the TerminalControl singleton that the font has changed.
-
-		fCtlTerminal.onFontChanged();
+		fCtlTerminal.setFont(JFaceResources.getFont(FONT_DEFINITION));
 	}
 
 	public void onEditCopy() {
@@ -379,20 +387,22 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	protected void setupControls(Composite wndParent) {
 		ITerminalConnector[] connectors=TerminalConnectorExtension.getTerminalConnectors();
 		fCtlTerminal = TerminalViewControlFactory.makeControl(this, wndParent, connectors);
-		String connectionType=fStore.get("ConnectionType"); //$NON-NLS-1$
+		String connectionType=fStore.get(STORE_CONNECTION_TYPE);
 		for (int i = 0; i < connectors.length; i++) {
 			connectors[i].load(getStore(connectors[i]));
 			if(connectors[i].getId().equals(connectionType))
 				fCtlTerminal.setConnector(connectors[i]);
 		}
+		setCommandInputField("true".equals(fStore.get(STORE_HAS_COMMAND_INPUT_FIELD))); //$NON-NLS-1$
 	}
+	
 	private void saveSettings(ITerminalConnector connector) {
 		ITerminalConnector[] connectors=fCtlTerminal.getConnectors();
 		for (int i = 0; i < connectors.length; i++) {
 			connectors[i].save(getStore(connectors[i]));
 		}
 		if(connector!=null) {
-			fStore.put("ConnectionType",connector.getId()); //$NON-NLS-1$
+			fStore.put(STORE_CONNECTION_TYPE,connector.getId());
 		}
 	}
 	
@@ -403,6 +413,9 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
+		if(fCommandInputField!=null)
+			fStore.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fCommandInputField.getHistory());
+		fStore.put(STORE_HAS_COMMAND_INPUT_FIELD,hasCommandInputField()?"true":"false");   //$NON-NLS-1$//$NON-NLS-2$
 		fStore.saveState(memento);
 	}
 	private ISettingsStore getStore(ITerminalConnector connector) {
@@ -419,6 +432,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		fActionEditPaste = new TerminalActionPaste(this);
 		fActionEditClearAll = new TerminalActionClearAll(this);
 		fActionEditSelectAll = new TerminalActionSelectAll(this);
+		fActionToggleCommandInputField = new TerminalActionToggleCommandInputField(this);
 
 		IActionBars actionBars = getViewSite().getActionBars();
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fActionEditCopy);
@@ -456,6 +470,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		toolBarMgr.add(fActionTerminalConnect);
 		toolBarMgr.add(fActionTerminalDisconnect);
 		toolBarMgr.add(fActionTerminalSettings);
+		toolBarMgr.add(fActionToggleCommandInputField);
 	}
 
 	protected void setupContextMenus() {
@@ -481,6 +496,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		menuMgr.add(new Separator());
 		menuMgr.add(fActionEditClearAll);
 		menuMgr.add(fActionEditSelectAll);
+		menuMgr.add(fActionToggleCommandInputField);
 
 		// Other plug-ins can contribute there actions here
 		menuMgr.add(new Separator("Additions")); //$NON-NLS-1$
@@ -624,5 +640,22 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 				onTerminalFontChanged();
 			}
 		}
+	}
+
+	public boolean hasCommandInputField() {
+		return fCommandInputField!=null;
+	}
+	public void setCommandInputField(boolean on) {
+		// save the old history
+		if(fCommandInputField!=null) {
+			fStore.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fCommandInputField.getHistory());
+			fCommandInputField=null;
+		}
+		if(on) {
+			// TODO make history size configurable
+			fCommandInputField=new CommandInputFieldWithHistory(100);
+			fCommandInputField.setHistory(fStore.get(STORE_COMMAND_INPUT_FIELD_HISTORY));
+		}
+		fCtlTerminal.setCommandInputField(fCommandInputField);
 	}
 }

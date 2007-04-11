@@ -41,4 +41,7 @@ public interface ImageConsts
     public static final String  IMAGE_ELCL_CONNECT             = "ImageElclConnect"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_DISCONNECT          = "ImageElclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_SETTINGS            = "ImageElclSettings"; //$NON-NLS-1$
+	public static final String  IMAGE_CLCL_COMMAND_INPUT_FIELD        = "ImageClclCommandInputField";//$NON-NLS-1$
+	public static final String  IMAGE_ELCL_COMMAND_INPUT_FIELD        = "ImageDlclCommandInputField";//$NON-NLS-1$
+	public static final String  IMAGE_DLCL_COMMAND_INPUT_FIELD        = "ImageDlclCommandInputField";//$NON-NLS-1$
  }

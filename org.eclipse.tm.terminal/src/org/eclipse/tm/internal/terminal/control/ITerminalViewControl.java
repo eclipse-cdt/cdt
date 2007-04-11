@@ -13,6 +13,7 @@ package org.eclipse.tm.internal.terminal.control;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.tm.terminal.ITerminalConnector;
 import org.eclipse.tm.terminal.TerminalState;
 
@@ -22,7 +23,7 @@ import org.eclipse.tm.terminal.TerminalState;
  */
 public interface ITerminalViewControl {
     boolean isEmpty();
-    void onFontChanged();
+	void setFont(Font font);
     StyledText getCtlText();
     boolean isDisposed();
     void selectAll();
@@ -40,7 +41,23 @@ public interface ITerminalViewControl {
     ITerminalConnector getTerminalConnection();
     void setConnector(ITerminalConnector connector);
     void connectTerminal();
+    /**
+     * @param write a single character to terminal
+     */
     void sendKey(char arg0);
+	/**
+	 * @param string write string to terminal
+	 */
+	public boolean pasteString(String string);
+	
     boolean isConnected();
 
+    /**
+     * @param inputField null means no input field is shown
+     */
+    void setCommandInputField(ICommandInputField inputField);
+    /**
+     * @return null or the current input field
+     */
+    ICommandInputField getCommandInputField();
 }

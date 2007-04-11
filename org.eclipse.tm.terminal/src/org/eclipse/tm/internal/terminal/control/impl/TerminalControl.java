@@ -35,11 +35,15 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.tm.internal.terminal.control.ICommandInputField;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.terminal.ITerminalConnector;
@@ -85,16 +89,16 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
     private ITerminalConnector		  fConnector;
     private final ITerminalConnector[]      fConnectors;
 
+	private ICommandInputField fCommandInputField;
+
 	private volatile TerminalState fState;
 
 	public TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors) {
 		fConnectors=connectors;
 		fTerminalListener=target;
-		fWndParent = wndParent;
-
 		setTerminalText(new TerminalText(this));
 
-		setupTerminal();
+		setupTerminal(wndParent);
 	}
 
 	public ITerminalConnector[] getConnectors() {
@@ -114,11 +118,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	public void paste() {
 		TextTransfer textTransfer = TextTransfer.getInstance();
 		String strText = (String) fClipboard.getContents(textTransfer);
-		if (strText == null)
-			return;
-		for (int i = 0; i < strText.length(); i++) {
-			sendChar(strText.charAt(i), false);
-		}
+		pasteString(strText);
 // TODO paste in another thread.... to avoid blocking
 //		new Thread() {
 //			public void run() {
@@ -128,6 +128,20 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 //				
 //			}
 //		}.start();
+	}
+
+	/**
+	 * @param strText
+	 */
+	public boolean pasteString(String strText) {
+		if(!isConnected())
+			return false;
+		if (strText == null)
+			return false;
+		for (int i = 0; i < strText.length(); i++) {
+			sendChar(strText.charAt(i), false);
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -358,9 +372,9 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.ITerminalControl#setupTerminal()
 	 */
-	public void setupTerminal() {
+	public void setupTerminal(Composite parent) {
 		fState=TerminalState.CLOSED;
-		setupControls();
+		setupControls(parent);
 		setupListeners();
 		setupHelp(fWndParent, TerminalPlugin.HELP_VIEW);
 	}
@@ -368,11 +382,18 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.ITerminalControl#onFontChanged()
 	 */
-	public void onFontChanged() {
+	public void setFont(Font font) {
+		getCtlText().setFont(font);
+		if(fCommandInputField!=null) {
+			fCommandInputField.setFont(font);
+		}
+
+		// Tell the TerminalControl singleton that the font has changed.
+
 		getTerminalText().fontChanged();
 	}
 
-	protected void setupControls() {
+	protected void setupControls(Composite parent) {
 		// The Terminal view now aims to be an ANSI-conforming terminal emulator, so it
 		// can't have a horizontal scroll bar (but a vertical one is ok).  Also, do
 		// _not_ make the TextViewer read-only, because that prevents it from seeing a
@@ -380,8 +401,15 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		// switch to another Workbench control).  We prevent local keyboard input from
 		// modifying the text in method TerminalVerifyKeyListener.verifyKey().
 
-//		fViewer = new TextViewer(fWndParent, SWT.V_SCROLL);
+		fWndParent=new Composite(parent,SWT.NONE);
+		GridLayout layout=new GridLayout();
+		layout.marginWidth=0;
+		layout.marginHeight=0;
+		
+		fWndParent.setLayout(layout);
 		setCtlText(new StyledText(fWndParent, SWT.V_SCROLL));
+		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
 
 		fDisplay = getCtlText().getDisplay();
 		fClipboard = new Clipboard(fDisplay);
@@ -790,5 +818,17 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	public void setConnector(ITerminalConnector connector) {
 		fConnector=connector;
 		
+	}
+	public ICommandInputField getCommandInputField() {
+		return fCommandInputField;
+	}
+
+	public void setCommandInputField(ICommandInputField inputField) {
+		if(fCommandInputField!=null)
+			fCommandInputField.dispose();
+		fCommandInputField=inputField;
+		if(fCommandInputField!=null)
+			fCommandInputField.createControl(fWndParent, this);
+		fWndParent.layout(true);
 	}
 }

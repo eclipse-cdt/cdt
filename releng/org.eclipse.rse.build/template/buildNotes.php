@@ -23,6 +23,23 @@
 </table>
 <table><tbody><tr><td>
 <ul>
+<li><b>TM 2.0M6 was respun as TM 2.0M6a</b> in order to include the following critical fixes:<ul>
+  <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181917">181917</a>]
+     <b>Fix EFS running out of file descriptors</b>, fix early startup problems, improve EFS performance</li>
+  <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176603">176603</a>][api]
+     ISubSystem.connect(IProgressMonitor, boolean forcePrompt) required for EFS</li>
+  <!--
+  <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id="180994">180994</a>]
+     Potential fix improving thread handling in dstore server</li>
+  -->
+  <li>[sync] Add proper group markers to the toolbar groups.
+     Re-used the context menu group markers for easier orientation</li>
+  </ul>
+  Only the following 3 plug-ins from the rse-runtime-core feature were changed:<ul>
+  <li><code>org.eclipse.rse.ui</code></li>
+  <li><code>org.eclipse.rse.core</code></li>
+  <li><code>org.eclipse.rse.eclipse.filesystem</code></li>
+  </ul></li>
 <li>TM 2.0M6 <b>requires Eclipse 3.3M6</b>. Platform Runtime is the minimum
   requirement for core RSE and Terminal. The Team CVS feature is no longer needed for
   SSH [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175686">175686</a>].</li>

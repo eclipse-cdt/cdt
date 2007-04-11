@@ -135,7 +135,8 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	    {
 	        result = SystemAdapterHelpers.getViewAdapter(object);
 	    }
-        result.setPropertySourceInput(object);
+	    if (result != null)
+	    	result.setPropertySourceInput(object);
         return result;
 	}
 

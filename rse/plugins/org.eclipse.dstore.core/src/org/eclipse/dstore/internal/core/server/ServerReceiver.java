@@ -83,7 +83,7 @@ public class ServerReceiver extends Receiver
 	public void handleError(Throwable e)
 	{
 		System.out.println("RECEIVER ERROR"); //$NON-NLS-1$
-	//	e.printStackTrace();
+		e.printStackTrace();
 		System.out.println(e);
 		_connection.finished(this);
 	}

@@ -146,7 +146,14 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 	public String getAbsoluteName(Object element)
 	{
 		ISystemFilter filter = getFilter(element);
-		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+		if (filter instanceof SystemFilterSimple)
+		{
+			return filter.getName();
+		}
+		else
+		{
+			return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}	
 	/**
 	 * Return the type label for this object

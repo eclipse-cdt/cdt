@@ -13,7 +13,7 @@ package org.eclipse.rse.internal.useractions;
 import org.eclipse.osgi.util.NLS;
 
 public class UserActionsResources extends NLS {
-	private static String BUNDLE_NAME = "org.eclipse.rse.useractions.UserActionsResources"; //$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.useractions.UserActionsResources"; //$NON-NLS-1$
 	// Property sheet values: Categories in Team view
 	public static String RESID_PROPERTY_TEAM_USERACTION_TYPE_VALUE;
 	public static String RESID_PROPERTY_TEAM_COMPILETYPE_TYPE_VALUE;

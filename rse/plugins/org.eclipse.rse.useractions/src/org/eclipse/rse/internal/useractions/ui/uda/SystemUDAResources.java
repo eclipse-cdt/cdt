@@ -13,7 +13,7 @@ package org.eclipse.rse.internal.useractions.ui.uda;
 import org.eclipse.osgi.util.NLS;
 
 public class SystemUDAResources extends NLS {
-	private static String BUNDLE_NAME = "org.eclipse.rse.useractions.ui.uda.SystemUDAResources";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources";//$NON-NLS-1$
 	// WORK WITH USER DEFINED ACTIONS DIALOG...
 	public static String RESID_WORKWITH_UDAS_TITLE;
 	public static String RESID_WORKWITH_UDAS_ACTION_LABEL;

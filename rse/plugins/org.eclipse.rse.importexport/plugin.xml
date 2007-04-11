@@ -9,7 +9,7 @@
       <wizard
             name="%RemoteFileSystemImportWizard.label"
             icon="icons/full/etool16/file_import.gif"
-            class="org.eclipse.rse.files.importexport.files.RemoteImportWizard"
+            class="org.eclipse.rse.internal.importexport.files.RemoteImportWizard"
             id="org.eclipse.rse.files.importexport.fileImportWizard">
          <description>
             %RemoteFileSystemImportWizard.description
@@ -29,7 +29,7 @@
          <action
                label="%RemoteFileImportAction.label"
                tooltip="%RemoteFileImportAction.tooltip"
-               class="org.eclipse.rse.files.importexport.files.RemoteFileImportActionDelegate"
+               class="org.eclipse.rse.internal.importexport.files.RemoteFileImportActionDelegate"
                menubarPath="additions"
                enablesFor="+"
                id="importRemoteFiles">
@@ -42,7 +42,7 @@
          <action
                label="%OpenRemoteFileImport.label"
                tooltip="%OpenRemoteFileImport.tooltip"
-               class="org.eclipse.rse.files.importexport.files.RemoteFileOpenImportWizardActionDelegate"
+               class="org.eclipse.rse.internal.importexport.files.RemoteFileOpenImportWizardActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="openRemoteFileImport">
@@ -55,7 +55,7 @@
       <wizard
             name="%RemoteFileSystemExportWizard.label"
             icon="icons/full/etool16/file_export.gif" 
-            class="org.eclipse.rse.files.importexport.files.RemoteExportWizard"
+            class="org.eclipse.rse.internal.importexport.files.RemoteExportWizard"
             id="org.eclipse.rse.files.importexport.fileExportWizard">
          <description>
             %RemoteFileSystemExportWizard.description
@@ -75,7 +75,7 @@
          <action
                label="%RemoteFileExportAction.label"
                tooltip="%RemoteFileExportAction.tooltip"
-               class="org.eclipse.rse.files.importexport.files.RemoteFileExportActionDelegate"
+               class="org.eclipse.rse.internal.importexport.files.RemoteFileExportActionDelegate"
                menubarPath="additions"
                enablesFor="+"
                id="exportRemoteFiles">
@@ -88,7 +88,7 @@
          <action
                label="%OpenRemoteFileExport.label"
                tooltip="%OpenRemoteFileExport.tooltip"
-               class="org.eclipse.rse.files.importexport.files.RemoteFileOpenExportWizardActionDelegate"
+               class="org.eclipse.rse.internal.importexport.files.RemoteFileOpenExportWizardActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="openRemoteFileExport">
@@ -109,7 +109,7 @@
          <action
                label="%ImportToProject.label"
                tooltip="%ImportToProject.tooltip"
-               class="org.eclipse.rse.files.importexport.files.RemoteFileImportToProjectActionDelegate"
+               class="org.eclipse.rse.internal.importexport.files.RemoteFileImportToProjectActionDelegate"
                menubarPath="group.importexport"
                enablesFor="1"
                id="importToProject">
@@ -118,7 +118,7 @@
          <action
                label="%ExportFromProject.label"
                tooltip="%ExportFromProject.tooltip"
-               class="org.eclipse.rse.files.importexport.files.RemoteFileExportFromProjectActionDelegate"
+               class="org.eclipse.rse.internal.importexport.files.RemoteFileExportFromProjectActionDelegate"
                menubarPath="group.importexport"
                enablesFor="1"
                id="exportFromProject">

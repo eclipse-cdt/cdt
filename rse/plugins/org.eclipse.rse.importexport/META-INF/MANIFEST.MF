@@ -4,12 +4,12 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.importexport; singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: systemsImportExport.jar
-Bundle-Activator: org.eclipse.rse.importexport.RemoteImportExportPlugin
+Bundle-Activator: org.eclipse.rse.internal.importexport.RemoteImportExportPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.rse.files.importexport,
- org.eclipse.rse.files.importexport.files,
- org.eclipse.rse.importexport
+Export-Package: 
+ org.eclipse.rse.internal.importexport,
+ org.eclipse.rse.internal.importexport.files
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.ui,

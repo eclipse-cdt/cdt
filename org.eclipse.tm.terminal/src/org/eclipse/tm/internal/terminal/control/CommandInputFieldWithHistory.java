@@ -32,6 +32,8 @@ import org.eclipse.swt.widgets.Text;
  * <ul>ESC to cancel history editing
  * <ul>History can be edited (by moving up and edit) but changes are 
  * not persistent (like in bash). 
+ * <ul>If the same command is entered multiple times in a row, 
+ * only one entry is kept in the history. 
  * </li>
  *
  */

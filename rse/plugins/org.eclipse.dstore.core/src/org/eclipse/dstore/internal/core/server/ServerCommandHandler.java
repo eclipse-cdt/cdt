@@ -91,6 +91,7 @@ public class ServerCommandHandler extends CommandHandler
 				_minerLoader = new MinerLoader(_dataStore, _loaders);
 			}
 			
+			_dataStore.trace("loading "+minerId); //$NON-NLS-1$
 			// load and connect the miner
 			Miner miner = _minerLoader.loadMiner(minerId);
 			if (miner != null)

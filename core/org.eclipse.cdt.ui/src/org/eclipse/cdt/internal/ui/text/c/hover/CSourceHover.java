@@ -260,138 +260,36 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			ITextFileBufferManager mgr= FileBuffers.getTextFileBufferManager();
 			mgr.connect(location, locationKind, fMonitor);
 			ITextFileBuffer buffer= mgr.getTextFileBuffer(location, locationKind);
-			String source;
 			try {
+				
 				IRegion nameRegion= new Region(fileLocation.getNodeOffset(), fileLocation.getNodeLength());
 				final int nameOffset= nameRegion.getOffset();
-				int sourceStart= nameOffset;
-				int sourceEnd= nameOffset + nameRegion.getLength();
+				final int sourceStart;
+				final int sourceEnd;
 				IDocument doc= buffer.getDocument();
-				// expand source range to include preceding comment, if any
-				CHeuristicScanner scanner= new CHeuristicScanner(doc);
-				if (binding instanceof IParameter) {
-					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '(', ',' });
-					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
-						return null;
-					}
-					sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
-					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
-						sourceStart = nameOffset;
-					}
-				} else if (binding instanceof ICPPTemplateParameter) {
-					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '<', ',' });
-					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
-						return null;
-					}
-					sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
-					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
-						sourceStart = nameOffset;
-					}
-				} else if (binding instanceof IEnumerator) {
-					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '{', ',' });
-					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
-						return null;
-					}
-					sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
-					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
-						sourceStart = nameOffset;
-					}
-				} else {
-					final int nameLine= doc.getLineOfOffset(nameOffset);
-					sourceStart= doc.getLineOffset(nameLine);
-					int commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
-					if (commentBound == CHeuristicScanner.NOT_FOUND) {
-						commentBound= -1; // unbound
-					}
-					int commentStart= searchCommentBackward(doc, sourceStart, commentBound);
-					if (commentStart >= 0) {
-						sourceStart= commentStart;
-					} else {
-						int nextNonWS= scanner.findNonWhitespaceForward(commentBound+1, sourceStart);
-						if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
-							int nextNonWSLine= doc.getLineOfOffset(nextNonWS);
-							int lineOffset= doc.getLineOffset(nextNonWSLine);
-							if (doc.get(lineOffset, nextNonWS - lineOffset).trim().length() == 0) {
-								sourceStart= doc.getLineOffset(nextNonWSLine);
-							}
-						}
-					}
-				}
-				// expand forward to the end of the definition/declaration
 				if (binding instanceof IMacroBinding) {
 					ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, nameOffset, false);
 					if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
-						sourceStart= partition.getOffset();
-						sourceEnd= sourceStart + partition.getLength();
-					}
- 				} else {
-					boolean searchBrace= false;
-					boolean searchSemi= false;
-					boolean searchComma= false;
-					if (binding instanceof ICompositeType || binding instanceof IEnumeration) {
-						searchBrace= true;
-					} else if (binding instanceof ICPPTemplateDefinition) {
-						searchBrace= true;
-					} else if (binding instanceof IFunction && name.isDefinition()) {
-						searchBrace= true;
-					} else if (binding instanceof IParameter || binding instanceof IEnumerator || binding instanceof ICPPTemplateParameter) {
-						searchComma= true;
-					} else if (binding instanceof IVariable || binding instanceof ITypedef) {
-						searchSemi= true;
-					} else if (!name.isDefinition()) {
-						searchSemi= true;
-					}
-					if (searchBrace) {
-						int brace= scanner.scanForward(nameOffset, CHeuristicScanner.UNBOUND, '{');
-						if (brace != CHeuristicScanner.NOT_FOUND) {
-							sourceEnd= scanner.findClosingPeer(brace + 1, '{', '}');
-							if (sourceEnd == CHeuristicScanner.NOT_FOUND) {
-								sourceEnd= doc.getLength();
-							}
-						}
-						// expand region to include whole line
-						IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
-						sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
-					} else if (searchSemi) {
-						int semi= scanner.scanForward(nameOffset, CHeuristicScanner.UNBOUND, ';');
-						if (semi != CHeuristicScanner.NOT_FOUND) {
-							sourceEnd= semi+1;
-						}
-						// expand region to include whole line
-						IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
-						sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
-					} else if (searchComma) {
-						int bound;
-						if (binding instanceof IParameter) {
-							bound= scanner.findClosingPeer(nameOffset, '(', ')');
-						} else if (binding instanceof ICPPTemplateParameter) {
-							bound= scanner.findClosingPeer(nameOffset, '<', '>');
-						} else if (binding instanceof IEnumerator) {
-							bound= scanner.findClosingPeer(nameOffset, '{', '}');
+						int directiveStart= partition.getOffset();
+						int commentStart= searchCommentBackward(doc, directiveStart, -1);
+						if (commentStart >= 0) {
+							sourceStart= commentStart;
 						} else {
-							bound = CHeuristicScanner.NOT_FOUND;
+							sourceStart= directiveStart;
 						}
-						if (bound == CHeuristicScanner.NOT_FOUND) {
-							bound= Math.min(doc.getLength(), nameOffset + 100);
-						}
-						int comma= scanner.scanForward(nameOffset, bound, ',');
-						if (comma == CHeuristicScanner.NOT_FOUND) {
-							sourceEnd= bound;
-						} else {
-							sourceEnd= comma;
-						}
-						// expand region to include whole line if rest is white space or comment
-						int nextNonWS= scanner.findNonWhitespaceForward(sourceEnd + 1, CHeuristicScanner.UNBOUND);
-						if (doc.getLineOfOffset(nextNonWS) > doc.getLineOfOffset(sourceEnd)) {
-							IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
-							sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
-						}
+							sourceEnd= directiveStart + partition.getLength();
 					} else {
-						
+						return null;
 					}
+				} else {
+					// expand source range to include preceding comment, if any
+					sourceStart= computeSourceStart(doc, nameOffset, binding);
+					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+						return null;
+					}
+					sourceEnd= computeSourceEnd(doc, nameOffset + nameRegion.getLength(), binding, name.isDefinition());
 				}
-				
-				source= buffer.getDocument().get(sourceStart, sourceEnd - sourceStart);
+				String source= buffer.getDocument().get(sourceStart, sourceEnd - sourceStart);
 				return source;
 
 			} catch (BadLocationException exc) {
@@ -401,6 +299,146 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				mgr.disconnect(location, LocationKind.LOCATION, fMonitor);
 			}
 			return null;
+		}
+
+		private int computeSourceStart(IDocument doc, int nameOffset, IBinding binding) throws BadLocationException {
+			int sourceStart= nameOffset;
+			CHeuristicScanner scanner= new CHeuristicScanner(doc);
+			if (binding instanceof IParameter) {
+				sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '>', '(', ',' });
+				if (sourceStart > 0 && doc.getChar(sourceStart) == '>') {
+					sourceStart= scanner.findOpeningPeer(sourceStart - 1, '<', '>');
+					if (sourceStart > 0) {
+						sourceStart= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '(', ',' });
+					}
+				}
+				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+					return sourceStart;
+				}
+				sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
+				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+					sourceStart = nameOffset;
+				}
+			} else if (binding instanceof ICPPTemplateParameter) {
+				sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '>', '<', ',' });
+				if (sourceStart > 0 && doc.getChar(sourceStart) == '>') {
+					sourceStart= scanner.findOpeningPeer(sourceStart - 1, '<', '>');
+					if (sourceStart > 0) {
+						sourceStart= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '<', ',' });
+					}
+				}
+				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+					return sourceStart;
+				}
+				sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
+				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+					sourceStart = nameOffset;
+				}
+			} else if (binding instanceof IEnumerator) {
+				sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '{', ',' });
+				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+					return sourceStart;
+				}
+				sourceStart= scanner.findNonWhitespaceForward(sourceStart + 1, nameOffset);
+				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
+					sourceStart = nameOffset;
+				}
+			} else {
+				final int nameLine= doc.getLineOfOffset(nameOffset);
+				sourceStart= doc.getLineOffset(nameLine);
+				int commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+				if (commentBound == CHeuristicScanner.NOT_FOUND) {
+					commentBound= -1; // unbound
+				}
+				int commentStart= searchCommentBackward(doc, sourceStart, commentBound);
+				if (commentStart >= 0) {
+					sourceStart= commentStart;
+				} else {
+					int nextNonWS= scanner.findNonWhitespaceForward(commentBound+1, sourceStart);
+					if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
+						int nextNonWSLine= doc.getLineOfOffset(nextNonWS);
+						int lineOffset= doc.getLineOffset(nextNonWSLine);
+						if (doc.get(lineOffset, nextNonWS - lineOffset).trim().length() == 0) {
+							sourceStart= doc.getLineOffset(nextNonWSLine);
+						}
+					}
+				}
+			}
+			return sourceStart;
+		}
+
+		private int computeSourceEnd(IDocument doc, int start, IBinding binding, boolean isDefinition) throws BadLocationException {
+			int sourceEnd= start;
+			CHeuristicScanner scanner= new CHeuristicScanner(doc);
+			// expand forward to the end of the definition/declaration
+			boolean searchBrace= false;
+			boolean searchSemi= false;
+			boolean searchComma= false;
+			if (binding instanceof ICompositeType || binding instanceof IEnumeration) {
+				searchBrace= true;
+			} else if (binding instanceof ICPPTemplateDefinition) {
+				searchBrace= true;
+			} else if (binding instanceof IFunction && isDefinition) {
+				searchBrace= true;
+			} else if (binding instanceof IParameter || binding instanceof IEnumerator || binding instanceof ICPPTemplateParameter) {
+				searchComma= true;
+			} else if (binding instanceof IVariable || binding instanceof ITypedef) {
+				searchSemi= true;
+			} else if (!isDefinition) {
+				searchSemi= true;
+			}
+			if (searchBrace) {
+				int brace= scanner.scanForward(start, CHeuristicScanner.UNBOUND, '{');
+				if (brace != CHeuristicScanner.NOT_FOUND) {
+					sourceEnd= scanner.findClosingPeer(brace + 1, '{', '}');
+					if (sourceEnd == CHeuristicScanner.NOT_FOUND) {
+						sourceEnd= doc.getLength();
+					}
+				}
+				// expand region to include whole line
+				IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
+				sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
+			} else if (searchSemi) {
+				int semi= scanner.scanForward(start, CHeuristicScanner.UNBOUND, ';');
+				if (semi != CHeuristicScanner.NOT_FOUND) {
+					sourceEnd= semi+1;
+				}
+				// expand region to include whole line
+				IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
+				sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
+			} else if (searchComma) {
+				int bound;
+				if (binding instanceof IParameter) {
+					bound= scanner.findClosingPeer(start, '(', ')');
+				} else if (binding instanceof ICPPTemplateParameter) {
+					bound= scanner.findClosingPeer(start, '<', '>');
+				} else if (binding instanceof IEnumerator) {
+					bound= scanner.findClosingPeer(start, '{', '}');
+				} else {
+					bound = CHeuristicScanner.NOT_FOUND;
+				}
+				if (bound == CHeuristicScanner.NOT_FOUND) {
+					bound= Math.min(doc.getLength(), start + 100);
+				}
+				int comma= scanner.scanForward(start, bound, ',');
+				if (comma == CHeuristicScanner.NOT_FOUND) {
+					// last argument
+					sourceEnd= bound;
+				} else {
+					sourceEnd= comma;
+					// expand region to include whole line if rest is comment
+					IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
+					int lineEnd= lineRegion.getOffset() + lineRegion.getLength();
+					int nextNonWS= scanner.findNonWhitespaceForwardInAnyPartition(sourceEnd + 1, lineEnd);
+					if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
+						String contentType= TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, nextNonWS, true);
+						if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType) || ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)) {
+							sourceEnd= lineEnd;
+						}
+					}
+				}
+			}
+			return sourceEnd;
 		}
 
 		/**
@@ -482,9 +520,10 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				String source= null;
 
 				// Try with the indexer
-				source= searchInIndex(hoverRegion);
+				source= searchInIndex(copy, hoverRegion);
 
 				if (source == null) {
+					// Try with CModel
 					ICElement curr = copy.getElement(expression);
 					if (curr != null) {
 						source= getSourceForCElement(textViewer.getDocument(), curr);
@@ -639,21 +678,11 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		return source.substring(i);
 	}
 
-	private String searchInIndex(IRegion textRegion) {
-		IEditorPart editor = getEditor();
-		if (editor != null) {
-			IEditorInput input= editor.getEditorInput();
-			IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
-			IWorkingCopy copy= manager.getWorkingCopy(input);
-			
-			if (copy != null) {
-				IProgressMonitor monitor= new NullProgressMonitor();
-				ComputeSourceRunnable computer= new ComputeSourceRunnable(copy, textRegion);
-				ASTProvider.getASTProvider().runOnAST(copy, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
-				return computer.getSource();
-			}
-		}
-		return null;
+	private String searchInIndex(ITranslationUnit tUnit, IRegion textRegion) {
+		IProgressMonitor monitor= new NullProgressMonitor();
+		ComputeSourceRunnable computer= new ComputeSourceRunnable(tUnit, textRegion);
+		ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
+		return computer.getSource();
 	}
 
 

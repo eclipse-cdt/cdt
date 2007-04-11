@@ -17,6 +17,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 
@@ -821,8 +822,9 @@ public class PreferenceConstants {
 	 * A named preference that defines whether the hint to make hover sticky should be shown.
 	 *
 	 * @since 3.1.1
+	 * @deprecated As of 4.0, replaced by {@link AbstractDecoratedTextEditorPreferenceConstants#EDITOR_SHOW_TEXT_HOVER_AFFORDANCE}
 	 */
-	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE"; //$NON-NLS-1$
+	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE;
 
 	/**
 	 * A named preference prefix for semantic highlighting preferences.
@@ -925,12 +927,11 @@ public class PreferenceConstants {
 		// Turned off by default since there are too many false reports right now 
 		store.setDefault(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, false);
 		
-		String mod1Name= Action.findModifierString(SWT.MOD1);	// SWT.COMMAND on Mac; SWT.CONTROL elsewhere
-		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + mod1Name); //$NON-NLS-1$
-		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + SWT.MOD1); //$NON-NLS-1$
+		int sourceHoverModifier= SWT.MOD2;
+		String sourceHoverModifierName= Action.findModifierString(sourceHoverModifier);	// Shift
+		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifierName); //$NON-NLS-1$
+		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifier); //$NON-NLS-1$
 		
-		store.setDefault(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
-
 		// coloring
 		PreferenceConverter.setDefault(store, EDITOR_MULTI_LINE_COMMENT_COLOR, new RGB(63, 127, 95));
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_BOLD, false);
@@ -996,6 +997,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, true);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);
 
+		// smart edit
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_STRINGS, true);
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_BRACKETS, true);
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_ANGULAR_BRACKETS, true);

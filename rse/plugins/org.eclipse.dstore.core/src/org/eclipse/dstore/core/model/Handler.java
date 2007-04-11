@@ -84,6 +84,7 @@ public abstract class Handler extends Thread
 
 			_waitIncrement = 0;
 			_keepRunning = false;
+			notifyInput();
 
 			/* causes hang
 			try

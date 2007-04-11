@@ -355,6 +355,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		setupListeners(wndParent);
 
 		onTerminalStatus();
+		onTerminalFontChanged();
 	}
 
 	public void dispose() {

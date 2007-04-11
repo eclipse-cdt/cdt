@@ -1635,10 +1635,7 @@ public class TerminalText implements Runnable, ControlListener {
 	 * Process a BEL (Control-G) character.
 	 */
 	protected void processBEL() {
-		// ISSUE: Is there a better way to make a sound? This is not guaranteed to
-		// work on all platforms.
-		// TODO
-		java.awt.Toolkit.getDefaultToolkit().beep();
+		Display.getCurrent().beep();
 	}
 
 	/**

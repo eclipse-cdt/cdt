@@ -8,7 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.wizards;
+package org.eclipse.cdt.ui.wizards;
 
 /**
  * Interface should be implemented by some visible object
@@ -16,7 +16,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * to be informed about changes in tool chains selection 
  * performed by ICNewWizard implementors.
  */
-public interface IToolChainListListener {
+public interface IWizardItemsListListener {
 	/**
 	 * Called by ICNewWizard instance when 
 	 * user has changed tool chains selection

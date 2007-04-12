@@ -11,13 +11,18 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
+import org.eclipse.cdt.ui.wizards.ICWizardHandler;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -26,6 +31,8 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -42,17 +49,16 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-public class CConfigWizardPage extends MBSCustomPage {
+public class CDTConfigWizardPage extends WizardPage {
 
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.CConfigWizardPage"; //$NON-NLS-1$
 
 	private static final Image IMG = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CONFIG);
-	private static final String TITLE = Messages.getString("CConfigWizardPage.0"); //$NON-NLS-1$
-	private static final String MESSAGE = Messages.getString("CConfigWizardPage.1"); //$NON-NLS-1$
-	private static final String COMMENT = Messages.getString("CConfigWizardPage.12"); //$NON-NLS-1$
+	private static final String TITLE = UIMessages.getString("CConfigWizardPage.0"); //$NON-NLS-1$
+	private static final String MESSAGE = UIMessages.getString("CConfigWizardPage.1"); //$NON-NLS-1$
+	private static final String COMMENT = UIMessages.getString("CConfigWizardPage.12"); //$NON-NLS-1$
 	private static final String EMPTY_STR = "";  //$NON-NLS-1$
 	
-	private ICWizardHandler handler;
 	private Table table;
 	private CheckboxTableViewer tv;
 	private Label l_projtype;
@@ -62,12 +68,45 @@ public class CConfigWizardPage extends MBSCustomPage {
 	private String propertyId;
 	private String errorMessage = null;
 	private String message = MESSAGE;
-	boolean isVisible = false;
+	public boolean isVisible = false;
+	private MBSWizardHandler handler;
+	public boolean pagesLoaded = false;
 	
-	public CConfigWizardPage() { pageID = PAGE_ID; }
+	public CDTConfigWizardPage(MBSWizardHandler h) {
+        super(UIMessages.getString("CDTConfigWizardPage.0")); //$NON-NLS-1$
+        setPageComplete(false);
+        handler = h;
+        setWizard(h.getWizard());
+    }
+	
+	private void addCustomPages() {
+		if (pagesLoaded) return;
+		pagesLoaded = true;
+		
+		if (! (getWizard() instanceof MBSProjectWizard)) return; 
+		MBSProjectWizard wz = (MBSProjectWizard)getWizard();
+		
+		IWizardPage p = MBSCustomPageManager.getPreviousPage(PAGE_ID);
+		MBSCustomPageManager.init();
+		MBSCustomPageManager.addStockPage(p, CDTMainWizardPage.PAGE_ID);
+		MBSCustomPageManager.addStockPage(this, CDTConfigWizardPage.PAGE_ID);
+		
+		 setCustomPagesFilter(wz);
+		// load all custom pages specified via extensions
+		try	{
+			MBSCustomPageManager.loadExtensions();
+		} catch (BuildException e) { e.printStackTrace(); }
+		
+		IWizardPage[] customPages = MBSCustomPageManager.getCustomPages();
+		if (customPages != null) {
+			for (int k = 0; k < customPages.length; k++) {
+				wz.addPage(customPages[k]);
+			}
+		}
+	}
+	
 	
 	public CfgHolder[] getCfgItems(boolean getDefault) {
-		if (handler == null) return null; 
 		CfgHolder[] its;
 		if (getDefault)  
 			its = getDefaultCfgs(handler);
@@ -88,11 +127,11 @@ public class CConfigWizardPage extends MBSCustomPage {
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 		parent.setLayout(new GridLayout(3, false));
 		
-		setupLabel(parent, Messages.getString("CConfigWizardPage.4"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(parent, UIMessages.getString("CConfigWizardPage.4"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		l_projtype = setupLabel(parent, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
-		setupLabel(parent, Messages.getString("CConfigWizardPage.5"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(parent, UIMessages.getString("CConfigWizardPage.5"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		l_chains = setupLabel(parent, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
-		setupLabel(parent, Messages.getString("CConfigWizardPage.6"), 3, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(parent, UIMessages.getString("CConfigWizardPage.6"), 3, GridData.BEGINNING); //$NON-NLS-1$
 		
 		table = new Table(parent, SWT.BORDER | SWT.CHECK);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -109,13 +148,13 @@ public class CConfigWizardPage extends MBSCustomPage {
 		});
 		tv.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {
-				return element == null ? EMPTY_STR : ((CfgHolder)element).name;
+				return element == null ? EMPTY_STR : ((CfgHolder)element).getName();
 			}
 			public Image getImage(Object element) { return IMG; }
 		});
 		tv.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				isCustomPageComplete();
+				setPageComplete(isCustomPageComplete());
 				update();
 			}});
 		Composite c = new Composite(parent, SWT.NONE);
@@ -123,22 +162,22 @@ public class CConfigWizardPage extends MBSCustomPage {
 		c.setLayout(new GridLayout(1, false));
 
 		Button b1 = new Button(c, SWT.PUSH);
-		b1.setText(Messages.getString("CConfigWizardPage.7")); //$NON-NLS-1$
+		b1.setText(UIMessages.getString("CConfigWizardPage.7")); //$NON-NLS-1$
 		b1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) { 
 				tv.setAllChecked(true);
-				isCustomPageComplete();
+				setPageComplete(isCustomPageComplete());
 				update();
 			}});
 
 		Button b2 = new Button(c, SWT.PUSH);
-		b2.setText(Messages.getString("CConfigWizardPage.8")); //$NON-NLS-1$
+		b2.setText(UIMessages.getString("CConfigWizardPage.8")); //$NON-NLS-1$
 		b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				tv.setAllChecked(false);
-				isCustomPageComplete();
+				setPageComplete(isCustomPageComplete());
 				update();
 			}});
 
@@ -146,7 +185,7 @@ public class CConfigWizardPage extends MBSCustomPage {
 		new Label(c, 0).setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Button b3 = new Button(c, SWT.PUSH);
-		b3.setText(Messages.getString("CConfigWizardPage.13")); //$NON-NLS-1$
+		b3.setText(UIMessages.getString("CConfigWizardPage.13")); //$NON-NLS-1$
 		b3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b3.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -167,7 +206,7 @@ public class CConfigWizardPage extends MBSCustomPage {
 	 * @param handler
 	 * @return
 	 */
-	static public CfgHolder[] getDefaultCfgs(ICWizardHandler handler) {
+	static public CfgHolder[] getDefaultCfgs(MBSWizardHandler handler) {
 		IToolChain[] tcs = handler.getSelectedToolChains();
 		String id = handler.getPropertyId();
 		IProjectType pt = handler.getProjectType(); 
@@ -203,12 +242,12 @@ public class CConfigWizardPage extends MBSCustomPage {
     	if (!isVisible) return true;
     	
 		if (table.getItemCount() == 0) {
-			errorMessage = Messages.getString("CConfigWizardPage.10"); //$NON-NLS-1$
+			errorMessage = UIMessages.getString("CConfigWizardPage.10"); //$NON-NLS-1$
 			message = errorMessage; 
 			return false;
 		}
 		if (tv.getCheckedElements().length == 0) {
-			errorMessage = Messages.getString("CConfigWizardPage.11"); //$NON-NLS-1$
+			errorMessage = UIMessages.getString("CConfigWizardPage.11"); //$NON-NLS-1$
 			message = errorMessage; 
 			return false;
 		}
@@ -222,19 +261,20 @@ public class CConfigWizardPage extends MBSCustomPage {
      */
     public void setVisible(boolean visible) {
     	isVisible = visible;
-		if (visible && handler != null) { 
+		if (visible && handler != null) {
 			tv.setInput(CfgHolder.unique(getDefaultCfgs(handler)));
 			tv.setAllChecked(true);
 			String s = EMPTY_STR;
 			IToolChain[] tc = handler.getSelectedToolChains();
 			for (int i=0; i < tc.length; i++) {
 				s = s + ((tc[i] == null) ? 
-						Messages.getString("StdProjectTypeHandler.0") : //$NON-NLS-1$
+						"" : //$NON-NLS-1$
 						tc[i].getName());  
 				if (i < tc.length - 1) s = s + ", ";  //$NON-NLS-1$
 			}
 			l_chains.setText(s);
-			l_projtype.setText(handler.getName());
+			l_projtype.setText(handler.getName());			
+			setPageComplete(isCustomPageComplete());
 		}
 		parent.setVisible(visible);
 		if (visible) update();
@@ -252,14 +292,12 @@ public class CConfigWizardPage extends MBSCustomPage {
 		return l;
 	}
 
-	public void setHandler(ICWizardHandler h) { handler = h; }
-
 	public String getName() { return TITLE; }
 	public void dispose() {}
 	public Control getControl() { return parent; }
 	public String getDescription() { return null; }
 	public String getErrorMessage() { return errorMessage; }
-	public Image getImage() { return wizard.getDefaultPageImage(); }
+//	public Image getImage() { return wizard.getDefaultPageImage(); }
 	public String getMessage() { return message; }
 	public String getTitle()   { return TITLE; }
 	public void performHelp() {}
@@ -268,24 +306,24 @@ public class CConfigWizardPage extends MBSCustomPage {
 	public void setTitle(String _title) {}
 
 	protected void update() {
-		wizard.getContainer().updateButtons();
-		wizard.getContainer().updateMessage();
-		wizard.getContainer().updateTitleBar();
+		getWizard().getContainer().updateButtons();
+		getWizard().getContainer().updateMessage();
+		getWizard().getContainer().updateTitleBar();
 	}
 	
 	/**
 	 * Edit properties
 	 */
 	private void advancedDialog() {
-		if (wizard instanceof NewModelProjectWizard) {
-			NewModelProjectWizard nmWizard = (NewModelProjectWizard)wizard;
+		if (getWizard() instanceof MBSProjectWizard) {
+			MBSProjectWizard nmWizard = (MBSProjectWizard)getWizard();
 			IProject newProject = nmWizard.getProject(true);
 			if (newProject != null) {
 				boolean oldManage = CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG);
 				// disable manage configurations button
 				CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, true);
 				try {
-					PreferencesUtil.createPropertyDialogOn(wizard.getContainer().getShell(), newProject, propertyId, null, null).open();
+					PreferencesUtil.createPropertyDialogOn(getWizard().getContainer().getShell(), newProject, propertyId, null, null).open();
 				} finally {
 					CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, oldManage);
 				}
@@ -293,4 +331,34 @@ public class CConfigWizardPage extends MBSCustomPage {
 		}
 	}
 	
+	public IWizardPage getNextPage() {
+		addCustomPages();
+		return MBSCustomPageManager.getNextPage(PAGE_ID);
+	}
+	
+	private void setCustomPagesFilter(MBSProjectWizard wz) {
+		String[] natures = wz.getNatures();
+		if (natures == null || natures.length == 0)
+			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, null);
+		else if (natures.length == 1)
+			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, natures[0]);
+		else {
+			Set x = new TreeSet();
+			for (int i=0; i<natures.length; i++) x.add(natures[i]);
+			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, x);
+		}
+		if (handler.getProjectType() != null) {
+			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, handler.getProjectType().getId());
+		} else {
+			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, null);
+		}
+		IToolChain[] tcs = handler.getSelectedToolChains();
+		int n = (tcs == null) ? 0 : tcs.length;
+		Set x = new TreeSet();			
+		for (int i=0; i<n; i++) {
+			x.add(tcs[i]); 
+		}
+		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.TOOLCHAIN, x);
+	}
+
 }

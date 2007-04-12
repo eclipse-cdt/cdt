@@ -29,14 +29,18 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
-import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.ui.wizards.CWizardHandler;
+import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -53,47 +57,36 @@ import org.eclipse.swt.widgets.TableItem;
  * - whole view of right pane, including 
  *
  */
-public class CWizardHandler implements ICWizardHandler {
-	private static final Image IMG0 = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_EMPTY);
-	private static final Image IMG1 = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_PREFERRED);
+public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHandler {
 	private static final String PROPERTY = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$
 	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
-	
-	
-	private static final String head = Messages.getString("CWizardHandler.0"); //$NON-NLS-1$
 	private static final String tooltip = 
 		Messages.getString("CWizardHandler.1")+ //$NON-NLS-1$
-		Messages.getString("CWizardHandler.2") +  //$NON-NLS-1$
+		Messages.getString("CWizardHandler.2") + //$NON-NLS-1$
 		Messages.getString("CWizardHandler.3") + //$NON-NLS-1$
 		Messages.getString("CWizardHandler.4") + //$NON-NLS-1$
 		Messages.getString("CWizardHandler.5"); //$NON-NLS-1$
 	
-	protected SortedMap tcs;
-	private String name;
-	private Image image;
-	private Composite parent;
-	protected Table table;
+	protected SortedMap tcs = new TreeMap();
 	private String propertyId = null;
 	private IProjectType pt = null;
-	private IToolChainListListener listener;
-	private boolean supportedOnly = true;
+	protected IWizardItemsListListener listener;
+	protected CDTConfigWizardPage fConfigPage;
+	private IToolChain[] savedToolChains = null;
+	private IWizard wizard;
 	
-	public CWizardHandler(String _name, IProjectType _pt, Image _image, Composite p, IToolChainListListener _listener) {
-		tcs = new TreeMap();
-		name = _name;
-		image = _image;
-		parent = p;
+	public MBSWizardHandler(String _name, IProjectType _pt, Image _image, Composite p, IWizardItemsListListener _listener, IWizard w) {
+		super(p, Messages.getString("CWizardHandler.0"), _name, _image); //$NON-NLS-1$
 		pt = _pt;
 		listener = _listener;
+		wizard = w;
 	}
 
-	public CWizardHandler(IBuildPropertyValue val, Image _image, Composite p, IToolChainListListener _listener) {
-		tcs = new TreeMap();
-		name = val.getName();
+	public MBSWizardHandler(IBuildPropertyValue val, Image _image, Composite p, IWizardItemsListListener _listener, IWizard w) {
+		super(p, Messages.getString("CWizardHandler.0"), val.getName(), _image); //$NON-NLS-1$
 		propertyId = val.getId();
-		image = _image;
-		parent = p;
 		listener = _listener;
+		wizard = w;
 	}
 	
 	public void handleSelection() {
@@ -134,12 +127,14 @@ public class CWizardHandler implements ICWizardHandler {
 		updatePreferred(preferred);
 		table.setVisible(true);
 		parent.layout();
+		if (fConfigPage != null) fConfigPage.pagesLoaded = false;
 	}
 
 	public void handleUnSelection() {
 		if (table != null) {
 			table.setVisible(false);
 		}
+		if (fConfigPage != null) fConfigPage.pagesLoaded = false;
 	}
 
 	public void addTc(IToolChain tc) {
@@ -156,35 +151,22 @@ public class CWizardHandler implements ICWizardHandler {
 		tcs.put(tc.getUniqueRealName(), tc);
 	}
 		
-	public IToolChain[] getSelectedToolChains() {
-		if (tcs.size() == 0)
-			return null;
-		else {
-			TableItem[] sel = table.getSelection();
-			IToolChain[] out = new IToolChain[sel.length];
-			for (int i=0; i< sel.length; i++) 
-				out[i] = (IToolChain)sel[i].getData();
-			return out;
-		}
-	}
-
-	public void createProject(IProject project, CfgHolder[] cfgs) throws CoreException {
+	public void createProject(IProject project, boolean defaults) throws CoreException {
 		CoreModel coreModel = CoreModel.getDefault();
-//		ICProjectDescription des = coreModel.getProjectDescription(project);
-//		des = coreModel.createProjectDescription(project, true);
+		CfgHolder[] cfgs = fConfigPage.getCfgItems(defaults);
 		ICProjectDescription des = coreModel.createProjectDescription(project, false);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 
 		if (cfgs == null || cfgs.length == 0) 
-			cfgs = CConfigWizardPage.getDefaultCfgs(this);
+			cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
 		
-		if (cfgs[0].cfg == null) {
+		if (cfgs[0].getConfiguration() == null) {
 			throw new CoreException(new Status(IStatus.ERROR, 
 					ManagedBuilderUIPlugin.getUniqueIdentifier(),
 					Messages.getString("CWizardHandler.6"))); //$NON-NLS-1$
 		}
-		
-		ManagedProject mProj = new ManagedProject(project, cfgs[0].cfg.getProjectType());
+		Configuration cf = (Configuration)cfgs[0].getConfiguration();
+		ManagedProject mProj = new ManagedProject(project, cf.getProjectType());
 		info.setManagedProject(mProj);
 
 		cfgs = CfgHolder.unique(cfgs);
@@ -192,8 +174,9 @@ public class CWizardHandler implements ICWizardHandler {
 		ICConfigurationDescription active = null;
 		
 		for(int i = 0; i < cfgs.length; i++){
-			String id = ManagedBuildManager.calculateChildId(cfgs[i].cfg.getId(), null);
-			Configuration config = new Configuration(mProj, (Configuration)cfgs[i].cfg, id, false, true);
+			cf = (Configuration)cfgs[i].getConfiguration();
+			String id = ManagedBuildManager.calculateChildId(cf.getId(), null);
+			Configuration config = new Configuration(mProj, cf, id, false, true);
 			CConfigurationData data = config.getConfigurationData();
 			ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 			config.setConfigurationDescription(cfgDes);
@@ -203,7 +186,7 @@ public class CWizardHandler implements ICWizardHandler {
 			if (bld != null) { 	bld.setManagedBuildOn(true); }
 			
 			String s = project.getName();
-			config.setName(cfgs[i].name);
+			config.setName(cfgs[i].getName());
 			config.setArtifactName(s);
 			
 			IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
@@ -216,21 +199,13 @@ public class CWizardHandler implements ICWizardHandler {
 		coreModel.setProjectDescription(project, des);
 	}
 
-// interface methods
+	public IWizardPage getSpecificPage() {
+		if (fConfigPage == null) {
+			fConfigPage = new CDTConfigWizardPage(this);
+		}
+		return fConfigPage; 
+	}
 	
-	public String getHeader() { return head; }
-	public String getName() { return name; }
-	public Image getIcon() { return image; }
-	public boolean isDummy() { return false; }
-	public int getToolChainsCount() { return tcs.size(); }
-	public IProjectType getProjectType() { return pt; }
-	public String getPropertyId() { return propertyId; }
-	public boolean canCreateWithoutToolchain() { return false; }
-
-	public void setSupportedOnly(boolean supp) { supportedOnly = supp;}
-	public boolean supportedOnly() { return supportedOnly; }
-	public boolean supportsPreferred() { return true; }
-
 	/**
 	 * Mark preferred toolchains with specific images
 	 */
@@ -243,4 +218,66 @@ public class CWizardHandler implements ICWizardHandler {
 			ti.setImage( prefs.contains(id) ? IMG1 : IMG0);
 		}
 	}
+	public String getHeader() { return head; }
+	public String getName() { return name; }
+	public Image getIcon() { return image; }
+	public boolean isDummy() { return false; }
+	public boolean supportsPreferred() { return true; }
+
+	public boolean isChanged() { 
+		IToolChain[] tcs = getSelectedToolChains();
+		if (savedToolChains.length != tcs.length) 
+			return true;
+		for (int i=0; i<savedToolChains.length; i++) {
+			boolean found = false;
+			for (int j=0; j<tcs.length; j++) {
+				if (savedToolChains[i] == tcs[j]) {
+					found = true; break;
+				}
+			}
+			if (!found) return true;
+		}
+		return false;
+	}
+	
+	public void saveState() {
+		savedToolChains = getSelectedToolChains();
+	}
+	
+	// Methods specific for MBSWizardHandler
+
+	public IToolChain[] getSelectedToolChains() {
+		TableItem[] tis = table.getSelection();
+		if (tis == null || tis.length == 0)
+			return new IToolChain[0];
+		IToolChain[] ts = new IToolChain[tis.length];
+		for (int i=0; i<tis.length; i++) {
+			ts[i] = (IToolChain)tis[i].getData();
+		}
+		return ts;
+	}
+	public int getToolChainsCount() {
+		return tcs.size();
+	}
+	public String getPropertyId() {
+		return propertyId;
+	}
+	public IProjectType getProjectType() {
+		return pt;
+	}
+	public IWizard getWizard() {
+		return wizard;
+	}
+	public CfgHolder[] getCfgItems(boolean defaults) {
+		return fConfigPage.getCfgItems(defaults);
+	}
+	public String getErrorMessage() { 
+		TableItem[] tis = table.getSelection();
+		if (tis == null || tis.length == 0)
+			return Messages.getString("MBSWizardHandler.0"); //$NON-NLS-1$
+		if (fConfigPage != null && fConfigPage.isVisible && !fConfigPage.isCustomPageComplete())
+			return UIMessages.getString("CConfigWizardPage.11"); //$NON-NLS-1$
+		return null;
+	}
+
 }

@@ -14,10 +14,11 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.properties.AbstractCBuildPropertyTab;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
-import org.eclipse.cdt.managedbuilder.ui.properties.PageLayout;
-import org.eclipse.cdt.managedbuilder.ui.wizards.CMainWizardPage;
-import org.eclipse.cdt.managedbuilder.ui.wizards.ICWizardHandler;
+import org.eclipse.cdt.managedbuilder.ui.wizards.ICBuildWizardHandler;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.cdt.ui.newui.PageLayout;
+import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
+import org.eclipse.cdt.ui.wizards.ICWizardHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -101,20 +102,22 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				if (h_selected != null)
 					h_selected.setSupportedOnly(show_sup.getSelection());
-				switchTo(CMainWizardPage.updateData(tree, right, show_sup, null));
+				switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, null, null));
 			}} );
         CDTPrefUtil.readPreferredTCs();
-        switchTo(CMainWizardPage.updateData(tree, right, show_sup, null));
+        switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, null, null));
     }
 
 	private void setPref(boolean set) {
 		if (h_selected == null || !h_selected.supportsPreferred()) 
 			return;
-		IToolChain[] tcs = h_selected.getSelectedToolChains();
-		for (int i=0; i<tcs.length; i++) {
-			String id = (tcs[i] == null) ? CDTPrefUtil.NULL : tcs[i].getId();
-			if (set) CDTPrefUtil.addPreferredTC(id);
-			else CDTPrefUtil.delPreferredTC(id);
+		if (h_selected instanceof ICBuildWizardHandler) {
+			IToolChain[] tcs = ((ICBuildWizardHandler)h_selected).getSelectedToolChains();
+			for (int i=0; i<tcs.length; i++) {
+				String id = (tcs[i] == null) ? CDTPrefUtil.NULL : tcs[i].getId();
+				if (set) CDTPrefUtil.addPreferredTC(id);
+				else CDTPrefUtil.delPreferredTC(id);
+			}
 		}
 		h_selected.updatePreferred(CDTPrefUtil.getPreferredTCs());
 	}

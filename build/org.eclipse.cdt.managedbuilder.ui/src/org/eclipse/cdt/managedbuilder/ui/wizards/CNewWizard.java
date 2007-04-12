@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.SortedMap;
 
@@ -22,40 +23,44 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.cdt.ui.wizards.ICWizardHandler;
+import org.eclipse.cdt.ui.wizards.WizardItemData;
+import org.eclipse.jface.wizard.IWizard;
 
 /**
  *
  */
 public class CNewWizard extends AbstractCWizard {
 	/**
-	 * Creates and returns an array of 
+	 * Creates and returns an array of items to be displayed 
 	 */
-	public void createItems(Tree tree, boolean supportedOnly) {
+	public WizardItemData[] createItems(boolean supportedOnly, IWizard wizard) {
 		IBuildPropertyManager bpm = ManagedBuildManager.getBuildPropertyManager();
 		IBuildPropertyType bpt = bpm.getPropertyType(ICWizardHandler.ARTIFACT);
 		IBuildPropertyValue[] vs = bpt.getSupportedValues();
-				
+		
+		ArrayList items = new ArrayList();
 		// new style project types
 		for (int i=0; i<vs.length; i++) {
 			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(ICWizardHandler.ARTIFACT, vs[i].getId());
 			if (tcs == null || tcs.length == 0) continue;
-			CWizardHandler h = new CWizardHandler(vs[i], IMG1, parent, listener);
+			MBSWizardHandler h = new MBSWizardHandler(vs[i], IMG1, parent, listener, wizard);
 			for (int j=0; j<tcs.length; j++) {
 				if (!supportedOnly || isValid(tcs[j])) h.addTc(tcs[j]);
 			}
 			if (h.getToolChainsCount() > 0) {
-				TreeItem ti = new TreeItem(tree, SWT.NONE);
-				ti.setText(h.getName());
-				ti.setData(h);
-				ti.setImage(h.getIcon());
+				WizardItemData wd = new WizardItemData(); 
+				wd.name = h.getName();
+				wd.handler = h;
+				wd.image = h.getIcon();
+				wd.id = h.getName();
+				wd.parentId = null;
+				items.add(wd);
 			}
 		}
 		
 		// old style project types
-		TreeItem oldsRoot = null;
+		WizardItemData oldsRoot = null;
 		SortedMap sm = ManagedBuildManager.getExtensionProjectTypeMap();
 		Iterator it = sm.keySet().iterator();
 		while(it.hasNext()) {
@@ -65,7 +70,7 @@ public class CNewWizard extends AbstractCWizard {
 			if (supportedOnly && !pt.isSupported()) continue; // not supported
 			String nattr = pt.getNameAttribute(); 
 			if (nattr == null || nattr.length() == 0) continue; // new proj style 
-			CWizardHandler h = new CWizardHandler(pt.getName(), pt, IMG2, parent, listener);
+			MBSWizardHandler h = new MBSWizardHandler(pt.getName(), pt, IMG2, parent, listener, wizard);
 			IConfiguration[] cfgs = pt.getConfigurations();
 			if (cfgs == null || cfgs.length == 0) continue;
 			IToolChain tc = null;
@@ -80,21 +85,27 @@ public class CNewWizard extends AbstractCWizard {
 			if (tc ==  null) continue;
 			h.addTc(tc);
 
-			TreeItem ti = null;
+			WizardItemData wd = new WizardItemData(); 
 			if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS)) {
 				if (oldsRoot == null) {
-					oldsRoot = new TreeItem(tree, SWT.NONE);
-					oldsRoot.setText(Messages.getString("CNewWizard.0")); //$NON-NLS-1$
-					oldsRoot.setData(new DummyHandler(parent));
-					oldsRoot.setImage(IMG0);				
+					oldsRoot = new WizardItemData();
+					oldsRoot.name = Messages.getString("CNewWizard.0"); //$NON-NLS-1$
+					oldsRoot.handler = null;
+					oldsRoot.image =IMG0;
+					oldsRoot.id = oldsRoot.name;
+					oldsRoot.parentId = null;
+					items.add(oldsRoot);
 				}
-				ti = new TreeItem(oldsRoot, SWT.NONE);
+				wd.parentId = oldsRoot.id;
 			} else { // do not group to <Others>
-				ti = new TreeItem(tree, SWT.NONE);
+				wd.parentId = null;
 			}
-			ti.setText(h.getName());
-			ti.setData(h);
-			ti.setImage(h.getIcon());
+			wd.name = h.getName();
+			wd.handler = h;
+			wd.image = h.getIcon();
+			wd.id = h.getName();
+			items.add(wd);
 		}
+		return (WizardItemData[])items.toArray(new WizardItemData[items.size()]);
 	}
 }

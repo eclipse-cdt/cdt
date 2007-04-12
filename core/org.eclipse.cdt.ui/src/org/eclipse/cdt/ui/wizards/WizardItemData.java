@@ -8,23 +8,18 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.wizards;
+package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.graphics.Image;
 
-public class CDTProjectWizard extends MBSProjectWizard {
-
-	public CDTProjectWizard() {
-		super(Messages.getString("NewModelProjectWizard.0"), Messages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	protected String[] getNatures() {
-		return new String[0];
-	}
-
-	protected IProject continueCreation(IProject prj) {
-		return prj;
-	}
-
+/**
+ * This class stores data for each tree item
+ * in "Project types" tree of New Project Wizard.
+ */
+public class WizardItemData {
+	public String id = null;
+	public String parentId = null;
+	public String name = null;
+	public Image image = null;
+	public ICWizardHandler handler = null;
 }

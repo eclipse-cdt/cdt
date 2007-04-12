@@ -8,10 +8,11 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.wizards;
+package org.eclipse.cdt.ui.wizards;
 
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Tree;
+
 
 /**
  * Interface to be used by extension point:
@@ -29,10 +30,10 @@ public interface ICNewWizard {
 	 * each of them should have data object attached,
 	 * data should be lt;ICProjectTypeHandler&gt; 
      *
-	 * @param tree - parent tree object
 	 * @param supportedOnly - whether display supported types only
+	 * @param wizard - New Project wizard to be passed to ICWizardHandler 
 	 */
-	void createItems(Tree tree, boolean supportedOnly);
+	public WizardItemData[] createItems(boolean supportedOnly, IWizard wizard);
 	
 	/**
 	 * Implementor will be informed about widget where additional
@@ -45,5 +46,5 @@ public interface ICNewWizard {
 	 *                 May be null if notification is not required
 	 *                 or implementor does not really support it. 
 	 */
-	void setDependentControl(Composite parent, IToolChainListListener page);
+	public void setDependentControl(Composite parent, IWizardItemsListListener page);
 }

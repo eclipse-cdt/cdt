@@ -80,12 +80,7 @@ public class ManagedBuilderUIImages {
 	public static final ImageDescriptor DESC_EDITABLE = createManaged(T_OBJ, IMG_EDITABLE);
 	public static final String IMG_BUILT_IN = NAME_PREFIX + "built_in.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILT_IN = createManaged(T_OBJ, IMG_BUILT_IN);
-	
-	public static final String IMG_PREFERRED = NAME_PREFIX + "preferred.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PREFERRED = createManaged(T_OBJ, IMG_PREFERRED);
-	public static final String IMG_EMPTY = NAME_PREFIX + "empty.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EMPTY = createManaged(T_OBJ, IMG_EMPTY);
-	
+		
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}

@@ -4,7 +4,6 @@
 
      <extension-point id="newWizardPages" name="Custom MBS New Wizard Pages" schema="schema/newWizardPages.exsd"/>
      <extension-point id="DiscoveryProfileUI" name="DiscoveryProfileUI" schema="schema/DiscoveryProfileUI.exsd"/>
-     <extension-point id="CDTWizard" name="CDTWizard" schema="schema/CDTWizard.exsd"/>
 
    <extension
          point="org.eclipse.ui.newWizards">
@@ -413,7 +412,7 @@
       <extension
             id="BuildSystemWizard"
             name="%Build.System.Wizard"
-            point="org.eclipse.cdt.managedbuilder.ui.CDTWizard">
+            point="org.eclipse.cdt.ui.CDTWizard">
          <wizard
                class="org.eclipse.cdt.managedbuilder.ui.wizards.CNewWizard"
                name="%Build.System.Wizard">

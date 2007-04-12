@@ -10,21 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.ui.wizards.ICWizardHandler;
 
-public class CDTProjectWizard extends MBSProjectWizard {
+/**
+ * Build-system specific methods for Wizard Handler
+ */
+public interface ICBuildWizardHandler extends ICWizardHandler {
 
-	public CDTProjectWizard() {
-		super(Messages.getString("NewModelProjectWizard.0"), Messages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	protected String[] getNatures() {
-		return new String[0];
-	}
-
-	protected IProject continueCreation(IProject prj) {
-		return prj;
-	}
-
+	public IToolChain[] getSelectedToolChains();
+	public int getToolChainsCount();
+	public String getPropertyId();
+	public IProjectType getProjectType();
 }

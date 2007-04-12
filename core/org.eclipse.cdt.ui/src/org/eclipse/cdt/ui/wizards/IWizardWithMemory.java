@@ -8,23 +8,12 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.wizards;
+package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.wizard.IWizard;
 
-public class CDTProjectWizard extends MBSProjectWizard {
-
-	public CDTProjectWizard() {
-		super(Messages.getString("NewModelProjectWizard.0"), Messages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	protected String[] getNatures() {
-		return new String[0];
-	}
-
-	protected IProject continueCreation(IProject prj) {
-		return prj;
-	}
-
+public interface IWizardWithMemory extends IWizard {
+	// returns name of last-created project
+	// or null if no projects were created
+	public String getLastProjectName(); 
 }

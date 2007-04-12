@@ -8,16 +8,11 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.wizards;
+package org.eclipse.cdt.ui.wizards;
 	import java.io.File;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
-import org.eclipse.cdt.managedbuilder.ui.properties.PageLayout;
-import org.eclipse.cdt.managedbuilder.ui.wizards.ProjectContentsArea.IErrorMessageReporter;
-import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -30,6 +25,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -47,11 +43,17 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 
-	public class CMainWizardPage extends WizardPage implements IToolChainListListener {
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.cdt.ui.newui.PageLayout;
+import org.eclipse.cdt.ui.newui.ProjectContentsArea;
+import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.ui.newui.ProjectContentsArea.IErrorMessageReporter;
+
+	public class CDTMainWizardPage extends WizardPage implements IWizardItemsListListener {
 
 		public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.NewModelProjectWizardPage"; //$NON-NLS-1$
 
-		private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.managedbuilder.ui.CDTWizard"; //$NON-NLS-1$
+		private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.CDTWizard"; //$NON-NLS-1$
 		private static final String ELEMENT_NAME = "wizard"; //$NON-NLS-1$
 		private static final String CLASS_NAME = "class"; //$NON-NLS-1$
 		private static final String HELP_CTX = "org.eclipse.ui.ide.new_project_wizard_page_context"; //$NON-NLS-1$
@@ -68,19 +70,17 @@ import org.eclipse.ui.PlatformUI;
 	    private Button show_sup;
 	    private Label right_label;
    
-	    private CConfigWizardPage next;
 		private ProjectContentsArea locationArea;
-	    protected ICWizardHandler h_selected = null;
+	    public ICWizardHandler h_selected = null;
 
 	    /**
 	     * Creates a new project creation wizard page.
 	     *
 	     * @param pageName the name of this page
 	     */
-	    public CMainWizardPage(String pageName, CConfigWizardPage _next) {
+	    public CDTMainWizardPage(String pageName) {
 	        super(pageName);
 	        setPageComplete(false);
-	        next = _next;
 	    }
 
 	    /** (non-Javadoc)
@@ -107,7 +107,7 @@ import org.eclipse.ui.PlatformUI;
 			
 			createDynamicGroup(composite); 
 			
-			switchTo(updateData(tree, right, show_sup, CMainWizardPage.this));
+			switchTo(updateData(tree, right, show_sup, CDTMainWizardPage.this, getWizard()));
 
 			setPageComplete(validatePage());
 	        // Show description on opening
@@ -122,7 +122,7 @@ import org.eclipse.ui.PlatformUI;
 	    	c.setLayout(new GridLayout(2, true));
 	    	
 	        Label l1 = new Label(c, SWT.NONE);
-	        l1.setText(Messages.getString("CMainWizardPage.0")); //$NON-NLS-1$
+	        l1.setText(UIMessages.getString("CMainWizardPage.0")); //$NON-NLS-1$
 	        l1.setFont(parent.getFont());
 	        l1.setLayoutData(new GridData(GridData.BEGINNING));
 	        
@@ -145,7 +145,7 @@ import org.eclipse.ui.PlatformUI;
 	        right.setLayout(new PageLayout());
 
 	        show_sup = new Button(c, SWT.CHECK);
-	        show_sup.setText(Messages.getString("CMainWizardPage.1")); //$NON-NLS-1$
+	        show_sup.setText(UIMessages.getString("CMainWizardPage.1")); //$NON-NLS-1$
 	        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        show_sup.setLayoutData(gd);
@@ -153,7 +153,7 @@ import org.eclipse.ui.PlatformUI;
 				public void widgetSelected(SelectionEvent e) {
 					if (h_selected != null)
 						h_selected.setSupportedOnly(show_sup.getSelection());
-					switchTo(updateData(tree, right, show_sup, CMainWizardPage.this));
+					switchTo(updateData(tree, right, show_sup, CDTMainWizardPage.this, getWizard()));
 				}} );
 
 	        // restore settings from preferences
@@ -176,9 +176,9 @@ import org.eclipse.ui.PlatformUI;
 		}
 		
 	    public IWizardPage getNextPage() {
-			if (h_selected == null || h_selected.isDummy()) // cannot continue
+			if (h_selected == null) // cannot continue
 				return null;
-			return next;
+			return h_selected.getSpecificPage();
 	    }		
 	    /**
 	     * Creates the project name specification controls.
@@ -195,7 +195,7 @@ import org.eclipse.ui.PlatformUI;
 
 	        // new project label
 	        Label projectLabel = new Label(projectGroup, SWT.NONE);
-	        projectLabel.setText(Messages.getString("CMainWizardPage.8")); //$NON-NLS-1$
+	        projectLabel.setText(UIMessages.getString("CMainWizardPage.8")); //$NON-NLS-1$
 	        projectLabel.setFont(parent.getFont());
 
 	        // new project name entry field
@@ -304,7 +304,7 @@ import org.eclipse.ui.PlatformUI;
 
             String projectFieldContents = getProjectNameFieldValue();
 	        if (projectFieldContents.length() == 0) {
-	            setErrorMessage(Messages.getString("CMainWizardPage.9")); //$NON-NLS-1$
+	            setErrorMessage(UIMessages.getString("CMainWizardPage.9")); //$NON-NLS-1$
 	            return false;
 	        }
 
@@ -316,29 +316,29 @@ import org.eclipse.ui.PlatformUI;
 	        }
 
 	        boolean bad = true; // should we treat existing project as error
-
+	        
 	        IProject handle = getProjectHandle();
 	        if (handle.exists()) {
-	        	if (getWizard() instanceof NewModelProjectWizard) {
-	        		NewModelProjectWizard w = (NewModelProjectWizard)getWizard();
-	        		if (w.lastProjectName != null && w.lastProjectName.equals(getProjectName()))
+	        	if (getWizard() instanceof IWizardWithMemory) {
+	        		IWizardWithMemory w = (IWizardWithMemory)getWizard();
+	        		if (w.getLastProjectName() != null && w.getLastProjectName().equals(getProjectName()))
 	        			bad = false;
 	        	}
 	        	if (bad) {
-	        		setErrorMessage(Messages.getString("CMainWizardPage.10")); //$NON-NLS-1$
+	        		setErrorMessage(UIMessages.getString("CMainWizardPage.10")); //$NON-NLS-1$
 	        	    return false;
 	        	}
 	        }
-	        
+
 	        if (bad) { // skip this check if project already created 
 	        	IPath p = getProjectLocation();
 	        	if (p == null) p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 	        	File f = p.append(getProjectName()).toFile();
 	        	if (f.exists()) {
 	        		if (f.isDirectory())
-	        			setErrorMessage(Messages.getString("CMainWizardPage.6")); //$NON-NLS-1$
+	        			setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
 	        		else
-	        			setErrorMessage(Messages.getString("CMainWizardPage.7")); //$NON-NLS-1$
+	        			setErrorMessage(UIMessages.getString("CMainWizardPage.7")); //$NON-NLS-1$
 	        		return false;
 	        	}
 	        }
@@ -353,23 +353,20 @@ import org.eclipse.ui.PlatformUI;
 	        }
 
 	        if (tree.getItemCount() == 0) {
-	        	setErrorMessage(Messages.getString("CMainWizardPage.3")); //$NON-NLS-1$
+	        	setErrorMessage(UIMessages.getString("CMainWizardPage.3")); //$NON-NLS-1$
 	        	return false;
 	        }
 	        
 	        // it is not an error, but we cannot continue
-	        if (h_selected == null || h_selected.isDummy()) {
+	        if (h_selected == null) {
 	            setErrorMessage(null);
 		        return false;	        	
 	        }
 
-			if ( ! h_selected.canCreateWithoutToolchain()) {
-				IToolChain tcs[] = h_selected.getSelectedToolChains(); 
-				int cnt = tcs != null ? tcs.length : 0;
-	        	if (cnt == 0) {
-	        		setErrorMessage(Messages.getString("CMainWizardPage.4")); //$NON-NLS-1$
-	        		return false;
-	        	}
+	        String s = h_selected.getErrorMessage(); 
+			if (s != null) {
+        		setErrorMessage(s);
+        		return false;
 	        }
 	        
             setErrorMessage(null);
@@ -392,7 +389,7 @@ import org.eclipse.ui.PlatformUI;
 	        return locationArea.isDefault();
 	    }
 
-		public static ICWizardHandler updateData(Tree tree, Composite right, Button show_sup, IToolChainListListener ls) {
+		public static ICWizardHandler updateData(Tree tree, Composite right, Button show_sup, IWizardItemsListListener ls, IWizard wizard) {
 			// remember selected item
 			TreeItem[] sel = tree.getSelection();
 			String savedStr = (sel.length > 0) ? sel[0].getText() : null; 
@@ -403,6 +400,8 @@ import org.eclipse.ui.PlatformUI;
 			if (extensionPoint == null) return null;
 			IExtension[] extensions = extensionPoint.getExtensions();
 			if (extensions == null) return null;
+			
+			ArrayList items = new ArrayList();
 			for (int i = 0; i < extensions.length; ++i)	{
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 				for (int k = 0; k < elements.length; k++) {
@@ -411,16 +410,20 @@ import org.eclipse.ui.PlatformUI;
 						try {
 							w = (ICNewWizard) elements[k].createExecutableExtension(CLASS_NAME);
 						} catch (CoreException e) {
-							System.out.println(Messages.getString("CMainWizardPage.5") + e.getLocalizedMessage()); //$NON-NLS-1$
+							System.out.println(UIMessages.getString("CMainWizardPage.5") + e.getLocalizedMessage()); //$NON-NLS-1$
 							return null; 
 						}
 						if (w == null) return null;
 						
 						w.setDependentControl(right, ls);
-						w.createItems(tree, show_sup.getSelection());
+						WizardItemData[] wd = w.createItems(show_sup.getSelection(), wizard);
+						for (int x=0; x<wd.length; x++)	items.add(wd[x]);
 					}
 				}
 			}
+			
+			addItemsToTree(tree, items);
+			
 			if (tree.getItemCount() > 0) {
 				TreeItem target = tree.getItem(0);
 				// try to search item which was selected before
@@ -439,40 +442,72 @@ import org.eclipse.ui.PlatformUI;
 			return null;
 		}
 
+		private static void addItemsToTree(Tree tree, ArrayList items) {
+			ArrayList tis = new ArrayList(items.size());
+			ArrayList its = new ArrayList(items.size());
+			Iterator it = items.iterator();
+			while (it.hasNext()) {
+				WizardItemData wd = (WizardItemData)it.next();
+				if (wd.parentId == null) {
+					TreeItem ti = new TreeItem(tree, SWT.NONE);
+					ti.setText(wd.name);
+					ti.setData(wd.handler);
+					if (wd.image != null)ti.setImage(wd.image);
+					tis.add(ti);
+					its.add(wd);
+				}
+			}
+			while(true) {
+				boolean found = false;
+				Iterator it2 = items.iterator();
+				while (it2.hasNext()) {
+					WizardItemData wd1 = (WizardItemData)it2.next();
+					if (wd1.parentId == null) continue;
+					for (int i=0; i<its.size(); i++) {
+						WizardItemData wd2 = (WizardItemData)its.get(i);
+						if (wd2.id.equals(wd1.parentId)) {
+							found = true;
+							TreeItem p = (TreeItem)tis.get(i);
+							TreeItem ti = new TreeItem(p, SWT.NONE);
+							ti.setText(wd1.name);
+							ti.setData(wd1.handler);
+							if (wd1.image != null)ti.setImage(wd1.image);
+							tis.add(ti);
+							its.add(wd1);
+							wd1.parentId = null;
+							break;
+						}
+					}
+				}
+				// repeat iterations until all items are placed.
+				if (!found) break;
+			}
+			// show orphan elements, if any
+			Iterator it3 = items.iterator();
+			while (it3.hasNext()) {
+				WizardItemData wd = (WizardItemData)it3.next();
+				if (wd.parentId == null) continue;
+				TreeItem ti = new TreeItem(tree, SWT.NONE);
+				ti.setText(wd.name + " @ " + wd.parentId); //$NON-NLS-1$
+				ti.setData(wd.handler);
+				if (wd.image != null)ti.setImage(wd.image);
+			}
+		}
+		
 		/**
 		 * @param h - new handler
 		 */
 		private void switchTo(ICWizardHandler h) {
-			if (h == null) return;
 			if (h_selected != null) h_selected.handleUnSelection();
 			h_selected = h;
+			if (h == null) return;
 			right_label.setText(h_selected.getHeader());
 			h_selected.handleSelection();
-			next.setHandler(h_selected);
 			h_selected.setSupportedOnly(show_sup.getSelection());
-			setCustomPagesFilter();
 		}
 		
-		private void setCustomPagesFilter() {
-			// Set up Manager's filters
-			if (h_selected.getProjectType() != null) {
-				MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, h_selected.getProjectType().getId());
-			} else {
-				MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, null);
-			}
-			
-			IToolChain[] tcs = h_selected.getSelectedToolChains();
-			int n = (tcs == null) ? 0 : tcs.length;
-			Set x = new TreeSet();			
-			for (int i=0; i<n; i++) {
-				x.add(tcs[i]); 
-			}
-			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.TOOLCHAIN, x);
-		}
-
 		public void toolChainListChanged(int count) {
-			if ( !h_selected.canCreateWithoutToolchain())
-				setPageComplete(validatePage());
+			setPageComplete(validatePage());
 		}
 
 		public boolean isCurrent() { return isCurrentPage(); }

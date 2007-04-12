@@ -8,7 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.properties;
+package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;

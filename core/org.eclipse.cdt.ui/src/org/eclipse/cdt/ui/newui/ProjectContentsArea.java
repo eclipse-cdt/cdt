@@ -9,15 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *     Intel corporation - cloned to CDT UI, to avoid discouraged access  
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.wizards;
+package org.eclipse.cdt.ui.newui;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
-import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -41,14 +39,14 @@ import org.eclipse.swt.widgets.Text;
  * 
  */
 public class ProjectContentsArea {
-	private static final String ERROR_INVALID_PATH = Messages.getString("ProjectContentsArea.3"); //$NON-NLS-1$
-	private static final String ERROR_PATH_EMPTY = Messages.getString("ProjectContentsArea.4"); //$NON-NLS-1$
-	private static final String ERROR_NOT_ABSOLUTE = Messages.getString("ProjectContentsArea.6"); //$NON-NLS-1$
-	private static final String ERROR_NOT_VALID = Messages.getString("ProjectContentsArea.7");  //$NON-NLS-1$
-	private static final String ERROR_CANNOT_CREATE = Messages.getString("ProjectContentsArea.8");  //$NON-NLS-1$
-	private static final String ERROR_FILE_EXISTS = Messages.getString("ProjectContentsArea.9"); //$NON-NLS-1$
+	private static final String ERROR_INVALID_PATH = UIMessages.getString("ProjectContentsArea.3"); //$NON-NLS-1$
+	private static final String ERROR_PATH_EMPTY = UIMessages.getString("ProjectContentsArea.4"); //$NON-NLS-1$
+	private static final String ERROR_NOT_ABSOLUTE = UIMessages.getString("ProjectContentsArea.6"); //$NON-NLS-1$
+	private static final String ERROR_NOT_VALID = UIMessages.getString("ProjectContentsArea.7");  //$NON-NLS-1$
+	private static final String ERROR_CANNOT_CREATE = UIMessages.getString("ProjectContentsArea.8");  //$NON-NLS-1$
+	private static final String ERROR_FILE_EXISTS = UIMessages.getString("ProjectContentsArea.9"); //$NON-NLS-1$
 	
-	private static final String BROWSE_LABEL = Messages.getString("ProjectContentsArea.0"); //$NON-NLS-1$
+	private static final String BROWSE_LABEL = UIMessages.getString("ProjectContentsArea.0"); //$NON-NLS-1$
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 	private static final String FILE_SCHEME = "file"; //$NON-NLS-1$
 	private Label locationLabel;
@@ -85,7 +83,7 @@ public class ProjectContentsArea {
 		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
-		useDefaultsButton.setText(Messages.getString("ProjectContentsArea.1")); //$NON-NLS-1$
+		useDefaultsButton.setText(UIMessages.getString("ProjectContentsArea.1")); //$NON-NLS-1$
 		useDefaultsButton.setSelection(defaultEnabled);
 		GridData buttonData = new GridData();
 		buttonData.horizontalSpan = 4;
@@ -129,7 +127,7 @@ public class ProjectContentsArea {
 	private void createUserEntryArea(Composite composite, boolean defaultEnabled) {
 		// location label
 		locationLabel = new Label(composite, SWT.NONE);
-		locationLabel.setText(Messages.getString("ProjectContentsArea.2")); //$NON-NLS-1$
+		locationLabel.setText(UIMessages.getString("ProjectContentsArea.2")); //$NON-NLS-1$
 
 		// project location entry field
 		locationPathField = new Text(composite, SWT.BORDER);
@@ -222,7 +220,7 @@ public class ProjectContentsArea {
 		}
 
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
-		dialog.setMessage(Messages.getString("ProjectContentsArea.5")); //$NON-NLS-1$
+		dialog.setMessage(UIMessages.getString("ProjectContentsArea.5")); //$NON-NLS-1$
 		dialog.setFilterPath(dirName);
 		selectedDirectory = dialog.open();
 

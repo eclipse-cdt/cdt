@@ -21,21 +21,22 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-public class StdProjectTypeHandler extends CWizardHandler {
+public class STDWizardHandler extends MBSWizardHandler {
 
-	public StdProjectTypeHandler(String _name, Image _image, Composite p) {
-		super(_name, null, _image, p, null);
+	public STDWizardHandler(String _name, Image _image, Composite p, IWizard w) {
+		super(_name, null, _image, p, null, w);
 	}
 
 	public void addTc(IToolChain tc) {
 		if (tc == null) {
-			tcs.put(Messages.getString("StdProjectTypeHandler.0"), null); //$NON-NLS-1$
+			tcs.put(UIMessages.getString("StdProjectTypeHandler.0"), null); //$NON-NLS-1$
 		} else {
 			if (tc.isAbstract() || tc.isSystemObject()) return;
 		// 	unlike CWizardHandler, we don't check for configs
@@ -46,18 +47,18 @@ public class StdProjectTypeHandler extends CWizardHandler {
 	/**
 	 * Note that configurations parameter is ignored
 	 */
-	public void createProject(IProject project, CfgHolder[] cfgs)  throws CoreException {
+	public void createProject(IProject project, boolean defaults)  throws CoreException {
 		CoreModel coreModel = CoreModel.getDefault();
-//		ICProjectDescription des = coreModel.getProjectDescription(project);
-//		des = coreModel.createProjectDescription(project, true);
 		ICProjectDescription des = coreModel.createProjectDescription(project, false);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 		ManagedProject mProj = new ManagedProject(des);
 		info.setManagedProject(mProj);
-		
+
+		CfgHolder[] cfgs = fConfigPage.getCfgItems(defaults);
+
 		for (int i=0; i<cfgs.length; i++) {
-			String s = (cfgs[i].tc == null) ? "0" : cfgs[i].tc.getId();  //$NON-NLS-1$
-			Configuration cfg = new Configuration(mProj, (ToolChain)cfgs[i].tc, ManagedBuildManager.calculateChildId(s, null), cfgs[i].name);
+			String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain)(cfgs[i].getToolChain())).getId();  //$NON-NLS-1$
+			Configuration cfg = new Configuration(mProj, (ToolChain)cfgs[i].getToolChain(), ManagedBuildManager.calculateChildId(s, null), cfgs[i].getName());
 			IBuilder bld = cfg.getEditableBuilder();
 			if (bld != null) {
 				if(bld.isInternalBuilder()){
@@ -69,7 +70,7 @@ public class StdProjectTypeHandler extends CWizardHandler {
 				}
 				bld.setManagedBuildOn(false);
 			} else {
-				System.out.println(Messages.getString("StdProjectTypeHandler.3"));			 //$NON-NLS-1$
+				System.out.println(UIMessages.getString("StdProjectTypeHandler.3")); //$NON-NLS-1$
 			}
 			cfg.setArtifactName(project.getName());
 			CConfigurationData data = cfg.getConfigurationData();
@@ -88,5 +89,4 @@ public class StdProjectTypeHandler extends CWizardHandler {
 		else
 			return super.getSelectedToolChains();
 	}
-
 }

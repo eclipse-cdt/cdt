@@ -8,7 +8,7 @@
    <extension-point id="PathContainerPage" name="%pathContainerPage" schema="schema/PathContainerPage.exsd"/>
    <extension-point id="foldingStructureProviders" name="%foldingStructureProvidersExtensionPoint" schema="schema/foldingStructureProviders.exsd"/>
    <extension-point id="cPropertyTab" name="%cPropertyTabName" schema="schema/cPropertyTab.exsd"/>
-   
+   <extension-point id="CDTWizard" name="%CDTWizard" schema="schema/CDTWizard.exsd"/>
    
 <!-- =========================================================================== -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->

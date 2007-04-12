@@ -345,7 +345,7 @@ public final class MBSCustomPageManager
 			MBSCustomPageData.ToolchainData[] toolchainData = page.getToolchains();
 
 			// if no toolchains are specified then we're done
-			if (toolchainData == null)
+			if (toolchainData == null || toolchainSet == null)
 			{
 				return true;
 			}
@@ -353,7 +353,6 @@ public final class MBSCustomPageManager
 			// otherwise, iterate through the toolchains to see if one matches
 			for (int k = 0; k < toolchainData.length; k++)
 			{
-
 				// check all toolchains, see if there is one for which we should be present
 				Iterator toolchainIterator = toolchainSet.iterator();
 

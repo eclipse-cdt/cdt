@@ -16,6 +16,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
+import org.eclipse.cdt.ui.wizards.ICNewWizard;
+import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 import org.eclipse.cdt.utils.Platform;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -31,9 +33,9 @@ public abstract class AbstractCWizard implements ICNewWizard {
 	protected static final Image IMG2 = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_TOOL);
 
 	protected Composite parent;
-	protected IToolChainListListener listener;
+	protected IWizardItemsListListener listener;
 	
-	public void setDependentControl(Composite _parent, IToolChainListListener _listener) {
+	public void setDependentControl(Composite _parent, IWizardItemsListListener _listener) {
 		parent = _parent;
 		listener = _listener;
 	}

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 
 /*
  * This class is intended for data exchange between 
@@ -25,16 +25,16 @@ import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 public class CfgHolder {
 	private static final String DELIMITER = "_with_";  //$NON-NLS-1$
 
-	String name;
-	IConfiguration cfg;
-	IToolChain tc;
+	private String name;
+	private IConfiguration cfg;
+	private IToolChain tc;
 	
 	public CfgHolder(IToolChain _tc, IConfiguration _cfg) {
 		tc = _tc;
 		cfg = _cfg;
 		if (cfg == null) {
 			if (tc == null)
-				name = Messages.getString("StdProjectTypeHandler.2"); //$NON-NLS-1$
+				name = UIMessages.getString("StdProjectTypeHandler.2"); //$NON-NLS-1$
 			else	
 				name = tc.getName(); 
 		} else		
@@ -94,4 +94,7 @@ public class CfgHolder {
     		if (its[i].cfg != null) lst.add(its[i].cfg);
     	return (IConfiguration[])lst.toArray(new IConfiguration[lst.size()]);
     }
+	public Object getConfiguration() { return cfg; }
+	public String getName() { return name; }
+	public Object getToolChain() { return tc; }
 }

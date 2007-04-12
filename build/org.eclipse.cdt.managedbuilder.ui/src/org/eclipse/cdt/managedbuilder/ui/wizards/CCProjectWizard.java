@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-public class CCProjectWizard extends NewModelProjectWizard {
+public class CCProjectWizard extends MBSProjectWizard {
 
 	public CCProjectWizard() {
 		super(Messages.getString("NewModelProjectWizard.2"), Messages.getString("NewModelProjectWizard.3")); //$NON-NLS-1$ //$NON-NLS-2$

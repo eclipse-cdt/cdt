@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
 import java.util.ArrayList;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
@@ -50,7 +51,7 @@ public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate 
 			containers.add( sc );
 		}
 		String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null );
-		if ( projectName != null ) {
+		if (projectName != null && projectName.length() > 0) {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
 			if ( project.exists() ) {
 				containers.add( 0, new ProjectSourceContainer( project, true ) );

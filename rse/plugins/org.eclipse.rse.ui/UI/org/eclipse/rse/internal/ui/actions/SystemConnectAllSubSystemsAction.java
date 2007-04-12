@@ -19,6 +19,10 @@ package org.eclipse.rse.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -34,6 +38,59 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemConnectAllSubSystemsAction extends SystemBaseAction
 {
+	public class ConnectAllJob extends Job
+	{
+		private IHost _connection;
+		public ConnectAllJob(IHost connection)
+		{
+			super(SystemResources.ACTION_CONNECT_ALL_LABEL);
+			_connection = connection;
+		}
+		
+		public IStatus run(IProgressMonitor monitor)
+		{
+		    List failedSystems = new ArrayList();
+			try 
+			{
+			    ISubSystem[] subsystems = _connection.getSubSystems();
+			    for (int i = 0; i < subsystems.length; i++)
+			    {
+			        ISubSystem subsystem = subsystems[i];
+			        IConnectorService system = subsystem.getConnectorService();
+			        if (!subsystem.isConnected() && !failedSystems.contains(system))
+			        {
+			            try
+			            {
+			                subsystem.connect(monitor, false);
+			            }
+			            catch (Exception e) 
+			            {	
+			                failedSystems.add(system);
+			                
+			                // if the user was prompted for password and cancelled
+			                // or if the connect was interrupted for some other reason
+			                // we don't attempt to connect the other subsystems
+			                if (e instanceof InterruptedException) {
+			                	break;
+			                }
+			            }// msg already shown	
+			        }
+			    }
+			} 
+			catch (Exception exc) 
+			{
+			} 	// msg already shown	
+			if (failedSystems.size() > 0)
+			{
+				return Status.CANCEL_STATUS;
+			}
+			else
+			{
+				return Status.OK_STATUS;
+			}
+		}
+		
+	}
 	
 	private ISystemRegistry sr = null;
 	/**
@@ -72,37 +129,9 @@ public class SystemConnectAllSubSystemsAction extends SystemBaseAction
 	 */
 	public void run()	
 	{		  
-	    List failedSystems = new ArrayList();
+
 		IHost conn = (IHost)getFirstSelection();
-		try 
-		{
-		    ISubSystem[] subsystems = conn.getSubSystems();
-		    for (int i = 0; i < subsystems.length; i++)
-		    {
-		        ISubSystem subsystem = subsystems[i];
-		        IConnectorService system = subsystem.getConnectorService();
-		        if (!subsystem.isConnected() && !failedSystems.contains(system))
-		        {
-		            try
-		            {
-		                subsystem.connect(false);
-		            }
-		            catch (Exception e) 
-		            {	
-		                failedSystems.add(system);
-		                
-		                // if the user was prompted for password and cancelled
-		                // or if the connect was interrupted for some other reason
-		                // we don't attempt to connect the other subsystems
-		                if (e instanceof InterruptedException) {
-		                	break;
-		                }
-		            }// msg already shown	
-		        }
-		    }
-		} 
-		catch (Exception exc) 
-		{
-		} 	// msg already shown	
+		ConnectAllJob job = new ConnectAllJob(conn);
+		job.schedule();
 	}
 }

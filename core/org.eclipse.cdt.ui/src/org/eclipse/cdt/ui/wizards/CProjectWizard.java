@@ -8,22 +8,30 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.wizards;
+package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
-public class CDTProjectWizard extends MBSProjectWizard {
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.ui.newui.UIMessages;
 
-	public CDTProjectWizard() {
-		super(Messages.getString("NewModelProjectWizard.0"), Messages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
+public class CProjectWizard extends CDTCommonProjectWizard {
+
+	public CProjectWizard() {
+		super(UIMessages.getString("NewModelProjectWizard.4"),  //$NON-NLS-1$
+			  UIMessages.getString("NewModelProjectWizard.5")); //$NON-NLS-1$
 	}
-	
-	protected String[] getNatures() {
-		return new String[0];
+
+	public String[] getNatures() {
+		return new String[] { CProjectNature.C_NATURE_ID };
 	}
 
 	protected IProject continueCreation(IProject prj) {
+		try {
+			CProjectNature.addCNature(prj, new NullProgressMonitor());
+		} catch (CoreException e) {}
 		return prj;
 	}
 

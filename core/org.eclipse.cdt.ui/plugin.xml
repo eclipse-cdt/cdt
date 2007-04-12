@@ -483,6 +483,51 @@
             %NewWizards.folder.description
          </description>
       </wizard>
+      
+            <wizard
+            canFinishEarly="false"
+            category="org.eclipse.cdt.ui.newCDTWizards"
+            class="org.eclipse.cdt.ui.wizards.CDTProjectWizard"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            hasPages="true"
+            icon="icons/elcl16/newmngcc_app.gif"
+            id="org.eclipse.cdt.ui.wizards.NewCWizard3"
+            name="%CDTproject"
+            project="true">
+          <description>
+             %CDTproject.desc
+          </description>
+       </wizard>
+      <wizard
+            canFinishEarly="false"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            class="org.eclipse.cdt.ui.wizards.CCProjectWizard"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            hasPages="true"
+            icon="icons/elcl16/newmngcc_app.gif"
+            id="org.eclipse.cdt.ui.wizards.NewCWizard1"
+            name="%CPPproject"
+            project="true">
+          <description>
+             %CPPproject.desc
+          </description>
+       </wizard>
+       <wizard
+             canFinishEarly="false"
+             category="org.eclipse.cdt.ui.newCWizards"
+             class="org.eclipse.cdt.ui.wizards.CProjectWizard"
+             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+             hasPages="true"
+             icon="icons/elcl16/newmngcc_app.gif"
+             id="org.eclipse.cdt.ui.wizards.NewCWizard2"
+             name="%Cproject"
+             project="true">
+         <description>
+             %Cproject.desc
+         </description>
+      </wizard>
+      
+      
    </extension>
 <!-- Define the document setup participant for the C/C++ and Assembly Editors -->
    <extension
@@ -1244,11 +1289,6 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-     <key
-            sequence="M1+E"
-            contextId="org.eclipse.cdt.ui.cEditorScope"
-            commandId="org.eclipse.cdt.ui.edit.text.c.toggle.source.header"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -1373,12 +1413,6 @@
             description="%ActionDefinition.gotoMatchingBracket.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket">
-      </command>
-      <command
-            name="%ActionDefinition.toggleSourceHeader.name"
-            description="%ActionDefinition.toggleSourceHeader.description"
-            categoryId="org.eclipse.cdt.ui.category.source"
-            id="org.eclipse.cdt.ui.edit.text.c.toggle.source.header">
       </command>
    </extension>
    <extension

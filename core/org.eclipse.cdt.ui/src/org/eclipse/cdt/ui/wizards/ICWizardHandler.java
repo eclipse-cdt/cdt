@@ -55,6 +55,12 @@ public interface ICWizardHandler {
 	 */
 	public void createProject(IProject proj, boolean defaults) throws CoreException;
 	/**
+	 * Called when Finish button pressed, 
+	 * even if project was created before.
+	 * @param proj
+	 */
+	public void postProcess(IProject proj);
+	/**
 	 * @return true if only supported project types and toolchains are displayed
 	 */
 	public boolean supportedOnly();

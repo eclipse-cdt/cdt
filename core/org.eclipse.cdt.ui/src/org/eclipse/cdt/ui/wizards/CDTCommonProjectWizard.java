@@ -9,23 +9,13 @@
  * IBM Rational Software - Initial API and implementation
  * Intel corp - rework for New Project Model
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.wizards;
+package org.eclipse.cdt.ui.wizards;
 
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
-import org.eclipse.cdt.ui.wizards.ICWizardHandler;
-import org.eclipse.cdt.ui.wizards.IWizardWithMemory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -45,7 +35,11 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
-public abstract class MBSProjectWizard extends BasicNewResourceWizard 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.UIMessages;
+
+public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard 
 implements IExecutableExtension, IWizardWithMemory  
 {
 	private static final String PREFIX= "CProjectWizard"; //$NON-NLS-1$
@@ -62,15 +56,14 @@ implements IExecutableExtension, IWizardWithMemory
 	
 	public String lastProjectName = null;
 	private ICWizardHandler savedHandler = null;
-	private boolean savedDefaults = false;
 
 	protected List localPages = new ArrayList(); // replacing Wizard.pages since we have to delete them
 	
-	public MBSProjectWizard() {
-		this(Messages.getString("NewModelProjectWizard.0"),Messages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
+	public CDTCommonProjectWizard() {
+		this(UIMessages.getString("NewModelProjectWizard.0"),UIMessages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public MBSProjectWizard(String title, String desc) {
+	public CDTCommonProjectWizard(String title, String desc) {
 		super();
 		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
@@ -83,10 +76,7 @@ implements IExecutableExtension, IWizardWithMemory
 		fMainPage.setTitle(wz_title);
 		fMainPage.setDescription(wz_desc);
 		addPage(fMainPage);
-		MBSCustomPageManager.init();
-		MBSCustomPageManager.addStockPage(fMainPage, CDTMainWizardPage.PAGE_ID);
 	}
-
 
 	/**
 	 * @return true if user has changed settings since project creation
@@ -101,7 +91,6 @@ implements IExecutableExtension, IWizardWithMemory
 		if (newProject != null && isChanged()) 
 			clearProject(); 
 		if (newProject == null)	{
-			savedDefaults = defaults;
 			savedHandler = fMainPage.h_selected;
 			savedHandler.saveState();
 			lastProjectName = fMainPage.getProjectName();
@@ -139,18 +128,9 @@ implements IExecutableExtension, IWizardWithMemory
 	}
 
 	public boolean performFinish() {
-		// needs delete only if project was 
-		// created before and still valid
-		boolean needsDelete = (newProject != null && savedDefaults && !isChanged());
 		// create project if it is not created yet
 		if (getProject(fMainPage.isCurrent()) == null) return false;
-		// process custom pages
-		doCustom();
-		// project is created with all possible configs
-		// to let user modify all of them. Resulting
-		// project should contain only selected cfgs.
-		if (needsDelete) deleteExtraConfigs();
-		
+		fMainPage.h_selected.postProcess(newProject);
 		BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
 		selectAndReveal(newProject);
 		return true;
@@ -161,46 +141,6 @@ implements IExecutableExtension, IWizardWithMemory
         return true;
     }
 
-	private void deleteExtraConfigs() {
-		if (fMainPage.isCurrent()) return; // nothing to delete
-		if (!(fMainPage.h_selected instanceof MBSWizardHandler))
-			return;
-		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(newProject, true);
-		if (prjd == null) return;
-		ICConfigurationDescription[] all = prjd.getConfigurations();
-		if (all == null) return;
-		CfgHolder[] req = ((MBSWizardHandler)fMainPage.h_selected).getCfgItems(false);
-		boolean modified = false;
-		for (int i=0; i<all.length; i++) {
-			boolean found = false;
-			for (int j=0; j<req.length; j++) {
-				if (all[i].getName().equals(req[j].getName())) {
-					found = true; break;
-				}
-			}
-			if (!found) {
-				modified = true;
-				prjd.removeConfiguration(all[i]);
-			}
-		}
-		if (modified) try {
-			CoreModel.getDefault().setProjectDescription(newProject, prjd);
-		} catch (CoreException e) {}
-	}
-
-	private void doCustom() {
-		IRunnableWithProgress[] operations = MBSCustomPageManager.getOperations();
-		if(operations != null)
-			for(int k = 0; k < operations.length; k++)
-				try {
-					getContainer().run(false, true, operations[k]);
-				} catch (InvocationTargetException e) {
-					ManagedBuilderUIPlugin.log(e);
-				} catch (InterruptedException e) {
-					ManagedBuilderUIPlugin.log(e);
-				}
-	}
-	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfigElement= config;
 	}
@@ -215,7 +155,7 @@ implements IExecutableExtension, IWizardWithMemory
 							newProject = createIProject(lastProjectName, fMainPage.getProjectLocation());
 							if (newProject != null) 
 								fMainPage.h_selected.createProject(newProject, defaults);
-						} catch (CoreException e) {	ManagedBuilderUIPlugin.log(e); }
+						} catch (CoreException e) {	CUIPlugin.getDefault().log(e); }
 					}
 				});
 			}
@@ -259,7 +199,7 @@ implements IExecutableExtension, IWizardWithMemory
 	}
 	
 	protected abstract IProject continueCreation(IProject prj); 
-	protected abstract String[] getNatures();
+	public abstract String[] getNatures();
 	
 	public void dispose() {
 		fMainPage.dispose();

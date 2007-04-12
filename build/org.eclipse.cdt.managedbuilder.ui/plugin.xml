@@ -9,48 +9,6 @@
          point="org.eclipse.ui.newWizards">
 <!-- Managed Make Builder Projects -->
       <wizard
-            canFinishEarly="false"
-            category="org.eclipse.cdt.ui.newCDTWizards"
-            class="org.eclipse.cdt.managedbuilder.ui.wizards.CDTProjectWizard"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            hasPages="true"
-            icon="icons/elcl16/newmngcc_app.gif"
-            id="org.eclipse.cdt.managedbuilder.ui.wizards.NewCWizard3"
-            name="%CDTproject"
-            project="true">
-          <description>
-             %CDTproject.desc
-          </description>
-       </wizard>
-      <wizard
-            canFinishEarly="false"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            class="org.eclipse.cdt.managedbuilder.ui.wizards.CCProjectWizard"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            hasPages="true"
-            icon="icons/elcl16/newmngcc_app.gif"
-            id="org.eclipse.cdt.managedbuilder.ui.wizards.NewCWizard1"
-            name="%CPPproject"
-            project="true">
-          <description>
-             %CPPproject.desc
-          </description>
-       </wizard>
-       <wizard
-             canFinishEarly="false"
-             category="org.eclipse.cdt.ui.newCWizards"
-             class="org.eclipse.cdt.managedbuilder.ui.wizards.CProjectWizard"
-             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-             hasPages="true"
-             icon="icons/elcl16/newmngcc_app.gif"
-             id="org.eclipse.cdt.managedbuilder.ui.wizards.NewCWizard2"
-             name="%Cproject"
-             project="true">
-         <description>
-             %Cproject.desc
-         </description>
-      </wizard>
-      <wizard
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.ConvertToMakeWizard"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"

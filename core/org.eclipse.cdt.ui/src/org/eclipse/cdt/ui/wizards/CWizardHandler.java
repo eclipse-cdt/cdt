@@ -67,7 +67,7 @@ public class CWizardHandler implements ICWizardHandler {
 		if (table == null) {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 			TableItem ti = new TableItem(table, SWT.NONE);
-			ti.setText("Single item"); //$NON-NLS-1$
+			ti.setText("---"); //$NON-NLS-1$
 			ti.setImage(IMG0);
 			table.select(0);
 		}
@@ -97,5 +97,6 @@ public class CWizardHandler implements ICWizardHandler {
 			throws CoreException {}
 	public boolean isChanged() { return true; } 
 	public void saveState() {}
+	public void postProcess(IProject proj) {}
 
 }

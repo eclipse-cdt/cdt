@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
@@ -32,13 +33,13 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
@@ -197,6 +198,9 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		}
 		if (active != null) active.setActive();
 		coreModel.setProjectDescription(project, des);
+		
+		// process custom pages
+		doCustom();
 	}
 
 	public IWizardPage getSpecificPage() {
@@ -225,6 +229,8 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 	public boolean supportsPreferred() { return true; }
 
 	public boolean isChanged() { 
+		if (savedToolChains == null)
+			return true;
 		IToolChain[] tcs = getSelectedToolChains();
 		if (savedToolChains.length != tcs.length) 
 			return true;
@@ -276,8 +282,51 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		if (tis == null || tis.length == 0)
 			return Messages.getString("MBSWizardHandler.0"); //$NON-NLS-1$
 		if (fConfigPage != null && fConfigPage.isVisible && !fConfigPage.isCustomPageComplete())
-			return UIMessages.getString("CConfigWizardPage.11"); //$NON-NLS-1$
+			return Messages.getString("MBSWizardHandler.1"); //$NON-NLS-1$
 		return null;
+	}
+	
+	private void doCustom() {
+		IRunnableWithProgress[] operations = MBSCustomPageManager.getOperations();
+		if(operations != null)
+			for(int k = 0; k < operations.length; k++)
+				try {
+					wizard.getContainer().run(false, true, operations[k]);
+				} catch (InvocationTargetException e) {
+					ManagedBuilderUIPlugin.log(e);
+				} catch (InterruptedException e) {
+					ManagedBuilderUIPlugin.log(e);
+				}
+	}
+	
+	public void postProcess(IProject newProject) {
+		deleteExtraConfigs(newProject);
+	}
+	
+	private void deleteExtraConfigs(IProject newProject) {
+		if (isChanged()) return; // no need to delete 
+		if (listener.isCurrent()) return; // nothing to delete
+		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(newProject, true);
+		if (prjd == null) return;
+		ICConfigurationDescription[] all = prjd.getConfigurations();
+		if (all == null) return;
+		CfgHolder[] req = getCfgItems(false);
+		boolean modified = false;
+		for (int i=0; i<all.length; i++) {
+			boolean found = false;
+			for (int j=0; j<req.length; j++) {
+				if (all[i].getName().equals(req[j].getName())) {
+					found = true; break;
+				}
+			}
+			if (!found) {
+				modified = true;
+				prjd.removeConfiguration(all[i]);
+			}
+		}
+		if (modified) try {
+			CoreModel.getDefault().setProjectDescription(newProject, prjd);
+		} catch (CoreException e) {}
 	}
 
 }

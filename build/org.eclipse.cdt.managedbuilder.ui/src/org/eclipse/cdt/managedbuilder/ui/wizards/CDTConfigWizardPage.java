@@ -23,6 +23,7 @@ import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.ICWizardHandler;
+import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -83,10 +84,10 @@ public class CDTConfigWizardPage extends WizardPage {
 		if (pagesLoaded) return;
 		pagesLoaded = true;
 		
-		if (! (getWizard() instanceof MBSProjectWizard)) return; 
-		MBSProjectWizard wz = (MBSProjectWizard)getWizard();
+		if (! (getWizard() instanceof CDTCommonProjectWizard)) return; 
+		CDTCommonProjectWizard wz = (CDTCommonProjectWizard)getWizard();
 		
-		IWizardPage p = MBSCustomPageManager.getPreviousPage(PAGE_ID);
+		IWizardPage p = getWizard().getStartingPage();  
 		MBSCustomPageManager.init();
 		MBSCustomPageManager.addStockPage(p, CDTMainWizardPage.PAGE_ID);
 		MBSCustomPageManager.addStockPage(this, CDTConfigWizardPage.PAGE_ID);
@@ -315,8 +316,8 @@ public class CDTConfigWizardPage extends WizardPage {
 	 * Edit properties
 	 */
 	private void advancedDialog() {
-		if (getWizard() instanceof MBSProjectWizard) {
-			MBSProjectWizard nmWizard = (MBSProjectWizard)getWizard();
+		if (getWizard() instanceof CDTCommonProjectWizard) {
+			CDTCommonProjectWizard nmWizard = (CDTCommonProjectWizard)getWizard();
 			IProject newProject = nmWizard.getProject(true);
 			if (newProject != null) {
 				boolean oldManage = CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG);
@@ -336,7 +337,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		return MBSCustomPageManager.getNextPage(PAGE_ID);
 	}
 	
-	private void setCustomPagesFilter(MBSProjectWizard wz) {
+	private void setCustomPagesFilter(CDTCommonProjectWizard wz) {
 		String[] natures = wz.getNatures();
 		if (natures == null || natures.length == 0)
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, null);

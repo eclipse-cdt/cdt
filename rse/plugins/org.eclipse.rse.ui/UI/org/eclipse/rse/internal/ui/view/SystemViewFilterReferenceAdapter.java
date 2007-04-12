@@ -60,7 +60,6 @@ import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterName;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.IContextObject;
-import org.eclipse.rse.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;

@@ -27,7 +27,6 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
-import org.eclipse.rse.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
@@ -388,7 +387,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     }
     	
 	/**
-	 * Set the save file policy. See constants in {@link org.eclipse.rse.core.filters.ISystemFilterConstants SystemFilterConstants}. 
+	 * Set the save file policy. See constants in {@link org.eclipse.rse.internal.core.filters.ISystemFilterConstants SystemFilterConstants}. 
 	 * One of:
      * <ul>
      *   <li>SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL - one file and folder per pool
@@ -942,7 +941,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      * @param namingPolicy The names to use for file and folders when persisting to disk. Pass
      *     null to just use the defaults.
      * @return SystemFilterPool object if restored ok, null if error encountered. If null, call getLastException().
-     * @see org.eclipse.rse.core.filters.ISystemFilterConstants
+     * @see org.eclipse.rse.internal.core.filters.ISystemFilterConstants
      */
     protected static ISystemFilterPool restore(String name, int savePolicy, 
                                               IRSEFilterNamingPolicy namingPolicy)

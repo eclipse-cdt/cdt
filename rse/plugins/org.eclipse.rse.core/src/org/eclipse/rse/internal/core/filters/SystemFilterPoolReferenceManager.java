@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
-import org.eclipse.rse.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
@@ -86,7 +85,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 * @param name the name of the filter pool reference manager. This is used when 
 	 *   the save policy is SAVE_POLICY_ONE_FILE_PER_MANAGER, to deduce the file name.
 	 * @param savePolicy The save policy for the filter pool references list. One of the
-	 *   following from the {@link org.eclipse.rse.core.filters.ISystemFilterConstants SystemFilterConstants} 
+	 *   following from the {@link org.eclipse.rse.internal.core.filters.ISystemFilterConstants SystemFilterConstants} 
 	 *   interface:
 	 *   <ul>
 	 *     <li>SAVE_POLICY_NONE - no files, all save/restore handled elsewhere

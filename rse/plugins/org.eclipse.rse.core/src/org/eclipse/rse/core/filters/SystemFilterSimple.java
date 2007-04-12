@@ -21,6 +21,7 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemContentsType;
+import org.eclipse.rse.internal.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.internal.core.filters.SystemFilter;
 
 

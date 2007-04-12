@@ -28,6 +28,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEPersistableObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+import org.eclipse.rse.internal.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
 
@@ -223,7 +224,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 *   individual filter pool level.
 	 * @param savePolicy The save policy for the filter pools and filters. One of the
 	 *   following constants from the 
-	 *   {@link org.eclipse.rse.core.filters.ISystemFilterConstants SystemFilterConstants} interface:
+	 *   {@link org.eclipse.rse.internal.core.filters.ISystemFilterConstants SystemFilterConstants} interface:
 	 *   <ul>
 	 *     <li>SAVE_POLICY_NONE - no files, all save/restore handled elsewhere
 	 *     <li>SAVE_POLICY_ONE_FILE_PER_MANAGER - one file: mgrName.xmi

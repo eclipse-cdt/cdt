@@ -59,7 +59,6 @@ import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
-import org.eclipse.rse.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;

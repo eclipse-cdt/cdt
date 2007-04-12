@@ -14,7 +14,7 @@
  * David Dykstal (IBM) - removing extension of ISystemFilterSavePolicies
  ********************************************************************************/
 
-package org.eclipse.rse.core.filters;
+package org.eclipse.rse.internal.core.filters;
 
 /**
  * Constants used throughout filters framework.

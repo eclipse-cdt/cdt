@@ -51,6 +51,7 @@ import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemDynamicPopupMenuExtensionManager;
+import org.eclipse.rse.internal.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.model.ISystemPromptableObject;

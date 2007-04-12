@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.view;
+package org.eclipse.rse.internal.ui.view;
 public interface ISystemMementoConstants 
 {
 	

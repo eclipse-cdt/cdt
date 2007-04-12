@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
-import org.eclipse.rse.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterString;

@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
-import org.eclipse.rse.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;

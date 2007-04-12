@@ -19,7 +19,6 @@ package org.eclipse.rse.internal.persistence.dom;
 import java.util.Vector;
 
 import org.eclipse.rse.core.filters.ISystemFilter;
-import org.eclipse.rse.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
@@ -41,6 +40,7 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemFilterNamingPolicy;
+import org.eclipse.rse.internal.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.persistence.dom.RSEDOMNode;

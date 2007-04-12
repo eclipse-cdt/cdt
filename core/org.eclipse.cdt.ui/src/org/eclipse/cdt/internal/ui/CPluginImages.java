@@ -308,7 +308,11 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= create(T_OBJ, "file_change.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT= create(T_OBJ, "text_edit.gif"); //$NON-NLS-1$
 
-	
+	public static final String IMG_PREFERRED = NAME_PREFIX + "tc_preferred.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PREFERRED = createManaged(T_OBJ, IMG_PREFERRED);
+	public static final String IMG_EMPTY = NAME_PREFIX + "tc_empty.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EMPTY = createManaged(T_OBJ, IMG_EMPTY);
+
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);

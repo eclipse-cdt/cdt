@@ -925,24 +925,32 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
 		public boolean consumes(SemanticToken token) {
-			IBinding binding= token.getBinding();
-			if (binding instanceof IVariable
-					&& !(binding instanceof IField)
-					&& !(binding instanceof IParameter)
-					&& !(binding instanceof IProblemBinding)) {
-				try {
-					IScope scope= binding.getScope();
-					if (!LocalVariableHighlighting.isLocalScope(scope)) {
-						return true;
+			IASTNode node= token.getNode();
+			if (node instanceof IASTName) {
+				IASTName name= (IASTName)node;
+				if (name instanceof ICPPASTQualifiedName) {
+					return false;
+				}
+				IBinding binding= token.getBinding();
+				if (binding instanceof IVariable
+						&& !(binding instanceof IField)
+						&& !(binding instanceof IParameter)
+						&& !(binding instanceof IProblemBinding)) {
+					try {
+						IScope scope= binding.getScope();
+						if (!LocalVariableHighlighting.isLocalScope(scope)) {
+							return true;
+						}
+					} catch (DOMException exc) {
+						CUIPlugin.getDefault().log(exc);
+					} catch (Error e) /* PDOMNotImplementedError */ {
+						// ignore
 					}
-				} catch (DOMException exc) {
-					CUIPlugin.getDefault().log(exc);
-				} catch (Error e) /* PDOMNotImplementedError */ {
-					// ignore
 				}
 			}
 			return false;
 		}
+		
 	}
 
 	/**
@@ -1333,7 +1341,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
 		 */
 		public RGB getDefaultTextColor() {
-			return RGB_BLACK;
+			return new RGB(0, 80, 50);
 		}
 		
 		/*
@@ -1368,9 +1376,16 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
 		public boolean consumes(SemanticToken token) {
-			IBinding binding= token.getBinding();
-			if (binding instanceof ITypedef) {
-				return true;
+			IASTNode node= token.getNode();
+			if (node instanceof IASTName) {
+				IASTName name= (IASTName)node;
+				if (name instanceof ICPPASTQualifiedName) {
+					return false;
+				}
+				IBinding binding= token.getBinding();
+				if (binding instanceof ITypedef) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -1545,9 +1560,16 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
 		public boolean consumes(SemanticToken token) {
-			IBinding binding= token.getBinding();
-			if (binding instanceof IEnumerator) {
-				return true;
+			IASTNode node= token.getNode();
+			if (node instanceof IASTName) {
+				IASTName name= (IASTName)node;
+				if (name instanceof ICPPASTQualifiedName) {
+					return false;
+				}
+				IBinding binding= token.getBinding();
+				if (binding instanceof IEnumerator) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -1689,21 +1711,26 @@ public class SemanticHighlightings {
 				}
 				if (name.isReference()) {
 					IBinding binding= token.getBinding();
-					IIndex index= token.getRoot().getIndex();
-					return isExternalSDKReference(binding, index);
+					if (binding instanceof IIndexBinding) {
+						IIndex index= token.getRoot().getIndex();
+						return isExternalSDKReference((IIndexBinding)binding, index);
+					}
 				}
 			}
 			return false;
 		}
 
-		private boolean isExternalSDKReference(IBinding binding, IIndex index) {
-			if (binding instanceof IIndexBinding && binding instanceof IFunction) {
+		private boolean isExternalSDKReference(IIndexBinding binding, IIndex index) {
+			if (binding instanceof IFunction) {
 				// unwrap binding from composite binding
 //				IIndexBinding binding2= (IIndexBinding)binding.getAdapter(IIndexBinding.class);
 //				if (binding2 != null) {
 //					binding= binding2;
 //				}
 				try {
+					if (binding.isFileLocal()) {
+						return false;
+					}
 					IIndexName[] defs= index.findDefinitions(binding);
 					for (int i = 0; i < defs.length; i++) {
 						IIndexFile indexFile= defs[i].getFile();
@@ -1712,7 +1739,7 @@ public class SemanticHighlightings {
 						}
 					}
 					IIndexName[] decls= index.findDeclarations(binding);
-					for (int i = 0; i < defs.length; i++) {
+					for (int i = 0; i < decls.length; i++) {
 						IIndexFile indexFile= decls[i].getFile();
 						if (indexFile != null && indexFile.getLocation().getFullPath() != null) {
 							return false;

@@ -41,10 +41,6 @@ import org.eclipse.cdt.internal.core.model.ASTCache;
  */
 public final class ASTProvider {
 
-	public static interface ASTRunnable {
-		IStatus runOnAST(IASTTranslationUnit tu);
-	}
-	
 	/**
 	 * Wait flag.
 	 */

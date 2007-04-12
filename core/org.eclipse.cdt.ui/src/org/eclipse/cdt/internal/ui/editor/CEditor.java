@@ -1882,6 +1882,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
         action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_PREVIOUS_MEMBER);
         setAction(GoToNextPreviousMemberAction.NEXT_MEMBER, action);
 
+        action= new ToggleSourceAndHeaderAction(CEditorMessages.getResourceBundle(), "ToggleSourceHeader.", this); //$NON-NLS-1$
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_SOURCE_HEADER);
+        setAction("ToggleSourceHeader", action); //$NON-NLS-1$
+        
         //Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fTextSearchGroup= new TextSearchGroup(this);
@@ -1921,6 +1925,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	
 			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenOutline"); //$NON-NLS-1$
 			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenHierarchy"); //$NON-NLS-1$
+			addAction(menu, IContextMenuConstants.GROUP_OPEN, "ToggleSourceHeader"); //$NON-NLS-1$
 		}
 		
 		ActionContext context= new ActionContext(getSelectionProvider().getSelection());

@@ -38,7 +38,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	private RetargetTextEditorAction fContextInformation;
 	private RetargetTextEditorAction fFormatter;
 	private RetargetTextEditorAction fAddInclude;
-//	private RetargetTextEditorAction fOpenOnSelection;
+	private RetargetTextEditorAction fOpenDeclaration;
 	private RetargetTextEditorAction fShiftLeft;
 	private RetargetTextEditorAction fShiftRight;
 	private TogglePresentationAction fTogglePresentation;
@@ -49,6 +49,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	private RetargetTextEditorAction fGotoPreviousMemberAction;
 	private RetargetTextEditorAction fToggleInsertModeAction;
 	private RetargetTextEditorAction fShowOutline;
+	private RetargetTextEditorAction fToggleSourceHeader;
 	
 	public CEditorActionContributor() {
 		super();
@@ -75,14 +76,13 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection."); //$NON-NLS-1$
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 
-//		fOpenOnSelection = new RetargetTextEditorAction(bundle, "OpenOnSelection."); //$NON-NLS-1$
+		fOpenDeclaration = new RetargetTextEditorAction(bundle, "OpenDeclarations."); //$NON-NLS-1$
+		fOpenDeclaration.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
 
 		// actions that are "contributed" to editors, they are considered belonging to the active editor
 		fTogglePresentation= new TogglePresentationAction();
 		fTogglePresentation.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY);
 		
-		//fToggleTextHover= new ToggleTextHoverAction();
-
 		fPreviousAnnotation= new GotoAnnotationAction("PreviousAnnotation.", false); //$NON-NLS-1$
 		fNextAnnotation= new GotoAnnotationAction("NextAnnotation.", true); //$NON-NLS-1$
 
@@ -100,6 +100,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fShowOutline= new RetargetTextEditorAction(bundle, "OpenOutline."); //$NON-NLS-1$
 		fShowOutline.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
 
+		fToggleSourceHeader= new RetargetTextEditorAction(bundle, "ToggleSourceHeader."); //$NON-NLS-1$
+		fToggleSourceHeader.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_SOURCE_HEADER);
 	}	
 
 	/*
@@ -126,9 +128,10 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
 		if (navigateMenu != null) {
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenDeclaration);
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fToggleSourceHeader);
+
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.SHOW_EXT, fShowOutline);
-//			navigateMenu.appendToGroup(IWorkbenchActionConstants.SHOW_EXT, fOpenHierarchy);
-//			navigateMenu.appendToGroup(IWorkbenchActionConstants.SHOW_EXT, fOpenOnSelection);
 
 			IMenuManager gotoMenu= navigateMenu.findMenuUsingPath(IWorkbenchActionConstants.GO_TO);
 			if (gotoMenu != null) {
@@ -176,7 +179,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fContentAssist.setAction(getAction(textEditor, "ContentAssistProposal")); //$NON-NLS-1$
 		fContextInformation.setAction(getAction(textEditor, "ContentAssistContextInformation")); //$NON-NLS-1$
 		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
-//		fOpenOnSelection.setAction(getAction(textEditor, "OpenOnSelection")); //$NON-NLS-1$
+		fOpenDeclaration.setAction(getAction(textEditor, "OpenDeclarations")); //$NON-NLS-1$
 		fFormatter.setAction(getAction(textEditor, "Format")); //$NON-NLS-1$
 
 		fGotoMatchingBracket.setAction(getAction(textEditor, GotoMatchingBracketAction.GOTO_MATCHING_BRACKET));
@@ -184,7 +187,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fGotoPreviousMemberAction.setAction(getAction(textEditor, GoToNextPreviousMemberAction.PREVIOUS_MEMBER));
 
 		fShowOutline.setAction(getAction(textEditor, "OpenOutline")); //$NON-NLS-1$
-
+		fToggleSourceHeader.setAction(getAction(textEditor, "ToggleSourceHeader")); //$NON-NLS-1$
 		fToggleInsertModeAction.setAction(getAction(textEditor, ITextEditorActionConstants.TOGGLE_INSERT_MODE));
 
 		if (part instanceof CEditor) {

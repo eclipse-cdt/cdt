@@ -1244,6 +1244,11 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="M1+E"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.toggle.source.header"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -1368,6 +1373,12 @@
             description="%ActionDefinition.gotoMatchingBracket.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket">
+      </command>
+      <command
+            name="%ActionDefinition.toggleSourceHeader.name"
+            description="%ActionDefinition.toggleSourceHeader.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.toggle.source.header">
       </command>
    </extension>
    <extension

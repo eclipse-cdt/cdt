@@ -173,11 +173,10 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String GOTO_MATCHING_BRACKET= "org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"; //$NON-NLS-1$
 
 	/**
-	 * Action definition ID of the edit -> show tooltip action
-	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.show.tooltip"</code>).
-	 *
-	 * @since 3.1.1
-	 * @deprecated Use {@link ITextEditorActionDefinitionIds#SHOW_INFORMATION} instead.
+	 * Action definition ID for toggle source/header action.
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.toggle.source.header"</code>)
+	 * 
+	 * @since 4.0
 	 */
-	public static final String SHOW_TOOLTIP = ITextEditorActionDefinitionIds.SHOW_INFORMATION;
+	public static final String TOGGLE_SOURCE_HEADER = "org.eclipse.cdt.ui.edit.text.c.toggle.source.header"; //$NON-NLS-1$
 }

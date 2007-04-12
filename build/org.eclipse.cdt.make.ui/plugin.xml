@@ -90,9 +90,14 @@
             </groupMarker>
          </menu>
          <visibility>
+            <or>
               <objectState
                  name="projectNature"
                  value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+              <objectState
+                 name="projectNature"
+                 value="org.eclipse.cdt.make.core.makeNature"/>
+            </or>
          </visibility>
       </objectContribution>
    </extension>

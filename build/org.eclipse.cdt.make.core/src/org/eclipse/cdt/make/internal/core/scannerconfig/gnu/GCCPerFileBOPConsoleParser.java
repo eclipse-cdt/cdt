@@ -41,9 +41,6 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
     private String[] compilerInvocation;
     private GCCPerFileBOPConsoleParserUtility fUtil;
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
-     */
     public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
         fUtil = (project != null && workingDirectory != null && markerGenerator != null) ?
                 new GCCPerFileBOPConsoleParserUtility(project, workingDirectory, markerGenerator) : null;
@@ -53,16 +50,10 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         compilerInvocation = getCompilerCommands();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParser#getUtility()
-     */
     protected AbstractGCCBOPConsoleParserUtility getUtility() {
         return fUtil;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParser#processSingleLine(java.lang.String)
-     */
     protected boolean processSingleLine(String line) {
         boolean rc = false;
         // GCC C/C++ compiler invocation 
@@ -77,18 +68,24 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 
         // expecting that compiler invocation is the first token in the line
         String[] split = line.split("\\s+"); //$NON-NLS-1$
-        String command = split[0];
-        // verify that it is compiler invocation
         int cii2 = -1;
-        for (int cii = 0; cii < compilerInvocation.length; ++cii) {
-            cii2 = command.indexOf(compilerInvocation[cii]);
-            if (cii2 != -1)
-                break;
+        for (int i = 0; i < 2; ++i) {
+        	// Checking the first two tokens since the first may be a wrapper script
+	        String command = split[i];
+	        // verify that it is compiler invocation
+	        for (int cii = 0; cii < compilerInvocation.length; ++cii) {
+	            cii2 = command.indexOf(compilerInvocation[cii]);
+	            if (cii2 != -1)
+	                break;
+	        }
+	        if (cii2 != -1)
+	        	break;
         }
         if (cii2 == -1) {
             TraceUtil.outputTrace("Error identifying compiler command", line, TraceUtil.EOL); //$NON-NLS-1$
             return rc;
         }
+        
         // find a file name
         int extensionsIndex = -1;
         boolean found = false;
@@ -105,24 +102,18 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
                 }
             }
         }
-//              for (int j = 0; j < FILE_EXTENSIONS.length; ++j) {
-//                  if (split[i].endsWith(FILE_EXTENSIONS[j])) {
-//                      filePath = split[i];
-//                      extensionsIndex = j;
-//                      found = true;
-//                      break;
-//                  }
-//              }
-//              if (found) break;
+
         if (!found) {
             TraceUtil.outputTrace("Error identifying file name :1", line, TraceUtil.EOL); //$NON-NLS-1$
             return rc;
         }
+        
         // sanity check
         if (filePath.indexOf(FILE_EXTENSIONS[extensionsIndex]) == -1) {
             TraceUtil.outputTrace("Error identifying file name :2", line, TraceUtil.EOL); //$NON-NLS-1$
             return rc;
         }
+        
         if (fUtil != null) {
             IPath pFilePath = fUtil.getAbsolutePath(filePath);
             String shortFileName = pFilePath.removeFileExtension().lastSegment();

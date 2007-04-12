@@ -72,16 +72,22 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 //		ArrayList allTokens = new ArrayList(Arrays.asList(line.split("\\s+")));//$NON-NLS-1$
 		if (allTokens.size() <= 1)
 			return false;
-		Iterator I = allTokens.iterator();
-		String token = ((String) I.next()).toLowerCase();
         
         boolean found = false;
-        for (int i = 0; i < compilerInvocation.length; i++) {
-            if (token.indexOf(compilerInvocation[i]) != -1) {
-                found = true;
-                break;
-            }
-        }
+		Iterator I = allTokens.iterator();
+		String token;
+		for (int ti = 0; ti < 2; ++ti) {
+			token = ((String) I.next()).toLowerCase();
+	        for (int i = 0; i < compilerInvocation.length; i++) {
+	            if (token.indexOf(compilerInvocation[i]) != -1) {
+	                found = true;
+	                break;
+	            }
+	        }
+	        if (found)
+	        	break;
+		}
+		
 		if (found) {
 			// Recognized gcc or g++ compiler invocation
 			List includes = new ArrayList();

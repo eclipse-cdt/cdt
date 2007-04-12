@@ -504,6 +504,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 
+		if (dontCheckProgram)
+			return true;
+
 		String name = fProjText.getText().trim();
 		if (name.length() == 0) {
 			setErrorMessage(LaunchMessages.getString("CMainTab.Project_not_specified")); //$NON-NLS-1$
@@ -519,39 +522,37 @@ public class CMainTab extends CLaunchConfigurationTab {
 			return false;
 		}
 
-		if (!dontCheckProgram) {
-			name = fProgText.getText().trim();
-			if (name.length() == 0) {
-				setErrorMessage(LaunchMessages.getString("CMainTab.Program_not_specified")); //$NON-NLS-1$
-				return false;
-			}
-			if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+		name = fProgText.getText().trim();
+		if (name.length() == 0) {
+			setErrorMessage(LaunchMessages.getString("CMainTab.Program_not_specified")); //$NON-NLS-1$
+			return false;
+		}
+		if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+			setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+			return false;
+		}
+		IPath exePath = new Path(name);
+		if (!exePath.isAbsolute()) {
+			if (!project.getFile(name).exists()) {
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 				return false;
 			}
-			IPath exePath = new Path(name);
-			if (!exePath.isAbsolute()) {
-				if (!project.getFile(name).exists()) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
-					return false;
-				}
-				exePath = project.getFile(name).getLocation();
-			} else {
-				if (!exePath.toFile().exists()) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
-					return false;
-				}
-			}
-			try {
-				if (!isBinary(project, exePath)) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
-					return false;
-				}
-			} catch (CoreException e) {
-				LaunchUIPlugin.log(e);
-				setErrorMessage(e.getLocalizedMessage());
+			exePath = project.getFile(name).getLocation();
+		} else {
+			if (!exePath.toFile().exists()) {
+				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 				return false;
 			}
+		}
+		try {
+			if (!isBinary(project, exePath)) {
+				setErrorMessage(LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
+				return false;
+			}
+		} catch (CoreException e) {
+			LaunchUIPlugin.log(e);
+			setErrorMessage(e.getLocalizedMessage());
+			return false;
 		}
 		
 		return true;

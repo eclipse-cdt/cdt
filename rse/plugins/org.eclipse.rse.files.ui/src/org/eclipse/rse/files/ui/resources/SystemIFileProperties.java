@@ -19,6 +19,7 @@ package org.eclipse.rse.files.ui.resources;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.rse.internal.files.ui.resources.ISystemRemoteEditConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 

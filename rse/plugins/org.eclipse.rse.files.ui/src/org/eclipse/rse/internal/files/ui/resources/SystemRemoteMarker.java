@@ -18,7 +18,6 @@ package org.eclipse.rse.internal.files.ui.resources;
 
 import java.util.Map;
 
-import org.eclipse.rse.files.ui.resources.ISystemRemoteCoreConstants;
 import org.eclipse.rse.files.ui.resources.ISystemRemoteMarker;
 import org.eclipse.rse.files.ui.resources.ISystemRemoteResource;
 

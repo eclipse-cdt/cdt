@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.files.ui.resources.ISystemRemoteCoreConstants;
 import org.eclipse.rse.files.ui.resources.ISystemRemoteManager;
 import org.eclipse.rse.files.ui.resources.ISystemRemoteMarker;
 import org.eclipse.rse.files.ui.resources.ISystemRemoteMarkerSetElement;

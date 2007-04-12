@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui;
+package org.eclipse.rse.internal.files.ui;
 
 // TODO is this file still used or necessary?
 

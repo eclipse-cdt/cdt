@@ -18,6 +18,8 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IServiceSubSystem;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.examples.daytime.model.DaytimeResource;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
@@ -32,7 +34,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * This is our subsystem, which manages the remote connection and resources for
  * a particular Service (system connection) object.
  */
-public class DaytimeSubSystem extends SubSystem {
+public class DaytimeSubSystem extends SubSystem implements IServiceSubSystem {
 
 	private IDaytimeService fDaytimeService; 
 	
@@ -82,6 +84,15 @@ public class DaytimeSubSystem extends SubSystem {
 
 	public void uninitializeSubSystem(IProgressMonitor monitor) {
 		//nothing to do
+	}
+
+	public Class getServiceType() {
+		return IDaytimeService.class;
+	}
+
+	public void switchServiceFactory(IServiceSubSystemConfiguration factory) {
+		// not applicable here
+		
 	}
 
 }

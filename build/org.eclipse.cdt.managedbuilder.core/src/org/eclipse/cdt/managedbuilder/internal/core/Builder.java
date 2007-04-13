@@ -807,7 +807,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
         if(parallelNum != null)
         	element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, parallelNum.toString());
         if(parallelBuildOn != null)
-        	element.setAttribute(ATTRIBUTE_MANAGED_BUILD_ON, parallelBuildOn.toString());
+        	element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_ON, parallelBuildOn.toString());
 		// Note: build file generator cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
 		if (buildFileGeneratorElement != null) {
@@ -1331,7 +1331,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 
 	public void checkForMigrationSupport() {
 
-		String tmpId = null;
+//		String tmpId = null;
 		boolean isExists = false;
 
 		if (getSuperClass() == null) {

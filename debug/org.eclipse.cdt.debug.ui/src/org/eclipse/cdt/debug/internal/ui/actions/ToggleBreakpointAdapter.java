@@ -314,9 +314,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			ILocationProvider provider = (ILocationProvider)editorInput.getAdapter( ILocationProvider.class );
 			if ( provider != null ) {
 				IPath location = provider.getPath( editorInput );
-				IFile[] files = root.findFilesForLocation( location );
-				if ( files.length > 0 )
-					return files[0];
+				if ( location != null ) {
+					IFile[] files = root.findFilesForLocation( location );
+					if ( files.length > 0 )
+						return files[0];
+				}
 			}
 		}
 		return root;

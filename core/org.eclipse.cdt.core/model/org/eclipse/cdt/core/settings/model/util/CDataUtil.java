@@ -504,6 +504,10 @@ public class CDataUtil {
 	
 	public static boolean isExcluded(IPath path, ICSourceEntry entry){
 		IPath entryPath = new Path(entry.getName());
+		
+		if(path.isPrefixOf(entryPath))
+			return false;
+		
 		if(!entryPath.isPrefixOf(path))
 			return true;
 		

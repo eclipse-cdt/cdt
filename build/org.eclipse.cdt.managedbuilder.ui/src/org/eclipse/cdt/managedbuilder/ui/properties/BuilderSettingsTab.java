@@ -22,6 +22,7 @@ import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -69,17 +70,24 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	Button b_dirVars;
 
 	protected final int cpuNumber = BuildProcessManager.checkCPUNumber(); 
-//	Configuration cfg = null;
 	IBuilder bld;
 	Configuration cfg;
-//	BuildMacroProvider bmp = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
 		
+		ScrolledComposite sc = new ScrolledComposite(usercomp, SWT.V_SCROLL | SWT.H_SCROLL);
+		sc.setLayoutData(new GridData(GridData.FILL_BOTH));
+	    sc.setExpandHorizontal(true);
+	    sc.setExpandVertical(true);
+
+	    Composite comp = new Composite(sc, SWT.NONE);
+		sc.setContent(comp);
+		comp.setLayout(new GridLayout(1, false));
+
 		// Builder group
-		Group g1 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.0"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g1 = setupGroup(comp, Messages.getString("BuilderSettingsTab.0"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g1, Messages.getString("BuilderSettingsTab.1"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		c_builderType = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		setupControl(c_builderType, 2, GridData.FILL_HORIZONTAL);
@@ -107,14 +115,14 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		        }
 			}});
 				
-		Group g2 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.6"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g2 = setupGroup(comp, Messages.getString("BuilderSettingsTab.6"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		((GridLayout)(g2.getLayout())).makeColumnsEqualWidth = true;
 		
 		b_genMakefileAuto = setupCheck(g2, Messages.getString("BuilderSettingsTab.7"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		b_expandVars  = setupCheck(g2, Messages.getString("BuilderSettingsTab.8"), 1, GridData.BEGINNING); //$NON-NLS-1$
 
 		// Build setting group
-		Group g3 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.9"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g3 = setupGroup(comp, Messages.getString("BuilderSettingsTab.9"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		((GridLayout)(g3.getLayout())).makeColumnsEqualWidth = true;
 		
 		Composite c1 = new Composite(g3, SWT.NONE);
@@ -159,7 +167,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		});
 
 		// Workbench behaviour group
-		Group g4 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.14"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g4 = setupGroup(comp, Messages.getString("BuilderSettingsTab.14"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g4, Messages.getString("BuilderSettingsTab.15"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		title2 = setupLabel(g4, Messages.getString("BuilderSettingsTab.16"), 2, GridData.BEGINNING); //$NON-NLS-1$
 		b_autoBuild = setupCheck(g4, Messages.getString("BuilderSettingsTab.17"), 1, GridData.BEGINNING); //$NON-NLS-1$
@@ -189,7 +197,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			}} );
 
 		// Build location group
-		Group g5 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.21"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g5 = setupGroup(comp, Messages.getString("BuilderSettingsTab.21"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g5, Messages.getString("BuilderSettingsTab.22"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_dir = setupText(g5, 1, GridData.FILL_HORIZONTAL);
 		t_dir.addModifyListener(new ModifyListener() {
@@ -205,6 +213,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_dirWsp = setupBottomButton(c, WORKSPACEBUTTON_NAME);
 		b_dirFile = setupBottomButton(c, FILESYSTEMBUTTON_NAME);
 		b_dirVars = setupBottomButton(c, VARIABLESBUTTON_NAME);
+
+		sc.setMinSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	void setManagedBuild(boolean enable) {

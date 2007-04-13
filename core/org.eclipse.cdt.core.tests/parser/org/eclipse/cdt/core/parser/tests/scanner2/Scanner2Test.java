@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.parser.tests.scanner2;
@@ -2501,5 +2502,18 @@ public class Scanner2Test extends BaseScanner2Test
        buffer.append("a       		             \n");
        initializeScanner(buffer.toString());
        validateIdentifier("a");
-   }	   
+   }
+   
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+   public void testBug182180() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer
+        .append("#ifdef _bug_182180_\n")
+       	.append("    printf(\"Hello World /*.ap\\n\");\n")
+       	.append("#endif\n")
+       	.append("bug182180\n");
+       initializeScanner(buffer.toString());
+       validateIdentifier("bug182180");
+   }
+   
 }

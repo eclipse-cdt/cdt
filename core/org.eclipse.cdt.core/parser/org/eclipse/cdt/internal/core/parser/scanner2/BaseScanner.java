@@ -3002,11 +3002,12 @@ abstract class BaseScanner implements IScanner {
         int pos = bufferPos[bufferStackPos];
         
         boolean escaped = false;
+        boolean insideString= false;
         while (++pos < limit) {
         	char ch= buffer[pos];
             switch (ch) {
             case '/':
-            	if (insideComment) {
+            	if (insideComment || insideString) {
             		break;
             	}
                 if (pos + 1 < limit) {
@@ -3030,6 +3031,11 @@ abstract class BaseScanner implements IScanner {
             case '\\':
                 escaped = !escaped;
                 continue;
+            case '"':
+            	if (!insideComment && !escaped) {
+            		insideString= !insideString;
+            	}
+            	break;
             case '\n':
                 if (escaped) {
                     break;

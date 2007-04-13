@@ -27,18 +27,24 @@
       <factory
             class="org.eclipse.cdt.internal.ui.CElementAdapterFactory"
             adaptableType="org.eclipse.cdt.core.model.ICElement">
-         <adapter
-               type="org.eclipse.core.resources.IResource">
-         </adapter>
-         <adapter
-               type="org.eclipse.ui.model.IWorkbenchAdapter">
-         </adapter>
-         <adapter
-               type="org.eclipse.ui.views.properties.IPropertySource">
-         </adapter>
+         <adapter type="org.eclipse.core.resources.IResource"/>
+         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         <adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
          <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
          <adapter type="org.eclipse.ui.IActionFilter"/>
          <adapter type="org.eclipse.ui.IPersistableElement"/>
+      </factory>
+
+     <factory
+            class="org.eclipse.cdt.internal.ui.CElementAdapterFactory"
+            adaptableType="org.eclipse.cdt.core.model.ICContainer">
+         <adapter type="org.eclipse.core.resources.IFolder"/>
+      </factory>
+
+      <factory
+            class="org.eclipse.cdt.internal.ui.CElementAdapterFactory"
+            adaptableType="org.eclipse.cdt.core.model.ITranslationUnit">
+         <adapter type="org.eclipse.core.resources.IFile"/>
       </factory>
 
       <factory
@@ -1917,6 +1923,38 @@
        </actionProvider>
 	   <commonWizard
 	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
+	         menuGroupId="org.eclipse.cdt.ui.newProject"
+	         type="new"
+	         wizardId="org.eclipse.cdt.ui.wizards.NewCWizard1">
+				<enablement>
+					<or>
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+			            <adapt type="org.eclipse.core.resources.IProject">
+			               <test
+			                     property="org.eclipse.core.resources.projectNature"
+			                     value="org.eclipse.cdt.core.cnature"/>
+			            </adapt>
+					</or>
+		         </enablement>
+	   </commonWizard>
+	   <commonWizard
+	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
+	         menuGroupId="org.eclipse.cdt.ui.newProject"
+	         type="new"
+	         wizardId="org.eclipse.cdt.ui.wizards.NewCWizard2">
+				<enablement>
+					<or>
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+			            <adapt type="org.eclipse.core.resources.IProject">
+			               <test
+			                     property="org.eclipse.core.resources.projectNature"
+			                     value="org.eclipse.cdt.core.cnature"/>
+			            </adapt>
+					</or>
+		         </enablement>
+	   </commonWizard>
+	   <commonWizard
+	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
 	         menuGroupId="org.eclipse.cdt.ui"
 	         type="new"
 	         wizardId="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
@@ -1987,6 +2025,7 @@
               <instanceof value="org.eclipse.cdt.core.model.ISourceReference"/>
               <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
               <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+              <adapt type="org.eclipse.core.resources.IResource"/>
            </or>
         </possibleDropTargets>
      </dropAssistant>

@@ -161,16 +161,9 @@
         point="org.eclipse.ui.navigator.navigatorContent">
      <commonWizard
            associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
-           menuGroupId="org.eclipse.cdt.ui.newCWizards"
+           menuGroupId="org.eclipse.cdt.ui.newProject"
            type="new"
-           wizardId="org.eclipse.cdt.managedbuilder.ui.wizards.StdCCWizard">
-         <enablement/>
-      </commonWizard>
-     <commonWizard
-           associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
-           menuGroupId="org.eclipse.cdt.ui.newCWizards"
-           type="new"
-           wizardId="org.eclipse.cdt.managedbuilder.ui.wizards.StdCWizard">
+           wizardId="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
          <enablement/>
       </commonWizard>
   </extension>

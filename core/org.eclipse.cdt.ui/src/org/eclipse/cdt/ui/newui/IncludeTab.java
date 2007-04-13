@@ -32,7 +32,8 @@ public class IncludeTab extends AbstractLangsListTab {
 				UIMessages.getString("IncludeTab.1"),  //$NON-NLS-1$
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
-			toAll = dlg.check1;
+			toAllCfgs = dlg.check1;
+			toAllLang = dlg.check3;
 			int flags = 0;
 			if (dlg.check2) { // isWsp
 				flags = ICSettingEntry.VALUE_WORKSPACE_PATH;

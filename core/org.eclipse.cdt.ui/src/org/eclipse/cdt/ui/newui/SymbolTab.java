@@ -37,7 +37,8 @@ public class SymbolTab extends AbstractLangsListTab {
 				usercomp.getShell(), true,
 				UIMessages.getString("SymbolTab.2"), EMPTY_STR, EMPTY_STR, getResDesc()); //$NON-NLS-1$
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
-			toAll = dlg.check1;
+			toAllCfgs = dlg.check1;
+			toAllLang = dlg.check3;
 			return new CMacroEntry(dlg.text1, dlg.text2, 0);
 		} else 
 			return null;

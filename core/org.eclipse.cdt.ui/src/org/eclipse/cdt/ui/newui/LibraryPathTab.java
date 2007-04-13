@@ -48,6 +48,8 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 				UIMessages.getString("LibraryPathTab.1"),  //$NON-NLS-1$ 
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
+			toAllCfgs = dlg.check1;
+			toAllLang = dlg.check3;
 			int flags = 0;
 			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			return new CLibraryPathEntry(dlg.text1, flags);

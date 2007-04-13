@@ -31,7 +31,8 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class IncludeDialog extends AbstractPropertyDialog {
 	public String sdata;
-	public Button b_add2all;
+	private Button b_add2confs;
+	private Button b_add2langs;
 	public Text text;
 	private Button b_work;
 	private Button b_file;
@@ -62,7 +63,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 	}
 
 	protected Control createDialogArea(Composite c) {
-		c.setLayout(new GridLayout(5, true));
+		c.setLayout(new GridLayout(3, true));
 		GridData gd;
 		
 		Label l1 = new Label(c, SWT.NONE);
@@ -71,40 +72,48 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		else
 			l1.setText(UIMessages.getString("IncludeDialog.1")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
-		gd.horizontalSpan = 5;
+		gd.horizontalSpan = 3;
 		l1.setLayoutData(gd);
 		
 		text = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 5;
-		gd.widthHint = 400;
+		gd.horizontalSpan = 3;
+		gd.widthHint = 450;
 		text.setLayoutData(gd);
 		if ((mode & OLD_MASK) == OLD_MASK) { text.setText(sdata); }
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				setButtons();
 			}}); 
-		b_add2all = new Button(c, SWT.CHECK);
-		b_add2all.setText(UIMessages.getString("IncludeDialog.2")); //$NON-NLS-1$
+
+		b_add2confs = new Button(c, SWT.CHECK);
+		b_add2confs.setText(UIMessages.getString("IncludeDialog.2")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 4;
+		gd.horizontalSpan = 2;
 		if ((mode & OLD_MASK) == OLD_MASK) {
 			gd.heightHint = 1;
-			b_add2all.setVisible(false);
+			b_add2confs.setVisible(false);
 		}
-		b_add2all.setLayoutData(gd);
-		
-		b_vars = setupButton(c, AbstractCPropertyTab.VARIABLESBUTTON_NAME);
-		new Label(c, 0).setLayoutData(new GridData()); // placeholder
-		b_ok = setupButton(c, IDialogConstants.OK_LABEL);
-		b_ko = setupButton(c, IDialogConstants.CANCEL_LABEL);
-		b_work = setupButton(c, AbstractCPropertyTab.WORKSPACEBUTTON_NAME);
-		b_file = setupButton(c, AbstractCPropertyTab.FILESYSTEMBUTTON_NAME);
+		b_add2confs.setLayoutData(gd);
 
+		b_vars = setupButton(c, AbstractCPropertyTab.VARIABLESBUTTON_NAME);
+
+		b_add2langs = new Button(c, SWT.CHECK);
+		b_add2langs.setText(UIMessages.getString("IncludeDialog.3")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		if ((mode & OLD_MASK) == OLD_MASK) {
+			gd.heightHint = 1;
+			b_add2langs.setVisible(false);
+		}
+		b_add2langs.setLayoutData(gd);
+
+		b_work = setupButton(c, AbstractCPropertyTab.WORKSPACEBUTTON_NAME);
+		
 		c_wsp = new Button(c, SWT.CHECK);
 		c_wsp.setText(UIMessages.getString("ExpDialog.4")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
-		gd.horizontalSpan = 5;
+		gd.horizontalSpan = 2;
 		c_wsp.setLayoutData(gd);
 		c_wsp.setSelection(isWsp);
 		c_wsp.addSelectionListener(new SelectionAdapter() {
@@ -113,6 +122,12 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			}});
 		
 		c_wsp.setImage(AbstractExportTab.getWspImage(isWsp));
+				
+		b_file = setupButton(c, AbstractCPropertyTab.FILESYSTEMBUTTON_NAME);
+
+		new Label(c, 0).setLayoutData(new GridData()); // placeholder
+		b_ok = setupButton(c, IDialogConstants.OK_LABEL);
+		b_ko = setupButton(c, IDialogConstants.CANCEL_LABEL);
 		
 		c.getShell().setDefaultButton(b_ok);
 		c.pack();
@@ -128,8 +143,9 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		String s;
 		if (e.widget.equals(b_ok)) { 
 			text1 = text.getText();
-			check1 = b_add2all.getSelection();
+			check1 = b_add2confs.getSelection();
 			check2 = c_wsp.getSelection();
+			check3 = b_add2langs.getSelection();
 			result = true;
 			shell.dispose(); 
 		} else if (e.widget.equals(b_ko)) {

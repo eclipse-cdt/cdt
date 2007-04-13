@@ -63,7 +63,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected Tree langTree;
 	protected TreeColumn langCol;
 	protected Button showBIButton;
-	protected boolean toAll = false;
+	protected boolean toAllCfgs = false;
+	protected boolean toAllLang = false;
 	
 //	protected boolean showBI = false;
 //	boolean  savedShowBI  = false;
@@ -332,10 +333,11 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 		switch (i) {
 		case 0: // add
-			toAll = false;
+			toAllCfgs = false;
+			toAllLang = false;
 			ent = doAdd();
 			if (ent != null) {
-				if (toAll) {
+				if (toAllCfgs || toAllLang) {
 					addToAll(ent);
 				} else {
 					incs.add(ent);
@@ -399,13 +401,17 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	 */
 	private void addToAll(ICLanguageSettingEntry ent) {
 		ICConfigurationDescription[] cfgs = page.getCfgsEditable();
+		ICResourceDescription cur_cfg = page.getResDesc();
 		String id = lang.getName(); // getLanguageId() sometimes returns null.
 		for (int i = 0; i < cfgs.length; i++) {
 			ICResourceDescription rcfg = page.getResDesc(cfgs[i]); 
-			if (rcfg == null) continue;
+			if (rcfg == null) 
+				continue;
+			if (!toAllCfgs && !(cur_cfg.equals(rcfg)))
+				continue;
 			ICLanguageSetting [] ls = getLangSetting(rcfg);
 			for (int j = 0; j < ls.length; j++ ) {
-				if (id == ls[j].getName()) {
+				if (id == ls[j].getName() || toAllLang) {
 					List lst = ls[j].getSettingEntriesList(getKind());
 					lst.add(ent);
 					ls[j].setSettingEntries(getKind(), lst);

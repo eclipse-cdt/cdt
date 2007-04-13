@@ -34,6 +34,7 @@ public abstract class AbstractPropertyDialog extends Dialog {
 	public Object data = null;
 	public boolean check1 = false;
 	public boolean check2 = false;
+	public boolean check3 = false;
 	public String text1;
 	public String text2;
 	private Shell parent;

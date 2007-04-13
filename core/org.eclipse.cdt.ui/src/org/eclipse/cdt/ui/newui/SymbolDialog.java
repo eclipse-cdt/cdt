@@ -28,16 +28,17 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
 public class SymbolDialog extends AbstractPropertyDialog {
-	String  data1;
-	String  data2;
-	Button b_add2all;
-	Text txt1;
-	Text txt2;
-	Button b_vars;
-	Button b_ok;
-	Button b_ko;
-	boolean newAction;
-	ICResourceDescription cfgd;
+	private String  data1;
+	private String  data2;
+	private Button b_add2conf;
+	private Button b_add2lang;
+	private Text txt1;
+	private Text txt2;
+	private Button b_vars;
+	private Button b_ok;
+	private Button b_ko;
+	private boolean newAction;
+	private ICResourceDescription cfgd;
 
 	public SymbolDialog(Shell parent, boolean _newAction,
 		String title, String _data1, String _data2,
@@ -83,13 +84,23 @@ public class SymbolDialog extends AbstractPropertyDialog {
 
 		b_vars = setupButton(c, AbstractCPropertyTab.VARIABLESBUTTON_NAME);
 			
-		b_add2all = new Button(c, SWT.CHECK);
-		b_add2all.setText(UIMessages.getString("SymbolDialog.2")); //$NON-NLS-1$
+		b_add2conf = new Button(c, SWT.CHECK);
+		b_add2conf.setText(UIMessages.getString("IncludeDialog.2")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
-		b_add2all.setLayoutData(gd);
+		b_add2conf.setLayoutData(gd);
 		if (!newAction) {
-			b_add2all.setVisible(false);
+			b_add2conf.setVisible(false);
+			txt1.setEnabled(false); // don't change name
+		}
+
+		b_add2lang = new Button(c, SWT.CHECK);
+		b_add2lang.setText(UIMessages.getString("IncludeDialog.3")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 4;
+		b_add2lang.setLayoutData(gd);
+		if (!newAction) {
+			b_add2lang.setVisible(false);
 			txt1.setEnabled(false); // don't change name
 		}
 		
@@ -118,7 +129,8 @@ public class SymbolDialog extends AbstractPropertyDialog {
 		if (e.widget.equals(b_ok)) { 
 			super.text1 = txt1.getText();
 			super.text2 = txt2.getText();
-			check1 = b_add2all.getSelection(); 
+			check1 = b_add2conf.getSelection(); 
+			check3 = b_add2lang.getSelection(); 
 			result = true;
 			shell.dispose(); 
 		} else if (e.widget.equals(b_ko)) {

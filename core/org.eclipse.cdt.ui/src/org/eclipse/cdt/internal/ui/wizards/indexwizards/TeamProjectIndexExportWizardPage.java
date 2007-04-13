@@ -150,6 +150,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
         SelectionAdapter listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 fProjectViewer.setAllChecked(true);
+                updateWidgetEnablements();
             }
         };
         selectButton.addSelectionListener(listener);
@@ -160,6 +161,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
         listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
             	fProjectViewer.setAllChecked(false);
+                updateWidgetEnablements();
             }
         };
         deselectButton.addSelectionListener(listener);

@@ -79,7 +79,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	//	{
 	//      void* v= func1;
 	//	}
-	public void _testBug181735() throws DOMException {
+	public void testBug181735() throws DOMException {
 		IBinding b0 = getBindingFromASTName("func1;", 5);
 		assertTrue(b0 instanceof IFunction);
 	}

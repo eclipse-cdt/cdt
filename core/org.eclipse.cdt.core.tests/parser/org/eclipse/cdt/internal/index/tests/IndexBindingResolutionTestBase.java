@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
@@ -140,11 +141,15 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		assertTrue("Binding is not a ProblemBinding for name "+names[0].getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));
 		return names[0].resolveBinding();
 	}
-
-	protected static void assertQNEquals(String expectedQn, IBinding b12) {
+	
+	protected static void assertQNEquals(String expectedQN, IBinding b) {
 		try {
-			assertTrue(b12 instanceof ICPPBinding);
-			assertEquals(expectedQn, CPPVisitor.renderQualifiedName(((ICPPBinding)b12).getQualifiedName()));
+			assertInstance(b, IBinding.class);
+			if(b instanceof ICPPBinding) {
+				assertEquals(expectedQN, CPPVisitor.renderQualifiedName(((ICPPBinding)b).getQualifiedName()));
+			} else {
+				assertEquals(expectedQN, b.getName());
+			}
 		} catch(DOMException de) {
 			fail(de.getMessage());
 		}
@@ -176,7 +181,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		assertEquals(qn, CPPVisitor.renderQualifiedName(((ICPPClassType)ft.getParameterTypes()[index]).getQualifiedName()));
 	}
 
-	protected void assertInstance(Object o, Class c) {
+	protected static void assertInstance(Object o, Class c) {
 		assertNotNull(o);
 		assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
 	}
@@ -197,6 +202,37 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public StringBuffer[] getTestData();
 		public ICProject getCProject();
 		public boolean isCompositeIndex();
+	}
+	
+	protected static void assertVariable(IBinding b, String qn, Class expType, String expTypeQN) {
+		try {
+			assertInstance(b, IVariable.class);
+			IVariable variable = (IVariable) b;
+			assertQNEquals(qn, variable);
+			assertInstance(variable.getType(), expType);
+			if(expTypeQN!=null) {
+				IType type= variable.getType();
+				assertInstance(type, IBinding.class);
+				assertQNEquals(expTypeQN, (IBinding) type);
+			}
+		} catch(DOMException de) {
+			fail(de.getMessage());
+		}
+	}
+	
+	protected static void assertTypeContainer(IType conType, String expQN, Class containerType, Class expContainedType, String expContainedTypeQN) {
+		try {
+			assertInstance(conType, ITypeContainer.class);
+			assertInstance(conType, containerType);
+			IType containedType= ((ITypeContainer)conType).getType();
+			assertInstance(containedType, expContainedType);
+			if(expContainedTypeQN!=null) {
+				assertInstance(containedType, IBinding.class);
+				assertQNEquals(expContainedTypeQN, (IBinding) containedType);
+			}
+		} catch(DOMException de) {
+			fail(de.getMessage());
+		}
 	}
 
 	class SinglePDOMTestStrategy implements ITestStrategy {

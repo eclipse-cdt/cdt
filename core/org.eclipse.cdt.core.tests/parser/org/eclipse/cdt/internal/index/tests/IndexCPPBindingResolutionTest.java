@@ -1126,27 +1126,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	/* CPP assertion helpers */
 	/* ##################################################################### */
 
-	static protected void assertVariable(
-			IBinding binding,
-			String qn,
-			Class expType,
-			String expTypeQN
-	) {
-		try {
-			assertTrue(binding instanceof ICPPVariable);
-			ICPPVariable variable = (ICPPVariable) binding;
-			assertQNEquals(qn, variable);
-			assertTrue(expType.isInstance(variable.getType()));
-			if(expTypeQN!=null) {
-				assert(variable.getType() instanceof ICPPBinding);
-				ICPPBinding tyBinding = (ICPPBinding) variable.getType();
-				assertQNEquals(expTypeQN, tyBinding);
-			}
-		} catch(DOMException de) {
-			fail(de.getMessage());
-		}
-	}
-
 	static protected void assertField(
 			IBinding binding,
 			String qn,

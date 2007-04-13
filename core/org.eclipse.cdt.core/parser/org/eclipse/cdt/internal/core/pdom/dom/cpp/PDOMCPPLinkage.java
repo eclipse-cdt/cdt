@@ -520,14 +520,6 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		return null;
 	}
 
-	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
-		IBinding binding= name.resolveBinding();
-		if (binding != null) {
-			return adaptBinding(binding);
-		}
-		return null;
-	}
-
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
 		if (type instanceof IProblemBinding) {
 			return null;

@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation 
  * Markus Schorn (Wind River Systems)
  * Bryan Wilkinson (QNX)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
@@ -95,6 +96,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -498,10 +500,13 @@ public class CVisitor {
             binding = null;
         }
         if( binding != null ){
-	        if( binding instanceof CEnumeration )
-	            ((CEnumeration)binding).addDefinition( name );
-	        else
-	            return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
+        	if(binding instanceof IEnumeration && (binding instanceof IIndexBinding || binding instanceof CEnumeration) ) {
+            	if( binding instanceof CEnumeration ) {
+            	    ((CEnumeration)binding).addDefinition( name );
+            	}
+        	} else {
+        		return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );	
+        	}
 	    } else {
 	        binding = new CEnumeration( name );
 	        try {
@@ -1243,7 +1248,8 @@ public class CVisitor {
                 }
 			    if( binding != null )
 			        return binding;
-			} else if (!prefix && scope != null  && scope.getParent() == null && scope.getBinding( name, false ) != null) {
+			} else if (!prefix && scope != null  && scope.getParent() == null
+					&& scope.getBinding( name, false ) != null) {
 				binding = scope.getBinding( name, false );
 				return binding;
 			} else {
@@ -1351,17 +1357,6 @@ public class CVisitor {
 		    return ArrayUtil.trim( IBinding.class, result );
 		}
 		if( blockItem != null) {
-			// We're at the end of our rope, check the PDOM if we can
-			IASTTranslationUnit tu = (IASTTranslationUnit)blockItem;
-			IIndex index = tu.getIndex();
-			if (index != null) {
-				try {
-					binding = index.findBinding(name);
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
-			}
-			
 			if (binding == null)
 				return externalBinding( (IASTTranslationUnit) blockItem, name );
 			else

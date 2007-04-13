@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 /*
@@ -16,27 +17,38 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author aniefer
@@ -175,8 +187,22 @@ public class CScope implements ICScope, IASTInternalScope {
         int type = getNamespaceType( name );
         Object o = bindings[type].get( name.toCharArray() );
         
-        if( o == null ) 
-            return null;
+        if( o == null ) {
+        	IBinding result= null;
+        	if(physicalNode instanceof IASTTranslationUnit) {
+        		IIndex index= ((IASTTranslationUnit)physicalNode).getIndex();
+        		if(index!=null) {
+        			try {
+        				IBinding[] bindings= index.findBindings(name.toCharArray(), getIndexFilter(type), new NullProgressMonitor());
+        				result= processIndexResults(name, bindings);
+        			} catch(CoreException ce) {
+        				CCorePlugin.log(ce);
+        			}
+        		}
+        	}
+        	return result;
+        }
+            
         
         if( o instanceof IBinding )
             return (IBinding) o;
@@ -187,6 +213,74 @@ public class CScope implements ICScope, IASTInternalScope {
         return null;
     }
 
+    /**
+     * Index results from global scope, differ from ast results from translation unit scope. This routine
+     * is intended to fix results from the index to be consistent with ast scope behaviour.
+     * @param name the name as it occurs in the ast
+     * @param bindings the set of candidate bindings
+     * @return the appropriate binding, or null if no binding is appropriate for the ast name
+     */
+    private IBinding processIndexResults(IASTName name, IBinding[] bindings) {
+    	if(bindings.length!=1)
+    		return null;
+
+    	IBinding candidate= bindings[0];
+    	if(candidate instanceof IFunction) {
+    		IASTNode parent= name.getParent();
+    		if(parent instanceof IASTFunctionDeclarator) {
+    			IASTNode parent2= parent.getParent();
+    			if(parent2 instanceof IASTFunctionDefinition) {
+    				IASTFunctionDefinition def= (IASTFunctionDefinition) parent2;
+    				if(def.getDeclSpecifier().getStorageClass()==IASTDeclSpecifier.sc_static) {
+    					try {
+    						if(!((IFunction)candidate).isStatic()) {
+    							return null;
+    						}
+    					} catch(DOMException de) {
+    						CCorePlugin.log(de);
+    					}
+    				}
+    			}
+    		}
+    	}
+
+    	return candidate;
+    }
+    
+
+    /**
+     * Returns a C-linkage filter suitable for searching the index for the types of bindings
+     * specified
+     * @param type the types of bindings to search for. One of {@link CScope#NAMESPACE_TYPE_TAG}
+     * or {@link CScope#NAMESPACE_TYPE_OTHER}, otherwise the C-linkage will not be filtered
+     * @return a C-linkage filter suitable for searching the index for the types of bindings
+     * specified
+     */
+    private IndexFilter getIndexFilter(final int type) {
+    	switch(type) {
+    		case NAMESPACE_TYPE_TAG:
+    		return new IndexFilter() {
+    			public boolean acceptBinding(IBinding binding) {
+    				return binding instanceof ICompositeType || binding instanceof IEnumeration;
+    			}
+    			public boolean acceptLinkage(ILinkage linkage) {
+    				return linkage.getID().equals(ILinkage.C_LINKAGE_ID);
+    			}
+    		};
+    		case NAMESPACE_TYPE_OTHER:
+    			return new IndexFilter() {
+        			public boolean acceptBinding(IBinding binding) {
+        				return !(binding instanceof ICompositeType || binding instanceof IEnumeration);
+        			}
+        			public boolean acceptLinkage(ILinkage linkage) {
+        				return linkage.getID().equals(ILinkage.C_LINKAGE_ID);
+        			}
+        		};
+        	default:
+        		return IndexFilter.getFilter(ILinkage.C_LINKAGE_ID);
+    	}
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICScope#setFullyCached(boolean)
      */

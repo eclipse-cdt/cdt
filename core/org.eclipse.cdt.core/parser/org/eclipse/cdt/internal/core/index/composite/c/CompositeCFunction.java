@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -27,7 +28,10 @@ class CompositeCFunction extends CompositeCBinding implements IIndexBinding, IFu
 		super(cf, rbinding);
 	}
 
-	public IScope getFunctionScope() throws DOMException {fail(); return null;}
+	public IScope getFunctionScope() throws DOMException {
+		IScope scope= ((IFunction)rbinding).getFunctionScope();
+		return cf.getCompositeScope((IIndexScope)scope);
+	}
 	
 	public IParameter[] getParameters() throws DOMException {
 		IParameter[] preResult = ((IFunction)rbinding).getParameters();

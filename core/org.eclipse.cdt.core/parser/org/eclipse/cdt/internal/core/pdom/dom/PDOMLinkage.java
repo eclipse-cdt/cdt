@@ -178,7 +178,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	
-	public abstract PDOMBinding resolveBinding(IASTName name) throws CoreException;
+	public final PDOMBinding resolveBinding(IASTName name) throws CoreException {
+		IBinding binding= name.resolveBinding();
+		if (binding != null) {
+			return adaptBinding(binding);
+		}
+		return null;
+	}
 	
 	/**
 	 * 

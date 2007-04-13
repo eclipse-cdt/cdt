@@ -125,7 +125,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 				return PDOMCFunction.this.getReturnType();
 			}
 			public boolean isSameType(IType type) {
-				return PDOMCFunction.this.isSameType(type);
+				fail(); return false;
 			}
 		};
 	}
@@ -200,7 +200,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		return null;
 	}
 	
-	public IScope getFunctionScope() throws DOMException {fail(); return null;}
-	public boolean isSameType(IType type) {fail(); return false;}
-	public Object clone() {fail(); return null;}
+	public IScope getFunctionScope() throws DOMException {
+		return null;
+	}
 }

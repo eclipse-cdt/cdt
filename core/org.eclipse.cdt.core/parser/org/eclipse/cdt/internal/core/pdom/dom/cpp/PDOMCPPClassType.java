@@ -405,19 +405,6 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	public IField findField(String name) throws DOMException {fail();return null;}
 	public IBinding[] getFriends() throws DOMException {fail();return null;}
 
-	public IScope getParent() throws DOMException {
-		try {
-			IBinding parent = getParentBinding();
-			if(parent instanceof IScope) {
-				return (IScope) parent;
-			}
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
-		}
-
-		return null;
-	}
-
 	public boolean mayHaveChildren() {
 		return true;
 	}

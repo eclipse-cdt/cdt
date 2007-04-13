@@ -15,11 +15,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -31,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -213,26 +208,6 @@ class PDOMCLinkage extends PDOMLinkage {
 		}
 
 		return super.getNode(record);
-	}
-
-	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
-		int[] constants;
-		IASTNode parent = name.getParent();
-		if (parent instanceof IASTIdExpression) {			// reference
-			IASTNode eParent = parent.getParent();
-			if (eParent instanceof IASTFunctionCallExpression) {
-				constants = new int[] {CFUNCTION};
-			} else {
-				constants = new int[] {CVARIABLE, CENUMERATOR};
-			}
-		} else if (parent instanceof ICASTElaboratedTypeSpecifier) {
-			constants = new int[] {CSTRUCTURE};
-		} else if (parent instanceof IASTNamedTypeSpecifier){
-			constants= new int [] {CSTRUCTURE, CENUMERATION, CTYPEDEF};
-		} else {
-			return null;
-		}
-		return FindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), constants);
 	}
 
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {

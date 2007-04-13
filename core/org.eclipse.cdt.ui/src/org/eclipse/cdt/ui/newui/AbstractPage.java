@@ -561,8 +561,11 @@ implements
 		if (pages.size() > 1) return; // do not duplicate
 		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSAVE)) return;
 		
+		if (internalElement == null && !checkElement()) 
+			return; // not initialized. Do not process
 		IProject prj = getProject();
-		if (prj == null) return; // preferences. Do not process. 
+		if (prj == null) 
+			return;	// preferences. Do not process. 
 		QualifiedName WIDTH  = new QualifiedName(prj.getName(),".property.page.width"); //$NON-NLS-1$
 		QualifiedName HEIGHT = new QualifiedName(prj.getName(),".property.page.height"); //$NON-NLS-1$
 		QualifiedName XKEY = new QualifiedName(prj.getName(),".property.page.x"); //$NON-NLS-1$

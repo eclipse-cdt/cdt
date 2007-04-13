@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 public class STDWizardHandler extends MBSWizardHandler {
 
 	public STDWizardHandler(String _name, Image _image, Composite p, IWizard w) {
-		super(_name, null, _image, p, null, w);
+		super(_name, null, _image, p, w);
 	}
 
 	public void addTc(IToolChain tc) {

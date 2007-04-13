@@ -44,7 +44,7 @@ public class CNewWizard extends AbstractCWizard {
 		for (int i=0; i<vs.length; i++) {
 			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(ICWizardHandler.ARTIFACT, vs[i].getId());
 			if (tcs == null || tcs.length == 0) continue;
-			MBSWizardHandler h = new MBSWizardHandler(vs[i], IMG1, parent, listener, wizard);
+			MBSWizardHandler h = new MBSWizardHandler(vs[i], IMG1, parent, wizard);
 			for (int j=0; j<tcs.length; j++) {
 				if (!supportedOnly || isValid(tcs[j])) h.addTc(tcs[j]);
 			}
@@ -70,7 +70,7 @@ public class CNewWizard extends AbstractCWizard {
 			if (supportedOnly && !pt.isSupported()) continue; // not supported
 			String nattr = pt.getNameAttribute(); 
 			if (nattr == null || nattr.length() == 0) continue; // new proj style 
-			MBSWizardHandler h = new MBSWizardHandler(pt.getName(), pt, IMG2, parent, listener, wizard);
+			MBSWizardHandler h = new MBSWizardHandler(pt.getName(), pt, IMG2, parent, wizard);
 			IConfiguration[] cfgs = pt.getConfigurations();
 			if (cfgs == null || cfgs.length == 0) continue;
 			IToolChain tc = null;

@@ -76,17 +76,19 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 	private IToolChain[] savedToolChains = null;
 	private IWizard wizard;
 	
-	public MBSWizardHandler(String _name, IProjectType _pt, Image _image, Composite p, IWizardItemsListListener _listener, IWizard w) {
+	public MBSWizardHandler(String _name, IProjectType _pt, Image _image, Composite p, IWizard w) {
 		super(p, Messages.getString("CWizardHandler.0"), _name, _image); //$NON-NLS-1$
 		pt = _pt;
-		listener = _listener;
+		if (w.getStartingPage() instanceof IWizardItemsListListener)
+			listener = (IWizardItemsListListener)w.getStartingPage();
 		wizard = w;
 	}
 
-	public MBSWizardHandler(IBuildPropertyValue val, Image _image, Composite p, IWizardItemsListListener _listener, IWizard w) {
+	public MBSWizardHandler(IBuildPropertyValue val, Image _image, Composite p, IWizard w) {
 		super(p, Messages.getString("CWizardHandler.0"), val.getName(), _image); //$NON-NLS-1$
 		propertyId = val.getId();
-		listener = _listener;
+		if (w.getStartingPage() instanceof IWizardItemsListListener)
+			listener = (IWizardItemsListListener)w.getStartingPage();
 		wizard = w;
 	}
 	
@@ -200,7 +202,8 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		coreModel.setProjectDescription(project, des);
 		
 		// process custom pages
-		doCustom();
+		if (fConfigPage != null && fConfigPage.pagesLoaded)
+			doCustom();
 	}
 
 	public IWizardPage getSpecificPage() {
@@ -305,7 +308,9 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 	
 	private void deleteExtraConfigs(IProject newProject) {
 		if (isChanged()) return; // no need to delete 
-		if (listener.isCurrent()) return; // nothing to delete
+		if (listener != null && listener.isCurrent()) return; // nothing to delete
+		if (fConfigPage == null || !fConfigPage.pagesLoaded) return;
+		
 		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(newProject, true);
 		if (prjd == null) return;
 		ICConfigurationDescription[] all = prjd.getConfigurations();

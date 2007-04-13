@@ -1661,7 +1661,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
 		 */
 		public RGB getDefaultTextColor() {
-			return new RGB(180, 0, 180);
+			return new RGB(128, 40, 100);
 		}
 		
 		/*

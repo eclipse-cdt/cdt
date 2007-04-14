@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -29,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMQualifierType extends PDOMNode implements IQualifierType,
+public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQualifierType,
 		ITypeContainer, IIndexType {
 
 	private static final int FLAGS = PDOMNode.RECORD_SIZE;
@@ -39,6 +40,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 	
 	private static final int CONST = 0x1;
 	private static final int VOLATILE = 0x2;
+	private static final int RESTRICT = 0x4;
 
 	public PDOMQualifierType(PDOM pdom, int record) {
 		super(pdom, record);
@@ -65,6 +67,8 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 				flags |= CONST;
 			if (type.isVolatile())
 				flags |= VOLATILE;
+			if (type instanceof ICQualifierType && ((ICQualifierType)type).isRestrict())
+				flags |= RESTRICT;
 			db.putByte(record + FLAGS, flags);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
@@ -111,6 +115,15 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 			return false;
 		}
 	}
+	
+	public boolean isRestrict() {
+		try {
+			return (getFlags() & RESTRICT) != 0;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
+	}
 
 	public boolean isSameType(IType type) {
 	    if( type instanceof ITypedef )
@@ -120,7 +133,10 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 	    
 	    IQualifierType pt = (IQualifierType) type;
 	    try {
-			if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() ) {
+	    	boolean flagsMatch= isConst() == pt.isConst() && isVolatile() == pt.isVolatile();
+	    	if(flagsMatch && (type instanceof ICQualifierType))
+	    		flagsMatch &= isRestrict() == ((ICQualifierType)type).isRestrict();
+			if(flagsMatch) {
 				IType myType= getType();
 			    return myType != null && myType.isSameType( pt.getType() );
 			}

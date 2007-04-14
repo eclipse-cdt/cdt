@@ -36,7 +36,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	// enum E1 {e1, e2};
 	// typedef enum E2 {e3, e4} TE2;
 	// enum E3 {e5, e6};
-	// typedef E3 TE3;
+	// typedef enum E3 TE3;
 	public void testEnumC() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enum.c", content);
@@ -73,7 +73,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	// enum E1 {e1, e2};
 	// typedef enum E2 {e3, e4} TE2;
 	// enum E3 {e5, e6};
-	// typedef E3 TE3;
+	// typedef enum E3 TE3;
 	public void testEnumCFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enummem.c", content);

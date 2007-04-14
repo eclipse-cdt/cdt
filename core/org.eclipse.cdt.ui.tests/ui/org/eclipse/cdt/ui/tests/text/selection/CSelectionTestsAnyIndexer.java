@@ -162,16 +162,16 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 	// };
 	// enum E {up, down}; 			// defines 
 	// int f(int);  				// declares 
-	// extern X anotherX; 			// declares 
+	// extern struct X anotherX; 	// declares 
 	
 	// #include "testCPPSpecDeclsDefs.h"
 	// int a; 						// defines 
-	// X anX; 						// defines 
+	// struct X anX; 				// defines 
 	// extern const int c; 			// declares
 	// int f(int x) {return x+a;}   // defines
 	// struct S; 					// declares
 	// typedef int Int; 			// declares 
-	// S s;
+	// struct S s;
 	// Int lhs= s.a+s.b+up+down+anX+0;			
 	public void testCPPSpecDeclsDefs() throws Exception {
         StringBuffer[] buffers= getContents(2);

@@ -147,6 +147,10 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 		return r;
 	}
 	
+	void setDirty(boolean dirty){
+		fIsDirty = dirty;
+	}
+
 	public void updateConfiguration(ICConfigurationDescription des) throws CoreException{
 		fCfgDes = des;
 		fProject = fCfgDes.getProjectDescription().getProject();

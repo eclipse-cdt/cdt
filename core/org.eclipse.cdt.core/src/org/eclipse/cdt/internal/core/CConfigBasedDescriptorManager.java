@@ -382,9 +382,10 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 						//the descriptor was requested while load process
 						des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(des.getProject(), true);
 						ICConfigurationDescription cfgDescription = des.getIndexConfiguration();
-						if(cfgDescription != null)
+						if(cfgDescription != null){
 							dr.updateConfiguration((CConfigurationDescription)cfgDescription);
-						else
+							dr.setDirty(false);
+						} else
 							setLoaddedDescriptor(des, null);
 					}
 				}
@@ -454,6 +455,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 					CProjectDescription writableDes = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(event.getProject(), true);
 					ICConfigurationDescription indexCfg = writableDes.getIndexConfiguration();
 					dr.updateConfiguration((CConfigurationDescription)indexCfg);
+					dr.setDirty(false);
 				}
 				if(desEvent != null){
 					notifyListeners(desEvent);

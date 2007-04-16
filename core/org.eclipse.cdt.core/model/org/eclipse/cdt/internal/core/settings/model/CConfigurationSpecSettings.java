@@ -643,6 +643,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		if(extRef == null){
 			extRef = createRef(extensionPoint, extension);
 			checkReconsile(extensionPoint, false);
+			fIsModified = true;
 		}
 		return extRef;
 	}

@@ -13,25 +13,26 @@
 
 <h1>Common page, Run or Debug dialog box</h1>
 
-<p>The Main page of the Run dialog box and the Debug dialog box lets you specify 
-the location in which to store your run configuration and how you access it and what 
-perspective to open when running an application.</p>
+<p>The Main page of the Run and Debug dialog boxes lets you specify 
+the location in which to store your run configuration and how you access it, how standard input and output is handled, and if background launches are enabled or not.</p>
+
+<img src="../images/run_debug_common.png" />
+<p />
 <dl>
-  <dt>Local</dt>
-  <dd>Saves the launch configuration locally.</dd>
-  <dt>Shared</dt>
-  <dd>Saves the launch configuration to a project in your workspace, 
-  and be able to commit it to CVS.</dd>
-  <dt>Location of shared configuration</dt>
-  <dd>Specifies the location of a launch configuration.</dd>
-  <dt>Run mode</dt>
-  <dd>Selects a perspective to switch to when you run an application.</dd>
-  <dt>Debug mode</dt>
-  <dd>Selects a perspective to switch to when you debug an application.</dd>
-  <dt>Run</dt>
-  <dd>Displays &quot;Run&quot; in favorites menu.</dd>
-  <dt>Debug</dt>
-  <dd>Displays in &quot;Debug&quot; favorites menu.</dd>
+<table width="580" border="1" cellpadding="2" cellspacing="0" >
+<tr bgcolor="#CCC"><th>Component</th><th>Description</th></tr>
+<tr><td width="30%"><dt>Local file</dt></td><td>Saves the launch configuration locally.</td></tr>
+<tr><td><dt>Shared file</dt></td><td>Specifies the path of, or browse to, a workspace to store the launch configuration file, and be able to commit it to CVS.</td></tr>
+<tr><td><dt>Display in favorites menu</dt></td><td>Add configuration name to Run or Debug menus for easy selection.</td></p></tr>
+<tr><td><dt>Console Encoding</dt></td><td>Specify encoding scheme to use for console output.</td></tr>
+<tr><td><dt>Allocate Console (necessary for input)</dt></td><td>Check to assign a console view to receive the output.</td></tr>
+<tr><td><dt>File</dt></td><td>Specify file name to save output.</td></tr>
+<tr><td><dt>Browse Workspace...</dt></td><td>Specifies the path of, or browse to, a workspace to store the output file.</td></tr>
+<tr><td><dt>Browse File System...</dt></td><td>Specifies the path of, or browse to, a file system directory to store the output file.</td></tr>
+<tr><td><dt>Variables...</dt></td><td>Select variables by name to include in the output file.</td></tr>
+<tr><td><dt>Append</dt></td><td>Check to append output. Uncheck to recreate file each time.</td></tr>
+<tr><td><dt>Launch in background</dt></td><td>Check to launch configuration in background mode.</td></tr>
+</table>
 </dl>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">

@@ -2338,10 +2338,12 @@ abstract class BaseScanner implements IScanner {
         Arrays.fill(result, ' ');
         int resultCount = 0;
         boolean insideString= false;
-        boolean backslash= false;
+        boolean insideSingleQuote= false;
+        boolean escaped= false;
         // either a single-line or multi-line comment was found
         for (int i = 0; i < text.length; ++i) {
-            if (!insideString && (text[i] == '/' && (i + 1 < text.length) && (text[i + 1] == '*' || text[i + 1] == '/'))) {
+            if (!insideString && !insideSingleQuote && (text[i] == '/' 
+            		&& (i + 1 < text.length) && (text[i + 1] == '*' || text[i + 1] == '/'))) {
             	if (text[i + 1] == '/') {
             		// done
             		break;
@@ -2353,13 +2355,20 @@ abstract class BaseScanner implements IScanner {
             	}
                 ++i;
             } else {
-            	if (insideString && !backslash && text[i] == '\\') {
-            		backslash= true;
-            	} else {
-            		backslash= false;
-            	}
-            	if (!backslash && text[i] == '"') {
-            		insideString= !insideString;
+            	switch (text[i]) {
+                case '\\':
+                    escaped = !escaped;
+                    break;
+                case '"':
+                	if (!insideSingleQuote && !escaped) {
+                		insideString= !insideString;
+                	}
+                	break;
+                case '\'':
+                	if (!insideString && !escaped) {
+                		insideSingleQuote= !insideSingleQuote;
+                	}
+                	break;
             	}
                 result[resultCount++] = text[i];
             }
@@ -3003,11 +3012,12 @@ abstract class BaseScanner implements IScanner {
         
         boolean escaped = false;
         boolean insideString= false;
+        boolean insideSingleQuote= false;
         while (++pos < limit) {
         	char ch= buffer[pos];
             switch (ch) {
             case '/':
-            	if (insideComment || insideString) {
+            	if (insideComment || insideString || insideSingleQuote) {
             		break;
             	}
                 if (pos + 1 < limit) {
@@ -3032,10 +3042,15 @@ abstract class BaseScanner implements IScanner {
                 escaped = !escaped;
                 continue;
             case '"':
-            	if (!insideComment && !escaped) {
+            	if (!insideComment && !insideSingleQuote && !escaped) {
             		insideString= !insideString;
             	}
-            	break;
+            	continue;
+            case '\'':
+            	if (!insideComment && !insideString && !escaped) {
+            		insideSingleQuote= !insideSingleQuote;
+            	}
+            	continue;
             case '\n':
                 if (escaped) {
                     break;

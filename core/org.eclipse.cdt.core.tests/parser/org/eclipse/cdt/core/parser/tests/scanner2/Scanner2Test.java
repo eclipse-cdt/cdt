@@ -2504,16 +2504,74 @@ public class Scanner2Test extends BaseScanner2Test
        validateIdentifier("a");
    }
    
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=180172
+   public void testBug180172() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       String value= "\"https://bugs.eclipse.org/bugs/show_bug.cgi?id=180172\"";
+       buffer.append("#define bug180172 ").append(value).append(" // bla \n");
+       initializeScanner(buffer.toString());
+       fullyTokenize();
+       validateDefinition("bug180172", value);
+   }
+
    // https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
-   public void testBug182180() throws Exception {
+   public void testBug182180_1() throws Exception {
        StringBuffer buffer = new StringBuffer();
        buffer
         .append("#ifdef _bug_182180_\n")
-       	.append("    printf(\"Hello World /*.ap\\n\");\n")
+       	.append("printf(\"Hello World /*.ap\\n\");\n")
        	.append("#endif\n")
        	.append("bug182180\n");
        initializeScanner(buffer.toString());
        validateIdentifier("bug182180");
    }
-   
+
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+   public void testBug182180_2() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer
+        .append("#ifdef _bug_182180_\n")
+       	.append("char c='\"'; printf(\"Hello World /*.ap\\n\");\n")
+       	.append("#endif\n")
+       	.append("bug182180\n");
+       initializeScanner(buffer.toString());
+       validateIdentifier("bug182180");
+   }
+
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+   public void testBug182180_3() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer
+        .append("#ifdef _bug_182180_\n")
+       	.append("char c1='\\'',c2='\\\"'; printf(\"Hello World /*.ap\\n\");\n")
+       	.append("#endif\n")
+       	.append("bug182180\n");
+       initializeScanner(buffer.toString());
+       validateIdentifier("bug182180");
+   }
+
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+   public void testBug182180_4() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer
+        .append("#ifdef _bug_182180_\n")
+       	.append("printf(\"Hello '\"'World /*.ap\\n\");\n")
+       	.append("#endif\n")
+       	.append("bug182180\n");
+       initializeScanner(buffer.toString());
+       validateIdentifier("bug182180");
+   }
+
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+   public void testBug182180_5() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer
+        .append("#ifdef _bug_182180_\n")
+       	.append("printf(\"Hello \\\"World /*.ap\\n\");\n")
+       	.append("#endif\n")
+       	.append("bug182180\n");
+       initializeScanner(buffer.toString());
+       validateIdentifier("bug182180");
+   }
+
 }

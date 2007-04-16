@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,14 +157,23 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
-		return dtor.getName().toString();
+		return getASTName().toString();
 	}
+	
 	public char[] getNameCharArray(){
-	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
-	    return dtor.getName().toCharArray();
+		return getASTName().toCharArray();
 	}
 
+	private IASTName getASTName() {
+		IASTDeclarator dtor = ( definition != null ) ? definition : declarators[0];
+	    IASTDeclarator nested= dtor.getNestedDeclarator();
+	    while (nested != null && nested.getPointerOperators().length == 0) {
+	    	dtor= nested;
+	    	nested= nested.getNestedDeclarator();
+	    }
+	    return dtor.getName();
+	}
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */

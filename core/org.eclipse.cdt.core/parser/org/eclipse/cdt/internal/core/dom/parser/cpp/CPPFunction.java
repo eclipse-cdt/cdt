@@ -155,11 +155,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 			else
 				declarations = new ICPPASTFunctionDeclarator [] { declarator };
 	    
-		    IASTName name = declarator.getName();
-		    if( name instanceof ICPPASTQualifiedName ){
-		        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-		        name = ns[ ns.length - 1 ];
-		    }
+		    IASTName name= getASTName();
 		    name.setBinding( this );
 	    }
 	}
@@ -283,35 +279,37 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-	    IASTName name = (definition != null ) ? definition.getName() : declarations[0].getName();
-	    if( name instanceof ICPPASTQualifiedName ){
-	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-	        name = ns[ ns.length - 1 ];
-	    }
-		return name.toString();
+	    return getASTName().toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-	    IASTName name = (definition != null ) ? definition.getName() : declarations[0].getName();
+		return getASTName().toCharArray();
+	}
+	
+	private IASTName getASTName() {
+		IASTDeclarator dtor = ( definition != null ) ? definition : declarations[0];
+	    IASTDeclarator nested= dtor.getNestedDeclarator();
+	    while (nested != null) {
+	    	dtor= nested;
+	    	nested= nested.getNestedDeclarator();
+	    }
+	    IASTName name= dtor.getName();
 	    if( name instanceof ICPPASTQualifiedName ){
 	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
 	        name = ns[ ns.length - 1 ];
 	    }
-		return name.toCharArray();	
+	    return name;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-	    IASTName n = definition != null ? definition.getName() : declarations[0].getName();
-	    if( n instanceof ICPPASTQualifiedName ){
-	    	IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
-	    	n = ns[ ns.length - 1 ];
-	    }
+	    IASTName n= getASTName();
 	    IScope scope = CPPVisitor.getContainingScope( n );
 	    if( scope instanceof ICPPClassScope ){
 	    	ICPPASTDeclSpecifier declSpec = null;
@@ -497,7 +495,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	static public boolean hasStorageClass( ICPPInternalFunction function, int storage ){
 	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) function.getDefinition();
-	    IASTNode[] ds = (IASTNode[]) function.getDeclarations();
+	    IASTNode[] ds = function.getDeclarations();
 
         int i = -1;
         do{

@@ -3603,6 +3603,7 @@ public class AST2Tests extends AST2BaseTest {
     		IBinding binding= idExpr.getName().resolveBinding();
     		assertTrue(lang.toString(),  binding instanceof IFunction);
     		assertFalse(lang.toString(), binding instanceof IProblemBinding);
+    		assertEquals(binding.getName(), "decl");
     	}
     }
 

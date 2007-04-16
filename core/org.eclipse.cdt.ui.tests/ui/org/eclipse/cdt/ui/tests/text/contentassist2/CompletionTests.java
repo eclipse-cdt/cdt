@@ -650,7 +650,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	}
 	
 	//void gfunc(){C3 c3; c3.t/*cursor*/
-	public void _testTemplateMethod() throws Exception {
+	public void testTemplateMethod() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172436
 		final String[] expected= {
 				"tConvert(void)"

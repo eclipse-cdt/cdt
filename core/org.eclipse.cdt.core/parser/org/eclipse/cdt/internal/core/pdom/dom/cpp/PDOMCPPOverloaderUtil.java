@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Bryan Wilkinson
  */
-public class PDOMCPPOverloaderUtil {
+class PDOMCPPOverloaderUtil {
 	
 	/**
 	 * Returns the signature for the binding.  Returns an empty string if a

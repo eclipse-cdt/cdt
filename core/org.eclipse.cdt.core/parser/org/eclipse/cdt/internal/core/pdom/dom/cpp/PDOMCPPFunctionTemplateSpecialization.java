@@ -10,33 +10,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunctionInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
-import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -44,61 +35,38 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  * 
  */
-class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
-		ICPPFunctionTemplate, ICPPInternalTemplateInstantiator,
-		IPDOMMemberOwner, ICPPTemplateScope, IIndexScope {
+class PDOMCPPFunctionTemplateSpecialization extends
+		PDOMCPPFunctionSpecialization implements ICPPFunctionTemplate,
+		ICPPInternalTemplateInstantiator, IPDOMMemberOwner {
 
-	private static final int TEMPLATE_PARAMS = PDOMCPPFunction.RECORD_SIZE + 0;
-	private static final int INSTANCES = PDOMCPPFunction.RECORD_SIZE + 4;
-	private static final int SPECIALIZATIONS = PDOMCPPFunction.RECORD_SIZE + 8;
+	private static final int INSTANCES = PDOMCPPFunctionSpecialization.RECORD_SIZE + 0;
+	private static final int SPECIALIZATIONS = PDOMCPPFunctionSpecialization.RECORD_SIZE + 4;
 	
 	/**
-	 * The size in bytes of a PDOMCPPFunctionTemplate record in the database.
+	 * The size in bytes of a PDOMCPPFunctionTemplateSpecialization record in the database.
 	 */
-	protected static final int RECORD_SIZE = PDOMCPPFunction.RECORD_SIZE + 12;
+	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 8;
 	
-	public PDOMCPPFunctionTemplate(PDOM pdom, PDOMNode parent,
-			ICPPFunctionTemplate template) throws CoreException {
-		super(pdom, parent, (ICPPFunction) template, false);
+	public PDOMCPPFunctionTemplateSpecialization(PDOM pdom, PDOMNode parent, ICPPFunctionTemplate template, PDOMBinding specialized)
+			throws CoreException {
+		super(pdom, parent, (ICPPFunction) template, specialized);
 	}
 
-	public PDOMCPPFunctionTemplate(PDOM pdom, int bindingRecord) {
+	public PDOMCPPFunctionTemplateSpecialization(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
 	}
-
+	
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_FUNCTION_TEMPLATE;
-	}
-
-	private static class TemplateParameterCollector implements IPDOMVisitor {
-		private List params = new ArrayList();
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof ICPPTemplateParameter)
-				params.add(node);
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public ICPPTemplateParameter[] getTemplateParameters() {
-			return (ICPPTemplateParameter[])params.toArray(new ICPPTemplateParameter[params.size()]);
-		}
+		return PDOMCPPLinkage.CPP_FUNCTION_TEMPLATE_SPECIALIZATION;
 	}
 	
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		try {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			TemplateParameterCollector visitor = new TemplateParameterCollector();
-			list.accept(visitor);
-			
-			return visitor.getTemplateParameters();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new ICPPTemplateParameter[0];
-		}
+		ICPPFunctionTemplate template = (ICPPFunctionTemplate) getSpecializedBinding();
+		return template.getTemplateParameters();
 	}
 
 	public ICPPSpecialization deferredInstance(IType[] arguments) {
@@ -153,7 +121,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 	}
 
 	public IBinding instantiate(IType[] arguments) {
-		return CPPTemplates.instantiateTemplate(this, arguments, null);
+		return CPPTemplates.instantiateTemplate(this, arguments, getArgumentMap());
 	}
 
 	public void addChild(PDOMNode child) throws CoreException {
@@ -161,10 +129,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 	}
 
 	public void addMember(PDOMNode member) throws CoreException {
-		if (member instanceof ICPPTemplateParameter) {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			list.addMember(member);
-		} else if (member instanceof ICPPTemplateInstance) {
+		if (member instanceof ICPPTemplateInstance) {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + INSTANCES, getLinkageImpl());
 			list.addMember(member);
 		} else if (member instanceof ICPPSpecialization) {
@@ -172,52 +137,10 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 			list.addMember(member);
 		}
 	}
-
+	
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + INSTANCES, getLinkageImpl());
 		list.accept(visitor);
-		list = new PDOMNodeLinkedList(pdom, record + INSTANCES, getLinkageImpl());
-		list.accept(visitor);
-	}
-
-	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException {
-		return this;
-	}
-
-	public IBinding[] find(String name) throws DOMException {
-		return find(name, false);
-	}
-
-	public IBinding[] find(String name, boolean prefixLookup)
-			throws DOMException {
-		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			list.accept(visitor);
-			
-			return visitor.getBindings();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
-	}
-
-	public IBinding getBinding(IASTName name, boolean resolve)
-			throws DOMException {
-		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray());
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			list.accept(visitor);
-			
-			return CPPSemantics.resolveAmbiguities(name, visitor.getBindings());
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
-	}
-
-	public IIndexBinding getScopeBinding() {
-		return this;
 	}
 }

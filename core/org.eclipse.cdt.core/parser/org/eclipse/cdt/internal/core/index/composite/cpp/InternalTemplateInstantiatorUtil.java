@@ -22,7 +22,12 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 public class InternalTemplateInstantiatorUtil {
 	public static ICPPSpecialization deferredInstance(IType[] arguments, ICompositesFactory cf, IIndexBinding rbinding) {
 		ICPPSpecialization spec= ((ICPPInternalTemplateInstantiator)rbinding).deferredInstance(arguments);
-		return (ICPPSpecialization) cf.getCompositeBinding((IIndexFragmentBinding)spec);
+		if (spec instanceof IIndexFragmentBinding) {
+			return (ICPPSpecialization) cf.getCompositeBinding((IIndexFragmentBinding)spec);
+		} else {
+			//can result in a non-index binding
+			return spec;
+		}
 	}
 
 	public static ICPPSpecialization getInstance(IType[] arguments, ICompositesFactory cf, IIndexBinding rbinding) {
@@ -35,7 +40,7 @@ public class InternalTemplateInstantiatorUtil {
 		if (ins instanceof IIndexFragmentBinding) {
 			return (IBinding) cf.getCompositeBinding((IIndexFragmentBinding)ins);
 		} else {
-			//instantiation of an index template can result in a non-index binding
+			//can result in a non-index binding
 			return ins;
 		}
 	}

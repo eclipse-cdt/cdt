@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -36,7 +37,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  * 
  */
-public class PDOMCPPClassTemplateSpecialization extends
+class PDOMCPPClassTemplateSpecialization extends
 		PDOMCPPClassSpecialization implements ICPPClassTemplate, ICPPInternalTemplateInstantiator {
 
 	private static final int INSTANCES = PDOMCPPClassSpecialization.RECORD_SIZE + 0;
@@ -74,7 +75,11 @@ public class PDOMCPPClassTemplateSpecialization extends
 	}
 
 	public ICPPSpecialization deferredInstance(IType[] arguments) {
-		return getInstance( arguments );
+		ICPPSpecialization instance = getInstance( arguments );
+		if( instance == null ){
+			instance = new CPPDeferredClassInstance( this, arguments );
+		}
+		return instance;
 	}
 
 	private static class InstanceFinder implements IPDOMVisitor {

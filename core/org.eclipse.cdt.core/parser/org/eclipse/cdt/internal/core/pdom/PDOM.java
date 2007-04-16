@@ -72,7 +72,7 @@ import org.eclipse.core.runtime.Status;
 public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	protected Database db;
 
-	public static final int VERSION = 29;
+	public static final int VERSION = 30;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -103,6 +103,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 27 - templates: classes, functions, limited nesting support, only template type parameters
 	// 28 - templates: class instance/specialization base classes
 	// 29 - includes: fixed modelling of unresolved includes (180159)
+	// 30 - templates: method/constructor templates, typedef specializations
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

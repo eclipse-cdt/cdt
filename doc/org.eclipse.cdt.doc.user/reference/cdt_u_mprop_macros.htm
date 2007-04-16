@@ -10,7 +10,6 @@
  table.MsoNormalTable
 	{mso-style-parent:"";
 	font-size:10.0pt;
-	font-family:"Times New Roman";
 	}
 -->
   </style>
@@ -46,16 +45,14 @@ Each table contains three columns<b>:</b></dd>
 <dl>
   <dd>
     <p>You can view all build macros that are not user-defined in the <b>System
-Macros</b> table.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;</span><span
+Macros</b> table.&nbsp;&nbsp;<span
  style="font-style: normal; font-variant: normal; font-weight: normal;">You</span>
 can choose to also display all macros defined for lower-precedence
 contexts in the <b>System Macros</b> table by checking the <b>Show
 parent context macros</b> checkbox. System macros are read-only.</p>
     <p class="MsoNormal">You can view all user-defined macros in the <b>User
-Macros</b> table.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;
-    </span>A user-defined macro overrides a non user-defined macro of
+Macros</b> table.&nbsp;&nbsp;
+    A user-defined macro overrides a non user-defined macro of
 the same name for the given context.&nbsp; Overridden macros are
 displayed in bold in the <b>System Macros</b> table. </p>
   </dd>
@@ -75,11 +72,11 @@ encouraged that a macro name begin with a letter and contain only
 letters, digits and underscore signs. Build macro names are case
 sensitive.
 <br>
-If the actual value of text property contains $<i>{text</i><some_expression>},
+If the actual value of text property contains $<i>{text</i>},
 it must be pre-pended with a backslash in order to distinguish it from
 a build macro. The Managed Build System (MBS) pre-defines many useful
 macros (see below) and allows tool integrators and users to define
-additional macros.</some_expression></p>
+additional macros.</p>
 <p>Build Macros can hold several types of values:
 </p>
 <ol>
@@ -208,15 +205,13 @@ Type</b></p>
       <p class="MsoNormal" style="text-align: justify;">Represents the
 input file name. The input file has the following meaning:</p>
       <p class="MsoNormal"
- style="text-align: justify; text-indent: -0.25in; margin-left: 0.25in;">1.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span>If a tool does not accept building multiple files of the
+ style="text-align: justify; text-indent: -0.25in; margin-left: 0.25in;">1.&nbsp;&nbsp;&nbsp;
+      If a tool does not accept building multiple files of the
 primary input type with one tool invocation, the input file is the file
 of the primary input type being built.</p>
       <p class="MsoNormal"
- style="text-align: justify; text-indent: -0.25in; margin-left: 0.25in;">2.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span>If a tool accepts building multiple files of the primary
+ style="text-align: justify; text-indent: -0.25in; margin-left: 0.25in;">2.&nbsp;&nbsp;&nbsp;
+      If a tool accepts building multiple files of the primary
 input type with one tool invocation the input file is undefined and the
 macros representing the input file contain information about one of the
 inputs of the primary input type being built.</p>
@@ -297,16 +292,14 @@ input file directory path relative to the builder current directory.</p>
       <p class="MsoNormal" style="text-align: justify;">Represents the
 output file name. The output file has the following meaning:</p>
       <p class="MsoNormal"
- style="text-align: justify; text-indent: -0.25in; margin-left: 0.25in;">1.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span>If a tool is not capable of producing multiple files of
+ style="text-align: justify; text-indent: -0.25in; margin-left: 0.25in;">1.&nbsp;&nbsp;&nbsp;
+      If a tool is not capable of producing multiple files of
 the primary output type with one tool invocation the output file is the
 file of the primary output type that is built with a given tool
 invocation.</p>
       <p class="MsoNormal"
- style="text-align: justify; text-indent: -0.25in; margin-left: 0.25in;">2.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </span>If a tool is capable of producing multiple files of the
+ style="text-align: justify; text-indent: -0.25in; margin-left: 0.25in;">2.&nbsp;&nbsp;&nbsp;
+      If a tool is capable of producing multiple files of the
 primary output type with one tool invocation the output file is
 undefined and the macros representing the output file contain
 information about one of the files of the primary output type that are

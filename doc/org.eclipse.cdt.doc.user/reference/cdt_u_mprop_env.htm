@@ -11,7 +11,6 @@
 	{mso-style-parent:"";
 	margin-bottom:.0001pt;
 	font-size:12.0pt;
-	font-family:"Times New Roman";
 	margin-left:0in; margin-right:0in; margin-top:0in}
 -->
   </style>
@@ -40,15 +39,12 @@ environment variables.&nbsp; Each table contains two columns<b>:</b>
     <p><b>Value </b>of the environment variable.&nbsp; </p>
     <p>You can view all environment variables that are not user-defined
 in the <b>System Variables</b> table.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;</span><span
  style="font-style: normal; font-variant: normal; font-weight: normal;">You</span>
 can choose to also display all variables defined for lower-precedence
 contexts in the <b>System Variables</b> table by checking the <b>Show
 parent level variables</b> checkbox. System variables are read-only.</p>
     <p class="MsoNormal">You can view all user-defined variables in the
-    <b>User Variables</b> table.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;
-    </span>A user-defined variable overrides a non user-defined
+    <b>User Variables</b> table.  A user-defined variable overrides a non user-defined
 variable of the same name for the given level.&nbsp; Overridden
 variables are displayed in bold in the <b>System Variables</b> table. </p>
   </dd>
@@ -83,26 +79,22 @@ or case insensitive (on Windows systems) in its own operations
 be specified at several levels:</span></p>
 <blockquote>
   <p class="MsoNormal" style="margin-top: 0pt; margin-bottom: 0pt;"> <span
- lang="EN-US">1.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>Configuration level – variables specific to the selected
+ lang="EN-US">1.&nbsp;&nbsp;&nbsp;
+  Configuration level – variables specific to the selected
 configuration</span></p>
   <p class="MsoNormal"
  style="text-indent: -0.25in; margin-left: 0.25in; margin-top: 0pt; margin-bottom: 0pt;">
-  <span lang="EN-US">2.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>Project level – variables specific to the selected project and
+  <span lang="EN-US">2.&nbsp;&nbsp;&nbsp;
+Project level – variables specific to the selected project and
 common for all project configurations</span></p>
   <p class="MsoNormal"
  style="text-indent: -0.25in; margin-left: 0.25in; margin-top: 0pt; margin-bottom: 0pt;">
-  <span lang="EN-US">3.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>Workspace level – variables specific to the current workspace</span></p>
+  <span lang="EN-US">3.&nbsp;&nbsp;&nbsp;
+  Workspace level – variables specific to the current workspace</span></p>
   <p class="MsoNormal"
  style="text-indent: -0.25in; margin-left: 0.25in; margin-top: 0pt; margin-bottom: 0pt;">
-  <span lang="EN-US">4.<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  </span>System environment passed to eclipse</span></p>
+  <span lang="EN-US">4.&nbsp;&nbsp;&nbsp;
+  System environment passed to eclipse</span></p>
 </blockquote>
 <p class="MsoNormal"><span lang="EN-US">When running the build utility
 for the selected configuration, the process' total environment
@@ -126,37 +118,36 @@ definition will appear.<br>
 the value, the delimiter and the "operation" <span lang="EN-US">to
 perform on the variable of the same name defined at the
 lower-precedence level. The following "operations" are defined:&nbsp;</span></p>
+<ul>
 <p class="MsoNormal"
  style="text-indent: -0.25in; margin-left: 53.25pt; margin-top: 0pt;">
-<span lang="EN-US" style="font-family: Symbol;">·<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-"</span></span><span lang="EN-US">append":&nbsp; If the variable
+<li>
+"append":&nbsp; If the variable
 already exists, add the user-specified value to the end of any existing
 value that the environment variable has.&nbsp; If the variable does not
-yet exist, create the variable and set it to the user-specified value.</span></p>
+yet exist, create the variable and set it to the user-specified value.</li></p>
+
 <p class="MsoNormal"
  style="text-indent: -0.25in; margin-left: 53.25pt; margin-top: 0pt;">
-<span lang="EN-US" style="font-family: Symbol;">·<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span lang="EN-US">"prepend":&nbsp; If the variable
+<li>
+"prepend":&nbsp; If the variable
 already exists, add the user-specified value to the beginning of any
 existing value that the environment variable has.&nbsp; If the variable
 does not yet exist, create the variable and set it to the
-user-specified value.</span></p>
+user-specified value.</li></p>
 <p class="MsoNormal"
  style="text-indent: -0.25in; margin-left: 53.25pt; margin-top: 0pt;">
-<span lang="EN-US" style="font-family: Symbol;">·<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-"</span></span><span lang="EN-US">replace":&nbsp; If the variable
+<li>
+"replace":&nbsp; If the variable
 already exists, set the value to the user-specified value.&nbsp; If the
 variable does not yet exist, create the variable and set it to the
-user-specified value.</span></p>
+user-specified value.</li></p>
 <p class="MsoNormal"
  style="text-indent: -0.25in; margin-left: 53.25pt; margin-top: 0pt;">
-<span lang="EN-US" style="font-family: Symbol;">·<span
- style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-stretch: normal; font-size-adjust: none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span lang="EN-US">"delete":&nbsp; If the variable
-already exists, remove the variable.</span></p>
+<li>
+"delete":&nbsp; If the variable
+already exists, remove the variable.</li></p>
+</ul>
 <p>The resulting value of the variable used for the build process will
 be calculated by querying all levels from bottom to top and performing
 the operations for the variables defined at those levels.</p>

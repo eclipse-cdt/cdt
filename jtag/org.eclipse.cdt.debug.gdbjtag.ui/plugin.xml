@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.cdt.debug.gdbjtag.launchConfigurationType"
+            icon="icons/obj16/c_app.gif"
+            id="org.eclipse.cdt.debug.gdbjtag.launchConfigurationTypeImage"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.debug.gdbjtag.ui.GDBJtagLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.debug.gdbjtag.launchConfigurationTabGroup"
+            type="org.eclipse.cdt.debug.gdbjtag.launchConfigurationType"/>
+   </extension>
+
+</plugin>

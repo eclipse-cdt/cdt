@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.eclipse.cdt.debug.gdbjtag.core.GDBJtagLaunchConfigurationDelegate"
+            id="org.eclipse.cdt.debug.gdbjtag.launchConfigurationType"
+            modes="debug"
+            name="%launchConfig.name"
+            public="true"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"/>
+   </extension>
+
+</plugin>

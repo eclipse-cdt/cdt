@@ -905,13 +905,14 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if (description != null)
 			element.setAttribute(IConfiguration.DESCRIPTION, description);
 		
-		if(buildProperties != null)
+		if(buildProperties != null){
 			element.setAttribute(BUILD_PROPERTIES, buildProperties.toString());
 
-		IBuildProperty prop = buildProperties.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
-		if(prop != null){
-			IBuildPropertyValue val = prop.getValue();
-			element.setAttribute(BUILD_ARTEFACT_TYPE, val.getId());
+			IBuildProperty prop = buildProperties.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
+			if(prop != null){
+				IBuildPropertyValue val = prop.getValue();
+				element.setAttribute(BUILD_ARTEFACT_TYPE, val.getId());
+			}
 		}
 		
 		if (parent != null)

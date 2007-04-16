@@ -179,7 +179,7 @@ public class DataElementRemover extends Handler
 		{
 			try
 			{
-				Thread.sleep(_waitIncrement);
+				Thread.sleep(100000); // wait 100 seconds
 				Thread.yield();
 			}
 			catch (InterruptedException e)

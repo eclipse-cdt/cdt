@@ -8,16 +8,12 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.settings.model;
+package org.eclipse.cdt.core.settings.model.extension;
 
-public interface ICExternalSetting {
-	String[] getCompatibleLanguageIds();
-	
-	String[] getCompatibleContentTypeIds();
-	
-	String[] getCompatibleExtensions();
-	
-	ICSettingEntry[] getEntries(int kind);
+import org.eclipse.cdt.core.settings.model.CExternalSetting;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.core.resources.IProject;
 
-	ICSettingEntry[] getEntries();
+public abstract class CExternalSettingProvider {
+	public abstract CExternalSetting[] getSettings(IProject project, ICConfigurationDescription cfg);
 }

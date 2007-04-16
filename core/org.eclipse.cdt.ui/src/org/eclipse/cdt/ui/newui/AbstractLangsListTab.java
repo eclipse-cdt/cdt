@@ -316,7 +316,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICExternalSetting[] vals = getResDesc().getConfiguration().getExternalSettings();
 		if (!(vals == null || vals.length == 0)) {
 			for (int i=0; i<vals.length; i++) {
-				ICLanguageSettingEntry[] ents = vals[i].getEntries(getKind());
+				ICSettingEntry[] ents = vals[i].getEntries(getKind());
 				if (ents == null || ents.length == 0) continue;
 				for (int j=0; j<ents.length; j++)
 					exported.add(ents[j]);

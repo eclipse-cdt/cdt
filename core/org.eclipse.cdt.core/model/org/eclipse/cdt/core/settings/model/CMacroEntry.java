@@ -40,7 +40,7 @@ public final class CMacroEntry extends ACLanguageSettingEntry implements ICMacro
 		return super.hashCode() + fValue.hashCode();
 	}
 
-	public boolean equalsByContents(ICLanguageSettingEntry entry) {
+	public boolean equalsByContents(ICSettingEntry entry) {
 		if(!super.equalsByContents(entry))
 			return false;
 		

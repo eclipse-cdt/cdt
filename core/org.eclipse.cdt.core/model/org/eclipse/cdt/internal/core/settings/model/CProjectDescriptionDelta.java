@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
-import org.eclipse.cdt.internal.core.settings.model.ExternalSettingsManager.ExtSettingsDelta;
 
 class CProjectDescriptionDelta implements ICDescriptionDelta {
 	private List fChildList = new ArrayList();
@@ -26,7 +25,6 @@ class CProjectDescriptionDelta implements ICDescriptionDelta {
 	private int fAddedLanguageEntriesKinds;
 	private int fRemovedLanguageEntriesKinds;
 	private int fReorderedLanguageEntriesKinds;
-	private ExtSettingsDelta[] fExtSettingsDeltas;
 
 	private static final int KIND_MASK = 3;
 	private static final int FLAGS_OFFSET = 2;
@@ -146,13 +144,4 @@ class CProjectDescriptionDelta implements ICDescriptionDelta {
 		else
 			removeChangeFlags(SETTING_ENTRIES);
 	}
-	
-	public ExtSettingsDelta[] getExtSettingsDeltas(){
-		return fExtSettingsDeltas;
-	}
-
-	public void setExtSettingsDeltas(ExtSettingsDelta[] deltas){
-		fExtSettingsDeltas = deltas;
-	}
-
 }

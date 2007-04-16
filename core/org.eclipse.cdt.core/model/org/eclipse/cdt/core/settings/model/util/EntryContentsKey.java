@@ -13,10 +13,10 @@ package org.eclipse.cdt.core.settings.model.util;
 import org.eclipse.cdt.core.settings.model.ACLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
-public class EntryNameKey {
+public class EntryContentsKey {
 	ICSettingEntry fEntry;
-		
-	public EntryNameKey(ICSettingEntry entry){
+	
+	public EntryContentsKey(ICSettingEntry entry){
 		fEntry = entry;
 	}
 
@@ -24,13 +24,13 @@ public class EntryNameKey {
 		if(this == obj)
 			return true;
 		
-		if(!(obj instanceof EntryNameKey))
+		if(!(obj instanceof EntryContentsKey))
 			return false;
-		return fEntry.equalsByName(((EntryNameKey)obj).fEntry);
+		return fEntry.equalsByContents(((EntryContentsKey)obj).fEntry);
 	}
 
 	public int hashCode() {
-		return ((ACLanguageSettingEntry)fEntry).codeForNameKey();
+		return ((ACLanguageSettingEntry)fEntry).codeForContentsKey();
 	}
 		
 	public ICSettingEntry getEntry(){

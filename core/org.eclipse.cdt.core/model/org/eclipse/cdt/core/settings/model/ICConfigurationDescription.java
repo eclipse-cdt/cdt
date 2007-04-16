@@ -263,7 +263,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	ICExternalSetting createExternalSetting(String languageIDs[],
 			String contentTypeIds[],
 			String extensions[],
-			ICLanguageSettingEntry entries[]) throws WriteAccessException;
+			ICSettingEntry entries[]) throws WriteAccessException;
 
 	/**
 	 * removes external setting from this configuration 

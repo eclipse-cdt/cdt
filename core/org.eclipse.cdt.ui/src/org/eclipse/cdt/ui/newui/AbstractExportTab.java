@@ -146,7 +146,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		boolean x = i != -1;
 		boolean y = x;
 		if (x) {
-			ICLanguageSettingEntry ent = ((ExtData)(table.getItem(i).getData())).entry;
+			ICSettingEntry ent = ((ExtData)(table.getItem(i).getData())).entry;
 			if (ent.isReadOnly()) x = false;
 			if (ent.isBuiltIn() || ent.isReadOnly()) y = false;
 		}
@@ -179,7 +179,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 			return;
 		}
 		for (int i=0; i<vals.length; i++) {
-			ICLanguageSettingEntry[] ents = vals[i].getEntries(getKind());
+			ICSettingEntry[] ents = vals[i].getEntries(getKind());
 			if (ents == null || ents.length == 0) continue;
 			for (int j=0; j<ents.length; j++) {
 				lst.add(new ExtData(vals[i], ents[j]));
@@ -249,8 +249,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 					getKind(), names_ls, names_ts, null, isWsp); 
 			if (dlg.open()) {
 				ent[0] = doEdit(dlg.text1.trim(), dlg.text2.trim(), dlg.check2);
-				ICLanguageSettingEntry[] ls = old.setting.getEntries(getKind());
-				ICLanguageSettingEntry[] ls2 = new ICLanguageSettingEntry[ls.length];
+				ICSettingEntry[] ls = old.setting.getEntries(getKind());
+				ICSettingEntry[] ls2 = new ICLanguageSettingEntry[ls.length];
 				for (int x=0; x<ls.length; x++) 
 					if (ls[x].equals(old.entry)) ls2[x] = ent[0];
 					else ls2[x] = ls[x];
@@ -268,7 +268,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 				if (checked[t] || its[t] == null) continue;
 				old = (ExtData)(its[t].getData());
 				if (old.entry.isReadOnly() || old.entry.isBuiltIn()) continue;
-				ICLanguageSettingEntry[] ls = old.setting.getEntries(getKind());
+				ICSettingEntry[] ls = old.setting.getEntries(getKind());
 				ArrayList lst = new ArrayList();
 outer:				
 				for (int x=0; x<ls.length; x++) { 
@@ -401,9 +401,9 @@ outer:
 	 */
 	static class ExtData {
 		ICExternalSetting setting;
-		ICLanguageSettingEntry entry;
+		ICSettingEntry entry;
 		
-		ExtData(ICExternalSetting _s, ICLanguageSettingEntry _e) {
+		ExtData(ICExternalSetting _s, ICSettingEntry _e) {
 			setting = _s;
 			entry = _e;
 		}

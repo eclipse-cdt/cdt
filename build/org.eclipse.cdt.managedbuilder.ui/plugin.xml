@@ -507,7 +507,7 @@
       </page>
       
       <!--page
-            class="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
             id="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
             category="org.eclipse.cdt.ui.newui.Page_head_general"
             name="%CDTExpPathSymbolsProperty.name"

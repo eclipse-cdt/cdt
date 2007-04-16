@@ -76,7 +76,7 @@ public abstract class ACLanguageSettingEntry implements ICLanguageSettingEntry {
 		return fFlags;
 	}
 
-	public boolean equalsByContents(ICLanguageSettingEntry entry) {
+	public boolean equalsByContents(ICSettingEntry entry) {
 		return equalsByName(entry);
 	}
 	
@@ -84,7 +84,7 @@ public abstract class ACLanguageSettingEntry implements ICLanguageSettingEntry {
 		return (fFlags & (~ (BUILTIN | READONLY)));
 	}
 
-	public final boolean equalsByName(ICLanguageSettingEntry entry) {
+	public final boolean equalsByName(ICSettingEntry entry) {
 		if(entry == this)
 			return true;
 		
@@ -106,8 +106,12 @@ public abstract class ACLanguageSettingEntry implements ICLanguageSettingEntry {
 		return true;
 	}
 	
-	public int codeForNameKey(){
+	public final int codeForNameKey(){
 		return getKind() + getByNameMatchFlags() + fName.hashCode(); 
+	}
+	
+	public int codeForContentsKey(){
+		return codeForNameKey();
 	}
 	
 }

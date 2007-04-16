@@ -8,53 +8,22 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.settings.model;
+package org.eclipse.cdt.core.settings.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.settings.model.ICExternalSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CEntriesSet;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
-import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 
-public class CExternalSetting implements ICExternalSetting {
-	static final String ELEMENT_SETTING_INFO = "externalSetting"; //$NON-NLS-1$
-//	private static final String ATTRIBUTE_ID = "id";
-	private static final String ATTRIBUTE_EXTENSIONS = "extensions"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_CONTENT_TYPE_IDS = "contentTypes"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_LANGUAGE_IDS = "languages"; //$NON-NLS-1$
-//	private static final String[] EMPTY_STRING_ARRAY = new String[0];
-	private static final String SEPARATOR = ":"; //$NON-NLS-1$
-
+public final class CExternalSetting implements ICExternalSetting {
 //	private EntryStore fEntryStore = new EntryStore();
-	private KindBasedStore fStore = new KindBasedStore();
+	private KindBasedStore fStore = new KindBasedStore(false);
 	private String[] fContentTypeIds;
 	private String[] fLanguageIds;
 	private String[] fExtensions;
 //	private String fId;
-
-	public CExternalSetting(ICStorageElement element){
-//		fId = element.getAttribute(ATTRIBUTE_ID);
-		String tmp = element.getAttribute(ATTRIBUTE_LANGUAGE_IDS);
-		if(tmp != null)
-			fLanguageIds = tmp.split(SEPARATOR);
-		
-		tmp = element.getAttribute(ATTRIBUTE_CONTENT_TYPE_IDS);
-		if(tmp != null)
-			fContentTypeIds = tmp.split(SEPARATOR);
-		
-		tmp = element.getAttribute(ATTRIBUTE_EXTENSIONS);
-		if(tmp != null)
-			fExtensions = tmp.split(ATTRIBUTE_EXTENSIONS);
-
-		List entriesList = LanguageSettingEntriesSerializer.loadEntriesList(element, KindBasedStore.ORED_LANG_ENTRY_KINDS);
-		ICLanguageSettingEntry[] entries = (ICLanguageSettingEntry[])entriesList.toArray(new ICLanguageSettingEntry[entriesList.size()]);
-		initEntryStore(entries);
-	}
 
 	public CExternalSetting(ICExternalSetting base){
 		fLanguageIds = base.getCompatibleLanguageIds();
@@ -65,7 +34,7 @@ public class CExternalSetting implements ICExternalSetting {
 		initEntryStore(base.getEntries());
 	}
 
-	public CExternalSetting(ICExternalSetting base, ICLanguageSettingEntry entries[]){
+	public CExternalSetting(ICExternalSetting base, ICSettingEntry entries[]){
 		this(base);
 		
 		initEntryStore(entries);
@@ -73,7 +42,7 @@ public class CExternalSetting implements ICExternalSetting {
 
 	public CExternalSetting(String[] languageIDs,
 			String[] contentTypeIds, String[] extensions,
-			ICLanguageSettingEntry[] entries){
+			ICSettingEntry[] entries){
 		if(languageIDs != null)
 			fLanguageIds = (String[])languageIDs.clone();
 		if(contentTypeIds != null)
@@ -84,8 +53,8 @@ public class CExternalSetting implements ICExternalSetting {
 		initEntryStore(entries);
 	}
 	
-	private void initEntryStore(ICLanguageSettingEntry entries[]){
-		ICLanguageSettingEntry entry;
+	private void initEntryStore(ICSettingEntry entries[]){
+		ICSettingEntry entry;
 		for(int i = 0; i < entries.length; i++){
 			entry = entries[i];
 			
@@ -95,7 +64,7 @@ public class CExternalSetting implements ICExternalSetting {
 //		trimToSize();
 	}
 	
-	private void addEntry(ICLanguageSettingEntry entry){
+	private void addEntry(ICSettingEntry entry){
 		getEntriesSet(entry.getKind(), true).addEntry(entry);
 	}
 	
@@ -135,18 +104,18 @@ public class CExternalSetting implements ICExternalSetting {
 		return null;
 	}
 
-	public ICLanguageSettingEntry[] getEntries(int kind) {
+	public ICSettingEntry[] getEntries(int kind) {
 		CEntriesSet set = getEntriesSet(kind, false);
 		if(set != null)
 			return set.toArray();
-		return new ICLanguageSettingEntry[0];
+		return new ICSettingEntry[0];
 	}
 
 //	public String getId(){
 //		return fId;
 //	}
 
-	public ICLanguageSettingEntry[] getEntries() {
+	public ICSettingEntry[] getEntries() {
 		List result = new ArrayList();
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		for(int i = 0; i < kinds.length; i++){
@@ -155,29 +124,6 @@ public class CExternalSetting implements ICExternalSetting {
 				result.addAll(Arrays.asList(list.toArray()));
 		}
 		
-		return (ICLanguageSettingEntry[])result.toArray(new ICLanguageSettingEntry[result.size()]);
-	}
-	
-	
-	private String composeString(String array[]){
-		StringBuffer buf = new StringBuffer(array[0]);
-		for(int i = 1; i < array.length; i++){
-			buf.append(SEPARATOR).append(array[i]);
-		}
-		return buf.toString();
-	}
-	
-	public void serialize(ICStorageElement el){
-		if(fLanguageIds != null && fLanguageIds.length != 0)
-			el.setAttribute(ATTRIBUTE_LANGUAGE_IDS, composeString(fLanguageIds));
-		
-		if(fContentTypeIds != null && fContentTypeIds.length != 0)
-			el.setAttribute(ATTRIBUTE_CONTENT_TYPE_IDS, composeString(fContentTypeIds));
-
-		
-		if(fExtensions != null && fExtensions.length != 0)
-			el.setAttribute(ATTRIBUTE_EXTENSIONS, composeString(fExtensions));
-
-		LanguageSettingEntriesSerializer.serializeEntries(getEntries(), el);
+		return (ICSettingEntry[])result.toArray(new ICSettingEntry[result.size()]);
 	}
 }

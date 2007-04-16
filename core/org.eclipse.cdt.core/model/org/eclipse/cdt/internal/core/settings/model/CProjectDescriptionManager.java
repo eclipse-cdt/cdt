@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
@@ -53,6 +54,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
@@ -76,6 +78,7 @@ import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
 import org.eclipse.cdt.internal.core.model.CElementDelta;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingsDelta;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
@@ -321,6 +324,8 @@ public class CProjectDescriptionManager {
 				fDescriptorManager.startup();
 			}
 			
+			CExternalSettingsManager.getInstance().startup();
+			
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			Job rcJob = new Job(SettingsModelMessages.getString("CProjectDescriptionManager.0")){ //$NON-NLS-1$
 				protected IStatus run(IProgressMonitor monitor) {
@@ -362,6 +367,8 @@ public class CProjectDescriptionManager {
 	}
 
 	public void shutdown(){
+		CExternalSettingsManager.getInstance().shutdown();
+		
 		if(fDescriptorManager != null){
 			fDescriptorManager.shutdown();
 		}
@@ -458,13 +465,13 @@ public class CProjectDescriptionManager {
 					
 					des = getLoaddedDescription(project);
 					
-					ICProjectDescription updatedDes = ExternalSettingsManager.getInstance().updateReferencedSettings(des);
-					if(updatedDes != des){
-						try {
-							setProjectDescription(project, updatedDes);
-						} catch (CoreException e) {
-						}
-					}
+//					ICProjectDescription updatedDes = ExternalSettingsManager.getInstance().updateReferencedSettings(des);
+//					if(updatedDes != des){
+//						try {
+//							setProjectDescription(project, updatedDes);
+//						} catch (CoreException e) {
+//						}
+//					}
 				}
 			}
 		}
@@ -2080,7 +2087,7 @@ public class CProjectDescriptionManager {
 			}
 
 			
-			ExternalSettingsManager.getInstance().calculateCfgExtSettingsDelta(delta);
+			calculateCfgExtSettingsDelta(delta);
 			
 			int drFlags = calculateDescriptorFlags(newCfg, oldCfg);
 			if(drFlags != 0)
@@ -2088,6 +2095,78 @@ public class CProjectDescriptionManager {
 		}
 
 		return delta.isEmpty() ? null : delta;
+	}
+	
+	private void calculateCfgExtSettingsDelta(CProjectDescriptionDelta delta){
+		ICConfigurationDescription newDes = (ICConfigurationDescription)delta.getNewSetting();
+		ICConfigurationDescription oldDes = (ICConfigurationDescription)delta.getOldSetting();
+		ExtSettingsDelta[] deltas = getSettingChange(newDes, oldDes);
+		int flags = 0;
+		int addedRemoved = ICDescriptionDelta.EXTERNAL_SETTINGS_ADDED | ICDescriptionDelta.EXTERNAL_SETTINGS_REMOVED; 
+		if(deltas != null ){
+			for(int i = 0; i < deltas.length; i++){
+				ICSettingEntry[][] d = deltas[i].getEntriesDelta();
+				if(d[0] != null)
+					flags |= ICDescriptionDelta.EXTERNAL_SETTINGS_ADDED;
+				if(d[1] != null)
+					flags |= ICDescriptionDelta.EXTERNAL_SETTINGS_REMOVED;
+				
+				if((flags & (addedRemoved)) == addedRemoved)
+					break;
+			}
+//			delta.setExtSettingsDeltas(deltas);
+			if(flags != 0)
+				delta.addChangeFlags(flags);
+		}
+		
+		int cfgRefFlags = calcRefChangeFlags(newDes, oldDes);
+		if(cfgRefFlags != 0)
+			delta.addChangeFlags(cfgRefFlags);
+	}
+	
+	private int calcRefChangeFlags(ICConfigurationDescription newDes, ICConfigurationDescription oldDes){
+		Map newMap = newDes != null ? newDes.getReferenceInfo() : null;  
+		Map oldMap = oldDes != null ? oldDes.getReferenceInfo() : null;
+		
+		int flags = 0;
+		if(newMap == null || newMap.size() == 0){
+			if(oldMap != null && oldMap.size() != 0){
+				flags = ICDescriptionDelta.CFG_REF_REMOVED;
+			}
+		} else {
+			if(oldMap == null || oldMap.size() == 0){
+				flags = ICDescriptionDelta.CFG_REF_ADDED;
+			} else {
+				boolean stop = false;
+				for(Iterator iter = newMap.entrySet().iterator(); iter.hasNext();){
+					Map.Entry newEntry = (Map.Entry)iter.next();
+					Object newProj = newEntry.getKey();
+					Object newCfg = newEntry.getValue();
+					Object oldCfg = oldMap.remove(newProj);
+					if(!newCfg.equals(oldCfg)){
+						flags |= ICDescriptionDelta.CFG_REF_ADDED;
+						if(oldCfg != null){
+							flags |= ICDescriptionDelta.CFG_REF_REMOVED;
+							stop = true;
+						}
+						if(stop)
+							break;
+					}
+				}
+				
+				if(!oldMap.isEmpty())
+					flags |= ICDescriptionDelta.CFG_REF_REMOVED;
+			}
+		}
+		
+		return flags;
+	}
+
+	
+	private ExtSettingsDelta[] getSettingChange(ICConfigurationDescription newDes, ICConfigurationDescription oldDes){
+		CExternalSetting[] newSettings = newDes != null ? (CExternalSetting[])newDes.getExternalSettings() : null;
+		CExternalSetting[] oldSettings = oldDes != null ? (CExternalSetting[])oldDes.getExternalSettings() : null;
+		return CExternalSettinsDeltaCalculator.getInstance().getSettingChange(newSettings, oldSettings);
 	}
 	
 	private CProjectDescriptionDelta createDelta(ICFolderDescription newFo, ICFolderDescription oldFo){

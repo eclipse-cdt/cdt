@@ -704,4 +704,27 @@ public class CDataUtil {
 			}
 		}
 	}
+	
+	public static Map fillEntriesMapByNameKey(Map map, ICSettingEntry[] entries){
+		if(map == null)
+			map = new LinkedHashMap();
+		
+		for(int i = 0; i < entries.length; i++){
+			ICSettingEntry entry = entries[i];
+			map.put(new EntryNameKey(entry), entry);
+		}
+		return map;
+	}
+
+	public static Map fillEntriesMapByContentsKey(Map map, ICSettingEntry[] entries){
+		if(map == null)
+			map = new LinkedHashMap();
+		
+		for(int i = 0; i < entries.length; i++){
+			ICSettingEntry entry = entries[i];
+			map.put(new EntryContentsKey(entry), entry);
+		}
+		return map;
+	}
+
 }

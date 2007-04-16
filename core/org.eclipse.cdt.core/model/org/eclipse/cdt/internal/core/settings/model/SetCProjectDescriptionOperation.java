@@ -100,7 +100,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		
 		cProject.close();
 		
-		ExternalSettingsManager.getInstance().updateDepentents(delta);
+//		ExternalSettingsManager.getInstance().updateDepentents(delta);
 		
 		try {
 			((InternalXmlStorageElement)fNewDescriptionCache.getRootStorageElement()).setReadOnly(true);

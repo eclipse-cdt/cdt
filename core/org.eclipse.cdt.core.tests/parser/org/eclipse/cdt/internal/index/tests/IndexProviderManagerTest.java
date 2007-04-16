@@ -38,10 +38,10 @@ import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
@@ -340,7 +340,7 @@ class MockConfig implements ICConfigurationDescription {
 
 	public ICExternalSetting createExternalSetting(String[] languageIDs,
 			String[] contentTypeIds, String[] extensions,
-			ICLanguageSettingEntry[] entries) throws WriteAccessException {
+			ICSettingEntry[] entries) throws WriteAccessException {
 		return null;
 	}
 

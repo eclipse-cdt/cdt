@@ -44,6 +44,17 @@ public class KindBasedStore implements Cloneable {
 		ICLanguageSettingEntry.LIBRARY_FILE,
 	};
 
+	private static final int ALL_ENTRY_KINDS[] = new int[]{
+		ICLanguageSettingEntry.INCLUDE_PATH,
+		ICLanguageSettingEntry.INCLUDE_FILE,
+		ICLanguageSettingEntry.MACRO,
+		ICLanguageSettingEntry.MACRO_FILE,
+		ICLanguageSettingEntry.LIBRARY_PATH,
+		ICLanguageSettingEntry.LIBRARY_FILE,
+		ICLanguageSettingEntry.SOURCE_PATH,
+		ICLanguageSettingEntry.OUTPUT_PATH,
+	};
+
 //	private static final int INEXISTENT_INDEX = -1;
 	
 	private Object[] fEntryStorage;
@@ -87,6 +98,10 @@ public class KindBasedStore implements Cloneable {
 
 	public static int[] getLanguageEntryKinds(){
 		return (int[])LANG_ENTRY_KINDS.clone();
+	}
+
+	public static int[] getAllEntryKinds(){
+		return (int[])ALL_ENTRY_KINDS.clone();
 	}
 
 	private int indexToKind(int index){

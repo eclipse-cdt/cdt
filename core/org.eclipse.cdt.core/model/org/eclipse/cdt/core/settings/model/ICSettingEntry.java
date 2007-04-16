@@ -39,9 +39,9 @@ public interface ICSettingEntry {
 	
 	boolean isResolved();
 	
-	boolean equalsByName(ICLanguageSettingEntry entry);
+	boolean equalsByName(ICSettingEntry entry);
 
-	boolean equalsByContents(ICLanguageSettingEntry entry);
+	boolean equalsByContents(ICSettingEntry entry);
 
 	int getFlags();
 

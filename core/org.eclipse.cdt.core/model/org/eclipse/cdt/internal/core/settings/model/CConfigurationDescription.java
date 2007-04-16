@@ -24,10 +24,10 @@ import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
@@ -632,14 +632,15 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 
 	public void setReferenceInfo(Map refs) {
 		try {
-			ExternalSettingsManager.getInstance().updateReferenceInfo(this, refs);
+			CConfigurationSpecSettings specs = getSpecSettings();
+			specs.setReferenceInfo(refs);
 		} catch (CoreException e) {
 		}
 	}
 
 	public ICExternalSetting createExternalSetting(String[] languageIDs,
 			String[] contentTypeIDs, String[] extensions,
-			ICLanguageSettingEntry[] entries) {
+			ICSettingEntry[] entries) {
 		try {
 			return getSpecSettings().createExternalSetting(languageIDs, contentTypeIDs, extensions, entries);
 		} catch (CoreException e) {

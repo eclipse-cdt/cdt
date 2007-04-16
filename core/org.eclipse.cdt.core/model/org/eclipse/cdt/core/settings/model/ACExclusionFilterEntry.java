@@ -79,7 +79,7 @@ public abstract class ACExclusionFilterEntry extends ACLanguageSettingPathEntry 
 		return super.hashCode() + exclusionPatterns.hashCode();
 	}
 
-	public boolean equalsByContents(ICLanguageSettingEntry entry) {
+	public boolean equalsByContents(ICSettingEntry entry) {
 		if(!super.equalsByContents(entry))
 			return false;
 		

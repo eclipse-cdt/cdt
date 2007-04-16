@@ -16,41 +16,41 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.settings.model.ICExternalSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.CExternalSetting;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.internal.core.settings.model.ExternalSettingsManager.ExtSettingMapKey;
+import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingMapKey;
 
-public class CExternalSettingProvider {
-	private Map fSettingsMap;;
+public class CExternalSettingsHolder extends CExternalSettingsContainer {
+	private Map fSettingsMap;
 	static final String ELEMENT_EXT_SETTINGS_CONTAINER = "externalSettings"; //$NON-NLS-1$
 	static final CExternalSetting[] EMPTY_EXT_SETTINGS_ARRAY = new CExternalSetting[0];
 	
 	private boolean fIsModified;
 
-	CExternalSettingProvider(){
+	CExternalSettingsHolder(){
 		
 	}
 
-	CExternalSettingProvider(ICStorageElement element){
+	CExternalSettingsHolder(ICStorageElement element){
 		ICStorageElement children[] = element.getChildren();
 		List externalSettingList = null;
 		for(int i = 0; i < children.length; i++){
 			ICStorageElement child = children[i];
 			String name = child.getName();
 			
-			if(CExternalSetting.ELEMENT_SETTING_INFO.equals(name)){
+			if(CExternalSettingSerializer.ELEMENT_SETTING_INFO.equals(name)){
 				if(externalSettingList == null)
 					externalSettingList = new ArrayList();
 				
-				CExternalSetting setting = new CExternalSetting(child);
+				CExternalSetting setting = CExternalSettingSerializer.load(child);
 				externalSettingList.add(setting);
 			}
 		}
 		
 		if(externalSettingList != null && externalSettingList.size() != 0){
 			for(int i = 0; i < externalSettingList.size(); i++){
-				ICExternalSetting setting = (ICExternalSetting)externalSettingList.get(i);
+				CExternalSetting setting = (CExternalSetting)externalSettingList.get(i);
 				createExternalSetting(setting.getCompatibleLanguageIds(),
 						setting.getCompatibleContentTypeIds(),
 						setting.getCompatibleExtensions(), 
@@ -59,40 +59,43 @@ public class CExternalSettingProvider {
 		}
 	}
 
-	CExternalSettingProvider(CExternalSettingProvider base){
+	CExternalSettingsHolder(CExternalSettingsHolder base){
 		if(base.fSettingsMap != null)
 			fSettingsMap = new HashMap(base.fSettingsMap);
 	}
 
-	public ICExternalSetting[] getExternalSettings(){
+	public CExternalSetting[] getExternalSettings(){
 		if(fSettingsMap != null)
-			return (ICExternalSetting[])fSettingsMap.values().toArray(new ICExternalSetting[fSettingsMap.size()]);
+			return (CExternalSetting[])fSettingsMap.values().toArray(new CExternalSetting[fSettingsMap.size()]);
 		return EMPTY_EXT_SETTINGS_ARRAY;
 	}
 	
-	void setExternallSetting(ICExternalSetting[] settings){
+	void setExternallSettings(CExternalSetting[] settings){
 		removeExternalSettings();
 
-		for(int i = 0; i < settings.length; i++){
-			ICExternalSetting setting = settings[i];
-			createExternalSetting(setting.getCompatibleLanguageIds(),
-					setting.getCompatibleContentTypeIds(),
-					setting.getCompatibleExtensions(),
-					setting.getEntries());
+		if(settings != null){
+			for(int i = 0; i < settings.length; i++){
+				CExternalSetting setting = settings[i];
+				createExternalSetting(setting.getCompatibleLanguageIds(),
+						setting.getCompatibleContentTypeIds(),
+						setting.getCompatibleExtensions(),
+						setting.getEntries());
+			}
 		}
 		fIsModified = true;
 	}
 
-	public ICExternalSetting createExternalSetting(String[] languageIDs,
+	public CExternalSetting createExternalSetting(String[] languageIDs,
 			String[] contentTypeIDs, String[] extensions,
-			ICLanguageSettingEntry[] entries) {
+			ICSettingEntry[] entries) {
 		return createExternalSetting(new CExternalSetting(languageIDs, contentTypeIDs, extensions, entries));
 	}
 
-	private ICExternalSetting createExternalSetting(ICExternalSetting setting){
+	private CExternalSetting createExternalSetting(CExternalSetting setting){
 		ExtSettingMapKey key = new ExtSettingMapKey(setting);
+		CExternalSetting newSetting;
 		if(fSettingsMap != null){
-			CExternalSetting newSetting = (CExternalSetting)fSettingsMap.get(key);
+			newSetting = (CExternalSetting)fSettingsMap.get(key);
 			if(newSetting == null){
 				newSetting = new CExternalSetting(setting);
 			} else {
@@ -101,20 +104,19 @@ public class CExternalSettingProvider {
 			
 			fSettingsMap.put(key, newSetting);
 		} else {
-			CExternalSetting newSetting = new CExternalSetting(setting);
+			newSetting = new CExternalSetting(setting);
 			fSettingsMap = new HashMap();
 			fSettingsMap.put(key, newSetting);
 		}
 		fIsModified = true;
-		return setting;
-		
+		return newSetting;
 	}
 
-	public void removeExternalSetting(ICExternalSetting setting) {
+	public void removeExternalSetting(CExternalSetting setting) {
 		if(fSettingsMap != null){
 			
 			ExtSettingMapKey key = new ExtSettingMapKey(setting);
-			ICExternalSetting settingToRemove = (ICExternalSetting)fSettingsMap.get(key);
+			CExternalSetting settingToRemove = (CExternalSetting)fSettingsMap.get(key);
 			if(setting.equals(settingToRemove)){
 				fSettingsMap.remove(key);
 				fIsModified = true;
@@ -134,8 +136,8 @@ public class CExternalSettingProvider {
 		if(fSettingsMap != null && fSettingsMap.size() != 0){
 			for(Iterator iter = fSettingsMap.values().iterator(); iter.hasNext();){
 				CExternalSetting setting = (CExternalSetting)iter.next();
-				ICStorageElement child = el.createChild(CExternalSetting.ELEMENT_SETTING_INFO);
-				setting.serialize(child);
+				ICStorageElement child = el.createChild(CExternalSettingSerializer.ELEMENT_SETTING_INFO);
+				CExternalSettingSerializer.store(setting, child);
 			}
 		}
 	}

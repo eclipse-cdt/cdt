@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class CEntriesSet {
 	private HashMap fEntriesMap = new HashMap();
@@ -26,7 +26,7 @@ public class CEntriesSet {
 		setEntries(list);
 	}
 
-	public CEntriesSet(ICLanguageSettingEntry entries[]){
+	public CEntriesSet(ICSettingEntry entries[]){
 		setEntries(entries);
 	}
 
@@ -41,16 +41,16 @@ public class CEntriesSet {
 		return entry;
 	}
 */
-	public ICLanguageSettingEntry[] toArray() {
-		return (ICLanguageSettingEntry[])fEntriesMap.values().toArray(new ICLanguageSettingEntry[fEntriesMap.size()]);
+	public ICSettingEntry[] toArray() {
+		return (ICSettingEntry[])fEntriesMap.values().toArray(new ICSettingEntry[fEntriesMap.size()]);
 	}
 	
-	protected Object getKey(ICLanguageSettingEntry entry){
+	protected Object getKey(ICSettingEntry entry){
 		return entry;
 	}
 	
-	public ICLanguageSettingEntry addEntry(ICLanguageSettingEntry entry) {
-		return (ICLanguageSettingEntry)fEntriesMap.put(getKey(entry), entry);
+	public ICSettingEntry addEntry(ICSettingEntry entry) {
+		return (ICSettingEntry)fEntriesMap.put(getKey(entry), entry);
 	}
 
 	public void clear() {
@@ -61,17 +61,17 @@ public class CEntriesSet {
 		clear();
 		for(Iterator iter = list.iterator(); iter.hasNext();){
 			Object obj = iter.next();
-			if(obj instanceof ICLanguageSettingEntry){
-				ICLanguageSettingEntry entry = (ICLanguageSettingEntry)obj;
+			if(obj instanceof ICSettingEntry){
+				ICSettingEntry entry = (ICSettingEntry)obj;
 				addEntry(entry);
 			}
 		}
 	}
 
-	public void setEntries(ICLanguageSettingEntry[] entries) {
+	public void setEntries(ICSettingEntry[] entries) {
 		clear();
 		for(int i = 0; i < entries.length; i++){
-			ICLanguageSettingEntry entry = entries[i];
+			ICSettingEntry entry = entries[i];
 			if(entry != null){
 				addEntry(entry);
 			}

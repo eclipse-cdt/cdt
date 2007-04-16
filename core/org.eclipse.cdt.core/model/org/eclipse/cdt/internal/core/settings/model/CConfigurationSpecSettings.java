@@ -19,11 +19,12 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
@@ -40,7 +41,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 public class CConfigurationSpecSettings implements ICSettingsStorage{
 	static final String BUILD_SYSTEM_ID = "buildSystemId";	//$NON-NLS-1$
-	private final static String ELEMENT_REFERENCES = "references";  //$NON-NLS-1$
+//	private final static String ELEMENT_REFERENCES = "references";  //$NON-NLS-1$
 	private static final String PROJECT_EXTENSION_ATTR_POINT = "point"; //$NON-NLS-1$
 	private static final String PROJECT_EXTENSION_ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String PROJECT_EXTENSION_ATTRIBUTE = "attribute"; //$NON-NLS-1$
@@ -65,8 +66,9 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	private String fId;
 	private StorableCdtVariables fMacros;
 	private StorableEnvironment fEnvironment;
-	private HashMap fRefInfoMap;
-	private CExternalSettingProvider fExtSettingsProvider = new CExternalSettingProvider();
+//	private HashMap fRefInfoMap;
+	private Map fRefMapCache;
+	private CExternalSettingsHolder fExtSettingsProvider = new CExternalSettingsHolder();
 	private boolean fIsModified;
 	private HashMap fSessionPropertiesMap;
 	private HashMap fExtMap;
@@ -94,10 +96,10 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			
 			if(StorableCdtVariables.MACROS_ELEMENT_NAME.equals(name)){
 				fMacros = new StorableCdtVariables(child, fCfg.isReadOnly());
-			} else if(ELEMENT_REFERENCES.equals(name)){
+			}/* else if(ELEMENT_REFERENCES.equals(name)){
 				loadReferences(child);
-			} else if (CExternalSettingProvider.ELEMENT_EXT_SETTINGS_CONTAINER.equals(name)){
-				fExtSettingsProvider = new CExternalSettingProvider(child);
+			} */else if (CExternalSettingsHolder.ELEMENT_EXT_SETTINGS_CONTAINER.equals(name)){
+				fExtSettingsProvider = new CExternalSettingsHolder(child);
 			} else if(StorableEnvironment.ENVIRONMENT_ELEMENT_NAME.equals(name)){
 				fEnvironment = new StorableEnvironment(child, fCfg.isReadOnly());
 			} else if(PROJECT_EXTENSIONS.equals(name)){
@@ -134,13 +136,13 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		fName = base.fName;
 		fId = base.fId;
 		
-		copyRefInfos(base.fRefInfoMap);
+//		copyRefInfos(base.fRefInfoMap);
 		
 		if(base.fMacros != null)
 			fMacros = new StorableCdtVariables(base.fMacros, des.isReadOnly());
 		
 		if(base.fExtSettingsProvider != null)
-			fExtSettingsProvider = new CExternalSettingProvider(base.fExtSettingsProvider);
+			fExtSettingsProvider = new CExternalSettingsHolder(base.fExtSettingsProvider);
 		
 		if(base.fSessionPropertiesMap != null)
 			fSessionPropertiesMap = (HashMap)base.fSessionPropertiesMap.clone();
@@ -154,20 +156,20 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		copyExtensionInfo(base);
 	}
 	
-	private void copyRefInfos(Map infosMap){
-		if(infosMap == null || infosMap.size() == 0){
-			fRefInfoMap = null;
-			return;
-		}
-		
-		fRefInfoMap = new HashMap(infosMap.size());
-		for(Iterator iter = infosMap.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			String projName = (String)entry.getKey();
-			ProjectRefInfo info = (ProjectRefInfo)entry.getValue();
-			fRefInfoMap.put(projName, new ProjectRefInfo(info));
-		}
-	}
+//	private void copyRefInfos(Map infosMap){
+//		if(infosMap == null || infosMap.size() == 0){
+//			fRefInfoMap = null;
+//			return;
+//		}
+//		
+//		fRefInfoMap = new HashMap(infosMap.size());
+//		for(Iterator iter = infosMap.entrySet().iterator(); iter.hasNext();){
+//			Map.Entry entry = (Map.Entry)iter.next();
+//			String projName = (String)entry.getKey();
+//			ProjectRefInfo info = (ProjectRefInfo)entry.getValue();
+//			fRefInfoMap.put(projName, new ProjectRefInfo(info));
+//		}
+//	}
 	
 	public void setCOwner(String ownerId) throws CoreException{
 		if(ownerId == null)
@@ -181,23 +183,23 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		fOwner = new COwner(cfg);
 	}
 	
-	private void loadReferences(ICStorageElement el){
-		fRefInfoMap = new HashMap();
-		ICStorageElement children[] = el.getChildren();
-		
-		for(int i = 0; i < children.length; i++){
-			ICStorageElement child = children[i];
-			String name = child.getName();
-
-			if(ProjectRefInfo.ELEMENT_REFERENCE.equals(name)){
-				ProjectRefInfo info = new ProjectRefInfo(child);
-				fRefInfoMap.put(info.getProjectName(), info);
-			}
-		}
-		
-		if(fRefInfoMap.size() == 0)
-			fRefInfoMap = null;
-	}
+//	private void loadReferences(ICStorageElement el){
+//		fRefInfoMap = new HashMap();
+//		ICStorageElement children[] = el.getChildren();
+//		
+//		for(int i = 0; i < children.length; i++){
+//			ICStorageElement child = children[i];
+//			String name = child.getName();
+//
+//			if(ProjectRefInfo.ELEMENT_REFERENCE.equals(name)){
+//				ProjectRefInfo info = new ProjectRefInfo(child);
+//				fRefInfoMap.put(info.getProjectName(), info);
+//			}
+//		}
+//		
+//		if(fRefInfoMap.size() == 0)
+//			fRefInfoMap = null;
+//	}
 	
 //	 private Map normalizeRefs(Map ref){
 //			for(Iterator iter = ref.entrySet().iterator(); iter.hasNext();){
@@ -333,18 +335,18 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		}
 		
 		if(fExtSettingsProvider != null){
-			ICStorageElement child = settings.createChild(CExternalSettingProvider.ELEMENT_EXT_SETTINGS_CONTAINER);
+			ICStorageElement child = settings.createChild(CExternalSettingsHolder.ELEMENT_EXT_SETTINGS_CONTAINER);
 			fExtSettingsProvider.serialize(child);
 		}
 		
-		if(fRefInfoMap != null && fRefInfoMap.size() != 0){
-			ICStorageElement el = settings.createChild(ELEMENT_REFERENCES);
-			for(Iterator iter = fRefInfoMap.values().iterator(); iter.hasNext();){
-				ProjectRefInfo info = (ProjectRefInfo)iter.next();
-				ICStorageElement child = el.createChild(ProjectRefInfo.ELEMENT_REFERENCE);
-				info.serialize(child);
-			}
-		}
+//		if(fRefInfoMap != null && fRefInfoMap.size() != 0){
+//			ICStorageElement el = settings.createChild(ELEMENT_REFERENCES);
+//			for(Iterator iter = fRefInfoMap.values().iterator(); iter.hasNext();){
+//				ProjectRefInfo info = (ProjectRefInfo)iter.next();
+//				ICStorageElement child = el.createChild(ProjectRefInfo.ELEMENT_REFERENCE);
+//				info.serialize(child);
+//			}
+//		}
 		
 		ICStorageElement extEl = settings.createChild(PROJECT_EXTENSIONS);
 		encodeProjectExtensions(extEl);
@@ -369,50 +371,57 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	}
 	
 	public Map getReferenceInfo(){
-		if(fRefInfoMap == null || fRefInfoMap.size() == 0)
-			return new HashMap(0);
-		
-		Map map = (HashMap)fRefInfoMap.clone();
-		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			ProjectRefInfo info = (ProjectRefInfo)entry.getValue();
-			entry.setValue(info.getCfgId());
-		}
-		return map;
+		if(!fCfg.isReadOnly())
+			return CfgExportSettingContainerFactory.getReferenceMap(fCfg);
+		if(fRefMapCache == null)
+			fRefMapCache = CfgExportSettingContainerFactory.getReferenceMap(fCfg);
+		return fRefMapCache;
+//		if(fRefInfoMap == null || fRefInfoMap.size() == 0)
+//			return new HashMap(0);
+//		
+//		Map map = (HashMap)fRefInfoMap.clone();
+//		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+//			Map.Entry entry = (Map.Entry)iter.next();
+//			ProjectRefInfo info = (ProjectRefInfo)entry.getValue();
+//			entry.setValue(info.getCfgId());
+//		}
+//		return map;
 	}
 	
-	public Map getProjectRefInfoMap(){
-		if(fRefInfoMap == null || fRefInfoMap.size() == 0)
-			return new HashMap(0);
-		
-		return (Map)fRefInfoMap.clone();
-	}
+//	public Map getProjectRefInfoMap(){
+//		if(fRefInfoMap == null || fRefInfoMap.size() == 0)
+//			return new HashMap(0);
+//		
+//		return (Map)fRefInfoMap.clone();
+//	}
 	
-	public void setProjectRefInfoMap(Map map){
-		if(map == null && map.size() == 0)
-			fRefInfoMap = null;
-		
-		fRefInfoMap = new HashMap(map);
-		fIsModified = true;
+//	public void setProjectRefInfoMap(Map map){
+//		if(map == null && map.size() == 0)
+//			fRefInfoMap = null;
+//		
+//		fRefInfoMap = new HashMap(map);
+//		fIsModified = true;
+//	}
+
+	public void setReferenceInfo(Map ref){
+		fRefMapCache = null;
+		CfgExportSettingContainerFactory.setReferenceMap(fCfg, ref);
+//		if(isReadOnly())
+//			throw ExceptionFactory.createIsReadOnlyException();
+//
+//		List removed = null, added = null;
+//		if(fRefInfos != null){
+//			for(int i = 0; i < fRefInfos.length; i++){
+//				String cfgId
+//			}
+//		}
+//		if(ref != null && CProjectDescriptionManager.getInstance().normalizeRefs(ref).size() != 0){
+//			fReferenceInfo = new HashMap(ref);
+//		} else {
+//			fReferenceInfo = null;
+//		}
 	}
 
-/*	public void setReferenceInfo(Map ref){
-		if(isReadOnly())
-			throw ExceptionFactory.createIsReadOnlyException();
-
-		List removed = null, added = null;
-		if(fRefInfos != null){
-			for(int i = 0; i < fRefInfos.length; i++){
-				String cfgId
-			}
-		}
-		if(ref != null && CProjectDescriptionManager.getInstance().normalizeRefs(ref).size() != 0){
-			fReferenceInfo = new HashMap(ref);
-		} else {
-			fReferenceInfo = null;
-		}
-	}
-*/
 /*	
 	private Map getExternalSettingsProviderMap(boolean create){
 		if(fExternalSettingsProviderMap == null && create)
@@ -437,12 +446,12 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	
 	public ICExternalSetting createExternalSetting(String[] languageIDs,
 			String[] contentTypeIDs, String[] extensions,
-			ICLanguageSettingEntry[] entries) {
+			ICSettingEntry[] entries) {
 		return fExtSettingsProvider.createExternalSetting(languageIDs, contentTypeIDs, extensions, entries);
 	}
 
 	public void removeExternalSetting(ICExternalSetting setting) {
-		fExtSettingsProvider.removeExternalSetting(setting);
+		fExtSettingsProvider.removeExternalSetting((CExternalSetting)setting);
 	}
 
 	public void removeExternalSettings() {

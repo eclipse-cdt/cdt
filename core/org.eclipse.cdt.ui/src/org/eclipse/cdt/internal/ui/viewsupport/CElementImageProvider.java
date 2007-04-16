@@ -115,9 +115,17 @@ public class CElementImageProvider {
 		} else if (element instanceof IFile) {
 			// Check for Non Translation Unit.
 			IFile file = (IFile)element;
-			if (CoreModel.isValidTranslationUnitName(file.getProject(), file.getName()) ||
-					CoreModel.isValidTranslationUnitName(null, file.getName())) {
-				descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE;
+			String name = file.getName();
+			if (CoreModel.isValidTranslationUnitName(file.getProject(), name) ||
+					CoreModel.isValidTranslationUnitName(null, name)) {
+				if (CoreModel.isValidCHeaderUnitName(null, name) ||
+					CoreModel.isValidCXXHeaderUnitName(null, name))
+					descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE_H;
+				else if (CoreModel.isValidASMSourceUnitName(null, name))
+					descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE_A;
+				else
+					descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE;
+				
 				Point size= useSmallSize(flags) ? SMALL_SIZE : BIG_SIZE;
 				descriptor = new CElementImageDescriptor(descriptor, 0, size);
 			}

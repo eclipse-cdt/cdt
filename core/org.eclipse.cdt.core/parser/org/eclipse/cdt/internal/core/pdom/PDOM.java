@@ -504,9 +504,13 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	public void acquireReadLock() throws InterruptedException {
 		synchronized (mutex) {
 			++waitingReaders;
-			while (lockCount < 0)
-				mutex.wait();
-			--waitingReaders;
+			try {
+				while (lockCount < 0)
+					mutex.wait();
+			}
+			finally {
+				--waitingReaders;
+			}
 			++lockCount;
 		}
 	}
@@ -530,18 +534,18 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			if (giveupReadLocks > 0) {
 				// giveup on read locks
 				assert lockCount >= giveupReadLocks: "Not enough locks to release"; //$NON-NLS-1$
-				if (lockCount >= giveupReadLocks) {
-					lockCount-= giveupReadLocks;
+				if (lockCount < giveupReadLocks) {
+					giveupReadLocks= lockCount;
 				}
-				else if (lockCount >= 0) {
-					lockCount= 0;
-				}
+			}
+			else {
+				giveupReadLocks= 0;
 			}
 
 			// Let the readers go first
-			while (lockCount != 0 || waitingReaders > 0)
+			while (lockCount > giveupReadLocks || waitingReaders > 0)
 				mutex.wait();
-			--lockCount;
+			lockCount= -1;
 			db.setWritable();
 		}
 	}

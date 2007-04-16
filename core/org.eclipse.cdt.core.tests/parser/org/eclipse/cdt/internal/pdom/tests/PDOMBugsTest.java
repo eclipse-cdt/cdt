@@ -120,4 +120,58 @@ public class PDOMBugsTest extends BaseTestCase {
 			pdom.releaseReadLock();
 		}
 	}
+	
+	public void testInterruptingAcquireReadLock() throws Exception {
+		final PDOM pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		final boolean[] ok= {false};
+		pdom.acquireWriteLock();
+		try {
+			Thread other= new Thread() {
+				public void run() {
+					try {
+						pdom.acquireReadLock();
+					} catch (InterruptedException e) {
+						ok[0]= true;
+					} 
+				}
+			};
+			other.start();
+			other.interrupt();
+			other.join();
+			assertTrue("thread was not interrupted", ok[0]);
+		}
+		finally {
+			pdom.releaseWriteLock();
+		}
+		pdom.acquireWriteLock();
+		pdom.releaseWriteLock();
+	}
+	
+	public void testInterruptingAcquireWriteLock() throws Exception {
+		final PDOM pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		final boolean[] ok= {false};
+		pdom.acquireReadLock();
+		try {
+			Thread other= new Thread() {
+				public void run() {
+					try {
+						pdom.acquireReadLock();
+						pdom.acquireWriteLock(1);
+					} catch (InterruptedException e) {
+						ok[0]= true;
+						pdom.releaseReadLock();
+					} 
+				}
+			};
+			other.start();
+			other.interrupt();
+			other.join();
+			assertTrue("thread was not interrupted", ok[0]);
+		}
+		finally {
+			pdom.releaseReadLock();
+		}
+		pdom.acquireWriteLock();
+		pdom.releaseWriteLock();
+	}
 }

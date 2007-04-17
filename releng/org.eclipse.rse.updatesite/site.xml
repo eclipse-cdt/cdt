@@ -18,11 +18,9 @@
    <feature url="features/org.eclipse.rse.local_2.0.0.qualifier.jar" id="org.eclipse.rse.local" version="2.0.0.qualifier">
       <category name="RSE End-User Runtime"/>
    </feature>
-   <!-- !EUROPA_ONLY! Combined Runtime
    <feature url="features/org.eclipse.rse_2.0.0.qualifier.jar" id="org.eclipse.rse" version="2.0.0.qualifier">
       <category name="RSE End-User Runtime"/>
    </feature>
-   !EUROPA_ONLY! -->
    <feature url="features/org.eclipse.rse.sdk_2.0.0.qualifier.jar" id="org.eclipse.rse.sdk" version="2.0.0.qualifier">
       <category name="Remote System Explorer (RSE) Extender SDK"/>
    </feature>

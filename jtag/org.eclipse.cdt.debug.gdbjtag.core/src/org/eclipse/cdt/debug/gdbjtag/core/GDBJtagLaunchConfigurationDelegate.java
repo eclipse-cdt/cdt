@@ -10,15 +10,24 @@
  **********************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
+import java.io.File;
+
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IProcess;
 
 /**
  * @author Doug Schaefer
@@ -37,69 +46,42 @@ public class GDBJtagLaunchConfigurationDelegate extends AbstractCLaunchDelegate 
 			setDefaultSourceLocator(launch, configuration);
 
 			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-				ICDebugConfiguration debugConfig = getDebugConfig(configuration);
-				ICDISession dsession = null;
-				String debugMode = configuration
-						.getAttribute(
-								ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-								ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+				GDBJtagDebugger debugger = new GDBJtagDebugger();
+				ICProject project = verifyCProject(configuration);
+				IPath exePath = verifyProgramPath(configuration);
+				File exeFile = exePath != null ? exePath.toFile() : null;
+				ICDISession session = debugger.createSession(launch, exeFile, monitor);
+				IBinaryObject exeBinary = null;
+				if ( exePath != null ) {
+					exeBinary = verifyBinary(project, exePath);
+				}
+				boolean defaultRun = configuration.getAttribute(GDBJtagConstants.ATTR_USE_DEFAULT_RUN, GDBJtagConstants.DEFAULT_USE_DEFAULT_RUN);
+				
+				try {
+					monitor.worked(1);
 
-				if (debugMode
-						.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-//					dsession = ((EmbeddedGDBCDIDebugger) debugConfig
-//							.createDebugger()).createDebuggerSession(this,
-//							launch, exeFileInfo, new SubProgressMonitor(
-//									monitor, 8));
-//
-//					ICDITarget[] dtargets = dsession.getTargets();
-//					// setFactory(dtargets);
-//					try {
-//
-//						monitor.worked(1);
-//
-//						executeGDBScript(
-//								configuration,
-//								LaunchConfigurationConstants.ATTR_DEBUGGER_COMMANDS_INIT,
-//								dtargets);
-//						monitor.worked(2);
-//
-//						queryTargetState(dtargets);
-//
-//						// create the Launch targets/processes for eclipse.
-//						for (int i = 0; i < dtargets.length; i++) {
-//							Target target = (Target) dtargets[i];
-//							target.setConfiguration(new Configuration(target));
-//							Process process = target.getProcess();
-//							IProcess iprocess = null;
-//							if (process != null) {
-//								iprocess = DebugPlugin.newProcess(launch,
-//										process, renderProcessLabel(exePath
-//												.toOSString()));
-//							}
-//							CDIDebugModel.newDebugTarget(launch, projectInfo,
-//									dtargets[i],
-//									renderTargetLabel(debugConfig), iprocess,
-//									exeFileInfo, true, true, false);
-//							/* FIX!!!! put up a console view for */
-//							// if (process != null) {
-//							// iprocess = DebugPlugin.newProcess(launch,
-//							// process,
-//							// renderProcessLabel(exePath.toOSString()));
-//							// }
-//						}
-//						executeGDBScript(
-//								configuration,
-//								LaunchConfigurationConstants.ATTR_DEBUGGER_COMMANDS_RUN,
-//								dtargets);
-//
-//					} catch (CoreException e) {
-//						try {
-//							dsession.terminate();
-//						} catch (CDIException e1) {
-//							// ignore
-//						}
-//						throw e;
-//					}
+					// create the Launch targets/processes for eclipse.
+					ICDITarget[] targets = session.getTargets();
+					for( int i = 0; i < targets.length; i++ ) {
+						Process process = targets[i].getProcess();
+						IProcess iprocess = null;
+						if ( process != null ) {
+							iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()),
+									getDefaultProcessMap() );
+						}
+						CDIDebugModel.newDebugTarget(launch, project.getProject(), targets[i],
+								renderProcessLabel("GDB Hardware Debugger"), iprocess, exeBinary, true, false, defaultRun);
+					}
+					
+					if (!defaultRun)
+						debugger.doRunSession(launch, session, monitor);
+				} catch (CoreException e) {
+					try {
+						session.terminate();
+					} catch (CDIException e1) {
+						// ignore
+					}
+					throw e;
 				}
 			} else {
 				cancel("TargetConfiguration not supported",

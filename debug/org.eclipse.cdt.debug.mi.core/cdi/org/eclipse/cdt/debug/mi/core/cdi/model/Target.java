@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Ken Ryall (Nokia) - 175532 support the address to source location API
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
@@ -14,6 +15,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
@@ -21,6 +23,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressToSource;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
@@ -60,6 +63,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoLine;
 import org.eclipse.cdt.debug.mi.core.command.CLIInfoThreads;
 import org.eclipse.cdt.debug.mi.core.command.CLIJump;
 import org.eclipse.cdt.debug.mi.core.command.CLISignal;
@@ -78,17 +82,17 @@ import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoLineInfo;
 import org.eclipse.cdt.debug.mi.core.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowEndianInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
-import org.eclipse.core.runtime.Path;
 
 /**
  */
-public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement2 {
+public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement2, ICDIAddressToSource {
 
 	public class Lock {
 
@@ -1212,5 +1216,28 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression, ICDICondition condition, boolean enabled) throws CDIException {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.setWatchpoint(this, type, watchType, expression, condition, enabled);
+	}
+
+	public IMappedSourceLocation getSourceForAddress(IAddress address) throws CDIException {
+		// Ask gdb for info for this address, use the module list
+		// to determine the executable.
+		CommandFactory factory = miSession.getCommandFactory();
+		CLIInfoLine cmd = factory.createCLIInfoLine(address);
+		try {
+			miSession.postCommand(cmd);
+			CLIInfoLineInfo info = cmd.getMIInfoLineInfo();
+			String fileName = ""; //$NON-NLS-1$
+			ICDISharedLibrary[] libs = getSharedLibraries();
+			BigInteger sourceAddress = address.getValue();
+			for (int i = 0; i < libs.length; i++) {
+				if (sourceAddress.compareTo(libs[i].getStartAddress()) > 0 && sourceAddress.compareTo(libs[i].getEndAddress()) < 0)
+				{
+					fileName = libs[i].getFileName();
+				}
+			}
+			return new MappedSourceLocation(address, info, fileName);
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 }

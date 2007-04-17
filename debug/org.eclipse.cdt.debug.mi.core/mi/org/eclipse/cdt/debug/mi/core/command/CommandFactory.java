@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.core.IAddress;
+
 
 /**
  * Factory to create GDB commands.
@@ -357,6 +359,10 @@ public class CommandFactory {
 
 	public CLIInfoProgram createCLIInfoProgram() {
 		return new CLIInfoProgram();
+	}
+
+	public CLIInfoLine createCLIInfoLine(IAddress address) {
+		return new CLIInfoLine(address);
 	}
 
 	public MIVarCreate createMIVarCreate(String expression) {

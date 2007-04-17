@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -63,6 +64,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 
 		private ICProject fCProject;
 		private final String fTestFilename;
+		private File fSdkFile;
 		
 		public SemanticHighlightingTestSetup(Test test, String testFilename) {
 			super(test);
@@ -76,12 +78,13 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 				"void SDKFunction();\n"+
 				"class SDKClass { public: SDKMethod(); };\n\n";
 			
-			final File sdk= createExternalSDK(sdkCode);
-			sdk.deleteOnExit();
+			fSdkFile= createExternalSDK(sdkCode);
+			assertNotNull(fSdkFile);
+			fSdkFile.deleteOnExit();
 
 			fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
 
-			importExternalSDK(sdk, fCProject);
+			importExternalSDK(fSdkFile, fCProject);
 
 			fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
 			fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
@@ -152,6 +155,9 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
 			
+			if (fSdkFile != null) {
+				fSdkFile.delete();
+			}
 			super.tearDown();
 		}
 	}

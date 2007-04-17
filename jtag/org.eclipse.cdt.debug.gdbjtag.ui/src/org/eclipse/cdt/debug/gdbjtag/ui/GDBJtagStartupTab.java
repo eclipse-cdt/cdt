@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
 
+import java.io.File;
+
 import org.eclipse.cdt.debug.gdbjtag.core.GDBJtagConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -28,6 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -42,10 +45,10 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	Button loadImage;
 	Text imageFileName;
 	Button imageFileBrowse;
-	Button imageFileWorkspace;
+	Button imageFileVariables;
 	Button defaultRun;
 	Text runCommands;
-	Button runVarsButton;
+	Button runCommandVariables;
 
 	public String getName() {
 		return "Startup";
@@ -73,6 +76,24 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		sc.setMinSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
+	private void browseButtonSelected(String title, Text text) {
+		FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
+		dialog.setText(title);
+		String str = text.getText().trim();
+		int lastSeparatorIndex = str.lastIndexOf(File.separator);
+		if (lastSeparatorIndex != -1)
+			dialog.setFilterPath(str.substring(0, lastSeparatorIndex));
+		str = dialog.open();
+		if (str != null)
+			text.setText(str);
+	}
+	
+	private void variablesButtonSelected(Text text) {
+		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+		dialog.open();
+		text.append(dialog.getVariableExpression());
+	}
+	
 	public void createInitGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -97,7 +118,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		varsButton.setText("Variables...");
 		varsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				varsButtonSelected(initCommands);
+				variablesButtonSelected(initCommands);
 			}
 		});
 	}
@@ -120,6 +141,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		loadImage.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				loadImageChanged();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -132,19 +154,34 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		imageFileName = new Text(group, SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		imageFileName.setLayoutData(gd);
+		imageFileName.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 
 		imageFileBrowse = new Button(group, SWT.NONE);
 		imageFileBrowse.setText("Browse...");
+		imageFileBrowse.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				browseButtonSelected("Select image file", imageFileName);
+			}
+		});
 		
-		imageFileWorkspace = new Button(group, SWT.NONE);
-		imageFileWorkspace.setText("Workspace...");
+		imageFileVariables = new Button(group, SWT.NONE);
+		imageFileVariables.setText("Variables...");
+		imageFileVariables.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				variablesButtonSelected(imageFileName);
+			}
+		});
 	}
 	
 	private void loadImageChanged() {
 		boolean enabled = loadImage.getSelection();
 		imageFileName.setEnabled(enabled);
 		imageFileBrowse.setEnabled(enabled);
-		imageFileWorkspace.setEnabled(enabled);
+		imageFileVariables.setEnabled(enabled);
 	}
 	
 	public void createRunGroup(Composite parent) {
@@ -160,6 +197,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		defaultRun.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				defaultRunChanged();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -173,13 +211,13 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		runVarsButton = new Button(group, SWT.NONE);
+		runCommandVariables = new Button(group, SWT.NONE);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		runVarsButton.setLayoutData(gd);
-		runVarsButton.setText("Variables...");
-		runVarsButton.addSelectionListener(new SelectionAdapter() {
+		runCommandVariables.setLayoutData(gd);
+		runCommandVariables.setText("Variables...");
+		runCommandVariables.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				varsButtonSelected(runCommands);
+				variablesButtonSelected(runCommands);
 			}
 		});
 	}
@@ -187,13 +225,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	private void defaultRunChanged() {
 		boolean enabled = !defaultRun.getSelection();
 		runCommands.setEnabled(enabled);
-		runVarsButton.setEnabled(enabled);
-	}
-	
-	private void varsButtonSelected(Text text) {
-		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
-		dialog.open();
-		text.append(dialog.getVariableExpression());
+		runCommandVariables.setEnabled(enabled);
 	}
 	
 	public void initializeFrom(ILaunchConfiguration configuration) {
@@ -213,7 +245,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(GDBJtagConstants.ATTR_INIT_COMMANDS, initCommands.getText());
 		configuration.setAttribute(GDBJtagConstants.ATTR_LOAD_IMAGE, loadImage.getSelection());
-		configuration.setAttribute(GDBJtagConstants.ATTR_IMAGE_FILE_NAME, imageFileName.getText());
+		configuration.setAttribute(GDBJtagConstants.ATTR_IMAGE_FILE_NAME, imageFileName.getText().trim());
 		configuration.setAttribute(GDBJtagConstants.ATTR_USE_DEFAULT_RUN, defaultRun.getSelection());
 		configuration.setAttribute(GDBJtagConstants.ATTR_RUN_COMMANDS, runCommands.getText());
 	}

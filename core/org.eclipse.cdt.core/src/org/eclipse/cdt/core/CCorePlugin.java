@@ -159,7 +159,11 @@ public class CCorePlugin extends Plugin {
 	 * IContentType id for ASM Unit
 	 */
 	public final static String CONTENT_TYPE_ASMSOURCE = "org.eclipse.cdt.core.asmSource"; //$NON-NLS-1$
-
+	/**
+	 * IContentType id for Binary Files
+	 */
+	public final static String CONTENT_TYPE_BINARYFILE = "org.eclipse.cdt.core.binaryFile"; //$NON-NLS-1$
+	
 	/**
 	 * Possible  configurable option value.
 	 * @see #getDefaultOptions()

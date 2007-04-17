@@ -503,6 +503,11 @@
           base-type="org.eclipse.core.runtime.text"
           file-extensions="s,asm"
           priority="high"/>
+      <content-type
+            id="binaryFile"
+            name="%binaryFileName"
+            priority="high">
+      </content-type>
    </extension>
 
    <!-- the reserved filenames by the C++ standard -->

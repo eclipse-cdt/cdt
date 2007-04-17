@@ -69,6 +69,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
 
@@ -574,6 +576,32 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	public IBinaryFile createBinaryFile(IFile file) {
+		// Only if file has no extension, has an extension that is an integer
+		// or is a binary file content type
+		String ext = file.getFileExtension();
+		if (ext != null) {
+			// shared libraries often have a version number
+			boolean isNumber = true;
+			for (int i = 0; i < ext.length(); ++i)
+				if (!Character.isDigit(ext.charAt(i))) {
+					isNumber = false;
+					break;
+				}
+			if (!isNumber) {
+				try {
+					// make sure it's a binary file content type
+					IContentDescription contentDesc = file.getContentDescription();
+					if (contentDesc == null)
+						return null;
+					IContentType contentType = contentDesc.getContentType();
+					if (!contentType.isKindOf(Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE)))
+						return null;
+				} catch (CoreException e) {
+					return null;
+				}
+			}
+		}
+		
 		//Avoid name special devices, empty files and the like
 		if (! Util.isNonZeroLengthFile(file.getLocationURI())) {
 			// PR:xxx the EFS does not seem to work for newly created file

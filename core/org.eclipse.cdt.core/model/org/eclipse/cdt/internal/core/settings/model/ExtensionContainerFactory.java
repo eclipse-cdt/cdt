@@ -198,9 +198,29 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactory 
 		}
 	}
 	
+	public static void updateReferencedProviderIds(ICConfigurationDescription cfg, String ids[]){
+		Set newIdsSet = new HashSet(Arrays.asList(ids));
+		Set oldIdsSet = new HashSet(Arrays.asList(getReferencedProviderIds(cfg)));
+		Set newIdsSetCopy = new HashSet(newIdsSet);
+		newIdsSetCopy.removeAll(oldIdsSet);
+		newIdsSet.removeAll(newIdsSetCopy);
+		
+		if(newIdsSet.size() != 0){
+			for(Iterator iter = newIdsSet.iterator(); iter.hasNext();){
+				providerChanged(cfg, (String)iter.next());
+			}
+		}
+	}
+	
 	private static void createReference(ICConfigurationDescription cfg, String id){
 		CContainerRef cr = createContainerRef(id);
 		CExternalSettingsManager.getInstance().addContainer(cfg, cr);
+	}
+	
+	private static void providerChanged(ICConfigurationDescription cfg, String id){
+		CContainerRef cr = createContainerRef(id);
+		CExternalSettingsManager.getInstance().containerContentsChanged(cfg, cr);
+		
 	}
 
 	private static void removeReference(ICConfigurationDescription cfg, String id){

@@ -581,6 +581,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		}
 	}
 	
+	
 	private boolean containerContentsChanged(ICfgContainer cr, CContainerRef ref, DeltaInfo deltaInfo){
 		return processContainerChange(OP_CHANGED, cr, ref, deltaInfo);
 	}
@@ -708,6 +709,11 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
+	}
+	
+	public void containerContentsChanged(ICConfigurationDescription cfg, CContainerRef cr){
+		CfgContainer ccr = new CfgContainer(cfg);
+		containerContentsChanged(ccr, cr, null);
 	}
 	
 	public void addContainer(ICConfigurationDescription cfg, CContainerRef cr){

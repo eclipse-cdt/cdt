@@ -459,6 +459,11 @@ class MockConfig implements ICConfigurationDescription {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void updateExternalSettingsProviders(String[] ids) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 /*

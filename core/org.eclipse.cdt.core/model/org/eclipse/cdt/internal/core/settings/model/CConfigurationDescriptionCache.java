@@ -482,4 +482,10 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 			throw ExceptionFactory.createIsReadOnlyException();
 		fSpecSettings.setExternalSettingsProviderIds(ids);
 	}
+
+	public void updateExternalSettingsProviders(String[] ids) {
+		if(!fInitializing)
+			throw ExceptionFactory.createIsReadOnlyException();
+		fSpecSettings.updateExternalSettingsProviders(ids);
+	}
 }

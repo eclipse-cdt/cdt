@@ -365,4 +365,6 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	void setExternalSettingsProviderIds(String ids[]);
 
 	String[] getExternalSettingsProviderIds();
+	
+	void updateExternalSettingsProviders(String[] ids);
 }

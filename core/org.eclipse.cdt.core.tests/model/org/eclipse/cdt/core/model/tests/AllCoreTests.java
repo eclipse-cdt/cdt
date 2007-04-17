@@ -14,7 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.failedTests.FailedDeclaratorsTest;
-import org.eclipse.cdt.core.settings.model.CConfigurationDescriptionReferenceTests;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionTests;
 
 
 /**
@@ -46,7 +46,10 @@ public class AllCoreTests {
 		suite.addTest(DeclaratorsTests.suite());
 		suite.addTest(FailedDeclaratorsTest.suite());
 		suite.addTest(CPathEntryTest.suite());
-		suite.addTest(CConfigurationDescriptionReferenceTests.suite());
+//		suite.addTest(CConfigurationDescriptionReferenceTests.suite());
+		//the CProjectDescriptionTests now groups all New Project Model related tests
+		//which includes the CConfigurationDescriptionReferenceTests
+		suite.addTest(CProjectDescriptionTests.suite());
 		suite.addTest(ASTCacheTests.suite());
         return suite;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,8 @@ public class CHMessages extends NLS {
 	public static String CHHistoryDropDownAction_ShowHistoryList_tooltip;
 	public static String OpenCallHierarchyAction_label;
 	public static String OpenCallHierarchyAction_tooltip;
+	public static String OpenElementInCallHierarchyAction_errorDlgTitle;
+	public static String OpenElementInCallHierarchyAction_errorNoDefinition;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CHMessages.class);

@@ -942,6 +942,24 @@
             description="%CNavigationActionSet.description"
             visible="false"
             id="org.eclipse.cdt.ui.NavigationActionSet">
+         <!-- enable only after the open symbol dialog can handle functions
+               action
+               id="org.eclipse.cdt.ui.actions.openElementInCallHierarchy"
+               class="org.eclipse.cdt.internal.ui.callhierarchy.OpenElementInCallHierarchyAction"
+               definitionId="org.eclipse.cdt.ui.navigate.open.element.in.call.hierarchy"
+               label="%OpenElementInCallHierarchyAction.label"
+               menubarPath="navigate/open.ext2"
+               tooltip="%OpenElementInCallHierarchyAction.tooltip">
+         </action-->
+         <action
+               id="org.eclipse.cdt.ui.actions.openTypeInHierarchy"
+               class="org.eclipse.cdt.internal.ui.typehierarchy.OpenTypeInHierarchyAction"
+               definitionId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
+               label="%OpenTypeInHierarchyAction.label"
+               helpContextId="org.eclipse.cdt.ui.open_type_in_hierarchy_action"
+               menubarPath="navigate/open.ext2"
+               tooltip="%OpenTypeInHierarchyAction.tooltip">
+         </action>
          <action
                id="org.eclipse.cdt.ui.actions.OpenType"
                toolbarPath="org.eclipse.search.searchActionSet/Search"
@@ -953,15 +971,6 @@
                menubarPath="navigate/open.ext2"
                tooltip="%OpenTypeAction.tooltip">
          </action>
-         <!--action
-               id="org.eclipse.cdt.ui.actions.openTypeInHierarchy"
-               class="org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeInHierarchyAction"
-               definitionId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
-               label="%OpenTypeInHierarchyAction.label"
-               helpContextId="org.eclipse.cdt.ui.open_type_in_hierarchy_action"
-               menubarPath="navigate/open.ext2"
-               tooltip="%OpenTypeInHierarchyAction.tooltip">
-         </action-->
       </actionSet>
       <actionSet
             label="%COpenActionSet.label"
@@ -1106,8 +1115,6 @@
             description="%cEditor.description"
             id="org.eclipse.cdt.ui.cEditorScope">
        </context>
-   </extension> 
-   <extension point="org.eclipse.ui.contexts">
       <context 
             name="%cViewScope.name" 
             description="%cViewScope.description" 
@@ -1204,11 +1211,16 @@
             contextId="org.eclipse.cdt.ui.cViewScope"
             commandId="org.eclipse.cdt.ui.edit.open.type.hierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-     <!--key
+     <key
             sequence="M1+M2+H"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/-->
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="M1+M2+H"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            commandId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
             sequence="M1+M2+N"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -1327,12 +1339,18 @@
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.cdt.ui.edit.open.type.hierarchy">
       </command>
-      <!--command
+      <command
             name="%ActionDefinition.openTypeInHierarchy.name"
             description="%ActionDefinition.openTypeInHierarchy.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy">
-      </command-->
+      </command>
+      <command
+            name="%ActionDefinition.openElementInCallHierarchy.name"
+            description="%ActionDefinition.openElementInCallHierarchy.description"
+            categoryId="org.eclipse.ui.category.navigate"
+            id="org.eclipse.cdt.ui.navigate.open.element.in.call.hierarchy">
+      </command>
       <command
             name="%ActionDefinition.addInclude.name"
             description="%ActionDefinition.addInclude.description"

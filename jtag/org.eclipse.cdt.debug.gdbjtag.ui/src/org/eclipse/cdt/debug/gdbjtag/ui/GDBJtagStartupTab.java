@@ -41,8 +41,11 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	Text initCommands;
 	Button loadImage;
 	Text imageFileName;
+	Button imageFileBrowse;
+	Button imageFileWorkspace;
 	Button defaultRun;
 	Text runCommands;
+	Button runVarsButton;
 
 	public String getName() {
 		return "Startup";
@@ -94,7 +97,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		varsButton.setText("Variables...");
 		varsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleVarsButtonSelected(initCommands);
+				varsButtonSelected(initCommands);
 			}
 		});
 	}
@@ -130,14 +133,18 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		imageFileName.setLayoutData(gd);
 
-		Button button = new Button(group, SWT.NONE);
-		button.setText("Browse...");
-		button = new Button(group, SWT.NONE);
-		button.setText("Workspace...");
+		imageFileBrowse = new Button(group, SWT.NONE);
+		imageFileBrowse.setText("Browse...");
+		
+		imageFileWorkspace = new Button(group, SWT.NONE);
+		imageFileWorkspace.setText("Workspace...");
 	}
 	
 	private void loadImageChanged() {
-		imageFileName.setEnabled(loadImage.getSelection());
+		boolean enabled = loadImage.getSelection();
+		imageFileName.setEnabled(enabled);
+		imageFileBrowse.setEnabled(enabled);
+		imageFileWorkspace.setEnabled(enabled);
 	}
 	
 	public void createRunGroup(Composite parent) {
@@ -150,6 +157,11 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 
 		defaultRun = new Button(group, SWT.CHECK);
 		defaultRun.setText("Use default run command");
+		defaultRun.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				defaultRunChanged();
+			}
+		});
 		
 		runCommands = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -161,18 +173,24 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		Button varsButton = new Button(group, SWT.NONE);
+		runVarsButton = new Button(group, SWT.NONE);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		varsButton.setLayoutData(gd);
-		varsButton.setText("Variables...");
-		varsButton.addSelectionListener(new SelectionAdapter() {
+		runVarsButton.setLayoutData(gd);
+		runVarsButton.setText("Variables...");
+		runVarsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleVarsButtonSelected(runCommands);
+				varsButtonSelected(runCommands);
 			}
 		});
 	}
 	
-	private void handleVarsButtonSelected(Text text) {
+	private void defaultRunChanged() {
+		boolean enabled = !defaultRun.getSelection();
+		runCommands.setEnabled(enabled);
+		runVarsButton.setEnabled(enabled);
+	}
+	
+	private void varsButtonSelected(Text text) {
 		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 		dialog.open();
 		text.append(dialog.getVariableExpression());
@@ -180,21 +198,32 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			initCommands.setText(configuration.getAttribute(GDBJtagConstants.LAUNCH_ATTR_INIT_COMMANDS, "")); //$NON-NLS-1$
-			runCommands.setText(configuration.getAttribute(GDBJtagConstants.LAUNCH_ATTR_RUN_COMMANDS, "")); //$NON-NLS-1$)
+			initCommands.setText(configuration.getAttribute(GDBJtagConstants.ATTR_INIT_COMMANDS, "")); //$NON-NLS-1$
+			loadImage.setSelection(configuration.getAttribute(GDBJtagConstants.ATTR_LOAD_IMAGE, GDBJtagConstants.DEFAULT_LOAD_IMAGE));
+			loadImageChanged();
+			imageFileName.setText(configuration.getAttribute(GDBJtagConstants.ATTR_IMAGE_FILE_NAME, "")); //$NON-NLS-1$
+			defaultRun.setSelection(configuration.getAttribute(GDBJtagConstants.ATTR_USE_DEFAULT_RUN, GDBJtagConstants.DEFAULT_USE_DEFAULT_RUN));
+			defaultRunChanged();
+			runCommands.setText(configuration.getAttribute(GDBJtagConstants.ATTR_RUN_COMMANDS, "")); //$NON-NLS-1$)
 		} catch (CoreException e) {
 			Activator.getDefault().getLog().log(e.getStatus());
 		}
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(GDBJtagConstants.LAUNCH_ATTR_INIT_COMMANDS, initCommands.getText());
-		configuration.setAttribute(GDBJtagConstants.LAUNCH_ATTR_RUN_COMMANDS, runCommands.getText());
+		configuration.setAttribute(GDBJtagConstants.ATTR_INIT_COMMANDS, initCommands.getText());
+		configuration.setAttribute(GDBJtagConstants.ATTR_LOAD_IMAGE, loadImage.getSelection());
+		configuration.setAttribute(GDBJtagConstants.ATTR_IMAGE_FILE_NAME, imageFileName.getText());
+		configuration.setAttribute(GDBJtagConstants.ATTR_USE_DEFAULT_RUN, defaultRun.getSelection());
+		configuration.setAttribute(GDBJtagConstants.ATTR_RUN_COMMANDS, runCommands.getText());
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(GDBJtagConstants.LAUNCH_ATTR_INIT_COMMANDS, ""); //$NON-NLS-1$
-		configuration.setAttribute(GDBJtagConstants.LAUNCH_ATTR_RUN_COMMANDS, ""); //$NON-NLS-1$
+		configuration.setAttribute(GDBJtagConstants.ATTR_INIT_COMMANDS, ""); //$NON-NLS-1$
+		configuration.setAttribute(GDBJtagConstants.ATTR_LOAD_IMAGE, GDBJtagConstants.DEFAULT_LOAD_IMAGE);
+		configuration.setAttribute(GDBJtagConstants.ATTR_IMAGE_FILE_NAME, ""); //$NON-NLS-1$
+		configuration.setAttribute(GDBJtagConstants.ATTR_USE_DEFAULT_RUN, true);
+		configuration.setAttribute(GDBJtagConstants.ATTR_RUN_COMMANDS, ""); //$NON-NLS-1$
 	}
 
 }

@@ -69,9 +69,14 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 			return (CExternalSetting[])fSettingsMap.values().toArray(new CExternalSetting[fSettingsMap.size()]);
 		return EMPTY_EXT_SETTINGS_ARRAY;
 	}
-	
+
 	void setExternallSettings(CExternalSetting[] settings){
-		removeExternalSettings();
+		setExternalSettings(settings, false);
+	}
+
+	void setExternalSettings(CExternalSetting[] settings, boolean add){
+		if(!add)
+			removeExternalSettings();
 
 		if(settings != null){
 			for(int i = 0; i < settings.length; i++){
@@ -83,6 +88,10 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 			}
 		}
 		fIsModified = true;
+	}
+	
+	void addExternalSettings(CExternalSetting[] settings){
+		setExternalSettings(settings, true);
 	}
 
 	public CExternalSetting createExternalSetting(String[] languageIDs,

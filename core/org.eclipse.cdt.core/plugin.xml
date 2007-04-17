@@ -47,6 +47,7 @@
    <extension-point id="CConfigurationDataProvider" name="CConfigurationData provider" schema="schema/CConfigurationDataProvider.exsd"/>
    <extension-point id="projectConverter" name="project converter" schema="schema/projectConverter.exsd"/>
    <extension-point id="CIndex" name="CIndex" schema="schema/CIndex.exsd"/>
+   <extension-point id="externalSettingsProvider" name="External Settings provider" schema="schema/externalSettingsProvider.exsd"/>
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
 <!-- =================================================================================== -->

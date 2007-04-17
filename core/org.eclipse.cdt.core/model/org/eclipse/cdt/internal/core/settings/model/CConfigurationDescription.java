@@ -790,4 +790,21 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		}
 	}
 
+	public String[] getExternalSettingsProviderIds() {
+		try {
+			return getSpecSettings().getExternalSettingsProviderIds();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return new String[0];
+	}
+
+	public void setExternalSettingsProviderIds(String[] ids) {
+		try {
+			getSpecSettings().setExternalSettingsProviderIds(ids);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
 }

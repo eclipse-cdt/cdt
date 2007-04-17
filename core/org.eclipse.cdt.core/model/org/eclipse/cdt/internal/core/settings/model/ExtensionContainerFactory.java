@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.extension.CExternalSettingProvider;
+import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager.CContainerRef;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -60,17 +65,23 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactory 
 		private IExtension fExtension;
 		private IConfigurationElement fProviderElement;
 		private String fId;
+		private String fName;
 		private CExternalSettingProvider fProvider;
 		
 		CExtensionSettingProviderDescriptor(IExtension extension){
 			fId = extension.getUniqueIdentifier();
+			fName = extension.getLabel();
 			fExtension = extension;
 		}
 		
 		public String getId(){
 			return fId;
 		}
-		
+
+		public String getName(){
+			return fName;
+		}
+
 		private CExternalSettingProvider getProvider(){
 			if(fProvider == null){
 				try {
@@ -156,5 +167,48 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactory 
 		if(dr != null)
 			return dr.getContainer(project, cfgDes);
 		return CExternalSettingsManager.NullContainer.INSTANCE;
+	}
+	
+	public static String[] getReferencedProviderIds(ICConfigurationDescription cfg){
+		CContainerRef[] refs = CExternalSettingsManager.getInstance().getReferences(cfg, FACTORY_ID);
+		String[] ids = new String[refs.length];
+		for(int i = 0; i < refs.length; i++){
+			ids[i] = refs[i].getContainerId();
+		}
+		return ids;
+	}
+	
+	public static void setReferencedProviderIds(ICConfigurationDescription cfg, String ids[]){
+		Set newIdsSet = new HashSet(Arrays.asList(ids));
+		Set oldIdsSet = new HashSet(Arrays.asList(getReferencedProviderIds(cfg)));
+		Set newIdsSetCopy = new HashSet(newIdsSet);
+		newIdsSet.removeAll(oldIdsSet);
+		oldIdsSet.removeAll(newIdsSetCopy);
+		
+		if(oldIdsSet.size() != 0){
+			for(Iterator iter = oldIdsSet.iterator(); iter.hasNext();){
+				removeReference(cfg, (String)iter.next());
+			}
+		}
+
+		if(newIdsSet.size() != 0){
+			for(Iterator iter = newIdsSet.iterator(); iter.hasNext();){
+				createReference(cfg, (String)iter.next());
+			}
+		}
+	}
+	
+	private static void createReference(ICConfigurationDescription cfg, String id){
+		CContainerRef cr = createContainerRef(id);
+		CExternalSettingsManager.getInstance().addContainer(cfg, cr);
+	}
+
+	private static void removeReference(ICConfigurationDescription cfg, String id){
+		CContainerRef cr = createContainerRef(id);
+		CExternalSettingsManager.getInstance().removeContainer(cfg, cr);
+	}
+
+	private static CContainerRef createContainerRef(String id){
+		return new CContainerRef(FACTORY_ID, id);
 	}
 }

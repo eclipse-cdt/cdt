@@ -449,6 +449,16 @@ class MockConfig implements ICConfigurationDescription {
 	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus) {
 		return null;
 	}
+
+	public String[] getExternalSettingsProviderIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setExternalSettingsProviderIds(String[] ids) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 /*

@@ -11,8 +11,10 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

@@ -361,4 +361,8 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @return ICLanguageSetting or null if not found
 	 */
 	ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus);
+	
+	void setExternalSettingsProviderIds(String ids[]);
+
+	String[] getExternalSettingsProviderIds();
 }

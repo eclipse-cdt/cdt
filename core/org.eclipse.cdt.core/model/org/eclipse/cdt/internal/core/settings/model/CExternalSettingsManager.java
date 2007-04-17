@@ -20,8 +20,11 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingsDelta;
 import org.eclipse.core.resources.IProject;
@@ -43,6 +46,23 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	private Map fFactoryMap = new HashMap();
 	private static CExternalSettingsManager fInstance;
 	
+	public static class SettingsUpdateStatus {
+		ICProjectDescription fDes;
+		boolean fIsChanged;
+		
+		SettingsUpdateStatus(ICProjectDescription des, boolean isChanged){
+			fDes = des;
+			fIsChanged = isChanged;
+		}
+
+		public ICProjectDescription getCProjectDescription(){
+			return fDes;
+		}
+		
+		public boolean isChanged(){
+			return fIsChanged;
+		}
+	}
 	private CExternalSettingsManager(){
 	}
 
@@ -561,18 +581,18 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		}
 	}
 	
-	private void containerContentsChanged(ICfgContainer cr, CContainerRef ref, DeltaInfo deltaInfo){
-		processContainerChange(OP_CHANGED, cr, ref, deltaInfo);
+	private boolean containerContentsChanged(ICfgContainer cr, CContainerRef ref, DeltaInfo deltaInfo){
+		return processContainerChange(OP_CHANGED, cr, ref, deltaInfo);
 	}
 
-	private void processContainerChange(int op, 
+	private boolean processContainerChange(int op, 
 			ICfgContainer cr, 
 			CContainerRef crInfo,
 			DeltaInfo deltaInfo){
-		processContainerChange(op, cr, new CfgContainerRefInfoContainer(cr), crInfo, deltaInfo);
+		return processContainerChange(op, cr, new CfgContainerRefInfoContainer(cr), crInfo, deltaInfo);
 	}
 
-	private void processContainerChange(int op, 
+	private boolean processContainerChange(int op, 
 		ICfgContainer cr, 
 		ICRefInfoContainer riContainer, 
 		CContainerRef crInfo,
@@ -584,13 +604,13 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 				cfg.getProjectDescription().getProject(), cfg, riContainer, crInfo);
 		
 		if(deltas != null){
-			applyDeltas(cr, deltas);
+			return applyDeltas(cr, deltas);
 		}
-
+		return false;
 	}
 	
-	private void applyDeltas(ICfgContainer cr, ExtSettingsDelta[] deltas){
-		CExternalSettingsDeltaProcessor.applyDelta(cr.getConfguration(true), deltas);
+	private boolean applyDeltas(ICfgContainer cr, ExtSettingsDelta[] deltas){
+		return CExternalSettingsDeltaProcessor.applyDelta(cr.getConfguration(true), deltas);
 	}
 	
 	private static class RefInfoContainer{
@@ -650,13 +670,17 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			checkStore(event.getNewCProjectDescription());
 			break;
 		case CProjectDescriptionEvent.LOADDED:
-			ICProjectDescription des = update(event.getNewCProjectDescription());
-			if(des.isModified()){
-				try {
-					CProjectDescriptionManager.getInstance().setProjectDescription(des.getProject(), des);
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
+			final SettingsUpdateStatus status = update(event.getNewCProjectDescription());
+			if(status.isChanged()){
+				IWorkspaceRunnable r = new IWorkspaceRunnable(){
+
+					public void run(IProgressMonitor monitor) throws CoreException {
+						ICProjectDescription des = status.getCProjectDescription();
+						CProjectDescriptionManager.getInstance().setProjectDescription(des.getProject(), des);
+					}
+					
+				};
+				CProjectDescriptionManager.getInstance().runWspModification(r, null);
 			}
 			break;
 		}
@@ -701,17 +725,19 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		return info.getReferences(factoryId);
 	}
 	
-	public ICProjectDescription update(ICProjectDescription des){
+	public SettingsUpdateStatus update(ICProjectDescription des){
 		ProjDesCfgList list = new ProjDesCfgList(des, null);
+		boolean changed = false;
 		for(int i = 0; i < list.size(); i++){
 			CfgListCfgContainer cfgCr = new CfgListCfgContainer(list, i);
 			CfgContainerRefInfoContainer ric = new CfgContainerRefInfoContainer(cfgCr);
 			CContainerRef[] refs = ric.getRefInfo(false).getReferences();
 			for(int k = 0; k < refs.length; k++){
-				containerContentsChanged(cfgCr, refs[k], null);
+				if(containerContentsChanged(cfgCr, refs[k], null))
+					changed = true;
 			}
 		}
-		return list.fProjDes;
+		return new SettingsUpdateStatus(list.fProjDes, changed);
 	}
 
 	private ExtSettingsDelta[] checkExternalSettingsChange(int op, 
@@ -757,5 +783,16 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	
 	private CExternalSettinsDeltaCalculator getDeltaCalculator(){
 		return CExternalSettinsDeltaCalculator.getInstance();
+	}
+	
+	public void restoreDefaults(ICLanguageSetting ls, int entryKinds){
+		ICConfigurationDescription cfg = ls.getConfiguration();
+		CfgContainer cr = new CfgContainer(cfg);
+		CfgContainerRefInfoContainer ric = new CfgContainerRefInfoContainer(cr);
+		CExternalSetting[] settings = ric.getRefInfo(false).createExternalSettings();
+		ExtSettingsDelta[] deltas = getDeltaCalculator().getSettingChange(settings, null);
+		if(deltas != null){
+			CExternalSettingsDeltaProcessor.applyDelta(ls, deltas, entryKinds);
+		}
 	}
 }

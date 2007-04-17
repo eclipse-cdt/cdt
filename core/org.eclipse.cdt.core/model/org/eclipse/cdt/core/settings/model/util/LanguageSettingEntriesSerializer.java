@@ -148,9 +148,11 @@ public class LanguageSettingEntriesSerializer {
 
 	public static void serializeEntries(ICSettingEntry entries[], ICStorageElement element){
 		ICStorageElement child;
-		for(int i = 0; i < entries.length; i++){
-			child = element.createChild(ELEMENT_ENTRY);
-			serializeEntry(entries[i], child);
+		if(entries != null){
+			for(int i = 0; i < entries.length; i++){
+				child = element.createChild(ELEMENT_ENTRY);
+				serializeEntry(entries[i], child);
+			}
 		}
 	}
 	

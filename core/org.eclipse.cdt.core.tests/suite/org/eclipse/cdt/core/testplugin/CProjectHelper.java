@@ -32,6 +32,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -103,6 +106,47 @@ public class CProjectHelper {
 
 		return newProject[0];
 	}
+	
+	/**
+	 * Creates a ICProject.
+	 */
+	public static ICProject createNewStileCProject(final String projectName, final String indexerID) throws CoreException {
+		final IWorkspace ws = ResourcesPlugin.getWorkspace();
+		final ICProject newProject[] = new ICProject[1];
+		ws.run(new IWorkspaceRunnable() {
+
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IWorkspaceRoot root = ws.getRoot();
+				IProject project = root.getProject(projectName);
+				if (indexerID != null) {
+					IndexerPreferences.set(project, IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
+					IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, indexerID);
+				}
+				if (!project.exists()) {
+					project.create(null);
+				} else {
+					project.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
+				if (!project.isOpen()) {
+					project.open(null);
+				}
+				if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
+					
+					String cfgProviderId = CTestPlugin.PLUGIN_ID + ".testCfgDataProvider";
+					addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
+					ICConfigurationDescription prefCfg = CCorePlugin.getDefault().getPreferenceConfiguration(cfgProviderId);
+					ICProjectDescription projDes = CCorePlugin.getDefault().createProjectDescription(project, false);
+					projDes.createConfiguration(CDataUtil.genId(null), CDataUtil.genId("test"), prefCfg);
+					CCorePlugin.getDefault().setProjectDescription(project, projDes);
+//					CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
+				}
+				newProject[0] = CCorePlugin.getDefault().getCoreModel().create(project);
+			}
+		}, null);
+
+		return newProject[0];
+	}
+
 	
 	private static String getMessage(IStatus status) {
 		StringBuffer message = new StringBuffer("[");

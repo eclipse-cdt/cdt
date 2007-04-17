@@ -472,4 +472,14 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		
 		return CDataUtil.isExcluded(path, fProjSourceEntries);
 	}
+
+	public String[] getExternalSettingsProviderIds() {
+		return fSpecSettings.getExternalSettingsProviderIds();
+	}
+
+	public void setExternalSettingsProviderIds(String[] ids) {
+		if(!fInitializing)
+			throw ExceptionFactory.createIsReadOnlyException();
+		fSpecSettings.setExternalSettingsProviderIds(ids);
+	}
 }

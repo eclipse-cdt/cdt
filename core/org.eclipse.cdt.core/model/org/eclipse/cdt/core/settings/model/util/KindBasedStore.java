@@ -34,7 +34,16 @@ public class KindBasedStore implements Cloneable {
 		| ICLanguageSettingEntry.LIBRARY_PATH
 		| ICLanguageSettingEntry.LIBRARY_FILE;
 
-
+	public static final int ORED_ALL_ENTRY_KINDS = 
+		ICLanguageSettingEntry.INCLUDE_PATH
+		| ICLanguageSettingEntry.INCLUDE_FILE
+		| ICLanguageSettingEntry.MACRO
+		| ICLanguageSettingEntry.MACRO_FILE
+		| ICLanguageSettingEntry.LIBRARY_PATH
+		| ICLanguageSettingEntry.LIBRARY_FILE
+		| ICLanguageSettingEntry.SOURCE_PATH
+		| ICLanguageSettingEntry.OUTPUT_PATH;
+	
 	private static final int LANG_ENTRY_KINDS[] = new int[]{
 		ICLanguageSettingEntry.INCLUDE_PATH,
 		ICLanguageSettingEntry.INCLUDE_FILE,

@@ -45,5 +45,20 @@
             class="org.eclipse.cdt.internal.pdom.tests.GeneratePDOMApplicationTest$TestProjectProvider4">
       </ExportProjectProvider>
    </extension>
-
+   <extension
+         point="org.eclipse.cdt.core.CConfigurationDataProvider"
+         id="testCfgDataProvider">
+      <provider
+            class="org.eclipse.cdt.core.settings.model.TestCfgDataProvider">
+      </provider>
+   </extension>
+   <extension
+         id="testExtSettingsProvider"
+         name="name"
+         point="org.eclipse.cdt.core.externalSettingsProvider">
+         <provider
+         	class="org.eclipse.cdt.core.settings.model.TestExtSettingsProvider">
+         </provider>
+   </extension>
+   
 </plugin>

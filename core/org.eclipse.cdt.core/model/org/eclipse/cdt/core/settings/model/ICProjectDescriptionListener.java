@@ -8,7 +8,8 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.settings.model;
+package org.eclipse.cdt.core.settings.model;
+
 
 public interface ICProjectDescriptionListener {
 	void handleEvent(CProjectDescriptionEvent event);

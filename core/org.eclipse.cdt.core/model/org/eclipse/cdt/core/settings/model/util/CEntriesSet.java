@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.util;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class CEntriesSet {
-	private HashMap fEntriesMap = new HashMap();
+	private LinkedHashMap fEntriesMap = new LinkedHashMap();
 
 	public CEntriesSet(){
 	}

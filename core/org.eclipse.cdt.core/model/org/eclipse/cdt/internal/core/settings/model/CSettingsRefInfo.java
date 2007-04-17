@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager.CContainerRef;
 
@@ -99,6 +100,19 @@ class CSettingsRefInfo {
 	
 	CRefSettingsHolder remove(CContainerRef cRef){
 		return (CRefSettingsHolder)fESHolderMap.remove(cRef);
+	}
+	
+	CExternalSetting[] createExternalSettings(){
+		if(fESHolderMap.size() == 0)
+			return new CExternalSetting[0];
+		if(fESHolderMap.size() == 1)
+			return ((CRefSettingsHolder)fESHolderMap.values().iterator().next()).getExternalSettings();
+		CExternalSettingsHolder holder = new CExternalSettingsHolder();
+		for(Iterator iter = fESHolderMap.values().iterator(); iter.hasNext();){
+			CExternalSettingsHolder h = (CExternalSettingsHolder)iter.next();
+			holder.setExternalSettings(h.getExternalSettings(), true);
+		}
+		return holder.getExternalSettings();
 	}
 
 }

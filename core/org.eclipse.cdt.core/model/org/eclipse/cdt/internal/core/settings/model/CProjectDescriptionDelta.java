@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 
-class CProjectDescriptionDelta implements ICDescriptionDelta {
+public class CProjectDescriptionDelta implements ICDescriptionDelta {
 	private List fChildList = new ArrayList();
 	private CProjectDescriptionDelta fParent;
 	private ICSettingObject fSetting;
@@ -29,7 +29,7 @@ class CProjectDescriptionDelta implements ICDescriptionDelta {
 	private static final int KIND_MASK = 3;
 	private static final int FLAGS_OFFSET = 2;
 	
-	CProjectDescriptionDelta(ICSettingObject newSetting, ICSettingObject oldSetting){
+	public CProjectDescriptionDelta(ICSettingObject newSetting, ICSettingObject oldSetting){
 		fNewSetting = newSetting;
 		fOldSetting = oldSetting;
 		if(newSetting != null){

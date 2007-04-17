@@ -29,52 +29,80 @@ import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingsDelta;
 
 public class CExternalSettingsDeltaProcessor {
-	static void applyDelta(ICConfigurationDescription des, ExtSettingsDelta deltas[]){
+	static boolean applyDelta(ICConfigurationDescription des, ExtSettingsDelta deltas[]){
+		return applyDelta(des, deltas, KindBasedStore.ORED_ALL_ENTRY_KINDS);
+	}
+
+	static boolean applyDelta(ICConfigurationDescription des, ExtSettingsDelta deltas[], int kindMask){
 		ICResourceDescription rcDess[] = des.getResourceDescriptions();
+		boolean changed = false;
 		for(int i = 0; i < rcDess.length; i++){
 			ICResourceDescription rcDes = rcDess[i];
-			if(rcDes.getType() == ICSettingBase.SETTING_FOLDER){
-				applyDelta((ICFolderDescription)rcDes, deltas);
-			} else {
-				applyDelta((ICFileDescription)rcDes, deltas);
-			}
+			if(applyDelta(rcDes, deltas, kindMask))
+				changed = true;
 		}
+		return changed;
 	}
 	
-	private static void applyDelta(ICFileDescription des, ExtSettingsDelta deltas[]){
+	static boolean applyDelta(ICResourceDescription rcDes, ExtSettingsDelta deltas[], int kindMask){
+		if(rcDes.getType() == ICSettingBase.SETTING_FOLDER){
+			return applyDelta((ICFolderDescription)rcDes, deltas, kindMask);
+		} 
+		return applyDelta((ICFileDescription)rcDes, deltas, kindMask);
+	}
+	
+	static boolean applyDelta(ICFileDescription des, ExtSettingsDelta deltas[], int kindMask){
 		ICLanguageSetting setting = des.getLanguageSetting();
 		if(setting == null)
-			return;
+			return false;
+		
+		boolean changed = false;
 		for(int i = 0; i < deltas.length; i++){
 			if(isSettingCompatible(setting, deltas[i].fSetting)){
-				applyDelta(setting, deltas[i]);
+				if(applyDelta(setting, deltas[i], kindMask))
+					changed = true;
 			}
 		}
+		return changed;
 	}
 
-	private static void applyDelta(ICFolderDescription des, ExtSettingsDelta deltas[]){
+	static boolean applyDelta(ICFolderDescription des, ExtSettingsDelta deltas[], int kindMask){
 		ICLanguageSetting settings[] = des.getLanguageSettings();
 		if(settings == null || settings.length == 0)
-			return;
+			return false;
 		
 		ICLanguageSetting setting;
+		boolean changed = false;
 		for(int k = 0; k < settings.length; k++){
 			setting = settings[k];
-			for(int i = 0; i < deltas.length; i++){
-				if(isSettingCompatible(setting, deltas[i].fSetting)){
-					applyDelta(setting, deltas[i]);
-				}
+			if(applyDelta(setting, deltas, kindMask))
+				changed = true;
+		}
+		return changed;
+	}
+	
+	static boolean applyDelta(ICLanguageSetting setting, ExtSettingsDelta[] deltas, int kindMask){
+		boolean changed = false;
+		for(int i = 0; i < deltas.length; i++){
+			if(isSettingCompatible(setting, deltas[i].fSetting)){
+				if(applyDelta(setting, deltas[i], kindMask))
+					changed = true;
 			}
 		}
+		return changed;
 	}
 
-	private static void applyDelta(ICLanguageSetting setting, ExtSettingsDelta delta){
+	static boolean applyDelta(ICLanguageSetting setting, ExtSettingsDelta delta, int kindMask){
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		int kind;
 		ICLanguageSettingEntry entries[];
 		ICSettingEntry diff[][];
+		boolean changed = false;
 		for(int i = 0; i < kinds.length; i++){
 			kind = kinds[i];
+			if((kind & kindMask) == 0)
+				continue;
+			
 			diff = delta.getEntriesDelta(kind);
 			if(diff == null)
 				continue;
@@ -82,9 +110,12 @@ public class CExternalSettingsDeltaProcessor {
 			entries = setting.getSettingEntries(kind);
 			List list = calculateUpdatedEntries(entries, diff[0], diff[1]);
 			
-			if(list != null)
+			if(list != null){
 				setting.setSettingEntries(kind, list);
+				changed = true;
+			}
 		}
+		return changed;
 	}
 	
 	private static List calculateUpdatedEntries(ICSettingEntry current[], ICSettingEntry added[], ICSettingEntry removed[]){

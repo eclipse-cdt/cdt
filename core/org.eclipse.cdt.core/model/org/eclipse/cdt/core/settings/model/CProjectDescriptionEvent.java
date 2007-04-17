@@ -8,11 +8,12 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.settings.model;
+package org.eclipse.cdt.core.settings.model;
 
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingObject;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionDelta;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
+import org.eclipse.cdt.internal.core.settings.model.ICDescriptionDelta;
 import org.eclipse.core.resources.IProject;
 
 public final class CProjectDescriptionEvent {

@@ -46,12 +46,14 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
@@ -635,6 +637,9 @@ public class CProjectDescriptionManager {
 	}
 	
 	public Job runWspModification(final IWorkspaceRunnable runnable, IProgressMonitor monitor){
+		if(monitor == null)
+			monitor = new NullProgressMonitor();
+		
 		final IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		boolean scheduleRule = true;
 		if(!wsp.isTreeLocked()) {
@@ -649,7 +654,8 @@ public class CProjectDescriptionManager {
 				CCorePlugin.log(e);
 			} catch (Exception e) {
 			} finally {
-				monitor.done();
+				if(!scheduleRule)
+					monitor.done();
 				mngr.endRule(rule);
 			}
 		}

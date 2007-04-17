@@ -919,4 +919,13 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		
 		return true;
 	}
+	
+	public String[] getExternalSettingsProviderIds(){
+		return ExtensionContainerFactory.getReferencedProviderIds(fCfg);
+	}
+	
+	public void setExternalSettingsProviderIds(String ids[]){
+		ExtensionContainerFactory.setReferencedProviderIds(fCfg, ids);
+	}
+ 
 }

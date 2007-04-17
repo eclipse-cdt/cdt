@@ -1294,33 +1294,37 @@ public class CPPSemantics {
 		return result;	
 	}
 
-	public static void visitVirtualBaseClasses( LookupData data, ICPPClassType cls ){
-	    ICPPBase [] bases = null;
-	    try {
-            bases = cls.getBases();
-        } catch ( DOMException e ) {
-            return;
-        }
+	public static void visitVirtualBaseClasses( LookupData data, ICPPClassType cls ) throws DOMException {		
+		if( data.inheritanceChain == null )
+			data.inheritanceChain = new ObjectSet( 2 );
+		
+		IScope scope = cls.getCompositeScope();
+		if (scope != null)
+			data.inheritanceChain.put( scope );
+		
+	    ICPPBase [] bases = cls.getBases();
+
         for( int i = 0; i < bases.length; i++ ){
-            try {
-                if( bases[i].isVirtual() ){
-                    if( data.visited == ObjectSet.EMPTY_SET )
-				        data.visited = new ObjectSet(2);
-                    IBinding b = bases[i].getBaseClass();
-                    if( b instanceof ICPPClassType ) {
-                    	IScope bScope = ((ICPPClassType)b).getCompositeScope();
-                    	if (bScope != null)
-                    		data.visited.put(bScope);
-                    }
-                } else {
-                	IBinding b = bases[i].getBaseClass();
-                    if( b instanceof ICPPClassType )
-                    	visitVirtualBaseClasses( data, (ICPPClassType) b );
-                }
-            } catch ( DOMException e1 ) {
+            IBinding b = bases[i].getBaseClass();
+            if (b instanceof ICPPClassType) {
+            	IScope bScope = ((ICPPClassType)b).getCompositeScope();
+            	if( bases[i].isVirtual() ){
+            		if( data.visited == ObjectSet.EMPTY_SET )
+            			data.visited = new ObjectSet(2);
+            		if (bScope != null)
+            			data.visited.put(bScope);
+            	} else if ( !data.inheritanceChain.containsKey(bScope) ) {
+            		visitVirtualBaseClasses( data, (ICPPClassType) b );
+            	} else {
+            		data.problem = new ProblemBinding( null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, cls.getNameCharArray() );
+            	}
             }
         }
+        
+        if (scope != null)
+        	data.inheritanceChain.remove( scope );
 	}
+	
 	private static boolean checkForAmbiguity( LookupData data, Object n, Object names ) throws DOMException{
 		if( names instanceof Object[] ) {
 		    names = ArrayUtil.trim( Object.class, (Object[]) names );

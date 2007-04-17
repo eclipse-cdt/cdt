@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.navigator;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -22,12 +21,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+
+import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 
 /**
  * Common Navigator compatible clone of {@link org.eclipse.cdt.internal.ui.cview.BuildGroup}.
@@ -106,14 +108,13 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 			}
 		}
 
-		menu.insertAfter(ICommonMenuConstants.GROUP_BUILD, new GroupMarker(BUILD_GROUP_MARKER));
-
 		if (!selection.isEmpty() && isProjectSelection && hasBuilder) {
 			fCleanAction.selectionChanged(selection);
 			if (fCleanAction.isEnabled()) {
-				menu.appendToGroup(BUILD_GROUP_MARKER, fCleanAction);
+				menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, fCleanAction);
 			}
 		}
+		menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, new Separator(BUILD_GROUP_MARKER));
 		menu.appendToGroup(BUILD_GROUP_MARKER, new GroupMarker(BUILD_GROUP_MARKER_END));
 	}
 

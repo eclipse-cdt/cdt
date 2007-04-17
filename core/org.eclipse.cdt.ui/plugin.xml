@@ -1824,6 +1824,7 @@
        </actionProvider>
        <actionProvider
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorBuildActionProvider"
+             dependsOn="org.eclipse.ui.navigator.resources.ResourceMgmtActions"
              id="org.eclipse.cdt.ui.navigator.actions.build">
           <enablement>
              <instanceof value="org.eclipse.cdt.core.model.ICElement"/>

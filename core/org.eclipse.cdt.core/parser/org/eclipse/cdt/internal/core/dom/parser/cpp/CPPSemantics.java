@@ -1313,10 +1313,11 @@ public class CPPSemantics {
             			data.visited = new ObjectSet(2);
             		if (bScope != null)
             			data.visited.put(bScope);
-            	} else if ( !data.inheritanceChain.containsKey(bScope) ) {
-            		visitVirtualBaseClasses( data, (ICPPClassType) b );
-            	} else {
-            		data.problem = new ProblemBinding( null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, cls.getNameCharArray() );
+            	} else if ( bScope != null ) {
+            		if ( !data.inheritanceChain.containsKey(bScope) )
+            			visitVirtualBaseClasses( data, (ICPPClassType) b );
+            		else
+            			data.problem = new ProblemBinding( null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, cls.getNameCharArray() );
             	}
             }
         }

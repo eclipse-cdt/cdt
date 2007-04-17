@@ -28,6 +28,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -116,6 +118,33 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 									});
 									break;
 								}
+							}
+						}
+					} else {
+						// Check if we're in an include statement
+						IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
+						for (int i = 0; i < preprocs.length; ++i) {
+							if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
+								continue;
+							IASTFileLocation loc = preprocs[i].getFileLocation();
+							if (loc.getFileName().equals(ast.getFilePath())
+									&& loc.getNodeOffset() < selectionStart
+									&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
+								// Got it
+								String name = ((IASTPreprocessorIncludeStatement)preprocs[i]).getPath();
+								if (name != null) {
+									final IPath path = new Path(name);
+									runInUIThread(new Runnable() {
+										public void run() {
+											try {
+												open(path, 0, 0);
+											} catch (CoreException e) {
+												CUIPlugin.getDefault().log(e);
+											}
+										}
+									});
+								}
+								break;
 							}
 						}
 					}

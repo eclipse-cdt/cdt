@@ -22,7 +22,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -50,7 +50,6 @@
                   project nature ids associated with this provider. IDs are separated by the semicolon.
 Each time the Build Active configuration gets changed, the project natures set gets adjusted by removing natures associated with the previously active configuration and adding natures associated with the new actove configuration.
 This allows to adjust, e.g. the builders to be used with the project, etc.
-
                </documentation>
             </annotation>
          </attribute>

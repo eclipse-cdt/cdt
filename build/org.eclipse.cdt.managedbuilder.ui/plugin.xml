@@ -101,6 +101,11 @@
               label="%BuildMenu.label"
               menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"
               style="pulldown"/>
+        <visibility>
+           <objectState
+              name="projectNature"
+              value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+        </visibility>      
       </objectContribution>
       <objectContribution
            adaptable="true"

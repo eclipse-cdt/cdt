@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,12 @@
 
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 
 /**
@@ -30,6 +32,17 @@ public class PartitionDamager implements IPresentationDamager {
 	 */
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event,
 			boolean documentPartitioningChanged) {
+		if (!documentPartitioningChanged && event.getOffset() == partition.getOffset() + partition.getLength()) {
+			IRegion lineRegion;
+			try {
+				lineRegion = event.fDocument.getLineInformationOfOffset(event.getOffset());
+				int start= partition.getOffset();
+				int end= lineRegion.getOffset() + lineRegion.getLength();
+				return new Region(start, end - start);
+			} catch (BadLocationException exc) {
+				// ignore
+			}
+		}
 		return partition;
 	}
 

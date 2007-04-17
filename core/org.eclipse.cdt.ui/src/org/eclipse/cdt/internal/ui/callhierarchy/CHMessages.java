@@ -53,6 +53,9 @@ public class CHMessages extends NLS {
 	public static String OpenCallHierarchyAction_tooltip;
 	public static String OpenElementInCallHierarchyAction_errorDlgTitle;
 	public static String OpenElementInCallHierarchyAction_errorNoDefinition;
+	public static String OpenElementInCallHierarchyAction_message;
+	public static String OpenElementInCallHierarchyAction_title;
+	public static String OpenElementInCallHierarchyAction_upperListLabel;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CHMessages.class);

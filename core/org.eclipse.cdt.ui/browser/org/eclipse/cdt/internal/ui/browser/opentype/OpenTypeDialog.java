@@ -116,7 +116,7 @@ public class OpenTypeDialog extends TypeSelectionDialog {
 	}
 	
 	protected void handleEmptyList() {
-		// override super-class behaviour with no-op
+		update(getFilter());
 	}
 	
 	protected Text createFilterText(Composite parent) {

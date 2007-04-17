@@ -19,6 +19,9 @@ public class Messages extends NLS {
 	public static String OpenTypeHierarchyAction_tooltip;
 	public static String OpenTypeInHierarchyAction_errorNoDefinition;
 	public static String OpenTypeInHierarchyAction_errorTitle;
+	public static String OpenTypeInHierarchyAction_message;
+	public static String OpenTypeInHierarchyAction_title;
+	public static String OpenTypeInHierarchyAction_upperListLabel;
 	public static String THGraph_error_elementNotFound;
 	public static String THHierarchyModel_errorComputingHierarchy;
 	public static String THHierarchyModel_Job_title;

@@ -16,9 +16,12 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
@@ -28,11 +31,12 @@ import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
+
+	private IWorkbenchWindow fWorkbenchWindow;
 
 	public OpenTypeAction() {
 		super();
@@ -45,6 +49,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 */
 	public void run(IAction action) {
 		OpenTypeDialog dialog = new OpenTypeDialog(getShell());
+		configureDialog(dialog);
 		int result = dialog.open();
 		if (result != IDialogConstants.OK_ID)
 			return;
@@ -67,8 +72,26 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 	
+	private void configureDialog(OpenTypeDialog dialog) {
+		if (fWorkbenchWindow != null) {
+			IWorkbenchPage page= fWorkbenchWindow.getActivePage();
+			if (page != null) {
+				IWorkbenchPart part= page.getActivePart();
+				if (part instanceof ITextEditor) {
+					ISelection sel= ((ITextEditor) part).getSelectionProvider().getSelection();
+					if (sel instanceof ITextSelection) {
+						String txt= ((ITextSelection) sel).getText();
+						if (txt.length() > 0 && txt.length() < 80) {
+							dialog.setFilter(txt, true);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	protected Shell getShell() {
-		return CUIPlugin.getActiveWorkbenchShell();
+		return fWorkbenchWindow.getShell();
 	}
 	
 	/**
@@ -127,6 +150,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
+		fWorkbenchWindow= null;
 	}
 	
 	/*
@@ -135,6 +159,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
+		fWorkbenchWindow= window;
 	}
 	
 	/*

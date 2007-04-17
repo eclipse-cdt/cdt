@@ -14,11 +14,15 @@ package org.eclipse.cdt.internal.ui.typehierarchy;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
@@ -65,6 +69,25 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 	
 	private void configureDialog(OpenTypeDialog dialog) {
 		dialog.setVisibleTypes(VISIBLE_TYPES);
+		dialog.setTitle(Messages.OpenTypeInHierarchyAction_title);
+		dialog.setUpperListLabel(Messages.OpenTypeInHierarchyAction_upperListLabel);
+		dialog.setMessage(Messages.OpenTypeInHierarchyAction_message);
+
+		if (fWorkbenchWindow != null) {
+			IWorkbenchPage page= fWorkbenchWindow.getActivePage();
+			if (page != null) {
+				IWorkbenchPart part= page.getActivePart();
+				if (part instanceof ITextEditor) {
+					ISelection sel= ((ITextEditor) part).getSelectionProvider().getSelection();
+					if (sel instanceof ITextSelection) {
+						String txt= ((ITextSelection) sel).getText();
+						if (txt.length() > 0 && txt.length() < 80) {
+							dialog.setFilter(txt, true);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private Shell getShell() {

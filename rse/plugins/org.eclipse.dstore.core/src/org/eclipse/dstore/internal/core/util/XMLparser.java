@@ -530,37 +530,43 @@ public class XMLparser
 					
 					if (parent != null && parent.getNestedSize() > 0 && _dataStore.isVirtual())
 					{
-						// end of children of parent
-						// find all spirits that match non-spirits
 						List toDelete = new ArrayList();
-						for (int s= 0; s < parent.getNestedSize(); s++)
+						List nested = parent.getNestedData();
+						synchronized (nested)
 						{
-							DataElement element = parent.get(s);
-							if (element.isSpirit())
+							for (int s= 0; s < nested.size(); s++)
 							{
-								String name = element.getName();
-								String value = element.getValue();
-								
-								// delete this element if there's another one with the same name and value
-								for (int n = 0; n < parent.getNestedSize(); n++)
+								DataElement element = (DataElement)nested.get(s);
+								if (element.isSpirit())
 								{
-									if (n != s)
+									boolean addedToDelete = false;
+									String name = element.getName();
+									String value = element.getValue();
+									
+									// delete this element if there's another one with the same name and value
+									for (int n = 0; n < parent.getNestedSize() && !addedToDelete; n++)
 									{
-										DataElement compare = parent.get(n);
-										String cname = compare.getName();
-										String cvalue = compare.getValue();
-										if (!compare.isSpirit() &&  cname.equals(name) && cvalue.equals(value))
-											toDelete.add(compare);
+										if (n != s)
+										{
+											DataElement compare = parent.get(n);
+											String cname = compare.getName();
+											String cvalue = compare.getValue();
+											if (!compare.isSpirit() &&  cname.equals(name) && cvalue.equals(value))										
+											{
+												toDelete.add(element);
+												addedToDelete = true;
+											}
+										}
 									}
 								}
+							}					
+							
+							// delete elements
+							for (int d = 0; d < toDelete.size(); d++)
+							{
+								DataElement delement = (DataElement)toDelete.get(d);
+								_dataStore.deleteObject(parent,delement);
 							}
-						}
-						
-						// delete elements
-						for (int d = 0; d < toDelete.size(); d++)
-						{
-							DataElement delement = (DataElement)toDelete.get(d);
-							_dataStore.deleteObject(parent,delement);
 						}
 					}
 

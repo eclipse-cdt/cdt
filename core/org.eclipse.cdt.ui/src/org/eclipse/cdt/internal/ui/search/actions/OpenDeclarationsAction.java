@@ -126,13 +126,16 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 						for (int i = 0; i < preprocs.length; ++i) {
 							if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
 								continue;
+							IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
+							if (!incStmt.isResolved())
+								continue;
 							IASTFileLocation loc = preprocs[i].getFileLocation();
 							if (loc != null
 									&& loc.getFileName().equals(ast.getFilePath())
 									&& loc.getNodeOffset() < selectionStart
 									&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
 								// Got it
-								String name = ((IASTPreprocessorIncludeStatement)preprocs[i]).getPath();
+								String name = incStmt.getPath();
 								if (name != null) {
 									final IPath path = new Path(name);
 									runInUIThread(new Runnable() {

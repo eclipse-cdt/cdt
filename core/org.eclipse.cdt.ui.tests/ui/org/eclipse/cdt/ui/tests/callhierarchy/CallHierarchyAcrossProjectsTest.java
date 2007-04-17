@@ -45,8 +45,9 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		fCProject2= CProjectHelper.createCCProject("__chTest_2__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		CCorePlugin.getIndexManager().reindex(fCProject2);
+		fCProject2= CProjectHelper.createCCProject("__chTest_2__", "bin", IPDOMManager.ID_NO_INDEXER);
+		CCorePlugin.getIndexManager().setIndexerId(fCProject2, IPDOMManager.ID_FAST_INDEXER);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 		fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {fCProject, fCProject2});
 		TestScannerProvider.sIncludes= new String[]{fCProject.getProject().getLocation().toOSString(), fCProject2.getProject().getLocation().toOSString()};
 	}

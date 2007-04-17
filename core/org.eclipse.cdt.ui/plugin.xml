@@ -1583,10 +1583,11 @@
             category="org.eclipse.cdt.ui.newui.Page_head_general"
             name="%CDTLanguagesProperty.name">
          <enabledWhen>
-            <adapt
-                  type="org.eclipse.cdt.core.model.ITranslationUnit">
-            </adapt>
-         </enabledWhen>z`
+            <and>
+               <adapt type="org.eclipse.cdt.core.model.ITranslationUnit"/>
+               <adapt type="org.eclipse.core.resources.IFile"/>
+            </and>
+         </enabledWhen>
       </page>
    </extension>
    <extension

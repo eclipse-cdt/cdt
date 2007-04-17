@@ -4,29 +4,55 @@
 <head>
 	<meta http-equiv="Content-Language" content="en-us">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Color preferences</title>
+	<title>Syntax Coloring preferences</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 
 <body>
 
-<h1>Color preferences</h1>
+<h1>Syntax Coloring preferences</h1>
 
-<p>You can customize the appearance of the C/C++ editor on the Colors page of the Preferences window.</p>
-<p><img src="../images/editor_color_preferences.png" alt="Editor General Preferences Dialog Box"></p>
+<p>The <b>Syntax Coloring</b> preference panel specifies how C/C++ source code is rendered. Each element category (Code, Comments, and Preprocessor) contains a list of language elements that may be rendered with its own color and style.</p>
+	<p>Note that general text editor settings such as the background color can be configured on the general <b>Text Editors</b> preference pages. Fonts may be configured on the general <b>Colors and Fonts</b> preference page</p>
+	<p><img src="../images/editor_color_preferences.png" alt="Syntax Coloring Preferences Page"></p>
 
-<dl>
-  <dt>System Default</dt>
-  <dd>Uses the system default for the background color.</dd>
-  <dt>Custom</dt>
-  <dd>Changes the background color.</dd>
-  <dt>Foreground</dt>
-  <dd>Lists items, such as comments, keywords, and strings, for which you can specify a color.</dd>
-  <dt>Color</dt>
-  <dd>Specifies the color in which to display the selected item.</dd>
-  <dt>Bold</dt>
-  <dd>Makes the selected item bold.</dd>
-</dl>
+<table width="600px" cellpadding="5" cellspacing="0" border="1" >
+	<caption><b>Syntax Coloring Preference Options</b></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody>
+		<tr>
+			<td><dt>Enable semantic highlighting</dt></td>
+			<td>Checkmark to activate semantic highlighting of specific structures in the elements listed.</td>
+		</tr>
+		<tr>
+			<td><dt>Enable</dt></td>
+			<td>Makes the selected element active for syntax coloring.</td>
+		</tr>
+		<tr>
+			<td><dt>Color</dt></td>
+			<td>Specifies the color in which to display the selected element.</td>
+		</tr>
+		<tr>
+			<td><dt>Bold</dt></td>
+			<td>Makes the selected element <b>bold</b>.</td>
+		</tr>
+		<tr>
+			<td><dt>Italic</dt></td>
+			<td>Makes the selected element <i>italic</i>.</td>
+		</tr>
+		<tr>
+			<td><dt>Strikethrough</dt></td>
+			<td>Makes the selected element <s>strikethrough</s>.</td>
+		</tr>
+		<tr>
+			<td><dt>Underline</dt></td>
+			<td>Makes the selected element <u>underlined</u>.</td>
+		</tr>
+	</tbody>
+</table>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
 <a href="../concepts/cdt_o_code_entry.htm">Coding aids</a></p>
@@ -36,6 +62,7 @@
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a></p>
+<hr>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
 
 </body>

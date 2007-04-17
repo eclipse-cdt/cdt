@@ -47,7 +47,7 @@
 		</topic>
 		<topic label="C/C++ Editor preferences" href="reference/cdt_o_ceditor_pref.htm">
 			<topic label="General preferences" href="reference/cdt_u_c_editor_gen.htm"/>
-			<topic label="Colors preferences" href="reference/cdt_u_c_editor_color.htm"/>
+			<topic label="Syntax Coloring preferences" href="reference/cdt_u_c_editor_color.htm"/>
 			<topic label="Content Assist preferences" href="reference/cdt_u_c_editor_con_assist.htm"/>
 			<topic label="Hovers preferences" href="reference/cdt_u_c_editor_hov.htm"/>
 			<topic label="Navigation preferences" href="reference/cdt_u_c_editor_navigation.htm"/>

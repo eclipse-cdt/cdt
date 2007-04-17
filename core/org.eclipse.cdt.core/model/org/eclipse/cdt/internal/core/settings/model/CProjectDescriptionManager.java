@@ -1332,7 +1332,6 @@ public class CProjectDescriptionManager {
 	
 			if (projectFile.exists()) {
 				if (projectFile.isReadOnly()) {						
-	
 					// Inform Eclipse that we are intending to modify this file
 					// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
 					// reset a read-only file protection to write etc.
@@ -1353,7 +1352,20 @@ public class CProjectDescriptionManager {
 					    //}
 					//}
 				}
-				projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+				try {
+					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+				} catch (CoreException e) {
+					if (projectFile.getLocation().toFile().isHidden()) {
+						String os = System.getProperty("os.name"); //$NON-NLS-1$
+						if (os != null && os.startsWith("Win")) { //$NON-NLS-1$
+							projectFile.delete(true, null);
+							projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+							CCorePlugin.log(e.getLocalizedMessage() +
+							    "\n** Error occured because of file status <hidden>." +  //$NON-NLS-1$
+							    "\n** This status is disabled now, to allow writing.");  //$NON-NLS-1$
+						} else throw(e);
+					} else throw(e);
+				}
 			} else {
 				projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
 			}

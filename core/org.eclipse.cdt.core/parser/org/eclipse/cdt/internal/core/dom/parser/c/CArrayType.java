@@ -12,11 +12,13 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * @author dsteffle
@@ -36,18 +38,22 @@ public class CArrayType implements ICArrayType, ITypeContainer {
         if( obj instanceof ITypedef )
             return obj.isSameType( this );
         if( obj instanceof ICArrayType ){
-            ICArrayType at = (ICArrayType) obj;
-            try {
-		        if( isConst() != at.isConst() ) return false;
-		        if( isRestrict() != at.isRestrict() ) return false;
-		        if( isStatic() != at.isStatic() ) return false;
-		        if( isVolatile() != at.isVolatile() ) return false;
-		        if( isVariableLength() != at.isVariableLength() ) return false;
-            
-                return at.getType().isSameType( type );
-            } catch ( DOMException e ) {
-                return false;
-            }
+        	ICArrayType at = (ICArrayType) obj;
+        	try {
+        		if( isConst() != at.isConst() ) return false;
+        		if( isRestrict() != at.isRestrict() ) return false;
+        		if( isStatic() != at.isStatic() ) return false;
+        		if( isVolatile() != at.isVolatile() ) return false;
+        		if( isVariableLength() != at.isVariableLength() ) return false;
+
+        		return at.getType().isSameType( type );
+        	} catch ( DOMException e ) {
+        		return false;
+        	}
+        }
+        // work around for bug 182976, no PDOMCArrayType.
+        else if (obj instanceof IArrayType && obj instanceof IIndexType) {
+        	return obj.isSameType(this);
         }
     	return false;
     }

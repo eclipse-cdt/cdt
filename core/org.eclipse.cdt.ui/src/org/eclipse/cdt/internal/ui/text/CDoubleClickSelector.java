@@ -45,7 +45,9 @@ public class CDoubleClickSelector implements ITextDoubleClickStrategy {
 			textViewer.setSelectedRange(region.getOffset() + 1, region.getLength() - 2);
 		} else {
 			region= selectWord(document, offset);
-			textViewer.setSelectedRange(region.getOffset(), region.getLength());
+			if (region != null && region.getLength() > 0) {
+				textViewer.setSelectedRange(region.getOffset(), region.getLength());
+			}
 		}
 	}
 

@@ -120,7 +120,13 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 				form.setCurrentlySelectedConnection(selectedContext);
 
 				if (defaultUserId != null) form.setUserId(defaultUserId);
+
+				// bugzilla#175153: setCurrentlySelectedConnection is filling in the name from the selected
+				// connection. As this is not wanted, set the connection name field always to be empty, except
+				// there had been a default connection name explicitly set from outside.
 				if (defaultConnectionName != null) form.setConnectionName(defaultConnectionName);
+				else form.setConnectionName(""); //$NON-NLS-1$
+				
 				if (defaultHostName != null) form.setHostName(defaultHostName);
 			}
 			

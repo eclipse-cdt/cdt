@@ -74,7 +74,6 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	 */
 	public ImageDescriptor getLiveImageDescriptor(Object object) {
 		ImageDescriptor img = getImage(object, IRSESystemTypeConstants.ICON_LIVE);
-		if (img==null) img = getImage(object, IRSESystemTypeConstants.ICON);
 		if (img==null) img = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTIONLIVE_ID);
 		return img;
 	}

@@ -220,7 +220,21 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 		});
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				if (canFlipToNextPage()) getWizard().getContainer().showPage(getNextPage());
+				// Double-click on a connection type is triggering the sub wizard
+				if (event.getSelection() instanceof IStructuredSelection) {
+					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+					// The tree is single selection, so look for the first element only.
+					Object element = selection.getFirstElement();
+					if (element instanceof RSENewConnectionWizardSelectionTreeElement) {
+						// Double-click on a connection type is triggering the sub wizard
+						if (canFlipToNextPage()) getWizard().getContainer().showPage(getNextPage());
+					} else if (event.getViewer() instanceof TreeViewer) {
+						TreeViewer viewer = (TreeViewer)event.getViewer();
+						if (viewer.isExpandable(element)) {
+							viewer.setExpandedState(element, !viewer.getExpandedState(element));
+						}
+					}
+				}
 			}
 		});
 		

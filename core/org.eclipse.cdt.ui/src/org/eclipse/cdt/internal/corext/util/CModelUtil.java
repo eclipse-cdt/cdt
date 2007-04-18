@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -149,34 +150,7 @@ public class CModelUtil {
 	 * @throws CModelException 
 	 */
 	public static ITranslationUnit findTranslationUnitForLocation(IPath location, ICProject preferredProject) throws CModelException {
-		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
-		if (files.length > 0) {
-			for (int i = 0; i < files.length; i++) {
-				IFile file = files[i];
-				ITranslationUnit tu= findTranslationUnit(file);
-				if (tu != null) {
-					return tu;
-				}
-			}
-		}
-		else {
-			CoreModel coreModel = CoreModel.getDefault();
-			ITranslationUnit tu= null;
-			if (preferredProject != null) {
-				tu= coreModel.createTranslationUnitFrom(preferredProject, location);
-			}
-			if (tu == null) {
-				ICProject[] projects= coreModel.getCModel().getCProjects();
-				for (int i = 0; i < projects.length && tu == null; i++) {
-					ICProject project = projects[i];
-					if (!project.equals(preferredProject)) {
-						tu= coreModel.createTranslationUnitFrom(project, location);
-					}
-				}
-			}
-			return tu;
-		}
-		return null;
+		return CoreModelUtil.findTranslationUnitForLocation(location, preferredProject);
 	}
 	
 	/**

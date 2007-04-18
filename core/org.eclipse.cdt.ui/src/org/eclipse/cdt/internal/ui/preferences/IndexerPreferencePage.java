@@ -27,25 +27,30 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.cdt.ui.dialogs.CacheSizeBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.IndexerBlock;
+import org.eclipse.cdt.ui.dialogs.IndexerStrategyBlock;
 
 public class IndexerPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage, ICOptionContainer {
 
 	private IndexerBlock fOptionBlock;
 	private CacheSizeBlock fCacheBlock;
+	private IndexerStrategyBlock fStrategyBlock;
 	
 	public IndexerPreferencePage(){
 		fOptionBlock = new IndexerBlock();
+		fStrategyBlock= new IndexerStrategyBlock(this);
 		fCacheBlock= new CacheSizeBlock(this);
 	}
 	
 	protected Control createContents(Composite parent) {
+		GridLayout gl;
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		GridData gd= new GridData();
-		composite.setLayoutData(gd);
+		composite.setLayout(gl= new GridLayout());
+		composite.setLayoutData(new GridData());
+		gl.verticalSpacing= 0;
 	
 		fOptionBlock.createControl(composite);
+		fStrategyBlock.createControl(composite);
 		fCacheBlock.createControl(composite);
 		
 		return composite;
@@ -57,6 +62,10 @@ public class IndexerPreferencePage extends PreferencePage implements
 	public void updateContainer() {
 		if (!fOptionBlock.isValid()) {
 			setErrorMessage(fOptionBlock.getErrorMessage());
+			setValid(false);
+		}
+		else if (!fStrategyBlock.isValid()) {
+			setErrorMessage(fStrategyBlock.getErrorMessage());
 			setValid(false);
 		}
 		else if (!fCacheBlock.isValid()) {
@@ -80,6 +89,7 @@ public class IndexerPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 		try {
 			fOptionBlock.performApply(new NullProgressMonitor());
+			fStrategyBlock.performApply(new NullProgressMonitor());
 			fCacheBlock.performApply(new NullProgressMonitor());
 		} catch (CoreException e) {}
 		return true;
@@ -87,6 +97,8 @@ public class IndexerPreferencePage extends PreferencePage implements
 	
 	public void performDefaults() {
 		fOptionBlock.performDefaults();
+		fStrategyBlock.performDefaults();
 		fCacheBlock.performDefaults();
+		updateContainer();
 	}
 }

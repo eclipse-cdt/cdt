@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.model.ICElement;
 
-import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeDialog;
+import org.eclipse.cdt.internal.ui.browser.opentype.ElementSelectionDialog;
 
 public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionDelegate {
 
@@ -42,7 +42,7 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 	}
 
 	public void run(IAction action) {
-		OpenTypeDialog dialog = new OpenTypeDialog(getShell());
+		ElementSelectionDialog dialog = new ElementSelectionDialog(getShell());
 		configureDialog(dialog);
 		int result = dialog.open();
 		if (result != IDialogConstants.OK_ID)
@@ -67,7 +67,7 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 		}
 	}
 	
-	private void configureDialog(OpenTypeDialog dialog) {
+	private void configureDialog(ElementSelectionDialog dialog) {
 		dialog.setDialogSettings(getClass().getName());
 		dialog.setVisibleTypes(VISIBLE_TYPES);
 		dialog.setTitle(CHMessages.OpenElementInCallHierarchyAction_title);

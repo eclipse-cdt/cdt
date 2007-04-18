@@ -942,15 +942,14 @@
             description="%CNavigationActionSet.description"
             visible="false"
             id="org.eclipse.cdt.ui.NavigationActionSet">
-         <!-- enable only after the open symbol dialog can handle functions
-               action
+         <action
                id="org.eclipse.cdt.ui.actions.openElementInCallHierarchy"
                class="org.eclipse.cdt.internal.ui.callhierarchy.OpenElementInCallHierarchyAction"
                definitionId="org.eclipse.cdt.ui.navigate.open.element.in.call.hierarchy"
                label="%OpenElementInCallHierarchyAction.label"
                menubarPath="navigate/open.ext2"
                tooltip="%OpenElementInCallHierarchyAction.tooltip">
-         </action-->
+         </action>
          <action
                id="org.eclipse.cdt.ui.actions.openTypeInHierarchy"
                class="org.eclipse.cdt.internal.ui.typehierarchy.OpenTypeInHierarchyAction"

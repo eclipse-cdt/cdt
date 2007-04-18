@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -135,24 +138,22 @@ public class TypeReference implements ITypeReference {
 			ICElement elem = CoreModel.getDefault().create(path);
 			if (elem instanceof ITranslationUnit)
 				unit = (ITranslationUnit) elem;
-		}
-		
-		if (unit == null) {
-			IProject project = getProject();
-			if (project != null) {
-				ICProject cProject = findCProject(project);
-				if (cProject != null) {
-					IPath path = getLocation();
-					ICElement elem = CoreModel.getDefault().createTranslationUnitFrom(cProject, path);
-					if (elem instanceof ITranslationUnit)
-						unit = (ITranslationUnit) elem;
+			else {
+				try {
+					unit= CoreModelUtil.findTranslationUnitForLocation(path, findCProject(getProject()));
+				} catch (CModelException e) {
+					CCorePlugin.log(e);
 				}
 			}
 		}
+		
 		return unit;
 	}
 	
 	private ICProject findCProject(IProject project) {
+		if (project == null) {
+			return null;
+		}
 		try {
 			ICProject[] cProjects = CoreModel.getDefault().getCModel().getCProjects();
 			if (cProjects != null) {

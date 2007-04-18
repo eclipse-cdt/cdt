@@ -9,15 +9,20 @@
  * 		QNX - Initial API and implementation
  * 		IBM Corporation
  *      Andrew Ferguson (Symbian)
+ *      Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.browser.util;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -29,6 +34,8 @@ import org.eclipse.cdt.core.model.ICElement;
  * This is internal in case some IBinding's do not have ICElement constants in future
  */
 public class IndexModelUtil {
+	private static final String[] EMPTY_STRING_ARRAY= {};
+
 	/**
 	 * Returns whether the binding is of any of the specified CElement type constants
 	 * @param binding
@@ -66,6 +73,14 @@ public class IndexModelUtil {
 					if(binding instanceof ITypedef)
 						return true;
 					break;
+				case ICElement.C_FUNCTION:
+					if(binding instanceof IFunction)
+						return true;
+					break;
+				case ICElement.C_VARIABLE:
+					if(binding instanceof IVariable)
+						return true;
+					break;
 				}
 			}
 		} catch(DOMException de) {
@@ -100,10 +115,47 @@ public class IndexModelUtil {
 		if (binding instanceof ICPPNamespace || binding instanceof ICPPNamespaceAlias) {
 			elementType = ICElement.C_NAMESPACE;
 		}
-
 		if (binding instanceof IEnumeration) {
-			elementType = ICElement.C_ENUMERATION; 		
+			elementType = ICElement.C_ENUMERATION;
+		}
+		if (binding instanceof ITypedef) {
+			elementType = ICElement.C_TYPEDEF;
+		}
+		if (binding instanceof IFunction) {
+			elementType = ICElement.C_FUNCTION;
+		}
+		if (binding instanceof IVariable) {
+			elementType = ICElement.C_VARIABLE;
 		}
 		return elementType;
+	}
+
+	/**
+	 * Extract the parmaeter types of the given function as array of strings.
+	 * @param function
+	 * @return the parameter types of the function
+	 * @throws DOMException
+	 */
+	public static String[] extractParameterTypes(IFunction function) throws DOMException {
+		IParameter[] params= function.getParameters();
+		String[] parameterTypes= new String[params.length];
+		for (int i = 0; i < params.length; i++) {
+			IParameter param = params[i];
+			parameterTypes[i]= ASTTypeUtil.getType(param.getType());
+		}
+		if (parameterTypes.length == 1 && parameterTypes[0].equals("void")) { //$NON-NLS-1$
+			return EMPTY_STRING_ARRAY;
+		}
+		return parameterTypes;
+	}
+
+	/**
+	 * Extract the return type of the given function as string.
+	 * @param function
+	 * @return the return type of the function
+	 * @throws DOMException 
+	 */
+	public static String extractReturnType(IFunction function) throws DOMException {
+		return ASTTypeUtil.getType(function.getType().getReturnType());
 	}
 }

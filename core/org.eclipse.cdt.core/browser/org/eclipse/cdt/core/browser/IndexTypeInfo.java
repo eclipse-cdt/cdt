@@ -9,18 +9,25 @@
  * 		QNX - Initial API and implementation
  * 		IBM Corporation
  *      Andrew Ferguson (Symbian)
+ *      Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.core.browser.IndexTypeReference;
 import org.eclipse.cdt.internal.core.browser.util.IndexModelUtil;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.filesystem.URIUtil;
@@ -36,15 +43,27 @@ import org.eclipse.core.runtime.Path;
  * @author Doug Schaefer
  *
  */
-public class IndexTypeInfo implements ITypeInfo {
+public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	private final String[] fqn;
 	private final int elementType;
 	private final IIndex index;
+	private final String[] params;
+	private final String returnType;
 	private ITypeReference reference; // lazily constructed
 	
 	public IndexTypeInfo(String[] fqn, int elementType, IIndex index) {
 		this.fqn = fqn;
 		this.elementType = elementType;
+		this.index = index;
+		this.params= null;
+		this.returnType= null;
+	}
+
+	public IndexTypeInfo(String[] fqn, int elementType, String[] params, String returnType, IIndex index) {
+		this.fqn = fqn;
+		this.elementType = elementType;
+		this.params= params;
+		this.returnType= returnType;
 		this.index = index;
 	}
 
@@ -130,26 +149,41 @@ public class IndexTypeInfo implements ITypeInfo {
 
 				IIndexBinding[] ibs = index.findBindings(cfqn, new IndexFilter() {
 					public boolean acceptBinding(IBinding binding) {
-						return IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType});
+						boolean sameType= IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType});
+						if (sameType && binding instanceof IFunction && params != null) {
+							String[] otherParams;
+							try {
+								otherParams= IndexModelUtil.extractParameterTypes((IFunction)binding);
+								return Arrays.equals(params, otherParams);
+							} catch (DOMException exc) {
+								CCorePlugin.log(exc);				
+							}
+						}
+						return sameType;
 					}
 				}, new NullProgressMonitor());
 				if(ibs.length>0) {
-					IIndexName[] names = index.findNames(ibs[0], IIndex.FIND_DEFINITIONS);
+					IIndexName[] names;
+					if (elementType == ICElement.C_TYPEDEF) {
+						names= index.findNames(ibs[0], IIndex.FIND_DECLARATIONS);
+					} else {
+						names= index.findNames(ibs[0], IIndex.FIND_DEFINITIONS);
+					}
 					if(names.length>0) {
 						IIndexFileLocation ifl = names[0].getFile().getLocation();
 						String fullPath = ifl.getFullPath();
 						if(fullPath!=null) {
 							IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
 							if(file!=null) {
-								reference = new TypeReference(
-										file, file.getProject(), names[0].getNodeOffset(), names[0].getNodeLength()
+								reference = new IndexTypeReference(
+										ibs[0], file, file.getProject(), names[0].getNodeOffset(), names[0].getNodeLength()
 								);
 							}
 						} else {
 							IPath path = URIUtil.toPath(ifl.getURI());
 							if(path!=null) {
-								reference = new TypeReference(
-										path, null, names[0].getNodeOffset(), names[0].getNodeLength()
+								reference = new IndexTypeReference(
+										ibs[0], path, null, names[0].getNodeOffset(), names[0].getNodeLength()
 								);
 							}
 						}
@@ -228,6 +262,20 @@ public class IndexTypeInfo implements ITypeInfo {
 
 	public int compareTo(Object arg0) {
 		throw new PDOMNotImplementedError();
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getParameters()
+	 */
+	public String[] getParameters() {
+		return params;
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getReturnType()
+	 */
+	public String getReturnType() {
+		return returnType;
 	}
 
 }

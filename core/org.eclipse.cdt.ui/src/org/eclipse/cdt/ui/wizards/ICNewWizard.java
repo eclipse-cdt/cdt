@@ -33,7 +33,7 @@ public interface ICNewWizard {
 	 * @param supportedOnly - whether display supported types only
 	 * @param wizard - New Project wizard to be passed to ICWizardHandler 
 	 */
-	public WizardItemData[] createItems(boolean supportedOnly, IWizard wizard);
+	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard);
 	
 	/**
 	 * Implementor will be informed about widget where additional

@@ -9,6 +9,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.ui.newui.AbstractExportTab.ExtData;
+import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 
 public class CDTListComparator implements Comparator {
 	private static CDTListComparator comparator = null;
@@ -51,7 +52,11 @@ public class CDTListComparator implements Comparator {
 			IConfigurationElement e2 = (IConfigurationElement)b;
 			return AbstractPage.getWeight(e1).compareTo(AbstractPage.getWeight(e2)); 
 		}
-		
+		if (a instanceof EntryDescriptor) {
+			EntryDescriptor c1 = (EntryDescriptor) a;
+			EntryDescriptor c2 = (EntryDescriptor) b;
+			return c1.getName().compareToIgnoreCase(c2.getName());
+		}
 		return a.toString().compareTo(b.toString());
 	}
 

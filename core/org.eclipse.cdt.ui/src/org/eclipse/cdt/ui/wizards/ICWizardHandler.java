@@ -15,9 +15,8 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.graphics.Image;
 
-public interface ICWizardHandler {
+public interface ICWizardHandler extends Cloneable {
 	static final String ARTIFACT = "org.eclipse.cdt.build.core.buildArtefactType";  //$NON-NLS-1$
 
 	/**
@@ -31,17 +30,13 @@ public interface ICWizardHandler {
 	 */
 	public void handleUnSelection();
 	/**
-	 * @return label of tree item 
-	 */
-	public String getName();
-	/**
-	 * @return icon for tree item
-	 */
-	public Image  getIcon();
-	/**
 	 * @return text for label above handler-specific pane
 	 */
 	public String getHeader();
+	/**
+	 * @return text for label in left tree
+	 */
+	public String getName();
 	/**
 	 * @return 1st handler-specific page
 	 */
@@ -94,4 +89,21 @@ public interface ICWizardHandler {
 	 *         since last call to saveState()
 	 */
 	public boolean isChanged();
+	/**
+	 * Checks whether this item can be added to Wizard tree
+	 * 
+	 * @param data - Wizard Item data to be added 
+	 *               as child to current Wizard item
+	 * @return - true if item can be added.
+	 */
+	public boolean isApplicable(EntryDescriptor data);
+	/**
+	 * Initializes the handler to be used for the specified entry
+	 * 
+	 * @param data - Wizard Item data to be handled 
+	 * @throws CoreException
+	 */
+	public void initialize(EntryDescriptor data) throws CoreException;
+	
+	public Object clone();
 }

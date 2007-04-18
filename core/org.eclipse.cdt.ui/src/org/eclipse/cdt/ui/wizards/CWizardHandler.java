@@ -50,16 +50,14 @@ public class CWizardHandler implements ICWizardHandler {
 	
 	protected String head;
 	protected String name;
-	protected Image image;
 	protected Composite parent;
 	protected Table table;
 	protected boolean supportedOnly = true;
 	
-	public CWizardHandler(Composite _parent, String _head, String _name, Image _image) {
+	public CWizardHandler(Composite _parent, String _head, String _name) {
 		parent = _parent;
-		name = _name;
-		image = _image;
 		head = _head;
+		name = _name;
 	}
 
 	public void handleSelection() {
@@ -84,7 +82,6 @@ public class CWizardHandler implements ICWizardHandler {
 	
 	public String getHeader() { return head; }
 	public String getName() { return name; }
-	public Image getIcon() { return image; }
 	public String getErrorMessage() { return null; }
 
 	public void setSupportedOnly(boolean supp) { supportedOnly = supp;}
@@ -98,5 +95,16 @@ public class CWizardHandler implements ICWizardHandler {
 	public boolean isChanged() { return true; } 
 	public void saveState() {}
 	public void postProcess(IProject proj) {}
-
+	public boolean isApplicable(EntryDescriptor data) { return true; }
+	public void initialize(EntryDescriptor data) throws CoreException {}
+	
+	public Object clone() {
+		try {
+			CWizardHandler clone = (CWizardHandler)super.clone();
+			clone.parent = parent;
+			clone.head = head;
+			clone.name = name;
+			return clone;
+		} catch (CloneNotSupportedException e) { return null; }
+	}
 }

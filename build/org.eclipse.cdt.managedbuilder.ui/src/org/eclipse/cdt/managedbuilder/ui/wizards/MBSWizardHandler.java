@@ -12,7 +12,9 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -34,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
+import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -45,7 +48,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -68,25 +70,32 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		Messages.getString("CWizardHandler.4") + //$NON-NLS-1$
 		Messages.getString("CWizardHandler.5"); //$NON-NLS-1$
 	
-	protected SortedMap tcs = new TreeMap();
+	protected SortedMap full_tcs = new TreeMap();
 	private String propertyId = null;
 	private IProjectType pt = null;
 	protected IWizardItemsListListener listener;
 	protected CDTConfigWizardPage fConfigPage;
 	private IToolChain[] savedToolChains = null;
 	private IWizard wizard;
+	private EntryDescriptor entryDescriptor = null;
 	
-	public MBSWizardHandler(String _name, IProjectType _pt, Image _image, Composite p, IWizard w) {
-		super(p, Messages.getString("CWizardHandler.0"), _name, _image); //$NON-NLS-1$
+	public MBSWizardHandler(IProjectType _pt, Composite p, IWizard w) {
+		super(p, Messages.getString("CWizardHandler.0"), _pt.getName()); //$NON-NLS-1$
 		pt = _pt;
-		if (w.getStartingPage() instanceof IWizardItemsListListener)
-			listener = (IWizardItemsListListener)w.getStartingPage();
-		wizard = w;
+		setWizard(w);
 	}
 
-	public MBSWizardHandler(IBuildPropertyValue val, Image _image, Composite p, IWizard w) {
-		super(p, Messages.getString("CWizardHandler.0"), val.getName(), _image); //$NON-NLS-1$
+	public MBSWizardHandler(String name, Composite p, IWizard w) {
+		super(p, Messages.getString("CWizardHandler.0"), name); //$NON-NLS-1$
+		setWizard(w);
+	}
+
+	public MBSWizardHandler(IBuildPropertyValue val, Composite p, IWizard w) {
+		super(p, Messages.getString("CWizardHandler.0"), val.getName()); //$NON-NLS-1$
 		propertyId = val.getId();
+		setWizard(w);
+	}
+	private void setWizard(IWizard w) {
 		if (w.getStartingPage() instanceof IWizardItemsListListener)
 			listener = (IWizardItemsListListener)w.getStartingPage();
 		wizard = w;
@@ -98,13 +107,13 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		if (table == null) {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 			table.setToolTipText(tooltip);
-			Iterator it = tcs.keySet().iterator();
+			Iterator it = tc_filter(full_tcs.keySet()).iterator();
 			int counter = 0;
 			int position = 0;
 			while (it.hasNext()) {
 				TableItem ti = new TableItem(table, SWT.NONE);
 				String s = (String)it.next();
-				Object obj = tcs.get(s);
+				Object obj = full_tcs.get(s);
 				String id = CDTPrefUtil.NULL;
 				if (obj instanceof IToolChain) {
 					IToolChain tc = (IToolChain)obj;
@@ -119,7 +128,7 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 				if (position == 0 && preferred.contains(id)) position = counter;
 				counter++;
 			}
-			if (tcs.size() > 0) table.select(position);
+			if (counter > 0) table.select(position);
 			
 			table.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -151,7 +160,7 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 			cfgs = ManagedBuildManager.getExtensionConfigurations(tc, pt);
 		} 
 		if (cfgs == null || cfgs.length == 0) return;
-		tcs.put(tc.getUniqueRealName(), tc);
+		full_tcs.put(tc.getUniqueRealName(), tc);
 	}
 		
 	public void createProject(IProject project, boolean defaults) throws CoreException {
@@ -226,8 +235,8 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		}
 	}
 	public String getHeader() { return head; }
-	public String getName() { return name; }
-	public Image getIcon() { return image; }
+//	public String getName() { return name; }
+//	public Image getIcon() { return null; /*image;*/ }
 	public boolean isDummy() { return false; }
 	public boolean supportsPreferred() { return true; }
 
@@ -266,7 +275,7 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		return ts;
 	}
 	public int getToolChainsCount() {
-		return tcs.size();
+		return tc_filter(full_tcs.keySet()).size();
 	}
 	public String getPropertyId() {
 		return propertyId;
@@ -333,5 +342,50 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 			CoreModel.getDefault().setProjectDescription(newProject, prjd);
 		} catch (CoreException e) {}
 	}
+	
+	public boolean isApplicable(EntryDescriptor data) { 
+		return true; 
+	}
+	
+	public void initialize(EntryDescriptor data) throws CoreException {
+		entryDescriptor = data;
+	}
 
+	/**
+	 * Filters toolchains according to entryDescriptor data  
+	 * 
+	 * @param full - full set of toolchain IDs
+	 * @return - set of compatible toolchain's IDs
+	 * 
+	 * Note that full_tcs map should remain unchanged
+	 */
+	protected Set tc_filter(Set full) {
+		if (entryDescriptor == null) 
+			return full;
+		Set out = new LinkedHashSet(full.size());
+		Iterator it = full.iterator();
+		while (it.hasNext()) {
+			String s = (String)it.next();
+			// checks for TC compatibility are to be here 
+			out.add(s);
+		}
+		return out;
+	}
+	
+	/**
+	 * Clones itself.
+	 */
+	public Object clone() {
+		MBSWizardHandler clone = (MBSWizardHandler)super.clone();
+		if (clone != null) {
+			clone.propertyId = propertyId;
+			clone.pt = pt;
+			clone.listener = listener;
+			clone.wizard = wizard;
+			clone.entryDescriptor = entryDescriptor; // the same !
+			clone.fConfigPage = fConfigPage; // the same !
+			clone.full_tcs = full_tcs;       // the same !
+		}
+		return clone;
+	}
 }

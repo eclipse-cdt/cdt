@@ -31,6 +31,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -49,7 +50,11 @@ import org.eclipse.cdt.ui.newui.ProjectContentsArea;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.newui.ProjectContentsArea.IErrorMessageReporter;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+
 	public class CDTMainWizardPage extends WizardPage implements IWizardItemsListListener {
+		private static final Image IMG_CATEGORY = CPluginImages.get(CPluginImages.IMG_OBJS_SEARCHFOLDER);
+		private static final Image IMG_ITEM = CPluginImages.get(CPluginImages.IMG_OBJS_VARIABLE);
 
 		public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.NewModelProjectWizardPage"; //$NON-NLS-1$
 
@@ -57,6 +62,7 @@ import org.eclipse.cdt.ui.newui.ProjectContentsArea.IErrorMessageReporter;
 		private static final String ELEMENT_NAME = "wizard"; //$NON-NLS-1$
 		private static final String CLASS_NAME = "class"; //$NON-NLS-1$
 		private static final String HELP_CTX = "org.eclipse.ui.ide.new_project_wizard_page_context"; //$NON-NLS-1$
+		private static final String DESC = "EntryDescriptor"; //$NON-NLS-1$ 
 	    // constants
 	    private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
@@ -136,7 +142,7 @@ import org.eclipse.cdt.ui.newui.ProjectContentsArea.IErrorMessageReporter;
 				public void widgetSelected(SelectionEvent e) {
 					TreeItem[] tis = tree.getSelection();
 					if (tis == null || tis.length == 0) return;
-					switchTo((ICWizardHandler)tis[0].getData());
+					switchTo((ICWizardHandler)tis[0].getData(), (EntryDescriptor)tis[0].getData(DESC));
 					setPageComplete(validatePage());
 				}});
 	        
@@ -416,7 +422,7 @@ import org.eclipse.cdt.ui.newui.ProjectContentsArea.IErrorMessageReporter;
 						if (w == null) return null;
 						
 						w.setDependentControl(right, ls);
-						WizardItemData[] wd = w.createItems(show_sup.getSelection(), wizard);
+						EntryDescriptor[] wd = w.createItems(show_sup.getSelection(), wizard);
 						for (int x=0; x<wd.length; x++)	items.add(wd[x]);
 					}
 				}
@@ -443,38 +449,55 @@ import org.eclipse.cdt.ui.newui.ProjectContentsArea.IErrorMessageReporter;
 		}
 
 		private static void addItemsToTree(Tree tree, ArrayList items) {
-			ArrayList tis = new ArrayList(items.size());
-			ArrayList its = new ArrayList(items.size());
+		//  Sorting is disabled because of users requests	
+		//	Collections.sort(items, CDTListComparator.getInstance());
+			
+			ArrayList placedTreeItemsList = new ArrayList(items.size());
+			ArrayList placedEntryDescriptorsList = new ArrayList(items.size());
 			Iterator it = items.iterator();
 			while (it.hasNext()) {
-				WizardItemData wd = (WizardItemData)it.next();
-				if (wd.parentId == null) {
+				EntryDescriptor wd = (EntryDescriptor)it.next();
+				if (wd.getParentId() == null) {
+					wd.setPath(wd.getId());
 					TreeItem ti = new TreeItem(tree, SWT.NONE);
-					ti.setText(wd.name);
-					ti.setData(wd.handler);
-					if (wd.image != null)ti.setImage(wd.image);
-					tis.add(ti);
-					its.add(wd);
+					ti.setText(wd.getName());
+					ti.setData(wd.getHandler());
+					ti.setData(DESC, wd);
+					ti.setImage(calcImage(wd));
+					placedTreeItemsList.add(ti);
+					placedEntryDescriptorsList.add(wd);
 				}
 			}
 			while(true) {
 				boolean found = false;
 				Iterator it2 = items.iterator();
 				while (it2.hasNext()) {
-					WizardItemData wd1 = (WizardItemData)it2.next();
-					if (wd1.parentId == null) continue;
-					for (int i=0; i<its.size(); i++) {
-						WizardItemData wd2 = (WizardItemData)its.get(i);
-						if (wd2.id.equals(wd1.parentId)) {
+					EntryDescriptor wd1 = (EntryDescriptor)it2.next();
+					if (wd1.getParentId() == null) continue;
+					for (int i=0; i<placedEntryDescriptorsList.size(); i++) {
+						EntryDescriptor wd2 = (EntryDescriptor)placedEntryDescriptorsList.get(i);
+						if (wd2.getId().equals(wd1.getParentId())) {
 							found = true;
-							TreeItem p = (TreeItem)tis.get(i);
+							wd1.setParentId(null);
+							ICWizardHandler h = wd2.getHandler();
+							if (h == null && !wd1.isCategory()) 
+								break;
+
+							wd1.setPath(wd2.getPath() + "/" + wd1.getId()); //$NON-NLS-1$
+							wd1.setParent(wd2);
+							if (wd1.getHandler() == null && !wd1.isCategory())
+								wd1.setHandler((ICWizardHandler)h.clone());
+							if (h != null && !h.isApplicable(wd1))
+								break;
+							
+							TreeItem p = (TreeItem)placedTreeItemsList.get(i);
 							TreeItem ti = new TreeItem(p, SWT.NONE);
-							ti.setText(wd1.name);
-							ti.setData(wd1.handler);
-							if (wd1.image != null)ti.setImage(wd1.image);
-							tis.add(ti);
-							its.add(wd1);
-							wd1.parentId = null;
+							ti.setText(wd1.getName());
+							ti.setData(wd1.getHandler());
+							ti.setData(DESC, wd1);
+							ti.setImage(calcImage(wd1));
+							placedTreeItemsList.add(ti);
+							placedEntryDescriptorsList.add(wd1);
 							break;
 						}
 					}
@@ -482,18 +505,17 @@ import org.eclipse.cdt.ui.newui.ProjectContentsArea.IErrorMessageReporter;
 				// repeat iterations until all items are placed.
 				if (!found) break;
 			}
-			// show orphan elements, if any
-			Iterator it3 = items.iterator();
-			while (it3.hasNext()) {
-				WizardItemData wd = (WizardItemData)it3.next();
-				if (wd.parentId == null) continue;
-				TreeItem ti = new TreeItem(tree, SWT.NONE);
-				ti.setText(wd.name + " @ " + wd.parentId); //$NON-NLS-1$
-				ti.setData(wd.handler);
-				if (wd.image != null)ti.setImage(wd.image);
-			}
+			// orphan elements (with not-existing parentId) are ignored
 		}
-		
+
+		private void switchTo(ICWizardHandler h, EntryDescriptor ed) {
+			if (h == null) h = ed.getHandler();
+			try {
+				if (h != null) h.initialize(ed);
+			} catch (CoreException e) { h = null; }
+			switchTo(h);
+		}
+
 		/**
 		 * @param h - new handler
 		 */
@@ -511,5 +533,11 @@ import org.eclipse.cdt.ui.newui.ProjectContentsArea.IErrorMessageReporter;
 		}
 
 		public boolean isCurrent() { return isCurrentPage(); }
+		
+		private static Image calcImage(EntryDescriptor ed) {
+			if (ed.getImage() != null) return ed.getImage();
+			if (ed.isCategory()) return IMG_CATEGORY;
+			return IMG_ITEM;
+		}
 }
 

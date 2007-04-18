@@ -21,26 +21,26 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 public class STDWizardHandler extends MBSWizardHandler {
 
-	public STDWizardHandler(String _name, Image _image, Composite p, IWizard w) {
-		super(_name, null, _image, p, w);
+	public STDWizardHandler(Composite p, IWizard w) {
+		super(Messages.getString("StdBuildWizard.0"), p, w); //$NON-NLS-1$
 	}
 
 	public void addTc(IToolChain tc) {
 		if (tc == null) {
-			tcs.put(UIMessages.getString("StdProjectTypeHandler.0"), null); //$NON-NLS-1$
+			full_tcs.put(UIMessages.getString("StdProjectTypeHandler.0"), null); //$NON-NLS-1$
 		} else {
 			if (tc.isAbstract() || tc.isSystemObject()) return;
 		// 	unlike CWizardHandler, we don't check for configs
-			tcs.put(tc.getUniqueRealName(), tc);
+			full_tcs.put(tc.getUniqueRealName(), tc);
 		}
 	}
 
@@ -84,7 +84,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 	 * If no toolchains selected by user, use default toolchain
 	 */
 	public IToolChain[] getSelectedToolChains() {
-		if (tcs.size() == 0 || table.getSelection().length == 0) 
+		if (full_tcs.size() == 0 || table.getSelection().length == 0) 
 			return new IToolChain[] { null };
 		else
 			return super.getSelectedToolChains();

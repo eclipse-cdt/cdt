@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.tests;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
@@ -49,14 +50,14 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		page = null;
 		wizard = null;
 	}
-	
+	ArrayUtil x;
 	
 	// testing methods
 	//////////////////
 	
 	/* Test the new page, set selection, create page lifecycle. */
 	public void testHandler1() throws Exception {
-		CWizardHandler h = new CWizardHandler(getShell(), "Head", "Name", null);
+		CWizardHandler h = new CWizardHandler(getShell(), "Head", "Name");
 		assertNotNull(h);
 		/*
 		IProjectType pt = new TestProjectType();

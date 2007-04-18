@@ -13,23 +13,31 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
-import org.eclipse.cdt.ui.wizards.WizardItemData;
+import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 
 public class StdBuildWizard extends AbstractCWizard {
+	private static final String NAME = Messages.getString("StdBuildWizard.0"); //$NON-NLS-1$
 	
-	public WizardItemData[] createItems(boolean supportedOnly, IWizard wizard) {
-		STDWizardHandler h = new STDWizardHandler(Messages.getString("StdBuildWizard.0"), IMG0, parent, wizard); //$NON-NLS-1$
+	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
+		STDWizardHandler h = new STDWizardHandler(parent, wizard);
 		h.addTc(null); // add default toolchain
 		IToolChain[] tcs = ManagedBuildManager.getRealToolChains();
 		for (int i=0; i<tcs.length; i++)
 			if (!supportedOnly || isValid(tcs[i])) h.addTc(tcs[i]);
-		WizardItemData wd = new WizardItemData(); 
-		wd.name = h.getName();
-		wd.handler = h;
-		wd.image = h.getIcon();
-		wd.id = h.getName();
-		wd.parentId = null;
-		return new WizardItemData[] {wd};
+		EntryDescriptor wd = new EntryDescriptor(NAME, null, NAME, false, h, null); 
+		return new EntryDescriptor[] {wd};
+		
+// test only: creating items like of Templates	
+/*		
+		EntryDescriptor[] out = new EntryDescriptor[6];
+		out[5] = wd;
+		for (int i=0; i<5; i++) {
+			out[i] = new EntryDescriptor("Template #" + i, 
+					"org.eclipse.cdt.build.core.buildArtefactType.exe",
+					"Template" + i,	false, null, null);
+		}
+		return out;
+*/		
 	}
 }

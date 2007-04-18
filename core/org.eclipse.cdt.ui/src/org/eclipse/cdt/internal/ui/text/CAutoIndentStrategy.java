@@ -254,19 +254,19 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			}
 		} catch (BadLocationException exc) {
 		}
+		int docLength = d.getLength();
+		if (c.offset == -1 || docLength == 0)
+			return;
+		int p = (c.offset == docLength ? c.offset - 1 : c.offset);
+
 		CIndenter indenter = new CIndenter(d, scanner, fProject);
-		StringBuffer indent = indenter.computeIndentation(c.offset);
+		StringBuffer indent = indenter.computeIndentation(p);
 		if (indent == null)
 			indent = new StringBuffer(); 
 		if (addIndent > 0 && indent.length() == 0) {
 			indent= indenter.createReusingIndent(indent, addIndent);
 		}
-		int docLength = d.getLength();
-		if (c.offset == -1 || docLength == 0)
-			return;
-
 		try {
-			int p = (c.offset == docLength ? c.offset - 1 : c.offset);
 			int line = d.getLineOfOffset(p);
 
 			StringBuffer buf = new StringBuffer(c.text + indent);

@@ -58,6 +58,11 @@ public class MISession extends Observable {
 	 */
 	public final static int CORE = 2;
 
+	/**
+	 * Timeout value for a very long time.
+	 */
+	public final static int FOREVER = Integer.MAX_VALUE;
+	
 	boolean terminated;
 	boolean useInterpreterExecConsole;
 	boolean verboseMode = false;

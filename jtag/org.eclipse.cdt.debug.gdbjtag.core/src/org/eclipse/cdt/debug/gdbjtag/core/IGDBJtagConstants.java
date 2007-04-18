@@ -15,7 +15,7 @@ package org.eclipse.cdt.debug.gdbjtag.core;
  * @author Doug Schaefer
  *
  */
-public class GDBJtagConstants {
+public interface IGDBJtagConstants {
 	
 	public static final String DEBUGGER_ID = "org.eclipse.cdt.debug.mi.core.CDebuggerNew"; //$NON-NLS-1$
 	
@@ -32,7 +32,6 @@ public class GDBJtagConstants {
 	public static final String ATTR_INIT_COMMANDS = Activator.PLUGIN_ID + ".initCommands"; //$NON-NLS-1$
 	public static final String ATTR_LOAD_IMAGE = Activator.PLUGIN_ID + ".loadImage"; //$NON-NLS-1$
 	public static final String ATTR_IMAGE_FILE_NAME = Activator.PLUGIN_ID + ".imageFileName"; //$NON-NLS-1$
-	public static final String ATTR_USE_DEFAULT_RUN = Activator.PLUGIN_ID + ".useDefaultRun"; //$NON-NLS-1$
 	public static final String ATTR_RUN_COMMANDS = Activator.PLUGIN_ID + ".runCommands"; //$NON-NLS-1$
 
 	public static final boolean DEFAULT_LOAD_IMAGE = false;

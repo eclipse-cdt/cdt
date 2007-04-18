@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.gdbjtag.ui;
 
 import java.io.File;
 
-import org.eclipse.cdt.debug.gdbjtag.core.GDBJtagConstants;
+import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -46,7 +46,6 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	Text imageFileName;
 	Button imageFileBrowse;
 	Button imageFileVariables;
-	Button defaultRun;
 	Text runCommands;
 	Button runCommandVariables;
 
@@ -192,15 +191,6 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		group.setLayoutData(gd);
 		group.setText("Run Commands");
 
-		defaultRun = new Button(group, SWT.CHECK);
-		defaultRun.setText("Use default run command");
-		defaultRun.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				defaultRunChanged();
-				updateLaunchConfigurationDialog();
-			}
-		});
-		
 		runCommands = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
@@ -222,40 +212,30 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
-	private void defaultRunChanged() {
-		boolean enabled = !defaultRun.getSelection();
-		runCommands.setEnabled(enabled);
-		runCommandVariables.setEnabled(enabled);
-	}
-	
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			initCommands.setText(configuration.getAttribute(GDBJtagConstants.ATTR_INIT_COMMANDS, "")); //$NON-NLS-1$
-			loadImage.setSelection(configuration.getAttribute(GDBJtagConstants.ATTR_LOAD_IMAGE, GDBJtagConstants.DEFAULT_LOAD_IMAGE));
+			initCommands.setText(configuration.getAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, "")); //$NON-NLS-1$
+			loadImage.setSelection(configuration.getAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE));
 			loadImageChanged();
-			imageFileName.setText(configuration.getAttribute(GDBJtagConstants.ATTR_IMAGE_FILE_NAME, "")); //$NON-NLS-1$
-			defaultRun.setSelection(configuration.getAttribute(GDBJtagConstants.ATTR_USE_DEFAULT_RUN, GDBJtagConstants.DEFAULT_USE_DEFAULT_RUN));
-			defaultRunChanged();
-			runCommands.setText(configuration.getAttribute(GDBJtagConstants.ATTR_RUN_COMMANDS, "")); //$NON-NLS-1$)
+			imageFileName.setText(configuration.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, "")); //$NON-NLS-1$
+			runCommands.setText(configuration.getAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, "")); //$NON-NLS-1$)
 		} catch (CoreException e) {
 			Activator.getDefault().getLog().log(e.getStatus());
 		}
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(GDBJtagConstants.ATTR_INIT_COMMANDS, initCommands.getText());
-		configuration.setAttribute(GDBJtagConstants.ATTR_LOAD_IMAGE, loadImage.getSelection());
-		configuration.setAttribute(GDBJtagConstants.ATTR_IMAGE_FILE_NAME, imageFileName.getText().trim());
-		configuration.setAttribute(GDBJtagConstants.ATTR_USE_DEFAULT_RUN, defaultRun.getSelection());
-		configuration.setAttribute(GDBJtagConstants.ATTR_RUN_COMMANDS, runCommands.getText());
+		configuration.setAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, initCommands.getText());
+		configuration.setAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, loadImage.getSelection());
+		configuration.setAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, imageFileName.getText().trim());
+		configuration.setAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, runCommands.getText());
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(GDBJtagConstants.ATTR_INIT_COMMANDS, ""); //$NON-NLS-1$
-		configuration.setAttribute(GDBJtagConstants.ATTR_LOAD_IMAGE, GDBJtagConstants.DEFAULT_LOAD_IMAGE);
-		configuration.setAttribute(GDBJtagConstants.ATTR_IMAGE_FILE_NAME, ""); //$NON-NLS-1$
-		configuration.setAttribute(GDBJtagConstants.ATTR_USE_DEFAULT_RUN, true);
-		configuration.setAttribute(GDBJtagConstants.ATTR_RUN_COMMANDS, ""); //$NON-NLS-1$
+		configuration.setAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, ""); //$NON-NLS-1$
+		configuration.setAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, ""); //$NON-NLS-1$
+		configuration.setAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, ""); //$NON-NLS-1$
 	}
 
 }

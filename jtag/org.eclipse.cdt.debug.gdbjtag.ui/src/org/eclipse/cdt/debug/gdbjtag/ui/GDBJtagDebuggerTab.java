@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.gdbjtag.ui;
 
 import java.io.File;
 
-import org.eclipse.cdt.debug.gdbjtag.core.GDBJtagConstants;
+import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.command.factories.CommandFactoryDescriptor;
@@ -205,7 +205,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		
 		// Get the command sets
 		CommandFactoryManager cfManager = MIPlugin.getDefault().getCommandFactoryManager();
-		cfDescs = cfManager.getDescriptors(GDBJtagConstants.DEBUGGER_ID);
+		cfDescs = cfManager.getDescriptors(IGDBJtagConstants.DEBUGGER_ID);
 		for (int i = 0; i < cfDescs.length; ++i) {
 			commandFactory.add(cfDescs[i].getName());
 		}
@@ -329,7 +329,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 			gdbinitFile.setText(gdbinitFileAttr);
 			
 			CommandFactoryManager cfManager = MIPlugin.getDefault().getCommandFactoryManager();
-			CommandFactoryDescriptor defDesc = cfManager.getDefaultDescriptor(GDBJtagConstants.DEBUGGER_ID);
+			CommandFactoryDescriptor defDesc = cfManager.getDefaultDescriptor(IGDBJtagConstants.DEBUGGER_ID);
 			String commandFactoryAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, defDesc.getName());
 			int cfid = 0;
 			for (int i = 0; i < cfDescs.length; ++i)
@@ -349,14 +349,14 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 			boolean verboseModeAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
 			verboseMode.setSelection(verboseModeAttr);
 
-			boolean useRemoteAttr = configuration.getAttribute(GDBJtagConstants.ATTR_USE_REMOTE_TARGET, GDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
+			boolean useRemoteAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
 			useRemote.setSelection(useRemoteAttr);
 			useRemoteChanged();
 			
-			String ipAddressAttr = configuration.getAttribute(GDBJtagConstants.ATTR_IP_ADDRESS, GDBJtagConstants.DEFAULT_IP_ADDRESS);
+			String ipAddressAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
 			ipAddress.setText(ipAddressAttr);
 			
-			int portNumberAttr = configuration.getAttribute(GDBJtagConstants.ATTR_PORT_NUMBER, GDBJtagConstants.DEFAULT_PORT_NUMBER);
+			int portNumberAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
 			portNumber.setText(String.valueOf(portNumberAttr));
 		} catch (CoreException e) {
 			Activator.getDefault().getLog().log(e.getStatus());
@@ -372,12 +372,12 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, verboseMode.getSelection());
 		
-		configuration.setAttribute(GDBJtagConstants.ATTR_USE_REMOTE_TARGET, useRemote.getSelection());
-		configuration.setAttribute(GDBJtagConstants.ATTR_IP_ADDRESS, ipAddress.getText().trim());
+		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, useRemote.getSelection());
+		configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ipAddress.getText().trim());
 		try {
-			configuration.setAttribute(GDBJtagConstants.ATTR_PORT_NUMBER, Integer.parseInt(portNumber.getText().trim()));
+			configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, Integer.parseInt(portNumber.getText().trim()));
 		} catch (NumberFormatException e) {
-			configuration.setAttribute(GDBJtagConstants.ATTR_PORT_NUMBER, 0);
+			configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, 0);
 		}
 	}
 
@@ -386,15 +386,15 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
 		
 		CommandFactoryManager cfManager = MIPlugin.getDefault().getCommandFactoryManager();
-		CommandFactoryDescriptor defDesc = cfManager.getDefaultDescriptor(GDBJtagConstants.DEBUGGER_ID);
+		CommandFactoryDescriptor defDesc = cfManager.getDefaultDescriptor(IGDBJtagConstants.DEBUGGER_ID);
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, defDesc.getName());
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, defDesc.getMIVersions()[0]);
 		
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
 		
-		configuration.setAttribute(GDBJtagConstants.ATTR_USE_REMOTE_TARGET, GDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
-		configuration.setAttribute(GDBJtagConstants.ATTR_IP_ADDRESS, GDBJtagConstants.DEFAULT_IP_ADDRESS);
-		configuration.setAttribute(GDBJtagConstants.ATTR_PORT_NUMBER, GDBJtagConstants.DEFAULT_PORT_NUMBER);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
 	}
 
 }

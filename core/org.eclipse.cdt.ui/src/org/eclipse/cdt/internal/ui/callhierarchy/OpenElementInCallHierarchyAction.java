@@ -68,6 +68,7 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 	}
 	
 	private void configureDialog(OpenTypeDialog dialog) {
+		dialog.setDialogSettings(getClass().getName());
 		dialog.setVisibleTypes(VISIBLE_TYPES);
 		dialog.setTitle(CHMessages.OpenElementInCallHierarchyAction_title);
 		dialog.setUpperListLabel(CHMessages.OpenElementInCallHierarchyAction_upperListLabel);

@@ -68,6 +68,7 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 	}
 	
 	private void configureDialog(OpenTypeDialog dialog) {
+		dialog.setDialogSettings(getClass().getName());
 		dialog.setVisibleTypes(VISIBLE_TYPES);
 		dialog.setTitle(Messages.OpenTypeInHierarchyAction_title);
 		dialog.setUpperListLabel(Messages.OpenTypeInHierarchyAction_upperListLabel);

@@ -73,6 +73,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	}
 	
 	private void configureDialog(OpenTypeDialog dialog) {
+		dialog.setDialogSettings(getClass().getName());
 		if (fWorkbenchWindow != null) {
 			IWorkbenchPage page= fWorkbenchWindow.getActivePage();
 			if (page != null) {

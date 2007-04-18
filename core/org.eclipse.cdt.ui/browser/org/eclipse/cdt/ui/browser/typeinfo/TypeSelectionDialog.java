@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - adapted for use in CDT
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.browser.typeinfo;
 
@@ -206,13 +207,14 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private static final TypeInfoLabelProvider fElementRenderer = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_TYPE_ONLY);
 	private static final TypeInfoLabelProvider fQualifierRenderer = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_ENCLOSING_TYPE_ONLY + TypeInfoLabelProvider.SHOW_PATH);
 	
-	static final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
 	private static final StringComparator fStringComparator = new StringComparator();
 
 	private static final int[] fAllTypes = { ICElement.C_NAMESPACE, ICElement.C_CLASS,
 			ICElement.C_STRUCT, ICElement.C_TYPEDEF, ICElement.C_ENUMERATION,
 			ICElement.C_UNION };
 
+	// the filter matcher contains state information, must not be static
+	private final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
 	private Set fKnownTypes = new HashSet(fAllTypes.length);
 	private Text fTextWidget;
 	private boolean fSelectFilterText = false;

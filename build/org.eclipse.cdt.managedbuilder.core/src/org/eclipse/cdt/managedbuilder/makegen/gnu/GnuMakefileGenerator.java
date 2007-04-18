@@ -31,6 +31,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -4670,6 +4671,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if(srcEntries.length == 0){
 			srcEntries = new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH)};
 		} else {
+			ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(config);
+			srcEntries = CDataUtil.resolveEntries(srcEntries, cfgDes); 
 		}
 	}
 	

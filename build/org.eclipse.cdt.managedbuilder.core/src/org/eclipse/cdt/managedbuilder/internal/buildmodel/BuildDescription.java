@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -713,6 +714,9 @@ public class BuildDescription implements IBuildDescription {
 		fSourceEntries = fCfg.getSourceEntries();
 		if(fSourceEntries.length == 0){
 			fSourceEntries = new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH)};
+		} else {
+			ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+			fSourceEntries = CDataUtil.resolveEntries(fSourceEntries, cfgDes); 
 		}
 		fInputStep = createStep(null,null);
 		fOutputStep = createStep(null,null);

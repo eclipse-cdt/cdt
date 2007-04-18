@@ -16,7 +16,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 	int fFlags;
 	String fName;
 	
-	public ACSettingEntry(String name, int flags){
+	ACSettingEntry(String name, int flags){
 		fName = name;
 		fFlags = flags;
 	}

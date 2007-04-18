@@ -21,17 +21,17 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 	char[][]fullCharExclusionPatterns = UNINIT_PATTERNS;
 
 
-	public ACExclusionFilterEntry(IPath path, IPath exclusionPatterns[] , int flags) {
+	ACExclusionFilterEntry(IPath path, IPath exclusionPatterns[] , int flags) {
 		super(path, flags);
 		this.exclusionPatterns = exclusionPatterns != null ? (IPath[])exclusionPatterns.clone() : new IPath[0];
 	}
 
-	public ACExclusionFilterEntry(IFolder rc, IPath exclusionPatterns[], int flags) {
+	ACExclusionFilterEntry(IFolder rc, IPath exclusionPatterns[], int flags) {
 		super(rc, flags);
 		this.exclusionPatterns = exclusionPatterns != null ? (IPath[])exclusionPatterns.clone() : new IPath[0];
 	}
 
-	public ACExclusionFilterEntry(String value, IPath exclusionPatterns[], int flags) {
+	ACExclusionFilterEntry(String value, IPath exclusionPatterns[], int flags) {
 		super(value, flags);
 		this.exclusionPatterns = exclusionPatterns != null ? (IPath[])exclusionPatterns.clone() : new IPath[0];
 	}

@@ -21,7 +21,7 @@ public abstract class ACPathEntry extends ACSettingEntry
 //	IPath fLocation;
 //	private IPath fPath;
 	
-	public ACPathEntry(IResource rc, int flags) {
+	ACPathEntry(IResource rc, int flags) {
 		super(rc.getFullPath().toString(), flags | RESOLVED | VALUE_WORKSPACE_PATH);
 //		fFullPath = rc.getFullPath();
 //		fPath = rc.getFullPath();
@@ -34,11 +34,11 @@ public abstract class ACPathEntry extends ACSettingEntry
 		fFullPath = fullPath;
 	}
 */
-	public ACPathEntry(String value, int flags) {
+	ACPathEntry(String value, int flags) {
 		super(value, flags);
 	}
 	
-	public ACPathEntry(IPath path, int flags) {
+	ACPathEntry(IPath path, int flags) {
 		super(path.toString(), flags /*| RESOLVED*/);
 //		fPath = path;
 //		if(isValueWorkspacePath())

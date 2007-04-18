@@ -284,8 +284,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			defaultProfileNames[0] = defaultProfile;
 		}
 
-		if (contentsCreated)
-			doInitializeFields();
+		if (contentsCreated) doInitializeFields();
 	}
 
 	/**
@@ -293,6 +292,10 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 */
 	public void setConnectionName(String name) {
 		defaultConnectionName = name;
+		if (contentsCreated) {
+			textConnectionName.setText(name != null ? name : ""); //$NON-NLS-1$
+			verify(false);
+		}
 	}
 
 	/**
@@ -300,6 +303,10 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 */
 	public void setHostName(String name) {
 		defaultHostName = name;
+		if (contentsCreated) {
+			textHostName.setText(name != null ? name : ""); //$NON-NLS-1$
+			verify(false);
+		}
 	}
 
 	/**
@@ -610,6 +617,22 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		if (updateMode)
 			SystemWidgetHelpers.createLabel(composite_prompts, " ", nbrColumns); // filler //$NON-NLS-1$
 
+		// HOSTNAME PROMPT
+		temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_HOSTNAME_LABEL);
+		labelHostName = SystemWidgetHelpers.createLabel(composite_prompts, temp);
+		labelHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
+
+		if (!updateMode && (defaultSystemType == null)) {
+			defaultSystemType = lastSystemType;
+			
+			if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
+				defaultSystemType = textSystemType.getItem(0);
+		}
+
+		textHostName = SystemWidgetHelpers.createHostNameCombo(composite_prompts, null, defaultSystemType);
+		textHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
+		SystemWidgetHelpers.setHelp(textHostName, RSEUIPlugin.HELPPREFIX + "ccon0004"); //$NON-NLS-1$     
+
 		// CONNECTION NAME PROMPT
 		temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_CONNECTIONNAME_LABEL);
 		labelConnectionName = SystemWidgetHelpers.createLabel(composite_prompts, temp);
@@ -627,22 +650,6 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 			SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003"); //$NON-NLS-1$ 
 		}
-
-		// HOSTNAME PROMPT
-		temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_HOSTNAME_LABEL);
-		labelHostName = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-		labelHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
-
-		if (!updateMode && (defaultSystemType == null)) {
-			defaultSystemType = lastSystemType;
-			
-			if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
-				defaultSystemType = textSystemType.getItem(0);
-		}
-
-		textHostName = SystemWidgetHelpers.createHostNameCombo(composite_prompts, null, defaultSystemType);
-		textHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
-		SystemWidgetHelpers.setHelp(textHostName, RSEUIPlugin.HELPPREFIX + "ccon0004"); //$NON-NLS-1$     
 
 		// USERID PROMPT
 		/*

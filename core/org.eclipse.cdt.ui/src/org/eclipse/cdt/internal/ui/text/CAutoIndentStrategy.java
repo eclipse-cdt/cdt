@@ -260,7 +260,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		int p = (c.offset == docLength ? c.offset - 1 : c.offset);
 
 		CIndenter indenter = new CIndenter(d, scanner, fProject);
-		StringBuffer indent = indenter.computeIndentation(p);
+		StringBuffer indent = indenter.computeIndentation(c.offset);
 		if (indent == null)
 			indent = new StringBuffer(); 
 		if (addIndent > 0 && indent.length() == 0) {
@@ -306,7 +306,8 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				int bound= c.offset > 200 ? c.offset - 200 : CHeuristicScanner.UNBOUND;
 				int bracePos = scanner.findOpeningPeer(c.offset - 1, bound, '{', '}');
 				if (bracePos != CHeuristicScanner.NOT_FOUND) {
-					if (scanner.looksLikeCompositeTypeDefinitionBackward(bracePos, bound)) {
+					if (scanner.looksLikeCompositeTypeDefinitionBackward(bracePos, bound) ||
+							scanner.previousToken(bracePos - 1, bound) == Symbols.TokenEQUAL) {
 						buf.append(';');
 					}
 				}

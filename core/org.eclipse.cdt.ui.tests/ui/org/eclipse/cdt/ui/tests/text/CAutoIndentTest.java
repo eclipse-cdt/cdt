@@ -503,6 +503,10 @@ public class CAutoIndentTest extends TestCase {
 		tester.reset();
 		tester.type("for (;;) /*class*/ {\n"); //$NON-NLS-1$
 		assertEquals("for (;;) /*class*/ {\n\t\r\n}", tester.fDoc.get()); //$NON-NLS-1$
+
+		tester.reset();
+		tester.type("int i[5]={\n"); //$NON-NLS-1$
+		assertEquals("int i[5]={\n\t\t\r\n};", tester.fDoc.get()); //$NON-NLS-1$
 	}
 	
 	public void testSmartPasteWhitesmiths_Bug180531() throws Exception {

@@ -908,7 +908,7 @@ public final class CIndenter {
 			case Symbols.TokenLPAREN:
 			case Symbols.TokenLBRACE:
 			case Symbols.TokenLBRACKET:
-				return handleScopeIntroduction(offset + 1);
+				return handleScopeIntroduction(Math.min(offset + 1, fDocument.getLength()));
 
 			case Symbols.TokenEOF:
 				// trap when hitting start of document

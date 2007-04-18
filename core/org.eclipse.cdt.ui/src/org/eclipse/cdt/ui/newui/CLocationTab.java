@@ -93,10 +93,17 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			ent = _ent;
 			f[0] = new _Filter(this);
 		}
-		public String toString() { return getPath().toString(); } 
+		public String toString() { 
+			return getPath() == null ? 
+					EMPTY_STR : 
+					getPath().toString();
+		} 
 
-		public IPath getPath() { return ent.isValueWorkspacePath() ? ent.getFullPath() : ent.getLocation(); } 
-
+		public IPath getPath() { 
+			return ent.isValueWorkspacePath() ? 
+					ent.getFullPath() : 
+					ent.getLocation(); 
+		} 
 	}
 	
 	public void createControls(Composite parent) {

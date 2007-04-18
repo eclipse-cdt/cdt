@@ -2244,8 +2244,17 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				// first, restore previous selection...
 				if (prevSelection != null) selectRemoteObjects(prevSelection, ss, parentSelectionItem);
 				TreeItem selectedItem = getFirstSelectedTreeItem();
-				if (selectedItem != null) {
-					if (!selectedItem.getExpanded()) // if the filter is expanded, then we already refreshed it... 
+				if (selectedItem != null) 
+				{
+					Object data = selectedItem.getData();
+					boolean allowExpand = true;
+					ISystemViewElementAdapter adapter = getViewAdapter(data);
+					
+					if (adapter != null && data instanceof IAdaptable)
+					{
+						allowExpand = adapter.hasChildren((IAdaptable)data);
+					}
+					if (allowExpand && !selectedItem.getExpanded()) // if the filter is expanded, then we already refreshed it... 
 					{
 						createChildren(selectedItem);
 						selectedItem.setExpanded(true);
@@ -2805,8 +2814,14 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 						(data == remoteObject)) // same binary object as given?
 				{
 					firstSelection = false;
-					if ((toSelect != null) && originatedHere) {
-						if (!getExpanded(match)) // assume if callers wants to select kids that they want to expand parent
+					if ((toSelect != null) && originatedHere) 
+					{
+						boolean allowExpand = true;
+						if (rmtAdapter != null && data instanceof IAdaptable)
+						{
+							allowExpand = rmtAdapter.hasChildren((IAdaptable)data);
+						}
+						if (allowExpand && !getExpanded(match)) // assume if callers wants to select kids that they want to expand parent
 						{
 							createChildren(match);
 							setExpanded(match, true);

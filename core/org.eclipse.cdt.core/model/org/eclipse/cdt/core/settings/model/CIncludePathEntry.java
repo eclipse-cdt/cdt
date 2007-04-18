@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.settings.model;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 
-public final class CIncludePathEntry extends ACLanguageSettingPathEntry implements ICIncludePathEntry{
+public final class CIncludePathEntry extends ACPathEntry implements ICIncludePathEntry{
 
 	public CIncludePathEntry(String value, int flags) {
 		super(value, flags);

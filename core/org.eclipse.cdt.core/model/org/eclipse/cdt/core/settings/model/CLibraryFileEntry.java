@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.settings.model;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
-public final class CLibraryFileEntry extends ACLanguageSettingPathEntry implements
+public final class CLibraryFileEntry extends ACPathEntry implements
 		ICLibraryFileEntry {
 
 	public CLibraryFileEntry(String value, int flags) {

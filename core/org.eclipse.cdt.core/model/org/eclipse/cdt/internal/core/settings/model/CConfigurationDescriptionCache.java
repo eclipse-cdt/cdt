@@ -65,6 +65,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	private boolean fInitializing;
 	private ICConfigurationDescription fBaseDescription;
 	private CSettingEntryFactory fSettingsFactory;
+	private ICSourceEntry[] fResolvedSourceEntries;
 
 	CConfigurationDescriptionCache(ICStorageElement storage, CProjectDescription parent) throws CoreException{
 		super(null);
@@ -487,5 +488,13 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
 		fSpecSettings.updateExternalSettingsProviders(ids);
+	}
+
+	public ICSourceEntry[] getResolvedSourceEntries() {
+		if(fResolvedSourceEntries == null){
+			ICSourceEntry[] entries = getSourceEntries();
+			fResolvedSourceEntries = CDataUtil.resolveEntries(entries, this);
+		}
+		return fResolvedSourceEntries;
 	}
 }

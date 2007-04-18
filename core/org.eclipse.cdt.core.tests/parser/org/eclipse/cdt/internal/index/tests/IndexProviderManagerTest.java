@@ -464,6 +464,11 @@ class MockConfig implements ICConfigurationDescription {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public ICSourceEntry[] getResolvedSourceEntries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 
 /*

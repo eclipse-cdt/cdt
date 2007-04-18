@@ -747,7 +747,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 //		if(path.segmentCount() == 0)
 //			return false;
 		IProject project = fIsPreference ? null : getProjectDescription().getProject();
-		ICSourceEntry[] entries = getSourceEntries();
+		ICSourceEntry[] entries = getResolvedSourceEntries();
 		if(project != null)
 			path = project.getFullPath().append(path);
 		return CDataUtil.isExcluded(path, entries);
@@ -771,16 +771,18 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 				if(roDes != null){
 					ICConfigurationDescription roCfg = roDes.getConfigurationById(getId());
 					if(roCfg != null){
-						newEntries = roCfg.getSourceEntries();
+						newEntries = roCfg.getResolvedSourceEntries();
 						if(CDataUtil.isExcluded(path, newEntries) != exclude)
 							newEntries = null;
+						else
+							newEntries = roCfg.getSourceEntries();
 					}
 				}
 			}
 		}
 			
 		if(newEntries == null){
-			newEntries = CDataUtil.setExcluded(path, exclude, getSourceEntries());
+			newEntries = CDataUtil.setExcluded(path, exclude, getResolvedSourceEntries());
 		}
 		
 		try {
@@ -813,5 +815,10 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
+	}
+
+	public ICSourceEntry[] getResolvedSourceEntries() {
+		ICSourceEntry[] entries = getSourceEntries();
+		return CDataUtil.resolveEntries(entries, this);
 	}
 }

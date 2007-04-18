@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.settings.model;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
-public final class CMacroFileEntry extends ACLanguageSettingPathEntry implements
+public final class CMacroFileEntry extends ACPathEntry implements
 		ICMacroFileEntry {
 
 	public CMacroFileEntry(String value, int flags) {

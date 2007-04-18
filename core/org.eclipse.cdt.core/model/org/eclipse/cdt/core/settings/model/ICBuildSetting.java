@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentContributor;
-import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.core.runtime.IPath;
 
 public interface ICBuildSetting extends ICSettingObject {
@@ -21,6 +20,8 @@ public interface ICBuildSetting extends ICSettingObject {
 
 	ICOutputEntry[] getOutputDirectories();
 	
+	ICOutputEntry[] getResolvedOutputDirectories();
+	
 	void setOutputDirectories(ICOutputEntry[] entries);
 	
 	String[] getErrorParserIDs();
@@ -28,7 +29,4 @@ public interface ICBuildSetting extends ICSettingObject {
 	void setErrorParserIDs(String[] ids);
 	
 	IEnvironmentContributor getBuildEnvironmentContributor();
-//	IEnvironment getBuildEnvironment();
-	
-//	void setBuildEnvironment(IEnvironment environment);
 }

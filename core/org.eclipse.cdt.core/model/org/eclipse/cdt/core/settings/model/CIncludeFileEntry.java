@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.settings.model;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
-public final class CIncludeFileEntry extends ACLanguageSettingPathEntry implements
+public final class CIncludeFileEntry extends ACPathEntry implements
 		ICIncludeFileEntry {
 
 	public CIncludeFileEntry(String value, int flags) {

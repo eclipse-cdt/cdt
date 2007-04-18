@@ -15,7 +15,7 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 
-public abstract class ACExclusionFilterEntry extends ACLanguageSettingPathEntry implements ICExclusionPatternPathEntry {
+public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICExclusionPatternPathEntry {
 	private IPath[] exclusionPatterns;
 	private final static char[][] UNINIT_PATTERNS = new char[][] { "Non-initialized yet".toCharArray() }; //$NON-NLS-1$
 	char[][]fullCharExclusionPatterns = UNINIT_PATTERNS;

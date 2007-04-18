@@ -12,11 +12,11 @@ package org.eclipse.cdt.core.settings.model;
 
 
 
-public abstract class ACLanguageSettingEntry implements ICLanguageSettingEntry {
+public abstract class ACSettingEntry implements ICSettingEntry {
 	int fFlags;
 	String fName;
 	
-	public ACLanguageSettingEntry(String name, int flags){
+	public ACSettingEntry(String name, int flags){
 		fName = name;
 		fFlags = flags;
 	}
@@ -51,10 +51,10 @@ public abstract class ACLanguageSettingEntry implements ICLanguageSettingEntry {
 		if(other == this)
 			return true;
 		
-		if(!(other instanceof ACLanguageSettingEntry))
+		if(!(other instanceof ACSettingEntry))
 			return false;
 		
-		ACLanguageSettingEntry e = (ACLanguageSettingEntry)other;
+		ACSettingEntry e = (ACSettingEntry)other;
 		
 		if(getKind() != e.getKind())
 			return false;
@@ -88,10 +88,10 @@ public abstract class ACLanguageSettingEntry implements ICLanguageSettingEntry {
 		if(entry == this)
 			return true;
 		
-		if(!(entry instanceof ACLanguageSettingEntry))
+		if(!(entry instanceof ACSettingEntry))
 			return false;
 		
-		ACLanguageSettingEntry e = (ACLanguageSettingEntry)entry;
+		ACSettingEntry e = (ACSettingEntry)entry;
 		
 		if(getKind() != e.getKind())
 			return false;

@@ -39,7 +39,9 @@ import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.COutputEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
@@ -123,23 +125,53 @@ public class CDataUtil {
 		}
 		return (String[])list.toArray(new String[list.size()]);
 	}
-	
-	public static ICLanguageSettingEntry[] resolveEntries(ICLanguageSettingEntry entries[], ICConfigurationDescription cfgDes){
+
+	public static ICSettingEntry[] resolveEntries(ICSettingEntry entries[], ICConfigurationDescription cfgDes){
 		if(entries.length == 0)
 			return entries;
 		
-		ICLanguageSettingEntry[] resolved = new ICLanguageSettingEntry[entries.length];
+		ICSettingEntry[] resolved = new ICSettingEntry[entries.length];
 		ICdtVariableManager mngr = CCorePlugin.getDefault().getCdtVariableManager();
 
 		for(int i = 0; i < entries.length; i++){
-			ICLanguageSettingEntry entry = entries[i];
+			ICSettingEntry entry = entries[i];
 			resolved[i] = createResolvedEntry(entry, cfgDes, mngr);
 		}
 		
 		return resolved;
 	}
-	
-	private static ICLanguageSettingEntry createResolvedEntry(ICLanguageSettingEntry entry, ICConfigurationDescription cfg, ICdtVariableManager mngr){
+
+	public static ICLanguageSettingEntry[] resolveEntries(ICLanguageSettingEntry entries[], ICConfigurationDescription cfgDes){
+		if(entries.length == 0)
+			return entries;
+
+		ICSettingEntry[] resolved = resolveEntries((ICSettingEntry[])entries, cfgDes);
+		ICLanguageSettingEntry[] resolvedLangEntries = new ICLanguageSettingEntry[resolved.length];
+		System.arraycopy(resolved, 0, resolvedLangEntries, 0, resolved.length);
+		return resolvedLangEntries;
+	}
+
+	public static ICSourceEntry[] resolveEntries(ICSourceEntry entries[], ICConfigurationDescription cfgDes){
+		if(entries.length == 0)
+			return entries;
+
+		ICSettingEntry[] resolved = resolveEntries((ICSettingEntry[])entries, cfgDes);
+		ICSourceEntry[] resolvedLangEntries = new ICSourceEntry[resolved.length];
+		System.arraycopy(resolved, 0, resolvedLangEntries, 0, resolved.length);
+		return resolvedLangEntries;
+	}
+
+	public static ICOutputEntry[] resolveEntries(ICOutputEntry entries[], ICConfigurationDescription cfgDes){
+		if(entries.length == 0)
+			return entries;
+
+		ICSettingEntry[] resolved = resolveEntries((ICSettingEntry[])entries, cfgDes);
+		ICOutputEntry[] resolvedLangEntries = new ICOutputEntry[resolved.length];
+		System.arraycopy(resolved, 0, resolvedLangEntries, 0, resolved.length);
+		return resolvedLangEntries;
+	}
+
+	private static ICSettingEntry createResolvedEntry(ICSettingEntry entry, ICConfigurationDescription cfg, ICdtVariableManager mngr){
 		if(entry.isResolved())
 			return entry;
 		
@@ -150,28 +182,36 @@ public class CDataUtil {
 			CCorePlugin.log(e);
 		}
 		
+		String value = null;
+		IPath[] exclusionFilters = null;
+		
 		switch (entry.getKind()) {
-		case ICLanguageSettingEntry.INCLUDE_PATH:
-			return new CIncludePathEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
-		case ICLanguageSettingEntry.INCLUDE_FILE:
-			return new CIncludeFileEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
-		case ICLanguageSettingEntry.MACRO:
-			String value = entry.getValue();
+		case ICSettingEntry.MACRO:
+			value = entry.getValue();
 			try {
 				value = mngr.resolveValue(value, "", " ", cfg);  //$NON-NLS-1$  //$NON-NLS-2$
 			} catch (CdtVariableException e) {
 				CCorePlugin.log(e);
 			}
-			return new CMacroEntry(name, value, ICSettingEntry.RESOLVED | entry.getFlags());
-		case ICLanguageSettingEntry.MACRO_FILE:
-			return new CMacroFileEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
-		case ICLanguageSettingEntry.LIBRARY_PATH:
-			return new CLibraryPathEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
-		case ICLanguageSettingEntry.LIBRARY_FILE:
-			return new CLibraryFileEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
-		default:
-			throw new IllegalArgumentException();
+			break;
+		case ICSettingEntry.SOURCE_PATH:
+		case ICSettingEntry.OUTPUT_PATH:
+			exclusionFilters = ((ICExclusionPatternPathEntry)entry).getExclusionPatterns();
+			for(int i = 0; i < exclusionFilters.length; i++){
+				String exclString = exclusionFilters[i].toString();
+				try {
+					exclString = mngr.resolveValue(exclString, "", " ", cfg);  //$NON-NLS-1$  //$NON-NLS-2$
+				} catch (CdtVariableException e) {
+					CCorePlugin.log(e);
+				}
+				exclusionFilters[i] = new Path(exclString);
+			}
+			break;
+//		default:
+//			throw new IllegalArgumentException();
 		}
+		
+		return createEntry(entry.getKind(), name, value, exclusionFilters, entry.getFlags() | ICSettingEntry.RESOLVED);
 	}
 
 	public static ICLanguageSettingEntry createEntry(ICLanguageSettingEntry entry, int flagsToAdd, int flafsToClear){

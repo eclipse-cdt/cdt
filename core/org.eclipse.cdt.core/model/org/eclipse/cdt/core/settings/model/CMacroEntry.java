@@ -12,7 +12,7 @@ package org.eclipse.cdt.core.settings.model;
 
 
 
-public final class CMacroEntry extends ACLanguageSettingEntry implements ICMacroEntry{
+public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 	private String fValue;
 
 	public CMacroEntry(String name, String value, int flags) {

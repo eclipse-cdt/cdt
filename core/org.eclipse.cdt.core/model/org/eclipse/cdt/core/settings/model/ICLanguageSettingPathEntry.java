@@ -10,8 +10,5 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import org.eclipse.core.runtime.IPath;
-
-
 public interface ICLanguageSettingPathEntry extends ICLanguageSettingEntry, ICPathEntry {
 }

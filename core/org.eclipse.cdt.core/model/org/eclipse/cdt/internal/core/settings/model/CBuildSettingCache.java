@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultBuildData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.runtime.IPath;
@@ -26,6 +27,7 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 	private CConfigurationDescriptionCache fCfgCache;
 	private StorableEnvironment fEnvironment;
 	private StorableEnvironment fResolvedEnvironment;
+	private ICOutputEntry[] fResolvedOutputEntries;
 
 	CBuildSettingCache(CBuildData base, CConfigurationDescriptionCache cfgCache){
 		super(base.getId(), base);
@@ -85,6 +87,14 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 
 	public IEnvironmentContributor getBuildEnvironmentContributor() {
 		return fCfgCache.getConfigurationData().getBuildData().getBuildEnvironmentContributor();
+	}
+
+	public ICOutputEntry[] getResolvedOutputDirectories() {
+		if(fResolvedOutputEntries == null){
+			ICOutputEntry[] entries = getOutputDirectories();
+			return CDataUtil.resolveEntries(entries, getConfiguration());
+		}
+		return fResolvedOutputEntries;
 	}
 	
 }

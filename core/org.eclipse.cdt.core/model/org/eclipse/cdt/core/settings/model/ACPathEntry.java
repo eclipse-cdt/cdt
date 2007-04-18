@@ -15,17 +15,17 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-public abstract class ACLanguageSettingPathEntry extends ACLanguageSettingEntry
-		implements ICLanguageSettingPathEntry {
-	IPath fFullPath;
-	IPath fLocation;
+public abstract class ACPathEntry extends ACSettingEntry
+		implements ICPathEntry {
+//	IPath fFullPath;
+//	IPath fLocation;
 //	private IPath fPath;
 	
-	public ACLanguageSettingPathEntry(IResource rc, int flags) {
+	public ACPathEntry(IResource rc, int flags) {
 		super(rc.getFullPath().toString(), flags | RESOLVED | VALUE_WORKSPACE_PATH);
-		fFullPath = rc.getFullPath();
+//		fFullPath = rc.getFullPath();
 //		fPath = rc.getFullPath();
-		fLocation = rc.getLocation();
+//		fLocation = rc.getLocation();
 	}
 
 /*	public ACLanguageSettingPathEntry(IPath fullPath, IPath location, int flags) {
@@ -34,12 +34,12 @@ public abstract class ACLanguageSettingPathEntry extends ACLanguageSettingEntry
 		fFullPath = fullPath;
 	}
 */
-	public ACLanguageSettingPathEntry(String value, int flags) {
+	public ACPathEntry(String value, int flags) {
 		super(value, flags);
 	}
 	
-	public ACLanguageSettingPathEntry(IPath path, int flags) {
-		super(path.toString(), flags | RESOLVED);
+	public ACPathEntry(IPath path, int flags) {
+		super(path.toString(), flags /*| RESOLVED*/);
 //		fPath = path;
 //		if(isValueWorkspacePath())
 //			fFullPath = path;
@@ -48,15 +48,13 @@ public abstract class ACLanguageSettingPathEntry extends ACLanguageSettingEntry
 	}
 
 	public IPath getFullPath() {
-		if(fFullPath == null && isResolved()){
-			if(isValueWorkspacePath()){
-				fFullPath = new Path(getValue());
-			} else {
-				fLocation = new Path(getValue());
-				fFullPath = fullPathForLocation(fLocation);
-			}
+		if(isValueWorkspacePath())
+			return new Path(getValue());
+		if(isResolved()) {
+			IPath path = new Path(getValue());
+			return fullPathForLocation(path);
 		}
-		return fFullPath;
+		return null;
 	}
 	
 	protected IPath fullPathForLocation(IPath location){
@@ -72,17 +70,15 @@ public abstract class ACLanguageSettingPathEntry extends ACLanguageSettingEntry
 	protected abstract boolean isFile();
 
 	public IPath getLocation() {
-		if(fLocation == null && isResolved()){
-			if(isValueWorkspacePath()){
-				fFullPath = new Path(getValue());
-				IResource rc = ResourcesPlugin.getWorkspace().getRoot().findMember(fFullPath);
-				if(rc != null)
-					fLocation = rc.getLocation();
-			} else {
-				fLocation = new Path(getValue());
-			}
+		if(!isValueWorkspacePath())
+			return new Path(getValue());
+		if(isResolved()){
+			IPath path = new Path(getValue());
+			IResource rc = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			if(rc != null)
+				return rc.getLocation();
 		}
-		return fLocation;
+		return null;
 	}
 	
 	public boolean isValueWorkspacePath() {

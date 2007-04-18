@@ -198,6 +198,8 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @return 
 	 */
 	ICSourceEntry[] getSourceEntries();
+	
+	ICSourceEntry[] getResolvedSourceEntries();
 
 	/**
 	 * sets the source entries for this configuration

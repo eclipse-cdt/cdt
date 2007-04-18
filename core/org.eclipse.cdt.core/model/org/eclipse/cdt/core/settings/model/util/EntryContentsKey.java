@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.util;
 
-import org.eclipse.cdt.core.settings.model.ACLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ACSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class EntryContentsKey {
@@ -30,7 +30,7 @@ public class EntryContentsKey {
 	}
 
 	public int hashCode() {
-		return ((ACLanguageSettingEntry)fEntry).codeForContentsKey();
+		return ((ACSettingEntry)fEntry).codeForContentsKey();
 	}
 		
 	public ICSettingEntry getEntry(){

@@ -11,11 +11,11 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentContributor;
-import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.runtime.IPath;
 
 public class CBuildSetting extends CDataProxy implements ICBuildSetting {
@@ -65,5 +65,10 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 	public IEnvironmentContributor getBuildEnvironmentContributor() {
 		CBuildData data = getBuildData(false);
 		return data.getBuildEnvironmentContributor();
+	}
+
+	public ICOutputEntry[] getResolvedOutputDirectories() {
+		ICOutputEntry[] entries = getOutputDirectories();
+		return CDataUtil.resolveEntries(entries, getConfiguration());
 	}
 }

@@ -291,6 +291,13 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		if (getContainer() != null && selectedWizard != null && !getContainer().equals(selectedWizard.getContainer())) {
 			selectedWizard.setContainer(getContainer());
 		}
+
+		// Check if the wizard defines it's own window title. If not, make sure to pass the
+		// main wizards window title.
+		if (selectedWizard instanceof Wizard 
+				&& (selectedWizard.getWindowTitle() == null || "".equals(selectedWizard.getWindowTitle()))) { //$NON-NLS-1$
+			((Wizard)selectedWizard).setWindowTitle(getWindowTitle());
+		}
 		
 		// if the newly selected wizard is the default RSE new connection wizard
 		// and the selected context is non-null, set the selected context to the

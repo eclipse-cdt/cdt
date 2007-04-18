@@ -28,6 +28,7 @@ import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
+import org.eclipse.cdt.managedbuilder.core.IReverseOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
@@ -153,7 +154,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 						if(value.indexOf('"') == 0 && value.lastIndexOf('"') == value.length() - 1 && value.length() != 1){
 							value = value.substring(1, value.length() - 1);
 						}
-						ICLanguageSettingEntry entry = createUserEntry(value, flags);  
+						ICLanguageSettingEntry entry = createUserEntry(option, value, flags);  
 						entryList.add(new UserEntryInfo(entry, value));
 					}
 				}
@@ -208,7 +209,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return new ICLanguageSettingEntry[0];
 	}
 	
-	private ICLanguageSettingEntry createUserEntry(String optionValue, int flags){
+	private ICLanguageSettingEntry createUserEntry(IOption option, String optionValue, int flags){
 		int kind = getKind();
 		
 		ICLanguageSettingEntry entry = null;
@@ -231,7 +232,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			if(((Boolean)v[1]).booleanValue()){
 				flags |= ICLanguageSettingEntry.VALUE_WORKSPACE_PATH;
 			} else if (optionPathConverter != null){
-				IPath path = optionPathConverter.convertToPlatformLocation(name, null, null);
+				IPath path = optionPathConverter.convertToPlatformLocation(name, option, fLangData.getTool());
 				if(path != null)
 					name = path.toString();
 			}
@@ -242,17 +243,21 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return entry;
 	}
 	
-	private String createOptionValue(UserEntryInfo info){
+	private String createOptionValue(IOption option, UserEntryInfo info){
 		if(info.fOptionValue != null)
 			return info.fOptionValue;
 		
-		return entryValueToOption(info.fEntry);
+		return entryValueToOption(option, info.fEntry);
 	}
 	
-	private String entryValueToOption(ICLanguageSettingEntry entry){
+	private String entryValueToOption(IOption option, ICLanguageSettingEntry entry){
 		if(entry.getKind() == ICLanguageSettingEntry.MACRO && entry.getValue().length() > 0){
 			return new StringBuffer(entry.getName()).append('=').append(entry.getValue()).toString();
 		} else if(entry instanceof ICLanguageSettingPathEntry){
+			IOptionPathConverter converter = fLangData.getTool().getOptionPathConverter();
+			if(converter instanceof IReverseOptionPathConverter){
+				return ((IReverseOptionPathConverter)converter).convertToOptionValue(entry, option, fLangData.getTool());
+			}
 			ICLanguageSettingPathEntry pathEntry = (ICLanguageSettingPathEntry)entry;
 			if(pathEntry.isValueWorkspacePath()){
 				return ManagedBuildManager.fullPathToLocation(pathEntry.getValue());
@@ -290,7 +295,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			String optValue[] = new String[entries.length]; 
 			if(entries.length != 0){
 				for(int i = 0; i < entries.length; i++){
-					optValue[i] = createOptionValue(entries[i]);
+					optValue[i] = createOptionValue(option, entries[i]);
 				}
 			}
 

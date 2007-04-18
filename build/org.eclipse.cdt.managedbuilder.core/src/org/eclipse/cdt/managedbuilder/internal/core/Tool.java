@@ -54,8 +54,8 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildEntryStorage;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildLanguageData;
-import org.eclipse.cdt.managedbuilder.internal.dataprovider.EntryStorage;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildfileMacroSubstitutor;
@@ -4073,7 +4073,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				for(int i = 0; i < values.size(); i++){
 					oVal = values.get(i);
 					if(type == IOption.PREPROCESSOR_SYMBOLS){
-						String[] nameVal = EntryStorage.macroNameValueFromValue((String)oVal);
+						String[] nameVal = BuildEntryStorage.macroNameValueFromValue((String)oVal);
 						oVal = nameVal[0];
 					}
 					if(filterSet.contains(oVal))

@@ -15,9 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
-import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.IKindBasedInfo;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
@@ -33,7 +31,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
-import org.eclipse.cdt.managedbuilder.internal.dataprovider.ProfileInfoProvider.DiscoveredEntry;
 
 public class BuildLanguageData extends CLanguageData {
 	private ITool fTool;
@@ -43,7 +40,7 @@ public class BuildLanguageData extends CLanguageData {
 	private static final IOption[] EMPTY_OPTION_ARRAY = new IOption[0];
 	private boolean fOptionStoreInited;
 //	private Map fKindToEntryArrayMap = new HashMap();
-	private ProfileInfoProvider fDiscoveredInfo;
+//	private ProfileInfoProvider fDiscoveredInfo;
 	private KindBasedStore fKindToEntryStore = new KindBasedStore();
 	private String fId;
 	
@@ -68,32 +65,32 @@ public class BuildLanguageData extends CLanguageData {
 			fId = new StringBuffer(fTool.getId()).append(".").append("languagedata").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
-		fDiscoveredInfo = new ProfileInfoProvider(this);
+//		fDiscoveredInfo = new ProfileInfoProvider(this);
 	}
 	
 	private void obtainEditableInputType(){
 		if(fInputType != null){
-			IInputType old = fInputType;
+//			IInputType old = fInputType;
 			fInputType = fTool.getEdtableInputType(fInputType);
-			if(old != fInputType){
-				fDiscoveredInfo.checkUpdateInputType(fInputType);
-			}
+//			if(old != fInputType){
+//				fDiscoveredInfo.checkUpdateInputType(fInputType);
+//			}
 		}
 	}
 
 	public void setEntries(int kind, ICLanguageSettingEntry entries[]) {
-		EntryStorage storage = getEntryStorage(kind);
+		BuildEntryStorage storage = getEntryStorage(kind);
 		if(storage != null)
 			storage.setEntries(entries);
 	}
 	
-	private EntryStorage getEntryStorage(int kind){
+	private BuildEntryStorage getEntryStorage(int kind){
 		if(getOptionsForKind(kind).length == 0 && isToolChainDiscoveryProfile())
 			return null;
 			
-		EntryStorage starage = (EntryStorage)fKindToEntryStore.get(kind);
+		BuildEntryStorage starage = (BuildEntryStorage)fKindToEntryStore.get(kind);
 		if(starage == null){
-			starage = new EntryStorage(kind, this);
+			starage = new BuildEntryStorage(kind, this);
 			fKindToEntryStore.put(kind, starage);
 		}
 		return starage;
@@ -101,7 +98,7 @@ public class BuildLanguageData extends CLanguageData {
 	
 	private void notifyOptionsChangeForKind(int kind){
 		fOptionStoreInited = false;
-		EntryStorage storage = getEntryStorage(kind);
+		BuildEntryStorage storage = getEntryStorage(kind);
 		if(storage != null)
 			storage.optionsChanged();
 	}
@@ -115,9 +112,9 @@ public class BuildLanguageData extends CLanguageData {
 			notifyOptionsChangeForKind(kind);
 	}
 	
-	private ProfileInfoProvider getDiscoveredInfoProvider(){
-		return fDiscoveredInfo;
-	}
+//	private ProfileInfoProvider getDiscoveredInfoProvider(){
+//		return fDiscoveredInfo;
+//	}
 /*	
 	private String getOptionValueFromEntry(ICLanguageSettingEntry entry){
 		String optValue = entry.getName();
@@ -138,27 +135,27 @@ public class BuildLanguageData extends CLanguageData {
 		List list = new ArrayList();
 		
 		if((kinds & ICLanguageSettingEntry.INCLUDE_PATH) != 0) {
-			EntryStorage storage = getEntryStorage(ICLanguageSettingEntry.INCLUDE_PATH);
+			BuildEntryStorage storage = getEntryStorage(ICLanguageSettingEntry.INCLUDE_PATH);
 			if(storage != null)
 				storage.getEntries(list);
 		} else if((kinds & ICLanguageSettingEntry.INCLUDE_FILE) != 0) {
-			EntryStorage storage = getEntryStorage(ICLanguageSettingEntry.INCLUDE_FILE);
+			BuildEntryStorage storage = getEntryStorage(ICLanguageSettingEntry.INCLUDE_FILE);
 			if(storage != null)
 				storage.getEntries(list);
 		} else if((kinds & ICLanguageSettingEntry.MACRO) != 0) {
-			EntryStorage storage = getEntryStorage(ICLanguageSettingEntry.MACRO);
+			BuildEntryStorage storage = getEntryStorage(ICLanguageSettingEntry.MACRO);
 			if(storage != null)
 				storage.getEntries(list);
 		} else if((kinds & ICLanguageSettingEntry.MACRO_FILE) != 0) {
-			EntryStorage storage = getEntryStorage(ICLanguageSettingEntry.MACRO_FILE);
+			BuildEntryStorage storage = getEntryStorage(ICLanguageSettingEntry.MACRO_FILE);
 			if(storage != null)
 				storage.getEntries(list);
 		} else if((kinds & ICLanguageSettingEntry.LIBRARY_PATH) != 0) {
-			EntryStorage storage = getEntryStorage(ICLanguageSettingEntry.LIBRARY_PATH);
+			BuildEntryStorage storage = getEntryStorage(ICLanguageSettingEntry.LIBRARY_PATH);
 			if(storage != null)
 				storage.getEntries(list);
 		} else if((kinds & ICLanguageSettingEntry.LIBRARY_FILE) != 0) {
-			EntryStorage storage = getEntryStorage(ICLanguageSettingEntry.LIBRARY_FILE);
+			BuildEntryStorage storage = getEntryStorage(ICLanguageSettingEntry.LIBRARY_FILE);
 			if(storage != null)
 				storage.getEntries(list);
 		}
@@ -180,124 +177,7 @@ public class BuildLanguageData extends CLanguageData {
 	public String[] getSourceExtensions() {
 		return fInputType != null ? fInputType.getSourceExtensions(fTool) : fTool.getPrimaryInputExtensions();
 	}
-/*	
-	private List getUserEntryValues(int kind){
-		IOption options[] = getOptionsForKind(kind);
-		List valueList = new ArrayList();
-		for(int i = 0; i < options.length; i++){
-			IOption option = options[i];
-			List value = (List)option.getValue();
-			valueList.addAll(value);
-		}
-		return valueList;
-	}
-*/	
-	DiscoveredEntry[] getDiscoveredEntryValues(int kind){
-		return getDiscoveredInfoProvider().getEntryValues(kind);
-	}
-/*
-	private List addLanguageEntries(int kind, List list){
-		ICLanguageSettingEntry entries[] = getLanguageEntries(kind);
-		for(int i = 0; i < entries.length; i++){
-			list.add(entries[i]);
-		}
-		return list;
-	}
 
-	private ICLanguageSettingEntry[] getLanguageEntries(int kind){
-		Integer iKind = new Integer(kind);
-		ICLanguageSettingEntry[] entries = (ICLanguageSettingEntry[])fKindToEntryArrayMap.get(iKind);
-		if(entries == null){
-			entries = calculateLanguageEntries(kind);
-			fKindToEntryArrayMap.put(iKind, entries);
-		}
-		return entries;
-	}
-		
-	private ICLanguageSettingEntry[] calculateLanguageEntries(int kind){
-		List discoveredList = fDiscoveredInfo.getEntryValues(kind);
-		List optionValueList = getUserEntryValues(kind);
-		List entryList = new ArrayList();
-		if(discoveredList != null && optionValueList != null){
-			Set set = new HashSet();
-			if(optionValueList != null)
-				processValues(kind, optionValueList, false, entryList, set);
-			if(discoveredList != null)
-				processValues(kind, discoveredList, true, entryList, set);
-		}
-		return (ICLanguageSettingEntry[])entryList.toArray(new ICLanguageSettingEntry[entryList.size()]);
-	}
-	
-	private List processValues(int kind, List valuesList, boolean discovered, List entriesList, Set processedValuesSet){
-		for(Iterator iter = valuesList.iterator(); iter.hasNext();){
-			String value = (String)iter.next();
-			if(processedValuesSet.add(value)){
-				ICLanguageSettingEntry entry = createEntry(kind, value, discovered);
-				if(entry != null)
-					entriesList.add(entry);
-			}
-		}
-		return entriesList;
-	}
-	
-	private ICLanguageSettingEntry createEntry(int kind, String value, boolean discovered){
-		ICLanguageSettingEntry entry = null;
-		switch (kind){
-		case ICLanguageSettingEntry.INCLUDE_PATH:
-			entry = new CIncludePathEntry(value, discovered ? ICLanguageSettingEntry.BUILTIN | ICLanguageSettingEntry.READONLY : 0);
-			break;
-		case ICLanguageSettingEntry.MACRO:
-			int index = value.indexOf('=');
-			String macroName;
-			String macroValue;
-			if(index > 0){
-				macroName = value.substring(index);
-				macroValue = value.substring(index + 1, value.length());
-			} else {
-				macroName = value;
-				macroValue = EMPTY_STRING;
-			}
-			entry = new CMacroEntry(macroName, macroValue, discovered ? ICLanguageSettingEntry.BUILTIN | ICLanguageSettingEntry.READONLY : 0);
-			break;
-		case ICLanguageSettingEntry.INCLUDE_FILE:
-			entry = new CIncludeFileEntry(value, discovered ? ICLanguageSettingEntry.BUILTIN | ICLanguageSettingEntry.READONLY : 0);
-			break;
-		case ICLanguageSettingEntry.MACRO_FILE:
-			entry = new CMacroFileEntry(value, discovered ? ICLanguageSettingEntry.BUILTIN | ICLanguageSettingEntry.READONLY : 0);
-			break;
-		case ICLanguageSettingEntry.LIBRARY_PATH:
-			entry = new CLibraryPathEntry(value, discovered ? ICLanguageSettingEntry.BUILTIN | ICLanguageSettingEntry.READONLY : 0);
-			break;
-		case ICLanguageSettingEntry.LIBRARY_FILE:
-			entry = new CLibraryFileEntry(value, discovered ? ICLanguageSettingEntry.BUILTIN | ICLanguageSettingEntry.READONLY : 0);
-			break;
-		}
-		return entry;
-		
-	}
-	
-	private String optionPathToEntryValue(String path, boolean discovered) {
-		//TODO:
-		String result = path;
-		if (path != null) { 
-			IOptionPathConverter optionPathConverter = fTool.getOptionPathConverter();
-			if (null!=optionPathConverter) {
-				IPath platformPath = optionPathConverter.convertToPlatformLocation(path, null, null);
-				if(platformPath != null)
-					result = platformPath.toString();
-			} else {
-				
-			}
-		}
-		return result;
-	}
-
-	
-	private String toEntryPathValue(String path, boolean discovered){
-		//TODO:
-		return path;
-	}
-*/	
 	public int getSupportedEntryKinds() {
 		KindBasedStore store = getKindToOptionArrayStore();
 		IKindBasedInfo infos[] = store.getContents();

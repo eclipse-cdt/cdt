@@ -74,6 +74,10 @@ public class SettingsSet {
 			return fFlagsToClear;
 		}
 		
+		public int getFlags(int baseFlags){
+			return (baseFlags | fFlagsToSet) & (~fFlagsToClear);
+		}
+		
 		public Set getOverrideSet(){
 			if(fOverrideSet != null)
 				return (HashSet)fOverrideSet.clone();
@@ -94,10 +98,14 @@ public class SettingsSet {
 				addEntry((ICLanguageSettingEntry)list.get(i));
 			}
 		}
-
+		
 		public void addEntry(ICLanguageSettingEntry entry){
+			addEntry(entry, null);
+		}
+
+		public void addEntry(ICLanguageSettingEntry entry, Object customInfo){
 			entry = CDataUtil.createEntry(entry, fFlagsToSet, fFlagsToClear);
-			EntryInfo info = new EntryInfo(entry);
+			EntryInfo info = new EntryInfo(entry, customInfo);
 			fEntries.put(info.getNameKey(), info);
 		}
 		
@@ -106,6 +114,16 @@ public class SettingsSet {
 				fOverrideSet = new HashSet();
 			
 			fOverrideSet.add(name);
+		}
+		
+		public void addOverrideNameSet(Set set){
+			if(set == null)
+				return;
+			if(fOverrideSet != null){
+				fOverrideSet.addAll(set);
+			} else if(set.size() != 0){
+				fOverrideSet = new HashSet(set);
+			}
 		}
 
 		public void removeOverrideName(String name){
@@ -123,7 +141,14 @@ public class SettingsSet {
 			fOverrideSet = null;
 		}
 		
-		EntryInfo[] getInfos(){
+		public Map clearAndGetMap(){
+			Map map = fEntries;
+			fEntries = new LinkedHashMap();
+			fOverrideSet = null;
+			return map;
+		}
+		
+		public EntryInfo[] getInfos(){
 			return (EntryInfo[])fEntries.values().toArray(new EntryInfo[fEntries.size()]);
 		}
 		
@@ -147,7 +172,41 @@ public class SettingsSet {
 			
 			return list;
 		}
+	}
+	
+	public static class EntryInfo {
+		private ICLanguageSettingEntry fEntry;
+		private EntryNameKey fNameKey;
+		private boolean fIsOverRidden;
+		private Object fCustomInfo;
+
+		private EntryInfo(ICLanguageSettingEntry entry, Object customInfo){
+			fEntry = entry;
+			fCustomInfo = customInfo;
+		}
+
+		public EntryNameKey getNameKey(){
+			if(fNameKey == null){
+				fNameKey = new EntryNameKey(fEntry);
+			}
+			return fNameKey;
+		}
 		
+		private void makeOverridden(boolean overrridden){
+			fIsOverRidden = overrridden;
+		}
+
+		public ICLanguageSettingEntry getEntry(){
+			return fEntry;
+		}
+
+		public boolean isOverridden(){
+			return fIsOverRidden;
+		}
+
+		public Object getCustomInfo(){
+			return fCustomInfo;
+		}
 	}
 	
 	public SettingsSet(int num){
@@ -241,9 +300,11 @@ public class SettingsSet {
 		HashMap map = getEntryLevelMap(WRITABLE | READ_ONLY);
 		Map mapCopy = (HashMap)map.clone();
 		
+		Map[] clearedInfos = new Map[fLevels.length];
+		
 		for(int i = 0; i < fLevels.length; i++){
 			if(!fLevels[i].isReadOnly()){
-				fLevels[i].clear();
+				clearedInfos[i] = fLevels[i].clearAndGetMap();
 			}
 		}
 
@@ -269,13 +330,21 @@ public class SettingsSet {
 			levelNum = levelInteger != null ? levelInteger.intValue() : writableLevel;
 			if(levelNum >= 0){
 				level = fLevels[levelNum];
-				if(!level.isReadOnly())
-					level.addEntry(entry);
+				if(!level.isReadOnly()){
+					Map clearedInfo = clearedInfos[levelNum];
+					Object customInfo = null;
+					if(clearedInfo != null){
+						EntryInfo info = (EntryInfo)clearedInfo.get(key);
+						if(info != null && entry.equalsByContents(info.getEntry()))
+							customInfo = info.getCustomInfo();
+					}
+					level.addEntry(entry, customInfo);
+				}
 			}
 		}
 		
 		int overrideLevel = getOverrideLevelNum();
-		if(overrideLevel > 0){
+		if(overrideLevel >= 0){
 			level = fLevels[overrideLevel];
 			if(level.isOverrideSupported() && !mapCopy.isEmpty()){
 				String str;

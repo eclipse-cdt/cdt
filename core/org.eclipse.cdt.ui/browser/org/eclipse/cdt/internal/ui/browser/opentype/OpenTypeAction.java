@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.opentype;
 
@@ -48,7 +49,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		OpenTypeDialog dialog = new OpenTypeDialog(getShell());
+		ElementSelectionDialog dialog = new ElementSelectionDialog(getShell());
 		configureDialog(dialog);
 		int result = dialog.open();
 		if (result != IDialogConstants.OK_ID)
@@ -72,7 +73,9 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 	
-	private void configureDialog(OpenTypeDialog dialog) {
+	private void configureDialog(ElementSelectionDialog dialog) {
+		dialog.setTitle(OpenTypeMessages.getString("OpenTypeDialog.title")); //$NON-NLS-1$
+		dialog.setMessage(OpenTypeMessages.getString("OpenTypeDialog.message")); //$NON-NLS-1$
 		dialog.setDialogSettings(getClass().getName());
 		if (fWorkbenchWindow != null) {
 			IWorkbenchPage page= fWorkbenchWindow.getActivePage();

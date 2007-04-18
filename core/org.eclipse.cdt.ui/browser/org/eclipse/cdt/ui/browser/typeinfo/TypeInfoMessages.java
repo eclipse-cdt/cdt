@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,44 +7,40 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.browser.typeinfo;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class TypeInfoMessages {
+public final class TypeInfoMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= TypeInfoMessages.class.getName();
-
-	private static ResourceBundle fgResourceBundle;
-	static {
-		try {
-			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
-		} catch (MissingResourceException x) {
-			fgResourceBundle = null;
-		}
-	}
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.ui.browser.typeinfo.TypeInfoMessages";//$NON-NLS-1$
 
 	private TypeInfoMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		} catch (NullPointerException e) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
+	public static String OpenSymbolDialog_UpdateSymbolsJob_name;
+	public static String OpenSymbolDialog_UpdateSymbolsJob_inProgress;
+	public static String TypeSelectionDialog_lowerLabel;
+	public static String TypeSelectionDialog_upperLabel;
+	public static String TypeSelectionDialog_filterLabel;
+	public static String TypeSelectionDialog_filterNamespaces;
+	public static String TypeSelectionDialog_filterClasses;
+	public static String TypeSelectionDialog_filterStructs;
+	public static String TypeSelectionDialog_filterTypedefs;
+	public static String TypeSelectionDialog_filterEnums;
+	public static String TypeSelectionDialog_filterUnions;
+	public static String TypeSelectionDialog_filterFunctions;
+	public static String TypeSelectionDialog_filterVariables;
+	public static String TypeSelectionDialog_filterLowLevelTypes;
+	public static String TypeInfoLabelProvider_default_filename;
+	public static String TypeInfoLabelProvider_globalScope;
+	public static String TypeInfoLabelProvider_dash;
+	public static String TypeInfoLabelProvider_colon;
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, TypeInfoMessages.class);
 	}
-	
-	public static String getFormattedString(String key, String arg) {
-		return getFormattedString(key, new String[] { arg });
-	}
-	
-	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), args);	
-	}	
 }

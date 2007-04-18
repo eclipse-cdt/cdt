@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -75,53 +76,65 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	public IStatus handleDrop(CommonDropAdapter dropAdapter,
 			DropTargetEvent event, Object target) {
 
-		// special case: drop in C source folder
-		if (target instanceof ICContainer || target instanceof ICProject) {
-			final Object data= event.data;
-			if (data == null) {
-				return Status.CANCEL_STATUS;
-			}
-			final IContainer destination= getDestination(target);
-			if (target == null) {
-				return Status.CANCEL_STATUS;
-			}
-			IResource[] resources = null;
-			TransferData currentTransfer = dropAdapter.getCurrentTransfer();
-			if (LocalSelectionTransfer.getTransfer().isSupportedType(
-					currentTransfer)) {
-				resources = getSelectedResources();
-			} else if (ResourceTransfer.getInstance().isSupportedType(
-					currentTransfer)) {
-				resources = (IResource[]) event.data;
-			}
-			if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
-				final String[] names = (String[]) data;
-				// Run the import operation asynchronously. 
-				// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
-				// while the operation executes. Fixes bug 35796.
-				Display.getCurrent().asyncExec(new Runnable() {
-					public void run() {
-						getShell().forceActive();
-						CopyFilesAndFoldersOperation op= new CopyFilesAndFoldersOperation(getShell());
-						op.copyFiles(names, destination);
-					}
-				});
-			} else if (event.detail == DND.DROP_COPY) {
-				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
-				operation.copyResources(resources, destination);
-			} else {
-				ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
-					getShell(), 
-					"Move Resource Action",	//$NON-NLS-1$
-					"Move Resource Action");//$NON-NLS-1$	
-				resources = checker.checkReadOnlyResources(resources);
-				MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
-				operation.copyResources(resources, destination);
-			}
-			return Status.OK_STATUS;
-		}
-		
 		try {
+			// drop in folder
+			if (target instanceof ICContainer || 
+					target instanceof ICProject || 
+					target instanceof IContainer ||
+					(event.detail == DND.DROP_COPY && (
+							target instanceof IFile ||
+							target instanceof ITranslationUnit))) {
+	
+				final Object data= event.data;
+				if (data == null) {
+					return Status.CANCEL_STATUS;
+				}
+				final IContainer destination= getDestination(target);
+				if (destination == null) {
+					return Status.CANCEL_STATUS;
+				}
+				IResource[] resources = null;
+				TransferData currentTransfer = dropAdapter.getCurrentTransfer();
+				if (LocalSelectionTransfer.getTransfer().isSupportedType(
+						currentTransfer)) {
+					resources = getSelectedResources();
+					if (target instanceof ITranslationUnit) {
+						if (handleDropCopy(target, event).isOK()) {
+							// drop inside translation unit - we are done
+							return Status.OK_STATUS;
+						}
+					}
+				} else if (ResourceTransfer.getInstance().isSupportedType(
+						currentTransfer)) {
+					resources = (IResource[]) event.data;
+				}
+				if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
+					final String[] names = (String[]) data;
+					// Run the import operation asynchronously. 
+					// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
+					// while the operation executes. Fixes bug 35796.
+					Display.getCurrent().asyncExec(new Runnable() {
+						public void run() {
+							getShell().forceActive();
+							CopyFilesAndFoldersOperation op= new CopyFilesAndFoldersOperation(getShell());
+							op.copyFiles(names, destination);
+						}
+					});
+				} else if (event.detail == DND.DROP_COPY) {
+					CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
+					operation.copyResources(resources, destination);
+				} else {
+					ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
+						getShell(), 
+						"Move Resource Action",	//$NON-NLS-1$
+						"Move Resource Action");//$NON-NLS-1$	
+					resources = checker.checkReadOnlyResources(resources);
+					MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
+					operation.copyResources(resources, destination);
+				}
+				return Status.OK_STATUS;
+			}
+		
 			switch(event.detail) {
 				case DND.DROP_MOVE:
 					return handleDropMove(target, event);
@@ -151,8 +164,13 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	public IStatus validateDrop(Object target, int operation,
 			TransferData transferType) {
 
-		// special case: drop in C source folder
-		if (target instanceof ICContainer || target instanceof ICProject) {
+		// drop in folder
+		if (target instanceof ICContainer || 
+				target instanceof ICProject || 
+				target instanceof IContainer ||
+				(operation == DND.DROP_COPY && (
+						target instanceof IFile ||
+						target instanceof ITranslationUnit))) {
 			IContainer destination= getDestination(target);
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
 				IResource[] selectedResources= getSelectedResources();
@@ -251,7 +269,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 		final ICElement[] cElements= getCElements(selection);
 
-		if (target instanceof ICElement) {
+		if (target instanceof ICElement && cElements.length > 0) {
 			ICElement cTarget = (ICElement)target;
 			ICElement parent = cTarget;
 			boolean isTargetTranslationUnit = cTarget instanceof ITranslationUnit;
@@ -379,6 +397,8 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			return (IContainer)dropTarget;
 		} else if (dropTarget instanceof ICElement) {
 			return getDestination(((ICElement)dropTarget).getResource());
+		} else if (dropTarget instanceof IFile) {
+			return ((IFile)dropTarget).getParent();
 		}
 		return null;
 	}

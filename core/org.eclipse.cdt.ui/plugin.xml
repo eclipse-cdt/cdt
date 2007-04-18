@@ -2000,7 +2000,7 @@
               <instanceof value="org.eclipse.cdt.core.model.ISourceReference"/>
               <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
               <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
-              <adapt type="org.eclipse.core.resources.IResource"/>
+              <instanceof value="org.eclipse.core.resources.IResource"/>
            </or>
         </possibleDropTargets>
      </dropAssistant>

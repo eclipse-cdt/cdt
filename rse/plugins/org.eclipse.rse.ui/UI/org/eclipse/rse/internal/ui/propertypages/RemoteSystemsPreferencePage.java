@@ -19,14 +19,9 @@
 package org.eclipse.rse.internal.ui.propertypages;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.rse.core.IRSEPreferenceNames;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
@@ -38,7 +33,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBooleanFieldEditor;
-import org.eclipse.rse.ui.propertypages.SystemComboBoxFieldEditor;
 import org.eclipse.rse.ui.propertypages.SystemTypeFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -57,7 +51,7 @@ public class RemoteSystemsPreferencePage
     private SystemBooleanFieldEditor showFilterPoolsEditor;
     private SystemBooleanFieldEditor qualifyConnectionNamesEditor;
     private SystemBooleanFieldEditor rememberStateEditor;
-    private SystemBooleanFieldEditor useDeferredQueryEditor;
+
 
 	// yantzi: artemis 60, restore from cache when available
 	private SystemBooleanFieldEditor restoreFromCache;
@@ -163,31 +157,6 @@ public class RemoteSystemsPreferencePage
 //		lastRestoreFromCacheValue = getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
 
 
-		// USE DEFERRED QUERY
-		useDeferredQueryEditor = new SystemBooleanFieldEditor(
-		        IRSEPreferenceNames.USE_DEFERRED_QUERIES,
-		        SystemResources.RESID_PREF_USEDEFERREDQUERIES_PREFIX_LABEL,
-		        getFieldEditorParent());
-		useDeferredQueryEditor.setPreferenceStore(coreStore);
-		useDeferredQueryEditor.setEnabled(false); // disable this because we want it always to be true
-		addField(useDeferredQueryEditor);
-		useDeferredQueryEditor.setToolTipText(SystemResources.RESID_PREF_USEDEFERREDQUERIES_PREFIX_TOOLTIP);
-		lastUseDeferredQueryValue = true; // enforcing this to true now
-		//getPreferenceStore().getBoolean(useDeferredQueryEditor.getPreferenceName());
-		
-		
-		/** FIXME - UDA should not be so coupled to core
-		 * might need a new preference page for this
-        // CASCADE USER-DEFINED ACTIONS BY PROFILE
-		SystemBooleanFieldEditor cascadeUDAsEditor = new SystemBooleanFieldEditor(
-			ISystemPreferencesConstants.CASCADE_UDAS_BYPROFILE,
-			SystemUDAResources.RESID_PREF_UDAS_CASCADEBYPROFILE_LABEL,
-			getFieldEditorParent()
-		);
-		addField(cascadeUDAsEditor);
-		cascadeUDAsEditor.setToolTipText(SystemUDAResources.RESID_PREF_UDAS_CASCADEBYPROFILE_TOOLTIP);
-		lastCascadeUDAsValue = getPreferenceStore().getBoolean(cascadeUDAsEditor.getPreferenceName());		
-		**/	
 		// set mnemonics
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(getFieldEditorParent());
 
@@ -263,15 +232,6 @@ public class RemoteSystemsPreferencePage
 			 	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_RESTORESTATE,lastRememberStateValue,newValue);
 		   	}
 		   	lastRememberStateValue = newValue;    		
-		}
-		if (useDeferredQueryEditor != null)
-		{
-		  	boolean newValue = useDeferredQueryEditor.getBooleanValue();
-		   	if (newValue != lastUseDeferredQueryValue)
-		   	{
-			 	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_RESTORESTATE,lastUseDeferredQueryValue,newValue);
-		   	}
-		   	lastUseDeferredQueryValue = newValue;    		
 		}
 
     	return ok;

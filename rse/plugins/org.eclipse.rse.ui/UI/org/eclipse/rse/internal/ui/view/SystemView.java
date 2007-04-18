@@ -5629,4 +5629,14 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		}
 		return false;
 	}
+	
+	public void update(Object element, String[] properties) {
+		Assert.isNotNull(element);
+		Vector matches = new Vector();
+		findAllRemoteItemReferences(element, element, matches);
+
+		for (int i = 0; i < matches.size(); i++) {
+			internalUpdate((Item)matches.get(i), element, properties);
+		}		
+	}
 }

@@ -38,6 +38,10 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		String prop = System.getProperty("gnu.io.rxtx.NoVersionOutput"); //$NON-NLS-1$
+		if (prop==null) {
+			System.setProperty("gnu.io.rxtx.NoVersionOutput", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	/*

@@ -40,8 +40,8 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	private static final int OP_ADDED = 2;
 	private static final int OP_REMOVED = 3;
 	
-	private static final QualifiedName EXTERNAL_SETTING_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "externalSettings");
-	private static final String EXTERNAL_SETTING_STORAGE_ID = CCorePlugin.PLUGIN_ID + ".externalSettings";
+	private static final QualifiedName EXTERNAL_SETTING_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "externalSettings"); //$NON-NLS-1$
+	private static final String EXTERNAL_SETTING_STORAGE_ID = CCorePlugin.PLUGIN_ID + ".externalSettings"; //$NON-NLS-1$
 	
 	private Map fFactoryMap = new HashMap();
 	private static CExternalSettingsManager fInstance;
@@ -129,7 +129,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		}
 
 		public String toString() {
-			return fFactoryId.toString() + " : " + fContainerId.toString();
+			return fFactoryId.toString() + " : " + fContainerId.toString(); //$NON-NLS-1$
 		}
 	}
 	private static class ContainerDescriptor {
@@ -626,7 +626,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	
 	private CSettingsRefInfo getRefInfo(ICConfigurationDescription cfg, boolean write){
 		if(write && cfg.isReadOnly())
-			throw new IllegalArgumentException("writable ref info is requested for the read only config");
+			throw new IllegalArgumentException(SettingsModelMessages.getString("CExternalSettingsManager.3")); //$NON-NLS-1$
 		
 		RefInfoContainer cr = (RefInfoContainer)cfg.getSessionProperty(EXTERNAL_SETTING_PROPERTY);
 		CSettingsRefInfo ri;

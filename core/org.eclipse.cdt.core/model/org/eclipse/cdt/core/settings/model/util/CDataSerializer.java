@@ -35,27 +35,27 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
 public class CDataSerializer {
-	protected static final String NAME = "name";
-	protected static final String ID = "id";
-	protected static final String DESCRIPTION = "description";
-	protected static final String SOURCE_ENTRIES = "sourceEntries";
-	protected static final String PATH = "path";
-	protected static final String LANGUAGE_ID = "languageId";
-	protected static final String CONTENT_TYPE_IDS = "contentTypeIds";
-	protected static final String EXTENSIONS = "extensions";
-	protected static final String DELIMITER = ";";
-	protected static final String FOLDER_DATA = "folderData";
-	protected static final String FILE_DATA = "fileData";
-	protected static final String BUILD_DATA = "buildData";
-	protected static final String TARGET_PLATFORM_DATA = "targetPlatformData";
-	protected static final String LANGUAGE_DATA = "languageData";
+	protected static final String NAME = "name"; //$NON-NLS-1$
+	protected static final String ID = "id"; //$NON-NLS-1$
+	protected static final String DESCRIPTION = "description"; //$NON-NLS-1$
+	protected static final String SOURCE_ENTRIES = "sourceEntries"; //$NON-NLS-1$
+	protected static final String PATH = "path"; //$NON-NLS-1$
+	protected static final String LANGUAGE_ID = "languageId"; //$NON-NLS-1$
+	protected static final String CONTENT_TYPE_IDS = "contentTypeIds"; //$NON-NLS-1$
+	protected static final String EXTENSIONS = "extensions"; //$NON-NLS-1$
+	protected static final String DELIMITER = ";"; //$NON-NLS-1$
+	protected static final String FOLDER_DATA = "folderData"; //$NON-NLS-1$
+	protected static final String FILE_DATA = "fileData"; //$NON-NLS-1$
+	protected static final String BUILD_DATA = "buildData"; //$NON-NLS-1$
+	protected static final String TARGET_PLATFORM_DATA = "targetPlatformData"; //$NON-NLS-1$
+	protected static final String LANGUAGE_DATA = "languageData"; //$NON-NLS-1$
 //	protected static final String EXCLUDED = "excluded";
-	protected static final String OUTPUT_ENTRIES = "outputEntries";
-	protected static final String ERROR_PARSERS = "errorParsers";
-	protected static final String BINARY_PARSERS = "binaryParsers";
-	protected static final String CWD = "cwd";
-	protected static final String SETTING_ENTRIES = "settingEntries";
-	protected static final String SUPPORTED_ENTRY_KINDS = "supportedEntryKinds";
+	protected static final String OUTPUT_ENTRIES = "outputEntries"; //$NON-NLS-1$
+	protected static final String ERROR_PARSERS = "errorParsers"; //$NON-NLS-1$
+	protected static final String BINARY_PARSERS = "binaryParsers"; //$NON-NLS-1$
+	protected static final String CWD = "cwd"; //$NON-NLS-1$
+	protected static final String SETTING_ENTRIES = "settingEntries"; //$NON-NLS-1$
+	protected static final String SUPPORTED_ENTRY_KINDS = "supportedEntryKinds"; //$NON-NLS-1$
 	
 	private static CDataSerializer fInstance;
 	
@@ -68,12 +68,12 @@ public class CDataSerializer {
 	public CConfigurationData loadConfigurationData(CDataFacroty factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "no id attribute for configuration"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.20"))); //$NON-NLS-1$
 		
 		String name = el.getAttribute(NAME);
 		CConfigurationData data = factory.createConfigurationdata(id, name, null, false);
 		if(data == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "failed to create configuration"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.21"))); //$NON-NLS-1$
 		
 		String tmp = el.getAttribute(DESCRIPTION);
 		if(tmp != null)
@@ -123,7 +123,7 @@ public class CDataSerializer {
 	public CFolderData loadFolderData(CConfigurationData data, CDataFacroty factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "no id attribute for folder data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.22"))); //$NON-NLS-1$
 		
 		String tmp = el.getAttribute(PATH);
 		IPath path = null;
@@ -131,11 +131,11 @@ public class CDataSerializer {
 			path = new Path(tmp);
 		}
 		if(path == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "no path attribute for folder data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.23"))); //$NON-NLS-1$
 
 		CFolderData foData = factory.createFolderData(data, null, id, false, path);
 		if(foData == null){
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "failed to create folder data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.24"))); //$NON-NLS-1$
 		}
 		
 //		tmp = el.getAttribute(EXCLUDED);
@@ -162,7 +162,7 @@ public class CDataSerializer {
 	public CFileData loadFileData(CConfigurationData data, CDataFacroty factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "no id attribute for file data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.25"))); //$NON-NLS-1$
 		
 		String tmp = el.getAttribute(PATH);
 		IPath path = null;
@@ -170,11 +170,11 @@ public class CDataSerializer {
 			path = new Path(tmp);
 		}
 		if(path == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "no path attribute for file data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.26"))); //$NON-NLS-1$
 
 		CFileData fiData = factory.createFileData(data, null, null, id, false, path);
 		if(fiData == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "failed to create file data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.27"))); //$NON-NLS-1$
 		
 //		tmp = el.getAttribute(EXCLUDED);
 //		if(tmp != null){
@@ -201,13 +201,13 @@ public class CDataSerializer {
 	public CBuildData loadBuildData(CConfigurationData data, CDataFacroty factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "no id attribute for build data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.28"))); //$NON-NLS-1$
 		
 		String name = el.getAttribute(NAME);
 		
 		CBuildData bData = factory.createBuildData(data, null, id, name, false);
 		if(bData == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "failed to create build data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.29"))); //$NON-NLS-1$
 
 		String tmp = el.getAttribute(ERROR_PARSERS);
 		if(tmp != null){
@@ -243,13 +243,13 @@ public class CDataSerializer {
 	public CTargetPlatformData loadTargetPlatformData(CConfigurationData data, CDataFacroty factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "no id attribute for target platform data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.30"))); //$NON-NLS-1$
 		
 		String name = el.getAttribute(NAME);
 		
 		CTargetPlatformData tpData = factory.createTargetPlatformData(data, null, id, name, false);
 		if(tpData == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "failed to create target platform data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.31"))); //$NON-NLS-1$
 
 		String tmp = el.getAttribute(BINARY_PARSERS);
 		if(tmp != null){
@@ -263,7 +263,7 @@ public class CDataSerializer {
 	public CLanguageData loadLanguageData(CConfigurationData data, CResourceData rcData, CDataFacroty factory, ICStorageElement el) throws CoreException {
 		String id = el.getAttribute(ID);
 		if(id == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "no id attribute for language data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.32"))); //$NON-NLS-1$
 		
 		String name = el.getAttribute(NAME);
 		String langId = el.getAttribute(LANGUAGE_ID);
@@ -291,7 +291,7 @@ public class CDataSerializer {
 		}
 		CLanguageData lData = factory.createLanguageData(data, rcData, id, name, langId, supportedKinds, ids, cTypes);
 		if(lData == null)
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "failed to create language data"));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, UtilMessages.getString("CDataSerializer.33"))); //$NON-NLS-1$
 
 		ICStorageElement[] children = el.getChildren();
 		String childName;

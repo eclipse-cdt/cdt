@@ -14,8 +14,8 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager.CContainerRef;
 
 public class CRefSettingsHolder extends CExternalSettingsHolder {
-	private static final String ATTR_FACTORY_ID = "factoryId";
-	private static final String ATTR_CONTAINER_ID = "containerId";
+	private static final String ATTR_FACTORY_ID = "factoryId"; //$NON-NLS-1$
+	private static final String ATTR_CONTAINER_ID = "containerId"; //$NON-NLS-1$
 	private CContainerRef fContainerRef;
 	private boolean fIsReconsiled;
 

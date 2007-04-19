@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 
 public class UserAndDiscoveredEntryDataSerializer extends CDataSerializer {
-	protected static final String DISABLED_DISCOVERED_ENTRIES = "disabledDiscoveredEntries";
-	protected static final String KIND = "kind";
-	protected static final String VALUE = "value";
+	protected static final String DISABLED_DISCOVERED_ENTRIES = "disabledDiscoveredEntries"; //$NON-NLS-1$
+	protected static final String KIND = "kind"; //$NON-NLS-1$
+	protected static final String VALUE = "value"; //$NON-NLS-1$
 	
 	private static UserAndDiscoveredEntryDataSerializer fInstance;
 	

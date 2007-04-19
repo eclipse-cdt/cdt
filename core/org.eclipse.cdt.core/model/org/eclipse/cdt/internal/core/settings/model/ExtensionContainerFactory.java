@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 
 public class ExtensionContainerFactory extends CExternalSettingContainerFactory {
-	static final String FACTORY_ID = CCorePlugin.PLUGIN_ID + ".extension.container.factory";
-	private static final String EXTENSION_ID = CCorePlugin.PLUGIN_ID + ".externalSettingsProvider";
+	static final String FACTORY_ID = CCorePlugin.PLUGIN_ID + ".extension.container.factory"; //$NON-NLS-1$
+	private static final String EXTENSION_ID = CCorePlugin.PLUGIN_ID + ".externalSettingsProvider"; //$NON-NLS-1$
 	
 	private static ExtensionContainerFactory fInstance;
 	private Map fDescriptorMap;
@@ -59,8 +59,8 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactory 
 	}
 	
 	private static class CExtensionSettingProviderDescriptor {
-		private static final String PROVIDER = "provider";
-		private static final String CLASS = "class";
+		private static final String PROVIDER = "provider"; //$NON-NLS-1$
+		private static final String CLASS = "class"; //$NON-NLS-1$
 		
 		private IExtension fExtension;
 		private IConfigurationElement fProviderElement;
@@ -107,9 +107,9 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactory 
 				if(obj instanceof CExternalSettingProvider){
 					return (CExternalSettingProvider)obj;
 				} else
-					throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("invalid setting provider class specified"));
+					throw ExceptionFactory.createCoreException(SettingsModelMessages.getString(SettingsModelMessages.getString("ExtensionContainerFactory.4"))); //$NON-NLS-1$
 			}
-			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("provider element not specified"));
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString(SettingsModelMessages.getString("ExtensionContainerFactory.5"))); //$NON-NLS-1$
 		}
 		
 		private IConfigurationElement getProviderElement(){

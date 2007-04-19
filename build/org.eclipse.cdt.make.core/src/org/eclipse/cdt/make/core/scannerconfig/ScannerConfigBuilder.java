@@ -92,7 +92,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 		
 		ICConfigurationDescription[] cfgs = des.getConfigurations();
 		IScannerConfigBuilderInfo2Set container = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(project);
-		monitor.beginTask("building per-configuratin info", cfgs.length + 1);
+		monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.0"), cfgs.length + 1); //$NON-NLS-1$
 		boolean wasbuilt = false;
 		for(int i = 0; i < cfgs.length; i++){
 			ICConfigurationDescription cfg = cfgs[i];

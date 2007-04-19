@@ -154,7 +154,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	public void convert(IProject project, String id) throws CoreException {
 		CConfigBasedDescriptor dr = findDescriptor(project, false);
 		if(dr == null){
-			throw ExceptionFactory.createCoreException("the project is not a CDT project");
+			throw ExceptionFactory.createCoreException(CCorePlugin.getResourceString("CConfigBasedDescriptorManager.0")); //$NON-NLS-1$
 		}
 		
 		
@@ -218,17 +218,17 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				throws CoreException {
 		CConfigBasedDescriptor dr = getOperatingDescriptor(project);
 		if(dr != null){
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "description based descriptor operation can not be nested", null));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CConfigBasedDescriptorManager.1"), null)); //$NON-NLS-1$
 		}
 		
 		if(des.isReadOnly()){
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "can not perform descriptor operation based on the read only description", null));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CConfigBasedDescriptorManager.2"), null)); //$NON-NLS-1$
 		}
 		
 		dr = loadDescriptor((CProjectDescription)des);
 		
 		if (dr == null) {
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Failed to create descriptor", null));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CConfigBasedDescriptorManager.3"), null)); //$NON-NLS-1$
 		}
 		
 		setOperatingDescriptor(project, dr);
@@ -312,11 +312,11 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 			
 			if(cfgDes != null){
 				if(cfgDes.isReadOnly())
-					throw ExceptionFactory.createCoreException("error: read-only configuration can not be used for CDescriptor");
+					throw ExceptionFactory.createCoreException(CCorePlugin.getResourceString("CConfigBasedDescriptorManager.4")); //$NON-NLS-1$
 					
 				dr = new CConfigBasedDescriptor(cfgDes);
 			} else {
-				throw ExceptionFactory.createCoreException("the project does not contain valid configurations");
+				throw ExceptionFactory.createCoreException(CCorePlugin.getResourceString("CConfigBasedDescriptorManager.5")); //$NON-NLS-1$
 			}
 		}
 		

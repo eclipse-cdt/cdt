@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.ListenerList;
 
 public class CfgExportSettingContainerFactory extends
 		CExternalSettingContainerFactory implements ICProjectDescriptionListener {
-	static final String FACTORY_ID = CCorePlugin.PLUGIN_ID + ".cfg.export.settings.sipplier";
+	static final String FACTORY_ID = CCorePlugin.PLUGIN_ID + ".cfg.export.settings.sipplier"; //$NON-NLS-1$
 	private static final char DELIMITER = ';';
 	private ListenerList fListenerList;
 	
@@ -165,11 +165,11 @@ public class CfgExportSettingContainerFactory extends
 			cfgId = id.substring(index + 1);
 		} else {
 			projName = id;
-			cfgId = "";
+			cfgId = ""; //$NON-NLS-1$
 		}
 		
 		if((projName = projName.trim()).length() == 0)
-			throw ExceptionFactory.createCoreException("invalid id: project name not specified");
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CfgExportSettingContainerFactory.2")); //$NON-NLS-1$
 		
 		return new String[]{projName, cfgId};
 	}
@@ -225,14 +225,14 @@ public class CfgExportSettingContainerFactory extends
 				for(int i = 0; i < cfgs.length; i++){
 					cfgIds.add(cfgs[i].getId());
 				}
-				cfgIds.add("");
+				cfgIds.add(""); //$NON-NLS-1$
 			}
 			
 		case ICDescriptionDelta.CHANGED:
 			ICDescriptionDelta[] children = delta.getChildren();
 			collectCfgIds(children, cfgIds);
 			if((delta.getChangeFlags() & ICDescriptionDelta.ACTIVE_CFG) != 0)
-				cfgIds.add("");
+				cfgIds.add(""); //$NON-NLS-1$
 		}
 
 

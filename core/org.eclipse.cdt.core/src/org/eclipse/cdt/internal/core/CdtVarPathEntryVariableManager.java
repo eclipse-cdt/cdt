@@ -52,7 +52,7 @@ public class CdtVarPathEntryVariableManager implements
 
 	private class VarSubstitutor extends SupplierBasedCdtVariableSubstitutor {
 		public VarSubstitutor() {
-			super(new VarContextInfo(), "", " ");
+			super(new VarContextInfo(), "", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

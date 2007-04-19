@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public class CExtensionDescriptor implements ICExtensionDescriptor {
 	private IConfigurationElement fElement;
-	protected static final String ATTRIBUTE_ID = "id";
-	protected static final String ATTRIBUTE_NAME = "name";
+	protected static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	protected static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 
 	public CExtensionDescriptor(IConfigurationElement el){
 		fElement = el;

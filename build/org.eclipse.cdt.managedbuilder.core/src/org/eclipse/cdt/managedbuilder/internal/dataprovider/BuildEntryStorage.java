@@ -275,7 +275,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			nv[1] = value.substring(index + 1);
 		} else {
 			nv[0] = value;
-			nv[1] = "";
+			nv[1] = ""; //$NON-NLS-1$
 		}
 		return nv;
 	}

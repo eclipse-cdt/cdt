@@ -88,6 +88,6 @@ public class CDefaultConfigurationDataProvider extends
 	}
 	
 	protected CConfigurationData createPreferenceConfig(CDataFacroty factory){
-		return CDataUtil.createEmptyData(null, "preference", factory, true);
+		return CDataUtil.createEmptyData(null, "preference", factory, true); //$NON-NLS-1$
 	}
 }

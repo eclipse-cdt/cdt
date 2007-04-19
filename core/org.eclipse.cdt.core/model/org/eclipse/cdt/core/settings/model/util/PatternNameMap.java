@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.model.CoreModelUtil;
 
 public class PatternNameMap {
 	private static final char[] SPEC_CHARS = new char[]{'*', '?'}; 
-	static final String DOUBLE_STAR_PATTERN = "**"; 
+	static final String DOUBLE_STAR_PATTERN = "**";  //$NON-NLS-1$
 
 	private Map fChildrenMap;
 	private Map fPatternMap;

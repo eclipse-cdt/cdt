@@ -323,7 +323,7 @@ public class ScannerConfigInfoFactory2 {
 		
 		private void checkRemoveInfo(InfoContext context) throws CoreException{
 			if(context.isDefaultContext())
-				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "can not remove the default info"));
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, MakeConfigurationDataProviderMessages.getString("ScannerConfigInfoFactory2.0"))); //$NON-NLS-1$
 		}
 		
 		public boolean isDirty(){

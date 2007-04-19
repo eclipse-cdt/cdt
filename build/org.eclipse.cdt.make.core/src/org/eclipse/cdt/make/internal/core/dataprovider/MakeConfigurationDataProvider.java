@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class MakeConfigurationDataProvider extends CDefaultConfigurationDataProvider {
-	private static final String STORAGE_ID = "makeConfigDataProvider";
+	private static final String STORAGE_ID = "makeConfigDataProvider"; //$NON-NLS-1$
 
 	protected CDataFacroty getDataFactory() {
 		return MakeCDataFacroty.getDefault();

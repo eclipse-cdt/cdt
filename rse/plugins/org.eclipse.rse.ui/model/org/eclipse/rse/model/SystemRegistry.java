@@ -39,7 +39,6 @@ import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
-import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterStartHere;
@@ -66,14 +65,13 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.internal.core.filters.SystemFilterPool;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.model.SystemHostPool;
 import org.eclipse.rse.internal.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.model.SystemModelChangeEventManager;
 import org.eclipse.rse.internal.model.SystemPostableEventNotifier;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeManager;
-import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.internal.model.SystemRemoteChangeEventManager;
 import org.eclipse.rse.internal.model.SystemResourceChangeManager;
 import org.eclipse.rse.internal.model.SystemScratchpad;
@@ -764,7 +762,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public ISystemProfileManager getSystemProfileManager()
 	{
-		return SystemProfileManager.getSystemProfileManager();
+		return SystemProfileManager.getDefault();
 	}
 
 	/**
@@ -800,7 +798,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public Vector getAllSystemProfileNamesVector()
 	{
-		return getSystemProfileManager().getSystemProfileNamesVector();
+		Vector v = getSystemProfileManager().getSystemProfileNamesVector();
+		return v;
 	}
 
 	/**
@@ -2842,8 +2841,6 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public void disconnectAllSubSystems(IHost conn)
 	{
-		// FIXME - save profile
-		save();
 		
 		ISubSystem[] subsystems = getSubSystemsLazily(conn);
 		if (subsystems == null)
@@ -3346,8 +3343,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public boolean save()
 	{
-		ISystemProfileManager profileManager = getSystemProfileManager();
-		return RSEUIPlugin.getThePersistenceManager().commit(profileManager);
+		return RSEUIPlugin.getThePersistenceManager().commitProfiles();
 	}
 
 	/**
@@ -3356,7 +3352,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public boolean saveHostPool(ISystemHostPool pool)
 	{
-		return RSEUIPlugin.getThePersistenceManager().commit(pool);
+		return pool.commit();
 	}
 
 	/**
@@ -3412,11 +3408,6 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	}
 	public ISystemFilterStartHere getSystemFilterStartHere() {
 		return SystemFilterStartHere.getDefault();
-	} 
-	
-	public ISystemFilterPool getSystemFilterPool()
-	{
-		return SystemFilterPool.getDefault();
 	}
 	
 }//SystemRegistryImpl

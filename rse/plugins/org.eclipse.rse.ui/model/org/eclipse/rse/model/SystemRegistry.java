@@ -2619,9 +2619,21 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 
 		// it looks good, so proceed...
 		String oldName = conn.getAliasName();
+		
+		
+		// DKM - changing how this is done since there are services with different configurations now
+		ISubSystem[] subsystems = conn.getSubSystems();
+		for (int i = 0; i < subsystems.length; i++)
+		{
+			ISubSystem ss = subsystems[i];
+			ss.getSubSystemConfiguration().renameSubSystemsByConnection(conn, newName);
+		}
+		
+		/*
 		Vector affectedSubSystemFactories = getSubSystemFactories(conn);
 		for (int idx = 0; idx < affectedSubSystemFactories.size(); idx++)
 			 ((ISubSystemConfiguration) affectedSubSystemFactories.elementAt(idx)).renameSubSystemsByConnection(conn, newName);
+		*/
 		conn.getHostPool().renameHost(conn, newName); // rename in memory and disk
 		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list        
 		fireModelChangeEvent(SYSTEM_RESOURCE_RENAMED, SYSTEM_RESOURCETYPE_CONNECTION, conn, oldName);

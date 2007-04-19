@@ -920,9 +920,17 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public void renameSubSystemsByConnection(IHost conn, String newConnectionName)
 	{
 		ISubSystem[] subsystems = getSubSystems(conn, ISubSystemConfiguration.FORCE_INTO_MEMORY);
-		for (int idx = 0; idx < subsystems.length; idx++)
+		if (subsystems != null)
 		{
-			subsystems[idx].renamingConnection(newConnectionName);
+			for (int idx = 0; idx < subsystems.length; idx++)
+			{
+				subsystems[idx].renamingConnection(newConnectionName);
+			}
+		}
+		else
+		{
+			// strange situation..log this 
+			RSEUIPlugin.logInfo("renameSubSystemsByConnection for " + conn.getAliasName() + " has no subsystems" );
 		}
 		try
 		{
@@ -1033,6 +1041,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			boolean subsystemsRestored = subSystemsHaveBeenRestored(conn);
 			if (!subsystemsRestored && force)
 			{
+				RSEUIPlugin.logInfo("in SubSystemConfiguration.getSubSystems(conn, force) - not restored");
 				/*FIXME - this should now be triggered by new persistence model
 				try
 				{
@@ -1054,6 +1063,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			}
 			else if (!subsystemsRestored && !force)
 			{
+				RSEUIPlugin.logInfo("in SubSystemConfiguration.getSubSytems(conn, force) - returning empty array");
 				return EMPTY_SUBSYSTEM_ARRAY;
 			}
 			else

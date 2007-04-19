@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -344,12 +345,33 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 					sourceStart = nameOffset;
 				}
 			} else {
+				final boolean expectClosingBrace;
+				IType type= null;
+				try {
+					if (binding instanceof ITypedef) {
+						type= ((ITypedef)binding).getType();
+					} else if (binding instanceof IVariable) {
+						type= ((IVariable)binding).getType();
+					} else {
+						type= null;
+					}
+				} catch (DOMException exc) {
+				}
+				expectClosingBrace= type instanceof ICompositeType || type instanceof IEnumeration;
 				final int nameLine= doc.getLineOfOffset(nameOffset);
-				sourceStart= doc.getLineOffset(nameLine);
+				sourceStart= nameOffset;
 				int commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+				while (expectClosingBrace && commentBound > 0 && doc.getChar(commentBound) == '}') {
+					int openingBrace= scanner.findOpeningPeer(commentBound - 1, '{', '}');
+					if (openingBrace != CHeuristicScanner.NOT_FOUND) {
+						sourceStart= openingBrace - 1;
+					}
+					commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+				}
 				if (commentBound == CHeuristicScanner.NOT_FOUND) {
 					commentBound= -1; // unbound
 				}
+				sourceStart= Math.min(sourceStart, doc.getLineOffset(nameLine));
 				int commentStart= searchCommentBackward(doc, sourceStart, commentBound);
 				if (commentStart >= 0) {
 					sourceStart= commentStart;
@@ -431,7 +453,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 					int lineEnd= lineRegion.getOffset() + lineRegion.getLength();
 					int nextNonWS= scanner.findNonWhitespaceForwardInAnyPartition(sourceEnd + 1, lineEnd);
 					if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
-						String contentType= TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, nextNonWS, true);
+						String contentType= TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, nextNonWS, false);
 						if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType) || ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)) {
 							sourceEnd= lineEnd;
 						}
@@ -580,8 +602,20 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		int commentStart= searchCommentBackward(doc, sourceStart, commentBound);
 		if (commentStart >= 0) {
 			sourceStart= commentStart;
+		} else {
+			sourceStart= doc.getLineInformationOfOffset(sourceStart).getOffset();
 		}
-		return doc.get(sourceStart, sourceEnd - sourceStart + 1);
+		// expand region to include whole line if rest is comment
+		IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
+		int lineEnd= lineRegion.getOffset() + lineRegion.getLength();
+		int nextNonWS= scanner.findNonWhitespaceForwardInAnyPartition(sourceEnd + 1, lineEnd);
+		if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
+			String contentType= TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, nextNonWS, false);
+			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType) || ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)) {
+				sourceEnd= lineEnd;
+			}
+		}
+		return doc.get(sourceStart, sourceEnd - sourceStart);
 	}
 
 	/**

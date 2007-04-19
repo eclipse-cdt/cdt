@@ -585,7 +585,7 @@
     	        <test property="org.eclipse.cdt.ui.isSource" value="" />
 	         </and>	
 		    </or>
-            <test property="org.eclipse.cdt.ui.toolEditEnabled" value="" />
+                <test property="org.eclipse.cdt.ui.toolEditEnabled" value="" />
 		    </and>          
          </enabledWhen>
       </page>

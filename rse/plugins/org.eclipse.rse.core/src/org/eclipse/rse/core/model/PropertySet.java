@@ -30,6 +30,7 @@ import java.util.Set;
  * not thread-safe.
  */
 public class PropertySet extends RSEPersistableObject implements IPropertySet, Observer {
+	
 	private String _name;
 	private Map _properties;
 	private IPropertySetContainer _container = null;
@@ -176,6 +177,10 @@ public class PropertySet extends RSEPersistableObject implements IPropertySet, O
 	
 	public void setContainer(IPropertySetContainer container) {
 		_container = container;
+	}
+	
+	public IPropertySetContainer getContainer() {
+		return _container;
 	}
 	
 	public void update(Observable o, Object arg) {

@@ -58,6 +58,10 @@ public abstract class PropertySetContainer extends RSEPersistableObject implemen
 	}
 
 	public boolean addPropertySet(IPropertySet set) {
+		IPropertySetContainer old = set.getContainer();
+		if (old != null) {
+			old.removePropertySet(set.getName());
+		}
 		set.setContainer(this);
 		_propertySets.put(set.getName(), set);
 		return true;

@@ -128,6 +128,7 @@ public class RemoteSystemEnvVar implements IRemoteSystemEnvVar
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 * Additional attributes that may need to be persisted per environment variable.
+	 * @deprecated
 	 */
 	public String getAdditionalAttributes()
 	{
@@ -136,6 +137,7 @@ public class RemoteSystemEnvVar implements IRemoteSystemEnvVar
 
 	/**
 	 * @generated This field/method will be replaced during code generation.
+	 * @deprecated
 	 */
 	public void setAdditionalAttributes(String newAdditionalAttributes)
 	{

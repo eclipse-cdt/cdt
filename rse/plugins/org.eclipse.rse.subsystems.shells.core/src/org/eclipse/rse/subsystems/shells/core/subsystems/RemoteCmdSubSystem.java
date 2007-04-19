@@ -18,17 +18,18 @@ package org.eclipse.rse.subsystems.shells.core.subsystems;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.PropertyList;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -57,12 +58,9 @@ import org.eclipse.swt.widgets.Shell;
 public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmdSubSystem, ICommunicationsListener
 {
 
-	public static String COMMAND_SHELLS_MEMENTO = "commandshells"; //$NON-NLS-1$
-
-	protected java.util.List envVars = null;
-
-	protected List _envVars;
-
+	private static String COMMAND_SHELLS_MEMENTO = "commandshells"; //$NON-NLS-1$
+	private static String ENVIRONMENT_VARS = "EnvironmentVariables"; //$NON-NLS-1$
+	
 	protected ArrayList _cmdShells;
 
 	protected IRemoteCommandShell _defaultShell;
@@ -128,164 +126,115 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * RemoteSystemEnvVar objects. Array returned may be size zero but will not
 	 * be null.
 	 */
-	public IRemoteSystemEnvVar[] getEnvironmentVariableList()
-	{
-		java.util.List initEVL = getEnvVars();
-		IRemoteSystemEnvVar[] envl = new IRemoteSystemEnvVar[initEVL.size()];
-		Iterator i = initEVL.iterator();
-		int idx = 0;
-		while (i.hasNext())
-			envl[idx++] = (IRemoteSystemEnvVar) i.next();
-		return envl;
+	public IRemoteSystemEnvVar[] getEnvironmentVariableList() {
+		IPropertySet environmentVariables = getEnvironmentVariables();
+		String[] names = environmentVariables.getPropertyKeys();
+		IRemoteSystemEnvVar[] result = new IRemoteSystemEnvVar[names.length];
+		for (int i = 0; i < names.length; i++) {
+			String name = names[i];
+			String value = environmentVariables.getPropertyValue(name);
+			IRemoteSystemEnvVar v = new RemoteSystemEnvVar();
+			v.setName(name);
+			v.setValue(value);
+			result[i] = v;
+		}
+		return result;
 	}
 
 	/**
 	 * Set the initial environment variable list entries, all in one shot, using
 	 * a pair of String arrays: the first is the environment variable names, the
 	 * second is the corresponding environment variable values.
-	 * <p>
-	 * Note, this calls getParentSubSystemConfiguration().saveSubSystem(this) for you.
+	 * @param names the array of names
+	 * @param values the array of string values
 	 */
-	public void setEnvironmentVariableList(String[] envVarNames, String[] envVarValues)
-	{
-		java.util.List initEVL = getEnvVars();
-		initEVL.clear();
-		if (envVarNames != null)
-		{
-			IRemoteSystemEnvVar rsev = null;
-			for (int idx = 0; idx < envVarNames.length; idx++)
-			{
-				rsev = new RemoteSystemEnvVar();
-				rsev.setName(envVarNames[idx]);
-				rsev.setValue(envVarValues[idx]);
-				initEVL.add(rsev);
+	public void setEnvironmentVariableList(String[] names, String[] values) {
+		removePropertySet(ENVIRONMENT_VARS);
+		IPropertySet environmentVariables = getEnvironmentVariables();
+		if (names != null) {
+			for (int i = 0; i < names.length; i++) {
+				environmentVariables.addProperty(names[i], values[i]);
 			}
 		}
-		try
-		{
-			if (getSubSystemConfiguration() != null)
-				getSubSystemConfiguration().saveSubSystem(this);
-		}
-		catch (Exception exc)
-		{
-			SystemBasePlugin.logError("Error saving command subsystem after setting env var entries", exc); //$NON-NLS-1$
+		try {
+			if (getSubSystemConfiguration() != null) getSubSystemConfiguration().saveSubSystem(this);
+		} catch (Exception exc) {
+			RSECorePlugin.getDefault().getLogger().logError("Error saving command subsystem after setting env var entries", exc); //$NON-NLS-1$
 		}
 	}
 
 	/**
 	 * Add environment variable entry, given a name and value
 	 */
-	public void addEnvironmentVariable(String name, String value)
-	{
-		/*
-		 * FIXME RemoteSystemEnvVar rsev =
-		 * SubSystemConfigurationImpl.getSSMOFfactory().createRemoteSystemEnvVar();
-		 * rsev.setName(name); rsev.setValue(value);
-		 * addEnvironmentVariable(rsev);
-		 */
-		RemoteSystemEnvVar rsev = new RemoteSystemEnvVar();
-		rsev.setName(name);
-		rsev.setValue(value);
-		addEnvironmentVariable(rsev);
-		return;
+	public void addEnvironmentVariable(String name, String value) {
+		IPropertySet environmentVariables = getEnvironmentVariables();
+		environmentVariables.addProperty(name, value);
+		commit();
 	}
 
 	/**
 	 * Add environment variable entry, given a RemoteSystemEnvVar object
 	 */
-	public void addEnvironmentVariable(IRemoteSystemEnvVar rsev)
-	{
-		getEnvVars().add(rsev);
-		try
-		{
-			getSubSystemConfiguration().saveSubSystem(this);
-		}
-		catch (Exception exc)
-		{
-			SystemBasePlugin.logError("Error saving command subsystem after adding env var entry", exc); //$NON-NLS-1$
-		}
+	public void addEnvironmentVariable(IRemoteSystemEnvVar rsev) {
+		addEnvironmentVariable(rsev.getName(), rsev.getValue());
 	}
 
 	/**
 	 * Remove environment variable entry given its RemoteSystemEnvVar object
+	 * @param rsev the remote system environment variable to remove
 	 */
-	public void removeEnvironmentVariable(IRemoteSystemEnvVar rsev)
-	{
-		getEnvVars().remove(rsev);
-		try
-		{
-			getSubSystemConfiguration().saveSubSystem(this);
-		}
-		catch (Exception exc)
-		{
-			SystemBasePlugin.logError("Error saving command subsystem after removing env var entry", exc); //$NON-NLS-1$
-		}
+	public void removeEnvironmentVariable(IRemoteSystemEnvVar rsev) {
+		removeEnvironmentVariable(rsev.getName());
 	}
 
 	/**
 	 * Remove environment variable entry given only its environment variable
 	 * name
 	 */
-	public void removeEnvironmentVariable(String name)
-	{
-		IRemoteSystemEnvVar rsev = getEnvironmentVariable(name);
-		if (rsev != null)
-			removeEnvironmentVariable(rsev);
+	public void removeEnvironmentVariable(String name) {
+		IPropertySet environmentVariables = getEnvironmentVariables();
+		environmentVariables.removeProperty(name);
+		commit();
 	}
 
 	/**
 	 * Given an environment variable name, find its RemoteSystemEnvVar object.
-	 * Returns null if not found!
+	 * Returns null if not found.
 	 */
-	public IRemoteSystemEnvVar getEnvironmentVariable(String name)
-	{
-		java.util.List envVarList = getEnvVars();
-		IRemoteSystemEnvVar match = null;
-		Iterator i = envVarList.iterator();
-		while ((match == null) && i.hasNext())
-		{
-			IRemoteSystemEnvVar rsev = (IRemoteSystemEnvVar) i.next();
-			if (rsev.getName().equals(name))
-				match = rsev;
+	public IRemoteSystemEnvVar getEnvironmentVariable(String name) {
+		IRemoteSystemEnvVar result = null;
+		String value = getEnvironmentVariableValue(name);
+		if (value != null) {
+			result = new RemoteSystemEnvVar();
+			result.setName(name);
+			result.setValue(value);
 		}
-		return match;
+		return result;
 	}
 
 	/**
 	 * Given an environment variable name, find its value. Returns null if not
 	 * found.
 	 */
-	public String getEnvironmentVariableValue(String name)
-	{
-		IRemoteSystemEnvVar match = getEnvironmentVariable(name);
-		if (match != null)
-			return match.getValue();
-		else
-			return null;
+	public String getEnvironmentVariableValue(String name) {
+		IPropertySet environmentVariables = getEnvironmentVariables();
+		String value = environmentVariables.getPropertyValue(name);
+		return value;
 	}
 
 	/**
 	 * 
 	 */
-	protected String[] getEnvVarsAsStringArray()
-	{
-		String[] envVars = null;
-		IRemoteSystemEnvVar[] list = getEnvironmentVariableList();
-		if (list != null && list.length > 0)
-		{
-			envVars = new String[list.length];
-			for (int i = 0; i < list.length; i++)
-			{
-				String name = list[i].getName();
-				if (isWindows())
-				{
-					name = name.toUpperCase();
-				}
-				envVars[i] = name + "=" + list[i].getValue(); //$NON-NLS-1$
-			}
+	protected String[] getEnvVarsAsStringArray() {
+		IPropertySet environmentVariables = getEnvironmentVariables();
+		String[] names = environmentVariables.getPropertyKeys();
+		String[] result = new String[names.length];
+		for (int i = 0; i < names.length; i++) {
+			String name = names[i];
+			String value = environmentVariables.getPropertyValue(name);
+			result[i] = name + "=" + value; //$NON-NLS-1$
 		}
-
-		return envVars;
+		return result;
 	}
 
 	protected boolean isUniqueVariable(List variables, String varName)
@@ -460,7 +409,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(IProgressMonitor,String)
 	 */
 	protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString)
-			throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
+			throws InvocationTargetException, InterruptedException
 	{
 		return null;
 	}
@@ -611,8 +560,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		}
 	}
 
-	protected void internalRemoveShell(Object command) throws java.lang.reflect.InvocationTargetException,
-			java.lang.InterruptedException
+	protected void internalRemoveShell(Object command) throws InvocationTargetException,
+			InterruptedException
 	{
 		if (command instanceof IRemoteCommandShell)
 		{
@@ -800,19 +749,23 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		}
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation
-	 */
-	public java.util.List getEnvVars()
-	{
-		if (envVars == null)
-		{
-			envVars = new ArrayList();// FIXME new
-			// EObjectContainmenteList(RemoteSystemEnvVar.class,
-			// this,
-			// SubsystemsPackage.REMOTE_CMD_SUB_SYSTEM__ENV_VARS);
+	private IPropertySet getEnvironmentVariables() {
+		IPropertySet environmentVariables = getPropertySet(ENVIRONMENT_VARS);
+		if (environmentVariables == null) {
+			environmentVariables = createPropertySet(ENVIRONMENT_VARS);
 		}
-		return envVars;
+		return environmentVariables;
+	}
+	
+	public IPropertySet createPropertySet(String name) {
+		IPropertySet result = null;
+		if (name.equals(ENVIRONMENT_VARS)) {
+			result = new PropertyList(ENVIRONMENT_VARS);
+			addPropertySet(result);
+		} else {
+			result = super.createPropertySet(name);
+		}
+		return result;
 	}
 
 	/**
@@ -821,8 +774,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public Object[] runCommand(String command, Object context, boolean interpretOutput) throws Exception
 	{
-//dwd		if (shell != null)
-//dwd			this.shell = shell;
 		return internalRunCommand(null, command, context, interpretOutput);
 	}
 	
@@ -831,8 +782,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public Object[] runCommand(IProgressMonitor monitor, String command, Object context, boolean interpretOutput) throws Exception
 	{
-//dwd		if (shell != null)
-//dwd			this.shell = shell;
 		return internalRunCommand(monitor, command, context, interpretOutput);
 	}
 
@@ -843,8 +792,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public IRemoteCommandShell runShell(Object context) throws Exception
 	{
-//dwd		if (shell != null)
-//dwd			this.shell = shell;
 		IRemoteCommandShell cmdShell = null;
 		if (isConnected())
 		{
@@ -929,7 +876,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			{
 			try
 			{
-//dwd				this.shell = shell; // FIXME remove this
 				SendCommandToShellJob job = new SendCommandToShellJob(input, commandObject);
 
 				scheduleJob(job, null);
@@ -990,7 +936,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			{
 				try
 				{
-//dwd					this.shell = shell; // FIXME remove this
 					CancelShellJob job = new CancelShellJob(commandObject);
 					scheduleJob(job, null);
 				}
@@ -1052,7 +997,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			{
 				try
 				{
-//dwd					this.shell = shell; // FIXME remove this
 					RemoveShellJob job = new RemoveShellJob(commandObject);
 					scheduleJob(job, null);
 				}
@@ -1264,7 +1208,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * <li>if the user cancels (monitor.isCanceled()), throw new
 	 * InterruptedException()
 	 * <li>if something else bad happens, throw new
-	 * java.lang.reflect.InvocationTargetException(exc);
+	 * InvocationTargetException(exc);
 	 * <li>do not worry about calling monitor.done() ... caller will do that!
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT COMMANDS!
@@ -1284,30 +1228,30 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * <li>if the user cancels (monitor.isCanceled()), throw new
 	 * InterruptedException()
 	 * <li>if something else bad happens, throw new
-	 * java.lang.reflect.InvocationTargetException(exc);
+	 * InvocationTargetException(exc);
 	 * <li>do not worry about calling monitor.done() ... caller will do that!
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT COMMANDS!
 	 */
 	protected Object[] internalRunCommand(IProgressMonitor monitor, String cmd, Object context, boolean interpretOutput)
-			throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException, SystemMessageException
+			throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
 		return null;
 	}
 
 	protected IRemoteCommandShell internalRunShell(IProgressMonitor monitor, Object context)
-			throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException, SystemMessageException
+			throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
 		return null;
 	}
 
 	protected void internalCancelShell(IProgressMonitor monitor, Object command)
-			throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
+			throws InvocationTargetException, InterruptedException
 	{
 	}
 
 	protected void internalSendCommandToShell(IProgressMonitor monitor, String cmd, Object command)
-			throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
+			throws InvocationTargetException, InterruptedException
 	{
 	}
 }

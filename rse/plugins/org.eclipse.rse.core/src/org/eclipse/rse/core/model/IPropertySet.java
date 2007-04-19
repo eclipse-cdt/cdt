@@ -88,6 +88,8 @@ public interface IPropertySet {
 	 * 
 	 * Provided that the Set has a description, the 
 	 * @link{DESCRIPTION_KEY} key will also be in the list.
+	 * The interface defines no particular ordering for the 
+	 * keys.
 	 * 
 	 * @return String array of Property keys.
 	 */
@@ -161,4 +163,8 @@ public interface IPropertySet {
 	 */
 	public void setContainer(IPropertySetContainer container);
 
+	/**
+	 * @return the container of this property set or null if there is no container.
+	 */
+	public IPropertySetContainer getContainer();
 }

@@ -216,13 +216,6 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	 */
 	public String getInvalidEnvironmentVariableNameCharacters(); 	
 	
-	/**
-	 * <i><b>Private</b>. Do not override or call.</i>
-	 * @generated This field/method will be replaced during code generation 
-	 * @return The list of EnvVars references
-	 */
-	java.util.List getEnvVars();
-	
 	public List getHostEnvironmentVariables();
 	
 	

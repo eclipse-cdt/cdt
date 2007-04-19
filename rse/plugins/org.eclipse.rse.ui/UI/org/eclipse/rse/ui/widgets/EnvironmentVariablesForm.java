@@ -590,17 +590,17 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 				}
 						
 				// next check for duplicate env var names
-				String existingName;
-				int currentSelection = envVarTable.getSelectionIndex();
-				for (int i = 0; i < envVars.size() && msg == null; i++)
-				{
-					existingName = ((EnvironmentVariable) envVars.get(i)).getName();
-					if (currentSelection != i && existingName.equals(name))
-					{
-						msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_DUPLICATE);
-						msg.makeSubstitution(existingName);
-					}
-				}							
+				int numberFound = 0;
+				int itemCount = envVarTable.getItemCount();
+				for (int i = 0; i < itemCount; i++) {
+					TableItem item = envVarTable.getItem(i);
+					String itemName = item.getText(0);
+					if (itemName.equals(name)) numberFound++;
+				}
+				if (numberFound > 1) {
+					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_DUPLICATE);
+					msg.makeSubstitution(name);
+				}
 			}					
 		}
 		

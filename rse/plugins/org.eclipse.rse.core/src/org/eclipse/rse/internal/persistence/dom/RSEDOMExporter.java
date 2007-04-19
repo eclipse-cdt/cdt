@@ -161,18 +161,23 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 	 */
 	public RSEDOMNode[] createPropertySetNodes(RSEDOMNode parent, IRSEModelObject modelObject, boolean clean) {
 		IPropertySet[] propertySets = modelObject.getPropertySets();
+		RSEDOMNode[] result = new RSEDOMNode[propertySets.length];
 		for (int i = 0; i < propertySets.length; i++) {
 			IPropertySet set = propertySets[i];
-			RSEDOMNode node = new RSEDOMNode(parent, IRSEDOMConstants.TYPE_PROPERTY_SET, set.getName());
+			RSEDOMNode propertySetNode = new RSEDOMNode(parent, IRSEDOMConstants.TYPE_PROPERTY_SET, set.getName());
 			String[] keys = set.getPropertyKeys();
 			for (int k = 0; k < keys.length; k++) {
 				String key = keys[k];
 				String value = set.getPropertyValue(key);
 				IPropertyType type = set.getPropertyType(key);
-				node.addAttribute(key, value, type.toString());
+				RSEDOMNode propertyNode = new RSEDOMNode(propertySetNode, IRSEDOMConstants.TYPE_PROPERTY, key);
+				propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, type.toString());
+				propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_VALUE, value);
+				
 			}
+			result[i] = propertySetNode;
 		}
-		return parent.getChildren();
+		return result;
 	}
 
 	/**

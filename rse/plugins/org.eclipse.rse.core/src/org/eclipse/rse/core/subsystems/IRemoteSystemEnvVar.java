@@ -61,12 +61,14 @@ public interface IRemoteSystemEnvVar {
 	 * @generated This field/method will be replaced during code generation 
 	 * @return The value of the AdditionalAttributes attribute
 	 * Additional attributes that may need to be persisted per environment variable.
+	 * @deprecated
 	 */
 	String getAdditionalAttributes();
 
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 * @param value The new value of the AdditionalAttributes attribute
+	 * @deprecated
 	 */
 	void setAdditionalAttributes(String value);
 

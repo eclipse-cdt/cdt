@@ -16,19 +16,69 @@
 
 package org.eclipse.rse.core.model;
 
+/**
+ * A property set container is capable of containing property sets. This interface allows for the 
+ * addition, retrieval, and deletion of property sets from the container. A property set may have only 
+ * one container.
+ */
 public interface IPropertySetContainer {
+	
+	/**
+	 * Retrieves an array all property sets known to this container. It will return an empty array if this
+	 * container has property sets. The order of these property sets is not dictated by the interface.
+	 * @return an array of property sets.
+	 */
 	public IPropertySet[] getPropertySets();
 
+	/**
+	 * Retrieves a particular property set by its name.
+	 * @param name the name of the property set.
+	 * @return the named property set or null if one by that name does not exist.
+	 */
 	public IPropertySet getPropertySet(String name);
 
+	/**
+	 * Creates a new property set of a particular name in this container.
+	 * If one already exists
+	 * by this name it is replaced with a new empty property set.
+	 * @param name the name of the property set.
+	 * @return The property set.
+	 */
 	public IPropertySet createPropertySet(String name);
 
+	/**
+	 * Creates a new property set of a particular name and description in this container.
+	 * If one already exists
+	 * by this name it is replaced with a new empty property set.
+	 * @param name the name of the property set.
+	 * @param description the description (usually already localized) for this property set.
+	 * @return the newly created property set.
+	 */
 	public IPropertySet createPropertySet(String name, String description);
 
+	/**
+	 * Adds an existing property set to this container. If the property set already has a container
+	 * it is removed from that container and added to this one. If this container already 
+	 * has a property set by this name, this one replaces it.
+	 * @param set the property set to be added.
+	 * @return true if the property set was added.
+	 */
 	public boolean addPropertySet(IPropertySet set);
 
+	/**
+	 * Adds a number of existing property sets to this container.
+	 * @param sets the sets to be added
+	 * @return true if all property sets were added.
+	 * @see #addPropertySet(IPropertySet)
+	 */
 	public boolean addPropertySets(IPropertySet[] sets);
 
+	/**
+	 * Removes a particular property set from this container.
+	 * @param name the name of the property set to be removed
+	 * @return true if the property set was removed;
+	 * false if a property set was not removed, usually if it does not exist in the container.
+	 */
 	public boolean removePropertySet(String name);
 
 }

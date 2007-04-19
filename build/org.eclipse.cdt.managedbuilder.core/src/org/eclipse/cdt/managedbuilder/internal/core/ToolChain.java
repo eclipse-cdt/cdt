@@ -2657,4 +2657,20 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		}
 		return false;
 	}
+	
+	private int getSuperClassNum(){
+		int num = 0;
+		for(IToolChain superTool = getSuperClass(); superTool != null; superTool = superTool.getSuperClass()){
+			num++;
+		}
+		return num;
+	}
+
+	public int compareTo(Object o) {
+		ToolChain other = (ToolChain)o;
+		if(other.isSystemObject() != isSystemObject())
+			return isSystemObject() ? 1 : -1;
+		
+		return getSuperClassNum() - other.getSuperClassNum();
+	}
 }

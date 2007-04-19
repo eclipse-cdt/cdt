@@ -4082,4 +4082,20 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			}
 		}
 	}
+	
+	private int getSuperClassNum(){
+		int num = 0;
+		for(ITool superTool = getSuperClass(); superTool != null; superTool = superTool.getSuperClass()){
+			num++;
+		}
+		return num;
+	}
+
+	public int compareTo(Object o) {
+		Tool other = (Tool)o;
+		if(other.isSystemObject() != isSystemObject())
+			return isSystemObject() ? 1 : -1;
+		
+		return getSuperClassNum() - other.getSuperClassNum();
+	}
 }

@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -3977,6 +3978,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 			list.add(p);
 			p.setIdenticalList(list);
+		}
+		
+		for(Iterator iter = map.values().iterator(); iter.hasNext();){
+			Collections.sort((List)iter.next());
 		}
 		return map;
 	}

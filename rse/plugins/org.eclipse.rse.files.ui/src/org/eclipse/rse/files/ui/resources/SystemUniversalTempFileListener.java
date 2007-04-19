@@ -230,7 +230,13 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				try
 				{
 					// upload our pending changes to the remote file
-					fs.upload(tempFile.getLocation().makeAbsolute().toOSString(), remoteFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
+					String srcEncoding = tempFile.getCharset(true);
+					
+					if (srcEncoding == null) {
+						srcEncoding = remoteFile.getEncoding();
+					}
+					
+					fs.upload(tempFile.getLocation().makeAbsolute().toOSString(), remoteFile, srcEncoding, monitor);
 				}
 
 				catch (RemoteFileSecurityException e)

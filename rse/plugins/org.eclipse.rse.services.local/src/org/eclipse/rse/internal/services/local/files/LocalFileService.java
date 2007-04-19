@@ -597,11 +597,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					destinationFile.setLastModified(localFile.lastModified());
 					//TODO check if we want to preserve permissions
 					//if(!localFile.canWrite()) destinationFile.setReadOnly();
-					if (destinationFile.length() != localFile.length()) {
+					
+					// File lengths can be different if the encodings are different
+/*					if (destinationFile.length() != localFile.length()) {
 						//	throw new RemoteFileCancelledException();
 						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath()); //$NON-NLS-1$
 						return false;
-					}
+					}*/
 				}
 			}
 			catch (IOException e)

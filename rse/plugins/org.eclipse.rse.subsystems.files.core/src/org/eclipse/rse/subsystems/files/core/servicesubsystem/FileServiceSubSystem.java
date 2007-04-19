@@ -68,7 +68,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	protected IRemoteFile _userHome;
 	
 	
-
+	
 	
 	public FileServiceSubSystem(IHost host, IConnectorService connectorService, IFileService hostFileService, IHostFileToRemoteFileAdapter fileAdapter, ISearchService searchService)
 	{
@@ -454,7 +454,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		File localFile = new File(localpath);
 		try
 		{
-			getFileService().download(monitor, parentPath, file.getName(), localFile, isBinary(file), encoding);
+			getFileService().download(monitor, parentPath, file.getName(), localFile, isBinary(file), file.getEncoding());
 		}
 		catch (SystemMessageException e)
 		{
@@ -533,7 +533,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	{
 		String remoteParentPath = destination.getParentPath();
 		String remoteFileName = destination.getName();
-		String hostEncoding = getRemoteEncoding(); // default host encoding
+		String hostEncoding = destination.getEncoding();
 		boolean isBinary = isBinary(encoding, hostEncoding, destination.getAbsolutePath());
 
 		if (!destination.canWrite())

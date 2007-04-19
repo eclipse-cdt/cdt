@@ -598,7 +598,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			return false;	
 		}
 		
-		subsystem.download(remoteFile, localPath, SystemEncodingUtil.ENCODING_UTF_8, monitor);
+		subsystem.download(remoteFile, localPath, remoteFile.getEncoding(), monitor);
 		if (monitor.isCanceled())
 		{
 			return false;
@@ -1438,7 +1438,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		else {
 			
 			if (!properties.getUsedBinaryTransfer()) {
-				encoding = SystemEncodingUtil.ENCODING_UTF_8;
+				encoding = remoteFile.getEncoding();
 			}
 		}
 		

@@ -313,7 +313,7 @@ public class SystemRemoteEditManager
 			
 			description.setNatureIds(newNatures);
 			editProject.setDescription(description, null);
-			editProject.setDefaultCharset(SystemEncodingUtil.ENCODING_UTF_8, new NullProgressMonitor());
+			// editProject.setDefaultCharset(SystemEncodingUtil.ENCODING_UTF_8, new NullProgressMonitor());
 	
 			
 			// add java support

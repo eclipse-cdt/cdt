@@ -167,7 +167,8 @@ public class UniversalFileTransferUtility
 		    // copy remote file to workspace
 			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
 			listener.addIgnoreFile(tempFile);
-		    srcFS.download(srcFileOrFolder, tempFile.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, monitor);
+			String remoteEncoding = srcFileOrFolder.getEncoding();
+		    srcFS.download(srcFileOrFolder, tempFile.getLocation().makeAbsolute().toOSString(), remoteEncoding, monitor);
 		    listener.removeIgnoreFile(tempFile);
 		    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
 		    {
@@ -196,12 +197,12 @@ public class UniversalFileTransferUtility
 					try
 					{
 						String cset = tempFile.getCharset();
-						if (!cset.equals(SystemEncodingUtil.ENCODING_UTF_8))
+						if (!cset.equals(remoteEncoding))
 						{
 						
 							//System.out.println("charset ="+cset);
 							//System.out.println("tempfile ="+tempFile.getFullPath());
-							tempFile.setCharset(SystemEncodingUtil.ENCODING_UTF_8, monitor);
+							tempFile.setCharset(remoteEncoding, monitor);
 						}
 					}
 					catch (Exception e)
@@ -528,7 +529,8 @@ public class UniversalFileTransferUtility
 		    // copy remote file to workspace
 			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
 			listener.addIgnoreFile(tempFile);
-		    download(srcFileOrFolder, tempFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
+			String encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+		    download(srcFileOrFolder, tempFile, encoding, monitor);
 		    listener.removeIgnoreFile(tempFile);
 		    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
 		    {
@@ -549,9 +551,9 @@ public class UniversalFileTransferUtility
 					try
 					{
 						String cset = tempFile.getCharset();
-						if (!cset.equals(SystemEncodingUtil.ENCODING_UTF_8))
+						if (!cset.equals(encoding))
 						{
-							tempFile.setCharset(SystemEncodingUtil.ENCODING_UTF_8, monitor);
+							tempFile.setCharset(encoding, monitor);
 						}
 					}
 					catch (Exception e)

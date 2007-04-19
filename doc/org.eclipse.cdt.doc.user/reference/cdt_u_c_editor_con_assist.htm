@@ -11,43 +11,49 @@
 
 <h1>Content Assist preferences</h1>
 
-<p>You can customize the Content Assist feature on the Contents Assist page of the C/C++ Editor Preferences window.  To change the Content Assist preferences click
-<b>Window &gt; Preferences &gt; C/C++ &gt; C++ Editor &gt; Content Assist.</b></p>
+<p>You can customize the Content Assist feature on the <b>Contents Assist</b> panel of the Preferences window. To change the Content Assist preferences click
+<b>Window &gt; Preferences &gt; C/C++ &gt; Editor &gt; Content Assist.</b></p>
 <p><img src="../images/contentAssist_preferences.png" alt="Content Assist Preferences Dialog Box"></p>
 
-<dl>
-	<p><dt>Search scope for completion proposals</dt>
-	<dd>You can configure the Content Assist feature to select proposals from items contained only in the current file and included files, or from the current project.</dd>
-	
-	<p><dt>Insert single proposals automatically</dt>
-  	<dd>Inserts an element into your code when the Content Assist feature finds only one proposal.</dd>
-	
-	<p><dt>Present proposals in alphabetical order</dt>
-	<dd>Proposals, by default, appear in order of relevance determined by context, scope and prefix. Alternatively, you can configure the Content Assist feature to order its proposals alphabetically.</dd> 
-
-	<p><dt>Content Assist parsing timeout (ms)
-	<dd>For very large projects, the Content Assist feature might slow the response of the plug-in as the Content Assist feature parses the project for proposals.  This setting stops the Content Assist parse when it reaches the specified threshold.<dd>
-	
-	<p><dt>Auto activation</dt>
-	<dd>Certain predefined triggers force the Content Assist feature to activate. You can disable the predefined triggers with these checkboxes.
-	
-	<p><dt>Auto activation delay</dt>
-	<dd>Specifies the number of milliseconds before Content Assist is activated, in Autoactivation mode.</dd>
-	
-	<p><dt>Background for completion proposals</dt>
-	<dd>Specifies the background color of the Content Assist dialog box.</dd>
-	
-	<p><dt>Foreground for completion proposals</dt>
-	<dd>Specifies the foreground color of the Content Assist dialog box.</dd>
-	
-	<p><dt>Completion Proposal Filter</dt>
-	<dd>Completion proposal filters may have been supplied with your eclipse CDT distribution.
-		Completion proposal filters can sort and order the proposals 
-		provided by the Content Assist feature to best suit your needs.
-		Select the desired content assist filter from the list of available filters.
-	</dd>
-	
-</dl>
+<table width="600px" cellpadding="5" cellspacing="0" border="1" >
+	<caption><b>Content Assist Preference Options</b></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody>
+		<tr>
+			<td><dt>Insert single proposals automatically</dt></td>
+			<td>Inserts an element into your code when the Content Assist feature finds only one proposal.</td>
+		</tr>
+		<tr>
+			<td><dt>Insert common prefixes automatically</dt></td>
+			<td>Inserts common prefixes.</td>
+		</tr>
+		<tr>
+			<td><dt>Completion Proposal Filter</dt></td>
+			<td>Completion proposal filters may have been supplied with your Eclipse CDT distribution.
+		Completion proposal filters can sort and order the proposals provided by the Content Assist feature to best suit your needs.
+		Select the desired content assist filter from the list of available filters.</td>
+		</tr>
+		<tr>
+			<td><dt>Enable "." as trigger</dt></td>
+			<td>Enable to use "." as a trigger for auto-completion.</td>
+		</tr>
+		<tr>
+			<td><dt>Enable "->" as trigger</dt></td>
+			<td>Enable to use "->" as a trigger for auto-completion.</td>
+		</tr>
+		<tr>
+			<td><dt>Enable "::" as trigger</dt></td>
+			<td>Enable to use "::" as a trigger for auto-completion.</td>
+		</tr>
+		<tr>
+			<td><dt>delay (ms)</dt></td>
+			<td>Specifies the number of milliseconds before Content Assist is activated.</td>
+		</tr>
+	</tbody>
+</table>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
 <a href="../concepts/cdt_o_code_entry.htm">Coding aids</a></p>

@@ -1679,8 +1679,11 @@ abstract class BaseScanner implements IScanner {
                     boolean isWarning= type == IPreprocessorDirective.ppWarning;
                     handleProblem(isWarning ? IProblem.PREPROCESSOR_POUND_WARNING : IProblem.PREPROCESSOR_POUND_ERROR, start,
                             CharArrayUtils.extract(buffer, start, end-start));
-                    processError(pos, end);
-                    processWarning(pos, end);
+                    if (isWarning) {
+                    	processWarning(pos, end);
+                    } else {
+                    	processError(pos, end);
+                    }
                     return;
                 case IPreprocessorDirective.ppEndif:
                     skipToNewLine();

@@ -19,7 +19,8 @@
             outputFlag="/fo"
             command="RC.EXE"
             outputs="free"
-            id="target.independent.tool">
+            id="target.independent.tool"
+            isSystem="true">
          <optionCategory
                owner="target.independent.tool"
                name="Free"
@@ -64,7 +65,8 @@
                outputFlag="-r"
                outputs="toor"
                command="doIt"
-               id="root.tool">
+               id="root.tool"
+               isSystem="true">
             <optionCategory
                   owner="root.tool"
                   name="Category"
@@ -218,7 +220,8 @@
                headerExtensions="arf,barf"
                outputs="bus"
                outputPrefix="lib"
-               id="tool.sub">
+               id="tool.sub"
+               isSystem="true">
             <option
                   name="Include Paths"
                   command="-I"
@@ -340,7 +343,8 @@
          <tool
                natureFilter="both"
                name="Forward Parent Tool"
-               id="test.forward.tool">
+               id="test.forward.tool"
+               isSystem="true">
             <option
                   name="Test Forward Option"
                   category="test.forward.child.category"
@@ -409,7 +413,8 @@
             outputFlag="-o"
             command="gcc"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
-            id="cdt.managedbuild.tool.testgnu.c.linker">
+            id="cdt.managedbuild.tool.testgnu.c.linker"
+            isSystem="true">
          <optionCategory
                owner="cdt.managedbuild.tool.testgnu.c.linker"
                name="General"
@@ -544,7 +549,8 @@
             outputFlag="-o"
             command="g++"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
-            id="cdt.managedbuild.tool.testgnu.cpp.linker">
+            id="cdt.managedbuild.tool.testgnu.cpp.linker"
+            isSystem="true">
          <optionCategory
                owner="cdt.managedbuild.tool.testgnu.cpp.linker"
                name="General"
@@ -672,7 +678,8 @@
             command="ar"
             outputPrefix="lib"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
-            id="cdt.managedbuild.tool.testgnu.archiver">
+            id="cdt.managedbuild.tool.testgnu.archiver"
+            isSystem="true">
          <optionCategory
                owner="cdt.managedbuild.tool.testgnu.archiver"
                name="General"
@@ -693,7 +700,8 @@
             name="assembler.gnu"
             outputFlag="-o"
             id="cdt.managedbuild.tool.testgnu.assembler"
-            natureFilter="both">
+            natureFilter="both"
+            isSystem="true">
          <optionCategory
                owner="cdt.managedbuild.tool.testgnu.assembler"
                name="General"
@@ -738,7 +746,8 @@
 		  headerExtensions="h"
 		  natureFilter="cnature"
 		  outputs="o"
-		  outputFlag="-o">
+		  outputFlag="-o"
+		  isSystem="true">
 		  <optionCategory
 		      owner="cdt.managedbuild.tool.testgnu.c.compiler"
 			  name="Preproc"
@@ -978,7 +987,8 @@
 		  headerExtensions="h,H,hpp"
 		  natureFilter="ccnature"
 		  outputs="o"
-		  outputFlag="-o">
+		  outputFlag="-o"
+		  isSystem="true">
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.testgnu.cpp.compiler"
 			  name="Preproc"
@@ -1228,7 +1238,8 @@
 		     	  </builder>               
                   <tool
                       id="cdt.managedbuild.tool.testgnu.c.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler"
+                      isSystem="true">                          
 			  	      <option
 					      id="testgnu.c.compiler.exe.debug.option.optimization.level"
 						  defaultValue="testgnu.c.optimization.level.none"
@@ -1242,7 +1253,8 @@
 				  </tool>
 				  <tool
                       id="cdt.managedbuild.tool.testgnu.cpp.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">                         
+                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler"
+                      isSystem="true">                         
                       <option
 				          id="testgnu.cpp.compiler.exe.debug.option.optimization.level"
                           defaultValue="testgnu.cpp.compiler.optimization.level.none"
@@ -1256,15 +1268,18 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.testgnu.c.linker.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu.c.linker">
+                      superClass="cdt.managedbuild.tool.testgnu.c.linker"
+                      isSystem="true">
                   </tool> 
                   <tool
                       id="cdt.managedbuild.tool.testgnu.cpp.linker.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu.cpp.linker">
+                      superClass="cdt.managedbuild.tool.testgnu.cpp.linker"
+                      isSystem="true">
                   </tool> 
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu.assembler.exe.debug"
-					  superClass="cdt.managedbuild.tool.testgnu.assembler">
+					  superClass="cdt.managedbuild.tool.testgnu.assembler"
+					  isSystem="true">
 				  </tool>   
 			  </toolChain>
          </configuration>
@@ -1703,7 +1718,8 @@
             name="MBS30.linker.gnu.c"
             outputFlag="-o"
             command="gcc"
-            id="cdt.managedbuild.tool.testgnu30.c.linker">
+            id="cdt.managedbuild.tool.testgnu30.c.linker"
+            isSystem="true">
          <envVarBuildPath 
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
@@ -1867,7 +1883,8 @@
             name="MBS30.linker.gnu.cpp"
             outputFlag="-o"
             command="g++"
-            id="cdt.managedbuild.tool.testgnu30.cpp.linker">
+            id="cdt.managedbuild.tool.testgnu30.cpp.linker"
+            isSystem="true">
          <envVarBuildPath 
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
@@ -2017,7 +2034,8 @@
             isAbstract="true"
             name="MBS30.archiver.gnu"
             command="ar"
-            id="cdt.managedbuild.tool.testgnu30.archiver">
+            id="cdt.managedbuild.tool.testgnu30.archiver"
+            isSystem="true">
          <optionCategory
                owner="cdt.managedbuild.tool.testgnu30.archiver"
                name="MBS30OptCat.General"
@@ -2059,7 +2077,8 @@
 		  isAbstract="true"
 		  command="gcc"
 		  natureFilter="cnature"
-		  outputFlag="-o">
+		  outputFlag="-o"
+		  isSystem="true">
          <envVarBuildPath 
          	pathType="buildpathInclude"
          	variableList="CPATH,C_INCLUDE_PATH">
@@ -2321,7 +2340,8 @@
 		  isAbstract="true"
 		  command="g++"
 		  natureFilter="ccnature"
-		  outputFlag="-o">
+		  outputFlag="-o"
+		  isSystem="true">
          <envVarBuildPath 
          	pathType="buildpathInclude"
          	variableList="CPATH,CPLUS_INCLUDE_PATH">
@@ -3013,7 +3033,8 @@
       		name="Copy tool"
       		command="cp"
       		commandLinePattern="${COMMAND} ${INPUTS} ${OUTPUT}"
-      		id="cdt.managedbuild.tool30.copy.x.c">
+      		id="cdt.managedbuild.tool30.copy.x.c"
+      		isSystem="true">
          <inputType
             id="cdt.managedbuild.tool30.copy.x.c.inputs"
             sources="x">
@@ -3028,7 +3049,8 @@
       		name="Deploy tool"
       		command="cp"
       		commandLinePattern="${COMMAND} ${INPUTS} ${OUTPUT}"
-      		id="cdt.managedbuild.tool30.deploy.x.c">
+      		id="cdt.managedbuild.tool30.deploy.x.c"
+      		isSystem="true">
          <inputType
             id="cdt.managedbuild.tool30.deploy.x.c.inputs"
             buildVariable="EXECUTABLES"
@@ -4555,7 +4577,8 @@
 		outputFlag="-c -object:"
 		command="myfort"
 		commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
-		id="cdt.test.fortran.compilestep">
+		id="cdt.test.fortran.compilestep"
+		isSystem="true">
 		<inputType
 		    sources="f,F,for,FOR,f90,F90"
 			dependencyCalculator="org.eclipse.cdt.managedbuilder.core.tests.DefaultFortranDependencyCalculator"
@@ -4639,7 +4662,8 @@
         outputFlag="-o"
         command="mylink"
 		commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
-        id="cdt.test.fortran.linkstep">
+        id="cdt.test.fortran.linkstep"
+        isSystem="true">
         <inputType
             sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
             sources="o"
@@ -4838,7 +4862,8 @@
             id="cdt.test.assignToOption.compiler"
             isAbstract="false"
             name="AssignToOption Compiler"
-            natureFilter="both">
+            natureFilter="both"
+            isSystem="true">
          <inputType
                id="cdt.test.assignToOption.compilerSources"
                multipleOfType="false"
@@ -4872,7 +4897,8 @@
             isAbstract="false"
             name="AssignToOption Executable Linker"
             natureFilter="both"
-            outputFlag="-o">
+            outputFlag="-o"
+            isSystem="true">
          <inputType
                buildVariable="OBJS"
                id="cdt.test.assignToOption.compilerObjectFilesTypeInput"
@@ -5070,7 +5096,8 @@
 		  headerExtensions="h"
 		  natureFilter="cnature"
 		  outputs="o"
-		  outputFlag="-o">
+		  outputFlag="-o"
+		  isSystem="true">
 		  <optionCategory
 		      owner="enablement.this"
 			  name="Preproc"
@@ -5899,7 +5926,8 @@
 		  headerExtensions="h"
 		  natureFilter="cnature"
 		  outputs="o"
-		  outputFlag="-o">
+		  outputFlag="-o"
+		  isSystem="true">
 		 <optionCategory
 			  owner="enablement.other"
 			  name="Misc"
@@ -5958,7 +5986,8 @@
          command="BaseCommand"
          id="test1.baseTool"
          isAbstract="false"
-         name="Base Tool">
+         name="Base Tool"
+         isSystem="true">
            <optionCategory
              id="test1.baseTool.optionCategory"
              name="Base Option Category1"/>
@@ -6364,6 +6393,7 @@
             id="pathconvertertest.convertingtool"
             isAbstract="false"
             name="path converting tool"
+            isSystem="true"
             optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.TestPathConverter2">
                   <option
                         id="pathconvertertest.convertingtool.includeOption"
@@ -6378,6 +6408,7 @@
             id="pathconvertertest.nonconvertingtool"
             isAbstract="false"
             name="non path converting tool"
+            isSystem="true"
             />
       <projectType
             id="pathconvertertest.projecttype"

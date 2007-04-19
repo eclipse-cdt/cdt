@@ -20,7 +20,7 @@ public final class CSourceEntry extends ACExclusionFilterEntry implements ICSour
 	}
 
 	public CSourceEntry(IFolder rc, IPath exclusionPatterns[], int flags) {
-		super(rc, exclusionPatterns,  flags);
+		super(rc, exclusionPatterns,  flags | VALUE_WORKSPACE_PATH);
 	}
 
 	public CSourceEntry(String value, IPath exclusionPatterns[], int flags) {

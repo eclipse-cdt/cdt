@@ -46,7 +46,7 @@ class CExternalSettinsDeltaCalculator {
 
 		ExtSettingsDelta(CExternalSetting setting){
 			fSetting = setting;
-			fEntryChangeStore = new KindBasedStore();
+			fEntryChangeStore = new KindBasedStore(false);
 		}
 
 		ExtSettingsDelta(CExternalSetting setting, boolean added){
@@ -277,6 +277,40 @@ class CExternalSettinsDeltaCalculator {
 		set.removeAll(Arrays.asList(removed));
 		
 		return set;
+	}
+	
+	static ICSettingEntry[][] getAllEntries(ExtSettingsDelta[] deltas, int kind){
+		if(deltas == null || deltas.length == 0)
+			return null;
+		
+		Map addedMap = new LinkedHashMap();
+		Map removedMap = new LinkedHashMap();
+		for(int i = 0; i < deltas.length; i++){
+			ICSettingEntry[][] change = deltas[i].getEntriesDelta(kind);
+			if(change == null)
+				continue;
+			
+			if(change[0] != null){
+				CDataUtil.fillEntriesMapByNameKey(addedMap, change[0]);
+			}
+			if(change[1] != null){
+				CDataUtil.fillEntriesMapByNameKey(removedMap, change[1]);
+			}
+			removedMap.keySet().removeAll(addedMap.keySet());
+		}
+		
+		if(addedMap.size() == 0 && removedMap.size() == 0)
+			return null;
+		
+		ICSettingEntry[][] result = new ICSettingEntry[2][];
+		if(addedMap.size() != 0){
+			result[0] = (ICSettingEntry[])addedMap.values().toArray(new ICSettingEntry[addedMap.size()]);
+		}
+		if(removedMap.size() != 0){
+			result[1] = (ICSettingEntry[])removedMap.values().toArray(new ICSettingEntry[removedMap.size()]);
+		}
+
+		return result;
 	}
 
 }

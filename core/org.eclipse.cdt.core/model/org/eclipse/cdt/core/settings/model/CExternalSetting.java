@@ -117,7 +117,7 @@ public final class CExternalSetting implements ICExternalSetting {
 
 	public ICSettingEntry[] getEntries() {
 		List result = new ArrayList();
-		int kinds[] = KindBasedStore.getLanguageEntryKinds();
+		int kinds[] = KindBasedStore.getAllEntryKinds();
 		for(int i = 0; i < kinds.length; i++){
 			CEntriesSet list = getEntriesSet(kinds[i], false);
 			if(list != null)

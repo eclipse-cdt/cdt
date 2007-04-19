@@ -14,19 +14,26 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.EntryContentsKey;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingsDelta;
+import org.eclipse.core.runtime.CoreException;
 
 public class CExternalSettingsDeltaProcessor {
 	static boolean applyDelta(ICConfigurationDescription des, ExtSettingsDelta deltas[]){
@@ -41,9 +48,74 @@ public class CExternalSettingsDeltaProcessor {
 			if(applyDelta(rcDes, deltas, kindMask))
 				changed = true;
 		}
+
+		if((kindMask & ICSettingEntry.SOURCE_PATH) != 0){
+			if(applySourceEntriesChange(des, deltas))
+				changed = true;
+		}
+		if((kindMask & ICSettingEntry.OUTPUT_PATH) != 0){
+			if(applyOutputEntriesChange(des, deltas))
+				changed = true;
+		}
+
 		return changed;
 	}
 	
+	static boolean applySourceEntriesChange(ICConfigurationDescription cfgDes, ExtSettingsDelta[] deltas){
+		ICSettingEntry[][] diff = CExternalSettinsDeltaCalculator.getAllEntries(deltas, ICSettingEntry.SOURCE_PATH);
+		if(diff == null)
+			return false;
+
+		ICSourceEntry[] current = cfgDes.getSourceEntries();
+		if(current.length == 1){
+			ICSourceEntry cur = current[0];
+			if(cur.getFullPath().segmentCount() == 1 && cur.getExclusionPatterns().length == 0){
+				current = new ICSourceEntry[0];
+			}
+		}
+		List newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
+		if(newEntries != null){
+			try {
+				cfgDes.setSourceEntries((ICSourceEntry[])newEntries.toArray(new ICSourceEntry[newEntries.size()]));
+			} catch (WriteAccessException e) {
+				CCorePlugin.log(e);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	static boolean applyOutputEntriesChange(ICConfigurationDescription cfgDes, ExtSettingsDelta[] deltas){
+		ICSettingEntry[][] diff = CExternalSettinsDeltaCalculator.getAllEntries(deltas, ICSettingEntry.OUTPUT_PATH);
+		if(diff == null)
+			return false;
+
+		ICBuildSetting bs = cfgDes.getBuildSetting();
+		if(bs == null)
+			return false;
+		
+		ICOutputEntry[] current = bs.getOutputDirectories(); 
+		if(current.length == 1){
+			ICOutputEntry cur = current[0];
+			if(cur.getFullPath().segmentCount() == 1 && cur.getExclusionPatterns().length == 0){
+				current = new ICOutputEntry[0];
+			}
+		}
+
+		List newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
+		if(newEntries != null){
+			try {
+				bs.setOutputDirectories((ICOutputEntry[])newEntries.toArray(new ICOutputEntry[newEntries.size()]));
+			} catch (WriteAccessException e) {
+				CCorePlugin.log(e);
+			}
+			return true;
+		}
+		return false;
+	}
+
 	static boolean applyDelta(ICResourceDescription rcDes, ExtSettingsDelta deltas[], int kindMask){
 		if(rcDes.getType() == ICSettingBase.SETTING_FOLDER){
 			return applyDelta((ICFolderDescription)rcDes, deltas, kindMask);

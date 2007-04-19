@@ -13,11 +13,14 @@ package org.eclipse.cdt.internal.core.settings.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager.CContainerRef;
 
 class CSettingsRefInfo {
@@ -113,6 +116,20 @@ class CSettingsRefInfo {
 			holder.setExternalSettings(h.getExternalSettings(), true);
 		}
 		return holder.getExternalSettings();
+	}
+	
+	ICSettingEntry[] getAllEntries(int kind){
+		Map map = new LinkedHashMap();
+		for(Iterator iter = fESHolderMap.entrySet().iterator(); iter.hasNext();){
+			Map.Entry entry = (Map.Entry)iter.next();
+			CRefSettingsHolder h = (CRefSettingsHolder)entry.getValue();
+			CExternalSetting[] settings = h.getExternalSettings();
+			for(int i = 0; i < settings.length; i++){
+				ICSettingEntry[] entries = settings[i].getEntries(kind);
+				CDataUtil.fillEntriesMapByNameKey(map, entries);
+			}
+		}
+		return (ICSettingEntry[])map.values().toArray(new ICSettingEntry[map.size()]);
 	}
 
 }

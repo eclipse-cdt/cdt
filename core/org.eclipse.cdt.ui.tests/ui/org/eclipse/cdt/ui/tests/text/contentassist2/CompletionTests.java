@@ -106,6 +106,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 //		return fTField + tOther;
 //	}
 //};
+//// bug 109480
+//class Printer
+//{
+//public:
+//	static void InitPrinter(unsigned char port);
+//private:
+//	//Storage for port printer is on
+//	static unsigned char port;
+//protected:
+//};
 
 	public CompletionTests(String name) {
 		super(name);
@@ -704,5 +714,14 @@ public class CompletionTests extends AbstractContentAssistTest {
 				"aNewGlobalVar"	
 		};
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_ID_STRINGS);
+	}
+	
+	//void Printer::InitPrinter(unsigned char port) {
+	//	Printer::/*cursor*/
+	public void testPrivateStaticMember_Bug109480() throws Exception {
+		final String[] expected= {
+				"InitPrinter()", "port"	
+		};
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
 }

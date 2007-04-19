@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
-import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
@@ -21,7 +21,6 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -31,8 +30,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 @SuppressWarnings("restriction")
 public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> {
 
-    public IVMContext[] fCachedRegisterVMCs;
-    
     public RegisterLayoutNode(AbstractVMProvider provider, DsfSession session) {
         super(provider, session, IRegisters.IRegisterDMContext.class);
     }
@@ -70,16 +67,7 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
         } else if (RegisterColumnPresentation.COL_VALUE.equals(columnId)) {
             update.setLabel(dmData.getHexValue(), idx); 
         } else if (RegisterColumnPresentation.COL_DESCRIPTION.equals(columnId)) {
-            String size = dmData.getDescription();
-            String value = dmData.getHexValue();
-            if ("".equals(size)) { //$NON-NLS-1$
-                if ( value.contains( "uint64" ) ) {          //$NON-NLS-1$
-                    size = "64 bit register" ;               //$NON-NLS-1$
-                } else if ( value.contains( "v4_float" ) ) { //$NON-NLS-1$
-                    size = "128 bit register" ;              //$NON-NLS-1$
-                }
-            }
-            update.setLabel(size, idx);
+            update.setLabel(dmData.getDescription(), idx);
         }
     }
     
@@ -89,12 +77,12 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
             return IModelDelta.CONTENT;
         } else if (e instanceof IRegisters.IRegisterChangedDMEvent) {
             return IModelDelta.STATE;
-        } 
+        }
         return IModelDelta.NO_CHANGE;
     }
 
     @Override
-    protected void buildDeltaForDMEvent(IDMEvent<?> e, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
+    protected void buildDeltaForDMEvent(IDMEvent<?> e, VMDelta parent, int nodeOffset, RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that the whole register group has changed.
             parent.addFlags(IModelDelta.CONTENT);
@@ -102,6 +90,7 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
         if (e instanceof IRegisters.IRegisterChangedDMEvent) {
             parent.addNode( new DMVMContext(((IRegisters.IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         } 
-        super.buildDeltaForDMEvent(e, parent, nodeOffset, requestMonitor);
+        
+        super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
     }
 }

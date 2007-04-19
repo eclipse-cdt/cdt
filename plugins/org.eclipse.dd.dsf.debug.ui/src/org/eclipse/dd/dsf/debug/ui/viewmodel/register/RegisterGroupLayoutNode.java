@@ -11,16 +11,21 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
 @SuppressWarnings("restriction")
 public class RegisterGroupLayoutNode extends AbstractDMVMLayoutNode<IRegisterGroupDMData> {
@@ -65,5 +70,28 @@ public class RegisterGroupLayoutNode extends AbstractDMVMLayoutNode<IRegisterGro
         } else if (RegisterColumnPresentation.COL_DESCRIPTION.equals(columnId)) {
             update.setLabel(dmData.getDescription(), idx);
         }
+    }
+    
+    @Override
+    protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
+        if (e instanceof IRunControl.ISuspendedDMEvent) {
+            return IModelDelta.CONTENT;
+        }else if (e instanceof IRegisters.IRegistersChangedDMEvent) {
+            return IModelDelta.CONTENT;
+        }
+        return IModelDelta.NO_CHANGE;
+    }
+
+    @Override
+    protected void buildDeltaForDMEvent(IDMEvent<?> e, VMDelta parent, int nodeOffset, RequestMonitor rm) {
+        if (e instanceof IRunControl.ISuspendedDMEvent) {
+            // Create a delta that the whole register group has changed.
+            parent.addFlags(IModelDelta.CONTENT);
+        } 
+        if (e instanceof IRegisters.IRegistersChangedDMEvent) {
+            parent.addNode( new DMVMContext(((IRegisters.IRegistersChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
+        } 
+        
+        super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
     }
 }

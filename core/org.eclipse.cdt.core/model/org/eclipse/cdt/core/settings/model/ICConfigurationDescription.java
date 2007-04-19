@@ -364,9 +364,26 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 */
 	ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus);
 	
+	/**
+	 * sets the external setting providers to be used for the configuration
+	 * 
+	 * @param ids the ids of externalSettinsProvider extensions
+	 */
 	void setExternalSettingsProviderIds(String ids[]);
 
+	/**
+	 * returns the ids of external setting providers used for the configuration
+	 * 
+	 * @return the ids of externalSettinsProvider extensions
+	 */
 	String[] getExternalSettingsProviderIds();
 	
-	void updateExternalSettingsProviders(String[] ids);
+	/**
+	 * tells the configuration to update the given providers
+	 * In case the specified ids contain provider ids not associated with the configuration,
+	 * those ids will be ignored and will NOT be added to the configuration settings
+	 * 
+	 * @param ids the ids of externalSettinsProvider extensions
+	 */
+	void updateExternalSettingsProviders(String[] ids) throws WriteAccessException;
 }

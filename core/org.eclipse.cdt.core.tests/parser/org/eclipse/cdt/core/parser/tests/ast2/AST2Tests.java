@@ -3648,4 +3648,35 @@ public class AST2Tests extends AST2BaseTest {
     	for (int i = 0; i < LANGUAGES.length; i++)
     		parse( buffer.toString(), LANGUAGES[i], true, true );
     }
+    
+	public void testMacroCommentsBug_177154_2() throws Exception {
+		String noCommentMacro =
+			"#define Sonar16G(x) ((Sonr16G(x)<<16)|0xff000000L)\r\n"; 
+		String commentMacro = 	
+			"#define Sonar16G(x) ((Sonr16G(x)<<16)|0xff000000L)	// add the varf value\r\n"; 
+
+		String textTail = "\r\n" + 
+				"const int snd16SonarR[32] = {\r\n" + 
+				"		0xFF000000L,   Sonar16G(0x01), Sonar16G(0x02), Sonar16G(0x03),\r\n" + 
+				"		Sonar16G(0x04), Sonar16G(0x05), Sonar16G(0x06), Sonar16G(0x07),\r\n" + 
+				"		Sonar16G(0x08), Sonar16G(0x09), Sonar16G(0x0A), Sonar16G(0x0B),\r\n" + 
+				"		Sonar16G(0x0C), Sonar16G(0x0D), Sonar16G(0x0E), Sonar16G(0x0F),\r\n" + 
+				"		Sonar16G(0x10), Sonar16G(0x11), Sonar16G(0x12), Sonar16G(0x13),\r\n" + 
+				"		Sonar16G(0x14), Sonar16G(0x15), Sonar16G(0x16), Sonar16G(0x17),\r\n" + 
+				"		Sonar16G(0x18), Sonar16G(0x19), Sonar16G(0x1A), Sonar16G(0x1B),\r\n" + 
+				"		Sonar16G(0x1C), Sonar16G(0x1D), Sonar16G(0x1E), Sonar16G(0x1F),\r\n" + 
+				"	};\r\n" + 
+				"\r\n" + 
+				"";
+		
+		// this should work
+		String textNoComment = noCommentMacro + textTail;
+		IASTTranslationUnit tu = parse( textNoComment, ParserLanguage.CPP, true, true );
+
+		// this fails
+		String textComment = commentMacro + textTail;
+		tu = parse( textComment, ParserLanguage.CPP, true, true );
+		
+	}
+        
 }

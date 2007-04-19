@@ -2330,8 +2330,9 @@ abstract class BaseScanner implements IScanner {
     }
 
     /**
-     * @param text
-     * @return
+     * Remove line and block comments from the given char array.
+     * @param text  the char array
+     * @return a char array without comment
      */
     protected char[] removeCommentFromBuffer(char[] text) {
         char[] result = new char[text.length];
@@ -2341,37 +2342,52 @@ abstract class BaseScanner implements IScanner {
         boolean insideSingleQuote= false;
         boolean escaped= false;
         // either a single-line or multi-line comment was found
-        for (int i = 0; i < text.length; ++i) {
-            if (!insideString && !insideSingleQuote && (text[i] == '/' 
-            		&& (i + 1 < text.length) && (text[i + 1] == '*' || text[i + 1] == '/'))) {
-            	if (text[i + 1] == '/') {
-            		// done
-            		break;
-            	} else {
-	                i += 2;
-	                while (i < text.length
-	                        && !(text[i] == '*' && i + 1 < text.length && text[i + 1] == '/'))
-	                    ++i;
+        forLoop: for (int i = 0; i < text.length; ++i) {
+            final char c= text[i];
+        	switch (c) {
+        	case '/':
+    			if (!insideString && !insideSingleQuote && i + 1 < text.length) {
+    				final char c2= text[i + 1];
+    				if (c2 == '/') {
+    					// done
+    					break forLoop;
+    				} else if (c2 == '*') {
+    					i += 2;
+    					while (i < text.length
+    							&& !(text[i] == '*' && i + 1 < text.length && text[i + 1] == '/'))
+    						++i;
+    					++i;
+    					continue;
+    				}
+    			}
+    			escaped= false;
+                break;
+            case '\\':
+           		escaped = !escaped;
+                break;
+            case '"':
+            	if (!insideSingleQuote) {
+            		insideString= insideString ? escaped : true;
             	}
-                ++i;
-            } else {
-            	switch (text[i]) {
-                case '\\':
-                    escaped = !escaped;
-                    break;
-                case '"':
-                	if (!insideSingleQuote && !escaped) {
-                		insideString= !insideString;
-                	}
-                	break;
-                case '\'':
-                	if (!insideString && !escaped) {
-                		insideSingleQuote= !insideSingleQuote;
-                	}
-                	break;
+            	escaped= false;
+            	break;
+            case '\'':
+            	if (!insideString) {
+            		insideSingleQuote= insideSingleQuote ? escaped : true;
             	}
-                result[resultCount++] = text[i];
-            }
+            	escaped= false;
+            	break;
+            case '\t':
+            	if (!insideString && !insideSingleQuote) {
+            		result[resultCount++]= ' ';
+                	continue;
+            	}
+        		escaped= false;
+            	break;
+        	default:
+        		escaped= false;
+        	}
+            result[resultCount++] = c;
         }
         return CharArrayUtils.trim(result);
     }
@@ -3041,16 +3057,16 @@ abstract class BaseScanner implements IScanner {
             case '\\':
                 escaped = !escaped;
                 continue;
-            case '"':
-            	if (!insideComment && !insideSingleQuote && !escaped) {
-            		insideString= !insideString;
+            case '"': 
+            	if (!insideComment && !insideSingleQuote) {
+            		insideString= insideString ? escaped : true;
             	}
-            	continue;
+            	break;
             case '\'':
-            	if (!insideComment && !insideString && !escaped) {
-            		insideSingleQuote= !insideSingleQuote;
+            	if (!insideComment && !insideString) {
+            		insideSingleQuote= insideSingleQuote ? escaped : true;
             	}
-            	continue;
+            	break;
             case '\n':
                 if (escaped) {
                     break;

@@ -229,4 +229,6 @@ public interface IResourceConfiguration extends IResourceInfo {
 	 * @param rebuild
 	 */
 	void setRebuildState(boolean rebuild);
+	
+	void setTools(ITool[] tools);
 }

@@ -23,10 +23,10 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.tm.discovery.model.Pair;
@@ -88,7 +88,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		
 		SystemRefreshAllAction systemRefreshAllAction = new SystemRefreshAllAction(null);
-		SystemRegistry registry = RSEUIPlugin.getDefault().getSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 				
 		String[] addresses = serviceDiscoveryPage.getAddresses();
 		for (int i = 0; i < addresses.length; i++) {

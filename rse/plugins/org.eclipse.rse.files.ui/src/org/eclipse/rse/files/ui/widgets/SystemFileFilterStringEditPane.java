@@ -18,7 +18,6 @@ package org.eclipse.rse.files.ui.widgets;
 
 import java.util.Vector;
 
-import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;

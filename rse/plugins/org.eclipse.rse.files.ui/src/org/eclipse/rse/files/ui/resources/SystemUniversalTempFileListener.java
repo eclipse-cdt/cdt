@@ -26,7 +26,6 @@ import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
-import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;

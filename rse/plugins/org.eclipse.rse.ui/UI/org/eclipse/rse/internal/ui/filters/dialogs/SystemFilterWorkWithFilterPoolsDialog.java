@@ -343,7 +343,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
 	
 	public boolean close()
 	{
-		//RSEUIPlugin.getDefault().getSystemRegistry().removeSystemResourceChangeListener(this);		
+		//RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);		
 		return super.close();
 	}
 	/**

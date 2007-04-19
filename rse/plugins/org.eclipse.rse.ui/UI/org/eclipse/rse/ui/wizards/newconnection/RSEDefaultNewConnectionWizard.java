@@ -207,7 +207,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
 				// 2. If the wizard is invoked the 1st time, the default private system profile is the
 				//    default profile.
-				ISystemProfile defaultPrivateProfile = RSEUIPlugin.getDefault().getSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile();
+				ISystemProfile defaultPrivateProfile = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile();
 				if (defaultPrivateProfile != null) defaultProfileName = defaultPrivateProfile.getName();
 				if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
 					// 4. The first non-empty profile from the list of active profiles is the default profile.
@@ -297,7 +297,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		if (ok) {
 			boolean cursorSet = true;
 			setBusyCursor(true);
-			ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 
 			// if private profile is not null, then we have to rename the private profile
 			// with the new profile name

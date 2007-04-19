@@ -136,7 +136,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 			IHost sysConn = sysConnCombo.getHost();
 			if ( sysConn != null )
 			{
-				//SubSystem[] cmdSubSystems = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemsBySubSystemConfigurationCategory(ISubSystemConfigurationCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
+				//SubSystem[] cmdSubSystems = RSEUIPlugin.getTheSystemRegistry().getSubSystemsBySubSystemConfigurationCategory(ISubSystemConfigurationCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
 				IRemoteCmdSubSystem[] cmdSubSystems = RemoteCommandHelpers.getCmdSubSystems(sysConn);
 				IRemoteCmdSubSystem currSubSystem = null;
 				String subSystemName = subSysCombo.getText();
@@ -210,7 +210,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 		IHost sysConn = sysConnCombo.getHost();
 		if ( sysConn != null )
 		{
-			//subSystems = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemsBySubSystemConfigurationCategory(ISubSystemConfigurationCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
+			//subSystems = RSEUIPlugin.getTheSystemRegistry().getSubSystemsBySubSystemConfigurationCategory(ISubSystemConfigurationCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
 			subSystems = RemoteCommandHelpers.getCmdSubSystems(sysConn);
 			for (int i = 0; i < subSystems.length; i++)
 			{

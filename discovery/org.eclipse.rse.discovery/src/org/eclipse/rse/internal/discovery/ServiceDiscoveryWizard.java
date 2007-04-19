@@ -103,7 +103,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 			try {
 				conn = registry.createHost("Discovery", "Discovery@" + hostName, hostName, "Discovered services in "+hostName);//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$;
 			} catch (Exception e) {
-				RSEUIPlugin.getDefault().getSystemRegistry().deleteHost(conn);
+				RSEUIPlugin.getTheSystemRegistry().deleteHost(conn);
 				return false;
 			} 
 			
@@ -181,7 +181,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 				}
 			}
 	
-			RSEUIPlugin.getDefault().getSystemRegistry().expandHost(conn);			
+			RSEUIPlugin.getTheSystemRegistry().expandHost(conn);			
 		}
 		
 		systemRefreshAllAction.run();

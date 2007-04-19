@@ -82,7 +82,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();	
 			ISubSystem ss = (ISubSystem)element;
-			ISubSystemConfiguration ssFactory = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
+			ISubSystemConfiguration ssFactory = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(ss);
 			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 
 			IAction[] actions = adapter.getSubSystemActions(menu, selection, shell, menuGroup, ssFactory, ss);
@@ -107,7 +107,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE GETIMAGEDESCRIPTOR FOR SUBSYSTEM VIEW ADAPTER: "+element);				
 		ISubSystem ss = (ISubSystem)element;
-		ISubSystemConfiguration ssFactory = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
+		ISubSystemConfiguration ssFactory = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(ss);
 		if (ssFactory != null)
 		{
 			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
@@ -176,7 +176,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE GETPARENT FOR SUBSYSTEM VIEW ADAPTER: "+element);		
 		ISubSystem ss = (ISubSystem)element;		
-		return RSEUIPlugin.getDefault().getSystemRegistry().getHost(ss.getSystemProfile(),ss.getHostAliasName());
+		return RSEUIPlugin.getTheSystemRegistry().getHost(ss.getSystemProfile(),ss.getHostAliasName());
 	}
 	
 	/**
@@ -649,7 +649,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE DODELETE FOR SUBSYSTEM VIEW ADAPTER: "+element);		
 		ISubSystem ss = (ISubSystem)element;		
-		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();								
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();								
 		sr.deleteSubSystem(ss);
 		return true;
 	}	

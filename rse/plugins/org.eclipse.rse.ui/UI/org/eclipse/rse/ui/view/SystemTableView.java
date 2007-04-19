@@ -1404,7 +1404,7 @@ public class SystemTableView
 	 */
 	public boolean doDelete(IProgressMonitor monitor)
 	{
-		SystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -1496,7 +1496,7 @@ public class SystemTableView
 	*/
 	public boolean doRename(String[] newNames)
 	{
-		SystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		Object element = null;

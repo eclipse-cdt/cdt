@@ -196,7 +196,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 			result = RSEPreferencesManager.getIsSystemTypeEnabled(systemType);
 			// if enabled, check if the system type has any registered subsystems. If
 			// not, this will auto-disable the system type.
-			if (result && RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfigurationsBySystemType(systemType, true).length == 0) {
+			if (result && RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(systemType, true).length == 0) {
 				result = false;
 			}
 		}
@@ -303,7 +303,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 		// SystemClearAllPasswordsAction is accepted only if passwords are supported
 		// by any of the sub systems.
 		if (actionClass.equals(SystemClearAllPasswordsAction.class)) {
-			ISystemRegistry registry = RSEUIPlugin.getDefault().getSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			IConnectorService[] connectorServices = registry.getConnectorServices(host);
 			boolean passwordsSupported = false;
 			for (int i = 0; i < connectorServices.length && passwordsSupported == false; i++) {

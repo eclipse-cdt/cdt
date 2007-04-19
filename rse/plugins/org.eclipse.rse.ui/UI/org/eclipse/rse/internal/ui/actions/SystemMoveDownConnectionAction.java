@@ -62,7 +62,7 @@ public class SystemMoveDownConnectionAction extends SystemBaseAction
 	public boolean updateSelection(IStructuredSelection selection)
 	{
 		boolean enable = true;
-		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();		
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();		
 		prevProfile = null;
 		Iterator e = selection.iterator();		
 		while (enable && e.hasNext())
@@ -94,7 +94,7 @@ public class SystemMoveDownConnectionAction extends SystemBaseAction
 	 */
 	public void run() 
 	{
-		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();	
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
 		SystemSortableSelection[] sortableArray = SystemSortableSelection.makeSortableArray(getSelection());
 		IHost conn = null;
 		for (int idx=0; idx<sortableArray.length; idx++)

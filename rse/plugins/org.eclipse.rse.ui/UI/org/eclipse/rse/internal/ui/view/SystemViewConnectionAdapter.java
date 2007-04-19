@@ -622,7 +622,7 @@ public class SystemViewConnectionAdapter
         //System.out.println("Inside resetPropertyValue in adapter");    
 		String property = (String)propertyObject;    	
 	    IHost conn = (IHost)propertySourceInput;   	
-	    ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
+	    ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 	    	   
 	    if (property.equals(ISystemPropertyConstants.P_DEFAULTUSERID))
 	    {
@@ -650,7 +650,7 @@ public class SystemViewConnectionAdapter
     	//if (!data.getIsLocal())
     	  //whereToUpdate = USERID_LOCATION_DEFAULT_SYSTEMTYPE;
     	String userId = data.getLocalValue(); // will be "" if !data.getIsLocal(), which results in wiping out local override
-	    ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();    	
+	    ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();    	
 		sr.updateHost(conn, conn.getSystemType().getName(), conn.getAliasName(), conn.getHostName(),
 		                      conn.getDescription(), userId, whereToUpdate);
     }
@@ -662,7 +662,7 @@ public class SystemViewConnectionAdapter
     {
 		String name = (String)property;    	
 	    IHost conn = (IHost)propertySourceInput;   		   
-	    ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
+	    ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 	       	
 	    if (name.equals(ISystemPropertyConstants.P_DEFAULTUSERID))
 	    {
@@ -707,7 +707,7 @@ public class SystemViewConnectionAdapter
 	    {
 	    	IHost sysCon = (IHost) element;
 	    	if (sysCon.getSystemType().getName().equals(IRSESystemType.SYSTEMTYPE_LOCAL)) return existsMoreThanOneLocalConnection();
-	        ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+	        ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 	    	return !sr.isAnySubSystemConnected((IHost)element);
 	    }
 		return true;
@@ -715,7 +715,7 @@ public class SystemViewConnectionAdapter
 	
 	protected boolean existsMoreThanOneLocalConnection()
 	{
-		IHost[] localCons = RSEUIPlugin.getDefault().getSystemRegistry().getHostsBySystemType(IRSESystemType.SYSTEMTYPE_LOCAL);
+		IHost[] localCons = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(IRSESystemType.SYSTEMTYPE_LOCAL);
 		return localCons.length > 1;		
 	}
 	
@@ -726,7 +726,7 @@ public class SystemViewConnectionAdapter
 	{
 		boolean ok = true;
 		IHost conn = (IHost)element;
-		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		sr.deleteHost(conn);
 		return ok;
 	}
@@ -747,7 +747,7 @@ public class SystemViewConnectionAdapter
 	{
 		boolean ok = true;
 		IHost conn = (IHost)element;
-		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();		
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();		
 		sr.renameHost(conn,name); // renames and saves to disk
 		return ok;
 	}    

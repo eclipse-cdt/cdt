@@ -243,7 +243,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 		    	//runnableContext.run(false,true,this); // inthread, cancellable, IRunnableWithProgress
 		    	runnableContext.run(true,true,this); // fork, cancellable, IRunnableWithProgress
 		    	_connection.reset();
-				ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	    
+				ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();    	    
 	            sr.connectedStatusChange(_connection.getPrimarySubSystem(), false, true, true);
 			}
 	    	catch (InterruptedException exc) // user cancelled

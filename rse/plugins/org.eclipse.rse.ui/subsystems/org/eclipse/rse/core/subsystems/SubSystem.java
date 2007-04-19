@@ -1624,7 +1624,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     		public void run()
     		{
     	    	getConnectorService().reset();
-    	        ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();	
+    	        ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
     	        sr.connectedStatusChange(_subsystem, false, true, _collapseTree);
     		}	
     		
@@ -1664,7 +1664,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	
     	public IStatus runInUIThread(IProgressMonitor monitor)
     	{
-			final ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();	
+			final ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
     		sr.connectedStatusChange(_subsystem, true, false);
     		return Status.OK_STATUS;
     	}
@@ -2580,7 +2580,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	if (!isConnected() || !supportsConnecting)
     	{
     	    // disconnected but may not have notified viewers (i.e. network problem)
-    	    ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();	
+    	    ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
             sr.connectedStatusChange(this, false, true, collapseTree);
     	  return;      	 	
     	}

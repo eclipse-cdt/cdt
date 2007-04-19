@@ -200,7 +200,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = showFilterPoolsEditor.getBooleanValue();
     	   	if (newValue != lastShowFilterPoolsValue)
     	   	{
-    	     	RSEUIPlugin.getDefault().getSystemRegistry().setShowFilterPools(newValue);
+    	     	RSEUIPlugin.getTheSystemRegistry().setShowFilterPools(newValue);
     	     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_SHOWFILTERPOOLS,lastShowFilterPoolsValue,newValue);
     	   	}
     	   	lastShowFilterPoolsValue = newValue;
@@ -210,7 +210,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = showNewConnectionPromptEditor.getBooleanValue();
     	   	if (newValue != lastShowNewConnectionPromptValue)
     	   	{
-    	     	RSEUIPlugin.getDefault().getSystemRegistry().setShowNewHostPrompt(newValue);
+    	     	RSEUIPlugin.getTheSystemRegistry().setShowNewHostPrompt(newValue);
     	   	}
     	   	lastShowNewConnectionPromptValue = newValue;    		
     	}
@@ -219,7 +219,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = qualifyConnectionNamesEditor.getBooleanValue();
     	   	if (newValue != lastQualifyConnectionNamesValue)
     	   	{
-    	     	RSEUIPlugin.getDefault().getSystemRegistry().setQualifiedHostNames(newValue);
+    	     	RSEUIPlugin.getTheSystemRegistry().setQualifiedHostNames(newValue);
     	     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_QUALIFYCONNECTIONNAMES,lastQualifyConnectionNamesValue,newValue);
     	   	}
     	   	lastQualifyConnectionNamesValue = newValue;    		
@@ -242,7 +242,7 @@ public class RemoteSystemsPreferencePage
      */
     private void firePreferenceChangeEvent(int type, boolean oldValue, boolean newValue)
     {
-    	RSEUIPlugin.getDefault().getSystemRegistry().fireEvent(
+    	RSEUIPlugin.getTheSystemRegistry().fireEvent(
     	  new SystemPreferenceChangeEvent(type,
     	                                  oldValue ? Boolean.TRUE : Boolean.FALSE,
     	                                  newValue ? Boolean.TRUE : Boolean.FALSE));

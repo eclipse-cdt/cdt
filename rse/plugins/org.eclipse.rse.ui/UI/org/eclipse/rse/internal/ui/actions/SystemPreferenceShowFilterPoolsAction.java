@@ -64,7 +64,7 @@ public class SystemPreferenceShowFilterPoolsAction extends SystemBaseAction
      */
     private void firePreferenceChangeEvent(int type, boolean oldValue, boolean newValue)
     {
-    	RSEUIPlugin.getDefault().getSystemRegistry().fireEvent(
+    	RSEUIPlugin.getTheSystemRegistry().fireEvent(
     	  new SystemPreferenceChangeEvent(type,
     	                                  oldValue ? Boolean.TRUE : Boolean.FALSE,
     	                                  newValue ? Boolean.TRUE : Boolean.FALSE));

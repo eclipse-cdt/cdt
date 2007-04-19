@@ -1395,7 +1395,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			case CommunicationsEvent.AFTER_DISCONNECT :	
 				_cachedRemoteFiles.clear();
 				// DKM - taking this out because it causes an exception when the event occurs in Modal Context
-				//SystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();	
+				//SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
 				//sr.connectedStatusChange(this, false, true, true);
 				getConnectorService().removeCommunicationsListener(this);
 		

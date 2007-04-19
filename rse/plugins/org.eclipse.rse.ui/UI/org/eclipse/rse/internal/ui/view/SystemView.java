@@ -4505,7 +4505,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	 * Required method from ISystemDeleteTarget
 	 */
 	public boolean doDelete(IProgressMonitor monitor) {
-		SystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -4633,7 +4633,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	 * Required method from ISystemRenameTarget
 	 */
 	public boolean doRename(String[] newNames) {
-		SystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		Object element = null;

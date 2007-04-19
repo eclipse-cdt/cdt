@@ -121,7 +121,7 @@ public class SystemUpdateConnectionDialog extends SystemPromptDialog implements 
 		if (closeDialog)
 		{
 		  IHost conn = (IHost)getInputObject();
-		  ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		  ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 		  sr.updateHost( conn,conn.getSystemType().getName(),form.getConnectionName(),form.getHostName(),
 		                       form.getConnectionDescription(), form.getDefaultUserId(),
 		                       form.getUserIdLocation() );

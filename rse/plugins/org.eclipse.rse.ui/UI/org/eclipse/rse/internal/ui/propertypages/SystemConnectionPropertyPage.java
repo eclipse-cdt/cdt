@@ -88,7 +88,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		if (okToClose)
 		{
 		  IHost conn = (IHost)getElement();
-		  ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		  ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 		  sr.updateHost( conn,conn.getSystemType().getName(),form.getConnectionName(),form.getHostName(),
 		                       form.getConnectionDescription(), form.getDefaultUserId(),
 		                       form.getUserIdLocation() );

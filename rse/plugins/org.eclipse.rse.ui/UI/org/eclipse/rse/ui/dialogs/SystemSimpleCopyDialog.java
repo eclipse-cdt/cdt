@@ -131,7 +131,7 @@ public class SystemSimpleCopyDialog
         //ActionContributionItem[] actionItems = createActionContributionItems();
         //Composite buttons = createButtonBar(composite_prompts, actionItems);
 
-		//RSEUIPlugin.getDefault().getSystemRegistry().addSystemResourceChangeListener(this);
+		//RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
                 			    			
 		return composite_prompts;
 	}
@@ -200,7 +200,7 @@ public class SystemSimpleCopyDialog
 	
 	public boolean close()
 	{
-		//RSEUIPlugin.getDefault().getSystemRegistry().removeSystemResourceChangeListener(this);		
+		//RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);		
 		return super.close();
 	}
 	/**

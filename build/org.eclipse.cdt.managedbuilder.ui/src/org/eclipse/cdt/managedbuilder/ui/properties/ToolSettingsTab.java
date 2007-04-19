@@ -270,7 +270,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		public void setVisible(boolean visible){
 			if(visible){
 				selectedElement = null;
-				handleOptionSelection();
+				updateData(page.getResDesc());
 			}
 			super.setVisible(visible);
 		}

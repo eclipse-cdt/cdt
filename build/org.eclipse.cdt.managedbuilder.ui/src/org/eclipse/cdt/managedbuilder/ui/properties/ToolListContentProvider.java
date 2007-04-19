@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
@@ -76,11 +75,13 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			if(info instanceof IFolderInfo){
 				tools = ((IFolderInfo)info).getFilteredTools();
 			} else {
-				tools = ((IFileInfo)info).getToolsToInvoke();
+				tools = info.getTools();
 			}
 
 			//  Create an element for each one
 			for (int i=0; i<tools.length; i++) {
+				if (tools[i].getCustomBuildStep())
+					continue;
 				ToolListElement e = new ToolListElement(tools[i]);
 				elementList.add(e);
 				createChildElements(e);
@@ -142,7 +143,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput == null || oldInput == newInput) return;
+		if (newInput == null) return;
 		fInfo = (IResourceInfo)newInput;
 		if (elementType == PROJECT)
 			elements = createElements(fInfo.getParent());

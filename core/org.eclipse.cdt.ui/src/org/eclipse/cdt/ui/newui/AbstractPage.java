@@ -306,6 +306,7 @@ implements
 		if (!isSingle()) {
 			comp.setLayout(new FillLayout());
 			folder = new TabFolder(comp, SWT.NONE);
+//			folder.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
 		loadExtensionsSynchronized(comp);
 		
@@ -553,7 +554,7 @@ implements
 			Object ob = folder.getItem(0).getData();
 			currentTab = (ICPropertyTab)ob;
 		}
-		if (currentTab != null)	
+		if (currentTab != null)
 			currentTab.handleTabEvent(ICPropertyTab.VISIBLE, visible ? NOT_NULL : null);
 	}
 	
@@ -837,8 +838,13 @@ implements
 		    // tabs adding will be made by re-creation
 		    // of all elements, to preserve their order 
 			case ICPropertyTab.MANAGEDBUILDSTATE:
-				// generally, single-tabbed pages are not intended to handle this message
-				if (folder == null) return;
+				if (folder == null) {
+					if (itabs == null || itabs.size() == 0) 
+						return;
+					ICPropertyTab t = ((InternalTab)itabs.get(0)).tab;
+					if (! t.canBeVisible())
+						t.handleTabEvent(ICPropertyTab.VISIBLE, null);
+				}
 				boolean willAdd = false;
 				TabItem[] ts = folder.getItems();
 				int x = folder.getSelectionIndex();
@@ -929,7 +935,7 @@ implements
 		if (internalElement == null && !checkElement())
 			return false; // unknown element
 		if (isForFile()) // only source files are applicable
-			return CoreModel.isValidSourceUnitName(getProject(), internalElement.getName());
+			return true; //CoreModel.isValidSourceUnitName(getProject(), internalElement.getName());
 		else
 			return true; // Projects and folders are always applicable
 	}

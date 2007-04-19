@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class ToolSelectionDialog extends Dialog {
 
+	private static final String EMPTY_STR = "";   //$NON-NLS-1$
 	private Table t1, t2;
 	private CLabel errorLabel;
 	public ITool[] all, used;
@@ -182,62 +183,59 @@ public class ToolSelectionDialog extends Dialog {
 			if (!exists) added.add(t);
 			add(t, t2, !exists);
 		}
-		if (true/*check && removed.size() > 0 || added.size() > 0 */) {
-			IModificationStatus st = fi.getToolChainModificationStatus(
-					(ITool[])removed.toArray(new ITool[removed.size()]), 
-					(ITool[])added.toArray(new ITool[added.size()]));
-			if (st.isOK()) {
-				errorLabel.setText("");  //$NON-NLS-1$
-				if(getButton(IDialogConstants.OK_ID) != null)
-					getButton(IDialogConstants.OK_ID).setEnabled(true);
-			} else {
-				int c = st.getCode();
-				String s = "";  //$NON-NLS-1$
-				if ((c & IModificationStatus.TOOLS_CONFLICT) != 0) {
-					s = s + Messages.getString("ToolSelectionDialog.7"); //$NON-NLS-1$
-					ITool[][] tools = st.getToolsConflicts();
-					for (int k=0; k<t2.getItemCount(); k++) {
-						TableItem ti = t2.getItem(k);
-						ITool t = (ITool)ti.getData();
-					loop:	
-						for (int i=0;i<tools.length;i++) {
-							for (int j=0;j<tools[i].length;j++) {
-								if (t.matches(tools[i][j])) {
-									ti.setForeground(red);
-									break loop;
-								}
-							}
-						}
-					}
-				}
-				if ((c & IModificationStatus.TOOLS_DONT_SUPPORT_MANAGED_BUILD) != 0) {
-					s = s + Messages.getString("ToolSelectionDialog.8"); //$NON-NLS-1$
-					ITool[] tools = st.getNonManagedBuildTools();
-					for (int k=0; k<t2.getItemCount(); k++) {
-						TableItem ti = t2.getItem(k);
-						ITool t = (ITool)ti.getData();
-						for (int i=0;i<tools.length;i++) {
-							if (t.matches(tools[i])) {
+		IModificationStatus st = fi.getToolChainModificationStatus(
+				(ITool[])removed.toArray(new ITool[removed.size()]), 
+				(ITool[])added.toArray(new ITool[added.size()]));
+		if (st.isOK()) {
+			errorLabel.setText(EMPTY_STR);
+			if(getButton(IDialogConstants.OK_ID) != null)
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
+		} else {
+			int c = st.getCode();
+			String s = EMPTY_STR;
+			if ((c & IModificationStatus.TOOLS_CONFLICT) != 0) {
+				s = s + Messages.getString("ToolSelectionDialog.7"); //$NON-NLS-1$
+				ITool[][] tools = st.getToolsConflicts();
+				for (int k=0; k<t2.getItemCount(); k++) {
+					TableItem ti = t2.getItem(k);
+					ITool t = (ITool)ti.getData();
+				loop:	
+					for (int i=0;i<tools.length;i++) {
+						for (int j=0;j<tools[i].length;j++) {
+							if (t.matches(tools[i][j])) {
 								ti.setForeground(red);
-								break;
+								break loop;
 							}
 						}
 					}
-					
 				}
-				if ((c & IModificationStatus.PROPS_NOT_DEFINED) != 0) {
-					s = s + Messages.getString("ToolSelectionDialog.9");  //$NON-NLS-1$
-				}
-				if ((c & IModificationStatus.PROPS_NOT_SUPPORTED) != 0) {
-					s = s + Messages.getString("ToolSelectionDialog.10");  //$NON-NLS-1$
-				}
-				if ((c & IModificationStatus.REQUIRED_PROPS_NOT_SUPPORTED) != 0) {
-					s = s + Messages.getString("ToolSelectionDialog.11");  //$NON-NLS-1$
-				}
-				errorLabel.setText(s);
-				if(getButton(IDialogConstants.OK_ID) != null)
-					getButton(IDialogConstants.OK_ID).setEnabled(false);
 			}
+			if ((c & IModificationStatus.TOOLS_DONT_SUPPORT_MANAGED_BUILD) != 0) {
+				s = s + Messages.getString("ToolSelectionDialog.8"); //$NON-NLS-1$
+				ITool[] tools = st.getNonManagedBuildTools();
+				for (int k=0; k<t2.getItemCount(); k++) {
+					TableItem ti = t2.getItem(k);
+					ITool t = (ITool)ti.getData();
+					for (int i=0;i<tools.length;i++) {
+						if (t.matches(tools[i])) {
+							ti.setForeground(red);
+							break;
+						}
+					}
+				}
+			}
+			if ((c & IModificationStatus.PROPS_NOT_DEFINED) != 0) {
+				s = s + Messages.getString("ToolSelectionDialog.9");  //$NON-NLS-1$
+			}
+			if ((c & IModificationStatus.PROPS_NOT_SUPPORTED) != 0) {
+				s = s + Messages.getString("ToolSelectionDialog.10");  //$NON-NLS-1$
+			}
+			if ((c & IModificationStatus.REQUIRED_PROPS_NOT_SUPPORTED) != 0) {
+				s = s + Messages.getString("ToolSelectionDialog.11");  //$NON-NLS-1$
+			}
+			errorLabel.setText(s);
+			if(getButton(IDialogConstants.OK_ID) != null)
+				getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
 	}
 }

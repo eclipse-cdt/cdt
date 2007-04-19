@@ -84,7 +84,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			try {
 				fProp.setProperty(PROPERTY, values[n].getId());
 			} catch (CoreException ex) {
-				System.out.println(ex.getMessage());
+				ManagedBuilderUIPlugin.log(ex);
 			}
 			updateData(getResDesc());
 		}

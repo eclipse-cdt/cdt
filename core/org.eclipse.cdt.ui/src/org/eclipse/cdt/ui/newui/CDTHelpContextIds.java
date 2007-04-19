@@ -13,7 +13,7 @@ package org.eclipse.cdt.ui.newui;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 
-public interface ManagedBuilderHelpContextIds {
+public interface CDTHelpContextIds {
 	public static final String PREFIX= CUIPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
 	// Wizard pages

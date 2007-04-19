@@ -487,7 +487,10 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		case ICPropertyTab.DISPOSE:
 			break;
 		case ICPropertyTab.VISIBLE:
-			if (canBeVisible()) setVisible(data != null);
+			if (canBeVisible()) 
+				setVisible(data != null);
+			else 
+				setVisible(false);
 			break;
 		case ICPropertyTab.SET_ICON:
 			icon = (Image)data; 

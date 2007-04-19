@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -130,7 +131,6 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		IToolChain tc = null;
 		if (ri instanceof IFolderInfo)
 			tc = ManagedBuildManager.getRealToolChain(((IFolderInfo)ri).getToolChain());
-		
 		int cnt = 0;
 		int pos = -1;
 		c_toolchain.removeAll();
@@ -189,6 +189,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		}
 		ITool[] tmp = new ITool[cnt];
 		System.arraycopy(v_tools, 0, tmp, 0, cnt);
+		Arrays.sort(tmp, BuildListComparator.getInstance());
 		v_tools = tmp;
 		
 		if (page.isForFile()) { // Edit tool in combo for File

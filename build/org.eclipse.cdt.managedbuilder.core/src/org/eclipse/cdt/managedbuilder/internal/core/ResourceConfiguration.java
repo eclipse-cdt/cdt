@@ -988,6 +988,8 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		for(int i = 0; i < tools.length; i++){
 			ITool[] pair = new ITool[2];
 			pair[0] = ManagedBuildManager.getRealTool(tools[i]);
+			if(pair[0] == null)
+				pair[0] = tools[i];
 			pair[1] = tools[i];
 			pairs[i] = pair;
 		}

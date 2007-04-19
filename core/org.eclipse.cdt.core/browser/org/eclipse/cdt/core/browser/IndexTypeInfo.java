@@ -151,9 +151,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 					public boolean acceptBinding(IBinding binding) {
 						boolean sameType= IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType});
 						if (sameType && binding instanceof IFunction && params != null) {
-							String[] otherParams;
 							try {
-								otherParams= IndexModelUtil.extractParameterTypes((IFunction)binding);
+								String[]otherParams= IndexModelUtil.extractParameterTypes((IFunction)binding);
 								return Arrays.equals(params, otherParams);
 							} catch (DOMException exc) {
 								CCorePlugin.log(exc);				
@@ -164,27 +163,29 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 				}, new NullProgressMonitor());
 				if(ibs.length>0) {
 					IIndexName[] names;
-					if (elementType == ICElement.C_TYPEDEF) {
+					names= index.findNames(ibs[0], IIndex.FIND_DEFINITIONS);
+					if (names.length == 0 && elementType == ICElement.C_VARIABLE || elementType == ICElement.C_FUNCTION) {
 						names= index.findNames(ibs[0], IIndex.FIND_DECLARATIONS);
-					} else {
-						names= index.findNames(ibs[0], IIndex.FIND_DEFINITIONS);
 					}
-					if(names.length>0) {
-						IIndexFileLocation ifl = names[0].getFile().getLocation();
+					for (int i = 0; i < names.length; i++) {
+						IIndexName indexName = names[i];
+						IIndexFileLocation ifl = indexName.getFile().getLocation();
 						String fullPath = ifl.getFullPath();
-						if(fullPath!=null) {
+						if (fullPath != null) {
 							IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
 							if(file!=null) {
 								reference = new IndexTypeReference(
 										ibs[0], file, file.getProject(), names[0].getNodeOffset(), names[0].getNodeLength()
 								);
 							}
+							break;
 						} else {
 							IPath path = URIUtil.toPath(ifl.getURI());
 							if(path!=null) {
 								reference = new IndexTypeReference(
 										ibs[0], path, null, names[0].getNodeOffset(), names[0].getNodeLength()
 								);
+								break;
 							}
 						}
 					}

@@ -21,8 +21,6 @@ public final class TypeInfoMessages extends NLS {
 		// Do not instantiate
 	}
 
-	public static String OpenSymbolDialog_UpdateSymbolsJob_name;
-	public static String OpenSymbolDialog_UpdateSymbolsJob_inProgress;
 	public static String TypeSelectionDialog_lowerLabel;
 	public static String TypeSelectionDialog_upperLabel;
 	public static String TypeSelectionDialog_filterLabel;

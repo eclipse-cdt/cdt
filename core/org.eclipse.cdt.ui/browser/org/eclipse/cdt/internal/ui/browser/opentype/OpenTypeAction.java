@@ -19,6 +19,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -31,6 +32,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -62,20 +64,20 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 		ITypeReference location = info.getResolvedReference();
 		if (location == null) {
 			// could not resolve location
-			String title = OpenTypeMessages.getString("OpenTypeAction.errorTitle"); //$NON-NLS-1$
-			String message = OpenTypeMessages.getFormattedString("OpenTypeAction.errorTypeNotFound", info.getQualifiedTypeName().toString()); //$NON-NLS-1$
+			String title = OpenTypeMessages.OpenTypeAction_errorTitle; 
+			String message = NLS.bind(OpenTypeMessages.OpenTypeAction_errorTypeNotFound, info.getQualifiedTypeName().toString()); 
 			MessageDialog.openError(getShell(), title, message);
 		} else if (!openTypeInEditor(location)) {
 			// error opening editor
-			String title = OpenTypeMessages.getString("OpenTypeAction.errorTitle"); //$NON-NLS-1$
-			String message = OpenTypeMessages.getFormattedString("OpenTypeAction.errorOpenEditor", location.getPath().toString()); //$NON-NLS-1$
+			String title = OpenTypeMessages.OpenTypeAction_errorTitle; 
+			String message = NLS.bind(OpenTypeMessages.OpenTypeAction_errorOpenEditor, location.getPath().toString()); 
 			MessageDialog.openError(getShell(), title, message);
 		}
 	}
 	
 	private void configureDialog(ElementSelectionDialog dialog) {
-		dialog.setTitle(OpenTypeMessages.getString("OpenTypeDialog.title")); //$NON-NLS-1$
-		dialog.setMessage(OpenTypeMessages.getString("OpenTypeDialog.message")); //$NON-NLS-1$
+		dialog.setTitle(OpenTypeMessages.OpenTypeDialog_title); 
+		dialog.setMessage(OpenTypeMessages.OpenTypeDialog_message); 
 		dialog.setDialogSettings(getClass().getName());
 		if (fWorkbenchWindow != null) {
 			IWorkbenchPage page= fWorkbenchWindow.getActivePage();
@@ -105,10 +107,16 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 * @return true if succesfully displayed.
 	 */
 	private boolean openTypeInEditor(ITypeReference location) {
-		ITranslationUnit unit = location.getTranslationUnit();
-		IEditorPart editorPart = null;
-		
+		ICElement[] cElements= location.getCElements();
 		try {
+			if (cElements.length > 0) {
+				IEditorPart editor= EditorUtility.openInEditor(cElements[0]);
+				EditorUtility.revealInEditor(editor, cElements[0]);
+				return true;
+			}
+			ITranslationUnit unit = location.getTranslationUnit();
+			IEditorPart editorPart = null;
+		
 			if (unit != null)
 				editorPart = EditorUtility.openInEditor(unit);
 			if (editorPart == null) {

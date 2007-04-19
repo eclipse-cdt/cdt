@@ -29,8 +29,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FilteredList;
 
@@ -45,13 +47,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoMessages;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 
 import org.eclipse.cdt.internal.core.browser.util.IndexModelUtil;
 
 /**
- * A dialog to select a element from a filterable list of elements.
+ * A dialog to select an element from a filterable list of elements.
  *
  * @since 4.0
  */
@@ -70,7 +71,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		}
 
 		public IStatus run(final IProgressMonitor monitor) {
-			monitor.beginTask(TypeInfoMessages.OpenSymbolDialog_UpdateSymbolsJob_inProgress, IProgressMonitor.UNKNOWN);
+			monitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress, IProgressMonitor.UNKNOWN);
 			final ITypeInfo[] elements= getElementsByPrefix(fCurrentPrefix, monitor);
 			if (elements != null && !monitor.isCanceled()) {
 				final Shell shell= getShell();
@@ -126,7 +127,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 				Runnable update= new Runnable() {
 					public void run() {
 						if (!shell.isDisposed() && !fDone) {
-							fMonitor.beginTask(TypeInfoMessages.OpenSymbolDialog_UpdateSymbolsJob_inProgress, IProgressMonitor.UNKNOWN);
+							fMonitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress, IProgressMonitor.UNKNOWN);
 						}
 					}};
 				shell.getDisplay().asyncExec(update);
@@ -153,7 +154,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	 */
 	public ElementSelectionDialog(Shell parent) {
 		super(parent);
-		fUpdateJob= new UpdateElementsJob(TypeInfoMessages.OpenSymbolDialog_UpdateSymbolsJob_name);
+		fUpdateJob= new UpdateElementsJob(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_name);
 		fUpdateJob.setRule(SINGLE_INSTANCE_RULE);
 	}
 	
@@ -194,18 +195,19 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	 * @see org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog#showLowLevelFilter()
 	 */
 	protected boolean showLowLevelFilter() {
+		// the low-level filter is useless for us
 		return false;
 	}
 	
 	/*
-	 * @see org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog#createFilteredList(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.ui.dialogs.TwoPaneElementSelector#createLowerList(org.eclipse.swt.widgets.Composite)
 	 */
-	protected FilteredList createFilteredList(Composite parent) {
-		FilteredList list= super.createFilteredList(parent);
+	protected Table createLowerList(Composite parent) {
+		Table table= super.createLowerList(parent);
 		createProgressMonitorPart(parent);
-		return list;
+		return table;
 	}
-
+	
 	/**
 	 * Create the control for progress reporting.
 	 * @param parent
@@ -216,7 +218,11 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		gridData.horizontalIndent= 0;
         gridData.verticalAlignment= GridData.BEGINNING;
         fProgressMonitorPart.setLayoutData(gridData);
-		fUpdateJob.addJobChangeListener(new UpdateJobListener(fProgressMonitorPart));
+        
+		Label separator= new Label(parent.getParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        fUpdateJob.addJobChangeListener(new UpdateJobListener(fProgressMonitorPart));
 	}
 
 	/**
@@ -243,15 +249,15 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 						}
 						IBinding binding = bindings[i];
 						try {
-							String[] fqn;
-
-							if(binding instanceof ICPPBinding) {
-								fqn= ((ICPPBinding)binding).getQualifiedName();
-							} else {
-								fqn = new String[] {binding.getName()};
-							}
 							final int elementType = IndexModelUtil.getElementType(binding);
 							if (isVisibleType(elementType)) {
+								String[] fqn;
+
+								if(binding instanceof ICPPBinding) {
+									fqn= ((ICPPBinding)binding).getQualifiedName();
+								} else {
+									fqn = new String[] {binding.getName()};
+								}
 								if (binding instanceof IFunction) {
 									final IFunction function = (IFunction)binding;
 									final String[] paramTypes = IndexModelUtil.extractParameterTypes(function);

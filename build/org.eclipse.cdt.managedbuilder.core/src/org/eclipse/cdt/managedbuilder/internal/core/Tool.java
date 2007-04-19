@@ -3694,7 +3694,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return supportsManagedBuild.booleanValue();
 	}
 	
-	private class MatchKey {
+	private static class MatchKey {
 		Tool tool;
 		
 		public MatchKey(Tool tch) {
@@ -3711,11 +3711,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		}
 
 		public int hashCode() {
-			String name = getName();
+			String name = tool.getName();
 			if(name == null)
-				name = getId();
+				name = tool.getId();
 			int code = name.hashCode();
-			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
+			String version = ManagedBuildManager.getVersionFromIdAndVersion(tool.getId());
 			if(version != null)
 				code += version.hashCode();
 			return code;

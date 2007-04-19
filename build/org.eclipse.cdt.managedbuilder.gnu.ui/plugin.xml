@@ -1496,6 +1496,7 @@
       
       <tool
           id="cdt.managedbuild.tool.gnu.c.linker.cygwin"
+          name="%ToolName.linker.cygwin.gnu.c"
           superClass="cdt.managedbuild.tool.gnu.c.linker">
           <envVarBuildPath 
               pathType="buildpathLibrary"
@@ -1510,11 +1511,13 @@
 		  <outputType
 	          outputs="dll,a.dll"
 			  buildVariable="LIBRARIES"
-			  id="cdt.managedbuild.tool.gnu.c.linker.cygwin.output.so">
+			  id="cdt.managedbuild.tool.gnu.c.linker.cygwin.output.so"
+			  superClass="cdt.managedbuild.tool.gnu.c.linker.output.so">
 	      </outputType>
       </tool>
       <tool
           id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin"
+          name="%ToolName.linker.cygwin.gnu.cpp"
           superClass="cdt.managedbuild.tool.gnu.cpp.linker">
           <envVarBuildPath 
               pathType="buildpathLibrary"
@@ -1529,12 +1532,14 @@
 		  <outputType
 	          outputs="dll,a.dll"
 			  buildVariable="LIBRARIES"
-			  id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output.so">
+			  id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output.so"
+			  superClass="cdt.managedbuild.tool.gnu.cpp.linker.output.so">
 	      </outputType>
 		  
       </tool>
       <tool
           id="cdt.managedbuild.tool.gnu.c.compiler.cygwin"
+          name="%ToolName.compiler.cygwin.gnu.c"
           superClass="cdt.managedbuild.tool.gnu.c.compiler">
           <envVarBuildPath 
               pathType="buildpathInclude"
@@ -1548,6 +1553,7 @@
       </tool>      
       <tool
           id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin"
+          name="%ToolName.compiler.cygwin.gnu.cpp"
           superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
           <envVarBuildPath 
               pathType="buildpathInclude"
@@ -1765,6 +1771,7 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.mingw.base"
+                      name="%ToolName.linker.mingw.gnu.c"
                       superClass="cdt.managedbuild.tool.gnu.c.linker">
                <enablement 
               	type="ALL">
@@ -1774,9 +1781,16 @@
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  	</not>
 			  </enablement>
+			  <outputType
+                   id="cdt.managedbuild.tool.gnu.c.linker.mingw.so.output.base"
+                   superClass="cdt.managedbuild.tool.gnu.c.linker.output.so"
+                   outputs="dll">
+			    </outputType>
+			  
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base"
+                      name="%ToolName.linker.mingw.gnu.cpp"
                       superClass="cdt.managedbuild.tool.gnu.cpp.linker">
                <enablement 
               	type="ALL">
@@ -1786,6 +1800,11 @@
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  	</not>
 			  </enablement>
+			  	<outputType
+                   id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.output.base"
+                   superClass="cdt.managedbuild.tool.gnu.cpp.linker.output.so"
+                   outputs="dll">
+			    </outputType>
                   </tool>                  
 
                </toolChain>                                   
@@ -1940,11 +1959,13 @@
 	              
 				  <tool
                       id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base"
+                      name="%ToolName.compiler.solaris.cpp"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base"
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.solaris.c.compiler.base"
+                      name="%ToolName.compiler.solaris.c"
                       superClass="cdt.managedbuild.tool.gnu.c.compiler.base"
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
 				  </tool>
@@ -2930,7 +2951,7 @@
                       </option>
 			          <outputType
                    id="cdt.managedbuild.tool.gnu.c.linker.mingw.so.debug.output"
-                   outputs="dll">
+                   superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.so.output.base">
 			          </outputType>
                   </tool>
                   <tool
@@ -2942,7 +2963,7 @@
                       </option>
 			          <outputType
                    id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.debug.output"
-                   outputs="dll">
+                   superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.output.base">
 			          </outputType>
                   </tool>                  
 				  <tool
@@ -2997,7 +3018,7 @@
                       </option>
 			          <outputType
                    id="cdt.managedbuild.tool.gnu.c.linker.mingw.so.release.output"
-                   outputs="dll">
+                   superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.so.output.base">
 			          </outputType>
                   </tool>
                   <tool
@@ -3009,7 +3030,7 @@
                       </option>
 			          <outputType
                    id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.release.output"
-                   outputs="dll">
+                   superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.output.base">
 			          </outputType>
                   </tool>
 				  <tool

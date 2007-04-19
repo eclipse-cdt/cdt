@@ -579,7 +579,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			return false;
 		}
 
-		int mode;
+/*		int mode;
 
 		if (isBinary)
 		{
@@ -588,8 +588,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		else
 		{
 			mode = IUniversalDataStoreConstants.TEXT_MODE;
-		}
+		}*/
 
+		// just download as binary since we do not have to convert to UTF-8 anyway
+		// the miner does a binary download anyway
+		int mode = IUniversalDataStoreConstants.BINARY_MODE;
+		
 		DataStore ds = getDataStore();
 		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
 		

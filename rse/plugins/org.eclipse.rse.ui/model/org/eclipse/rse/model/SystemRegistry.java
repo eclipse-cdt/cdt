@@ -17,6 +17,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * Tobias Schwarz (Wind River) - [183134] getLocalHost() does not return Local
  ********************************************************************************/
 
 package org.eclipse.rse.model;
@@ -38,6 +39,7 @@ import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterStartHere;
@@ -64,13 +66,14 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
+import org.eclipse.rse.internal.core.filters.SystemFilterPool;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
-import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.model.SystemHostPool;
 import org.eclipse.rse.internal.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.model.SystemModelChangeEventManager;
 import org.eclipse.rse.internal.model.SystemPostableEventNotifier;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeManager;
+import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.internal.model.SystemRemoteChangeEventManager;
 import org.eclipse.rse.internal.model.SystemResourceChangeManager;
 import org.eclipse.rse.internal.model.SystemScratchpad;
@@ -761,7 +764,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public ISystemProfileManager getSystemProfileManager()
 	{
-		return SystemProfileManager.getDefault();
+		return SystemProfileManager.getSystemProfileManager();
 	}
 
 	/**
@@ -792,14 +795,12 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	{
 		return getSystemProfileManager().getSystemProfileNames();
 	}
-
 	/**
 	 * Return all defined profile names as a vector
 	 */
 	public Vector getAllSystemProfileNamesVector()
 	{
-		Vector v = getSystemProfileManager().getSystemProfileNamesVector();
-		return v;
+		return getSystemProfileManager().getSystemProfileNamesVector();
 	}
 
 	/**
@@ -1793,7 +1794,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		Vector v = new Vector();
 		for (int idx = 0; idx < connections.length; idx++)
 		{
-			if (connections[idx].getSystemType().equals(systemType))
+			if (systemType.equals(connections[idx].getSystemType().getName()))
 				v.addElement(connections[idx]);
 		}
 		IHost[] conns = new IHost[v.size()];
@@ -2841,6 +2842,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public void disconnectAllSubSystems(IHost conn)
 	{
+		// FIXME - save profile
+		save();
 		
 		ISubSystem[] subsystems = getSubSystemsLazily(conn);
 		if (subsystems == null)
@@ -3343,7 +3346,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public boolean save()
 	{
-		return RSEUIPlugin.getThePersistenceManager().commitProfiles();
+		ISystemProfileManager profileManager = getSystemProfileManager();
+		return RSEUIPlugin.getThePersistenceManager().commit(profileManager);
 	}
 
 	/**
@@ -3352,7 +3356,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public boolean saveHostPool(ISystemHostPool pool)
 	{
-		return pool.commit();
+		return RSEUIPlugin.getThePersistenceManager().commit(pool);
 	}
 
 	/**
@@ -3409,5 +3413,10 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	public ISystemFilterStartHere getSystemFilterStartHere() {
 		return SystemFilterStartHere.getDefault();
 	} 
+	
+	public ISystemFilterPool getSystemFilterPool()
+	{
+		return SystemFilterPool.getDefault();
+	}
 	
 }//SystemRegistryImpl

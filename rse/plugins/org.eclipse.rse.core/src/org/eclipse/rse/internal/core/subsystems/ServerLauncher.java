@@ -16,7 +16,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.subsystems;
-import org.eclipse.rse.core.RSECorePlugin;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
@@ -59,7 +61,10 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return new IRSEPersistableContainer[0];
+		List children = Arrays.asList(getPropertySets());
+		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
+		children.toArray(result);
+		return result;
 	}
 
 	/**

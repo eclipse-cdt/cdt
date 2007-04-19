@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.core.model;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -44,9 +45,15 @@ public interface ISystemProfileManager {
 	public void makeSystemProfileActive(ISystemProfile profile, boolean makeActive);
 
 	/**
-	 * @return an array of all existing profiles.
+	 * @return an array of all existing profiles. This is guaranteed to contain the
+	 * default private profile.
 	 */
 	public ISystemProfile[] getSystemProfiles();
+
+	/**
+	 * @return the number of profiles known to this manager.
+	 */
+	public int getSize();
 
 	/**
 	 * @return an array of all existing profile names.
@@ -129,7 +136,9 @@ public interface ISystemProfileManager {
 	 * @return The list of profiles known to this manager. This list is generated
 	 * at the point of this call and may thus be manipulated by the caller.
 	 */
-	java.util.List getProfiles();
+	public List getProfiles();
+	
+	public void addSystemProfile(ISystemProfile profile);
 
 	//	/**
 	//	 * Reusable method to return a name validator for renaming a profile.

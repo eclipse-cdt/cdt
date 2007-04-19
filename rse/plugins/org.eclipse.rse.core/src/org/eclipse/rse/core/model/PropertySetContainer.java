@@ -44,6 +44,7 @@ public abstract class PropertySetContainer extends RSEPersistableObject implemen
 
 	public IPropertySet createPropertySet(String name, String description) {
 		IPropertySet newSet = new PropertySet(name);
+		newSet.setContainer(this);
 		newSet.addProperty(IPropertySet.DESCRIPTION_KEY, description);
 		_propertySets.put(name, newSet);
 		return newSet;
@@ -51,11 +52,13 @@ public abstract class PropertySetContainer extends RSEPersistableObject implemen
 
 	public IPropertySet createPropertySet(String name) {
 		IPropertySet newSet = new PropertySet(name);
+		newSet.setContainer(this);
 		_propertySets.put(name, newSet);
 		return newSet;
 	}
 
 	public boolean addPropertySet(IPropertySet set) {
+		set.setContainer(this);
 		_propertySets.put(set.getName(), set);
 		return true;
 	}

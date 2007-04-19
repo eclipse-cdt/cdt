@@ -124,21 +124,14 @@ public class ValidatorUniqueString
 	/**
 	 * Reset the existing names list. 
 	 */
-	public void setExistingNamesList(Vector existingList)
+	public void setExistingNamesList(Vector newList)
 	{		
-		if (existingList == null)
-		  this.existingList = null;
+		if (newList == null)
+		  existingList = null;
 		else
 		{
-		  String newList[] = new String[existingList.size()];
-		  for (int idx=0; idx<existingList.size(); idx++)
-		  {
-		     if (!caseSensitive)
-		       newList[idx] = existingList.elementAt(idx).toString().toLowerCase();		
-		     else
-		       newList[idx] = existingList.elementAt(idx).toString(); 
-		  }
-		  init(newList, true); // don't redo the toLowerCase calls		
+		  existingList = new String[newList.size()];
+		  newList.toArray(existingList);
 		}
 	}
 	/**

@@ -17,7 +17,9 @@
 
 package org.eclipse.rse.internal.core.filters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFolder;
@@ -256,103 +258,22 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected java.util.List filters = null;
-	private static SystemFilterPool _instance;
-/**
+
+	/**
 	 * Default constructor
 	 */
-	protected SystemFilterPool() 
+	public SystemFilterPool(String poolName, boolean allowNestedFilters, boolean isDeletable) 
 	{
 		super();
 		helpers = new SystemFilterContainerCommonMethods();
-	}
-	
-	public static SystemFilterPool getDefault()
-	{
-		if (_instance == null)
-		{
-			_instance = new SystemFilterPool();
+	   	setRelease(RSECorePlugin.CURRENT_RELEASE);
+		if (!initialized) {
+			initialize(poolName, savePolicy, namingPolicy);
 		}
-		return _instance;
-	}
-	
-	/**
-	 * Static factory method for creating a new filter pool. Will
-	 * first try to restore it, and if that fails will create a new instance and
-	 * return it.
-	 * <p>
-	 * Use this method only if you are not using a SystemFilterPoolManager, else
-	 *  use the createSystemFilterPool method in that class.
-	 * 
-     *   This folder will be created if it does not already exist.
-     * @param name the name of the filter pool. Typically this is also the name
-     *   of the given folder, but this is not required. For the save policy of one file
-     *   per pool, the name of the file is derived from this.
-     * @param allowNestedFilters true if filters inside this filter pool are
-     *   to allow nested filters. 
-     * @param isDeletable true if this filter pool is allowed to be deleted by users.
-     * @param tryToRestore true to attempt a restore first, false if a pure create operation.
-	 */
-	public ISystemFilterPool createSystemFilterPool(
-	                                                      String name,
-	                                                      boolean allowNestedFilters, 
-	                                                      boolean isDeletable,
-	                                                      boolean tryToRestore)
-	{    	  
-     	  
-     	  
-    	SystemFilterPool pool = null;
-    	if (tryToRestore)
-    	{
-    	  try
-    	  {
-             pool = (SystemFilterPool)RSECorePlugin.getThePersistenceManager().restoreFilterPool(name);
-    	  }
-    	  catch (Exception exc) // real error trying to restore, versus simply not found.
-    	  {
-    	     // todo: something? Log the exception somewhere?
-    	  }
-    	}
-        if (pool == null) // not found or some serious error.
-        {
-    	  pool = createPool();    	
-        }
-    	if (pool != null)
-    	{    	   
-    	  pool.initialize(name, allowNestedFilters, isDeletable);
-    	}
-    	return pool;
-	}
-	
-	// temporary!
-	//public boolean isSharable() {return isSharable; }
-	//public void setIsSharable(boolean is) { isSharable = is; }
-
-    /*
-     * Private helper method.
-     * Uses MOF to create an instance of this class.
-     */
-    protected static SystemFilterPool createPool()
-    {
-    	ISystemFilterPool pool = new SystemFilterPool();
-    		// FIXME SystemFilterImpl.initMOF().createSystemFilterPool();
-    	pool.setRelease(RSECorePlugin.CURRENT_RELEASE);
-    	return (SystemFilterPool)pool;    	
-    }
-
-    /*
-     * Private helper method to initialize attributes
-     */
-	protected void initialize(String name,
-	                          boolean allowNestedFilters, 
-	                          boolean isDeletable)
-	{
-		if (!initialized)
-		  initialize(name, savePolicy, namingPolicy);
         setDeletable(isDeletable); // mof attribute
-		//System.out.println("In initialize() for filter pool " + getName() + ". isDeletable= " + isDeletable);        
         setSupportsNestedFilters(allowNestedFilters); // cascades to each filter
-	}
-
+ 	}
+	
     /*
      * Private helper method to core initialization, from either createXXX or restore.
      */
@@ -1321,17 +1242,25 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	
 	public boolean commit()
 	{
-		ISystemProfile profile = getSystemFilterPoolManager().getSystemProfile();
-		boolean result = profile.commit();
-		return result;
+		return getPersistableParent().commit();
 	}
 	
 	public IRSEPersistableContainer getPersistableParent() {
-		return mgr;
+		ISystemProfile profile = null;
+		ISystemFilterPoolManager filterPoolManager = getSystemFilterPoolManager();
+		if (filterPoolManager != null) {
+			profile = filterPoolManager.getSystemProfile();
+		}
+		return profile;
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return getSystemFilters();
+		List children = new ArrayList(10);
+		children.addAll(Arrays.asList(getSystemFilters()));
+		children.addAll(Arrays.asList(getPropertySets()));
+		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
+		children.toArray(result);
+		return result;
 	}
 	
 }

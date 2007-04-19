@@ -21,6 +21,9 @@
 
 package org.eclipse.rse.core.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.Platform;
@@ -511,7 +514,11 @@ public class Host extends RSEModelObject implements IHost {
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		IConnectorService[] result = getConnectorServices();
+		List children = new ArrayList(10);
+		children.addAll(Arrays.asList(getPropertySets()));
+		children.addAll(Arrays.asList(getConnectorServices()));
+		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
+		children.toArray(result);
 		return result;
 	}
 

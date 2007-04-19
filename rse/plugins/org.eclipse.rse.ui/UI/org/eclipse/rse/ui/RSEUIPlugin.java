@@ -44,9 +44,9 @@ import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxyComparator;
-import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemDynamicPopupMenuExtensionManager;
@@ -114,7 +114,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 					if (systemType != null) {
 						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
 						if (adapter != null && adapter.isEnabled(systemType)) {
-							ISystemProfileManager profileManager = SystemProfileManager.getSystemProfileManager();
+							ISystemProfileManager profileManager = SystemProfileManager.getDefault();
 							ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
 							String userName = System.getProperty("user.name"); //$NON-NLS-1$
 							registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
@@ -761,7 +761,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	 */
 	public static ISystemProfileManager getTheSystemProfileManager()
 	{
-		return SystemProfileManager.getSystemProfileManager();
+		return SystemProfileManager.getDefault();
 	}
 
     /**

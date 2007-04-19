@@ -17,10 +17,9 @@
 
 package org.eclipse.rse.core.model;
 
-/**
- * 
- */
-public class Property implements IProperty {
+import java.util.Observable;
+
+public class Property extends Observable implements IProperty {
 	
 	private String _name;
 	private String _label;
@@ -35,6 +34,7 @@ public class Property implements IProperty {
 		_value = property.getValue();
 		_type = property.getType();
 		_isEnabled = property.isEnabled();
+		touch();
 	}
 
 	public Property(String name, String value, IPropertyType type, boolean isEnabled) {
@@ -42,6 +42,7 @@ public class Property implements IProperty {
 		_value = value;
 		_type = type;
 		_isEnabled = isEnabled;
+		touch();
 	}
 
 	/* (non-Javadoc)
@@ -55,7 +56,10 @@ public class Property implements IProperty {
 	 * @see org.eclipse.rse.core.model.IProperty#setLabel(java.lang.String)
 	 */
 	public void setLabel(String label) {
-		_label = label;
+		if (!stringsAreEqual(_label, label)) {
+			_label = label;
+			touch();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -72,7 +76,10 @@ public class Property implements IProperty {
 	 * @see org.eclipse.rse.core.model.IProperty#setValue(java.lang.String)
 	 */
 	public void setValue(String value) {
-		_value = value;
+		if (!stringsAreEqual(_value, value)) {
+			_value = value;
+			touch();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -86,7 +93,10 @@ public class Property implements IProperty {
 	 * @see org.eclipse.rse.core.model.IProperty#setType(org.eclipse.rse.core.model.IPropertyType)
 	 */
 	public void setType(IPropertyType type) {
-		_type = type;
+		if (_type != type) {
+			_type = type;
+			touch();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -100,7 +110,10 @@ public class Property implements IProperty {
 	 * @see org.eclipse.rse.core.model.IProperty#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean flag) {
-		_isEnabled = flag;
+		if (_isEnabled != flag) {
+			_isEnabled = flag;
+			touch();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -114,7 +127,10 @@ public class Property implements IProperty {
 	 * @see org.eclipse.rse.core.model.IProperty#setReadOnly(boolean)
 	 */
 	public void setReadOnly(boolean flag) {
-		_isReadOnly = flag;
+		if (_isReadOnly != flag) {
+			_isReadOnly = flag;
+			touch();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -122,6 +138,17 @@ public class Property implements IProperty {
 	 */
 	public boolean isReadOnly() {
 		return _isReadOnly;
+	}
+	
+	private boolean stringsAreEqual(String s1, String s2) {
+		if (s1 == s2) return true;
+		if (s1 == null) return false;
+		return s1.equals(s2);
+	}
+	
+	private void touch() {
+		setChanged();
+		notifyObservers();
 	}
 
 }

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
-import org.eclipse.rse.core.model.RSEPersistableObject;
 
 public abstract class AbstractDelegatingConnectorService implements IDelegatingConnectorService 
 {
@@ -752,6 +751,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#isTainted()
+	 */
 	public boolean isTainted() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -761,6 +763,9 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#setTainted(boolean)
+	 */
 	public void setTainted(boolean flag) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -769,26 +774,16 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableParent()
+	 */
 	public IRSEPersistableContainer getPersistableParent() {
 		return getHost();
 	}
 	
-	public void beginRestore() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			conServ.beginRestore();
-		}
-	}
-	
-	public void endRestore() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			conServ.endRestore();
-		}
-	}
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableChildren()
+	 */
 	public IRSEPersistableContainer[] getPersistableChildren() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)

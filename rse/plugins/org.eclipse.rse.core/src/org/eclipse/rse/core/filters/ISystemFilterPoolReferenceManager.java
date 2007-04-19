@@ -201,11 +201,10 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 	 * Given a filter pool name, create a referencing object and add it to the list.
 	 * This creates an unresolved reference to that filter pool. It will be resolved on first use.
 	 * <p> Calls back to inform provider
-	 * @param filterPoolManager the manager that can be used to resolve the reference.
 	 * @param filterPoolName the name of the filter pool being referenced.
 	 * @return new filter pool reference
 	 */
-	public ISystemFilterPoolReference addReferenceToSystemFilterPool(ISystemFilterPoolManager filterPoolManager, String filterPoolName);
+	public ISystemFilterPoolReference addReferenceToSystemFilterPool(String filterPoolName);
 
 	/**
 	 * Given a filter pool, locate the referencing object for it and remove it from the list.

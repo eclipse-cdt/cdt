@@ -337,6 +337,5 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @generated
 	 */
 	void setNonRenamable(boolean value);
-
-	public ISystemFilterPool createSystemFilterPool(String name, boolean allowNestedFilters, boolean isDeletable, boolean tryToRestore);
+	
 }

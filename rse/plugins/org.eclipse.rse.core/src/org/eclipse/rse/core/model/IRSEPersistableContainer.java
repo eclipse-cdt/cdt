@@ -49,22 +49,7 @@ public interface IRSEPersistableContainer {
 	 * @param flag true if the object was restored.
 	 */
 	public void setWasRestored(boolean flag);
-	
-	/**
-	 * Notifies the object that it is being restored. Typically this will
-	 * suppress any marking of the object as dirty and related objects as 
-	 * tainted while the restore is taking place. Should be used only by
-	 * persistence providers.
-	 */
-	public void beginRestore();
-	
-	/**
-	 * Notifies the object that it is has been restored. This will
-	 * enable the object to be marked as dirty if subsequent changes
-	 * are made to it. Should be used only by persistence providers.
-	 */
-	public void endRestore();
-	
+		
 	/**
 	 * An object is dirty if a change has been made to it that requires
 	 * it to be persisted.
@@ -106,8 +91,7 @@ public interface IRSEPersistableContainer {
 	 * Sets the tainted attribute for this object. This should set to 
 	 * true only by child objects when they have been marked dirty or tainted.
 	 * Setting this to true will cause all parent objects in the containment
-	 * hierarchy to be marked tainted. Setting this to false will cause all
-	 * children to be marked as not tainted.
+	 * hierarchy to be marked tainted.
 	 * It should be set to false only by a persistence manager when the
 	 * object has been committed.
 	 * @param flag the tainted state of the object.

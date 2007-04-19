@@ -274,17 +274,6 @@ public class SystemResourceManager implements SystemResourceConstants
     }
     */
 
-    // -----------------------------------
-    // GET A SPECIFIC PROFILE FOLDER...
-    // -----------------------------------
-    /**
-     * Get profiles folder for a given profile
-     */
-    public static IFolder getProfileFolder(ISystemProfile profile)
-    {
-    	return getProfileFolder(profile.getName());
-    }
-
     /**
      * Get profiles folder for a given profile name
      */
@@ -293,9 +282,6 @@ public class SystemResourceManager implements SystemResourceConstants
         return getResourceHelpers().getOrCreateFolder(getRemoteSystemsProject(),profileName);      	
     }
 
-
-  
-   
     /*
      * --------------------------------------------------------------------------------------------------------------------------------
      * USER ACTIONS SUBTREE FOLDER METHODS...

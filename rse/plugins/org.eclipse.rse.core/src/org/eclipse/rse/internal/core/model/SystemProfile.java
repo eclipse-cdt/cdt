@@ -14,11 +14,15 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
-package org.eclipse.rse.internal.model;
+package org.eclipse.rse.internal.core.model;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
@@ -28,9 +32,7 @@ import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.core.model.RSEModelResources;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * A profile contains hosts and filter pools. It is the unit of save/restore for RSE model 
@@ -39,9 +41,9 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 public class SystemProfile extends RSEModelObject implements ISystemProfile, IAdaptable
 {
 
-	private ISystemProfileManager mgr;
-	private IRSEPersistenceProvider provider;
-	private boolean active;
+	private ISystemProfileManager mgr = null;
+	private IRSEPersistenceProvider provider = null;
+	private boolean isActive = true;
 	private String name = null;
 	private boolean defaultPrivate = false;
 
@@ -51,6 +53,11 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	protected SystemProfile() 
 	{
 		super();
+	}
+	
+	public SystemProfile(String name, boolean isActive) {
+		this.name = name;
+		this.isActive = isActive;
 	}
 
 	/**
@@ -75,7 +82,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
      */
     public IHost createHost(String systemType, String connectionName, String hostName, String description) throws Exception
     {
-		return RSEUIPlugin.getTheSystemRegistry().createHost(getName(), systemType, connectionName,  hostName, description);
+		return RSECorePlugin.getDefault().getSystemRegistry().createHost(getName(), systemType, connectionName,  hostName, description);
     }
     
 	/**
@@ -83,7 +90,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	 */
 	public IHost[] getHosts()
 	{
-		return RSEUIPlugin.getTheSystemRegistry().getHostsByProfile(this);
+		return RSECorePlugin.getDefault().getSystemRegistry().getHostsByProfile(this);
 	}
 
 	/**
@@ -91,7 +98,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	 */
 	public ISystemFilterPool[] getFilterPools()
 	{
-		ISubSystemConfiguration[] ssFactories = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurations();
+		ISubSystemConfiguration[] ssFactories = RSECorePlugin.getDefault().getSystemRegistry().getSubSystemConfigurations();
 		Vector poolsVector = new Vector();
 		for (int idx = 0; idx < ssFactories.length; idx++)
 		{
@@ -121,14 +128,15 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	 */
 	public boolean isActive()
 	{
-		return active;
+		return isActive;
 	}
 	/**
 	 * Reset whether this profile is currently active.
 	 */
 	public void setActive(boolean active)
 	{
-		this.active = active;
+		this.isActive = active;
+		setDirty(true);
 	}
 
     /**
@@ -175,6 +183,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	public void setName(String newName)
 	{
 		name = newName;
+		setDirty(true);
 	}
 
 	/**
@@ -193,11 +202,12 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	public void setDefaultPrivate(boolean newDefaultPrivate)
 	{
 		defaultPrivate = newDefaultPrivate;
+		setDirty(true);
 	}
 	
 	public boolean commit() 
 	{
-		return RSEUIPlugin.getThePersistenceManager().commit(this);
+		return RSECorePlugin.getThePersistenceManager().commitProfile(this);
 	}
 	
 	/**
@@ -209,11 +219,12 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		ISystemFilterPool[] pools = getFilterPools();
-		IHost[] hosts = getHosts();
-		IRSEPersistableContainer[] result = new IRSEPersistableContainer[pools.length + hosts.length];
-		System.arraycopy(pools, 0, result, 0, pools.length);
-		System.arraycopy(hosts, 0, result, pools.length, hosts.length);
+		List children = new ArrayList(10);
+		children.addAll(Arrays.asList(getFilterPools()));
+		children.addAll(Arrays.asList(getHosts()));
+		children.addAll(Arrays.asList(getPropertySets()));
+		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
+		children.toArray(result);
 		return result;	
 	}
 	
@@ -224,10 +235,11 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 		return provider;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemProfile#setPersistenceProvider(org.eclipse.rse.persistence.IRSEPersistenceProvider)
+	 */
 	public void setPersistenceProvider(IRSEPersistenceProvider provider) {
 		this.provider = provider;
 	}
 	
-	
-
 }

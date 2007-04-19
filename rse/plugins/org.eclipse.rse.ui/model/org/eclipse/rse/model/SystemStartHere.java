@@ -21,7 +21,7 @@ import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.model.SystemProfileManager;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 
@@ -161,7 +161,7 @@ public class SystemStartHere
 	*/
    public static ISystemProfileManager getSystemProfileManager()
    {
-	   return SystemProfileManager.getSystemProfileManager();
+	   return SystemProfileManager.getDefault();
    }
 
     /**

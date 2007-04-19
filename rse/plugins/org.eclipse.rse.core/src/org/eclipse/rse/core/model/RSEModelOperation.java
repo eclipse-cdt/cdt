@@ -74,10 +74,8 @@ public abstract class RSEModelOperation {
 	 * Ends a transaction. Schedules all changed profiles for save.
 	 */
 	private static void endTransaction() {
-		ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
-		ISystemProfileManager profileManager = registry.getSystemProfileManager();
 		IRSEPersistenceManager persistenceManager = RSECorePlugin.getDefault().getPersistenceManager();
-		persistenceManager.commit(profileManager);
+		persistenceManager.commitProfiles();
 	}
 
 	/**

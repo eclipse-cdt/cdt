@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.internal.model.SystemProfileManager;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -61,7 +61,7 @@ public class SystemTeamViewActiveProfileAction extends SystemBaseAction
 		ISystemProfile profile = (ISystemProfile)getFirstSelection();
 		if (profile == null)
 		  return false;
-		ISystemProfileManager mgr = SystemProfileManager.getSystemProfileManager();
+		ISystemProfileManager mgr = SystemProfileManager.getDefault();
 		// todo... we need to have two actions, one to make active, and one to make inactive.
 		while (profile != null)
 		{

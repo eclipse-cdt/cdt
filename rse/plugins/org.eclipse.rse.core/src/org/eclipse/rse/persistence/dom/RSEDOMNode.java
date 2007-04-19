@@ -21,10 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RSEDOMNode implements Serializable {
-	/*
-	 * Recommended for serializable objects. This should be updated if there is a schema change. 
-	 */
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 1L; // This should be updated if there is a schema change.
 	protected String _type;
 	protected String _name;
 	protected RSEDOMNode _parent;
@@ -218,6 +216,14 @@ public class RSEDOMNode implements Serializable {
 
 	public void setRestoring(boolean restoring) {
 		this.restoring = restoring;
+	}
+	
+	public void setName(String name) {
+		_name = name;
+	}
+	
+	public void setType(String type) {
+		_type = type;
 	}
 
 }

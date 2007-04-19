@@ -18,6 +18,7 @@ package org.eclipse.rse.core.filters;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -25,15 +26,11 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEPersistableObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.internal.core.filters.ISystemFilterConstants;
+import org.eclipse.rse.internal.core.filters.SystemFilterPool;
 import org.eclipse.rse.logging.Logger;
-import org.eclipse.rse.persistence.IRSEPersistenceManager;
-
-//
-//
 
 /**
  * A filter pool manager manages filter pools.
@@ -190,10 +187,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 */
 	protected boolean singleFilterStringOnly = SINGLE_FILTER_STRING_ONLY_EDEFAULT;
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected java.util.List pools = null;
+	protected List pools = null;
 
 	/**
 	 * Constructor
@@ -224,7 +218,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 *   individual filter pool level.
 	 * @param savePolicy The save policy for the filter pools and filters. One of the
 	 *   following constants from the 
-	 *   {@link org.eclipse.rse.internal.core.filters.ISystemFilterConstants SystemFilterConstants} interface:
+	 *   {@link ISystemFilterConstants} interface:
 	 *   <ul>
 	 *     <li>SAVE_POLICY_NONE - no files, all save/restore handled elsewhere
 	 *     <li>SAVE_POLICY_ONE_FILE_PER_MANAGER - one file: mgrName.xmi
@@ -238,26 +232,8 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	public static ISystemFilterPoolManager createSystemFilterPoolManager(ISystemProfile profile, Logger logger, 
 			ISystemFilterPoolManagerProvider caller, String name, boolean allowNestedFilters,
 			int savePolicy, IRSEFilterNamingPolicy namingPolicy) {
-
-		SystemFilterPoolManager mgr = null;
-		if (namingPolicy == null) namingPolicy = SystemFilterNamingPolicy.getNamingPolicy();
-		try {
-			mgr = (SystemFilterPoolManager) RSECorePlugin.getThePersistenceManager().restoreFilterPoolManager(profile, logger, caller, name);
-			/*
-			 if (savePolicy != SystemFilterConstants.SAVE_POLICY_NONE)
-			 mgr = (SystemFilterPoolManagerImpl)restore(;
-			 */
-		} catch (Exception exc) // real error trying to restore, versus simply not found.
-		{
-			// todo: something. Log the exception somewhere?
-		}
-		if (mgr == null) // not found or some serious error.
-		{
-			mgr = createManager(profile);
-		}
-		if (mgr != null) {
-			mgr.initialize(logger, caller, name, allowNestedFilters);
-		}
+		SystemFilterPoolManager mgr = SystemFilterPoolManager.createManager(profile);
+		mgr.initialize(logger, caller, name, allowNestedFilters);
 		return mgr;
 	}
 
@@ -276,30 +252,29 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * Private helper method to initialize state
 	 */
 	public void initialize(Logger logger, ISystemFilterPoolManagerProvider caller, String name, boolean allowNestedFilters) {
-		if (!initialized) initialize(logger, caller, name); // core data
-
-		{
-			java.util.List pools = getPools();
-			ISystemFilterPool pool = null;
-			Vector poolNames = getSystemFilterPoolNamesVector();
-			for (int idx = 0; idx < poolNames.size(); idx++) {
-				String poolName = (String) poolNames.elementAt(idx);
-				pool = RSECorePlugin.getThePersistenceManager().restoreFilterPool(poolName);
-				pool.setSystemFilterPoolManager(this);
-				pools.add(pool);
-
-				/** FIXME test
-				 if (pool.specialCaseNoDataRestored)
-				 {
-				 pool.setDeletable(true); // what else to do?
-				 //pool.setSupportsNestedFilters(allowNestedFilters); will be cascaded down anyway
-				 }
-				 */
-			}
-
+		if (!initialized) {
+			initialize(logger, caller, name); // core data
 		}
 		setSupportsNestedFilters(allowNestedFilters); // cascade it down    	
 		invalidatePoolCache();
+//		List pools = getPools();
+//		ISystemFilterPool pool = null;
+//		Vector poolNames = getSystemFilterPoolNamesVector();
+//		for (int idx = 0; idx < poolNames.size(); idx++) {
+//			String poolName = (String) poolNames.elementAt(idx);
+////			pool = RSECorePlugin.getThePersistenceManager().restoreFilterPool(poolName);
+//			pool = null; // that's what the above returned
+//			pool.setSystemFilterPoolManager(this);
+//			pools.add(pool);
+//
+//			/** FIXME test
+//			 if (pool.specialCaseNoDataRestored)
+//			 {
+//			 pool.setDeletable(true); // what else to do?
+//			 //pool.setSupportsNestedFilters(allowNestedFilters); will be cascaded down anyway
+//			 }
+//			 */
+//		}
 	}
 
 	/*
@@ -309,7 +284,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	public void initialize(Logger logger, ISystemFilterPoolManagerProvider caller, String name) {
 		this.logger = logger;
 		setProvider(caller);
-		setNameGen(name);
+		setName(name);
 		setFilterPoolManager(); // cascade it down
 		initialized = true;
 	}
@@ -331,14 +306,11 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 
 	/**
 	 * Set the name of this manager.
-	 * Intercepted so the file get be renamed for SAVE_POLICY_ONE_FILE_PER_MANAGER.
 	 */
-	public void setName(String name) {
-		String oldName = getName();
-		if (oldName != null) {
-			if (!oldName.equals(name)) {
-				this.name = name;
-			}
+	public void setName(String newName) {
+		if ((name == null && newName != null) || !name.equals(newName)) {
+			this.name = newName;
+			setDirty(true);
 		}
 	}
 
@@ -473,7 +445,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	public ISystemFilterPool[] getSystemFilterPools() {
 		//System.out.println("Inside getSFPools for mgr "+getName()+". poolArray null? "+(poolArray==null));
 		if ((poolArray == null) || (getPools().size() != poolArray.length)) {
-			java.util.List pools = getPools();
+			List pools = getPools();
 			poolArray = new ISystemFilterPool[pools.size()];
 			Iterator i = pools.iterator();
 			int idx = 0;
@@ -499,7 +471,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * Get list of filter pool names currently existing.
 	 */
 	public Vector getSystemFilterPoolNamesVector() {
-		java.util.List pools = getPools();
+		List pools = getPools();
 		if ((poolNames == null) || (poolNames.size() != pools.size())) // been invalidated?
 		{
 			poolNames = new Vector();
@@ -540,30 +512,20 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * Calls back to inform provider of this event
 	 */
 	public ISystemFilterPool createSystemFilterPool(String poolName, boolean isDeletable) throws Exception {
-		// always trim the pool name, MOF does not handle trailing or preceding spaces
-		poolName = poolName.trim();
-
-		if (getSystemFilterPool(poolName) != null) return null;
-
 		ISystemFilterPool pool = null;
-
-		ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
-		ISystemFilterPool filterPool = registry.getSystemFilterPool();
-		pool = filterPool.createSystemFilterPool(poolName, supportsNestedFilters(), isDeletable, ISystemFilterConstants.TRY_TO_RESTORE_NO);
-
-		if (pool != null) {
+		poolName = poolName.trim();
+		if (getSystemFilterPool(poolName) == null) {
+			pool = new SystemFilterPool(poolName, supportsNestedFilters(), isDeletable);
 			pool.setSystemFilterPoolManager(this);
 			pool.setStringsCaseSensitive(areStringsCaseSensitive());
-			if (isSetSupportsDuplicateFilterStrings()) pool.setSupportsDuplicateFilterStrings(supportsDuplicateFilterStrings());
-			// add to model
-			java.util.List pools = getPools();
+			pool.setSupportsDuplicateFilterStrings(isSetSupportsDuplicateFilterStrings() && supportsDuplicateFilterStrings());
+			List pools = getPools();
 			pools.add(pool);
-			//System.out.println("Inside createSFPool for mgr "+getName()+". Pool "+name+" added");
 			invalidatePoolCache();
-			// save to disk...
 			commit(pool);
-			// if caller provider, callback to inform them of this event
-			if ((caller != null) && !suspendCallbacks) caller.filterEventFilterPoolCreated(pool);
+			if ((caller != null) && !suspendCallbacks) {
+				caller.filterEventFilterPoolCreated(pool);
+			}
 		}
 		return pool;
 	}
@@ -601,8 +563,9 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 		// DWD removing a pool should mark its parent profile as dirty and cause a save to be "scheduled"
 
 		// remove from model
-		java.util.List pools = getPools();
+		List pools = getPools();
 		pools.remove(pool);
+		invalidatePoolCache();
 
 		/* FIXME
 		 // now in EMF, the pools are "owned" by the Resource, and only referenced by this pool manager,
@@ -1530,7 +1493,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 		/* FIXME
 		 String fileName = getRootSaveFileName(namingPolicy, name);
 		 
-		 java.util.List ext = getMOFHelpers(logger).restore(mgrFolder,fileName);
+		 List ext = getMOFHelpers(logger).restore(mgrFolder,fileName);
 		 
 		 SystemFilterPoolManager mgr = null;
 
@@ -1652,23 +1615,11 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 */
-	public java.util.List getPools() {
+	public List getPools() {
 		if (pools == null) {
 			pools = new ArrayList();
-			//FIXME new EObjectResolvingeList(SystemFilterPool.class, this, FiltersPackage.SYSTEM_FILTER_POOL_MANAGER__POOLS);
 		}
 		return pools;
-	}
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	public void setNameGen(String newName) {
-		String oldName = name;
-		if (oldName != newName) {
-			name = newName;
-			setDirty(true);
-		}
 	}
 
 	/**
@@ -1727,8 +1678,9 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * Uses the save policy specified in this manager's factory method.
 	 */
 	public boolean commit() {
-		IRSEPersistenceManager mgr = RSECorePlugin.getThePersistenceManager();
-		return mgr.commit(this);
+		ISystemProfile profile = getSystemProfile();
+		boolean result = profile.commit();
+		return result;
 	}
 
 	/**
@@ -1741,12 +1693,11 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	}
 
 	public IRSEPersistableContainer getPersistableParent() {
-		return _profile;
+		return null;
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		IRSEPersistableContainer[] result = getSystemFilterPools();
-		return result;
+		return new IRSEPersistableContainer[0];
 	}
 
 }

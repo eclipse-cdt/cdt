@@ -30,7 +30,6 @@ import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -40,13 +39,14 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemFilterNamingPolicy;
-import org.eclipse.rse.internal.core.filters.ISystemFilterConstants;
+import org.eclipse.rse.internal.core.model.SystemProfile;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.persistence.dom.RSEDOMNode;
 import org.eclipse.rse.persistence.dom.RSEDOMNodeAttribute;
 
-public class RSEDOMImporter implements IRSEDOMImporter {
+public class RSEDOMImporter {
 	private static RSEDOMImporter _instance = new RSEDOMImporter();
 	private ISystemRegistry _registry;
 
@@ -63,20 +63,17 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 
 	/**
 	 * Restores the profile represented by dom
-	 * @param profileManager
 	 * @param dom
 	 * @return the restored profile
 	 */
-	public ISystemProfile restoreProfile(ISystemProfileManager profileManager, RSEDOM dom) {
-		// create the profile
+	public ISystemProfile restoreProfile(RSEDOM dom) {
 		String profileName = dom.getName();
 		boolean defaultPrivate = getBooleanValue(dom.getAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT_PRIVATE).getValue());
 		boolean isActive = getBooleanValue(dom.getAttribute(IRSEDOMConstants.ATTRIBUTE_IS_ACTIVE).getValue());
-		ISystemProfile profile = profileManager.createSystemProfile(profileName, isActive);
-
+		ISystemProfile profile = new SystemProfile(profileName, isActive);
 		if (profile != null) {
 			profile.setDefaultPrivate(defaultPrivate);
-			profileManager.makeSystemProfileActive(profile, isActive);
+			SystemProfileManager.getDefault().addSystemProfile(profile);
 			// restore the children for the profile
 			RSEDOMNode[] children = dom.getChildren();
 			for (int i = 0; i < children.length; i++) {
@@ -130,7 +127,6 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 				restorePropertySet(host, child);
 			}
 		}
-		
 		return host;
 	}
 
@@ -194,7 +190,7 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 	}
 
 	public IServerLauncherProperties restoreServerLauncher(IConnectorService service, RSEDOMNode serverLauncherNode, IServerLauncherProperties sl) {
-		//		 restore all property sets
+		// restore all property sets
 		RSEDOMNode[] psChildren = serverLauncherNode.getChildren(IRSEDOMConstants.TYPE_PROPERTY_SET);
 		for (int p = 0; p < psChildren.length; p++) {
 			RSEDOMNode psChild = psChildren[p];
@@ -232,7 +228,7 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 					subSystem = existingSubSystems[0];
 				}
 			}
-
+			
 			if (subSystem == null) {
 				// subSystem = factory.createSubSystemInternal(host);
 				ISubSystem[] createdSystems = _registry.createSubSystems(host, new ISubSystemConfiguration[]{factory});
@@ -243,7 +239,6 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 			subSystem.setSubSystemConfiguration(factory);
 			subSystem.setName(factory.getName());
 			subSystem.setConfigurationId(factory.getId());
-			subSystem.setWasRestored(true);
 
 			if (factory.supportsFilters()) {
 				ISystemFilterStartHere startHere = _registry.getSystemFilterStartHere();
@@ -267,6 +262,7 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 				restorePropertySet(subSystem, psChild);
 			}
 		}
+		subSystem.wasRestored();
 		return subSystem;
 	}
 
@@ -304,10 +300,6 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 
 		// create the filter
 		ISystemFilter filter = filterPool.createSystemFilter(name, filterStrings);
-
-		filter.setWasRestored(true);
-
-		// set filter attributes
 		filter.setSupportsNestedFilters(supportsNestedFilters);
 		filter.setRelativeOrder(relativeOrder);
 		filter.setDefault(isDefault);
@@ -361,26 +353,21 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 					filterPool = mgr.getSystemFilterPool(name);
 				}
 				if (filterPool == null) {
-					filterPool = _registry.getSystemFilterPool().createSystemFilterPool(name, supportsNestedFilters, isDeletable, ISystemFilterConstants.TRY_TO_RESTORE_NO);
-
-					if (filterPool != null) {
-						filterPool.setSystemFilterPoolManager(mgr);
-						// add to model
-						mgr.getPools().add(filterPool);
-					}
+					filterPool = mgr.createSystemFilterPool(name, isDeletable);
+//					filterPool = new SystemFilterPool(name, supportsNestedFilters, isDeletable);
+//					filterPool.setSystemFilterPoolManager(mgr);
+//					mgr.getPools().add(filterPool);
 				}
-				if (filterPool != null) {
-					filterPool.setType(type);
-					filterPool.setDefault(isDefault);
-					filterPool.setSupportsNestedFilters(supportsNestedFilters);
-					filterPool.setStringsCaseSensitive(isSetStringsCaseSensitive);
-					filterPool.setSupportsDuplicateFilterStrings(isSetSupportsDuplicateFilterStrings);
-					filterPool.setRelease(release);
-					filterPool.setSingleFilterStringOnly(isSetSingleFilterStringOnly);
-					filterPool.setOwningParentName(owningParentName);
-					filterPool.setNonRenamable(isNonRenamable);
-					filterPool.setWasRestored(true);
-				}
+				filterPool.setType(type);
+				filterPool.setDefault(isDefault);
+				filterPool.setSupportsNestedFilters(supportsNestedFilters);
+				filterPool.setStringsCaseSensitive(isSetStringsCaseSensitive);
+				filterPool.setSupportsDuplicateFilterStrings(isSetSupportsDuplicateFilterStrings);
+				filterPool.setRelease(release);
+				filterPool.setSingleFilterStringOnly(isSetSingleFilterStringOnly);
+				filterPool.setOwningParentName(owningParentName);
+				filterPool.setNonRenamable(isNonRenamable);
+//				filterPool.wasRestored();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -407,26 +394,15 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 	 */
 	public ISystemFilterPoolReference restoreFilterPoolReference(ISubSystem subsystem, RSEDOMNode node) {
 		ISystemFilterPoolReference filterPoolReference = null;
-		String subsystemName = node.getAttribute(IRSEDOMConstants.ATTRIBUTE_REF_ID).getValue();
 		String filterPoolName = node.getName();
-		ISubSystemConfiguration configuration = getSubSystemConfiguration(subsystemName);
-		if (configuration != null) {
-			ISystemProfile profile = subsystem.getSystemProfile(); // DWD are there cases where this may be null?
-			ISystemFilterPoolManager filterPoolManager = configuration.getFilterPoolManager(profile);
-			ISystemFilterPool filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
-			ISystemFilterPoolReferenceManager referenceManager = subsystem.getFilterPoolReferenceManager();
-			/*
-			 * DWD filterpool can be null when restoring since there can be forward references. 
-			 * A profile may be being restored that has references to a filter pool in a profile that doesn't yet exist. 
-			 * Need to create an "unresolved" reference instead of a null object and then patch them up on first access.
-			 */
-			// create reference to the filterpool
-			if (filterPool != null) {
-				filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPool);
-			} else {
-				filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPoolManager, filterPoolName);
-			}
+		String[] part = filterPoolName.split("___", 2); //$NON-NLS-1$
+		if (part.length == 1) { // name is unqualified and refers to a filter pool in the current profile, ensure it is qualified
+			ISystemProfile profile = subsystem.getSystemProfile();
+			String profileName = profile.getName();
+			filterPoolName = profileName + "___" + filterPoolName; //$NON-NLS-1$
 		}
+		ISystemFilterPoolReferenceManager referenceManager = subsystem.getFilterPoolReferenceManager();
+		filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPoolName);
 		return filterPoolReference;
 	}
 

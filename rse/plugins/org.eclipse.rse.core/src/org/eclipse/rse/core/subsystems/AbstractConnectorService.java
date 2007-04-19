@@ -18,11 +18,11 @@
 package org.eclipse.rse.core.subsystems;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
@@ -253,8 +253,12 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
 		List children = new ArrayList(20);
-		children.add(getRemoteServerLauncherProperties());
+		IServerLauncherProperties launcherProperties = getRemoteServerLauncherProperties();
+		if (launcherProperties != null) {
+			children.add(getRemoteServerLauncherProperties());
+		}
 		children.addAll(_registeredSubSystems);
+		children.addAll(Arrays.asList(getPropertySets()));
 		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
 		children.toArray(result);
 		return result;

@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.internal.core.filters;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -384,9 +386,10 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 * Create a filter pool reference. This creates an unresolved raw reference that
 	 * must be added to the managed lists by the caller.
 	 * That will be attempted to be resolved on first use.
+	 * @param filterPoolName the fully qualified filter pool name
 	 */
-	private ISystemFilterPoolReference createSystemFilterPoolReference(ISystemFilterPoolManager filterPoolManager, String filterPoolName) {
-		ISystemFilterPoolReference filterPoolReference = new SystemFilterPoolReference(filterPoolManager, filterPoolName);
+	private ISystemFilterPoolReference createSystemFilterPoolReference(String filterPoolName) {
+		ISystemFilterPoolReference filterPoolReference = new SystemFilterPoolReference(filterPoolName);
 		invalidateFilterPoolReferencesCache();
 		return filterPoolReference;
 	}
@@ -503,10 +506,16 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 */
 	public ISystemFilterPool[] getReferencedSystemFilterPools() {
 		ISystemFilterPoolReference[] refs = getSystemFilterPoolReferences();
-		ISystemFilterPool[] pools = new ISystemFilterPool[refs.length];
-		for (int idx = 0; idx < pools.length; idx++)
-			pools[idx] = refs[idx].getReferencedFilterPool();
-		return pools;
+		List pools = new ArrayList(refs.length);
+		for (int idx = 0; idx < refs.length; idx++) {
+			ISystemFilterPool pool = refs[idx].getReferencedFilterPool();
+			if (pool != null) {
+				pools.add(pool);
+			}
+		}
+		ISystemFilterPool[] result = new ISystemFilterPool[pools.size()];
+		pools.toArray(result);
+		return result;
 	}
 
 	/**
@@ -542,8 +551,8 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.filters.ISystemFilterPoolReferenceManager#addReferenceToSystemFilterPool(org.eclipse.rse.filters.ISystemFilterPoolManager, java.lang.String)
 	 */
-	public ISystemFilterPoolReference addReferenceToSystemFilterPool(ISystemFilterPoolManager filterPoolManager, String filterPoolName) {
-		ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPoolManager, filterPoolName);
+	public ISystemFilterPoolReference addReferenceToSystemFilterPool(String filterPoolName) {
+		ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPoolName);
 		addReferencingObject(filterPoolReference);
 		filterPoolReference.setParentReferenceManager(this);
 		invalidateFilterPoolReferencesCache();

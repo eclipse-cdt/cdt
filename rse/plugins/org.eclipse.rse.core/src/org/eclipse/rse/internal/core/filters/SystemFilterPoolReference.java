@@ -16,9 +16,6 @@
 
 package org.eclipse.rse.internal.core.filters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -35,6 +32,7 @@ import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.references.SystemPersistableReferencingObject;
 
 /**
@@ -66,13 +64,10 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	
 	/**
 	 * Constructs a new filter pool reference. This is an unresolved reference.
-	 * It is resolved on first use by using the supplied filterPoolManager.
-	 * @param filterPoolManager the manager used to resolve the reference.
 	 * @param filterPoolName the name of the filter pool.
 	 */
-	public SystemFilterPoolReference(ISystemFilterPoolManager filterPoolManager, String filterPoolName) {
+	public SystemFilterPoolReference(String filterPoolName) {
 		this();
-		this.filterPoolManager = filterPoolManager;
 		setReferencedObjectName(filterPoolName);
 	}
 
@@ -105,28 +100,48 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#getReferencedFilterPoolName()
 	 */
 	public String getReferencedFilterPoolName() {
-		String savedName = super.getReferencedObjectName();
-		String poolName = null;
-		int idx = savedName.indexOf(DELIMITER);
-		if (idx >= 0)
-			poolName = savedName.substring(idx + DELIMITER_LENGTH);
-		else
-			poolName = savedName;
-		return poolName;
+		/*
+		 * A filter pool reference stores the name of the filter pool it references in the form managerName___filterPoolName.
+		 * or in the unqualified form of filterPoolName which references a locally defined filter pool.
+		 * ___ is the delimiter. Absence of the delimiter indicates an unqualified name.
+		 * The filter pool manager name is the same as its owning profile.
+		 */
+		String savedName = getReferencedObjectName();
+		String[] parts = savedName.split(DELIMITER, 2);
+		String result = parts[0];
+		if (parts.length == 2) {
+			result = parts[1];
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#getReferencedFilterPoolManagerName()
 	 */
 	public String getReferencedFilterPoolManagerName() {
-		String savedName = super.getReferencedObjectName();
-		String mgrName = null;
-		int idx = savedName.indexOf(DELIMITER);
-		if (idx >= 0)
-			mgrName = savedName.substring(0, idx);
-		else
-			mgrName = savedName;
-		return mgrName;
+		/*
+		 * A filter pool reference stores the name of the filter pool it references in the form managerName___filterPoolName.
+		 * or in the unqualified form of filterPoolName which references a locally defined filter pool.
+		 * ___ is the delimiter. Absence of the delimiter indicates an unqualified name.
+		 * The filter pool manager name is the same as its owning profile.
+		 */
+		String result = null;
+		String savedName = getReferencedObjectName();
+		String[] parts = savedName.split(DELIMITER, 2);
+		if (parts.length == 2) {
+			result = parts[0];
+		} else {
+			ISystemFilterPoolReferenceManagerProvider provider = getProvider();
+			if (provider instanceof ISubSystem) {
+				ISubSystem subsystem = (ISubSystem) provider;
+				ISystemProfile profile = subsystem.getSystemProfile();
+				result = profile.getName();
+			}
+		}
+		if (result == null) {
+			RSECorePlugin.getDefault().getLogger().logWarning("Unexpected condition: filter pool manager name not found.", null); //$NON-NLS-1$
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -150,28 +165,20 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		ISystemFilterPool filterPool = (ISystemFilterPool) getReferencedObject();
 		if (filterPool == null) {
 			String filterPoolName = getReferencedFilterPoolName();
+			String profileName = getReferencedFilterPoolManagerName();
+			ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
+			ISystemProfile profile = registry.getSystemProfile(profileName);
+			ISubSystem subsystem = (ISubSystem) getProvider();
+			ISubSystemConfiguration config = subsystem.getSubSystemConfiguration();
+			filterPoolManager = config.getFilterPoolManager(profile);
 			filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
-			if (filterPool == null) {
-				Pattern p = Pattern.compile("(^.*):"); //$NON-NLS-1$
-				Matcher m = p.matcher(filterPoolName);
-				if (m.find()) {
-					String profileName = m.group(1);
-					ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
-					ISystemProfile profile = registry.getSystemProfile(profileName);
-					if (profile != null) {
-						ISystemFilterPool[] pools = profile.getFilterPools();
-						for (int i = 0; i < pools.length && filterPool == null; i++) {
-							ISystemFilterPool pool = pools[i];
-							if (filterPoolName.equals(pool.getName())) filterPool = pool;
-						}
-					}
-				}
-			}
-			if (filterPool != null) {
-				setReferenceToFilterPool(filterPool);
-			}
 		}
-		setReferenceBroken(filterPool == null);
+		if (filterPool != null) {
+			setReferenceToFilterPool(filterPool);
+			setReferenceBroken(false);
+		} else {
+			setReferenceBroken(true);
+		}
 		return filterPool;
 	}
 
@@ -234,7 +241,7 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#getFullName()
 	 */
 	public String getFullName() {
-		return super.getReferencedObjectName();
+		return getReferencedObjectName();
 	}
 
 	/* (non-Javadoc)

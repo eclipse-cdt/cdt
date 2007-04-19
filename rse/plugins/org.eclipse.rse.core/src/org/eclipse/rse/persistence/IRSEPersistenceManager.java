@@ -16,84 +16,89 @@
 
 package org.eclipse.rse.persistence;
 
-import org.eclipse.rse.core.filters.ISystemFilterPool;
-import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
-import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.model.ISystemProfileManager;
-import org.eclipse.rse.logging.Logger;
 
 public interface IRSEPersistenceManager {
 
-	public boolean commit(ISystemFilterPoolManager filterPoolManager);
-
 	/**
-	 * Save all connections in the connection pool
-	 * @param connectionPool
+	 * Save a particular profile. If the profile has an existing persistence provider
+	 * it is saved by that persistence provider. If the profile has no persistence provider
+	 * then the default persistence provider is used.
+	 * @param profile the profile to save
 	 * @return true if successful
 	 */
-	public boolean commit(ISystemHostPool connectionPool);
+	public boolean commitProfile(ISystemProfile profile);
 
 	/**
-	 * Save this profile
-	 * @param profile
+	 * Save all profiles.
 	 * @return true if successful
 	 */
-	public boolean commit(ISystemProfile profile);
+	public boolean commitProfiles();
 
 	/**
-	 * Save all profiles
-	 * @param profileManager
-	 * @return true if successful
+	 * Restore all profiles
+	 * @return an array of restored profiles.
 	 */
-	public boolean commit(ISystemProfileManager profileManager);
+	public ISystemProfile[] restoreProfiles();
+
+	/**
+	 * Restore a profiles particular provider by name.
+	 * @param provider a persistence provider
+	 * @param profileName the name of the profile to restore
+	 * @return the restored profile or null if no profile of that name is known to this provider.
+	 */
+	public ISystemProfile restoreProfile(IRSEPersistenceProvider provider, String profileName);
 
 	/**
 	 * Delete the persistent form of a profile.
+	 * @param persistenceProvider the persistence provider to use to delete the profile.
+	 * If this is null the default persistence provider is used.
 	 * @param profileName The name of the profile to delete
 	 */
-	public void deleteProfile(String profileName);
-
-	public boolean isExporting();
-
-	public boolean isImporting();
+	public void deleteProfile(IRSEPersistenceProvider persistenceProvider, String profileName);
+	
+	/**
+	 * Migrates a profile to a new persistence provider. It will delete the persistent form known to its previous
+	 * persistence provider. If the new provider and the previous provider are the same this does nothing.
+	 * @param profile the system profile to be migrated
+	 * @param persistenceProvider the persistence provider to which this profile will be migrated.
+	 */
+	public void migrateProfile(ISystemProfile profile, IRSEPersistenceProvider persistenceProvider);
 
 	/**
 	 * Register the persistence provider to be used when saving and restoring RSE doms.
 	 * The provider is registered under the provided id.
+	 * If the id has already been registered, this provider replaces the previous provider
+	 * with that id.
 	 * @param id the provider id.
 	 * @param provider the provider.
 	 */
-	public void registerRSEPersistenceProvider(String id, IRSEPersistenceProvider provider);
+	public void registerPersistenceProvider(String id, IRSEPersistenceProvider provider);
+	
+	/**
+	 * @return an array of persistence provider ids known to this workbench. These may have been
+	 * provided by extension point or by registering them using 
+	 * {@link #registerPersistenceProvider(String, IRSEPersistenceProvider)}
+	 */
+	public String[] getPersistenceProviderIds();
+	
+	/**
+	 * Retrieves the persistence provider named by a particular id. It can return null if there
+	 * is no provider known by that id. This may have the effect of activating the plugin that 
+	 * contains this provider.
+	 * @param id the id of the persistence provider to locate
+	 * @return the persistence provider or null
+	 */
+	public IRSEPersistenceProvider getPersistenceProvider(String id);
 
 	/**
-	 * Restore all the filters for the filter pool
-	 * @param filterPool
-	 * @return true if sucessful
+	 * @return true if this instance of the persistence manager is currently exporting a profile.
 	 */
-	public boolean restore(ISystemFilterPool filterPool);
+	public boolean isExporting();
 
 	/**
-	 * Restore all connections in the connection pool
-	 * @param connectionPool
-	 * @return true if successful
+	 * @return true if this instance of the persistence manager is currently importing a profile.
 	 */
-	public boolean restore(ISystemHostPool connectionPool);
+	public boolean isImporting();
 
-	/**
-	 * Restore all profiles
-	 * @param profileManager
-	 * @return true if successful
-	 */
-	public boolean restore(ISystemProfileManager profileManager);
-
-	/**
-	 * Restore the filter pool
-	 * @param name
-	 * @return the filter pool if successful
-	 */
-	public ISystemFilterPool restoreFilterPool(String name);
-
-	public ISystemFilterPoolManager restoreFilterPoolManager(ISystemProfile profile, Logger logger, ISystemFilterPoolManagerProvider caller, String name);
 }

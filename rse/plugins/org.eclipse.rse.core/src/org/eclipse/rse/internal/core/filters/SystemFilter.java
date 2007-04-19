@@ -17,6 +17,7 @@
 package org.eclipse.rse.internal.core.filters;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -1384,6 +1385,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		if (filterStringVector != null) {
 			children.addAll(filterStringVector);
 		}
+		children.addAll(Arrays.asList(getPropertySets()));
 		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
 		children.toArray(result);
 		return result;

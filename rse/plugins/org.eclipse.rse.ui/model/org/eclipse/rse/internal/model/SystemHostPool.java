@@ -34,6 +34,7 @@ import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.internal.core.model.RSEModelResources;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 
 
@@ -102,7 +103,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      */
     public ISystemProfile getSystemProfile()
     {
-    	return SystemProfileManager.getSystemProfileManager().getSystemProfile(getName());
+    	return SystemProfileManager.getDefault().getSystemProfile(getName());
     }	
 	
 	/**
@@ -408,7 +409,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     	conn.deletingHost(); // let connection do any necessary cleanup
         getHostList().remove(conn);
         setDirty(true);
-        RSECorePlugin.getThePersistenceManager().commit(conn.getSystemProfile());
+        conn.getSystemProfile().commit();
     }
 
     /**
@@ -648,7 +649,9 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	 */
 	public boolean commit()
 	{
-		return RSECorePlugin.getThePersistenceManager().commit(this);
+		ISystemProfile profile = getSystemProfile();
+		boolean result = profile.commit();
+		return result;
 	}
 
 	/**

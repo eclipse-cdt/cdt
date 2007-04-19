@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -89,7 +90,7 @@ public class SystemViewFilterPoolReferenceAdapter
 		  	 menu.add(menuGroup, action);
 		  }   
 		}    	  
-		actions = adapter.getFilterPoolReferenceActions(menu, selection, shell, menuGroup, ssFactory, getFilterPoolReference(element));
+		actions = adapter.getFilterPoolReferenceActions(menu, selection, shell, menuGroup, ssFactory, (ISystemFilterPoolReference)element);
 		if (actions != null)
 		{
 		  //menu.addSeparator();
@@ -112,35 +113,35 @@ public class SystemViewFilterPoolReferenceAdapter
 	 */ 	
 	public ISubSystem getSubSystem(Object element)
 	{
-		return ((ISubSystem)getFilterPoolReference(element).getProvider());
+		ISystemFilterPoolReference ref = (ISystemFilterPoolReference)element;
+		return (ISubSystem)ref.getProvider();
 	}
 	
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * @param element The element for which an image is desired
 	 */
-	public ImageDescriptor getImageDescriptor(Object element)
-	{
-    	ImageDescriptor poolImage = null;
-    	ISystemFilterPool pool = getFilterPool(element);
-    	if (pool.getProvider() != null)
-    	{
-    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)pool.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
-          poolImage = adapter.getSystemFilterPoolImage(pool); 
-    	}
-    	if (poolImage == null)
-    	  poolImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
-    	return poolImage;  	
-	}
-	
-	private ISystemFilterPoolReference getFilterPoolReference(Object element)
-	{
-		return (ISystemFilterPoolReference)element; // get referenced object
+	public ImageDescriptor getImageDescriptor(Object element) {
+		ImageDescriptor poolImage = null;
+		ISystemFilterPool pool = getFilterPool(element);
+		if (pool != null) {
+			ISystemFilterPoolManagerProvider provider = pool.getProvider();
+			if (provider != null) {
+				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter) provider.getAdapter(ISubSystemConfigurationAdapter.class);
+				poolImage = adapter.getSystemFilterPoolImage(pool);
+			}
+		}
+		if (poolImage == null) {
+			poolImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
+		}
+		return poolImage;
 	}
 	
 	private ISystemFilterPool getFilterPool(Object element)
 	{
-		return getFilterPoolReference(element).getReferencedFilterPool(); // get master object
+		ISystemFilterPoolReference ref = (ISystemFilterPoolReference)element;
+		ISystemFilterPool pool = ref.getReferencedFilterPool();
+		return pool; // get master object
 	}
 
 	/**
@@ -148,16 +149,11 @@ public class SystemViewFilterPoolReferenceAdapter
 	 * @return the label for this filter pool reference.
 	 */
 	public String getText(Object element) {
-		String result = "unknown"; // $NON-NLS-1$ //$NON-NLS-1$
+		ISystemFilterPoolReference reference = (ISystemFilterPoolReference) element;
+		String result = reference.getName();
 		ISystemFilterPool pool = getFilterPool(element);
 		if (pool != null) {
 			result = pool.getName();
-// the following looks like it was copied from the host adapter and not really needed here.
-//			boolean qualifyNames = RSEUIPlugin.getTheSystemRegistry().getQualifiedHostNames();
-//			if (qualifyNames) {
-//				String prefix = SubSystemHelpers.getParentSystemProfile(pool).getName();
-//				result =  prefix + "." + result;
-//			}
 		}
 		return result;
 	}
@@ -178,13 +174,14 @@ public class SystemViewFilterPoolReferenceAdapter
 	public String getAbsoluteName(Object element)
 	{
 		//TODO consider caching the absolute name in the FilterPoolReference to avoid unnecessary String operations - the name won't ever change 
-		ISystemFilterPoolReference filterPoolRef = getFilterPoolReference(element);
+		ISystemFilterPoolReference filterPoolRef = (ISystemFilterPoolReference)element;
 		ISystemFilterPoolReferenceManagerProvider subSystem = filterPoolRef.getProvider();
 		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(subSystem);
 		String parentAbsoluteName = (adapter != null) ?	adapter.getAbsoluteName(subSystem) : ""; //$NON-NLS-1$
-		return parentAbsoluteName + "." +  //$NON-NLS-1$
-			filterPoolRef.getReferencedFilterPool().getSystemFilterPoolManager().getName() + "." +  //$NON-NLS-1$
-			filterPoolRef.getName();
+		String referenceName = filterPoolRef.getName();
+		String managerName = filterPoolRef.getReferencedFilterPoolManagerName();
+		String absoluteName = parentAbsoluteName + "." + managerName + "." +  referenceName; //$NON-NLS-1$ //$NON-NLS-2$
+		return absoluteName;
 	}
 	
 	/**
@@ -202,7 +199,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	 */
 	public Object getParent(Object element)
 	{
-		ISystemFilterPoolReference fpr = getFilterPoolReference(element);
+		ISystemFilterPoolReference fpr = (ISystemFilterPoolReference)element;
 		return SubSystemHelpers.getParentSubSystem(fpr);
 	}	
 	
@@ -212,7 +209,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	 */
 	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
-		ISystemFilterPoolReference fpRef = getFilterPoolReference(element);
+		ISystemFilterPoolReference fpRef = (ISystemFilterPoolReference)element;
 		ISubSystem ss = getSubSystem(element);
 		return fpRef.getSystemFilterReferences(ss);
 	}
@@ -222,7 +219,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	 */
 	public boolean hasChildren(IAdaptable element) {
 		int count = 0;
-		ISystemFilterPoolReference fpRef = getFilterPoolReference(element);
+		ISystemFilterPoolReference fpRef = (ISystemFilterPoolReference)element;
 		if (fpRef != null) {
 			ISystemFilterPool filterPool = fpRef.getReferencedFilterPool();
 			if (filterPool != null) {

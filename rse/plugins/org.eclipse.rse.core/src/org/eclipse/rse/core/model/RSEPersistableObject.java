@@ -1,11 +1,11 @@
 package org.eclipse.rse.core.model;
 
+
 public abstract class RSEPersistableObject implements IRSEPersistableContainer {
 
 	private boolean _isDirty = false;
 	private boolean _wasRestored = false;
 	private boolean _isTainted = false;
-	private boolean _restoring = false;
 
 	public RSEPersistableObject() {
 		super();
@@ -16,21 +16,8 @@ public abstract class RSEPersistableObject implements IRSEPersistableContainer {
 	}
 
 	public final void setDirty(boolean flag) {
-		if (!_restoring) {
-			_isDirty = flag;
-			if (flag) {
-				setTainted(true);
-			}
-		}
-	}
-
-	public final void beginRestore() {
-		_restoring = true;
-	}
-
-	public final void endRestore() {
-		_restoring = false;
-		setWasRestored(true);
+		_isDirty = flag;
+		setTainted(flag);
 	}
 
 	public final boolean wasRestored() {
@@ -46,21 +33,28 @@ public abstract class RSEPersistableObject implements IRSEPersistableContainer {
 	}
 
 	public final void setTainted(boolean flag) {
-		if (!_restoring) {
-			_isTainted = flag;
-			if (_isTainted) {
-				IRSEPersistableContainer parent = getPersistableParent();
-				if (parent != null) {
-					parent.setTainted(true);
-				}
-			} else {
-				IRSEPersistableContainer[] children = getPersistableChildren();
-				for (int i = 0; i < children.length; i++) {
-					IRSEPersistableContainer child = children[i];
-					child.setTainted(false);
-				}
+		boolean taintParent = flag && !_isTainted;
+		_isTainted = flag;
+		if (taintParent) {
+			IRSEPersistableContainer parent = getPersistableParent();
+			if (parent != null) {
+				parent.setTainted(true);
 			}
 		}
+	}
+
+	/**
+	 * Does a null-aware string comparison. Two strings that are
+	 * <code>null</code> will compare equal. Otherwise the result is 
+	 * the same as s1.equals(s2), if s1 is not null.
+	 * @param s1 The first string to compare
+	 * @param s2 the second string
+	 * @return true if the strings are equal or both null.
+	 */
+	protected boolean compareStrings(String s1, String s2) {
+		if (s1 == s2) return true;
+		if (s1 == null) return false;
+		return s1.equals(s2);
 	}
 
 }

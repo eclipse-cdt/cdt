@@ -531,7 +531,7 @@ public class SystemViewConnectionAdapter
 		IHost conn = (IHost)propertySourceInput;
 		
 		if (name.equals(ISystemPropertyConstants.P_SYSTEMTYPE))
-		  	return conn.getSystemType().getName();
+		  	return conn.getSystemType().getLabel();
 		else if (name.equals(ISystemPropertyConstants.P_HOSTNAME))
 		  	return conn.getHostName();
 		else if (name.equals(ISystemPropertyConstants.P_DEFAULTUSERID))

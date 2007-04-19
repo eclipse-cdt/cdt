@@ -20,6 +20,9 @@
 
 package org.eclipse.rse.core.subsystems;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IResource;
@@ -3249,8 +3252,14 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
+		List children = new ArrayList(10);
 		ISystemFilterPoolReferenceManager manager = getSystemFilterPoolReferenceManager();
-		IRSEPersistableContainer[] result = manager.getReferencedSystemFilterPools();
+		if (manager != null) {
+			children.addAll(Arrays.asList(manager.getSystemFilterPoolReferences()));
+		}
+		children.addAll(Arrays.asList(getPropertySets()));
+		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
+		children.toArray(result);
 		return result;
 	}
 	

@@ -153,5 +153,12 @@ public interface IPropertySet {
 	 *      or <code>false</code> if the key has not been part of the set.
 	 */
 	public boolean removeProperty(String key);
+	
+	/**
+	 * Sets the container of this property set. Used to notify the
+	 * container of a change in a property.
+	 * @param container
+	 */
+	public void setContainer(IPropertySetContainer container);
 
 }

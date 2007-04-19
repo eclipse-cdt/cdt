@@ -18,7 +18,6 @@ package org.eclipse.rse.internal.ui.dialogs;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -27,6 +26,7 @@ import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
+import org.eclipse.rse.ui.validators.ValidatorFactory;
 import org.eclipse.rse.ui.validators.ValidatorProfileName;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -71,10 +71,7 @@ public class SystemCopyProfileDialog extends SystemPromptDialog
 		{		
 		   setInputObject(profile);
 		}
-		
-		// FIXME cast to SystemProfileManager is temporary to get at api - need to use an adapter for getting validators
-		SystemProfileManager mgr = (SystemProfileManager)RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager();
-		nameValidator = mgr.getProfileNameValidator((String)null);		
+		nameValidator = ValidatorFactory.getProfileNameValidator((String)null);		
 		//pack();
 		setHelp(RSEUIPlugin.HELPPREFIX+"drnp0000"); //$NON-NLS-1$
 	}

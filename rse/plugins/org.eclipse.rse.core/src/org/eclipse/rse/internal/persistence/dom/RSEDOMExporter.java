@@ -31,7 +31,6 @@ import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IDelegatingConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
@@ -41,20 +40,15 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.persistence.dom.RSEDOMNode;
 
 public class RSEDOMExporter implements IRSEDOMExporter {
+	
 	private static RSEDOMExporter _instance = new RSEDOMExporter();
 	private Map _domMap;
-
-	//	private ISystemRegistry _registry;
 
 	/**
 	 * Constructor to create a new DOM exporter.
 	 */
 	protected RSEDOMExporter() {
 		_domMap = new HashMap();
-	}
-
-	public void setSystemRegistry(ISystemRegistry registry) {
-		//		_registry = registry;
 	}
 
 	/**
@@ -401,13 +395,13 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 	 */
 	public RSEDOMNode createNode(RSEDOMNode parent, ISystemFilterPoolReference filterPoolReference, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_FILTER_POOL_REFERENCE, filterPoolReference, clean);
-
+		String name = filterPoolReference.getFullName();
+		node.setName(name); // filter pool references must write out the fully qualified name of their referenced filter pool
 		if (clean || node.isDirty()) {
 			ISystemFilterPool filterPool = filterPoolReference.getReferencedFilterPool();
 			String refId = (filterPool != null) ? filterPool.getId() : "unknown"; //$NON-NLS-1$
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_REF_ID, refId);
 		}
-
 		createPropertySetNodes(node, filterPoolReference, clean);
 		node.setDirty(false);
 		return node;
@@ -430,8 +424,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 				node.setDirty(true);
 			}
 		}
-		boolean newNode = (node == null);
-		if (newNode) {
+		if (node == null) {
 			node = new RSEDOMNode(parent, type, name);
 		}
 		return node;

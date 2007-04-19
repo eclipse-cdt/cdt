@@ -23,7 +23,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.internal.model.SystemProfileManager;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -87,7 +87,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 		            : RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MOVE_ID)), 
 		      parent);
 		this.mode = mode;
-		mgr = SystemProfileManager.getSystemProfileManager();
+		mgr = SystemProfileManager.getDefault();
 		sr = RSEUIPlugin.getTheSystemRegistry();
 		allowOnMultipleSelection(true);
         setProcessAllSelections(true);

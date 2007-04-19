@@ -22,7 +22,6 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterStartHere;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -43,8 +42,6 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 public interface ISystemRegistry extends ISchedulingRule {
 
 	public ISystemFilterStartHere getSystemFilterStartHere();
-
-	public ISystemFilterPool getSystemFilterPool();
 
 	// ----------------------------------
 	// UI METHODS...

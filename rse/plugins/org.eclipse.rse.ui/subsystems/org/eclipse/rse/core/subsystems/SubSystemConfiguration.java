@@ -55,7 +55,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.internal.core.filters.SystemFilterPoolWrapperInformation;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
-import org.eclipse.rse.internal.model.SystemProfileManager;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapter;
@@ -773,7 +773,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ISystemProfile getSystemProfile(String name)
 	{
-		return SystemProfileManager.getSystemProfileManager().getSystemProfile(name);
+		return SystemProfileManager.getDefault().getSystemProfile(name);
 	}
 
 	/**
@@ -1001,8 +1001,8 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 		if ((subsystems == null) || (subsystems.length != getSubSystemList().size()))
 		{
-			java.util.List alist = null;
-			if (SystemProfileManager.getSystemProfileManager().getSystemProfileNamesVector().size() > 0) // 42913
+			List alist = null;
+			if (SystemProfileManager.getDefault().getSize() > 0) // 42913
 				alist = getSubSystemList();
 			if (alist == null)
 				return new ISubSystem[0];
@@ -1803,12 +1803,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	protected boolean isUserPrivateProfile(ISystemFilterPoolManager mgr)
 	{
-		//System.out.println("mgr name = " + mgr.getName());
-		//String name = mgr.getName();
-		//return name.equalsIgnoreCase("private");
-		ISystemProfile profile = getSystemProfile(mgr);
-		//System.out.println("Testing for user private profile for mgr " + mgr.getName() + ": " + profile.isDefaultPrivate());;
-		return profile.isDefaultPrivate() || mgr.getName().equalsIgnoreCase("private"); //$NON-NLS-1$
+		ISystemProfile profile = mgr.getSystemProfile();
+		boolean result = profile.isDefaultPrivate() || mgr.getName().equalsIgnoreCase("private"); //$NON-NLS-1$
+		return result;
 	}
 
 	/**
@@ -2538,7 +2535,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public ISubSystem[] testForActiveReferences(ISystemProfile profile)
 	{
 		Vector v = new Vector();
-		ISystemProfileManager profileMgr = SystemProfileManager.getSystemProfileManager();
+		ISystemProfileManager profileMgr = SystemProfileManager.getDefault();
 		ISystemFilterPoolManager sfpm = getFilterPoolManager(profile);
 		String profileName = profile.getName();
 		if (sfpm != null)
@@ -3022,7 +3019,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		if (filterPoolManagerList == null)
 		{
 			filterPoolManagerList = new ArrayList();
-			//FIXMEnew EObjectContainmenteList(SystemFilterPoolManager.class, this, SubsystemsPackage.SUB_SYSTEM_FACTORY__FILTER_POOL_MANAGER_LIST);
 		}
 		return filterPoolManagerList;
 	}
@@ -3080,18 +3076,18 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 	}
 	
+	public void beginRestore() {
+	}
+	
+	public void endRestore() {
+	}
+	
 	/**
 	 * Subsystem configurations are not persisted.
 	 * @return null
 	 */
 	public IRSEPersistableContainer getPersistableParent() {
 		return null;
-	}
-	
-	public void beginRestore() {
-	}
-	
-	public void endRestore() {
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {

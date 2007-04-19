@@ -19,6 +19,8 @@ package org.eclipse.rse.core.model;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 /**
@@ -27,9 +29,10 @@ import java.util.Set;
  * Not thread-safe since the underlying {@link java.util.HashMap} is 
  * not thread-safe.
  */
-public class PropertySet implements IPropertySet {
+public class PropertySet extends RSEPersistableObject implements IPropertySet, Observer {
 	private String _name;
 	private Map _properties;
+	private IPropertySetContainer _container = null;
 
 	protected static IPropertyType _defaultType = PropertyType.getStringPropertyType();
 
@@ -47,6 +50,7 @@ public class PropertySet implements IPropertySet {
 			IProperty property = propertySet.getProperty(key);
 			addProperty(key, new Property(property));
 		}
+		setDirty(true);
 	}
 
 	/**
@@ -56,6 +60,7 @@ public class PropertySet implements IPropertySet {
 	public PropertySet(String name) {
 		_name = name;
 		_properties = new HashMap();
+		setDirty(true);
 	}
 
 	public String getName() {
@@ -68,16 +73,17 @@ public class PropertySet implements IPropertySet {
 	
 	public void setDescription(String description) {
 		addProperty(DESCRIPTION_KEY, description);
+		setDirty(true);
 	}
 
 	public String[] getPropertyKeys() {
 		Set set = _properties.keySet();
-
 		return (String[]) set.toArray(new String[set.size()]);
 	}
 
 	public void setName(String name) {
 		_name = name;
+		setDirty(true);
 	}
 
 	public void setProperties(Map map) {
@@ -85,7 +91,11 @@ public class PropertySet implements IPropertySet {
 		for (Iterator z = map.keySet().iterator(); z.hasNext();) {
 			String key = (String) z.next();
 			Object value = map.get(key);
-			_properties.put(key, value);
+			if (value instanceof IProperty) {
+				addProperty(key, (IProperty)value);
+			} else if (value instanceof String) {
+				addProperty(key, (String)value);
+			}
 		}
 	}
 
@@ -100,6 +110,7 @@ public class PropertySet implements IPropertySet {
 	 */
 	public IProperty addProperty(String key, IProperty property) {
 		_properties.put(key, property);
+		setDirty(true);
 		return property;
 	}
 
@@ -109,10 +120,10 @@ public class PropertySet implements IPropertySet {
 			//FIXME should throw a NumberFormatException or similar,
 			//if the value does not fit the type of the existing property.
 			property.setValue(value);
-			return property;
 		} else {
-			return addProperty(key, value, _defaultType);
+			property = addProperty(key, value, _defaultType);
 		}
+		return property;
 	}
 
 	public IProperty addProperty(String key, String value, IPropertyType type) {
@@ -121,7 +132,10 @@ public class PropertySet implements IPropertySet {
 	}
 
 	public boolean removeProperty(String key) {
-		return _properties.remove(key) != null;
+		Object value = _properties.remove(key);
+		if (value == null) return false;
+		setDirty(true);
+		return true;
 	}
 
 	public IProperty getProperty(String key) {
@@ -143,5 +157,28 @@ public class PropertySet implements IPropertySet {
 		}
 		return null;
 	}
-
+	
+	public boolean commit() {
+		return getPersistableParent().commit();
+	}
+	
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		return new IRSEPersistableContainer[0];
+	}
+	
+	public IRSEPersistableContainer getPersistableParent() {
+		IRSEPersistableContainer result = null;
+		if (_container instanceof IRSEPersistableContainer) {
+			result = (IRSEPersistableContainer) _container;
+		}
+		return result;
+	}
+	
+	public void setContainer(IPropertySetContainer container) {
+		_container = container;
+	}
+	
+	public void update(Observable o, Object arg) {
+		setDirty(true);
+	}
 }

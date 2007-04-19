@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.internal.model.SystemProfileManager;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -60,7 +60,7 @@ public class SystemTeamViewMakeActiveProfileAction extends SystemBaseAction
 		if (!(currsel instanceof ISystemProfile))
 			return false;
 		ISystemProfile profile = (ISystemProfile)currsel;
-		ISystemProfileManager mgr = SystemProfileManager.getSystemProfileManager();
+		ISystemProfileManager mgr = SystemProfileManager.getDefault();
 		boolean allActive = true;
 		while (profile != null)
 		{

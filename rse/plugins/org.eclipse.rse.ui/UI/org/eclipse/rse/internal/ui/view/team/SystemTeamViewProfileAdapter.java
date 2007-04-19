@@ -16,11 +16,13 @@
 
 package org.eclipse.rse.internal.ui.view.team;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -371,7 +373,9 @@ public class SystemTeamViewProfileAdapter
 	 */
     public ISystemValidator getNameValidator(Object element)
     {
-		return new ValidatorProfileName(RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().getSystemProfileNamesVector());
+    	Vector names = RSECorePlugin.getDefault().getSystemRegistry().getSystemProfileManager().getSystemProfileNamesVector();
+    	ISystemValidator validator = new ValidatorProfileName(names);
+		return validator;
     }
     /**
      * Parent override.

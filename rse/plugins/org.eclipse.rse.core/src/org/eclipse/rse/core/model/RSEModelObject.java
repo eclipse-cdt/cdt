@@ -29,22 +29,5 @@ public abstract class RSEModelObject extends PropertySetContainer implements IRS
 	public String getDescription() {
 		return RSEModelResources.RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
 	}
-
-	/**
-	 * Does a null-aware string comparison. Two strings that are
-	 * <code>null</code> will compare equal. Otherwise the result is 
-	 * the same as s1.equals(s2), if s1 is not null.
-	 * @param s1 The first string to compare
-	 * @param s2 the second string
-	 * @return true if the strings are equal or both null.
-	 */
-	protected boolean compareStrings(String s1, String s2) {
-		boolean result = false;
-		if (s1 == null) {
-			result = (s2 == null);
-		} else {
-			result = s1.equals(s2);
-		}
-		return result;
-	}
+	
 }

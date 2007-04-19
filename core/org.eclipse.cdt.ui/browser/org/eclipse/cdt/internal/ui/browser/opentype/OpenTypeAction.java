@@ -109,7 +109,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	private boolean openTypeInEditor(ITypeReference location) {
 		ICElement[] cElements= location.getCElements();
 		try {
-			if (cElements.length > 0) {
+			if (cElements != null && cElements.length > 0) {
 				IEditorPart editor= EditorUtility.openInEditor(cElements[0]);
 				EditorUtility.revealInEditor(editor, cElements[0]);
 				return true;

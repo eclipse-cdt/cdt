@@ -529,7 +529,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		setDisposed( true );
 	}
 
-	protected int sizeof() {
+	public int sizeof() {
 		IInternalVariable iv = getCurrentInternalVariable(); 
 		return ( iv != null ) ? iv.sizeof() : -1;
 	}

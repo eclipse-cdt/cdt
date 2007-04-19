@@ -719,7 +719,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
   
     
     /**
-     * Return the SystemRegistry singleton
+     * Return the SystemRegistry singleton.
+     * Clients should use static @{link getTheSystemRegistry()} instead.
      */
     private SystemRegistry getSystemRegistry()
     {

@@ -3,7 +3,6 @@
 <plugin>
 
      <extension-point id="newWizardPages" name="Custom MBS New Wizard Pages" schema="schema/newWizardPages.exsd"/>
-     <extension-point id="DiscoveryProfileUI" name="DiscoveryProfileUI" schema="schema/DiscoveryProfileUI.exsd"/>
 
    <extension
          point="org.eclipse.ui.newWizards">

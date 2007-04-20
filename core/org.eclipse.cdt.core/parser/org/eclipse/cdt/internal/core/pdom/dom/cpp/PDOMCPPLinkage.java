@@ -316,12 +316,6 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			} else if (binding instanceof ICPPField) {
 				pdomBinding = new PDOMCPPFieldSpecialization(pdom, parent,
 						(ICPPField) binding, pdomSpecialized);
-			} else if (binding instanceof ICPPConstructor) {
-				pdomBinding = new PDOMCPPConstructorSpecialization(pdom, parent,
-						(ICPPConstructor) binding, pdomSpecialized);
-			} else if (binding instanceof ICPPMethod) {
-				pdomBinding = new PDOMCPPMethodSpecialization(pdom, parent,
-						(ICPPMethod) binding, pdomSpecialized);
 			} else if (binding instanceof ICPPFunctionTemplate) {
 				if (binding instanceof ICPPConstructor) {
 					pdomBinding = new PDOMCPPConstructorTemplateSpecialization(
@@ -333,6 +327,12 @@ class PDOMCPPLinkage extends PDOMLinkage {
 					pdomBinding = new PDOMCPPFunctionTemplateSpecialization(
 							pdom, parent, (ICPPFunctionTemplate) binding, pdomSpecialized);
 				}
+			} else if (binding instanceof ICPPConstructor) {
+				pdomBinding = new PDOMCPPConstructorSpecialization(pdom, parent,
+						(ICPPConstructor) binding, pdomSpecialized);
+			} else if (binding instanceof ICPPMethod) {
+				pdomBinding = new PDOMCPPMethodSpecialization(pdom, parent,
+						(ICPPMethod) binding, pdomSpecialized);
 			} else if (binding instanceof ICPPFunction) {
 				pdomBinding = new PDOMCPPFunctionSpecialization(pdom, parent,
 						(ICPPFunction) binding, pdomSpecialized);
@@ -461,14 +461,10 @@ class PDOMCPPLinkage extends PDOMLinkage {
 					return CPP_FUNCTION_INSTANCE;
 				else if (binding instanceof ICPPClassType)
 					return CPP_CLASS_INSTANCE;		
-			} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
+			} else if (binding instanceof ICPPClassTemplatePartialSpecialization)
 				return CPP_CLASS_TEMPLATE_PARTIAL_SPEC;
-			} else if (binding instanceof ICPPField)
+			else if (binding instanceof ICPPField)
 				return CPP_FIELD_SPECIALIZATION;
-			else if (binding instanceof ICPPConstructor)
-				return CPP_CONSTRUCTOR_SPECIALIZATION;
-			else if (binding instanceof ICPPMethod)
-				return CPP_METHOD_SPECIALIZATION;
 			else if (binding instanceof ICPPFunctionTemplate) {
 				if (binding instanceof ICPPConstructor)
 					return CPP_CONSTRUCTOR_TEMPLATE_SPECIALIZATION;
@@ -476,7 +472,11 @@ class PDOMCPPLinkage extends PDOMLinkage {
 					return CPP_METHOD_TEMPLATE_SPECIALIZATION;
 				else if (binding instanceof ICPPFunction)
 					return CPP_FUNCTION_TEMPLATE_SPECIALIZATION;
-			} else if (binding instanceof ICPPFunction)
+			} else if (binding instanceof ICPPConstructor)
+				return CPP_CONSTRUCTOR_SPECIALIZATION;
+			else if (binding instanceof ICPPMethod)
+				return CPP_METHOD_SPECIALIZATION;
+			else if (binding instanceof ICPPFunction)
 				return CPP_FUNCTION_SPECIALIZATION;
 			else if (binding instanceof ICPPClassTemplate)
 				return CPP_CLASS_TEMPLATE_SPECIALIZATION;

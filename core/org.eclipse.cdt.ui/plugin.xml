@@ -1181,6 +1181,11 @@
             commandId="org.eclipse.cdt.ui.navigate.opentype"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+            sequence="M1+M2+T"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            commandId="org.eclipse.cdt.ui.navigate.opentype"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
             commandId="org.eclipse.cdt.ui.search.findrefs"
             sequence="M1+M2+G"
             contextId="org.eclipse.cdt.ui.cEditorScope"

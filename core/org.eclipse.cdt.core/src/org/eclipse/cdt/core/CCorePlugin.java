@@ -303,6 +303,8 @@ public class CCorePlugin extends Plugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		try {
+			pdomManager.shutdown();
+			
             PositionTrackerManager.getInstance().uninstall();
             
 //			if (fDescriptorManager != null) {

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
+import org.eclipse.cdt.internal.core.pdom.IndexUpdatePolicy;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
@@ -45,14 +46,17 @@ public class IndexerPreferences {
 	public static final String KEY_FILES_TO_PARSE_UP_FRONT= "filesToParseUpFront"; //$NON-NLS-1$
 	public static final String KEY_SKIP_ALL_REFERENCES= "skipReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_TYPE_REFERENCES= "skipTypeReferences"; //$NON-NLS-1$
+
+	private static final String KEY_INDEXER_PREFS_SCOPE = "preferenceScope"; //$NON-NLS-1$
+	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
+	private static final String KEY_UPDATE_POLICY= "updatePolicy"; //$NON-NLS-1$
 	
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
 	private static final String DEFAULT_FILES_TO_PARSE_UP_FRONT= "stdarg.h, stddef.h, sys/types.h"; //$NON-NLS-1$
+	private static final int DEFAULT_UPDATE_POLICY= 0; 
 
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String INDEXER_NODE = "indexer"; //$NON-NLS-1$
-	private static final String KEY_INDEXER_PREFS_SCOPE = "preferenceScope"; //$NON-NLS-1$
-	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
 
 
 	/**
@@ -343,5 +347,44 @@ public class IndexerPreferences {
 			getProjectPreferences(project).put(KEY_INDEX_IMPORT_LOCATION, location);
 			CCoreInternals.savePreferences(project);
 		}
+	}
+
+	public static int getUpdatePolicy(IProject project) {
+		Preferences[] prefs;
+		if (project != null) {
+			prefs= new Preferences[] {
+					getProjectPreferences(project),
+					getInstancePreferences(),
+					getConfigurationPreferences(),
+					getDefaultPreferences()
+			};
+		}
+		else {
+			prefs= new Preferences[] {
+					getInstancePreferences(),
+					getConfigurationPreferences(),
+					getDefaultPreferences()
+			};
+		}
+		String val= Platform.getPreferencesService().get(KEY_UPDATE_POLICY, null, prefs);
+		if (val != null) {
+			try {
+				int result= Integer.parseInt(val);
+				switch(result) {
+				case IndexUpdatePolicy.POST_CHANGE:
+				case IndexUpdatePolicy.POST_BUILD:
+				case IndexUpdatePolicy.MANUAL:
+					return result;
+				}
+			}
+			catch (Exception e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return DEFAULT_UPDATE_POLICY;
+	}
+
+	public static boolean getIndexAllFiles(IProject project) {
+		return "true".equals(IndexerPreferences.get(project.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)); //$NON-NLS-1$
 	}
 }

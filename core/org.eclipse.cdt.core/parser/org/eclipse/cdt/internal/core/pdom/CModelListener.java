@@ -17,13 +17,15 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * CModel listener used for the PDOMManager.
  * @since 4.0
  */
-public class CModelListener implements IElementChangedListener {
+public class CModelListener implements IElementChangedListener, IResourceChangeListener {
 
 	private PDOMManager fManager;
 
@@ -58,7 +60,7 @@ public class CModelListener implements IElementChangedListener {
 			final ICProject project = (ICProject)delta.getElement();
 			switch (delta.getKind()) {
 			case ICElementDelta.ADDED:
-				fManager.addProject(project.getProject());
+				fManager.addProject(project);
 		    	break;
 			case ICElementDelta.CHANGED:
 				fManager.changeProject(project, delta);
@@ -67,6 +69,12 @@ public class CModelListener implements IElementChangedListener {
 				// handled on pre-close and pre-delete
 				break;
 			}
+		}
+	}
+
+	public void resourceChanged(IResourceChangeEvent event) {
+		if (event.getType() == IResourceChangeEvent.POST_BUILD) {
+			fManager.handlePostBuildEvent();
 		}
 	}
 }

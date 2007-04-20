@@ -149,16 +149,19 @@ public class PDOMIndexerJob extends Job {
 		return monitorJob;
 	}
 
-	public void cancelJobs(IPDOMIndexer indexer) {
+	public void cancelJobs(IPDOMIndexer indexer, boolean waitUntilCancelled) {
 		synchronized (taskMutex) {
-			if (currentTask != null && currentTask.getIndexer() == indexer) {
+			if (currentTask != null && 
+					(indexer == null || currentTask.getIndexer() == indexer)) {
 				fMonitor.setCanceled(true);
 				cancelledByManager = true;
-				while (currentTask != null && currentTask.getIndexer() == indexer) {
-					try {
-						taskMutex.wait();
-					} catch (InterruptedException e) {
-						return;
+				if (waitUntilCancelled) {
+					while (currentTask != null && currentTask.getIndexer() == indexer) {
+						try {
+							taskMutex.wait();
+						} catch (InterruptedException e) {
+							return;
+						}
 					}
 				}
 			}

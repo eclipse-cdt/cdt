@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software Ltd. and others.
+ * Copyright (c) 2006, 2007 Symbian Software Ltd. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Andrew Ferguson (Symbian) - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/ 
  package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -50,7 +51,7 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 			IResource member= root.getFile(new Path(raw));
 			uri = member.getLocationURI();
 		}		
-		return new IndexFileLocation(uri, fullPath);
+		return uri == null ? null : new IndexFileLocation(uri, fullPath);
 	}
 	
 	/* (non-Javadoc)

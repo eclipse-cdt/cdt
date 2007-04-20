@@ -55,8 +55,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__thTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		CCorePlugin.getIndexManager().reindex(fCProject);
-
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	

@@ -92,6 +92,11 @@ public class BaseUITestCase extends BaseTestCase {
 		long endTime= System.currentTimeMillis()+time;
 		do {
 			while (Display.getCurrent().readAndDispatch());
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				return;
+			}
 		}
 		while(System.currentTimeMillis() < endTime);
 	}

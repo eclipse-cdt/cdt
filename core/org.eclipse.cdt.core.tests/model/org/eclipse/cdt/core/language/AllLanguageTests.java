@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.language;
 
-import org.eclipse.cdt.internal.index.tests.IndexTests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -20,7 +19,7 @@ import junit.framework.TestSuite;
  */
 public class AllLanguageTests extends TestSuite {
 	public static Test suite() {
-		TestSuite suite = new IndexTests();
+		TestSuite suite = new AllLanguageTests();
 		
 		suite.addTest(LanguageInheritanceTests.suite());
 		

@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected static final int INDEXER_WAIT_TIME = 8000;
+	private static int sProjectCounter= 0;
 
 	protected ICProject fCProject;
 	protected IIndex fIndex;
@@ -47,8 +48,8 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCCProject("__chTest__", "bin", IPDOMManager.ID_NO_INDEXER);
-		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
+		String prjName= "chTest"+sProjectCounter++;
+		fCProject= CProjectHelper.createCCProject(prjName, "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}

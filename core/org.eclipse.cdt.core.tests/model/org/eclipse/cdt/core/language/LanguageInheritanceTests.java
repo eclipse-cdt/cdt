@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.language;
 import java.util.Collections;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
@@ -24,7 +23,6 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.CContentTypes;
-import org.eclipse.cdt.internal.index.tests.IndexCompositeTests;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.content.IContentType;

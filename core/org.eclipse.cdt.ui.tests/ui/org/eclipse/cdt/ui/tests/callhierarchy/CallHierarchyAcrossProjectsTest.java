@@ -288,6 +288,14 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		TreeItem item1= checkTreeNode(item, 1, "MyClass::method1()");
 		checkTreeNode(item, 2, null); item= null;
 		
+		try {
+			tv.setExpandedState(item0.getData(), true); 
+			nextItem= checkTreeNode(item0, 0,  "MyClass::method2()");
+		}
+		catch (Throwable e) {
+			TreeItem tmp= item0; item0= item1; item1= tmp;
+		}
+
 		// method 1
 		tv.setExpandedState(item0.getData(), true); 
 		nextItem= checkTreeNode(item0, 0,  "MyClass::method2()");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -263,6 +263,14 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(item, 2, null); item= null;
 		
 		// method 1
+		try {
+			tv.setExpandedState(item0.getData(), true); 
+			nextItem= checkTreeNode(item0, 0,  "MyClass::method2()");
+		}
+		catch (Throwable e) {
+			TreeItem tmp= item0; item0= item1; item1= tmp;
+		}
+		
 		tv.setExpandedState(item0.getData(), true); 
 		nextItem= checkTreeNode(item0, 0,  "MyClass::method2()");
 		checkTreeNode(item0, 1, null); item0= nextItem;

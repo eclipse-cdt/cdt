@@ -437,7 +437,14 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setMessage(java.lang.String)
 	 */
 	public void setMessage(String message) {
-		infoMessage = new MyImpromptuMessage(INFO, message);
+		if (message != null)
+		{
+			infoMessage = new MyImpromptuMessage(INFO, message);
+		}
+		else
+		{
+			infoMessage = null;
+		}
 		showCurrentMessage();
 	}
 
@@ -445,7 +452,15 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setErrorMessage(java.lang.String)
 	 */
 	public void setErrorMessage(String message) {
-		errorMessage = new MyImpromptuMessage(ERROR, message);
+		if (message != null)
+		{
+			errorMessage = new MyImpromptuMessage(ERROR, message);
+		}
+		else
+		{
+			errorMessage = null;
+		}
+			
 		showCurrentMessage();
 	}
 

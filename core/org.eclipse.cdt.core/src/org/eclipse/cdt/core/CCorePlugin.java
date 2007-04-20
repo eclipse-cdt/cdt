@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core;
@@ -91,7 +92,6 @@ public class CCorePlugin extends Plugin {
 	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF"; //$NON-NLS-1$
 	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID; //$NON-NLS-1$
 	public final static String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode"; //$NON-NLS-1$
-	public final static String PREF_USE_NEW_MODEL_BUILDER = "useNewModelBuilder"; //$NON-NLS-1$
 	
 	public static final String INDEX_SIMPLE_ID = "CIndex"; //$NON-NLS-1$
 	public static final String INDEX_UNIQ_ID = PLUGIN_ID + "." + INDEX_SIMPLE_ID; //$NON-NLS-1$
@@ -361,8 +361,6 @@ public class CCorePlugin extends Plugin {
 
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
-		// Set the default for using the new model builder to build the CModel
-		getPluginPreferences().setDefault(PREF_USE_NEW_MODEL_BUILDER, true);
 
         PositionTrackerManager.getInstance().install();
 	}

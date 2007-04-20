@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,20 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * The page for setting c plugin preferences.
@@ -29,8 +37,8 @@ import org.eclipse.ui.PlatformUI;
 public class CPluginPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 
-	private static final String LINK_TO_EDITOR_LABEL= "CBasePreferencePage.linkToEditor.label"; //$NON-NLS-1$
-	private static final String USE_STRUCTURAL_PARSE_MODE_LABEL= "CBasePreferencePage.OutlineView.structuralParseMode.label"; //$NON-NLS-1$
+	private static final String LINK_TO_EDITOR_LABEL= PreferencesMessages.CPluginPreferencePage_linkToEditor_label;
+	private static final String USE_STRUCTURAL_PARSE_MODE_LABEL= PreferencesMessages.CPluginPreferencePage_structuralParseMode_label;
 	
 	public CPluginPreferencePage() {
 		super(GRID);
@@ -48,14 +56,31 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	protected void createFieldEditors() {
 		Composite parent= getFieldEditorParent();
 
-		BooleanFieldEditor linkEditor= new BooleanFieldEditor(PreferenceConstants.PREF_LINK_TO_EDITOR, CUIPlugin.getResourceString(LINK_TO_EDITOR_LABEL), parent);
+		BooleanFieldEditor linkEditor= new BooleanFieldEditor(PreferenceConstants.PREF_LINK_TO_EDITOR, LINK_TO_EDITOR_LABEL, parent);
 		addField(linkEditor);
 
+		// blank space
+		addFiller(parent);
 		
-		BooleanFieldEditor useStructuralParseMode= new BooleanFieldEditor(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, CUIPlugin.getResourceString(USE_STRUCTURAL_PARSE_MODE_LABEL), parent);
-		addField(useStructuralParseMode);		
+		BooleanFieldEditor useStructuralParseMode= new BooleanFieldEditor(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, USE_STRUCTURAL_PARSE_MODE_LABEL, parent);
+		addField(useStructuralParseMode);
+		
+		String noteTitle= PreferencesMessages.CPluginPreferencePage_note; 
+		String noteMessage= PreferencesMessages.CPluginPreferencePage_performanceHint; 
+		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), parent, noteTitle, noteMessage);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		noteControl.setLayoutData(gd);
 	}
 	
+	protected void addFiller(Composite composite) {
+		PixelConverter pixelConverter= new PixelConverter(composite);
+		Label filler= new Label(composite, SWT.LEFT );
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
+		filler.setLayoutData(gd);
+	}
 
 	public static boolean isLinkToEditor() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_LINK_TO_EDITOR);
@@ -83,7 +108,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, false);
 		// The field is under Appearance page/preference
 		prefs.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
-		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, CCorePlugin.getDefault().useStructuralParseMode());
+		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, false);
 		prefs.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);
 	}
 	

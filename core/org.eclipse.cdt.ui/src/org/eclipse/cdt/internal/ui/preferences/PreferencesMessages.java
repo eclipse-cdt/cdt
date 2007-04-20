@@ -214,6 +214,11 @@ public final class PreferencesMessages extends NLS {
 	public static String FileLanguagesPropertyPage_inheritedFromProject;
 	public static String FileLanguagesPropertyPage_inheritedFromWorkspace;
 	public static String FileLanguagesPropertyPage_description;
+
+	public static String CPluginPreferencePage_linkToEditor_label;
+	public static String CPluginPreferencePage_structuralParseMode_label;
+	public static String CPluginPreferencePage_note;
+	public static String CPluginPreferencePage_performanceHint;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, PreferencesMessages.class);

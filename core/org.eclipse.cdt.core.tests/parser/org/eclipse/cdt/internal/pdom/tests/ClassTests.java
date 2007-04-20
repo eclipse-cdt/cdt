@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -30,7 +31,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author Doug Schaefer
@@ -57,7 +57,7 @@ public class ClassTests extends PDOMTestBase {
 	}
 	
 	public void test1() throws Exception {
-		IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), false, new IndexFilter(), new NullProgressMonitor());
+		IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), false, IndexFilter.ALL, NPM);
 		assertEquals(1, Bs.length);
 		ICPPClassType B = (ICPPClassType)Bs[0];
 		ICPPMethod[] Bmethods = B.getAllDeclaredMethods();
@@ -71,7 +71,7 @@ public class ClassTests extends PDOMTestBase {
 	}
 	
 	public void testNested() throws Exception {
-		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"), false, new IndexFilter(), new NullProgressMonitor());
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"), false, IndexFilter.ALL, NPM);
 		assertEquals(1, bindings.length);
 		ICPPClassType NestedA = (ICPPClassType)bindings[0];
 		ICPPClassType[] nested = NestedA.getNestedClasses();
@@ -94,7 +94,7 @@ public class ClassTests extends PDOMTestBase {
 	}
 	
 	public void test147903() throws Exception {
-		IBinding[] bindings = pdom.findBindings(Pattern.compile("pr147903"), false, new IndexFilter(), new NullProgressMonitor());
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("pr147903"), false, IndexFilter.ALL, NPM);
 		assertEquals(1, bindings.length);
 		ICPPNamespaceScope ns = ((ICPPNamespace)bindings[0]).getNamespaceScope();
 		bindings = ns.find("testRef");
@@ -108,28 +108,28 @@ public class ClassTests extends PDOMTestBase {
 	/* Test friend relationships between classes */
 	public void _testFriend() throws Exception {
 		//TODO this test is failing		
-		IBinding[] bindings = pdom.findBindings(Pattern.compile("ClassA"), false, new IndexFilter(), new NullProgressMonitor());
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("ClassA"), false, IndexFilter.ALL, NPM);
 		assertEquals(1, bindings.length);
 		ICPPClassType classA = (ICPPClassType) bindings[0];
 		IBinding[] friends = classA.getFriends();
 		assertEquals(1, friends.length);
-		bindings = pdom.findBindings(Pattern.compile("ClassC"), false, new IndexFilter(), new NullProgressMonitor());
+		bindings = pdom.findBindings(Pattern.compile("ClassC"), false, IndexFilter.ALL, NPM);
 		assertEquals(bindings[0], friends[0]); //ClassC is a friend class of ClassA
 		
-		bindings = pdom.findBindings(Pattern.compile("ClassC"), false, new IndexFilter(), new NullProgressMonitor());
+		bindings = pdom.findBindings(Pattern.compile("ClassC"), false, IndexFilter.ALL, NPM);
 		assertEquals(1, bindings.length);
 		ICPPClassType classC = (ICPPClassType) bindings[0];
 		friends = classC.getFriends();
 		assertEquals(1, friends.length);
 		Pattern[] patterns = {Pattern.compile("ClassB"),Pattern.compile("functionB")};
-		bindings = pdom.findBindings(patterns, false, new IndexFilter(), new NullProgressMonitor());
+		bindings = pdom.findBindings(patterns, false, IndexFilter.ALL, NPM);
 		assertEquals(bindings[0], friends[0]); //functionB is a friend of ClassC
 	}
 	
 	public void _testConstructor() throws Exception {
 		// the source does not define Class1, so it is no surprise that the test is failing.
 		//TODO PDOM doesn't have information on constructor
-		IBinding[] bindings = pdom.findBindings(Pattern.compile("Class1"), false, new IndexFilter(), new NullProgressMonitor());
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("Class1"), false, IndexFilter.ALL, NPM);
 		assertEquals(2, bindings.length);
 		assertTrue(bindings[0] instanceof ICPPClassType);
 		assertTrue(bindings[1] instanceof ICPPMethod);
@@ -143,7 +143,7 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(offset("constructor.cpp","Class1::Class1") + 8, loc.getNodeOffset()); //character offset
 		
 		/* Member initialization */
-		bindings = pdom.findBindings(Pattern.compile("number"), false, new IndexFilter(), new NullProgressMonitor());
+		bindings = pdom.findBindings(Pattern.compile("number"), false, IndexFilter.ALL, NPM);
 		assertEquals(1, bindings.length);
 		
 		IName[] refs = pdom.findNames(bindings[0], IIndex.FIND_REFERENCES);
@@ -152,5 +152,33 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(offset("constructor.cpp","number(num)"), loc.getNodeOffset()); //character offset	
 		
 		assertEquals(bindings[0], ((PDOMName)refs[0]).resolveBinding());
+	}
+	
+	public void testAbsenceOfDefaultConstructorWhenExplicitNonDefaultPresentA() throws Exception {
+		IndexFilter JUST_CONSTRUCTORS= new IndexFilter() {
+			public boolean acceptBinding(IBinding binding) {
+				return binding instanceof ICPPConstructor;
+			}
+			public boolean acceptImplicitMethods() {
+				return true;
+			}
+		};
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("C"), false, JUST_CONSTRUCTORS, NPM);
+		// expecting C(int) and C(const C &)
+		assertEquals(2, bindings.length);
+	}
+	
+	public void testAbsenceOfDefaultConstructorWhenExplicitNonDefaultPresentB() throws Exception {
+		IndexFilter JUST_CONSTRUCTORS= new IndexFilter() {
+			public boolean acceptBinding(IBinding binding) {
+				return binding instanceof ICPPConstructor;
+			}
+			public boolean acceptImplicitMethods() {
+				return true;
+			}
+		};
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("D"), false, JUST_CONSTRUCTORS, NPM);
+		// expecting just D(D &)
+		assertEquals(1, bindings.length);
 	}
 }

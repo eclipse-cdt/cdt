@@ -9,12 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *     Ed Swartz (Nokia)
  *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -1250,7 +1254,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
     public void testConstructors() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("class A { A();  A( const A & ); }; "); //$NON-NLS-1$
+        buffer.append("class A { A(void);  A( const A & ); }; "); //$NON-NLS-1$
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
 
@@ -1274,7 +1278,223 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue(qt.isConst());
         assertSame(qt.getType(), A);
     }
+    
+    // class A {~A(); };
+    // class B {~B(void); };
+    public void testExplicitDestructor_183160() throws Exception {
+        // class F {(~)F(); };
+        // class G {(~)G(void); };
+    	
+    	BufferedReader br= new BufferedReader(new StringReader(getContents(1)[0].toString()));
+    	for(String line= br.readLine(); line!=null; line= br.readLine()) {
+    		IASTTranslationUnit tu = parse(line, ParserLanguage.CPP);
+    		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+    		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+    		
+    		ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
+    		assertNotNull(methods);
+    		int count=0;
+    		for(int i=0; i<methods.length; i++)
+    			count+= methods[i].getName().startsWith("~") ? 1 : 0;
+    		assertEquals(line, 0, count);
+    		
+    		methods = A.getDeclaredMethods();
+    		assertNotNull(methods);
+    		count=0;
+    		for(int i=0; i<methods.length; i++)
+    			count+= methods[i].getName().startsWith("~") ? 1 : 0;
+    		assertEquals(line, 1, count);
+    	}
+    }
+    
+    // class C {};
+    // class D {D();};
+    // class E {E(void);};
+    public void testImplicitDestructor_183160() throws Exception {
+    	BufferedReader br= new BufferedReader(new StringReader(getContents(1)[0].toString()));
+    	for(String line= br.readLine(); line!=null; line= br.readLine()) {
+    		IASTTranslationUnit tu = parse(line, ParserLanguage.CPP);
+    		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+    		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+    		
+    		ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
+    		assertNotNull(methods);
+    		int count=0;
+    		for(int i=0; i<methods.length; i++)
+    			count+= methods[i].getName().startsWith("~") ? 1 : 0;
+    		assertEquals(line, 1, count);
+    		
+    		methods = A.getDeclaredMethods();
+    		assertNotNull(methods);
+    		count=0;
+    		for(int i=0; i<methods.length; i++)
+    			count+= methods[i].getName().startsWith("~") ? 1 : 0;
+    		assertEquals(line, 0, count);
+    	}
+    }
+    
+	//  class A {public: A();};
+	//	class B {public: B() {}};
+	//	class C {public: C() {}};
+	//	class D {public: D(void) {}};
+	//	class E {protected: E();};
+	//	class F {protected: F() {}};
+	//	class G {protected: G() {}};
+	//	class H {protected: H(void) {}};
+	//	class I {private: I();};
+	//	class J {private: J() {}};
+	//	class K {private: K() {}};
+	//	class L {private: L(void) {}};
+	//	class M {M();};
+	//	class N {N() {}};
+	//	class O {O() {}};
+	//	class P {P(void) {}};
+    //  class Q {public: Q(int k=5);};
+    //  class R {public: R(int k=5, long k=4);};
+    //  class S {public: S(int k=5, int* ip= 0);};
+    //  class T {public: T(int k=5, int* ip= 0, T* t= 0);};
+    public void testExplicitDefaultConstructor_183160() throws Exception {
+    	BufferedReader br= new BufferedReader(new StringReader(getContents(1)[0].toString()));
+    	for(String line= br.readLine(); line!=null; line= br.readLine()) {
+    		IASTTranslationUnit tu = parse(line, ParserLanguage.CPP);
+    		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+    		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+    		ICPPConstructor[] ctors = A.getConstructors();
 
+    		assertNotNull(ctors);
+    		assertEquals(2, ctors.length); // one user-declared default constructor, one implicit copy constructor
+    	}
+    }
+    
+    //  class Q {public: Q(int k);};
+    //  class R {public: R(int k=5, long k);};
+    //  class S {public: S(int k=5, int* ip);};
+    //  class T {public: T(int k, int* ip= 0, T* t= 0);};
+    public void testExplicitNonDefaultConstructor_183160() throws Exception {
+    	BufferedReader br= new BufferedReader(new StringReader(getContents(1)[0].toString()));
+    	for(String line= br.readLine(); line!=null; line= br.readLine()) {
+    		IASTTranslationUnit tu = parse(line, ParserLanguage.CPP);
+    		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+    		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+    		ICPPConstructor[] ctors = A.getConstructors();
+
+    		assertNotNull(ctors);
+    		assertEquals(2, ctors.length); // one user-declared non-default constructor, one implicit copy constructor
+    	}
+    }
+
+	//  class A {public: A(A &);};
+	//	class B {private: B(const B &);};
+	//	class C {protected: C(volatile C &);};
+	//	class D {D(const volatile D &) {}};
+	//	class E {public: E(E &, int k=5);};
+	//	class F {private: F(const F &, int j=2, int k=3);};
+	//	class G {protected: G(volatile G &, int i=4, int l=2);};
+	//	class H {H(const volatile H &, int i=1, long k=2) {}};
+    public void testExplicitCopyConstructor_183160() throws Exception {
+    	BufferedReader br= new BufferedReader(new StringReader(getContents(1)[0].toString()));
+    	for(String line= br.readLine(); line!=null; line= br.readLine()) {
+    		IASTTranslationUnit tu = parse(line, ParserLanguage.CPP);
+    		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+    		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+    		ICPPConstructor[] ctors = A.getConstructors();
+
+    		assertNotNull(ctors);
+    		// one copy constructor, no implicit default constructor
+    		assertEquals(1, ctors.length); 
+    	}
+    }
+    
+	//	class I {public: I(I *, int k=5);}; // I * rather than I &
+	//	class J {private: J(const J *, int j, int k=3);}; // J * rather than J &
+	//	class K {protected: K(volatile K *, int i=4, int l=2);}; // K * rather than K  &
+	//	class L {L(const volatile L &, int i=1, long k=2, int* x) {}}; // param int* x has no initializer
+    public void testNotExplicitCopyConstructor_183160() throws Exception {
+    	BufferedReader br= new BufferedReader(new StringReader(getContents(1)[0].toString()));
+    	for(String line= br.readLine(); line!=null; line= br.readLine()) {
+    		IASTTranslationUnit tu = parse(line, ParserLanguage.CPP);
+    		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+    		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+    		ICPPConstructor[] ctors = A.getConstructors();
+
+    		assertNotNull(ctors);
+    		// one copy constructor, one user declared constructor (not a copy constructor)
+    		assertEquals(2, ctors.length); 
+    	}
+    }
+    
+	//	class A {public: void operator=(int); };  // legitimate, but not a copy assignment operator
+	//	class B {public: void operator=(B &, int); };  // compile error
+	//	class C {public: void operator=(C &c, int k=5) {} };  // compile error
+	//	class D {public: void operator=(const D &, const D &); };  // compile error
+    public void testNotExplicitCopyAssignmentOperator_183160() throws Exception {
+    	BufferedReader br= new BufferedReader(new StringReader(getContents(1)[0].toString()));
+    	for(String line= br.readLine(); line!=null; line= br.readLine()) {
+    		IASTTranslationUnit tu = parse(line, ParserLanguage.CPP);
+    		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+    		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+    		ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
+    		assertNotNull(methods);
+    		int count=0;
+    		for(int i=0; i<methods.length; i++) {
+    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN);
+    			count+= eq ? 1 : 0;
+    		}
+    		
+    		assertEquals(1, count); // check for one implicit operator= method
+    		
+    		methods = A.getDeclaredMethods();
+    		assertNotNull(methods);
+    		count=0;
+    		for(int i=0; i<methods.length; i++) {
+    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN);
+    			count+= eq ? 1 : 0;
+    		}
+    		
+    		assertEquals(1, count); // check for the user declared
+    	}
+    }
+    
+    //	class A {public: void operator=(A &); };
+	//	class B {protected: void operator=(const B &); };
+	//	class C {private: void operator=(volatile C &) {} };
+	//	class D {D& operator=(volatile const D &); };  
+    public void testExplicitCopyAssignmentOperator_183160() throws Exception {
+    	BufferedReader br= new BufferedReader(new StringReader(getContents(1)[0].toString()));
+    	for(String line= br.readLine(); line!=null; line= br.readLine()) {
+    		IASTTranslationUnit tu = parse(line, ParserLanguage.CPP);
+    		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    		IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+    		ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+    		ICPPMethod[] methods = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
+    		assertNotNull(methods);
+    		int count=0;
+    		for(int i=0; i<methods.length; i++) {
+    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN);
+    			count+= eq ? 1 : 0;
+    		}
+    		
+    		assertEquals(0, count); // check for no implicit operator= methods
+    		
+    		methods = A.getDeclaredMethods();
+    		assertNotNull(methods);
+    		count=0;
+    		for(int i=0; i<methods.length; i++) {
+    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN);
+    			count+= eq ? 1 : 0;
+    		}
+    		
+    		assertEquals(1, count); // only should get the user declared
+    	}
+    }
+    
     public void testNamespaceAlias() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace A { int x; }   \n"); //$NON-NLS-1$
@@ -4256,8 +4476,8 @@ public class AST2CPPTests extends AST2BaseTest {
                 .resolveBinding();
 
         ICPPConstructor[] ctors = A.getConstructors();
-        assertEquals(ctors.length, 2);
-        assertSame(ctor, ctors[0]);
+        assertEquals(2, ctors.length); // one user declared constructor, one copy constructor
+        assertSame(ctor, ctors[1]);
 
         tu = parse("class A { A( void ); };", ParserLanguage.CPP); //$NON-NLS-1$
         col = new CPPNameCollector();
@@ -4267,8 +4487,8 @@ public class AST2CPPTests extends AST2BaseTest {
         ctor = (ICPPConstructor) col.getName(1).resolveBinding();
 
         ctors = A.getConstructors();
-        assertEquals(ctors.length, 2);
-        assertSame(ctor, ctors[0]);
+        assertEquals(2, ctors.length); // one user declared constructor, one copy constructor
+        assertSame(ctor, ctors[1]);
     }
 
     public void testBug95461() throws Exception {

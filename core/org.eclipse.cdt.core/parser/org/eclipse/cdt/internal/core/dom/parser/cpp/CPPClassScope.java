@@ -9,15 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -36,9 +39,11 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -81,7 +86,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         if( !(binding instanceof ICPPClassType ) )
         	return;
         
-        implicits = new ICPPMethod[4];
         ICPPClassType clsType = (ICPPClassType) binding;
         if( clsType instanceof ICPPClassTemplate ){
             try {
@@ -94,72 +98,43 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         char [] className = name.toCharArray();
             
 		IParameter [] voidPs = new IParameter [] { new CPPParameter( CPPSemantics.VOID_TYPE ) };
-        if( !hasNonStandardDefaultConstructor( compTypeSpec ) ) {
-	        //default constructor: A(void)
-	        ICPPMethod m = new CPPImplicitConstructor( this, className, voidPs );
-	        implicits[0] = m;
-		    addBinding( m );
-        }
-	    
-	    //copy constructor: A( const A & )
-	    IType pType = new CPPReferenceType( new CPPQualifierType( clsType, true, false ) );
-	    IParameter [] ps = new IParameter [] { new CPPParameter( pType ) };
-	    ICPPMethod m = new CPPImplicitConstructor( this, className, ps );
-	    implicits[1] = m;
-	    addBinding( m );
-	    
-	    //copy assignment operator: A& operator = ( const A & ) 
-	    IType refType = new CPPReferenceType( clsType );
-	    m = new CPPImplicitMethod( this, ICPPASTOperatorName.OPERATOR_ASSIGN, refType, ps ); 
-	    implicits[2] = m;
-	    addBinding( m );
-	    
-	    //destructor: ~A()
-	    char [] dtorName = CharArrayUtils.concat( "~".toCharArray(), className );  //$NON-NLS-1$
-	    m = new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), voidPs );
-	    implicits[3] = m;
-	    addBinding( m );
-	}
-	
-	private boolean hasNonStandardDefaultConstructor( ICPPASTCompositeTypeSpecifier compSpec ){
-		IASTDeclaration [] members = compSpec.getMembers();
-		char [] name = compSpec.getName().toCharArray();
-		IASTDeclarator dtor = null;
-		IASTDeclSpecifier spec = null;
-        for( int i = 0; i < members.length; i++ ){
-			if( members[i] instanceof IASTSimpleDeclaration ){
-			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
-			    if( dtors.length == 0 || dtors.length > 1 )
-			    	continue;
-			    dtor = dtors[0];
-			    spec = ((IASTSimpleDeclaration)members[i]).getDeclSpecifier();
-			} else if( members[i] instanceof IASTFunctionDefinition ){
-			    dtor = ((IASTFunctionDefinition)members[i]).getDeclarator();
-			    spec = ((IASTFunctionDefinition)members[i]).getDeclSpecifier();
-			}
-			if( !(dtor instanceof ICPPASTFunctionDeclarator) || !(spec instanceof IASTSimpleDeclSpecifier) ||
-				((IASTSimpleDeclSpecifier)spec).getType() != IASTSimpleDeclSpecifier.t_unspecified ||
-				!CharArrayUtils.equals( dtor.getName().toCharArray(), name ) )
-			{
-				continue;
-			}
-			
-			IASTParameterDeclaration [] ps = ((ICPPASTFunctionDeclarator)dtor).getParameters();
-        	if( ps.length >= 1 ){
-        		IASTDeclarator d = ps[0].getDeclarator();
-        		IASTDeclSpecifier s = ps[0].getDeclSpecifier();
-        		if( s instanceof IASTSimpleDeclSpecifier &&
-        		    ((IASTSimpleDeclSpecifier)s).getType() == IASTSimpleDeclSpecifier.t_void &&
-        		    d.getPointerOperators().length == 0 && !(d instanceof IASTArrayDeclarator) )
-        		{
-        			continue;  //A(void)
-        		}
-        		    
-        		if( d.getInitializer() != null )
-        			return true;
-        	}
-	    }
-		return false;
+		IType pType = new CPPReferenceType( new CPPQualifierType( clsType, true, false ) );
+		IParameter [] ps = new IParameter [] { new CPPParameter( pType ) };
+		
+		int i= 0;
+		ImplicitsAnalysis ia= new ImplicitsAnalysis( compTypeSpec );
+		implicits= new ICPPMethod[ia.getImplicitsToDeclareCount()];
+
+		if( !ia.hasUserDeclaredConstructor() ) {
+			//default constructor: A(void)
+			ICPPMethod m = new CPPImplicitConstructor( this, className, voidPs );
+			implicits[i++]=m;
+			addBinding( m );
+		}
+
+		if( !ia.hasUserDeclaredCopyConstructor() ) {
+			//copy constructor: A( const A & )
+
+			ICPPMethod m = new CPPImplicitConstructor( this, className, ps );
+			implicits[i++]=m;
+			addBinding( m );
+		}
+
+		if( !ia.hasUserDeclaredCopyAssignmentOperator() ) {
+			//copy assignment operator: A& operator = ( const A & ) 
+			IType refType = new CPPReferenceType( clsType );
+			ICPPMethod m = new CPPImplicitMethod( this, ICPPASTOperatorName.OPERATOR_ASSIGN, refType, ps ); 
+			implicits[i++]=m;
+			addBinding( m );
+		}
+
+		if( !ia.hasUserDeclaredDestructor() ) {
+			//destructor: ~A()
+			char [] dtorName = CharArrayUtils.concat( "~".toCharArray(), className );  //$NON-NLS-1$
+			ICPPMethod m = new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), voidPs );
+			implicits[i++]=m;
+			addBinding( m );
+		}
 	}
 	
 	public IScope getParent() {
@@ -388,5 +363,149 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    } else {
 	        removeBinding( binding.getNameCharArray(), binding );
 	    }
+	}
+}
+
+/**
+ * Helps analyzis of the class declaration for user declared members relevent
+ * to deciding which implicit bindings to declare.
+ */ 
+class ImplicitsAnalysis {
+	private boolean hasUserDeclaredConstructor;
+	private boolean hasUserDeclaredCopyConstructor;
+	private boolean hasUserDeclaredCopyAssignmentOperator;
+	private boolean hasUserDeclaredDestructor;
+	
+	ImplicitsAnalysis( ICPPASTCompositeTypeSpecifier compSpec ) {
+		ICPPASTFunctionDeclarator[] ctors= getUserDeclaredCtorOrDtor(compSpec, true);
+		
+		hasUserDeclaredConstructor= ctors.length> 0;
+		hasUserDeclaredCopyConstructor= false;
+		hasUserDeclaredCopyAssignmentOperator= false;
+		hasUserDeclaredDestructor= getUserDeclaredCtorOrDtor(compSpec, false).length>0;
+		
+		outer: for(int i=0; i<ctors.length; i++) {
+			ICPPASTFunctionDeclarator dcltor= ctors[i];
+			IASTParameterDeclaration [] ps = ((ICPPASTFunctionDeclarator)dcltor).getParameters();
+        	if( ps.length >= 1 ){
+        		if(paramHasTypeReferenceToTheAssociatedClassType(ps[0])) {
+            		// and all remaining arguments have initializers
+        			for(int j=1; j<ps.length; j++) {
+            			if( ps[j].getDeclarator().getInitializer() == null ) {
+            				continue outer;
+            			}
+            		}
+        			hasUserDeclaredCopyConstructor= true;
+        		}
+        	}
+	    }
+		
+		boolean hasUserDeclaredCAO= getUserDeclaredCopyAssignmentOperators(compSpec).length > 0;
+		hasUserDeclaredCopyAssignmentOperator= hasUserDeclaredCAO;
+	}
+	
+	public int getImplicitsToDeclareCount() {
+		return (!hasUserDeclaredDestructor ? 1 : 0)
+			+ (!hasUserDeclaredConstructor ? 1 : 0)
+			+ (!hasUserDeclaredCopyConstructor ? 1 : 0)
+			+ (!hasUserDeclaredCopyAssignmentOperator ? 1 : 0);
+	}
+	
+	private static ICPPASTFunctionDeclarator[] getUserDeclaredCtorOrDtor( ICPPASTCompositeTypeSpecifier compSpec, boolean constructor ) {
+		List result= new ArrayList();
+		IASTDeclaration [] members = compSpec.getMembers();
+		char [] name = compSpec.getName().toCharArray();
+		IASTDeclarator dcltor = null;
+		IASTDeclSpecifier spec = null;
+        for( int i = 0; i < members.length; i++ ){
+			if( members[i] instanceof IASTSimpleDeclaration ){
+			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+			    if( dtors.length == 0 || dtors.length > 1 )
+			    	continue;
+			    dcltor = dtors[0];
+			    spec = ((IASTSimpleDeclaration)members[i]).getDeclSpecifier();
+			} else if( members[i] instanceof IASTFunctionDefinition ){
+			    dcltor = ((IASTFunctionDefinition)members[i]).getDeclarator();
+			    spec = ((IASTFunctionDefinition)members[i]).getDeclSpecifier();
+			}
+			
+			
+			if( !(dcltor instanceof ICPPASTFunctionDeclarator) || !(spec instanceof IASTSimpleDeclSpecifier) ||
+				((IASTSimpleDeclSpecifier)spec).getType() != IASTSimpleDeclSpecifier.t_unspecified)
+			{
+				continue;
+			}
+			
+			boolean nameEquals= false;
+			if(constructor) {
+				nameEquals= CharArrayUtils.equals( dcltor.getName().toCharArray(), name );
+			} else {
+				char[] cname= dcltor.getName().toCharArray();
+				if(cname.length>0 && cname[0]=='~') {
+					nameEquals= CharArrayUtils.equals( cname, 1, name.length, name );
+				}
+			}
+			
+			if(!nameEquals)
+				continue;
+			
+			result.add(dcltor);
+        }
+        return (ICPPASTFunctionDeclarator[]) result.toArray(new ICPPASTFunctionDeclarator[result.size()]);
+	}
+	
+	private static ICPPASTFunctionDeclarator[] getUserDeclaredCopyAssignmentOperators( ICPPASTCompositeTypeSpecifier compSpec ) {
+		List result= new ArrayList();
+		IASTDeclaration [] members = compSpec.getMembers();
+		IASTDeclarator dcltor = null;
+        for( int i = 0; i < members.length; i++ ){
+			if( members[i] instanceof IASTSimpleDeclaration ){
+			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+			    if( dtors.length == 0 || dtors.length > 1 )
+			    	continue;
+			    dcltor = dtors[0];
+			} else if( members[i] instanceof IASTFunctionDefinition ){
+			    dcltor = ((IASTFunctionDefinition)members[i]).getDeclarator();
+			}
+			if( !(dcltor instanceof ICPPASTFunctionDeclarator) ||
+				!CharArrayUtils.equals( dcltor.getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN ) )
+			{
+	        	continue;
+			}
+			
+			IASTParameterDeclaration [] ps = ((ICPPASTFunctionDeclarator)dcltor).getParameters();
+        	if( ps.length != 1 || !paramHasTypeReferenceToTheAssociatedClassType(ps[0]) )
+        		continue;
+        	
+			result.add(dcltor);
+        }
+        return (ICPPASTFunctionDeclarator[]) result.toArray(new ICPPASTFunctionDeclarator[result.size()]);
+	}
+	
+	private static boolean paramHasTypeReferenceToTheAssociatedClassType(IASTParameterDeclaration dec) {
+		boolean result= false;
+		IASTDeclarator pdtor= dec.getDeclarator();
+		if(pdtor.getPointerOperators().length==1 && pdtor.getPointerOperators()[0] instanceof ICPPASTReferenceOperator) {
+			if(dec.getDeclSpecifier() instanceof ICPPASTNamedTypeSpecifier) {
+				result= true;
+			}
+		}
+		return result;
+	}
+
+	public boolean hasUserDeclaredConstructor() {
+		return hasUserDeclaredConstructor;
+	}
+
+	public boolean hasUserDeclaredCopyConstructor() {
+		return hasUserDeclaredCopyConstructor;
+	}
+
+	public boolean hasUserDeclaredCopyAssignmentOperator() {
+		return hasUserDeclaredCopyAssignmentOperator;
+	}
+	
+	public boolean hasUserDeclaredDestructor() {
+		return hasUserDeclaredDestructor;
 	}
 }

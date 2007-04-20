@@ -385,54 +385,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		busyCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
 		
 		setUseHashlookup(true); // new for our 2nd release. Attempt to fix 38 minutes to refresh for 15K elements
-		setComparer(new IElementComparer() 
-		 {
-		      public boolean equals(Object a, Object b) 
-		      {
-		          if(a==b) return true;
-		          if(a==null || b==null) return false;
-		          if(a.equals(b)) return true;
+		setComparer(new ElementComparer()); 
 		 
-		          ISystemViewElementAdapter identa= null;
-		          if(a instanceof IAdaptable) {
-		              identa = (ISystemViewElementAdapter)
-		                 ((IAdaptable)a).getAdapter(ISystemViewElementAdapter.class);
-		          }
-		          if(identa != null) {
-		              ISystemViewElementAdapter identb = null;
-		               if(b instanceof IAdaptable) {
-		                  identb = (ISystemViewElementAdapter)
-		                     ((IAdaptable)b).getAdapter(ISystemViewElementAdapter.class);
-		              }
-		              if (identb != null){
-		            	  if(identa.getAbsoluteName(a).equals(identb.getAbsoluteName(b))) return true;
-		              }
-		          }
-		          
-		          return false;
-		      }
-		      
-		      public int hashCode(Object element) 
-		      {
-		          ISystemViewElementAdapter ident=null;
-		          if(element instanceof IAdaptable) {
-		              ident = (ISystemViewElementAdapter)
-		                  ((IAdaptable)element).getAdapter(ISystemViewElementAdapter.class);
-		              if(ident!=null) {
-		                  String absName = ident.getAbsoluteName(element);
-		                  if(absName!=null) return absName.hashCode();
-		                  return ident.hashCode();
-		              }
-		          }		          
-		          if (element != null) // adding check because I hit a null exception here once at startup
-		        	  return element.hashCode();
-		          else
-		          {		        	  
-		        	  //System.out.println("null element");
-		        	  return 0;
-		          }
-		      }
-		    });
 		
 		
 		// set content provider
@@ -4323,6 +4277,61 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			return match;
 		}
 	}
+
+	protected class ElementComparer implements IElementComparer
+	{
+	      public boolean equals(Object a, Object b) 
+	      {
+	          if(a==b) return true;
+	          if(a==null || b==null) return false;
+	          if(a.equals(b)) return true;
+	 
+	          ISystemViewElementAdapter identa= null;
+	          if(a instanceof IAdaptable) {
+	              identa = (ISystemViewElementAdapter)
+	                 ((IAdaptable)a).getAdapter(ISystemViewElementAdapter.class);
+	          }
+	          if(identa != null) {
+	              ISystemViewElementAdapter identb = null;
+	               if(b instanceof IAdaptable) {
+	                  identb = (ISystemViewElementAdapter)
+	                     ((IAdaptable)b).getAdapter(ISystemViewElementAdapter.class);
+	              }
+	              if (identb != null){
+	            	  // first need to check subsystems
+	            	  ISubSystem ssa = identa.getSubSystem(a);
+	            	  ISubSystem ssb = identb.getSubSystem(b);
+	            	  if (ssa == ssb) // if the subsystems are the same OR if both are not subsystems (the absolute name will distinguish them)
+	            	  {
+	            		  if(identa.getAbsoluteName(a).equals(identb.getAbsoluteName(b))) return true;
+	            	  }
+	              }
+	          }
+	          
+	          return false;
+	      }
+	      
+	      public int hashCode(Object element) 
+	      {
+	          ISystemViewElementAdapter ident=null;
+	          if(element instanceof IAdaptable) {
+	              ident = (ISystemViewElementAdapter)
+	                  ((IAdaptable)element).getAdapter(ISystemViewElementAdapter.class);
+	              if(ident!=null) {
+	                  String absName = ident.getAbsoluteName(element);
+	                  if(absName!=null) return absName.hashCode();
+	                  return ident.hashCode();
+	              }
+	          }		          
+	          if (element != null) // adding check because I hit a null exception here once at startup
+	        	  return element.hashCode();
+	          else
+	          {		        	  
+	        	  //System.out.println("null element");
+	        	  return 0;
+	          }
+	      }
+	    }
 
 	/**
 	 * --------------------------------------------------------------------------------

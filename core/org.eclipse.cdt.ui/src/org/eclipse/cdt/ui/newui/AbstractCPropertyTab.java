@@ -240,6 +240,12 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	protected void buttonPressed(int i) {}
 	
+	/**
+	 * Checks state of existing button.
+	 * 
+	 * @param i - button index
+	 * @return - true if button exists and enabled 
+	 */
 	protected boolean buttonIsEnabled(int i) {
 		if (buttons == null || buttons.length <= i ) 
 			return false;
@@ -247,9 +253,28 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			return buttons[i].isEnabled();
 	}
 	
+	/**
+	 * Changes state of existing button.
+	 * Does nothing if index is invalid
+	 * 
+	 * @param i - button index
+	 * @param state - required state
+	 */
 	protected void buttonSetEnabled(int i, boolean state) {
 		if (buttons == null || buttons.length <= i ) return;
 		buttons[i].setEnabled(state);
+	}
+	
+	/**
+	 * Changes text of existing button
+	 * Does nothing if index is invalid
+	 * 
+	 * @param i - button index
+	 * @param text - text to display
+	 */
+	protected void buttonSetText(int i, String text) {
+		if (buttons == null || buttons.length <= i ) return;
+		buttons[i].setText(text);
 	}
 
 	/**********************************************

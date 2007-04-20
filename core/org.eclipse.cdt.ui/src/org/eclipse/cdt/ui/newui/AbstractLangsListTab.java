@@ -176,6 +176,12 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			ICLanguageSettingEntry ent = (ICLanguageSettingEntry)(table.getItem(index).getData());
 			if (ent.isBuiltIn() || ent.isReadOnly()) canEdit = false;
 			if (ent.isReadOnly()) canDelete = false;
+			if (exported.contains(ent))
+				buttonSetText(3, UIMessages.getString("AbstractLangsListTab.4")); //$NON-NLS-1$
+			else
+				buttonSetText(3, UIMessages.getString("AbstractLangsListTab.2")); //$NON-NLS-1$
+		} else {
+			buttonSetText(3, UIMessages.getString("AbstractLangsListTab.2")); //$NON-NLS-1$
 		}
     	boolean canMoveUp = canDelete && index > 0;
     	boolean canMoveDown = canDelete && (index < table.getItemCount() - 1); 
@@ -367,10 +373,14 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			lang.setSettingEntries(getKind(), incs);
 			update();
 			break;
-		case 3: // export	
+		case 3: // toggle export	
 			if (n == -1) return;
 			old = (ICLanguageSettingEntry)(table.getItem(n).getData());
-			page.getResDesc().getConfiguration().createExternalSetting(new String[] {lang.getId()}, null, null, new ICLanguageSettingEntry[] {old});
+			if (exported.contains(old)) {
+				deleteExportSetting(old);
+			} else {
+				page.getResDesc().getConfiguration().createExternalSetting(new String[] {lang.getId()}, null, null, new ICLanguageSettingEntry[] {old});
+			}
 			updateExport();
 			update();
 			break;
@@ -395,6 +405,33 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		}
 	}
 
+	private void deleteExportSetting(ICSettingEntry ent) {
+//		if (ent.isReadOnly() || ent.isBuiltIn()) continue;
+		ICConfigurationDescription cfg = getResDesc().getConfiguration();
+		ICExternalSetting[] vals = cfg.getExternalSettings();
+		if (!(vals == null || vals.length == 0)) {
+			for (int i=0; i<vals.length; i++) {
+				ICSettingEntry[] ents = vals[i].getEntries(getKind());
+				if (ents == null || ents.length == 0) continue;
+				for (int j=0; j<ents.length; j++) {
+					if (ents[j].equalsByName(ent)) {
+						ICSettingEntry[] arr = new ICSettingEntry[ents.length - 1];
+						int index = 0;
+						for (int k=0; k<ents.length; k++) 
+							if (k != j) arr[index++] = ents[k];
+						cfg.removeExternalSetting(vals[i]);
+						cfg.createExternalSetting(vals[i].getCompatibleLanguageIds(), 
+								vals[i].getCompatibleContentTypeIds(),
+								vals[i].getCompatibleExtensions(),
+								arr);
+						return;
+					}
+				}
+			}
+		}
+	}
+	
+	
 	/**
 	 * Adds entry to all configurations 
 	 * @param ent - entry to add

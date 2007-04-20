@@ -418,7 +418,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		{
 			IHost host = Utilities.parseForSystemConnection(destValue);
 			IRemoteFile path = Utilities.parseForIRemoteFile(destValue);
-			action.setHost(host);
+			action.setDefaultConnection(host);
 			action.setPreSelection(path);
 		}
 		

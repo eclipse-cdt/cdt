@@ -30,14 +30,14 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
  * Helper class for exporting resources to the file system.
  */
 class RemoteExporter {
-	private Object as400 = null;
+	private IHost _host = null;
 
 	/**
 	 *  Create an instance of this class.  Use this constructor if you wish to
-	 *  use an AS400 object */
+	 *  use an host object */
 	public RemoteExporter(IHost s) {
 		super();
-		as400 = s;
+		_host = s;
 	}
 
 	/**
@@ -53,8 +53,8 @@ class RemoteExporter {
 	 */
 	public void createFolder(IPath destinationPath) {
 		// IFS: use IFSJaveFile object if necessary
-		if (as400 != null)
-			new UniFilePlus(Utilities.getIRemoteFile((IHost) as400, destinationPath.toString())).mkdir();
+		if (_host != null)
+			new UniFilePlus(Utilities.getIRemoteFile((IHost) _host, destinationPath.toString())).mkdir();
 		else
 			new File(destinationPath.toOSString()).mkdir();
 	}
@@ -87,8 +87,15 @@ class RemoteExporter {
 	 *  file system
 	 */
 	protected void writeFile(IFile file, IPath destinationPath) throws IOException, CoreException, RemoteFileSecurityException, RemoteFileException {
-		IRemoteFileSubSystem rfss = RemoteFileUtility.getFileSubSystem((IHost) as400);
-		rfss.upload(file.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, destinationPath.toString(), System.getProperty("file.encoding"), null); //$NON-NLS-1$
+		IRemoteFileSubSystem rfss = RemoteFileUtility.getFileSubSystem((IHost) _host);
+		String dest = destinationPath.toString();
+		char sep = rfss.getSeparatorChar();
+		if (sep != '/')
+		{
+			// for windows
+			dest = dest.replace('/', sep);
+		}
+		rfss.upload(file.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, dest, System.getProperty("file.encoding"), null); //$NON-NLS-1$
 	}
 
 	/**

@@ -361,7 +361,6 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     public IRemoteFile getSelectedFolder()
     {
     	Object o = getValue();
-    	System.out.println("selected = "+o);
     	if (o instanceof IRemoteFile[])
     	  return ((IRemoteFile[])o)[0];
     	else if (o instanceof IRemoteFile)

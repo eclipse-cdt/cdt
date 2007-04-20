@@ -42,6 +42,14 @@ public class Utilities {
 		if (c != null) {
 			try {
 				IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(c);
+				
+				char sep = ss.getSeparatorChar();
+				if (sep != '/')
+				{
+					// on windows we need win path
+					path = path.replace('/', sep);
+				}
+				
 				ret = ss.getRemoteFileObject(path);
 			} catch (SystemMessageException e) {
 				// get RemoteFileObject has been changed to raise

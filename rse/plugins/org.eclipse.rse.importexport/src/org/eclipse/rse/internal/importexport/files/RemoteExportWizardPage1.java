@@ -411,12 +411,24 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 	protected void handleDestinationBrowseButtonPressed() {
 		SystemSelectRemoteFolderAction action = new SystemSelectRemoteFolderAction(this.getShell());
 		action.setShowNewConnectionPrompt(true);
+		action.setFoldersOnly(true);
 		action.setShowPropertySheet(true, false);
+		String destValue = getDestinationValue();
+		if (destValue != null)
+		{
+			IHost host = Utilities.parseForSystemConnection(destValue);
+			IRemoteFile path = Utilities.parseForIRemoteFile(destValue);
+			action.setHost(host);
+			action.setPreSelection(path);
+		}
+		
 		action.run();
 		IRemoteFile folder = action.getSelectedFolder();
+
 		if (folder != null) {
 			destinationFolder = new UniFilePlus(folder);
-			setDestinationValue(Utilities.getAsString((UniFilePlus) destinationFolder));
+			destValue = Utilities.getAsString((UniFilePlus)destinationFolder);
+			setDestinationValue(destValue);
 		}
 	}
 
@@ -596,6 +608,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 				String[] newItems = new String[oldLength + 1];
 				System.arraycopy(currentItems, 0, newItems, 0, oldLength);
 				newItems[oldLength] = path;
+				destinationNameField.setText(path);
 				destinationNameField.setItems(newItems);
 				selectionIndex = oldLength;
 			} else {

@@ -505,6 +505,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	            browseAction = getBrowseAction(getShell());
 		  	  }
 	          //if (connection != null)	          
+		  	  browseAction.setFoldersOnly(true);
 	            browseAction.setHost(connection);
 	          //if (systemTypes != null)
 	            browseAction.setSystemTypes(systemTypes);	          

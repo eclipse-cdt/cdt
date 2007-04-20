@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -237,14 +238,18 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 			checkCanceled();
 			long startTime= System.currentTimeMillis();
-			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, quickParseMode ? ITranslationUnit.AST_SKIP_ALL_HEADERS : ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			final CElementInfo elementInfo= fTranslationUnit.getElementInfo();
+			int parseFlags= quickParseMode ? ITranslationUnit.AST_SKIP_ALL_HEADERS : ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+			if (!(elementInfo instanceof ASTHolderTUInfo)) {
+				parseFlags |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
+			}
+			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, parseFlags);
 			Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$
 					+ fTranslationUnit.getElementName()
 					+ " mode="+ (quickParseMode ? "skip all " : "skip indexed ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
 					IDebugLogConstants.MODEL, false);
 
-			final CElementInfo elementInfo= fTranslationUnit.getElementInfo();
 			if (elementInfo instanceof ASTHolderTUInfo) {
 				((ASTHolderTUInfo)elementInfo).fAST= ast;
 			}

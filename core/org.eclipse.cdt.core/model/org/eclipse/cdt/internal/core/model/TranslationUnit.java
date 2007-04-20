@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
@@ -744,6 +745,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (reader != null) {
 			ILanguage language= getLanguage();
 			if (language != null) {
+				if (language instanceof AbstractLanguage) {
+					return ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, style, ParserUtil.getParserLogService());
+				}
 				return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
 			}
 		}

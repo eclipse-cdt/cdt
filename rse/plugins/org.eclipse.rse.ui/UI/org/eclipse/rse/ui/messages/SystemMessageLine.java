@@ -525,21 +525,19 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 		String toolTip = null;
 		Color color = null;
 		if (message != null) {
-			text = message.getText();
-			toolTip = message.getTooltip();
+			text = message.getText() != null ? message.getText() : "";
+			toolTip = message.getTooltip() != null ? message.getTooltip() : "";
 			color = message.getColor();
 		}
 
-		if (text != null)
-		{
-			if (toolTip != null)
-				widget.setToolTipText(toolTip);
-			widget.setForeground(color);
-			widget.setText(text);
-			widget.setData(text);
-			widget.setVisible(text.length() > 0);
-			adjustText();
-		}
+
+		widget.setToolTipText(toolTip);
+		widget.setForeground(color);
+		widget.setText(text);
+		widget.setData(text);
+		widget.setVisible(text.length() > 0);
+		adjustText();
+		
 	}
 
 	/**

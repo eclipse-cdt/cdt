@@ -52,11 +52,13 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 			switch(type){
 			case IBuildMacroProvider.CONTEXT_CONFIGURATION:
 				return new ICdtVariableSupplier[]{
-					new ExternalExtensionMacroSupplier(fMngr, fCfgDes)
+					new ExternalExtensionMacroSupplier(fMngr, fCfgDes),
+					MbsMacroSupplier.getInstance()
 				};
 			case IBuildMacroProvider.CONTEXT_PROJECT:
 				return new ICdtVariableSupplier[]{
-						new ExternalExtensionMacroSupplier(fMngr, fCfgDes)
+						new ExternalExtensionMacroSupplier(fMngr, fCfgDes),
+						MbsMacroSupplier.getInstance()
 					};
 			case IBuildMacroProvider.CONTEXT_WORKSPACE:
 				return new ICdtVariableSupplier[]{

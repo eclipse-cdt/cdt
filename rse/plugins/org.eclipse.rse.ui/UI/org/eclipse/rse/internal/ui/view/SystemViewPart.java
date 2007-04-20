@@ -600,6 +600,8 @@ public class SystemViewPart
 	{
 		IActionBars actionBars = getViewSite().getActionBars();
 		SystemRefreshAction refreshAction = new SystemRefreshAction(getShell());
+		refreshAction.setId(ActionFactory.REFRESH.getId());
+		refreshAction.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
 		refreshAction.setSelectionProvider(systemView);
 		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 

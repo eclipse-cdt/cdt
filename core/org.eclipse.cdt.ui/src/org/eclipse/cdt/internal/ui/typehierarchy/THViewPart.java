@@ -77,6 +77,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -117,8 +118,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private static final int ORIENTATION_SINGLE = 3;
 	
 	// options for label provider
-	private static final int MEMBER_LABEL_OPTIONS_SIMPLE = CElementLabels.M_PARAMETER_TYPES;
-	private static final int MEMBER_LABEL_OPTIONS_QUALIFIED = MEMBER_LABEL_OPTIONS_SIMPLE | CElementLabels.ALL_POST_QUALIFIED;
+	private static final int MEMBER_LABEL_OPTIONS_SIMPLE = CElementBaseLabels.M_PARAMETER_TYPES;
+	private static final int MEMBER_LABEL_OPTIONS_QUALIFIED = MEMBER_LABEL_OPTIONS_SIMPLE | CElementBaseLabels.ALL_POST_QUALIFIED;
 	private static final int MEMBER_ICON_OPTIONS = CElementImageProvider.OVERLAY_ICONS;
     
 	// state information
@@ -378,7 +379,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 			if (hierarchyView && !elem.equals(fModel.getInput())) {
 				String label= MessageFormat.format(Messages.THViewPart_FocusOn, 
 						new Object[] {
-							CElementLabels.getTextLabel(elem, CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES)
+						CElementLabels.getTextLabel(elem, CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.M_PARAMETER_TYPES)
 				});
 				menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, new Action(label) {
 					public void run() {
@@ -816,7 +817,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
                 String label;
             	
                 // label
-                label= CElementLabels.getElementLabel(elem, 0);
+                label= CElementBaseLabels.getElementLabel(elem, 0);
             	
                 // scope
                 IWorkingSet workingSet= fWorkingSetFilterUI.getWorkingSet();
@@ -834,7 +835,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
             	if (node != null) {
             		elem= node.getElement();
             		if (elem != null) {
-            			label= CElementLabels.getElementLabel(elem, 0);
+            			label= CElementBaseLabels.getElementLabel(elem, 0);
             			image= fHierarchyLabelProvider.getImage(elem);
             		}
             	}

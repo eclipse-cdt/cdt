@@ -35,11 +35,11 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class CallHierarchyUI {
@@ -82,7 +82,7 @@ public class CallHierarchyUI {
 			}
 			elem = OpenActionUtil.selectCElement(input, window.getShell(),
 					CHMessages.CallHierarchyUI_label, CHMessages.CallHierarchyUI_selectMessage,
-					CElementLabels.ALL_DEFAULT | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
+					CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
 			break;
 		}
 		if (elem != null) {

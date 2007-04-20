@@ -15,9 +15,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
 
 /**
@@ -25,9 +25,9 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
  */
 public class THHistoryAction extends Action {
 	final static int LABEL_OPTIONS= 
-		CElementLabels.M_PARAMETER_TYPES | 
-		CElementLabels.ALL_FULLY_QUALIFIED |
-		CElementLabels.MF_POST_FILE_QUALIFIED;
+		CElementBaseLabels.M_PARAMETER_TYPES | 
+		CElementBaseLabels.ALL_FULLY_QUALIFIED |
+		CElementBaseLabels.MF_POST_FILE_QUALIFIED;
 	
 	private THViewPart fViewPart;
 	private ICElement fElement;
@@ -37,7 +37,7 @@ public class THHistoryAction extends Action {
 		fViewPart= hierarchyView;
 		fElement= element;		
 	
-		String elementName= CElementLabels.getElementLabel(element, LABEL_OPTIONS);
+		String elementName= CElementBaseLabels.getElementLabel(element, LABEL_OPTIONS);
 		setText(elementName);
 		setImageDescriptor(getImageDescriptor(element));
 	}

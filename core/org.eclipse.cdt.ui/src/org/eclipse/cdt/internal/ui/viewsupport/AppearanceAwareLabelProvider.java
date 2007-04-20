@@ -15,13 +15,15 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+
 /**
  * CUILabelProvider that respects settings from the Appearance preference page.
  * Triggers a viewer update when a preference changes (currently none).
  */
 public class AppearanceAwareLabelProvider extends CUILabelProvider implements IPropertyChangeListener {
 
-	public final static int DEFAULT_TEXTFLAGS= CElementLabels.M_PARAMETER_TYPES | CElementLabels.PROJECT_POST_QUALIFIED;
+	public final static int DEFAULT_TEXTFLAGS= CElementBaseLabels.M_PARAMETER_TYPES | CElementBaseLabels.PROJECT_POST_QUALIFIED;
 	public final static int DEFAULT_IMAGEFLAGS= CElementImageProvider.OVERLAY_ICONS;
 	
 	private int fTextFlagMask;

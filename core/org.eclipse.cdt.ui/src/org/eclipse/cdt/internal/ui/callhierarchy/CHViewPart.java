@@ -63,6 +63,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
@@ -618,7 +619,7 @@ public class CHViewPart extends ViewPart {
                 String format, scope, label;
             	
                 // label
-                label= CElementLabels.getElementLabel(elem, CHHistoryAction.LABEL_OPTIONS);
+                label= CElementBaseLabels.getElementLabel(elem, CHHistoryAction.LABEL_OPTIONS);
             	
                 // scope
                 IWorkingSet workingSet= fWorkingSetFilterUI.getWorkingSet();
@@ -681,7 +682,7 @@ public class CHViewPart extends ViewPart {
 				final ICElement element= node.getRepresentedDeclaration();
 				if (element != null) {
 					String label= Messages.format(CHMessages.CHViewPart_FocusOn_label, 
-							CElementLabels.getTextLabel(element, CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES));
+							CElementLabels.getTextLabel(element, CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.M_PARAMETER_TYPES));
 					menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, new Action(label) {
 						public void run() {
 							setInput(element);

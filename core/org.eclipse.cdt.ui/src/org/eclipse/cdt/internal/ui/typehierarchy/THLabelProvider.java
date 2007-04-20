@@ -24,16 +24,16 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
 
 public class THLabelProvider extends LabelProvider implements IColorProvider {
-	private final static int LABEL_OPTIONS_SIMPLE= CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES;
-	private final static int LABEL_OPTIONS_SHOW_FILES= LABEL_OPTIONS_SIMPLE | CElementLabels.MF_POST_FILE_QUALIFIED;
+	private final static int LABEL_OPTIONS_SIMPLE= CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.M_PARAMETER_TYPES;
+	private final static int LABEL_OPTIONS_SHOW_FILES= LABEL_OPTIONS_SIMPLE | CElementBaseLabels.MF_POST_FILE_QUALIFIED;
 	
     private CUILabelProvider fCLabelProvider= new CUILabelProvider(LABEL_OPTIONS_SIMPLE, 0);
     private THHierarchyModel fModel;

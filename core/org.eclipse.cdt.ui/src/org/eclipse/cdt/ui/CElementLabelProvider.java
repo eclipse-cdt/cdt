@@ -17,9 +17,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 /**
@@ -99,7 +99,7 @@ public class CElementLabelProvider extends LabelProvider {
 		fImageLabelProvider= new CElementImageProvider();
 
 		fFlags = flags;
-		fCElementLabelProvider= new CUILabelProvider(getTextFlags() | CElementLabels.TEMPLATE_PARAMETERS, getImageFlags());
+		fCElementLabelProvider= new CUILabelProvider(getTextFlags() | CElementBaseLabels.TEMPLATE_PARAMETERS, getImageFlags());
 	}
 
 	public String getText(Object element) {
@@ -154,16 +154,16 @@ public class CElementLabelProvider extends LabelProvider {
 	public int getTextFlags() {
 		fTextFlags = 0;
 		if (getFlag(SHOW_RETURN_TYPE)) {
-			fTextFlags |= CElementLabels.M_APP_RETURNTYPE;
+			fTextFlags |= CElementBaseLabels.M_APP_RETURNTYPE;
 		}
 		if (getFlag(SHOW_PARAMETERS)) {
-			fTextFlags |= CElementLabels.M_PARAMETER_TYPES;
+			fTextFlags |= CElementBaseLabels.M_PARAMETER_TYPES;
 		}
 		if (getFlag(SHOW_EXCEPTION)) {
-			fTextFlags |= CElementLabels.M_EXCEPTIONS;
+			fTextFlags |= CElementBaseLabels.M_EXCEPTIONS;
 		}
 		if (getFlag(SHOW_POST_QUALIFIED)) {
-			fTextFlags |= CElementLabels.M_POST_QUALIFIED;
+			fTextFlags |= CElementBaseLabels.M_POST_QUALIFIED;
 		}
 		return fTextFlags;
 	}

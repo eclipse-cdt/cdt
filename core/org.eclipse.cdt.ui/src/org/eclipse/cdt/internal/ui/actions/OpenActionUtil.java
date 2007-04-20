@@ -17,8 +17,9 @@ import java.util.List;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 import org.eclipse.cdt.ui.CElementLabelProvider;
@@ -76,7 +77,7 @@ public class OpenActionUtil {
 
 	/**
 	 * Shows a dialog for resolving an ambigous C element.
-	 * @see CElementLabels
+	 * @see CElementBaseLabels
 	 * @param elements an array of ambigous elements.
 	 * @param shell parent shell for showing the dialog
 	 * @param title title of the dialog

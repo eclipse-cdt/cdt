@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class CUILabelProvider extends LabelProvider implements IColorProvider {
@@ -41,11 +42,11 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	 * Creates a new label provider with default flags.
 	 */
 	public CUILabelProvider() {
-		this(CElementLabels.M_PARAMETER_TYPES, CElementImageProvider.OVERLAY_ICONS);
+		this(CElementBaseLabels.M_PARAMETER_TYPES, CElementImageProvider.OVERLAY_ICONS);
 	}
 
 	/**
-	 * @param textFlags Flags defined in <code>CElementLabels</code>.
+	 * @param textFlags Flags defined in <code>CElementBaseLabels</code>.
 	 * @param imageFlags Flags defined in <code>CElementImageProvider</code>.
 	 */
 	public CUILabelProvider(int textFlags, int imageFlags) {

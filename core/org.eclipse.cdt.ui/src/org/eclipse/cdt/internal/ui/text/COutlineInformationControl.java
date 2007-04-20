@@ -28,6 +28,7 @@ import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -35,7 +36,6 @@ import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.editor.CContentOutlinerProvider;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
 /**
@@ -46,7 +46,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
  */
 public class COutlineInformationControl extends AbstractInformationControl {
 
-	private static final int TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
+	private static final int TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementBaseLabels.F_APP_TYPE_SIGNATURE | CElementBaseLabels.M_APP_RETURNTYPE;
 	private static final int IMAGE_FLAGS = AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS;
 
 	private ICElement fInput = null;

@@ -15,9 +15,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
 
 /**
@@ -33,7 +33,7 @@ public class IBHistoryAction extends Action {
 		fViewPart= viewPart;
 		fElement= element;		
 		
-		String elementName= CElementLabels.getElementLabel(element, CElementLabels.ALL_POST_QUALIFIED);
+		String elementName= CElementBaseLabels.getElementLabel(element, CElementBaseLabels.ALL_POST_QUALIFIED);
 		setText(elementName);
 		setImageDescriptor(getImageDescriptor(element));
 	}

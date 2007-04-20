@@ -27,10 +27,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
@@ -66,7 +66,7 @@ public class IBHistoryListAction extends Action {
 				}				
 			};
 		
-			CUILabelProvider labelProvider= new CUILabelProvider(CElementLabels.APPEND_ROOT_PATH, CElementImageProvider.OVERLAY_ICONS);
+			CUILabelProvider labelProvider= new CUILabelProvider(CElementBaseLabels.APPEND_ROOT_PATH, CElementImageProvider.OVERLAY_ICONS);
 			
 			fHistoryList= new ListDialogField(adapter, buttonLabels, labelProvider);
 			fHistoryList.setLabelText(IBMessages.IBHistoryListAction_HistoryList_label); 

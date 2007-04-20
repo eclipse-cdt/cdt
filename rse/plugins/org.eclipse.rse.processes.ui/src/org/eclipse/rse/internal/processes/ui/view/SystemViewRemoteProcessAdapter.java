@@ -482,4 +482,12 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	{
 		return false;
 	}
+	
+	/*
+	 * Return whether deferred queries are supported.
+	 */
+	public boolean supportsDeferredQueries(ISubSystem subSys)
+	{
+	    return true;
+	}
 }

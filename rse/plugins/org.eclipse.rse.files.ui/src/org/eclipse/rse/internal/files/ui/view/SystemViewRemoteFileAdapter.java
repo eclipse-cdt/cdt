@@ -3191,7 +3191,7 @@ public class SystemViewRemoteFileAdapter
 	/*
 	 * Return whether deferred queries are supported.
 	 */
-	public boolean supportsDeferredQueries()
+	public boolean supportsDeferredQueries(ISubSystem subSys)
 	{
 	    return true;
 	}

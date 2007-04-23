@@ -747,6 +747,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			if (language != null) {
 				if (language instanceof AbstractLanguage) {
 					int options= 0;
+					if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
+						options |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
+					}
 					if ((style & AST_CREATE_COMMENT_NODES) != 0) {
 						options |= AbstractLanguage.OPTION_ADD_COMMENTS;
 					}

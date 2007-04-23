@@ -67,7 +67,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -241,7 +240,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			final CElementInfo elementInfo= fTranslationUnit.getElementInfo();
 			int parseFlags= quickParseMode ? ITranslationUnit.AST_SKIP_ALL_HEADERS : ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 			if (!(elementInfo instanceof ASTHolderTUInfo)) {
-				parseFlags |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
+				parseFlags |= ITranslationUnit.AST_SKIP_FUNCTION_BODIES;
 			}
 			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, parseFlags);
 			Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$

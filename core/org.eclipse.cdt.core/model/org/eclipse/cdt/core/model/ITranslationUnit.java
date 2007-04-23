@@ -35,6 +35,13 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Meaning: Skip function and method bodies.
+	 * @since 4.0
+	 */
+	public static final int AST_SKIP_FUNCTION_BODIES= 1;
+
+	/**
+	 * Style constant for {@link #getAST(IIndex, int)}. 
 	 * Meaning: Skip over headers that are found in the index, parse all others.
 	 * Macro definitions and bindings are taken from index for skipped files.
 	 */

@@ -111,8 +111,19 @@ public class CProjectHelper {
 	 * Creates a ICProject.
 	 */
 	public static ICProject createNewStileCProject(final String projectName, final String indexerID) throws CoreException {
+		return createNewStileCProject(projectName, null, indexerID);
+	}
+
+	/**
+	 * Creates a ICProject.
+	 */
+	public static ICProject createNewStileCProject(final String projectName, String cfgProviderId, final String indexerID) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
+		if(cfgProviderId == null)
+			cfgProviderId = CTestPlugin.PLUGIN_ID + ".testCfgDataProvider";
+		
+		final String finalCfgProviderId = cfgProviderId;
 		ws.run(new IWorkspaceRunnable() {
 
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -131,10 +142,8 @@ public class CProjectHelper {
 					project.open(null);
 				}
 				if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-					
-					String cfgProviderId = CTestPlugin.PLUGIN_ID + ".testCfgDataProvider";
 					addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
-					ICConfigurationDescription prefCfg = CCorePlugin.getDefault().getPreferenceConfiguration(cfgProviderId);
+					ICConfigurationDescription prefCfg = CCorePlugin.getDefault().getPreferenceConfiguration(finalCfgProviderId);
 					ICProjectDescription projDes = CCorePlugin.getDefault().createProjectDescription(project, false);
 					projDes.createConfiguration(CDataUtil.genId(null), CDataUtil.genId("test"), prefCfg);
 					CCorePlugin.getDefault().setProjectDescription(project, projDes);

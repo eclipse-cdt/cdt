@@ -30,6 +30,7 @@
 		<topic label="Core" href="provisional_api.html">
 			<topic label="org.eclipse.rse.core" href="reference/api/org/eclipse/rse/core/package-summary.html" />
 			<topic label="org.eclipse.rse.core.comm" href="reference/api/org/eclipse/rse/core/comm/package-summary.html" />
+			<topic label="org.eclipse.rse.core.events" href="reference/api/org/eclipse/rse/core/events/package-summary.html" />
 			<topic label="org.eclipse.rse.core.servicesubsystem" href="reference/api/org/eclipse/rse/core/servicesubsystem/package-summary.html" />
 			<topic label="org.eclipse.rse.core.subsystems" href="reference/api/org/eclipse/rse/core/subsystems/package-summary.html" />
 			<topic label="org.eclipse.rse.core.subsystems.util" href="reference/api/org/eclipse/rse/core/subsystems/util/package-summary.html" />
@@ -39,7 +40,6 @@
 	    </topic>
 		<topic label="Model and Persistence" href="provisional_api.html">
 			<topic label="org.eclipse.rse.core.model" href="reference/api/org/eclipse/rse/core/model/package-summary.html"/>
-			<topic label="org.eclipse.rse.model" href="reference/api/org/eclipse/rse/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.core.filters" href="reference/api/org/eclipse/rse/core/filters/package-summary.html"/>
 			<topic label="org.eclipse.rse.core.references" href="reference/api/org/eclipse/rse/core/references/package-summary.html"/>
 			<topic label="org.eclipse.rse.persistence" href="reference/api/org/eclipse/rse/persistence/package-summary.html"/>
@@ -118,6 +118,7 @@
 			<topic label="org.eclipse.rse.ui.filters.dialogs" href="reference/api/org/eclipse/rse/ui/filters/dialogs/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.filters" href="reference/api/org/eclipse/rse/ui/filters/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.messages" href="reference/api/org/eclipse/rse/ui/messages/package-summary.html"/>
+			<topic label="org.eclipse.rse.ui.model" href="reference/api/org/eclipse/rse/ui/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.open" href="reference/api/org/eclipse/rse/ui/open/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.operations" href="reference/api/org/eclipse/rse/ui/operations/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.propertypages" href="reference/api/org/eclipse/rse/ui/propertypages/package-summary.html"/>

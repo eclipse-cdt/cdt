@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved methods to SystemPreferencesManager.
  * Uwe Stieber (Wind River) - bugfixing.
  * David Dykstal (IBM) - 168870: move core function from UI to core
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -39,9 +40,12 @@ import org.eclipse.rse.core.SystemResourceListener;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
@@ -55,15 +59,13 @@ import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapter
 import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapterFactory;
 import org.eclipse.rse.internal.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewResourceAdapterFactory;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
-import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.rse.ui.actions.ISystemDynamicPopupMenuExtension;
+import org.eclipse.rse.ui.internal.model.SystemRegistry;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -83,7 +85,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    	public IStatus run(IProgressMonitor monitor)
 	    	{    		
 	            
-	    		ISystemRegistry registry = getSystemRegistry();
+	    		ISystemRegistry registry = getSystemRegistryInternal();
 
 	    		
 	        	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree  
@@ -137,7 +139,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     private static SystemMessageFile    defaultMessageFile = null;    
     
 //    private SystemType[]	            allSystemTypes = null;
-    private SystemRegistry              _systemRegistry = null;
+    private SystemRegistry           _systemRegistry = null;
     
     
  
@@ -478,7 +480,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml"); //$NON-NLS-1$
 
         
-		ISystemRegistry registry = getSystemRegistry();
+		ISystemRegistry registry = getSystemRegistryInternal();
 		RSECorePlugin.getDefault().setSystemRegistry(registry);
   	
     	IAdapterManager manager = Platform.getAdapterManager();
@@ -531,7 +533,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
           closeViews();
               	
           // clear in-memory settings for all filter pools and subsystems
-    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistry().getSubSystemConfigurationProxies();
+    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryInternal().getSubSystemConfigurationProxies();
     	  if (proxies != null)
     	  	for (int idx=0; idx < proxies.length; idx++)
     	  	   proxies[idx].reset();
@@ -617,7 +619,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     {
     	if (isSystemRegistryActive())
     	{
-    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistry().getSubSystemConfigurationProxies();
+    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryInternal().getSubSystemConfigurationProxies();
     	  if (proxies != null)
     	  {
     	  	for (int idx=0; idx < proxies.length; idx++)
@@ -722,13 +724,13 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
      * Return the SystemRegistry singleton.
      * Clients should use static @{link getTheSystemRegistry()} instead.
      */
-    private SystemRegistry getSystemRegistry()
+    private SystemRegistry getSystemRegistryInternal()
     {
     	if (_systemRegistry == null)
         {
     	  String logfilePath = getStateLocation().toOSString();    	
 
-    	  _systemRegistry = (SystemRegistry)SystemRegistry.getSystemRegistry(logfilePath);
+    	  _systemRegistry = SystemRegistry.getInstance(logfilePath);
 
           ISubSystemConfigurationProxy[] proxies = getSubSystemConfigurationProxies();
           if (proxies != null)
@@ -744,9 +746,9 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
      * A static version for convenience
 	 * Returns the master registry singleton.
      */
-    public static SystemRegistry getTheSystemRegistry()
+    public static ISystemRegistryUI getTheSystemRegistry()
     {
-    	return getDefault().getSystemRegistry();
+    	return getDefault().getSystemRegistryInternal();
     }
     
     public static IRSEPersistenceManager getThePersistenceManager()

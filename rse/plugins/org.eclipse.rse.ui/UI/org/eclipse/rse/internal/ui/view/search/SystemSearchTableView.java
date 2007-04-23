@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,21 +11,21 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
 
 import java.util.Vector;
 
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.view.SystemDecoratingLabelProvider;
 import org.eclipse.rse.internal.ui.view.SystemTableTreeView;
 import org.eclipse.rse.internal.ui.view.SystemTableTreeViewProvider;
-import org.eclipse.rse.model.ISystemRemoteChangeEvent;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.ui.RSEUIPlugin;

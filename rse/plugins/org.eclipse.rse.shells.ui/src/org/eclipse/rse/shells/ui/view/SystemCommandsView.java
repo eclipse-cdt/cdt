@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemThemeConstants 
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -20,10 +21,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewProvider;
 import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
@@ -40,7 +41,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.IThemeManager;
 
-public class SystemCommandsView extends SystemTableView implements IPropertyChangeListener
+public class SystemCommandsView extends SystemTableView
+	implements IPropertyChangeListener
 {
 	public class CommandsViewFilter extends ViewerFilter
 	{

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,16 +11,16 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -172,7 +172,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		  	   {
 		  	   	 //System.out.println("Firing REFRESH_REMOTE");
 		         sr.fireEvent(
-                   new org.eclipse.rse.model.impl.SystemResourceChangeEvent(
+                   new org.eclipse.rse.ui.model.impl.SystemResourceChangeEvent(
                       parent,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, null) );
 		  	   }
 		  	   else  
@@ -180,11 +180,11 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		  	   	 //System.out.println("MOVE OPERATION: Firing REFRESH");
 		  	   	 // FIRST REFRESH EXPANDED FILTER
 		         sr.fireEvent(
-                   new org.eclipse.rse.model.impl.SystemResourceChangeEvent(
+                   new org.eclipse.rse.ui.model.impl.SystemResourceChangeEvent(
                       parent,ISystemResourceChangeEvent.EVENT_REFRESH, null) );
                  // NEXT REFRESH ALL OTHER PLACES THAT MIGHT BE SHOWING THE SOURCE FOLDER
 		         sr.fireEvent(
-                   new org.eclipse.rse.model.impl.SystemResourceChangeEvent(
+                   new org.eclipse.rse.ui.model.impl.SystemResourceChangeEvent(
                       firstSelectionParent,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, null) );                 
 		  	   }
 		  	}

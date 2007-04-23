@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -33,12 +34,12 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
-import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;

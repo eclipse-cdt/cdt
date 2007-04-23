@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 162962 - recursive removeCachedRemoteFile()
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -44,6 +45,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.model.SystemMessageObject;
+import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -51,7 +53,6 @@ import org.eclipse.rse.core.subsystems.IRemoteContainer;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.core.subsystems.SubSystem;
-import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IClientServerConstants;
 import org.eclipse.rse.services.clientserver.IMatcher;
@@ -1395,7 +1396,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			case CommunicationsEvent.AFTER_DISCONNECT :	
 				_cachedRemoteFiles.clear();
 				// DKM - taking this out because it causes an exception when the event occurs in Modal Context
-				//SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
+				//ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
 				//sr.connectedStatusChange(this, false, true, true);
 				getConnectorService().removeCommunicationsListener(this);
 		

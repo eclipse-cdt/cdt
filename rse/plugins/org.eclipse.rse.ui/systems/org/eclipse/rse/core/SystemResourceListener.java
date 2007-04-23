@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -23,10 +23,10 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.rse.core.model.ISystemModelChangeEvents;
+import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.core.RemoteSystemsProject;
-import org.eclipse.rse.internal.model.SystemModelChangeEvent;
+import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
 import org.eclipse.rse.internal.ui.view.SystemPerspectiveLayout;
 import org.eclipse.rse.internal.ui.view.SystemView;

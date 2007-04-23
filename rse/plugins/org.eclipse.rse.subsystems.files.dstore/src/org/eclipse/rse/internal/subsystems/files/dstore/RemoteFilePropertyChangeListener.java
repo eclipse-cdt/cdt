@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -30,13 +30,13 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -56,7 +56,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 
     protected Shell shell;
 
-    protected SystemRegistry _registry;
+    protected ISystemRegistry _registry;
 
     protected IConnectorService system;
 
@@ -116,14 +116,14 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 			for (int i = 0; i < _files.length; i++)
 			{			
 			  _registry.fireEvent(new
-                      org.eclipse.rse.model.SystemResourceChangeEvent(_files[i],
+                      org.eclipse.rse.core.events.SystemResourceChangeEvent(_files[i],
                       ISystemResourceChangeEvents.EVENT_ICON_CHANGE,
                         _parentFile));
             }
               
 			/*
 			_registry.fireEvent(new
-                      org.eclipse.rse.model.SystemResourceChangeEvent(_files,
+                      org.eclipse.rse.ui.model.SystemResourceChangeEvent(_files,
                       ISystemResourceChangeEvent.EVENT_REPLACE_CHILDREN,
                         _parentFile));
                         */

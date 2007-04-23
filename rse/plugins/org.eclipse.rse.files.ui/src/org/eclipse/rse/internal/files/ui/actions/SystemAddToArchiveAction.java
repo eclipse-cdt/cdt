@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2003, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -27,13 +27,14 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.files.ui.dialogs.AddToArchiveDialog;
 import org.eclipse.rse.internal.files.ui.FileResources;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -44,7 +45,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -158,8 +158,8 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 				IRemoteFile selection = (IRemoteFile) _selected.get(i);
 				addToArchive(selection, destinationArchive, saveFullPathInfo, relativeTo);
 			}
-			SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
-			registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, destinationArchive, destinationArchive.getParentPath(), destSS, null, null);
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, destinationArchive, destinationArchive.getParentPath(), destSS, null);
 			registry.fireEvent(new SystemResourceChangeEvent(destinationArchive, ISystemResourceChangeEvents.EVENT_REFRESH, destinationArchive.getParentPath()));
 			repeat = false;
 		}

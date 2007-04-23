@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -41,6 +42,8 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.SystemFilterReference;
@@ -50,8 +53,10 @@ import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemMessageObject;
+import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
@@ -79,11 +84,6 @@ import org.eclipse.rse.internal.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.internal.ui.view.SystemDNDTransferRunnable;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.internal.ui.view.search.SystemSearchTableView;
-import org.eclipse.rse.model.ISystemRegistryUI;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemRemoteResourceSet;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
@@ -118,11 +118,11 @@ import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.operations.SystemFetchOperation;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.IContextObject;
-import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -2506,7 +2506,7 @@ public class SystemViewRemoteFileAdapter
 		boolean ok = true;
 		IRemoteFile file = (IRemoteFile) element;
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
-		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		try
 		{
 			

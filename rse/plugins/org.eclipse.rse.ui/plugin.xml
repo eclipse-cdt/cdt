@@ -235,7 +235,7 @@ Contributors:
       </page>
       <!-- with move to services this should disappear
       <page
-            objectClass="org.eclipse.rse.model.IHost"
+            objectClass="org.eclipse.rse.ui.model.IHost"
             name="%PropertyPage.Connection.SubSystems"
             class="org.eclipse.rse.ui.propertypages.SystemConnectionSubSystemsPropertyPage"
             id="org.eclipse.rse.SystemConnectionSubSystemsPropertyPage">

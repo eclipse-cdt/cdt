@@ -12,17 +12,18 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -451,7 +451,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
     	  {
     	     getRemoteFile().getParentRemoteFileSubSystem().setReadOnly(new NullProgressMonitor(), getRemoteFile(), readOnlySelected);
 		     RSEUIPlugin.getTheSystemRegistry().fireEvent(
-                   new org.eclipse.rse.model.SystemResourceChangeEvent(
+                   new org.eclipse.rse.core.events.SystemResourceChangeEvent(
                    getRemoteFile(),ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE,null)); 
     	     
     	  }

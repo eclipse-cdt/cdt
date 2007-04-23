@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -20,12 +21,12 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.actions.SystemUploadConflictAction;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -261,7 +262,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				
 				IRemoteFile parent = remoteFile.getParentRemoteFile();
 	
-				SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+				ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 				// refresh
 				if (parent != null)
 				{

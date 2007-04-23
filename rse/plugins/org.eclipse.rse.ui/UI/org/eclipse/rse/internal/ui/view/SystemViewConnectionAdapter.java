@@ -16,6 +16,7 @@
  * Uwe Stieber (Wind River) - Menu action contributions can be acknowlegded by system type provider
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -47,7 +48,6 @@ import org.eclipse.rse.internal.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInMonitorAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.internal.ui.actions.SystemWorkOfflineAction;
-import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
@@ -55,6 +55,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;

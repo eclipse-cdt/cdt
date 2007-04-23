@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
@@ -42,7 +42,7 @@ public abstract class ProcessServiceSubSystemConfiguration extends RemoteProcess
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemConfiguration#getProcessService(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemConfiguration#getProcessService(org.eclipse.rse.ui.model.IHost)
 	 */
 	public IProcessService getProcessService(IHost host) 
 	{
@@ -64,7 +64,7 @@ public abstract class ProcessServiceSubSystemConfiguration extends RemoteProcess
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.ui.model.IHost)
 	 */
 	public boolean supportsServerLaunchProperties(IHost host) 
 	{
@@ -72,7 +72,7 @@ public abstract class ProcessServiceSubSystemConfiguration extends RemoteProcess
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration#getService(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration#getService(org.eclipse.rse.ui.model.IHost)
 	 */
 	public IService getService(IHost host)
 	{

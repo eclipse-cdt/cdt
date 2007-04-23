@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.model;
@@ -22,14 +22,15 @@ import java.util.Stack;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -42,7 +43,8 @@ import org.eclipse.swt.widgets.Shell;
  * is called. 
  *
  */
-public abstract class RemoteCommandShellOperation implements ISystemResourceChangeListener
+public abstract class RemoteCommandShellOperation 
+	implements ISystemResourceChangeListener, ISystemShellProvider
 {
 
 	protected class CommandAlias

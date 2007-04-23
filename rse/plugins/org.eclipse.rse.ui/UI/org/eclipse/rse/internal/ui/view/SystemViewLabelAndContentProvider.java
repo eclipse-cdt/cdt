@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -37,7 +37,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.operations.SystemDeferredTreeContentManager;
 import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -211,8 +211,8 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	if ((adapter!=null) && (viewer != null))
     	{    	
     	  	Shell shell = null;
-    	  	if (viewer instanceof ISystemResourceChangeListener)
-    	    	shell = ((ISystemResourceChangeListener)viewer).getShell();
+    	  	if (viewer instanceof ISystemShellProvider)
+    	    	shell = ((ISystemShellProvider)viewer).getShell();
     	  	else
     	    	shell = viewer.getControl().getShell();
     	  	adapter.setShell(shell);

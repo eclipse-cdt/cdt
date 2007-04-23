@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - Replace SystemRegistry by ISystemRegistry
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -49,13 +50,15 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemPreferenceChangeEvent;
+import org.eclipse.rse.core.events.ISystemPreferenceChangeEvents;
+import org.eclipse.rse.core.events.ISystemPreferenceChangeListener;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemPreferenceChangeEvent;
-import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
-import org.eclipse.rse.core.model.ISystemPreferenceChangeListener;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -66,9 +69,6 @@ import org.eclipse.rse.internal.ui.actions.SystemPreferenceQualifyConnectionName
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceRestoreStateAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceShowFilterPoolsAction;
 import org.eclipse.rse.internal.ui.actions.SystemWorkWithProfilesAction;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -83,6 +83,7 @@ import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -395,7 +396,7 @@ public class SystemViewPart
 		}
 
 		// register global edit actions 		
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
 
 		Clipboard clipboard = registry.getSystemClipboard();
 

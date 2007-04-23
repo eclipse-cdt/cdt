@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -36,16 +37,15 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.shells.ui.ShellResources;
 import org.eclipse.rse.internal.shells.ui.actions.SystemBaseShellAction;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.shells.ui.view.SystemViewRemoteOutputAdapter;
@@ -58,6 +58,7 @@ import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemBaseDummyAction;
 import org.eclipse.rse.ui.actions.SystemTablePrintAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -73,8 +74,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
 
-
-
 /**
  * This is the desktop view wrapper of the System View viewer.
  */
@@ -85,6 +84,7 @@ public class SystemCommandsViewPart
 		SelectionListener,
 		ISelectionChangedListener,
 		ISystemResourceChangeListener,
+		ISystemShellProvider,
 		IRSEViewPart,
 		IMenuListener,
 		ISystemMessageLine
@@ -317,7 +317,7 @@ public class SystemCommandsViewPart
 
 		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 
 	
@@ -339,7 +339,7 @@ public class SystemCommandsViewPart
 		selectionService.removeSelectionListener(this);
 		_folder.dispose();
 
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
 		super.dispose();
 	}

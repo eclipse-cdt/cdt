@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2003, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,12 +11,13 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
@@ -28,8 +29,6 @@ import org.eclipse.ui.views.properties.IPropertySource;
  */
 public abstract class AbstractSystemRemoteAdapterFactory implements IAdapterFactory 
 {
-
-
 
 	/**
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(Object, Class)

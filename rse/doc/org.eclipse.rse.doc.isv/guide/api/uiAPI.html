@@ -117,9 +117,20 @@ together with the RSE dialog and wizard support.
 
 <p>Often we want to refresh the contents of the Remote Systems view or Table view from within our actions, to visualize
 changes to the selected resources. To do this, use the
-<samp><A href="../../reference/api/org/eclipse/rse/model/SystemRegistry.html#fireRemoteResourceChangeEvent(int, java.lang.Object, java.lang.Object, org.eclipse.rse.core.subsystems.ISubSystem, java.lang.String, org.eclipse.jface.viewers.Viewer)">method</a></samp>.
+<samp><A href="../../reference/api/org/eclipse/rse/core/model/ISystemRegistry.html#fireRemoteResourceChangeEvent(int, java.lang.Object, java.lang.Object, org.eclipse.rse.core.subsystems.ISubSystem, java.lang.String)">method</a></samp>.
 To get the system registry, use the
-<samp><A href="../../reference/api/org/eclipse/rse/model/SystemStartHere.html#getSystemRegistry()">method</a></samp>.
-</body>
+<samp><A href="../../reference/api/org/eclipse/rse/core/model/SystemStartHere.html#getSystemRegistry()">method</a></samp>.
+</p>
 
+<p>At times, you may want to post events in a dispatch thread rather than using the
+original client's thread; or you may want to pass the originating viewer's ID
+with the resource change event. Such operations are only possible when the UI 
+is loaded, and therefore you need to use
+<samp><A href="../../reference/api/org/eclipse/rse/ui/model/ISystemRegistryUI.html#fireRemoteResourceChangeEvent(int, java.lang.Object, java.lang.Object, org.eclipse.rse.core.subsystems.ISubSystem, java.lang.String, org.eclipse.jface.viewers.Viewer)">ISystemRegistryUI.fireEvent()</a></samp>
+method in that case. To get the system registry UI interface, use the
+<samp><A href="../../reference/api/org/eclipse/rse/ui/RSEUIPlugin.html#getTheSystemRegistry()">RSEUIPlugin.getTheSystemRegistry()</a></samp>
+method.
+</p>
+
+</body>
 </html>

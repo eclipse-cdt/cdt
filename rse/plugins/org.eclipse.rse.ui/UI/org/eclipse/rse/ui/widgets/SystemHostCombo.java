@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -21,16 +22,18 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -76,9 +79,9 @@ import org.eclipse.swt.widgets.Shell;
  *       For a list of pre-defined categories, see {@link org.eclipse.rse.core.model.ISubSystemConfigurationCategories}.
  * </ul>
  */
-public class SystemHostCombo extends Composite implements ISelectionProvider, ISystemCombo,
-																org.eclipse.rse.model.ISystemResourceChangeListener,
-			                                                      ISystemResourceChangeEvents, DisposeListener
+public class SystemHostCombo extends Composite implements ISelectionProvider,
+	ISystemCombo, ISystemResourceChangeListener, ISystemShellProvider,
+	DisposeListener
 {
 	protected Label              connectionLabel = null;
 	protected Combo              connectionCombo = null;
@@ -917,14 +920,14 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 		//Object parent = event.getParent();
 		switch ( type )
 		{
-			case EVENT_ADD:
-			case EVENT_ADD_RELATIVE:
-			case EVENT_DELETE_MANY:
-			case EVENT_RENAME:
+			case ISystemResourceChangeEvents.EVENT_ADD:
+			case ISystemResourceChangeEvents.EVENT_ADD_RELATIVE:
+			case ISystemResourceChangeEvents.EVENT_DELETE_MANY:
+			case ISystemResourceChangeEvents.EVENT_RENAME:
 					if ( src instanceof IHost )
 					{
 						// if RENAME, update showQualifiedNames in case it changed
-						if ( type == EVENT_RENAME )
+						if ( type == ISystemResourceChangeEvents.EVENT_RENAME )
 							showQualifiedNames = SystemPreferencesManager.getQualifyConnectionNames();
 							
 						refreshConnections();

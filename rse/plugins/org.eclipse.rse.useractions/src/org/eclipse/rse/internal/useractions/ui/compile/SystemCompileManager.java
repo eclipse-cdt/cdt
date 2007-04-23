@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.compile;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,9 +7,12 @@ package org.eclipse.rse.internal.useractions.ui.compile;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
-import java.util.Hashtable;
 
+package org.eclipse.rse.internal.useractions.ui.compile;
+
+import java.util.Hashtable;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemAdapterHelpers;
@@ -19,10 +20,10 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
-import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.ui.ISystemMessages;

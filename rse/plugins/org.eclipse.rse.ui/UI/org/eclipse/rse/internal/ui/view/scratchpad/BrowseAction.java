@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,14 +11,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.internal.model.SystemScratchpad;
-import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.internal.model.SystemRegistry;
+import org.eclipse.rse.ui.internal.model.SystemScratchpad;
 
 
 
@@ -32,7 +32,7 @@ class BrowseAction extends Action
         _view = view;
 		setImageDescriptor(des);
 		setToolTipText(label);
-		_scratchPad = RSEUIPlugin.getTheSystemRegistry().getSystemScratchPad();
+		_scratchPad = SystemRegistry.getInstance().getSystemScratchPad();
 	}
 
 	public void checkEnabledState()

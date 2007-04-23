@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -28,14 +28,14 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.model.SystemNewConnectionPromptObject;
+import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewCategoryAdapter;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewCategoryNode;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewProfileAdapter;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
-import org.eclipse.rse.model.ISystemPromptableObject;
-import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
+import org.eclipse.rse.ui.internal.model.SystemNewConnectionPromptObject;
+import org.eclipse.rse.ui.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.ui.IActionFilter;

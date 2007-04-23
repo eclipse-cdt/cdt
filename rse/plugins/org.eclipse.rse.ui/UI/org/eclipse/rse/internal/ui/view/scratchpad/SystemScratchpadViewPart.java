@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -28,19 +28,21 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
+import org.eclipse.rse.ui.internal.model.SystemRegistry;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.SWT;
@@ -60,8 +62,10 @@ import org.eclipse.ui.part.ViewPart;
 /**
  * This class is the Remote Scratchpad view.
  */
-public class SystemScratchpadViewPart extends ViewPart implements ISelectionListener, ISelectionChangedListener, 
- ISystemResourceChangeListener, ISystemMessageLine, IRSEViewPart
+public class SystemScratchpadViewPart extends ViewPart
+	implements ISelectionListener, ISelectionChangedListener, 
+	ISystemResourceChangeListener, ISystemShellProvider,
+	ISystemMessageLine, IRSEViewPart
 {
 
 	
@@ -120,7 +124,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 		fillLocalToolBar();
 
 		// register global edit actions 		
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
 		Clipboard clipboard = registry.getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
@@ -142,7 +146,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 
 		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "scrp0000"); //$NON-NLS-1$
 
-		setInput(registry.getSystemScratchPad());
+		setInput(SystemRegistry.getInstance().getSystemScratchPad());
 		
 		getSite().registerContextMenu(_viewer.getContextMenuManager(), _viewer);
 	}

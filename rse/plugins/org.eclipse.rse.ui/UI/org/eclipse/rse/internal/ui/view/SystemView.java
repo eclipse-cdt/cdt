@@ -18,6 +18,7 @@
  *                          - [177537] [api] Dynamic system type provider need a hook to add dynamic system type specific menu groups
  *                          - Several bugfixes.
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -61,12 +62,20 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
@@ -95,16 +104,6 @@ import org.eclipse.rse.internal.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInMonitorAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.internal.ui.actions.SystemSubMenuManager;
-import org.eclipse.rse.model.ISystemPromptableObject;
-import org.eclipse.rse.model.ISystemRemoteChangeEvent;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
-import org.eclipse.rse.model.ISystemRemoteChangeListener;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemRemoteElementResourceSet;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
@@ -120,6 +119,11 @@ import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.model.ISystemPromptableObject;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
+import org.eclipse.rse.ui.model.SystemRemoteElementResourceSet;
+import org.eclipse.rse.ui.model.SystemResourceChangeEventUI;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.IContextObject;
@@ -169,9 +173,12 @@ import org.eclipse.ui.views.framelist.GoIntoAction;
 /*
  * At one time implemented the following as well: MenuListener, IDoubleClickListener, ArmListener, IWireEventTarget
  */
-public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemResourceChangeListener, ISystemRemoteChangeListener, IMenuListener,
-IPostSelectionProvider,		
-ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget
+public class SystemView extends SafeTreeViewer
+	implements ISystemTree, ISystemShellProvider,
+		ISystemResourceChangeListener, ISystemRemoteChangeListener,
+		IMenuListener, IPostSelectionProvider,
+		ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget,
+		ISelectionChangedListener,  ITreeViewerListener 
 {
 
 	protected Shell shell; // shell hosting this viewer
@@ -1594,34 +1601,49 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			Widget parentItem = null;
 			Object[] multiSource = null;
 			Object previous = null;
-			if (_event.getViewerItem() instanceof TreeItem)
-				inputTreeItem = (TreeItem) _event.getViewerItem();
-			else
-				inputTreeItem = null;
 			boolean wasSelected = false;
-			boolean originatedHere = (_event.getOriginatingViewer() == null) || (_event.getOriginatingViewer() == _originatingViewer);
+			boolean originatedHere = true;
+			if (_event instanceof SystemResourceChangeEventUI) {
+				Viewer viewer = ((SystemResourceChangeEventUI)_event).getOriginatingViewer();
+				if (viewer!=null && viewer!=_originatingViewer) {
+					originatedHere = false;
+				}
+				Object viewerItem = ((SystemResourceChangeEventUI)_event).getViewerItem();
+				if (viewerItem instanceof TreeItem) {
+					inputTreeItem = (TreeItem)viewerItem;
+				} else {
+					inputTreeItem = null;
+				}
+			} else {
+				inputTreeItem = null;
+			}
 
 			//logDebugMsg("INSIDE SYSRESCHGD: " + type + ", " + src + ", " + parent);
 			switch (type) {
 			// SPECIAL CASES: ANYTHING TO DO WITH FILTERS!!
-			case EVENT_RENAME_FILTER_REFERENCE:
-			case EVENT_CHANGE_FILTER_REFERENCE:
+			case ISystemResourceChangeEvents.EVENT_RENAME_FILTER_REFERENCE:
+			case ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE:
 				findAndUpdateFilter(_event, type);
 				break;
-			case EVENT_CHANGE_FILTERSTRING_REFERENCE:
+			case ISystemResourceChangeEvents.EVENT_CHANGE_FILTERSTRING_REFERENCE:
 				findAndUpdateFilterString(_event, type);
 				break;
 
-			case EVENT_ADD_FILTERSTRING_REFERENCE:
-			case EVENT_DELETE_FILTERSTRING_REFERENCE:
-			case EVENT_MOVE_FILTERSTRING_REFERENCES:
+			case ISystemResourceChangeEvents.EVENT_ADD_FILTERSTRING_REFERENCE:
+			case ISystemResourceChangeEvents.EVENT_DELETE_FILTERSTRING_REFERENCE:
+			case ISystemResourceChangeEvents.EVENT_MOVE_FILTERSTRING_REFERENCES:
 				//findAndUpdateFilterStringParent(event, type);
 				//break;
-			case EVENT_ADD_FILTER_REFERENCE:
-			case EVENT_DELETE_FILTER_REFERENCE:
-			case EVENT_MOVE_FILTER_REFERENCES:
+			case ISystemResourceChangeEvents.EVENT_ADD_FILTER_REFERENCE:
+			case ISystemResourceChangeEvents.EVENT_DELETE_FILTER_REFERENCE:
+			case ISystemResourceChangeEvents.EVENT_MOVE_FILTER_REFERENCES:
 				// are we a secondary perspective, and our input or parent of our input was deleted?
-				if (((type == EVENT_DELETE_FILTERSTRING_REFERENCE) || (type == EVENT_DELETE_FILTER_REFERENCE)) && affectsInput(src)) {
+				if ((
+					   (type == ISystemResourceChangeEvents.EVENT_DELETE_FILTERSTRING_REFERENCE)
+					|| (type == ISystemResourceChangeEvents.EVENT_DELETE_FILTER_REFERENCE)
+					)
+					&& affectsInput(src)
+				) {
 					close();
 					return Status.OK_STATUS;
 				}
@@ -1629,8 +1651,8 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				findAndUpdateFilterParent(_event, type);
 				break;
 
-			case EVENT_ADD:
-			case EVENT_ADD_RELATIVE:
+			case ISystemResourceChangeEvents.EVENT_ADD:
+			case ISystemResourceChangeEvents.EVENT_ADD_RELATIVE:
 				if (debug) {
 					logDebugMsg("SV event: EVENT_ADD "); //$NON-NLS-1$
 				}
@@ -1649,7 +1671,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					//System.out.println("inputProvider.showingConnections().........: " + (inputProvider.showingConnections()));
 					if ((parent == inputProvider) && addingConnection && (_event.getParent() instanceof ISystemRegistry) && !inputProvider.showingConnections()) return Status.OK_STATUS; // only reflect new connections in main perspective. pc42742
 					int pos = -1;
-					if (type == EVENT_ADD_RELATIVE) {
+					if (type == ISystemResourceChangeEvents.EVENT_ADD_RELATIVE) {
 						previous = _event.getRelativePrevious();
 						if (previous != null) pos = getItemIndex(parentItem, previous);
 						if (pos >= 0) pos++; // want to add after previous
@@ -1684,7 +1706,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					setSelection(new StructuredSelection(src), true);
 				}
 				break;
-			case EVENT_ADD_MANY:
+			case ISystemResourceChangeEvents.EVENT_ADD_MANY:
 				if (debug) {
 					logDebugMsg("SV event: EVENT_ADD_MANY"); //$NON-NLS-1$
 				}
@@ -1721,7 +1743,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					setSelection(new StructuredSelection(multiSource), true);
 				}
 				break;
-			case EVENT_REPLACE_CHILDREN:
+			case ISystemResourceChangeEvents.EVENT_REPLACE_CHILDREN:
 				if (debug) {
 					logDebugMsg("SV event: EVENT_REPLACE_CHILDREN"); //$NON-NLS-1$
 				}
@@ -1748,7 +1770,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					//setSelection(new StructuredSelection(multiSource),true);
 				}
 				break;
-			case EVENT_CHANGE_CHILDREN:
+			case ISystemResourceChangeEvents.EVENT_CHANGE_CHILDREN:
 				if (debug) {
 					logDebugMsg("SV event: EVENT_CHANGE_CHILDREN. src=" + src + ", parent=" + parent); //$NON-NLS-1$ //$NON-NLS-2$
 					//Exception e = new Exception();
@@ -1786,7 +1808,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				} else
 					collapseNode(parent, true);
 				break;
-			case EVENT_DELETE:
+			case ISystemResourceChangeEvents.EVENT_DELETE:
 				if (debug) logDebugMsg("SV event: EVENT_DELETE "); //$NON-NLS-1$
 				// are we a secondary perspective, and our input or parent of our input was deleted?
 				if (affectsInput(src)) {
@@ -1805,7 +1827,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				}
 				break;
 
-			case EVENT_DELETE_MANY:
+			case ISystemResourceChangeEvents.EVENT_DELETE_MANY:
 				if (debug) logDebugMsg("SV event: EVENT_DELETE_MANY "); //$NON-NLS-1$
 				multiSource = _event.getMultiSource();
 				// are we a secondary perspective, and our input or parent of our input was deleted?
@@ -1845,7 +1867,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			 deleteRemoteObject(multiSource[idx]);
 			 break;   	    	      
 			 */
-			case EVENT_RENAME:
+			case ISystemResourceChangeEvents.EVENT_RENAME:
 				if (debug) logDebugMsg("SV event: EVENT_RENAME "); //$NON-NLS-1$
 				properties[0] = IBasicPropertyConstants.P_TEXT;
 				update(src, properties); // for refreshing non-structural properties in viewer when model changes   	   	      
@@ -1861,7 +1883,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			 renameRemoteObject(src, (String)parent);
 			 break;
 			 */
-			case EVENT_ICON_CHANGE:
+			case ISystemResourceChangeEvents.EVENT_ICON_CHANGE:
 				if (debug) logDebugMsg("SV event: EVENT_ICON_CHANGE "); //$NON-NLS-1$
 
 				if (initViewerFilters != null && initViewerFilters.length > 0) {
@@ -1886,7 +1908,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 			//refresh(src); THIS IS AN EVIL OPERATION: CAUSES ALL EXPANDED NODES TO RE-REQUEST THEIR CHILDREN. OUCH!
 			//updatePropertySheet();
 			//break;
-			case EVENT_REFRESH:
+			case ISystemResourceChangeEvents.EVENT_REFRESH:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH "); //$NON-NLS-1$
 				//if (src != null)
 				//  refresh(src); // ONLY VALID WHEN USER TRULY WANTS TO REQUERY CHILDREN FROM HOST
@@ -1902,7 +1924,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				break;
 			// refresh the parent of the currently selected items.
 			// todo: intelligently re-select previous selections
-			case EVENT_REFRESH_SELECTED_PARENT:
+			case ISystemResourceChangeEvents.EVENT_REFRESH_SELECTED_PARENT:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH_SELECTED_PARENT "); //$NON-NLS-1$
 				TreeItem[] items = getTree().getSelection();
 				if ((items != null) && (items.length > 0) && (items[0] != null)) {
@@ -1918,7 +1940,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				//else
 				//System.out.println("Selection is empty");    	   	      
 				break;
-			case EVENT_REFRESH_SELECTED:
+			case ISystemResourceChangeEvents.EVENT_REFRESH_SELECTED:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH_SELECTED "); //$NON-NLS-1$
 				IStructuredSelection selected = (IStructuredSelection) getSelection();
 				Iterator i = selected.iterator();
@@ -1976,7 +1998,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 
 				updatePropertySheet();
 				break;
-			case EVENT_REFRESH_SELECTED_FILTER:
+			case ISystemResourceChangeEvents.EVENT_REFRESH_SELECTED_FILTER:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH_SELECTED_FILTER "); //$NON-NLS-1$
 				IStructuredSelection selectedItems = (IStructuredSelection) getSelection();
 				Iterator j = selectedItems.iterator();
@@ -2021,17 +2043,17 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					systemResourceChanged(_event);
 				}
 				break;
-			case EVENT_REFRESH_REMOTE:
+			case ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH_REMOTE: src = " + src); //$NON-NLS-1$
 				refreshRemoteObject(src, parent, originatedHere);
 				break;
-			case EVENT_SELECT_REMOTE:
+			case ISystemResourceChangeEvents.EVENT_SELECT_REMOTE:
 				if (debug) logDebugMsg("SV event: EVENT_SELECT_REMOTE: src = " + src); //$NON-NLS-1$
 				//remoteItemsToSkip = null; // reset
 				selectRemoteObjects(src, (ISubSystem) null, parent);
 				break;
 
-			case EVENT_MOVE_MANY:
+			case ISystemResourceChangeEvents.EVENT_MOVE_MANY:
 				if (debug) logDebugMsg("SV event: EVENT_MOVE_MANY "); //$NON-NLS-1$
 				multiSource = _event.getMultiSource();
 				if ((multiSource == null) || (multiSource.length == 0)) return Status.OK_STATUS;
@@ -2045,7 +2067,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					setSelection(new StructuredSelection(multiSource), true);
 				}
 				break;
-			case EVENT_PROPERTY_CHANGE:
+			case ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE:
 				if (debug) logDebugMsg("SV event: EVENT_PROPERTY_CHANGE "); //$NON-NLS-1$
 				String[] allProps = { IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
 				ISystemRemoteElementAdapter ra = (ISystemRemoteElementAdapter)((IAdaptable)src).getAdapter(ISystemRemoteElementAdapter.class);
@@ -2055,15 +2077,15 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					update(src, allProps); // for refreshing non-structural properties in viewer when model changes   	   	      
 				updatePropertySheet();
 				break;
-			case EVENT_PROPERTYSHEET_UPDATE:
+			case ISystemResourceChangeEvents.EVENT_PROPERTYSHEET_UPDATE:
 				if (debug) logDebugMsg("SV event: EVENT_PROPERTYSHEET_UPDATE "); //$NON-NLS-1$
 				updatePropertySheet();
 				break;
-			case EVENT_MUST_COLLAPSE:
+			case ISystemResourceChangeEvents.EVENT_MUST_COLLAPSE:
 				if (debug) logDebugMsg("SV event: EVENT_MUST_COLLAPSE "); //$NON-NLS-1$
 				collapseNode(src, true); // collapse and flush gui widgets from memory
 				break;
-			case EVENT_COLLAPSE_ALL:
+			case ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL:
 				if (debug) logDebugMsg("SV event: EVENT_COLLAPSE_ALL "); //$NON-NLS-1$
 				collapseAll(); // collapse all
 				if ((src != null) && (src instanceof String) && ((String) src).equals("false")) // defect 41203 //$NON-NLS-1$
@@ -2071,16 +2093,16 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				} else
 					refresh(); // flush gui widgets from memory
 				break;
-			case EVENT_COLLAPSE_SELECTED: // defect 41203
+			case ISystemResourceChangeEvents.EVENT_COLLAPSE_SELECTED: // defect 41203
 				if (debug) logDebugMsg("SV event: EVENT_COLLAPSE_SELECTED "); //$NON-NLS-1$
 				collapseSelected();
 				break;
-			case EVENT_EXPAND_SELECTED: // defect 41203
+			case ISystemResourceChangeEvents.EVENT_EXPAND_SELECTED: // defect 41203
 				if (debug) logDebugMsg("SV event: EVENT_EXPAND_SELECTED "); //$NON-NLS-1$
 				expandSelected();
 				break;
 
-			case EVENT_REVEAL_AND_SELECT:
+			case ISystemResourceChangeEvents.EVENT_REVEAL_AND_SELECT:
 				if (debug) logDebugMsg("SV event: EVENT_REVEAL_AND_SELECT "); //$NON-NLS-1$
 				parentItem = findItem(parent);
 				if (parentItem == null) return Status.OK_STATUS;
@@ -2104,14 +2126,14 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					}
 				}
 				break;
-			case EVENT_SELECT:
+			case ISystemResourceChangeEvents.EVENT_SELECT:
 				if (debug) logDebugMsg("SV event: EVENT_SELECT "); //$NON-NLS-1$
 				item = findItem(src);
 				if (item == null) // if not showing item, this is a no-op
 					return Status.OK_STATUS;
 				setSelection(new StructuredSelection(src), true);
 				break;
-			case EVENT_SELECT_EXPAND:
+			case ISystemResourceChangeEvents.EVENT_SELECT_EXPAND:
 				if (debug) logDebugMsg("SV event: EVENT_SELECT_EXPAND "); //$NON-NLS-1$
 				item = findItem(src);
 				if (item == null) // if not showing item, this is a no-op
@@ -2132,13 +2154,20 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	/**
 	 * This is the method in your class that will be called when a remote resource
 	 *  changes. You will be called after the resource is changed.
-	 * @see org.eclipse.rse.model.ISystemRemoteChangeEvent
+	 * @see org.eclipse.rse.core.events.ISystemRemoteChangeEvent
 	 */
 	public void systemRemoteResourceChanged(ISystemRemoteChangeEvent event) {
 		int eventType = event.getEventType();
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
-		boolean originatedHere = (event.getOriginatingViewer() == this);
+		boolean originatedHere;
+		if (event instanceof SystemResourceChangeEventUI) {
+			Viewer viewer = ((SystemResourceChangeEventUI)event).getOriginatingViewer();
+			originatedHere = (viewer==this);
+		} else {
+			originatedHere = false;
+		}
+		
 		List remoteResourceNames = null;
 		if (remoteResource instanceof List) { 
 			remoteResourceNames = (List) remoteResource;
@@ -3380,10 +3409,10 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		if (debug) {
 			String eventType = null;
 			switch (type) {
-			case EVENT_RENAME_FILTER_REFERENCE:
+			case ISystemResourceChangeEvents.EVENT_RENAME_FILTER_REFERENCE:
 				eventType = "EVENT_RENAME_FILTER_REFERENCE"; //$NON-NLS-1$
 				break;
-			case EVENT_CHANGE_FILTER_REFERENCE:
+			case ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE:
 				eventType = "EVENT_CHANGE_FILTER_REFERENCE"; //$NON-NLS-1$
 				break;
 			}
@@ -3421,10 +3450,10 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				logDebugMsg("......didn't find renamed/updated filter's reference!"); //$NON-NLS-1$
 			else {
 				// STEP 3: UPDATE THAT FILTER...
-				if (type == EVENT_RENAME_FILTER_REFERENCE) {
+				if (type == ISystemResourceChangeEvents.EVENT_RENAME_FILTER_REFERENCE) {
 					String[] rproperties = { IBasicPropertyConstants.P_TEXT };
 					update(item.getData(), rproperties); // for refreshing non-structural properties in viewer when model changes   	   	      
-				} else if (type == EVENT_CHANGE_FILTER_REFERENCE) {
+				} else if (type == ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE) {
 					//if (((TreeItem)item).getExpanded())    	      
 					//refresh(item.getData()); 
 					smartRefresh(new TreeItem[] { (TreeItem) item });
@@ -3456,7 +3485,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				logDebugMsg("......didn't find updated filter string's reference!"); //$NON-NLS-1$
 			else {
 				// STEP 3: UPDATE THAT FILTER STRING...
-				if (type == EVENT_CHANGE_FILTERSTRING_REFERENCE) // HAD BETTER!
+				if (type == ISystemResourceChangeEvents.EVENT_CHANGE_FILTERSTRING_REFERENCE) // HAD BETTER!
 				{
 					//if (((TreeItem)item).getExpanded())
 					//refresh(item.getData()); 
@@ -3516,29 +3545,29 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		//{
 		String eventType = null;
 		switch (type) {
-		case EVENT_ADD_FILTER_REFERENCE:
+		case ISystemResourceChangeEvents.EVENT_ADD_FILTER_REFERENCE:
 			add = true;
 			if (debug) eventType = "EVENT_ADD_FILTER_REFERENCE"; //$NON-NLS-1$
 			break;
-		case EVENT_DELETE_FILTER_REFERENCE:
+		case ISystemResourceChangeEvents.EVENT_DELETE_FILTER_REFERENCE:
 			delete = true;
 			if (debug) eventType = "EVENT_DELETE_FILTER_REFERENCE"; //$NON-NLS-1$
 			break;
-		case EVENT_MOVE_FILTER_REFERENCES:
+		case ISystemResourceChangeEvents.EVENT_MOVE_FILTER_REFERENCES:
 			move = true;
 			if (debug) eventType = "EVENT_MOVE_FILTER_REFERENCES"; //$NON-NLS-1$
 			break;
-		case EVENT_ADD_FILTERSTRING_REFERENCE:
+		case ISystemResourceChangeEvents.EVENT_ADD_FILTERSTRING_REFERENCE:
 			add = true;
 			afilterstring = true;
 			if (debug) eventType = "EVENT_ADD_FILTERSTRING_REFERENCE"; //$NON-NLS-1$
 			break;
-		case EVENT_DELETE_FILTERSTRING_REFERENCE:
+		case ISystemResourceChangeEvents.EVENT_DELETE_FILTERSTRING_REFERENCE:
 			delete = true;
 			afilterstring = true;
 			if (debug) eventType = "EVENT_DELETE_FILTERSTRING_REFERENCE"; //$NON-NLS-1$
 			break;
-		case EVENT_MOVE_FILTERSTRING_REFERENCES:
+		case ISystemResourceChangeEvents.EVENT_MOVE_FILTERSTRING_REFERENCES:
 			move = true;
 			afilterstring = true;
 			if (debug) eventType = "EVENT_MOVE_FILTERSTRING_REFERENCES"; //$NON-NLS-1$
@@ -4514,7 +4543,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	 * Required method from ISystemDeleteTarget
 	 */
 	public boolean doDelete(IProgressMonitor monitor) {
-		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -4609,7 +4638,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 				Object[] deleted = new Object[deletedVector.size()];
 				for (int idx = 0; idx < deleted.length; idx++)
 					deleted[idx] = deletedVector.elementAt(idx);
-				sr.fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(deleted, ISystemResourceChangeEvents.EVENT_DELETE_MANY, getSelectedParent()));
+				sr.fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(deleted, ISystemResourceChangeEvents.EVENT_DELETE_MANY, getSelectedParent()));
 			}
 		}
 		return ok;
@@ -4642,7 +4671,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 	 * Required method from ISystemRenameTarget
 	 */
 	public boolean doRename(String[] newNames) {
-		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		Object element = null;
@@ -4669,7 +4698,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					}
 
 					else
-						sr.fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(element, ISystemResourceChangeEvents.EVENT_RENAME, parentElement));
+						sr.fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(element, ISystemResourceChangeEvents.EVENT_RENAME, parentElement));
 				}
 			}
 		} catch (SystemMessageException exc) {

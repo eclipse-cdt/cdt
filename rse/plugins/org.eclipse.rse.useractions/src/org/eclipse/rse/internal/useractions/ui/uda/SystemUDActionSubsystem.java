@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
@@ -30,7 +31,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.GenericMessages;
@@ -39,10 +44,6 @@ import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
 import org.eclipse.rse.internal.useractions.ui.ISystemSubstitutor;
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
@@ -491,7 +492,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 		// REFRESH VIEW IF REQUESTED IN ACTION         
 		// ------------------------------------------------------------
 		if (actionRunEvenOnce && action.getRefresh() && (viewer != null)) {
-			SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 			try {
 				Thread.sleep(500L);
 			} catch (Exception exc) {

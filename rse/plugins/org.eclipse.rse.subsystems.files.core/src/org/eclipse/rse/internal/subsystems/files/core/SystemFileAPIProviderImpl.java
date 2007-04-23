@@ -12,14 +12,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.view.SystemAbstractAPIProvider;
-import org.eclipse.rse.model.SystemRegistry;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileAPIProvider;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -34,7 +34,7 @@ public class SystemFileAPIProviderImpl
 {
 
 
-	protected SystemRegistry sr = null;
+	protected ISystemRegistry sr = null;
 	protected boolean directoryMode = false;
 	//protected Object[] emptyList = new Object[0];	
 	

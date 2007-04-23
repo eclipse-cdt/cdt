@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -26,9 +26,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.PropertyList;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
@@ -37,9 +40,6 @@ import org.eclipse.rse.core.subsystems.IRemoteSystemEnvVar;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.internal.subsystems.shells.core.ShellStrings;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteSystemEnvVar;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -647,7 +647,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		_cmdShells.clear();
 		_defaultShell = null;
 		// registry.fireEvent(new
-		// org.eclipse.rse.model.SystemResourceChangeEvent(this,
+		// org.eclipse.rse.ui.model.SystemResourceChangeEvent(this,
 		// ISystemResourceChangeEvent.EVENT_COMMAND_SHELL_FINISHED, null));
 		Display.getDefault().asyncExec(new Refresh(this));
 
@@ -663,7 +663,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		public void run() 
 		{
-			SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
 		}
 	}
@@ -681,7 +681,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		public void run() 
 		{
-			SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(_cmdShell, ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED, null));
 			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
 		}
@@ -802,7 +802,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			return null;
 		}
 
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
 		return cmdShell;
@@ -814,7 +814,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	public IRemoteCommandShell runShell(IProgressMonitor monitor, Object context) throws Exception
 	{
 		IRemoteCommandShell cmdShell = internalRunShell(monitor, context);
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
 		return cmdShell;

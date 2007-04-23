@@ -49,10 +49,11 @@ public class SshConnectorServiceManager extends AbstractConnectorServiceManager 
     	return fInstance;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager#createConnectorService(org.eclipse.rse.model.IHost)
-	 */
-	public IConnectorService createConnectorService(IHost host) {
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager#createConnectorService(org.eclipse.rse.core.model.IHost)
+     */
+    public IConnectorService createConnectorService(IHost host) {
     	IConnectorService service =  new SshConnectorService(host);
     	return service;
 	}

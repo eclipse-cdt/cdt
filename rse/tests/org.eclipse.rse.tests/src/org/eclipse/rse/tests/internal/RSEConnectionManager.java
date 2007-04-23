@@ -9,6 +9,7 @@
  * Don Yantzi (IBM) - initial contribution.
  * David Dykstal (IBM) - initial contribution.
  * Uwe Stieber (Wind River) - refactoring and cleanup.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -28,6 +29,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -35,9 +38,6 @@ import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
@@ -167,7 +167,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 	public void removeConnection(String profileName, String name) {
 		assert profileName != null && name != null;
 		
-		SystemRegistry systemRegistry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry systemRegistry = RSEUIPlugin.getTheSystemRegistry();
 		Assert.assertNotNull("FAILED(findOrCreateConnection): RSE system registry unavailable!", systemRegistry); //$NON-NLS-1$
 		
 		ISystemProfile profile = systemRegistry.getSystemProfile(profileName);
@@ -188,7 +188,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 		
 		IHost connection = null;
 
-		SystemRegistry systemRegistry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry systemRegistry = RSEUIPlugin.getTheSystemRegistry();
 		Assert.assertNotNull("FAILED(findOrCreateConnection): RSE system registry unavailable!", systemRegistry); //$NON-NLS-1$
 
 		Exception exception = null;

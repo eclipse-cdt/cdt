@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.uda;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,11 +7,15 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
+
+package org.eclipse.rse.internal.useractions.ui.uda;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
 

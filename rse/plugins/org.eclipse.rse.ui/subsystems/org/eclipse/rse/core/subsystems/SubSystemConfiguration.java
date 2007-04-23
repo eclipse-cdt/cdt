@@ -16,6 +16,7 @@
  * David Dykstal (IBM) - 168870: made use of adapters on the SubSystemConfigurationProxy
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -35,6 +36,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemModelChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
@@ -47,11 +51,11 @@ import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.filters.SystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
-import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.internal.core.filters.SystemFilterPoolWrapperInformation;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
@@ -59,9 +63,6 @@ import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapter;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
-import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -606,7 +607,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		for (int idx = 0; idx < subsystems.length; idx++)
 		{
 			ISubSystem ss = subsystems[idx];
-			RSEUIPlugin.getTheSystemRegistry().fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(ss, ISystemResourceChangeEvents.EVENT_CHANGE_CHILDREN, ss));
+			RSEUIPlugin.getTheSystemRegistry().fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(ss, ISystemResourceChangeEvents.EVENT_CHANGE_CHILDREN, ss));
 		}
 	}
 

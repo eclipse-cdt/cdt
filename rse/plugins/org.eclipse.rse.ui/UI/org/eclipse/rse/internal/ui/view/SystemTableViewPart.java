@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -43,6 +44,13 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemContainer;
@@ -53,14 +61,6 @@ import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
-import org.eclipse.rse.model.ISystemRemoteChangeEvent;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
-import org.eclipse.rse.model.ISystemRemoteChangeListener;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -73,6 +73,8 @@ import org.eclipse.rse.ui.actions.SystemTablePrintAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemSelectAnythingDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
@@ -111,10 +113,12 @@ import org.osgi.framework.Bundle;
 /**
  * Comment goes here
  */
-public class SystemTableViewPart extends ViewPart implements ISelectionListener, ISelectionChangedListener, 
-				ISystemMessageLine, ISystemResourceChangeListener, ISystemRemoteChangeListener, IRSEViewPart
+public class SystemTableViewPart extends ViewPart
+	implements ISelectionListener, ISelectionChangedListener,
+		ISystemMessageLine, ISystemShellProvider,
+		ISystemResourceChangeListener, ISystemRemoteChangeListener,
+		IRSEViewPart
 {
-
 
 	class BrowseAction extends Action
 	{
@@ -335,7 +339,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 				((ISystemContainer)inputObject).markStale(true);
 			}
 			((SystemTableViewProvider) _viewer.getContentProvider()).flushCache();
-			SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(inputObject, ISystemResourceChangeEvents.EVENT_REFRESH, inputObject));
 
 			//_viewer.refresh();
@@ -1155,7 +1159,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		_browsePosition = 0;
 
 		// register global edit actions 		
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
 		Clipboard clipboard = registry.getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
@@ -1562,7 +1566,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	/**
 	 * This is the method in your class that will be called when a remote resource
 	 *  changes. You will be called after the resource is changed.
-	 * @see org.eclipse.rse.model.ISystemRemoteChangeEvent
+	 * @see org.eclipse.rse.core.events.ISystemRemoteChangeEvent
 	 */
 	public void systemRemoteResourceChanged(ISystemRemoteChangeEvent event)
 	{

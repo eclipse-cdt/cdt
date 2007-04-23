@@ -15,6 +15,7 @@
  *                     - created and used RSEPreferencesManager
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -339,7 +340,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
   
   /**
    * Creates a new <code>IHost</code> object instance. This method is
-   * called from {@link org.eclipse.rse.internal.model.SystemHostPool#createHost(String, String, String, String, String, int)}.
+   * called from {@link org.eclipse.rse.ui.internal.model.SystemHostPool#createHost(String, String, String, String, String, int)}.
    * 
    * @param profile The system profile to associate with the host.
    * @return A new <code>IHost</code> object instance.

@@ -57,6 +57,7 @@ org.eclipse.rse.connectorservice.dstore
 org.eclipse.rse.connectorservice.dstore.util
 org.eclipse.rse.core
 org.eclipse.rse.core.comm
+org.eclipse.rse.core.events
 org.eclipse.rse.core.filters
 org.eclipse.rse.core.model
 org.eclipse.rse.core.references

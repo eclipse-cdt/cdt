@@ -7,19 +7,20 @@
  * 
  * Contributors: 
  * Tobias Schwarz (Wind River) - initial API and implementation.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.testsubsystem;
 
 import java.util.Vector;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.IRSEViews;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil;
@@ -103,7 +104,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		assertNotNull("No test subystem", testSubSystem); //$NON-NLS-1$
 
 		testSubSystem.removeAllChildNodes();
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
         registry.invalidateFiltersFor(testSubSystem);
         
 		TestSubSystemContainerNode node = null;
@@ -191,7 +192,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 			
 			node.setName("Node 1 (changed)"); //$NON-NLS-1$
 
-			SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(node, ISystemResourceChangeEvents.EVENT_REFRESH, node));
 			
 			RSEWaitAndDispatchUtil.waitAndDispatch(10000);

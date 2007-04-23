@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
  * Tobias Schwarz (Wind River) - [181394] Include Context in getAbsoluteName() for filter and pool references
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -30,6 +31,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
@@ -42,20 +46,17 @@ import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.model.SystemMessageObject;
+import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemRemoteResourceSet;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemPreferencesManager;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterName;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
@@ -298,7 +299,7 @@ public class SystemViewFilterReferenceAdapter
 					ISystemViewInputProvider inputProvider = getInput();
 					if ((sfr != null) && (inputProvider != null) && (inputProvider.getViewer() != null))
 					{
-						SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+						ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 						SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
 						Viewer v = inputProvider.getViewer();
 						if (v instanceof ISystemResourceChangeListener)

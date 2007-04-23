@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2003, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
@@ -40,13 +40,12 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemTableTreeViewProvider;
 import org.eclipse.rse.internal.ui.view.SystemView;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
@@ -57,6 +56,8 @@ import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemRemoveElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -82,7 +83,7 @@ import org.eclipse.ui.part.ViewPart;
  * This class defines the Remote Search view.
  */
 public class SystemSearchViewPart extends ViewPart 
-	implements ISystemResourceChangeListener, 
+	implements ISystemResourceChangeListener, ISystemShellProvider,
                IMenuListener, ISelectionChangedListener, 
                ISystemMessageLine, IRSEViewPart
 {
@@ -306,7 +307,7 @@ public class SystemSearchViewPart extends ViewPart
 		tbMgr.add(removeAllAction);
 
 		// register global edit actions 		
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
 		
 		// clipboard
 		Clipboard clipboard = registry.getSystemClipboard();

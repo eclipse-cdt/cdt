@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -46,6 +46,12 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -58,13 +64,6 @@ import org.eclipse.rse.internal.ui.actions.SystemCommonSelectAllAction;
 import org.eclipse.rse.internal.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.internal.ui.actions.SystemSubMenuManager;
-import org.eclipse.rse.model.ISystemRemoteChangeEvent;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
-import org.eclipse.rse.model.ISystemRemoteChangeListener;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
@@ -78,6 +77,8 @@ import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.IContextObject;
@@ -125,12 +126,14 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
  * 
  */
 public class SystemTableTreeView
-// TODO change TreeViewer to TableTreeViewer when Eclipse fixes SWT viewer 
-//extends TableTreeViewer
-extends TreeViewer
-implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget, ISystemResourceChangeListener, ISystemRemoteChangeListener, ISelectionChangedListener, ISelectionProvider
+	//FIXEM change TreeViewer to TableTreeViewer when Eclipse fixes SWT viewer 
+	//extends TableTreeViewer
+	extends TreeViewer
+	implements IMenuListener,
+		ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget, 
+		ISystemResourceChangeListener, ISystemRemoteChangeListener,
+		ISystemShellProvider, ISelectionChangedListener, ISelectionProvider
 {
-
 
 	protected Composite getTableTree()
 	{
@@ -881,7 +884,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	/**
 	 * This is the method in your class that will be called when a remote resource
 	 *  changes. You will be called after the resource is changed.
-	 * @see org.eclipse.rse.model.ISystemRemoteChangeEvent
+	 * @see org.eclipse.rse.core.events.ISystemRemoteChangeEvent
 	 */
 	public void systemRemoteResourceChanged(ISystemRemoteChangeEvent event)
 	{
@@ -1274,7 +1277,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	 */
 	public boolean doDelete(IProgressMonitor monitor)
 	{
-		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -1322,7 +1325,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			if (_selectionIsRemoteObject)
 				sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, deletedVector, null, null, null, this);
 			else
-				sr.fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(deleted, ISystemResourceChangeEvents.EVENT_DELETE_MANY, getInput()));
+				sr.fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(deleted, ISystemResourceChangeEvents.EVENT_DELETE_MANY, getInput()));
 		}
 		return ok;
 	}
@@ -1366,7 +1369,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	*/
 	public boolean doRename(String[] newNames)
 	{
-		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -1396,7 +1399,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 						sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, remoteAdapter.getSubSystem(element), oldFullName, this);
 					}
 					else {
-						sr.fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(element, ISystemResourceChangeEvents.EVENT_RENAME, parentElement));
+						sr.fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(element, ISystemResourceChangeEvents.EVENT_RENAME, parentElement));
 					}
 				}
 			}

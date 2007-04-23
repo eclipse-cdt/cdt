@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,6 +22,14 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.events.ISystemModelChangeEvent;
+import org.eclipse.rse.core.events.ISystemModelChangeListener;
+import org.eclipse.rse.core.events.ISystemPreferenceChangeEvent;
+import org.eclipse.rse.core.events.ISystemPreferenceChangeListener;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
+import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.filters.ISystemFilterStartHere;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -128,6 +136,26 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(String systemType, boolean filterDuplicateServiceSubSystemFactories);
 
+	// ----------------------------------
+	// SYSTEMVIEWINPUTPROVIDER METHODS...
+	// ----------------------------------
+
+	/**
+	 * This method is called by the connection adapter when the user expands
+	 * a connection.
+	 * This method must return the child objects to show for that connection.
+	 */
+	public Object[] getConnectionChildren(IHost selectedConnection);
+
+	/**
+	 * This method is called by the connection adapter when deciding
+	 * to show a plus-sign or not beside a connection.
+	 * 
+	 * @return true if this connection has children to be shown.
+	 */
+	public boolean hasConnectionChildren(IHost selectedConnection);
+
+	
 	// ----------------------------
 	// USER PREFERENCE METHODS...
 	// ----------------------------
@@ -677,6 +705,131 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public void connectedStatusChange(ISubSystem subsystem, boolean connected, boolean wasConnected, boolean collapseTree);
 
 	// ----------------------------
+	// RESOURCE EVENT METHODS...
+	// ----------------------------            
+
+	/**
+	 * Register your interest in being told when a system resource such as a connection is changed.
+	 */
+	public void addSystemResourceChangeListener(ISystemResourceChangeListener l);
+
+	/**
+	 * De-Register your interest in being told when a system resource such as a connection is changed.
+	 */
+	public void removeSystemResourceChangeListener(ISystemResourceChangeListener l);
+
+	/**
+	 * Query if the ISystemResourceChangeListener is already listening for SystemResourceChange events
+	 */
+	public boolean isRegisteredSystemResourceChangeListener(ISystemResourceChangeListener l);
+
+	/**
+	 * Notify all listeners of a change to a system resource such as a connection.
+	 * You would not normally call this as the methods in this class call it when appropriate.
+	 */
+	public void fireEvent(ISystemResourceChangeEvent event);
+
+	/**
+	 * Notify a specific listener of a change to a system resource such as a connection.
+	 */
+	public void fireEvent(ISystemResourceChangeListener l, ISystemResourceChangeEvent event);
+
+	// ----------------------------
+	// MODEL RESOURCE EVENT METHODS...
+	// ----------------------------            
+
+	/**
+	 * Register your interest in being told when an RSE model resource is changed.
+	 * These are model events, not GUI-optimized events.
+	 */
+	public void addSystemModelChangeListener(ISystemModelChangeListener l);
+
+	/**
+	 * De-Register your interest in being told when an RSE model resource is changed.
+	 */
+	public void removeSystemModelChangeListener(ISystemModelChangeListener l);
+
+	/**
+	 * Notify all listeners of a change to a system model resource such as a connection.
+	 * You would not normally call this as the methods in this class call it when appropriate.
+	 */
+	public void fireEvent(ISystemModelChangeEvent event);
+
+	/**
+	 * Notify all listeners of a change to a system model resource such as a connection.
+	 * This one takes the information needed and creates the event for you.
+	 */
+	public void fireModelChangeEvent(int eventType, int resourceType, Object resource, String oldName);
+
+	/**
+	 * Notify a specific listener of a change to a system model resource such as a connection.
+	 */
+	public void fireEvent(ISystemModelChangeListener l, ISystemModelChangeEvent event);
+
+	// --------------------------------
+	// REMOTE RESOURCE EVENT METHODS...
+	// --------------------------------            
+
+	/**
+	 * Register your interest in being told when a remote resource is changed.
+	 * These are model events, not GUI-optimized events.
+	 */
+	public void addSystemRemoteChangeListener(ISystemRemoteChangeListener l);
+
+	/**
+	 * De-Register your interest in being told when a remote resource is changed.
+	 */
+	public void removeSystemRemoteChangeListener(ISystemRemoteChangeListener l);
+
+	/**
+	 * Notify all listeners of a change to a remote resource such as a file.
+	 * You would not normally call this as the methods in this class call it when appropriate.
+	 */
+	public void fireEvent(ISystemRemoteChangeEvent event);
+	
+	/**
+	 * Notify all listeners of a change to a remote resource such as a file.
+	 * This one takes the information needed and creates the event for you.
+	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
+	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
+	 * @param oldName - on a rename operation, this is the absolute name of the resource prior to the rename
+	 */
+	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String oldName);
+
+	/**
+	 * Notify a specific listener of a change to a remote resource such as a file.
+	 */
+	public void fireEvent(ISystemRemoteChangeListener l, ISystemRemoteChangeEvent event);
+
+	// ----------------------------
+	// PREFERENCE EVENT METHODS...
+	// ----------------------------            
+
+	/**
+	 * Register your interest in being told when a system preference changes
+	 */
+	public void addSystemPreferenceChangeListener(ISystemPreferenceChangeListener l);
+
+	/**
+	 * De-Register your interest in being told when a system preference changes
+	 */
+	public void removeSystemPreferenceChangeListener(ISystemPreferenceChangeListener l);
+
+	/**
+	 * Notify all listeners of a change to a system preference
+	 * You would not normally call this as the methods in this class call it when appropriate.
+	 */
+	public void fireEvent(ISystemPreferenceChangeEvent event);
+
+	/**
+	 * Notify a specific listener of a change to a system preference 
+	 */
+	public void fireEvent(ISystemPreferenceChangeListener l, ISystemPreferenceChangeEvent event);
+
+	// ----------------------------
 	// MISCELLANEOUS METHODS...
 	// ----------------------------
 
@@ -735,4 +888,4 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * @return true if restored ok, false if error encountered. If false, call getLastException().
 	 */
 	public boolean restore();
-} //SystemRegistry
+}

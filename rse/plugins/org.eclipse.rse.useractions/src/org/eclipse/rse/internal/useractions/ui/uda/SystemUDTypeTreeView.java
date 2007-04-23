@@ -7,11 +7,12 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.rse.core.model.ISystemModelChangeEvents;
+import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -75,7 +76,7 @@ public class SystemUDTypeTreeView extends SystemUDBaseTreeView {
 	}
 
 	/**
-	 * Return the {@link org.eclipse.rse.core.model.ISystemModelChangeEvents} constant representing the resource type managed by this tree.
+	 * Return the {@link org.eclipse.rse.core.events.ISystemModelChangeEvents} constant representing the resource type managed by this tree.
 	 * This is a parent class override.
 	 */
 	protected int getResourceType() {

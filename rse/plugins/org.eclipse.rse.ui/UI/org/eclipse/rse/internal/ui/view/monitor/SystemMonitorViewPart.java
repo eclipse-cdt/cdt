@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -29,24 +30,25 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemTableTreeViewProvider;
 import org.eclipse.rse.internal.ui.view.SystemTableViewColumnManager;
-import org.eclipse.rse.model.ISystemRemoteChangeEvent;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
-import org.eclipse.rse.model.ISystemRemoteChangeListener;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
@@ -73,10 +75,6 @@ import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
-
-
-
-
 /**
  * This is the desktop view wrapper of the System View viewer.
  */
@@ -87,6 +85,7 @@ public class SystemMonitorViewPart
 		SelectionListener,
 		ISelectionChangedListener,
 		ISystemResourceChangeListener,
+		ISystemShellProvider,
 		ISystemRemoteChangeListener,
 		ISystemMessageLine,
 		IRSEViewPart
@@ -664,7 +663,7 @@ class SubSetAction extends BrowseAction
 
 		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.addSystemResourceChangeListener(this);
 		registry.addSystemRemoteChangeListener(this);
 
@@ -686,7 +685,7 @@ class SubSetAction extends BrowseAction
 		selectionService.removeSelectionListener(this);
 		_folder.dispose();
 
-		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
 		registry.removeSystemRemoteChangeListener(this);
 		
@@ -840,7 +839,7 @@ class SubSetAction extends BrowseAction
 	/**
 	 * This is the method in your class that will be called when a remote resource
 	 *  changes. You will be called after the resource is changed.
-	 * @see org.eclipse.rse.model.ISystemRemoteChangeEvent
+	 * @see org.eclipse.rse.core.events.ISystemRemoteChangeEvent
 	 */
 	public void systemRemoteResourceChanged(ISystemRemoteChangeEvent event)
 	{

@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used PreferencesMapper
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemPreferencesConstants
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -23,8 +24,8 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
-import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
+import org.eclipse.rse.core.events.ISystemPreferenceChangeEvents;
+import org.eclipse.rse.internal.core.model.SystemPreferenceChangeEvent;
 import org.eclipse.rse.internal.ui.PreferencesMapper;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;

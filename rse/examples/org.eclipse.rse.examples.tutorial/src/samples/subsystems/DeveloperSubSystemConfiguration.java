@@ -49,8 +49,9 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 	   	return new DeveloperSubSystem(conn, getConnectorService(conn));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.model.IHost)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.core.model.IHost)
 	 */
 	public IConnectorService getConnectorService(IHost host) {
 		return DeveloperConnectorServiceManager.getTheDeveloperConnectorServiceManager()

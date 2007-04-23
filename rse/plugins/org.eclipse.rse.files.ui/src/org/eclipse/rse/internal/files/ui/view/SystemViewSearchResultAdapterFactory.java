@@ -12,14 +12,15 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.services.search.IHostSearchResult;
-import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.ui.IActionFilter;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -32,7 +32,7 @@ public class RemoteFileChildrenContentsType implements ISystemContentsType
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.rse.model.ISystemContentsType#getType()
+     * @see org.eclipse.rse.ui.model.ISystemContentsType#getType()
      */
     public String getType()
     {
@@ -40,7 +40,7 @@ public class RemoteFileChildrenContentsType implements ISystemContentsType
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.rse.model.ISystemContentsType#isPersistent()
+     * @see org.eclipse.rse.ui.model.ISystemContentsType#isPersistent()
      */
     public boolean isPersistent()
     {

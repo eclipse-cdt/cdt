@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Allow to extend action filter by dynamic system type providers.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -43,6 +44,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemMessageObject;
+import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -54,11 +56,10 @@ import org.eclipse.rse.internal.ui.actions.SystemDynamicPopupMenuExtensionManage
 import org.eclipse.rse.internal.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
-import org.eclipse.rse.model.ISystemPromptableObject;
-import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.operations.Policy;
 import org.eclipse.rse.ui.operations.SystemFetchOperation;
 import org.eclipse.rse.ui.operations.SystemSchedulingRule;

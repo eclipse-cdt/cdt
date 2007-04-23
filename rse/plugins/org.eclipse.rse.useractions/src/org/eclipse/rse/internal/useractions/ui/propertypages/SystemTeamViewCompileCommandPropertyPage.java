@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.propertypages;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,8 +7,12 @@ package org.eclipse.rse.internal.useractions.ui.propertypages;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  *******************************************************************************/
-import org.eclipse.rse.core.model.ISystemModelChangeEvents;
+
+package org.eclipse.rse.internal.useractions.ui.propertypages;
+
+import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.useractions.UserActionsResources;

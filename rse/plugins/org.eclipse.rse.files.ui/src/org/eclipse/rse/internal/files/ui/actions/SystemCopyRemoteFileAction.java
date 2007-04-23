@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
@@ -35,7 +36,6 @@ import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemView;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -489,18 +489,18 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		  	if (parent instanceof IRemoteFile)
 		  	  // refresh parent in all views...
 		      sr.fireEvent(
-                 new org.eclipse.rse.model.SystemResourceChangeEvent(
+                 new org.eclipse.rse.ui.model.SystemResourceChangeEvent(
                     parent,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, null)
 		      );
 		  	else
 		  	  // refresh parent in all views...
 		      sr.fireEvent(
-                 new org.eclipse.rse.model.SystemResourceChangeEvent(
+                 new org.eclipse.rse.ui.model.SystemResourceChangeEvent(
                     parent,ISystemResourceChangeEvent.EVENT_REFRESH, null)
 		      );
 		    // select new files in this view only
 		    sr.fireEvent((ISystemResourceChangeListener)v,
-                 new org.eclipse.rse.model.SystemResourceChangeEvent(
+                 new org.eclipse.rse.ui.model.SystemResourceChangeEvent(
                     copiedFiles,ISystemResourceChangeEvent.EVENT_SELECT_REMOTE, targetFolder)
 		    );
 		  }
@@ -509,8 +509,8 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		else
 		{
 			// refresh target folder in all views, but only select new files in this view...
-			org.eclipse.rse.model.SystemResourceChangeEvent event = 
-			  new org.eclipse.rse.model.SystemResourceChangeEvent(
+			org.eclipse.rse.ui.model.SystemResourceChangeEvent event = 
+			  new org.eclipse.rse.ui.model.SystemResourceChangeEvent(
 			        targetFolder,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, copiedFiles);
 			event.setOriginatingViewer(getViewer());
 		    sr.fireEvent(event);

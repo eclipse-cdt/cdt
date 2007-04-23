@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
@@ -20,15 +20,14 @@ import java.util.Vector;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.FileResources;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -43,6 +42,7 @@ import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
@@ -279,7 +279,7 @@ public class SystemNewFileWizard
 	protected static void updateGUI(IRemoteFile parentFolder, IRemoteFile newFileOrFolder, Viewer viewer,  
 	                                  boolean isInputAFilter, ISystemFilterReference selectedFilterRef)
 	{
-		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 		if (selectedFilterRef != null)
 		{
 			selectedFilterRef.markStale(true);
@@ -287,7 +287,7 @@ public class SystemNewFileWizard
 		
 		// invalidate filters that reference this object
 		// TODO: we shouldn't have to do this. Presumably step 0 below should take care of it.
-		SystemRegistry.getSystemRegistry().invalidateFiltersFor(newFileOrFolder, parentFolder.getParentRemoteFileSubSystem());
+		sr.invalidateFiltersFor(newFileOrFolder, parentFolder.getParentRemoteFileSubSystem());
 		
      	// step 0: refresh all affected filters...
     	ISubSystem fileSS = newFileOrFolder.getParentRemoteFileSubSystem();

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and Wind River Systems, Inc.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -46,21 +46,24 @@ public class DaytimeConnectorServiceManager extends AbstractConnectorServiceMana
 		return fInstance;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager#createConnectorService(org.eclipse.rse.model.IHost)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager#createConnectorService(org.eclipse.rse.core.model.IHost)
 	 */
 	public IConnectorService createConnectorService(IHost host) {
 		return new DaytimeConnectorService(host);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager#sharesSystem(org.eclipse.rse.core.subsystems.ISubSystem)
 	 */
 	public boolean sharesSystem(ISubSystem otherSubSystem) {
 		return (otherSubSystem instanceof IDaytimeSubSystem);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager#getSubSystemCommonInterface(org.eclipse.rse.core.subsystems.ISubSystem)
 	 */
 	public Class getSubSystemCommonInterface(ISubSystem subsystem) {

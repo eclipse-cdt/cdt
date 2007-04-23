@@ -19,11 +19,11 @@ import java.util.Map;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
+import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
@@ -476,9 +476,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	
 	private void clearChangedDiscoveredInfos(){
  		List changedContexts = checkChanges();
+ 		IProject project = getProject();
  		for(int i = 0; i < changedContexts.size(); i++){
- 			InfoContext c = (InfoContext)changedContexts.get(i);
- 			MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(c.getProject(), c);
+ 			CfgInfoContext c = (CfgInfoContext)changedContexts.get(i);
+ 			CfgDiscoveredPathManager.getInstance().removeDiscoveredInfo(project, c);
+// 			MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(c.getProject(), c);
  		}
 	}
 
@@ -500,14 +502,20 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			IScannerConfigBuilderInfo2 old = (IScannerConfigBuilderInfo2)baseCopy.remove(c);
 			
 			if(old == null){
-				list.add(c);
+				list.add(cic);
 			} else if(!settingsEqual(changed, old)){
-				list.add(c);
+				list.add(cic);
 			}
 		}
 		
 		if(baseCopy.size() != 0){
-			list.addAll(baseCopy.keySet());
+			IConfiguration cfg = cbi.getConfiguration();
+			for(Iterator iter = baseCopy.keySet().iterator(); iter.hasNext();){
+				InfoContext c = (InfoContext)iter.next();
+				CfgInfoContext cic = CfgInfoContext.fromInfoContext(cfg, c);
+				if(cic != null)
+					list.add(cic);
+			}
 		}
 		
 		return list;

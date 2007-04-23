@@ -304,7 +304,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 	
 	private PathInfo getCachedPathInfo(ContextInfo cInfo){
 //        ICfgScannerConfigBuilderInfo2Set cfgInfo = cInfo.fCfgInfo;
-        PathInfo info = getCachedPathInfo(cInfo, true, true);
+        PathInfo info = getCachedPathInfo(cInfo, true, true, false);
 //        boolean queryCfg = !cfgInfo.isPerRcTypeDiscovery();
 //        if(!queryCfg){
 //    		Tool tool = (Tool)context.getTool();
@@ -320,24 +320,42 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
         return info;
 	}
 
-	private PathInfo getCachedPathInfo(ContextInfo cInfo, boolean queryParent, boolean clearIfInvalid){
-		return getCachedPathInfo(cInfo, (Configuration)cInfo.fCacheContext.getConfiguration(), (Tool)cInfo.fCacheContext.getTool(), cInfo.fCacheContext.getInputType(), queryParent, clearIfInvalid);
+	private PathInfo removeCachedPathInfo(ContextInfo cInfo){
+//      ICfgScannerConfigBuilderInfo2Set cfgInfo = cInfo.fCfgInfo;
+      PathInfo info = getCachedPathInfo(cInfo, true, true, true);
+//      boolean queryCfg = !cfgInfo.isPerRcTypeDiscovery();
+//      if(!queryCfg){
+//  		Tool tool = (Tool)context.getTool();
+//  		if(tool != null){
+//  			info = tool.getDiscoveredPathInfo(context.getInputType());
+//  		} else {
+//  			queryCfg = true;
+//  		}
+//      } 
+//      if(queryCfg) {
+//      	info = ((Configuration)context.getConfiguration()).getDiscoveredPathInfo();
+//      }
+      return info;
 	}
 
-	private PathInfo getCachedPathInfo(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType, boolean queryParent, boolean clearIfInvalid){
-		PathInfoCache infoCache = getPathInfoCache(cInfo, cfg, tool, inType, queryParent, clearIfInvalid);
+	private PathInfo getCachedPathInfo(ContextInfo cInfo, boolean queryParent, boolean clearIfInvalid, boolean clear){
+		return getCachedPathInfo(cInfo, (Configuration)cInfo.fCacheContext.getConfiguration(), (Tool)cInfo.fCacheContext.getTool(), cInfo.fCacheContext.getInputType(), queryParent, clearIfInvalid, clear);
+	}
+
+	private PathInfo getCachedPathInfo(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType, boolean queryParent, boolean clearIfInvalid, boolean clear){
+		PathInfoCache infoCache = getPathInfoCache(cInfo, cfg, tool, inType, queryParent, clearIfInvalid, clear);
 		if(infoCache != null && isCacheValid(cInfo, infoCache))
 			return infoCache.fPathInfo;
 		return null;
 	}
 	
-	private PathInfoCache getPathInfoCache(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType, boolean queryParent, boolean clearIfInvalid){
+	private PathInfoCache getPathInfoCache(ContextInfo cInfo, Configuration cfg, Tool tool, IInputType inType, boolean queryParent, boolean clearIfInvalid, boolean clear){
 		PathInfoCache info = null;
 //		boolean queryCfg = false;
 		if(tool != null){
 			info = tool.getDiscoveredPathInfo(inType);
 			if(info != null){
-				if(clearIfInvalid && !isCacheValid(cInfo, info)){
+				if(clear || (clearIfInvalid && !isCacheValid(cInfo, info))){
 					tool.clearDiscoveredPathInfo(inType);
 //					fBaseMngr.removeDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext());
 				}
@@ -354,18 +372,18 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 								break;
 						}
 						if(superInType != null){
-							info = getPathInfoCache(cInfo, cfg, (Tool)superTool, superInType, true, clearIfInvalid);
+							info = getPathInfoCache(cInfo, cfg, (Tool)superTool, superInType, true, clearIfInvalid, clear);
 						}
 					} else {
-						info = getPathInfoCache(cInfo, cfg, (Tool)superTool, null, true, clearIfInvalid);
+						info = getPathInfoCache(cInfo, cfg, (Tool)superTool, null, true, clearIfInvalid, clear);
 					}
 				} else {
-					info = getPathInfoCache(cInfo, cfg, null, null, true, clearIfInvalid);
+					info = getPathInfoCache(cInfo, cfg, null, null, true, clearIfInvalid, clear);
 				}
 			}
 		} else {
 			info = cfg.getDiscoveredPathInfo();
-			if(clearIfInvalid && !isCacheValid(cInfo, info)){
+			if(clear || (clearIfInvalid && !isCacheValid(cInfo, info))){
 				cfg.clearDiscoveredPathInfo();
 //				fBaseMngr.removeDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext());
 			}
@@ -508,16 +526,14 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
         return oldInfo != null ? oldInfo.fPathInfo : null;
 	}
 
-//	public void removeDiscoveredInfo(IProject project, CfgInfoContext context) {
-////        if(context == null)
-////        	context = ScannerConfigUtil.createContextForProject(project);
-//
-//        context = adjustContext(context);
-//
-//        setCachedPathInfo(context, null);
-//        fBaseMngr.removeDiscoveredInfo(project, context.toInfoContext());
-////		if (info != null) {
-////			fireUpdate(INFO_REMOVED, info);
-////		}
-//	}
+	public void removeDiscoveredInfo(IProject project, CfgInfoContext context) {
+//        if(context == null)
+//        	context = ScannerConfigUtil.createContextForProject(project);
+		
+		ContextInfo cInfo = getContextInfo(context);
+
+        removeCachedPathInfo(cInfo);
+
+        fBaseMngr.removeDiscoveredInfo(project, cInfo.fLoadContext.toInfoContext());
+	}
 }

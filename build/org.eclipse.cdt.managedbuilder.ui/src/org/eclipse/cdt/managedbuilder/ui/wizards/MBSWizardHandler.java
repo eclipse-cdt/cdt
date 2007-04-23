@@ -366,12 +366,22 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		Iterator it = full.iterator();
 		while (it.hasNext()) {
 			String s = (String)it.next();
-			// checks for TC compatibility are to be here 
-			out.add(s);
+			if (isToolChainAcceptable(s, entryDescriptor)) 
+				out.add(s);
 		}
 		return out;
 	}
 	
+	/**
+	 * Checks whether given toolchain can be displayed
+	 * 
+	 * @param tcId - toolchain to check
+	 * @param ed   - Entry descriptor (Who Am I) 
+	 * @return - true if toolchain can be displayed
+	 */
+	protected boolean isToolChainAcceptable(String tcId, EntryDescriptor ed) {
+		return true;
+	}
 	/**
 	 * Clones itself.
 	 */

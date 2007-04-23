@@ -135,10 +135,23 @@ public class CfgScannerConfigInfoFactory2 {
 	
 					if(info == null){
 						String id = cfg.getDiscoveryProfileId();
-						if(id != null)
-							info = container.createInfo(baseContext, id);
-						else
-							info = container.createInfo(baseContext);
+						IScannerConfigBuilderInfo2 prefInfo = null;
+						if(!cfg.isPreference()){
+							IConfiguration prefCfg = ManagedBuildManager.getPreferenceConfiguration(false);
+							ICfgScannerConfigBuilderInfo2Set prefContainer = create(prefCfg);
+							prefInfo = prefContainer.getInfo(new CfgInfoContext(prefCfg));
+						}
+						if(prefInfo == null){
+							if(id != null)
+								info = container.createInfo(baseContext, id);
+							else
+								info = container.createInfo(baseContext);
+						} else {
+							if(id != null)
+								info = container.createInfo(baseContext, prefInfo, id);
+							else
+								info = container.createInfo(baseContext, prefInfo, prefInfo.getSelectedProfileId());
+						}
 					}
 					map.put(new CfgInfoContext(cfg), info);				
 				} else {

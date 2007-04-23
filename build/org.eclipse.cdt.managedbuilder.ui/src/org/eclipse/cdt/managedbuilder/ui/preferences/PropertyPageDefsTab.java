@@ -31,6 +31,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
     private Button show_mng;
     private Button show_sav;
     private Button show_tool;
+    private Button show_exp;
     private Button b_0;
     private Button b_1;
     private Button b_2;
@@ -60,6 +61,10 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         show_tool.setText(UIMessages.getString("PropertyPageDefsTab.4")); //$NON-NLS-1$
         show_tool.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		show_exp = new Button(usercomp, SWT.CHECK);
+        show_exp.setText(UIMessages.getString("PropertyPageDefsTab.10")); //$NON-NLS-1$
+        show_exp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
         Group discGrp = new Group(usercomp, SWT.NONE);
         discGrp.setText(UIMessages.getString("PropertyPageDefsTab.5")); //$NON-NLS-1$
         discGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -83,6 +88,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		show_mng.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG));
 		show_sav.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSAVE));
 		show_tool.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_TOOLM));
+		show_exp.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_EXPORT));
 		
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DISC_NAMES)) {
 			case CDTPrefUtil.DISC_NAMING_UNIQUE_OR_BOTH: b_0.setSelection(true); break;
@@ -98,6 +104,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, !show_mng.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOSAVE, !show_sav.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_TOOLM, show_tool.getSelection());
+		CDTPrefUtil.setBool(CDTPrefUtil.KEY_EXPORT, show_exp.getSelection());
 		int x = 0;
 		if (b_1.getSelection()) x = 1;
 		else if (b_2.getSelection()) x = 2;
@@ -111,6 +118,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		show_mng.setSelection(true);
 		show_mng.setSelection(true);
 		show_tool.setSelection(false);
+		show_exp.setSelection(false);
 		b_0.setSelection(true);
 	}
 

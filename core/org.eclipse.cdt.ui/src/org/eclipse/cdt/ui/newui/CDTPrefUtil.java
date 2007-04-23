@@ -22,11 +22,12 @@ public class CDTPrefUtil {
 	// boolean keys (KEY_NO-s are to be inverted !)
 	public static final String KEY_NOSUPP  = "wizard.show.unsupported.disable";  //$NON-NLS-1$
 	public static final String KEY_OTHERS  = "wizard.group.others.enable";  //$NON-NLS-1$
-	public static final String KEY_NOMNG  = "properties.manage.config.disable"; //$NON-NLS-1$
-	public static final String KEY_MULTI  = "properties.multi.config.enable"; //$NON-NLS-1$
-	public static final String KEY_DTREE  = "properties.data.hierarchy.enable"; //$NON-NLS-1$
+	public static final String KEY_NOMNG   = "properties.manage.config.disable"; //$NON-NLS-1$
+	public static final String KEY_MULTI   = "properties.multi.config.enable"; //$NON-NLS-1$
+	public static final String KEY_DTREE   = "properties.data.hierarchy.enable"; //$NON-NLS-1$
 	public static final String KEY_NOSAVE  = "properties.save.position.disable"; //$NON-NLS-1$
-	public static final String KEY_TOOLM  = "properties.toolchain.modification.enable"; //$NON-NLS-1$
+	public static final String KEY_TOOLM   = "properties.toolchain.modification.enable"; //$NON-NLS-1$
+	public static final String KEY_EXPORT  = "properties.export.page.enable"; //$NON-NLS-1$
 	// string keys
 	public static final String KEY_PREFTC  = "wizard.preferred.toolchains";  //$NON-NLS-1$
 	// integer keys

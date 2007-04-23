@@ -102,13 +102,10 @@ implements
 		IPreferencePageContainer, // dynamic pages
 		ICPropertyProvider // utility methods for tabs
 {
-	private static ArrayList pages = new ArrayList(5);
 	private static ICResourceDescription resd = null;
 	private static ICConfigurationDescription[] cfgDescs = null;
 	private static ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
-	private static ICProjectDescription prjd = null;
 	private static int cfgIndex = 0;
-	protected static boolean saveDone  = false;
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME = "tab"; //$NON-NLS-1$
@@ -177,18 +174,14 @@ implements
 		}
 	}
 	
-	
 	/**
 	 * Default constructor
 	 */
 	public AbstractPage() {
-		// reset static values before new session 
-		if (pages.size() == 0) {
-			prjd = null;    // force getting new descriptors
-			saveDone = false; // needs in performOK();
+		if (CDTPropertyManager.getPagesCount() == 0) {
+			cfgDescs = null;
+			cfgIndex = 0;
 		}
-		// register current page 
-		if (!pages.contains(this)) pages.add(this);
 	}
 	
 	protected Control createContents(Composite parent) {
@@ -263,9 +256,7 @@ implements
 			manageButton.setLayoutData(gd);
 			manageButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					performOk();
-					if (ManageConfigDialog.manage(getProject())) {
-						prjd = null;
+					if (ManageConfigDialog.manage(getProject(), false)) {
 						cfgDescs = null;
 						populateConfigurations();					
 					}
@@ -432,19 +423,22 @@ implements
     private boolean performSave(int mode)	{
     	final int finalMode = mode;
 		if (noContentOnPage || !displayedConfig) return true;
-		if ((mode == SAVE_MODE_OK || mode == SAVE_MODE_APPLYOK) && saveDone) return true; // do not duplicate
+		if ((mode == SAVE_MODE_OK || mode == SAVE_MODE_APPLYOK) && CDTPropertyManager.isSaveDone()) return true; // do not duplicate
 		
 		final boolean needs = (mode != SAVE_MODE_OK);
-		final ICProjectDescription local_prjd = needs ? CoreModel.getDefault().getProjectDescription(prjd.getProject()) : null;
+		final ICProjectDescription local_prjd = needs ? CoreModel.getDefault().getProjectDescription(getProject()) : null;
 		ICConfigurationDescription c = needs ? local_prjd.getConfigurationById(resd.getConfiguration().getId()) : null;
 		final ICResourceDescription local_cfgd = needs ? getResDesc(c) : null;
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			
 			private void sendOK() {
-				for (int j=0; j<pages.size(); j++) {
-					AbstractPage ap = (AbstractPage)pages.get(j);
-					if (ap.displayedConfig) ap.forEach(ICPropertyTab.OK, null);
+				for (int j=0; j<CDTPropertyManager.getPagesCount(); j++) {
+					Object p = CDTPropertyManager.getPage(j);
+					if (p != null && p instanceof AbstractPage) { 
+						AbstractPage ap = (AbstractPage)p;
+						if (ap.displayedConfig) ap.forEach(ICPropertyTab.OK, null);
+					}
 				}
 			}
 			
@@ -452,17 +446,19 @@ implements
 				// ask all tabs to store changes in cfg
 				switch (finalMode) {
 				case SAVE_MODE_APPLYOK:
-					saveDone = true;
 					sendOK();
-					ICConfigurationDescription[] olds = prjd.getConfigurations();
+					ICConfigurationDescription[] olds = CDTPropertyManager.getProjectDescription(AbstractPage.this, getProject()).getConfigurations();
 					for (int i=0; i<olds.length; i++) {
 						resd = getResDesc(olds[i]);
 						ICResourceDescription r = getResDesc(local_prjd.getConfigurationById(olds[i].getId()));
-						for (int j=0; j<pages.size(); j++) {
-							AbstractPage ap = (AbstractPage)pages.get(j);
-							if (ap.displayedConfig) {
-								ap.forEach(ICPropertyTab.UPDATE, resd);
-							    ap.forEach(ICPropertyTab.APPLY, r);
+						for (int j=0; j<CDTPropertyManager.getPagesCount(); j++) {
+							Object p = CDTPropertyManager.getPage(j);
+							if (p != null && p instanceof AbstractPage) { 
+								AbstractPage ap = (AbstractPage)p;
+								if (ap.displayedConfig) {
+									ap.forEach(ICPropertyTab.UPDATE, resd);
+									ap.forEach(ICPropertyTab.APPLY, r);
+								}
 							}
 						}
 					}
@@ -471,14 +467,16 @@ implements
 					forEach(ICPropertyTab.APPLY, local_cfgd);
 					break;
 				case SAVE_MODE_OK:
-					saveDone = true;
 					sendOK();
 					break;
 				} // end switch
 				try {
-					CoreModel.getDefault().setProjectDescription(getProject(), needs ? local_prjd : prjd);
+					if (needs) // 
+						CoreModel.getDefault().setProjectDescription(getProject(), local_prjd);
+					else
+						CDTPropertyManager.performOk(AbstractPage.this.getControl());
 				} catch (CoreException e) {
-					System.out.println(UIMessages.getString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
+					CUIPlugin.getDefault().logErrorMessage(UIMessages.getString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
 				updateViews(internalElement);
 			}
@@ -500,14 +498,9 @@ implements
 		// Do nothing if widget not created yet.
 		if (configSelector == null)	return;
 
-		if (prjd == null) {
-			prjd = CoreModel.getDefault().getProjectDescription(getProject());
-			cfgDescs = null;
-			cfgIndex = 0;
-		}
 		// Do not re-read if list already created by another page
 		if (cfgDescs == null) {
-			cfgDescs = prjd.getConfigurations();
+			cfgDescs = CDTPropertyManager.getProjectDescription(this, getProject()).getConfigurations();
 			if (cfgDescs == null || cfgDescs.length == 0) return;
 			Arrays.sort(cfgDescs, CDTListComparator.getInstance());
 		}
@@ -559,7 +552,7 @@ implements
 	}
 	
 	protected void handleResize(boolean visible) {
-		if (pages.size() > 1) return; // do not duplicate
+		if (CDTPropertyManager.getPagesCount() > 1) return; // do not duplicate
 		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSAVE)) return;
 		
 		if (internalElement == null && !checkElement()) 
@@ -680,8 +673,11 @@ implements
 		if (excludeFromBuildCheck != null)
 			excludeFromBuildCheck.setSelection(resd.isExcluded());
 
-		for (int i=0; i<pages.size(); i++) {
-			AbstractPage ap = (AbstractPage)pages.get(i);
+		for (int i=0; i<CDTPropertyManager.getPagesCount(); i++) {
+			Object p = CDTPropertyManager.getPage(i);
+			if (p == null || !(p instanceof AbstractPage))
+				continue;
+			AbstractPage ap = (AbstractPage)p;
 			if (ap.displayedConfig)
 				ap.forEach(ICPropertyTab.UPDATE,getResDesc());
 		}
@@ -690,10 +686,8 @@ implements
 	public void dispose() {
 		if (displayedConfig) forEach(ICPropertyTab.DISPOSE);
 		handleResize(false); // save page size 
-		if (pages.contains(this)) pages.remove(this);
 		// clear static variables
-		if (pages.size() == 0) {
-			prjd = null;
+		if (CDTPropertyManager.getPagesCount() == 0) {
 			resd = null;
 			cfgDescs = null;
 			multiCfgs = null;
@@ -818,15 +812,21 @@ implements
 	}
 	
 	public void informAll(int code, Object data) {
-		for (int i=0; i<pages.size(); i++) {
-			AbstractPage ap = (AbstractPage)pages.get(i);
+		for (int i=0; i<CDTPropertyManager.getPagesCount(); i++) {
+			Object p = CDTPropertyManager.getPage(i);
+			if (p == null || !(p instanceof AbstractPage))
+				continue;
+			AbstractPage ap = (AbstractPage)p;
 			ap.forEach(code, data);
 		}
 	}
 
 	public void informPages(int code, Object data) {
-		for (int i=0; i<pages.size(); i++) {
-			AbstractPage ap = (AbstractPage)pages.get(i);
+		for (int i=0; i<CDTPropertyManager.getPagesCount(); i++) {
+			Object p = CDTPropertyManager.getPage(i);
+			if (p == null || !(p instanceof AbstractPage))
+				continue;
+			AbstractPage ap = (AbstractPage)p;
 			ap.handleMessage(code, data);
 		}
 	}

@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.newui.ManageConfigDialog;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
@@ -26,6 +21,12 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.ui.newui.ManageConfigDialog;
 
 /**
  * Action which changes active build configuration of the current project to 
@@ -89,7 +90,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 	
 	public void run(IAction action) {
 		if (project != null) 
-			ManageConfigDialog.manage(project);
+			ManageConfigDialog.manage(project, true);
 	}
 	
 	public void dispose() { project = null; }

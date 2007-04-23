@@ -2054,7 +2054,7 @@
            id="org.eclipse.cdt.Tester3"
            class="org.eclipse.cdt.ui.newui.PropertyTester"
            namespace="org.eclipse.cdt.ui"
-           properties="toolEditEnabled"
+           properties="pageEnabled"
            type="java.lang.Object"/>
       <propertyTester
            id="org.eclipse.cdt.Tester1"

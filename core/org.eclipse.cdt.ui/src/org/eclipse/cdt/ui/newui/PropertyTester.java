@@ -19,8 +19,10 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  * Checks whether given object is a source file.
  */
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
-	private static final String KEY_SRC = "isSource"; //$NON-NLS-1$
-	private static final String KEY_TOOL = "toolEditEnabled"; //$NON-NLS-1$
+	private static final String KEY_SRC  = "isSource"; //$NON-NLS-1$
+	private static final String KEY_PAGE = "pageEnabled"; //$NON-NLS-1$
+	private static final String VAL_EXP  = "export"; //$NON-NLS-1$
+	private static final String VAL_TOOL = "toolEdit"; //$NON-NLS-1$
 	
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
@@ -32,8 +34,13 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 				IFile file = (IFile)receiver;
 				return CoreModel.isValidSourceUnitName(file.getProject(), file.getName());
 			}
-		} else if (KEY_TOOL.equals(property)) {
-			return CDTPrefUtil.getBool(CDTPrefUtil.KEY_TOOLM);
+		} else if (KEY_PAGE.equals(property) 
+				&& expectedValue instanceof String) {
+			String s = (String) expectedValue;
+			if (VAL_EXP.equalsIgnoreCase(s))
+				return CDTPrefUtil.getBool(CDTPrefUtil.KEY_EXPORT);
+			if (VAL_TOOL.equalsIgnoreCase(s))
+				return CDTPrefUtil.getBool(CDTPrefUtil.KEY_TOOLM);
 		}
 		return false;
 	}

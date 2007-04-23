@@ -14,13 +14,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.newui.AbstractPage;
+import org.eclipse.cdt.ui.newui.CDTPropertyManager;
 
 /**
  * Action which changes active build configuration of the current project to 
@@ -50,16 +49,14 @@ public class BuildConfigAction extends Action {
 		Iterator iter = fProjects.iterator();
 		while (iter.hasNext()) {
 			IProject prj = (IProject)iter.next();
-			ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, true);
+			ICProjectDescription prjd = CDTPropertyManager.getProjectDescription(prj);
 			ICConfigurationDescription[] configs = prjd.getConfigurations(); 
 			if (configs != null && configs.length > 0) {
 				for (int i = 0; i < configs.length; i++) {
 					if (configs[i].getName().equals(fConfigName)) {
 						configs[i].setActive();
-						try {
-							CoreModel.getDefault().setProjectDescription(prj, prjd);
-							AbstractPage.updateViews(prj);
-						} catch (CoreException e) { }	
+						CDTPropertyManager.performOk(null);
+						AbstractPage.updateViews(prj);
 						break;
 					}
 				}

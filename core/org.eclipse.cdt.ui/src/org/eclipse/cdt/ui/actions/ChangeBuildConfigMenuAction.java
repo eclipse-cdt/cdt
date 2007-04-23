@@ -70,7 +70,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	public void run(IAction action) {
 		if (fProjects.size() == 1) {
 			IProject project = (IProject)fProjects.toArray(new IProject[1])[0]; 
-			ManageConfigDialog.manage(project);
+			ManageConfigDialog.manage(project, true);
 		} else {
 			MessageDialog.openInformation(CUIPlugin.getActiveWorkbenchShell(),
 					ActionMessages.getString("ChangeBuildConfigMenuAction.title"),  //$NON-NLS-1$

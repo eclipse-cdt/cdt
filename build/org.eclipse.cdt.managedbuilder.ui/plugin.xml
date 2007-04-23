@@ -497,7 +497,7 @@
          </enabledWhen>
       </page>
       
-      <!--page
+      <page
             class="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
             id="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
             category="org.eclipse.cdt.ui.newui.Page_head_general"
@@ -508,12 +508,15 @@
                value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
          </filter>
          <enabledWhen>
+            <and>
             <or>
 		     <instanceof value="org.eclipse.core.resources.IProject"/>
 		     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
-		    </or>          
+		    </or>
+                <test property="org.eclipse.cdt.ui.pageEnabled" value="export" />
+		    </and>          
          </enabledWhen>
-      </page-->
+      </page>
 
       <page
             class="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
@@ -560,7 +563,7 @@
 	         <instanceof value="org.eclipse.core.resources.IFile"/>
          	 <instanceof value="org.eclipse.cdt.core.model.ITranslationUnit"/>
 		    </or>
-                <test property="org.eclipse.cdt.ui.toolEditEnabled" value="" />
+                <test property="org.eclipse.cdt.ui.pageEnabled" value="toolEdit" />
 		    </and>          
          </enabledWhen>
       </page>

@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -58,8 +57,8 @@ public class ManageConfigDialog extends Dialog {
 	private static final String RENAME_CONF_DLG = LABEL + ".rename.config.dialog";	//$NON-NLS-1$
 	
 	// The list of configurations to delete
-//	private IManagedProject mp;
-	ICProjectDescription des;
+	private ICProjectDescription des;
+	private IProject prj;
 	private String title;
 	private String mbs_id;
 	protected Table table;
@@ -68,29 +67,31 @@ public class ManageConfigDialog extends Dialog {
 	protected Button newBtn;
 	protected Button renBtn;
 	protected Button delBtn;
+
+	private static Composite comp;
 	
-	public static boolean manage(IProject prj) {
-		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj);
+	public static boolean manage(IProject _prj, boolean doOk) {
 		ManageConfigDialog d = new ManageConfigDialog(CUIPlugin.getActiveWorkbenchShell(),
-				prj.getName()+ " : " + MANAGE_TITLE, prjd); //$NON-NLS-1$
-			if (d.open() == OK) {
-				try {
-					CoreModel.getDefault().setProjectDescription(prj, prjd);
-					AbstractPage.updateViews(prj);
-				} catch (CoreException e) { return false; }
-				return true;
+				_prj.getName()+ " : " + MANAGE_TITLE, _prj); //$NON-NLS-1$
+		boolean result = false;
+		if (d.open() == OK) {
+			if (doOk) {
+				CDTPropertyManager.performOk(comp);
 			}
-			return false;
+			AbstractPage.updateViews(_prj);
+			result = true;
+		}
+		return result;
 	}
 	
 	/**
 	 * @param parentShell
 	 */
-	public ManageConfigDialog(Shell parentShell, String _title, ICProjectDescription prjd) {
+	ManageConfigDialog(Shell parentShell, String _title, IProject _prj) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		title = _title;
-		des = prjd;
+		prj = _prj;
 	}
 
 	protected void configureShell(Shell shell) {
@@ -106,7 +107,6 @@ public class ManageConfigDialog extends Dialog {
 		composite.setFont(parent.getFont());
 		composite.setLayout(new GridLayout(4, true));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    	
 	
 		// Create the current config table
 		table = new Table(composite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
@@ -163,6 +163,9 @@ public class ManageConfigDialog extends Dialog {
 				handleRenamePressed();
 			}} ); 
 
+		des = CDTPropertyManager.getProjectDescription(composite, prj);
+		comp = composite;
+		
 		updateData();
     	return composite;
 	}

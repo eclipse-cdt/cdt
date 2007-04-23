@@ -210,11 +210,15 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		if (active != null) active.setActive();
 		coreModel.setProjectDescription(project, des);
 		
+		doPostProcess(project);
+		
 		// process custom pages
 		if (fConfigPage != null && fConfigPage.pagesLoaded)
 			doCustom();
 	}
 
+	protected void doPostProcess(IProject prj) {}
+	
 	public IWizardPage getSpecificPage() {
 		if (fConfigPage == null) {
 			fConfigPage = new CDTConfigWizardPage(this);

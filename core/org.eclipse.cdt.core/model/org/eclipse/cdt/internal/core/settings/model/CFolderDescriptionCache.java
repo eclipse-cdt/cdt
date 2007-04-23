@@ -75,6 +75,10 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	public boolean canExclude(boolean exclude) {
+		return exclude == isExcluded();
+	}
+
 	public void setPath(IPath path) throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}

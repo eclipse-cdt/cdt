@@ -24,4 +24,6 @@ public interface ICResourceDescription extends ICSettingContainer, ICSettingObje
 	void setPath(IPath path) throws WriteAccessException ;
 	
 	ICFolderDescription getParentFolderDescription();
+	
+	boolean canExclude(boolean exclude);
 }

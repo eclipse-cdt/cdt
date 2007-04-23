@@ -43,7 +43,7 @@ public class CFileDescription extends CDataProxyContainer implements
 
 	public void setExcluded(boolean excluded) {
 		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
-		cfg.setExcluded(getPath(), excluded);
+		cfg.setExcluded(getPath(), false, excluded);
 	}
 
 	public void setPath(IPath path) {
@@ -128,4 +128,8 @@ public class CFileDescription extends CDataProxyContainer implements
 		return fCache;
 	}
 
+	public boolean canExclude(boolean exclude) {
+		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
+		return cfg.canExclude(getPath(), false, exclude);
+	}
 }

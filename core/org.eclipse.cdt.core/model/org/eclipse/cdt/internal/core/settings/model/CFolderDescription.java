@@ -45,7 +45,7 @@ public class CFolderDescription extends CDataProxyContainer implements
 
 	public void setExcluded(boolean excluded) {
 		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
-		cfg.setExcluded(getPath(), excluded);
+		cfg.setExcluded(getPath(), true, excluded);
 	}
 
 	public void setPath(IPath path) {
@@ -188,8 +188,12 @@ public class CFolderDescription extends CDataProxyContainer implements
 		return (ICLanguageSetting)proxy;
 	}
 
-
 	public boolean isRoot() {
 		return getPath().segmentCount() == 0;
+	}
+	
+	public boolean canExclude(boolean exclude) {
+		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
+		return cfg.canExclude(getPath(), true, exclude);
 	}
 }

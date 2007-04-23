@@ -1064,4 +1064,8 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		
 		toolList = newToolList;
 	}
+
+	public boolean isFolderInfo() {
+		return false;
+	}
 }

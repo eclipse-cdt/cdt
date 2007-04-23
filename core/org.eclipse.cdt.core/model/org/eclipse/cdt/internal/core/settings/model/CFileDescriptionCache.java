@@ -42,6 +42,10 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 	public void setExcluded(boolean excluded) throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
+	
+	public boolean canExclude(boolean exclude) {
+		return exclude == isExcluded();
+	}
 
 	public void setName(String name) throws WriteAccessException{
 		throw ExceptionFactory.createIsReadOnlyException();

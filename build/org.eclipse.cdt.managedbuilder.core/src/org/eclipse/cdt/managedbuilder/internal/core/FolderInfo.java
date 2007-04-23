@@ -1369,4 +1369,8 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	public void setContainsDiscoveredScannerInfo(boolean contains){
 		containsDiscoveredScannerInfo = contains;
 	}
+
+	public boolean isFolderInfo() {
+		return true;
+	}
 }

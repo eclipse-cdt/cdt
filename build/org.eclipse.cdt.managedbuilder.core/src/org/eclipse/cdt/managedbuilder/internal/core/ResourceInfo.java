@@ -165,7 +165,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		// exclude
         String excludeStr = element.getAttribute(EXCLUDE);
         if (excludeStr != null){
-    		config.setExcluded(getPath(), ("true".equals(excludeStr))); //$NON-NLS-1$
+    		config.setExcluded(getPath(), isFolderInfo(), ("true".equals(excludeStr))); //$NON-NLS-1$
         }
 	}
 
@@ -197,7 +197,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if (element.getAttribute(EXCLUDE) != null) {
 			String excludeStr = element.getAttribute(EXCLUDE);
 			if (excludeStr != null){
-	    		config.setExcluded(getPath(), ("true".equals(excludeStr))); //$NON-NLS-1$
+	    		config.setExcluded(getPath(), isFolderInfo(), ("true".equals(excludeStr))); //$NON-NLS-1$
 			}
 		}
 
@@ -247,11 +247,17 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if(isExcluded() == excluded)
 			return;
 		
-		config.setExcluded(getPath(), excluded);
+		config.setExcluded(getPath(), isFolderInfo(), excluded);
 		
 		setDirty(true);
 		setRebuildState(true);
 	}
+	
+	public boolean canExclude(boolean exclude) {
+		return config.canExclude(getPath(), isFolderInfo(), exclude);
+	}
+
+	public abstract boolean isFolderInfo();
 	
 //	private boolean internalSetExclude(boolean excluded){
 ////		if(excluded/* && isRoot()*/)

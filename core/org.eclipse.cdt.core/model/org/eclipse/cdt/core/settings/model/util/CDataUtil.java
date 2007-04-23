@@ -54,8 +54,10 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
+import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -557,8 +559,46 @@ public class CDataUtil {
 		char[][] exclusions = entry.fullExclusionPatternChars();
 		return CoreModelUtil.isExcluded(path, exclusions);
 	}
-	
-	public static ICSourceEntry[] setExcluded(IPath path, boolean excluded, ICSourceEntry[] entries){
+
+	public static boolean isOnSourceEntry(IPath path, ICSourceEntry entry){
+		IPath entryPath = new Path(entry.getName());
+		
+		if(path.equals(entryPath))
+			return true;
+		
+		if(!entryPath.isPrefixOf(path))
+			return false;
+		
+		if(path.segmentCount() == 0)
+			return true;
+		char[][] exclusions = entry.fullExclusionPatternChars();
+		return !CoreModelUtil.isExcluded(path, exclusions);
+	}
+
+	public static boolean canExclude(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries){
+		try {
+			return setExcluded(path, isFolder, excluded, entries, false) != null;
+		} catch (CoreException e) {
+		}
+		return false;
+	}
+
+	public static ICSourceEntry[] setExcluded(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries) throws CoreException {
+		return setExcluded(path, isFolder, excluded, entries, true);
+	}
+
+	public static ICSourceEntry[] setExcludedIfPossible(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries) {
+		try {
+			ICSourceEntry[] newEntries = setExcluded(path, isFolder, excluded, entries, false);
+			if(newEntries == null)
+				newEntries = entries;
+			return newEntries;
+		} catch (CoreException e) {
+		}
+		return entries;
+	}
+
+	public static ICSourceEntry[] setExcluded(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries, boolean throwExceptionOnErr) throws CoreException {
 		if(isExcluded(path, entries) == excluded)
 			return entries;
 		
@@ -567,7 +607,7 @@ public class CDataUtil {
 			List includeList = new ArrayList(entries.length);
 			List excludeList = new ArrayList(entries.length);
 			
-			sortEntries(path, entries, includeList, excludeList);
+			sortEntries(path, false, entries, includeList, excludeList);
 			
 			for(int i = 0; i < includeList.size(); i++){
 				ICSourceEntry oldEntry = (ICSourceEntry)includeList.get(i);
@@ -580,12 +620,71 @@ public class CDataUtil {
 			
 			newEntries = (ICSourceEntry[])excludeList.toArray(new ICSourceEntry[excludeList.size()]);
 		} else {
-			newEntries = new ICSourceEntry[entries.length + 1];
-			System.arraycopy(entries, 0, newEntries, 0, entries.length);
-			newEntries[entries.length] = new CSourceEntry(path, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+			List includeList = new ArrayList(entries.length + 1);
+			List excludeList = new ArrayList(entries.length);
+
+			sortIncludingExcludingEntries(path, entries, includeList, excludeList);
+			boolean included = false;
+			if(includeList.size() != 0){
+				if(includeExclusion(path, includeList) >= 0)
+					included = true;
+			}
+			
+			if(!included){
+				if(isFolder){
+					includeList.add(new CSourceEntry(path, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED));
+				} else {
+					if(throwExceptionOnErr)
+						throw ExceptionFactory.createCoreException("can not create a source entry for individual file");
+					return null;
+				}
+			}
+			
+			includeList.addAll(excludeList);
+			newEntries = (ICSourceEntry[])includeList.toArray(new ICSourceEntry[includeList.size()]);
 		}
 		
 		return newEntries;
+	}
+	
+	private static int includeExclusion(IPath path, List entries){
+		for(int i = 0; i < entries.size(); i++){
+			ICSourceEntry entry = (ICSourceEntry)entries.get(i);
+			entry = include(path, entry);
+			if(entry != null)
+				entries.set(i, entry);
+			return i;
+		}
+		return -1;
+	}
+	
+	private static ICSourceEntry include(IPath path, ICSourceEntry entry){
+		IPath[] exclusions = entry.getExclusionPatterns();
+		IPath entryPath = new Path(entry.getName());
+		IPath relPath = path.removeFirstSegments(entryPath.segmentCount()).makeRelative();
+		for(int k = 0; k < exclusions.length; k++){
+			if(exclusions[k].equals(relPath)){
+				IPath updatedExclusions[] = new IPath[exclusions.length - 1];
+				System.arraycopy(exclusions, 0, updatedExclusions, 0, k);
+				System.arraycopy(exclusions, k + 1, updatedExclusions, k, updatedExclusions.length - k);
+				ICSourceEntry updatedEntry = new CSourceEntry(entry.getName(), updatedExclusions, entry.getFlags());
+				if(isOnSourceEntry(path, updatedEntry))
+					return updatedEntry;
+				exclusions = updatedExclusions;
+				entry = updatedEntry;
+			}
+		}
+		return null;
+	}
+	
+	private static void sortIncludingExcludingEntries(IPath path, ICSourceEntry[] entries, List including, List excluding){
+		for(int i = 0; i < entries.length; i++){
+			IPath entryPath = new Path(entries[i].getName());
+			if(entryPath.isPrefixOf(path))
+				including.add(entries[i]);
+			else
+				excluding.add(entries[i]);
+		}
 	}
 
 	public static ICSourceEntry[] adjustEntries(ICSourceEntry entries[]){
@@ -734,9 +833,9 @@ public class CDataUtil {
 		return new CSourceEntry(entry.getName(), newExclusions, entry.getFlags());
 	}
 	
-	private static void sortEntries(IPath path, ICSourceEntry[] entries, List included, List excluded){
+	private static void sortEntries(IPath path, boolean byExclude, ICSourceEntry[] entries, List included, List excluded){
 		for(int i = 0; i < entries.length; i++){
-			if(isExcluded(path, entries[i])){
+			if(byExclude ? isExcluded(path, entries[i]) : !isOnSourceEntry(path, entries[i])){
 				if(excluded != null)
 					excluded.add(entries[i]);
 			} else {

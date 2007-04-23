@@ -2952,18 +2952,38 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return CDataUtil.isExcluded(path, entries);
 	}
 	
-	void setExcluded(IPath path, boolean excluded){
+	void setExcluded(IPath path, boolean isFolder, boolean excluded){
 //		if(path.segmentCount() == 0)
 //			return;
 		if(excludeList == null) {
-			ICSourceEntry[] entries = getSourceEntries();
-			ICSourceEntry[] newEntries = CDataUtil.setExcluded(path, excluded, entries);
-			setSourceEntries(newEntries, false);
+			ICSourceEntry[] newEntries = getUpdatedEntries(path, isFolder, excluded);
+			if(newEntries != null)
+				setSourceEntries(newEntries, false);
 		} else{
 			if(excluded)
 				excludeList.add(path);
 		}
-			
+	}
+	
+	private ICSourceEntry[] getUpdatedEntries(IPath path, boolean isFolder, boolean excluded){
+		try {
+			ICSourceEntry[] entries = getSourceEntries();
+			return CDataUtil.setExcluded(path, isFolder, excluded, entries, false);
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
+		return null;
+	}
+	
+	boolean canExclude(IPath path, boolean isFolder, boolean excluded){
+		if(excludeList == null) {
+			ICSourceEntry[] newEntries = getUpdatedEntries(path, isFolder, excluded);
+			return newEntries != null;
+		} else{
+			if(excluded)
+				excludeList.add(path);
+			return true;
+		}
 	}
 
 }

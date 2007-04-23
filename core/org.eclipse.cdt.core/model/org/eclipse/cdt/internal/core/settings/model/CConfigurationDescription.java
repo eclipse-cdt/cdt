@@ -753,12 +753,32 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		return CDataUtil.isExcluded(path, entries);
 	}
 
-	void setExcluded(IPath path, boolean exclude){
+	void setExcluded(IPath path, boolean isFolder, boolean exclude){
 //		if(path.segmentCount() == 0)
 //			return;
 		if(isExcluded(path) == exclude)
 			return;
 
+		ICSourceEntry[] newEntries = getUpdatedSourceEntries(path, isFolder, exclude);
+		if(newEntries != null) {
+			try {
+				setSourceEntries(newEntries);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+	}
+
+	boolean canExclude(IPath path, boolean isFolder, boolean exclude){
+		if(isExcluded(path) == exclude)
+			return true;
+
+		return getUpdatedSourceEntries(path, isFolder, exclude) != null;
+	}
+
+	private ICSourceEntry[] getUpdatedSourceEntries(IPath path, boolean isFolder, boolean exclude){
+//		if(path.segmentCount() == 0)
+//			return;
 		IProject project = fIsPreference ? null : getProjectDescription().getProject();
 		if(project != null)
 			path = project.getFullPath().append(path);
@@ -782,14 +802,13 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		}
 			
 		if(newEntries == null){
-			newEntries = CDataUtil.setExcluded(path, exclude, getResolvedSourceEntries());
+			try {
+				newEntries = CDataUtil.setExcluded(path, isFolder, exclude, getResolvedSourceEntries(), false);
+			} catch (CoreException e) {
+			}
 		}
 		
-		try {
-			setSourceEntries(newEntries);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
+		return newEntries;
 	}
 
 	public String[] getExternalSettingsProviderIds() {

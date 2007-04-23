@@ -221,4 +221,9 @@ public class TestFolderInfo implements IFolderInfo {
 
 	}
 
+	public boolean canExclude(boolean exclude) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

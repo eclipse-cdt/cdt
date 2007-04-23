@@ -78,28 +78,68 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	}
 	
 	private ICProject createProject(String name) throws CoreException {
-		ICProject project= CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
-		registerProject(project);
-		TestSourceReader.createFile(project.getProject(), "a.cpp", "int a;");
-		TestSourceReader.createFile(project.getProject(), "b.cpp", "int b;");
-		TestSourceReader.createFile(project.getProject(), "c.cpp", "int c;");
-		fPDOMManager.setIndexerId(project, IPDOMManager.ID_FAST_INDEXER);
-		assertTrue(fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM));
-		return project;
+		ModelJoiner mj= new ModelJoiner();
+		try {
+			ICProject project= CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
+			registerProject(project);
+			TestSourceReader.createFile(project.getProject(), "a.cpp", "int a;");
+			TestSourceReader.createFile(project.getProject(), "b.cpp", "int b;");
+			TestSourceReader.createFile(project.getProject(), "c.cpp", "int c;");
+			mj.join(); // in order we are sure the indexer task has been scheduled before joining the indexer
+
+			fPDOMManager.setIndexerId(project, IPDOMManager.ID_FAST_INDEXER);
+			assertTrue(fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM));
+			return project;
+		} finally {
+			mj.dispose();
+		}
 	}
 
-	private ICProject recreateProject(final String prjName) throws Exception {
-		final boolean[] changed= {false};
-		final IElementChangedListener listener = new IElementChangedListener() {
-			public void elementChanged(ElementChangedEvent event) {
-				synchronized (changed) {
-					changed[0]= true;
-					changed.notifyAll();
-				}
+	static class ModelJoiner implements IElementChangedListener {
+		private boolean[] changed= new boolean[1];
+		
+		public ModelJoiner() {
+			CoreModel.getDefault().addElementChangedListener(this);
+		}
+		
+		public void clear() {
+			synchronized (changed) {
+				changed[0]= false;
+				changed.notifyAll();
 			}
-		};
+		}
+		
+		public void join() throws CoreException {
+			try {
+				synchronized(changed) {
+					while(!changed[0]) {
+						changed.wait();
+					}
+				}
+			} catch(InterruptedException ie) {
+				throw new CoreException(CCorePlugin.createStatus("Interrupted", ie));
+			}
+		}
+		
+		public void dispose() {
+			CoreModel.getDefault().removeElementChangedListener(this);
+		}
+		
+		public void elementChanged(ElementChangedEvent event) {
+			// Only respond to post change events
+			if (event.getType() != ElementChangedEvent.POST_CHANGE)
+				return;
+			
+			synchronized (changed) {
+				changed[0]= true;
+				changed.notifyAll();
+			}
+		}
+	}
+	
+	private ICProject recreateProject(final String prjName) throws Exception {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		CoreModel.getDefault().addElementChangedListener(listener);
+		ModelJoiner pj= new ModelJoiner();
 		try {
 			final IProject prjHandle= workspace.getRoot().getProject(prjName);
 			workspace.run(new IWorkspaceRunnable() {
@@ -109,15 +149,9 @@ public class TeamSharedIndexTest extends IndexTestBase {
 					prjHandle.open(0, NPM);
 				}
 			}, null);
-			synchronized(changed) {
-				if (!changed[0]) {
-					changed.wait(INDEXER_WAIT_TIME);
-					assertTrue(changed[0]);
-				}
-			}
-		}
-		finally {
-			CoreModel.getDefault().removeElementChangedListener(listener);
+			pj.join();  // in order we are sure the indexer task has been scheduled before joining the indexer
+		} finally {
+			pj.dispose();
 		}
 		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
 		return CoreModel.getDefault().create(workspace.getRoot().getProject(prjName));
@@ -163,7 +197,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "c", 0);
 		
 		// delete project
-		prj.getProject().delete(false, true, NPM);
+		deleteAndWait(prj);
 		unregisterProject(prj);
 		
 		// import project
@@ -192,7 +226,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		
 		// change file
 		prj.getProject().getFile("a.cpp").setContents(new ByteArrayInputStream("int d;".getBytes()), true, false, NPM);
-		prj.getProject().delete(false, true, NPM);
+		deleteAndWait(prj);
 		unregisterProject(prj);
 		
 		// import project
@@ -202,6 +236,16 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "b", 1);
 		checkVariable(prj, "c", 1);
 		checkVariable(prj, "d", 1);
+	}
+	
+	private void deleteAndWait(ICProject prj) throws CoreException {
+		ModelJoiner dj= new ModelJoiner();
+		try {
+			prj.getProject().delete(false, true, NPM);
+			dj.join();
+		} finally {
+			dj.dispose();
+		}
 	}
 
 	public void testExportWithFileChangeFake() throws Exception {
@@ -220,13 +264,14 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
 		
 		// change file
 		prj.getProject().getFile("a.cpp").setContents(new ByteArrayInputStream("int d;".getBytes()), true, false, NPM);
-		prj.getProject().delete(false, true, NPM);
+		deleteAndWait(prj);
 		unregisterProject(prj);
 		
 		// import project
@@ -254,7 +299,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		
 		// add file
 		TestSourceReader.createFile(prj.getProject(), "d.cpp", "int d;");
-		prj.getProject().delete(false, true, NPM);
+		deleteAndWait(prj);
 		unregisterProject(prj);
 		
 		// import project
@@ -282,13 +327,14 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
 
 		// add file
 		TestSourceReader.createFile(prj.getProject(), "d.cpp", "int d;");
-		prj.getProject().delete(false, true, NPM);
+		deleteAndWait(prj);
 		unregisterProject(prj);
 		
 		// import project
@@ -316,7 +362,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		
 		// delete file
 		prj.getProject().getFile("a.cpp").delete(true, NPM);
-		prj.getProject().delete(false, true, NPM);
+		deleteAndWait(prj);
 		unregisterProject(prj);
 		
 		// import project
@@ -343,13 +389,14 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
 
 		// delete file
 		prj.getProject().getFile("a.cpp").delete(true, NPM);
-		prj.getProject().delete(false, true, NPM);
+		deleteAndWait(prj);
 		unregisterProject(prj);
 		
 		// import project

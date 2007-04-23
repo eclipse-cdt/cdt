@@ -108,8 +108,13 @@ public class BaseTestCase extends TestCase {
 		};
 		CCorePlugin.getDefault().getLog().addLogListener(logListener);
 		
+		Throwable testThrowable= null;
 		try {
-			super.runBare();
+			try {
+				super.runBare();
+			} catch(Throwable e) {
+				testThrowable=e;
+			}
 			
 			if(statusLog.size()!=fExpectedLoggedNonOK) {
 				StringBuffer msg= new StringBuffer("Expected number ("+fExpectedLoggedNonOK+") of ");
@@ -132,6 +137,9 @@ public class BaseTestCase extends TestCase {
 		} finally {
 			CCorePlugin.getDefault().getLog().removeLogListener(logListener);
 		}
+		
+		if(testThrowable!=null)
+			throw testThrowable;
 	}
 
     public void run( TestResult result ) {

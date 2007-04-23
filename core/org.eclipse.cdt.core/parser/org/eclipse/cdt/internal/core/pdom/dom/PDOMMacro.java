@@ -12,13 +12,17 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
@@ -33,30 +37,38 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-public class PDOMMacro implements IIndexMacro {
+public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 
 	private final PDOM pdom;
 	private final int record;
 	private IMacro macro;
 
 	private static final int NAME = 0;
-	private static final int FIRST_PARAMETER = 4;
-	private static final int EXPANSION = 8;
-	private static final int NEXT_MACRO = 12;
+	private static final int FILE = 4;
+	private static final int NAME_OFFSET = 8;
+	private static final int NAME_LENGTH = 12; // short
+	private static final int FIRST_PARAMETER = 14;
+	private static final int EXPANSION = 18;
+	private static final int NEXT_MACRO = 22;
 	
-	private static final int RECORD_SIZE = 16;
+	private static final int RECORD_SIZE = 26;
 	
 	public PDOMMacro(PDOM pdom, int record) {
 		this.pdom = pdom;
 		this.record = record;
 	}
 	
-	public PDOMMacro(PDOM pdom, IASTPreprocessorMacroDefinition macro) throws CoreException {
+	public PDOMMacro(PDOM pdom, IASTPreprocessorMacroDefinition macro, PDOMFile file) throws CoreException {
 		this.pdom = pdom;
 		
 		Database db = pdom.getDB();
 		this.record = db.malloc(RECORD_SIZE);
-		db.putInt(record + NAME, db.newString(macro.getName().toCharArray()).getRecord());
+		IASTName name = macro.getName();
+		db.putInt(record + NAME, db.newString(name.toCharArray()).getRecord());
+		db.putInt(record + FILE, file.getRecord());
+		IASTFileLocation fileloc = name.getFileLocation();
+		db.putInt(record + NAME_OFFSET, fileloc.getNodeOffset());
+		db.putShort(record + NAME_LENGTH, (short) fileloc.getNodeLength());
 		db.putInt(record + EXPANSION, db.newString(macro.getExpansion()).getRecord());
 		setNextMacro(0);
 		
@@ -118,21 +130,27 @@ public class PDOMMacro implements IIndexMacro {
 		return rec != 0 ? new PDOMMacroParameter(pdom, rec) : null;
 	}
 	
-	private class ObjectStylePDOMMacro extends ObjectStyleMacro {
+	private class ObjectStylePDOMMacro extends ObjectStyleMacro implements IIndexMacro {
 		public ObjectStylePDOMMacro(char[] name) {
 			super(name, null);
 		}
 		public char[] getExpansion() {
 			return getMacroExpansion();
 		}
+		public IASTFileLocation getFileLocation() {
+			return PDOMMacro.this;
+		}
 	}
 	
-	private class FunctionStylePDOMMacro extends FunctionStyleMacro {
+	private class FunctionStylePDOMMacro extends FunctionStyleMacro implements IIndexMacro {
 		public FunctionStylePDOMMacro(char[] name, char[][] arglist) {
 			super(name, null, arglist);
 		}
 		public char[] getExpansion() {
 			return getMacroExpansion();
+		}
+		public IASTFileLocation getFileLocation() {
+			return PDOMMacro.this;
 		}
 	}
 	
@@ -194,4 +212,63 @@ public class PDOMMacro implements IIndexMacro {
 		}
 		return macro.getName();
 	}
+	
+	public IIndexFile getFile() throws CoreException {
+		int filerec = pdom.getDB().getInt(record + FILE);
+		return filerec != 0 ? new PDOMFile(pdom, filerec) : null;
+	}
+
+	public int getEndingLineNumber() {
+		return 0;
+	}
+
+	public String getFileName() {
+		try {
+			PDOMFile file = (PDOMFile) getFile();
+			if(file!=null) {
+				/*
+				 * We need to spec. what this method can return to know
+				 * how to implement this. Existing implmentations return
+				 * the absolute path, so here we attempt to do the same.
+				 */
+				URI uri = file.getLocation().getURI();
+				if ("file".equals(uri.getScheme())) //$NON-NLS-1$
+					return uri.getSchemeSpecificPart();
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
+	}
+
+	public int getStartingLineNumber() {
+		return 0;
+	}
+
+	public IASTFileLocation asFileLocation() {
+		return this;
+	}
+	
+	public IASTFileLocation getFileLocation() {
+		return this;
+	}
+
+	public int getNodeLength() {
+		try {
+			return pdom.getDB().getShort(record + NAME_LENGTH);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return 0;
+		}
+	}
+
+	public int getNodeOffset() {
+		try {
+			return pdom.getDB().getInt(record + NAME_OFFSET);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return 0;
+		}
+	}
+
 }

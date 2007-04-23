@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.core.index;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.parser.IMacro;
 
 /**
@@ -28,5 +29,12 @@ import org.eclipse.cdt.core.parser.IMacro;
  * @since 4.0
  */
 public interface IIndexMacro extends IMacro {
+	
+	/**
+	 * If available, return the file location for this macro definition
+	 * otherwise return null
+	 * @return
+	 */
+	IASTFileLocation getFileLocation();
 
 }

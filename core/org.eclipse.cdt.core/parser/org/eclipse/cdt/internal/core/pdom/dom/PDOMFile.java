@@ -176,7 +176,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMMacro lastMacro= null;
 		for (int i = 0; i < macros.length; i++) {
 			IASTPreprocessorMacroDefinition macro = macros[i];
-			PDOMMacro pdomMacro = new PDOMMacro(pdom, macro);
+			PDOMMacro pdomMacro = new PDOMMacro(pdom, macro, this);
 			if (lastMacro == null) {
 				setFirstMacro(pdomMacro);
 			}

@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -813,14 +814,19 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @author jcamelon
      */
     public class ASTMacroName extends ASTNode implements IASTName {
-        private final char[] name;
-        private IMacroBinding binding = null;
-       
-
+    	private final char[] name;
+    	private final IASTFileLocation fileLocation;
+    	private IMacroBinding binding = null;
+    	
         public ASTMacroName(char[] n) {
-            this.name = n;
+        	this(n, null);
         }
 
+        public ASTMacroName(char [] n, IASTFileLocation fileLocation) {
+        	this.name = n;
+        	this.fileLocation = fileLocation;
+        }
+        
         /*
          * (non-Javadoc)
          * 
@@ -899,6 +905,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          */
         public void setBinding(IBinding binding) {
             //do nothing
+        }
+        
+        public IASTFileLocation getFileLocation() {
+        	return fileLocation != null ? fileLocation : super.getFileLocation();
         }
         
     	public ILinkage getLinkage() {
@@ -1464,6 +1474,12 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             return expansion;
         }
 
+        public IASTFileLocation getFileLocation() {
+        	return macro != null && macro instanceof IIndexMacro
+        		? ((IIndexMacro)macro).getFileLocation()
+        		: null;
+        }
+        
         public IMacroBinding getBinding() {
             return bind;
         }
@@ -1683,7 +1699,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         	r = new ASTObjectMacro();
         }
         
-        IASTName name = new ASTMacroName(d.name);
+        IASTName name = new ASTMacroName(d.name, d.getFileLocation());
         name.setPropertyInParent(IASTPreprocessorMacroDefinition.MACRO_NAME);
         name.setParent(r);
         ((ASTNode) name).setOffsetAndLength(d.nameOffset, d.name.length);

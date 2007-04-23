@@ -25,6 +25,7 @@ public class CProjectDescriptionTests {
         // each class being tested
 		suite.addTest(CConfigurationDescriptionReferenceTests.suite());
 		suite.addTest(ExternalSettingsProviderTests.suite());
+		suite.addTest(CfgSettingsTests.suite());
         return suite;
 
     }

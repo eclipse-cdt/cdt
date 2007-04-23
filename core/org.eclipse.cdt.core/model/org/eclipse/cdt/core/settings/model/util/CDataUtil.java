@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
@@ -766,5 +767,35 @@ public class CDataUtil {
 		}
 		return map;
 	}
+	
+	public static boolean getBoolean(ICStorageElement el, String attr, boolean defaultValue){
+		if(el != null){
+			String tmp = el.getAttribute(attr);
+			if(tmp != null){
+				return Boolean.valueOf(tmp).booleanValue();
+			}
+		}
+		return defaultValue;
+	}
 
+	public static void setBoolean(ICStorageElement el, String attr, boolean value){
+		el.setAttribute(attr, Boolean.valueOf(value).toString());
+	}
+
+	public static int getInteger(ICStorageElement el, String attr, int defaultValue){
+		if(el != null){
+			String tmp = el.getAttribute(attr);
+			if(tmp != null){
+				try {
+					return Integer.parseInt(tmp);
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+		return defaultValue;
+	}
+
+	public static void setInteger(ICStorageElement el, String attr, int value){
+		el.setAttribute(attr, new Integer(value).toString());
+	}
 }

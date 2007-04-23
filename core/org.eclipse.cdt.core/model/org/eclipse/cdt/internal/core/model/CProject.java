@@ -44,8 +44,8 @@ import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -603,9 +603,9 @@ public class CProject extends Openable implements ICProject {
 	protected List computeSourceRoots() throws CModelException {
 		//IPathEntry[] entries = getResolvedPathEntries();
 		ICSourceEntry[] entries = null;
-		CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(getProject(), false);
+		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(getProject(), false);
 		if(des != null){
-			ICConfigurationDescription cfg = des.getIndexConfiguration();
+			ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
 			if(cfg != null)
 				entries = cfg.getResolvedSourceEntries();
 		}

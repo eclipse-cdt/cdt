@@ -49,13 +49,13 @@ public class CfgExportSettingContainerFactory extends
 	}
 	
 	public void startup(){
-		CProjectDescriptionManager.getInstance().addListener(this, 
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, 
 				CProjectDescriptionEvent.APPLIED
 				| CProjectDescriptionEvent.LOADDED);
 	}
 	
 	public void shutdown(){
-		CProjectDescriptionManager.getInstance().removeListener(this);
+		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 	}
 	
 	private class CfgRefContainer extends CExternalSettingsContainer {

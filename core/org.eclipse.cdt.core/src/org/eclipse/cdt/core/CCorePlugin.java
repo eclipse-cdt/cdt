@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
@@ -1247,5 +1248,9 @@ public class CCorePlugin extends Plugin {
 	 */
 	public boolean isNewStyleProject(ICProjectDescription des){
 		return fNewCProjectDescriptionManager.isNewStyleProject(des);
+	}
+	
+	public ICProjectDescriptionManager getProjectDescriptionManager(){
+		return fNewCProjectDescriptionManager;
 	}
 }

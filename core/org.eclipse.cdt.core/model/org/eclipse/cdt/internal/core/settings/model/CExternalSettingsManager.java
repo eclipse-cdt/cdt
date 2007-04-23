@@ -67,7 +67,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	}
 
 	public void startup(){
-		CProjectDescriptionManager.getInstance().addListener(this, CProjectDescriptionEvent.DATA_APPLIED
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.DATA_APPLIED
 				| CProjectDescriptionEvent.LOADDED);
 	}
 
@@ -78,7 +78,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		}
 		fFactoryMap.clear();
 
-		CProjectDescriptionManager.getInstance().removeListener(this);
+		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 	}
 
 	

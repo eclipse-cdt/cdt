@@ -17,8 +17,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -70,9 +70,9 @@ public class CContainerInfo extends OpenableInfo {
 
 //			IPathEntry[] entries = cproject.getResolvedPathEntries();
 			ICSourceEntry[] entries = null;
-			CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(cproject.getProject(), false);
+			ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(cproject.getProject(), false);
 			if(des != null){
-				ICConfigurationDescription cfg = des.getIndexConfiguration();
+				ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
 				if(cfg != null){
 					entries = cfg.getResolvedSourceEntries();
 				}

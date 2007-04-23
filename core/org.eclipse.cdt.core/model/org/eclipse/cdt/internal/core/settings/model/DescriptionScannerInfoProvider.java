@@ -53,14 +53,14 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 	DescriptionScannerInfoProvider(IProject project){
 		fProject = project;
 		
-		CProjectDescriptionManager.getInstance().addListener(this, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED);
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED);
 	}
 	
 	private void updateProjCfgInfo(ICProjectDescription des){
 		fInited = true;
 		fProjDes = des;
 		if(fProjDes != null){
-			fCfgDes = ((CProjectDescription)des).getIndexConfiguration();
+			fCfgDes = des.getDefaultSettingConfiguration();
 		}
 		
 		fIdToLanguageSettingsMap.clear();
@@ -267,7 +267,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 	}
 	
 	public void close(){
-		CProjectDescriptionManager.getInstance().removeListener(this);
+		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 	}
 
 	public void handleEvent(CProjectDescriptionEvent event) {

@@ -307,7 +307,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 			if(des.isReadOnly())
 				des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(des.getProject(), true);
 			
-			ICConfigurationDescription cfgDes = des.getIndexConfiguration();
+			ICConfigurationDescription cfgDes = des.getDefaultSettingConfiguration();
 	
 			
 			if(cfgDes != null){
@@ -362,13 +362,13 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				}
 				
 			};
-			CProjectDescriptionManager.getInstance().addListener(fDescriptionListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED | CProjectDescriptionEvent.DATA_APPLIED | CProjectDescriptionEvent.ABOUT_TO_APPLY);
+			CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(fDescriptionListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED | CProjectDescriptionEvent.DATA_APPLIED | CProjectDescriptionEvent.ABOUT_TO_APPLY);
 		}
 	}
 	
 	public void shutdown(){
 		if(fDescriptionListener != null){
-			CProjectDescriptionManager.getInstance().removeListener(fDescriptionListener);
+			CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(fDescriptionListener);
 		}
 	}
 	
@@ -381,7 +381,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 					if(dr != null){
 						//the descriptor was requested while load process
 						des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(des.getProject(), true);
-						ICConfigurationDescription cfgDescription = des.getIndexConfiguration();
+						ICConfigurationDescription cfgDescription = des.getDefaultSettingConfiguration();
 						if(cfgDescription != null){
 							dr.updateConfiguration((CConfigurationDescription)cfgDescription);
 							dr.setDirty(false);
@@ -419,7 +419,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				ICConfigurationDescription updatedCfg = null;
 				if(oldDes == null){
 					dr = findDescriptor(newDes);
-					updatedCfg = newDes.getIndexConfiguration();
+					updatedCfg = newDes.getDefaultSettingConfiguration();
 					if(dr != null){
 						desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_ADDED, 0);
 					}
@@ -430,10 +430,10 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 					}
 				} else {
 					dr = findDescriptor(newDes);
-					updatedCfg = newDes.getIndexConfiguration();
+					updatedCfg = newDes.getDefaultSettingConfiguration();
 					if(dr != null){
-						ICConfigurationDescription newCfg = newDes.getIndexConfiguration();
-						ICConfigurationDescription oldCfg = oldDes.getIndexConfiguration();
+						ICConfigurationDescription newCfg = newDes.getDefaultSettingConfiguration();
+						ICConfigurationDescription oldCfg = oldDes.getDefaultSettingConfiguration();
 						int flags = 0;
 						if(newCfg.getId().equals(oldCfg.getId())){
 							ICDescriptionDelta cfgDelta = findCfgDelta(event.getProjectDelta(), newCfg.getId());
@@ -453,7 +453,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				
 				if(updatedCfg != null && dr != null){
 					CProjectDescription writableDes = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(event.getProject(), true);
-					ICConfigurationDescription indexCfg = writableDes.getIndexConfiguration();
+					ICConfigurationDescription indexCfg = writableDes.getDefaultSettingConfiguration();
 					dr.updateConfiguration((CConfigurationDescription)indexCfg);
 					dr.setDirty(false);
 				}

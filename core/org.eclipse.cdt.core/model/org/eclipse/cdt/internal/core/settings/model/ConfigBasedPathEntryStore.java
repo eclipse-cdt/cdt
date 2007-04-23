@@ -53,7 +53,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		fProject = project;
 		fListeners = Collections.synchronizedList(new ArrayList());
 		
-		CProjectDescriptionManager.getInstance().addListener(this, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED);
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED);
 	}
 
 	/* (non-Javadoc)
@@ -89,7 +89,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		for (int i = 0; i < observers.length; i++) {
 			observers[i].pathEntryStoreChanged(evt);
 		}
-		CProjectDescriptionManager.getInstance().removeListener(this);
+		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 	}
 
 	public IProject getProject() {
@@ -123,8 +123,8 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 //					usrList.add(entries[i]);
 //			}
 			
-			CProjectDescription des = (CProjectDescription)CoreModel.getDefault().getProjectDescription(fProject, true);
-			ICConfigurationDescription cfgDes = des.getIndexConfiguration();
+			ICProjectDescription des = CoreModel.getDefault().getProjectDescription(fProject, true);
+			ICConfigurationDescription cfgDes = des.getDefaultSettingConfiguration();
 			CConfigurationData data = cfgDes.getConfigurationData();
 			PathEntryTranslator tr = new PathEntryTranslator(fProject, data);
 			IPathEntry[] usrEntries = (IPathEntry[])usrList.toArray(new IPathEntry[usrList.size()]);
@@ -160,11 +160,11 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		
 		switch(event.getEventType()){
 			case CProjectDescriptionEvent.APPLIED:{
-				CProjectDescription des = (CProjectDescription)event.getNewCProjectDescription();
-				CProjectDescription oldDes = (CProjectDescription)event.getOldCProjectDescription();
+				ICProjectDescription des = event.getNewCProjectDescription();
+				ICProjectDescription oldDes = event.getOldCProjectDescription();
 				List oldCrEntries = null;
 				if(oldDes != null){
-					ICConfigurationDescription oldIndexCfg = oldDes.getIndexConfiguration();
+					ICConfigurationDescription oldIndexCfg = oldDes.getDefaultSettingConfiguration();
 					List[] oldEs = getCachedEntries(oldIndexCfg);
 					if(oldEs != null)
 						oldCrEntries = oldEs[1];
@@ -176,7 +176,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 					clearCachedEntries(des);
 					
 					if(oldCrEntries != null){
-						ICConfigurationDescription newIndexCfg = des.getIndexConfiguration();
+						ICConfigurationDescription newIndexCfg = des.getDefaultSettingConfiguration();
 						List[] newEs = getEntries(fProject, newIndexCfg);
 						List newCrEntries = newEs[1];
 						if(!Arrays.equals(oldCrEntries.toArray(), newCrEntries.toArray())){
@@ -253,8 +253,8 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 //	}
 	
 	private static ICConfigurationDescription getIndexCfg(IProject project){
-		CProjectDescription des = (CProjectDescription)CCorePlugin.getDefault().getProjectDescription(project, false);
-		return des.getIndexConfiguration();
+		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
+		return des.getDefaultSettingConfiguration();
 	}
 	
 	private static List getContainerEntries(IProject project){
@@ -265,7 +265,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	}
 
 	private static List getContainerEntries(ICProjectDescription des){
-		ICConfigurationDescription cfg = ((CProjectDescription)des).getIndexConfiguration();
+		ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
 		List es[] = getEntries(des.getProject(), cfg);
 		if(es != null)
 			return es[1];

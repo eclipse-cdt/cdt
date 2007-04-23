@@ -23,7 +23,11 @@ import org.eclipse.core.runtime.QualifiedName;
  * @see CoreModel#getProjectDescription(IProject, boolean) 
  *
  */
-public interface ICProjectDescription  extends ICSettingContainer, ICSettingObject, ICSettingsStorage{
+public interface ICProjectDescription  extends ICSettingContainer, 
+							ICSettingObject, 
+							ICSettingsStorage,
+							ICProjectDescriptionPreferences {
+
 	/**
 	 * returns an array of configurations available for this project
 	 * 
@@ -140,4 +144,8 @@ public interface ICProjectDescription  extends ICSettingContainer, ICSettingObje
 	 * @param value
 	 */
 	void setSessionProperty(QualifiedName name, Object value);
+	
+	ICConfigurationDescription getDefaultSettingConfiguration();
+
+	void setDefaultSettingConfiguration(ICConfigurationDescription cfg);
 }

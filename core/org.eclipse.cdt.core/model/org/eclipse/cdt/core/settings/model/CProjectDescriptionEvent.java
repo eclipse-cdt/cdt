@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionDelta;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.ICDescriptionDelta;
@@ -69,7 +68,7 @@ public final class CProjectDescriptionEvent {
 		return fActiveCfgDelta;
 	}
 
-	public ICDescriptionDelta getIndexCfgDelta(){
+	public ICDescriptionDelta getDefaultSettingCfgDelta(){
 		if(fIndexCfgDelta == null){
 			fIndexCfgDelta = getDelta(false);
 		}
@@ -121,7 +120,7 @@ public final class CProjectDescriptionEvent {
 	}
 	
 	private ICConfigurationDescription getCfg(ICProjectDescription des, boolean active){
-		return active ? des.getActiveConfiguration() : ((CProjectDescription)des).getIndexConfiguration(); 
+		return active ? des.getActiveConfiguration() : des.getDefaultSettingConfiguration(); 
 	}
 	
 	private ICDescriptionDelta findCfgDelta(ICDescriptionDelta delta, String id){

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
@@ -37,7 +38,6 @@ import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.model.ProjectEntry;
 import org.eclipse.cdt.internal.core.model.SourceEntry;
 import org.eclipse.cdt.internal.core.settings.model.CLanguageSettingCache;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -1232,9 +1232,9 @@ public class CoreModel {
 	public static boolean isScannerInformationEmpty(IResource resource) {
 		IProject project = resource.getProject();
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance(); 
-		CProjectDescription des = (CProjectDescription)mngr.getProjectDescription(project, false);
+		ICProjectDescription des = mngr.getProjectDescription(project, false);
 		if(des != null){
-			ICConfigurationDescription indexCfg = des.getIndexConfiguration();
+			ICConfigurationDescription indexCfg = des.getDefaultSettingConfiguration();
 			if(indexCfg != null){
 				if(!mngr.isNewStyleCfg(indexCfg)){
 					return oldIsScannerInformationEmpty(resource);
@@ -1424,10 +1424,14 @@ public class CoreModel {
 	}
 	
 	public void addCProjectDescriptionListener(ICProjectDescriptionListener listener, int eventTypes){
-		descriptionManager.addListener(listener, eventTypes);
+		descriptionManager.addCProjectDescriptionListener(listener, eventTypes);
 	}
 
 	public void removeCProjectDescriptionListener(ICProjectDescriptionListener listener){
-		descriptionManager.removeListener(listener);
+		descriptionManager.removeCProjectDescriptionListener(listener);
+	}
+	
+	public ICProjectDescriptionManager getProjectDescriptionManager(){
+		return descriptionManager;
 	}
 }

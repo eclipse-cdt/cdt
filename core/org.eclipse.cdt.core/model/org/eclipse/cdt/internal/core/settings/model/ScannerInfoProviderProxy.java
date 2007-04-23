@@ -32,7 +32,7 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 
 	public ScannerInfoProviderProxy(IProject project) {
 		super(project, CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
-		CProjectDescriptionManager.getInstance().addListener(this, CProjectDescriptionEvent.LOADDED | CProjectDescriptionEvent.APPLIED);
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.LOADDED | CProjectDescriptionEvent.APPLIED);
 	}
 
 	public IScannerInfo getScannerInformation(IResource resource) {

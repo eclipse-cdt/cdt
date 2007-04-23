@@ -30,7 +30,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 	public AbstractCExtensionProxy(IProject project, String extPointId) {
 		fProject = project;
 		fExtPointId = extPointId;
-		CProjectDescriptionManager.getInstance().addListener(this, CProjectDescriptionEvent.LOADDED | CProjectDescriptionEvent.APPLIED);
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, CProjectDescriptionEvent.LOADDED | CProjectDescriptionEvent.APPLIED);
 	}
 
 	protected final void providerRequested(){
@@ -73,7 +73,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 				boolean newStile = true;
 				ICConfigurationDescription cfg = null;
 				if(des != null){
-					cfg = ((CProjectDescription)des).getIndexConfiguration();
+					cfg = des.getDefaultSettingConfiguration();
 					if(cfg != null){
 						ref = getRef(cfg, false);
 						newStile = CProjectDescriptionManager.getInstance().isNewStyleCfg(cfg);
@@ -140,7 +140,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 	}
 
 	public void close(){
-		CProjectDescriptionManager.getInstance().removeListener(this);
+		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 		if(fProvider != null){
 			deinitializeProvider(fProvider);
 		}

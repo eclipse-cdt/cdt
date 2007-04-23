@@ -22,11 +22,10 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IOutputEntry;
-import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -88,9 +87,9 @@ class CProjectInfo extends OpenableInfo {
 		char[][] exclusionPatterns = null;
 //		try {
 //			entries = cproject.getResolvedPathEntries();
-			CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
 			if(des != null){
-				ICConfigurationDescription cfg = des.getIndexConfiguration();
+				ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
 				if(cfg != null){
 					entries = cfg.getResolvedSourceEntries();
 				}

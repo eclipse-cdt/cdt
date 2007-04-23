@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
@@ -92,6 +93,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected final boolean supportAlignOfUnaries;
 
     protected final boolean supportKnRC;
+    
+	protected IASTComment[] comments = new ASTComment[0];
 
     protected final boolean supportAttributeSpecifiers;
     
@@ -252,6 +255,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IToken fetchToken() throws EndOfFileException {
         try {
             IToken value = scanner.nextToken();
+            // Put the Comments in the Array for later processing
+            int type = value.getType();
+			while(type == IToken.tCOMMENT || type == IToken.tBLOCKCOMMENT){
+            	IASTComment comment = createComment(value);
+            	comments = ASTComment.addComment(comments, comment);
+            	value = scanner.nextToken();
+            	type= value.getType();
+            }
             return value;
         } catch (OffsetLimitReachedException olre) {
             handleOffsetLimitException(olre);
@@ -2363,4 +2374,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 		return false;
 	}
+	
+	/**
+	 * Creates the ast node for a comment.
+	 * @since 4.0
+	 */
+	protected abstract IASTComment createComment(IToken commentToken) throws EndOfFileException;
 }

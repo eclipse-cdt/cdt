@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTComment;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
@@ -80,6 +82,8 @@ public class CASTTranslationUnit extends CASTNode implements
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
+    
+    private IASTComment[] comments = new ASTComment[0];
 
     public IASTTranslationUnit getTranslationUnit() {
     	return this;
@@ -582,5 +586,13 @@ public class CASTTranslationUnit extends CASTNode implements
     public void setIndex(IIndex index) {
     	this.index = index;
     }
+
+	public IASTComment[] getComments() {
+		return comments;
+	}
+
+	public void setComments(IASTComment[] comments) {
+		this.comments = comments;
+	}
     
 }

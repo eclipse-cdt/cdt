@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
@@ -106,6 +107,7 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTComment;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
@@ -679,6 +681,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 }
             }
         }
+        translationUnit.setComments((IASTComment[]) ArrayUtil.trim(IASTComment.class, comments));
         // compilationUnit.exitScope( requestor );
     }
 
@@ -3022,5 +3025,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return for_statement;
     }
 
+	protected IASTComment createComment(IToken commentToken)
+			throws EndOfFileException {
+		return new ASTComment(commentToken);
+	}
 
 }

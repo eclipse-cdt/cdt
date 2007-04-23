@@ -47,6 +47,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTestSuite( DOMSelectionParseTest.class );
 		suite.addTestSuite( GCCCompleteParseExtensionsTest.class );
 		suite.addTestSuite(DOMPreprocessorInformationTest.class);
+		suite.addTestSuite(CommentTests.class);
 		suite.addTest( CompletionTestSuite.suite() );
 		return suite;
 	}	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -214,6 +214,39 @@ public class ArrayUtil {
     	}
     	return result;
     }
+    
+    /**
+     * Assumes that array contains nulls at the end, only. 
+     * Returns whether the specified array contains the specified object. Comparison is by
+     * object identity.
+     * @param array the array to search
+     * @param obj the object to search for
+     * @return true if the specified array contains the specified object, or the specified array is null
+     */
+    public static boolean containsEqual( Object [] array, Object obj ){
+    	return indexOfEqual(array, obj)!=-1;
+    }
+
+    /**
+     * Assumes that array contains nulls at the end, only. 
+     * Returns the index into the specified array of the specified object, or -1 if the array does not
+     * contain the object, or if the array is null.  Comparison is by equals().
+     * @param array the array to search
+     * @param obj the object to search for
+     * @return the index into the specified array of the specified object, or -1 if the array does not
+     * contain an equal object, or if the array is null
+     */    
+	public static int indexOfEqual(Object[] comments, Object comment) {
+    	int result = -1;
+    	if(comments!=null) {
+    		for(int i=0; (i<comments.length) && (comments[i]!=null); i++) {
+    			if(comments[i].equals(comment))
+    				return i;
+    		}
+    	}
+    	return result;
+    }
+
 	
 	/**
 	 * Note that this should only be used when the placement of 

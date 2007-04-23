@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -58,6 +59,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTComment;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
@@ -95,6 +97,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
+    private IASTComment[] comments = new ASTComment[0];
+    
     public IASTTranslationUnit getTranslationUnit() {
     	return this;
     }
@@ -625,5 +629,13 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     public void setIndex(IIndex pdom) {
     	this.index = pdom;
     }
+
+	public IASTComment[] getComments() {
+		return comments;
+	}
+
+	public void setComments(IASTComment[] comments) {
+		this.comments = comments;
+	}
     
 }

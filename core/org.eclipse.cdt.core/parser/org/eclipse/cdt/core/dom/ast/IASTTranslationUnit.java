@@ -235,4 +235,21 @@ public interface IASTTranslationUnit extends IASTNode {
      */
     public void setIndex(IIndex index);
     
+    /**
+     * Set comments to translation unit.
+     *   
+     * @param comment
+     */
+    public void setComments(IASTComment[] comments);
+
+	/**
+	 * In case the ast was created in a way that supports comment parsing,
+	 * all comments of the translation unit are returned. Otherwise an
+	 * empty array will be supplied.
+	 * 
+	 * @return <code>IASTComment[]</code>
+	 * @since 4.0
+	 */
+	public IASTComment[] getComments();
+    
 }

@@ -97,8 +97,9 @@ public abstract class AbstractCLanguage extends AbstractLanguage implements ICLa
 			ICodeReaderFactory codeReaderFactory, IIndex index, int options, IParserLogService log) throws CoreException {
 
 		IScanner scanner= createScanner(reader, scanInfo, codeReaderFactory, log);
+		scanner.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
 		ISourceCodeParser parser= createParser(scanner, log, index, false, options);
-
+		
 		// Parse
 		IASTTranslationUnit ast= parser.parse();
 		return ast;

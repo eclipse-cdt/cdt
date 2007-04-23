@@ -746,7 +746,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			ILanguage language= getLanguage();
 			if (language != null) {
 				if (language instanceof AbstractLanguage) {
-					return ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, style, ParserUtil.getParserLogService());
+					int options= 0;
+					if ((style & AST_CREATE_COMMENT_NODES) != 0) {
+						options |= AbstractLanguage.OPTION_ADD_COMMENTS;
+					}
+					return ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, options, ParserUtil.getParserLogService());
 				}
 				return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
 			}

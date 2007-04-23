@@ -196,6 +196,8 @@ abstract class BaseScanner implements IScanner {
 
     protected final boolean supportMinAndMax;
 
+    protected boolean scanComments;
+
     protected final CharArrayIntMap additionalKeywords;
 
     protected final CharArrayIntMap additionalPPKeywords;
@@ -203,11 +205,12 @@ abstract class BaseScanner implements IScanner {
     public BaseScanner(CodeReader reader, IScannerInfo info,
             ParserMode parserMode, ParserLanguage language,
             IParserLogService log, IScannerExtensionConfiguration configuration) {
-
+    	
         this.parserMode = parserMode;
         this.language = language;
         this.log = log;
-
+        this.scanComments = false;
+        
         if (configuration.supportAdditionalNumericLiteralSuffixes() != null)
             suffixes = configuration.supportAdditionalNumericLiteralSuffixes();
         else
@@ -660,7 +663,7 @@ abstract class BaseScanner implements IScanner {
                         ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
 
             // Find the first thing we would care about
-            skipOverWhiteSpace();
+            skipOverWhiteSpaceFetchToken();
 
             if (++bufferPos[bufferStackPos] >= bufferLimit[bufferStackPos]) {
                 // We're at the end of a context, pop it off and try again
@@ -894,12 +897,14 @@ abstract class BaseScanner implements IScanner {
 
             case '/':
                 if (pos + 1 < limit) {
-                    if (buffer[pos + 1] == '=') {
-                        ++bufferPos[bufferStackPos];
-                        return newToken(IToken.tDIVASSIGN);
-                    }
-                }
-                return newToken(IToken.tDIV);
+					if (buffer[pos + 1] == '=') {
+						++bufferPos[bufferStackPos];
+						return newToken(IToken.tDIVASSIGN);
+					} else if (buffer[pos + 1] == '/' || buffer[pos + 1] == '*') {
+						return scanComment();
+					}
+				}
+				return newToken(IToken.tDIV);
 
             case '%':
                 if (pos + 1 < limit) {
@@ -2210,8 +2215,15 @@ abstract class BaseScanner implements IScanner {
                 skipOverNonWhiteSpace();
             }
             textend = bufferPos[bufferStackPos];
-            if (skipOverWhiteSpace())
-                encounteredComment = true;
+            if(scanComments && (buffer[textend+1]=='/' 
+            	&& (buffer[textend+2]=='/'||buffer[textend+2]=='*'))) {
+
+            	if (skipOverWhiteSpaceAndParseComments())
+            		encounteredComment = true;
+            } else {
+            	if (skipOverWhiteSpace())
+            		encounteredComment = true;
+            }
         }
 
         int textlen = textend - textstart + 1;
@@ -2668,13 +2680,15 @@ abstract class BaseScanner implements IScanner {
     }
 
     protected boolean skipOverWhiteSpace() {
+    	return skipOverWhiteSpaceAndParseComments();    	
+    }
+    
+    protected boolean skipOverWhiteSpaceFetchToken() {
 
         char[] buffer = bufferStack[bufferStackPos];
         int limit = bufferLimit[bufferStackPos];
 
-        int pos = bufferPos[bufferStackPos];
-        //		if( pos > 0 && pos < limit && buffer[pos] == '\n')
-        //			return false;
+        int pos = bufferPos[bufferStackPos];        
 
         boolean encounteredComment = false;
         while (++bufferPos[bufferStackPos] < limit) {
@@ -2685,26 +2699,27 @@ abstract class BaseScanner implements IScanner {
             case '\r':
                 continue;
             case '/':
-                if (pos + 1 < limit) {
-                    if (buffer[pos + 1] == '/') {
-                        // C++ comment, skip rest of line
-                        skipToNewLine(true);
-                        encounteredComment = true;
-                        return encounteredComment;
-                    } else if (buffer[pos + 1] == '*') {
-                        // C comment, find closing */
-                        for (bufferPos[bufferStackPos] += 2; bufferPos[bufferStackPos] < limit; ++bufferPos[bufferStackPos]) {
-                            pos = bufferPos[bufferStackPos];
-                            if (buffer[pos] == '*' && pos + 1 < limit
-                                    && buffer[pos + 1] == '/') {
-                                ++bufferPos[bufferStackPos];
-                                encounteredComment = true;
-                                break;
-                            }
-                        }
-                        continue;
-                    }
-                }
+                if (!scanComments) {
+              	   if (pos + 1 < limit) {
+              		   if (buffer[pos + 1] == '/') {
+  							// C++ comment, skip rest of line
+  							skipToNewLine(true); 
+  							return false;
+  						} else if (buffer[pos + 1] == '*') {
+  							// C comment, find closing */
+  							for (bufferPos[bufferStackPos] += 2; bufferPos[bufferStackPos] < limit; ++bufferPos[bufferStackPos]) {
+  								pos = bufferPos[bufferStackPos];
+  								if (buffer[pos] == '*' && pos + 1 < limit
+  										&& buffer[pos + 1] == '/') {
+  									++bufferPos[bufferStackPos];
+  									encounteredComment = true;
+  									break;
+  								}
+  							}
+  							continue;
+  						}
+  					}
+  				}
                 break;
             case '\\':
                 if (pos + 1 < limit && buffer[pos + 1] == '\n') {
@@ -2724,6 +2739,54 @@ abstract class BaseScanner implements IScanner {
             // fell out of switch without continuing, we're done
             --bufferPos[bufferStackPos];
             return encounteredComment;
+        }
+        --bufferPos[bufferStackPos];
+        return encounteredComment;
+    }
+    
+    protected boolean skipOverWhiteSpaceAndParseComments() {
+        char[] buffer = bufferStack[bufferStackPos];
+        int limit = bufferLimit[bufferStackPos];
+	
+        int pos = bufferPos[bufferStackPos];
+        //		if( pos > 0 && pos < limit && buffer[pos] == '\n')
+        //			return false;
+        boolean encounteredComment = false;
+        while (++bufferPos[bufferStackPos] < limit) {
+        	pos = bufferPos[bufferStackPos];
+        	switch (buffer[pos]) {
+        	case ' ':
+        	case '\t':
+        	case '\r':
+        		continue;
+        	case '/':
+        		if (pos + 1 < limit) {
+        			if (buffer[pos + 1] == '/' || buffer[pos + 1] == '*') {
+        				IToken comment = scanComment();	
+        				if(comment.getType() == IToken.tBLOCKCOMMENT){
+        					encounteredComment=true;
+        				}
+        				continue;
+        			}
+        		}
+        		break;
+        	case '\\':
+        		if (pos + 1 < limit && buffer[pos + 1] == '\n') {
+        			// \n is a whitespace
+        			++bufferPos[bufferStackPos];
+        			continue;
+        		}
+        		if (pos + 1 < limit && buffer[pos + 1] == '\r') {
+        			if (pos + 2 < limit && buffer[pos + 2] == '\n') {
+        				bufferPos[bufferStackPos] += 2;
+        				continue;
+        			}
+        		}
+        		break;
+        	}
+        	// fell out of switch without continuing, we're done
+        	--bufferPos[bufferStackPos];
+        	return encounteredComment;
         }
         --bufferPos[bufferStackPos];
         return encounteredComment;
@@ -3862,6 +3925,14 @@ abstract class BaseScanner implements IScanner {
 		contentAssistMode = true;
 	}
 	
+	/**
+	 * Turns on/off comment parsing.
+	 * @since 4.0
+	 */
+	public void setScanComments(boolean val) {
+		scanComments= val;
+	}
+	
     protected ParserLanguage getLanguage() {
         return language;
     }
@@ -4095,6 +4166,43 @@ abstract class BaseScanner implements IScanner {
     protected int getCurrentOffset() {
         return bufferPos[bufferStackPos];
     }
+    protected IToken scanComment() {
+    		char[] buffer = bufferStack[bufferStackPos];
+    		int limit = bufferLimit[bufferStackPos];
+    
+    		int pos = bufferPos[bufferStackPos];
+    		if (pos + 1 < limit) {
+    			if (buffer[pos + 1] == '/') {
+    				// C++ comment
+    				int commentLength = 0;
+    				while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
+    					if (buffer[bufferPos[bufferStackPos]] == '\n'||buffer[bufferPos[bufferStackPos]] == '\r') {
+    						break;
+    					}
+    					++commentLength;
+    				}
+   				// leave the new line there
+   				--bufferPos[bufferStackPos];
+    			return newToken(IToken.tCOMMENT, CharArrayUtils.extract(buffer,
+    					pos, bufferPos[bufferStackPos] - pos + 1));
+    		} else if (buffer[pos + 1] == '*') {
+    			// C comment, find closing */
+    			int start = pos;
+    			for (bufferPos[bufferStackPos] += 2; bufferPos[bufferStackPos] < limit; ++bufferPos[bufferStackPos]) {
+    				pos = bufferPos[bufferStackPos];
+    				if (buffer[pos] == '*' && pos + 1 < limit
+    						&& buffer[pos + 1] == '/') {
+    					++bufferPos[bufferStackPos];
+    					break;
+    				}
+    			}
+    			return newToken(IToken.tBLOCKCOMMENT, CharArrayUtils.extract(
+    					buffer, start, bufferPos[bufferStackPos] - start + 1));
+    		}
+    	}
+    	return null;
+    }
+    
 
     /*
      * (non-Javadoc)

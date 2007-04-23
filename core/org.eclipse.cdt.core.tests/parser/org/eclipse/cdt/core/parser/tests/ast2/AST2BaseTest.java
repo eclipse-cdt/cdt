@@ -98,7 +98,11 @@ public class AST2BaseTest extends BaseTestCase {
      * @return
      * @throws ParserException
      */
-    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException{
+    	return parse(code, lang, useGNUExtensions, expectNoProblems, false);
+    }
+    
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems , boolean parseComments) throws ParserException {
         CodeReader codeReader = new CodeReader(code
                 .toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
@@ -108,6 +112,7 @@ public class AST2BaseTest extends BaseTestCase {
         else
             configuration = new GPPScannerExtensionConfiguration();
         IScanner scanner = new DOMScanner( codeReader, scannerInfo, ParserMode.COMPLETE_PARSE, lang, NULL_LOG, configuration, FileCodeReaderFactory.getInstance() );
+        scanner.setScanComments(parseComments);
         
         ISourceCodeParser parser2 = null;
         if( lang == ParserLanguage.CPP )
@@ -117,9 +122,7 @@ public class AST2BaseTest extends BaseTestCase {
             	config = new GPPParserExtensionConfiguration();
             else
             	config = new ANSICPPParserExtensionConfiguration();
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE,
-                NULL_LOG,
-                config );
+            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG,config, null);
         }
         else
         {
@@ -130,8 +133,7 @@ public class AST2BaseTest extends BaseTestCase {
             else
             	config = new ANSICParserExtensionConfiguration();
             
-            parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, 
-                NULL_LOG, config );
+            parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config, null);
         }
         
         IASTTranslationUnit tu = parser2.parse();
@@ -224,7 +226,7 @@ public class AST2BaseTest extends BaseTestCase {
      * @throws ParserException
      */
     protected void validateSimpleBinaryExpressionC( String code, int operand ) throws ParserException {
-        IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode( code, ParserLanguage.C ); //$NON-NLS-1$
+        IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode( code, ParserLanguage.C ); 
         assertNotNull( e );
         assertEquals( e.getOperator(), operand );
         IASTIdExpression x = (IASTIdExpression) e.getOperand1();

@@ -30,7 +30,13 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 	 * Instructs the parser to skip function and method bodies.
 	 */
 	public final static int OPTION_SKIP_FUNCTION_BODIES= 1;
-	
+
+	/**
+	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
+	 * Instructs the parser to add comment nodes to the ast.
+	 */
+	public final static int OPTION_ADD_COMMENTS= 2;
+
 	/** 
 	 * @deprecated, throws an UnsupportedOperationException
 	 */
@@ -55,7 +61,8 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 	 *                    by the source code being parsed.
 	 * @param index (optional) index to use to provide support for ambiguity
 	 *              resolution.
-	 * @param options {@link #OPTION_SKIP_FUNCTION_BODIES} or <code>0</code>.
+	 * @param options A combination of 
+	 * {@link #OPTION_SKIP_FUNCTION_BODIES} and {@link #OPTION_ADD_COMMENTS} or <code>0</code>.
 	 * @param log logger
 	 * @return an AST for the source code provided by reader.
 	 * @throws CoreException

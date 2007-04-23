@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,16 @@ public interface IASTServiceProvider {
      * Returns a parse tree that represents the content provided as parameters.
      * 
      * @param fileToParse the file in question
+     * @param parseComments parse commtents flag
+     * @return syntactical parse tree
+     * @throws UnsupportedDialectException 
+     */
+    public IASTTranslationUnit getTranslationUnit( IFile fileToParse, boolean parseComments) throws UnsupportedDialectException;
+    
+    /**
+     * Returns a parse tree that represents the content provided as parameters.
+     * 
+     * @param fileToParse the file in question
      * @param project     project handle to help us figure out build settings 
      * @param fileCreator @see CDOM#getCodeReaderFactory(int)
      * @return syntactical parse tree
@@ -74,6 +84,17 @@ public interface IASTServiceProvider {
      * @throws UnsupportedDialectException
      */
     public IASTTranslationUnit getTranslationUnit( IFile fileToParse, ICodeReaderFactory fileCreator  )throws UnsupportedDialectException;
+
+    /**
+     * Returns a parse tree that represents the content provided as parameters.
+     * 
+     * @param fileToParse the file in question
+     * @param fileCreator @see CDOM#getCodeReaderFactory(int)
+     * @param parseComments parse commtents flag
+     * @return syntactical parse tree
+     * @throws UnsupportedDialectException
+     */
+    public IASTTranslationUnit getTranslationUnit( IFile fileToParse, ICodeReaderFactory fileCreator, boolean parseComments)throws UnsupportedDialectException;
 
     /**
      * Returns a parse tree that represents the content provided as parameters.

@@ -51,6 +51,8 @@ public abstract class ASTVisitor {
 	public boolean shouldVisitTranslationUnit = false;
 
 	public boolean shouldVisitProblems = false;
+
+	public boolean shouldVisitComments = false;
 	
 	/**
 	 * @return continue to continue visiting, abort to stop, skip to not descend
@@ -115,6 +117,10 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
+	public int visit( IASTComment comment){
+		return PROCESS_CONTINUE;
+	}
+	
 	/**
 	 * leave methods - implement a bottom-up traversal 
 	 */
@@ -163,6 +169,10 @@ public abstract class ASTVisitor {
 	}
 	
 	public int leave(IASTProblem problem){
+		return PROCESS_CONTINUE;
+	}
+	
+	public int leave( IASTComment comment){
 		return PROCESS_CONTINUE;
 	}
 }

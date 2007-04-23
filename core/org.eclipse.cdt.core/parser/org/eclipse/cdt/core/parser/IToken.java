@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -316,6 +316,12 @@ public interface IToken {
 	static public final int tCOMPLETION = 140;
 	
 	static public final int tEOC = 141; // End of Completion
+	
+	static public final int tCOMMENT = 142;
+	
+	static public final int tBLOCKCOMMENT = 143;
 
-	static public final int tLAST = 141;
+
+	static public final int tLAST = 143;
+	
 }

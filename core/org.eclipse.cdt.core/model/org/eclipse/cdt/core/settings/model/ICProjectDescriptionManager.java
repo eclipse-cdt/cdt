@@ -114,7 +114,28 @@ public interface ICProjectDescriptionManager {
 
 	void removeCProjectDescriptionListener(ICProjectDescriptionListener listener);
 	
+	/**
+	 * returns the workspace project description preferences.
+	 * if the <code>write</code> argument is <code>false</code>, the returned preferences are read-only
+	 * otherwise the preferences are writable.
+	 * NOTE: the changes made to the preferences will NOT get applied untill the preferences are set via the {@link #setProjectDescriptionWorkspacePreferences(ICProjectDescriptionWorkspacePreferences, boolean, IProgressMonitor)}  
+	 * method
+	 * @param write
+	 * @return
+	 * 
+	 * @see #setProjectDescriptionWorkspacePreferences(ICProjectDescriptionWorkspacePreferences, boolean, IProgressMonitor)
+	 */
 	ICProjectDescriptionWorkspacePreferences getProjectDescriptionWorkspacePreferences(boolean write);
 
+	/**
+	 * used to apply the project description workspace preferences
+	 * 
+	 * @param prefs - preferences to be applied 
+	 * @param updateProjects - if <code>true</code> all project descriptions within the workspace will be updated 
+	 * to reflect/use the settings specified with the given preferences
+	 *   
+	 * @param monitor
+	 * @return
+	 */
 	boolean setProjectDescriptionWorkspacePreferences(ICProjectDescriptionWorkspacePreferences prefs, boolean updateProjects, IProgressMonitor monitor);
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [183165] Do not implement constant interfaces
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -58,8 +58,7 @@ import org.eclipse.swt.widgets.Composite;
  *  <li>{@link #resetPressed()} -> when user successfully presses reset
  * </ul>
  */
-public class SystemEditPaneStateMachine implements ISystemEditPaneStates
-                                                      //, SelectionListener
+public class SystemEditPaneStateMachine
 {
 	// state
 	private Composite composite;
@@ -131,9 +130,9 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
 	 */
 	public void setNewMode()
 	{
-        setButtonText(mode, MODE_NEW);
-		setMode(MODE_NEW);
-		setState(STATE_INITIAL);
+        setButtonText(mode, ISystemEditPaneStates.MODE_NEW);
+		setMode(ISystemEditPaneStates.MODE_NEW);
+		setState(ISystemEditPaneStates.STATE_INITIAL);
 		enableButtons();
 		if (!composite.isVisible())
 		  composite.setVisible(true);
@@ -144,9 +143,9 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
 	 */
 	public void setEditMode()
 	{
-        setButtonText(mode, MODE_EDIT);
-		setMode(MODE_EDIT);
-		setState(STATE_INITIAL);
+        setButtonText(mode, ISystemEditPaneStates.MODE_EDIT);
+		setMode(ISystemEditPaneStates.MODE_EDIT);
+		setState(ISystemEditPaneStates.STATE_INITIAL);
 		enableButtons();
 		if (!composite.isVisible())
 		  composite.setVisible(true);
@@ -157,9 +156,9 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
 	 */
 	public void setUnsetMode()
 	{
-        setButtonText(mode, MODE_UNSET);
-		setMode(MODE_UNSET);
-		setState(STATE_INITIAL);
+        setButtonText(mode, ISystemEditPaneStates.MODE_UNSET);
+		setMode(ISystemEditPaneStates.MODE_UNSET);
+		setState(ISystemEditPaneStates.STATE_INITIAL);
 		enableButtons();
 		if (composite.isVisible())
 		  composite.setVisible(false);
@@ -170,7 +169,7 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
 	 */
 	public void setChangesMade()
 	{
-		setState(STATE_PENDING);
+		setState(ISystemEditPaneStates.STATE_PENDING);
 		enableButtons();
 	}
 	/**
@@ -193,7 +192,7 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
 			} catch (Exception exc) {}
 		}
 	    //if (!changesPending) // user has made decision, so clear state
-		setState(STATE_INITIAL); // one way or another, decision has been made
+		setState(ISystemEditPaneStates.STATE_INITIAL); // one way or another, decision has been made
 		return changesPending;
 	}
 	
@@ -202,7 +201,7 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
 	 */
 	public void applyPressed()
 	{
-    	setState(STATE_APPLIED);
+    	setState(ISystemEditPaneStates.STATE_APPLIED);
     	enableButtons();
 	}
 	/**
@@ -210,7 +209,7 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
 	 */
 	public void resetPressed()
 	{
-    	setState(STATE_INITIAL);
+    	setState(ISystemEditPaneStates.STATE_INITIAL);
     	enableButtons();
 	}	
 	
@@ -219,7 +218,7 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
 	 */
 	public boolean areChangesPending()
 	{
-		return (state == STATE_PENDING);
+		return (state == ISystemEditPaneStates.STATE_PENDING);
 	}
 
     // -----------------------------------
@@ -289,15 +288,15 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
     	boolean enableReset = false;
     	switch(state)
     	{
-    		case STATE_INITIAL:
+    		case ISystemEditPaneStates.STATE_INITIAL:
     		    enableApply = false;
     		    enableReset = false;
     		    break;
-    		case STATE_APPLIED:
+    		case ISystemEditPaneStates.STATE_APPLIED:
     		    enableApply = false;
     		    enableReset = false; // true; only true if reset returns to pre-applied values. Not usually the case
     		    break;
-    		case STATE_PENDING:
+    		case ISystemEditPaneStates.STATE_PENDING:
     		    enableApply = true;
     		    enableReset = true;
     		    break;
@@ -315,7 +314,7 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
     {
     	if (oldMode != newMode)
     	{
-    		if ((newMode == MODE_NEW) && applyLabelMode)
+    		if ((newMode == ISystemEditPaneStates.MODE_NEW) && applyLabelMode)
     		{
     			applyButton.setText(applyLabel_newMode);
     			applyButton.setToolTipText(applyTip_newMode);
@@ -331,7 +330,7 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
     			  //}
     			}
     		}
-    		else if ((newMode == MODE_EDIT) && !applyLabelMode)
+    		else if ((newMode == ISystemEditPaneStates.MODE_EDIT) && !applyLabelMode)
     		{
     			applyButton.setText(applyLabel_applyMode);
     			applyButton.setToolTipText(applyTip_applyMode);
@@ -426,24 +425,24 @@ public class SystemEditPaneStateMachine implements ISystemEditPaneStates
     {
     	switch(backupMode)
     	{
-    		case MODE_UNSET:
+    		case ISystemEditPaneStates.MODE_UNSET:
     		     setUnsetMode();
     		     break;
-    		case MODE_NEW:
+    		case ISystemEditPaneStates.MODE_NEW:
     		     setNewMode();
     		     break;
-    		case MODE_EDIT:
+    		case ISystemEditPaneStates.MODE_EDIT:
     		     setEditMode();
     		     break;
     	}
     	switch(backupState)
     	{
-    		case STATE_PENDING:
+    		case ISystemEditPaneStates.STATE_PENDING:
     		     setChangesMade();
     		     break;
-    		case STATE_INITIAL:
+    		case ISystemEditPaneStates.STATE_INITIAL:
     		     break;
-    		case STATE_APPLIED:
+    		case ISystemEditPaneStates.STATE_APPLIED:
     		     applyPressed();
     		     break;
     	}

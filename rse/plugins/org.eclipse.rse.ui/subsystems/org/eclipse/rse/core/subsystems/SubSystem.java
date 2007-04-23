@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [183165] Do not implement constant interfaces
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -109,7 +110,9 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * 
  */
 
-public abstract class SubSystem extends RSEModelObject implements IAdaptable, ISystemFilterPoolReferenceManagerProvider, ISystemResourceChangeEvents, ISubSystem
+public abstract class SubSystem extends RSEModelObject
+	implements IAdaptable, ISubSystem,
+		ISystemFilterPoolReferenceManagerProvider
 {
 
 
@@ -1041,13 +1044,13 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 */
 	public void filterEventFilterPoolReferenceCreated(ISystemFilterPoolReference newPoolRef) {
 		if (getSubSystemConfiguration().showFilterPools()) {
-			fireEvent(newPoolRef, EVENT_ADD, this);
-			fireEvent(newPoolRef, EVENT_REVEAL_AND_SELECT, this);
+			fireEvent(newPoolRef, ISystemResourceChangeEvents.EVENT_ADD, this);
+			fireEvent(newPoolRef, ISystemResourceChangeEvents.EVENT_REVEAL_AND_SELECT, this);
 		} else {
 			ISystemFilterPool pool = newPoolRef.getReferencedFilterPool();
 			if (pool != null && pool.getSystemFilterCount() > 0) {
 				ISystemFilterReference[] filterRefs = newPoolRef.getSystemFilterReferences(this);
-				fireEvent(filterRefs, EVENT_ADD_MANY, this, -1); // -1 means append to end
+				fireEvent(filterRefs, ISystemResourceChangeEvents.EVENT_ADD_MANY, this, -1); // -1 means append to end
 			}
 		}
 		try {
@@ -1065,12 +1068,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     {
     	if (getSubSystemConfiguration().showFilterPools())
     	{
-    	  	fireEvent(filterPoolRef, EVENT_DELETE, this);    		
+    	  	fireEvent(filterPoolRef, ISystemResourceChangeEvents.EVENT_DELETE, this);    		
     	}
     	else if (filterPoolRef.getReferencedFilterPool().getSystemFilterCount()>0)
     	{    	
     	  	ISystemFilterReference[] filterRefs = filterPoolRef.getSystemFilterReferences(this);
-    	  	fireEvent(filterRefs, EVENT_DELETE_MANY, this);
+    	  	fireEvent(filterRefs, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this);
     	}
 
         try {
@@ -1088,7 +1091,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public void filterEventFilterPoolReferenceReset(ISystemFilterPoolReference filterPoolRef)
     {
-    	fireEvent(filterPoolRef, EVENT_PROPERTYSHEET_UPDATE, this); // we assume its a move operation so little impact
+    	fireEvent(filterPoolRef, ISystemResourceChangeEvents.EVENT_PROPERTYSHEET_UPDATE, this); // we assume its a move operation so little impact
         try {
            getSubSystemConfiguration().saveSubSystem(this);
 		   // fire model change event in case any BP code is listening...
@@ -1104,7 +1107,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public void filterEventFilterPoolReferencesReset()
     {
-    	fireEvent(this, EVENT_CHANGE_CHILDREN, this);
+    	fireEvent(this, ISystemResourceChangeEvents.EVENT_CHANGE_CHILDREN, this);
         try 
         {
            	getSubSystemConfiguration().saveSubSystem(this);           
@@ -1124,7 +1127,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     {
     	if (getSubSystemConfiguration().showFilterPools())
     	{
-    	  	fireEvent(poolRef, EVENT_RENAME, this);
+    	  	fireEvent(poolRef, ISystemResourceChangeEvents.EVENT_RENAME, this);
     	}
     	else
     	{
@@ -1143,7 +1146,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public void filterEventFilterPoolReferencesRePositioned(ISystemFilterPoolReference[] poolRefs, int delta)
     {
-    	fireEvent(poolRefs, EVENT_MOVE_MANY, this, delta);    	
+    	fireEvent(poolRefs, ISystemResourceChangeEvents.EVENT_MOVE_MANY, this, delta);    	
         try {
            getSubSystemConfiguration().saveSubSystem(this);
 		   // fire model change event in case any BP code is listening...
@@ -1168,7 +1171,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public void filterEventFilterCreated(Object selectedObject, ISystemFilter newFilter)
     {    	
-    	fireEvent(newFilter,EVENT_REVEAL_AND_SELECT,selectedObject);
+    	fireEvent(newFilter, ISystemResourceChangeEvents.EVENT_REVEAL_AND_SELECT, selectedObject);
     }
     // ---------------------------------
     // FILTER STRING REFERENCE EVENTS...
@@ -1183,7 +1186,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public void filterEventFilterStringCreated(Object selectedObject, ISystemFilterString newFilterString)
     {
-    	fireEvent(newFilterString,EVENT_REVEAL_AND_SELECT,selectedObject);
+    	fireEvent(newFilterString, ISystemResourceChangeEvents.EVENT_REVEAL_AND_SELECT, selectedObject);
     }
 
     /**

@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Emanuel Graf (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -45,6 +46,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTestSuite( AST2CSpecFailingTest.class );
 		suite.addTestSuite( DOMSelectionParseTest.class );
 		suite.addTestSuite( GCCCompleteParseExtensionsTest.class );
+		suite.addTestSuite(DOMPreprocessorInformationTest.class);
 		suite.addTest( CompletionTestSuite.suite() );
 		return suite;
 	}	

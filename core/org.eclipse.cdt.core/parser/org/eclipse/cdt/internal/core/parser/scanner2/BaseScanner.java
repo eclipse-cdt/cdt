@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
  *     Anton Leherbauer (Wind River Systems)
+ *     Emanuel Graf (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -114,6 +115,18 @@ abstract class BaseScanner implements IScanner {
         public int getLength() {
         	return endOffset-startOffset;
         }
+    }
+    
+    protected static class FunctionMacroData extends MacroData{
+    	private CharArrayObjectMap arguments;
+    	 public FunctionMacroData(int start, int end, IMacro macro, CharArrayObjectMap argmap) {
+    		 super(start,end, macro);
+    		 arguments = argmap;
+    	 }
+    	 
+    	 public CharArrayObjectMap getActualArgs() {
+    		 return arguments;
+    	 }
     }
 
     protected ParserLanguage language;
@@ -3269,7 +3282,8 @@ abstract class BaseScanner implements IScanner {
         }
         if (pushContext)
         {
-            pushContext(result, new MacroData(start, bufferPos[bufferStackPos]+1, macro));
+            pushContext(result, new FunctionMacroData(start, bufferPos[bufferStackPos] + 1,
+        		macro, argmap));
         }
         return result;
     }

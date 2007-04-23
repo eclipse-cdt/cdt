@@ -9,6 +9,7 @@
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Anton Leherbauer (Wind River Systems)
+ * Emanuel Graf (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -106,6 +107,27 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
     }
+    
+    public class FunctionMacroExpansionLocation extends MacroExpansionLocation{
+    	
+    	private Object[] actParams;
+
+		/**
+		 * @param macroDefinition
+		 * @param locations
+		 * @param offset
+		 * @param length
+		 */
+		public FunctionMacroExpansionLocation(IASTPreprocessorMacroDefinition macroDefinition, IASTNodeLocation[] locations, int offset, int length, Object[] actParameters) {
+			super(macroDefinition, locations, offset, length);
+			this.actParams = actParameters;
+		}
+		
+		public Object[] getActualParameters() {
+			return actParams;
+		}
+    	
+    }
 
     private static final String NOT_VALID_MACRO = "Not a valid macro selection"; //$NON-NLS-1$
 
@@ -126,6 +148,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorElifStatement {
 
         private final boolean taken;
+        private char[] condition;
 
         /*
          * (non-Javadoc)
@@ -139,9 +162,17 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         /**
          * @param taken
          */
-        public ASTElif(boolean taken) {
+        public ASTElif(boolean taken, char[] condition) {
             this.taken = taken;
+            this.condition = condition;
         }
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement#getCondition()
+		 */
+		public char[] getCondition() {
+			return condition;
+		}
 
     }
 
@@ -177,6 +208,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorIfndefStatement {
 
         private final boolean taken;
+        private char[] condition;
 
         /*
          * (non-Javadoc)
@@ -190,9 +222,17 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         /**
          * @param taken
          */
-        public ASTIfndef(boolean taken) {
+        public ASTIfndef(boolean taken, char[] condition) {
             this.taken = taken;
+            this.condition = condition;
         }
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement#getCondition()
+		 */
+		public char[] getCondition() {
+			return condition;
+		}
 
     }
 
@@ -203,6 +243,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorIfdefStatement {
 
         private final boolean taken;
+        
+        private char[] condition;
 
         /*
          * (non-Javadoc)
@@ -216,9 +258,17 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         /**
          * @param taken
          */
-        public ASTIfdef(boolean taken) {
+        public ASTIfdef(boolean taken, char[] condition) {
             this.taken = taken;
+            this.condition = condition;
         }
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement#getCondition()
+		 */
+		public char[] getCondition() {
+			return condition;
+		}
 
     }
 
@@ -229,6 +279,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorIfStatement {
 
         private final boolean taken;
+		private char[] condition;
 
         /*
          * (non-Javadoc)
@@ -242,9 +293,17 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         /**
          * @param taken
          */
-        public ASTIf(boolean taken) {
+        public ASTIf(boolean taken, char[] condition) {
             this.taken = taken;
+            this.condition = condition;
         }
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement#getCondition()
+		 */
+		public char[] getCondition() {
+			return condition;
+		}
 
     }
 
@@ -253,11 +312,35 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     public static class ASTError extends ASTNode implements
             IASTPreprocessorErrorStatement {
+    	
+    	private char[] msg;
+    	
+    	
+    	
+    	public ASTError(char[] msg) {
+			super();
+			this.msg = msg;
+		}
+
+		public char[] getMessage() {
+    		return msg;
+    	}
 
     }
 
     public static class ASTWarning extends ASTNode implements
-    		IASTPreprocessorErrorStatement {
+    IASTPreprocessorErrorStatement {
+
+    	private char[] msg;
+
+    	public ASTWarning(char[] msg) {
+    		super();
+    		this.msg = msg;
+    	}
+
+    	public char[] getMessage() {
+    		return msg;
+    	}
     }
 
     /**
@@ -265,6 +348,24 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     public static class ASTPragma extends ASTNode implements
             IASTPreprocessorPragmaStatement {
+    	
+    	private char[] msg;
+    	
+    	
+
+		public ASTPragma(char[] msg) {
+			super();
+			this.msg = msg;
+		}
+
+
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement#getMessage()
+		 */
+		public char[] getMessage() {
+			return msg;
+		}
 
     }
 
@@ -314,6 +415,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             _IPreprocessorDirective {
 
         public final boolean taken;
+        public char[] condition;
 
         /**
          * @param parent
@@ -321,9 +423,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          * @param endOffset
          */
         public _Elif(_CompositeContext parent, int startOffset, int endOffset,
-                boolean taken) {
+                boolean taken, char[] condition) {
             super(parent, startOffset, endOffset);
             this.taken = taken;
+            this.condition = condition;
         }
 
     }
@@ -335,6 +438,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             _IPreprocessorDirective {
 
         public final boolean taken;
+		public char[] condition;
 
         /**
          * @param parent
@@ -342,9 +446,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          * @param endOffset
          */
         public _Ifdef(_CompositeContext parent, int startOffset, int endOffset,
-                boolean taken) {
+                boolean taken, char[] condition) {
             super(parent, startOffset, endOffset);
             this.taken = taken;
+            this.condition = condition;
         }
 
     }
@@ -356,6 +461,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             _IPreprocessorDirective {
 
         public final boolean taken;
+		public char[] condition;
 
         /**
          * @param parent
@@ -363,9 +469,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          * @param endOffset
          */
         public _Ifndef(_CompositeContext parent, int startOffset,
-                int endOffset, boolean taken) {
+                int endOffset, boolean taken, char[] condition) {
             super(parent, startOffset, endOffset);
             this.taken = taken;
+            this.condition = condition;
         }
 
     }
@@ -375,22 +482,27 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     protected static class _Error extends _Context implements
             _IPreprocessorDirective {
+    	
+    	char[] msg;
 
         /**
          * @param parent
          * @param startOffset
          * @param endOffset
+         * @param msg 
          */
-        public _Error(_CompositeContext parent, int startOffset, int endOffset) {
+        public _Error(_CompositeContext parent, int startOffset, int endOffset, char[] msg) {
             super(parent, startOffset, endOffset);
-            // TODO Auto-generated constructor stub
+            this.msg = msg;
         }
 
     }
 
     protected static class _Warning extends _Context implements _IPreprocessorDirective {
-     	public _Warning(_CompositeContext parent, int startOffset, int endOffset) {
+    	char[] msg;
+     	public _Warning(_CompositeContext parent, int startOffset, int endOffset, char[] msg) {
     		super(parent, startOffset, endOffset);
+    		this.msg = msg;
     	}
     }
     
@@ -399,15 +511,19 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     protected static class _Pragma extends _Context implements
             _IPreprocessorDirective {
+    	
+    	char[] msg;
 
         /**
          * @param parent
          * @param startOffset
          * @param endOffset
          */
-        public _Pragma(_CompositeContext parent, int startOffset, int endOffset) {
+        public _Pragma(_CompositeContext parent, int startOffset, int endOffset, char[] msg) {
             super(parent, startOffset, endOffset);
+            this.msg = msg;
         }
+        
 
     }
 
@@ -417,6 +533,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     protected class _If extends _Context implements _IPreprocessorDirective {
 
         public final boolean taken;
+		public char[] condition;
 
         /**
          * @param parent
@@ -424,9 +541,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          * @param endOffset
          */
         public _If(_CompositeContext parent, int startOffset, int endOffset,
-                boolean taken) {
+                boolean taken, char[] condition) {
             super(parent, startOffset, endOffset);
             this.taken = taken;
+            this.condition = condition;
         }
 
     }
@@ -1461,13 +1579,15 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     protected class _FunctionMacroExpansion extends _MacroExpansion {
         public final char[][] args;
+        public final Object[] actArgs;
 
 
         public _FunctionMacroExpansion(_CompositeContext parent,
                 int startOffset, int endOffset, IMacroDefinition definition,
-                char[][] args) {
+                char[][] args, Object[] actParameters) {
             super(parent, startOffset, endOffset, definition);
             this.args = args;
+            this.actArgs = actParameters;
         }
 
     }
@@ -1703,7 +1823,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @return
      */
     private IASTPreprocessorStatement createASTElif(_Elif elif) {
-        IASTPreprocessorElifStatement result = new ASTElif(elif.taken);
+    	IASTPreprocessorElifStatement result = new ASTElif(elif.taken, elif.condition);
         ((ASTNode) result).setOffsetAndLength(elif.context_directive_start, elif.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
@@ -1727,7 +1847,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @return
      */
     private IASTPreprocessorStatement createASTIfndef(_Ifndef ifndef) {
-        IASTPreprocessorIfndefStatement result = new ASTIfndef(ifndef.taken);
+        IASTPreprocessorIfndefStatement result = new ASTIfndef(ifndef.taken, ifndef.condition);
         ((ASTNode) result).setOffsetAndLength(ifndef.context_directive_start, ifndef.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
@@ -1739,7 +1859,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @return
      */
     private IASTPreprocessorStatement createASTIfdef(_Ifdef ifdef) {
-        IASTPreprocessorIfdefStatement result = new ASTIfdef(ifdef.taken);
+         IASTPreprocessorIfdefStatement result = new ASTIfdef(ifdef.taken, ifdef.condition);
         ((ASTNode) result).setOffsetAndLength(ifdef.context_directive_start, ifdef.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
@@ -1751,7 +1871,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @return
      */
     private IASTPreprocessorStatement createASTIf(_If i) {
-        IASTPreprocessorIfStatement result = new ASTIf(i.taken);
+        IASTPreprocessorIfStatement result = new ASTIf(i.taken, i.condition);
         ((ASTNode) result).setOffsetAndLength(i.context_directive_start, i.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
@@ -1763,7 +1883,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @return
      */
     private IASTPreprocessorStatement createASTError(_Error error) {
-        IASTPreprocessorErrorStatement result = new ASTError();
+        IASTPreprocessorErrorStatement result = new ASTError(error.msg);
         ((ASTNode) result).setOffsetAndLength(error.context_directive_start, error.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
@@ -1775,7 +1895,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @return
      */
     private IASTPreprocessorStatement createASTWarning(_Warning warning) {
-        IASTPreprocessorErrorStatement result = new ASTWarning();
+        IASTPreprocessorErrorStatement result = new ASTWarning(warning.msg);
         ((ASTNode) result).setOffsetAndLength(warning.context_directive_start, warning.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
@@ -1787,7 +1907,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @return
      */
     private IASTPreprocessorStatement createASTPragma(_Pragma pragma) {
-        IASTPreprocessorPragmaStatement result = new ASTPragma();
+        IASTPreprocessorPragmaStatement result = new ASTPragma(pragma.msg);
         ((ASTNode) result).setOffsetAndLength(pragma.getDirectiveStart(), pragma.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
@@ -1952,7 +2072,14 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 definition = astNode;
             }
 
-            return new MacroExpansionLocation(definition, locations, expansion.getOffsetInContext(offset), length);
+            if (c instanceof _FunctionMacroExpansion) {
+				_FunctionMacroExpansion fe = (_FunctionMacroExpansion) c;
+				return new FunctionMacroExpansionLocation(definition, locations, fe.getOffsetInContext(offset), length, fe.actArgs);
+			}else {
+				_MacroExpansion me = (_MacroExpansion) c;
+				return new MacroExpansionLocation(definition, locations,
+						me.getOffsetInContext(offset), length);
+			}
         }
         return null;
     }
@@ -2085,9 +2212,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      *      char[][], char[], int)
      */
     public void startFunctionStyleExpansion(IMacroDefinition macro,
-            char[][] parameters, int startOffset, int endOffset) {
+            char[][] parameters, int startOffset, int endOffset, Object[] actParameters) {
         _FunctionMacroExpansion context = new _FunctionMacroExpansion(
-                currentContext, startOffset, endOffset, macro, parameters);
+                currentContext, startOffset, endOffset, macro, parameters, actParameters);
         currentContext.addSubContext(context);
         currentContext = context;
     }
@@ -2174,9 +2301,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundIf(int,
      *      int)
      */
-    public void encounterPoundIf(int startOffset, int endOffset, boolean taken) {
+    public void encounterPoundIf(int startOffset, int endOffset, boolean taken, char[] condtion) {
         currentContext.addSubContext(new _If(currentContext, startOffset,
-                endOffset, taken));
+                endOffset, taken, condtion));
 
     }
 
@@ -2186,9 +2313,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundPragma(int,
      *      int)
      */
-    public void encounterPoundPragma(int startOffset, int endOffset) {
+    public void encounterPoundPragma(int startOffset, int endOffset, char[] msg) {
         currentContext.addSubContext(new _Pragma(currentContext, startOffset,
-                endOffset));
+                endOffset, msg));
     }
 
     /*
@@ -2197,17 +2324,17 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundError(int,
      *      int)
      */
-    public void encounterPoundError(int startOffset, int endOffset) {
+    public void encounterPoundError(int startOffset, int endOffset, char[] msg) {
         currentContext.addSubContext(new _Error(currentContext, startOffset,
-                endOffset));
+                endOffset, msg));
     }
 
     /*
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundWarning(int, int)
      */
-    public void encounterPoundWarning(int startOffset, int endOffset) {
+    public void encounterPoundWarning(int startOffset, int endOffset, char[] msg) {
         currentContext.addSubContext(new _Warning(currentContext, startOffset,
-                endOffset));
+                endOffset, msg));
     }
 
     /*
@@ -2217,9 +2344,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      *      int)
      */
     public void encounterPoundIfdef(int startOffset, int endOffset,
-            boolean taken) {
+            boolean taken, char[] condition) {
         currentContext.addSubContext(new _Ifdef(currentContext, startOffset,
-                endOffset, taken));
+                endOffset, taken, condition));
     }
 
     /*
@@ -2251,9 +2378,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundElif(int,
      *      int)
      */
-    public void encounterPoundElif(int startOffset, int endOffset, boolean taken) {
+    public void encounterPoundElif(int startOffset, int endOffset, boolean taken, char[] condition) {
         currentContext.addSubContext(new _Elif(currentContext, startOffset,
-                endOffset, taken));
+                endOffset, taken, condition));
     }
 
     /*
@@ -2470,9 +2597,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      *      int, boolean)
      */
     public void encounterPoundIfndef(int startOffset, int endOffset,
-            boolean taken) {
+           boolean taken, char[] condition) {
         currentContext.addSubContext(new _Ifndef(currentContext, startOffset,
-                endOffset, taken));
+                 endOffset, taken, condition));
     }
 
     _Inclusion findInclusion(_CompositeContext context, String path) {

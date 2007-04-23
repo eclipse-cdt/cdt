@@ -9,6 +9,7 @@
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Anton Leherbauer (Wind River Systems)
+ * Emanuel Graf (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -36,7 +37,7 @@ public interface IScannerPreprocessorLog {
 
     
     public void startFunctionStyleExpansion(IMacroDefinition macro,
-            char[][] parameters, int startOffset, int endOffset);
+            char[][] parameters, int startOffset, int endOffset, Object[] objects);
 
     public void endFunctionStyleExpansion(IMacroDefinition macro, int offset);
 
@@ -54,25 +55,25 @@ public interface IScannerPreprocessorLog {
     public IMacroDefinition defineFunctionStyleMacro(FunctionStyleMacro m,
             int startOffset, int nameOffset, int nameEndOffset, int endOffset);
 
-    public void encounterPoundIf(int startOffset, int endOffset, boolean taken);
+    public void encounterPoundIf(int startOffset, int endOffset, boolean taken, char[] condition);
 
     public void encounterPoundIfdef(int startOffset, int endOffset,
-            boolean taken);
+            boolean taken, char[] condition);
 
     public void encounterPoundIfndef(int startOffset, int endOffset,
-            boolean taken);
+            boolean taken, char[] condition);
 
     public void encounterPoundElse(int startOffset, int endOffset, boolean taken);
 
-    public void encounterPoundElif(int startOffset, int endOffset, boolean taken);
+    public void encounterPoundElif(int startOffset, int endOffset, boolean taken, char[] condition);
 
     public void encounterPoundEndIf(int startOffset, int endOffset);
 
-    public void encounterPoundPragma(int startOffset, int endOffset);
+    public void encounterPoundPragma(int startOffset, int endOffset, char[] msg);
 
-    public void encounterPoundError(int startOffset, int endOffset);
+    public void encounterPoundError(int startOffset, int endOffset, char[] msg);
 
-    public void encounterPoundWarning(int startOffset, int endOffset);
+    public void encounterPoundWarning(int startOffset, int endOffset, char[] msg);
     
     public void encounterPoundUndef(int startOffset, int endOffset,
             char[] symbol, int nameOffset, IMacroDefinition macroDefinition);

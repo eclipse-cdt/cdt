@@ -9,6 +9,7 @@
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Anton Leherbauer (Wind River Systems)
+ * Emanuel Graf (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -208,6 +209,7 @@ public class DOMScanner extends BaseScanner {
 
         if (data instanceof InclusionData) {
 
+        	InclusionData inclusionData = ((InclusionData) data);
             if (log.isTracing()) {
                 StringBuffer b = new StringBuffer("Entering inclusion "); //$NON-NLS-1$
                 b.append(((InclusionData) data).reader.filename);
@@ -215,7 +217,7 @@ public class DOMScanner extends BaseScanner {
             }
             if( ! isCircularInclusion( (InclusionData) data ))
             {
-                DOMInclusion inc = ((DOMInclusion) ((InclusionData) data).inclusion);
+                DOMInclusion inc = ((DOMInclusion) inclusionData.inclusion);
                 locationMap.startInclusion(((InclusionData) data).reader, inc.o, getGlobalOffset(getCurrentOffset())+1,
                 		inc.nameOffset, inc.nameEndoffset, inc.name, inc.systemInclude);
                 bufferDelta[bufferStackPos + 1] = 0;
@@ -225,11 +227,11 @@ public class DOMScanner extends BaseScanner {
         else if (data instanceof MacroData) {
             MacroData d = (MacroData) data;
             if (d.macro instanceof FunctionStyleMacro && fsmCount == 0) {
+            	FunctionMacroData fd = (FunctionMacroData)d;
                 FunctionStyleMacro fsm = (FunctionStyleMacro) d.macro;
-                int startOffset= getGlobalOffset(d.getStartOffset());
-                int endOffset= startOffset+d.getLength();
                 locationMap.startFunctionStyleExpansion(fsm.attachment,
-                        fsm.arglist, startOffset, endOffset);
+                        fsm.arglist, getGlobalOffset(d.getStartOffset()),
+                        getGlobalOffset(d.getStartOffset() + d.getLength()),fd.getActualArgs().valueArray() );
                 bufferDelta[bufferStackPos + 1] = 0;
             } else if (d.macro instanceof ObjectStyleMacro && fsmCount == 0) {
                 ObjectStyleMacro osm = (ObjectStyleMacro) d.macro;
@@ -395,12 +397,18 @@ public class DOMScanner extends BaseScanner {
      */
     protected void processIfdef(int startPos, int endPos, boolean positive,
             boolean taken) {
-        if (positive)
+        if (positive){
+        	int startCond = startPos + 7 + countSpaces(startPos);
+			char[] condition = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - startCond);
             locationMap.encounterPoundIfdef(getGlobalOffset(startPos),
-                    getGlobalOffset(endPos), taken);
-        else
+                    getGlobalOffset(endPos), taken, condition);
+        }
+        else{
+        	int startCond = startPos + 8 + countSpaces(startPos);
+			char[] condition = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - startCond);
             locationMap.encounterPoundIfndef(getGlobalOffset(startPos),
-                    getGlobalOffset(endPos), taken);
+                    getGlobalOffset(endPos), taken, condition);
+        }
 
     }
 
@@ -411,8 +419,10 @@ public class DOMScanner extends BaseScanner {
      *      int, boolean)
      */
     protected void processIf(int startPos, int endPos, boolean taken) {
+    	int startCond = startPos + 4 + countSpaces(startPos);
+		char[] condition = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - startCond);
         locationMap.encounterPoundIf(getGlobalOffset(startPos),
-                getGlobalOffset(endPos), taken);
+                getGlobalOffset(endPos), taken, condition);
     }
 
     /*
@@ -422,8 +432,10 @@ public class DOMScanner extends BaseScanner {
      *      int, boolean)
      */
     protected void processElsif(int startPos, int endPos, boolean taken) {
+    	int startCond = startPos + 6 + countSpaces(startPos);
+		char[] condition = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - startCond);
         locationMap.encounterPoundElif(getGlobalOffset(startPos),
-                getGlobalOffset(endPos), taken);
+                getGlobalOffset(endPos), taken, condition);
     }
 
     /*
@@ -458,16 +470,28 @@ public class DOMScanner extends BaseScanner {
      *      int)
      */
     protected void processError(int startPos, int endPos) {
+    	int start = startPos+7 + countSpaces(startPos);
+		char[] msg = CharArrayUtils.extract(bufferStack[bufferStackPos], start, endPos- start);
         locationMap.encounterPoundError(getGlobalOffset(startPos),
-                getGlobalOffset(endPos));
+                getGlobalOffset(endPos), msg);
     }
 
     /*
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processWarning(int, int)
      */
     protected void processWarning(int startPos, int endPos) {
+    	int start = startPos+9 + countSpaces(startPos);
+		char[] msg = CharArrayUtils.extract(bufferStack[bufferStackPos], start, endPos - start);
         locationMap.encounterPoundWarning(getGlobalOffset(startPos),
-                getGlobalOffset(endPos));
+                getGlobalOffset(endPos), msg);
+    }
+    
+    private int countSpaces(int startPos) {
+    	int spaces = 0;
+    	while(bufferStack[bufferStackPos][startPos + spaces + 1] == ' ' || bufferStack[bufferStackPos][startPos + spaces + 1] == '\t' ) {
+    		++spaces;
+    	}
+    	return spaces;
     }
     
     /*
@@ -487,7 +511,9 @@ public class DOMScanner extends BaseScanner {
      *      int)
      */
     protected void processPragma(int startPos, int endPos) {
-        locationMap.encounterPoundPragma(getGlobalOffset(startPos), getGlobalOffset(endPos));
+    	int startCond = startPos + 8 + countSpaces(startPos);
+		char[] msg = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - (startCond));
+        locationMap.encounterPoundPragma(getGlobalOffset(startPos), getGlobalOffset(endPos), msg);
     }
 
     protected void beforeReplaceAllMacros() {

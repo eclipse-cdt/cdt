@@ -553,16 +553,16 @@ public class IndexBugsTests extends BaseTestCase {
 				}
 			};
 			
-			IBinding[] bindings= fIndex.findBindingsForPrefix(new char[] {'a'}, true, NON_FUNCTIONS);
+			IBinding[] bindings= fIndex.findBindingsForPrefix(new char[] {'a'}, true, NON_FUNCTIONS, null);
 			assertEquals(3,bindings.length);
 			
-			bindings= fIndex.findBindingsForPrefix(new char[] {'a'}, false, NON_FUNCTIONS);
+			bindings= fIndex.findBindingsForPrefix(new char[] {'a'}, false, NON_FUNCTIONS, null);
 			assertEquals(6,bindings.length);
 			
-			bindings= fIndex.findBindingsForPrefix(new char[] {'a','A'}, true, NON_FUNCTIONS);
+			bindings= fIndex.findBindingsForPrefix(new char[] {'a','A'}, true, NON_FUNCTIONS, null);
 			assertEquals(1,bindings.length);
 			
-			bindings= fIndex.findBindingsForPrefix(new char[] {'a','A'}, false, NON_FUNCTIONS);
+			bindings= fIndex.findBindingsForPrefix(new char[] {'a','A'}, false, NON_FUNCTIONS, null);
 			assertEquals(2, bindings.length);
 		}
 		finally {

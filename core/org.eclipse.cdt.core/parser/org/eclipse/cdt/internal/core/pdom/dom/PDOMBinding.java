@@ -76,7 +76,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return record;
 	}
 
-	public boolean hasDeclarations() throws CoreException {
+	public boolean hasDeclaration() throws CoreException {
 		Database db = pdom.getDB();
 		return db.getInt(record + FIRST_DECL_OFFSET) != 0
 			|| db.getInt(record + FIRST_DEF_OFFSET) != 0;

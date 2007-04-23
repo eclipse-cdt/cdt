@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.index.composite.c.CCompositesFactory;
 import org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class CIndex implements IIndex {
@@ -98,7 +99,7 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindings(patterns, isFullyQualified, retargetFilter(linkages[j], filter), new SubProgressMonitor(monitor, 1));
+							IBinding[] part = fFragments[i].findBindings(patterns, isFullyQualified, retargetFilter(linkages[j], filter), monitor);
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {
@@ -306,6 +307,9 @@ public class CIndex implements IIndex {
 				return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 			}
 		} else {
+			if (monitor == null) {
+				monitor= new NullProgressMonitor();
+			}
 			List result = new ArrayList();
 			ILinkage[] linkages = Linkage.getAllLinkages();
 			monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length * linkages.length);
@@ -425,7 +429,7 @@ public class CIndex implements IIndex {
 	
 	private IndexFilter retargetFilter(final ILinkage linkage, final IndexFilter filter) {
 		return new IndexFilter() {
-			public boolean acceptBinding(IBinding binding) {
+			public boolean acceptBinding(IBinding binding) throws CoreException {
 				return filter.acceptBinding(binding);
 			}
 			public boolean acceptImplicitMethods() {
@@ -437,9 +441,9 @@ public class CIndex implements IIndex {
 		};
 	}
 	
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter) throws CoreException {
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if(SPECIALCASE_SINGLES && fFragments.length==1) {
-			return fFragments[0].findBindingsForPrefix(prefix, filescope, filter);
+			return fFragments[0].findBindingsForPrefix(prefix, filescope, filter, monitor);
 		} else {
 			List result = new ArrayList();
 			ILinkage[] linkages = Linkage.getAllLinkages();
@@ -448,7 +452,7 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, filescope, retargetFilter(linkages[j], filter));
+							IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, filescope, retargetFilter(linkages[j], filter), monitor);
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {

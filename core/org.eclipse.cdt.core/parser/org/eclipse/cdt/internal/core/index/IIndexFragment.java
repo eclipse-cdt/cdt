@@ -110,7 +110,7 @@ public interface IIndexFragment {
 	 * @param patterns an array of patterns the names of the qualified name of the bindings have to match.
 	 * @param isFullyQualified if <code>true</code>, the array of pattern specifies the fully qualified name
 	 * @param filter a filter that allows for skipping parts of the index 
-	 * @param monitor a monitor to report progress
+	 * @param monitor a monitor to report progress, may be <code>null</code>
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
@@ -121,7 +121,7 @@ public interface IIndexFragment {
 	 * the given array of names. 
 	 * @param names an array of names the qualified name of the bindings have to match.
 	 * @param filter a filter that allows for skipping parts of the index 
-	 * @param monitor a monitor to report progress
+	 * @param monitor a monitor to report progress, may be <code>null</code>
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
@@ -155,8 +155,9 @@ public interface IIndexFragment {
 
 	/**
 	 * Returns all bindings with the given prefix, accepted by the given filter
+	 * @param monitor to report progress, may be <code>null</code>
 	 */
-	IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter) throws CoreException;
+	IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns the linkages that are contained in this fragment

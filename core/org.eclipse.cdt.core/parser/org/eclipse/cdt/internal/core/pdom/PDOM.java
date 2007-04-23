@@ -10,6 +10,7 @@
  * Markus Schorn (Wind River Systems)
  * IBM Corporation
  * Andrew Ferguson (Symbian)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -61,6 +62,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 
@@ -377,6 +380,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public IIndexFragmentBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}
 		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, filter, monitor);
 		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
 			PDOMLinkage linkage = (PDOMLinkage) iter.next();
@@ -670,7 +676,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return fPath;
 	}
 	
-	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter) throws CoreException {
+	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList result= new ArrayList();
 		for (Iterator iter= fLinkageIDCache.values().iterator(); iter.hasNext();) {
 			PDOMLinkage linkage= (PDOMLinkage) iter.next();
@@ -678,14 +684,25 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				IBinding[] bindings;
 				if(filescope) {
 					BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
-					linkage.accept(visitor);
+					visitor.setMonitor(monitor);
+					try {
+						linkage.accept(visitor);
+					}
+					catch (OperationCanceledException e) {
+					}
 					bindings= visitor.getBindings();
 				} else {
 					BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
-					linkage.accept(visitor);
-					linkage.accept(new ApplyVisitor(linkage, visitor));
+					visitor.setMonitor(monitor);
+					try {
+						linkage.accept(visitor);
+						linkage.accept(new ApplyVisitor(linkage, visitor));
+					}
+					catch (OperationCanceledException e) {
+					}
 					bindings= visitor.getBindings();
 				}
+
 				for (int j = 0; j < bindings.length; j++) {
 					result.add(bindings[j]);
 				}

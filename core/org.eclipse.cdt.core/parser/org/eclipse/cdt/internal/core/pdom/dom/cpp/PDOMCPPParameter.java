@@ -204,6 +204,11 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IIndexFra
 		return true;
 	}
 
+	public boolean hasDeclaration() throws CoreException {
+		// parameter bindings do not span index fragments
+		return true;
+	}
+
 	public int compareTo(Object arg0) {
 		throw new PDOMNotImplementedError();
 	}

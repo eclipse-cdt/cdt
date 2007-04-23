@@ -74,7 +74,7 @@ public class DefDeclTests extends PDOMTestBase {
 
 	private IBinding findSingleBinding(String elName) throws CoreException {
 		IBinding[] binds = pdom.findBindings(Pattern.compile(elName), true,
-				new IndexFilter(), new NullProgressMonitor());
+				IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, binds.length);
 		assertEquals(elName, binds[0].getName());
 		IBinding element = binds[0];
@@ -283,7 +283,7 @@ public class DefDeclTests extends PDOMTestBase {
 		String num = "_t04";
 		String elName = "type" + num;
 		
-		IBinding[] bindings = pdom.findBindings(Pattern.compile(elName), false, new IndexFilter(), new NullProgressMonitor());
+		IBinding[] bindings = pdom.findBindings(Pattern.compile(elName), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(2,bindings.length);
 		
 		IBinding typedef = bindings[0] instanceof ITypedef ? bindings[0] : bindings[1];

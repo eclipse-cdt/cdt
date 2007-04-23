@@ -15,6 +15,8 @@ package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.internal.core.index.DeclaredBindingsFilter;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Can be subclassed and used for queries in the index.
@@ -27,8 +29,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  * </p>
  */
 
-public class IndexFilter {
-	public static final IndexFilter ALL = new IndexFilter();
+abstract public class IndexFilter {
+	public static final IndexFilter ALL = new IndexFilter() {};
+	public static final IndexFilter ALL_DECLARED = new DeclaredBindingsFilter();
 
 	/**
 	 * Get an IndexFilter that filters out bindings from linkages other than that
@@ -69,8 +72,9 @@ public class IndexFilter {
 	 * 
 	 * @param binding the binding being checked for validity
 	 * @return whether or not the binding is valid
+	 * @throws CoreException 
 	 */
-	public boolean acceptBinding(IBinding binding) {
+	public boolean acceptBinding(IBinding binding) throws CoreException {
 		return true;
 	}
 }

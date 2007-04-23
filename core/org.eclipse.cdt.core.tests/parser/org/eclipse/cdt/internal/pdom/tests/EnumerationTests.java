@@ -54,7 +54,7 @@ public class EnumerationTests extends PDOMTestBase {
 	public void testC() throws Exception {
 		// Check bindings
 		Pattern pattern = Pattern.compile("TestCEnum");
-		IBinding[] bindings = pdom.findBindings(pattern, false, new IndexFilter(), new NullProgressMonitor());
+		IBinding[] bindings = pdom.findBindings(pattern, false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		IEnumeration enumeration = (IEnumeration)bindings[0];
 		assertEquals("TestCEnum", enumeration.getName());
@@ -86,7 +86,7 @@ public class EnumerationTests extends PDOMTestBase {
 	public void testCPP() throws Exception {
 		// Check bindings
 		Pattern pattern = Pattern.compile("TestCPPEnum");
-		IBinding[] bindings = pdom.findBindings(pattern, false, new IndexFilter(), new NullProgressMonitor());
+		IBinding[] bindings = pdom.findBindings(pattern, false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		IEnumeration enumeration = (IEnumeration)bindings[0];
 		assertEquals("TestCPPEnum", enumeration.getName());

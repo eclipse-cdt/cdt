@@ -204,7 +204,7 @@ public interface IIndex {
 	 * @param pattern the pattern the name of the binding has to match.
 	 * @param isFullyQualified if <code>true</code>, binding must be in global scope
 	 * @param filter a filter that allows for skipping parts of the index 
-	 * @param monitor a monitor to report progress
+	 * @param monitor a monitor to report progress, may be <code>null</code>.
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
@@ -217,7 +217,7 @@ public interface IIndex {
 	 * @param patterns an array of patterns the names of the qualified name of the bindings have to match.
 	 * @param isFullyQualified if <code>true</code>, the array of pattern specifies the fully qualified name
 	 * @param filter a filter that allows for skipping parts of the index 
-	 * @param monitor a monitor to report progress
+	 * @param monitor a monitor to report progress, may be <code>null</code>.
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
@@ -228,7 +228,7 @@ public interface IIndex {
 	 * This method makes use of the BTree and is faster than the methods using patterns.
 	 * @param names an array of names, which has to be matched by the qualified name of the bindings.
 	 * @param filter a filter that allows for skipping parts of the index 
-	 * @param monitor a monitor to report progress
+	 * @param monitor a monitor to report progress, may be <code>null</code>.
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
@@ -245,7 +245,7 @@ public interface IIndex {
 	 * </pre> 
 	 * @param names an array of names, which has to be matched by the qualified name of the bindings.
 	 * @param filter a filter that allows for skipping parts of the index 
-	 * @param monitor a monitor to report progress
+	 * @param monitor a monitor to report progress, may be <code>null</code>.
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
@@ -256,10 +256,11 @@ public interface IIndex {
 	 * @param prefix the prefix with which all returned bindings must start
 	 * @param filescope if true, only bindings at file scope are returned
 	 * @param filter a filter that allows for skipping parts of the index
+	 * @param monitor a monitor for progress reporting and cancellation, may be <code>null</code>
 	 * @return an array of bindings with the prefix
 	 * @throws CoreException
 	 */
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter) throws CoreException;
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to references, declarations

@@ -134,7 +134,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author aniefer
@@ -1048,8 +1047,8 @@ public class CPPSemantics {
 									try {
 										IndexFilter filter = IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID);
 										IBinding[] bindings = data.prefixLookup ?
-												index.findBindingsForPrefix(data.astName.toCharArray(), true, filter) :
-												index.findBindings(data.astName.toCharArray(), filter, new NullProgressMonitor());
+												index.findBindingsForPrefix(data.astName.toCharArray(), true, filter, null) :
+												index.findBindings(data.astName.toCharArray(), filter, null);
 										mergeResults(data, bindings, true);
 										useASTResults = false;
 									} catch (CoreException e) {

@@ -106,7 +106,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Created on Nov 5, 2004
@@ -1341,14 +1340,12 @@ public class CVisitor {
 			IIndex index = tu.getIndex();
 			if (index != null) {
 				try {
-					IndexFilter filter = IndexFilter
-							.getFilter(ILinkage.C_LINKAGE_ID);
-					IBinding[] bindings = prefix ? index.findBindingsForPrefix(
-							name.toCharArray(), true, filter) : index.findBindings(
-							name.toCharArray(), filter,
-							new NullProgressMonitor());
+					IndexFilter filter = IndexFilter.getFilter(ILinkage.C_LINKAGE_ID);
+					IBinding[] bindings= prefix 
+						? index.findBindingsForPrefix(name.toCharArray(), true, filter, null) 
+						: index.findBindings(name.toCharArray(), filter, null);
 							
-							result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
+					result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
 				}

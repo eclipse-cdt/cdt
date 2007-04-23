@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Visitor to find named nodes in a BTree or below a PDOMNode. Nested nodes are not visited.
@@ -27,6 +29,8 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	private final char[] name;
 	private final boolean prefixLookup;
 	private final boolean caseSensitive;
+	private IProgressMonitor monitor= null;
+	private int monitorCheckCounter= 0;
 	
 	private List nodes = new ArrayList();
 
@@ -46,6 +50,14 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		this.linkage= linkage;
 		this.prefixLookup= prefixLookup;
 		this.caseSensitive= caseSensitive;
+	}
+	
+	/**
+	 * Allows to cancel a visit. If set a visit may throw an OperationCancelledException.
+	 * @since 4.0
+	 */
+	public void setMonitor(IProgressMonitor pm) {
+		monitor= pm;
 	}
 	
 	final public int compare(int record) throws CoreException {
@@ -71,6 +83,9 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	}
 	
 	final public boolean visit(int record) throws CoreException {
+		if (monitor != null)
+			checkCancelled();
+
 		if (record == 0)
 			return true;
 		
@@ -83,8 +98,9 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 
 	/**
 	 * Return true to continue the visit.
+	 * @throws CoreException 
 	 */
-	protected boolean addNode(PDOMNamedNode node) {
+	protected boolean addNode(PDOMNamedNode node) throws CoreException {
 		nodes.add(node);
 		return true; // look for more
 	}
@@ -98,6 +114,9 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	}
 
 	final public boolean visit(IPDOMNode node) throws CoreException {
+		if (monitor != null)
+			checkCancelled();
+		
 		if (node instanceof PDOMNamedNode) {
 			PDOMNamedNode pb= (PDOMNamedNode) node;
 			if (compare(pb) == 0) {
@@ -105,6 +124,12 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 			}
 		}
 		return false;	// don't visit children
+	}
+
+	private void checkCancelled() {
+		if (++monitorCheckCounter % 0x100 == 0 && monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
 	}
 
 	final public void leave(IPDOMNode node) throws CoreException {

@@ -34,4 +34,10 @@ public interface IIndexFragmentBinding extends Comparable, IIndexBinding {
      * in its associated fragment.
      */
 	boolean hasDefinition() throws CoreException;
+
+	/**
+     * Returns whether this binding has a declaration or definition associated with 
+     * it in its associated fragment.
+     */
+	boolean hasDeclaration() throws CoreException;
 }

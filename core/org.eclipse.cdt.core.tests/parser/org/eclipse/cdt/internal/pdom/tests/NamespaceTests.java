@@ -41,7 +41,7 @@ public class NamespaceTests extends PDOMTestBase {
 	protected ICProject project;	
 	protected PDOM pdom;
 	protected IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
-	protected IndexFilter INDEX_FILTER = new IndexFilter();
+	protected IndexFilter INDEX_FILTER = IndexFilter.ALL;
 	
 	public static Test suite() {
 		return suite(NamespaceTests.class);

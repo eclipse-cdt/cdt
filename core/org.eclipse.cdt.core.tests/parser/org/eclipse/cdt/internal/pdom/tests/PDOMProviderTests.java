@@ -111,7 +111,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 			public boolean acceptBinding(IBinding binding) {
 				return binding instanceof ICPPClassType;
 			}
-		});
+		}, null);
 		assertEquals(2, bindings.length);
 	}
 
@@ -185,7 +185,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 				public boolean acceptBinding(IBinding binding) {
 					return binding instanceof ICPPClassType;
 				}
-			});
+			}, null);
 			assertEquals(2, bindings.length);
 		}
 
@@ -198,7 +198,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 				public boolean acceptBinding(IBinding binding) {
 					return binding instanceof ICPPClassType;
 				}
-			});
+			}, null);
 			assertEquals(2, bindings.length);
 		}
 		
@@ -211,7 +211,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 				public boolean acceptBinding(IBinding binding) {
 					return binding instanceof ICPPClassType;
 				}
-			});
+			}, null);
 			assertEquals(3, bindings.length);
 		}
 	}

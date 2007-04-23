@@ -56,7 +56,7 @@ public class TypesTests extends PDOMTestBase {
 	
 	public void testC() throws Exception {
 		// Get the binding for A::f
-		IBinding [] CAs = pdom.findBindings(Pattern.compile("CA"), false, new IndexFilter(), new NullProgressMonitor());
+		IBinding [] CAs = pdom.findBindings(Pattern.compile("CA"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, CAs.length);
 		ICompositeType CA = (ICompositeType)CAs[0];
 		IField [] CAfields = CA.getFields();
@@ -73,7 +73,7 @@ public class TypesTests extends PDOMTestBase {
 
 	public void testCPP() throws Exception {
 		// Get the binding for A::f
-		IBinding [] As = pdom.findBindings(Pattern.compile("A"), false, new IndexFilter(), new NullProgressMonitor());
+		IBinding [] As = pdom.findBindings(Pattern.compile("A"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, As.length);
 		ICPPClassType A = (ICPPClassType)As[0];
 		ICPPMethod[] Amethods = A.getDeclaredMethods();
@@ -89,7 +89,7 @@ public class TypesTests extends PDOMTestBase {
 	}
 	
 	public void test145351() throws Exception {
-		IBinding [] bindings = pdom.findBindings(Pattern.compile("spinlock_t"), false, new IndexFilter(), new NullProgressMonitor());
+		IBinding [] bindings = pdom.findBindings(Pattern.compile("spinlock_t"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		ITypedef spinlock_t = (ITypedef)bindings[0];
 		IName [] refs = pdom.findNames(spinlock_t, IIndex.FIND_REFERENCES);

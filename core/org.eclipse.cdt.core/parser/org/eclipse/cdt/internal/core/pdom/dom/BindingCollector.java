@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Visitor to find bindings in a BTree or below a PDOMNode. Nested bindings are not visited.
@@ -40,7 +41,7 @@ public final class BindingCollector extends NamedNodeCollector {
 		this.filter= filter;
 	}
 		
-	public boolean addNode(PDOMNamedNode tBinding) {
+	public boolean addNode(PDOMNamedNode tBinding) throws CoreException {
 		if (tBinding instanceof IBinding) {
 			if (filter == null || filter.acceptBinding((IBinding) tBinding)) {
 				return super.addNode(tBinding);

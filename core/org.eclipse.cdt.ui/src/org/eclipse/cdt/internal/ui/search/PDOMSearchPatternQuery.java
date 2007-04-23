@@ -124,7 +124,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	
 	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			IndexFilter filter= new IndexFilter();
+			IndexFilter filter= IndexFilter.ALL;
 			IIndexBinding[] bindings = index.findBindings(pattern, false, filter, monitor);
 			for (int i = 0; i < bindings.length; ++i) {
 				IIndexBinding pdomBinding = bindings[i];

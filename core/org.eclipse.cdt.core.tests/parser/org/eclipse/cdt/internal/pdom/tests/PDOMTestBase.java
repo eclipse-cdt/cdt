@@ -115,7 +115,7 @@ public class PDOMTestBase extends BaseTestCase {
 		for (int i = 0; i < segments.length; i++) {
 			pattern[i] = Pattern.compile(segments[i]);
 		}
-		return pdom.findBindings(pattern, true, new IndexFilter(), PROGRESS);
+		return pdom.findBindings(pattern, true, IndexFilter.ALL, PROGRESS);
 	}
 
 	/**

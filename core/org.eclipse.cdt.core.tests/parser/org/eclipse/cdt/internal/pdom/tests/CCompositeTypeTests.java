@@ -56,7 +56,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	//TODO PDOM does not distinguish between a struct or union in C
 	public void _testSimpleCStructureDistinction() throws Exception {
 		assertType(pdom, "SimpleCStructure", ICompositeType.class);
-		IIndexBinding[] bindings = pdom.findBindings(Pattern.compile("SimpleCStructure"), false, new IndexFilter(), new NullProgressMonitor());
+		IIndexBinding[] bindings = pdom.findBindings(Pattern.compile("SimpleCStructure"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		assertEquals(ICompositeType.k_struct, ((ICompositeType)bindings[0]).getKey());
 	}
@@ -148,7 +148,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	
 //	TODO PDOM does not distinguish between a struct or union in C
 	public void _testCUnionDistinction() throws Exception {
-		IIndexBinding[] bindings = pdom.findBindings(Pattern.compile("CUnion1"), false, new IndexFilter(), new NullProgressMonitor());
+		IIndexBinding[] bindings = pdom.findBindings(Pattern.compile("CUnion1"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		assertEquals(ICompositeType.k_union, ((ICompositeType)bindings[0]).getKey());
 	}

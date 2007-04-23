@@ -240,8 +240,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 				IIndex index = CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects());
 				try {
 					index.acquireReadLock();
-					IBinding[] bindings= index.findBindingsForPrefix(prefix, false, IndexFilter.ALL);
-//					IBinding[] bindings= index.findBindingsForPrefix(prefix, false, IndexFilter.ALL, monitor);
+					IBinding[] bindings= index.findBindingsForPrefix(prefix, false, IndexFilter.ALL_DECLARED, monitor);
 					for(int i=0; i<bindings.length; i++) {
 						if ((i % 100) == 0 && monitor.isCanceled()) {
 							return null;

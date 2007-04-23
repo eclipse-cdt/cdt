@@ -66,6 +66,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -169,7 +170,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		initializeDatabaseCache();
 
 		final CoreModel model = CoreModel.getDefault();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(fCModelListener);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(fCModelListener, IResourceChangeEvent.POST_BUILD);
 		model.addElementChangedListener(fCModelListener);
 		LanguageManager.getInstance().registerLanguageChangeListener(fLanguageChangeListener);
 
@@ -349,13 +350,31 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     }
 	
 	protected void onPreferenceChange(ICProject cproject, PreferenceChangeEvent event) {
-		IProject project= cproject.getProject();
-		if (project.exists() && project.isOpen()) {
-			try {
-				changeIndexer(cproject);
+		if (IndexerPreferences.KEY_UPDATE_POLICY.equals(event.getKey())) {
+			changeUpdatePolicy(cproject);
+		}
+		else {
+			IProject project= cproject.getProject();
+			if (project.exists() && project.isOpen()) {
+				try {
+					changeIndexer(cproject);
+				}
+				catch (Exception e) {
+					CCorePlugin.log(e);
+				}
 			}
-			catch (Exception e) {
-				CCorePlugin.log(e);
+		}
+	}
+
+	private void changeUpdatePolicy(ICProject cproject) {
+		assert !Thread.holdsLock(fProjectToPDOM);
+		synchronized (fUpdatePolicies) {
+			IndexUpdatePolicy policy= getPolicy(cproject);
+			if (policy != null) {
+				IPDOMIndexerTask task= policy.changePolicy(IndexerPreferences.getUpdatePolicy(cproject.getProject()));
+				if (task != null) {
+					enqueue(task);
+				}
 			}
 		}
 	}
@@ -622,7 +641,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		if (added.length > 0 || changed.length > 0 || removed.length > 0) {
 			synchronized (fUpdatePolicies) {
 				IndexUpdatePolicy policy= createPolicy(project);
-				IPDOMIndexerTask task= policy.addDelta(added, changed, removed);
+				IPDOMIndexerTask task= policy.handleDelta(added, changed, removed);
 				if (task != null) {
 					enqueue(task);
 				}
@@ -710,6 +729,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			IndexUpdatePolicy policy= getPolicy(project);
 			if (policy != null) {
 				if (policy.getIndexer() == indexer) {
+					policy.clearTUs();
 					policy.setIndexer(null);
 				}
 			}					

@@ -41,15 +41,19 @@ public class IndexerPreferences {
 	public static final int SCOPE_PROJECT_PRIVATE = 1;
 	public static final int SCOPE_PROJECT_SHARED = 2;
 
+	public static final int UPDATE_POLICY_IMMEDIATE= 0;
+	public static final int UPDATE_POLICY_LAZY= 1;
+	public static final int UPDATE_POLICY_MANUAL= 2;
+	
 	public static final String KEY_INDEXER_ID= "indexerId"; //$NON-NLS-1$
 	public static final String KEY_INDEX_ALL_FILES= "indexAllFiles"; //$NON-NLS-1$
 	public static final String KEY_FILES_TO_PARSE_UP_FRONT= "filesToParseUpFront"; //$NON-NLS-1$
 	public static final String KEY_SKIP_ALL_REFERENCES= "skipReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_TYPE_REFERENCES= "skipTypeReferences"; //$NON-NLS-1$
+	public static final String KEY_UPDATE_POLICY= "updatePolicy"; //$NON-NLS-1$
 
 	private static final String KEY_INDEXER_PREFS_SCOPE = "preferenceScope"; //$NON-NLS-1$
 	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
-	private static final String KEY_UPDATE_POLICY= "updatePolicy"; //$NON-NLS-1$
 	
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
 	private static final String DEFAULT_FILES_TO_PARSE_UP_FRONT= "stdarg.h, stddef.h, sys/types.h"; //$NON-NLS-1$
@@ -121,6 +125,24 @@ public class IndexerPreferences {
 	}
 
 	/**
+	 * Sets the scope that shall be used for the project.
+	 * Must be one of {@link #UPDATE_POLICY_IMMEDIATE}, {@link #UPDATE_POLICY_LAZY} or
+	 * {@link #UPDATE_POLICY_MANUAL}.
+	 */
+	public static void setUpdatePolicy(IProject project, int policy) {
+		switch (policy) {
+		case UPDATE_POLICY_IMMEDIATE:
+		case UPDATE_POLICY_LAZY: 
+		case UPDATE_POLICY_MANUAL:
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
+		// no support for project specific policies.
+		getInstancePreferences().put(KEY_UPDATE_POLICY, String.valueOf(policy));
+	}
+
+	/**
 	 * Returns the properties for the indexer of a project.
 	 */
 	public static Properties getProperties(IProject project) {
@@ -146,7 +168,14 @@ public class IndexerPreferences {
 		addProperties(prefs, props);
 		return props;
 	}
-		
+
+	public static int getDefaultUpdatePolicy() {
+		Preferences[] prefs = new Preferences[] {
+				getDefaultPreferences()
+		};
+		return getUpdatePolicy(prefs);
+	}
+
 	/**
 	 * Adds or changes indexer properties for a project.
 	 */
@@ -350,22 +379,12 @@ public class IndexerPreferences {
 	}
 
 	public static int getUpdatePolicy(IProject project) {
-		Preferences[] prefs;
-		if (project != null) {
-			prefs= new Preferences[] {
-					getProjectPreferences(project),
-					getInstancePreferences(),
-					getConfigurationPreferences(),
-					getDefaultPreferences()
-			};
-		}
-		else {
-			prefs= new Preferences[] {
-					getInstancePreferences(),
-					getConfigurationPreferences(),
-					getDefaultPreferences()
-			};
-		}
+		// no support for project specific policies
+		Preferences[] prefs= getPreferences(null);
+		return getUpdatePolicy(prefs);
+	}
+
+	private static int getUpdatePolicy(Preferences[] prefs) {
 		String val= Platform.getPreferencesService().get(KEY_UPDATE_POLICY, null, prefs);
 		if (val != null) {
 			try {

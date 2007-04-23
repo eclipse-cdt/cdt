@@ -120,7 +120,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 		GridLayout layout=  ((GridLayout)composite.getLayout());
 		layout.marginWidth= 0;
 		
-		composite.setLayoutData(null);
+		GridData gd= (GridData) composite.getLayoutData();
+		gd.grabExcessHorizontalSpace= true;
 		setControl(composite);
       
 		if (getProject() != null || getContainer() instanceof ICOptionContainerExtension) {
@@ -136,8 +137,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 		layout=  (GridLayout)fPreferenceContent.getLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-		GridData gd= (GridData) fPreferenceContent.getLayoutData();
-		gd.horizontalIndent= 0;
+		gd= (GridData) fPreferenceContent.getLayoutData();
+		gd.horizontalIndent= 0; 
 		
         Composite isc = ControlFactory.createComposite(fPreferenceContent, 1);
         GridLayout gridLayout = ((GridLayout)isc.getLayout());
@@ -147,6 +148,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 
 		// add combo to select indexer
 		Group group= ControlFactory.createGroup(isc,INDEXER_COMBO_LABEL, 1);
+		gd= (GridData) group.getLayoutData();
+		gd.grabExcessHorizontalSpace= true;
 		fIndexersComboBox = ControlFactory.createSelectCombo(group,"", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		fIndexersComboBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -155,7 +158,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 		});
 
 		// add composite for pages
-        fIndexerPageComposite= ControlFactory.createComposite(fPreferenceContent, 1);
+        fIndexerPageComposite= ControlFactory.createComposite(group, 1);
         fIndexerPageComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
         fIndexerPageComposite.setLayout(new TabFolderLayout());
 

@@ -13,7 +13,7 @@ package org.eclipse.cdt.ui.dialogs;
 
 import java.util.Properties;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.swt.widgets.Composite;
 
 
@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 public class NullIndexerBlock extends AbstractIndexerPage {
 
 	public void createControl(Composite parent) {
-	    Composite comp = new Composite(parent, SWT.NULL);
-        setControl(comp);
+		super.createControl(parent);
+		ControlEnableState.disable(getControl());
 	}
 
 	public Properties getProperties() {

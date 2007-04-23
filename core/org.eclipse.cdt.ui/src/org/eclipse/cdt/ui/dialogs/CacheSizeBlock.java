@@ -67,24 +67,24 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 
 		setControl(composite);
       
-		Group group= ControlFactory.createGroup(composite, Messages.CacheSizeBlock_cacheLimitGroup, 1);
+		Group group= ControlFactory.createGroup(composite, DialogsMessages.CacheSizeBlock_cacheLimitGroup, 1);
 		gd= (GridData) group.getLayoutData();
 		gd.grabExcessHorizontalSpace= true;
 		gd.horizontalAlignment= GridData.FILL;
 		
 		Composite cacheComp= ControlFactory.createComposite(group, 3);
 
-		Label dbCacheLabel= ControlFactory.createLabel(cacheComp, Messages.CacheSizeBlock_indexDatabaseCache);
-		fDBLimitPct= new IntegerFieldEditor(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT, Messages.CacheSizeBlock_limitRelativeToMaxHeapSize, cacheComp, 3);
+		Label dbCacheLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_indexDatabaseCache);
+		fDBLimitPct= new IntegerFieldEditor(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT, DialogsMessages.CacheSizeBlock_limitRelativeToMaxHeapSize, cacheComp, 3);
 		fDBLimitPct.setValidRange(1, 40);
 		ControlFactory.createLabel(cacheComp, "%"); //$NON-NLS-1$
 
-		fDBAbsoluteLimit= new IntegerFieldEditor(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, Messages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
+		fDBAbsoluteLimit= new IntegerFieldEditor(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
 		fDBAbsoluteLimit.setValidRange(1, 10000);
 		ControlFactory.createLabel(cacheComp, "mb"); //$NON-NLS-1$
 		
-		Label codeReaderLabel= ControlFactory.createLabel(cacheComp, Messages.CacheSizeBlock_headerFileCache);
-		fCodeReaderLimit= new IntegerFieldEditor(CodeReaderCache.CODE_READER_BUFFER, Messages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
+		Label codeReaderLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_headerFileCache);
+		fCodeReaderLimit= new IntegerFieldEditor(CodeReaderCache.CODE_READER_BUFFER, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
 		fCodeReaderLimit.setValidRange(1, 10000);
 		ControlFactory.createLabel(cacheComp, "mb"); //$NON-NLS-1$
 		
@@ -92,6 +92,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		gl.numColumns= 3;
 		gl.makeColumnsEqualWidth= false;
 		gl.marginLeft= 0;
+		gl.verticalSpacing= 2;
 
 		gd= (GridData) dbCacheLabel.getLayoutData();
 		gd.horizontalSpan= 3;

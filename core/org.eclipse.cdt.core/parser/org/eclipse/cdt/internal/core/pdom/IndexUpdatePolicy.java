@@ -18,12 +18,13 @@ import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
 
 public class IndexUpdatePolicy {
-
-	public static final int POST_CHANGE = 0;
-	public static final int POST_BUILD = 1;
-	public static final int MANUAL= 2;
+	public static final int POST_CHANGE= IndexerPreferences.UPDATE_POLICY_IMMEDIATE;
+	public static final int POST_BUILD= IndexerPreferences.UPDATE_POLICY_LAZY;
+	public static final int MANUAL= IndexerPreferences.UPDATE_POLICY_MANUAL;
 	
 	private final ICProject fCProject;
 	private int fKind;
@@ -35,20 +36,55 @@ public class IndexUpdatePolicy {
 
 	public IndexUpdatePolicy(ICProject project, int kind) {
 		fCProject= project;
-		fKind= kind;
+		fKind= getLegalPolicy(kind);
+	}
+
+	private int getLegalPolicy(int kind) {
+		switch(kind) {
+		case POST_BUILD:
+		case POST_CHANGE:
+		case MANUAL:
+			return kind;
+		}
+		return POST_CHANGE;
 	}
 
 	public ICProject getProject() {
 		return fCProject;
 	}
 
-	public int getKind() {
-		return fKind;
+	public void clearTUs() {
+		fAdded.clear();
+		fChanged.clear();
+		fRemoved.clear();
 	}
-	
-	public IPDOMIndexerTask addDelta(ITranslationUnit[] added, ITranslationUnit[] changed,
-			ITranslationUnit[] removed) {
-		if (fIndexer != null && fIndexer.getID().equals(IPDOMManager.ID_NO_INDEXER)) {
+
+	public boolean hasTUs() {
+		return !(fAdded.isEmpty() && fChanged.isEmpty() && fRemoved.isEmpty());
+	}
+
+	private ITranslationUnit[] getAdded() {
+		return (ITranslationUnit[]) fAdded.toArray(new ITranslationUnit[fAdded.size()]);
+	}
+
+	private ITranslationUnit[] getChanged() {
+		return (ITranslationUnit[]) fChanged.toArray(new ITranslationUnit[fChanged.size()]);
+	}
+
+	private ITranslationUnit[] getRemoved() {
+		return (ITranslationUnit[]) fRemoved.toArray(new ITranslationUnit[fRemoved.size()]);
+	}
+
+	public void setIndexer(IPDOMIndexer indexer) {
+		fIndexer= indexer;
+	}
+
+	public IPDOMIndexer getIndexer() {
+		return fIndexer;
+	}
+
+	public IPDOMIndexerTask handleDelta(ITranslationUnit[] added, ITranslationUnit[] changed, ITranslationUnit[] removed) {
+		if (isNullIndexer()) {
 			return null;
 		}
 
@@ -84,45 +120,39 @@ public class IndexUpdatePolicy {
 		}
 		return null;
 	}
-
-	public void clearTUs() {
-		fAdded.clear();
-		fChanged.clear();
-		fRemoved.clear();
-	}
-
-	public boolean hasTUs() {
-		return !(fAdded.isEmpty() && fChanged.isEmpty() && fRemoved.isEmpty());
-	}
-
+	
 	public IPDOMIndexerTask createTask() {
+		IPDOMIndexerTask task= null;
 		if (fIndexer != null && hasTUs()) {
-			if (getKind() != IndexUpdatePolicy.MANUAL &&
-					!fIndexer.getID().equals(IPDOMManager.ID_NO_INDEXER)) {
-				return fIndexer.createTask(getAdded(), getChanged(), getRemoved());
+			if (fKind != IndexUpdatePolicy.MANUAL && !isNullIndexer()) {
+				task= fIndexer.createTask(getAdded(), getChanged(), getRemoved());
 			}
 			clearTUs();
 		}
-		return null;
+		return task;
 	}
 
-	private ITranslationUnit[] getAdded() {
-		return (ITranslationUnit[]) fAdded.toArray(new ITranslationUnit[fAdded.size()]);
+	private boolean isNullIndexer() {
+		return fIndexer != null && fIndexer.getID().equals(IPDOMManager.ID_NO_INDEXER);
 	}
 
-	private ITranslationUnit[] getChanged() {
-		return (ITranslationUnit[]) fChanged.toArray(new ITranslationUnit[fChanged.size()]);
-	}
-
-	private ITranslationUnit[] getRemoved() {
-		return (ITranslationUnit[]) fRemoved.toArray(new ITranslationUnit[fRemoved.size()]);
-	}
-
-	public void setIndexer(IPDOMIndexer indexer) {
-		fIndexer= indexer;
-	}
-
-	public IPDOMIndexer getIndexer() {
-		return fIndexer;
+	public IPDOMIndexerTask changePolicy(int updatePolicy) {
+		int oldPolicy= fKind;
+		fKind= getLegalPolicy(updatePolicy);
+		
+		IPDOMIndexerTask task= null;
+		if (fKind == MANUAL || isNullIndexer()) {
+			clearTUs();
+		}
+		else if (fIndexer != null) {
+			if (oldPolicy == MANUAL) {
+				task= new PDOMUpdateTask(fIndexer,  true);
+				clearTUs();
+			}
+			else if (fKind == POST_CHANGE) {
+				task= createTask();
+			}
+		}
+		return task;
 	}
 }

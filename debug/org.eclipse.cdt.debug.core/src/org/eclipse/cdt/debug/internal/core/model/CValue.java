@@ -20,6 +20,8 @@ import java.util.List;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
+import org.eclipse.cdt.debug.core.cdi.ICDIFormattable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
@@ -258,8 +260,13 @@ public class CValue extends AbstractCValue {
 	}
 
 	private String getShortValueString( ICDIShortValue value ) throws CDIException {
-		CVariableFormat format = getParentVariable().getFormat(); 
-		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
+		CVariableFormat format = getParentVariable().getFormat();
+		
+		if (CVariableFormat.NATURAL.equals(format)) {
+			format = getNaturalFormat(value, CVariableFormat.DECIMAL);
+		}
+		
+		if ( CVariableFormat.DECIMAL.equals( format ) ) {
 			return (isUnsigned()) ? Integer.toString( value.intValue() ) : Short.toString( value.shortValue() );
 		}
 		else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
@@ -278,8 +285,13 @@ public class CValue extends AbstractCValue {
 	}
 
 	private String getIntValueString( ICDIIntValue value ) throws CDIException {
-		CVariableFormat format = getParentVariable().getFormat(); 
-		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
+		CVariableFormat format = getParentVariable().getFormat();
+		
+		if (CVariableFormat.NATURAL.equals(format)) {
+			format = getNaturalFormat(value, CVariableFormat.DECIMAL);
+		}
+		
+		if ( CVariableFormat.DECIMAL.equals( format ) ) {
 			return (isUnsigned()) ? Long.toString( value.longValue() ) : Integer.toString( value.intValue() );
 		}
 		else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
@@ -299,8 +311,13 @@ public class CValue extends AbstractCValue {
 
 	private String getLongValueString( ICDILongValue value ) throws CDIException {
 		try {
-			CVariableFormat format = getParentVariable().getFormat(); 
-			if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
+			CVariableFormat format = getParentVariable().getFormat();
+
+			if (CVariableFormat.NATURAL.equals(format)) {
+				format = getNaturalFormat(value, CVariableFormat.DECIMAL);
+			}
+			
+			if ( CVariableFormat.DECIMAL.equals( format ) ) {
 				if ( isUnsigned() ) {
 					BigInteger bigValue = new BigInteger( value.getValueString() );
 					return bigValue.toString();
@@ -335,8 +352,13 @@ public class CValue extends AbstractCValue {
 
 	private String getLongLongValueString( ICDILongLongValue value ) throws CDIException {
 		try {
-			CVariableFormat format = getParentVariable().getFormat(); 
-			if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
+			CVariableFormat format = getParentVariable().getFormat();
+			
+			if (CVariableFormat.NATURAL.equals(format)) {
+				format = getNaturalFormat(value, CVariableFormat.DECIMAL);
+			}
+			
+			if ( CVariableFormat.DECIMAL.equals( format ) ) {
 				if ( isUnsigned() ) {
 					BigInteger bigValue = new BigInteger( value.getValueString() );
 					return bigValue.toString();
@@ -542,5 +564,22 @@ public class CValue extends AbstractCValue {
 		while( it.hasNext() ) {
 			((AbstractCVariable)it.next()).preserve();
 		}
+	}
+
+	private static CVariableFormat getNaturalFormat(ICDIValue value, CVariableFormat defaultFormat) {
+		if (value instanceof ICDIFormattable) {
+			int naturalFormat = ((ICDIFormattable)value).getNaturalFormat();
+			switch (naturalFormat) {
+				case ICDIFormat.DECIMAL:
+					return CVariableFormat.DECIMAL;
+				case ICDIFormat.BINARY:
+					return CVariableFormat.BINARY;
+				case ICDIFormat.OCTAL:
+					return CVariableFormat.OCTAL;
+				case ICDIFormat.HEXADECIMAL:
+					return CVariableFormat.HEXADECIMAL;
+			}
+		}
+		return defaultFormat;
 	}
 }

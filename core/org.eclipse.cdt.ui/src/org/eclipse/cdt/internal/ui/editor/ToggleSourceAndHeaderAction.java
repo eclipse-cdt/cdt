@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -253,33 +254,37 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		// search partnerfile based on filename/extension
 		IPath sourceFileLocation= tUnit.getLocation();
 		IPath partnerBasePath= sourceFileLocation.removeFileExtension();
-		IContentType contentType= getPartnerContentType(tUnit.getContentTypeId());
-		if (contentType != null) {
+		IContentType[] contentTypes= getPartnerContentTypes(tUnit.getContentTypeId());
+		HashSet extensionsTried= new HashSet();
+		for (int j = 0; j < contentTypes.length; j++) {
+			IContentType contentType= contentTypes[j];
 			String[] partnerExtensions;
 			partnerExtensions= contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 			for (int i= 0; i < partnerExtensions.length; i++) {
 				String ext= partnerExtensions[i];
-				String partnerFileBasename= partnerBasePath.addFileExtension(ext).lastSegment();
-				
-				IFile partnerFile= null;
-				if (tUnit.getResource() != null) {
-					partnerFile= findInContainer(tUnit.getResource().getParent(), partnerFileBasename);
-				}
-				if (partnerFile == null) {
-					partnerFile= findInContainer(tUnit.getCProject().getProject(), partnerFileBasename);
-				}
-				if (partnerFile != null) {
-					ITranslationUnit partnerUnit= (ITranslationUnit) CoreModel.getDefault().create(partnerFile);
-					if (partnerUnit != null) {
-						return partnerUnit;
+				if (extensionsTried.add(ext)) {
+					String partnerFileBasename= partnerBasePath.addFileExtension(ext).lastSegment();
+					
+					IFile partnerFile= null;
+					if (tUnit.getResource() != null) {
+						partnerFile= findInContainer(tUnit.getResource().getParent(), partnerFileBasename);
 					}
-				}
-				// external tanslation unit - try in same directory
-				if (tUnit.getResource() == null) {
-					partnerFileLoation= partnerBasePath.removeLastSegments(1).append(partnerFileBasename);
-					ITranslationUnit partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(tUnit.getCProject(), partnerFileLoation);
-					if (partnerUnit != null) {
-						return partnerUnit;
+					if (partnerFile == null) {
+						partnerFile= findInContainer(tUnit.getCProject().getProject(), partnerFileBasename);
+					}
+					if (partnerFile != null) {
+						ITranslationUnit partnerUnit= (ITranslationUnit) CoreModel.getDefault().create(partnerFile);
+						if (partnerUnit != null) {
+							return partnerUnit;
+						}
+					}
+					// external tanslation unit - try in same directory
+					if (tUnit.getResource() == null) {
+						partnerFileLoation= partnerBasePath.removeLastSegments(1).append(partnerFileBasename);
+						ITranslationUnit partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(tUnit.getCProject(), partnerFileLoation);
+						if (partnerUnit != null) {
+							return partnerUnit;
+						}
 					}
 				}
 			}
@@ -318,20 +323,32 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		return result[0];
 	}
 
-	private IContentType getPartnerContentType(String contentTypeId) {
+	private IContentType[] getPartnerContentTypes(String contentTypeId) {
 		IContentTypeManager mgr= Platform.getContentTypeManager();
 		if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CHEADER)) {
-			return mgr.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
+			return new IContentType[] {
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE),
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE)
+			};
 		}
 		if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CSOURCE)) {
-			return mgr.getContentType(CCorePlugin.CONTENT_TYPE_CHEADER);
+			return new IContentType[] {
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CHEADER),
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER)
+			};
 		}
 		if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) {
-			return mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
+			return new IContentType[] {
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE),
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE)
+			};
 		}
 		if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CXXSOURCE)) {
-			return mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER);
+			return new IContentType[] {
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER),
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CHEADER)
+			};
 		}
-		return null;
+		return new IContentType[0];
 	}
 }

@@ -61,6 +61,8 @@ import org.eclipse.swt.widgets.TableItem;
  *
  */
 public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHandler {
+	public static final String ARTIFACT = "org.eclipse.cdt.build.core.buildArtefactType";  //$NON-NLS-1$
+	
 	private static final String PROPERTY = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$
 	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
 	private static final String tooltip = 

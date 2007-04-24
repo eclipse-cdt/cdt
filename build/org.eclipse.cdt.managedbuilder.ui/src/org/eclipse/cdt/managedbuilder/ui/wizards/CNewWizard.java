@@ -24,7 +24,6 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-import org.eclipse.cdt.ui.wizards.ICWizardHandler;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.graphics.Image;
@@ -40,13 +39,13 @@ public class CNewWizard extends AbstractCWizard {
 	 */
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
 		IBuildPropertyManager bpm = ManagedBuildManager.getBuildPropertyManager();
-		IBuildPropertyType bpt = bpm.getPropertyType(ICWizardHandler.ARTIFACT);
+		IBuildPropertyType bpt = bpm.getPropertyType(MBSWizardHandler.ARTIFACT);
 		IBuildPropertyValue[] vs = bpt.getSupportedValues();
 		
 		ArrayList items = new ArrayList();
 		// new style project types
 		for (int i=0; i<vs.length; i++) {
-			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(ICWizardHandler.ARTIFACT, vs[i].getId());
+			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(MBSWizardHandler.ARTIFACT, vs[i].getId());
 			if (tcs == null || tcs.length == 0) continue;
 			MBSWizardHandler h = new MBSWizardHandler(vs[i], parent, wizard);
 			for (int j=0; j<tcs.length; j++) {

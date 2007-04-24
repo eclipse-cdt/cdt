@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.IWizardPage;
 
 public interface ICWizardHandler extends Cloneable {
-	static final String ARTIFACT = "org.eclipse.cdt.build.core.buildArtefactType";  //$NON-NLS-1$
-
 	/**
 	 * Called when user selects corresponding item in wizard tree
 	 * 

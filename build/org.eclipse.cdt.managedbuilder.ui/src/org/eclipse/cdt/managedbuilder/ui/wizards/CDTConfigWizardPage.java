@@ -21,9 +21,8 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.UIMessages;
-import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
-import org.eclipse.cdt.ui.wizards.ICWizardHandler;
 import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
+import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -215,7 +214,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		for (int i=0; i < tcs.length; i++) {
 			CfgHolder[] cfgs = null;
 			if (id != null) 
-				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tcs[i], ICWizardHandler.ARTIFACT, id));
+				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tcs[i], MBSWizardHandler.ARTIFACT, id));
 			else if (pt != null) 
 				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tcs[i], pt));
 			else { // Create default configuration for StdProject

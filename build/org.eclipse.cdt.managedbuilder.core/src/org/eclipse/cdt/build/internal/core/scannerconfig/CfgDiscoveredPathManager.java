@@ -320,22 +320,26 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
         return info;
 	}
 
-	private PathInfo removeCachedPathInfo(ContextInfo cInfo){
+	private void removeCachedPathInfo(ContextInfo cInfo){
 //      ICfgScannerConfigBuilderInfo2Set cfgInfo = cInfo.fCfgInfo;
-      PathInfo info = getCachedPathInfo(cInfo, true, true, true);
-//      boolean queryCfg = !cfgInfo.isPerRcTypeDiscovery();
-//      if(!queryCfg){
-//  		Tool tool = (Tool)context.getTool();
-//  		if(tool != null){
-//  			info = tool.getDiscoveredPathInfo(context.getInputType());
-//  		} else {
-//  			queryCfg = true;
-//  		}
-//      } 
-//      if(queryCfg) {
-//      	info = ((Configuration)context.getConfiguration()).getDiscoveredPathInfo();
-//      }
-      return info;
+		if(cInfo.fIsFerFileCache){
+			Configuration cfg = (Configuration)cInfo.fInitialContext.getConfiguration();
+			cfg.clearDiscoveredPathInfo();
+			
+			IResourceInfo[] infos = cfg.getResourceInfos();
+			for(int i = 0; i < infos.length; i++){
+				IResourceInfo rcInfo = infos[i];
+				ITool[] tools = rcInfo.getTools();
+				for(int k = 0; k < tools.length; k++){
+					Tool tool = (Tool)tools[k];
+					tool.clearAllDiscoveredPathInfo();
+				}
+			}
+		} else {
+			setCachedPathInfo(cInfo, null);
+		}
+			
+//      PathInfo info = getCachedPathInfo(cInfo, true, true, true);
 	}
 
 	private PathInfo getCachedPathInfo(ContextInfo cInfo, boolean queryParent, boolean clearIfInvalid, boolean clear){
@@ -527,6 +531,10 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 	}
 
 	public void removeDiscoveredInfo(IProject project, CfgInfoContext context) {
+		removeDiscoveredInfo(project, context, true);
+	}
+
+	public void removeDiscoveredInfo(IProject project, CfgInfoContext context, boolean removeBaseCache) {
 //        if(context == null)
 //        	context = ScannerConfigUtil.createContextForProject(project);
 		
@@ -534,6 +542,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 
         removeCachedPathInfo(cInfo);
 
-        fBaseMngr.removeDiscoveredInfo(project, cInfo.fLoadContext.toInfoContext());
+        if(removeBaseCache)
+        	fBaseMngr.removeDiscoveredInfo(project, cInfo.fLoadContext.toInfoContext());
 	}
 }

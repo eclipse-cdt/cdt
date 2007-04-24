@@ -3921,6 +3921,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return (PathInfoCache)discoveredInfoMap.remove(getTypeKey(type));
 	}
 
+	public void clearAllDiscoveredPathInfo(){
+		discoveredInfoMap.clear();
+	}
+
 	public void clearAllDiscoveredInfo(){
 		discoveredInfoMap.clear();
 	}

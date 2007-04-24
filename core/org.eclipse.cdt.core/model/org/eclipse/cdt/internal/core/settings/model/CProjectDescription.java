@@ -451,6 +451,12 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		if(fIsModified)
 			return true;
 		
+		if(fActiveCfgInfo.fIsModified)
+			return true;
+
+		if(fSettingCfgInfo.fIsModified)
+			return true;
+
 		if(fPrefs.isModified())
 			return true;
 		

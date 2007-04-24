@@ -670,8 +670,10 @@ implements
 	protected void cfgChanged(ICConfigurationDescription _cfgd) {
 		resd = getResDesc(_cfgd);
 		
-		if (excludeFromBuildCheck != null)
+		if (excludeFromBuildCheck != null) {
+			excludeFromBuildCheck.setEnabled(resd.canExclude(!resd.isExcluded()));
 			excludeFromBuildCheck.setSelection(resd.isExcluded());
+		}
 
 		for (int i=0; i<CDTPropertyManager.getPagesCount(); i++) {
 			Object p = CDTPropertyManager.getPage(i);

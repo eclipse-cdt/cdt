@@ -37,9 +37,9 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * @author jcamelon
  */
 public class DOMScanner extends BaseScanner {
+    private static final Class CHAR_ARRAY_CLASS = new char[]{}.getClass();
 
     protected final ICodeReaderFactory codeReaderFactory;
-
     protected int[] bufferDelta = new int[bufferInitialSize];
 
     private static class DOMInclusion {
@@ -229,9 +229,10 @@ public class DOMScanner extends BaseScanner {
             if (d.macro instanceof FunctionStyleMacro && fsmCount == 0) {
             	FunctionMacroData fd = (FunctionMacroData)d;
                 FunctionStyleMacro fsm = (FunctionStyleMacro) d.macro;
+                char[][] actualArgs= (char[][]) fd.getActualArgs().valueArray(CHAR_ARRAY_CLASS);
                 locationMap.startFunctionStyleExpansion(fsm.attachment,
                         fsm.arglist, getGlobalOffset(d.getStartOffset()),
-                        getGlobalOffset(d.getStartOffset() + d.getLength()),fd.getActualArgs().valueArray() );
+                        getGlobalOffset(d.getStartOffset() + d.getLength()), actualArgs);
                 bufferDelta[bufferStackPos + 1] = 0;
             } else if (d.macro instanceof ObjectStyleMacro && fsmCount == 0) {
                 ObjectStyleMacro osm = (ObjectStyleMacro) d.macro;

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
+import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -125,6 +127,12 @@ public class CharArrayObjectMap extends CharTable {
     
     public Object [] valueArray(){
 	    Object [] values = new Object[ size() ];
+	    System.arraycopy( valueTable, 0, values, 0, values.length );
+	    return values;
+	}
+
+    public Object [] valueArray(Class clazz){
+	    Object[] values= (Object[]) Array.newInstance(clazz, size());
 	    System.arraycopy( valueTable, 0, values, 0, values.length );
 	    return values;
 	}

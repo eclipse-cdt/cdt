@@ -37,7 +37,7 @@ public interface IScannerPreprocessorLog {
 
     
     public void startFunctionStyleExpansion(IMacroDefinition macro,
-            char[][] parameters, int startOffset, int endOffset, Object[] objects);
+            char[][] parameters, int startOffset, int endOffset, char[][] actualArguments);
 
     public void endFunctionStyleExpansion(IMacroDefinition macro, int offset);
 

@@ -111,7 +111,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     
     public class FunctionMacroExpansionLocation extends MacroExpansionLocation{
     	
-    	private Object[] actParams;
+    	private char[][] actParams;
 
 		/**
 		 * @param macroDefinition
@@ -119,12 +119,12 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 		 * @param offset
 		 * @param length
 		 */
-		public FunctionMacroExpansionLocation(IASTPreprocessorMacroDefinition macroDefinition, IASTNodeLocation[] locations, int offset, int length, Object[] actParameters) {
+		public FunctionMacroExpansionLocation(IASTPreprocessorMacroDefinition macroDefinition, IASTNodeLocation[] locations, int offset, int length, char[][] actParameters) {
 			super(macroDefinition, locations, offset, length);
 			this.actParams = actParameters;
 		}
 		
-		public Object[] getActualParameters() {
+		public char[][] getActualParameters() {
 			return actParams;
 		}
     	
@@ -1595,12 +1595,12 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     protected class _FunctionMacroExpansion extends _MacroExpansion {
         public final char[][] args;
-        public final Object[] actArgs;
+        public final char[][] actArgs;
 
 
         public _FunctionMacroExpansion(_CompositeContext parent,
                 int startOffset, int endOffset, IMacroDefinition definition,
-                char[][] args, Object[] actParameters) {
+                char[][] args, char[][] actParameters) {
             super(parent, startOffset, endOffset, definition);
             this.args = args;
             this.actArgs = actParameters;
@@ -2228,7 +2228,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      *      char[][], char[], int)
      */
     public void startFunctionStyleExpansion(IMacroDefinition macro,
-            char[][] parameters, int startOffset, int endOffset, Object[] actParameters) {
+            char[][] parameters, int startOffset, int endOffset, char[][] actParameters) {
         _FunctionMacroExpansion context = new _FunctionMacroExpansion(
                 currentContext, startOffset, endOffset, macro, parameters, actParameters);
         currentContext.addSubContext(context);

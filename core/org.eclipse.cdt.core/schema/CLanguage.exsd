@@ -13,6 +13,11 @@ By themselves, languages don&apos;t serve much purpose.  However, they are used 
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true" replacement="org.eclipse.cdt.core.language" />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="language" minOccurs="1" maxOccurs="unbounded"/>

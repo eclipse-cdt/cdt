@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.core" id="language" name="%language.name"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point is used to declare a language or language variant. Languages define how the C model of a file is created (e.g. to populate the outline view). It also provides hooks to override the low level parsing of translation units into an abstract syntax tree. Practically this is limited to C/C++ language variants only. Completely different languages cannot be modelled reasonably using this extension point.
       </documentation>
    </annotation>
 
@@ -50,24 +50,27 @@
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="contentType"/>
          </sequence>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A unique identifier of the language. Note that the identifier is prefixed with the ID of the contributing plug-in.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A human readable and translatable name of the language.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A class extending &lt;code&gt;org.eclipse.core.model.AbstractLanguage&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.model.AbstractLanguage"/>
@@ -116,7 +119,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         CDT 3.1
       </documentation>
    </annotation>
 
@@ -125,7 +128,15 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;pre&gt;
+&lt;language
+      class=&quot;org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage&quot;
+      id=&quot;gcc&quot;
+      name=&quot;GNU C&quot;&gt;
+   &lt;contentType id=&quot;org.eclipse.cdt.core.cSource&quot;/&gt;
+   &lt;contentType id=&quot;org.eclipse.cdt.core.cHeader&quot;/&gt;
+&lt;/language&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -134,7 +145,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Clients need to extend the abstract class &lt;code&gt;org.eclipse.core.model.AbstractLanguage&lt;/code&gt;.
       </documentation>
    </annotation>
 
@@ -143,7 +154,13 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         CDT comes with following built-in languages:
+&lt;code&gt;org.eclipse.cdt.core.language.gcc&lt;/code&gt; (GNU C) and 
+&lt;code&gt;org.eclipse.cdt.core.language.g++&lt;/code&gt; (GNU C++).
+&lt;p&gt;The respective language implementations are
+&lt;code&gt;org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage&lt;/code&gt; and
+&lt;code&gt;org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage&lt;/code&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -152,7 +169,11 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2005, 2007 QNX Software Systems and others. 
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which
+accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
 

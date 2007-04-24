@@ -58,7 +58,7 @@ import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.core.subsystems.SubSystem;
-import org.eclipse.rse.dstore.universal.miners.environment.EnvironmentMiner;
+import org.eclipse.rse.dstore.universal.miners.EnvironmentMiner;
 import org.eclipse.rse.internal.connectorservice.dstore.RexecDstoreServer;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;

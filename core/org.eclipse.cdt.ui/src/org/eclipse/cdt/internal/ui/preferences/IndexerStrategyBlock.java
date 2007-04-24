@@ -8,10 +8,11 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-package org.eclipse.cdt.ui.dialogs;
+package org.eclipse.cdt.internal.ui.preferences;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -21,6 +22,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionWorkspacePreferences;
+import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
+import org.eclipse.cdt.ui.dialogs.DialogsMessages;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -33,8 +41,8 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 
     private Button fAutoUpdateButton;
 	private Button fImmediateUpdateButton;
-//	private Button fUseActiveBuildButton;
-//	private Button fUseFixedBuildConfig;
+	private Button fUseActiveBuildButton;
+	private Button fUseFixedBuildConfig;
 
 	public IndexerStrategyBlock(ICOptionContainer container){
     	setContainer(container);
@@ -68,12 +76,12 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 		fImmediateUpdateButton= ControlFactory.createCheckBox(group, DialogsMessages.IndexerStrategyBlock_immediateUpdate);
 		fAutoUpdateButton.addSelectionListener(updateEnablement);
 		
-//		group= ControlFactory.createGroup(composite, DialogsMessages.IndexerStrategyBlock_buildConfigGroup, 1);
-//		gd= (GridData) group.getLayoutData();
-//		gd.grabExcessHorizontalSpace= true;
-//		gd.horizontalAlignment= GridData.FILL;
-//		fUseActiveBuildButton= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_activeBuildConfig, null, null);
-//		fUseFixedBuildConfig= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_specificBuildConfig, null, null);
+		group= ControlFactory.createGroup(composite, DialogsMessages.IndexerStrategyBlock_buildConfigGroup, 1);
+		gd= (GridData) group.getLayoutData();
+		gd.grabExcessHorizontalSpace= true;
+		gd.horizontalAlignment= GridData.FILL;
+		fUseActiveBuildButton= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_activeBuildConfig, null, null);
+		fUseFixedBuildConfig= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_specificBuildConfig, null, null);
 		
 		initializeValues();
     }
@@ -86,8 +94,11 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
     	int updatePolicy= IndexerPreferences.getUpdatePolicy(null);
     	initUpdatePolicy(updatePolicy);
 
-//    	fUseActiveBuildButton.setSelection(false);
-//    	fUseFixedBuildConfig.setSelection(false);
+    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+    	ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(false);
+    	boolean useActive= prefs.getConfigurationReltations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE;
+    	fUseActiveBuildButton.setSelection(useActive);
+    	fUseFixedBuildConfig.setSelection(!useActive);
     	
     	updateEnablement();
 	}
@@ -109,10 +120,21 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 			updatePolicy= IndexerPreferences.UPDATE_POLICY_LAZY;
 		}			
 		IndexerPreferences.setUpdatePolicy(null, updatePolicy);
-    }
+
+		boolean useActive= fUseActiveBuildButton.getSelection();
+    	int relation=  useActive
+    			? ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE
+    			: ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT;
+    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+    	ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(true);
+    	prefs.setConfigurationRelations(relation);
+    	prjDescMgr.setProjectDescriptionWorkspacePreferences(prefs, false, new NullProgressMonitor());
+	}
 
     public void performDefaults() {
     	initUpdatePolicy(IndexerPreferences.getDefaultUpdatePolicy());
+    	fAutoUpdateButton.setSelection(false);
+    	fImmediateUpdateButton.setSelection(true);
     	updateEnablement();
     }
 }

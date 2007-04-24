@@ -27,7 +27,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.cdt.ui.dialogs.CacheSizeBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.IndexerBlock;
-import org.eclipse.cdt.ui.dialogs.IndexerStrategyBlock;
 
 public class IndexerPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage, ICOptionContainer {

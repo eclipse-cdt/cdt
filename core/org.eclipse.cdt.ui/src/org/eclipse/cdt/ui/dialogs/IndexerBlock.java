@@ -28,12 +28,20 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.ibm.icu.text.Collator;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionWorkspacePreferences;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
@@ -58,9 +66,9 @@ public class IndexerBlock extends AbstractCOptionPage {
 
 	private static final String PREF_PAGE_ID = "org.eclipse.cdt.ui.preferences.IndexerPreferencePage"; //$NON-NLS-1$
 
-	private static final String INDEXER_LABEL = CUIPlugin.getResourceString("BaseIndexerBlock.label" ); //$NON-NLS-1$
-	private static final String INDEXER_DESCRIPTION = CUIPlugin.getResourceString("BaseIndexerBlock.desc"); //$NON-NLS-1$
-	private static final String INDEXER_COMBO_LABEL = CUIPlugin.getResourceString("BaseIndexerBlock.comboLabel"); //$NON-NLS-1$
+	private static final String INDEXER_LABEL = "C/C++ Indexer"; //$NON-NLS-1$
+	private static final String INDEXER_DESCRIPTION = "C/C++ Indexer setting for this project."; //$NON-NLS-1$
+	private static final String INDEXER_COMBO_LABEL = "Select indexer"; //$NON-NLS-1$
 	
 	private PreferenceScopeBlock    fPrefScopeBlock;
     private Combo 					fIndexersComboBox;
@@ -68,9 +76,12 @@ public class IndexerBlock extends AbstractCOptionPage {
 	private Composite 				fIndexerPageComposite;
     private AbstractIndexerPage 	fCurrentPage;
     private Properties				fCurrentProperties;
+	private Composite 				fPreferenceContent;
+	private Composite 				fParent;
+	private Button 					fUseActiveBuildButton;
+	private Button 					fUseFixedBuildConfig;
+	private Combo 					fBuildConfigComboBox;
 	private ControlEnableState 		fEnableState;
-	private Composite fPreferenceContent;
-	private Composite fParent;
     
     public IndexerBlock(){
 		super(INDEXER_LABEL);
@@ -140,14 +151,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 		gd= (GridData) fPreferenceContent.getLayoutData();
 		gd.horizontalIndent= 0; 
 		
-        Composite isc = ControlFactory.createComposite(fPreferenceContent, 1);
-        GridLayout gridLayout = ((GridLayout)isc.getLayout());
-        gridLayout.makeColumnsEqualWidth= false;
-		gridLayout.marginHeight = 0;
-		gridLayout.marginWidth= 0;
-
 		// add combo to select indexer
-		Group group= ControlFactory.createGroup(isc,INDEXER_COMBO_LABEL, 1);
+		Group group= ControlFactory.createGroup(fPreferenceContent,INDEXER_COMBO_LABEL, 1);
 		gd= (GridData) group.getLayoutData();
 		gd.grabExcessHorizontalSpace= true;
 		fIndexersComboBox = ControlFactory.createSelectCombo(group,"", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -162,21 +167,87 @@ public class IndexerBlock extends AbstractCOptionPage {
         fIndexerPageComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
         fIndexerPageComposite.setLayout(new TabFolderLayout());
 
+        if (needBuildConfigOptions()) {
+        	group= ControlFactory.createGroup(composite, DialogsMessages.IndexerStrategyBlock_buildConfigGroup, 1);
+        	gd= (GridData) group.getLayoutData();
+        	gd.grabExcessHorizontalSpace= true;
+        	fUseActiveBuildButton= ControlFactory.createRadioButton(group, DialogsMessages.IndexerStrategyBlock_activeBuildConfig, null, null);
+        	fUseFixedBuildConfig= ControlFactory.createRadioButton(group, DialogsMessages.IndexerBlock_fixedBuildConfig, null, null);
+        	fBuildConfigComboBox= ControlFactory.createSelectCombo(group, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        	final SelectionAdapter listener = new SelectionAdapter() {
+        		public void widgetSelected(SelectionEvent e) {
+        			setUseActiveBuildConfig(fUseActiveBuildButton.getSelection());
+        		}
+        	};
+			fUseActiveBuildButton.addSelectionListener(listener);
+			fUseFixedBuildConfig.addSelectionListener(listener);
+        }
+        
         initializeScope();
 		initializeIndexerCombo();
+		initializeBuildConfigs();
 		onPreferenceScopeChange();
         fParent.layout(true);
     }
 
+	protected boolean needBuildConfigOptions() {
+		if (fPrefScopeBlock == null || !(getContainer() instanceof PropertyPage)) {
+			return false;
+		}
+		IProject prj= getProject();
+		if (prj != null) {
+			ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+			if (prjDescMgr.isNewStyleProject(prj)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void updateBuildConfigForScope(int scope) {
+		if (fBuildConfigComboBox != null) {
+			if (scope == IndexerPreferences.SCOPE_INSTANCE) {
+		    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+		    	ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(false);
+		    	boolean useActive= prefs.getConfigurationReltations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE;
+		    	setUseActiveBuildConfig(useActive);
+			}
+		}
+	}		
+	
+	protected void setUseActiveBuildConfig(boolean useActive) {
+		if (fBuildConfigComboBox != null) {
+			if (useActive) {
+		    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+		    	ICProjectDescription prefs= prjDescMgr.getProjectDescription(getProject(), false);
+		    	selectBuildConfigInCombo(prefs.getActiveConfiguration().getName());
+				fBuildConfigComboBox.setEnabled(false);
+			}
+			else {
+				fBuildConfigComboBox.setEnabled(true);
+			}
+			fUseActiveBuildButton.setSelection(useActive);
+			fUseFixedBuildConfig.setSelection(!useActive);
+		}
+	}
+
 	private void enablePreferenceContent(boolean enable) {
 		if (fEnableState != null) {
 			fEnableState.restore();
+			if (fUseActiveBuildButton != null) {
+				fUseActiveBuildButton.setEnabled(true);
+				fUseFixedBuildConfig.setEnabled(true);
+			}
 		}
 		if (enable) {
 			fEnableState= null;
 		}
 		else {
 			fEnableState= ControlEnableState.disable(fPreferenceContent);
+			if (fUseActiveBuildButton != null) {
+				fUseActiveBuildButton.setEnabled(false);
+				fUseFixedBuildConfig.setEnabled(false);
+			}
 		}
 	}
 
@@ -211,8 +282,36 @@ public class IndexerBlock extends AbstractCOptionPage {
 		fIndexersComboBox.setItems(names);
 	}
 
+	private void initializeBuildConfigs() {
+		if (fBuildConfigComboBox != null) {
+	    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+	    	ICProjectDescription prefs= prjDescMgr.getProjectDescription(getProject(), false);
+	    	setUseActiveBuildConfig(prefs.getConfigurationReltations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
+	    	ICConfigurationDescription[] configs= prefs.getConfigurations();
+	    	String[] names= new String[configs.length];
+	    	for (int i = 0; i < configs.length; i++) {
+				ICConfigurationDescription config = configs[i];
+				names[i]= config.getName();
+			}
+			Arrays.sort(names, Collator.getInstance());
+			fBuildConfigComboBox.setItems(names);
+	        selectBuildConfigInCombo(prefs.getDefaultSettingConfiguration().getName());
+		}
+	}
+
+	private void selectBuildConfigInCombo(String useName) {
+		String[] names= fBuildConfigComboBox.getItems();
+		int selectedIndex = 0;
+		for (int i=0; i<names.length; i++){
+			if (names[i].equals(useName))
+				selectedIndex = i;
+		}
+		fBuildConfigComboBox.select(selectedIndex);
+	}
+	
     protected void onPreferenceScopeChange() {
     	int scope= computeScope();
+    	updateBuildConfigForScope(scope);
     	if (fCurrentProperties == null || scope != IndexerPreferences.SCOPE_PROJECT_PRIVATE) {
         	Properties props= IndexerPreferences.getProperties(getProject(), scope);
 
@@ -367,6 +466,24 @@ public class IndexerBlock extends AbstractCOptionPage {
     	
     	if (project != null) {
     		IndexerPreferences.setScope(project, scope);
+    	}
+    	
+    	if (fBuildConfigComboBox != null) {
+    		boolean useActive= fUseActiveBuildButton.getSelection();
+	    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+	    	ICProjectDescription prefs= prjDescMgr.getProjectDescription(getProject(), true);
+    		if (scope == IndexerPreferences.SCOPE_INSTANCE) {
+		    	prefs.useDefaultConfigurationRelations();
+    		}
+    		else {
+    			prefs.setConfigurationRelations(useActive
+    					? ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE 
+    				    : ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
+    		}
+    		if (!useActive) {
+    			prefs.setDefaultSettingConfiguration(prefs.getConfigurationByName(fBuildConfigComboBox.getText()));
+    		}
+    		prjDescMgr.setProjectDescription(getProject(), prefs);
     	}
     	CCoreInternals.savePreferences(project);
     }

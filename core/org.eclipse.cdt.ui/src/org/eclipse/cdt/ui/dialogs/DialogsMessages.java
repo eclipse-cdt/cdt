@@ -19,6 +19,7 @@ public class DialogsMessages extends NLS {
 	public static String AbstractIndexerPage_indexUpFront;
 	public static String AbstractIndexerPage_skipAllReferences;
 	public static String AbstractIndexerPage_skipTypeReferences;
+	public static String IndexerBlock_fixedBuildConfig;
 	public static String IndexerStrategyBlock_activeBuildConfig;
 	public static String IndexerStrategyBlock_autoUpdate;
 	public static String IndexerStrategyBlock_buildConfigGroup;

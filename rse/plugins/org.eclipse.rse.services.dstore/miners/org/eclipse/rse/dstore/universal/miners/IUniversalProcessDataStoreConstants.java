@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.processes;
+package org.eclipse.rse.dstore.universal.miners;
 
 public interface IUniversalProcessDataStoreConstants
 {

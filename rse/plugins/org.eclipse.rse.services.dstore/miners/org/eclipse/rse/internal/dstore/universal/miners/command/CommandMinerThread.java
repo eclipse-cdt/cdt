@@ -35,8 +35,8 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
-import org.eclipse.rse.dstore.universal.miners.command.CommandMiner;
-import org.eclipse.rse.dstore.universal.miners.environment.EnvironmentMiner;
+import org.eclipse.rse.dstore.universal.miners.CommandMiner;
+import org.eclipse.rse.dstore.universal.miners.EnvironmentMiner;
 import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.ParsedOutput;
 import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.Patterns;
 

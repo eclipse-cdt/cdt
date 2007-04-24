@@ -18,7 +18,7 @@ import java.io.OutputStream;
 
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
-import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalByteStreamHandler;
+import org.eclipse.rse.dstore.universal.miners.UniversalByteStreamHandler;
 
 public class DStoreOutputStream extends OutputStream 
 {

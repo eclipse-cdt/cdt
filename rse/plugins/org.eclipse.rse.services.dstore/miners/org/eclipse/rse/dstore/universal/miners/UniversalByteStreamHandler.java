@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.filesystem;
+package org.eclipse.rse.dstore.universal.miners;
 
 import java.io.File;
 import java.io.FileInputStream;

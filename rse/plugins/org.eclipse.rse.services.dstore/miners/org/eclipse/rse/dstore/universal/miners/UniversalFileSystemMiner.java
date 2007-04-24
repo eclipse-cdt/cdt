@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.filesystem;
+package org.eclipse.rse.dstore.universal.miners;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,9 +31,6 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.util.StringCompare;
-import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
-import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
-import org.eclipse.rse.dstore.universal.miners.UniversalServerUtilities;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.ClassFileParser;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileClassifier;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.UniversalDownloadHandler;

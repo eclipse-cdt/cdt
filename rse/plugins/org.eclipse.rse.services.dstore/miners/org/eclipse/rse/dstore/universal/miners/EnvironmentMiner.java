@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners.environment;
+package org.eclipse.rse.dstore.universal.miners;
 
 import java.io.BufferedReader;
 import java.io.IOException;

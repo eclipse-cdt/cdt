@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
-import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalFileSystemMiner;
+import org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.internal.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.services.clientserver.SystemSearchString;

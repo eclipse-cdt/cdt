@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
-import org.eclipse.rse.dstore.universal.miners.environment.EnvironmentMiner;
+import org.eclipse.rse.dstore.universal.miners.EnvironmentMiner;
 
 /**
  * QueryPathThread is used to determine available command completions

@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.browser.IndexTypeReference;
@@ -164,7 +163,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 				if(ibs.length>0) {
 					IIndexName[] names;
 					names= index.findNames(ibs[0], IIndex.FIND_DEFINITIONS);
-					if (names.length == 0 && elementType == ICElement.C_VARIABLE || elementType == ICElement.C_FUNCTION) {
+					if (names.length == 0) {
 						names= index.findNames(ibs[0], IIndex.FIND_DECLARATIONS);
 					}
 					for (int i = 0; i < names.length; i++) {

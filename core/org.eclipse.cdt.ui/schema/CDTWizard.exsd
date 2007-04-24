@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.managedbuilder.ui">
+<schema targetNamespace="org.eclipse.cdt.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.managedbuilder.ui" id="CDTWizard" name="CDTWizard"/>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="CDTWizard" name="CDTWizard"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]

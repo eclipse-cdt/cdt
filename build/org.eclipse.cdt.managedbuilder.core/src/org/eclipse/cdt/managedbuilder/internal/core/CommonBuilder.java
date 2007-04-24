@@ -851,7 +851,7 @@ public class CommonBuilder extends ACBuilder {
 
 		IBuilder builder = bInfo.getBuilder();
 		IConfiguration cfg = bInfo.getConfiguration();
-		boolean isParallel = builder.getParallelizationNum() != 0;
+		boolean isParallel = builder.isParallelBuildOn() && builder.getParallelizationNum() > 1;
 //		boolean buildIncrementaly = true;
 		boolean resumeOnErr = !builder.isStopOnError();
 		

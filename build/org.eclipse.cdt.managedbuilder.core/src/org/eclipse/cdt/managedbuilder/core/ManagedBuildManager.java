@@ -3713,7 +3713,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				}
 			}
 		} else {
-			fullPath = cfg.getOwner().getProject().getFullPath().append(cfg.getName());
+			fullPath = cfg.getOwner().getProject().getFullPath();
+			if(builder.isManagedBuildOn())
+				fullPath = fullPath.append(cfg.getName());
 		}
 		
 		return fullPath;

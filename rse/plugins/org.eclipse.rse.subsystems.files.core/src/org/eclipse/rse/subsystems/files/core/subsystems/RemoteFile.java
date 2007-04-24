@@ -1121,7 +1121,13 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		String encoding = RemoteFileEncodingManager.getInstance().getEncoding(getHostName(), getAbsolutePath());
 		
 		if (encoding == null) {
-			encoding = getParentRemoteFileSubSystem().getRemoteEncoding();
+			
+			if (isRoot()) {
+				encoding = getParentRemoteFileSubSystem().getRemoteEncoding();
+			}
+			else {
+				encoding = getParentRemoteFile().getEncoding();
+			}
 		}
 		
 		return encoding;

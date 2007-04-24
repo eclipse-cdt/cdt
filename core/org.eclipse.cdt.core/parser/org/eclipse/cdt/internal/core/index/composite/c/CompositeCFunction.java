@@ -43,33 +43,8 @@ class CompositeCFunction extends CompositeCBinding implements IIndexBinding, IFu
 	}
 	
 	public IFunctionType getType() throws DOMException {
-		/* @see PDOMCFunction.getType() */
-		return new IFunctionType() {
-			public IType[] getParameterTypes() throws DOMException {
-				IType[] preresult = ((IFunctionType)rbinding).getParameterTypes();
-				IType[] result = new IType[preresult.length];
-				for(int i=0; i<preresult.length; i++) {
-					assert preresult!=null;
-					result[i] = cf.getCompositeType((IIndexType)preresult[i]);
-				}
-				return result;
-			}
-
-			public IType getReturnType() throws DOMException {
-				IType type = ((IFunction)rbinding).getType().getReturnType();
-				return cf.getCompositeType((IIndexType)type);
-			}
-
-			public boolean isSameType(IType type) {
-				try {
-					return ((IFunction)rbinding).getType().isSameType(type);
-				} catch(DOMException de) {
-					return false;
-				}
-			}
-			
-			public Object clone() {fail(); return null;}
-		};
+		IType rtype = ((IFunction)rbinding).getType();
+		return (IFunctionType) cf.getCompositeType((IIndexType)rtype);
 	}
 
 	public boolean isAuto() throws DOMException {

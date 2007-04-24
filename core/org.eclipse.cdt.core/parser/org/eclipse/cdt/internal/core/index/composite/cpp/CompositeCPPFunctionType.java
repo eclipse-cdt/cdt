@@ -10,14 +10,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.index.composite.CompositeTypeContainer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.internal.core.index.composite.CompositeFunctionType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPReferenceType extends CompositeTypeContainer implements ICPPReferenceType {
-	public CompositeCPPReferenceType(ICPPReferenceType referenceType, ICompositesFactory cf) throws DOMException {
-		super((ITypeContainer) referenceType, cf);
+public class CompositeCPPFunctionType extends CompositeFunctionType implements ICPPFunctionType {
+
+	public CompositeCPPFunctionType(ICPPFunctionType rtype,
+			ICompositesFactory cf) {
+		super(rtype, cf);
+	}
+
+	public boolean isConst() {
+		return ((ICPPFunctionType)type).isConst();
+	}
+
+	public boolean isVolatile() {
+		return ((ICPPFunctionType)type).isVolatile();
+	}
+	
+	public Object clone() {
+		fail(); return null;
 	}
 }

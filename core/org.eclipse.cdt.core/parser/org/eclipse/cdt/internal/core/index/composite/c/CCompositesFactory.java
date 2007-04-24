@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.AbstractCompositeFactory;
 import org.eclipse.cdt.internal.core.index.composite.CompositeArrayType;
+import org.eclipse.cdt.internal.core.index.composite.CompositeFunctionType;
 import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
 import org.eclipse.cdt.internal.core.index.composite.CompositeQualifierType;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
@@ -71,6 +73,8 @@ public class CCompositesFactory extends AbstractCompositeFactory implements ICom
 		
 		if(rtype==null) {
 			result = null;
+		} else if(rtype instanceof IFunctionType) {
+			result = new CompositeFunctionType((IFunctionType)rtype, this);
 		} else if(rtype instanceof ICompositeType) {
 			result = (ICompositeType) getCompositeBinding((IIndexFragmentBinding) rtype);
 		} else if (rtype instanceof IEnumeration) {

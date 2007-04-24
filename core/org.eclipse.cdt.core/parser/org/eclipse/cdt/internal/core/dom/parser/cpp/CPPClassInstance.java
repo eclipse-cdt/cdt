@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * @author aniefer
@@ -173,13 +174,15 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
     public boolean isSameType( IType type ) {
         if( type == this )
             return true;
-        if( type instanceof ITypedef )
-            return ((ITypedef)type).isSameType( this );
+        if( type instanceof ITypedef || type instanceof IIndexType )
+            return type.isSameType( this );
         if( type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType )
         	return type.isSameType( this );  //the CPPDeferredClassInstance has some fuzziness
         
         if( type instanceof ICPPTemplateInstance ){
-        	if( getSpecializedBinding() != ((ICPPTemplateInstance)type).getTemplateDefinition() )
+        	ICPPClassType ct1= (ICPPClassType) getSpecializedBinding();
+        	ICPPClassType ct2= (ICPPClassType) ((ICPPTemplateInstance)type).getTemplateDefinition();
+        	if(!ct1.isSameType(ct2))
         		return false;
         	
         	ObjectMap m1 = getArgumentMap(), m2 = ((ICPPTemplateInstance)type).getArgumentMap();
@@ -199,5 +202,9 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 
 	public ICPPClassType[] getNestedClasses() throws DOMException {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
+	}
+	
+	public boolean equals(Object obj) {
+		return obj instanceof ICPPClassType ? isSameType((ICPPClassType)obj) : false;
 	}
 }

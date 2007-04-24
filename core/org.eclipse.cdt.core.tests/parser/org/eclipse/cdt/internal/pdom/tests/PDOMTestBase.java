@@ -153,7 +153,11 @@ public class PDOMTestBase extends BaseTestCase {
 		} else {
 			assertEquals(0, count);
 		}
-
+	}
+	
+	protected void assertNameCount(PDOM pdom, IBinding binding, int options, int count) throws CoreException {
+		IName[] names = pdom.findNames(binding, options);
+		assertUniqueNameCount(names, count);
 	}
 
 	/**
@@ -215,7 +219,11 @@ public class PDOMTestBase extends BaseTestCase {
 		}
 	}
 
-
+	protected void assertInstance(Object o, Class c) {
+		assertNotNull(o);
+		assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+	}
+	
 	public static Pattern[] makePatternArray(String[] args) {
 		List preresult = new ArrayList();
 		for(int i=0; i<args.length; i++) {

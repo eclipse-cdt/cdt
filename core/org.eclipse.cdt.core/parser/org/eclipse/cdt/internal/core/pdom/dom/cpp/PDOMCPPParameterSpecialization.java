@@ -25,9 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  * 
  */
-class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization
-		implements ICPPParameter {
-	
+class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements ICPPParameter {
 	/**
 	 * Offset of pointer to the next parameter (relative to the
 	 * beginning of the record).
@@ -44,6 +42,14 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization
 	 * The size in bytes of a PDOMCPPParameterSpecialization record in the database.
 	 */
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
+
+	public PDOMCPPParameterSpecialization(PDOM pdom, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, int typeRecord)
+	throws CoreException {
+		super(pdom, parent, (ICPPSpecialization) param, specialized);
+		Database db = pdom.getDB();
+		db.putInt(record + NEXT_PARAM, 0);
+		db.putInt(record + TYPE, typeRecord);
+	}
 
 	public PDOMCPPParameterSpecialization(PDOM pdom, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, IType type)
 			throws CoreException {

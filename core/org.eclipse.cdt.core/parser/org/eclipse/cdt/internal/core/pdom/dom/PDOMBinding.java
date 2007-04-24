@@ -268,16 +268,35 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	}
 
 	public int compareTo(Object other) {
-		if(other instanceof PDOMBinding) {
-			PDOMBinding otherBinding = (PDOMBinding) other;
-			int cmp = comparePDOMBindingQNs(this, otherBinding);
-			if(cmp==0) {
-				int t1 = getNodeType();
-				int t2 = otherBinding.getNodeType();
-				return t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
+		if(other==null)
+			return 1;
+		
+		if(other instanceof IBinding) {
+			if(!(other instanceof PDOMBinding)) {
+				try {
+					other= getLinkageImpl().adaptBinding((IBinding)other);
+				} catch(CoreException ce) {
+					CCorePlugin.log(ce);
+				}
 			}
-			return cmp;
+			if(other instanceof PDOMBinding) {
+				PDOMBinding otherBinding = (PDOMBinding) other;
+				int cmp = comparePDOMBindingQNs(this, otherBinding);
+				if(cmp==0) {
+					int t1 = getNodeType();
+					int t2 = otherBinding.getNodeType();
+					return t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
+				}
+				return cmp;
+			}
+			if(other==null)
+				return 1;
+			throw new PDOMNotImplementedError(""+other); //$NON-NLS-1$
 		}
-		throw new PDOMNotImplementedError();
+		return -1;
+	}
+	
+	public boolean equals(Object o) {
+		return compareTo(o)==0;
 	}
 }

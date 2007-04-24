@@ -19,11 +19,15 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -54,6 +58,21 @@ public class CPPFunctionTests extends PDOMTestBase {
 		if (project != null) {
 			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 		}
+	}
+	
+	public void testPointerToFunctionType() throws Exception {
+		assertDeclarationCount(pdom, "int2intPtr", 1);
+		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {"int2intPtr".toCharArray()}, IndexFilter.ALL, NPM);
+		assertEquals(1, b.length);
+		assertInstance(b[0], ICPPVariable.class);
+		ICPPVariable v= (ICPPVariable) b[0];
+		assertInstance(v.getType(), IPointerType.class);
+		IPointerType pt= (IPointerType) v.getType();
+		assertInstance(pt.getType(), IFunctionType.class);
+		IFunctionType ft= (IFunctionType) pt.getType();
+		assertInstance(ft.getReturnType(), ICPPBasicType.class);
+		assertEquals(1, ft.getParameterTypes().length);
+		assertInstance(ft.getParameterTypes()[0], ICPPBasicType.class);
 	}
 	
 	public void testFunctionType() throws Exception {

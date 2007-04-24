@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -28,6 +30,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexInternalTemplateParameter;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -162,5 +166,26 @@ class PDOMCPPOverloaderUtil {
 	public static Integer getSignatureMemento(IBinding binding) throws CoreException, DOMException {
 		String sig = getSignature(binding);
 		return sig.length() == 0 ? null : new Integer(sig.hashCode());
+	}
+	
+	public static Integer getSignatureMemento(ICPPFunctionType type) throws DOMException {
+		String sig= getFunctionParameterString(type); 
+		return sig.length() == 0 ? null : new Integer(sig.hashCode());
+	}
+	
+	public static int compare(IPDOMOverloader a, Object b) {
+		if(b instanceof IPDOMOverloader) {
+			IPDOMOverloader bb= (IPDOMOverloader) b;
+			try {
+				int mySM = a.getSignatureMemento();
+				int otherSM = bb.getSignatureMemento();
+				return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
+			} catch(CoreException ce) {
+				CCorePlugin.log(ce);
+			}
+		} else {
+			throw new PDOMNotImplementedError(b.getClass().toString());
+		}
+		return 0;
 	}
 }

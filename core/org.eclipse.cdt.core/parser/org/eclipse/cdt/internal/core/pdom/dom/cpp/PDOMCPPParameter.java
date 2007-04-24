@@ -67,15 +67,15 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IIndexFra
 	}
 
 	public PDOMCPPParameter(PDOM pdom, PDOMNode parent, IParameter param, IType type)
-			throws CoreException {
+	throws CoreException {
 		super(pdom, parent, param.getNameCharArray());
-		
+
 		Database db = pdom.getDB();
 
 		db.putInt(record + NEXT_PARAM, 0);
 		byte flags= encodeFlags(param);
 		db.putByte(record + FLAGS, flags);
-		
+
 		try {
 			if (type == null) 
 				type= param.getType();
@@ -86,6 +86,19 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IIndexFra
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
+	}
+	
+	public PDOMCPPParameter(PDOM pdom, PDOMNode parent, IParameter param, int typeRecord)
+			throws CoreException {
+		super(pdom, parent, param.getNameCharArray());
+		
+		Database db = pdom.getDB();
+
+		db.putInt(record + NEXT_PARAM, 0);
+		byte flags= encodeFlags(param);
+		db.putByte(record + FLAGS, flags);
+		
+		db.putInt(record + TYPE, typeRecord);
 	}
 
 	private byte encodeFlags(IParameter param) {

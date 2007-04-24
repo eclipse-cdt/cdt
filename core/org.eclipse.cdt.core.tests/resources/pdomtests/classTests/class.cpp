@@ -12,6 +12,13 @@ int main() {
 	b.f();
 }
 
+class Z {
+  public:
+  Z (*f)(Z);
+};
+
+Z zzz= *new Z();
+
 class C {
   public:
      C(int a) {}

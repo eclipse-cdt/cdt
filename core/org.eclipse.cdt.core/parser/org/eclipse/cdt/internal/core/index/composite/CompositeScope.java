@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -80,6 +81,8 @@ public abstract class CompositeScope implements IIndexScope {
 			);
 		} else if(binding == null) {
 			return null;
+		} else if(binding instanceof ICPPSpecialization) {
+			return binding;
 		}
 		CCorePlugin.log("CompositeFactory unsure how to process: "+binding.getClass().getName()); //$NON-NLS-1$
 		return binding;

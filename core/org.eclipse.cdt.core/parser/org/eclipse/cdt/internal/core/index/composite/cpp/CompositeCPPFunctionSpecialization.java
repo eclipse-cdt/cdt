@@ -16,11 +16,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction
-implements IIndexType, ICPPFunction, ICPPSpecialization {
+implements ICPPFunction, ICPPSpecialization {
 
 	public CompositeCPPFunctionSpecialization(ICompositesFactory cf, ICPPFunction ft) {
 		super(cf, (ICPPFunction) ft);

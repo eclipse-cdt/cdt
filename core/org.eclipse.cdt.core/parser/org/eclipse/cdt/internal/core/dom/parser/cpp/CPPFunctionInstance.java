@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -23,8 +24,10 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -154,5 +157,31 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
     public IBinding resolveParameter( IASTParameterDeclaration param ) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    public boolean equals(Object obj) {
+    	if( (obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)){
+    		try {
+    			ICPPFunctionType ct1= (ICPPFunctionType) ((ICPPFunction)getSpecializedBinding()).getType();
+    			ICPPFunctionType ct2= (ICPPFunctionType) ((ICPPFunction)((ICPPTemplateInstance)obj).getTemplateDefinition()).getType();
+    			if(!ct1.isSameType(ct2))
+    				return false;
+
+    			ObjectMap m1 = getArgumentMap(), m2 = ((ICPPTemplateInstance)obj).getArgumentMap();
+    			if( m1 == null || m2 == null || m1.size() != m2.size())
+    				return false;
+    			for( int i = 0; i < m1.size(); i++ ){
+    				IType t1 = (IType) m1.getAt( i );
+    				IType t2 = (IType) m2.getAt( i );
+    				if( t1 == null || ! t1.isSameType( t2 ) )
+    					return false;
+    			}
+    			return true;
+    		} catch(DOMException de) {
+    			CCorePlugin.log(de);
+    		}
+    	}
+
+    	return false;
     }
 }

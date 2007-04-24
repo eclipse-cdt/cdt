@@ -146,7 +146,9 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
         	return type.isSameType( this );  //the CPPDeferredClassInstance has some fuzziness
         
         if( type instanceof ICPPTemplateInstance ){
-        	if( getSpecializedBinding() != ((ICPPTemplateInstance)type).getTemplateDefinition() )
+        	ICPPClassType ct1= (ICPPClassType) getSpecializedBinding();
+        	ICPPClassType ct2= (ICPPClassType) ((ICPPTemplateInstance)type).getTemplateDefinition();
+        	if(!ct1.isSameType(ct2))
         		return false;
         	
         	ObjectMap m1 = getArgumentMap(), m2 = ((ICPPTemplateInstance)type).getArgumentMap();

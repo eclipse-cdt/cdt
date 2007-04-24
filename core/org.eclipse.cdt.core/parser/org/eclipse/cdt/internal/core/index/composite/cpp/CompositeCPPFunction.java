@@ -17,12 +17,11 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, ICPPFunctionType, IIndexType {
+class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 
 	public CompositeCPPFunction(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
@@ -49,7 +48,8 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 	}
 
 	public IFunctionType getType() throws DOMException {
-		return this;
+		IType rtype = ((ICPPFunction)rbinding).getType();
+		return (IFunctionType) cf.getCompositeType((IIndexType)rtype);
 	}
 
 	public boolean isAuto() throws DOMException {
@@ -70,30 +70,6 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 
 	public boolean takesVarArgs() throws DOMException {
 		return ((ICPPFunction)rbinding).takesVarArgs();
-	}
-
-	public boolean isConst() {
-		return ((ICPPFunctionType)rbinding).isConst();
-	}
-
-	public boolean isVolatile() {
-		return ((ICPPFunctionType)rbinding).isVolatile();
-	}
-
-	public IType[] getParameterTypes() throws DOMException {
-		IType[] result = ((ICPPFunctionType)rbinding).getParameterTypes();
-		for(int i=0; i<result.length; i++) {
-			result[i] = cf.getCompositeType((IIndexType)result[i]);
-		}
-		return result;
-	}
-
-	public IType getReturnType() throws DOMException {
-		return cf.getCompositeType((IIndexType)((ICPPFunctionType)rbinding).getReturnType());
-	}
-
-	public boolean isSameType(IType type) {
-		return ((ICPPFunctionType)rbinding).isSameType(type);
 	}
 
 	public Object clone() {

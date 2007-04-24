@@ -13,7 +13,6 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
@@ -66,31 +65,5 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	
 	public boolean hasName(char[] name) throws CoreException {
 		return getDBName().equals(name);
-	}
-
-	/**
-	 * Convenience method for fetching a byte from the database.
-	 * @param offset Location of the byte.
-	 * @return a byte from the database.
-	 */
-	protected byte getByte(int offset) {
-		try {
-			return pdom.getDB().getByte(offset);
-		}
-		catch (CoreException e) {
-			CCorePlugin.log(e);
-			return 0;
-		}
-	}
-
-	/**
-	 * Returns the bit at the specified offset in a bit vector.
-	 * @param bitVector Bits.
-	 * @param offset The position of the desired bit.
-	 * @return the bit at the specified offset.
-	 */
-	protected boolean getBit(int bitVector, int offset) {
-		int mask = 1 << offset;
-		return (bitVector & mask) == mask;
 	}
 }

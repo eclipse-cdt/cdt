@@ -8,27 +8,22 @@
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
+
 package org.eclipse.cdt.internal.core.index.composite;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
-public class CompositeQualifierType extends CompositeTypeContainer implements IQualifierType, ITypeContainer {
-	public CompositeQualifierType(IQualifierType qualifierType, ICompositesFactory cf) throws DOMException {
-		super((ITypeContainer) qualifierType, cf);
+public class CompositeTypeContainer extends CompositeType implements ITypeContainer {
+
+	protected CompositeTypeContainer(ITypeContainer rtype, ICompositesFactory cf) {
+		super(rtype, cf);
 	}
 
-	public boolean isConst() throws DOMException {
-		return ((IQualifierType)type).isConst();
+	public final IType getType() throws DOMException {
+		return cf.getCompositeType((IIndexType)((ITypeContainer)type).getType());
 	}
 
-	public boolean isVolatile() throws DOMException {
-		return ((IQualifierType)type).isVolatile();
-	}
-
-	public boolean isSameType(IType other) {		
-		return ((IQualifierType)type).isSameType(other);
-	}
 }

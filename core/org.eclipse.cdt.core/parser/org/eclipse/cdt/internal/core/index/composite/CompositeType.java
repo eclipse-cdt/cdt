@@ -10,19 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * Represents an index-contexting carrying type
  */
-public abstract class CompositeType implements IType, IIndexType, ITypeContainer {
-	protected final ITypeContainer type;
+public abstract class CompositeType implements IType, IIndexType {
+	protected final IType type;
 	protected final ICompositesFactory cf; 
 	
-	protected CompositeType(ITypeContainer rtype, ICompositesFactory cf) {
+	protected CompositeType(IType rtype, ICompositesFactory cf) {
 		this.type = rtype;
 		this.cf = cf;
 	}
@@ -38,11 +36,7 @@ public abstract class CompositeType implements IType, IIndexType, ITypeContainer
 	public final void setType(IType type) {
 		fail();
 	}
-	
-	public final IType getType() throws DOMException {
-		return cf.getCompositeType((IIndexType)type.getType());
-	}
-	
+		
 	protected void fail() {
 		throw new CompositingNotImplementedError("Compositing feature (for IType) not implemented"); //$NON-NLS-1$
 	}

@@ -395,4 +395,12 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.accept(visitor);
 	}
+	
+	public String toString() {
+		String result= super.toString();
+		ObjectMap map= getArgumentMap();
+		for(int i=0; i<map.size(); i++)
+			result+=" <"+map.keyAt(i)+"=>"+getArgumentMap().getAt(i)+">";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return result;
+	}
 }

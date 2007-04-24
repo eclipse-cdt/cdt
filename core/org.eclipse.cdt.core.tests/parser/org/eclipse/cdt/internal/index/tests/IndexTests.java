@@ -17,7 +17,6 @@ import junit.framework.TestSuite;
  * Test suite for the indexer tests
  */
 public class IndexTests extends TestSuite {
-
 	public static Test suite() {
 		TestSuite suite = new IndexTests();
 		
@@ -32,11 +31,11 @@ public class IndexTests extends TestSuite {
 		suite.addTest(IndexProviderManagerTest.suite());
 		
 		IndexCBindingResolutionTest.addTests(suite);
+		IndexCPPTemplateResolutionTest.addTests(suite);
 		IndexCPPBindingResolutionTest.addTests(suite);
 		IndexCBindingResolutionBugs.addTests(suite);
 		IndexBindingResolutionBugs.addTests(suite);
 		
 		return suite;
-	}
-	
+	}	
 }

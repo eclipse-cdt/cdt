@@ -45,6 +45,7 @@ public class PDOMTests extends TestSuite {
 		suite.addTest(CPPFunctionTests.suite());
 		suite.addTest(CPPVariableTests.suite());
 		suite.addTest(CPPClassTemplateTests.suite());
+		suite.addTest(CPPFunctionTemplateTests.suite());
 		suite.addTest(MethodTests.suite());
 		suite.addTest(NamespaceTests.suite());
 		

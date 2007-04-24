@@ -27,16 +27,15 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -61,70 +60,32 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		suite.addTest(suite(ProjectWithDepProj.class));
 	}
 	
-	// // header file
-	//	template <class T>
-	//	T left(T a, T b) {
-	//	   	return a;
-	//	}
-	//  void sanity() {}
+	// int (*f)(int);
+	// int g(int n){return n;}
+	// int g(int n, int m){ return n+m; }
 	
-	//  void foo() { sanity(); }
-	//	class Int {};
-	//	Int a,b;
-	//	Int c= left(a,b);
-	public void testSimpleFunctionTemplate() {
-		IBinding b0 = getBindingFromASTName("sanity();", 6);
-		IBinding b1 = getBindingFromASTName("left(a,b)", 4);
-	}
-	
-	// //header file
-	//
-	// template<typename T>
-	// class Foo {};
-	//
-	// class B {};
-	//
-	// template<>	
-	// class Foo<B> {};
-	
-	// Foo<B> b1; 
-	//
-	// class A {};
-	//
-	// template<>
-	// class Foo<A> {};
-	//
-	// Foo<B> b2;
-	public void _testClassSpecializationInHeader() {
-		IBinding b1a = getBindingFromASTName("Foo<B> b1;", 3);
-		IBinding b1b = getBindingFromASTNameWithRawSignature("Foo<B> b1;", "Foo<B>");
+	// void foo() {
+	//    f= g;
+	// }
+	public void testPointerToFunction() throws Exception {
+		IBinding b0 = getBindingFromASTName("f= g;", 1);		
+		IBinding b1 = getBindingFromASTName("g;", 1);
 		
-		assertInstance(b1a, ICPPClassType.class);
-		assertInstance(b1a, ICPPClassTemplate.class);
+		assertInstance(b0, ICPPVariable.class);
+		ICPPVariable v0= (ICPPVariable) b0;
+		assertInstance(v0.getType(), IPointerType.class);
+		IPointerType p0= (IPointerType) v0.getType();
+		assertInstance(p0.getType(), ICPPFunctionType.class);
+		ICPPFunctionType f0= (ICPPFunctionType) p0.getType();
+		assertInstance(f0.getReturnType(), ICPPBasicType.class);
+		assertEquals(1, f0.getParameterTypes().length);
+		assertInstance(f0.getParameterTypes()[0], ICPPBasicType.class);
 		
-		assertInstance(b1b, ICPPClassType.class);
-		assertInstance(b1b, ICPPSpecialization.class);
-		ICPPSpecialization b1spc= (ICPPSpecialization) b1b;
-		ObjectMap b1om= b1spc.getArgumentMap();
-		assertEquals(1, b1om.keyArray().length);
-		assertInstance(b1om.getAt(0), ICPPClassType.class);
-		ICPPClassType b1pct= (ICPPClassType) b1om.getAt(0);
-		assertEquals("B", b1pct.getName());
-		
-		IBinding b2a = getBindingFromASTName("Foo<B> b2;", 3);
-		IBinding b2b = getBindingFromASTNameWithRawSignature("Foo<B> b2;", "Foo<B>");
-		
-		assertInstance(b2a, ICPPClassType.class);
-		assertInstance(b2a, ICPPClassTemplate.class);
-		
-		assertInstance(b2b, ICPPClassType.class);
-		assertInstance(b2b, ICPPSpecialization.class);
-		ICPPSpecialization b2spc= (ICPPSpecialization) b2b;
-		ObjectMap b2om= b2spc.getArgumentMap();
-		assertEquals(1, b2om.keyArray().length);
-		assertInstance(b2om.getAt(0), ICPPClassType.class);
-		ICPPClassType b2pct= (ICPPClassType) b2om.getAt(0);
-		assertEquals("B", b2pct.getName());
+		assertInstance(b1, ICPPFunction.class);
+		ICPPFunctionType f1= (ICPPFunctionType) ((ICPPFunction)b1).getType();
+		assertInstance(f1.getReturnType(), ICPPBasicType.class);
+		assertEquals(1, f1.getParameterTypes().length);
+		assertInstance(f1.getParameterTypes()[0], ICPPBasicType.class);
 	}
 
 	// // header file

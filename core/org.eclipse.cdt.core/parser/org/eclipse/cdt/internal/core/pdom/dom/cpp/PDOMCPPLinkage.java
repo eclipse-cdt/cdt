@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -40,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -131,6 +131,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPP_CONSTRUCTOR_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 37;
 	public static final int CPP_CLASS_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 38;
 	public static final int CPP_TYPEDEF_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 39;
+	public static final int CPP_FUNCTION_TYPE= PDOMLinkage.LAST_NODE_TYPE + 40;
 	
 	private class ConfigureTemplate implements Runnable {
 		ICPPTemplateDefinition template;
@@ -185,32 +186,23 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	
 	private class ConfigureFunctionTemplate implements Runnable {
 		PDOMCPPFunctionTemplate template;
-		ICPPFunction binding;
+		ICPPFunction function;
 		
 		public ConfigureFunctionTemplate(PDOMCPPFunctionTemplate template, ICPPFunction binding) {
 			this.template = template;
-			this.binding = binding;
+			this.function = binding;
 		}
 		
 		public void run() {
 			try {
-				IFunctionType ft = binding.getType();
-				template.setReturnType(ft.getReturnType());
-				
-				IParameter[] params= binding.getParameters();
-				IType[] paramTypes= ft.getParameterTypes();
-				
-				for (int i=0; i<params.length; ++i) {
-					IType pt= i<paramTypes.length ? paramTypes[i] : null;
-					template.setFirstParameter(new PDOMCPPParameter(pdom, PDOMCPPLinkage.this, params[i], pt));
-				}
+				template.initData(function);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 			} finally {
 				template = null;
-				binding = null;
+				function = null;
 			}
 		}
 	}
@@ -511,6 +503,8 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		else if (binding instanceof ICPPMethod)
 			// this must be before functions
 			return CPPMETHOD;
+		else if (binding instanceof ICPPFunctionType)
+			return CPP_FUNCTION_TYPE;
 		else if (binding instanceof ICPPFunction)
 			return CPPFUNCTION;
 		else if (binding instanceof ICPPClassTemplate)
@@ -574,6 +568,9 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		}
 		if (type instanceof ICPPBasicType) {
 			return new PDOMCPPBasicType(pdom, parent, (ICPPBasicType) type);
+		}
+		if (type instanceof ICPPFunctionType) {
+			return new PDOMCPPFunctionType(pdom, parent, (ICPPFunctionType) type);
 		}
 		if (type instanceof ICPPClassType) {
 			return addBinding((ICPPClassType) type);
@@ -695,6 +692,8 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPClassTemplateSpecialization(pdom, record);
 		case CPP_TYPEDEF_SPECIALIZATION:
 			return new PDOMCPPTypedefSpecialization(pdom, record);
+		case CPP_FUNCTION_TYPE:
+			return new PDOMCPPFunctionType(pdom, record);
 		default:
 			return super.getNode(record);
 		}

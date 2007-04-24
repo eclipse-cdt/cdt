@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -44,10 +43,10 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	public static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
 	
 	/**
-	 * Offset for return type of this function (relative to
+	 * Offset for the type of this function (relative to
 	 * the beginning of the record).
 	 */
-	private static final int RETURN_TYPE = PDOMBinding.RECORD_SIZE + 8;
+	private static final int FUNCTION_TYPE = PDOMBinding.RECORD_SIZE + 8;
 	
 	/**
 	 * Offset of annotation information (relative to the beginning of the
@@ -65,11 +64,11 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		
 		try {
 			IFunctionType ft= function.getType();
-			IType rt= ft.getReturnType();
-			if (rt != null) {
-				PDOMNode typeNode = getLinkageImpl().addType(this, rt);
+	
+			if (ft != null) {
+				PDOMNode typeNode = getLinkageImpl().addType(this, ft);
 				if (typeNode != null) {
-					pdom.getDB().putInt(record + RETURN_TYPE, typeNode.getRecord());
+					pdom.getDB().putInt(record + FUNCTION_TYPE, typeNode.getRecord());
 				}
 			}
 			
@@ -116,18 +115,13 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		 * we can't use the convenient idea of having PDOMCFunction implement
 		 * both the IType and IBinding subinterfaces. 
 		 */
-		return new IFunctionType() {
-			public Object clone() { fail(); return null;	}
-			public IType[] getParameterTypes() throws DOMException {
-				return PDOMCFunction.this.getParameterTypes();
-			}
-			public IType getReturnType() throws DOMException {
-				return PDOMCFunction.this.getReturnType();
-			}
-			public boolean isSameType(IType type) {
-				fail(); return false;
-			}
-		};
+		try {
+			int offset= pdom.getDB().getInt(record + FUNCTION_TYPE);
+			return offset==0 ? null : new PDOMCFunctionType(pdom, offset); 
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+			return null;
+		}
 	}
 
 	public boolean isStatic() throws DOMException {
@@ -154,22 +148,6 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		}
 	}
 	
-	public IType[] getParameterTypes() throws DOMException {
-		try {
-			int n = pdom.getDB().getInt(record + NUM_PARAMS);
-			IType[] types = new IType[n];
-			PDOMCParameter param = getFirstParameter();
-			while (param != null) {
-				types[--n] = param.getType();
-				param = param.getNextParameter();
-			}
-			return types;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new IType[0];
-		}
-	}
-	
 	public boolean isAuto() throws DOMException {
 		// ISO/IEC 9899:TC1 6.9.1.4
 		return false;
@@ -186,18 +164,6 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	public boolean takesVarArgs() throws DOMException {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.VARARGS_OFFSET);
-	}
-	
-	public IType getReturnType() throws DOMException {
-		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + RETURN_TYPE));
-			if (node instanceof IType) {
-				return (IType) node;
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
 	}
 	
 	public IScope getFunctionScope() throws DOMException {

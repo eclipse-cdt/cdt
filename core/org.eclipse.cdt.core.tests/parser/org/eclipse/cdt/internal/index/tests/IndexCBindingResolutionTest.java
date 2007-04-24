@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -46,6 +48,33 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	
 	public IndexCBindingResolutionTest() {
 		setStrategy(new SinglePDOMTestStrategy(false));
+	}
+	
+	// int (*f)(int);
+	// int g(int n){return n;}
+	
+	// void foo() {
+	//    f= g;
+	// }
+	public void testPointerToFunction() throws Exception {
+		IBinding b0 = getBindingFromASTName("f= g;", 1);		
+		IBinding b1 = getBindingFromASTName("g;", 1);
+		
+		assertInstance(b0, IVariable.class);
+		IVariable v0= (IVariable) b0;
+		assertInstance(v0.getType(), IPointerType.class);
+		IPointerType p0= (IPointerType) v0.getType();
+		assertInstance(p0.getType(), IFunctionType.class);
+		IFunctionType f0= (IFunctionType) p0.getType();
+		assertInstance(f0.getReturnType(), IBasicType.class);
+		assertEquals(1, f0.getParameterTypes().length);
+		assertInstance(f0.getParameterTypes()[0], IBasicType.class);
+		
+		assertInstance(b1, IFunction.class);
+		IFunctionType f1= ((IFunction)b1).getType();
+		assertInstance(f1.getReturnType(), IBasicType.class);
+		assertEquals(1, f1.getParameterTypes().length);
+		assertInstance(f1.getParameterTypes()[0], IBasicType.class);
 	}
 	
 	//	// header file

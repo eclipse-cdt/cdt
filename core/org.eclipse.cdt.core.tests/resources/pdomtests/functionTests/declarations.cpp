@@ -18,4 +18,7 @@ void spin() {
 	normalDeclaration2();
 	forwardDeclaration();
 }
+
+int (*int2intPtr)(int);
+
 	

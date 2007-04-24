@@ -16,14 +16,10 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -35,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  * 
  */
-class PDOMCPPMethod extends PDOMCPPFunction implements IIndexType, ICPPMethod, ICPPFunctionType {
+class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	/**
 	 * Offset of remaining annotation information (relative to the beginning of
@@ -59,9 +55,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements IIndexType, ICPPMethod, I
 		Database db = pdom.getDB();
 
 		try {
-			ICPPFunctionType type = (ICPPFunctionType) method.getType();
 			byte annotation = 0;
-			annotation |= PDOMCAnnotation.encodeCVQualifiers(type) << CV_OFFSET;
 			annotation |= PDOMCPPAnnotation.encodeExtraAnnotation(method);
 			db.putByte(record + ANNOTATION1, annotation);
 		} catch (DOMException e) {
@@ -99,10 +93,6 @@ class PDOMCPPMethod extends PDOMCPPFunction implements IIndexType, ICPPMethod, I
 	
 	public IScope getFunctionScope() throws DOMException {
 		throw new PDOMNotImplementedError();
-	}
-
-	public IFunctionType getType() throws DOMException {
-		return this;
 	}
 
 	public boolean isExtern() throws DOMException {
@@ -143,9 +133,5 @@ class PDOMCPPMethod extends PDOMCPPFunction implements IIndexType, ICPPMethod, I
 
 	public boolean isVolatile() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
-	}
-
-	public boolean isSameType(IType type) {	
-		return super.isSameType(type);
 	}
 }

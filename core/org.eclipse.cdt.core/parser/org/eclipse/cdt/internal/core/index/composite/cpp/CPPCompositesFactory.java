@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -114,6 +115,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 			result = new CompositeCPPTypedef(this, (ICPPBinding) rtype);
 		} else if (rtype instanceof IEnumeration) {
 			result = (IEnumeration) getCompositeBinding((IIndexFragmentBinding) rtype);
+		} else if(rtype instanceof ICPPFunctionType) {
+			result = new CompositeCPPFunctionType((ICPPFunctionType) rtype, this); 
 		} else if(rtype instanceof ICPPPointerToMemberType) {
 			result = new CompositeCPPPointerToMemberType(this, (ICPPPointerToMemberType)rtype);
 		} else if(rtype instanceof IPointerType) {

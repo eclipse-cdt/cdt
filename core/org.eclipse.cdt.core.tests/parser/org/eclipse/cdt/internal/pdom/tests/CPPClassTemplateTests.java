@@ -17,6 +17,9 @@ import junit.framework.Test;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -50,10 +53,11 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	}
 	
 	public void setUp() throws Exception {
-		cproject= CProjectHelper.createCCProject("classTemplateTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);		
+		cproject= CProjectHelper.createCCProject("classTemplateTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+		setUpSections(1);
 	}
 	
-	protected void setUpSpecifics(int sections) throws Exception {
+	protected void setUpSections(int sections) throws Exception {
 		StringBuffer[] contents= TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
 		for(int i=0; i<contents.length; i++) {
@@ -77,13 +81,56 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	
 	/*************************************************************************/
 	
+	//	template<typename T>
+	//	class Foo {};
+	//
+	//	class A{}; class B{};
+	//
+	//	template<>
+	//	class Foo<A> {};
+	//
+	//	Foo<A> a;
+	//	Foo<B> b;
+	public void testSpecializations() throws Exception {
+		IBinding[] as= pdom.findBindings(new char[][]{{'a'}}, IndexFilter.ALL, NPM);
+		IBinding[] bs= pdom.findBindings(new char[][]{{'b'}}, IndexFilter.ALL, NPM);
+		
+		assertEquals(1, as.length);
+		assertEquals(1, bs.length);
+		assertInstance(as[0], ICPPVariable.class);
+		assertInstance(bs[0], ICPPVariable.class);
+		
+		ICPPVariable a= (ICPPVariable) as[0];
+		ICPPVariable b= (ICPPVariable) bs[0];
+		
+		assertInstance(a.getType(), ICPPSpecialization.class);
+		assertInstance(b.getType(), ICPPSpecialization.class);
+		
+		ICPPSpecialization asp= (ICPPSpecialization) a.getType();
+		ICPPSpecialization bsp= (ICPPSpecialization) b.getType();
+		
+		assertEquals(1, asp.getArgumentMap().size());
+		assertEquals(1, bsp.getArgumentMap().size());
+		
+		assertInstance(asp.getArgumentMap().keyAt(0), ICPPTemplateParameter.class);
+		assertInstance(bsp.getArgumentMap().keyAt(0), ICPPTemplateParameter.class);
+		
+		assertInstance(asp.getArgumentMap().getAt(0), ICPPClassType.class);
+		assertInstance(bsp.getArgumentMap().getAt(0), ICPPClassType.class);
+		
+		assertEquals("A", ((ICPPClassType) asp.getArgumentMap().getAt(0)).getName());
+		assertEquals("B", ((ICPPClassType) bsp.getArgumentMap().getAt(0)).getName());
+		
+		assertDeclarationCount(pdom, "a", 1);
+		assertDeclarationCount(pdom, "b", 1);
+	}
+	
 	// template<typename C>
 	// class D {
 	// public:
 	// int foo(C c) {return 1};
 	// };
 	public void testSimpleDefinition() throws Exception {
-		setUpSpecifics(1);
 		assertDeclarationCount(pdom, "D", 1);
 		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL, NPM);
 		assertEquals(1, b.length);
@@ -103,7 +150,6 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// int foo(C c) {return 1};
 	// };
 	public void testDefinition() throws Exception {
-		setUpSpecifics(1);
 		assertDeclarationCount(pdom, "D", 1);
 		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL, NPM);
 		assertEquals(1, b.length);
@@ -130,7 +176,6 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// int foo(C c, B b, A a) {return 1};
 	// };
 	public void testDefinition2() throws Exception {
-		setUpSpecifics(1);
 		assertDeclarationCount(pdom, "E", 1);
 		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'E'}}, IndexFilter.ALL, NPM);
 		assertEquals(1, b.length);
@@ -170,6 +215,33 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		assertEquals(0, ct.getPartialSpecializations().length);
 	}
 	
+	// template<typename T>
+	// class Foo {
+	//    public:
+	//    T (*f)(T);
+	// };
+	//
+	// class A {};
+	// Foo<A> foo = *new Foo<A>();
+	// void bar() {
+	//    foo->f(*new A());
+	// }
+	public void _testFunctionPointer() throws Exception {
+		IIndexFragmentBinding[] bs= pdom.findBindings(new char[][] {"foo".toCharArray()}, IndexFilter.ALL, NPM);
+		assertEquals(1, bs.length);
+		assertInstance(bs[0], ICPPVariable.class);
+		ICPPVariable var= (ICPPVariable) bs[0];
+		assertInstance(var.getType(), ICPPClassType.class);
+		ICPPClassType ct= (ICPPClassType) var.getType();
+		assertEquals(1, ct.getFields().length);
+		assertInstance(ct.getFields()[0].getType(), IPointerType.class);
+		IPointerType pt= (IPointerType) ct.getFields()[0].getType();
+		assertInstance(pt.getType(), IFunctionType.class);
+		IFunctionType ft= (IFunctionType) pt.getType();
+		assertInstance(ft.getReturnType(), ICPPClassType.class);
+		assertEquals(1, ft.getParameterTypes().length);
+		assertInstance(ft.getParameterTypes()[0], ICPPClassType.class);
+	}
 	
 	// template<typename C>
 	// class D {
@@ -188,7 +260,6 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// D<N> dn;
 	// D<int> dint;
 	public void testExplicitInstantiation() throws Exception {
-		setUpSpecifics(1);
 		
 		{
 			// template

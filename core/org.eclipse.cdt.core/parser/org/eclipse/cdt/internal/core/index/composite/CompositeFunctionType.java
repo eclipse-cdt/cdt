@@ -11,24 +11,30 @@
 package org.eclipse.cdt.internal.core.index.composite;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
-public class CompositePointerType extends CompositeTypeContainer implements IPointerType, ITypeContainer {
-	public CompositePointerType(IPointerType pointerType, ICompositesFactory cf) throws DOMException {
-		super((ITypeContainer) pointerType, cf);
-	}
-	
-	public boolean isConst() throws DOMException {
-		return ((IPointerType)type).isConst();
+public class CompositeFunctionType extends CompositeType implements IFunctionType, IIndexType {
+
+	public CompositeFunctionType(IFunctionType rtype, ICompositesFactory cf) {
+		super(rtype, cf);
 	}
 
-	public boolean isVolatile() throws DOMException {
-		return ((IPointerType)type).isVolatile();
+	public IType[] getParameterTypes() throws DOMException {
+		IType[] result = ((IFunctionType)type).getParameterTypes();
+		for(int i=0; i<result.length; i++) {
+			result[i] = cf.getCompositeType((IIndexType)result[i]);
+		}
+		return result;
 	}
-	
+
+	public IType getReturnType() throws DOMException {
+		return cf.getCompositeType((IIndexType)((IFunctionType)type).getReturnType());
+	}
+
 	public boolean isSameType(IType other) {
-		return ((IPointerType)type).isSameType(other);
+		return type.isSameType(other);
 	}
+
 }

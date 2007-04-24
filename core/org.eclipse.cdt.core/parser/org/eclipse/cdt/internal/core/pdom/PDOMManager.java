@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,6 +58,7 @@ import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.DeltaAnalyzer;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -1036,12 +1036,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			PDOM pdom= (PDOM) getPDOM(cproject);
 			pdom.acquireWriteLock();
 			try {
-				File db = pdom.getDB().getLocation();
-				FileChannel from = new FileInputStream(db).getChannel();
+				Database db= pdom.getDB();
+				db.flushDirtyChunks();
+				FileChannel from= db.getChannel();
 				FileChannel to = new FileOutputStream(targetLocation).getChannel();
 				from.transferTo(0, from.size(), to);
 				to.close();
-				from.close();
 			} finally {
 				pdom.releaseWriteLock();
 			}

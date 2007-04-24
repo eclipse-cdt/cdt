@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -69,6 +70,7 @@ class PDOMCLinkage extends PDOMLinkage {
 	public static final int CTYPEDEF = PDOMLinkage.LAST_NODE_TYPE + 7;
 	public static final int CPARAMETER = PDOMLinkage.LAST_NODE_TYPE + 8;
 	public static final int CBASICTYPE = PDOMLinkage.LAST_NODE_TYPE + 9;
+	public static final int CFUNCTIONTYPE = PDOMLinkage.LAST_NODE_TYPE + 10;
 
 	public PDOMBinding addBinding(IBinding binding) throws CoreException {
 		PDOMBinding pdomBinding = adaptBinding(binding);
@@ -205,6 +207,8 @@ class PDOMCLinkage extends PDOMLinkage {
 			return new PDOMCParameter(pdom, record);
 		case CBASICTYPE:
 			return new PDOMCBasicType(pdom, record);
+		case CFUNCTIONTYPE:
+			return new PDOMCFunctionType(pdom, record);
 		}
 
 		return super.getNode(record);
@@ -216,6 +220,8 @@ class PDOMCLinkage extends PDOMLinkage {
 		
 		if (type instanceof ICBasicType) {
 			return new PDOMCBasicType(pdom, parent, (ICBasicType)type);
+		} else if(type instanceof IFunctionType) {
+			return new PDOMCFunctionType(pdom, parent, (IFunctionType)type);
 		} else if (type instanceof IBinding) {
 			return addBinding((IBinding)type);
 		}

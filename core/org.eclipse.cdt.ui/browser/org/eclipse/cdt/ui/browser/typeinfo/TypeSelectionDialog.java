@@ -458,6 +458,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	 */
 	void updateElements() {
 		fNewFilteredList.setFilter(fTextWidget.getText());
+		handleSelectionChanged();
 	}
 	
 	/**

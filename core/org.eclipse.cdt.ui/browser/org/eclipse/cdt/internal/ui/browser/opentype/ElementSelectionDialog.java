@@ -242,7 +242,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 					index.acquireReadLock();
 					IBinding[] bindings= index.findBindingsForPrefix(prefix, false, IndexFilter.ALL_DECLARED, monitor);
 					for(int i=0; i<bindings.length; i++) {
-						if ((i % 100) == 0 && monitor.isCanceled()) {
+						if (i % 0x1000 == 0 && monitor.isCanceled()) {
 							return null;
 						}
 						IBinding binding = bindings[i];
@@ -254,11 +254,11 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 								if(binding instanceof ICPPBinding) {
 									fqn= ((ICPPBinding)binding).getQualifiedName();
 								} else {
-									fqn = new String[] {binding.getName()};
+									fqn= new String[] {binding.getName()};
 								}
 								if (binding instanceof IFunction) {
-									final IFunction function = (IFunction)binding;
-									final String[] paramTypes = IndexModelUtil.extractParameterTypes(function);
+									final IFunction function= (IFunction)binding;
+									final String[] paramTypes= IndexModelUtil.extractParameterTypes(function);
 									final String returnType= IndexModelUtil.extractReturnType(function);
 									types.add(new IndexTypeInfo(fqn, elementType, paramTypes, returnType, index));
 								} else {
@@ -266,7 +266,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 								}
 							}
 						} catch(DOMException de) {
-
+							CCorePlugin.log(de);
 						}
 					}
 				} finally {
@@ -309,7 +309,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 
 	protected void scheduleUpdate(String filterText) {
 		char[] newPrefix= toPrefix(filterText);
-		if (!isEquivalentPrefix(fCurrentPrefix, newPrefix)) {
+		if (fUpdateJob.getState() == Job.RUNNING || !isEquivalentPrefix(fCurrentPrefix, newPrefix)) {
 			fUpdateJob.cancel();
 			fCurrentPrefix= newPrefix;
 			fUpdateJob.schedule(200);

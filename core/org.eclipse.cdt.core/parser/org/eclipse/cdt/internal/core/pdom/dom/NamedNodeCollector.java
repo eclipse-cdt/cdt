@@ -127,7 +127,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	}
 
 	private void checkCancelled() {
-		if (++monitorCheckCounter % 0x100 == 0 && monitor.isCanceled()) {
+		if (++monitorCheckCounter % 0x1000 == 0 && monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
 	}

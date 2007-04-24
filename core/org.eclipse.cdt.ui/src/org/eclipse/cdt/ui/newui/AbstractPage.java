@@ -132,7 +132,7 @@ implements
 	/*
 	 * Bookeeping variables
 	 */
-	private boolean noContentOnPage = false;
+	protected boolean noContentOnPage = false;
 	protected boolean displayedConfig = false;
 	protected IResource internalElement = null;
 	protected boolean isProject = false;
@@ -143,7 +143,7 @@ implements
 	// tabs
 	protected TabFolder folder;
 	protected ArrayList itabs = new ArrayList();
-	ICPropertyTab currentTab;
+	protected ICPropertyTab currentTab;
 
 	protected class InternalTab {
 		Composite comp;
@@ -667,7 +667,7 @@ implements
 		return out;
 	}
 	
-	private void cfgChanged(ICConfigurationDescription _cfgd) {
+	protected void cfgChanged(ICConfigurationDescription _cfgd) {
 		resd = getResDesc(_cfgd);
 		
 		if (excludeFromBuildCheck != null)

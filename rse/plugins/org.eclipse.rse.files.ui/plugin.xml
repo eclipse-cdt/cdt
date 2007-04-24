@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,7 +12,8 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-Martin Oberhuber (Wind River) - declaratively register adapter factories
+Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
+Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -29,7 +30,7 @@ Martin Oberhuber (Wind River) - declaratively register adapter factories
             <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
 			<!-- all adapter types which are subject to getAdapter() need to be registered! -->
 			<!-- just having it in AdapterFactory#getAdapterList() is not sufficient. -->
-			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.ISystemDragDropAdapter"/>
 			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
 			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
 			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
@@ -52,7 +53,7 @@ Martin Oberhuber (Wind River) - declaratively register adapter factories
 			<!-- TODO Check: These are not in the adapter factories 
 			     getAdapterList() Although the adapter implements them
 			<adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
-			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.ISystemDragDropAdapter"/>
 			<adapter type="org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier"/>
 			<adapter type="org.eclipse.rse.ui.view.ISystemRemoveElementAdapter"/>
 			-->
@@ -62,7 +63,7 @@ Martin Oberhuber (Wind River) - declaratively register adapter factories
 				class="org.eclipse.rse.internal.files.ui.view.SystemViewSearchResultAdapterFactory" 
 				adaptableType="org.eclipse.rse.services.search.IHostSearchResult">
             <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
-			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.ISystemDragDropAdapter"/>
 			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
 			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
 			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>

@@ -12,7 +12,8 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.processes.ui adapter factories
+Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
+Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -27,7 +28,7 @@ Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.process
 				class="org.eclipse.rse.internal.processes.ui.view.SystemViewProcessAdapterFactory" 
 				adaptableType="org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess">
             <adapter type="org.eclipse.rse.ui.view.ISystemViewElementAdapter"/>
-			<adapter type="org.eclipse.rse.ui.view.ISystemDragDropAdapter"/>
+			<adapter type="org.eclipse.rse.core.subsystems.ISystemDragDropAdapter"/>
 			<adapter type="org.eclipse.rse.ui.view.ISystemRemoteElementAdapter"/>
 			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
 			<adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>

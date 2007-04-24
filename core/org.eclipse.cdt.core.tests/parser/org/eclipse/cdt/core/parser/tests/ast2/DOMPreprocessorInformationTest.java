@@ -11,15 +11,20 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorErrorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.FunctionMacroExpansionLocation;
 
 /**
  * @author Emanuel Graf
@@ -157,6 +162,30 @@ public class DOMPreprocessorInformationTest extends AST2BaseTest {
 		assertTrue(st[0] instanceof IASTPreprocessorErrorStatement);
 		IASTPreprocessorErrorStatement pragma = (IASTPreprocessorErrorStatement) st[0];
 		assertEquals(msg, new String(pragma.getMessage()));
+	}
+	
+	public void testMacroExpansion() throws Exception {
+		StringBuffer sb = new StringBuffer();
+		sb.append("#define add(a, b) (a) + (b) \n");
+		sb.append("int x = add(foo, bar); \n");
+		String code = sb.toString();
+		
+		IASTTranslationUnit tu = parse( code, ParserLanguage.CPP, false, false );
+		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
+		assertEquals(1, st.length);
+		assertTrue(st[0] instanceof IASTPreprocessorFunctionStyleMacroDefinition);
+		
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		IASTInitializer init = decl.getDeclarators()[0].getInitializer();
+		
+		IASTNodeLocation[] nodeLocations = init.getNodeLocations();
+		assertEquals(1, nodeLocations.length);
+		
+		FunctionMacroExpansionLocation location = (FunctionMacroExpansionLocation) nodeLocations[0];
+		char[][] actualParameters = location.getActualParameters();
+		
+		assertEquals("foo", new String(actualParameters[0]));
+		assertEquals("bar", new String(actualParameters[1]));
 	}
 	
 }

@@ -17,6 +17,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
 
+import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -60,11 +61,33 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  	{
 		    	  		// parentFile is already null
 		    	  		//parentFile = null;
+		    	  		DataStore ds = _dstoreHostFile.getDataElement().getDataStore();
+		    	  		DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, "");
+		    	  		element.setAttribute(DE.A_VALUE, pathOnly);
+		    	  		DStoreHostFile hostParent = new DStoreHostFile(element);
+		    	  		parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, hostParent);
 		    	  	}
 		    	  	else if (!(pathOnly.charAt(pathOnly.length()-1)==sep))
 		    	  	{
 		    	  		DataStore ds = _dstoreHostFile.getDataElement().getDataStore();
-		    	  		DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, pathOnly+sep);
+		    	  		
+		    	  		int nameSep = pathOnly.lastIndexOf(sep);
+		    	  		String parentName = pathOnly;
+		    	  		String parentPath = pathOnly;
+		    	  		if (nameSep > 0)
+		    	  		{
+		    	  			parentName = pathOnly.substring(nameSep);
+		    	  			parentPath = pathOnly.substring(0, nameSep);
+		    	  		}
+		    	  		else
+		    	  		{
+		    	  			parentName = pathOnly.substring(nameSep);
+		    	  			parentPath = "" + sep;
+		    	  		}
+		    	  		
+		    	  		DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, parentName);
+		    	  		element.setAttribute(DE.A_VALUE, parentPath);
+		    	  		
 		    	  		
 		    	  		DStoreHostFile hostParent = new DStoreHostFile(element);
 		    	  		parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, hostParent);

@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -112,6 +113,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator;
 	
 	private List identicalList;
+	private Set unusedChildrenSet;
 
 	
 	private IFolderInfo parentFolderInfo;
@@ -966,7 +968,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getTools()
 	 */
 	public ITool[] getTools() {
-		ITool tools[] = getAllTools();
+		ITool tools[] = getAllTools(false);
 		if(!isExtensionToolChain){
 			for(int i = 0; i < tools.length; i++){
 				if(tools[i].isExtensionElement()){
@@ -979,11 +981,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return tools;
 	}
 
-	public ITool[] getAllTools() {
+	public ITool[] getAllTools(boolean includeCurrentUnused) {
 		ITool[] tools = null;
 		//  Merge our tools with our superclass' tools
 		if (getSuperClass() != null) {
-			tools = ((ToolChain)getSuperClass()).getAllTools();
+			tools = ((ToolChain)getSuperClass()).getAllTools(false);
 		}
 		//  Our tools take precedence
 		if (tools != null) {
@@ -1021,20 +1023,20 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				}
 			}
 			
-			if(!isExtensionToolChain){
-				for(int i = 0; i < tools.length; i++){
-					if(tools[i].getParent() != this){
-						ArrayList list = new ArrayList(Arrays.asList(tools));
-						for(int k = 0; k < list.size(); k++){
-							if(((ITool)list.get(k)).getParent() != this){
-								list.remove(k);
-							}
-						}
-						tools = (ITool[])list.toArray(new ITool[list.size()]);
-						break;
-					}
-				}
-			}
+//			if(!isExtensionToolChain){
+//				for(int i = 0; i < tools.length; i++){
+//					if(tools[i].getParent() != this){
+//						ArrayList list = new ArrayList(Arrays.asList(tools));
+//						for(int k = 0; k < list.size(); k++){
+//							if(((ITool)list.get(k)).getParent() != this){
+//								list.remove(k);
+//							}
+//						}
+//						tools = (ITool[])list.toArray(new ITool[list.size()]);
+//						break;
+//					}
+//				}
+//			}
 		} else {
 			tools = new ITool[getToolList().size()];
 			Iterator iter = getToolList().listIterator();
@@ -1044,9 +1046,30 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				tools[i++] = (ITool)tool; 
 			}
 		}
-		return tools;
+		if(includeCurrentUnused)
+			return tools;
+		return filterUsedTools(tools, true);
 	}
-
+	
+	private ITool[] filterUsedTools(ITool tools[], boolean used){
+		Set set = getUnusedChilrenSet();
+		if(set.size() == 0)
+			return used ? tools : new ITool[0];
+		
+		List list = new ArrayList(tools.length);
+		for(int i = 0; i < tools.length; i++){
+			if(set.contains(tools[i].getId()) != used)
+				list.add(tools[i]);
+		}
+		
+		return (ITool[])list.toArray(new ITool[list.size()]);
+	}
+	
+	public ITool[] getUnusedTools(){
+		ITool[] all = getAllTools(true);
+		return filterUsedTools(all, false);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getTool(java.lang.String)
 	 */
@@ -1115,6 +1138,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	public void removeTool(Tool tool){
 		getToolList().remove(tool);
 		getToolMap().remove(tool.getId());
+		ITool extTool = ManagedBuildManager.getExtensionTool(tool);
+		if(extTool.getParent() == getSuperClass())
+			addUnusedChild(extTool);
 	}
 
 	/*
@@ -2672,5 +2698,29 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			return isSystemObject() ? 1 : -1;
 		
 		return getSuperClassNum() - other.getSuperClassNum();
+	}
+	
+	private Set getUnusedChilrenSet(){
+		if(unusedChildrenSet == null){
+			String childIds[] = CDataUtil.stringToArray(unusedChildren, ";");
+			if(childIds == null)
+				unusedChildrenSet = new HashSet();
+			else {
+				unusedChildrenSet = new HashSet();
+				unusedChildrenSet.addAll(Arrays.asList(childIds));
+			}
+		}
+		return unusedChildrenSet;
+	}
+	
+	private void addUnusedChild(ITool tool){
+		Set set = getUnusedChilrenSet();
+		set.add(tool.getId());
+		unusedChildrenSet = set;
+		unusedChildren = translateUnusedIdSetToString(set);
+	}
+	
+	private String translateUnusedIdSetToString(Set set){
+		return CDataUtil.arrayToString(set.toArray(), ";");
 	}
 }

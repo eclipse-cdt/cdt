@@ -167,7 +167,7 @@ public interface IIndexManager extends IPDOMManager {
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public void reindex(ICProject project) throws CoreException;
+	public void reindex(ICProject project);
 
 	/**
 	 * Updates the index for the given selection of translation units considering

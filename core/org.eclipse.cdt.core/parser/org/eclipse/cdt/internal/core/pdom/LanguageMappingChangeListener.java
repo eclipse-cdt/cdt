@@ -49,23 +49,18 @@ public class LanguageMappingChangeListener implements
 			// are potentially unaffected due to project settings
 			try {
 				ICProject[] cProjects = manager.getCModel().getCProjects();
-				fManager.update(cProjects, IIndexManager.UPDATE_ALL);
+				for (int i = 0; i < cProjects.length; i++) {
+					ICProject project = cProjects[i];
+					fManager.reindex(project);
+				}
 			} catch (CModelException e) {
-				CCorePlugin.log(e);
-			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
 		} else if (event.getType() == ILanguageMappingChangeEvent.TYPE_PROJECT) {
 			// For now, reindex the entire project since we don't know which
 			// files are affected.
-			try {
-				ICProject cProject = manager.getCModel().getCProject(event.getProject());
-				fManager.reindex(cProject);
-			} catch (CModelException e) {
-				CCorePlugin.log(e);
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
+			ICProject cProject = manager.getCModel().getCProject(event.getProject());
+			fManager.reindex(cProject);
 		} else if (event.getType() == ILanguageMappingChangeEvent.TYPE_FILE) {
 			// Just reindex the affected file.
 			IFile file = event.getFile();

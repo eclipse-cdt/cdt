@@ -481,7 +481,10 @@ public class IndexerBlock extends AbstractCOptionPage {
     				    : ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
     		}
     		if (!useActive) {
-    			prefs.setDefaultSettingConfiguration(prefs.getConfigurationByName(fBuildConfigComboBox.getText()));
+    			final ICConfigurationDescription config= prefs.getConfigurationByName(fBuildConfigComboBox.getText());
+    			if (config != null) {
+    				prefs.setDefaultSettingConfiguration(config);
+    			}
     		}
     		prjDescMgr.setProjectDescription(getProject(), prefs);
     	}

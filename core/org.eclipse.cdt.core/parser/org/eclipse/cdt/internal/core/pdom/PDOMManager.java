@@ -47,6 +47,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -148,6 +150,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private CModelListener fCModelListener= new CModelListener(this);
 	private ILanguageMappingChangeListener fLanguageChangeListener = new LanguageMappingChangeListener(this);
+	private ICProjectDescriptionListener fProjectDescriptionListener= new CProjectDescriptionListener(this);
+	
 	private IndexFactory fIndexFactory= new IndexFactory(this);
     private IndexProviderManager fIndexProviderManager = new IndexProviderManager();
 
@@ -173,6 +177,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(fCModelListener, IResourceChangeEvent.POST_BUILD);
 		model.addElementChangedListener(fCModelListener);
 		LanguageManager.getInstance().registerLanguageChangeListener(fLanguageChangeListener);
+		final int types= CProjectDescriptionEvent.DATA_APPLIED;
+		CCorePlugin.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fProjectDescriptionListener, types);
 
 		try {
 			ICProject[] projects= model.getCModel().getCProjects();
@@ -185,6 +191,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 	
 	public void shutdown() {
+		CCorePlugin.getDefault().getProjectDescriptionManager().removeCProjectDescriptionListener(fProjectDescriptionListener);
 		final CoreModel model = CoreModel.getDefault();
 		model.removeElementChangedListener(fCModelListener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fCModelListener);
@@ -755,7 +762,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}    
 
-	public void reindex(ICProject project) throws CoreException {
+	public void reindex(ICProject project) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		IPDOMIndexer indexer= null;
 		synchronized (fUpdatePolicies) {

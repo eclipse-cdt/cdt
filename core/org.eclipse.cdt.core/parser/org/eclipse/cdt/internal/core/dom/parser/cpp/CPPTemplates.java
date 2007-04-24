@@ -276,7 +276,8 @@ public class CPPTemplates {
 			if( template != null && template instanceof ICPPInternalTemplateInstantiator){
 				IASTNode [] args = id.getTemplateArguments();
 				IType [] types = CPPTemplates.createTypeArray( args );
-				return ((ICPPInternalTemplateInstantiator) template).instantiate(types);
+				template = ((ICPPInternalTemplateInstantiator) template).instantiate(types);
+				return CPPSemantics.postResolution(template, id);
 			}
 		} else {
 			//functions are instatiated as part of the resolution process
@@ -616,6 +617,8 @@ public class CPPTemplates {
 		ICPPTemplateInstance instance = null;
 		if( decl instanceof ICPPClassType ){
 			instance = new CPPClassInstance( scope, decl, argMap, args );
+		} else if( decl instanceof ICPPConstructor ) {
+			instance = new CPPConstructorInstance( scope, decl, argMap, args );
 		} else if( decl instanceof ICPPMethod ) {
 			instance = new CPPMethodInstance( scope, decl, argMap, args );
 		} else if( decl instanceof ICPPFunction ) {
@@ -1492,6 +1495,18 @@ public class CPPTemplates {
 				IType pType = ((ICPPTemplateNonTypeParameter)param).getType();
 				if( map != null && pType != null && map.containsKey( pType ) ){
 					pType = (IType) map.get( pType );
+				}
+				
+				//14.1s8 function to pointer and array to pointer conversions
+				if( pType instanceof IFunctionType )
+			    {
+					pType = new CPPPointerType( pType );
+			    } else if( pType instanceof IArrayType ){
+			    	try {
+			    		pType = new CPPPointerType( ((IArrayType)pType).getType() );
+					} catch (DOMException e) {
+						pType = e.getProblem();
+					}
 				}
 				Cost cost = CPPSemantics.checkStandardConversionSequence( argument, pType );
 					

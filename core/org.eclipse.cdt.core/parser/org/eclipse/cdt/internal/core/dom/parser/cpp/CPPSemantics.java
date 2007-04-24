@@ -638,6 +638,11 @@ public class CPPSemantics {
 		return binding;
 	}
 
+	protected static IBinding postResolution( IBinding binding, IASTName name) {
+		LookupData data = createLookupData( name, true );
+		return postResolution(binding, data);
+	}
+	
 	/**
      * @param binding
      * @param data
@@ -702,10 +707,10 @@ public class CPPSemantics {
 		}
         if( binding instanceof ICPPClassType && data.considerConstructors ){
         	ICPPClassType cls = (ICPPClassType) binding;
-        	if( data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPInternalTemplate ){
+        	if( data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPTemplateDefinition ){
         		ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
         		IType [] args = CPPTemplates.createTypeArray( id.getTemplateArguments() );
-        		IBinding inst = ((ICPPInternalTemplate)cls).instantiate( args ); 
+        		IBinding inst = ((ICPPInternalTemplateInstantiator)cls).instantiate( args ); 
         		cls = inst instanceof ICPPClassType ? (ICPPClassType)inst : cls; 
         	}
 		    if( cls != null ){

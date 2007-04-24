@@ -114,24 +114,23 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPP_CLASS_TEMPLATE_PARTIAL_SPEC= PDOMLinkage.LAST_NODE_TYPE + 20;
 	public static final int CPP_FUNCTION_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 21;
 	public static final int CPP_METHOD_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 22;
-	public static final int CPP_DEFERRED_FUNCTION_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 23;
-	public static final int CPP_CLASS_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 24;
-	public static final int CPP_DEFERRED_CLASS_INSTANCE= PDOMCPPLinkage.LAST_NODE_TYPE + 25;
-	public static final int CPP_TEMPLATE_TYPE_PARAMETER= PDOMLinkage.LAST_NODE_TYPE + 26;
-	public static final int CPP_TEMPLATE_TEMPLATE_PARAMETER= PDOMLinkage.LAST_NODE_TYPE + 27;
-	public static final int CPP_TEMPLATE_NON_TYPE_PARAMETER= PDOMLinkage.LAST_NODE_TYPE + 28;
-	public static final int CPP_PARAMETER_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 29;
-	public static final int CPP_FIELD_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 30;
-	public static final int CPP_FUNCTION_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 31;
-	public static final int CPP_METHOD_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 32;
-	public static final int CPP_CONSTRUCTOR_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 33;
-	public static final int CPP_CLASS_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 34;
-	public static final int CPP_FUNCTION_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 35;
-	public static final int CPP_METHOD_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 36;
-	public static final int CPP_CONSTRUCTOR_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 37;
-	public static final int CPP_CLASS_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 38;
-	public static final int CPP_TYPEDEF_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 39;
-	public static final int CPP_FUNCTION_TYPE= PDOMLinkage.LAST_NODE_TYPE + 40;
+	public static final int CPP_CONSTRUCTOR_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 23;
+	public static final int CPP_DEFERRED_FUNCTION_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 24;
+	public static final int CPP_CLASS_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 25;
+	public static final int CPP_DEFERRED_CLASS_INSTANCE= PDOMCPPLinkage.LAST_NODE_TYPE + 26;
+	public static final int CPP_PARAMETER_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 27;
+	public static final int CPP_FIELD_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 28;
+	public static final int CPP_FUNCTION_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 29;
+	public static final int CPP_METHOD_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 30;
+	public static final int CPP_CONSTRUCTOR_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 31;
+	public static final int CPP_CLASS_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 32;
+	public static final int CPP_FUNCTION_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 33;
+	public static final int CPP_METHOD_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 34;
+	public static final int CPP_CONSTRUCTOR_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 35;
+	public static final int CPP_CLASS_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 36;
+	public static final int CPP_TYPEDEF_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 37;
+	public static final int CPP_TEMPLATE_TYPE_PARAMETER= PDOMLinkage.LAST_NODE_TYPE + 38;
+	public static final int CPP_FUNCTION_TYPE= PDOMLinkage.LAST_NODE_TYPE + 39;
 	
 	private class ConfigureTemplate implements Runnable {
 		ICPPTemplateDefinition template;
@@ -291,7 +290,10 @@ class PDOMCPPLinkage extends PDOMLinkage {
 							parent, (ICPPClassType) binding, pdomSpecialized);
 				}
 			} else if (binding instanceof ICPPTemplateInstance) {
-				if (binding instanceof ICPPMethod && pdomSpecialized instanceof ICPPMethod) {
+				if (binding instanceof ICPPConstructor && pdomSpecialized instanceof ICPPConstructor) {
+					pdomBinding = new PDOMCPPConstructorInstance(pdom, parent,
+							(ICPPConstructor) binding, pdomSpecialized);
+				} else if (binding instanceof ICPPMethod && pdomSpecialized instanceof ICPPMethod) {
 					pdomBinding = new PDOMCPPMethodInstance(pdom, parent,
 							(ICPPMethod) binding, pdomSpecialized);
 				} else if (binding instanceof ICPPFunction && pdomSpecialized instanceof ICPPFunction) {
@@ -447,6 +449,8 @@ class PDOMCPPLinkage extends PDOMLinkage {
 				if (binding instanceof ICPPClassType)
 					return CPP_DEFERRED_CLASS_INSTANCE;	
 			} else if (binding instanceof ICPPTemplateInstance) {
+				if (binding instanceof ICPPConstructor)
+					return CPP_CONSTRUCTOR_INSTANCE;
 				if (binding instanceof ICPPMethod)
 					return CPP_METHOD_INSTANCE;
 				else if (binding instanceof ICPPFunction)
@@ -659,6 +663,8 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPFunctionInstance(pdom, record);
 		case CPP_METHOD_INSTANCE:
 			return new PDOMCPPMethodInstance(pdom, record);
+		case CPP_CONSTRUCTOR_INSTANCE:
+			return new PDOMCPPConstructorInstance(pdom, record);
 		case CPP_DEFERRED_FUNCTION_INSTANCE:
 			return new PDOMCPPDeferredFunctionInstance(pdom, record);
 		case CPP_CLASS_INSTANCE:

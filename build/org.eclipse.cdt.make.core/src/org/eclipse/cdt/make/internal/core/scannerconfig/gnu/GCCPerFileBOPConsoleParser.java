@@ -66,29 +66,37 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         if (compilerInvocationIndex == -1)
             return rc;
 
+        // Search for the compiler invocation command
+        
         // expecting that compiler invocation is the first token in the line
         String[] split = line.split("\\s+"); //$NON-NLS-1$
-        int cii2 = -1;
-        for (int i = 0; i < 2; ++i) {
-        	// Checking the first two tokens since the first may be a wrapper script
+        boolean found = false;
+        for (int i = 0; i < split.length; ++i) {
 	        String command = split[i];
 	        // verify that it is compiler invocation
 	        for (int cii = 0; cii < compilerInvocation.length; ++cii) {
-	            cii2 = command.indexOf(compilerInvocation[cii]);
-	            if (cii2 != -1)
-	                break;
+	            if (command.indexOf(compilerInvocation[cii]) >= 0) {
+	            	found = true;
+	            	if (i > 0) {
+	            		// strip off anything before the compiler command
+		            	String[] old = split;
+		            	split = new String[old.length - i];
+		            	System.arraycopy(old, i, split, 0, split.length);
+	            	}
+	            	break;
+	            }
 	        }
-	        if (cii2 != -1)
+	        if (found)
 	        	break;
         }
-        if (cii2 == -1) {
+        if (!found) {
             TraceUtil.outputTrace("Error identifying compiler command", line, TraceUtil.EOL); //$NON-NLS-1$
             return rc;
         }
         
         // find a file name
         int extensionsIndex = -1;
-        boolean found = false;
+        found = false;
         String filePath = null;
         for (int i = 1; i < split.length; ++i) {
             int k = split[i].lastIndexOf('.');

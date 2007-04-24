@@ -11,7 +11,14 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig.jobs;
 
 import java.util.List;
+import java.util.Properties;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -87,7 +94,17 @@ public class SCJobsUtil {
                     ISafeRunnable runnable = new ISafeRunnable() {
 
                         public void run() {
-                            esiProvider.invokeProvider(monitor, project, context, providerId, buildInfo, collector, null);
+                        	// TODO we need the environment for the project here...
+                        	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
+                        	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
+                        	IEnvironmentVariableManager envVarManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+                        	IEnvironmentVariable[] envVars = envVarManager.getVariables(configDesc, true);
+                        	Properties env = new Properties();
+                        	for (int i = 0; i < envVars.length; ++i) {
+                        		IEnvironmentVariable envVar = envVars[i];
+                        		env.put(envVar.getName(), envVar.getValue());
+                        	}
+                            esiProvider.invokeProvider(monitor, project, context, providerId, buildInfo, collector, env);
                             rc.set(true);
                         }
             

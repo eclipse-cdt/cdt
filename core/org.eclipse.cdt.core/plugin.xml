@@ -575,14 +575,14 @@
       <language
             class="org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage"
             id="gcc"
-            name="GNU C">
+            name="%language.name.gcc">
          <contentType id="org.eclipse.cdt.core.cSource"/>
          <contentType id="org.eclipse.cdt.core.cHeader"/>
       </language>
       <language
             class="org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage"
             id="g++"
-            name="GNU C++">
+            name="%language.name.gpp">
          <contentType id="org.eclipse.cdt.core.cxxSource"/>
          <contentType id="org.eclipse.cdt.core.cxxHeader"/>
       </language>

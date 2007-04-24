@@ -7,7 +7,8 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *    Anton Leherbauer (Wind River Systems)
+ *******************************************************************************/
 
 package org.eclipse.cdt.core.model;
 
@@ -51,7 +52,18 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 			int style) throws CoreException {
 		throw new UnsupportedOperationException();
 	}
-	
+
+	/*
+	 * @see org.eclipse.cdt.core.model.ILanguage#getName()
+	 */
+	public String getName() {
+		ILanguageDescriptor languageDescriptor= LanguageManager.getInstance().getLanguageDescriptor(getId());
+		if (languageDescriptor != null) {
+			return languageDescriptor.getName();
+		}
+		return getId();
+	}
+
 	/**
 	 * Construct an AST for the source code provided by <code>reader</code>.
 	 * As an option you can supply 

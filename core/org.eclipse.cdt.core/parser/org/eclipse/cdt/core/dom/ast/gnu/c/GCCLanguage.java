@@ -15,7 +15,6 @@
 package org.eclipse.cdt.core.dom.ast.gnu.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.gnu.Messages;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.AbstractCLanguage;
 import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;
@@ -42,23 +41,19 @@ public class GCCLanguage extends AbstractCLanguage {
 	public String getId() {
 		return ID; 
 	}
-	
-	public String getName() {
-		return Messages.getString("GCCLanguage.name"); //$NON-NLS-1$
-	}
 
 	/*
-	 * @see org.eclipse.cdt.core.parser.AbstractCLanguage#getParserExtensionConfiguration()
-	 */
-	protected ICParserExtensionConfiguration getParserExtensionConfiguration() {
-		return C_GNU_PARSER_EXTENSION;
-	}
-
-	/*
-	 * @see org.eclipse.cdt.core.parser.AbstractCLanguage#getScannerExtensionConfiguration()
+	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCLanguage#getScannerExtensionConfiguration()
 	 */
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
 		return C_GNU_SCANNER_EXTENSION;
 	}
 	
+	/*
+	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCLanguage#getParserExtensionConfiguration()
+	 */
+	protected ICParserExtensionConfiguration getParserExtensionConfiguration() {
+		return C_GNU_PARSER_EXTENSION;
+	}
+
 }

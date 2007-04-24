@@ -14,7 +14,6 @@
 package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.gnu.Messages;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPLanguage;
 import org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration;
@@ -41,19 +40,15 @@ public class GPPLanguage extends AbstractCPPLanguage {
 		return ID;
 	}
 	
-	public String getName() {
-		return Messages.getString("GPPLanguage.name"); //$NON-NLS-1$
-	}
-
 	/*
-	 * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.AbstractCPPLanguage#getScannerExtensionConfiguration()
+	 * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPLanguage#getScannerExtensionConfiguration()
 	 */
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
 		return CPP_GNU_SCANNER_EXTENSION;
 	}
 
 	/*
-	 * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.AbstractCPPLanguage#getParserExtensionConfiguration()
+	 * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPLanguage#getParserExtensionConfiguration()
 	 */
 	protected AbstractCPPParserExtensionConfiguration getParserExtensionConfiguration() {
 		return CPP_GNU_PARSER_EXTENSION;

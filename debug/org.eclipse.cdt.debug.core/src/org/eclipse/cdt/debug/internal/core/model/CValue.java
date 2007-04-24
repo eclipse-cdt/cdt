@@ -566,7 +566,7 @@ public class CValue extends AbstractCValue {
 		}
 	}
 
-	private static CVariableFormat getNaturalFormat(ICDIValue value, CVariableFormat defaultFormat) {
+	private static CVariableFormat getNaturalFormat(ICDIValue value, CVariableFormat defaultFormat) throws CDIException {
 		if (value instanceof ICDIFormattable) {
 			int naturalFormat = ((ICDIFormattable)value).getNaturalFormat();
 			switch (naturalFormat) {

@@ -21,6 +21,7 @@ public interface ICDIFormattable {
 	 * @return one of the ICDIFormat constants, excluding 'NATURAL' and 'OCTAL'.
 	 *         Octal is not supported simply because the general support for it
 	 *         is lacking in CDT (apparently no one is asking for it).
+	 * @throws CDIException
 	 */
-	int getNaturalFormat();
+	int getNaturalFormat() throws CDIException;
 }

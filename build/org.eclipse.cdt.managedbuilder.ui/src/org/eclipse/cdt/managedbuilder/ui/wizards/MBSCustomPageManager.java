@@ -191,7 +191,7 @@ public final class MBSCustomPageManager
 //		String operationClassName = element.getAttribute(OPERATION_CLASS); // optional element so may be null
 
 		IWizardPage wizardPage = null;
-		Runnable operation = null;
+		Object operation = null;
 		// instantiate the classes specified in the manifest
 
 		// first try to create the page class, which is required
@@ -201,7 +201,7 @@ public final class MBSCustomPageManager
 
 			// the operation is an optional element so it might not be present
 			if (element.getAttribute(OPERATION_CLASS) != null)
-				operation = (Runnable) element.createExecutableExtension(OPERATION_CLASS);
+				operation = element.createExecutableExtension(OPERATION_CLASS);
 		}
 		catch (CoreException e)
 		{
@@ -210,8 +210,18 @@ public final class MBSCustomPageManager
 		}
 
 		// create the page data and add it to ourselves
-		MBSCustomPageData currentPageData = new MBSCustomPageData(id,
-				wizardPage, operation, false);
+		MBSCustomPageData currentPageData;
+		
+		// Custom pages prior to CDT 4.0 were required to provide Runnables as operations.
+		// Post 4.0, IRunnableWithProgress are accepted as well.
+		if (operation instanceof Runnable) {
+			currentPageData = new MBSCustomPageData(id, wizardPage, (Runnable) operation, false);
+		} else if (operation instanceof IRunnableWithProgress) {
+			currentPageData = new MBSCustomPageData(id, wizardPage, (IRunnableWithProgress) operation, false);
+		} else {
+			throw new BuildException(element.getName());
+		}
+		
 		idToPageDataMap.put(id, currentPageData);
 		pageSet.add(currentPageData);
 

@@ -87,7 +87,7 @@ For convenience, there is an org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustom
          <attribute name="operationClass" type="string">
             <annotation>
                <documentation>
-                  Specifies the Java class which implements the operations associated with this page.  The class must implement the java.lang.Runnable interface.
+                  Specifies the Java class which implements the operations associated with this page.  The class must implement either the java.lang.Runnable interface, or the org.eclipse.jface.operation.IRunnableWithProgress interface if progress reporting is desired.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>

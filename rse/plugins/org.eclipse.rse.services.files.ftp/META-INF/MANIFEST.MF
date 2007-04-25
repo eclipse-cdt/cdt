@@ -8,7 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services,
- org.apache.commons.net,
+ org.apache.commons.net;visibility:="reexport",
  org.eclipse.rse.core,
  org.eclipse.core.resources
 Eclipse-LazyStart: true

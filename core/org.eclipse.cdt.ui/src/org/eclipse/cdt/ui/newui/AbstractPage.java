@@ -474,7 +474,7 @@ implements
 					if (needs) // 
 						CoreModel.getDefault().setProjectDescription(getProject(), local_prjd);
 					else
-						CDTPropertyManager.performOk(AbstractPage.this.getControl());
+						CDTPropertyManager.performOk(AbstractPage.this);
 				} catch (CoreException e) {
 					CUIPlugin.getDefault().logErrorMessage(UIMessages.getString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
 				}

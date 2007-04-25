@@ -216,7 +216,7 @@ public final class MBSCustomPageManager
 		// Post 4.0, IRunnableWithProgress are accepted as well.
 		if (operation instanceof Runnable) {
 			currentPageData = new MBSCustomPageData(id, wizardPage, (Runnable) operation, false);
-		} else if (operation instanceof IRunnableWithProgress) {
+		} else if (operation instanceof IRunnableWithProgress || operation == null) {
 			currentPageData = new MBSCustomPageData(id, wizardPage, (IRunnableWithProgress) operation, false);
 		} else {
 			throw new BuildException(element.getName());

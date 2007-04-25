@@ -1661,7 +1661,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
 		 */
 		public RGB getDefaultTextColor() {
-			return new RGB(128, 40, 100);
+			return new RGB(100, 40, 128);
 		}
 		
 		/*
@@ -1731,13 +1731,6 @@ public class SemanticHighlightings {
 					if (binding.isFileLocal()) {
 						return false;
 					}
-					IIndexName[] defs= index.findDefinitions(binding);
-					for (int i = 0; i < defs.length; i++) {
-						IIndexFile indexFile= defs[i].getFile();
-						if (indexFile != null && indexFile.getLocation().getFullPath() != null) {
-							return false;
-						}
-					}
 					IIndexName[] decls= index.findDeclarations(binding);
 					for (int i = 0; i < decls.length; i++) {
 						IIndexFile indexFile= decls[i].getFile();
@@ -1745,7 +1738,7 @@ public class SemanticHighlightings {
 							return false;
 						}
 					}
-					if (defs.length != 0 || decls.length != 0) {
+					if (decls.length != 0) {
 						return true;
 					}
 				} catch (CoreException exc) {

@@ -93,11 +93,19 @@ public class CDTPropertyManager {
 	}
 
 	/**
-	 * 
+	 * Performs optimized (single-time) saving
 	 * @param p - widget which calls this functionality
 	 */
 	public static void performOk(Object p) {
 		if (saveDone) return;
+		performOkForced(p);
+	}		
+	
+	/**
+	 * Performs mandatory saving 
+	 * @param p
+	 */
+	public static void performOkForced(Object p) {
 		saveDone = true;
 		try {
 			CoreModel.getDefault().setProjectDescription(project, prjd);

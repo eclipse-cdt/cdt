@@ -117,7 +117,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPP_CONSTRUCTOR_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 23;
 	public static final int CPP_DEFERRED_FUNCTION_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 24;
 	public static final int CPP_CLASS_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 25;
-	public static final int CPP_DEFERRED_CLASS_INSTANCE= PDOMCPPLinkage.LAST_NODE_TYPE + 26;
+	public static final int CPP_DEFERRED_CLASS_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 26;
 	public static final int CPP_PARAMETER_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 27;
 	public static final int CPP_FIELD_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 28;
 	public static final int CPP_FUNCTION_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 29;
@@ -713,6 +713,14 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		super.onCreateName(pdomName, name);
 		
 		IASTNode parentNode= name.getParent();
+		if (parentNode instanceof ICPPASTQualifiedName) {
+		    IASTName [] ns = ((ICPPASTQualifiedName)parentNode).getNames();
+		    if ( name != ns[ ns.length -1 ] ) {
+		    	return;
+		    } else {
+		    	parentNode = parentNode.getParent();
+		    }
+		}
 		if (parentNode instanceof ICPPASTBaseSpecifier) {
 			PDOMName derivedClassName= (PDOMName) pdomName.getEnclosingDefinition();
 			if (derivedClassName != null) {

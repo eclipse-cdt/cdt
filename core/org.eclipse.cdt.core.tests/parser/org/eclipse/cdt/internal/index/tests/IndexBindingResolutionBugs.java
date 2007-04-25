@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -221,5 +222,26 @@ public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 	public void testBug181735() throws DOMException {
 		IBinding b0 = getBindingFromASTName("func1;", 5);
 		assertTrue(b0 instanceof IFunction);
+	}
+	
+	//	class B {
+	//  public:
+	//		class BB {
+	//		public:
+	//			int field;
+	//		};
+	//	};
+	//
+	//	class A : public B::BB {};
+	
+	//  #include "header.h"
+	//	
+	//  void foo() {
+	//		A c;
+	//		c.field;//comment
+	//	}
+	public void testBug183843() throws DOMException {
+		IBinding b0 = getBindingFromASTName("field;//", 5);
+		assertTrue(b0 instanceof ICPPField);
 	}
 }

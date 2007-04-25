@@ -71,12 +71,7 @@
 			<topic label="org.eclipse.rse.services.dstore.util" href="reference/api/org/eclipse/rse/services/dstore/util/package-summary.html"/>
 		</topic>
 		<topic label="DStore Miners" href="provisional_api.html">
-			<topic label="org.eclipse.rse.dstore.universal.miners.command" href="reference/api/org/eclipse/rse/dstore/universal/miners/command/package-summary.html"/>
-			<topic label="org.eclipse.rse.dstore.universal.miners.command.patterns" href="reference/api/org/eclipse/rse/dstore/universal/miners/command/patterns/package-summary.html"/>
-			<topic label="org.eclipse.rse.dstore.universal.miners.environment" href="reference/api/org/eclipse/rse/dstore/universal/miners/environment/package-summary.html"/>
-			<topic label="org.eclipse.rse.dstore.universal.miners.filesystem" href="reference/api/org/eclipse/rse/dstore/universal/miners/filesystem/package-summary.html"/>
 			<topic label="org.eclipse.rse.dstore.universal.miners" href="reference/api/org/eclipse/rse/dstore/universal/miners/package-summary.html"/>
-			<topic label="org.eclipse.rse.dstore.universal.miners.processes" href="reference/api/org/eclipse/rse/dstore/universal/miners/processes/package-summary.html"/>
 		</topic>
 		<topic label="Connector Service Implementations" href="provisional_api.html">
 			<topic label="org.eclipse.rse.connectorservice.dstore" href="reference/api/org/eclipse/rse/connectorservice/dstore/package-summary.html"/>

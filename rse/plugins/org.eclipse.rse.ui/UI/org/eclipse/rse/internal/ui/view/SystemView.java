@@ -4314,8 +4314,10 @@ public class SystemView extends SafeTreeViewer
 	      {
 	          if(a==b) return true;
 	          if(a==null || b==null) return false;
-	          //TODO not sure if this equals() check is a good idea
-	          //It may be expensive and unnecessary
+	          //TODO not sure if this equals() check is a good idea.
+	          //It may be expensive and unnecessary. It might be better
+	          //to do this as a fallback instead, in case the adapter 
+	          //is not found. 
 	          if(a.equals(b)) return true;
 	 
 	          if( (a instanceof IAdaptable) && (b instanceof IAdaptable) ) {
@@ -4351,13 +4353,20 @@ public class SystemView extends SafeTreeViewer
 	              if(ident!=null) {
 	                  String absName = ident.getAbsoluteName(element);
 	                  if(absName!=null) return absName.hashCode();
-	                  return ident.hashCode();
+	                  //Since one adapter is typically used for many elements in RSE,
+	                  //performance is better if the original Element's hashCode
+	                  //is used rather than the adapter's hashCode. The problem with
+	                  //this is, that if the remote object changes, it cannot be 
+	                  //identified any more. But by returning null for the absolute
+	                  //name, the extender has agreed that the remote object's 
+	                  //equals() and hashCode() methods will always work properly.
+	                  
+	                  //return ident.hashCode();
 	              }
 	          }		          
-	          if (element != null) // adding check because I hit a null exception here once at startup
+	          if (element != null) { // adding check because I hit a null exception here once at startup
 	        	  return element.hashCode();
-	          else
-	          {		        	  
+	          } else {
 	        	  //System.out.println("null element");
 	        	  return 0;
 	          }

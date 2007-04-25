@@ -400,8 +400,11 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	private int getTopIndexStartOffset() {
 		if (fTextWidget != null) {
 			int top= fTextWidget.getTopIndex();
-			top= fTextWidget.getOffsetAtLine(top);
-			return getDocumentOffset(top);
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=183653
+			top= fTextWidget.getOffsetAtLine(Math.min(fTextWidget.getLineCount() - 1, top));
+			if (top >= 0) {
+				return getDocumentOffset(top);
+			}
 		}
 		return -1;
 	}

@@ -67,6 +67,7 @@ implements IExecutableExtension, IWizardWithMemory
 		super();
 		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
+		setForcePreviousAndNextButtons(true);
 		wz_title = title;
 		wz_desc = desc;
 	}

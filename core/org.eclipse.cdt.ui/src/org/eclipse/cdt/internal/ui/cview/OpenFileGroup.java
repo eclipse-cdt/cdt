@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.core.resources.IContainer;
@@ -134,7 +137,7 @@ public class OpenFileGroup extends CViewActionGroup {
 				if (part != null) {
 					IWorkbenchPage page = getCView().getSite().getPage();
 					page.bringToTop(part);
-					if (celement instanceof ISourceReference) {
+					if (celement instanceof ISourceReference && !(celement instanceof ITranslationUnit)) {
 						EditorUtility.revealInEditor(part, celement);
 					}
 				}

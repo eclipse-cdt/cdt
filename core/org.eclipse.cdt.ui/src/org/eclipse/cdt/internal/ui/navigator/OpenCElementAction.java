@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.ui.navigator;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -47,7 +49,7 @@ public class OpenCElementAction extends OpenFileAction {
 			IEditorPart part;
 			try {
 				part= EditorUtility.openInEditor(fOpenElement);
-				if (fOpenElement instanceof ISourceReference) {
+				if (fOpenElement instanceof ISourceReference && !(fOpenElement instanceof ITranslationUnit)) {
 					EditorUtility.revealInEditor(part, fOpenElement);
 				}
 			} catch (CoreException exc) {

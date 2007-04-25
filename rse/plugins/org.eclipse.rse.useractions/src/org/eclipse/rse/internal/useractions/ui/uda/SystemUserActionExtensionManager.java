@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.uda;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,12 +7,17 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  *******************************************************************************/
+
+package org.eclipse.rse.internal.useractions.ui.uda;
+
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.IRSESystemType;
 
 /**
  * This class manages reading user action extension points. 
@@ -52,7 +55,7 @@ public class SystemUserActionExtensionManager {
 	 * Return list of user-actions defined by the given extension point, for the given 
 	 *  system type.
 	 */
-	public SystemUserActionExtension[] getUserActionExtensions(String systemType) {
+	public SystemUserActionExtension[] getUserActionExtensions(IRSESystemType systemType) {
 		int count = 0;
 		if (!read) readExtensions();
 		if ((elements == null) || (elements.size() == 0)) return null;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,11 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -36,7 +37,8 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 
 
 	private Text nameTextField, valueTextField;
-	private String name, value, systemType, invalidNameChars;
+	private String name, value, invalidNameChars;
+	private IRSESystemType systemType;
 	private boolean change;		// Is this dialog for add or change
 	private String[] existingNames;	
 	
@@ -45,7 +47,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 	 * @param shell
 	 * @param title
 	 */
-	public EnvironmentVariablesPromptDialog(Shell shell, String title, String systemType, String invalidNameChars, String[] existingNames, boolean change) {
+	public EnvironmentVariablesPromptDialog(Shell shell, String title, IRSESystemType systemType, String invalidNameChars, String[] existingNames, boolean change) {
 		super(shell, title);
 		this.change = change;
 		this.systemType = systemType;

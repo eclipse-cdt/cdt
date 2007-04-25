@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,12 +12,14 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168870: move core function from UI to core
-********************************************************************************/
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
 
 import java.net.URL;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.osgi.framework.Bundle;
 
 /**
@@ -65,7 +67,7 @@ public interface ISubSystemConfigurationProxy {
 	 *  
 	 * @return The list of supported system types or an empty list.
 	 */
-	public String[] getSystemTypes();
+	public IRSESystemType[] getSystemTypes();
 
 	/**
 	 * Return true if this factory supports all system types
@@ -108,10 +110,10 @@ public interface ISubSystemConfigurationProxy {
 	//	public IConnectorService getSystemObject();
 
 	/**
-	 * Test if the given system type matches one or more of the type names declared in the
-	 *  <samp>systemTypes</samp> attribute of this extension.
+	 * Test if the given system type matches one or more of the
+	 * <samp>systemTypes</samp> attribute of this extension.
 	 */
-	public boolean appliesToSystemType(String type);
+	public boolean appliesToSystemType(IRSESystemType type);
 
 	/**
 	 * Reset for a full refresh from disk, such as after a team synch. 

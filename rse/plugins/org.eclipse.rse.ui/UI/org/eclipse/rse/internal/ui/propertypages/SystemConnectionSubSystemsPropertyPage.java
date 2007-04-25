@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -19,6 +20,7 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -391,7 +393,7 @@ public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPa
 	/**
 	 * Event: the user has selected a system type.
 	 */
-	public void systemTypeSelected(String systemType, boolean duringInitialization)
+	public void systemTypeSelected(IRSESystemType systemType, boolean duringInitialization)
 	{
 	}
 }

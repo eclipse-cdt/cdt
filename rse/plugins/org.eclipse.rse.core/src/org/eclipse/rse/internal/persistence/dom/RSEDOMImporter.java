@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,13 +11,15 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
 
 import java.util.Vector;
 
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -99,7 +101,7 @@ public class RSEDOMImporter {
 
 		// get host node attributes
 		String connectionName = hostNode.getName();
-		String systemType = hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
+		String systemTypeName = hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
 		String hostName = hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_HOSTNAME).getValue();
 		String description = hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION).getValue();
 		boolean isOffline = getBooleanValue(hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_OFFLINE).getValue());
@@ -109,6 +111,7 @@ public class RSEDOMImporter {
 		try {
 			// NOTE create host effectively recreates the subsystems
 			// so instead of creating subsystems on restore, we should be updating their properties
+			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeName);
 			host = profile.createHost(systemType, connectionName, hostName, description);
 			host.setOffline(isOffline);
 			host.setPromptable(isPromptable);

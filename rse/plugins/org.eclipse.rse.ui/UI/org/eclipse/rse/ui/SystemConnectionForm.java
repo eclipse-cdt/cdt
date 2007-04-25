@@ -17,12 +17,15 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,7 +37,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -81,7 +83,9 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 
 	public static final boolean CREATE_MODE = false;
 	public static final boolean UPDATE_MODE = true;
-	public static String lastSystemType = null;
+	public static IRSESystemType lastSystemType = null;
+	protected IRSESystemType defaultSystemType;
+	protected IRSESystemType[] validSystemTypes;
 
 	// GUI widgets
 	protected Label labelType, labelConnectionName, labelHostName, labelUserId, labelDescription, labelProfile;
@@ -104,8 +108,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	// other inputs
 	protected ISystemMessageLine msgLine;
 	protected ISystemConnectionFormCaller caller;
-	protected String[] restrictSystemTypesTo;
-	protected String defaultSystemType, defaultConnectionName, defaultHostName;
+	protected String defaultConnectionName, defaultHostName;
 	protected String defaultUserId, defaultDescription, defaultProfile; // update mode initial values	                  
 	protected String[] defaultProfileNames;
 	protected boolean defaultWorkOffline;
@@ -227,28 +230,56 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	}
 
 	/**
-	 * Call this to restrict the system type that the user is allowed to choose
+	 * Call this to restrict the system type that the user is allowed to choose.
+	 * Must be called before the widgets are created in 
+	 * {@link #createContents(Composite, boolean, String)}.
+	 * 
+	 * @param systemType the only IRSESystemType allowed, or
+	 *     <code>null</code> to show all allowed system types.
 	 */
-	public void restrictSystemType(String systemType) {
-		if (systemType.equals("*")) //$NON-NLS-1$
-			return;
-		this.restrictSystemTypesTo = new String[1];
-		this.restrictSystemTypesTo[0] = systemType;
-		if (defaultSystemType == null)
-			defaultSystemType = systemType;
+	public void restrictSystemType(IRSESystemType systemType) {
+		if (systemType==null) {
+			restrictSystemTypes(null);
+		} else {
+			IRSESystemType[] types = new IRSESystemType[] { systemType };
+			restrictSystemTypes (types);
+		}
 	}
 
 	/**
-	 * Call this to restrict the system types that the user is allowed to choose
+	 * Call this to restrict the system types that the user is allowed to choose.
+	 * 
+	 * @param systemTypes the list of allowed system types, or
+	 *     <code>null</code> to not restrict the allowed system types.
 	 */
-	public void restrictSystemTypes(String[] systemTypes) {
-		if (systemTypes == null)
-			return;
-		else if ((systemTypes.length == 1) && (systemTypes[0].equals("*"))) //$NON-NLS-1$
-			return;
-		this.restrictSystemTypesTo = systemTypes;
-		if (defaultSystemType == null)
-			defaultSystemType = systemTypes[0];
+	public void restrictSystemTypes(IRSESystemType[] systemTypes) {
+		//Remember the old selection before changing the data
+		IRSESystemType oldSelection = getSystemType();
+		
+		//Update the known list of valid system types
+		if (systemTypes == null) {
+			validSystemTypes = SystemWidgetHelpers.getValidSystemTypes(null);
+		} else {
+			validSystemTypes = new IRSESystemType[systemTypes.length];
+			System.arraycopy(systemTypes, 0, validSystemTypes, 0, systemTypes.length);
+			SystemWidgetHelpers.sortSystemTypesByLabel(validSystemTypes);
+		}
+		
+		//Restore the default system type based on the new list
+		List systemTypesAsList = Arrays.asList(validSystemTypes);
+		if (defaultSystemType == null || !systemTypesAsList.contains(defaultSystemType)) {
+			defaultSystemType = validSystemTypes[0];
+		} 
+
+		//Set items in Combo and restore the previous selection
+		if (textSystemType!=null) {
+			textSystemType.setItems(SystemWidgetHelpers.getSystemTypeLabels(validSystemTypes));
+			if (oldSelection!=null && Arrays.asList(validSystemTypes).contains(oldSelection)) {
+				textSystemType.select(systemTypesAsList.indexOf(oldSelection));
+			} else {
+				textSystemType.select(0);
+			}
+		}
 	}
 
 	/**
@@ -271,7 +302,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 */
 	public void initializeInputFields(IHost conn, boolean updateMode) {
 		this.updateMode = updateMode;
-		defaultSystemType = conn.getSystemType().getName();
+		defaultSystemType = conn.getSystemType();
 		defaultConnectionName = conn.getAliasName();
 		defaultHostName = conn.getHostName();
 		defaultUserId = conn.getLocalDefaultUserId();
@@ -468,21 +499,22 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		if (!updateMode) {
 			return false;
 		}
-
-		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(defaultSystemType);
-		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
-		return sysTypeAdapter.isEnableOffline(sysType);
+		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(defaultSystemType.getAdapter(IRSESystemType.class));
+		return sysTypeAdapter.isEnableOffline(defaultSystemType);
 	}
 
 	/**
 	 * Return user-entered System Type.
 	 * Call this after finish ends successfully.
 	 */
-	public String getSystemType() {
-		if (textSystemType != null)
-			return textSystemType.getText().trim();
-		else
-			return defaultSystemType;
+	public IRSESystemType getSystemType() {
+		if (textSystemType != null) {
+			int idx = textSystemType.getSelectionIndex();
+			if (idx >= 0) {
+				return validSystemTypes[idx];
+			}
+		}
+		return defaultSystemType;
 	}
 
 	/**
@@ -603,7 +635,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			SystemWidgetHelpers.createLabel(composite_prompts, " ", 2); // filler //$NON-NLS-1$
 
 		// SYSTEMTYPE PROMPT IN UPDATE MODE OR RESTRICTED MODE
-		if (updateMode || ((restrictSystemTypesTo != null) && (restrictSystemTypesTo.length == 1))) {
+		if (updateMode || ((validSystemTypes != null) && (validSystemTypes.length == 1))) {
 			if (updateMode) {
 				temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_SYSTEMTYPE_LABEL);
 				labelSystemType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
@@ -624,9 +656,9 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 
 		if (!updateMode && (defaultSystemType == null)) {
 			defaultSystemType = lastSystemType;
-			
-			if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
-				defaultSystemType = textSystemType.getItem(0);
+			if (defaultSystemType == null) {
+				defaultSystemType = validSystemTypes[0];
+			}
 		}
 
 		textHostName = SystemWidgetHelpers.createHostNameCombo(composite_prompts, null, defaultSystemType);
@@ -646,7 +678,12 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_SYSTEMTYPE_LABEL);
 			labelSystemType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
 			labelSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-			textSystemType = SystemWidgetHelpers.createSystemTypeCombo(composite_prompts, null, restrictSystemTypesTo);
+			if (validSystemTypes==null) {
+				validSystemTypes = SystemWidgetHelpers.getValidSystemTypes(null);
+			} else {
+				SystemWidgetHelpers.sortSystemTypesByLabel(validSystemTypes);
+			}
+			textSystemType = SystemWidgetHelpers.createSystemTypeCombo(composite_prompts, null, validSystemTypes);
 			textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 			SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003"); //$NON-NLS-1$ 
 		}
@@ -725,10 +762,10 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			verifyHostNameCB.addSelectionListener(this);
 		}
 
-		if ((textSystemType != null) && (textSystemType.getText() != null))
-			caller.systemTypeSelected(textSystemType.getText(), true);
-		else if ((restrictSystemTypesTo != null) && (restrictSystemTypesTo.length == 1))
-			caller.systemTypeSelected(restrictSystemTypesTo[0], true);
+		if ((textSystemType != null) && (textSystemType.getSelectionIndex()>=0))
+			caller.systemTypeSelected(validSystemTypes[textSystemType.getSelectionIndex()], true);
+		else if ((validSystemTypes != null) && (validSystemTypes.length == 1))
+			caller.systemTypeSelected(validSystemTypes[0], true);
 
 		if (textUserId == null)
 			userIdLocation = IRSEUserIdConstants.USERID_LOCATION_NOTSET;
@@ -774,7 +811,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		{
 			String currHostName = textHostName.getText().trim();
 			boolean hostNameChanged = !currHostName.equals(originalHostName);
-			String currSystemType = textSystemType.getText().trim();
+			IRSESystemType currSystemType = getSystemType();
 			textHostName.setItems(RSEUIPlugin.getTheSystemRegistry().getHostNames(currSystemType));
 			if (hostNameChanged) {
 				textHostName.setText(currHostName);
@@ -893,14 +930,14 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		// -----------
 		// ...output-only:
 		if ((textSystemTypeReadOnly != null) || singleTypeMode) {
-			if (restrictSystemTypesTo != null) {
+			if (validSystemTypes != null) {
 				if (textSystemTypeReadOnly != null)
-					textSystemTypeReadOnly.setText(restrictSystemTypesTo[0]);
+					textSystemTypeReadOnly.setText(validSystemTypes[0].getLabel());
 				if (defaultSystemType == null)
-					defaultSystemType = restrictSystemTypesTo[0];
+					defaultSystemType = validSystemTypes[0];
 			} else if (defaultSystemType != null) {
 				if (textSystemTypeReadOnly != null)
-					textSystemTypeReadOnly.setText(defaultSystemType);
+					textSystemTypeReadOnly.setText(defaultSystemType.getLabel());
 			}
 		}
 		// ...selectable:
@@ -909,13 +946,16 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 				defaultSystemType = lastSystemType;
 			}
 			if (defaultSystemType != null) {
-				int selIdx = textSystemType.indexOf(defaultSystemType);
-				if (selIdx >= 0)
+				int selIdx = Arrays.asList(validSystemTypes).indexOf(defaultSystemType);
+				if (selIdx >= 0) {
 					textSystemType.select(selIdx);
+				} else {
+					textSystemType.select(0);
+				}
 			} else {
 				textSystemType.select(0);
-				defaultSystemType = textSystemType.getText();
 			}
+			defaultSystemType = getSystemType();
 		}
 
 		// ---------------------------------------------------		
@@ -961,11 +1001,11 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 * Initialize userId values.
 	 * We have to reset after user changes the system type
 	 */
-	private void initializeUserIdField(String systemType, String currentUserId) {
+	private void initializeUserIdField(IRSESystemType systemType, String currentUserId) {
 		// ---------------		
 		// default user id
 		// ---------------
-		String parentUserId = RSEPreferencesManager.getUserId(systemType);
+		String parentUserId = RSEPreferencesManager.getUserId(systemType.getId());
 		if (textUserId != null) {
 			textUserId.setInheritedText(parentUserId);
 			boolean allowEditingOfInherited = ((parentUserId == null) || (parentUserId.length() == 0));
@@ -1101,7 +1141,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	public void setPageComplete() {
 		boolean complete = isPageComplete();
 		if (complete && (textSystemType != null))
-			lastSystemType = textSystemType.getText().trim();
+			lastSystemType = getSystemType();
 		if (callerInstanceOfWizardPage) {
 			((WizardPage)caller).setPageComplete(complete);
 		} else if (callerInstanceOfSystemPromptDialog) {

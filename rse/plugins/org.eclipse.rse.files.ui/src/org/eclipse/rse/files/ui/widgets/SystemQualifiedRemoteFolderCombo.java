@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,12 +12,14 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -82,7 +84,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 	//private IRemoteFile[]      folders = null;
 	private Hashtable          resolvedFolders = new Hashtable();
 	//private String[]           folderStrings = null;
-	private String[]           systemTypes;
+	private IRSESystemType[]   systemTypes;
 	private boolean            readOnly = true;
 	private boolean            showNewPrompt = true;
     private SystemSelectRemoteFolderAction browseAction = null;
@@ -99,7 +101,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 	 * @param parent Parent composite
 	 * @param style SWT style flags for overall composite widget
 	 * @param historyKey A string identifying the key into the user preferences where this combo's history will be stored.
-	 * @see #setSystemType(String)
+	 * @see #setSystemType(IRSESystemType)
 	 */
 	public SystemQualifiedRemoteFolderCombo(Composite parent, int style, String historyKey)
 	{
@@ -129,30 +131,33 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 	}
 
     /**
-     * Set the system types to restrict what connections the user sees, and what types of 
-     * connections they can create.
-     * @param systemTypes An array of system type names
+     * Set the system types to restrict what connections the user sees,
+     * and what types of connections they can create.
      * 
-     * @see org.eclipse.rse.core.IRSESystemType
+     * @param systemTypes An array of system types, or
+     *     <code>null</code> to allow all registered valid system types.
+     *     A system type is valid if at least one subsystem configuration
+     *     is registered against it.
      */
-    public void setSystemTypes(String[] systemTypes)
+    public void setSystemTypes(IRSESystemType[] systemTypes)
     {
     	this.systemTypes = systemTypes;
     }
     /**
      * Convenience method to restrict to a single system type. 
-     * Same as setSystemTypes(new String[] {systemType})
+     * Same as setSystemTypes(new IRSESystemType[] {systemType})
      *
-     * @param systemType The name of the system type to restrict to
-     * 
-     * @see org.eclipse.rse.core.IRSESystemType
+     * @param systemType The system type to restrict to, or
+     *     <code>null</code> to allow all registered valid system types.
+     *     A system type is valid if at least one subsystem configuration
+     *     is registered against it.
      */
-    public void setSystemType(String systemType)
+    public void setSystemType(IRSESystemType systemType)
     {
     	if (systemType == null)
     	  setSystemTypes(null);
     	else
-    	  setSystemTypes(new String[] {systemType});
+    	  setSystemTypes(new IRSESystemType[] {systemType});
     	//System.out.println("SYSTEM TYPES SET TO "+systemType+" IN SYSQUALRMTFLDRCMBO");
     }
 

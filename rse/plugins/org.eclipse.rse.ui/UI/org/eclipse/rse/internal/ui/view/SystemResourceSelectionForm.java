@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
@@ -158,12 +159,12 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		}
 		else
 		{
-			String[] systemTypes = _inputProvider.getSystemTypes();
+			IRSESystemType[] systemTypes = _inputProvider.getSystemTypes();
 			String category = _inputProvider.getCategory();
 		
 			if (systemTypes != null)
 			{
-				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, _inputProvider.getSystemTypes(), _inputProvider.getSystemConnection(), _inputProvider.allowNewConnection());	
+				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, systemTypes, _inputProvider.getSystemConnection(), _inputProvider.allowNewConnection());	
 			}
 			else if (category != null)
 			{
@@ -171,7 +172,10 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 			}
 			else
 			{
-				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, "*", _inputProvider.getSystemConnection(), _inputProvider.allowNewConnection()); //$NON-NLS-1$	
+				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, 
+						SystemWidgetHelpers.getValidSystemTypes(null),
+						_inputProvider.getSystemConnection(),
+						_inputProvider.allowNewConnection());	
 				
 			}
 			_connectionCombo.addSelectionListener(new SelectionAdapter() 

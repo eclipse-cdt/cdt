@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.uda;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,8 +7,13 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  *******************************************************************************/
+
+package org.eclipse.rse.internal.useractions.ui.uda;
+
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.rse.core.IRSESystemType;
 
 /**
  * This class represents a user action read from a user action extension point
@@ -19,7 +22,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * IT IS NOT COMPLETE YET AND NOT SUPPORTED YET.
  */
 public class SystemUserActionExtension {
-	private String types, id, vendor;
+	private String types;
+	private String id, vendor;
 	private boolean allTypes;
 
 	// SEE FILE plugin.xml.udaExtensionPoint.notused
@@ -51,11 +55,13 @@ public class SystemUserActionExtension {
 	/**
 	 * Return true if this extension's systemTypes attribute matches the given system type
 	 */
-	public boolean appliesToSystemType(String type) {
+	public boolean appliesToSystemType(IRSESystemType type) {
 		//System.out.println("INSIDE APPLIESTO FOR " + type + ". allTypes = " + allTypes + ". types = " + types);
 		if (allTypes)
 			return true;
-		else
-			return (types.indexOf(type) >= 0);
+		else {
+			//FIXME migrate to using ID
+			return (types.indexOf(type.getName()) >= 0);
+		}
 	}
 }

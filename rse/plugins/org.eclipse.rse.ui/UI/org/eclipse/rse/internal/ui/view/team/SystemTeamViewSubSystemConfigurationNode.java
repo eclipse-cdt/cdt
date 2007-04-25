@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -19,6 +19,7 @@ package org.eclipse.rse.internal.ui.view.team;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
@@ -95,24 +96,24 @@ public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 	{
 		if (name == null)
 		{
-			name = ""; //$NON-NLS-1$
-			String[] types = ssf.getSystemTypes();
+			StringBuffer buf = new StringBuffer();
+			buf.append(ssf.getName());
+			buf.append(" ("); //$NON-NLS-1$
 			if (ssf.getSubSystemConfigurationProxy().supportsAllSystemTypes())
 			{
-				name = SystemResources.TERM_ALL;
+				buf.append(SystemResources.TERM_ALL);
 			}
 			else
 			{
+				IRSESystemType[] types = ssf.getSystemTypes();
 				for (int idx=0; idx<types.length; idx++)
 				{
-					if (idx==0)
-						name += types[idx];
-					else
-						name += ", " + types[idx]; //$NON-NLS-1$
+					if (idx>0) buf.append(", "); //$NON-NLS-1$
+					buf.append(types[idx].getLabel());
 				}
 			}
-			name = ssf.getName() + " ("+name+")"; //$NON-NLS-1$  //$NON-NLS-2$
-			//name = ssf.getName() + ": "+name;
+			buf.append(")"); //$NON-NLS-1$
+			name = buf.toString();
 		}
 		return name;	
 	}

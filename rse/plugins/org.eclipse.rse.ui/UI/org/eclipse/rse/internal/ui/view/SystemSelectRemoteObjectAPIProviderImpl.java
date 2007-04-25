@@ -12,11 +12,13 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -61,7 +63,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	protected String   subsystemFactoryId; 
 	protected String   subsystemFactoryCategory;
 	protected String   filterSuffix;
-	protected String[] systemTypes;
+	protected IRSESystemType[] systemTypes;
 	protected String   preSelectFilterChild;
 	protected Object   preSelectFilterChildObject;
 	protected ISystemFilter[] quickFilters;
@@ -102,7 +104,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	 * @param systemTypes Optional list of system types to restrict the "New Connection" wizard to. Pass null for no restrictions
 	 */
 	public SystemSelectRemoteObjectAPIProviderImpl(String factoryId, String factoryCategory, 
-	                                               boolean showNewConnectionPrompt, String[] systemTypes)
+	                                               boolean showNewConnectionPrompt, IRSESystemType[] systemTypes)
 	{
 		super();
 		this.subsystemFactoryId = factoryId;
@@ -130,11 +132,16 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	}
 
 	/**
-	 * Specify system types to restrict what types of connections the user can create, and see.
+	 * Specify system types to restrict what types of connections
+	 * the user can create, and see.
 	 * This will override subsystemFactoryId,if that has been set!
-	 * @see org.eclipse.rse.core.IRSESystemType
+	 * 
+     * @param systemTypes An array of system types, or
+     *     <code>null</code> to allow all registered valid system types.
+     *     A system type is valid if at least one subsystem configuration
+     *     is registered against it.
 	 */
-	public void setSystemTypes(String[] systemTypes)
+	public void setSystemTypes(IRSESystemType[] systemTypes)
 	{
 		this.systemTypes = systemTypes;
 	}

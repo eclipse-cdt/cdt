@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
@@ -19,7 +19,7 @@ package org.eclipse.rse.internal.references;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.references.IRSEReferencingObject;
-import org.eclipse.rse.internal.core.model.RSEModelResources;
+import org.eclipse.rse.internal.core.RSECoreMessages;
 
 /**
  * A class to encapsulate the operations required of an object which
@@ -32,36 +32,36 @@ import org.eclipse.rse.internal.core.model.RSEModelResources;
  * These references are not persistent. Persistent references are managed
  * by the subclass SystemPersistableReferencingObject.
  */
-/** 
- * @lastgen class SystemReferencingObjectImpl Impl implements SystemReferencingObject, EObject {}
- */
 public abstract class SystemReferencingObject extends RSEModelObject implements IRSEReferencingObject {
 	private SystemReferencingObjectHelper helper = null;
 	protected boolean referenceBroken = false;
 
 	/**
-	 * Default constructor. Typically called by EMF factory method.
+	 * Default constructor.
 	 */
 	protected SystemReferencingObject() {
 		super();
 		helper = new SystemReferencingObjectHelper(this);
 	}
 
-	/**
-	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#setReferencedObject(IRSEBaseReferencedObject)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#setReferencedObject(org.eclipse.rse.core.references.IRSEBaseReferencedObject)
 	 */
 	public void setReferencedObject(IRSEBaseReferencedObject obj) {
 		helper.setReferencedObject(obj);
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#getReferencedObject()
 	 */
 	public IRSEBaseReferencedObject getReferencedObject() {
 		return helper.getReferencedObject();
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#removeReference()
 	 */
 	public int removeReference() {
@@ -83,7 +83,7 @@ public abstract class SystemReferencingObject extends RSEModelObject implements 
 	}
 
 	public String getDescription() {
-		return RSEModelResources.RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
+		return RSECoreMessages.RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
 	}
 
 	protected final SystemReferencingObjectHelper getHelper() {

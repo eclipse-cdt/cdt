@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemRemoteObjectMatcher;
@@ -73,7 +74,7 @@ import org.eclipse.swt.widgets.Text;
  * <ul>
  *   <li>{@link #setShowNewConnectionPrompt(boolean)}
  *   <li>{@link #setSystemConnection(IHost) or #setDefaultConnection(SystemConnection)}
- *   <li>{@link #setSystemTypes(String[])}
+ *   <li>{@link #setSystemTypes(IRSESystemType[])}
  *   <li>{@link #setRootFolder(IHost, String)} or {@link #setRootFolder(IRemoteFile)}
  *   <li>{@link #setPreSelection(IRemoteFile)}
  *   <li>{@link #setFileTypes(String[])} or {@link #setFileTypes(String)} 
@@ -156,7 +157,7 @@ public class SystemSelectRemoteFileOrFolderForm
 
 	 * @see #setSystemConnection(IHost)
 	 * @see #setShowNewConnectionPrompt(boolean)
-	 * @see #setSystemTypes(String[])
+	 * @see #setSystemTypes(IRSESystemType[])
      * @see #setSelectionTreeToolTipText(String)
 	 */
 	public SystemSelectRemoteFileOrFolderForm(ISystemMessageLine msgLine, Object caller, boolean fileMode) 
@@ -240,16 +241,21 @@ public class SystemSelectRemoteFileOrFolderForm
     {
     	inputProvider.setShowNewConnectionPrompt(show);
     }
+    
     /**
-     * Restrict to certain system types
-     * @param systemTypes the system types to restrict what connections are shown and what types of connections
-     *  the user can create
-     * @see org.eclipse.rse.core.IRSESystemType
+     * Set the system types to restrict what connections the user sees,
+     * and what types of connections they can create.
+     * 
+     * @param systemTypes An array of system types, or
+     *     <code>null</code> to allow all registered valid system types.
+     *     A system type is valid if at least one subsystem configuration
+     *     is registered against it.
      */
-    public void setSystemTypes(String[] systemTypes)
+    public void setSystemTypes(IRSESystemType[] systemTypes)
     {
     	inputProvider.setSystemTypes(systemTypes);
     }
+    
     /**
      * Set the message shown as the text at the top of the form. Eg, "Select a file"
      */

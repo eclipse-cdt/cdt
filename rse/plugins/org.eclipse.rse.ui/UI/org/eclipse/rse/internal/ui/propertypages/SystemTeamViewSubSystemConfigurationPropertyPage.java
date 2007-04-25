@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,10 +11,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
@@ -114,20 +115,21 @@ public class SystemTeamViewSubSystemConfigurationPropertyPage extends SystemBase
 		labelId.setText(proxy.getId());
 		labelVendor.setText(proxy.getVendor());
 		String systypes = ""; //$NON-NLS-1$
-		String[] types = ssf.getSystemTypes();
 		if (ssf.getSubSystemConfigurationProxy().supportsAllSystemTypes())
 		{
 			systypes = SystemResources.TERM_ALL;
 		}
 		else
 		{
+			IRSESystemType[] types = ssf.getSystemTypes();
+			StringBuffer buf = new StringBuffer();
 			for (int idx=0; idx<types.length; idx++)
 			{
-				if (idx==0)
-					systypes += types[idx];
-				else
-					systypes += ", " + types[idx]; //$NON-NLS-1$
+				if (idx>0)
+					buf.append(", "); //$NON-NLS-1$
+				buf.append(types[idx].getLabel());
 			}
+			systypes = buf.toString();
 		}
 		labelTypes.setText(systypes);		
 	}

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -19,6 +20,7 @@ package org.eclipse.rse.internal.files.ui.propertypages;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
@@ -47,7 +49,7 @@ public class FileServicesPropertyPage extends ServicesPropertyPage
 	
 		IHost host = subSystem.getHost();
 		_currentFactory = (IFileServiceSubSystemConfiguration)subSystem.getParentRemoteFileSubSystemConfiguration();
-		IFileServiceSubSystemConfiguration[] factories = getFileServiceSubSystemFactories(host.getSystemType().getName());
+		IFileServiceSubSystemConfiguration[] factories = getFileServiceSubSystemConfigurations(host.getSystemType());
 		
 		
 		// create elements for each 
@@ -65,11 +67,11 @@ public class FileServicesPropertyPage extends ServicesPropertyPage
 		return elements;
 	}
 	
-	protected IFileServiceSubSystemConfiguration[] getFileServiceSubSystemFactories(String systemType)
+	protected IFileServiceSubSystemConfiguration[] getFileServiceSubSystemConfigurations(IRSESystemType systemType)
 	{
 		List results = new ArrayList();
 		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
-		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType);
+		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType, false);
 		
 		for (int i = 0; i < factories.length; i++)
 		{

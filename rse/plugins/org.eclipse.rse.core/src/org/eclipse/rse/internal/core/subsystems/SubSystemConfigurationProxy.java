@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,14 +14,15 @@
  * Uwe Stieber (Wind River) - systemTypeIds attribute extension and dynamic association
  *                            of system types.
  * David Dykstal (IBM) - 168870: move core function from UI to core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.subsystems;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -51,7 +52,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	private String systemTypeIds;
 	
 	// The list of resolved system types supported by this subsystem configuration.
-	private List resolvedSystemTypes;
+	private IRSESystemType[] resolvedSystemTypes;
 
 	// The subsystem configuration vendor
 	private String vendor;
@@ -145,35 +146,35 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy#getSystemTypes()
 	 */
-	public String[] getSystemTypes() {
+	public IRSESystemType[] getSystemTypes() {
 		if (resolvedSystemTypes == null) {
-			resolvedSystemTypes = new LinkedList();
+			IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
 			
 			// If the subsystem configuration supports all system types, just add all
-			// currently registered system types to th resolved list
+			// currently registered system types to the resolved list
 			if (supportsAllSystemTypes()) {
-				IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
-				for (int i = 0; i < systemTypes.length; i++) resolvedSystemTypes.add(systemTypes[i].getName());
+				resolvedSystemTypes = systemTypes;
 			} else {
 				// We have to match the given lists of system type ids against
 				// the list of available system types. As the list of system types cannot
 				// change ones it has been initialized, we filter out the not matching ones
 				// here directly.
-				IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+				List systemTypesList = new ArrayList(systemTypes.length);
 				for (int i = 0; i < systemTypes.length; i++) {
 					IRSESystemType systemType = systemTypes[i];
 					if (isMatchingDeclaredSystemTypes(systemType)
-							|| (systemType.getSubsystemConfigurationIds() != null
-									&& Arrays.asList(systemType.getSubsystemConfigurationIds()).contains(getId()))) {
-						if (!resolvedSystemTypes.contains(systemType.getName())) {
-								resolvedSystemTypes.add(systemType.getName());
+						|| (systemType.getSubsystemConfigurationIds() != null
+									&& Arrays.asList(systemType.getSubsystemConfigurationIds()).contains(getId()))
+					) {
+						if (!systemTypesList.contains(systemType)) {
+							systemTypesList.add(systemType);
 						}
 					}
 				}
+				resolvedSystemTypes = (IRSESystemType[])systemTypesList.toArray(new IRSESystemType[systemTypesList.size()]);
 			}
 		}
-
-		return (String[])resolvedSystemTypes.toArray(new String[resolvedSystemTypes.size()]);
+		return resolvedSystemTypes;
 	}
 
 	/**
@@ -210,7 +211,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	/**
 	 * Return true if this extension's systemTypes attribute matches the given system type name.
 	 */
-	public boolean appliesToSystemType(String type) {
+	public boolean appliesToSystemType(IRSESystemType type) {
 		assert type != null;
 		if (systemTypeMatcher.supportsAllSystemTypes()) return true;
 		return Arrays.asList(getSystemTypes()).contains(type);

@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -162,13 +163,13 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		if (getSystemType() == null) {
 			pageTitle = SystemResources.RESID_NEWCONN_PAGE1_TITLE;
 		} else {
-			String onlySystemType = getSystemType().getLabel();
+			IRSESystemType onlySystemType = getSystemType();
 
-			if (onlySystemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL)) {
+			if (onlySystemType.getId().equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID)) {
 				pageTitle = SystemResources.RESID_NEWCONN_PAGE1_LOCAL_TITLE;
 			} else {
 				pageTitle = SystemResources.RESID_NEWCONN_PAGE1_REMOTE_TITLE;
-				pageTitle = SystemMessage.sub(pageTitle, "&1", onlySystemType); //$NON-NLS-1$
+				pageTitle = SystemMessage.sub(pageTitle, "&1", onlySystemType.getLabel()); //$NON-NLS-1$
 			}
 		}
 
@@ -322,9 +323,9 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 
 			if (ok) {
 				try {
-					String sysType = getSystemType() != null ? getSystemType().getName() : null;
+					IRSESystemType systemType = getSystemType();
 					SystemConnectionForm form = mainPage.getSystemConnectionForm();
-					IHost conn = sr.createHost(form.getProfileName(), sysType, form.getConnectionName(), form.getHostName(),
+					IHost conn = sr.createHost(form.getProfileName(), systemType, form.getConnectionName(), form.getHostName(),
 																			form.getConnectionDescription(), form.getDefaultUserId(), form.getUserIdLocation(),
 																			subsystemFactorySuppliedWizardPages);
 
@@ -333,7 +334,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 
 					// a tweak that is the result of UCD feedback. Phil
 					if ((conn != null) && SystemPerspectiveHelpers.isRSEPerspectiveActive()) {
-						if (sysType.equals(IRSESystemType.SYSTEMTYPE_ISERIES)) {
+						if (systemType.getId().equals(IRSESystemType.SYSTEMTYPE_ISERIES_ID)) {
 							ISubSystem[] objSubSystems = sr.getSubSystemsBySubSystemConfigurationCategory("nativefiles", conn); //$NON-NLS-1$
 							if ((objSubSystems != null) && (objSubSystems.length > 0))// might be in product that doesn't have iSeries plugins
 								sr.expandSubSystem(objSubSystems[0]);

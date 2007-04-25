@@ -12,10 +12,12 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.internal.model.SystemNewConnectionPromptObject;
@@ -32,7 +34,7 @@ public class SystemViewConnectionSelectionInputProvider extends SystemAbstractAP
 	private boolean showNew = true;
 	private SystemNewConnectionPromptObject newConnPrompt;
 	private Object[] newConnPromptArray;
-	private String[] systemTypes;
+	private IRSESystemType[] systemTypes;
 	
 	/**
 	 * Constructor
@@ -60,14 +62,14 @@ public class SystemViewConnectionSelectionInputProvider extends SystemAbstractAP
 	/**
 	 * Set the system types to restrict by
 	 */
-	public void setSystemTypes(String[] systemTypes)
+	public void setSystemTypes(IRSESystemType[] systemTypes)
 	{
 		this.systemTypes = systemTypes;
 	}
 	/**
 	 * Return the system types we are restricted by
 	 */
-	public String[] getSystemTypes()
+	public IRSESystemType[] getSystemTypes()
 	{
 		return systemTypes;
 	}

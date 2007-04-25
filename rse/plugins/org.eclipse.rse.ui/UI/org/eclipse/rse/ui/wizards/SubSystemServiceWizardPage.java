@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -88,9 +89,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)getSubSystemConfiguration();
 			
 			IRSESystemType systemType = getMainPage() != null && getMainPage().getWizard() instanceof RSEDefaultNewConnectionWizard ? ((RSEDefaultNewConnectionWizard)getMainPage().getWizard()).getSystemType() : null;
-			String systemTypeName = systemType != null ? systemType.getName() : null;
-			
-			IServiceSubSystemConfiguration[] factories = getServiceSubSystemFactories(systemTypeName, currentFactory.getServiceType());
+			IServiceSubSystemConfiguration[] factories = getServiceSubSystemConfigurations(systemType, currentFactory.getServiceType());
 			
 			IHost dummyHost = null;
 			if (getWizard() instanceof RSEDefaultNewConnectionWizard)
@@ -119,22 +118,22 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		return _serviceElements;
 	}
 	
-	protected IServiceSubSystemConfiguration[] getServiceSubSystemFactories(String systemType, Class serviceType)
+	protected IServiceSubSystemConfiguration[] getServiceSubSystemConfigurations(IRSESystemType systemType, Class serviceType)
 	{
 		List results = new ArrayList();
 		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
-		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType);
+		ISubSystemConfiguration[] configs = sr.getSubSystemConfigurationsBySystemType(systemType, false);
 		
-		for (int i = 0; i < factories.length; i++)
+		for (int i = 0; i < configs.length; i++)
 		{
-			ISubSystemConfiguration factory = factories[i];
-			if (factory instanceof IServiceSubSystemConfiguration)
+			ISubSystemConfiguration config = configs[i];
+			if (config instanceof IServiceSubSystemConfiguration)
 			{
-				IServiceSubSystemConfiguration sfactory = (IServiceSubSystemConfiguration)factory;
-				if (sfactory.getServiceType() == serviceType)
+				IServiceSubSystemConfiguration sconfig = (IServiceSubSystemConfiguration)config;
+				if (sconfig.getServiceType() == serviceType)
 				{
 					
-					results.add(sfactory);
+					results.add(sconfig);
 				}
 			}
 		}

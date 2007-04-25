@@ -1,11 +1,12 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * David Dykstal (IBM) - initial API and implementation.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.tests.persistence;
@@ -16,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
@@ -172,7 +174,8 @@ public class PersistenceTest extends RSECoreTestCase {
 		assertNotNull(profile);
 		
 		try {
-			registry.createHost("bogus", "Linux", "myhost", "myhost.mynet.mycompany.net", null);
+			IRSESystemType linuxType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LINUX_ID);
+			registry.createHost("bogus", linuxType, "myhost", "myhost.mynet.mycompany.net", null);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

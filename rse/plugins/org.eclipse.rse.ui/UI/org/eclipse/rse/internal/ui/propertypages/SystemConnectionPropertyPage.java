@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -90,7 +91,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		{
 		  IHost conn = (IHost)getElement();
 		  ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
-		  sr.updateHost( conn,conn.getSystemType().getName(),form.getConnectionName(),form.getHostName(),
+		  sr.updateHost( conn, conn.getSystemType(), form.getConnectionName(),form.getHostName(),
 		                       form.getConnectionDescription(), form.getDefaultUserId(),
 		                       form.getUserIdLocation() );
 
@@ -130,7 +131,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 				  }
 				
 				  // check that everything was disconnedted okay and this is not the local connection
-				  if(sr.isAnySubSystemConnected(conn) && !IRSESystemType.SYSTEMTYPE_LOCAL.equals(conn.getSystemType().getName()))
+				  if(sr.isAnySubSystemConnected(conn) && !IRSESystemType.SYSTEMTYPE_LOCAL_ID.equals(conn.getSystemType().getId()))
 				  {
 					  // backout changes, likely because user cancelled the disconnect
 					  sr.setHostOffline(conn, false);
@@ -161,7 +162,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
     /**
      * Event: the user has selected a system type.
      */
-    public void systemTypeSelected(String systemType, boolean duringInitialization)
+    public void systemTypeSelected(IRSESystemType systemType, boolean duringInitialization)
     {
     }
 	

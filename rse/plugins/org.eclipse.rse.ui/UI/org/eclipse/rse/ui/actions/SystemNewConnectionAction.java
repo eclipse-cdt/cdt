@@ -12,12 +12,10 @@
  * 
  * Contributors:
  * Uwe Stieber (Wind River) - Set action id for identification from plugin.xml menu extensions.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -26,7 +24,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
@@ -47,7 +44,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 
 	private boolean fromPopupMenu = true;
 	private ISelectionProvider sp;
-	private String[] restrictSystemTypesTo;
+	private IRSESystemType[] restrictSystemTypesTo;
 
 	// The current selection the action is knowing of. Just pass on
 	// to the wizards. Do not interpret here!
@@ -120,16 +117,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 		// First, restrict the wizard in the system types to show if this is
 		// requested.
 		if (restrictSystemTypesTo != null) {
-			// Till now, we get the list of system types to restrict to via system
-			// type name. This should be changed to be a list of system type objects
-			// as soon as possible. Till than, we have to translate the lists here.
-			List systemTypes = new LinkedList();
-			for (int i = 0; i < restrictSystemTypesTo.length; i++) {
-				IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(restrictSystemTypesTo[i]);
-				if (systemType != null) systemTypes.add(systemType);
-			}
-
-			newConnWizard.restrictToSystemTypes((IRSESystemType[])systemTypes.toArray(new IRSESystemType[systemTypes.size()]));
+			newConnWizard.restrictToSystemTypes(restrictSystemTypesTo);
 		}
 
 		// If there is an remembered selection, we pass on the selected context
@@ -167,7 +155,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 	/**
 	 * Call this to restrict the system types that the user is allowed to choose
 	 */
-	public void restrictSystemTypes(String[] systemTypes) {
+	public void restrictSystemTypes(IRSESystemType[] systemTypes) {
 		this.restrictSystemTypesTo = systemTypes;
 	}
 

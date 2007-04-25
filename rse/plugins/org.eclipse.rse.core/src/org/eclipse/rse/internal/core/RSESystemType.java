@@ -12,6 +12,7 @@
  *
  * Contributors:
  * Uwe Stieber (Wind River) - Dynamic system type provider extension.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.osgi.framework.Bundle;
 
 /**
@@ -58,6 +60,13 @@ public class RSESystemType extends PlatformObject implements IRSESystemType {
 
 		id = element.getAttribute(ATTR_ID);
 		name = element.getAttribute(ATTR_NAME);
+		if (id==null) {
+			RSECorePlugin.getDefault().getLogger().logWarning("RSE: System Type \""+name+"\" does not define an ID"); //$NON-NLS-1$ //$NON-NLS-2$
+			//Fallback: use the name as ID. When PDE was used to define the
+			//extension, this should never happen since ID is marked as a 
+			//required attribute.
+			id = name;
+		}
 		label = element.getAttribute(ATTR_LABEL);
 		description = element.getAttribute(ATTR_DESCRIPTION);
 
@@ -83,6 +92,27 @@ public class RSESystemType extends PlatformObject implements IRSESystemType {
 			}
 		}
 		subsystemConfigurationIds = (String[])subsystemConfigs.toArray(new String[subsystemConfigs.size()]);
+	}
+
+	/**
+	 * Checks whether two system types are the same.
+	 * 
+	 * System types are considered the same if they have the same ID.
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof IRSESystemType) {
+			return id.equals( ((IRSESystemType)obj).getId() );
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the hashCode for this system type.
+	 * 
+	 * The hashCode is the hashCode of its ID.
+	 */
+	public int hashCode() {
+		return id.hashCode();
 	}
 
 	/**
@@ -114,14 +144,15 @@ public class RSESystemType extends PlatformObject implements IRSESystemType {
 	 */
 	public String getLabel() {
 		// For default RSE system types, the UI label is equal to the
-		// name. Therefor, fallback to the name if the label is not
+		// name. Therefore, fallback to the name if the label is not
 		// explicitly set.
 		if (label == null) return getName();
 		return label;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSESystemType#getName()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.IRSESystemType#getNameOfSystemTypeDeprecated()
 	 */
 	public String getName() {
 		return name;

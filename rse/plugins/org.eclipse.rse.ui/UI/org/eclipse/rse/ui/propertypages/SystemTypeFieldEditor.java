@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used RSEPreferencesManager
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 
@@ -319,7 +320,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 		ArrayList list = new ArrayList();
 		if (systemTypes == null || restoreDefaults) {
 			for (int i = 0; i < types.length; i++) {
-				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(types[i].getName());
+				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(types[i], false);
 				if (configurations != null && configurations.length > 0) {
 					list.add(types[i]);
 				}
@@ -399,7 +400,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 		else
 			return;
 		
-		keyValues.put(row.getLabel(), "");		 //$NON-NLS-1$
+		keyValues.put(row.getId(), "");		 //$NON-NLS-1$
 		tableViewer.update(row, null);
 	}
 

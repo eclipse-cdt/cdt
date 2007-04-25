@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -22,6 +23,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
@@ -92,13 +94,13 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
     protected boolean		    listeningForConnectionEvents = false;
     private IHost[] connections = null;
     private SystemNewConnectionAction newConnectionAction = null;
-    private String[]           restrictSystemTypesTo = null;
+    private IRSESystemType[]   restrictSystemTypesTo = null;
     private int                gridColumns = 2;
 	//private static final int DEFAULT_COMBO_WIDTH = 300;
 	//private static final int DEFAULT_BUTTON_WIDTH = 80;
 	private String             label;
-	private String             populateSystemType = null;			/* used as criteria when refresh is done */
-	private String[]           populateSystemTypes = null;			/* used as criteria when refresh is done */
+	private IRSESystemType     populateSystemType = null;			/* used as criteria when refresh is done */
+	private IRSESystemType[]   populateSystemTypes = null;			/* used as criteria when refresh is done */
 	private ISubSystemConfiguration   populateSSFactory = null;			/* used as criteria when refresh is done */
 	private String             populateSSFactoryId = null;			/* used as criteria when refresh is done */
 	private String             populateSSFactoryCategory = null;	/* used as criteria when refresh is done */
@@ -112,10 +114,10 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 * @param defaultConnection the system connection to preselect. Pass null to preselect first connection.
 	 * @param showNewButton true if a New... button is to be included in this composite
 	 */
-	public SystemHostCombo(Composite parent, int style, String systemType, IHost defaultConnection, boolean showNewButton)
+	public SystemHostCombo(Composite parent, int style, IRSESystemType systemType, IHost defaultConnection, boolean showNewButton)
 	{
 		super(parent, style);		
-	    restrictSystemTypesTo = new String[1];
+	    restrictSystemTypesTo = new IRSESystemType[1];
 	    restrictSystemTypesTo[0] = systemType;
 		init(parent, showNewButton);	
 		populateSystemType = systemType;
@@ -131,7 +133,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 * @param defaultConnection the system connection to preselect. Pass null to preselect first connection.
 	 * @param showNewButton true if a New... button is to be included in this composite
 	 */
-	public SystemHostCombo(Composite parent, int style, String[] systemTypes, IHost defaultConnection, boolean showNewButton)
+	public SystemHostCombo(Composite parent, int style, IRSESystemType[] systemTypes, IHost defaultConnection, boolean showNewButton)
 	{
 		super(parent, style);		
 	    restrictSystemTypesTo = systemTypes;
@@ -217,15 +219,13 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 				// some one has overriden ISubSystemConfiguration.getSystemTypes(), the
 				// proxy cannot return the correct list anymore. This is especially important
 				// if the systemType <--> subsystemConfiguration association is dynamic!
-				String[] types = ssfProxies[idx].getSubSystemConfiguration().getSystemTypes();
+				IRSESystemType[] types = ssfProxies[idx].getSubSystemConfiguration().getSystemTypes();
 				for (int jdx = 0; jdx < types.length; jdx++) {
 					if (!vTypes.contains(types[jdx]))
 						vTypes.addElement(types[jdx]);
 				}
 			}
-			restrictSystemTypesTo = new String[vTypes.size()];
-			for (int idx = 0; idx < vTypes.size(); idx++)
-				restrictSystemTypesTo[idx] = (String)vTypes.elementAt(idx);
+			restrictSystemTypesTo = (IRSESystemType[])vTypes.toArray(new IRSESystemType[vTypes.size()]);
 		}
 		init(parent, showNewButton, showLabel);
 		populateSSFactoryCategory = ssFactoryCategory;
@@ -667,8 +667,8 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 * @param preSelectIfNoMatch true if we should preselect the first item if the given connection is not found
 	 * @return true if given default connection was found and selected
 	 */
-	protected boolean populateConnectionCombo(Combo combo, String systemType, IHost defaultConnection,
-	                                       boolean preSelectIfNoMatch)
+	protected boolean populateConnectionCombo(Combo combo, IRSESystemType systemType,
+				IHost defaultConnection, boolean preSelectIfNoMatch)
 	{
 	    return populateConnectionCombo(combo, systemType, defaultConnection, preSelectIfNoMatch, false);
 	}
@@ -686,7 +686,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 * @param appendToCombo indicates whether or not to append to combo with population or replace 
 	 * @return true if given default connection was found and selected
 	 */
-	protected boolean populateConnectionCombo(Combo combo, String systemType, IHost defaultConnection,
+	protected boolean populateConnectionCombo(Combo combo, IRSESystemType systemType, IHost defaultConnection,
 	                                       boolean preSelectIfNoMatch, boolean appendToCombo)
 	{
 		boolean matchFound = false;
@@ -751,7 +751,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 * @param systemTypes the system types to restrict the connection list to. Pass null or * for all system types
 	 * @param defaultConnection the default system connection to preselect.
 	 */
-	protected void populateConnectionCombo(Combo combo, String[] systemTypes, IHost defaultConnection)
+	protected void populateConnectionCombo(Combo combo, IRSESystemType[] systemTypes, IHost defaultConnection)
 	{
 		 boolean match = false;
 		 boolean anyMatch = false;

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui;
@@ -140,7 +141,7 @@ public class RemoteCommandHelpers
               	 
 					showInView(defaultShell, isCompile, cmdString);   
 					           	 
-					 IRemoteFileSubSystemConfiguration fileSSF = RemoteFileUtility.getFileSubSystemConfiguration(cmdSubSystem.getHost().getSystemType().getName());
+					 IRemoteFileSubSystemConfiguration fileSSF = RemoteFileUtility.getFileSubSystemConfiguration(cmdSubSystem.getHost().getSystemType());
 					 IRemoteFile pwd = ((RemoteCommandShell)defaultShell).getWorkingDirectory();
 	                if (pwd == null || !pwd.getAbsolutePath().equals(path))
 	                {

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,11 +12,13 @@
  * 
  * Contributors:
  * Javier Montalvo Orús (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Locale;
 
 import org.eclipse.jface.action.IAction;
@@ -24,6 +26,7 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
@@ -750,56 +753,26 @@ public class SystemWidgetHelpers {
 	}
 
 	/**
-	 * Creates a readonly system type listbox.
-	 * Does NOT create the leading prompt or anything except the listbox.
-	 * @param group composite to put the listbox into.
-	 * @param listener object to listen for events. Can be null.
-	 * @return empty listbox  
-	 */
-	public static List createSystemTypeListBox(Composite group, Listener listener) {
-		return createSystemTypeListBox(group, listener, null);
-	}
-	
-	/**
 	 * Creates a readonly system type listbox with the given system types.
 	 * Does NOT create the leading prompt or anything except the listbox.
+	 * 
 	 * @param group composite to put the listbox into.
 	 * @param listener object to listen for events. Can be null.
-	 * @param systemTypes array of system types to add to the listbox
+	 * @param systemTypes an array of system types to show in this Combo.
+	 *     Must not be <code>null</code>.
+	 *     Fill this with the result of {@link #getValidSystemTypes(String[])}
+	 *     with a null argument in order to get a combo box with all valid 
+	 *     system types.
 	 * @return listbox containing the given system types  
-	 
 	 */
-	public static List createSystemTypeListBox(Composite group, Listener listener, String[] systemTypes) {
-		ArrayList arrayList = new ArrayList();
-		
+	public static List createSystemTypeListBox(Composite group, Listener listener, IRSESystemType[] systemTypes) {
 		List list = createListBox(group, listener, false, null, SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-		
-		String[] typeItems = ((systemTypes == null) ? getSystemTypeNames() : systemTypes);
-		
-		if (systemTypes == null) {
-			for (int i = 0; i < typeItems.length; i++) {
-				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(typeItems[i]);
-				
-				if (configurations != null && configurations.length > 0) {
-					arrayList.add(typeItems[i]);
-				}
-			}
-			
-			systemTypes = (String[])arrayList.toArray(new String[arrayList.size()]);
-			Arrays.sort(systemTypes);
-		}
-		
-		for(int i=0; i<systemTypes.length; i++){
-			list.add(systemTypes[i]);
-		}
-		
+		list.setItems(getSystemTypeLabels(systemTypes));
 		if(list.getItemCount()>0){
 			list.select(0);	
 		}
-	
 		return list;
 	}
-	
 	
 	/**
 	 * Creates a new listbox instance and sets the default
@@ -1080,7 +1053,7 @@ public class SystemWidgetHelpers {
 	 * @param horizontalSpan number of columns this should span
 	 * @param newButton true if the combo is to have a "New..." button beside it
 	 */
-	public static SystemHostCombo createConnectionCombo(Composite parent, SelectionListener listener, String[] systemTypes, ISubSystemConfiguration factory, String factoryId, String factoryCategory, IHost defaultConnection, int horizontalSpan, boolean newButton) {
+	public static SystemHostCombo createConnectionCombo(Composite parent, SelectionListener listener, IRSESystemType[] systemTypes, ISubSystemConfiguration factory, String factoryId, String factoryCategory, IHost defaultConnection, int horizontalSpan, boolean newButton) {
 		SystemHostCombo combo = null;
 		if (systemTypes != null)
 			combo = new SystemHostCombo(parent, SWT.NULL, systemTypes, defaultConnection, newButton);
@@ -1120,56 +1093,100 @@ public class SystemWidgetHelpers {
 		return combo;
 	}
 
+	private static IRSESystemType[] validSystemTypes = null;
+
 	/**
-	 * Creates a readonly system type combination box.
-	 * Does NOT create the leading prompt or anything except the combo.
+	 * Return the list of all registered valid system types.
+	 * 
+	 * A system type is considered valid, if at least one subsystem
+	 * configuration is registered against it. The list is ordered
+	 * alphabetically by system type label.
+	 * 
+	 * @param restrictIds An array of system type IDs to restrict the
+	 *    returned list of valid system types to only those requested,
+	 *    or <code>null</code> to return all valid system types.
+	 * @return an ordered list of all registered valid system types.
 	 */
-	public static Combo createSystemTypeCombo(Composite parent, Listener listener) {
-		return createSystemTypeCombo(parent, listener, null);
+	public static IRSESystemType[] getValidSystemTypes(String[] restrictIds) {
+		if (validSystemTypes==null) {
+			IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+			ArrayList list = new ArrayList(systemTypes.length);
+			ISystemRegistry sr = RSECorePlugin.getDefault().getSystemRegistry();
+			for (int i=0; i<systemTypes.length; i++) {
+				ISubSystemConfiguration[] configurations = sr.getSubSystemConfigurationsBySystemType(systemTypes[i], false);
+				if (configurations != null && configurations.length > 0) {
+					list.add(systemTypes[i]);
+				}
+			}
+			systemTypes = (IRSESystemType[])list.toArray(new IRSESystemType[list.size()]);
+			sortSystemTypesByLabel(systemTypes);
+		}
+		if (restrictIds==null) {
+			return validSystemTypes;
+		} else {
+			java.util.List result = new ArrayList(validSystemTypes.length);
+			java.util.List restrictList = Arrays.asList(restrictIds);
+			for(int i=0; i<validSystemTypes.length; i++) {
+				if (restrictList.contains(validSystemTypes[i].getId())) {
+					result.add(validSystemTypes[i]);
+				}
+			}
+			return (IRSESystemType[])result.toArray(new IRSESystemType[result.size()]);
+		}
 	}
 
-	private static String[] systemTypeNames = null;
-
 	/**
-	 * Internal method. Helper to get the list of registered system type names.
+	 * Sorts the given array of systemTypes in ascending order by system
+	 * type label. 
+	 * @param systemTypes list of system types to sort
 	 */
-	private static String[] getSystemTypeNames() {
-		if (systemTypeNames == null) {
-			java.util.List names = new ArrayList();
-			IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
-			for (int i = 0; i < systemTypes.length; i++) names.add(systemTypes[i].getName());
-			systemTypeNames = (String[])names.toArray(new String[names.size()]);
+	public static void sortSystemTypesByLabel(IRSESystemType[] systemTypes) {
+		Arrays.sort(systemTypes, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				String l1 = ((IRSESystemType)o1).getLabel();
+				String l2 = ((IRSESystemType)o2).getLabel();
+				//FIXME use com.ibm.icu.text.Collator.getInstance(Locale)
+				return l1.compareTo(l2);
+			}
+			public boolean equals(Object obj) {
+				return this==obj;
+			}
+		});
+	}
+	
+	/**
+	 * Return the labels for the given list of system types.
+	 * @param systemTypes an array of system types
+	 * @return the String labels for the system types.
+	 */
+	public static String[] getSystemTypeLabels(IRSESystemType[] systemTypes) {
+		String[] labels = new String[systemTypes.length];
+		for (int i=0; i<systemTypes.length; i++) {
+			labels[i] = systemTypes[i].getLabel();
 		}
-		return systemTypeNames;
+		return labels;
 	}
 	
 	/**
 	 * Creates a readonly system type combination box with the given system types.
+	 * 
 	 * Does NOT create the leading prompt or anything except the combo.
+	 * In order to find out what system type was selected, clients need to 
+	 * use {@link Combo#getSelectionIndex()} and use the return value as
+	 * an index into the array of system types they provided.
+	 * 
+	 * @param parent the parent composite to embed this widget in.
+	 * @param listener a listener for selection events.
+	 * @param systemTypes an array of system types to show in this Combo.
+	 *     Must not be <code>null</code>.
+	 *     Fill this with the result of {@link #getValidSystemTypes(String[])}
+	 *     with a null argument in order to get a combo box with all valid 
+	 *     system types.
+	 * @return a Combo box displaying the given system types.
 	 */
-	public static Combo createSystemTypeCombo(Composite parent, Listener listener, String[] systemTypes) {
+	public static Combo createSystemTypeCombo(Composite parent, Listener listener, IRSESystemType[] systemTypes) {
 		Combo combo = createReadonlyCombo(parent, listener, SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-		String[] typeItems = ((systemTypes == null) ? getSystemTypeNames() : systemTypes);
-		
-		ArrayList list = new ArrayList();
-
-		if (systemTypes == null) {
-			for (int i = 0; i < typeItems.length; i++) {
-				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(typeItems[i]);
-				
-				if (configurations != null && configurations.length > 0) {
-					list.add(typeItems[i]);
-				}
-			}
-		}
-		
-		typeItems = new String[list.size()];
-		
-		for (int i = 0; i < list.size(); i++) {
-			typeItems[i] = (String)(list.get(i));
-		}
-		
-		combo.setItems(typeItems);
+		combo.setItems(getSystemTypeLabels(systemTypes));
 		combo.select(0);
 		return combo;
 	}
@@ -1180,7 +1197,7 @@ public class SystemWidgetHelpers {
 	 * <p>
 	 * Does NOT create the leading prompt or anything except the combo.
 	 */
-	public static Combo createHostNameCombo(Composite parent, Listener listener, String systemType) {
+	public static Combo createHostNameCombo(Composite parent, Listener listener, IRSESystemType systemType) {
 		//System.out.println("TipId: " + ISystemConstants.RESID_HOSTNAME_TIP);		
 		Combo combo = createCombo(parent, listener, SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
 		//System.out.println("Tip  : " + combo.getToolTipText());
@@ -1188,10 +1205,6 @@ public class SystemWidgetHelpers {
 		combo.select(0);
 		return combo;
 	}
-
-
-
-
 
 	/**
 	 * Create an entry field controlled by an inherit/override switch button

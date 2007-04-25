@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -758,7 +759,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return the system types this subsystem factory supports.
 	 */
-	public String[] getSystemTypes()
+	public IRSESystemType[] getSystemTypes()
 	{
 		return proxy.getSystemTypes();
 	}
@@ -931,7 +932,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		else
 		{
 			// strange situation..log this 
-			RSEUIPlugin.logInfo("renameSubSystemsByConnection for " + conn.getAliasName() + " has no subsystems" );
+			SystemBasePlugin.logInfo("renameSubSystemsByConnection for " + conn.getAliasName() + " has no subsystems" ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		try
 		{
@@ -1002,7 +1003,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			if (allActiveConnections != null)
 			{
 				for (int idx = 0; idx < allActiveConnections.length; idx++)
-					if (proxy.appliesToSystemType(allActiveConnections[idx].getSystemType().getName()))
+					if (proxy.appliesToSystemType(allActiveConnections[idx].getSystemType()))
 						getSubSystems(allActiveConnections[idx], force); // will load from disk if not already loaded
 			}
 			allSubSystemsRestored = true;
@@ -1042,7 +1043,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			boolean subsystemsRestored = subSystemsHaveBeenRestored(conn);
 			if (!subsystemsRestored && force)
 			{
-				RSEUIPlugin.logInfo("in SubSystemConfiguration.getSubSystems(conn, force) - not restored");
+				SystemBasePlugin.logInfo("in SubSystemConfiguration.getSubSystems(conn, force) - not restored");  //$NON-NLS-1$
 				/*FIXME - this should now be triggered by new persistence model
 				try
 				{
@@ -1064,7 +1065,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			}
 			else if (!subsystemsRestored && !force)
 			{
-				RSEUIPlugin.logInfo("in SubSystemConfiguration.getSubSytems(conn, force) - returning empty array");
+				SystemBasePlugin.logInfo("in SubSystemConfiguration.getSubSytems(conn, force) - returning empty array");  //$NON-NLS-1$
 				return EMPTY_SUBSYSTEM_ARRAY;
 			}
 			else
@@ -2688,15 +2689,18 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public IServerLauncherProperties createServerLauncher(IConnectorService connectorService)
 	{
 		IRemoteServerLauncher sl = new RemoteServerLauncher("Remote Server Launcher", connectorService); //$NON-NLS-1$
-		String systemType = connectorService.getHostType();
+		IRSESystemType systemType = connectorService.getHost().getSystemType();
+		String systemTypeId = systemType.getId();
 		
-		if (systemType.equals(IRSESystemType.SYSTEMTYPE_LINUX) ||
-				systemType.equals(IRSESystemType.SYSTEMTYPE_POWER_LINUX) ||
-				systemType.equals(IRSESystemType.SYSTEMTYPE_ZSERIES_LINUX)) {
+		if (systemTypeId.equals(IRSESystemType.SYSTEMTYPE_LINUX_ID)
+			|| systemTypeId.equals(IRSESystemType.SYSTEMTYPE_POWER_LINUX_ID)
+			|| systemTypeId.equals(IRSESystemType.SYSTEMTYPE_ZSERIES_LINUX_ID)
+		) {
 			sl.setServerScript(RemoteServerLauncherConstants.LINUX_REXEC_SCRIPT);
 		}
-		else if (systemType.equals(IRSESystemType.SYSTEMTYPE_UNIX) ||
-				systemType.equals(IRSESystemType.SYSTEMTYPE_AIX)) {
+		else if (systemTypeId.equals(IRSESystemType.SYSTEMTYPE_UNIX_ID)
+			|| systemTypeId.equals(IRSESystemType.SYSTEMTYPE_AIX_ID)
+		) {
 			sl.setServerScript(RemoteServerLauncherConstants.UNIX_REXEC_SCRIPT);
 		}
 		

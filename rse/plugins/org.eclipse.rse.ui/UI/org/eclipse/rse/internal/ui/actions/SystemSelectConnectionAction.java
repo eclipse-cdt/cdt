@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,12 +11,13 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
@@ -35,8 +36,8 @@ public class SystemSelectConnectionAction extends SystemBaseDialogAction
 	private boolean showPropertySheet;
 	private String message;
 	private boolean showNewConnectionPrompt = true;
-	private String[] systemTypes;
-	private String   systemType;
+	private IRSESystemType[] systemTypes;
+	private IRSESystemType   systemType;
 	private IHost defaultConn;
 	private Object result;
 
@@ -56,22 +57,20 @@ public class SystemSelectConnectionAction extends SystemBaseDialogAction
 		this.defaultConn = conn;
 	}
 	/**
-	 * Restrict to certain system types
-	 * @param systemTypes the system types to restrict what connections are shown and what types of connections
-	 *  the user can create
-	 * @see org.eclipse.rse.core.IRSESystemType
+	 * Restrict to certain system types.
+	 * @param systemTypes the system types to restrict what connections 
+	 *     are shown and what types of connections the user can create.
 	 */
-	public void setSystemTypes(String[] systemTypes)
+	public void setSystemTypes(IRSESystemType[] systemTypes)
 	{
 		this.systemTypes = systemTypes;
 	}
 	/**
-	 * Restrict to a certain system type
-	 * @param systemType the system type to restrict what connections are shown and what types of connections
-	 *  the user can create
-	 * @see org.eclipse.rse.core.IRSESystemType
+	 * Restrict to a certain system type.
+	 * @param systemType the system type to restrict what connections 
+	 *     are shown and what types of connections the user can create.
 	 */
-	public void setSystemType(String systemType)
+	public void setSystemType(IRSESystemType systemType)
 	{
 		this.systemType = systemType;
 	}

@@ -1,5 +1,5 @@
-/* ******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+/*******************************************************************************
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,7 +10,8 @@
  * Kushal Munir (IBM) - initial API and implementation.
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used RSEPreferencesManager
- * ******************************************************************************/
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ *******************************************************************************/
 
 package org.eclipse.rse.tests.preferences;
 
@@ -73,7 +74,8 @@ public class PreferencesTest extends RSECoreTestCase {
 		String oldValue = RSEPreferencesManager.getDefaultUserId(systemType);
 		RSEPreferencesManager.setDefaultUserId(systemType, "bogus1"); //$NON-NLS-1$
 		assertEquals("bogus1", RSEPreferencesManager.getDefaultUserId(systemType)); //$NON-NLS-1$
-		RSEPreferencesManager.setDefaultUserId("Local", "bogus2"); //$NON-NLS-1$ //$NON-NLS-2$
+		IRSESystemType localType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+		RSEPreferencesManager.setDefaultUserId(localType, "bogus2"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("bogus2", RSEPreferencesManager.getDefaultUserId(systemType)); //$NON-NLS-1$
 		RSEPreferencesManager.setDefaultUserId(systemType, oldValue);
 		assertEquals(oldValue, RSEPreferencesManager.getDefaultUserId(systemType));

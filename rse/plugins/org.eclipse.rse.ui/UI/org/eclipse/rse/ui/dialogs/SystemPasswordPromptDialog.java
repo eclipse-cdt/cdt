@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,10 +13,12 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -178,7 +180,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		Label label = SystemWidgetHelpers.createLabel(composite_prompts, text);
 		GridData gd = new GridData();
 		label.setLayoutData(gd);
-		label = SystemWidgetHelpers.createLabel(composite_prompts, connectorService.getHostType());
+		label = SystemWidgetHelpers.createLabel(composite_prompts, connectorService.getHost().getSystemType().getLabel());
 		gd = new GridData();
 		label.setLayoutData(gd);
 
@@ -267,7 +269,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		originalUserId = connectorService.getUserId();
 		userId = originalUserId;
 		if (connectorService.supportsUserId() && (userId == null || userId.length() == 0)) {
-			userId = RSEPreferencesManager.getUserId(connectorService.getHostType());
+			userId = RSEPreferencesManager.getUserId(connectorService.getHost().getSystemType().getId());
 		}
 		if (textUserId != null && userId != null) {
 			textUserId.setText(userId);
@@ -493,8 +495,8 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		// If all inputs are OK then validate signon
 		if (getErrorMessage() == null && (signonValidator != null)) {
 			String hostName = connectorService.getHostName();
-			String hostType = connectorService.getHostType();
-			ICredentials credentials = new SystemSignonInformation(hostName, userId, password, hostType);
+			IRSESystemType systemType = connectorService.getHost().getSystemType();
+			ICredentials credentials = new SystemSignonInformation(hostName, userId, password, systemType);
 			SystemMessage m = signonValidator.validate(credentials);
 			setErrorMessage(m);
 		}

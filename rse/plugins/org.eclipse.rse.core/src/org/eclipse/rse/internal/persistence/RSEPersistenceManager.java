@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -37,6 +38,7 @@ import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.persistence.dom.RSEDOMExporter;
 import org.eclipse.rse.internal.persistence.dom.RSEDOMImporter;
@@ -142,7 +144,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#deleteProfile(java.lang.String)
 	 */
 	public void deleteProfile(final IRSEPersistenceProvider persistenceProvider, final String profileName) {
-		Job job = new Job(Messages.RSEPersistenceManager_DeleteProfileJobName) {
+		Job job = new Job(RSECoreMessages.RSEPersistenceManager_DeleteProfileJobName) {
 			protected IStatus run(IProgressMonitor monitor) {
 				IRSEPersistenceProvider p = persistenceProvider != null ? persistenceProvider : getDefaultPersistenceProvider();
 				IStatus result = p.deleteProfile(profileName, monitor);

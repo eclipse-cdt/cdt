@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
@@ -316,7 +318,8 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_CONNECTOR_SERVICE, connectorService, clean);
 		if (clean || node.isDirty()) {
 			// store it's attributes
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, connectorService.getHostType());
+			IRSESystemType systemType = connectorService.getHost().getSystemType();
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, systemType.getName());
 
 			// can't do this til connector service owns the properties (right now it's still subsystem)
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_GROUP, connectorService.getName());

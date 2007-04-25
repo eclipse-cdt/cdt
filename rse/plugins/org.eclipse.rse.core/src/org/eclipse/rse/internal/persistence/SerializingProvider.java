@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
@@ -157,7 +158,7 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 			try {
 				profileFile.delete(IResource.FORCE | IResource.KEEP_HISTORY, monitor);
 			} catch (CoreException e) {
-				result = new Status(IStatus.ERROR, null, 0, Messages.SerializingProvider_UnexpectedException, e);
+				result = new Status(IStatus.ERROR, null, 0, RSECoreMessages.SerializingProvider_UnexpectedException, e);
 			}
 		}
 		return result;

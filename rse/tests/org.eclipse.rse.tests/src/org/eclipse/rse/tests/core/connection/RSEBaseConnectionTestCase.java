@@ -1,5 +1,5 @@
-/* *******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
+/********************************************************************************
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,11 +8,13 @@
  * Don Yantzi (IBM) - initial contribution.
  * David Dykstal (IBM) - initial contribution.
  * Uwe Stieber (Wind River) - refactoring and cleanup.
- * *******************************************************************************/
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ ********************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
 import java.util.Properties;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.tests.core.RSECoreTestCase;
 import org.eclipse.rse.tests.internal.RSEConnectionManager;
@@ -43,7 +45,7 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 
 		// Pre-create the local system connection properties
 		Properties properties = new Properties();
-		properties.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE, "Local"); //$NON-NLS-1$
+		properties.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID, IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 		properties.setProperty(IRSEConnectionProperties.ATTR_ADDRESS, "localhost"); //$NON-NLS-1$
 		properties.setProperty(IRSEConnectionProperties.ATTR_NAME, "Local"); //$NON-NLS-1$
 		localSystemConnectionProperties = getConnectionManager().loadConnectionProperties(properties, false);

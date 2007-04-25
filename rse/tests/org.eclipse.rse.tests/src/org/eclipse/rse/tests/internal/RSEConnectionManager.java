@@ -10,6 +10,7 @@
  * David Dykstal (IBM) - initial contribution.
  * Uwe Stieber (Wind River) - refactoring and cleanup.
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -26,6 +27,7 @@ import junit.framework.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -219,9 +221,10 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid user password name!", "unknown", password); //$NON-NLS-1$ //$NON-NLS-2$
 				String address = properties.getProperty(IRSEConnectionProperties.ATTR_ADDRESS);
 				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid remote system ip address or dns name!", "unknown", address); //$NON-NLS-1$ //$NON-NLS-2$
-				String systemType = properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE);
-				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid system type!", "unknown", address); //$NON-NLS-1$ //$NON-NLS-2$
-
+				String systemTypeId = properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID);
+				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid system type!", "unknown", systemTypeId); //$NON-NLS-1$ //$NON-NLS-2$
+				IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(systemTypeId);
+				
 				exception = null;
 				cause = null;
 				

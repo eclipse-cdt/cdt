@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  *******************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
@@ -18,7 +19,7 @@ public interface IRSEConnectionProperties {
 
 	public final String ATTR_NAME = "name"; //$NON-NLS-1$
 	public final String ATTR_PROFILE_NAME = "profile_name"; //$NON-NLS-1$
-	public final String ATTR_SYSTEM_TYPE = "system_type"; //$NON-NLS-1$
+	public final String ATTR_SYSTEM_TYPE_ID = "system_type_id"; //$NON-NLS-1$
 	public final String ATTR_ADDRESS = "address"; //$NON-NLS-1$
 	public final String ATTR_USERID = "userid"; //$NON-NLS-1$
 	public final String ATTR_PASSWORD = "password"; //$NON-NLS-1$

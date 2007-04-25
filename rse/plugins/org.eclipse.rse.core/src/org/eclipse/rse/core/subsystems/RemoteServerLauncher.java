@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -23,7 +24,7 @@ import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.core.model.PropertyType;
-import org.eclipse.rse.internal.core.model.RSEModelResources;
+import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.internal.core.subsystems.ServerLauncher;
 
 
@@ -140,14 +141,14 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 			try
 			{
 				IProperty launchTypeProperty = set.getProperty(KEY_SERVER_LAUNCH_TYPE_NAME);
-				launchTypeProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
+				launchTypeProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
 				String launchTypeName = launchTypeProperty.getValue();
 				_serverLaunchType  = ServerLaunchType.get(launchTypeName);
 				
 				IProperty daemonPortProperty = set.getProperty(KEY_DAEMON_PORT);
 				boolean daemon = _serverLaunchType == null || _serverLaunchType.getType() == ServerLaunchType.DAEMON;
 				daemonPortProperty.setEnabled(daemon);
-				daemonPortProperty.setLabel(RSEModelResources.RESID_CONNECTION_DAEMON_PORT_LABEL);
+				daemonPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_DAEMON_PORT_LABEL);
 				
 				_daemonPort = Integer.parseInt(daemonPortProperty.getValue());
 				
@@ -156,7 +157,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				{
 					boolean autoDetect = _serverLaunchType == null || _serverLaunchType.getType() == ServerLaunchType.REXEC;
 					autoDetectProperty.setEnabled(autoDetect);
-					autoDetectProperty.setLabel(RSEModelResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
+					autoDetectProperty.setLabel(RSECoreMessages.RESID_SUBSYSTEM_AUTODETECT_LABEL);
 				
 					_autoDetectSSL = Boolean.getBoolean(autoDetectProperty.getValue());
 				}
@@ -164,18 +165,18 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				boolean usingRexec = _serverLaunchType != null && _serverLaunchType.getType() == ServerLaunchType.REXEC;
 				IProperty rexecPortProperty = set.getProperty(KEY_REXEC_PORT);
 				rexecPortProperty.setEnabled(usingRexec);
-				rexecPortProperty.setLabel(RSEModelResources.RESID_CONNECTION_PORT_LABEL);
+				rexecPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_PORT_LABEL);
 				
 				_rexecPort  = Integer.parseInt(rexecPortProperty.getValue());
 				
 				IProperty serverPathProperty = set.getProperty(KEY_SERVER_PATH);
 				serverPathProperty.setEnabled(usingRexec);
-				serverPathProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_PATH);
+				serverPathProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_PATH);
 				_serverPath = serverPathProperty.getValue();
 				
 				IProperty serverScriptProperty = set.getProperty(KEY_SERVER_SCRIPT);
 				serverScriptProperty.setEnabled(usingRexec);
-				serverScriptProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_INVOCATION);
+				serverScriptProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_INVOCATION);
 				_serverScript = serverScriptProperty.getValue();
 				
 				_hasSetServerLaunchType = true;
@@ -199,28 +200,28 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		if (_serverLaunchType == null)
 			_serverLaunchType = ServerLaunchType.get(ServerLaunchType.DAEMON);
 		IProperty launchTypeProperty = set.addProperty(KEY_SERVER_LAUNCH_TYPE_NAME, _serverLaunchType.getName(), getServerLauncherPropertyType());
-		launchTypeProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
+		launchTypeProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
 		
 		IProperty daemonPortProperty = set.addProperty(KEY_DAEMON_PORT, ""+_daemonPort, PropertyType.getIntegerPropertyType()); //$NON-NLS-1$
 		daemonPortProperty.setEnabled(_serverLaunchType.getType() == ServerLaunchType.DAEMON);
-		daemonPortProperty.setLabel(RSEModelResources.RESID_CONNECTION_DAEMON_PORT_LABEL);
+		daemonPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_DAEMON_PORT_LABEL);
 		
 		IProperty rexecPortProperty  = set.addProperty(KEY_REXEC_PORT, ""+_rexecPort, PropertyType.getIntegerPropertyType());	 //$NON-NLS-1$
 		boolean usingRexec = _serverLaunchType.getType() == ServerLaunchType.REXEC;
 		rexecPortProperty.setEnabled(usingRexec);
-		rexecPortProperty.setLabel(RSEModelResources.RESID_CONNECTION_PORT_LABEL);
+		rexecPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_PORT_LABEL);
 		
 		IProperty autoDetectSSLProperty  = set.addProperty(KEY_AUTODETECT_SSL, ""+_autoDetectSSL, PropertyType.getBooleanPropertyType());	 //$NON-NLS-1$
 		autoDetectSSLProperty.setEnabled(usingRexec);
-		autoDetectSSLProperty.setLabel(RSEModelResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
+		autoDetectSSLProperty.setLabel(RSECoreMessages.RESID_SUBSYSTEM_AUTODETECT_LABEL);
 		
 		IProperty serverPathProperty  = set.addProperty(KEY_SERVER_PATH, ""+_serverPath); //$NON-NLS-1$
-		serverPathProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_PATH);
+		serverPathProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_PATH);
 		serverPathProperty.setEnabled(usingRexec);
 		
 		IProperty serverScriptProperty  = set.addProperty(KEY_SERVER_SCRIPT, ""+_serverScript); //$NON-NLS-1$
 		serverScriptProperty.setEnabled(usingRexec);
-		serverScriptProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_INVOCATION);
+		serverScriptProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_INVOCATION);
 	}
 	
 	

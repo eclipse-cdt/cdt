@@ -17,6 +17,7 @@
  *                          - Moved to package org.eclipse.rse.model for being extendable.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -210,10 +211,10 @@ public class Host extends RSEModelObject implements IHost {
 		// defect 43219
 		if (systemType != null) {
 			//FIXME MOB this should be in IRSESystemType.isForceUC() / IRSESystemType.isUIDCaseSensitive()
-			String systemTypeName = systemType.getName();
-			boolean forceUC = systemTypeName.equals(IRSESystemType.SYSTEMTYPE_ISERIES);
-			boolean caseSensitiveUID = systemTypeName.equals(IRSESystemType.SYSTEMTYPE_UNIX) || systemTypeName.equals(IRSESystemType.SYSTEMTYPE_LINUX)
-																	|| (systemTypeName.equals(IRSESystemType.SYSTEMTYPE_LOCAL) && !System.getProperty("os.name").toLowerCase().startsWith("windows")); //$NON-NLS-1$  //$NON-NLS-2$
+			String systemTypeId = systemType.getId();
+			boolean forceUC = systemTypeId.equals(IRSESystemType.SYSTEMTYPE_ISERIES_ID);
+			boolean caseSensitiveUID = systemTypeId.equals(IRSESystemType.SYSTEMTYPE_UNIX_ID) || systemTypeId.equals(IRSESystemType.SYSTEMTYPE_LINUX_ID)
+																	|| (systemTypeId.equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID) && !System.getProperty("os.name").toLowerCase().startsWith("windows")); //$NON-NLS-1$  //$NON-NLS-2$
 			setForceUserIdToUpperCase(forceUC);
 			setUserIdCaseSensitive(caseSensitiveUID);
 		}
@@ -264,7 +265,7 @@ public class Host extends RSEModelObject implements IHost {
 	public String getDefaultUserId() {
 		String uid = getLocalDefaultUserId();
 		if ((uid == null) || (uid.length() == 0)) {
-			uid = RSEPreferencesManager.getUserId(getSystemType().getName()); // resolve from preferences	
+			uid = RSEPreferencesManager.getUserId(getSystemType().getId()); // resolve from preferences	
 			if ((uid != null) && ucId) uid = uid.toUpperCase();
 		}
 		return uid;
@@ -489,15 +490,6 @@ public class Host extends RSEModelObject implements IHost {
 	private void setHostNameGen(String newHostName) {
 		setDirty(!compareStrings(hostName, newHostName));
 		hostName = newHostName;
-	}
-
-	private String getDefaultUserIdGen() {
-		return defaultUserId;
-	}
-
-	private void setDefaultUserIdGen(String newDefaultUserId) {
-		setDirty(!compareStrings(defaultUserId, newDefaultUserId));
-		defaultUserId = newDefaultUserId;
 	}
 
 	/* (non-Javadoc)

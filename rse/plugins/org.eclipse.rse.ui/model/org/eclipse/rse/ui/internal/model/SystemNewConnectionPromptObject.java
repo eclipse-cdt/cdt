@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -83,22 +84,6 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 		this.systemTypesSet = true;
 	}
 	
-	/**
-	 * @deprecated Use {@link #setSystemTypes(IRSESystemType[])}.
-	 */
-	public void setSystemTypes(String[] systemTypes) {
-		if (systemTypes != null) {
-			List types = new ArrayList();
-			for (int i = 0; i < systemTypes.length; i++) {
-				IRSESystemType type = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[i]);
-				if (type != null) types.add(type);
-			}
-			setSystemTypes((IRSESystemType[])types.toArray(new IRSESystemType[types.size()]));
-		} else {
-			setSystemTypes((IRSESystemType[])null);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.model.ISystemPromptableObject#getSystemTypes()
 	 */
@@ -280,9 +265,7 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 			action = new SystemNewConnectionAction(shell, false, false, null);
 		}
 		if (systemTypes != null) {
-			List systemTypeNames = new ArrayList();
-			for (int i = 0; i < systemTypes.length; i++) systemTypeNames.add(systemTypes[i].getName());
-			action.restrictSystemTypes((String[])systemTypeNames.toArray(new String[systemTypeNames.size()]));
+			action.restrictSystemTypes(systemTypes);
 		}
 
 		try {

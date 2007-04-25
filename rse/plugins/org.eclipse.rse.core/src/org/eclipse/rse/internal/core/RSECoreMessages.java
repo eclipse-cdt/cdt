@@ -1,30 +1,26 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Initial Contributors:
- * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
- * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
  * Contributors:
+ * David Dykstal (IBM) - initial API and implementation
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * Martin Oberhuber (Wind River) - [184095] combined RSEModelResources and persistence.Messages into this file
  ********************************************************************************/
-
-package org.eclipse.rse.internal.core.model;
+package org.eclipse.rse.internal.core;
 
 import org.eclipse.osgi.util.NLS;
 
-/**
- * This class contains bundle resources for model objects.
- */
-public class RSEModelResources extends NLS {
+public class RSECoreMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.rse.internal.core.messages"; //$NON-NLS-1$
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(BUNDLE_NAME, RSECoreMessages.class);
+	}
 
-	private static String BUNDLE_NAME = "org.eclipse.rse.internal.core.model.RSEModelResources"; //$NON-NLS-1$
-
+	// Model
 	public static String RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
 	public static String RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
 	public static String RESID_MODELOBJECTS_FILTERSTRING_DESCRIPTION;
@@ -41,11 +37,17 @@ public class RSEModelResources extends NLS {
 	public static String RESID_CONNECTION_PORT_LABEL;
 	public static String RESID_SUBSYSTEM_AUTODETECT_LABEL;
 
+	// Persistence
+	public static String PropertyFileProvider_LoadingTaskName;
+	public static String PropertyFileProvider_SavingTaskName;
+	public static String PropertyFileProvider_UnexpectedException;
+	public static String RSEPersistenceManager_DeleteProfileJobName;
+	public static String SaveRSEDOMJob_SavingProfileJobName;
+	public static String SerializingProvider_UnexpectedException;
 
-	static {
-		// load message values from bundle file
-		NLS.initializeMessages(BUNDLE_NAME, RSEModelResources.class);
+	// Password Persistence Manager
+	public static String DefaultSystemType_Label;
+	
+	private RSECoreMessages() {
 	}
-
-
 }

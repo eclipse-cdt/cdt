@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -64,7 +65,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 			dialog.setMessage(message);
 			dialog.setShowNewConnectionPrompt(true);
 			dialog.setShowPropertySheet(true, false);
-			dialog.setSystemTypes(systemTypes);
+			dialog.setSystemTypes(getValidSystemTypes());
 	
 			dialog.setPreSelection(selection);
 	

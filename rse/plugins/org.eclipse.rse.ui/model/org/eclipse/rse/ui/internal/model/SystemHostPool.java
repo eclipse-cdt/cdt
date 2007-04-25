@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -26,7 +27,6 @@ import java.util.List;
 
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
@@ -34,7 +34,7 @@ import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.internal.core.model.RSEModelResources;
+import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 
@@ -148,59 +148,35 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         }
     }
 
-
     // -------------------------------------------------------------------------------------
     // CONNECTION METHODS...
     // -------------------------------------------------------------------------------------
-    /**
-     * Create a connection object, given only the minimal information.
-     * <p>
-     * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU.
-     * @param systemType system type matching one of the system type names defined via the
-     *                    systemTypes extension point.
-     * @param aliasName unique connection name.
-     * @param hostName ip name of host.
-     * @return SystemConnection object, or null if it failed to create
-     *   because the aliasName is not unique. All other errors throw an exception.
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#createHost(org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String)
      */
-    public IHost createHost(String systemType, String aliasName, String hostName)
+    public IHost createHost(IRSESystemType systemType, String aliasName, String hostName)
         throws Exception                                                 
     {
         return createHost(systemType,aliasName,hostName,null,null,IRSEUserIdConstants.USERID_LOCATION_HOST);
     }
-    /**
-     * Create a connection object, given all the possible attributes except default userId.
-     * <p>
-     * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU.
-     * @param systemType system type matching one of the system type names defined via the
-     *                    systemTypes extension point.
-     * @param aliasName unique connection name.
-     * @param hostName ip name of host.
-     * @param description optional description of the connection. Can be null.
-     * @return SystemConnection object, or null if it failed to create
-     *   because the aliasName is not unique. All other errors throw an exception.
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#createHost(org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String)
      */
-    public IHost createHost(String systemType, String aliasName, String hostName, String description)
+    public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description)
         throws Exception                                                 
     {
         return createHost(systemType,aliasName,hostName,description,null,IRSEUserIdConstants.USERID_LOCATION_HOST);
     }
-    /**
-     * Create a connection object, given all the possible attributes.
-     * <p>
-     * The new connection is added to the list and saved to disk.
-     * @param systemType system type matching one of the system type names defined via the
-     *                    systemTypes extension point.
-     * @param aliasName unique connection name.
-     * @param hostName ip name of host.
-     * @param description optional description of the connection. Can be null.
-     * @param defaultUserId userId to use as the default for the subsystems.
-     * @param defaultUserIdLocation where to set the given default user Id. See IRSEUserIdConstants for values.
-     * @return SystemConnection object, or null if it failed to create
-     *   because the aliasName is not unique. All other errors throw an exception.
-     * @see IRSEUserIdConstants
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#createHost(org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int)
      */
-    public IHost createHost(String systemType, String aliasName, String hostName,
+    public IHost createHost(IRSESystemType systemType, String aliasName, String hostName,
                                              String description,String defaultUserId,int defaultUserIdLocation)        
         throws Exception                                             
     {
@@ -215,9 +191,8 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           ISystemProfile profile = getSystemProfile();
           
           // delegate the creation of the host object instance to the system type provider!!!
-          IRSESystemType systemTypeObject = RSECorePlugin.getDefault().getRegistry().getSystemType(systemType);
-          if (systemTypeObject != null) {
-          	Object adapter = systemTypeObject.getAdapter(IRSESystemType.class);
+          if (systemType != null) {
+          	Object adapter = systemType.getAdapter(IRSESystemType.class);
           	if (adapter instanceof RSESystemTypeAdapter) {
           		conn = ((RSESystemTypeAdapter)adapter).createNewHostInstance(profile);
           	}
@@ -229,7 +204,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           addHost(conn); // only record internally if saved successfully
           conn.setHostPool(this);          
           conn.setAliasName(aliasName);
-          conn.setSystemType(systemTypeObject);
+          conn.setSystemType(systemType);
           // if default userID is null, and location is in the connection we should retrieve it and use it as the initial value.
           if (defaultUserId == null && defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_HOST) {
               defaultUserId = conn.getDefaultUserId();
@@ -242,25 +217,12 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         }
         return conn;
     }
-    /**
-     * Update an existing connection given the new information.
-     * This method:
-     * <ul>
-     *  <li>calls the setXXX methods on the given connection object, updating the information in it.
-     *  <li>saves the connection to disk (renaming its folder if needed)
-     * </ul>
-     * <p>
-     * @param conn SystemConnection to be updated
-     * @param systemType system type matching one of the system type names defined via the
-     *                    systemTypes extension point.
-     * @param aliasName unique connection name.
-     * @param hostName ip name of host.
-     * @param description optional description of the connection. Can be null.
-     * @param defaultUserId userId to use as the default for the subsystems.
-     * @param defaultUserIdLocation where to set the given default user Id. See IRSEUserIdConstants for values.
-     * @see IRSEUserIdConstants
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#updateHost(org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int)
      */
-    public void updateHost(IHost conn, String systemType,
+    public void updateHost(IHost conn, IRSESystemType systemType,
                                  String aliasName, String hostName,
                                  String description,String defaultUserId, int defaultUserIdLocation)
         throws Exception
@@ -268,8 +230,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     	boolean aliasNameChanged = !aliasName.equalsIgnoreCase(conn.getAliasName());    	
     	if (aliasNameChanged)
     	  renameHost(conn,aliasName);
-        IRSESystemType systemTypeObject = RSECorePlugin.getDefault().getRegistry().getSystemType(systemType);
-    	conn.setSystemType(systemTypeObject);
+    	conn.setSystemType(systemType);
     	conn.setHostName(hostName);
     	if (defaultUserIdLocation != IRSEUserIdConstants.USERID_LOCATION_NOTSET)
     	{
@@ -443,7 +404,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
        throws Exception
     {
         IHost copy =
-            targetPool.createHost(conn.getSystemType().getName(), aliasName,
+            targetPool.createHost(conn.getSystemType(), aliasName,
                  conn.getHostName(), conn.getDescription(), conn.getLocalDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_HOST);
         return copy;
     }
@@ -555,7 +516,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	
 	public String getDescription()
 	{
-		return RSEModelResources.RESID_MODELOBJECTS_HOSTPOOL_DESCRIPTION;
+		return RSECoreMessages.RESID_MODELOBJECTS_HOSTPOOL_DESCRIPTION;
 	}
 
 	/**
@@ -646,7 +607,8 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	// -------------------------
 	/**
 	 * Save all connections to disk.
-	 * Attempts to save all of them, swallowing exceptions, then at the end throws the last exception caught.
+	 * Attempts to save all of them, swallowing exceptions,
+	 * then at the end throws the last exception caught.
 	 */
 	public boolean commit()
 	{

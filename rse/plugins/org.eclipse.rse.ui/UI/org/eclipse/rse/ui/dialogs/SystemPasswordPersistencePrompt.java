@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,13 +11,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
 
 import java.util.List;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -45,9 +46,11 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 
 	private Text hostname, userid, password, passwordVerify;
 	private Combo systemType;
+	private IRSESystemType[] systemTypes;
 	private SystemSignonInformation signonInfo;
 	private boolean change;
-	private String originalHostname, originalUserid, originalSystemType;
+	private String originalHostname, originalUserid;
+	private IRSESystemType originalSystemType;
 	
 	private List existingEntries;
 	
@@ -79,11 +82,16 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		hostname.addModifyListener(this);
 				
 		// System type prompt
+		systemTypes = PasswordPersistenceManager.getInstance().getRegisteredSystemTypes();
+		String[] systemTypeLabels = new String[systemTypes.length];
+		for (int i=0; i<systemTypes.length; i++) {
+			systemTypeLabels[i] = systemTypes[i].getLabel();
+		}
 		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_PREF_SIGNON_SYSTYPE_LABEL, SystemResources.RESID_PREF_SIGNON_SYSTYPE_TOOLTIP);
 		systemType = SystemWidgetHelpers.createReadonlyCombo(page, null);
-		systemType.setItems(PasswordPersistenceManager.getInstance().getRegisteredSystemTypes());
+		systemType.setItems(systemTypeLabels);
 		if (originalSystemType != null)
-			systemType.setText(originalSystemType);
+			systemType.setText(originalSystemType.getLabel());
 		systemType.addModifyListener(this);
 		
 		// User ID prompt
@@ -133,8 +141,8 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 			return false;
 		}
 
-		String sSystemType = systemType.getText();
-		if (sSystemType == null || sSystemType.trim().equals("")) //$NON-NLS-1$
+		int systemTypeIndex = systemType.getSelectionIndex();
+		if (systemTypeIndex<0)
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
@@ -178,8 +186,9 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 			password.setSelection(0, sPwd1.length());
 			return false;
 		}
-		
-		signonInfo = new SystemSignonInformation(hostname.getText(), userid.getText(), password.getText(), systemType.getText());
+
+		IRSESystemType systemType = systemTypes[systemTypeIndex];
+		signonInfo = new SystemSignonInformation(hostname.getText(), userid.getText(), password.getText(), systemType);
 		
 		if (change)
 		{
@@ -220,7 +229,7 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 	/**
 	 * Check if a password is already saved for the given hostname, user ID and system type
 	 */
-	private boolean exists(String hostname, String userID, String systemType)
+	private boolean exists(String hostname, String userID, IRSESystemType systemType)
 	{ 
 		SystemSignonInformation info;
 		PasswordPersistenceManager manager = PasswordPersistenceManager.getInstance();
@@ -266,7 +275,7 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 	/**
 	 * Set the input data to prepopulate the change dialog
 	 */
-	public void setInputData(String systemtype, String hostname, String userid)
+	public void setInputData(IRSESystemType systemtype, String hostname, String userid)
 	{
 		originalSystemType = systemtype;
 		originalHostname = hostname;

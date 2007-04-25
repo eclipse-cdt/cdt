@@ -7,12 +7,14 @@
  * Contributors:
  * David Dykstal (IBM) - initial API and implementation from AbstractConnectorService.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -102,7 +104,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		ICredentials credentials = credentialsProvider.getCredentials();
 		boolean cached = (credentials != null && credentials.getPassword() != null);
 		if (!cached && onDisk) {
-			String systemType = getHostType();
+			IRSESystemType systemType = getHost().getSystemType();
 			String hostName = getHostName();
 			String userId = getUserId();
 			if (userId != null) {
@@ -149,7 +151,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#removePassword()
 	 */
 	public final void removePassword() {
-		String systemType = getHostType();
+		IRSESystemType systemType = getHost().getSystemType();
 		String hostName = getHostName();
 		String userId = credentialsProvider.getUserId();
 		PasswordPersistenceManager.getInstance().remove(systemType, hostName, userId);
@@ -255,7 +257,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 			int whereToUpdate = IRSEUserIdConstants.USERID_LOCATION_HOST;
 			IHost host = subsystem.getHost();
 			ISystemRegistry sr = RSECorePlugin.getDefault().getSystemRegistry();
-			sr.updateHost(host, host.getSystemType().getName(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
+			sr.updateHost(host, host.getSystemType(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
 		}
 	}
 

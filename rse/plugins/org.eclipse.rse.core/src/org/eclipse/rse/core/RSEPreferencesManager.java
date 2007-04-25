@@ -1,11 +1,12 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * David Dykstal (IBM) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -135,19 +136,6 @@ public class RSEPreferencesManager {
 
 	/**
 	 * Sets the default userId for the given system type.
-	 * @param systemTypeName the name of the system type
-	 * @param userId the default user id for this system type.
-	 * This may be null to "unset" the default.
-	 */
-	public static void setDefaultUserId(String systemTypeName, String userId) {
-		IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeName);
-		if (systemType != null) {
-			setDefaultUserId(systemType, userId);
-		}
-	}
-
-	/**
-	 * Sets the default userId for the given system type.
 	 * @param systemType the system type for which to set the default
 	 * @param userId the default user id for this system type.
 	 * This may be null to "unset" the default.
@@ -162,7 +150,7 @@ public class RSEPreferencesManager {
 	/**
 	 * Gets the system type values table for editing. This is a synthesized preference
 	 * that is handled as a single value. Rows are separated by semi-colons.
-	 * Each row is of the format <systemTypeName>=<enabled>+<defaultUserId>;
+	 * Each row is of the format <systemTypeId>=<enabled>+<defaultUserId>;
 	 * @return the table of system types formatted as a single string
 	 */
 	public static String getSystemTypeValues() {
@@ -170,7 +158,7 @@ public class RSEPreferencesManager {
 		StringBuffer buffer = new StringBuffer(100);
 		for (int i = 0; i < systemTypes.length; i++) {
 			IRSESystemType systemType = systemTypes[i];
-			buffer.append(systemType.getName());
+			buffer.append(systemType.getId());
 			buffer.append('=');
 			buffer.append(getIsSystemTypeEnabled(systemType));
 			buffer.append('+');
@@ -197,7 +185,7 @@ public class RSEPreferencesManager {
 			String[] values = compoundValue.split("\\+"); //$NON-NLS-1$
 			String isEnabled = values[0];
 			String defaultUserId = values[1];
-			IRSESystemType systemType = registry.getSystemType(key);
+			IRSESystemType systemType = registry.getSystemTypeById(key);
 			setIsSystemTypeEnabled(systemType, isEnabled.equals("true")); //$NON-NLS-1$
 			setDefaultUserId(systemType, defaultUserId);
 		}
@@ -234,7 +222,7 @@ public class RSEPreferencesManager {
 	}
 
 	private static String getSystemTypePreferencesKey(IRSESystemType systemType, String preference) {
-		String key = systemType.getName() + "." + preference; //$NON-NLS-1$
+		String key = systemType.getId() + "." + preference; //$NON-NLS-1$
 		return key;
 	}
 

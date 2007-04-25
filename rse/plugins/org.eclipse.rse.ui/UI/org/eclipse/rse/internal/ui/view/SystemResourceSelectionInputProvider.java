@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,10 +11,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -26,7 +27,7 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	private IHost _connection;
 	private boolean _onlyConnection = false;
 	private boolean _allowNew = true;
-	private String[] _systemTypes;
+	private IRSESystemType[] _systemTypes;
 	private String _category = null;
 	
 	public SystemResourceSelectionInputProvider(IHost connection)
@@ -69,12 +70,12 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 		_onlyConnection = onlyConnection;
 	}
 	
-	public String[] getSystemTypes()
+	public IRSESystemType[] getSystemTypes()
 	{
 		return _systemTypes;
 	}
 	
-	public void setSystemTypes(String[] types)
+	public void setSystemTypes(IRSESystemType[] types)
 	{
 		_systemTypes = types;
 	}

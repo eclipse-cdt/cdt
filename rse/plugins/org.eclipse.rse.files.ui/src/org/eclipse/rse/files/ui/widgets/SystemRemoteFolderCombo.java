@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
@@ -70,7 +71,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	private Button             browseButton = null;	
 	//private RemoteFileSubSystem subsystem = null;
 	//private RemoteFileSubSystemConfiguration subsystemFactory = null;
-	private String[]           systemTypes = null;	
+	private IRSESystemType[]   systemTypes = null;	
 	private IHost   connection = null;
 	private boolean            showNewConnectionPrompt = true;
 	//private static final int DEFAULT_COMBO_WIDTH = 300;
@@ -118,30 +119,34 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	}
 
     /**
-     * Set the system types to restrict what connections the user sees, and what types of 
-     * connections they can create.
-     * @param systemTypes An array of system type names
+     * Set the system types to restrict what connections the user sees,
+     * and what types of connections they can create.
      * 
-     * @see org.eclipse.rse.core.IRSESystemType
+     * @param systemTypes An array of system types, or
+     *     <code>null</code> to allow all registered valid system types.
+     *     A system type is valid if at least one subsystem configuration
+     *     is registered against it.
      */
-    public void setSystemTypes(String[] systemTypes)
+    public void setSystemTypes(IRSESystemType[] systemTypes)
     {
     	this.systemTypes = systemTypes;
     }
+
     /**
      * Convenience method to restrict to a single system type. 
-     * Same as setSystemTypes(new String[] {systemType})
+     * Same as setSystemTypes(new IRSESystemType[] {systemType})
      *
-     * @param systemType The name of the system type to restrict to
-     * 
-     * @see org.eclipse.rse.core.IRSESystemType
+     * @param systemType The system type to restrict to, or
+     *     <code>null</code> to allow all registered valid system types.
+     *     A system type is valid if at least one subsystem configuration
+     *     is registered against it.
      */
-    public void setSystemType(String systemType)
+    public void setSystemType(IRSESystemType systemType)
     {
     	if (systemType == null)
     	  setSystemTypes(null);
     	else
-    	  setSystemTypes(new String[] {systemType});
+    	  setSystemTypes(new IRSESystemType[] {systemType});
     }
 
     /**

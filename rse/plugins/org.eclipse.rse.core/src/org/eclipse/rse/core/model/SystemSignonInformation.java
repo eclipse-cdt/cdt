@@ -13,10 +13,12 @@
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.ICredentials;
 
 /**
@@ -24,14 +26,12 @@ import org.eclipse.rse.core.subsystems.ICredentials;
  * must be secure and never disclose the password for the remote system in its unencrypted form.
  * However the encrypted form of the password is not considered secret information and can be
  * accessed by anyone.
- * 
- * @author yantzi
  */
 public final class SystemSignonInformation implements ICredentials {
 
+	private IRSESystemType _systemType;
 	private String _hostname;
 	private String _userId;
-	private String _systemType;
 	private String _password;
 
 	/**
@@ -43,7 +43,7 @@ public final class SystemSignonInformation implements ICredentials {
 	/**
 	 * Constructor for SystemSignonInformation.
 	 */
-	public SystemSignonInformation(String hostname, String userid, String systemType) {
+	public SystemSignonInformation(String hostname, String userid, IRSESystemType systemType) {
 		_hostname = hostname;//RSEUIPlugin.getQualifiedHostName(hostname).toUpperCase();
 		_userId = userid;
 		_systemType = systemType;
@@ -52,7 +52,7 @@ public final class SystemSignonInformation implements ICredentials {
 	/**
 	 * Constructor for SystemSignonInformation.
 	 */
-	public SystemSignonInformation(String hostname, String userid, String password, String systemType) {
+	public SystemSignonInformation(String hostname, String userid, String password, IRSESystemType systemType) {
 		_hostname = hostname;//RSEUIPlugin.getQualifiedHostName(hostname).toUpperCase();
 		_userId = userid;
 		_password = password;
@@ -68,18 +68,16 @@ public final class SystemSignonInformation implements ICredentials {
 	}
 
 	/**
-	 * Returns the systemType of the remote system
-	 * //FIXME should be replaced by IRSESystemType getSystemType()
-	 * @deprecated
-	 * @return String
+	 * Returns the systemType of the remote system.
+	 * @return the systemType object.
 	 */
-	public String getSystemType() {
+	public IRSESystemType getSystemType() {
 		return _systemType;
 	}
 
 	/**
 	 * Returns the userid for the remote system
-	 * @return String
+	 * @return the user ID.
 	 */
 	public String getUserId() {
 		return _userId;
@@ -111,7 +109,7 @@ public final class SystemSignonInformation implements ICredentials {
 	 * Sets the systemType.
 	 * @param systemType The systemType to set
 	 */
-	public void setSystemType(String systemType) {
+	public void setSystemType(IRSESystemType systemType) {
 		_systemType = systemType;
 	}
 

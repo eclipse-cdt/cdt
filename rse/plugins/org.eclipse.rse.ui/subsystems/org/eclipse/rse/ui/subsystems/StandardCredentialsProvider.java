@@ -7,10 +7,12 @@
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.SystemSignonInformation;
@@ -175,7 +177,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		ISubSystem subsystem = getPrimarySubSystem();
 		IHost host = subsystem.getHost();
 		String hostName = host.getHostName();
-		String hostType = host.getSystemType().getName();
+		IRSESystemType systemType = host.getSystemType();
 		savePassword = false;
 		if (supportsUserId()) {
 			boolean sameHost = hostName.equalsIgnoreCase(getConnectorService().getHostName());
@@ -187,7 +189,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		if (supportsPassword()) {
 			if (password == null) {
 				PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
-				SystemSignonInformation savedSignonInformation = ppm.find(hostType, hostName, userId);
+				SystemSignonInformation savedSignonInformation = ppm.find(systemType, hostName, userId);
 				if (savedSignonInformation != null) {
 					password = savedSignonInformation.getPassword();
 					savePassword = true;
@@ -253,7 +255,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	public final ICredentials getCredentials() {
 		IHost host = getConnectorService().getHost();
 		String hostName = host.getHostName();
-		String systemType = host.getSystemType().getName();
+		IRSESystemType systemType = host.getSystemType();
 		SystemSignonInformation result = new SystemSignonInformation(hostName, userId, password, systemType);
 		return result;
 	}
@@ -296,7 +298,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 			matchingUserId = matchingUserId.toUpperCase();
 		}
 		IConnectorService cs = getConnectorService();
-		String systemType = cs.getHostType();
+		IRSESystemType systemType = cs.getHost().getSystemType();
 		String hostName = cs.getHostName();
 		SystemSignonInformation signonInformation = new SystemSignonInformation(hostName, matchingUserId, password, systemType);
 		setSignonInformation(signonInformation);

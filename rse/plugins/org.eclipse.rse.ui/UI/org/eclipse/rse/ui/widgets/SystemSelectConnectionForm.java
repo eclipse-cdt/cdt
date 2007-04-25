@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemPropertySheetForm;
@@ -52,7 +53,7 @@ import org.eclipse.swt.widgets.Text;
  * <ul>
  *   <li>{@link #setShowNewConnectionPrompt(boolean)}
  *   <li>{@link #setDefaultConnection(IHost)}
- *   <li>{@link #setSystemTypes(String[])} 
+ *   <li>{@link #setSystemTypes(IRSESystemType[])} 
  *   <li>{@link #setShowPropertySheet(boolean)}
  *   <li>{@link #setMultipleSelectionMode(boolean)}
  * </ul>
@@ -81,7 +82,7 @@ public class SystemSelectConnectionForm extends SystemBaseForm
 	protected Composite               outerParent, ps_composite;	
 	// inputs
 	protected String           verbiage = null;
-	protected String[]         systemTypes = null;
+	protected IRSESystemType[] systemTypes = null;
 	protected IHost defaultConn;
 	protected boolean          allowNew = true;
 	protected boolean          multipleSelectionMode;
@@ -109,7 +110,7 @@ public class SystemSelectConnectionForm extends SystemBaseForm
 	 * @param msgLine A GUI widget capable of writing error messages to.
 	 * 
 	 * @see #setShowNewConnectionPrompt(boolean)
-	 * @see #setSystemTypes(String[])
+	 * @see #setSystemTypes(IRSESystemType[])
 	 */
 	public SystemSelectConnectionForm(Shell shell, ISystemMessageLine msgLine) 
 	{
@@ -141,25 +142,23 @@ public class SystemSelectConnectionForm extends SystemBaseForm
     	allowNew = show;    	
     }
     /**
-     * Restrict to certain system types
-     * @param systemTypes the system types to restrict what connections are shown and what types of connections
-     *  the user can create
-     * @see org.eclipse.rse.core.IRSESystemType
+     * Restrict to certain system types.
+     * @param systemTypes the system types to restrict what connections 
+     *     are shown and what types of connections the user can create.
      */
-    public void setSystemTypes(String[] systemTypes)
+    public void setSystemTypes(IRSESystemType[] systemTypes)
     {
     	this.systemTypes = systemTypes;
     }
 	/**
-	 * Restrict to one system type
-	 * @param systemType the system type to restrict what connections are shown and what types of connections
-	 *  the user can create
-	 * @see org.eclipse.rse.core.IRSESystemType
+	 * Restrict to one system type.
+	 * @param systemType the system type to restrict what connections 
+	 *     are shown and what types of connections the user can create.
 	 */
-	public void setSystemType(String systemType)
+	public void setSystemType(IRSESystemType systemType)
 	{
-		systemTypes = new String[1];
-		systemTypes[0] = systemType; 
+		if (systemType==null) setSystemTypes(null);
+		setSystemTypes(new IRSESystemType[] {systemType});
 	}
     /**
      * Set the message shown as the text at the top of the form. Default is "Select a connection"

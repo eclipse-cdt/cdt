@@ -1,12 +1,13 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 Symbian Software Ltd. All rights reserved.
+ * Copyright (c) 2006, 2007 Symbian Software Ltd. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orus (Symbian) - initial API and implementation
- *   Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
+ * Javier Montalvo Orus (Symbian) - initial API and implementation
+ * Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.discovery;
@@ -21,6 +22,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -101,7 +104,8 @@ public class ServiceDiscoveryWizard extends Wizard {
 			
 			IHost conn = null;
 			try {
-				conn = registry.createHost("Discovery", "Discovery@" + hostName, hostName, "Discovered services in "+hostName);//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$;
+				IRSESystemType discoveryType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById("org.eclipse.rse.systemtype.discovery"); //$NON-NLS-1$
+				conn = registry.createHost(discoveryType, "Discovery@" + hostName, hostName, "Discovered services in "+hostName);//$NON-NLS-1$ //$NON-NLS-2$
 			} catch (Exception e) {
 				RSEUIPlugin.getTheSystemRegistry().deleteHost(conn);
 				return false;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -36,7 +37,7 @@ import org.eclipse.rse.core.filters.SystemFilterSimple;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
-import org.eclipse.rse.internal.core.model.RSEModelResources;
+import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.internal.references.SystemReferencedObject;
 
 
@@ -1022,7 +1023,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	
 	public String getDescription()
 	{
-		return RSEModelResources.RESID_MODELOBJECTS_FILTER_DESCRIPTION;
+		return RSECoreMessages.RESID_MODELOBJECTS_FILTER_DESCRIPTION;
 	}
 
 	/**

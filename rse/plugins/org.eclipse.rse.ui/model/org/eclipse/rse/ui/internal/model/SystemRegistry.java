@@ -19,10 +19,12 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Tobias Schwarz (Wind River) - [183134] getLocalHost() does not return Local
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -36,6 +38,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvent;
@@ -602,27 +605,12 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return factories;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(org.eclipse.rse.core.IRSESystemType, boolean)
-	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemFactories) {
-		return getSubSystemConfigurationsBySystemType(systemType != null ? systemType.getName() : null, filterDuplicateServiceSubSystemFactories);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(java.lang.String)
-	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(String systemType)
-	{
-		return getSubSystemConfigurationsBySystemType(systemType, false);
-	}
-	
 	/**
-	 * Return all subsystem factories which support the given system type. If the type is null,
-	 *  returns all.
+	 * Return all subsystem factories which support the given system type.
+	 * If the type is null, returns all.
 	 * 
 	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(String systemType, boolean filterDuplicateServiceSubSystemFactories)
+	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemFactories)
 	{
 		List serviceTypesAdded = new ArrayList();
 		List serviceImplsAdded = new ArrayList();
@@ -1260,7 +1248,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				// if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType().getName()))
+				// if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()))
 				// {
 					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
@@ -1416,7 +1404,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType().getName()) && subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
+				if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()) && subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
 				{
 					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
@@ -1660,7 +1648,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	public IHost getLocalHost()
 	{
 		IHost localConn = null;
-		IHost[] conns = getHostsBySystemType(IRSESystemType.SYSTEMTYPE_LOCAL);
+		IRSESystemType localType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+		IHost[] conns = getHostsBySystemType(localType);
 		if (conns != null && conns.length > 0) return conns[0];
 		else return localConn;
 	}
@@ -1674,7 +1663,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		Vector v = new Vector();
 		for (int idx = 0; idx < pools.length; idx++)
 		{
-			IHost[] conns = getHostsByProfile(getSystemProfileName(pools[idx]));
+			IHost[] conns = getHostsByProfile(getSystemProfile(pools[idx]));
 			if (conns != null)
 				for (int jdx = 0; jdx < conns.length; jdx++)
 					v.addElement(conns[jdx]);
@@ -1684,16 +1673,20 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 			allConns[idx] = (IHost) v.elementAt(idx);
 		return allConns;
 	}
-	/**
-	 * Return all connections in a given profile.
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsByProfile(org.eclipse.rse.core.model.ISystemProfile)
 	 */
 	public IHost[] getHostsByProfile(ISystemProfile profile)
 	{
 		ISystemHostPool pool = getHostPool(profile);
 		return pool.getHosts();
 	}
-	/**
-	 * Return all connections in a given profile name.
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsByProfile(java.lang.String)
 	 */
 	public IHost[] getHostsByProfile(String profileName)
 	{
@@ -1707,10 +1700,10 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 			return null;
 		}
 	}
-	/**
-	 * Return all connections for which there exists one or more subsystems owned
-	 *  by a given subsystem factory.
-	 * @see #getSubSystemConfiguration(String)
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfiguration(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 	 */
 	public IHost[] getHostsBySubSystemConfiguration(ISubSystemConfiguration factory)
 	{
@@ -1733,23 +1726,19 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		}
 		return conns;
 	}
-	/**
-	 * Return all connections for which there exists one or more subsystems owned
-	 *  by a given subsystem factory, identified by factory Id
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationId(java.lang.String)
 	 */
 	public IHost[] getHostsBySubSystemConfigurationId(String factoryId)
 	{
 		return getHostsBySubSystemConfiguration(getSubSystemConfiguration(factoryId));
 	}
-	/**
-	 * Return all connections for which there exists one or more subsystems owned
-	 *  by any child classes of a given subsystem factory category.
-	 * <p>
-	 * This looks for a match on the "category" of the subsystem factory's xml declaration
-	 *  in its plugin.xml file. Thus, it is effecient as it need not bring to live a 
-	 *  subsystem factory just to test its parent class type.
-	 * 
-	 * @see ISubSystemConfigurationCategories
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(java.lang.String)
 	 */
 	public IHost[] getHostsBySubSystemConfigurationCategory(String factoryCategory)
 	{
@@ -1803,64 +1792,44 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return (IHost[])connections.toArray(new IHost[connections.size()]);
 	}
 	
-	/**
-	 * Return all connections for all active profiles, for the given system type.
-	 * Never returns null!
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySystemTypes(org.eclipse.rse.core.IRSESystemType[])
 	 */
-	public IHost[] getHostsBySystemType(String systemType)
+	public IHost[] getHostsBySystemTypes(IRSESystemType[] systemTypes)
 	{
+		List systemTypesList = Arrays.asList(systemTypes);
 		IHost[] connections = getHosts();
 		Vector v = new Vector();
 		for (int idx = 0; idx < connections.length; idx++)
 		{
-			if (systemType.equals(connections[idx].getSystemType().getName()))
+			IRSESystemType systemType = connections[idx].getSystemType();
+			if (systemTypesList.contains(systemType)) {
 				v.addElement(connections[idx]);
+			}
 		}
-		IHost[] conns = new IHost[v.size()];
-		for (int idx = 0; idx < v.size(); idx++)
-			conns[idx] = (IHost) v.elementAt(idx);
-		return conns;
-	}
-	/**
-	 * Return all connections for all active profiles, for the given system types.
-	 * Never returns null!
-	 */
-	public IHost[] getHostsBySystemTypes(String[] systemTypes)
-	{
-		IHost[] connections = getHosts();
-		Vector v = new Vector();
-		for (int idx = 0; idx < connections.length; idx++)
-		{
-			String systemType = connections[idx].getSystemType().getName();
-			boolean match = false;
-			for (int jdx = 0; !match && (jdx < systemTypes.length); jdx++)
-				if (systemType.equals(systemTypes[jdx]))
-					match = true;
-			if (match)
-				v.addElement(connections[idx]);
-		}
-		IHost[] conns = new IHost[v.size()];
-		for (int idx = 0; idx < v.size(); idx++)
-			conns[idx] = (IHost) v.elementAt(idx);
-		return conns;
+		return (IHost[])v.toArray(new IHost[v.size()]);
 	}
 
-	/**
-	 * Return a SystemConnection object given a system profile containing it, 
-	 *   and an connection name uniquely identifying it.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHost(org.eclipse.rse.core.model.ISystemProfile, java.lang.String)
 	 */
 	public IHost getHost(ISystemProfile profile, String connectionName)
 	{
 		return getHostPool(profile).getHost(connectionName);
 	}
-	/**
-	 * Return the zero-based position of a SystemConnection object within its profile.
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostPosition(org.eclipse.rse.core.model.IHost)
 	 */
 	public int getHostPosition(IHost conn)
 	{
 		ISystemHostPool pool = conn.getHostPool();
 		return pool.getHostPosition(conn);
 	}
+	
 	/**
 	 * Return the zero-based position of a SystemConnection object within all active profiles.
 	 */
@@ -1876,23 +1845,27 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return pos;
 	}
 
-	/**
-	 * Return the number of SystemConnection objects within the given profile
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostCount(java.lang.String)
 	 */
 	public int getHostCount(String profileName)
 	{
 		return getHostPool(profileName).getHostCount();
 	}
-	/**
-	 * Return the number of SystemConnection objects within the given connection's owning profile
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostCountWithinProfile(org.eclipse.rse.core.model.IHost)
 	 */
 	public int getHostCountWithinProfile(IHost conn)
 	{
 		return conn.getHostPool().getHostCount();
 	}
 
-	/**
-	 * Return the number of SystemConnection objects within all active profiles
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostCount()
 	 */
 	public int getHostCount()
 	{
@@ -1905,9 +1878,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return total;
 	}
 
-	/**
-	 * Return a vector of previously-used connection names in the given named profile.
-	 * @return Vector of String objects.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostAliasNames(java.lang.String)
 	 */
 	public Vector getHostAliasNames(String profileName)
 	{
@@ -1920,16 +1893,19 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		}
 		return names;
 	}
-	/**
-	 * Return a vector of previously-used connection names in the given profile.
-	 * @return Vector of String objects.
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostAliasNames(org.eclipse.rse.core.model.ISystemProfile)
 	 */
 	public Vector getHostAliasNames(ISystemProfile profile)
 	{
 		return getHostAliasNames(profile.getName());
 	}
-	/**
-	 * Return a vector of previously-used connection names in all active profiles.
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostAliasNamesForAllActiveProfiles()
 	 */
 	public Vector getHostAliasNamesForAllActiveProfiles()
 	{
@@ -1944,19 +1920,11 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return allNames;
 	}
 
-	/**
-	 * Return array of all previously specified hostnames.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostNames(org.eclipse.rse.core.IRSESystemType)
 	 */
-	public String[] getHostNames()
-	{
-		return getHostNames(null);
-	}
-	/**
-	 * Return array of previously specified hostnames for a given system type.
-	 * After careful consideration, it is decided that if the system type is null,
-	 *  then no hostnames should be returned. Previously all for all types were returned.
-	 */
-	public String[] getHostNames(String systemType)
+	public String[] getHostNames(IRSESystemType systemType)
 	{
 		Vector v = new Vector();
 
@@ -1971,21 +1939,19 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 				//       in SystemConnectionForm.
 				if (conns[idx].getHostName() != null && !v.contains(conns[idx].getHostName()))
 				{
-					if (conns[idx].getSystemType().getName().equals(systemType))
+					if (conns[idx].getSystemType().equals(systemType))
 						v.addElement(conns[idx].getHostName());
 				}
 			}
 		}
-		if ((systemType != null) && (systemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL) && (v.size() == 0)))
+		if ((systemType != null) && (systemType.getId().equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID) && (v.size() == 0)))
 			v.addElement("localhost"); //$NON-NLS-1$
-		String[] names = new String[v.size()];
-		for (int idx = 0; idx < names.length; idx++)
-			names[idx] = (String) v.elementAt(idx);
-		return names;
+		return (String[])v.toArray(new String[v.size()]);
 	}
 
-	/**
-	 * Returns the clipboard used for copy actions
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.ui.model.ISystemRegistryUI#getSystemClipboard()
 	 */
 	public Clipboard getSystemClipboard()
 	{
@@ -2058,6 +2024,10 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSystemClipboardObjects(int)
+	 */
 	public List getSystemClipboardObjects(int srcType)
 	{
 		Clipboard clipboard = getSystemClipboard();
@@ -2144,14 +2114,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
         return scratchpad;
     }
 
-	
-	/**
-	 * Convenience method to create a local connection, as it often that one is needed
-	 *  for access to the local file system.
-	 * @param profile - the profile to create this connection in. If null is passed, we first
-	 *   try to find the default private profile and use it, else we take the first active profile.
-	 * @param name - the name to give this profile. Must be unique and non-null.
-	 * @param userId - the user ID to use as the default for the subsystems. Can be null.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#createLocalHost(org.eclipse.rse.core.model.ISystemProfile, java.lang.String, java.lang.String)
 	 */
 	public IHost createLocalHost(ISystemProfile profile, String name, String userId)
 	{
@@ -2163,8 +2128,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		 
 		try
 		{
-	  	 	localConn = createHost(
-		  			profile.getName(), IRSESystemType.SYSTEMTYPE_LOCAL,
+			IRSESystemType localType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+			localConn = createHost(
+		  			profile.getName(), localType,
 		  			name, // connection name
 		  			"localhost", // hostname //$NON-NLS-1$
 		  			"", // description //$NON-NLS-1$
@@ -2181,36 +2147,13 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return localConn;
 	}
 	
-	/**
-	 * Create a connection object, given the connection pool and given all the possible attributes.
-	 * <p>
-	 * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU, IN
-	 *  THE PROFILE YOU SPECIFY. THE PROFILE IS ALSO SAVED TO DISK.
-	 * <p>
-	 * This method:
-	 * <ul>
-	 *  <li>creates and saves a new connection within the given profile
-	 *  <li>calls all subsystem factories to give them a chance to create a subsystem instance
-	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
-	 * </ul>
-	 * <p>
-	 * @param profileName Name of the system profile the connection is to be added to.
-	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemTypes extension point.
-	 * @param connectionName unique connection name.
-	 * @param hostName ip name of host.
-	 * @param description optional description of the connection. Can be null.
-	 * @param defaultUserId userId to use as the default for the subsystems.
-	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
-	 *   that tells us where to set the user Id
-	 * @param newConnectionWizardPages when called from the New Connection wizard this is union of the list of additional
-	 *          wizard pages supplied by the subsystem factories that pertain to the specified system type. Else null.
-	 * @return SystemConnection object, or null if it failed to create. This is typically
-	 *   because the connectionName is not unique. Call getLastException() if necessary.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(java.lang.String, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, org.eclipse.rse.core.model.ISystemNewConnectionWizardPage[])
 	 */
 	public IHost createHost(
 		String profileName,
-		String systemType,
+		IRSESystemType systemType,
 		String connectionName,
 		String hostName,
 		String description,
@@ -2236,8 +2179,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	 * </ul>
 	 * <p>
 	 * @param profileName Name of the system profile the connection is to be added to.
-	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemTypes extension point.
+	 * @param systemType system type matching one of the system types
+	 *     defined via the systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
@@ -2252,7 +2195,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	 */
 	public IHost createHost(
 		String profileName,
-		String systemType,
+		IRSESystemType systemType,
 		String connectionName,
 		String hostName,
 		String description,
@@ -2307,12 +2250,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return conn;
 	}
 	
-	/**
-	 * Creates subsystems for a given host and subsystem configurations.
-	 * @param host the host.
-	 * @param configurations the subsystem configurations.
-	 * @return the array of subsystems corresponding to the array of given configurations.
-	 * @since 2.0
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#createSubSystems(org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.subsystems.ISubSystemConfiguration[])
 	 */
 	public ISubSystem[] createSubSystems(IHost host, ISubSystemConfiguration[] configurations) {
 		
@@ -2329,7 +2269,6 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		host.commit();
 		return subsystems;
 	}
-	
 	
 	class FireNewHostEvents implements Runnable
 	{
@@ -2389,29 +2328,12 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 				subPages[count++] = allPages[idx];
 		return subPages;
 	}
-	/**
-	 * Create a connection object. This is a simplified version
-	 * <p>
-	 * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU, IN
-	 *  THE PROFILE YOU SPECIFY. THE PROFILE IS ALSO SAVED TO DISK.
-	 * <p>
-	 * This method:
-	 * <ul>
-	 *  <li>creates and saves a new connection within the given profile
-	 *  <li>calls all subsystem factories to give them a chance to create a subsystem instance
-	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
-	 * </ul>
-	 * <p>
-	 * @param profileName Name of the system profile the connection is to be added to.
-	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemTypes extension point.
-	 * @param connectionName unique connection name.
-	 * @param hostName ip name of host.
-	 * @param description optional description of the connection. Can be null.
-	 * @return SystemConnection object, or null if it failed to create. This is typically
-	 *   because the connectionName is not unique. Call getLastException() if necessary.
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(java.lang.String, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public IHost createHost(String profileName, String systemType, String connectionName, String hostName, String description)
+	public IHost createHost(String profileName, IRSESystemType systemType, String connectionName, String hostName, String description)
 		throws Exception
 	{
 		return createHost(profileName, systemType, connectionName, hostName, description, true);  
@@ -2431,8 +2353,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	 * </ul>
 	 * <p>
 	 * @param profileName Name of the system profile the connection is to be added to.
-	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemTypes extension point.
+	 * @param systemType system type matching one of the system types
+	 *     defined via the systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
@@ -2441,34 +2363,16 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	 *   because the connectionName is not unique. Call getLastException() if necessary.
 	 * @since 2.0
 	 */
-	public IHost createHost(String profileName, String systemType, String connectionName, String hostName, String description, boolean createSubSystems) throws Exception
+	public IHost createHost(String profileName, IRSESystemType systemType, String connectionName, String hostName, String description, boolean createSubSystems) throws Exception
 	{
 		return createHost(profileName, systemType, connectionName, hostName, description, null, IRSEUserIdConstants.USERID_LOCATION_HOST, null);  
 	}
 	
-	/**
-	 * Create a connection object. This is a very simplified version that defaults to the user's
-	 *  private profile, or the first active profile if there is no private profile.
-	 * <p>
-	 * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU, IN
-	 *  THE DEFAULT PRIVATE PROFILE, WHICH IS SAVED TO DISK.
-	 * <p>
-	 * This method:
-	 * <ul>
-	 *  <li>creates and saves a new connection within the given profile
-	 *  <li>calls all subsystem factories to give them a chance to create a subsystem instance
-	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
-	 * </ul>
-	 * <p>
-	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemTypes extension point.
-	 * @param connectionName unique connection name.
-	 * @param hostName ip name of host.
-	 * @param description optional description of the connection. Can be null.
-	 * @return SystemConnection object, or null if it failed to create. This is typically
-	 *   because the connectionName is not unique. Call getLastException() if necessary.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public IHost createHost(String systemType, String connectionName, String hostName, String description)
+	public IHost createHost(IRSESystemType systemType, String connectionName, String hostName, String description)
 		throws Exception
 	{
 		ISystemProfile profile = getSystemProfileManager().getDefaultPrivateSystemProfile();
@@ -2476,6 +2380,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 			profile = getSystemProfileManager().getActiveSystemProfiles()[0];
 		return createHost(profile.getName(), systemType, connectionName, hostName, description);  
 	}
+	
 	/**
 	 * Return the previous connection as would be shown in the view
 	 */
@@ -2498,30 +2403,12 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		}
 		return prevConn;
 	}
-	/**
-	 * Update an existing connection given the new information.
-	 * This method:
-	 * <ul>
-	 *  <li>calls the setXXX methods on the given connection object, updating the information in it.
-	 *  <li>save the connection's connection pool to disk
-	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_CHANGE to all registered listeners
-	 *  <li>if the systemtype or hostname is changed, calls disconnect on each associated subsystem.
-	 *       We must do this because a hostname changes fundamentally affects the connection, 
-	 *       rendering any information currently displayed under
-	 *       that connection obsolete. That is, the user will have to reconnect.
-	 * </ul>
-	 * <p>
-	 * @param conn SystemConnection to be updated
-	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemTypes extension point.
-	 * @param connectionName unique connection name.
-	 * @param hostName ip name of host.
-	 * @param description optional description of the connection. Can be null.
-	 * @param defaultUserId userId to use as the default for the subsystems.
-	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
-	 *   that tells us where to set the user Id
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#updateHost(org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int)
 	 */
-	public void updateHost(IHost conn, String systemType, String connectionName, String hostName, String description, String defaultUserId, int defaultUserIdLocation)
+	public void updateHost(IHost conn, IRSESystemType systemType, String connectionName, String hostName, String description, String defaultUserId, int defaultUserIdLocation)
 	{
 		lastException = null;
 		boolean connectionNameChanged = !connectionName.equalsIgnoreCase(conn.getAliasName());
@@ -2588,11 +2475,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		}
 	}
 
-	/**
-	 * Update the workoffline attribute for a connection.
-	 * 
-	 * @param conn SystemConnection to change
-	 * @param offline true if connection should be set offline, false if it should be set online
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#setHostOffline(org.eclipse.rse.core.model.IHost, boolean)
 	 */
 	public void setHostOffline(IHost conn, boolean offline)
 	{
@@ -2604,17 +2489,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		}
 	}
 
-	/**
-	 * Delete an existing connection. 
-	 * <p>
-	 * Lots to do here:
-	 * <ul>
-	 *   <li>Delete all subsystem objects for this connection, including their file's on disk.
-	 *   <li>Delete this connection's private filter pool, if exists
-	 *   <li>Delete the connection from memory.
-	 *   <li>Delete the connection's folder from disk.
-	 * </ul>
-	 * Assumption: firing the delete event is done elsewhere. Specifically, the doDelete method of SystemView.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#deleteHost(org.eclipse.rse.core.model.IHost)
 	 */
 	public void deleteHost(IHost conn)
 	{
@@ -2631,16 +2508,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 				conn, null);
 	}
 
-	/**
-	 * Renames an existing connection. 
-	 * <p>
-	 * Lots to do here:
-	 * <ul>
-	 *   <li>Reset the conn name for all subsystem objects for this connection
-	 *   <li>Rename the connection in memory.
-	 *   <li>Rename the connection's folder on disk.
-	 * </ul>
-	 * Assumption: firing the rename event is done elsewhere. Specifically, the doRename method of SystemView.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#renameHost(org.eclipse.rse.core.model.IHost, java.lang.String)
 	 */
 	public void renameHost(IHost conn, String newName) throws Exception
 	{
@@ -2671,18 +2541,10 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 				conn, oldName);
 	}
 
-	/**
-	 * Move existing connections a given number of positions in the same profile.
-	 * If the delta is negative, they are all moved up by the given amount. If 
-	 * positive, they are all moved down by the given amount.<p>
-	 * <ul>
-	 * <li>After the move, the pool containing the moved connection is saved to disk.
-	 * <li>The connection's connection name must be unique in pool.
-	 * <li>Fires a single ISystemResourceChangeEvent event of type EVENT_MOVE, if the pool is the private pool.
-	 * </ul>
-	 * <b>TODO PROBLEM: CAN'T RE-ORDER FOLDERS SO CAN WE SUPPORT THIS ACTION?</b>
-	 * @param conns Array of SystemConnections to move.
-	 * @param delta new zero-based position for the connection
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#moveHosts(java.lang.String, org.eclipse.rse.core.model.IHost[], int)
+	 * FIXME PROBLEM: CAN'T RE-ORDER FOLDERS SO CAN WE SUPPORT THIS ACTION?</b>
 	 */
 	public void moveHosts(String profileName, IHost conns[], int delta)
 	{
@@ -2701,13 +2563,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 					conns[idx], null);
 	}
 
-	/**
-	 * Copy a SystemConnection. All subsystems are copied, and all connection data is copied.
-	 * @param monitor Progress monitor to reflect each step of the operation
-	 * @param conn The connection to copy
-	 * @param targetProfile What profile to copy into
-	 * @param newName Unique name to give copied profile
-	 * @return new SystemConnection object
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#copyHost(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.model.ISystemProfile, java.lang.String)
 	 */
 	public IHost copyHost(IProgressMonitor monitor, IHost conn, ISystemProfile targetProfile, String newName) throws Exception
 	{
@@ -2792,15 +2650,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return newConn;
 	}
 
-	/**
-	 * Move a SystemConnection to another profile. All subsystems are moved, and all connection data is moved.
-	 * This is actually accomplished by doing a copy operation first, and if successful deleting the original.
-	 * @param monitor Progress monitor to reflect each step of the operation
-	 * @param conn The connection to move
-	 * @param targetProfile What profile to move into
-	 * @param newName Unique name to give copied profile. Typically this is the same as the original name, but 
-	 *                will be different on name collisions
-	 * @return new SystemConnection object
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#moveHost(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.model.ISystemProfile, java.lang.String)
 	 */
 	public IHost moveHost(IProgressMonitor monitor, IHost conn, ISystemProfile targetProfile, String newName) throws Exception
 	{
@@ -2823,7 +2675,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return newConn;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#isAnySubSystemSupportsConnect(org.eclipse.rse.core.model.IHost)
 	 */
 	public boolean isAnySubSystemSupportsConnect(IHost conn) {
@@ -2848,8 +2701,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return false;
 	}
 	
-	/**
-	 * Return true if any of the subsystems for the given connection are currently connected
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#isAnySubSystemConnected(org.eclipse.rse.core.model.IHost)
 	 */
 	public boolean isAnySubSystemConnected(IHost conn)
 	{
@@ -2866,8 +2720,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return any;
 	}
 	
-	/**
-	 * Return true if all of the subsystems for the given connection are currently connected
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#areAllSubSystemsConnected(org.eclipse.rse.core.model.IHost)
 	 */
 	public boolean areAllSubSystemsConnected(IHost conn)
 	{
@@ -2886,8 +2741,10 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		}
 		return all;
 	}
-	/**
-	 * Disconnect all subsystems for the given connection, if they are currently connected.
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#disconnectAllSubSystems(org.eclipse.rse.core.model.IHost)
 	 */
 	public void disconnectAllSubSystems(IHost conn)
 	{
@@ -2921,18 +2778,18 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		}
 	}
 
-	/**
-	 * Inform the world when the connection status changes for a subsystem within a connection.
-	 * Update properties for the subsystem and its connection
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#connectedStatusChange(org.eclipse.rse.core.subsystems.ISubSystem, boolean, boolean)
 	 */
 	public void connectedStatusChange(ISubSystem subsystem, boolean connected, boolean wasConnected)
 	{
 		connectedStatusChange(subsystem, connected, wasConnected, true);
 	}
 
-	/**
-	 * Inform the world when the connection status changes for a subsystem within a connection.
-	 * Update properties for the subsystem and its connection
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#connectedStatusChange(org.eclipse.rse.core.subsystems.ISubSystem, boolean, boolean, boolean)
 	 */
 	public void connectedStatusChange(ISubSystem subsystem, boolean connected, boolean wasConnected, boolean collapseTree)
 	{

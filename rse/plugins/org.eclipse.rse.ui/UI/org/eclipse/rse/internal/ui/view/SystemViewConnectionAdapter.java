@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -31,6 +32,7 @@ import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -572,7 +574,7 @@ public class SystemViewConnectionAdapter
 	{
 		String localUserId = conn.getLocalDefaultUserId();
 		data.setLocalValue(localUserId);
-		String parentUserId = RSEPreferencesManager.getUserId(conn.getSystemType().getName());
+		String parentUserId = RSEPreferencesManager.getUserId(conn.getSystemType().getId());
 		data.setInheritedValue(parentUserId);
 		data.setIsLocal((localUserId!=null)&&(localUserId.length()>0));
 	    //data.printDetails();
@@ -635,12 +637,12 @@ public class SystemViewConnectionAdapter
 	    }
 	    else if (property.equals(ISystemPropertyConstants.P_HOSTNAME))
 	    {
-		  sr.updateHost(conn, conn.getSystemType().getName(), conn.getAliasName(), original_hostName,
+		  sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), original_hostName,
 		                      conn.getDescription(), conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    }
 	    else if (property.equals(ISystemPropertyConstants.P_DESCRIPTION))
 	    {
-		  sr.updateHost(conn, conn.getSystemType().getName(), conn.getAliasName(), conn.getHostName(),
+		  sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(),
 		                      original_description, conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    }
     }   
@@ -654,7 +656,7 @@ public class SystemViewConnectionAdapter
     	  //whereToUpdate = USERID_LOCATION_DEFAULT_SYSTEMTYPE;
     	String userId = data.getLocalValue(); // will be "" if !data.getIsLocal(), which results in wiping out local override
 	    ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();    	
-		sr.updateHost(conn, conn.getSystemType().getName(), conn.getAliasName(), conn.getHostName(),
+		sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(),
 		                      conn.getDescription(), userId, whereToUpdate);
     }
     
@@ -681,7 +683,7 @@ public class SystemViewConnectionAdapter
 	    	// defect  57739
 	    	if (!((String)value).equalsIgnoreCase(conn.getHostName()))
 	    	{
-	    		sr.updateHost(conn, conn.getSystemType().getName(), conn.getAliasName(), (String)value,
+	    		sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), (String)value,
 		                      conn.getDescription(), conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    		changed_hostName = true;
 	    	}
@@ -692,7 +694,7 @@ public class SystemViewConnectionAdapter
 	    	// defect  57739
 	    	if (!((String)value).equalsIgnoreCase(conn.getDescription()))
 	    	{
-			  sr.updateHost(conn, conn.getSystemType().getName(), conn.getAliasName(), conn.getHostName(),
+			  sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(),
 			                      (String)value, conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);		  
 			  changed_description = true;		                      
 	    	}
@@ -709,7 +711,7 @@ public class SystemViewConnectionAdapter
 	    if (element instanceof IHost)
 	    {
 	    	IHost sysCon = (IHost) element;
-	    	if (sysCon.getSystemType().getName().equals(IRSESystemType.SYSTEMTYPE_LOCAL)) return existsMoreThanOneLocalConnection();
+	    	if (sysCon.getSystemType().getId().equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID)) return existsMoreThanOneLocalConnection();
 	        ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 	    	return !sr.isAnySubSystemConnected((IHost)element);
 	    }
@@ -718,7 +720,8 @@ public class SystemViewConnectionAdapter
 	
 	protected boolean existsMoreThanOneLocalConnection()
 	{
-		IHost[] localCons = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(IRSESystemType.SYSTEMTYPE_LOCAL);
+		IRSESystemType localType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+		IHost[] localCons = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(localType);
 		return localCons.length > 1;		
 	}
 	

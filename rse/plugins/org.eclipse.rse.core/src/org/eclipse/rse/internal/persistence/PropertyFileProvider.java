@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
  * Contributors:
  * David Dykstal (IBM) - removed printlns, printStackTrace and added logging.
  * David Dykstal (IBM) - [177882] fixed escapeValue for garbling of CJK characters
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 package org.eclipse.rse.internal.persistence;
 
@@ -45,6 +46,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
@@ -132,7 +134,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		IFolder providerFolder = getProviderFolder();
 		try {
 			int n = countNodes(dom);
-			if (monitor != null) monitor.beginTask(Messages.PropertyFileProvider_SavingTaskName, n);
+			if (monitor != null) monitor.beginTask(RSECoreMessages.PropertyFileProvider_SavingTaskName, n);
 			saveNode(dom, providerFolder, monitor);
 			if (monitor != null) monitor.done();
 		} catch (Exception e) {
@@ -152,7 +154,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			try {
 				profileFolder.delete(IResource.FORCE, monitor);
 			} catch (CoreException e) {
-				result = new Status(IStatus.ERROR, null, 0, Messages.PropertyFileProvider_UnexpectedException, e);
+				result = new Status(IStatus.ERROR, null, 0, RSECoreMessages.PropertyFileProvider_UnexpectedException, e);
 			}
 		}
 		return result;
@@ -538,7 +540,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		IFolder profileFolder = getProfileFolder(profileName);
 		if (profileFolder.exists()) {
 			int n = countPropertiesFiles(profileFolder);
-			if (monitor != null) monitor.beginTask(Messages.PropertyFileProvider_LoadingTaskName, n);
+			if (monitor != null) monitor.beginTask(RSECoreMessages.PropertyFileProvider_LoadingTaskName, n);
 			dom = (RSEDOM) loadNode(null, profileFolder, monitor);
 			if (monitor != null) monitor.done();
 		} else {

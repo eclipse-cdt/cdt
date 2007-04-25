@@ -12,9 +12,11 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -53,19 +55,21 @@ public class SystemStartHere
     * SAME AS: <code>getSystemRegistry().getConnectionsBySystemType(systemType)</code>
     * @param systemType One of the system types defined via system type extension point:
     * <ul>
-    *  <li>"iSeries"
-    *  <li>"Windows"
-    *  <li>"z/OS"
-    *  <li>"Unix"
-    *  <li>"Linux"
-    *  <li>"Local"
+    *  <li>"iSeries" ({@link IRSESystemType#SYSTEMTYPE_ISERIES_ID})
+    *  <li>"Windows" ({@link IRSESystemType#SYSTEMTYPE_WINDOWS_ID})
+    *  <li>"z/OS" ({@link IRSESystemType#SYSTEMTYPE_ZSERIES_ID})
+    *  <li>"Unix" ({@link IRSESystemType#SYSTEMTYPE_UNIX_ID})
+    *  <li>"Linux" ({@link IRSESystemType#SYSTEMTYPE_LINUX_ID})
+    *  <li>"Local" ({@link IRSESystemType#SYSTEMTYPE_LOCAL_ID})
     * </ul>
     * @see org.eclipse.rse.core.IRSESystemType
     * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySystemType(String)
+    * 
     */
-   public static IHost[] getConnectionsBySystemType(String systemType)
+   public static IHost[] getConnectionsBySystemType(String systemTypeId)
    {
-   	   return getSystemRegistry().getHostsBySystemType(systemType);
+	   IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(systemTypeId);
+	   return getSystemRegistry().getHostsBySystemType(systemType);
    }
 
    /**

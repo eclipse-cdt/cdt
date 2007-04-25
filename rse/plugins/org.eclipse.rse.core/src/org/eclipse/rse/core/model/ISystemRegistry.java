@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -35,6 +36,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
+import org.eclipse.rse.internal.core.RSECoreRegistry;
 
 /**
  * Registry or front door for all remote system connections.
@@ -118,24 +120,13 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public ISubSystemConfiguration[] getSubSystemConfigurationsByCategory(String factoryCategory);
 
 	/**
-	 * Return all subsystem factories which support the given system type. If the type is null,
-	 * returns all.
+	 * Return all subsystem factories which support the given system type.
+	 * If the type is null, returns all.
+	 * @param systemType system type to filter
+	 * @param filterDuplicateServiceSubSystemFactories set false by default
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemFactories);
 	
-	/**
-	 * Return all subsystem factories which support the given system type. If the type is null,
-	 *  returns all.
-	 * 
-	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(String systemType);
-
-	/**
-	 * Return all subsystem factories which support the given system type. If the type is null,
-	 *  returns all.
-	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(String systemType, boolean filterDuplicateServiceSubSystemFactories);
-
 	// ----------------------------------
 	// SYSTEMVIEWINPUTPROVIDER METHODS...
 	// ----------------------------------
@@ -368,35 +359,38 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public IHost[] getHosts();
 
 	/**
-	 * Return all connections in a given profile name.
+	 * Return all connections in a given profile.
 	 */
 	public IHost[] getHostsByProfile(ISystemProfile profile);
 
 	/**
-	 * Return all connections in a given profile.
+	 * Return all connections in a given profile name.
 	 */
 	public IHost[] getHostsByProfile(String profileName);
 
 	/**
-	 * Return all connections for which there exists one or more subsystems owned
-	 *  by a given subsystem factory.
+	 * Return all connections for which there exists one or more
+	 * subsystems owned by a given subsystem configuration.
 	 * @see #getSubSystemConfiguration(String)
 	 */
 	public IHost[] getHostsBySubSystemConfiguration(ISubSystemConfiguration factory);
 
 	/**
-	 * Return all connections for which there exists one or more subsystems owned
-	 *  by a given subsystem factory, identified by factory Id
+	 * Return all connections for which there exists one or more
+	 * subsystems owned  by a given subsystem configuration,
+	 * identified by configuration Id.
 	 */
 	public IHost[] getHostsBySubSystemConfigurationId(String factoryId);
 
 	/**
-	 * Return all connections for which there exists one or more subsystems owned
-	 *  by any a given subsystem factory that is of the given category.
+	 * Return all connections for which there exists one or more
+	 * subsystems owned by any a given subsystem configuration
+	 * that is of the given category.
 	 * <p>
-	 * This looks for a match on the "category" of the subsystem factory's xml declaration
-	 *  in its plugin.xml file. Thus, it is effecient as it need not bring to life a 
-	 *  subsystem factory just to test its parent class type.
+	 * This looks for a match on the "category" of the subsystem
+	 * configuration's xml declaration in its plugin.xml file.
+	 * Thus, it is effecient as it need not bring to life a 
+	 * subsystem configuration just to test its parent class type.
 	 * 
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
 	 */
@@ -405,6 +399,8 @@ public interface ISystemRegistry extends ISchedulingRule {
 	/**
 	 * Returns all connections for all active profiles, for the given system type.
 	 * If the specified system type is null, an empty array is returned.
+	 * In order to get an IRSESystemType, use
+	 * <code>RSECorePlugin.getDefault().getRegistry().{@link RSECoreRegistry#getSystemTypeById(String) getSystemTypeById(String)}</code>
 	 * 
 	 * @param systemType The system type instance.
 	 * @return The list of connections or an empty array.
@@ -412,14 +408,12 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public IHost[] getHostsBySystemType(IRSESystemType systemType);
 	
 	/**
-	 * Return all connections for all active profiles, for the given system type.
-	 */
-	public IHost[] getHostsBySystemType(String systemType);
-
-	/**
 	 * Return all connections for all active profiles, for the given system types.
+	 * 
+	 * In order to get an IRSESystemType, use
+	 * <code>RSECorePlugin.getDefault().getRegistry().{@link RSECoreRegistry#getSystemTypeById(String) getSystemTypeById(String)}</code>
 	 */
-	public IHost[] getHostsBySystemTypes(String[] systemTypes);
+	public IHost[] getHostsBySystemTypes(IRSESystemType[] systemTypes);
 
 	/**
 	 * Return a SystemConnection object given a system profile containing it, 
@@ -428,22 +422,25 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public IHost getHost(ISystemProfile profile, String connectionName);
 
 	/**
-	 * Return the zero-based position of a SystemConnection object within its profile.
+	 * Return the zero-based position of a SystemConnection object within
+	 * its profile.
 	 */
 	public int getHostPosition(IHost conn);
 
 	/**
-	 * Return the number of SystemConnection objects within the given profile
+	 * Return the number of SystemConnection objects within the given profile.
 	 */
 	public int getHostCount(String profileName);
 
 	/**
-	 * Return the number of SystemConnection objects within the given connection's owning profile
+	 * Return the number of SystemConnection objects within the given 
+	 * connection's owning profile.
 	 */
 	public int getHostCountWithinProfile(IHost conn);
 
 	/**
-	 * Return the number of SystemConnection objects within all active profiles
+	 * Return the number of SystemConnection objects within all active
+	 * profiles.
 	 */
 	public int getHostCount();
 
@@ -465,14 +462,11 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public Vector getHostAliasNamesForAllActiveProfiles();
 
 	/**
-	 * Return array of all previously specified hostnames.
-	 */
-	public String[] getHostNames();
-
-	/**
 	 * Return array of previously specified hostnames for a given system type.
+	 * After careful consideration, it is decided that if the system type is null,
+	 * then no hostnames should be returned. Previously all for all types were returned.
 	 */
-	public String[] getHostNames(String systemType);
+	public String[] getHostNames(IRSESystemType systemType);
 
 	/**
 	 * Returns the list of objects on the system clipboard
@@ -504,8 +498,8 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * </ul>
 	 * <p>
 	 * @param profileName Name of the system profile the connection is to be added to.
-	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemTypes extension point.
+	 * @param systemType system type matching one of the system types
+	 *     defined via the systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
@@ -517,7 +511,7 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * @return SystemConnection object, or null if it failed to create. This is typically
 	 * because the connectionName is not unique. Call getLastException() if necessary.
 	 */
-	public IHost createHost(String profileName, String systemType, String connectionName, String hostName, String description, String defaultUserId, int defaultUserIdLocation,
+	public IHost createHost(String profileName, IRSESystemType systemType, String connectionName, String hostName, String description, String defaultUserId, int defaultUserIdLocation,
 			ISystemNewConnectionWizardPage[] newConnectionWizardPages) throws Exception;
 
 	/**
@@ -534,15 +528,15 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * </ul>
 	 * <p>
 	 * @param profileName Name of the system profile the connection is to be added to.
-	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemTypes extension point.
+	 * @param systemType system type matching one of the system types
+	 *     defined via the systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
 	 * @return SystemConnection object, or null if it failed to create. This is typically
 	 *   because the connectionName is not unique. Call getLastException() if necessary.
 	 */
-	public IHost createHost(String profileName, String systemType, String connectionName, String hostName, String description) throws Exception;
+	public IHost createHost(String profileName, IRSESystemType systemType, String connectionName, String hostName, String description) throws Exception;
 
 	/**
 	 * Create a connection object. This is a very simplified version that defaults to the user's
@@ -558,15 +552,15 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
 	 * </ul>
 	 * <p>
-	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemTypes extension point.
+	 * @param systemType system type matching one of the system types
+	 *     defined via the systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostAddress ip name of host.
 	 * @param description optional description of the connection. Can be null.
 	 * @return SystemConnection object, or null if it failed to create. This is typically
 	 *   because the connectionName is not unique. Call getLastException() if necessary.
 	 */
-	public IHost createHost(String systemType, String connectionName, String hostAddress, String description) throws Exception;
+	public IHost createHost(IRSESystemType systemType, String connectionName, String hostAddress, String description) throws Exception;
 	
     /**
      * Update an existing host given the new information.
@@ -582,8 +576,8 @@ public interface ISystemRegistry extends ISchedulingRule {
      * </ul>
      * <p>
      * @param host the host to be updated
-     * @param systemType system type matching one of the system type names defined via the
-     *                    systemTypes extension point.
+	 * @param systemType system type matching one of the system types
+	 *     defined via the systemTypes extension point.
      * @param connectionName unique connection name.
      * @param hostName ip name of host.
      * @param description optional description of the host. Can be null.
@@ -591,7 +585,7 @@ public interface ISystemRegistry extends ISchedulingRule {
      * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
      *   that tells us where to set the user Id
      */
-    public void updateHost(IHost host, String systemType, String connectionName,
+    public void updateHost(IHost host, IRSESystemType systemType, String connectionName,
                                  String hostName, String description,
                                  String defaultUserId, int defaultUserIdLocation);
     
@@ -663,11 +657,15 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public IHost copyHost(IProgressMonitor monitor, IHost conn, ISystemProfile targetProfile, String newName) throws Exception;
 
 	/**
-	 * Move a SystemConnection to another profile. All subsystems are copied, and all connection data is copied.
+	 * Move a SystemConnection to another profile.
+	 * All subsystems are moved, and all connection data is moved.
+	 * This is actually accomplished by doing a copy operation first,
+	 * and if successful deleting the original.
 	 * @param monitor Progress monitor to reflect each step of the operation
 	 * @param conn The connection to move
-	 * @param targetProfile What profile to move to
-	 * @param newName Unique name to give moved profile
+	 * @param targetProfile What profile to move into
+	 * @param newName Unique name to give copied profile. Typically this is the same as the original name, but 
+	 *                will be different on name collisions
 	 * @return new SystemConnection object
 	 */
 	public IHost moveHost(IProgressMonitor monitor, IHost conn, ISystemProfile targetProfile, String newName) throws Exception;
@@ -680,27 +678,34 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public boolean isAnySubSystemSupportsConnect(IHost conn);
 
 	/**
-	 * Return true if any of the subsystems for the given connection are currently connected
+	 * Return true if any of the subsystems for the given connection are
+	 * currently connected.
 	 */
 	public boolean isAnySubSystemConnected(IHost conn);
 
 	/**
-	 * Return true if all of the subsystems for the given connection are currently connected
+	 * Return true if all of the subsystems for the given connection are
+	 * currently connected.
 	 */
 	public boolean areAllSubSystemsConnected(IHost conn);
 
 	/**
-	 * Disconnect all subsystems for the given connection, if they are currently connected.
+	 * Disconnect all subsystems for the given connection, if they are
+	 * currently connected.
 	 */
 	public void disconnectAllSubSystems(IHost conn);
 
 	/**
-	 * Inform the world when the connection status changes for a subsystem within a connection
+	 * Inform the world when the connection status changes for a subsystem
+	 * within a connection.
+	 * Update properties for the subsystem and its connection.
 	 */
 	public void connectedStatusChange(ISubSystem subsystem, boolean connected, boolean wasConnected);
 
 	/**
-	 * Inform the world when the connection status changes for a subsystem within a connection
+	 * Inform the world when the connection status changes for a subsystem
+	 * within a connection.
+	 * Update properties for the subsystem and its connection.
 	 */
 	public void connectedStatusChange(ISubSystem subsystem, boolean connected, boolean wasConnected, boolean collapseTree);
 

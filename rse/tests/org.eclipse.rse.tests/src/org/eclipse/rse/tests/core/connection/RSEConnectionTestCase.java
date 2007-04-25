@@ -1,5 +1,5 @@
-/* *******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
+/********************************************************************************
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,11 +7,13 @@
  * Contributors:
  * Don Yantzi (IBM) - initial contribution.
  * David Dykstal (IBM) - initial contribution.
- * *******************************************************************************/
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ ********************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
 import java.util.Properties;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.tests.RSETestsPlugin;
@@ -37,7 +39,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		properties.setProperty(IRSEConnectionProperties.ATTR_PROFILE_NAME, "TestProfile"); //$NON-NLS-1$
 		properties.setProperty(IRSEConnectionProperties.ATTR_NAME, "TestHost1"); //$NON-NLS-1$
 		properties.setProperty(IRSEConnectionProperties.ATTR_ADDRESS, "localhost"); //$NON-NLS-1$
-		properties.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE, "Unix"); //$NON-NLS-1$
+		properties.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID, IRSESystemType.SYSTEMTYPE_UNIX_ID);
 		properties.setProperty(IRSEConnectionProperties.ATTR_USERID, "userid"); //$NON-NLS-1$
 		properties.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, "password"); //$NON-NLS-1$
 		

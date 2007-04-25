@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,11 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
 
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -39,7 +40,7 @@ public class ServerLauncherPropertyPage extends SystemBasePropertyPage implement
 {
 
 	private IServerLauncherForm _form;
-	protected String _systemType;
+	protected IRSESystemType _systemType;
 	private IServerLauncherProperties sl;
 	private ISubSystemConfiguration _factory;
 
@@ -180,7 +181,7 @@ public class ServerLauncherPropertyPage extends SystemBasePropertyPage implement
 		return getErrorMessage();
 	}
 
-	public void setSystemType(String systemType)
+	public void setSystemType(IRSESystemType systemType)
 	{
 		_systemType = systemType;		
 	}

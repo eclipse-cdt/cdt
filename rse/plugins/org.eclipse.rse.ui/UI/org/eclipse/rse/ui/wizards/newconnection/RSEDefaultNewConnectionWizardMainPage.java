@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -71,7 +72,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends WizardPage implements
 		if (systemType != null) {
 			// The page _always_ restrict the system connection form
 			// to only one system type.
-			getSystemConnectionForm().restrictSystemType(systemType.getName());
+			getSystemConnectionForm().restrictSystemType(systemType);
 		}
 	}
 	
@@ -164,7 +165,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends WizardPage implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.ISystemConnectionFormCaller#systemTypeSelected(java.lang.String, boolean)
 	 */
-	public void systemTypeSelected(String systemType, boolean duringInitialization) {
+	public void systemTypeSelected(IRSESystemType systemType, boolean duringInitialization) {
 		// Not applicable: The Page is driving the system connection form and not the way around!!!
 	}
 

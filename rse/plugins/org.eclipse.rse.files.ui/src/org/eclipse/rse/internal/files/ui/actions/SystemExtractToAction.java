@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -21,15 +22,16 @@ import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.files.ui.dialogs.ExtractToDialog;
 import org.eclipse.rse.internal.files.ui.FileResources;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -44,14 +46,17 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemExtractToAction extends SystemExtractAction implements IValidatorRemoteSelection
 {	
-	protected static final String[] systemTypes = { IRSESystemType.SYSTEMTYPE_LOCAL,
-													IRSESystemType.SYSTEMTYPE_WINDOWS,
-													IRSESystemType.SYSTEMTYPE_LINUX,
-													IRSESystemType.SYSTEMTYPE_POWER_LINUX,
-													IRSESystemType.SYSTEMTYPE_UNIX,
-													IRSESystemType.SYSTEMTYPE_AIX,
-													IRSESystemType.SYSTEMTYPE_ISERIES
-												  };
+	private static final String[] validSystemTypesIds = {
+		IRSESystemType.SYSTEMTYPE_LOCAL_ID,
+		IRSESystemType.SYSTEMTYPE_WINDOWS_ID,
+		IRSESystemType.SYSTEMTYPE_LINUX_ID,
+		IRSESystemType.SYSTEMTYPE_POWER_LINUX_ID,
+		IRSESystemType.SYSTEMTYPE_UNIX_ID,
+		IRSESystemType.SYSTEMTYPE_AIX_ID,
+		IRSESystemType.SYSTEMTYPE_ISERIES_ID
+	};
+	private static IRSESystemType[] validSystemTypes = null;
+	
 	protected SystemMessage targetDescendsFromSrcMsg = null;
 	protected int currentlyProcessingSelection = 0;
 	
@@ -68,6 +73,13 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 		super(parent, label, tooltip);
 		setHelp(RSEUIPlugin.HELPPREFIX + "actn0119"); //$NON-NLS-1$
 		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACTTO_ID));
+	}
+	
+	protected IRSESystemType[] getValidSystemTypes() {
+		if (validSystemTypes==null) {
+			validSystemTypes = SystemWidgetHelpers.getValidSystemTypes(validSystemTypesIds);
+		}
+		return validSystemTypes;
 	}
 
 	public void run()
@@ -86,7 +98,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 			dialog.setMessage(message);
 			dialog.setShowNewConnectionPrompt(true);
 			dialog.setShowPropertySheet(true, false);
-			dialog.setSystemTypes(systemTypes);
+			dialog.setSystemTypes(getValidSystemTypes());
 			
 			dialog.setPreSelection(selection);
 			

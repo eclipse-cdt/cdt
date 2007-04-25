@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -22,6 +24,10 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class CommentTests extends AST2BaseTest {
 	
+	public static TestSuite suite() {
+		return suite(CommentTests.class);
+	}
+
 	public void testCountCommentsInHeaderFile() throws ParserException{
 		IASTTranslationUnit tu = parse(getHSource(), ParserLanguage.CPP, false, true, true);
 		IASTComment[] comments = tu.getComments();
@@ -188,4 +194,18 @@ public class CommentTests extends AST2BaseTest {
 		return buffer.toString();
 	}	
 	
+	// #ifdef xxx
+	// // comment1
+	// #else 
+	// // comment2
+	// #endif
+	public void _testCommentsInInactiveCode_bug183930() throws Exception {
+		StringBuffer code= getContents(1)[0];
+		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true, true);
+		IASTComment[] comments = tu.getComments();
+		
+		assertEquals(2, comments.length);
+		assertEquals("// comment1", new String(comments[0].getComment()));
+		assertEquals("// comment2", new String(comments[0].getComment()));
+	}
 }

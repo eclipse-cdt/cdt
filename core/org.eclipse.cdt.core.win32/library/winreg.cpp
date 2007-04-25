@@ -13,7 +13,7 @@
 #include <string.h>
 
 extern "C"
-JNIEXPORT jstring Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineValue(
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineValue(
 	JNIEnv * env, jobject obj, jstring subkey, jstring name)
 {
 	const jchar * csubkey = env->GetStringChars(subkey, NULL);
@@ -46,7 +46,7 @@ JNIEXPORT jstring Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineValu
  */
  
 extern "C"
-JNIEXPORT jstring Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineValueName(
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineValueName(
 	JNIEnv * env, jobject obj, jstring subkey, jint index)
 {
 	const jchar * csubkey = env->GetStringChars(subkey, NULL);

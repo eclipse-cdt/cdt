@@ -2260,8 +2260,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		ISourceViewer sourceViewer =
 				new AdaptedSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles, store);
 
-		CUIHelp.setHelp(this, sourceViewer.getTextWidget(), ICHelpContextIds.CEDITOR_VIEW);
-
 		CSourceViewer cSourceViewer= null;
 		if (sourceViewer instanceof CSourceViewer) {
 			cSourceViewer= (CSourceViewer) sourceViewer;

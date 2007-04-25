@@ -7,6 +7,7 @@
 package org.eclipse.dd.dsf.debug.service;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
@@ -14,7 +15,7 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
 public interface IFormattedValues extends IDMService {
 
     /** Marker interface for a DMC that has a formatted value. */
-    public interface IDataDMContext<V extends IDMData> extends IDMContext<V> {}
+    public interface IFormattedDataDMContext<V extends IDMData> extends IDMContext<V> {}
 
     /**
      * These strings represent the standard known formats  for any bit stream
@@ -28,36 +29,15 @@ public interface IFormattedValues extends IDMService {
     public final static String NATURAL_FORMAT = "NATURAL.Format" ; //$NON-NLS-1$
     
     /**
-     * DMC that represents a value with specific format.  The format ID can be
-     * persisted and used for comparison. 
-     */
-    public interface IValueDMContext extends  IDMContext<IValueDMData>
-    {
-        public String getID();
-    }
-
-    /**
-     * DM Data returned when a formatted value DMC is evaluated.  It contains 
-     * only the properly formatted string.
-     * 
-     * @param includePrefix Should the resulting formatted string contain the
-     * typical prefix ( if any exists for this format - e.g. 0x, 0b, 0 ).
-     * @param leadingZeros Should the resulting formatted string contain leading 0's.
-     */
-    public interface IValueDMData extends IDMData {
-        String getFormattedValue();
-    }
-
-    /**
      * Retrieves the available formats that the given data is available in.  
      * This method is asynchronous because the service may need to retrieve     
      * information from the back end in order to determine what formats are 
      * available for the given data context.
      * 
      * @param dmc Context for which to retrieve available formatted values.
-     * @param formatIDs Currently supported format IDs.  
+     * @param rm Completion monitor returns an array of support formatIds.  
      */
-    public void getAvailableFormattedValues(IDataDMContext<?> dmc, DataRequestMonitor<String[]> formatIDs);
+    public void getAvailableFormattedValues(IFormattedDataDMContext<?> dmc, DataRequestMonitor<String[]> rm);
         
     /**
      * Retrieves the available formats that the given data is available in.  
@@ -68,5 +48,57 @@ public interface IFormattedValues extends IDMService {
      * @param dmc Context for which to retrieve a IValueDMContext.
      * @param formatId Defines format to be supplied from the returned context.
      */
-    public IValueDMContext getFormattedValue(IDataDMContext<?> dmc, String formatId);
+    public FormattedValueDMContext getFormattedValue(IFormattedDataDMContext<?> dmc, String formatId);
+    
+    /**
+     * DMC that represents a value with specific format.  The format ID can be
+     * persisted and used for comparison. 
+     */
+
+    public static class FormattedValueDMContext extends AbstractDMContext<FormattedValueDMData> 
+    {
+        private final String fFormatID;
+        
+        public FormattedValueDMContext(IDMService service, IDMContext<?> parent, String formatId) {
+            super(service, new IDMContext[] { parent });
+            fFormatID = formatId;
+        }
+
+        public FormattedValueDMContext(String sessionId, String filter, IDMContext<?> parent, String formatId) {
+            super(sessionId, filter, new IDMContext[] { parent });
+            fFormatID = formatId;
+        }
+        
+        public String getFormatID() {
+            return fFormatID;
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return baseEquals(obj) && ((FormattedValueDMContext)obj).getFormatID().equals(getFormatID());
+        }
+
+        @Override
+        public int hashCode() {
+            return baseHashCode() + getFormatID().hashCode();
+        }
+    }
+
+    public static class FormattedValueDMData implements IDMData {
+
+        private final String fValue;
+        
+        public FormattedValueDMData(String value) {
+            fValue = value;
+        }
+        
+        public String getFormattedValue() {
+            return fValue;
+        }
+        
+        public boolean isValid() {
+            return true;
+        }
+        
+    }
 }

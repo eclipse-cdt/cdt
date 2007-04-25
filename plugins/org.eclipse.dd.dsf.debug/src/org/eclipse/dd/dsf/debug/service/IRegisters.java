@@ -12,21 +12,19 @@ package org.eclipse.dd.dsf.debug.service;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.datamodel.IDMService;
 
 /**
  * Service for accessing register data.
  */
-public interface IRegisters extends IDMService {
+public interface IRegisters extends IFormattedValues {
     
     /** Event indicating groups have changed. */
     public interface IGroupsChangedDMEvent extends IDMEvent<IRunControl.IExecutionDMContext> {}
 
     /** Register group context */
-    public interface IRegisterGroupDMContext extends IDMContext<IRegisterGroupDMData> {}
+    public interface IRegisterGroupDMContext extends IFormattedDataDMContext<IRegisterGroupDMData> {}
     
     /** Event indicating registers in a group have changed. */
     public interface IRegistersChangedDMEvent extends IDMEvent<IRegisterGroupDMContext> {}
@@ -41,13 +39,13 @@ public interface IRegisters extends IDMService {
     }
 
     /** Register context */
-    public interface IRegisterDMContext extends IDMContext<IRegisterDMData> {}
+    public interface IRegisterDMContext extends IFormattedDataDMContext<IRegisterDMData> {}
     
     /** Event indicating register value changed. */
     public interface IRegisterChangedDMEvent extends IDMEvent<IRegisterDMContext> {}
         
     /** Register information */
-    public interface IRegisterDMData extends IDMData, INumericalValue {
+    public interface IRegisterDMData extends IDMData {
         String getName();
         String getDescription();
         boolean isReadable();
@@ -60,7 +58,7 @@ public interface IRegisters extends IDMService {
     }
 
     /** Bit field context */
-    public interface IBitFieldDMContext extends IDMContext<IBitFieldDMData> {}
+    public interface IBitFieldDMContext extends IFormattedDataDMContext<IBitFieldDMData> {}
 
     /** Event indicating register value changed. */
     public interface IBitFieldChangedDMEvent extends IDMEvent<IBitFieldDMContext> {}
@@ -69,7 +67,7 @@ public interface IRegisters extends IDMService {
      * Bitfield data, big groups and mnemonics are retrieved at the same 
      * time as rest of bit field data 
      */
-    public interface IBitFieldDMData extends IDMData, INumericalValue {
+    public interface IBitFieldDMData extends IDMData {
         String getName();
         String getDescription();
         boolean isReadable();
@@ -81,6 +79,7 @@ public interface IRegisters extends IDMService {
         boolean isZeroBitLeftMost();
         IBitGroup[] getBitGroup();
         IMnemonic[] getMnemonics();
+        IMnemonic getCurrentMnemonicValue();
     }
 
     /** Bit group definition */
@@ -90,20 +89,9 @@ public interface IRegisters extends IDMService {
     }
  
     /** Bit field mnemonic */
-    public interface IMnemonic extends INumericalValue {
+    public interface IMnemonic {
         String getShortName();
         String getLongName();
-    }
-    
-    /** 
-     * Common interface for describing a number value for various register 
-     * data objects 
-     */
-    public interface INumericalValue {
-        String getNaturalValue();
-        String getHexValue();
-        String getOctalValue();
-        String getBinaryValue();
     }
     
     /** 

@@ -1,15 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *  IBM Corporation - initial API and implementation   
+ * 	Anton Leherbauer (Wind River Systems) - bug 183291
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -19,6 +21,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
@@ -132,7 +135,16 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 */
 	public void partActivated(IWorkbenchPart part) {
 		fActivePart = part;
-		fTargetAdapter = getAdapter(part);
+		IResource resource = (IResource) part.getAdapter(IResource.class);
+		if (resource == null && part instanceof IEditorPart) {
+			resource = (IResource) ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
+		}
+		if (resource != null) {
+			fTargetAdapter = getAdapter(resource);
+		}
+		if (fTargetAdapter == null) {
+			fTargetAdapter = getAdapter(part);
+		}
 		update();
 	}
 	

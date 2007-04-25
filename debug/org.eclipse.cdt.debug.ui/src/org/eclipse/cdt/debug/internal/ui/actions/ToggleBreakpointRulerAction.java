@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,17 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems) - bug 183291
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
@@ -23,6 +26,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -38,7 +42,7 @@ public class ToggleBreakpointRulerAction extends Action {
 	
 	private IVerticalRulerInfo fRuler;
 	private IWorkbenchPart fTargetPart;
-	private ToggleBreakpointAdapter fBreakpointAdapter;
+	private IToggleBreakpointsTarget fTargetAdapter;
 	private static final ISelection EMPTY_SELECTION = new EmptySelection();  
 
 	/**
@@ -51,7 +55,6 @@ public class ToggleBreakpointRulerAction extends Action {
 		super( ActionMessages.getString( "ToggleBreakpointRulerAction.Toggle_Breakpoint_1" ) ); //$NON-NLS-1$
 		fRuler = ruler;
 		setTargetPart( part );
-		fBreakpointAdapter = new ToggleBreakpointAdapter();
 		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.TOGGLE_BREAKPOINT_ACTION );
 		setId( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT );
 	}
@@ -69,7 +72,7 @@ public class ToggleBreakpointRulerAction extends Action {
 	 */
 	public void run() {
 		try {
-				fBreakpointAdapter.toggleLineBreakpoints( getTargetPart(), getTargetSelection() );
+				fTargetAdapter.toggleLineBreakpoints( getTargetPart(), getTargetSelection() );
 		}
 		catch( CoreException e ) {
 			ErrorDialog.openError( getTargetPart().getSite().getShell(), 
@@ -94,6 +97,21 @@ public class ToggleBreakpointRulerAction extends Action {
 
 	private void setTargetPart( IWorkbenchPart targetPart ) {
 		this.fTargetPart = targetPart;
+		if (fTargetPart != null) {
+			IResource resource = (IResource) fTargetPart.getAdapter(IResource.class);
+			if (resource == null && fTargetPart instanceof IEditorPart) {
+				resource = (IResource) ((IEditorPart)fTargetPart).getEditorInput().getAdapter(IResource.class);
+			}
+			if (resource != null) {
+				fTargetAdapter = (IToggleBreakpointsTarget)resource.getAdapter(IToggleBreakpointsTarget.class);
+			}
+			if (fTargetAdapter == null) {
+				fTargetAdapter = (IToggleBreakpointsTarget)fTargetPart.getAdapter(IToggleBreakpointsTarget.class);
+			}
+		}
+		if (fTargetAdapter == null) {
+			fTargetAdapter = new ToggleBreakpointAdapter();
+		}
 	}
 
 	/**

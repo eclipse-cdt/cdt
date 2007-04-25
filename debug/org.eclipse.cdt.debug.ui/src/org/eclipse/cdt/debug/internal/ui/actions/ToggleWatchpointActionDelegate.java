@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,21 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems) - bug 183291
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions; 
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
+import org.eclipse.ui.part.IContributedContentsView;
 
 /**
  * The delegate of the "Toggle Watchpoint" action.
@@ -74,8 +79,35 @@ public class ToggleWatchpointActionDelegate extends ActionDelegate implements IO
 		return fSelection;
 	}
 
-	private ToggleBreakpointAdapter getBreakpointAdapter() {
-		return fBreakpointAdapter;
+	private IToggleBreakpointsTarget getBreakpointAdapter() {
+		IToggleBreakpointsTarget targetAdapter = null;
+		if (fTargetPart != null) {
+			IResource resource = (IResource) fTargetPart.getAdapter(IResource.class);
+			if (resource == null && fTargetPart instanceof IEditorPart) {
+				resource = (IResource) ((IEditorPart)fTargetPart).getEditorInput().getAdapter(IResource.class);
+			}
+			if (resource == null) {
+				// in case of outline view
+				IContributedContentsView contentsView = (IContributedContentsView) fTargetPart.getAdapter(IContributedContentsView.class);
+				if (contentsView != null) {
+					IWorkbenchPart contributingPart = contentsView.getContributingPart();
+					resource = (IResource) contributingPart.getAdapter(IResource.class);
+					if (resource == null && contributingPart instanceof IEditorPart) {
+						resource = (IResource) ((IEditorPart)contributingPart).getEditorInput().getAdapter(IResource.class);
+					}
+				}
+ 			}
+			if (resource != null) {
+				targetAdapter = (IToggleBreakpointsTarget)resource.getAdapter(IToggleBreakpointsTarget.class);
+			}
+			if (targetAdapter == null) {
+				targetAdapter = (IToggleBreakpointsTarget)fTargetPart.getAdapter(IToggleBreakpointsTarget.class);
+			}
+		}
+		if (targetAdapter == null) {
+			targetAdapter = fBreakpointAdapter;
+		}
+		return targetAdapter;
 	}
 
 	private void setSelection( ISelection selection ) {

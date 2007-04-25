@@ -98,9 +98,11 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		setWizard(w);
 	}
 	private void setWizard(IWizard w) {
-		if (w.getStartingPage() instanceof IWizardItemsListListener)
-			listener = (IWizardItemsListListener)w.getStartingPage();
-		wizard = w;
+		if (w != null) {
+			if (w.getStartingPage() instanceof IWizardItemsListListener)
+				listener = (IWizardItemsListListener)w.getStartingPage();
+			wizard = w;
+		}
 	}
 	
 	public void handleSelection() {

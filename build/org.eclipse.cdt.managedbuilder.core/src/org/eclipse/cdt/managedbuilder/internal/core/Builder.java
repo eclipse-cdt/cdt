@@ -2065,12 +2065,20 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			else if(!cfg.supportsBuild(false))
 				return true;
 		}
+		
+		Boolean attr = getManagedBuildOnAttribute();
+		if(attr != null)
+			return attr.booleanValue();
+		return true;
+	}
+	
+	public Boolean getManagedBuildOnAttribute(){
 		if(managedBuildOn == null){
 			if(superClass != null)
-				return superClass.isManagedBuildOn();
-			return true;
+				return ((Builder)superClass).getManagedBuildOnAttribute();
+			return null;
 		}
-		return managedBuildOn.booleanValue();
+		return managedBuildOn;
 	}
 
 	public void setManagedBuildOn(boolean on) throws CoreException {

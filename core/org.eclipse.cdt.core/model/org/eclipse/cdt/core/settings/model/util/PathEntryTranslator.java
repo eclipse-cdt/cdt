@@ -943,6 +943,7 @@ public class PathEntryTranslator {
 	public static class PathEntryCollector {
 		private PathSettingsContainer fStorage;
 		private KindBasedStore fStore;
+		private KindBasedStore fNameKeyMapStore; //utility map, does not contain all entries, only those added explicitly
 		private LinkedHashMap fRefProjMap;
 		private IProject fProject;
 //		private ICConfigurationDescription fCfg;
@@ -951,6 +952,7 @@ public class PathEntryTranslator {
 			fStorage = PathSettingsContainer.createRootContainer();
 			fStorage.setValue(this);
 			fStore = new KindBasedStore(false);
+			fNameKeyMapStore = new KindBasedStore(false);
 //			fCfg = cfg;
 			fProject = project;
 		}
@@ -958,14 +960,26 @@ public class PathEntryTranslator {
 		private PathEntryCollector(PathSettingsContainer container, KindBasedStore store, IProject project/*, ICConfigurationDescription cfg*/){
 			fStorage = container;
 			fStore = store;
+			fNameKeyMapStore = new KindBasedStore(false);
 //			fCfg = cfg;
 			fProject = project;
 		}
 
 		public void setSourceOutputEntries(int kind, ICExclusionPatternPathEntry entries[]){
 			Map map = getEntriesMap(kind, true);
+			Map nameKeyMap = getEntriesNameKeyMap(kind, true);
 			for(int i = 0; i < entries.length; i++){
-				map.put(entries[i], new PathEntryComposer(entries[i], fProject/*, fCfg*/));
+				ICExclusionPatternPathEntry entry = entries[i];
+				EntryNameKey nameKey = new EntryNameKey(entry);
+				PathEntryComposer old = (PathEntryComposer)nameKeyMap.get(nameKey);
+				if(old != null){
+					entry = CDataUtil.addRemoveExclusionsToEntry(entry, 
+							((ICExclusionPatternPathEntry)old.fLangEntry).getExclusionPatterns(), 
+							true);
+				}
+				PathEntryComposer newComposer = new PathEntryComposer(entry, fProject/*, fCfg*/); 
+				map.put(entry, newComposer);
+				nameKeyMap.put(nameKey, newComposer);
 			}
 		}
 		
@@ -1050,6 +1064,15 @@ public class PathEntryTranslator {
 			if(map == null && create){
 				map = new LinkedHashMap();
 				fStore.put(kind, map);
+			}
+			return map;
+		}
+		
+		private LinkedHashMap getEntriesNameKeyMap(int kind, boolean create){
+			LinkedHashMap map = (LinkedHashMap)fNameKeyMapStore.get(kind);
+			if(map == null && create){
+				map = new LinkedHashMap();
+				fNameKeyMapStore.put(kind, map);
 			}
 			return map;
 		}
@@ -2283,12 +2306,33 @@ public class PathEntryTranslator {
 		}
 	}
 
+	private static CConfigurationData getCfgData(ICConfigurationDescription cfgDes){
+		return cfgDes instanceof CConfigurationDescriptionCache ? 
+				(CConfigurationData)cfgDes : ((IInternalCCfgInfo)cfgDes).getConfigurationData(false);
+	}
+	
+	private static void addOutputEntries(PathEntryCollector cr, CConfigurationData data){
+		CBuildData bData = data.getBuildData();
+		if(bData != null){
+			ICOutputEntry oEntries[] = bData.getOutputDirectories();
+			if(oEntries != null && oEntries.length != 0){
+				cr.setSourceOutputEntries(ICSettingEntry.OUTPUT_PATH, oEntries);
+			}
+		}
+	}
+
 	public static PathEntryCollector collectEntries(IProject project, ICConfigurationDescription des){
-		CConfigurationData data = des instanceof CConfigurationDescriptionCache ? 
-				(CConfigurationData)des : ((IInternalCCfgInfo)des).getConfigurationData(false);
+		CConfigurationData data = getCfgData(des);
 				
 		ReferenceSettingsInfo refInfo = new ReferenceSettingsInfo(des);
+		ICConfigurationDescription[] allCfgs = des.isPreferenceConfiguration() ? 
+				new ICConfigurationDescription[]{des}
+				: des.getProjectDescription().getConfigurations();
 		
+		CConfigurationData[] allDatas = new CConfigurationData[allCfgs.length];
+		for(int i = 0; i < allCfgs.length; i++){
+			allDatas[i] = getCfgData(allCfgs[i]);
+		}
 //		return collectEntries(project, data, info);
 //	}
 //
@@ -2300,12 +2344,8 @@ public class PathEntryTranslator {
 		if(sEntries != null && sEntries.length != 0){
 			cr.setSourceOutputEntries(ICSettingEntry.SOURCE_PATH, sEntries);
 		}
-		CBuildData bData = data.getBuildData();
-		if(bData != null){
-			ICOutputEntry oEntries[] = bData.getOutputDirectories();
-			if(oEntries != null && oEntries.length != 0){
-				cr.setSourceOutputEntries(ICSettingEntry.OUTPUT_PATH, oEntries);
-			}
+		for(int i = 0; i < allDatas.length; i++){
+			addOutputEntries(cr, allDatas[i]);
 		}
 		final HashSet exportedSettings = new HashSet();
 		if(refInfo != null){

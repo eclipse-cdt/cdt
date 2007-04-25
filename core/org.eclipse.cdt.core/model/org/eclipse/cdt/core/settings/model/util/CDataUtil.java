@@ -897,4 +897,24 @@ public class CDataUtil {
 	public static void setInteger(ICStorageElement el, String attr, int value){
 		el.setAttribute(attr, new Integer(value).toString());
 	}
+	
+	public static ICExclusionPatternPathEntry addRemoveExclusionsToEntry(ICExclusionPatternPathEntry entry, IPath[] paths, boolean add) throws IllegalArgumentException{
+		if(paths == null || paths.length == 0)
+			return entry;
+		
+		Set set = mergeRemovingDups(entry.getExclusionPatterns(), paths, add);
+		IPath exclusions[] = (IPath[])set.toArray(new IPath[set.size()]);
+		
+		return (ICExclusionPatternPathEntry)createEntry(entry.getKind(), entry.getName(), null, exclusions, entry.getFlags());
+	}
+
+	private static Set mergeRemovingDups(Object o1[], Object o2[], boolean add){
+		LinkedHashSet set = new LinkedHashSet();
+		set.addAll(Arrays.asList(o1));
+		if(add)
+			set.addAll(Arrays.asList(o2));
+		else
+			set.removeAll(Arrays.asList(o2));
+		return set;
+	}
 }

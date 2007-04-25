@@ -297,6 +297,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	}
 	
 	public boolean equals(Object o) {
+		if (o instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) o;
+			return pdom==node.pdom && record == node.record;
+		}
 		return compareTo(o)==0;
 	}
 }

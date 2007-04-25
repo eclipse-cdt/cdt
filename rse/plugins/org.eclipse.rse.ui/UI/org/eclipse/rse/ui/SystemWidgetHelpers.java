@@ -1137,7 +1137,14 @@ public class SystemWidgetHelpers {
 
 	/**
 	 * Sorts the given array of systemTypes in ascending order by system
-	 * type label. 
+	 * type label.
+	 *  
+	 * Note that this method sorts the array in place, so clients are 
+	 * responsible for creating a copy of the array when needed. In the
+	 * future, this may sort using an internationalization enabled
+	 * collate algorithm for translated labels (currently, normal
+	 * String compare is used).
+	 * 
 	 * @param systemTypes list of system types to sort
 	 */
 	public static void sortSystemTypesByLabel(IRSESystemType[] systemTypes) {

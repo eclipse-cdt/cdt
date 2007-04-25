@@ -122,6 +122,7 @@ implements IExecutableExtension, IWizardWithMemory
 			clearProject();
 			return false;
 		} catch  (InterruptedException e) {
+			clearProject();
 			return false;
 		}
 		return true;

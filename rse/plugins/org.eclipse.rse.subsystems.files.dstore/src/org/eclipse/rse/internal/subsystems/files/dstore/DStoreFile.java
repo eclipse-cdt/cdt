@@ -76,12 +76,12 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  		String parentPath = pathOnly;
 		    	  		if (nameSep > 0)
 		    	  		{
-		    	  			parentName = pathOnly.substring(nameSep);
+		    	  			parentName = pathOnly.substring(nameSep + 1);
 		    	  			parentPath = pathOnly.substring(0, nameSep);
 		    	  		}
 		    	  		else
 		    	  		{
-		    	  			parentName = pathOnly.substring(nameSep);
+		    	  			parentName = pathOnly.substring(nameSep + 1);
 		    	  			parentPath = "" + sep;
 		    	  		}
 		    	  		

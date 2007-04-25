@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -341,7 +342,7 @@ public class UniversalFileTransferUtility
 				{
 
 					IFile tempFile = copyRemoteFileToWorkspace(srcFileOrFolder, monitor);
-					resultSet.addResource(tempFile);
+					resultSet.addResource(tempFile);										
 				}
 				else // folder transfer
 				{
@@ -385,7 +386,7 @@ public class UniversalFileTransferUtility
 						{
 							e.printStackTrace();
 						}
-					}
+					}					
 				}
 			}
 		}
@@ -436,7 +437,42 @@ public class UniversalFileTransferUtility
 			*/
 		}
 
+		
 		return resultSet;
+	}
+	
+	public static void discardReplicasOfDeletedFiles(IRemoteFileSubSystem ss, IContainer folder)
+	{
+		try
+		{
+			IResource[] members = folder.members();
+			for (int i = 0; i < members.length; i++)
+			{
+				IResource member = members[i];
+				if (member instanceof IFile)
+				{
+					// is this a valid replica?
+					SystemIFileProperties properties = new SystemIFileProperties(member);
+					String path = properties.getRemoteFilePath();
+					if (path != null)
+					{
+						IRemoteFile remoteFile = ss.getRemoteFileObject(path);
+						if (remoteFile != null && !remoteFile.exists())
+						{
+							// this must be old so we should delete this
+							member.delete(false, new NullProgressMonitor());
+						}
+					}
+				}
+				else if (member instanceof IContainer)
+				{
+					discardReplicasOfDeletedFiles(ss, (IContainer)member);
+				}
+			}
+		}
+		catch (Exception e)
+		{			
+		}
 	}
 	
 	public static Object copyRemoteResourceToWorkspace(File srcFileOrFolder, IProgressMonitor monitor) {

@@ -1500,7 +1500,12 @@ public class SystemViewRemoteFileAdapter
 					for (int i = 0; i < set.size(); i++)
 					{
 						IRemoteFile remoteFile = (IRemoteFile)set.get(i);
-						hierarchicalResult.addResource(UniversalFileTransferUtility.getTempFileFor(remoteFile));
+						IResource tempResource = UniversalFileTransferUtility.getTempFileFor(remoteFile);
+						if (tempResource instanceof IContainer)
+						{
+							UniversalFileTransferUtility.discardReplicasOfDeletedFiles((IRemoteFileSubSystem)set.getSubSystem(), (IContainer)tempResource);
+						}
+						hierarchicalResult.addResource(tempResource);
 					}
 					return hierarchicalResult;
 				}

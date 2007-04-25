@@ -42,5 +42,5 @@ Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
             serviceType="_ftp._tcp">
       </configuration>
       </extension>
-  
+ 
 </plugin> 

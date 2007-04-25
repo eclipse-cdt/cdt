@@ -37,6 +37,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 168120 - [ftp] root filter resolves to home dir
  * Javier Montalvo Orus (Symbian) - Fixing 169680 - [ftp] FTP files subsystem and service should use passive mode
  * Javier Montalvo Orus (Symbian) - Fixing 174828 - [ftp] Folders are attempted to be removed as files
+ * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -52,8 +53,6 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -63,6 +62,7 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.internal.services.files.ftp.parser.FTPClientConfigFactory;
 import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
@@ -80,9 +80,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private FTPClient _ftpClient;
 	private FTPFile[] _ftpFiles;
 	
-	private Mutex _downloadMutex = new Mutex();
+	private Mutex _commandMutex = new Mutex();
 	
-	private String _systemName;
+	private String _parser;
 	private String    _userHome;
 	private transient String _hostName;
 	private transient String _userId;
@@ -92,6 +92,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private OutputStream _ftpLoggingOutputStream;
 	private IPropertySet _ftpPropertySet;
 	private Exception _exception;
+	
+	private boolean _isBinaryFileType = true;
+	private boolean _isPassiveDataConnectionMode = false;
 	
 	private class FTPBufferedInputStream extends BufferedInputStream {
 		
@@ -224,10 +227,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 	public void connect() throws Exception
 	{
+		
 		if (_ftpClient == null)
 		{
 			_ftpClient = new FTPClient();
-			
 		}
 
 		if(_ftpLoggingOutputStream!=null)
@@ -274,75 +277,85 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			throw new Exception(lastMessage);
 		}
 		
-		//SYSTEM PARSER 
+		//System parser
 		
-		FTPClientConfig ftpClientConfig;
+		_parser = _ftpPropertySet.getPropertyValue("parser"); //$NON-NLS-1$
 		
-		_systemName = _ftpClient.getSystemName().toUpperCase();
-		if(_systemName.indexOf(' ')!=-1)
+		if(!_parser.equalsIgnoreCase("AUTO")) //$NON-NLS-1$
 		{
-			_systemName = _systemName.substring(0,_systemName.indexOf(' '));
+			_ftpClient.setParserFactory(FTPClientConfigFactory.getParserFactory());
+			_ftpClient.configure(FTPClientConfigFactory.getParserFactory().getFTPClientConfig(_parser));
+		}
+		else
+		{
+			//try to guess
+			
+			String systemName = _ftpClient.getSystemName().toUpperCase();
+			if(systemName.indexOf(' ')!=-1)
+			{
+				systemName = systemName.substring(0,systemName.indexOf(' '));
+			}
+			
+			//FTPClientConfig.SYST_NT = "WINDOWS"
+			if(systemName.startsWith(FTPClientConfig.SYST_NT))
+			{
+				_ftpClient.setParserFactory(FTPClientConfigFactory.getParserFactory());
+				_ftpClient.configure(FTPClientConfigFactory.getParserFactory().getFTPClientConfig("WinNT")); //$NON-NLS-1$
+			}else 
+			//FTPClientConfig.SYST_MVS = "MVS" 	
+			if(systemName.startsWith(FTPClientConfig.SYST_MVS))
+			{
+				_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_MVS));
+			}else
+			//FTPClientConfig.SYST_OS2 = "OS/2" 	
+			if(systemName.startsWith(FTPClientConfig.SYST_OS2))
+			{
+				_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_OS2));
+			}else
+			//FTPClientConfig.SYST_OS400 = "OS/400"   	
+			if(systemName.startsWith(FTPClientConfig.SYST_OS400))
+			{
+				_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_OS400));
+			}else
+			//FTPClientConfig.SYST_VMS = "VMS"   	
+			if(systemName.startsWith(FTPClientConfig.SYST_VMS))
+			{
+				_ftpClient.setParserFactory(FTPClientConfigFactory.getParserFactory());
+				_ftpClient.configure(FTPClientConfigFactory.getParserFactory().getFTPClientConfig("VMS_improved")); //$NON-NLS-1$
+			}else
+			//Default UNIX-like parsing	
+			//FTPClientConfig.SYST_UNIX = "UNIX"	
+			{
+				_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_UNIX));
+			}
+		}
+				
+		// Initial active/passive mode. This action will be refreshed later using setDataConnectionMode()
+		
+		if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("true")) //$NON-NLS-1$ //$NON-NLS-2$
+		{
+			_ftpClient.enterLocalPassiveMode();
+			_isPassiveDataConnectionMode = true;
+		}
+		else
+		{
+			_ftpClient.enterLocalActiveMode();
+			_isPassiveDataConnectionMode = false;
 		}
 		
-		//FTPClientConfig.SYST_NT = "WINDOWS"
-		if(_systemName.startsWith(FTPClientConfig.SYST_NT))
-		{
-			_systemName = FTPClientConfig.SYST_NT;
-			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_NT);
-		}else 
-		//FTPClientConfig.SYST_MVS = "MVS" 	
-		if(_systemName.startsWith(FTPClientConfig.SYST_MVS))
-		{
-			_systemName = FTPClientConfig.SYST_MVS;
-			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_MVS);
-		}else
-		//FTPClientConfig.SYST_OS2 = "OS/2" 	
-		if(_systemName.startsWith(FTPClientConfig.SYST_OS2))
-		{
-			_systemName = FTPClientConfig.SYST_OS2;
-			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_OS2);
-		}else
-		//FTPClientConfig.SYST_OS400 = "OS/400"   	
-		if(_systemName.startsWith(FTPClientConfig.SYST_OS400))
-		{
-			_systemName = FTPClientConfig.SYST_OS400;
-			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_OS400);
-		}else
-		//FTPClientConfig.SYST_VMS = "VMS"   	
-		if(_systemName.startsWith(FTPClientConfig.SYST_VMS))
-		{
-			_systemName = FTPClientConfig.SYST_VMS;
-			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_VMS);
-		}else
-		//Default UNIX-like parsing	
-		//FTPClientConfig.SYST_UNIX = "UNIX"	
-		{
-			_systemName = FTPClientConfig.SYST_UNIX;
-			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
-		}
-		
-		_ftpClient.configure(ftpClientConfig);
+		// Initial ASCII/Binary mode. This action will be refreshed later using setFileType()
+		_ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+		_isBinaryFileType = true;
 		
 		_userHome = _ftpClient.printWorkingDirectory();
 		
 		//For VMS, normalize the home location
-		if(_systemName.equals(FTPClientConfig.SYST_VMS))
+		if(_userHome.indexOf(':')!=-1)
 		{
 			_userHome = _userHome.replaceAll(":\\[", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			_userHome = '/'+_userHome.substring(0,_userHome.lastIndexOf(']'));
 		}
 		
-		if(_ftpPropertySet != null)
-		{
-			if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("true")) //$NON-NLS-1$ //$NON-NLS-2$
-			{
-				_ftpClient.enterLocalPassiveMode();
-			}
-			else
-			{
-				_ftpClient.enterLocalActiveMode();
-			}
-		}
 	}
 	
 	public void disconnect()
@@ -352,10 +365,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			getFTPClient().logout();
 			_ftpClient = null;
 		}
-		catch (Exception e)
+		catch (IOException e)
 		{
 			_ftpClient = null;
 		}
+		
 	}
 	
 	/**
@@ -372,19 +386,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		if (_ftpClient == null)
 		{
 			_ftpClient = new FTPClient();
-			
-		}
-		
-		if(_ftpPropertySet != null)
-		{
-			if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("true")) //$NON-NLS-1$ //$NON-NLS-2$
-			{
-				_ftpClient.enterLocalPassiveMode();
-			}
-			else
-			{
-				_ftpClient.enterLocalActiveMode();
-			}
 		}
 		
 		if(_hostName!=null)
@@ -397,7 +398,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				} catch (Exception e1) {}
 			}
 		}
-			
+		
+		setDataConnectionMode();
 		
 		return _ftpClient; 
 	}
@@ -416,43 +418,47 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		FTPHostFile file = null;
 		
-		try{
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
+		{
 		
-			//try to retrieve the file
-			_ftpClient = getFTPClient();
+			try{
 			
-			remoteParent = adaptPath(remoteParent);
-			
-			if(!_ftpClient.changeWorkingDirectory(remoteParent))
-			{
-				throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
-			}
-			
-			if(!listFiles(monitor))
-			{
-				throw new RemoteFileCancelledException();
-			}
-			
-			for (int i = 0; i < _ftpFiles.length; i++) 
-			{
-				FTPHostFile tempFile = new FTPHostFile(remoteParent,_ftpFiles[i],_systemName);
+				//try to retrieve the file
+				_ftpClient = getFTPClient();
 				
-				if(tempFile.getName().equalsIgnoreCase(fileName))
+				if(!_ftpClient.changeWorkingDirectory(remoteParent))
 				{
-					file = tempFile;
-					break;
+					throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
 				}
-			}
+				
+				if(!listFiles(monitor))
+				{
+					throw new RemoteFileCancelledException();
+				}
+				
+				for (int i = 0; i < _ftpFiles.length; i++) 
+				{
+					FTPHostFile tempFile = new FTPHostFile(remoteParent,_ftpFiles[i]);
+					
+					if(tempFile.getName().equalsIgnoreCase(fileName))
+					{
+						file = tempFile;
+						break;
+					}
+				}
+				
+				// if not found, create new object with non-existing flag
+				if(file == null)
+				{
+					file = new FTPHostFile(remoteParent,fileName, false, false, 0, 0, false);
+				}
 			
-			// if not found, create new object with non-existing flag
-			if(file == null)
-			{
-				file = new FTPHostFile(remoteParent,fileName, false, false, 0, 0, false);
-			}
-		
-		
-		}catch (Exception e){
-			throw new RemoteFileIOException(e);
+			
+			}catch (Exception e){
+				throw new RemoteFileIOException(e);
+			} finally {
+				_commandMutex.release();
+		    }
 		}
 		
 		return file;
@@ -481,48 +487,54 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}	
 		}
 		
-		
-		if (fileFilter == null)
-		{
-			fileFilter = "*"; //$NON-NLS-1$
-		}
-		IMatcher filematcher = null;
-		if (fileFilter.endsWith(",")) {  //$NON-NLS-1$
-			String[] types = fileFilter.split(",");  //$NON-NLS-1$
-			filematcher = new FileTypeMatcher(types, true);
-		} else {
-			filematcher = new NamePatternMatcher(fileFilter, true, true);
-		}
 		List results = new ArrayList();
 		
-		try
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-			_ftpClient = getFTPClient();
-			
-			parentPath = adaptPath(parentPath);
-			
-			if(!_ftpClient.changeWorkingDirectory(parentPath))
+		
+			if (fileFilter == null)
 			{
-				throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
+				fileFilter = "*"; //$NON-NLS-1$
+			}
+			IMatcher filematcher = null;
+			if (fileFilter.endsWith(",")) {  //$NON-NLS-1$
+				String[] types = fileFilter.split(",");  //$NON-NLS-1$
+				filematcher = new FileTypeMatcher(types, true);
+			} else {
+				filematcher = new NamePatternMatcher(fileFilter, true, true);
 			}
 			
-			if(!listFiles(monitor))
-			{
-				throw new RemoteFileCancelledException();
-			}
 			
-			for(int i=0; i<_ftpFiles.length; i++)
+			try
 			{
-				FTPHostFile f = new FTPHostFile(parentPath,_ftpFiles[i],_systemName);
-				if((filematcher.matches(f.getName()) || f.isDirectory()) && !(f.getName().equals(".") || f.getName().equals(".."))) //$NON-NLS-1$ //$NON-NLS-2$
+				_ftpClient = getFTPClient();
+				
+				if(!_ftpClient.changeWorkingDirectory(parentPath))
 				{
-					results.add(f);
+					throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
+				}
+				
+				if(!listFiles(monitor))
+				{
+					throw new RemoteFileCancelledException();
+				}
+				
+				for(int i=0; i<_ftpFiles.length; i++)
+				{
+					FTPHostFile f = new FTPHostFile(parentPath, _ftpFiles[i]);
+	
+					if((filematcher.matches(f.getName()) || f.isDirectory()) && !(f.getName().equals(".") || f.getName().equals(".."))) //$NON-NLS-1$ //$NON-NLS-2$
+					{
+						results.add(f);
+					}
 				}
 			}
-		}
-		catch (Exception e)
-		{			
-			throw new RemoteFileIOException(e);
+			catch (Exception e)
+			{			
+				throw new RemoteFileIOException(e);
+			} finally {
+				_commandMutex.release();
+		    }
 		}
 		
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
@@ -533,7 +545,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		char separator =  '/'; 
 		
-		if((_systemName.equals(FTPClientConfig.SYST_NT) || _userHome.indexOf('\\')!=-1) && _userHome.indexOf('/')==-1) 
+		if(_userHome.indexOf('\\')!=-1 && _userHome.indexOf('/')==-1) 
 		{
 			separator = '\\';  
 		}
@@ -556,58 +568,59 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}	
 		}
 		
-		FTPClient ftpClient = getFTPClient();
-		
-		MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
-		
-		try
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
+		
+			FTPClient ftpClient = getFTPClient();
 			
-			remoteParent = adaptPath(remoteParent);
+			MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
 			
-			ftpClient.changeWorkingDirectory(remoteParent);
-				
-			if (isBinary)
-				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);			
-			else
-				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
-			
-			FileInputStream input =  new FileInputStream(localFile);
-			OutputStream output = ftpClient.storeFileStream(remoteFile);
-			
-			progressMonitor.init(0, localFile.getName(), remoteFile, localFile.length());
-			long bytes=0;
-			byte[] buffer = new byte[4096];
-			
-			int readCount;
-			while((readCount = input.read(buffer)) > 0)
+			try
 			{
-				bytes+=readCount;
-				output.write(buffer, 0, readCount);
-				progressMonitor.count(readCount);
-				if (monitor!=null){
-					if (monitor.isCanceled()) {
-						retValue = false;
-						break;
-					}	
+				
+				ftpClient.changeWorkingDirectory(remoteParent);
+				
+				setFileType(isBinary);
+				
+				FileInputStream input =  new FileInputStream(localFile);
+				OutputStream output = ftpClient.storeFileStream(remoteFile);
+				
+				progressMonitor.init(0, localFile.getName(), remoteFile, localFile.length());
+				long bytes=0;
+				byte[] buffer = new byte[4096];
+				
+				int readCount;
+				while((readCount = input.read(buffer)) > 0)
+				{
+					bytes+=readCount;
+					output.write(buffer, 0, readCount);
+					progressMonitor.count(readCount);
+					if (monitor!=null){
+						if (monitor.isCanceled()) {
+							retValue = false;
+							break;
+						}	
+					}
 				}
+				
+				input.close();
+				output.flush();
+				output.close();
+				
+				ftpClient.completePendingCommand();
+				
+				if(retValue==false)	{
+					ftpClient.deleteFile(remoteFile);
+				}
+				
+				progressMonitor.end();
 			}
-			
-			input.close();
-			output.flush();
-			output.close();
-			
-			ftpClient.completePendingCommand();
-			
-			if(retValue==false)	{
-				ftpClient.deleteFile(remoteFile);
-			}
-			
-			progressMonitor.end();
-		}
-		catch (Exception e)
-		{
-			throw new RemoteFileIOException(e);
+			catch (Exception e)
+			{
+				throw new RemoteFileIOException(e);
+			} finally {
+				_commandMutex.release();
+		    }
 		}
 		
 		return retValue;
@@ -623,6 +636,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try
 		{
+			
 			BufferedInputStream bis = new BufferedInputStream(stream);
 			File tempFile = File.createTempFile("ftpup", "temp"); //$NON-NLS-1$ //$NON-NLS-2$
 			FileOutputStream os = new FileOutputStream(tempFile);
@@ -643,16 +657,18 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			 bos.close();
 			 
 			 if(retValue == true){
-				 retValue = upload(monitor, tempFile, remoteParent, remoteFile, isBinary, "", hostEncoding); //$NON-NLS-1$
+				setFileType(isBinary);
+				retValue = upload(monitor, tempFile, remoteParent, remoteFile, isBinary, "", hostEncoding); //$NON-NLS-1$
 			 }
 			 
 		}
 		catch (Exception e) {
 			throw new RemoteFileIOException(e);
-		}
-		return retValue;
+	  }
+		
+	  return retValue;
 	
-		}
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -660,7 +676,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding) throws SystemMessageException
 	{
-		boolean retValue = false;
+		boolean retValue = true;
 		
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
@@ -668,21 +684,22 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}	
 		}
 		
-		if(_downloadMutex.waitForLock(monitor, Long.MAX_VALUE))
+		IHostFile remoteHostFile = getFile(null,remoteParent,remoteFile);
+		
+		FTPClient ftpClient = getFTPClient();
+		
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
+			MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
+			//IHostFile remoteHostFile = null;
+			OutputStream output = null;
+			InputStream input = null;
+			
 			try
 			{
-				MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
-				IHostFile remoteHostFile = getFile(null,remoteParent,remoteFile);
-				FTPClient ftpClient = getFTPClient();
-
-				remoteParent = adaptPath(remoteParent);
 				ftpClient.changeWorkingDirectory(remoteParent);
 				
-				if (isBinary)
-					ftpClient.setFileType(FTP.BINARY_FILE_TYPE);			
-				else
-					ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
+				setFileType(isBinary);
 				
 				if (!localFile.exists())
 				{
@@ -694,40 +711,55 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 					localFile.createNewFile();
 				}
 				
-				OutputStream output = new FileOutputStream(localFile);
-				InputStream input = ftpClient.retrieveFileStream(remoteFile);
+				output = new FileOutputStream(localFile);
+				input = ftpClient.retrieveFileStream(remoteFile);
 				
-				progressMonitor.init(0, remoteFile, localFile.getName(), remoteHostFile.getSize());
-				
-				byte[] buffer = new byte[4096];
-				
-				int readCount;
-				while((readCount = input.read(buffer)) > 0)
-				{
-					output.write(buffer, 0, readCount);
-					progressMonitor.count(readCount);
-					if (monitor!=null){
-						if (monitor.isCanceled()) {
-							retValue = false;
-							break;
-						}	
-					}
-				}
-				
-				progressMonitor.end();
-				
-				output.flush();
-				input.close();
-				output.close();
-				
-				ftpClient.completePendingCommand();
 			}
 			catch (Exception e)
 			{			
 				throw new RemoteFileIOException(e);
-			} finally {
-				_downloadMutex.release();
-		    }
+			}
+			
+			
+			if(remoteHostFile != null && input != null)
+			{
+				progressMonitor.init(0, remoteFile, localFile.getName(), remoteHostFile.getSize());
+					
+				byte[] buffer = new byte[4096];
+				
+				int readCount;
+				
+				try{
+					
+					while((readCount = input.read(buffer)) > 0)
+					{
+						output.write(buffer, 0, readCount);
+						progressMonitor.count(readCount);
+						if (monitor!=null){
+							if (monitor.isCanceled()) {
+								retValue = false;
+								break;
+							}	
+						}
+					}
+					
+					progressMonitor.end();
+					
+					output.flush();
+					input.close();
+					output.close();
+					
+					ftpClient.completePendingCommand();
+					
+				}catch(IOException e)
+				{
+					e.printStackTrace();
+				} 
+				finally {
+				_commandMutex.release();
+				}
+			}
+			
 		}
 		return retValue;
 	}
@@ -890,9 +922,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try
 		{
-		
-			remoteParent = adaptPath(remoteParent);
-			
 			if(!ftpClient.changeWorkingDirectory(remoteParent))
 			{
 				throw new Exception(ftpClient.getReplyString()+" ("+remoteParent+")");  //$NON-NLS-1$  //$NON-NLS-2$
@@ -919,7 +948,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
     	try {
 			File tempFile = File.createTempFile("ftp", "temp");  //$NON-NLS-1$  //$NON-NLS-2$
 			tempFile.deleteOnExit();
-			boolean success = upload(monitor, tempFile, remoteParent, fileName, true, null, null);
+			boolean success = upload(monitor, tempFile, remoteParent, fileName, _isBinaryFileType, null, null);
 			
 			if(!success)
 			{
@@ -968,7 +997,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	}
 	
 	
-	private synchronized boolean listFiles(IProgressMonitor monitor) throws Exception
+	private boolean listFiles(IProgressMonitor monitor) throws Exception
 	{
 		boolean result = true;
 		
@@ -1027,25 +1056,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		return result;
 	}
-	
-	private String adaptPath(String path)
-	{
-		Matcher matcher = Pattern.compile("[\\\\/](\\w:.*)").matcher(path); //$NON-NLS-1$
-		
-		if(matcher.matches())
-		{
-			path = matcher.group(1);
-		}
-		
-		
-		if(path.length()>1)
-		{
-			path = getSeparator() == '/' ? path.replace('\\', getSeparator()) : path.replace('/', getSeparator());
-		}
-		
-		return path;
-	}
-	
 	
 	
 	private class MyProgressMonitor
@@ -1163,16 +1173,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		InputStream stream = null;
 		
 		try {
-			remoteParent = adaptPath(remoteParent);
 			
-			ftpClient.changeWorkingDirectory(remoteParent);
-			
-			if (isBinary) {
-				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-			}
-			else {
-				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
-			}
+			setFileType(isBinary);
 			
 			stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
 		}
@@ -1203,16 +1205,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try {
 			
-			remoteParent = adaptPath(remoteParent);
-			
 			ftpClient.changeWorkingDirectory(remoteParent);
-				
-			if (isBinary) {
-				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-			}
-			else {
-				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
-			}
+			
+			setFileType(isBinary);
 			
 			stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
 		}
@@ -1222,4 +1217,38 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		return stream;
 	}
+	
+	private void setDataConnectionMode()
+	{
+		if(_ftpPropertySet != null)
+		{
+			if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("true") && !_isPassiveDataConnectionMode) //$NON-NLS-1$ //$NON-NLS-2$
+			{
+				_ftpClient.enterLocalPassiveMode();
+				_isPassiveDataConnectionMode = true;
+			}
+			else if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("false") && _isPassiveDataConnectionMode) //$NON-NLS-1$ //$NON-NLS-2$
+			{
+				_ftpClient.enterLocalActiveMode();
+				_isPassiveDataConnectionMode = false;
+			}
+		}
+	}
+
+	private void setFileType(boolean isBinaryFileType) throws IOException
+	{
+		if(!isBinaryFileType && _isBinaryFileType)
+		{
+			_ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
+			_isBinaryFileType = isBinaryFileType;
+		} else if(isBinaryFileType && !_isBinaryFileType)
+		{
+			_ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+			_isBinaryFileType = isBinaryFileType;
+		}
+	}
+	
+	
+	
+	
 }

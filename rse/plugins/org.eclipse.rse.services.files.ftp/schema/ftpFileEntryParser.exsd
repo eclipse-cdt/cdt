@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.services.files.ftp">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rse.services.files.ftp" id="ftpFileEntryParser" name="ftpFileEntryParser"/>
+      </appInfo>
+      <documentation>
+         Extension point that allows providing extra parsers for the FTP LIST command output.
+Apache commons net provides some APIs and factories to costumize the parser and this extension 
+provides an easy way to setup a custom parser and integrate it into RSE.
+The provided extension points will be available as a list in the property &quot;FTP Settings&quot;, 
+allowing the user to select them overriding the default parser.
+The string attributes &lt;code&gt;defaultDateFormatStr&lt;/code&gt; &lt;code&gt;recentDateFormatStr&lt;/code&gt;
+ &lt;code&gt;serverLanguageCode&lt;/code&gt; &lt;code&gt;serverTimeZoneId&lt;/code&gt; &lt;code&gt;shortMonthNames&lt;/code&gt; have to 
+ follow the format described by &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="parser"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parser">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name that will be displayed in the UI
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.apache.commons.net.ftp.Configurable,org.apache.commons.net.ftp.FTPFileEntryParser"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="defaultDateFormatStr" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="recentDateFormatStr" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="serverLanguageCode" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="shortMonthNames" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="serverTimeZoneId" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         RSE 2.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;!-- Default UNIX parser provided by Apache commons net package --&gt;
+&lt;parser
+ class=&quot;org.apache.commons.net.ftp.parser.UnixFTPEntryParser&quot;
+    name=&quot;UNIX&quot;&gt;
+&lt;/parser&gt;
+
+&lt;!-- Custom parser implementing org.apache.commons.net.ftp.Configurable and org.apache.commons.net.ftp.FTPFileEntryParser --&gt;
+&lt;parser
+    class=&quot;com.mycompany.MyParser&quot;
+    name=&quot;MyParser&quot;&gt;
+&lt;/parser&gt;
+
+&lt;!--  UNIX server that uses Danish month names and &quot;European&quot; date formatting in Denmark&apos;s time zone --&gt;
+&lt;parser
+    class=&quot;org.apache.commons.net.ftp.parser.UnixFTPEntryParser&quot;
+    name=&quot;UNIX_Danish&quot;
+    defaultDateFormatStr = &quot;d MMM yyyy&quot;
+    recentDateFormatStr = &quot;d MMM HH:mm&quot;
+    serverLanguageCode = &quot;da&quot;
+    serverTimeZoneId = &quot;Europe/Copenhagen&quot;
+    &gt;
+&lt;/parser&gt;
+
+&lt;!--  VMS server that uses month names in a language not supported but uses the standard date formatting --&gt;
+&lt;parser
+    class=&quot;org.apache.commons.net.ftp.parser.VMSFTPEntryParser&quot;
+    name=&quot;VMS_custom&quot;
+    shortMonthNames=&quot;jan|feb|mar|apr|ma\u00ED|j\u00FAn|j\u00FAl|\u00e1g\u00FA|sep|okt|n\u00F3v|des&quot; 
+    &gt;
+&lt;/parser&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The provider of a new FTPEntryParser must implement &lt;samp&gt;org.apache.commons.net.ftp.Configurable&lt;/samp&gt; and &lt;samp&gt;org.apache.commons.net.ftp.FTPFileEntryParser&lt;/samp&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         Customized VMS and WinNT implementations are supplied in the &lt;code&gt;org.eclipse.rse.services.files.ftp&lt;/code&gt; plug-in.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2007 Symbian Software Ltd. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+   Javier Montalvo Orus (Symbian) - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

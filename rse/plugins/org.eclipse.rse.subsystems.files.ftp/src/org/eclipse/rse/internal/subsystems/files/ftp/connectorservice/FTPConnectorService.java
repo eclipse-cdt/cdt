@@ -16,11 +16,14 @@
  * Javier Montalvo Orus (Symbian) - Bug 169680 - [ftp] FTP files subsystem and service should use passive mode
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [cleanup] move FTPSubsystemResources out of core
+ * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
 
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
@@ -28,6 +31,7 @@ import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.internal.services.files.ftp.FTPService;
+import org.eclipse.rse.internal.services.files.ftp.parser.FTPClientConfigFactory;
 import org.eclipse.rse.internal.subsystems.files.ftp.FTPSubsystemResources;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.ui.subsystems.StandardConnectorService;
@@ -51,8 +55,21 @@ public class FTPConnectorService extends StandardConnectorService
 		
 		if(_propertySet==null)
 		{
+			
+			//Active - passive mode
 			_propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
 			_propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			
+			// FTP List parser
+			Set keys = FTPClientConfigFactory.getParserFactory().getKeySet();
+			String[] keysArray = new String[keys.size()+1];
+			
+			keys.toArray(keysArray);
+			keysArray[keysArray.length-1]="AUTO"; //$NON-NLS-1$
+			
+			Arrays.sort(keysArray);
+			
+			_propertySet.addProperty("parser","AUTO",PropertyType.getEnumPropertyType(keysArray)); //$NON-NLS-1$ //$NON-NLS-2$
 		}	
 	} 
 	
@@ -63,14 +80,7 @@ public class FTPConnectorService extends StandardConnectorService
 
 	private void internalConnect() throws Exception
 	{
-		_propertySet = getPropertySet("FTP Settings"); //$NON-NLS-1$
-		
-		if(_propertySet==null)
-		{
-			_propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
-			_propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		}	
-		
+
 		SystemSignonInformation info = getSignonInformation();
 		_ftpService.setHostName(info.getHostname());
 		_ftpService.setUserId(info.getUserId());

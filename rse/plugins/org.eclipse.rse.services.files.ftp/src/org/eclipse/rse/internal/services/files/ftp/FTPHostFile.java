@@ -15,7 +15,8 @@
  * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
  * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as 
  *    anonymous on ftp.wacom.com
- * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable   
+ * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable
+ * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser   
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -23,7 +24,6 @@ package org.eclipse.rse.internal.services.files.ftp;
 
 import java.io.File;
 
-import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.files.IHostFile;
@@ -56,45 +56,26 @@ public class FTPHostFile implements IHostFile
 		_isRoot = isRoot;
 		_exists = exists;
 	}
-	
-	public FTPHostFile(String parentPath, FTPFile ftpFile, String systemName)
+
+	public FTPHostFile(String parentPath, FTPFile ftpFile)
 	{
 		_parentPath = parentPath;
 		_ftpFile = ftpFile;
 		
-		if(systemName.equals(FTPClientConfig.SYST_VMS))
-		{
-			_name = ftpFile.getName();
-			if(_name.indexOf(".DIR")!=-1) //$NON-NLS-1$
-			{
-				_name = _name.substring(0,_name.indexOf(".DIR")); //$NON-NLS-1$
-			}
-			else
-			{
-				_name = _name.substring(0,_name.indexOf(";")); //$NON-NLS-1$
-			}
-		}
-		else
-		{
-			_name = ftpFile.getName();
-		}
+		_name = ftpFile.getName();
 		
 		_isDirectory = ftpFile.isDirectory();
 		_lastModified = ftpFile.getTimestamp().getTimeInMillis();
 		_size = ftpFile.getSize();
 		_isArchive = internalIsArchive();
 		
-		//In Windows r/w is not listed
-		//In VMS it is not implemented in the Jakarta parser
-		if(!systemName.equals(FTPClientConfig.SYST_NT) && !systemName.equals(FTPClientConfig.SYST_VMS)) 
-		{
-			_canRead = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION);
-			_canWrite = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION);
-		}
+		_canRead = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION);
+		_canWrite = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION);
 		
 		_isRoot = false;
 		_exists = true;
 	}
+	
 	
 	public long getSize()
 	{
@@ -188,30 +169,58 @@ public class FTPHostFile implements IHostFile
 	
 	public int getUserPermissions()
 	{
+		int userRead = 0;
+		int userWrite = 0;
+		int userExec = 0;
+		
 		//user
-		int userRead = _ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION) || _canRead ? 1 : 0;
-		int userWrite = _ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) || _canWrite ? 1 : 0;
-		int userExec = _ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
+		if(_ftpFile!=null)
+		{
+			userRead = _ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION) ? 1 : 0;
+			userWrite = _ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ? 1 : 0;
+			userExec = _ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
+		}
+		else
+		{
+			userRead = _canRead ? 1 : 0;
+			userWrite = _canWrite ? 1 : 0;
+			userExec = 0;
+			
+		}
 		
 		return userRead << 2  | userWrite << 1  | userExec;
 	}
 	
 	public int getGroupPermissions()
 	{	
+		int groupRead = 0;
+		int groupWrite = 0;
+		int groupExec = 0;
+		
 		//group
-		int groupRead = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.READ_PERMISSION) ? 1 : 0;
-		int groupWrite = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION) ? 1 : 0;
-		int groupExec = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
+		if(_ftpFile!=null)
+		{
+			groupRead = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.READ_PERMISSION) ? 1 : 0;
+			groupWrite = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION) ? 1 : 0;
+			groupExec = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
+		}
 		
 		return groupRead << 2 | groupWrite << 1 | groupExec;
 	}
 		
 	public int getOtherPermissions()
 	{
+		int otherRead = 0;
+		int otherWrite = 0;
+		int otherExec = 0;
+		
 		//other
-		int otherRead = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.READ_PERMISSION) ? 1 : 0;
-		int otherWrite = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION) ? 1 : 0;
-		int otherExec = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
+		if(_ftpFile!=null)
+		{
+			otherRead = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.READ_PERMISSION) ? 1 : 0;
+			otherWrite = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION) ? 1 : 0;
+			otherExec = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
+		}
 		
 		return otherRead << 2 | otherWrite << 1 | otherExec;
 	}

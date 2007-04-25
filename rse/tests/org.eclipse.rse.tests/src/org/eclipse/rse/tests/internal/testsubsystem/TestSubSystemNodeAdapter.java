@@ -81,17 +81,15 @@ public class TestSubSystemNodeAdapter extends AbstractSystemViewAdapter
 	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element) {
-		if (isTestSubSystemNode(element)) {
-			ITestSubSystemNode node = (ITestSubSystemNode) element;
-			String absName = node.getName();
+		assert isTestSubSystemNode(element);
+		ITestSubSystemNode node = (ITestSubSystemNode) element;
+		String absName = node.getName();
+		node = node.getParent();
+		while (node != null) {
+			absName = node.getName() + "/" + absName; //$NON-NLS-1$
 			node = node.getParent();
-			while (node != null) {
-				absName = node.getName() + "/" + absName; //$NON-NLS-1$
-				node = node.getParent();
-			}
-			return absName;
 		}
-		return null;
+		return absName;
 	}
 
 	/* (non-Javadoc)

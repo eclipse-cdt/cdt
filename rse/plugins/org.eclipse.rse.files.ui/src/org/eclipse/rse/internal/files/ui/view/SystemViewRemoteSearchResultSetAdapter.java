@@ -179,6 +179,7 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 	 */
 	public String getAbsoluteName(Object element)
 	{
+		//FIXME this is forbidden by the API
 		return null;
 	} 
 	

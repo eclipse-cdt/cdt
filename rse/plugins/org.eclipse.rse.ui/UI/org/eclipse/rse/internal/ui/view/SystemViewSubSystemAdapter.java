@@ -150,6 +150,8 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		ISubSystem ss = (ISubSystem)element;
 		
 		// DKM - using type instead of name
+		//FIXME can we guarantee that the serviceType is always different than the subsystemName?
+		//Or could the two be confused when looking up the subsystem the reverse way?
 		if (ss instanceof IServiceSubSystem)
 		{
 			return ss.getSystemProfileName() + "." + ss.getHostAliasName() + "." + ((IServiceSubSystem)ss).getServiceType(); //$NON-NLS-1$ //$NON-NLS-2$

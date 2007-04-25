@@ -57,6 +57,7 @@ public class DaytimeResourceAdapter extends AbstractSystemViewAdapter implements
 
 	public String getAbsoluteName(Object object) {
 		//Not used since we dont support clipboard copy, rename or filtering
+		//FIXME absolute name must remain unique for the object over its lifetime
 		return "daytime:"+getText(object); //$NON-NLS-1$
 	}
 

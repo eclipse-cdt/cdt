@@ -699,6 +699,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			String str = getAbsoluteParentName(element);
 			return str + ":" + out.getIndex(); //$NON-NLS-1$
 		}
+		//FIXME this should never happen
 		return null;
 	}
 

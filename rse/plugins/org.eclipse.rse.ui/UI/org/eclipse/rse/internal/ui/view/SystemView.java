@@ -2608,7 +2608,7 @@ public class SystemView extends SafeTreeViewer
 					disassociate(match);
 					match.dispose();
 				} else {
-					toRemove.add(data);
+					toRemove.add(match);
 					//System.out.println(".....calling remove(data) on this match");
 					//remove(data); // remove this item from the tree
 				}
@@ -2616,7 +2616,12 @@ public class SystemView extends SafeTreeViewer
 		}
 		
 		// do the remove now
-		remove(toRemove.toArray());
+		for (int i = 0; i < toRemove.size(); i++)
+		{
+			Item childItem = (Item)toRemove.get(i);
+			disassociate(childItem);
+			childItem.dispose();
+		}
 
 		// STEP 4: if we removed a selected item, select its parent
 		if (wasSelected && (parentItem != null) && (parentItem instanceof TreeItem) && (parentItem.getData() != null)) {
@@ -3992,11 +3997,54 @@ public class SystemView extends SafeTreeViewer
 
 		// try new map lookup method - won't work in cases of rename
 		if (!mappedFindAllRemoteItemReferences(elementObject, matches)){
+			
+			boolean foundExact = false;
 			for (int idx = 0; idx < roots.length; idx++){
-				matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
+				if (recursiveFindExactMatches((TreeItem)roots[idx], elementObject, subsystem, matches)){
+					foundExact = true;
+				}
+			}
+
+			if (!foundExact)
+			{
+				for (int idx = 0; idx < roots.length; idx++){
+					matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
+				}
 			}
 		}
 		return matches;
+	}
+	
+	
+	private boolean recursiveFindExactMatches(TreeItem root, Object elementObject, ISubSystem subsystem, Vector matches)
+	{
+		boolean foundSomething = false;
+		Object data = root.getData();
+		if (data == elementObject)
+		{
+			matches.add(root);
+			foundSomething = true;
+		}
+		if (subsystem != null){
+			if (data instanceof ISubSystem){
+				if (data != subsystem)
+					return false;
+			}
+			else if (data instanceof IHost){
+				if (subsystem.getHost() != data)
+					return false;
+			}
+		}
+		
+		TreeItem[] children = root.getItems();
+		for (int i = 0; i < children.length; i++)
+		{
+			if (recursiveFindExactMatches(children[i], elementObject, subsystem,  matches))
+			{
+				foundSomething = true;
+			}
+		}
+		return foundSomething;
 	}
 
 	/**

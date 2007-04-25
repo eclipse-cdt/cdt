@@ -131,9 +131,12 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 						rulesList.add(targetSubSystem);
 					}
 					*/
-					ISchedulingRule[] rules = (ISchedulingRule[])rulesList.toArray(new ISchedulingRule[rulesList.size()]);
-					MultiRule rule = new MultiRule(rules);
-					runnable.setRule(rule);
+					if (rulesList.size() > 0)
+					{
+						ISchedulingRule[] rules = (ISchedulingRule[])rulesList.toArray(new ISchedulingRule[rulesList.size()]);
+						MultiRule rule = new MultiRule(rules);
+						runnable.setRule(rule);
+					}
 				}
 			}
 			runnable.schedule();

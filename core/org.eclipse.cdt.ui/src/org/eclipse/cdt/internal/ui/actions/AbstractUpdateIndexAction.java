@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.ui.actions;
@@ -41,7 +42,8 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 		if (!(fSelection instanceof IStructuredSelection))
 			return;
 		
-		Iterator i= ((IStructuredSelection)fSelection).iterator();
+		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
+		Iterator i= cElements.iterator();
 		ArrayList tuSelection= new ArrayList();
 		while (i.hasNext()) {
 			Object o= i.next();

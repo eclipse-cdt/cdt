@@ -699,7 +699,7 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-          adaptable="false"
+          adaptable="true"
           id="org.eclipse.cdt.ui.rebuildIndexContribution"
           objectClass="org.eclipse.cdt.core.model.ICElement">
          <action
@@ -721,18 +721,19 @@
             </groupMarker>
          </menu>
          <visibility>
-            <or>
-               <objectClass
-                     name="org.eclipse.cdt.core.model.ICProject">
-               </objectClass>
-               <objectClass
-                     name="org.eclipse.cdt.core.model.ICContainer">
-               </objectClass>
-               <objectClass
-                     name="org.eclipse.cdt.core.model.ITranslationUnit">
-               </objectClass>
-            </or>
+              <objectState
+                 name="projectNature"
+                 value="org.eclipse.cdt.core.cnature"/>
          </visibility>
+         <!-- See https://bugs.eclipse.org/bugs/show_bug.cgi?id=143594
+         	  [Menus] popupMenus.exsd schema incorrectly does not allow eclipse core expressions -->
+         <!--enablement>
+            <adapt type="org.eclipse.core.resources.IProject">
+               <test
+                  property="org.eclipse.core.resources.projectNature"
+                  value="org.eclipse.cdt.core.cnature"/>
+            </adapt>
+        </enablement-->
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IMarker"
@@ -1846,17 +1847,31 @@
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorOpenActionProvider"
              id="org.eclipse.cdt.ui.navigator.actions.open"
              overrides="org.eclipse.ui.navigator.resources.OpenActions">
-          <enablement>
-             <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
-          </enablement>
+		 <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.cnature"/>
+	            </adapt>
+			</or>
+         </enablement>
        </actionProvider>
        <actionProvider
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorBuildActionProvider"
              dependsOn="org.eclipse.ui.navigator.resources.ResourceMgmtActions"
              id="org.eclipse.cdt.ui.navigator.actions.build">
-          <enablement>
-             <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
-          </enablement>
+		 <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.cnature"/>
+	            </adapt>
+			</or>
+         </enablement>
        </actionProvider>
        <actionProvider
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorSearchActionProvider"
@@ -1889,7 +1904,7 @@
              overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
           <enablement>
 			<or>
-			 <instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+			    <instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 				<instanceof value="org.eclipse.core.resources.IResource" />
 			</or>
           </enablement>
@@ -1899,96 +1914,96 @@
 	         menuGroupId="org.eclipse.cdt.ui.newProject"
 	         type="new"
 	         wizardId="org.eclipse.cdt.ui.wizards.NewCWizard1">
-				<enablement>
-					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-			            <adapt type="org.eclipse.core.resources.IProject">
-			               <test
-			                     property="org.eclipse.core.resources.projectNature"
-			                     value="org.eclipse.cdt.core.cnature"/>
-			            </adapt>
-					</or>
-		         </enablement>
+		 <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.cnature"/>
+	            </adapt>
+			</or>
+         </enablement>
 	   </commonWizard>
 	   <commonWizard
 	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
 	         menuGroupId="org.eclipse.cdt.ui.newProject"
 	         type="new"
 	         wizardId="org.eclipse.cdt.ui.wizards.NewCWizard2">
-				<enablement>
-					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-			            <adapt type="org.eclipse.core.resources.IProject">
-			               <test
-			                     property="org.eclipse.core.resources.projectNature"
-			                     value="org.eclipse.cdt.core.cnature"/>
-			            </adapt>
-					</or>
-		         </enablement>
+		 <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.cnature"/>
+	            </adapt>
+			</or>
+         </enablement>
 	   </commonWizard>
 	   <commonWizard
 	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
 	         menuGroupId="org.eclipse.cdt.ui"
 	         type="new"
 	         wizardId="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
-				<enablement>
-					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-			            <adapt type="org.eclipse.core.resources.IProject">
-			               <test
-			                     property="org.eclipse.core.resources.projectNature"
-			                     value="org.eclipse.cdt.core.cnature"/>
-			            </adapt>
-					</or>
-		         </enablement>
+		 <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.cnature"/>
+	            </adapt>
+			</or>
+         </enablement>
 	   </commonWizard>
        <commonWizard
             associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
             menuGroupId="org.eclipse.cdt.ui"
             type="new"
             wizardId="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
-				<enablement>
-					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-			            <adapt type="org.eclipse.core.resources.IProject">
-			               <test
-			                     property="org.eclipse.core.resources.projectNature"
-			                     value="org.eclipse.cdt.core.cnature"/>
-			            </adapt>
-					</or>
-		         </enablement>
+		 <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.cnature"/>
+	            </adapt>
+			</or>
+         </enablement>
 	   </commonWizard>
        <commonWizard
             associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
             menuGroupId="org.eclipse.cdt.ui"
             type="new"
             wizardId="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
-				<enablement>
-					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-			            <adapt type="org.eclipse.core.resources.IProject">
-			               <test
-			                     property="org.eclipse.core.resources.projectNature"
-			                     value="org.eclipse.cdt.core.cnature"/>
-			            </adapt>
-					</or>
-		         </enablement>
+		 <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.cnature"/>
+	            </adapt>
+			</or>
+         </enablement>
 	   </commonWizard>
        <commonWizard
             associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
             menuGroupId="org.eclipse.cdt.ui"
             type="new"
             wizardId="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
-				<enablement>
-					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-			            <adapt type="org.eclipse.core.resources.IProject">
-		                   <test
-		                         property="org.eclipse.core.resources.projectNature"
-		                         value="org.eclipse.cdt.core.ccnature"/>
-			            </adapt>
-					</or>
-		         </enablement>
+		 <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.ccnature"/>
+	            </adapt>
+			</or>
+         </enablement>
 	   </commonWizard>
      <dropAssistant
            class="org.eclipse.cdt.internal.ui.navigator.CNavigatorDropAdapterAssistant"

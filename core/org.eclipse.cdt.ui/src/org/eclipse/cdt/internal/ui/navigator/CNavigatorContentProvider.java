@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IAdaptable;
@@ -33,6 +36,7 @@ import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
@@ -144,7 +148,8 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		Object parent= super.getParent(element);
 		if (parent instanceof ICModel) {
 			return getViewerInput() != null ? fRealInput : parent;
-		}
+		} else if (parent instanceof ICProject)
+			return ((ICProject)parent).getProject();
 		return parent;
 	}
 
@@ -169,8 +174,11 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 */
 	public Object[] getElements(Object parent) {
 		if (parent instanceof IWorkspaceRoot) {
-			return super.getElements(CoreModel.create((IWorkspaceRoot)parent));
-		}
+//			return super.getElements(CoreModel.create((IWorkspaceRoot)parent));
+			return ((IWorkspaceRoot)parent).getProjects();
+		} else if (parent instanceof IProject) {
+			return super.getChildren(CoreModel.getDefault().create((IProject)parent));
+		} 
 		return super.getElements(parent);
 	}
 
@@ -180,7 +188,10 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	public Object[] getChildren(Object element) {
 		Object children[];
 		if (element instanceof IWorkspaceRoot) {
-			children =  super.getChildren(CoreModel.create((IWorkspaceRoot)element));
+//			children =  super.getChildren(CoreModel.create((IWorkspaceRoot)element));
+			return ((IWorkspaceRoot)element).getProjects();
+		} else if (element instanceof IProject) {
+			return super.getChildren(CoreModel.getDefault().create((IProject)element));
 		} else {
 			children = super.getChildren(element);
 		}
@@ -190,15 +201,16 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
 	 */
-	public void getPipelinedChildren(Object parent, Set currentChildren) {
-		Object[] children= getChildren(parent);
-		for (Iterator iter= currentChildren.iterator(); iter.hasNext();) {
-			if (iter.next() instanceof IResource) {
-				iter.remove();
-			}
-		}
-		currentChildren.addAll(Arrays.asList(children));
+	public void getPipelinedChildren(Object parent, Set currentChildren) { 
+		customizeCElements(getChildren(parent), currentChildren);
 	}
+
+ 
+
+//	private boolean isCElement(IResource resource) {
+//		// TODO Implement me properly.
+//		return CoreModel.getDefault().create(resource) != null;
+//	}
 
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements(java.lang.Object, java.util.Set)
@@ -206,10 +218,13 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	public void getPipelinedElements(Object input, Set currentElements) {
 		// only replace plain resource elements with custom elements
 		// and avoid duplicating elements already customized
-		// by upstream content providers
-		Object[] elements= getElements(input);
-		List elementList= Arrays.asList(elements);
-		for (Iterator iter= currentElements.iterator(); iter.hasNext();) {
+		// by upstream content providers 
+		customizeCElements(getElements(input), currentElements);
+	}
+
+	private void customizeCElements(Object[] cChildren, Set proposedChildren) {
+		List elementList= Arrays.asList(cChildren);
+		for (Iterator iter= proposedChildren.iterator(); iter.hasNext();) {
 			Object element= iter.next();
 			IResource resource= null;
 			if (element instanceof IResource) {
@@ -220,21 +235,21 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			if (resource != null) {
 				int i= elementList.indexOf(resource);
 				if (i >= 0) {
-					elements[i]= null;
+					cChildren[i]= null;
 				}
 			}
 		}
-		for (int i= 0; i < elements.length; i++) {
-			Object element= elements[i];
+		for (int i= 0; i < cChildren.length; i++) {
+			Object element= cChildren[i];
 			if (element instanceof ICElement) {
 				ICElement cElement= (ICElement)element;
 				IResource resource= cElement.getResource();
 				if (resource != null) {
-					currentElements.remove(resource);
+					proposedChildren.remove(resource);
 				}
-				currentElements.add(element);
+				proposedChildren.add(element);
 			} else if (element != null) {
-				currentElements.add(element);
+				proposedChildren.add(element);
 			}
 		}
 	}
@@ -286,11 +301,12 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	private boolean convertToCElements(
 			PipelinedShapeModification modification) {
 		Object parent= modification.getParent();
+		// don't convert projects
 		if (parent instanceof IContainer) {
 			ICElement element= CoreModel.getDefault().create((IContainer) parent);
 			if (element != null) {
-				// don't convert the root
-				if( !(element instanceof ICModel)) {
+				// don't convert the root  
+				if( !(element instanceof ICModel) && !(element instanceof ICProject) ) {
 					modification.setParent(element);
 				}
 				return convertToCElements(modification.getChildren());
@@ -313,10 +329,11 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		ICElement newChild;
 		for (Iterator iter= currentChildren.iterator(); iter.hasNext();) {
 			Object child= iter.next();
-			if (child instanceof IResource) {
+			// do not convert IProject
+			if (child instanceof IFile || child instanceof IFolder) {
 				IResource resource= (IResource)child;
-				if (resource.isAccessible()) {
-					if ((newChild= CoreModel.getDefault().create((IResource) child)) != null) {
+				if ( resource.isAccessible() ) {
+					if ((newChild= CoreModel.getDefault().create(resource)) != null) {
 						iter.remove();
 						convertedChildren.add(newChild);
 					}

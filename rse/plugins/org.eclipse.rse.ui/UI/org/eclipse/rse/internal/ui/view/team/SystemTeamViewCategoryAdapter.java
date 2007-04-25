@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -98,8 +99,9 @@ public class SystemTeamViewCategoryAdapter
 		return category.getLabel();
 	}
 
-	/**
-	 * Return the absolute name, versus just display name, of this object
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element)
 	{

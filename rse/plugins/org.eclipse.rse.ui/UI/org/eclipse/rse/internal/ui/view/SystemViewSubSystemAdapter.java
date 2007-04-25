@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -139,9 +140,10 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		return ((ISubSystem)element).getName();
 	}
-	/**
-	 * Return the absolute name, versus just display name, of this object. 
-	 * Returns profileName.connectionName.subsystemName;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element)
 	{

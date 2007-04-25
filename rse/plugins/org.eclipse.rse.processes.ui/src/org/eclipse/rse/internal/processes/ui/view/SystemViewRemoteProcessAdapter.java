@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.view;
@@ -126,6 +127,10 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		return allProperties.replace('|', '\t');
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
+	 */
 	public String getAbsoluteName(Object object)
 	{
 		IRemoteProcess process = (IRemoteProcess) object;

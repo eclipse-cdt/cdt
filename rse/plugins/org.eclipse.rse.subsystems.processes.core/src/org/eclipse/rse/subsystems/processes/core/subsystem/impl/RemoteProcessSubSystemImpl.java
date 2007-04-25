@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.core.subsystem.impl;
@@ -27,23 +27,18 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
-import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext;
-import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
+import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
 
 /**
- * The implementation of the RemoteProcessSubSystem interface. 
+ * Default implementation of the IRemoteProcessSubSystem interface.
+ * <p> 
  * Some of the methods are simply convenience methods - these are
  * implemented here, whereas the real work takes place in the
- * ProcessServiceSubSystem. 
- * @author mjberger
- *
- */
-/**
- * @author mjberger
- *
+ * ProcessServiceSubSystem.
+ * </p>
  */
 public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 		IRemoteProcessSubSystem, ICommunicationsListener
@@ -55,7 +50,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#getParentRemoteProcessSubSystemConfiguration()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem#getParentRemoteProcessSubSystemConfiguration()
 	 */
 	public IRemoteProcessSubSystemConfiguration getParentRemoteProcessSubSystemConfiguration()
 	{
@@ -63,7 +58,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#isCaseSensitive()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem#isCaseSensitive()
 	 */
 	public boolean isCaseSensitive()
 	{
@@ -109,7 +104,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#getParentProcess(org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess)
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem#getParentProcess(org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess)
 	 */
 	public IRemoteProcess getParentProcess(IRemoteProcess process)
 	{
@@ -157,34 +152,6 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 		}
 		return roots;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#listAllProcesses(org.eclipse.rse.services.clientserver.processes.IHostProcessFilter, org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext)
-	 */
-	public abstract IRemoteProcess[] listAllProcesses(
-			IHostProcessFilter processNameFilter,
-			IRemoteProcessContext context,
-			IProgressMonitor monitor) throws InterruptedException,
-			SystemMessageException;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#getRemoteProcessObject(long)
-	 */
-	public abstract IRemoteProcess getRemoteProcessObject(long pid)
-			throws SystemMessageException;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#kill(org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess, java.lang.String)
-	 */
-	public abstract boolean kill(IRemoteProcess process, String signal)
-			throws SystemMessageException;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#getSignalTypes()
-	 */
-	public abstract String[] getSignalTypes() throws SystemMessageException;
-
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.ICommunicationsListener#isPassiveCommunicationsListener()

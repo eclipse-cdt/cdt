@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -483,9 +484,23 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	}
 
 	/**
-	 * Return the object within the subsystem that corresponds to the specified
-	 * unique ID. For remote command, the key is determined by the command ID
-	 * and the ouput ID
+	 * Return the object within the subsystem that corresponds to the 
+	 * specified unique ID.
+	 * For remote command, the key is determined by the command ID
+	 * and the ouput ID.
+	 * 
+	 * @param key the unique id of the remote object.
+	 *     Must not be <code>null</code>.
+	 * @return the remote object instance, or <code>null</code> if no 
+	 *     object is found with the given id.
+	 * @throws Exception in case an error occurs contacting the remote 
+	 *     system while retrieving the requested remote object.
+	 *     Extenders are encouraged to throw {@link SystemMessageException}
+	 *     in order to support good user feedback in case of errors.
+	 *     Since exceptions should only occur while retrieving new 
+	 *     remote objects during startup, clients are typically allowed 
+	 *     to ignore these exceptions and treat them as if the remote 
+	 *     object were simply not there.
 	 */
 	public Object getObjectWithAbsoluteName(String key) throws Exception
 	{
@@ -510,15 +525,15 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 				theCmd = cmd;
 			}
 		}
-		if (theCmd != null && outKey != null)
-		{
-			int outIndex = Integer.parseInt(outKey);
-			return theCmd.getOutputAt(outIndex);
-		}
-		else
-		{
+		if (theCmd != null) {
+			if (outKey != null) {
+				int outIndex = Integer.parseInt(outKey);
+				return theCmd.getOutputAt(outIndex);
+			}
 			return theCmd;
 		}
+		//fallback to return filter reference or similar
+		return super.getObjectWithAbsoluteName(key);
 	}
 
 	// called by subsystem on disconnect
@@ -858,7 +873,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * @param input the command to invoke in the shell.
 	 * @param commandObject the shell or command to send the invocation to.
 	 * 
-	 * @deprecated
+	 * @deprecated use {@link #sendCommandToShell(IProgressMonitor, String, Object)}
 	 */
 	public void sendCommandToShell(String input,  Object commandObject) throws Exception
 	{

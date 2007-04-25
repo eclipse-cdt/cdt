@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2005, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,11 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.core.subsystem.impl;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -32,8 +33,6 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSyst
  * with methods for returning information about the underlying process, as well
  * as more client-oriented methods for returning information about the associated
  * subsystem, connection, and filter string.
- * @author mjberger
- *
  */
 public class RemoteProcessImpl implements IRemoteProcess
 {
@@ -45,7 +44,7 @@ public class RemoteProcessImpl implements IRemoteProcess
     /**
      * Constructor that takes a context object containing important information.
      * @param context An object holding contextual information about this object
-     * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext
+     * @see IRemoteProcessContext
      */ 
     public RemoteProcessImpl(IRemoteProcessContext context, IHostProcess process)
     {
@@ -55,7 +54,7 @@ public class RemoteProcessImpl implements IRemoteProcess
     	  try
     	  {
     	  	// deduce active shell from display
-    	    context.getParentRemoteProcessSubSystem().connect();
+    	    context.getParentRemoteProcessSubSystem().connect(new NullProgressMonitor(), false);
     	  } catch (Exception exc) {}
     	  
     	  _underlyingProcess = process;

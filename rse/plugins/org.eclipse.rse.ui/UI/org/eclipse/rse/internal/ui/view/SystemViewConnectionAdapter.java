@@ -17,6 +17,7 @@
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -365,8 +366,9 @@ public class SystemViewConnectionAdapter
 		return conn.getAliasName();
 	}
 
-	/**
-	 * Return the absolute name, versus just display name, of this object
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element)
 	{

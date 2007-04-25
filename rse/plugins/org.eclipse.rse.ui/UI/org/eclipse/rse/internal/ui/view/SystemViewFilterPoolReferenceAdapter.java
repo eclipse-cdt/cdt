@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Tobias Schwarz (Wind River) - [181394] Include Context in getAbsoluteName() for filter and pool references
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -168,8 +169,9 @@ public class SystemViewFilterPoolReferenceAdapter
 		return getFilterPool(element).getName();
 	}
 	
-	/**
-	 * Return the absolute name, versus just display name, of this object
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element)
 	{

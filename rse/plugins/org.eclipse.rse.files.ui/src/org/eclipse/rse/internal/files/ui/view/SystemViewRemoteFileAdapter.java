@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -41,6 +42,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -1527,7 +1529,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IHost connection = connections[i];
 			IRemoteFileSubSystem anFS = RemoteFileUtility.getFileSubSystem(connection);
-			if ((anFS != null) && (anFS.getHost().getSystemType().getName().equals("Local"))) //$NON-NLS-1$
+			if ( anFS != null && IRSESystemType.SYSTEMTYPE_LOCAL_ID.equals(anFS.getHost().getSystemType().getId()))
 			{
 				return anFS;
 			}
@@ -2622,16 +2624,20 @@ public class SystemViewRemoteFileAdapter
 	// --------------------------------------------------------------------
 	// METHODS PRESCRIBED BY THE ISYSTEMREMOTEELEMENT ADAPTER INTERFACE...
 	// --------------------------------------------------------------------	
-	/**
-	 * Return fully qualified name that uniquely identifies this object within its subsystem
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element)
 	{
 		IRemoteFile file = (IRemoteFile) element;
 		return file.getAbsolutePath();
 	}
-	/**
-	 * Return fully qualified name that uniquely identifies this remote object's remote parent within its subsystem
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getAbsoluteParentName(java.lang.Object)
 	 */
 	public String getAbsoluteParentName(Object element)
 	{

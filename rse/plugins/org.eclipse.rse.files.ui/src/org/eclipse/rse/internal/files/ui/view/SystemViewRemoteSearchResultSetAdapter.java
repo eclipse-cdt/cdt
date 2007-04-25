@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -39,14 +39,14 @@ import org.eclipse.rse.ui.view.ISystemRemoveElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
-
 /**
  * Adapter for a search result set.
  */
 public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter, ISystemRemoveElementAdapter
 {
-
-
+	/**
+	 * Constructor.
+	 */
 	public SystemViewRemoteSearchResultSetAdapter()
 	{
 	}
@@ -173,7 +173,10 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 		return null;
 	} 
 	
-	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
+	 */
 	public String getAbsoluteName(Object element)
 	{
 		return null;

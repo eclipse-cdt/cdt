@@ -19,6 +19,7 @@
  *                          - Several bugfixes.
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -4313,30 +4314,31 @@ public class SystemView extends SafeTreeViewer
 	      {
 	          if(a==b) return true;
 	          if(a==null || b==null) return false;
+	          //TODO not sure if this equals() check is a good idea
+	          //It may be expensive and unnecessary
 	          if(a.equals(b)) return true;
 	 
-	          ISystemViewElementAdapter identa= null;
-	          if(a instanceof IAdaptable) {
-	              identa = (ISystemViewElementAdapter)
-	                 ((IAdaptable)a).getAdapter(ISystemViewElementAdapter.class);
+	          if( (a instanceof IAdaptable) && (b instanceof IAdaptable) ) {
+	        	  ISystemViewElementAdapter identa =
+	        		  (ISystemViewElementAdapter)
+	        		  ((IAdaptable)a).getAdapter(ISystemViewElementAdapter.class);
+	        	  ISystemViewElementAdapter identb = 
+	        		  (ISystemViewElementAdapter)
+	        		  ((IAdaptable)b).getAdapter(ISystemViewElementAdapter.class);
+	        	  if(identa != null && identb != null) {
+	        		  // first need to check subsystems
+	        		  ISubSystem ssa = identa.getSubSystem(a);
+	        		  ISubSystem ssb = identb.getSubSystem(b);
+	        		  if (ssa == ssb) {
+	        			  // if the subsystems are the same OR if both are null
+	        			  // (the absolute name will distinguish them)
+	        			  String ana = identa.getAbsoluteName(a);
+	        			  if (ana!=null) {
+	        				  return ana.equals(identb.getAbsoluteName(b));
+	        			  }
+		              }
+		          }
 	          }
-	          if(identa != null) {
-	              ISystemViewElementAdapter identb = null;
-	               if(b instanceof IAdaptable) {
-	                  identb = (ISystemViewElementAdapter)
-	                     ((IAdaptable)b).getAdapter(ISystemViewElementAdapter.class);
-	              }
-	              if (identb != null){
-	            	  // first need to check subsystems
-	            	  ISubSystem ssa = identa.getSubSystem(a);
-	            	  ISubSystem ssb = identb.getSubSystem(b);
-	            	  if (ssa == ssb) // if the subsystems are the same OR if both are not subsystems (the absolute name will distinguish them)
-	            	  {
-	            		  if(identa.getAbsoluteName(a).equals(identb.getAbsoluteName(b))) return true;
-	            	  }
-	              }
-	          }
-	          
 	          return false;
 	      }
 	      

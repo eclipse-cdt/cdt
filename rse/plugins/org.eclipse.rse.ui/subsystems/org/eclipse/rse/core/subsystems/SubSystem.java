@@ -18,6 +18,7 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [183165] Do not implement constant interfaces
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -754,35 +755,49 @@ public abstract class SubSystem extends RSEModelObject
 	// --------------------------------------------------------------------------------------
 	// Methods for encoding and decoding remote objects for drag and drop, and clipboard copy
 	// --------------------------------------------------------------------------------------
-		
-	
+
 	/**
-	 * For drag and drop, and clipboard, support of remote objects.
+	 * Return the remote object that corresponds to the specified unique ID.
 	 * <p>
-	 * Return the object within the subsystem that corresponds to
-	 * the specified unique ID.  Because each subsystem maintains it's own
-	 * objects, it's the responsability of the subsystem to determine
-	 * how an ID (or key) for a given object maps to the real object.
-	 * By default this returns null. 
-	 * <p>
-	 * This is the functional opposite of {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getAbsoluteName(Object)}.
+	 * Since the abstract subsystem implementation does not know anything
+	 * about the specific kinds of resources managed by concrete
+	 * implementations, this method can only resolve filter references.
+	 * </p><p>
+	 * <strong>subsystem implementations must override this method
+	 * in order to resolve IDs for the remote objects they manage, 
+	 * to support drag and drop, clipboard copy and other remote object 
+	 * resolving schemes.</strong>
+	 * Extenders that want to support filters should call
+	 * <code>super.getObjectWithAbsoluteName(key)</code>
+	 * when they do not find a reference for the key themselves.
+	 * </p>
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectResolver#getObjectWithAbsoluteName(java.lang.String)
+	 * 
+	 * @param key the unique id of the remote object.
+	 *     Must not be <code>null</code>.
+	 * @return the remote object instance, or <code>null</code> if no 
+	 *     object is found with the given id.
+	 * @throws Exception in case an error occurs contacting the remote 
+	 *     system while retrieving the requested remote object.
+	 *     Extenders are encouraged to throw {@link SystemMessageException}
+	 *     in order to support good user feedback in case of errors.
+	 *     Since exceptions should only occur while retrieving new 
+	 *     remote objects during startup, clients are typically allowed 
+	 *     to ignore these exceptions and treat them as if the remote 
+	 *     object were simply not there.
 	 */
 	public Object getObjectWithAbsoluteName(String key) throws Exception
 	{
-		// by default, the subsystem will attempt to find a filter reference for the key
-		Object filterRef = getFilterReferenceWithAbsoluteName(key);
-		if (filterRef != null)
-		{
-			return filterRef;
-		}
-		return null;	
+		// by default, the subsystem will attempt to find a filter reference for the key.
+		// Return null when no such filter is found.
+		return getFilterReferenceWithAbsoluteName(key);
 	}
-	
+
 	/**
 	 * Return the filter reference that corresponds to the specified key.  If there
-	 * is no such filter reference, return null;
 	 * @param key the absolute name for an object.
-	 * @return a filter reference if there is one matching the key
+	 * @return a filter reference if there is one matching the key,
+	 *     or <code>null</code> if no such filter is found.
 	 */
 	protected Object getFilterReferenceWithAbsoluteName(String key)
 	{

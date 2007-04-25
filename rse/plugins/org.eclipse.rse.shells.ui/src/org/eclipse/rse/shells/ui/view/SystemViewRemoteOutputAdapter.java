@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemOutputRemoteTypes
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -681,9 +682,10 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		return null;
 	}
 
-	/**
-	  * Return the fully qualified name of this remote object. 
-	  */
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
+	 */
 	public String getAbsoluteName(Object element)
 	{
 		if (element instanceof IRemoteCommandShell)

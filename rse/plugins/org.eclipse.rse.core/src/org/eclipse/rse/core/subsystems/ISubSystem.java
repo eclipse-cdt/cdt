@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -31,12 +31,14 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
- * Interface implemented by SubSystem objects. While connections contain information to identify a 
- * particular remote system, it is the subsystem objects within a connection that contain information
- * unique to a particular tool, for that remote system, such as the port the tool uses and the 
- * user ID for making the connection. There are a set of default properties, but these can be
- * extended by subsystem providers, by extending SubSystem. 
- * <p>
+ * Interface implemented by SubSystem objects.
+ * 
+ * While connections contain information to identify a particular remote
+ * system, it is the subsystem objects within a connection that contain
+ * information unique to a particular tool for that remote system, such as
+ * the port the tool uses and the user ID for making the connection.
+ * There are a set of default properties, but these can be extended by 
+ * subsystem providers, by extending SubSystem. 
  */
 public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, IRemoteObjectResolver, ISchedulingRule, IRSEModelObject {
 	// -------------------------------------
@@ -356,7 +358,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	/**
 	 * Connect to the remote system. Does not force a prompt for a password.
 	 * 
-	 * @deprecated
+	 * @deprecated use {@link #connect(IProgressMonitor, boolean)}
 	 */
 	public void connect() throws Exception;
 	
@@ -368,7 +370,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
 	 * in memory.
 	 * 
-	 * @deprecated
+	 * @deprecated use {@link #connect(IProgressMonitor, boolean)}
 	 */
 	public void connect(boolean forcePrompt) throws Exception;
 	
@@ -376,18 +378,18 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	/**
 	 * Connect to the remote system from a background job
 	 * 
-	 * @param monitor the process monitor
+	 * @param monitor the process monitor. Must not be <code>null</code>.
 	 * 
-	 * @deprecated use connect(IProgressMonitor, boolean)
+	 * @deprecated use {@link #connect(IProgressMonitor, boolean)}
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Connect to the remote system from a background job
 	 * 
-	 * @param monitor the process monitor
-	 * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
-	 * in memory
+	 * @param monitor the process monitor. Must not be <code>null</code>.
+	 * @param forcePrompt forces the prompt dialog to be displayed
+	 *     even if the password is currently in memory.
 	 */
 	public void connect(IProgressMonitor monitor, boolean forcePrompt) throws Exception;
 

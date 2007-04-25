@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -140,8 +141,10 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 	{
 		return getFilter(element).getName();
 	}
-	/**
-	 * Return the absolute name, versus just display name, of this object
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element)
 	{

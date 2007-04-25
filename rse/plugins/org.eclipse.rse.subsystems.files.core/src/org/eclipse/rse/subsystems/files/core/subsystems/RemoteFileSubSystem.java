@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 162962 - recursive removeCachedRemoteFile()
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -1065,21 +1066,35 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 
 	/**
 	 * Return the object within the subsystem that corresponds to
-	 * the specified unique ID.  For remote files, assuming the key 
-	 * is the absolute path of a file, this is simply a wrapper to
-	 * getRemoteFileObject(). 
+	 * the specified unique ID.
+	 * 
+	 * For remote files, assuming the key is the absolute path of
+	 * a file, this is simply a wrapper to getRemoteFileObject().
+	 *  
+	 * @see SubSystem#getObjectWithAbsoluteName(String)
+	 * @param key the unique id of the remote object.
+	 *     Must not be <code>null</code>.
+	 * @return the remote object instance, or <code>null</code> if no 
+	 *     object is found with the given id.
+	 * @throws Exception in case an error occurs contacting the remote 
+	 *     system while retrieving the requested remote object.
+	 *     Extenders are encouraged to throw {@link SystemMessageException}
+	 *     in order to support good user feedback in case of errors.
+	 *     Since exceptions should only occur while retrieving new 
+	 *     remote objects during startup, clients are typically allowed 
+	 *     to ignore these exceptions and treat them as if the remote 
+	 *     object were simply not there.
 	 */
 	public Object getObjectWithAbsoluteName(String key) throws Exception
 	{
-		Object filterRef = getFilterReferenceWithAbsoluteName(key);
-		
+		Object filterRef = super.getObjectWithAbsoluteName(key);
 		if (filterRef != null) {
 			return filterRef;
 		}
 
 		// look to see if there is a search result delimiter
 		// if not, the key must be for a file
-		if (key.lastIndexOf(IHostSearchResult.SEARCH_RESULT_DELIMITER) == -1) {
+		if (key.lastIndexOf(IHostSearchResult.SEARCH_RESULT_DELIMITER) < 0) {
 		    
 		    IRemoteFile remoteFile = getRemoteFileObject(key);
 		

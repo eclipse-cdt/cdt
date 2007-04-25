@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -80,9 +81,10 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
 		//return SystemResources.RESID_SYSTEMREGISTRY_CONNECTIONS); 
 		return "Remote Scratchpad"; //$NON-NLS-1$
 	}
-	/**
-	 * Return the absolute name, versus just display name, of this object. 
-	 * Just uses getText(element);
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element)
 	{

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and Wind River Systems, Inc.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - adapted template for daytime example.
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.examples.daytime.model;
@@ -56,7 +57,6 @@ public class DaytimeResourceAdapter extends AbstractSystemViewAdapter implements
 
 	public String getAbsoluteName(Object object) {
 		//Not used since we dont support clipboard copy, rename or filtering
-		//TODO check if it is still used anywhere? Then we'd want to externalize the String
 		return "daytime:"+getText(object); //$NON-NLS-1$
 	}
 
@@ -76,7 +76,6 @@ public class DaytimeResourceAdapter extends AbstractSystemViewAdapter implements
 		return null;
 	}
 
-	
 	protected Object internalGetPropertyValue(Object key) {
 		return null;
 	}

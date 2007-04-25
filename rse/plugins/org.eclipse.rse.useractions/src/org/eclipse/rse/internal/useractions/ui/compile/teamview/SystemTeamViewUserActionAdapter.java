@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.compile.teamview;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +7,11 @@ package org.eclipse.rse.internal.useractions.ui.compile.teamview;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  *******************************************************************************/
+
+package org.eclipse.rse.internal.useractions.ui.compile.teamview;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -88,8 +90,9 @@ public class SystemTeamViewUserActionAdapter extends AbstractSystemViewAdapter i
 		return action.getName();
 	}
 
-	/**
-	 * Return the absolute name, versus just display name, of this object
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element) {
 		SystemUDActionElement action = (SystemUDActionElement) element;

@@ -244,8 +244,16 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	public SystemRemoteResourceSet getRemoteFileObjects(List folderOrFileNames) throws SystemMessageException;
 	
 	/**
-	 * Given a fully qualified file or folder name, return an IRemoteFile object for it.
-	 * @param folderOrFileName Fully qualified folder or file name
+	 * Given a fully qualified file or folder name, return an IRemoteFile
+	 * object for it.
+	 * <p>
+	 * This may be a long-running operation involving remote system access
+	 * if the file with the given key is not found in the internal cache.
+	 * </p>
+	 * @param folderOrFileName Fully qualified folder or file name.
+	 * @return the requested IRemoteFile object.
+	 * @throws SystemMessageException in case an error occurs contacting the
+	 *     remote system while retrieving the requested remote object.
 	 */
 	public IRemoteFile getRemoteFileObject(String folderOrFileName) throws SystemMessageException;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Tobias Schwarz (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
@@ -75,8 +76,9 @@ public class TestSubSystemNodeAdapter extends AbstractSystemViewAdapter
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getAbsoluteName(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object element) {
 		if (isTestSubSystemNode(element)) {

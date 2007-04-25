@@ -14,6 +14,7 @@
  * Uwe Stieber (Wind River) - Allow to extend action filter by dynamic system type providers.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -423,15 +424,6 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	{
 		return getText(element);
 	}
-    /**
-     * <i><b>Abstract</b></i>. <i>Must be overridden.</i><br>.
-     * Return the fully-qualified name, versus just the displayable name, for this object.
-     * For remote objects, this should be sufficient to uniquely identify this object within its
-     *  subsystem.
-	 * @see #getText(Object)
-	 * @see #getName(Object)
-	 */
-	public abstract String getAbsoluteName(Object object);	
 	
 	/**
      * <i>Internal use. Can be safely ignored.</i><br>

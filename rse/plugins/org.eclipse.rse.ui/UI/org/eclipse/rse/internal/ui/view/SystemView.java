@@ -4354,14 +4354,15 @@ public class SystemView extends SafeTreeViewer
 	                  String absName = ident.getAbsoluteName(element);
 	                  if(absName!=null) return absName.hashCode();
 	                  //Since one adapter is typically used for many elements in RSE,
-	                  //performance is better if the original Element's hashCode
-	                  //is used rather than the adapter's hashCode. The problem with
+	                  //performance would be better if the original Element's hashCode
+	                  //were used rather than the adapter's hashCode. The problem with
 	                  //this is, that if the remote object changes, it cannot be 
-	                  //identified any more. But by returning null for the absolute
-	                  //name, the extender has agreed that the remote object's 
-	                  //equals() and hashCode() methods will always work properly.
-	                  
-	                  //return ident.hashCode();
+	                  //identified any more.
+	                  //Note that even if the SAME object is modified during refresh
+	                  //(so object a==b), the hashCode of the object can change 
+	                  //over time if properties are modified. Therefore, play it
+	                  //safe and return the adapter's hashCode which won't ever change.
+	                  return ident.hashCode();
 	              }
 	          }		          
 	          if (element != null) { // adding check because I hit a null exception here once at startup

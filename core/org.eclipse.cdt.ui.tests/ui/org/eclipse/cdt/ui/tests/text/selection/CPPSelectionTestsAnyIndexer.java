@@ -110,7 +110,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //    (2);
     //    return (0);                          
     // }
-    public void testBug93281() throws Exception {
+    public void _testBug93281() throws Exception {
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();

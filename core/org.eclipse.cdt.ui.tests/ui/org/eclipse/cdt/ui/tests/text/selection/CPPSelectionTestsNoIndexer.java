@@ -250,7 +250,7 @@ public class CPPSelectionTestsNoIndexer extends BaseTestCase {
         return null;
     }
     	
-    public void testBug93281() throws Exception {
+    public void _testBug93281() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class Point{                         \n"); //$NON-NLS-1$
         buffer.append("public:                              \n"); //$NON-NLS-1$
@@ -868,7 +868,7 @@ public class CPPSelectionTestsNoIndexer extends BaseTestCase {
         assertEquals(((ASTNode)decl).getLength(), 1);
     }
     
-    public void testBug95229() throws Exception {
+    public void _testBug95229() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("struct A {\n"); //$NON-NLS-1$
         buffer.append("operator short(); // F3 on operator causes an infinite loop\n"); //$NON-NLS-1$

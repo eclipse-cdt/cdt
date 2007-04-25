@@ -44,9 +44,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
-import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
-import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildFileData;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildFolderData;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildLanguageData;
@@ -247,7 +245,6 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		}
 	}
 	
-	
 	private void cache(ContextInfo cInfo, IRcSettingInfo rcSetting){
 		CResourceData rcData = rcSetting.getResourceData();
 		clearCache(rcData);
@@ -303,20 +300,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 	}
 	
 	private PathInfo getCachedPathInfo(ContextInfo cInfo){
-//        ICfgScannerConfigBuilderInfo2Set cfgInfo = cInfo.fCfgInfo;
         PathInfo info = getCachedPathInfo(cInfo, true, true, false);
-//        boolean queryCfg = !cfgInfo.isPerRcTypeDiscovery();
-//        if(!queryCfg){
-//    		Tool tool = (Tool)context.getTool();
-//    		if(tool != null){
-//    			info = tool.getDiscoveredPathInfo(context.getInputType());
-//    		} else {
-//    			queryCfg = true;
-//    		}
-//        } 
-//        if(queryCfg) {
-//        	info = ((Configuration)context.getConfiguration()).getDiscoveredPathInfo();
-//        }
         return info;
 	}
 
@@ -420,7 +404,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		contextInfo.fInitialContext = context;
 		contextInfo.fCfgInfo = cfgInfo;
 		if(isPerRcType){
-			contextInfo.fLoadContext = adjustPerRcTypeContext(contextInfo.fInitialContext);
+			contextInfo.fLoadContext = CfgScannerConfigUtil.adjustPerRcTypeContext(contextInfo.fInitialContext);
 			contextInfo.fCacheContext = contextInfo.fLoadContext;
 			contextInfo.fIsFerFileCache = false;
 			contextInfo.fInfo = cfgInfo.getInfo(contextInfo.fLoadContext);
@@ -432,72 +416,6 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		}
         
         return contextInfo;
-	}
-	
-	private CfgInfoContext adjustPerRcTypeContext(CfgInfoContext context){
-        Tool tool = (Tool)context.getTool();
-        IResourceInfo rcInfo = context.getResourceInfo();
-        IInputType inType = context.getInputType();
-        boolean adjust = false;
-        CfgInfoContext newContext = context;
-        
-   		if(tool != null){
-   			if(inType != null){
-        		if(!tool.hasScannerConfigSettings(inType)){
-//	        			tool = null;
-        			inType = null;
-        			adjust = true;
-        		}
-   			}
-   			if(inType == null){
-        		if(!tool.hasScannerConfigSettings(null)){
-        			tool = null;
-        			adjust = true;
-        		}
-   			}
-   		}
-   		if(tool == null){
-   			if(inType != null){
-   				inType = null;
-   				adjust = true;
-   			}
-    			
-   			if(rcInfo != null){
-    			ToolChain tc = rcInfo instanceof FolderInfo ? 
-    					(ToolChain)((FolderInfo)rcInfo).getToolChain()
-    					: (ToolChain)((ResourceConfiguration)rcInfo).getBaseToolChain();
-    					
-    			if(tc != null){
-    				if(!tc.hasScannerConfigSettings()){
-    					adjust = true;
-    					rcInfo = null;
-    				}
-    			}
-   			}
-   		}
-//        } else {
-//        	if(tool != null){
-//        		tool = null;
-//        		adjust = true;
-//        	}
-//        	if(rcInfo != null){
-//        		rcInfo = null;
-//        		adjust = true;
-//        	}
-//        	if(inType != null){
-//        		inType = null;
-//        		adjust = true;
-//        	}
-//        }
-        
-        if(adjust){
-        	if(rcInfo == null)
-        		newContext = new CfgInfoContext(context.getConfiguration());
-        	else
-        		newContext = new CfgInfoContext(rcInfo, tool, inType);
-        }
-        
-        return newContext;
 	}
 	
 	private PathInfo setCachedPathInfo(ContextInfo cInfo, PathInfo info){

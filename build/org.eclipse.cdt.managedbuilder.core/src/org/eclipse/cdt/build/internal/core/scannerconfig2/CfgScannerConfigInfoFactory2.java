@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
+import org.eclipse.cdt.build.internal.core.scannerconfig.CfgScannerConfigUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -173,45 +174,47 @@ public class CfgScannerConfigInfoFactory2 {
 								for(int t = 0; t < types.length; t++){
 									InputType type = (InputType)types[t];
 									CfgInfoContext context = new CfgInfoContext(rcInfo, tool, type);
-									IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)configMap.remove(context);
-									if(info == null &&  type.hasScannerConfigSettings()){
-										InfoContext baseContext = context.toInfoContext();
-										if(!type.isExtensionElement() && type.getSuperClass() != null){
-											CfgInfoContext tmpCfgC = new CfgInfoContext(rcInfo, tool, type.getSuperClass());
-											info = (IScannerConfigBuilderInfo2)configMap.get(tmpCfgC);
-											if(info != null){
-												info =  container.createInfo(baseContext, info);
+									context = CfgScannerConfigUtil.adjustPerRcTypeContext(context);
+									if(context != null && context.getResourceInfo() != null){
+										IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)configMap.get(context);
+										if(info == null && !type.isExtensionElement() && type.getSuperClass() != null){
+											CfgInfoContext superContext = new CfgInfoContext(rcInfo, tool, type.getSuperClass());
+											superContext = CfgScannerConfigUtil.adjustPerRcTypeContext(superContext);
+											if(superContext != null){
+												info = (IScannerConfigBuilderInfo2)configMap.get(superContext);
 											}
 										}
-										
 										if(info == null){
-											String id = type.getDiscoveryProfileId(tool);
+											String id = CfgScannerConfigUtil.getDefaultProfileId(context);
+											InfoContext baseContext = context.toInfoContext();
 											if(id != null){
 												info = container.createInfo(baseContext, id);
 											} else {
 												info = container.createInfo(baseContext);
 											}
 										}
-									}
-									
-									if(info != null){
-										map.put(context, info);
+										if(info != null){
+											map.put(context, info);
+										}
 									}
 								}
 							} else {
 								CfgInfoContext context = new CfgInfoContext(rcInfo, tool, null);
-								IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)configMap.get(context);
-								if(info == null && tool.hasScannerConfigSettings(null)){
-									String id = tool.getDiscoveryProfileId();
-									InfoContext baseContext = context.toInfoContext();
-									if(id != null){
-										info = container.createInfo(baseContext, id);
-									} else {
-										info = container.createInfo(baseContext);
+								context = CfgScannerConfigUtil.adjustPerRcTypeContext(context);
+								if(context != null && context.getResourceInfo() != null){
+									IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)configMap.get(context);
+									if(info == null){
+										String id = CfgScannerConfigUtil.getDefaultProfileId(context);
+										InfoContext baseContext = context.toInfoContext();
+										if(id != null){
+											info = container.createInfo(baseContext, id);
+										} else {
+											info = container.createInfo(baseContext);
+										}
 									}
-								}
-								if(info != null){
-									map.put(context, info);
+									if(info != null){
+										map.put(context, info);
+									}
 								}
 							}
 						}
@@ -220,6 +223,8 @@ public class CfgScannerConfigInfoFactory2 {
 					if(!configMap.isEmpty()){
 						for(Iterator iter = configMap.entrySet().iterator(); iter.hasNext();){
 							Map.Entry entry = (Map.Entry)iter.next();
+							if(map.containsKey(entry.getKey()))
+								continue;
 							CfgInfoContext c = (CfgInfoContext)entry.getKey();
 							if(c.getResourceInfo() != null || c.getTool() != null || c.getInputType() != null){
 								InfoContext baseC = c.toInfoContext();

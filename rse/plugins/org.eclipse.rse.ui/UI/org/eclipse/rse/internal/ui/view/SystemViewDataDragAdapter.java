@@ -19,8 +19,11 @@ package org.eclipse.rse.internal.ui.view;
 
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -28,6 +31,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.actions.LazyDownloadJob;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -226,23 +230,24 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 				String[] fileNames = new String[ss.size()];
 				Iterator iterator = ss.iterator();
 				int i = 0;
-				//while (iterator.hasNext())
-				//{
-					iterator.next();
-					/** FIXME - IREmoteFile is systems.core independent now
-					if (dragObject instanceof IRemoteFile)
+				while (iterator.hasNext())
+				{
+					Object dragObject = iterator.next();
+					if (dragObject instanceof IAdaptable)
 					{
-						IRemoteFile file = (IRemoteFile) dragObject;
-
-						String connectionType = file.getParentRemoteFileSubSystem().getHost().getSystemType().getName();
-						if (connectionType.equals("Local"))
+						ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) dragObject).getAdapter(ISystemViewElementAdapter.class);
+						if (adapter.canDrag(dragObject))
 						{
-							fileNames[i] = file.getAbsolutePath();
-							i++;
+							IResource resource = getResource((IAdaptable)dragObject);
+							if (resource != null)
+							{								
+								String fileName = resource.getLocation().toOSString();
+								fileNames[i] = fileName;
+								i++;
+							}		
 						}
 					}
-					*/
-				//}
+				}	
 				if (i > 0)
 				{
 					event.data = fileNames;
@@ -346,4 +351,68 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 		IEditorRegistry registry = getEditorRegistry();
 		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 	}
+	
+	private IResource getResource(IAdaptable dragObject)
+	{
+		IResource resource = null;
+		ISystemViewElementAdapter viewAdapter = (ISystemViewElementAdapter) dragObject.getAdapter(ISystemViewElementAdapter.class);
+		ISystemRemoteElementAdapter remoteAdapter = (ISystemRemoteElementAdapter)dragObject.getAdapter(ISystemRemoteElementAdapter.class);
+		
+		if (remoteAdapter != null)
+		{
+			
+			if (remoteAdapter.canEdit(dragObject))
+			{				
+				ISystemEditableRemoteObject editable = remoteAdapter.getEditableRemoteObject(dragObject);
+				// corresponds to a file
+				IFile file = editable.getLocalResource();
+				if (!file.exists())
+				{
+					// this is a drag and drop to windows explorer
+					//  because we're dealing with file paths we need to force this to complete before allowing the drop
+					//  so instead of doing the job, I'm forcing the transfer on this thread
+					LazyDownloadJob job = new LazyDownloadJob(editable);
+					job.run(new NullProgressMonitor());
+					//job.setPriority(Job.INTERACTIVE);
+					//job.schedule();
+				}
+				resource = file;
+			}
+			else if (viewAdapter != null)
+			{
+				if (viewAdapter.hasChildren(dragObject)) 
+				{
+					IContainer parentFolder = null;
+					// corresponds to a folder
+					Object[] children = viewAdapter.getChildren(new NullProgressMonitor(), dragObject);
+					for (int i = 0; i < children.length; i++)
+					{
+						IAdaptable child = (IAdaptable)children[i];
+						IResource childResource = getResource(child);
+						if (childResource != null)
+						{							
+							parentFolder = childResource.getParent();
+							if (!parentFolder.exists())
+							{
+								try
+								{
+									parentFolder.touch(new NullProgressMonitor());
+								}
+								catch (Exception e)
+								{
+									
+								}
+							
+							}
+						}
+					}
+					
+					
+					resource = parentFolder;
+				}				
+			}
+		}		
+		return resource;
+	}
+	
 }

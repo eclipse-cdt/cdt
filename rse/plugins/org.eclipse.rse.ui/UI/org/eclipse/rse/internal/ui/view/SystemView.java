@@ -5238,6 +5238,7 @@ public class SystemView extends SafeTreeViewer
         int ops = DND.DROP_COPY | DND.DROP_MOVE;
         Transfer[] dragtransfers = new Transfer[]   
             { PluginTransfer.getInstance(), 
+        		FileTransfer.getInstance(),
         		EditorInputTransfer.getInstance()
             };  
    

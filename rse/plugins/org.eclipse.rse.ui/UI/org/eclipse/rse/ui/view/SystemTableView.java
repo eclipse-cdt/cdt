@@ -814,7 +814,7 @@ public class SystemTableView
 	protected void initDragAndDrop()
 	{
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] dragtransfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(),  EditorInputTransfer.getInstance()};
+		Transfer[] dragtransfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(),  FileTransfer.getInstance(), EditorInputTransfer.getInstance()};
 		Transfer[] droptransfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), FileTransfer.getInstance(), EditorInputTransfer.getInstance()};
 		
 		addDragSupport(ops, dragtransfers, new SystemViewDataDragAdapter((ISelectionProvider) this));

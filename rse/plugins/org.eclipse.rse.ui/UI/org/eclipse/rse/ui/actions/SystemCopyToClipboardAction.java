@@ -22,11 +22,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -58,30 +54,6 @@ import org.eclipse.ui.part.ResourceTransfer;
  */
 public class SystemCopyToClipboardAction extends SystemBaseAction implements  IValidatorRemoteSelection
 {
-	private class LazyDownloadJob extends Job
-	{
-		private ISystemEditableRemoteObject _editable;
-		public LazyDownloadJob(ISystemEditableRemoteObject editable) 
-		{
-			// TODO Auto-generated constructor stub
-			super("Downloading " + editable.getAbsolutePath());
-			_editable = editable;
-		}
-		
-		public IStatus run(IProgressMonitor monitor)
-		{	
-			try
-			{
-				_editable.download(monitor);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-			return Status.OK_STATUS;
-		}
-	}
-
 	private IStructuredSelection _selection;
 	private Clipboard _clipboard;
 	private boolean  _doResourceTransfer = true; //experiment
@@ -216,23 +188,16 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 
 						if (_doResourceTransfer)
 						{
-							resources.add(getResource((IAdaptable)dragObject));
+							IResource resource = getResource((IAdaptable)dragObject);
+							if (resource != null)
+							{
+								resources.add(resource);
+								
+								String fileName = resource.getLocation().toOSString();
+								fileNames.add(fileName);
+							}							
 						}
 						
-						/** FIXME - files can't be coupled to systems.core!
-						// support for external copy for local files
-						if (dragObject instanceof IRemoteFile)
-						{
-							IRemoteFile file = (IRemoteFile) dragObject;
-
-							String connectionType = file.getParentRemoteFileSubSystem().getHost().getSystemType().getName();
-							
-							if (connectionType.equals("Local"))
-							{
-								fileNames.add(file.getAbsolutePath());
-							}
-						}
-						*/
 					}
 				}
 			}
@@ -248,14 +213,16 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 			{
 				ft[i] = (IResource) resources.get(i);								
 			}
+			
+			String[] fn = new String[fileNames.size()];
+			for (int j = 0; j < fn.length; j++)
+			{
+				fn[j] = (String)fileNames.get(j);
+			}
 
-			_clipboard.setContents(new Object[] { data, ft, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), ResourceTransfer.getInstance(), TextTransfer.getInstance()});
+			_clipboard.setContents(new Object[] { data, ft, fn, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), ResourceTransfer.getInstance(), FileTransfer.getInstance(), TextTransfer.getInstance()});
 
-		}
-		else if (fileNames.size() == 0)
-		{
-			_clipboard.setContents(new Object[] { data, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance()});
-		}
+		}		
 		else
 		{		
 			String[] ft = new String[fileNames.size()];

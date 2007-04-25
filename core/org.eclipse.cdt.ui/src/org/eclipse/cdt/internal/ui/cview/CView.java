@@ -882,7 +882,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 				IWorkbenchPage page = getSite().getPage();
 				page.bringToTop(part);
 				if (obj instanceof ISourceReference) {
-					if (obj instanceof ICElement) {
+					if (obj instanceof ICElement && !(obj instanceof ITranslationUnit)) {
 						EditorUtility.revealInEditor(part, (ICElement) obj);
 					}
 				}

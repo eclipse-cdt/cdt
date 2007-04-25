@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  *     Intel Corporation - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  **********************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
@@ -24,6 +25,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -31,7 +33,6 @@ import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 /**
@@ -39,10 +40,11 @@ import org.eclipse.cdt.internal.ui.text.CWordFinder;
  * @since 2.1
  */
 public class CHelpDisplayContext implements IContext {
+	
 	private IHelpResource[] fHelpResources;
 	private String fText;
 	
-	public static void displayHelp(String contextId, CEditor editor) throws CoreException {
+	public static void displayHelp(String contextId, ITextEditor editor) throws CoreException {
 		String selected = getSelectedString(editor);
 		IContext context= HelpSystem.getContext(contextId);
 		if (context != null) {
@@ -53,7 +55,7 @@ public class CHelpDisplayContext implements IContext {
 		}
 	}
 	
-	private static String getSelectedString(CEditor editor){
+	private static String getSelectedString(ITextEditor editor){
 		String expression = null;
 		try{
 			ITextSelection selection = (ITextSelection)editor.getSite().getSelectionProvider().getSelection();
@@ -66,7 +68,7 @@ public class CHelpDisplayContext implements IContext {
 		return expression;
 	}
 
-	public CHelpDisplayContext(IContext context, final CEditor editor , String selected) throws CoreException {
+	public CHelpDisplayContext(IContext context, final ITextEditor editor , String selected) throws CoreException {
 
 		List helpResources= new ArrayList();
 		

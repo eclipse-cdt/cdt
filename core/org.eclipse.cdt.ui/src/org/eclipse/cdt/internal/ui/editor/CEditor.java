@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -1261,6 +1262,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 				if (adapter != null)
 					return adapter;
 			}
+		}
+		if (IContextProvider.class.equals(required)) {
+			return new CUIHelp.CUIHelpContextProvider(this);
 		}
 		return super.getAdapter(required);
 	}

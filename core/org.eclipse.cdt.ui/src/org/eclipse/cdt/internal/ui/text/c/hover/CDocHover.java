@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
@@ -18,6 +19,7 @@ import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.IFunctionSummary.IFunctionPrototypeSummary;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IRegion;
@@ -72,8 +74,11 @@ public class CDocHover extends AbstractCEditorTextHover {
 			if (fs != null) {
 				buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.name")); //$NON-NLS-1$
 				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getName()));
-				buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.prototype")); //$NON-NLS-1$
-				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getPrototype().getPrototypeString(false)));
+				final IFunctionPrototypeSummary prototype = fs.getPrototype();
+				if (prototype != null) {
+					buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.prototype")); //$NON-NLS-1$
+					buffer.append(HTMLPrinter.convertToHTMLContent(prototype.getPrototypeString(false)));
+				}
 				if(fs.getDescription() != null) {
 					buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.description")); //$NON-NLS-1$
 					//Don't convert this description since it could already be formatted

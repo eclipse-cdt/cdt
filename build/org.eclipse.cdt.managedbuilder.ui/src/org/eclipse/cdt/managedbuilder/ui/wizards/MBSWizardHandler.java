@@ -167,14 +167,19 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		
 	public void createProject(IProject project, boolean defaults) throws CoreException {
 		CoreModel coreModel = CoreModel.getDefault();
-		CfgHolder[] cfgs = fConfigPage.getCfgItems(defaults);
 		ICProjectDescription des = coreModel.createProjectDescription(project, false);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-
-		if (cfgs == null || cfgs.length == 0) 
+		CfgHolder[] cfgs = null;
+		if (defaults) {
 			cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
+		} else {
+			getSpecificPage(); // ensure that page is created
+			cfgs = fConfigPage.getCfgItems(defaults);
+			if (cfgs == null || cfgs.length == 0) 
+				cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
+		}
 		
-		if (cfgs[0].getConfiguration() == null) {
+		if (cfgs == null || cfgs.length == 0 || cfgs[0].getConfiguration() == null) {
 			throw new CoreException(new Status(IStatus.ERROR, 
 					ManagedBuilderUIPlugin.getUniqueIdentifier(),
 					Messages.getString("CWizardHandler.6"))); //$NON-NLS-1$
@@ -293,6 +298,7 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		return wizard;
 	}
 	public CfgHolder[] getCfgItems(boolean defaults) {
+		getSpecificPage(); // ensure that page is created
 		return fConfigPage.getCfgItems(defaults);
 	}
 	public String getErrorMessage() { 

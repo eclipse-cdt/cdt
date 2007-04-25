@@ -180,17 +180,23 @@ public class CfgScannerConfigInfoFactory2 {
 										if(info == null && !type.isExtensionElement() && type.getSuperClass() != null){
 											CfgInfoContext superContext = new CfgInfoContext(rcInfo, tool, type.getSuperClass());
 											superContext = CfgScannerConfigUtil.adjustPerRcTypeContext(superContext);
-											if(superContext != null){
+											if(superContext != null && superContext.getResourceInfo() != null){
 												info = (IScannerConfigBuilderInfo2)configMap.get(superContext);
 											}
-										}
-										if(info == null){
 											String id = CfgScannerConfigUtil.getDefaultProfileId(context);
 											InfoContext baseContext = context.toInfoContext();
-											if(id != null){
-												info = container.createInfo(baseContext, id);
+											if(info == null){
+												if(id != null){
+													info = container.createInfo(baseContext, id);
+												} else {
+													info = container.createInfo(baseContext);
+												}
 											} else {
-												info = container.createInfo(baseContext);
+												if(id != null){
+													info = container.createInfo(baseContext, info, id);
+												} else {
+													info = container.createInfo(baseContext, info);
+												}
 											}
 										}
 										if(info != null){

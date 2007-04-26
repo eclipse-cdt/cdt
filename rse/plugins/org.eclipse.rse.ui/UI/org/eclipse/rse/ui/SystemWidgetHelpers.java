@@ -51,6 +51,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.icu.text.Collator;
+
 /**
  * Static methods that can be used when writing SWT GUI code.
  * They simply make it more productive.
@@ -1100,7 +1102,8 @@ public class SystemWidgetHelpers {
 	 * 
 	 * A system type is considered valid, if at least one subsystem
 	 * configuration is registered against it. The list is ordered
-	 * alphabetically by system type label.
+	 * alphabetically by system type label according to international
+	 * unicode rules, in the current Locale.
 	 * 
 	 * @param restrictIds An array of system type IDs to restrict the
 	 *    returned list of valid system types to only those requested,
@@ -1140,23 +1143,19 @@ public class SystemWidgetHelpers {
 	 * type label.
 	 *  
 	 * Note that this method sorts the array in place, so clients are 
-	 * responsible for creating a copy of the array when needed. In the
-	 * future, this may sort using an internationalization enabled
-	 * collate algorithm for translated labels (currently, normal
-	 * String compare is used).
+	 * responsible for creating a copy of the array when needed. 
+	 * Labels are sorted with a Collator according to international
+	 * unicode rules, in the current Locale.
 	 * 
 	 * @param systemTypes list of system types to sort
 	 */
 	public static void sortSystemTypesByLabel(IRSESystemType[] systemTypes) {
 		Arrays.sort(systemTypes, new Comparator() {
+			private Collator collator = Collator.getInstance();
 			public int compare(Object o1, Object o2) {
-				String l1 = ((IRSESystemType)o1).getLabel();
-				String l2 = ((IRSESystemType)o2).getLabel();
-				//FIXME use com.ibm.icu.text.Collator.getInstance(Locale)
-				return l1.compareTo(l2);
-			}
-			public boolean equals(Object obj) {
-				return this==obj;
+				IRSESystemType t1 = (IRSESystemType)o1;
+				IRSESystemType t2 = (IRSESystemType)o2;
+				return collator.compare(t1.getLabel(), t2.getLabel());
 			}
 		});
 	}

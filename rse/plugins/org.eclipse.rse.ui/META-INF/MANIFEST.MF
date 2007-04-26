@@ -15,6 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.rse.core
+Import-Package: com.ibm.icu.text
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.core,
  org.eclipse.rse.core.comm,

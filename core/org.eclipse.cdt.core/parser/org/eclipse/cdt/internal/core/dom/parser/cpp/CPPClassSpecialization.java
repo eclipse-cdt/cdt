@@ -75,18 +75,21 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	 */
 	public ICPPBase[] getBases() throws DOMException {
 		if( getDefinition() == null ){
+			ICPPBase[] result = null;
 			ICPPBase[] bindings = ((ICPPClassType)getSpecializedBinding()).getBases();
 			for (int i = 0; i < bindings.length; i++) {
+				ICPPBase specBinding = (ICPPBase) ((ICPPInternalBase)bindings[i]).clone();
     		    IBinding base = bindings[i].getBaseClass();
-    		    if (bindings[i] instanceof CPPBaseClause && base instanceof IType) {
+    		    if (base instanceof IType) {
     		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
     		    	specBase = CPPSemantics.getUltimateType(specBase, false);
-    		    	if (specBase instanceof ICPPClassType) {
-    		    		((CPPBaseClause)bindings[i]).setBaseClass((ICPPClassType)specBase);
+    		    	if (specBase instanceof IBinding) {
+    		    		((ICPPInternalBase)specBinding).setBaseClass((IBinding)specBase);
     		    	}
+    		    	result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBinding);
     		    }
 			}
-			return bindings;
+			return (ICPPBase[]) ArrayUtil.trim(ICPPBase.class, result);
         }
 		
 		ICPPASTBaseSpecifier[] bases = getCompositeTypeSpecifier().getBaseSpecifiers();

@@ -16,16 +16,18 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  */
-class PDOMCPPBase implements ICPPBase {
+class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 
 	private static final int BASECLASS_SPECIFIER = 0;
 	private static final int NEXTBASE = 4;
@@ -126,15 +128,25 @@ class PDOMCPPBase implements ICPPBase {
 		pdom.getDB().free(record);
 	}
 	
-	private static class PDOMCPPBaseSpecialization implements ICPPBase {
-		private PDOMCPPBase base;
-		private IBinding baseClass;
+	public void setBaseClass(IBinding binding) {
+		throw new PDOMNotImplementedError();
+	}
+	
+	public Object clone() {
+		return new PDOMCPPBaseClone(this);
+	}
+	
+	private static class PDOMCPPBaseClone implements ICPPBase, ICPPInternalBase {
+		private ICPPBase base;
+		private IBinding baseClass = null;
 		
-		public PDOMCPPBaseSpecialization(PDOMCPPBase base, IBinding baseClass) {
+		public PDOMCPPBaseClone(ICPPBase base) {
 			this.base = base;
-			this.baseClass = baseClass;
 		}
 		public IBinding getBaseClass() throws DOMException {
+			if (baseClass == null) {
+				return base.getBaseClass();
+			}
 			return baseClass;
 		}
 		public IName getBaseClassSpecifierName() {
@@ -146,9 +158,11 @@ class PDOMCPPBase implements ICPPBase {
 		public boolean isVirtual() throws DOMException {
 			return base.isVirtual();
 		}
-	}
-	
-	public ICPPBase createSpecialization(IBinding baseClass) {
-		return new PDOMCPPBaseSpecialization(this, baseClass);
+		public void setBaseClass(IBinding binding) {
+			baseClass = binding;
+		}
+		public Object clone() {
+			return new PDOMCPPBaseClone(this);
+		}
 	}
 }

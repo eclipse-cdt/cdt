@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -85,13 +86,16 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 			ICPPBase[] result = null;
 			
 			for (int i = 0; i < pdomBases.length; i++) {
-				PDOMCPPBase pdomBase = (PDOMCPPBase) pdomBases[i];
-				IType type = (IType) pdomBase.getBaseClass();
-				type = CPPTemplates.instantiateType(type, getArgumentMap());
-				type = CPPSemantics.getUltimateType(type, false);
-				if (type instanceof IBinding) {
-					result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result,
-							pdomBase.createSpecialization((IBinding) type));
+				ICPPBase origBase = pdomBases[i];
+				ICPPBase specBase = (ICPPBase) ((ICPPInternalBase)origBase).clone();
+				IBinding origClass = origBase.getBaseClass();
+				if (origClass instanceof IType) {
+					IType specClass = CPPTemplates.instantiateType((IType) origClass, getArgumentMap());
+					specClass = CPPSemantics.getUltimateType(specClass, true);
+					if (specClass instanceof IBinding) {
+						((ICPPInternalBase)specBase).setBaseClass((IBinding) specClass);
+					}
+					result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBase);
 				}
 			}
 			

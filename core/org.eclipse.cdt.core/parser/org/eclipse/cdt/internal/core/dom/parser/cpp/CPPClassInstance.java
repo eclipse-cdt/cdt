@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
@@ -54,18 +55,21 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	public ICPPBase[] getBases() throws DOMException {
 		ICPPClassType cls = (ICPPClassType) getSpecializedBinding();
 		if( cls != null ){
+			ICPPBase[] result = null;
 			ICPPBase [] bindings = cls.getBases();
 			for (int i = 0; i < bindings.length; i++) {
+				ICPPBase specBinding = (ICPPBase) ((ICPPInternalBase)bindings[i]).clone();
     		    IBinding base = bindings[i].getBaseClass();
-    		    if (bindings[i] instanceof CPPBaseClause && base instanceof IType) {
+    		    if (base instanceof IType) {
     		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
     		    	specBase = CPPSemantics.getUltimateType(specBase, false);
-    		    	if (specBase instanceof ICPPClassType) {
-    		    		((CPPBaseClause)bindings[i]).setBaseClass((ICPPClassType)specBase);
+    		    	if (specBase instanceof IBinding) {
+    		    		((ICPPInternalBase)specBinding).setBaseClass((IBinding)specBase);
     		    	}
+    		    	result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBinding);
     		    }
 			}
-			return bindings;
+			return (ICPPBase[]) ArrayUtil.trim(ICPPBase.class, result);
 		}
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}

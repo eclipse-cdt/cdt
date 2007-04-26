@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -47,28 +48,43 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
+	private class CPPBaseDelegate implements ICPPBase, ICPPInternalBase {
+		private ICPPBase base;
+		
+		CPPBaseDelegate(ICPPBase b) {
+			this.base = b;
+		}
+		
+		public IBinding getBaseClass() throws DOMException {
+			return cf.getCompositeBinding((IIndexFragmentBinding)base.getBaseClass());
+		}
+
+		public IName getBaseClassSpecifierName() {
+			return base.getBaseClassSpecifierName();
+		}
+
+		public int getVisibility() throws DOMException {
+			return base.getVisibility();
+		}
+
+		public boolean isVirtual() throws DOMException {
+			return base.isVirtual();
+		}
+
+		public void setBaseClass(IBinding binding) throws DOMException {
+			((ICPPInternalBase)base).setBaseClass(binding);
+		}
+		
+	    public Object clone(){
+	    	return ((ICPPInternalBase)base).clone();
+	    }
+	}
+	
 	public ICPPBase[] getBases() throws DOMException {
 		final ICPPBase[] preresult = ((ICPPClassType)rbinding).getBases();
 		ICPPBase[] result = new ICPPBase[preresult.length];
 		for(int i=0; i<preresult.length; i++) {
-			final int n = i;
-			result[i] = new ICPPBase() {
-				public IBinding getBaseClass() throws DOMException {
-					return cf.getCompositeBinding((IIndexFragmentBinding)preresult[n].getBaseClass());
-				}
-
-				public int getVisibility() throws DOMException {
-					return preresult[n].getVisibility();
-				}
-
-				public boolean isVirtual() throws DOMException {
-					return preresult[n].isVirtual();
-				}
-				
-				public IName getBaseClassSpecifierName() {
-					return preresult[n].getBaseClassSpecifierName();
-				}
-			};
+			result[i] = new CPPBaseDelegate(preresult[i]);
 		}
 		return result;
 	}

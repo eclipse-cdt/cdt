@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *	   Bryan Wilkinson (QNX)
  *******************************************************************************/
 
 /*
@@ -30,8 +31,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 /**
  * @author aniefer
  */
-public class CPPBaseClause implements ICPPBase {
-    static public class CPPBaseProblem extends ProblemBinding implements ICPPBase {
+public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
+    static public class CPPBaseProblem extends ProblemBinding implements ICPPBase, ICPPInternalBase {
     	private ICPPClassType classProblem = null; 
         public CPPBaseProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
@@ -52,6 +53,9 @@ public class CPPBaseClause implements ICPPBase {
         }
 		public IName getBaseClassSpecifierName() {
 			return (IName) node;
+		}
+		public void setBaseClass(IBinding binding) throws DOMException {
+			throw new DOMException( this );
 		}
     }
     private ICPPASTBaseSpecifier base = null;
@@ -107,7 +111,7 @@ public class CPPBaseClause implements ICPPBase {
         return base.isVirtual();
     }
 
-	public void setBaseClass(ICPPClassType cls) {
+	public void setBaseClass(IBinding cls) {
 		baseClass = cls;
 	}
 
@@ -115,4 +119,13 @@ public class CPPBaseClause implements ICPPBase {
 		return base.getName();
 	}
 
+    public Object clone(){
+        ICPPBase t = null;
+   		try {
+            t = (ICPPBase) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

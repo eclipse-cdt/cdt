@@ -12,6 +12,8 @@ package org.eclipse.cdt.ui.wizards;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+
 /**
  * This class stores data for each tree item
  * in "Project types" tree of New Project Wizard.
@@ -62,7 +64,11 @@ public class EntryDescriptor {
 	public String getPath() { 
 		return path; 
 	}
-	
+
+	public String[] getPathArray() { 
+		return CDataUtil.stringToArray(path, "/");  //$NON-NLS-1$
+	}
+
 	public void setParent(EntryDescriptor p) { 
 		parent = p; 
 	}

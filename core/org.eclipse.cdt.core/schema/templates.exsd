@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="templates" name="Template Extension point"/>
+      </appInfo>
+      <documentation>
+         This templates extension point facilitates the users to contribute their Template XMLs to the Template Engine plugin.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <documentation>
+            Extension point added to Template Engine plugin.  Any plugin, which intends to contribute XML templates to Temaplate Engine has to extend this extension point, and add template element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="template" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  Id for the extension in the extender plugin.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Optional name attribute.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="template">
+      <annotation>
+         <documentation>
+            By adding the templates extension point the users can contribute there Template XMLs to the Template Engine plugin.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="toolChain" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="location" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The location of the template(relative within the extender plugin).
+This is a must enter, attribute.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="filterPattern" type="string">
+            <annotation>
+               <documentation>
+                  Any filterPatter associated with this Template to be used by TemplateEngine.
+This is an optional attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="usageDescription" type="string">
+            <annotation>
+               <documentation>
+                  A notation describing how this template is used. Usually used to filter the list of templates on offer depending on other wizard attributes.
+This is an optional attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pagesAfterTemplateSelectionProvider" type="string">
+            <annotation>
+               <documentation>
+                  A class that implements org.eclipse.cdt.templateengine.IPagesAfterTemplateSelectionProvider interface to create pages that will be appended to the pages returned from TemplatesChoiceWizard.getPagesAfterTemplateSelection().
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.templateengine.IPagesAfterTemplateSelectionProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="isCategory" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="projectType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="toolChain">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         This extension point was added in CDT 4.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of the extension point usage:
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         id=&quot;simpleEXETemplateExample&quot;
+         name=&quot;Simple EXE Template Example&quot;
+         point=&quot;org.eclipse.cdt.templateengine.templates&quot;&gt;
+      &lt;template 
+            filterPattern=&quot;.*&quot;
+            usageDescription=&quot;Simple EXE&quot;
+            location=&quot;templates/org/eclipse/cdt/templates/projecttemplates/Simple EXE/template.xml&quot;
+            projectType=&quot;org.eclipse.cdt.build.projectType.exe&quot;
+            wizardId=&quot;org.eclipse.cdt.templates.ui.NewManagedProjectWizard&quot;&gt;
+      &lt;/template&gt; 
+   &lt;/extension&gt;
+&lt;/pre&gt;            
+
+For more details on how to define your own templates, please check examples provided under
+&lt;samp&gt;org.eclipse.cdt.templates&lt;/samp&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         An implementation of this extension point is supplied in &lt;samp&gt;org.eclipse.cdt.templateengine&lt;/samp&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2007 Symbian Software Limited and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+Symbian - Initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

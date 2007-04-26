@@ -22,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
+import org.eclipse.cdt.utils.ui.controls.FileListControl;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;

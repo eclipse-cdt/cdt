@@ -9,17 +9,12 @@
  *     BitMethods Inc - initial API and implementation
  *     Sascha Radike <sradike@ejectlag.com> - Support for workspace browsing and small improvements
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.properties;
+package org.eclipse.cdt.utils.ui.controls;
 
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.ui.newui.CDTStatusInfo;
-import org.eclipse.cdt.ui.newui.UIMessages;
-import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;
-import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -63,12 +58,25 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
+import org.eclipse.cdt.ui.CDTUIImages;
+import org.eclipse.cdt.ui.newui.CDTStatusInfo;
+import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;
+import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
+
 /**
  * Instances of this class allow the user to add,remove, delete, moveup and movedown
  * the items in the list control.
  */
 
 public class FileListControl {
+
+	// Browse type values
+	//  (copied from IOption to fix the dependency on MBS ui plugins issue)
+	private static final int BROWSE_NONE = 0;
+	private static final int BROWSE_FILE = 1;
+	private static final int BROWSE_DIR = 2;
+
 	/**
 	 * Multi-purpose dialog to prompt the user for a value, path, or file.
 	 * 
@@ -88,14 +96,13 @@ public class FileListControl {
 		 * @param validator
 		 * @param browseType
 		 */
-		public SelectPathInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator, int type) {
+		public SelectPathInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator, int browseType) {
 			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
-			this.type = type;
+			this.type = browseType;
 		}
 		
 		/**
 		 * Returns true if the value has been set by a browse dialog. 
-		 * @return
 		 */
 		public boolean isValueSetByBrowse() {
 			return fSetByBrowseDialog;
@@ -108,7 +115,7 @@ public class FileListControl {
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			
-			if (((type == IOption.BROWSE_DIR) || (type == IOption.BROWSE_FILE)
+			if (((type == BROWSE_DIR) || (type == BROWSE_FILE)
 					) && (fWorkspaceSupport)) {
 
 				/* Browse button for workspace folders/files */
@@ -162,7 +169,7 @@ public class FileListControl {
 		                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
 		                dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 						
-						if (type == IOption.BROWSE_DIR)	{
+						if (type == BROWSE_DIR)	{
 							IResource container = null;
 							if(path.isAbsolute()){
 								IContainer cs[] = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(path);
@@ -221,7 +228,7 @@ public class FileListControl {
 				});
 			}
 			
-			if (type != IOption.BROWSE_NONE) {
+			if (type != BROWSE_NONE) {
 				/* Browse button for external directories/files */
 				final Button externalButton = createButton(parent, 4, FILESYSTEMBUTTON_NAME, false);
 				externalButton.addSelectionListener(new SelectionAdapter() {
@@ -229,7 +236,7 @@ public class FileListControl {
 						String currentName;
 						String result;
 						switch (type) {
-							case IOption.BROWSE_DIR :
+							case BROWSE_DIR :
 								DirectoryDialog dialog = new DirectoryDialog(getParentShell(), 
 										SWT.OPEN|SWT.APPLICATION_MODAL);
 								currentName = getText().getText();
@@ -243,7 +250,7 @@ public class FileListControl {
 									getText().setText(result);
 								}
 								break;
-							case IOption.BROWSE_FILE:
+							case BROWSE_FILE:
 								FileDialog browseDialog = new FileDialog(getParentShell());
 								currentName = getText().getText();
 								if (currentName != null && currentName.trim().length() != 0) {
@@ -318,23 +325,23 @@ public class FileListControl {
 	private String oldValue[];
 	
 	//images
-	private final Image IMG_ADD = ManagedBuilderUIImages
-			.get(ManagedBuilderUIImages.IMG_FILELIST_ADD);
-	private final Image IMG_DEL = ManagedBuilderUIImages
-			.get(ManagedBuilderUIImages.IMG_FILELIST_DEL);
-	private final Image IMG_EDIT = ManagedBuilderUIImages
-			.get(ManagedBuilderUIImages.IMG_FILELIST_EDIT);
-	private final Image IMG_MOVEUP = ManagedBuilderUIImages
-			.get(ManagedBuilderUIImages.IMG_FILELIST_MOVEUP);
-	private final Image IMG_MOVEDOWN = ManagedBuilderUIImages
-			.get(ManagedBuilderUIImages.IMG_FILELIST_MOVEDOWN);
+	private final Image IMG_ADD = CDTUIImages
+			.get(CDTUIImages.IMG_FILELIST_ADD);
+	private final Image IMG_DEL = CDTUIImages
+			.get(CDTUIImages.IMG_FILELIST_DEL);
+	private final Image IMG_EDIT = CDTUIImages
+			.get(CDTUIImages.IMG_FILELIST_EDIT);
+	private final Image IMG_MOVEUP = CDTUIImages
+			.get(CDTUIImages.IMG_FILELIST_MOVEUP);
+	private final Image IMG_MOVEDOWN = CDTUIImages
+			.get(CDTUIImages.IMG_FILELIST_MOVEDOWN);
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param parent
 	 * @param compTitle
-	 * @param browseType
+	 * @param type
 	 */
 	public FileListControl(Composite parent, String compTitle, int type) {
 		// Default to no browsing
@@ -519,8 +526,6 @@ public class FileListControl {
 	}
 	/**
 	 * get list items
-	 * 
-	 * @return
 	 */
 	public String[] getItems() {
 		return list.getItems();
@@ -586,7 +591,7 @@ public class FileListControl {
 	 */
 	private void removePressed() {
 		int index = list.getSelectionIndex();
-		if (browseType == IOption.BROWSE_DIR || browseType == IOption.BROWSE_FILE) {
+		if (browseType == BROWSE_DIR || browseType == BROWSE_FILE) {
 			String quest = UIMessages.getString("FileListControl.deletedialog.message"); //$NON-NLS-1$
 			String title = UIMessages.getString("FileListControl.deletedialog.title"); //$NON-NLS-1$
 			boolean delDir = MessageDialog.openQuestion(list.getShell(), title,
@@ -639,12 +644,12 @@ public class FileListControl {
 				 * IOption.BROWSE_FILE. Use simple input dialog otherwise.
 				 */
 				InputDialog dialog;
-				if ((browseType == IOption.BROWSE_DIR) ||
-						(browseType == IOption.BROWSE_FILE)) {
+				if ((browseType == BROWSE_DIR) ||
+						(browseType == BROWSE_FILE)) {
 
 					String title;
 					String message;
-					if (browseType == IOption.BROWSE_DIR) {
+					if (browseType == BROWSE_DIR) {
 						title = DIR_TITLE_EDIT;
 						message = DIR_MSG;
 					} else {
@@ -698,8 +703,6 @@ public class FileListControl {
 	}
 	/**
 	 * Returns List control
-	 * 
-	 * @return
 	 */
 	public List getListControl() {
 		return list;
@@ -733,7 +736,6 @@ public class FileListControl {
 
 	/**
 	 * Set the field editor context.
-	 * @param project
 	 */
 	public void setContext(IVariableContextInfo info) {
 		contextInfo = info;
@@ -750,8 +752,6 @@ public class FileListControl {
 
 	/**
 	 * Returns the input dialog string
-	 * 
-	 * @return
 	 */
 	private String getNewInputObject() {
 		// Create a dialog to prompt for a new list item
@@ -760,11 +760,11 @@ public class FileListControl {
 		String message = new String();
 		String initVal = new String();
 		
-		if (browseType == IOption.BROWSE_DIR) {
+		if (browseType == BROWSE_DIR) {
 			title = DIR_TITLE_ADD;
 			message = DIR_MSG;
 			initVal = (path == null ? initVal : path.toString());
-		} else if (browseType == IOption.BROWSE_FILE) {
+		} else if (browseType == BROWSE_FILE) {
 			title = FILE_TITLE_ADD;
 			message = FILE_MSG;
 			initVal = (path == null ? initVal : path.toString());
@@ -781,8 +781,8 @@ public class FileListControl {
 		
 		/* Double-quote (if required) the text if it is a directory or file */
 		if (input != null && input.length() > 0) {
-			if (browseType == IOption.BROWSE_DIR ||
-					browseType == IOption.BROWSE_FILE) {
+			if (browseType == BROWSE_DIR ||
+					browseType == BROWSE_FILE) {
 				input = doubleQuotePath(input);
 			}
 		}

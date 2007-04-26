@@ -1,0 +1,66 @@
+/*******************************************************************************
+ * Copyright (c) 2007 Symbian Software Limited and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Bala Torati (Symbian) - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.core.templateengine.process;
+
+import java.util.List;
+
+public class ProcessFailureException extends Exception {
+	private static final long serialVersionUID = 1766239661286962870L;
+	private List/*<IStatus>*/ statuses;
+
+	/**
+	 * Constructor based on the msg.
+	 * @param msg
+	 */
+	public ProcessFailureException(String msg) {
+		super(msg);
+	}
+
+	/**
+	 * Constructor based on the msg and cause.
+	 * @param cause
+	 */
+	public ProcessFailureException(Throwable cause) {
+		super(cause);
+	}
+	
+	/**
+	 * Constructor based on the msg and cause.
+	 * @param msg
+	 * @param cause
+	 */
+	public ProcessFailureException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
+	/**
+	 * Constructor based on the msg and causes.
+	 * @param msg
+	 * @param statuses
+	 */
+	public ProcessFailureException(String msg, List/*<IStatus>*/ statuses) {
+		super(msg);
+		this.statuses = statuses;
+	}
+
+	public ProcessFailureException(String msg, Throwable cause, List/*<IStatus>*/ statuses) {
+		super(msg, cause);
+		this.statuses = statuses;
+	}
+
+	/**
+	 * Returns the Statuses.
+	 * @return   List, contains the IStatus.
+	 */
+	public List/*<IStatus>*/ getStatuses() {
+		return statuses;
+	}
+}

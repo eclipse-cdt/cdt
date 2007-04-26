@@ -209,6 +209,8 @@ implements IExecutableExtension, IWizardWithMemory
 	
     public boolean canFinish() {
     	if (fMainPage.h_selected != null) {
+    		if(!fMainPage.h_selected.canFinich())
+    			return false;
     		String s = fMainPage.h_selected.getErrorMessage();
     		if (s != null) return false;
     	}

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 rel. 3 U (http://www.altova.com) by Bala Torati (Symbian) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:element name="template">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="property-group" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="item" minOccurs="0" maxOccurs="unbounded">
+											<xsd:complexType>
+												<xsd:attribute name="label" type="xsd:string"/>
+												<xsd:attribute name="selected">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:boolean">
+															<xsd:pattern value="true|false"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:attribute>
+												<xsd:attribute name="name" type="xsd:string"/>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+									<xsd:attribute name="id">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:pattern value="[a-zA-Z0-9.]*"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="label">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:pattern value="[a-zA-Z0-9 ]*"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="description" type="xsd:string"/>
+									<xsd:attribute name="type">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="input"/>
+												<xsd:enumeration value="multiline"/>
+												<xsd:enumeration value="select"/>
+												<xsd:enumeration value="boolean"/>
+												<xsd:enumeration value="stringlist"/>
+												<xsd:enumeration value="speciallist"/>
+												<xsd:enumeration value="browse"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="default" type="xsd:string"/>
+									<xsd:attribute name="pattern" type="xsd:string"/>
+									<xsd:attribute name="size">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:integer">
+												<xsd:pattern value="[0-9]*"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="checkproject" use="optional" default="false">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:boolean">
+												<xsd:pattern value="true|false"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="persist" default="false">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:boolean">
+												<xsd:pattern value="true|false"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="hidden" default="false">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:boolean">
+												<xsd:pattern value="true|false"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+									<xsd:attribute name="mandatory" default="false">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:boolean">
+												<xsd:pattern value="true|false"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+						<xsd:attribute name="id">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:pattern value="[a-zA-Z0-9_.]*"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:attribute>
+						<xsd:attribute name="label" type="xsd:string"/>
+						<xsd:attribute name="description" type="xsd:string"/>
+						<xsd:attribute name="type">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:pattern value="[A-Z]*-[A-Z]*"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:attribute>
+						<xsd:attribute name="branding-icon">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:pattern value="([/][a-zA-Z0-9]*[/])?[a-zA-Z0-9]*[\\.][a-zA-Z]*"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:attribute>
+						<xsd:attribute name="help">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:pattern value="[a-zA-Z.]*"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+				<!-- End of Property-Group Element-->
+				<xsd:element name="if" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="process" maxOccurs="unbounded"/>
+						</xsd:sequence>
+						<xsd:attribute name="condition" type="xsd:string" use="optional"/>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="process" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:string"/>
+			<xsd:attribute name="type" type="xsd:string"/>
+			<xsd:attribute name="version" type="xsd:string"/>
+			<xsd:attribute name="supplier" type="xsd:string"/>
+			<xsd:attribute name="revision" type="xsd:string"/>
+			<xsd:attribute name="author" type="xsd:string"/>
+			<xsd:attribute name="copyright" type="xsd:string" use="optional"/>
+			<xsd:attribute name="label" type="xsd:string"/>
+			<xsd:attribute name="description" type="xsd:string"/>
+			<xsd:attribute name="help" type="xsd:string" use="optional"/>
+			<xsd:attribute name="preview-icon" use="optional">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="([/][a-zA-Z0-9]*[/])?[a-zA-Z0-9]*[\\.][a-zA-Z]*"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="simple">
+		<xsd:complexType>
+			<xsd:attribute name="name" use="required"/>
+			<xsd:attribute name="value" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="simple-array">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="element" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:attribute name="value" use="required"/>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="name" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="complex">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element ref="simple"/>
+					<xsd:element ref="simple-array"/>
+					<xsd:element ref="complex"/>
+					<xsd:element ref="complex-array"/>
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:attribute name="name" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="process">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element ref="simple"/>
+					<xsd:element ref="simple-array"/>
+					<xsd:element ref="complex"/>
+					<xsd:element ref="complex-array"/>
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:attribute name="type" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="complex-array">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="element" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:choice maxOccurs="unbounded">
+								<xsd:element ref="simple"/>
+								<xsd:element ref="simple-array"/>
+								<xsd:element ref="complex"/>
+								<xsd:element ref="complex-array"/>
+							</xsd:choice>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="name" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

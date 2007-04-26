@@ -7,7 +7,8 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
- *******************************************************************************/package org.eclipse.cdt.managedbuilder.ui.wizards;
+ *******************************************************************************/
+package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,5 +56,22 @@ public abstract class AbstractCWizard implements ICNewWizard {
 		}
 		return true; // No platform: nothing to check 
 	}
+
+/* comment it out for now..
+	protected boolean isSupportedForTemplate(TemplateInfo templateInfo, IToolChain tc) {
+		String[] tcIds = templateInfo.getToolChainIds();
+		if (tcIds.length != 0) {
+			for (int i=0; i< tcIds.length; i++) {
+				if (tcIds[i].equals(tc.getId()) || tcIds[i].equals(tc.getSuperClass().getId())) {
+					return true;
+				}
+			}
+			return false;
+		} else { 
+			return true;
+		}
+	}
+*/	
+	
 
 }

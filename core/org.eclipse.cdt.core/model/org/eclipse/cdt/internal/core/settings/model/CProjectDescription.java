@@ -116,7 +116,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			if(cfg.getProjectDescription() != CProjectDescription.this)
 				throw new IllegalArgumentException();
 
-			if(!fCfg.getId().equals(getId()))
+			if(!cfg.getId().equals(getId()))
 				return;
 
 			fIsModified = true;

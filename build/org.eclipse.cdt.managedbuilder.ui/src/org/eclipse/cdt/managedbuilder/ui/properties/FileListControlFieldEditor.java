@@ -20,6 +20,8 @@ import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
+import org.eclipse.cdt.utils.ui.controls.FileListControl;
+import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;

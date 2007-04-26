@@ -11,9 +11,11 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -22,6 +24,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -35,6 +38,11 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.cdt.ui.templateengine.Template;
+import org.eclipse.cdt.ui.templateengine.TemplateEngineUI;
+import org.eclipse.cdt.ui.templateengine.TemplateEngineUIUtil;
+import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
+import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
@@ -79,7 +87,123 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 	protected CDTConfigWizardPage fConfigPage;
 	private IToolChain[] savedToolChains = null;
 	private IWizard wizard;
-	private EntryDescriptor entryDescriptor = null;
+	private IWizardPage startingPage;
+//	private EntryDescriptor entryDescriptor = null;
+	private EntryInfo entryInfo; 
+	
+	protected static final class EntryInfo {
+		private EntryDescriptor entryDescriptor;
+		private Template template;
+		private boolean initialized;
+		private boolean isValid;
+		private String projectTypeId;
+		private String templateId;
+		private IWizardPage[] templatePages;
+		private IWizardPage predatingPage;
+		private IWizardPage followingPage;
+		
+		public EntryInfo(EntryDescriptor dr){
+			entryDescriptor = dr;
+		}
+		
+		public boolean isValid(){
+			initialize();
+			return isValid;
+		}
+
+		public Template getTemplate(){
+			initialize();
+			return template;
+		}
+		
+		public EntryDescriptor getDescriptor(){
+			return entryDescriptor;
+		}
+
+		private void initialize(){
+			if(initialized)
+				return;
+			
+			do {
+				if(entryDescriptor == null)
+					break;
+				String path[] = entryDescriptor.getPathArray();
+				if(path == null || path.length == 0)
+					break;
+			
+				projectTypeId = path[0];
+				if(path.length > 1){
+					templateId = path[path.length - 1]; 
+					Template templates[] = TemplateEngineUI.getDefault().getTemplates(projectTypeId);
+					if(templates.length == 0)
+						break;
+					
+					for(int i = 0; i < templates.length; i++){
+						if(templates[i].getTemplateId().equals(templateId)){
+							template = templates[i];
+							break;
+						}
+					}
+					
+					if(template == null)
+						break;
+				}
+				
+				isValid = true;
+			} while(false);
+
+			initialized = true;
+		}
+		
+		public Template getInitializedTemplate(IWizardPage predatingPage, IWizardPage followingPage, Map map){
+			getNextPage(predatingPage, followingPage);
+			
+			Template template = getTemplate();
+			
+			if(template != null){
+				Map/*<String, String>*/ valueStore = template.getValueStore();
+//				valueStore.clear();
+				for(int i=0; i < templatePages.length; i++) {
+					IWizardPage page = templatePages[i];
+					if (page instanceof UIWizardPage)
+						valueStore.putAll(((UIWizardPage)page).getPageData());
+				}
+				if (map != null) {
+					valueStore.putAll(map);
+				}
+			}
+			return template;
+		}
+		
+		public IWizardPage getNextPage(IWizardPage predatingPage, IWizardPage followingPage) {
+			initialize();
+			if(this.templatePages == null 
+					|| this.predatingPage != predatingPage 
+					|| this.followingPage != followingPage){
+				this.predatingPage = predatingPage;
+				this.followingPage = followingPage;
+				if (template != null) {
+					this.templatePages = template.getTemplateWizardPages(predatingPage, followingPage, predatingPage.getWizard());
+				} else {
+					templatePages = new IWizardPage[0];
+					followingPage.setPreviousPage(predatingPage);
+				}
+			}
+			
+			if(templatePages.length != 0)
+				return templatePages[0];
+			return followingPage;
+		}
+		
+		public boolean canFinish(IWizardPage predatingPage, IWizardPage followingPage){
+			getNextPage(predatingPage, followingPage);
+			for(int i = 0; i < templatePages.length; i++){
+				if(!templatePages[i].isPageComplete())
+					return false;
+			}
+			return true;
+		}
+	}
 	
 	public MBSWizardHandler(IProjectType _pt, Composite p, IWizard w) {
 		super(p, Messages.getString("CWizardHandler.0"), _pt.getName()); //$NON-NLS-1$
@@ -102,7 +226,41 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 			if (w.getStartingPage() instanceof IWizardItemsListListener)
 				listener = (IWizardItemsListListener)w.getStartingPage();
 			wizard = w;
+			startingPage = w.getStartingPage();
 		}
+	}
+	
+	protected IWizardPage getStartingPage(){
+		return startingPage;
+	}
+	
+	public Map getMainPageData() {
+		CDTMainWizardPage page = (CDTMainWizardPage)getStartingPage();
+		Map data = new HashMap();
+		String projName = page.getProjectName();
+		projName = projName != null ? projName.trim() : "";  //$NON-NLS-1$ 
+		data.put("projectName", projName); //$NON-NLS-1$
+		data.put("baseName", getBaseName(projName)); //$NON-NLS-1$
+		data.put("baseNameUpper", getBaseName(projName).toUpperCase() ); //$NON-NLS-1$
+		data.put("baseNameLower", getBaseName(projName).toLowerCase() ); //$NON-NLS-1$
+		String location = page.getProjectLocationPath();
+		if(location == null)
+			location = "";  //$NON-NLS-1$
+		data.put("location", location); //getProjectLocation().toPortableString()); //$NON-NLS-1$
+		return data;
+	}
+	
+	private String getBaseName(String name) {
+		String baseName = name;
+		int dot = baseName.lastIndexOf('.');
+		if (dot != -1) {
+			baseName = baseName.substring(dot + 1);
+		}
+		dot = baseName.indexOf(' ');
+		if (dot != -1) {
+			baseName = baseName.substring(0, dot);
+		}
+		return baseName;
 	}
 	
 	public void handleSelection() {
@@ -175,7 +333,7 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		if (defaults) {
 			cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
 		} else {
-			getSpecificPage(); // ensure that page is created
+			getConfigPage(); // ensure that page is created
 			cfgs = fConfigPage.getCfgItems(defaults);
 			if (cfgs == null || cfgs.length == 0) 
 				cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
@@ -225,14 +383,34 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		if (fConfigPage != null && fConfigPage.pagesLoaded)
 			doCustom();
 	}
-
-	protected void doPostProcess(IProject prj) {}
 	
-	public IWizardPage getSpecificPage() {
+	protected void doPostProcess(IProject prj) {
+		if(entryInfo == null)
+			return;
+		
+		Template template = entryInfo.getInitializedTemplate(getStartingPage(), getConfigPage(), getMainPageData());
+		if(template == null)
+			return;
+
+		IStatus[] statuses = template.executeTemplateProcesses(null, false);
+	    if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {
+	    	TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
+	    }
+	}
+	
+	protected CDTConfigWizardPage getConfigPage() {
 		if (fConfigPage == null) {
 			fConfigPage = new CDTConfigWizardPage(this);
 		}
-		return fConfigPage; 
+		return fConfigPage;
+	}
+	
+	public IWizardPage getSpecificPage() {
+		return entryInfo.getNextPage(getStartingPage(), getConfigPage());
+//		if (fConfigPage == null) {
+//			fConfigPage = new CDTConfigWizardPage(this);
+//		}
+//		return fConfigPage; 
 	}
 	
 	/**
@@ -300,7 +478,7 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 		return wizard;
 	}
 	public CfgHolder[] getCfgItems(boolean defaults) {
-		getSpecificPage(); // ensure that page is created
+		getConfigPage(); // ensure that page is created
 		return fConfigPage.getCfgItems(defaults);
 	}
 	public String getErrorMessage() { 
@@ -358,11 +536,16 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 	}
 	
 	public boolean isApplicable(EntryDescriptor data) { 
-		return true; 
+		EntryInfo info = new EntryInfo(data);
+		return info.isValid();
 	}
 	
 	public void initialize(EntryDescriptor data) throws CoreException {
-		entryDescriptor = data;
+		EntryInfo info = new EntryInfo(data);
+		if(!info.isValid())
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), "inappropriate descriptor"));
+		
+		entryInfo = info;
 	}
 
 	/**
@@ -374,6 +557,10 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 	 * Note that full_tcs map should remain unchanged
 	 */
 	protected Set tc_filter(Set full) {
+		if(entryInfo == null)
+			return full;
+		
+		EntryDescriptor entryDescriptor = entryInfo.getDescriptor();
 		if (entryDescriptor == null) 
 			return full;
 		Set out = new LinkedHashSet(full.size());
@@ -406,10 +593,22 @@ public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHan
 			clone.pt = pt;
 			clone.listener = listener;
 			clone.wizard = wizard;
-			clone.entryDescriptor = entryDescriptor; // the same !
+			clone.entryInfo = entryInfo; // the same !
 			clone.fConfigPage = fConfigPage; // the same !
 			clone.full_tcs = full_tcs;       // the same !
 		}
 		return clone;
 	}
+
+	public boolean canFinich() {
+		if(entryInfo == null)
+			return false;
+		
+		if(!entryInfo.canFinish(getStartingPage(), getConfigPage()))
+			return false;
+		
+		return super.canFinich();
+	}
+	
+	
 }

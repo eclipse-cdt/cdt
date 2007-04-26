@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<template type="TestTemplate" version="1.0" supplier="Symbian" revision="1.0" author="Symbian"
+		id="??" label="Add Files test" description="Testing Template Engines AddFiles Process"
+		 help="help.html">
+
+	<process type="org.eclipse.cdt.core.AddFiles">
+		<simple name="projectName" value="$(projectName)"/>
+		<complex-array name="files">
+			<element>
+				<simple name="source" value="Basename.h"/>
+				<simple name="target" value="$(baseName).h"/>
+				<simple name="replaceable" value="true"/>
+			</element>
+			<element>
+				<simple name="source" value="Basename.cpp"/>
+				<simple name="target" value="$(baseName).cpp"/>
+				<simple name="replaceable" value="true"/>
+			</element>
+		</complex-array>
+	</process>
+</template>
+

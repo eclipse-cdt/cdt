@@ -103,5 +103,7 @@ public interface ICWizardHandler extends Cloneable {
 	 */
 	public void initialize(EntryDescriptor data) throws CoreException;
 	
+	public boolean canFinich();
+	
 	public Object clone();
 }

@@ -97,7 +97,8 @@ public class CWizardHandler implements ICWizardHandler {
 	public void postProcess(IProject proj) {}
 	public boolean isApplicable(EntryDescriptor data) { return true; }
 	public void initialize(EntryDescriptor data) throws CoreException {}
-	
+	public boolean canFinich() {return true;}
+
 	public Object clone() {
 		try {
 			CWizardHandler clone = (CWizardHandler)super.clone();

@@ -45,6 +45,7 @@
             class="org.eclipse.cdt.internal.pdom.tests.GeneratePDOMApplicationTest$TestProjectProvider4">
       </ExportProjectProvider>
    </extension>
+   
    <extension
          point="org.eclipse.cdt.core.CConfigurationDataProvider"
          id="testCfgDataProvider">
@@ -61,4 +62,46 @@
          </provider>
    </extension>
    
+   <extension
+         point="org.eclipse.cdt.core.templates">
+      <template
+            filterPattern=".*AddFile"
+            isCategory="true"
+            location="testdata/AddFile.xml"
+            projectType="org.eclipse.cdt.core.tests.projectType">
+      </template>
+      <template
+            filterPattern=".*AddFiles"
+            location="testdata/AddFiles.xml"
+            projectType="org.eclipse.cdt.core.tests.projectType">
+         <toolChain id="org.eclipse.cdt.core.tests.toolChain1"/>
+         <toolChain id="org.eclipse.cdt.core.tests.toolChain2"/>
+      </template>
+      <template
+            filterPattern=".*AddLink"
+            location="testdata/AddLink.xml"
+            projectType="org.eclipse.cdt.core.tests.projectType">
+      </template>
+      <template
+            filterPattern=".*Append"
+            location="testdata/Append.xml"
+            projectType="org.eclipse.cdt.core.tests.projectType"/>
+      <template
+            filterPattern=".*AppendCreate"
+            location="testdata/AppendCreate.xml"
+            projectType="org.eclipse.cdt.core.tests.projectType"/>
+      <template
+            filterPattern=".*Copy"
+            location="testdata/Copy.xml"
+            projectType="org.eclipse.cdt.core.tests.projectType"/>
+      <template
+            filterPattern=".*CreateResourceIdentifier"
+            location="testdata/CreateResourceIdentifier.xml"
+            projectType="org.eclipse.cdt.core.tests.projectType"/>
+      <template
+            filterPattern=".*CreateSourceFolder"
+            location="testdata/CreateSourceFolder.xml"
+            projectType="org.eclipse.cdt.core.tests.projectType"/>
+   </extension>
+
 </plugin>

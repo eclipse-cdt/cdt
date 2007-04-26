@@ -457,5 +457,93 @@
       </builder>
    </extension>
       
+   <extension
+         point="org.eclipse.cdt.core.templateProcessTypes">
+      <processType
+            name="NewManagedProject"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.NewManagedProject">
+         <simple name="name"/>
+         <simple
+               external="true"
+               name="location"
+               nullable="true"/>
+         <simple name="artifactExtension"/>
+         <simple external="true" name="isCProject"/>
+      </processType>
+      <processType
+            name="CreateIncludeFolder"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.CreateIncludeFolder">
+         <simple name="projectName"/>
+         <simple name="path"/>
+      </processType>
+      <processType
+            name="ExcludeResources"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.ExcludeResources">
+         <simple name="projectName"/>
+         <simple name="configIdPattern"/>
+         <simpleArray name="filePatterns"/>
+         <simple name="invertConfigMatching" />
+      </processType>
+      <processType
+            name="SetMBSStringOptionValue"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.SetMBSStringOptionValue">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simple name="value"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="SetMBSStringListOptionValues"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.SetMBSStringListOptionValues">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simpleArray name="values"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+     <processType
+            name="SetMBSBooleanOptionValue"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.SetMBSBooleanOptionValue">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simple name="value"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="AppendToMBSStringOptionValue"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.AppendToMBSStringOptionValue">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simple name="value"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="AppendToMBSStringListOptionValues"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.AppendToMBSStringListOptionValues">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simpleArray name="values"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+   </extension>
 
 </plugin>

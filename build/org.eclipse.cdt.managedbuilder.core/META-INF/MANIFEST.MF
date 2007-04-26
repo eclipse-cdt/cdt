@@ -24,6 +24,8 @@ Export-Package: org.eclipse.cdt.build.core.scannerconfig,
  org.eclipse.cdt.managedbuilder.makegen.internal,
  org.eclipse.cdt.managedbuilder.projectconverter,
  org.eclipse.cdt.managedbuilder.scannerconfig,
+ org.eclipse.cdt.managedbuilder.templateengine,
+ org.eclipse.cdt.managedbuilder.templateengine.processes,
  org.eclipse.cdt.newmake.core
 Require-Bundle: org.eclipse.cdt.core;bundle-version="[4.0.0,5.0.0)",
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",

@@ -77,6 +77,8 @@ public class STDWizardHandler extends MBSWizardHandler {
 			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 		}
 		coreModel.setProjectDescription(project, des);
+		
+		doPostProcess(project);
 	}
 	public boolean canCreateWithoutToolchain() { return true; } 
 	

@@ -91,6 +91,8 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(FailedCompleteParseASTTest.class);
 
+//        suite.addTest(AllTemplateEngineTests.suite());
+
 		return suite;
 	}
 	

@@ -61,18 +61,6 @@ public class ManagedBuilderUIImages {
 	public static final String IMG_BUILD_CAT = NAME_PREFIX + "config-category.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_CAT = createManaged(T_BUILD, IMG_BUILD_CAT);
 	
-	// Image for file list control
-	public static final String IMG_FILELIST_ADD = NAME_PREFIX + "list-add.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FILELIST_ADD = createManaged(T_LIST, IMG_FILELIST_ADD);
-	public static final String IMG_FILELIST_DEL = NAME_PREFIX + "list-delete.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FILELIST_DEL = createManaged(T_LIST, IMG_FILELIST_DEL);
-	public static final String IMG_FILELIST_EDIT = NAME_PREFIX + "list-edit.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FILELIST_EDIT = createManaged(T_LIST, IMG_FILELIST_EDIT);
-	public static final String IMG_FILELIST_MOVEUP = NAME_PREFIX + "list-moveup.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FILELIST_MOVEUP = createManaged(T_LIST, IMG_FILELIST_MOVEUP);
-	public static final String IMG_FILELIST_MOVEDOWN = NAME_PREFIX + "list-movedown.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FILELIST_MOVEDOWN = createManaged(T_LIST, IMG_FILELIST_MOVEDOWN);
-	
 	// new images 
 	public static final String IMG_READ_ONLY = NAME_PREFIX + "read_only.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_READ_ONLY = createManaged(T_OBJ, IMG_READ_ONLY);

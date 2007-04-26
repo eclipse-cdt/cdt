@@ -113,7 +113,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			
 			createDynamicGroup(composite); 
 			
-			switchTo(updateData(tree, right, show_sup, CDTMainWizardPage.this, getWizard()));
+			switchTo(updateData(tree, right, show_sup, CDTMainWizardPage.this, getWizard()),
+					getDescriptor());
 
 			setPageComplete(validatePage());
 	        // Show description on opening
@@ -159,7 +160,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 				public void widgetSelected(SelectionEvent e) {
 					if (h_selected != null)
 						h_selected.setSupportedOnly(show_sup.getSelection());
-					switchTo(updateData(tree, right, show_sup, CDTMainWizardPage.this, getWizard()));
+					switchTo(updateData(tree, right, show_sup, CDTMainWizardPage.this, getWizard()),
+							getDescriptor());
 				}} );
 
 	        // restore settings from preferences
@@ -256,7 +258,11 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	    	if (locationArea.isDefault()) return null;
 	    	return new Path(locationArea.getProjectLocation());
 	    }
-	    
+
+	    public String getProjectLocationPath() {
+	    	return locationArea.getProjectLocation();
+	    }
+
 	    /**
 	     * Returns the value of the project name field
 	     * with leading and trailing spaces removed.
@@ -509,24 +515,42 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 		}
 
 		private void switchTo(ICWizardHandler h, EntryDescriptor ed) {
+
 			if (h == null) h = ed.getHandler();
+
 			try {
-				if (h != null) h.initialize(ed);
+
+			if (h != null && ed != null) h.initialize(ed);
+
 			} catch (CoreException e) { h = null; }
-			switchTo(h);
+
+			if (h_selected != null) h_selected.handleUnSelection();
+
+			h_selected = h;
+
+			if (h == null) return;
+
+			right_label.setText(h_selected.getHeader());
+
+			h_selected.handleSelection();
+
+			h_selected.setSupportedOnly(show_sup.getSelection());
+
 		}
 
-		/**
-		 * @param h - new handler
-		 */
-		private void switchTo(ICWizardHandler h) {
-			if (h_selected != null) h_selected.handleUnSelection();
-			h_selected = h;
-			if (h == null) return;
-			right_label.setText(h_selected.getHeader());
-			h_selected.handleSelection();
-			h_selected.setSupportedOnly(show_sup.getSelection());
+
+		private EntryDescriptor getDescriptor() {
+
+			TreeItem[] sel = tree.getSelection();
+
+			if (sel == null || sel.length == 0) 
+
+			return null;
+
+			return (EntryDescriptor)sel[0].getData(DESC);
+
 		}
+
 		
 		public void toolChainListChanged(int count) {
 			setPageComplete(validatePage());

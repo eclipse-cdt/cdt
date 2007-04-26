@@ -801,4 +801,17 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fASTProvider;
 	}
 		
+	/**
+	 * Answers the <code>Shell</code> associated with the active workbench, or 
+	 * one of the windows associated with the workbench.
+	 */
+	public Shell getShell() {
+		if (getActiveWorkbenchShell() != null) {
+			return getActiveWorkbenchShell();
+		} else {
+			IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+			return windows[0].getShell();
+		}
+	}
+	
 }

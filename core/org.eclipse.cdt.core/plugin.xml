@@ -624,7 +624,89 @@
    </extension>
 
 <!-- =================================================================================== -->
-<!-- Dynamic Variables                                                          -->	
+<!-- Template engine extension points	 -->
 <!-- =================================================================================== -->
+   <extension-point id="templates" name="Templates Extension point" 
+                    schema="schema/templates.exsd"/>
+   <extension-point id="templateProcessTypes" name="Process Types Extension point" schema="schema/templateProcessTypes.exsd"/>
+
+   <extension
+         point="org.eclipse.cdt.core.templateProcessTypes">
+      <processType
+            name="Copy"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.Copy">
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="Append"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.Append">
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="AddFile"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddFile">
+         <simple name="projectName"/>
+         <complex name="file">
+            <simple name="source"/>
+            <simple name="target"/>
+            <simple name="replaceable"/>
+         </complex>
+      </processType>
+      <processType
+            name="AddFiles"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddFiles">
+         <simple name="projectName"/>
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="CreateSourceFolder"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.CreateSourceFolder">
+         <simple name="projectName"/>
+         <simple name="path"/>
+      </processType>
+      <processType
+            name="AddLink"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddLink">
+         <simple name="projectName"/>
+         <simple name="filePath"/>
+         <simple name="targetPath"/>
+      </processType>
+      <processType
+            name="AppendCreate"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AppendCreate">
+         <simple name="projectName"/>
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="CreateResourceIdentifier"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.CreateResourceIdentifier">
+         <simple name="valueName"/>
+         <simple name="appName"/>
+      </processType>
+   </extension>
 
 </plugin>

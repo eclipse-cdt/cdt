@@ -6542,4 +6542,41 @@
          </configuration>
       </projectType>
    </extension>
+   
+   <extension
+         point="org.eclipse.cdt.core.templates">
+      <template
+            filterPattern=".*AppendToMBSStringOptionValue"
+            location="testdata/AppendToMBSStringOptionValue.xml"
+            projectType="org.eclipse.cdt.managedbuilder.core.tests.projectType"/>
+      <template
+            filterPattern=".*AppendToMBSStringListOptionValues"
+            location="testdata/AppendToMBSStringListOptionValues.xml"
+            projectType="org.eclipse.cdt.managedbuilder.core.tests.projectType"/>
+      <template
+            filterPattern=".*CreateIncludeFolder"
+            location="testdata/CreateIncludeFolder.xml"
+            projectType="org.eclipse.cdt.managedbuilder.core.tests.projectType"/>
+      <template
+            filterPattern=".*ExcludeResources"
+            location="testdata/ExcludeResources.xml"
+            projectType="org.eclipse.cdt.managedbuilder.core.tests.projectType"/>
+      <template
+            filterPattern=".*NewManagedProject"
+            location="testdata/NewManagedProject.xml"
+            projectType="org.eclipse.cdt.managedbuilder.core.tests.projectType"/>
+      <template
+            filterPattern=".*SetMBSBooleanOptionValue"
+            location="testdata/SetMBSBooleanOptionValue.xml"
+            projectType="org.eclipse.cdt.managedbuilder.core.tests.projectType"/>
+      <template
+            filterPattern=".*SetMBSStringOptionValue"
+            location="testdata/SetMBSStringOptionValue.xml"
+            projectType="org.eclipse.cdt.managedbuilder.core.tests.projectType"/>
+      <template
+            filterPattern=".*SetMBSStringListOptionValues"
+            location="testdata/SetMBSStringListOptionValues.xml"
+            projectType="org.eclipse.cdt.managedbuilder.core.tests.projectType"/>
+   </extension>
+   
 </plugin>

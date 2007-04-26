@@ -48,7 +48,7 @@
 			<property name="builder" value="${basedir}/sdk"/>
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
-			<property name="builder" value="${basedir}/windows"/>
+			<property name="builder" value="${basedir}/gdbjtag"/>
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
 			<property name="builder" value="${basedir}/platform"/>
@@ -57,7 +57,7 @@
 			<property name="builder" value="${basedir}/sdk"/>
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
-			<property name="builder" value="${basedir}/windows"/>
+			<property name="builder" value="${basedir}/gdbjtag"/>
 		</ant>
 	</target>
 	
@@ -76,7 +76,7 @@
 			<property name="builder" value="${basedir}/sdk" />
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
-			<property name="builder" value="${basedir}/windows" />
+			<property name="builder" value="${basedir}/gdbjtag" />
 		</ant>
 		<concat destfile="${zipsdir}/compilelog.txt">
 			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
@@ -317,13 +317,16 @@
 			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.testing-feature"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/windows/org.eclipse.cdt.windows.build"/>
+			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.debug.gdbjtag"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/windows/org.eclipse.cdt.windows"/>
+			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.debug.gdbjtag.core"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/windows/org.eclipse.cdt.windows-feature"/>
+			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.debug.gdbjtag.ui"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.debug.gdbjtag-feature"/>
 		</antcall>
 	</target>
 </project>

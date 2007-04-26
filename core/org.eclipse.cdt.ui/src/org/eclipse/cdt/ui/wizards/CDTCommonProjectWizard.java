@@ -54,7 +54,8 @@ implements IExecutableExtension, IWizardWithMemory
 	private String wz_title;
 	private String wz_desc;
 	
-	public String lastProjectName = null;
+	private String lastProjectName = null;
+	private IPath lastProjectLocation = null;
 	private ICWizardHandler savedHandler = null;
 
 	protected List localPages = new ArrayList(); // replacing Wizard.pages since we have to delete them
@@ -83,7 +84,9 @@ implements IExecutableExtension, IWizardWithMemory
 	 * @return true if user has changed settings since project creation
 	 */
 	private boolean isChanged() {
-		if (savedHandler != fMainPage.h_selected || !fMainPage.getProjectName().equals(lastProjectName))
+		if (savedHandler != fMainPage.h_selected
+			|| !fMainPage.getProjectName().equals(lastProjectName)
+			|| !fMainPage.getProjectLocation().equals(lastProjectLocation))
 			return true;
 		return savedHandler.isChanged(); 
 	}
@@ -95,6 +98,7 @@ implements IExecutableExtension, IWizardWithMemory
 			savedHandler = fMainPage.h_selected;
 			savedHandler.saveState();
 			lastProjectName = fMainPage.getProjectName();
+			lastProjectLocation = fMainPage.getProjectLocation();
 			// start creation process
 			invokeRunnable(getRunnable(defaults)); 
 		} 
@@ -112,6 +116,7 @@ implements IExecutableExtension, IWizardWithMemory
 		} catch (CoreException ignore) {}
 		newProject = null;
 		lastProjectName = null;
+		lastProjectLocation = null;
 	}
 	
 	private boolean invokeRunnable(IRunnableWithProgress runnable) {
@@ -154,7 +159,7 @@ implements IExecutableExtension, IWizardWithMemory
 				getShell().getDisplay().syncExec(new Runnable() {
 					public void run() { 
 						try {
-							newProject = createIProject(lastProjectName, fMainPage.getProjectLocation());
+							newProject = createIProject(lastProjectName, lastProjectLocation);
 							if (newProject != null) 
 								fMainPage.h_selected.createProject(newProject, defaults);
 						} catch (CoreException e) {	CUIPlugin.getDefault().log(e); }
@@ -221,5 +226,9 @@ implements IExecutableExtension, IWizardWithMemory
      */
 	public String getLastProjectName() {
 		return lastProjectName;
+	}
+
+	public IPath getLastProjectLocation() {
+		return lastProjectLocation;
 	}
 }

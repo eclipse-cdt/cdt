@@ -587,7 +587,7 @@ class TelnetOption implements TelnetCodes
 			// thread, and calls to write() can block, but blocking the display thread
 			// is _bad_ (it hangs the GUI).
 
-			new Thread() {
+			Thread t=new Thread() {
 				public void run() {
 					try {
 						outputStream.write(NAWSDataFinal);
@@ -596,7 +596,9 @@ class TelnetOption implements TelnetCodes
 						Logger.logException(ex);
 					}
 				}
-			}.start();
+			};
+			t.setDaemon(true);
+			t.start();
 			break;
 
 		default:

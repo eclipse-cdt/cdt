@@ -52,20 +52,19 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	}
 
 	public void addFileContent(IIndexFragmentFile sourceFile, 
-			IASTPreprocessorIncludeStatement[] includes, IIndexFragmentFile[] destFiles,
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
 		assert sourceFile.getIndexFragment() == this;
-		assert includes.length == destFiles.length;
 		
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
-		pdomFile.addIncludesTo(destFiles, includes);
 		pdomFile.addMacros(macros);
 		pdomFile.addNames(names);
 	}
 
-	public void clearFile(IIndexFragmentFile file) throws CoreException {
+	public void clearFile(IIndexFragmentFile file, 
+			IASTPreprocessorIncludeStatement[] newIncludes, IIndexFragmentFile[] destFiles) throws CoreException {
 		assert file.getIndexFragment() == this;
-		((PDOMFile) file).clear();		
+		assert newIncludes.length == destFiles.length;
+		((PDOMFile) file).clear(newIncludes, destFiles);		
 	}
 	
 	public void clear() throws CoreException {
@@ -131,7 +130,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		for(Iterator i = notConverted.iterator(); i.hasNext(); ) {
 			PDOMFile file = (PDOMFile) i.next();
 			file.convertIncludersToUnresolved();
-			file.clear();
+			file.clear(null, null);
 		}
 	}
 

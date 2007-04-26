@@ -30,6 +30,7 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -60,11 +61,13 @@ import org.eclipse.osgi.util.NLS;
 public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 	static final String CHECKSUMS_NAME = "checksums.dat"; //$NON-NLS-1$
 	static final String INDEX_NAME = "cdt-index.pdom"; //$NON-NLS-1$
-	private static Pattern PROJECT_VAR_PATTERN= Pattern.compile("\\$\\{(project_[a-zA-Z0-9]*)\\}"); //$NON-NLS-1$
+	private static final Pattern PROJECT_VAR_PATTERN= Pattern.compile("\\$\\{(project_[a-zA-Z0-9]*)\\}"); //$NON-NLS-1$
 	private static final String PROJECT_VAR_REPLACEMENT_BEGIN = "\\${$1:"; //$NON-NLS-1$
 	private static final String PROJECT_VAR_REPLACEMENT_END = "}"; //$NON-NLS-1$
 	private static final String DOLLAR_OR_BACKSLASH_REPLACEMENT = "\\\\$0"; //$NON-NLS-1$
-	private static Pattern DOLLAR_OR_BACKSLASH_PATTERN= Pattern.compile("[\\$\\\\]"); //$NON-NLS-1$
+	private static final IASTPreprocessorIncludeStatement[] NO_INCLUDES = {};
+	private static final Pattern DOLLAR_OR_BACKSLASH_PATTERN= Pattern.compile("[\\$\\\\]"); //$NON-NLS-1$
+	private static final IIndexFragmentFile[] NO_IDS = {};
 
 	private static final class FileAndChecksum {
 		public ITranslationUnit fFile;
@@ -265,7 +268,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 				
 				IndexFileLocation ifl = (IndexFileLocation) i.next();
 				IIndexFragmentFile file= pdom.getFile(ifl);
-				pdom.clearFile(file);
+				pdom.clearFile(file, NO_INCLUDES, NO_IDS);
 			}
 			for (Iterator i = updateTimestamps.iterator(); i.hasNext();) {
 				checkMonitor(monitor);
@@ -276,6 +279,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					IResource r= fc.fFile.getResource();
 					if (r != null) {
 						file.setTimestamp(r.getLocalTimeStamp());
+						file.setScannerConfigurationHashcode(0);
 					}
 				}
 			}

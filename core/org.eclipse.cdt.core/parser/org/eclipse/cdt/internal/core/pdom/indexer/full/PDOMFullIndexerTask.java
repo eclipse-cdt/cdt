@@ -45,13 +45,13 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 	private final static Object REQUIRED= new Object();
 	private final static Object MISSING = new Object();
 	private final static Object SKIP=     new Object();
+	private final static Object REQUIRED_IF_CONFIG_CHANGED= new Object();
 	
 	private List fChanged = new ArrayList();
 	private List fRemoved = new ArrayList();
 	private IWritableIndex fIndex = null;
 	private Map filePathsToParse = new HashMap/*<IIndexFileLocation, Object>*/();
 	private Map fIflCache = new HashMap/*<String, IIndexFileLocation>*/();
-	private boolean fCheckTimestamps= false;
 
 	public PDOMFullIndexerTask(PDOMFullIndexer indexer, ITranslationUnit[] added,
 			ITranslationUnit[] changed, ITranslationUnit[] removed) {
@@ -66,30 +66,18 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		long start = System.currentTimeMillis();
 		try {
 			setupIndex();
+			registerTUsInReaderFactory(fChanged);
 			
 			// separate headers
 			List headers= new ArrayList();
 			List sources= fChanged;
-			int removed= 0;
 			for (Iterator iter = fChanged.iterator(); iter.hasNext();) {
 				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				if (fCheckTimestamps) {
-					IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
-					IIndexFile file= fIndex.getFile(ifl);
-					if (!isOutdated(tu, file)) {
-						iter.remove();
-						removed++;
-						continue;
-					}
-				}
 				if (!tu.isSourceUnit()) {
 					headers.add(tu);
 					iter.remove();
 				}
 			}
-			updateInfo(0, 0, -removed);
-			registerTUsInReaderFactory(sources);
-			registerTUsInReaderFactory(headers);
 					
 			Iterator i= fRemoved.iterator();
 			while (i.hasNext()) {
@@ -129,10 +117,26 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 
 	private void registerTUsInReaderFactory(Collection/*<ITranslationUnit>*/ sources)
 			throws CoreException {
+		int removed= 0;
 		filePathsToParse= new HashMap/*<IIndexFileLocation, Object>*/();
 		for (Iterator iter = sources.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			filePathsToParse.put(IndexLocationFactory.getIFL(tu), REQUIRED);
+			IIndexFileLocation ifl= IndexLocationFactory.getIFL(tu);
+			if (updateAll()) {
+				filePathsToParse.put(ifl, REQUIRED);
+			}
+			else if (updateChangedTimestamps() && isOutdated(tu, fIndex.getFile(ifl))) {
+				filePathsToParse.put(ifl, REQUIRED);
+			}
+			else if (updateChangedConfiguration()) {
+				filePathsToParse.put(ifl, REQUIRED_IF_CONFIG_CHANGED);
+			}
+			else {
+				iter.remove();
+				removed++;
+				continue;
+			}
+			updateInfo(0, 0, -removed);
 		}
 	}
 
@@ -154,12 +158,26 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		return ast;
 	}
 	
-	protected boolean needToUpdate(IIndexFileLocation location) throws CoreException {
-		if (super.needToUpdate(location)) {
+	public boolean needToUpdate(IIndexFileLocation location, int confighash) throws CoreException {
+		if (super.needToUpdate(location, confighash)) {
 			Object required= filePathsToParse.get(location);
 			if (required == null) {
 				required= MISSING;
 				filePathsToParse.put(location, required);
+			}
+			else if (confighash != 0 && required == REQUIRED_IF_CONFIG_CHANGED) {
+				IIndexFile file= fIndex.getFile(location);
+				if (file != null) {
+					int oldConfig= file.getScannerConfigurationHashcode();
+					if (oldConfig == 0 || oldConfig == confighash) {
+						required= SKIP;
+						updateInfo(0, 0, -1);
+					}
+					else {
+						required= REQUIRED;
+					}
+					filePathsToParse.put(location, required);
+				}
 			}
 			return required != SKIP;
 		}
@@ -171,9 +189,5 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		Object required= filePathsToParse.get(location);
 		filePathsToParse.put(location, SKIP);
 		return required == REQUIRED;
-	}
-
-	public void setCheckTimestamps(boolean val) {
-		fCheckTimestamps= val;
 	}
 }

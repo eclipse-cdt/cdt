@@ -46,7 +46,21 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
+	public static interface CallbackHandler {
+		boolean needToUpdate(IndexFileInfo fileInfo) throws CoreException;		
+	}
+	public static class IndexFileInfo {
+		public final static int NOT_REQUESTED= 0;
+		public final static int REQUESTED_IF_CONFIG_CHANGED= 1;
+		public final static int REQUESTED= 2;
+		
+		private IndexFileInfo() {}
+		private IMacro[] fMacros= null;
 
+		public IIndexFile fFile= null;
+		public int fRequested= 0;
+	}
+	
 	private final static boolean CASE_SENSITIVE_FILES= !new File("a").equals(new File("A"));  //$NON-NLS-1$//$NON-NLS-2$
 	private final IIndex index;
 	private Map/*<IIndexFileLocation,FileInfo>*/ fileInfoCache;
@@ -55,27 +69,13 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	private Set/*<FileInfo>*/ fIncluded= new HashSet();
 	/** The fallback code reader factory used in case a header file is not indexed */
 	private ICodeReaderFactory fFallBackFactory;
+	private CallbackHandler fCallbackHandler;
 	
 	private static final char[] EMPTY_CHARS = new char[0];
 	
 	private static class NeedToParseException extends Exception {
 		private static final long serialVersionUID = 1L;
 	}
-	public static class FileInfo {
-		private FileInfo() {}
-		public IIndexFile fFile= null;
-		public IMacro[] fMacros= null;
-//		public FileInfo[] fFileInfos= null;
-		private boolean fRequested= false;
-		
-		public boolean isRequested() {
-			return fRequested;
-		}
-		public void setRequested(boolean val) {
-			fRequested= val;
-		}
-	}
-	
 	public IndexBasedCodeReaderFactory(IIndex index) {
 		this(index, new HashMap/*<String,IIndexFileLocation>*/());
 	}
@@ -120,7 +120,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		}
 		try {
 			IIndexFileLocation incLocation = findLocation(canonicalPath);
-			FileInfo info= createInfo(incLocation, null);
+			IndexFileInfo info= createInfo(incLocation, null);
 
 			if (isIncluded(info)) {
 				return new CodeReader(canonicalPath, EMPTY_CHARS);
@@ -132,7 +132,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 					LinkedHashSet infos= new LinkedHashSet();
 					getInfosForMacroDictionary(info, infos);
 					for (Iterator iter = infos.iterator(); iter.hasNext();) {
-						FileInfo fi = (FileInfo) iter.next();
+						IndexFileInfo fi = (IndexFileInfo) iter.next();
 						if (fi.fMacros == null) {
 							assert fi.fFile != null;
 							IIndexMacro[] macros= fi.fFile.getMacros();
@@ -170,7 +170,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	 * Mark the given inclusion as included.
 	 * @param info
 	 */
-	private void setIncluded(FileInfo info) {
+	private void setIncluded(IndexFileInfo info) {
 		fIncluded.add(info);
 	}
 
@@ -179,38 +179,39 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	 * @param info
 	 * @return <code>true</code> if the inclusion is already included.
 	 */
-	private boolean isIncluded(FileInfo info) {
+	private boolean isIncluded(IndexFileInfo info) {
 		return fIncluded.contains(info);
 	}
 
-	private FileInfo createInfo(IIndexFileLocation location, IIndexFile file) throws CoreException {
-		FileInfo info= (FileInfo) fileInfoCache.get(location);
+	private IndexFileInfo createInfo(IIndexFileLocation location, IIndexFile file) throws CoreException {
+		IndexFileInfo info= (IndexFileInfo) fileInfoCache.get(location);
 		if (info == null) {
-			info= new FileInfo();			
+			info= new IndexFileInfo();			
 			info.fFile= file == null ? index.getFile(location) : file;
 			fileInfoCache.put(location, info);
 		}
 		return info;
 	}
 	
-	private void getInfosForMacroDictionary(FileInfo fileInfo, LinkedHashSet/*<FileInfo>*/ target) throws CoreException, NeedToParseException {
+	private void getInfosForMacroDictionary(IndexFileInfo fileInfo, LinkedHashSet/*<FileInfo>*/ target) throws CoreException, NeedToParseException {
 		if (!target.add(fileInfo)) {
 			return;
 		}
 		if (isIncluded(fileInfo)) {
 			return;
 		}
-		if (fileInfo.fFile == null || fileInfo.isRequested()) {
+		final IIndexFile file= fileInfo.fFile;
+		if (file == null || 
+				(fCallbackHandler != null && fCallbackHandler.needToUpdate(fileInfo))) {
 			throw new NeedToParseException();
 		}
 
 		// Follow the includes
-		IIndexFile file= fileInfo.fFile;
 		IIndexInclude[] includeDirectives= file.getIncludes();
 		for (int i = 0; i < includeDirectives.length; i++) {
 			IIndexFile includedFile= index.resolveInclude(includeDirectives[i]);
 			if (includedFile != null) {
-				FileInfo nextInfo= createInfo(includedFile.getLocation(), includedFile);
+				IndexFileInfo nextInfo= createInfo(includedFile.getLocation(), includedFile);
 				getInfosForMacroDictionary(nextInfo, target);
 			}
 		}
@@ -236,7 +237,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		return null;
 	}
 	
-	public FileInfo createFileInfo(IIndexFileLocation location) throws CoreException {
+	public IndexFileInfo createFileInfo(IIndexFileLocation location) throws CoreException {
 		return createInfo(location, null);
 	}
 	
@@ -245,5 +246,9 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 			iflCache.put(absolutePath, IndexLocationFactory.getIFLExpensive(absolutePath));
 		}
 		return (IIndexFileLocation) iflCache.get(absolutePath);
+	}
+
+	public void setCallbackHandler(CallbackHandler callbackHandler) {
+		fCallbackHandler= callbackHandler;
 	}
 }

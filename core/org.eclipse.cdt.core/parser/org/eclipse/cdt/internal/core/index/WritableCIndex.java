@@ -56,21 +56,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	}
 
 	public void setFileContent(IIndexFragmentFile file, 
-			IASTPreprocessorIncludeStatement[] includes,
-			IIndexFileLocation[] includeLocations,
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
 
 		IIndexFragment indexFragment = file.getIndexFragment();
 		assert isWritableFragment(indexFragment);
 		
-		IIndexFragmentFile[] destFiles= new IIndexFragmentFile[includes.length];
-		for (int i = 0; i < includes.length; i++) {
-			if (includeLocations[i] != null) {
-				destFiles[i]= addFile(includeLocations[i]);
-			}
-		}
-		((IWritableIndexFragment) indexFragment).addFileContent(file, 
-				includes, destFiles, macros, names);
+		((IWritableIndexFragment) indexFragment).addFileContent(file, macros, names);
 	}
 
 	public void clear() throws CoreException {
@@ -80,11 +71,20 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		}
 	}
 
-	public void clearFile(IIndexFragmentFile file) throws CoreException {
+	public void clearFile(IIndexFragmentFile file,
+			IASTPreprocessorIncludeStatement[] newIncludes,
+			IIndexFileLocation[] newIncludeLocations) throws CoreException {
 		IIndexFragment indexFragment = file.getIndexFragment();
 		assert isWritableFragment(indexFragment);
 		
-		((IWritableIndexFragment) indexFragment).clearFile(file);
+		IIndexFragmentFile[] destFiles= new IIndexFragmentFile[newIncludes.length];
+		for (int i = 0; i < newIncludes.length; i++) {
+			if (newIncludeLocations[i] != null) {
+				destFiles[i]= addFile(newIncludeLocations[i]);
+			}
+		}
+
+		((IWritableIndexFragment) indexFragment).clearFile(file, newIncludes, destFiles);
 	}
 
 	

@@ -25,11 +25,13 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -39,6 +41,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -50,6 +53,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOMWriter;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -62,12 +66,15 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	private static final Object NO_CONTEXT = new Object();
 	private static final int MAX_ERRORS = 500;
 	private static final String TRUE = "true"; //$NON-NLS-1$
+	private static final IIndexFileLocation[] NO_LOCATIONS= {};
+	private static final IASTPreprocessorIncludeStatement[] NO_INCLUDES= {};
 	
 	private AbstractPDOMIndexer fIndexer;
 	protected Map/*<IIndexFileLocation, Object>*/ fContextMap = new HashMap/*<IIndexFileLocation, Object>*/();
 	private List fFilesUpFront= new ArrayList();
 	private String fDummyFileName;
 	private URI fDummyFileURI;
+	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
 
 	protected PDOMIndexerTask(AbstractPDOMIndexer indexer) {
 		fIndexer= indexer;
@@ -93,7 +100,21 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		return super.getProgressInformation();
 	}
 	
-	abstract public void setCheckTimestamps(boolean val);
+	public void setUpateFlags(int flags) {
+		fUpdateFlags= flags;
+	}
+	
+	final public boolean updateAll() {
+		return (fUpdateFlags & IIndexManager.UPDATE_ALL) != 0;
+	}
+	
+	final public boolean updateChangedTimestamps() {
+		return (fUpdateFlags & IIndexManager.UPDATE_CHECK_TIMESTAMPS) != 0;
+	}
+
+	final public boolean updateChangedConfiguration() {
+		return (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONFIGURATION) != 0;
+	}
 		
 	final public void setParseUpFront() {
 		fFilesUpFront.addAll(Arrays.asList(fIndexer.getFilesToParseUpFront()));
@@ -123,7 +144,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		return TRUE.equals(getIndexer().getProperty(key));
 	}
 
-	private IASTTranslationUnit createAST(ITranslationUnit tu, int options, IProgressMonitor pm) throws CoreException {
+	private IASTTranslationUnit createAST(ITranslationUnit tu, IScannerInfo scannerInfo, int options, IProgressMonitor pm) throws CoreException {
 		IPath path = tu.getLocation();
 		if (path == null) {
 			return null;
@@ -132,17 +153,12 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		if (! (language instanceof AbstractLanguage))
 			return null;
 
-		// skip if no scanner info
-		IScannerInfo scanner= tu.getScannerInfo(getIndexAllFiles());
-		if (scanner == null) {
-			return null;
-		}
 		CodeReader codeReader = tu.getCodeReader();
 		if (codeReader == null) {
 			return null;
 		}
 
-		return createAST((AbstractLanguage)language, codeReader, scanner, options, pm);
+		return createAST((AbstractLanguage)language, codeReader, scannerInfo, options, pm);
 	}
 
 	/**
@@ -156,7 +172,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	/**
 	 * Convenience method for subclasses, parses the files calling out to the methods 
 	 * {@link #createAST(AbstractLanguage, CodeReader, IScannerInfo, int, IProgressMonitor)}, 
-	 * {@link #needToUpdate(IIndexFileLocation)}, 
+	 * {@link #needToUpdate(IIndexFileLocation,int)}, 
 	 * {@link #addSymbols(IASTTranslationUnit, IWritableIndex, int, IProgressMonitor)}
 	 * {@link #postAddToIndex(IIndexFileLocation, IIndexFile)},
 	 * {@link #getLastModified(IIndexFileLocation)} and
@@ -179,8 +195,8 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 				return;
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			final IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
-			if (needToUpdate(ifl)) {
-				parseTU(tu, options, index, readlockCount, monitor);
+			if (needToUpdate(ifl, 0)) {
+				parseTU(ifl, tu, options, index, readlockCount, monitor);
 			}
 		}
 
@@ -189,14 +205,14 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			if (monitor.isCanceled()) 
 				return;
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			IIndexFileLocation location = IndexLocationFactory.getIFL(tu);
-			if (!needToUpdate(location)) {
+			final IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
+			if (!needToUpdate(ifl, 0)) {
 				iter.remove();
 			} 
 			else {
-				ITranslationUnit context= findContext(index, location);
+				ITranslationUnit context= findContext(index, ifl);
 				if (context != null) {
-					parseTU(context, options, index, readlockCount, monitor);
+					parseTU(ifl, context, options, index, readlockCount, monitor);
 				}
 			}
 		}
@@ -208,11 +224,11 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					return;
 				ITranslationUnit tu = (ITranslationUnit) iter.next();
 				final IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
-				if (!needToUpdate(ifl)) {
+				if (!needToUpdate(ifl, 0)) {
 					iter.remove();
 				}
 				else {
-					parseTU(tu, options, index, readlockCount, monitor);
+					parseTU(ifl, tu, options, index, readlockCount, monitor);
 				}
 			}
 		}
@@ -225,32 +241,45 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	 * @since 4.0
 	 */
 	final protected boolean isOutdated(ITranslationUnit tu, IIndexFile indexFile) throws CoreException {
-		boolean outofdate= true;
+		if (indexFile == null) {
+			return true;
+		}
 		IResource res= tu.getResource();
 		if (res != null) {
 			if (indexFile != null) {
 				if (res.getLocalTimeStamp() == indexFile.getTimestamp()) {
-					outofdate= false;
+					return false;
 				}
 			}
+			return true;
 		}
-		return outofdate;
+		return false;
 	}
 
 
-	private void parseTU(ITranslationUnit tu, int options, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
+	private void parseTU(IIndexFileLocation originator, ITranslationUnit tu, int options, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= tu.getPath();
 		try {
-			if (fShowActivity) {
-				System.out.println("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
+			// skip if no scanner info
+			IScannerInfo scanner= tu.getScannerInfo(getIndexAllFiles());
+			if (scanner == null) {
+				updateInfo(0, 0, -1);
 			}
-			pm.subTask(MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
-					new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()}));
-			long start= System.currentTimeMillis();
-			IASTTranslationUnit ast= createAST(tu, options, pm);
-			fStatistics.fParsingTime += System.currentTimeMillis()-start;
-			if (ast != null) {
-				addSymbols(ast, index, readlockCount, pm);
+			else {
+				final int configHash = computeHashCode(scanner);
+				if (needToUpdate(originator, configHash)) {
+					if (fShowActivity) {
+						System.out.println("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
+					}
+					pm.subTask(MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
+							new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()}));
+					long start= System.currentTimeMillis();
+					IASTTranslationUnit ast= createAST(tu, scanner, options, pm);
+					fStatistics.fParsingTime += System.currentTimeMillis()-start;
+					if (ast != null) {
+						addSymbols(ast, index, readlockCount, configHash, pm);
+					}
+				}
 			}
 		}
 		catch (CoreException e) {
@@ -305,7 +334,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 				
 			fStatistics.fParsingTime += System.currentTimeMillis()-start;
 			if (ast != null) {
-				addSymbols(ast, index, readlockCount, pm);
+				addSymbols(ast, index, readlockCount, 0, pm);
 				updateInfo(-1, +1, 0);
 			}
 		}
@@ -329,7 +358,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	 *   }
 	 *   return false;
 	 */
-	protected boolean needToUpdate(IIndexFileLocation fileLoc) throws CoreException {
+	protected boolean needToUpdate(IIndexFileLocation fileLoc, int configHash) throws CoreException {
 		return fDummyFileURI==null || !fDummyFileURI.equals(fileLoc.getURI());
 	}
 	
@@ -356,22 +385,16 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			if (pdomFile != null) {
 				ICProject project= getIndexer().getProject();
 				IIndexInclude[] includedBy = index.findIncludedBy(pdomFile, IIndex.DEPTH_ZERO);
-				ArrayList/*<IIndexFileLocation>*/ paths= new ArrayList/*<IIndexFileLocation>*/(includedBy.length);
-				for (int i = 0; i < includedBy.length; i++) {
+				for (int i = includedBy.length-1; i >=0; i--) {
 					IIndexInclude include = includedBy[i];
 					IIndexFileLocation incLocation = include.getIncludedByLocation();
+					ITranslationUnit context= null;
 					if (CoreModel.isValidSourceUnitName(project.getProject(), incLocation.getURI().toString())) { // FIXME - is this ok?
-						ITranslationUnit context = CoreModelUtil.findTranslationUnitForLocation(IndexLocationFactory.getAbsolutePath(incLocation), project);
-						if (context != null) {
-							fContextMap.put(location, context);
-							return context;
-						}
+						context = CoreModelUtil.findTranslationUnitForLocation(IndexLocationFactory.getAbsolutePath(incLocation), project);
 					}
-					paths.add(incLocation);
-				}
-				for (Iterator/*<IIndexFileLocation>*/ iter = paths.iterator(); iter.hasNext();) {
-					IIndexFileLocation nextLevel = (IIndexFileLocation) iter.next();
-					ITranslationUnit context = findContext(index, nextLevel);
+					else {
+						context= findContext(index, incLocation);
+					}
 					if (context != null) {
 						fContextMap.put(location, context);
 						return context;
@@ -393,7 +416,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		try {
 			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(IndexLocationFactory.getIFL(tu));
 			if (file != null)
-				index.clearFile(file);
+				index.clearFile(file, NO_INCLUDES, NO_LOCATIONS);
 		} finally {
 			index.releaseWriteLock(readlocks);
 		}
@@ -448,5 +471,68 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					+ misses + "(" + nf.format(missPct)+ ") misses.");   //$NON-NLS-1$//$NON-NLS-2$
 			}
 		}
+	}
+
+	protected long getLastModified(IIndexFileLocation location)	throws CoreException {
+		String fullPath= location.getFullPath();
+		if (fullPath != null) {
+			IResource res= ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
+			if (res != null) {
+				return res.getLocalTimeStamp();
+			}
+		}
+		return super.getLastModified(location);
+	}
+
+	protected static int computeHashCode(IScannerInfo scannerInfo) {
+		int result= 0;
+		Map macros= scannerInfo.getDefinedSymbols();
+		if (macros != null) {
+			for (Iterator i = macros.entrySet().iterator(); i.hasNext();) {
+				Map.Entry entry = (Map.Entry) i.next();
+				String key = (String) entry.getKey();
+				String value = (String) entry.getValue();
+				result= addToHashcode(result, key);
+				if (value != null && value.length() > 0) {
+					result= addToHashcode(result, value);
+				}
+			}
+		}
+		String[] a= scannerInfo.getIncludePaths();
+		if (a != null) {
+			for (int i = 0; i < a.length; i++) {
+				result= addToHashcode(result, a[i]);
+
+			}
+		}
+		if (scannerInfo instanceof IExtendedScannerInfo) {
+			IExtendedScannerInfo esi= (IExtendedScannerInfo) scannerInfo;
+			a= esi.getIncludeFiles();
+			if (a != null) {
+				for (int i = 0; i < a.length; i++) {
+					result= addToHashcode(result, a[i]);
+
+				}
+			}			
+			a= esi.getLocalIncludePath();
+			if (a != null) {
+				for (int i = 0; i < a.length; i++) {
+					result= addToHashcode(result, a[i]);
+
+				}
+			}		
+			a= esi.getMacroFiles();
+			if (a != null) {
+				for (int i = 0; i < a.length; i++) {
+					result= addToHashcode(result, a[i]);
+
+				}
+			}		
+		}
+		return result;
+	}
+
+	private static int addToHashcode(int result, String key) {
+		return result*31 + key.hashCode();
 	}
 }

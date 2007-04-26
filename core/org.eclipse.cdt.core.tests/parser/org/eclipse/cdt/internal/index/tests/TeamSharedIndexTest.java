@@ -44,8 +44,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 public class TeamSharedIndexTest extends IndexTestBase {
 
-	private static final int INDEXER_WAIT_TIME = 8000;
-
 	public static TestSuite suite() {
 		return suite(TeamSharedIndexTest.class);
 	}

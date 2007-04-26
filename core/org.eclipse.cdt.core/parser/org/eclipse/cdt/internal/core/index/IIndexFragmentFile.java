@@ -29,6 +29,13 @@ public interface IIndexFragmentFile extends IIndexFile {
 	void setTimestamp(long timestamp) throws CoreException;
 
 	/**
+	 * Sets the hashcode of the scanner configuration.
+	 * @param hashcode a hashcode or <code>0</code> if it is unknown.
+	 * @throws CoreException 
+	 */
+	void setScannerConfigurationHashcode(int hashcode) throws CoreException;
+
+	/**
 	 * Returns whether any names are associated with this file object
 	 * in this fragment - i.e. whether this file contains content in its
 	 * associated fragment

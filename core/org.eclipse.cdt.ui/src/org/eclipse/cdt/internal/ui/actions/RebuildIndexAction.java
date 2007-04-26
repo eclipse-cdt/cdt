@@ -11,11 +11,39 @@
 
 package org.eclipse.cdt.internal.ui.actions;
 
-import org.eclipse.cdt.core.index.IIndexManager;
+import java.util.Iterator;
 
-public class RebuildIndexAction extends AbstractUpdateIndexAction {
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
 
-	protected int getUpdateOptions() {
-		return IIndexManager.UPDATE_ALL;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICProject;
+
+public class RebuildIndexAction implements IObjectActionDelegate {
+
+	private ISelection fSelection;
+
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+	}
+	
+	public void run(IAction action) {
+		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
+		for (Iterator i = cElements.iterator(); i.hasNext();) {
+			Object elem = i.next();
+			if (elem instanceof ICProject) {
+				CCorePlugin.getIndexManager().reindex((ICProject) elem);
+			}
+		}
+	}
+	
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		fSelection= selection;
 	}
 }

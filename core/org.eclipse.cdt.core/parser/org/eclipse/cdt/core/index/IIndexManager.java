@@ -67,11 +67,17 @@ public interface IIndexManager extends IPDOMManager {
 	public final static int UPDATE_ALL= 0x1;
 
 	/**
-	 * Constant for indicating to update translation units only if their timestamp
+	 * Constant for indicating to update translation units if their timestamp
 	 * has changed.
 	 */
 	public final static int UPDATE_CHECK_TIMESTAMPS= 0x2;
-	
+
+	/**
+	 * Constant for indicating to update translation units if their configuration
+	 * has changed.
+	 */
+	public final static int UPDATE_CHECK_CONFIGURATION= 0x4;
+
 	/**
 	 * Returns the index for the given project.
 	 * @param project the project to get the index for

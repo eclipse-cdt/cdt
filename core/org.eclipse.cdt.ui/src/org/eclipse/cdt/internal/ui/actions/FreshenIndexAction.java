@@ -13,9 +13,9 @@ package org.eclipse.cdt.internal.ui.actions;
 
 import org.eclipse.cdt.core.index.IIndexManager;
 
-public class UpdateIndexWithModifiedFilesAction extends AbstractUpdateIndexAction {
+public class FreshenIndexAction extends AbstractUpdateIndexAction {
 
 	protected int getUpdateOptions() {
-		return IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONFIGURATION;
+		return IIndexManager.UPDATE_ALL;
 	}
 }

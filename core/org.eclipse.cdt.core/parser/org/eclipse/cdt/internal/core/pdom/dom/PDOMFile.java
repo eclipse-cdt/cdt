@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,8 +57,9 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int FIRST_MACRO = 12;
 	private static final int LOCATION_REPRESENTATION = 16;
 	private static final int TIME_STAMP = 20;
+	private static final int SCANNER_CONFIG_HASH= 28;
 
-	private static final int RECORD_SIZE = 28;
+	private static final int RECORD_SIZE = 32;
 
 	public static class Comparator implements IBTreeComparator {
 		private Database db;
@@ -128,6 +131,16 @@ public class PDOMFile implements IIndexFragmentFile {
 	public void setTimestamp(long timestamp) throws CoreException {
 		Database db= pdom.getDB();
 		db.putLong(record + TIME_STAMP, timestamp);
+	}
+
+	public int getScannerConfigurationHashcode() throws CoreException {
+		Database db = pdom.getDB();
+		return db.getInt(record + SCANNER_CONFIG_HASH);
+	}
+
+	public void setScannerConfigurationHashcode(int hashcode) throws CoreException {
+		Database db= pdom.getDB();
+		db.putInt(record + SCANNER_CONFIG_HASH, hashcode);
 	}
 
 	public PDOMName getFirstName() throws CoreException {
@@ -224,15 +237,63 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result;
 	}
 
-	public void clear() throws CoreException {
-		// Remove the includes
+	public void clear(IASTPreprocessorIncludeStatement[] newIncludes, IIndexFragmentFile[] destFiles) throws CoreException {
+		int[] records= new int[destFiles.length];
+		PDOMInclude[] oldDirectives= new PDOMInclude[destFiles.length];
+		for (int i = 0; i < records.length; i++) {
+			PDOMFile destFile= (PDOMFile) destFiles[i];
+			if (destFile != null) {
+				records[i]= destFile.getRecord();
+			}
+		}
+
+		// Remove the includes preserving the unchanged
 		PDOMInclude include = getFirstInclude();
 		while (include != null) {
 			PDOMInclude nextInclude = include.getNextInIncludes();
-			include.delete();
+			final PDOMFile includes= (PDOMFile) include.getIncludes();
+			if (includes != null) {
+				final int rec= includes.record;
+				int i;
+				for (i=0; i < records.length; i++) {
+					if (rec == records[i]) {
+						records[i]= 0;
+						oldDirectives[i]= include;
+						include.setNextInIncludes(null);
+						break;
+					}
+				}
+				if (i >= records.length) {
+					include.delete();
+				}
+			}
 			include = nextInclude;
 		}
-		setFirstInclude(include);
+		setFirstInclude(null);
+
+		PDOMInclude lastInclude= null;
+		for (int i = 0; i < newIncludes.length; i++) {
+			IASTPreprocessorIncludeStatement statement = newIncludes[i];
+			PDOMFile targetFile= (PDOMFile) destFiles[i];
+			PDOMInclude pdomInclude= oldDirectives[i];
+			if (pdomInclude == null) {
+				pdomInclude= new PDOMInclude(pdom, statement, this, targetFile);
+				if (targetFile != null) {
+					assert targetFile.getIndexFragment() instanceof IWritableIndexFragment;
+					targetFile.addIncludedBy(pdomInclude);
+				}
+			}
+			else {
+				pdomInclude.update(statement);
+			}
+			if (lastInclude == null) {
+				setFirstInclude(pdomInclude);
+			}
+			else {
+				lastInclude.setNextInIncludes(pdomInclude);
+			}
+			lastInclude= pdomInclude;
+		}
 
 		// Delete all the macros in this file
 		PDOMMacro macro = getFirstMacro();
@@ -257,30 +318,6 @@ public class PDOMFile implements IIndexFragmentFile {
 			name.delete();
 		}
 		setFirstName(null);
-	}
-
-	public void addIncludesTo(IIndexFragmentFile[] files, IASTPreprocessorIncludeStatement[] includes) throws CoreException {
-		assert files.length == includes.length;
-		assert getFirstInclude() == null;
-
-		PDOMInclude lastInclude= null;
-		for (int i = 0; i < includes.length; i++) {
-			IASTPreprocessorIncludeStatement statement = includes[i];
-			PDOMFile targetFile= (PDOMFile) files[i];
-			
-			PDOMInclude pdomInclude = new PDOMInclude(pdom, statement, this, targetFile);
-			if (targetFile != null) {
-				assert targetFile.getIndexFragment() instanceof IWritableIndexFragment;
-				targetFile.addIncludedBy(pdomInclude);
-			}
-			if (lastInclude == null) {
-				setFirstInclude(pdomInclude);
-			}
-			else {
-				lastInclude.setNextInIncludes(pdomInclude);
-			}
-			lastInclude= pdomInclude;
-		}
 	}
 
 	public void addIncludedBy(PDOMInclude include) throws CoreException {

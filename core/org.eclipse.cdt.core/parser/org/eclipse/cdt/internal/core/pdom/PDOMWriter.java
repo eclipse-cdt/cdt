@@ -49,6 +49,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 4.0
  */
 abstract public class PDOMWriter {
+	private static final IASTPreprocessorIncludeStatement[] NO_INCLUDES = {};
+	private static final IIndexFileLocation[] NO_LOCATIONS = {};
+	
 	public static int SKIP_ALL_REFERENCES= -1;
 	public static int SKIP_TYPE_REFERENCES= 1;
 	public static int SKIP_NO_REFERENCES= 0;
@@ -85,7 +88,7 @@ abstract public class PDOMWriter {
 	 * @see #addSymbols(IASTTranslationUnit, IWritableIndex, int, IProgressMonitor)
 	 * @since 4.0
 	 */
-	protected abstract boolean needToUpdate(IIndexFileLocation location) throws CoreException;
+	protected abstract boolean needToUpdate(IIndexFileLocation location, int confighash) throws CoreException;
 
 	/**
 	 * Called after a file was added to the index. 
@@ -100,7 +103,7 @@ abstract public class PDOMWriter {
 	 * @since 4.0
 	 */
 	protected abstract IIndexFileLocation findLocation(String absolutePath);
-	
+		
 	/**
 	 * Extracts symbols from the given ast and adds them to the index. It will
 	 * make calls to 	  
@@ -110,10 +113,11 @@ abstract public class PDOMWriter {
 	 * {@link #findLocation(String)} to obtain further information.
 	 * @since 4.0
 	 */
-	public void addSymbols(IASTTranslationUnit ast, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws InterruptedException, CoreException {
+	public void addSymbols(IASTTranslationUnit ast, IWritableIndex index, int readlockCount, int configHash,
+			IProgressMonitor pm) throws InterruptedException, CoreException {
 		final Map symbolMap= new HashMap();
 		try {
-			IIndexFileLocation[] orderedPaths= extractSymbols(ast, symbolMap);
+			IIndexFileLocation[] orderedPaths= extractSymbols(ast, symbolMap, configHash);
 			for (int i=0; i<orderedPaths.length; i++) {
 				if (pm.isCanceled()) {
 					return;
@@ -160,7 +164,7 @@ abstract public class PDOMWriter {
 						if (fShowActivity) {
 							System.out.println("Indexer: adding " + path.getURI());  //$NON-NLS-1$
 						}
-						IIndexFile file= addToIndex(index, path, symbolMap);
+						IIndexFile file= addToIndex(index, path, symbolMap, configHash);
 						boolean wasRequested= postAddToIndex(path, file);
 
 						synchronized(fInfo) {
@@ -189,7 +193,7 @@ abstract public class PDOMWriter {
 		}
 	}
 
-	private IIndexFileLocation[] extractSymbols(IASTTranslationUnit ast, final Map symbolMap) throws CoreException {
+	private IIndexFileLocation[] extractSymbols(IASTTranslationUnit ast, final Map symbolMap, int confighash) throws CoreException {
 		LinkedHashSet/*<IIndexFileLocation>*/ orderedIFLs= new LinkedHashSet/*<IIndexFileLocation>*/();
 		ArrayList/*<IIndexFileLocation>*/ iflStack= new ArrayList/*<IIndexFileLocation>*/();
 
@@ -206,7 +210,7 @@ abstract public class PDOMWriter {
 			final IIndexFileLocation nextIFL= tmpLoc != null ? findLocation(tmpLoc.getFileName()) : astLocation; // command-line includes
 			while (!aboveStackIFL.equals(nextIFL)) {
 				if (!iflStack.isEmpty()) { 
-					if (needToUpdate(aboveStackIFL)) {
+					if (needToUpdate(aboveStackIFL, confighash)) {
 						prepareInMap(symbolMap, aboveStackIFL);
 						orderedIFLs.add(aboveStackIFL);
 					}
@@ -221,7 +225,7 @@ abstract public class PDOMWriter {
 			}
 			
 			// save include in map
-			if (needToUpdate(nextIFL)) {
+			if (needToUpdate(nextIFL, confighash)) {
 				prepareInMap(symbolMap, nextIFL);
 				addToMap(symbolMap, 0, nextIFL, include);
 			}
@@ -238,7 +242,7 @@ abstract public class PDOMWriter {
 		iflStack.add(aboveStackIFL);
 		while (!iflStack.isEmpty()) {
 			aboveStackIFL= (IIndexFileLocation) iflStack.remove(iflStack.size()-1);
-			if (needToUpdate(aboveStackIFL)) {
+			if (needToUpdate(aboveStackIFL, confighash)) {
 				prepareInMap(symbolMap, aboveStackIFL);
 				orderedIFLs.add(aboveStackIFL);
 			}
@@ -340,30 +344,36 @@ abstract public class PDOMWriter {
 		return false;
 	}
 
-	private IIndexFragmentFile addToIndex(IWritableIndex index, IIndexFileLocation location, Map symbolMap) throws CoreException {
-		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(location);
-		if (file != null) {
-			index.clearFile(file);
-		} else {
-			file= index.addFile(location);
-		}
-		file.setTimestamp(getLastModified(location));
+	private IIndexFragmentFile addToIndex(IWritableIndex index, IIndexFileLocation location, Map symbolMap, int configHash) throws CoreException {
 		ArrayList[] lists= (ArrayList[]) symbolMap.get(location);
+		IASTPreprocessorIncludeStatement[] includes= NO_INCLUDES;
+		IASTPreprocessorMacroDefinition[] macros= null;
+		IASTName[][] names= null;
+		IIndexFileLocation[] includeLocations= NO_LOCATIONS;
 		if (lists != null) {
 			ArrayList list= lists[0];
-			IASTPreprocessorIncludeStatement[] includes= (IASTPreprocessorIncludeStatement[]) list.toArray(new IASTPreprocessorIncludeStatement[list.size()]);
+			includes= (IASTPreprocessorIncludeStatement[]) list.toArray(new IASTPreprocessorIncludeStatement[list.size()]);
 			list= lists[1];
-			IASTPreprocessorMacroDefinition[] macros= (IASTPreprocessorMacroDefinition[]) list.toArray(new IASTPreprocessorMacroDefinition[list.size()]);
+			macros= (IASTPreprocessorMacroDefinition[]) list.toArray(new IASTPreprocessorMacroDefinition[list.size()]);
 			list= lists[2];
-			IASTName[][] names= (IASTName[][]) list.toArray(new IASTName[list.size()][]);
+			names= (IASTName[][]) list.toArray(new IASTName[list.size()][]);
 
-			IIndexFileLocation[] includeLocations = new IIndexFileLocation[includes.length];
+			includeLocations = new IIndexFileLocation[includes.length];
 			for(int i=0; i<includes.length; i++) {
 				if (includes[i].isResolved()) {
 					includeLocations[i] = findLocation(includes[i].getPath());
 				}
 			}
-			index.setFileContent(file, includes, includeLocations, macros, names);
+		}
+		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(location);
+		if (file == null) {
+			file= index.addFile(location);
+		}
+		index.clearFile(file, includes, includeLocations);
+		file.setTimestamp(getLastModified(location));
+		file.setScannerConfigurationHashcode(configHash);
+		if (lists != null) {
+			index.setFileContent(file, macros, names);
 		}
 		return file;
 	}
@@ -399,5 +409,18 @@ abstract public class PDOMWriter {
 	 */
 	protected long getLastModified(IIndexFileLocation location) throws CoreException {
 		return EFS.getStore(location.getURI()).fetchInfo().getLastModified();
+	}
+
+	/**
+	 * Obtains the scanner configuration hash code for an index file location. With
+	 * that it can be determined at a later point if the scanner configuration has
+	 * potentially been changed for a particular file.
+	 * @param location the location for which the scanner configuration hash code is obtained.
+	 * @return the hashcode or <code>0</code>, if unknown.
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	protected int getScannerConfigurationHashcode(IIndexFileLocation location) throws CoreException {
+		return 0;
 	}
 }

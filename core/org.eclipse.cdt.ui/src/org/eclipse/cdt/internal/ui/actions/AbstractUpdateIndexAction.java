@@ -47,8 +47,7 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 		ArrayList tuSelection= new ArrayList();
 		while (i.hasNext()) {
 			Object o= i.next();
-			if (o instanceof ICProject || o instanceof ICContainer || 
-					o instanceof ITranslationUnit) {
+			if (o instanceof ICProject || o instanceof ICContainer || o instanceof ITranslationUnit) {
 				tuSelection.add(o);
 			}
 		}

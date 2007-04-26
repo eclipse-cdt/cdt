@@ -696,44 +696,71 @@
          </action>
       </editorContribution>
    </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
+   <extension point="org.eclipse.ui.popupMenus">
       <objectContribution
-          adaptable="true"
-          id="org.eclipse.cdt.ui.rebuildIndexContribution"
-          objectClass="org.eclipse.cdt.core.model.ICElement">
+            id="org.eclipse.cdt.ui.cresources.contrib"
+            objectClass="org.eclipse.cdt.core.model.ICElement">
+         <visibility>
+            <or>
+               <objectClass name="org.eclipse.cdt.core.model.ITranslationUnit"/>
+               <objectClass name="org.eclipse.cdt.core.model.ICContainer"/>
+               <and>
+                  <objectClass name="org.eclipse.cdt.core.model.ICProject"/>
+                  <objectState name="open" value="true">
+                  </objectState>
+               </and>
+            </or>
+         </visibility>
          <action
              class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
              id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
              label="%SyncIndex.name"
-             menubarPath="org.eclipse.cdt.ui.indexmenu/gm1"/>
-         <action
-             class="org.eclipse.cdt.internal.ui.actions.RebuildIndexAction"
-             id="org.eclipse.cdt.ui.rebuildIndexAction"
-             label="%RebuildIndex.name"
-             menubarPath="org.eclipse.cdt.ui.indexmenu/gm1"/>
+             menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <menu
                id="org.eclipse.cdt.ui.indexmenu"
                label="%Index.menu"
                path="buildGroup">
-            <groupMarker
-                  name="gm1">
-            </groupMarker>
+            <groupMarker name="rebuild"/>
+            <groupMarker name="update"/>
          </menu>
-         <visibility>
-              <objectState
-                 name="projectNature"
-                 value="org.eclipse.cdt.core.cnature"/>
-         </visibility>
-         <!-- See https://bugs.eclipse.org/bugs/show_bug.cgi?id=143594
-         	  [Menus] popupMenus.exsd schema incorrectly does not allow eclipse core expressions -->
-         <!--enablement>
-            <adapt type="org.eclipse.core.resources.IProject">
-               <test
-                  property="org.eclipse.core.resources.projectNature"
-                  value="org.eclipse.cdt.core.cnature"/>
-            </adapt>
-        </enablement-->
+      </objectContribution>
+      <objectContribution
+          id="org.eclipse.cdt.ui.cproject.contrib"
+          objectClass="org.eclipse.cdt.core.model.ICProject">
+         <action
+             class="org.eclipse.cdt.internal.ui.actions.RebuildIndexAction"
+             id="org.eclipse.cdt.ui.rebuildIndexAction"
+             label="%RebuildIndex.name"
+             menubarPath="org.eclipse.cdt.ui.indexmenu/rebuild"/>
+         <menu
+               id="org.eclipse.cdt.ui.indexmenu"
+               label="%Index.menu"
+               path="buildGroup">
+            <groupMarker name="rebuild"/>
+            <groupMarker name="update"/>
+         </menu>
+      </objectContribution>
+      <!-- project explorer shows IProjects, we need to handle this -->
+      <objectContribution 
+          id="org.eclipse.cdt.ui.cproject.in.explorer.contrib"
+          objectClass="org.eclipse.core.resources.IProject">
+         <action
+             class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
+             id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
+             label="%SyncIndex.name"
+             menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
+         <action
+             class="org.eclipse.cdt.internal.ui.actions.RebuildIndexAction"
+             id="org.eclipse.cdt.ui.rebuildIndexAction"
+             label="%RebuildIndex.name"
+             menubarPath="org.eclipse.cdt.ui.indexmenu/rebuild"/>
+         <menu
+               id="org.eclipse.cdt.ui.indexmenu"
+               label="%Index.menu"
+               path="buildGroup">
+            <groupMarker name="rebuild"/>
+            <groupMarker name="update"/>
+         </menu>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IMarker"

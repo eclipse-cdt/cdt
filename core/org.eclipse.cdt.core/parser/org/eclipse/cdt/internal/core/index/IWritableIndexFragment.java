@@ -30,8 +30,10 @@ public interface IWritableIndexFragment extends IIndexFragment {
 
 	/**
 	 * Clears the given file in the index.
+	 * @param newIncludes list of includes to set
+	 * @param destFiles list of file objects for the includes
 	 */
-	void clearFile(IIndexFragmentFile file) throws CoreException;
+	void clearFile(IIndexFragmentFile file, IASTPreprocessorIncludeStatement[] newIncludes, IIndexFragmentFile[] destFiles) throws CoreException;
 
 	/**
 	 * Creates a file object for the given location or returns an existing one.
@@ -45,7 +47,6 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * Adds an include to the given file.
 	 */
 	void addFileContent(IIndexFragmentFile sourceFile, 
-			IASTPreprocessorIncludeStatement[] includes, IIndexFragmentFile[] destFiles, 
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
 
 	/**

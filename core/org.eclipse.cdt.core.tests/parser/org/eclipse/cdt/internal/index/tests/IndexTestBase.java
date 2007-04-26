@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.index.tests;
 
+import java.io.IOException;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
@@ -26,7 +28,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class IndexTestBase extends BaseTestCase {
-
+	protected static int INDEXER_WAIT_TIME= 8000;
+	
 	public IndexTestBase(String name) {
 		super(name);
 	}
@@ -56,4 +59,9 @@ public class IndexTestBase extends BaseTestCase {
 	protected String readTaggedComment(String tag) throws Exception {
 		return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "parser", getClass(), tag);
 	}
+	
+    protected StringBuffer[] getContentsForTest(int blocks) throws IOException {
+    	return TestSourceReader.getContentsForTest(
+    			CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
+    }
 }

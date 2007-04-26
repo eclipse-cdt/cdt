@@ -32,18 +32,19 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
-import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory.FileInfo;
+import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory.CallbackHandler;
+import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory.IndexFileInfo;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-class PDOMFastIndexerTask extends PDOMIndexerTask {
+class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 	private List fChanged = new ArrayList();
 	private List fRemoved = new ArrayList();
 	private IWritableIndex fIndex;
 	private IndexBasedCodeReaderFactory fCodeReaderFactory;
 	private Map fIflCache;
-	private boolean fCheckTimestamps= false;
+	private int fCurrentConfigHash= 0;
 
 	public PDOMFastIndexerTask(PDOMFastIndexer indexer, ITranslationUnit[] added,
 			ITranslationUnit[] changed, ITranslationUnit[] removed) {
@@ -103,10 +104,11 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 	}
 
 	private void setupIndexAndReaderFactory() throws CoreException {
-		this.fIndex= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
-		this.fIndex.resetCacheCounters();
-		this.fIflCache = new HashMap/*<String,IIndexFileLocation>*/();
-		this.fCodeReaderFactory = new IndexBasedCodeReaderFactory(fIndex, fIflCache);
+		fIndex= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
+		fIndex.resetCacheCounters();
+		fIflCache = new HashMap/*<String,IIndexFileLocation>*/();
+		fCodeReaderFactory = new IndexBasedCodeReaderFactory(fIndex, fIflCache);
+		fCodeReaderFactory.setCallbackHandler(this);
 	}
 
 	private void registerTUsInReaderFactory() throws CoreException {
@@ -114,13 +116,19 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 		for (Iterator iter = fChanged.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
-			FileInfo info= fCodeReaderFactory.createFileInfo(ifl);
-			if (fCheckTimestamps && !isOutdated(tu, info.fFile)) {
-				iter.remove();
-				removed++;
+			IndexFileInfo info= fCodeReaderFactory.createFileInfo(ifl);
+			if (updateAll()) {
+				info.fRequested= IndexFileInfo.REQUESTED;
+			}
+			else if (updateChangedTimestamps() && isOutdated(tu, info.fFile)) {
+				info.fRequested= IndexFileInfo.REQUESTED;
+			}
+			else if (updateChangedConfiguration()) {
+				info.fRequested= IndexFileInfo.REQUESTED_IF_CONFIG_CHANGED;
 			}
 			else {
-				info.setRequested(true);
+				iter.remove();
+				removed++;
 			}
 		}
 		updateInfo(0, 0, -removed);
@@ -143,31 +151,47 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 		}
 		// Clear the macros
 		fCodeReaderFactory.clearMacroAttachements();
-
 		return ast;
 	}
 
-	protected boolean needToUpdate(IIndexFileLocation location) throws CoreException {
-		if (super.needToUpdate(location)) {
+	protected boolean needToUpdate(IIndexFileLocation location, int confighash) throws CoreException {
+		if (super.needToUpdate(location, confighash)) {
 			// file is requested or is not yet indexed.
-			FileInfo info= fCodeReaderFactory.createFileInfo(location);
-			return info.isRequested() || info.fFile == null;
+			IndexFileInfo info= fCodeReaderFactory.createFileInfo(location);
+			return needToUpdate(info, confighash);
 		}
 		return false;
+	}
+	
+	public boolean needToUpdate(IndexFileInfo info) throws CoreException {
+		return needToUpdate(info, fCurrentConfigHash);
+	}
+	
+	private boolean needToUpdate(IndexFileInfo info, int confighash) throws CoreException {
+		if (info.fFile == null) {
+			return true;
+		}
+		if (confighash != 0 && info.fRequested == IndexFileInfo.REQUESTED_IF_CONFIG_CHANGED) {
+			int oldhash= info.fFile.getScannerConfigurationHashcode();
+			if (oldhash == 0 || oldhash==confighash) {
+				info.fRequested= IndexFileInfo.NOT_REQUESTED;
+				updateInfo(0, 0, -1);
+			}
+			else {
+				info.fRequested= IndexFileInfo.REQUESTED;
+			}
+		}
+		return info.fRequested != IndexFileInfo.NOT_REQUESTED;
 	}
 
 	protected boolean postAddToIndex(IIndexFileLocation path, IIndexFile file)
 			throws CoreException {
-		FileInfo info= fCodeReaderFactory.createFileInfo(path);
+		IndexFileInfo info= fCodeReaderFactory.createFileInfo(path);
 		info.fFile= file;
-		if (info.isRequested()) {
-			info.setRequested(false);
+		if (info.fRequested != IndexFileInfo.NOT_REQUESTED) {
+			info.fRequested= IndexFileInfo.NOT_REQUESTED;
 			return true;
 		}
 		return false;
-	}
-
-	public void setCheckTimestamps(boolean val) {
-		fCheckTimestamps= val;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,17 +114,24 @@ public class AsyncViewerTest extends BaseUITestCase {
             return comp;
         }
     }
+
+	private TestDialog fDialog;
     
-    public void testSyncPopulation() {
-        TestDialog dlg = createTestDialog(false);
-        doTestSyncPopulation(dlg);
-        dlg.close();
+    protected void tearDown() throws Exception {
+    	if (fDialog != null) {
+    		fDialog.close();
+    	}
+		super.tearDown();
+	}
+
+	public void testSyncPopulation() {
+        createTestDialog(false);
+        doTestSyncPopulation(fDialog);
     }
 
     public void testSyncPopulationEx() {
-        TestDialog dlg = createTestDialog(true);
-        doTestSyncPopulation(dlg);
-        dlg.close();
+        createTestDialog(true);
+        doTestSyncPopulation(fDialog);
     }
 
     private void doTestSyncPopulation(TestDialog dlg) {
@@ -145,11 +152,10 @@ public class AsyncViewerTest extends BaseUITestCase {
         assertEquals(3, countVisibleItems(dlg.fViewer));
     }
 
-    private TestDialog createTestDialog(boolean useExtendedViewer) {
-        TestDialog dlg= new TestDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), useExtendedViewer);
-        dlg.setBlockOnOpen(false);
-        dlg.open();
-        return dlg;
+    private void createTestDialog(boolean useExtendedViewer) {
+        fDialog= new TestDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), useExtendedViewer);
+        fDialog.setBlockOnOpen(false);
+        fDialog.open();
     }
 
     private int countVisibleItems(TreeViewer viewer) {
@@ -168,15 +174,13 @@ public class AsyncViewerTest extends BaseUITestCase {
     }     
 
     public void testAsyncPopulation() throws InterruptedException {
-        TestDialog dlg = createTestDialog(false);
-        doTestAsyncPopulation(dlg);        
-        dlg.close();
+        createTestDialog(false);
+        doTestAsyncPopulation(fDialog);        
     }
 
     public void testAsyncPopulationEx() throws InterruptedException {
-        TestDialog dlg = createTestDialog(true);
-        doTestAsyncPopulation(dlg);        
-        dlg.close();
+    	createTestDialog(true);
+        doTestAsyncPopulation(fDialog);        
     }
 
     private void doTestAsyncPopulation(TestDialog dlg) throws InterruptedException {
@@ -252,7 +256,7 @@ public class AsyncViewerTest extends BaseUITestCase {
 	}
 
     public void testRecompute() throws InterruptedException {        
-        TestDialog dlg = createTestDialog(true);
+        createTestDialog(true);
         Node a,b,c;
         Node root= 
             new Node("", new Node[] {
@@ -264,15 +268,15 @@ public class AsyncViewerTest extends BaseUITestCase {
                 }, 150)
             }, 0);
         
-        dlg.fViewer.setInput(root); runEventQueue(50);
-        assertEquals(2, countVisibleItems(dlg.fViewer));
+        fDialog.fViewer.setInput(root); runEventQueue(50);
+        assertEquals(2, countVisibleItems(fDialog.fViewer));
 
-        dlg.fContentProvider.recompute();
-        assertEquals(2, countVisibleItems(dlg.fViewer));
+        fDialog.fContentProvider.recompute();
+        assertEquals(2, countVisibleItems(fDialog.fViewer));
         
-        dlg.fViewer.setExpandedState(b, true); 
+        fDialog.fViewer.setExpandedState(b, true); 
         runEventQueue(200);
-        assertEquals(4, countVisibleItems(dlg.fViewer));
+        assertEquals(4, countVisibleItems(fDialog.fViewer));
         runEventQueue(200);
 
         root.fChildren= new Node[] {
@@ -283,24 +287,23 @@ public class AsyncViewerTest extends BaseUITestCase {
                         new Node("d")
                 }, 150)
         };
-        dlg.fContentProvider.recompute();
-        assertEquals(3, countVisibleItems(dlg.fViewer));
+        fDialog.fContentProvider.recompute();
+        assertEquals(3, countVisibleItems(fDialog.fViewer));
         runEventQueue(200);
-        assertEquals(4, countVisibleItems(dlg.fViewer));
+        assertEquals(4, countVisibleItems(fDialog.fViewer));
         
-        dlg.fViewer.setExpandedState(c, true); 
-        assertEquals(5, countVisibleItems(dlg.fViewer));
+        fDialog.fViewer.setExpandedState(c, true); 
+        assertEquals(5, countVisibleItems(fDialog.fViewer));
         runEventQueue(200);
-        assertEquals(6, countVisibleItems(dlg.fViewer));
+        assertEquals(6, countVisibleItems(fDialog.fViewer));
 
-        dlg.fViewer.setSelection(new StructuredSelection(c));
-        dlg.fContentProvider.recompute();
+        fDialog.fViewer.setSelection(new StructuredSelection(c));
+        fDialog.fContentProvider.recompute();
         runEventQueue(200);
-        assertEquals(5, countVisibleItems(dlg.fViewer));
+        assertEquals(5, countVisibleItems(fDialog.fViewer));
         runEventQueue(200);
-        assertEquals(6, countVisibleItems(dlg.fViewer));
-        assertEquals(1, dlg.fViewer.getTree().getSelectionCount());
-        assertEquals("c", dlg.fViewer.getTree().getSelection()[0].getText());
-        dlg.close();
+        assertEquals(6, countVisibleItems(fDialog.fViewer));
+        assertEquals(1, fDialog.fViewer.getTree().getSelectionCount());
+        assertEquals("c", fDialog.fViewer.getTree().getSelection()[0].getText());
     }
 }

@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexerStateListener;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -474,7 +475,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 				IPDOMIndexerTask task= null;
 				if (operation.wasSuccessful()) {
-					task= new PDOMUpdateTask(indexer, true);
+					task= new PDOMUpdateTask(indexer, IIndexManager.UPDATE_CHECK_TIMESTAMPS);
 				}
 				else {
 					task= new PDOMRebuildTask(indexer);
@@ -1186,30 +1187,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	private void update(ICProject project, List filesAndFolders, int options) throws CoreException {
-		boolean all= false;
-		boolean timestamps= false;
-		if ((options & UPDATE_ALL) != 0) {
-			all= true;
-		}
-		else if ((options & UPDATE_CHECK_TIMESTAMPS) != 0) {
-			timestamps= true;
-		}
-		else {
-			throw new IllegalArgumentException();
-		}
-			
-		if (all && filesAndFolders.size() == 1 && project.equals(filesAndFolders.get(0))) {
-			reindex(project);
-		}
-		else {
-			assert !Thread.holdsLock(fProjectToPDOM);
-			synchronized (fUpdatePolicies) {
-				IPDOMIndexer indexer= getIndexer(project);
-				PDOMUpdateTask task= new PDOMUpdateTask(indexer, timestamps);
-				task.setTranslationUnitSelection(filesAndFolders);
-				if (indexer != null) {
-					enqueue(task);
-				}
+		assert !Thread.holdsLock(fProjectToPDOM);
+		synchronized (fUpdatePolicies) {
+			IPDOMIndexer indexer= getIndexer(project);
+			PDOMUpdateTask task= new PDOMUpdateTask(indexer, options);
+			task.setTranslationUnitSelection(filesAndFolders);
+			if (indexer != null) {
+				enqueue(task);
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,14 @@ public interface IIndexFile {
 	 * @throws CoreException 
 	 */
 	long getTimestamp() throws CoreException;
+
+	/**
+	 * Returns the hashcode of the scanner configuration that was used to parse the file.
+	 * <code>0</code> will be returned in case the hashcode is unknown.
+	 * @return the hashcode of the scanner configuration or <code>0</code>.
+	 * @throws CoreException 
+	 */
+	int getScannerConfigurationHashcode() throws CoreException;
 
 	/**
 	 * Find all names within the given range.

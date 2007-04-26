@@ -35,8 +35,6 @@ public interface IWritableIndex extends IIndex {
 	 * Adds content to the given file.
 	 */
 	void setFileContent(IIndexFragmentFile sourceFile, 
-			IASTPreprocessorIncludeStatement[] includes, 
-			IIndexFileLocation[] includeLocations,
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
 
 	/**
@@ -46,8 +44,10 @@ public interface IWritableIndex extends IIndex {
 
 	/**
 	 * Clears the given file in the index.
+	 * @param newIncludes 
+	 * @param newIncludeLocations 
 	 */
-	void clearFile(IIndexFragmentFile file) throws CoreException;
+	void clearFile(IIndexFragmentFile file, IASTPreprocessorIncludeStatement[] newIncludes, IIndexFileLocation[] newIncludeLocations) throws CoreException;
 
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.

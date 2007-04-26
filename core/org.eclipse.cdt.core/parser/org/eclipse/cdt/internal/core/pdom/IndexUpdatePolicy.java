@@ -16,6 +16,7 @@ import java.util.HashSet;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -146,7 +147,7 @@ public class IndexUpdatePolicy {
 		}
 		else if (fIndexer != null) {
 			if (oldPolicy == MANUAL) {
-				task= new PDOMUpdateTask(fIndexer,  true);
+				task= new PDOMUpdateTask(fIndexer, IIndexManager.UPDATE_CHECK_TIMESTAMPS);
 				clearTUs();
 			}
 			else if (fKind == POST_CHANGE) {

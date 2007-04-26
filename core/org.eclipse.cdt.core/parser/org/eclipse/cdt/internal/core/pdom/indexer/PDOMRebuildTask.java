@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -100,7 +101,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		ITranslationUnit[] tus= (ITranslationUnit[]) sources.toArray(new ITranslationUnit[sources.size()]);
 		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (fDelegate instanceof PDOMIndexerTask) {
-			((PDOMIndexerTask) fDelegate).setCheckTimestamps(true);
+			((PDOMIndexerTask) fDelegate).setUpateFlags(IIndexManager.UPDATE_ALL);
 			((PDOMIndexerTask) fDelegate).setParseUpFront();
 		}
 	}

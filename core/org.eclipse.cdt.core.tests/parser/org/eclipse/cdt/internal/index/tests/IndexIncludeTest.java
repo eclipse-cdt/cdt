@@ -68,6 +68,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	}
 	
 	public void tearDown() throws Exception {
+		TestScannerProvider.sIncludes= null;
 		super.tearDown();
 	}
 		
@@ -314,4 +315,271 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 		
 	}
+	
+	// #include "resolved20070426.h"
+	public void testFixedContext() throws Exception {
+		waitForIndexer();
+		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		String source= getContentsForTest(1)[0].toString();
+		IFile header= TestSourceReader.createFile(fProject.getProject(), "resolved20070426.h", "");
+		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", source);
+		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", source);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
+			assertEquals(2, includes.length);
+			assertEquals(s2.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+		
+		s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", source + "\nint a20070426;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		fIndex.acquireReadLock();
+		try {
+			assertEquals(1, fIndex.findBindings("a20070426".toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
+			assertEquals(2, includes.length);
+			assertEquals(s2.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+
+		s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", source + "\nint b20070426;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		fIndex.acquireReadLock();
+		try {
+			assertEquals(1, fIndex.findBindings("b20070426".toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
+			assertEquals(2, includes.length);
+			assertEquals(s2.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	// #include "resolved20070427.h"
+	// #include "unesolved20070427.h"
+	// #if 0
+	// #include "inactive20070427.h"
+	// #endif
+
+	// #include <unesolved20070427.h>
+	// #if 0
+	// #include <inactive20070427.h>
+	// #endif
+
+	// #include <resolved20070427.h>
+	// #if 0
+	// #include <inactive20070427.h>
+	// #endif
+
+	// #include "resolved20070427.h"
+	// #include "unesolved20070427.h"
+	public void testUpdateIncludes() throws Exception {
+		waitForIndexer();
+		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		StringBuffer[] source= getContentsForTest(4);
+		IFile header= TestSourceReader.createFile(fProject.getProject(), "resolved20070427.h", "");
+		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+				source[0].toString() + "\nint a20070427;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		standardCheckUpdateIncludes(header, s1, "a20070427");
+		
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+				source[0].toString() + "\nint b20070427;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		standardCheckUpdateIncludes(header, s1, "b20070427");
+
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+				source[1].toString() + "\nint c20070427;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		checkUpdateIncludes1(header, s1, "c20070427");
+
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+				source[0].toString() + "\nint d20070427;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		standardCheckUpdateIncludes(header, s1, "d20070427");
+
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+				source[2].toString() + "\nint e20070427;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		checkUpdateIncludes2(header, s1, "e20070427");
+
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+				source[0].toString() + "\nint f20070427;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		standardCheckUpdateIncludes(header, s1, "f20070427");
+
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+				source[3].toString() + "\nint g20070427;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		checkUpdateIncludes3(header, s1, "g20070427");
+
+		s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
+				source[0].toString() + "\nint h20070427;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		standardCheckUpdateIncludes(header, s1, "h20070427");
+
+	}
+
+	private void standardCheckUpdateIncludes(IFile header, IFile s1, String tag) throws Exception {
+		fIndex.acquireReadLock();
+		try {
+			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile sfile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(s1));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
+			assertEquals(1, includes.length);
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(header.getFullPath().toString(), includes[0].getIncludesLocation().getFullPath());
+			assertTrue(includes[0].isActive());
+			assertTrue(includes[0].isResolved());
+			assertFalse(includes[0].isSystemInclude());
+
+			assertNotNull(sfile);
+			includes= fIndex.findIncludes(sfile);
+			assertEquals(3, includes.length);
+			assertEquals(header.getFullPath().toString(), includes[0].getIncludesLocation().getFullPath());
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertTrue(includes[0].isActive());
+			assertTrue(includes[0].isResolved());
+			assertFalse(includes[0].isSystemInclude());
+
+			assertNull(includes[1].getIncludesLocation());
+			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			assertTrue(includes[1].isActive());
+			assertFalse(includes[1].isResolved());
+			assertFalse(includes[1].isSystemInclude());
+
+			assertNull(includes[2].getIncludesLocation());
+			assertEquals(s1.getFullPath().toString(), includes[2].getIncludedByLocation().getFullPath());
+			assertFalse(includes[2].isActive());
+			assertFalse(includes[2].isResolved());
+			assertFalse(includes[2].isSystemInclude());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}	
+
+	private void checkUpdateIncludes1(IFile header, IFile s1, String tag) throws Exception {
+		fIndex.acquireReadLock();
+		try {
+			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile sfile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(s1));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
+			assertEquals(0, includes.length);
+
+			assertNotNull(sfile);
+			includes= fIndex.findIncludes(sfile);
+			assertEquals(2, includes.length);
+
+			assertNull(includes[0].getIncludesLocation());
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertTrue(includes[0].isActive());
+			assertFalse(includes[0].isResolved());
+			assertTrue(includes[0].isSystemInclude());
+
+			assertNull(includes[1].getIncludesLocation());
+			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			assertFalse(includes[1].isActive());
+			assertFalse(includes[1].isResolved());
+			assertTrue(includes[1].isSystemInclude());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}	
+
+	private void checkUpdateIncludes2(IFile header, IFile s1, String tag) throws Exception {
+		fIndex.acquireReadLock();
+		try {
+			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile sfile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(s1));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
+			assertEquals(1, includes.length);
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(header.getFullPath().toString(), includes[0].getIncludesLocation().getFullPath());
+			assertTrue(includes[0].isActive());
+			assertTrue(includes[0].isResolved());
+			assertTrue(includes[0].isSystemInclude());
+
+			assertNotNull(sfile);
+			includes= fIndex.findIncludes(sfile);
+			assertEquals(2, includes.length);
+			assertEquals(header.getFullPath().toString(), includes[0].getIncludesLocation().getFullPath());
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertTrue(includes[0].isActive());
+			assertTrue(includes[0].isResolved());
+			assertTrue(includes[0].isSystemInclude());
+
+			assertNull(includes[1].getIncludesLocation());
+			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			assertFalse(includes[1].isActive());
+			assertFalse(includes[1].isResolved());
+			assertTrue(includes[1].isSystemInclude());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}	
+
+	private void checkUpdateIncludes3(IFile header, IFile s1, String tag) throws Exception {
+		fIndex.acquireReadLock();
+		try {
+			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile sfile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(s1));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
+			assertEquals(1, includes.length);
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(header.getFullPath().toString(), includes[0].getIncludesLocation().getFullPath());
+			assertTrue(includes[0].isActive());
+			assertTrue(includes[0].isResolved());
+			assertFalse(includes[0].isSystemInclude());
+
+			assertNotNull(sfile);
+			includes= fIndex.findIncludes(sfile);
+			assertEquals(2, includes.length);
+			assertEquals(header.getFullPath().toString(), includes[0].getIncludesLocation().getFullPath());
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertTrue(includes[0].isActive());
+			assertTrue(includes[0].isResolved());
+			assertFalse(includes[0].isSystemInclude());
+
+			assertNull(includes[1].getIncludesLocation());
+			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			assertTrue(includes[1].isActive());
+			assertFalse(includes[1].isResolved());
+			assertFalse(includes[1].isSystemInclude());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}	
 }

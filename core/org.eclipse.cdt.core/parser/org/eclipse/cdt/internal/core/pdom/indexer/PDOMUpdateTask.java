@@ -34,14 +34,14 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	
 	private final IPDOMIndexer fIndexer;
 	private final IndexerProgress fProgress;
-	private final boolean fCheckTimestamps;
+	private final int fUpdateOptions;
 	private volatile IPDOMIndexerTask fDelegate;
 	private ArrayList fFilesAndFolders= null;
 
-	public PDOMUpdateTask(IPDOMIndexer indexer, boolean checkTimestamps) {
+	public PDOMUpdateTask(IPDOMIndexer indexer, int updateOptions) {
 		fIndexer= indexer;
 		fProgress= createProgress();
-		fCheckTimestamps= checkTimestamps;
+		fUpdateOptions= updateOptions;
 	}
 
 	private IndexerProgress createProgress() {
@@ -90,7 +90,8 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		ITranslationUnit[] tus= (ITranslationUnit[]) set.toArray(new ITranslationUnit[set.size()]);
 		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (fDelegate instanceof PDOMIndexerTask) {
-			((PDOMIndexerTask) fDelegate).setCheckTimestamps(fCheckTimestamps);
+			final PDOMIndexerTask task = (PDOMIndexerTask) fDelegate;
+			task.setUpateFlags(fUpdateOptions);
 		}
 	}
 

@@ -111,6 +111,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 32 - support standalone function types (181936)
 	// 33 - templates: constructor instances
 	// 34 - fix for base classes represented by qualified names (183843)
+	// 35 - add scanner configuration hashcode (62366)
 	
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

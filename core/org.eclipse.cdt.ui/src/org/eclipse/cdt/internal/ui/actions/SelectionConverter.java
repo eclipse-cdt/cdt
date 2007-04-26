@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.actions;
@@ -87,8 +88,8 @@ public class SelectionConverter {
 	public static IStructuredSelection convertSelectionToCElements(ISelection s,
 			boolean keepNonCElements) {
 		List converted = new ArrayList();
-		if (s instanceof StructuredSelection) {
-			Object[] elements = ((StructuredSelection) s).toArray();
+		if (s instanceof IStructuredSelection) {
+			Object[] elements = ((IStructuredSelection) s).toArray();
 			for (int i = 0; i < elements.length; i++) {
 				Object e = elements[i];
 				if (e instanceof ICElement) {

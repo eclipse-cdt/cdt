@@ -45,17 +45,17 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         show_mng.setText(UIMessages.getString("PropertyPageDefsTab.0")); //$NON-NLS-1$
         show_mng.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		show_tree = new Button(usercomp, SWT.CHECK);
-        show_tree.setText(UIMessages.getString("PropertyPageDefsTab.1")); //$NON-NLS-1$
-        show_tree.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-	//	show_mul = new Button(usercomp, SWT.CHECK);
-    //    show_mul.setText(UIMessages.getString("PropertyPageDefsTab.2")); //$NON-NLS-1$
-    //    show_mul.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 		show_sav = new Button(usercomp, SWT.CHECK);
         show_sav.setText(UIMessages.getString("PropertyPageDefsTab.3")); //$NON-NLS-1$
         show_sav.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+    	//	show_mul = new Button(usercomp, SWT.CHECK);
+        //    show_mul.setText(UIMessages.getString("PropertyPageDefsTab.2")); //$NON-NLS-1$
+        //    show_mul.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		show_tree = new Button(usercomp, SWT.CHECK);
+        show_tree.setText(UIMessages.getString("PropertyPageDefsTab.1")); //$NON-NLS-1$
+        show_tree.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_tool = new Button(usercomp, SWT.CHECK);
         show_tool.setText(UIMessages.getString("PropertyPageDefsTab.4")); //$NON-NLS-1$

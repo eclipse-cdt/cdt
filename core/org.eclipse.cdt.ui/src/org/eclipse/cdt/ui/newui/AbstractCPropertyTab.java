@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.dialogs.ListDialog;
@@ -78,6 +79,9 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
  */
 public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final int BUTTON_WIDTH = 120; // used as hint for all push buttons
+
+	// use 3-state buttons in property pages
+	public static final boolean USE_TRI_STATE = false;
 
 	// commonly used button names
 	public static final String EMPTY_STR = ""; //$NON-NLS-1$
@@ -323,6 +327,17 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		 return b;
 	}
 
+	protected TriButton setupTri(Composite c, String name, int span, int mode) {
+		 TriButton b = new TriButton(c, 0, USE_TRI_STATE);
+		 b.setText(name);
+		 setupControl(b, span, mode);
+		 b.addSelectionListener(new SelectionAdapter() {
+		    public void widgetSelected(SelectionEvent event) {
+		    	triButtonPressed(event);
+		 }});
+		 return b;
+	}
+
 	/**
 	 * Selection handler for checkbox created by method "setupCheck()" 
 	 * Descendants should override this method if they use "setupCheck".  
@@ -334,6 +349,17 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 *   ... } 
 	 */
     protected void checkPressed(SelectionEvent e) {}
+    
+    /**
+     * Substitutes combo or button
+     * with its parent (triButton)
+     * @param e
+     */
+    protected void triButtonPressed(SelectionEvent e) {
+    	Control w = (Control)e.widget;
+    	e.widget = w.getParent();
+    	checkPressed(e);
+    }
     
 	protected void setupControl(Control c, int span, int mode) {
 		// although we use GridLayout usually,

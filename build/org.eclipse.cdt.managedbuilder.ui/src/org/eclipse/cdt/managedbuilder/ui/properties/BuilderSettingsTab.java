@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildProcessManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
+import org.eclipse.cdt.ui.newui.TriButton;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -43,15 +44,16 @@ import org.eclipse.swt.widgets.Widget;
 public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	// Widgets
 	//1
-	Button b_useDefault;
+	TriButton b_useDefault;
 	Combo  c_builderType;
 	Text   t_buildCmd; 
 	//2
-	Button b_genMakefileAuto;
-	Button b_expandVars;
+	TriButton b_genMakefileAuto;
+	TriButton b_expandVars;
 	//3
-	Button b_stopOnError;
-	Button b_parallel;
+	TriButton b_stopOnError;
+	TriButton b_parallel;
+
 	Button b_parallelOpt;
 	Button b_parallelNum;
 	Spinner parallelProcesses;
@@ -99,7 +101,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		    	updateButtons();
 		 }});
 		
-		b_useDefault = setupCheck(g1, Messages.getString("BuilderSettingsTab.4"), 3, GridData.BEGINNING); //$NON-NLS-1$
+		b_useDefault = setupTri(g1, Messages.getString("BuilderSettingsTab.4"), 3, GridData.BEGINNING); //$NON-NLS-1$
 		
 		setupLabel(g1, Messages.getString("BuilderSettingsTab.5"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_buildCmd = setupBlock(g1, b_useDefault);
@@ -118,8 +120,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		Group g2 = setupGroup(comp, Messages.getString("BuilderSettingsTab.6"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		((GridLayout)(g2.getLayout())).makeColumnsEqualWidth = true;
 		
-		b_genMakefileAuto = setupCheck(g2, Messages.getString("BuilderSettingsTab.7"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		b_expandVars  = setupCheck(g2, Messages.getString("BuilderSettingsTab.8"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		b_genMakefileAuto = setupTri(g2, Messages.getString("BuilderSettingsTab.7"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		b_expandVars  = setupTri(g2, Messages.getString("BuilderSettingsTab.8"), 1, GridData.BEGINNING); //$NON-NLS-1$
 
 		// Build setting group
 		Group g3 = setupGroup(comp, Messages.getString("BuilderSettingsTab.9"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
@@ -127,14 +129,18 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		
 		Composite c1 = new Composite(g3, SWT.NONE);
 		setupControl(c1, 1, GridData.FILL_BOTH);
-		c1.setLayout(new GridLayout(1, false));
+		GridLayout gl = new GridLayout(1, false);
+		gl.marginWidth = 0;
+		c1.setLayout(gl);
 		
-		b_stopOnError = setupCheck(c1, Messages.getString("BuilderSettingsTab.10"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		b_stopOnError = setupTri(c1, Messages.getString("BuilderSettingsTab.10"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		Composite c2 = new Composite(g3, SWT.NONE);
 		setupControl(c2, 1, GridData.FILL_BOTH);
-		c2.setLayout(new GridLayout(2, false));
+		gl = new GridLayout(2, false);
+		gl.marginWidth = 0;
+		c2.setLayout(gl);
 		
-		b_parallel = setupCheck(c2, Messages.getString("BuilderSettingsTab.11"), 2, GridData.BEGINNING); //$NON-NLS-1$
+		b_parallel = setupTri(c2, Messages.getString("BuilderSettingsTab.11"), 2, GridData.BEGINNING); //$NON-NLS-1$
 		
 		b_parallelOpt= new Button(c2, SWT.RADIO);
 		b_parallelOpt.setText(Messages.getString("BuilderSettingsTab.12")); //$NON-NLS-1$
@@ -326,8 +332,9 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	
 	/**
 	 * Sets up text + corresponding button
+	 * Checkbox can be implemented either by Button or by TriButton
 	 */
-	Text setupBlock(Composite c, Button check) {
+	Text setupBlock(Composite c, Control check) {
 		Text t = setupText(c, 1, GridData.FILL_HORIZONTAL);
 		Button b = setupButton(c, VARIABLESBUTTON_NAME, 1, GridData.END);
 		b.setData(t); // to get know which text is affected
@@ -362,14 +369,17 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	}
 	
     public void checkPressed(SelectionEvent e) {
-    	checkPressed((Button)e.widget);
+    	checkPressed((Control)e.widget);
     	updateButtons();
     }
 	
-	void checkPressed(Button b) {	
+	void checkPressed(Control b) {	
 		if (b == null) return;
 		
-		boolean val = b.getSelection();
+		boolean val = false;
+		if (b instanceof Button) val = ((Button)b).getSelection();
+		else if (b instanceof TriButton) val = ((TriButton)b).getSelection();
+		
 		if (b.getData() instanceof Text) {
 			Text t = (Text)b.getData();
 			if (b == b_useDefault) { val = !val; }

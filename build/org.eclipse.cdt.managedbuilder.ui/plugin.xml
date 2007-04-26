@@ -156,7 +156,6 @@
   <extension
         point="org.eclipse.ui.perspectiveExtensions">
      <perspectiveExtension targetID="org.eclipse.cdt.ui.CPerspective">
-        <actionSet id="org.eclipse.cdt.managedbuilder.ui.buildSelectedFilesActionSet"/>
      </perspectiveExtension>
   </extension>
 

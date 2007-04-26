@@ -67,7 +67,7 @@ public abstract class PDOMNode implements IPDOMNode {
 		return record;
 	}
 	
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (obj == this)
 			return true;
 		if (obj instanceof PDOMNode) {
@@ -78,7 +78,7 @@ public abstract class PDOMNode implements IPDOMNode {
 		return super.equals(obj);
 	}
 
-	public int hashCode() {
+	public final int hashCode() {
 		return System.identityHashCode(pdom) + 41*record;
 	}
 

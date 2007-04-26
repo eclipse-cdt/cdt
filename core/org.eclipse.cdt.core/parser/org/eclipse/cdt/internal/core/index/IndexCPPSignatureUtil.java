@@ -8,7 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.pdom.dom.cpp;
+package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
@@ -29,9 +29,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.cdt.internal.core.index.IIndexInternalTemplateParameter;
-import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -40,7 +37,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Bryan Wilkinson
  */
-class PDOMCPPOverloaderUtil {
+public class IndexCPPSignatureUtil {
 	
 	/**
 	 * Returns the signature for the binding.  Returns an empty string if a
@@ -172,19 +169,23 @@ class PDOMCPPOverloaderUtil {
 		String sig= getFunctionParameterString(type); 
 		return sig.length() == 0 ? null : new Integer(sig.hashCode());
 	}
-	
-	public static int compare(IPDOMOverloader a, Object b) {
-		if(b instanceof IPDOMOverloader) {
-			IPDOMOverloader bb= (IPDOMOverloader) b;
-			try {
-				int mySM = a.getSignatureMemento();
-				int otherSM = bb.getSignatureMemento();
-				return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
-			}
-		} else {
-			throw new PDOMNotImplementedError(b.getClass().toString());
+
+	/**
+	 * Compares two bindings for signature information. Signature information covers
+	 * function signatures, or template specialization/instance arguments.
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static int compareSignatures(IBinding a, IBinding b) {
+		try {
+			int siga= getSignature(a).hashCode();
+			int sigb= getSignature(b).hashCode();
+			return siga<sigb ? -1 : (siga>sigb ? 1 : 0);
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+		} catch(DOMException de) {
+			CCorePlugin.log(de);
 		}
 		return 0;
 	}

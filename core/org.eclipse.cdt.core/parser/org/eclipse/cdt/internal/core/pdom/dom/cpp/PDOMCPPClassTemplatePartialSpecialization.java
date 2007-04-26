@@ -28,9 +28,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
+import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -59,7 +61,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		primary.addPartial(this);
 		
 		try {
-			Integer memento = PDOMCPPOverloaderUtil.getSignatureMemento(partial);
+			Integer memento = IndexCPPSignatureUtil.getSignatureMemento(partial);
 			pdom.getDB().putInt(record + SIGNATURE_MEMENTO, memento != null ? memento.intValue() : 0);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
@@ -140,8 +142,8 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		}
 	}
 	
-	public int compareTo(Object other) {
-		int cmp = super.compareTo(other);
+	public int pdomCompareTo(PDOMBinding other) {
+		int cmp = super.pdomCompareTo(other);
 		if(cmp==0) {
 			if(other instanceof PDOMCPPClassTemplatePartialSpecialization) {
 				try {

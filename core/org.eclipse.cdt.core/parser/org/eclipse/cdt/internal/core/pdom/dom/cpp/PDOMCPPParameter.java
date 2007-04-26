@@ -229,4 +229,8 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IIndexFra
 	public boolean isFileLocal() throws CoreException {
 		return true;
 	}
+	
+	public int getBindingConstant() {
+		return getNodeType();
+	}
 }

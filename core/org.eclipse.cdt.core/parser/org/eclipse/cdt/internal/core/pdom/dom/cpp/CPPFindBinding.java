@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -107,7 +108,7 @@ public class CPPFindBinding extends FindBinding {
 	public static PDOMBinding findBinding(BTree btree, PDOMLinkage linkage, IBinding binding) throws CoreException {	
 		Integer memento = null;
 		try {
-			memento = PDOMCPPOverloaderUtil.getSignatureMemento(binding);
+			memento = IndexCPPSignatureUtil.getSignatureMemento(binding);
 		} catch (DOMException e) {
 		}
 		if(memento != null) {
@@ -119,7 +120,7 @@ public class CPPFindBinding extends FindBinding {
 	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, IBinding binding) throws CoreException {
 		Integer memento = null;
 		try {
-			memento = PDOMCPPOverloaderUtil.getSignatureMemento(binding);
+			memento = IndexCPPSignatureUtil.getSignatureMemento(binding);
 		} catch (DOMException e) {
 		}
 		if(memento != null) {

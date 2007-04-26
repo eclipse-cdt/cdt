@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
@@ -73,7 +74,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 			}
 		}
 		try {
-			Integer memento = PDOMCPPOverloaderUtil.getSignatureMemento(spec);
+			Integer memento = IndexCPPSignatureUtil.getSignatureMemento(spec);
 			pdom.getDB().putInt(record + SIGNATURE_MEMENTO, memento != null ? memento.intValue() : 0);
 		} catch (DOMException e) {
 		}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
+import java.util.Comparator;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -17,7 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.CIndex;
+import org.eclipse.cdt.internal.core.index.DefaultFragmentBindingComparator;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFragmentBindingComparator;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -25,9 +29,16 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class AbstractCompositeFactory implements ICompositesFactory {	
 	protected IIndex index;
+	private Comparator fragmentComparator;
 	
 	public AbstractCompositeFactory(IIndex index) {
-		this.index = index;
+		this.index= index;
+		this.fragmentComparator= new FragmentBindingComparator( 
+			new IIndexFragmentBindingComparator[] {
+					new PDOMFragmentBindingComparator(), 
+					new DefaultFragmentBindingComparator()
+			}
+		);
 	}
 	
 	/*
@@ -54,14 +65,14 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	 * @param fragmentBindings
 	 * @return an array of unique bindings
 	 */
-	protected static IIndexFragmentBinding[] mergeBindingArrays(IIndexFragmentBinding[][] fragmentBindings) {
-		TreeSet ts = new TreeSet();
+	protected IIndexFragmentBinding[] mergeBindingArrays(IIndexFragmentBinding[][] fragmentBindings) {
+		TreeSet ts = new TreeSet(fragmentComparator);
 		for(int i=0; i<fragmentBindings.length; i++)
 			for(int j=0; j<fragmentBindings[i].length; j++)
 				ts.add(fragmentBindings[i][j]);
 		return (IIndexFragmentBinding[]) ts.toArray(new IIndexFragmentBinding[ts.size()]);
 	}
-
+	
 	/**
 	 * Convenience method for finding a binding with a definition in the specified index
 	 * context, which is equivalent to the specified binding
@@ -84,5 +95,28 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 			CCorePlugin.log(ce);
 		}
 		throw new CompositingNotImplementedError();
+	}
+	
+	private static class FragmentBindingComparator implements Comparator {
+		private IIndexFragmentBindingComparator[] comparators;
+		
+		FragmentBindingComparator(IIndexFragmentBindingComparator[] comparators) {
+			this.comparators= comparators;
+		}
+		
+		public int compare(Object o1, Object o2) {
+			if(o1 instanceof IIndexFragmentBinding && o2 instanceof IIndexFragmentBinding) {
+				IIndexFragmentBinding f1= (IIndexFragmentBinding) o1;
+				IIndexFragmentBinding f2= (IIndexFragmentBinding) o2;
+				
+				for(int i=0; i<comparators.length; i++) {
+					int cmp= comparators[i].compare(f1, f2);
+					if(cmp!=Integer.MIN_VALUE) {
+						return cmp;
+					}
+				}
+			}
+			throw new IllegalArgumentException();
+		}
 	}
 }

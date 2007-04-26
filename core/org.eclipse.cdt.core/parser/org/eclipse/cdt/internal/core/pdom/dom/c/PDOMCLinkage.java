@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
@@ -43,7 +44,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-class PDOMCLinkage extends PDOMLinkage {
+class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
 	public PDOMCLinkage(PDOM pdom, int record) {
 		super(pdom, record);
@@ -60,17 +61,6 @@ class PDOMCLinkage extends PDOMLinkage {
 	public String getID() {
 		return C_LINKAGE_ID;
 	}
-	
-	public static final int CVARIABLE = PDOMLinkage.LAST_NODE_TYPE + 1;
-	public static final int CFUNCTION = PDOMLinkage.LAST_NODE_TYPE + 2;
-	public static final int CSTRUCTURE = PDOMLinkage.LAST_NODE_TYPE + 3;
-	public static final int CFIELD = PDOMLinkage.LAST_NODE_TYPE + 4;
-	public static final int CENUMERATION = PDOMLinkage.LAST_NODE_TYPE + 5;
-	public static final int CENUMERATOR = PDOMLinkage.LAST_NODE_TYPE + 6;
-	public static final int CTYPEDEF = PDOMLinkage.LAST_NODE_TYPE + 7;
-	public static final int CPARAMETER = PDOMLinkage.LAST_NODE_TYPE + 8;
-	public static final int CBASICTYPE = PDOMLinkage.LAST_NODE_TYPE + 9;
-	public static final int CFUNCTIONTYPE = PDOMLinkage.LAST_NODE_TYPE + 10;
 
 	public PDOMBinding addBinding(IBinding binding) throws CoreException {
 		PDOMBinding pdomBinding = adaptBinding(binding);

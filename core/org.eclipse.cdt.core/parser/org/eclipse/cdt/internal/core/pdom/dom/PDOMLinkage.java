@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecializationScope;
+import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -57,7 +58,7 @@ import org.eclipse.core.runtime.CoreException;
  * This class represents a collection of symbols that can be linked together at
  * link time. These are generally global symbols specific to a given language.
  */
-public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage {
+public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage, IIndexBindingConstants {
 
 	// record offsets
 	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
@@ -68,12 +69,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	
 	// node types
 	protected static final int LINKAGE= 0; // special one for myself
-	static final int POINTER_TYPE= 1;
-	static final int ARRAY_TYPE= 2;
-	static final int QUALIFIER_TYPE= 3;
-	static final int FILE_LOCAL_SCOPE_TYPE= 4;
-	
-	protected static final int LAST_NODE_TYPE = FILE_LOCAL_SCOPE_TYPE;
 	
 	public PDOMLinkage(PDOM pdom, int record) {
 		super(pdom, record);

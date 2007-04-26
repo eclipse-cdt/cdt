@@ -182,8 +182,8 @@ class PDOMCPPFunctionInstance extends PDOMCPPInstance implements ICPPFunction {
 		return false;
 	}
 	
-	public int compareTo(Object other) {
-		int cmp= super.compareTo(other);
-		return cmp==0 ? PDOMCPPOverloaderUtil.compare(this, other) : cmp;
+	public int pdomCompareTo(PDOMBinding other) {
+		int cmp= super.pdomCompareTo(other);
+		return cmp==0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;
 	}
 }

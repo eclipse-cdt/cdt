@@ -56,6 +56,7 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -70,7 +71,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPLinkage extends PDOMLinkage {
+class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	public PDOMCPPLinkage(PDOM pdom, int record) {
 		super(pdom, record);
 	}
@@ -92,45 +93,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	}
 
 	// Binding types
-	public static final int CPPVARIABLE = PDOMLinkage.LAST_NODE_TYPE + 1;
-	public static final int CPPFUNCTION = PDOMLinkage.LAST_NODE_TYPE + 2;
-	public static final int CPPCLASSTYPE = PDOMLinkage.LAST_NODE_TYPE + 3;
-	public static final int CPPFIELD = PDOMLinkage.LAST_NODE_TYPE + 4;
-	public static final int CPPMETHOD = PDOMLinkage.LAST_NODE_TYPE + 5;
-	public static final int CPPNAMESPACE = PDOMLinkage.LAST_NODE_TYPE + 6;
-	public static final int CPPNAMESPACEALIAS = PDOMLinkage.LAST_NODE_TYPE + 7;
-	public static final int CPPBASICTYPE = PDOMLinkage.LAST_NODE_TYPE + 8;
-	public static final int CPPPARAMETER = PDOMLinkage.LAST_NODE_TYPE + 9;
-	public static final int CPPENUMERATION = PDOMLinkage.LAST_NODE_TYPE + 10;
-	public static final int CPPENUMERATOR = PDOMLinkage.LAST_NODE_TYPE + 11;
-	public static final int CPPTYPEDEF = PDOMLinkage.LAST_NODE_TYPE + 12;
-	public static final int CPP_POINTER_TO_MEMBER_TYPE= PDOMLinkage.LAST_NODE_TYPE + 13;
-	public static final int CPP_CONSTRUCTOR= PDOMLinkage.LAST_NODE_TYPE + 14;
-	public static final int CPP_REFERENCE_TYPE= PDOMLinkage.LAST_NODE_TYPE + 15;
-	public static final int CPP_FUNCTION_TEMPLATE= PDOMLinkage.LAST_NODE_TYPE + 16;
-	public static final int CPP_METHOD_TEMPLATE= PDOMLinkage.LAST_NODE_TYPE + 17;
-	public static final int CPP_CONSTRUCTOR_TEMPLATE= PDOMLinkage.LAST_NODE_TYPE + 18;
-	public static final int CPP_CLASS_TEMPLATE= PDOMLinkage.LAST_NODE_TYPE + 19;
-	public static final int CPP_CLASS_TEMPLATE_PARTIAL_SPEC= PDOMLinkage.LAST_NODE_TYPE + 20;
-	public static final int CPP_FUNCTION_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 21;
-	public static final int CPP_METHOD_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 22;
-	public static final int CPP_CONSTRUCTOR_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 23;
-	public static final int CPP_DEFERRED_FUNCTION_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 24;
-	public static final int CPP_CLASS_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 25;
-	public static final int CPP_DEFERRED_CLASS_INSTANCE= PDOMLinkage.LAST_NODE_TYPE + 26;
-	public static final int CPP_PARAMETER_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 27;
-	public static final int CPP_FIELD_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 28;
-	public static final int CPP_FUNCTION_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 29;
-	public static final int CPP_METHOD_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 30;
-	public static final int CPP_CONSTRUCTOR_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 31;
-	public static final int CPP_CLASS_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 32;
-	public static final int CPP_FUNCTION_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 33;
-	public static final int CPP_METHOD_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 34;
-	public static final int CPP_CONSTRUCTOR_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 35;
-	public static final int CPP_CLASS_TEMPLATE_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 36;
-	public static final int CPP_TYPEDEF_SPECIALIZATION= PDOMLinkage.LAST_NODE_TYPE + 37;
-	public static final int CPP_TEMPLATE_TYPE_PARAMETER= PDOMLinkage.LAST_NODE_TYPE + 38;
-	public static final int CPP_FUNCTION_TYPE= PDOMLinkage.LAST_NODE_TYPE + 39;
+
 	
 	private class ConfigureTemplate implements Runnable {
 		ICPPTemplateDefinition template;

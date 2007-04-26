@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.core.runtime.CoreException;
 
-public interface IIndexFragmentBinding extends Comparable, IIndexBinding {
+public interface IIndexFragmentBinding extends IIndexBinding {
 	IIndexFragmentBinding[] EMPTY_INDEX_BINDING_ARRAY= new IIndexFragmentBinding[0];
 	
 	/**
@@ -40,4 +40,9 @@ public interface IIndexFragmentBinding extends Comparable, IIndexBinding {
      * it in its associated fragment.
      */
 	boolean hasDeclaration() throws CoreException;
+	
+	/**
+	 * Returns the constant identifying the type of binding stored in the index
+	 */
+	int getBindingConstant();
 }

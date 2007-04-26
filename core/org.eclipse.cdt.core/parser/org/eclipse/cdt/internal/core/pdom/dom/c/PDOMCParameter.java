@@ -173,4 +173,8 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 	public boolean isGloballyQualified() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
+	
+	public int getBindingConstant() {
+		return getNodeType();
+	}
 }

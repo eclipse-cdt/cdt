@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -246,6 +247,21 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return getFirstDefinition()!=null;
 	}
 
+	/**
+	 * Compares two binding fully qualified names. If b0 has
+     * less segments than b1 then -1 is returned, if b0 has 
+     * more segments than b1 then 1 is returned. If the segment
+     * lengths are equal then comparison is lexographical on each
+     * component name, beginning with the most nested name and working
+     * outward. The first non-zero comparison is returned as the result.
+	 * @param b0
+	 * @param b1
+	 * @return<ul><li> -1 if b0 &lt; b1
+	 * <li> 0 if b0 == b1
+	 * <li> 1 if b0 &gt; b1
+	 * </ul>
+	 * @throws CoreException
+	 */
 	private static int comparePDOMBindingQNs(PDOMBinding b0, PDOMBinding b1) {
 		try {
 			int cmp = 0; 
@@ -267,40 +283,31 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		}
 	}
 
-	public int compareTo(Object other) {
-		if(other==null)
-			return 1;
-		
-		if(other instanceof IBinding) {
-			if(!(other instanceof PDOMBinding)) {
-				try {
-					other= getLinkageImpl().adaptBinding((IBinding)other);
-				} catch(CoreException ce) {
-					CCorePlugin.log(ce);
-				}
-			}
-			if(other instanceof PDOMBinding) {
-				PDOMBinding otherBinding = (PDOMBinding) other;
-				int cmp = comparePDOMBindingQNs(this, otherBinding);
-				if(cmp==0) {
-					int t1 = getNodeType();
-					int t2 = otherBinding.getNodeType();
-					return t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
-				}
-				return cmp;
-			}
-			if(other==null)
-				return 1;
-			throw new PDOMNotImplementedError(""+other); //$NON-NLS-1$
+	/**
+	 * Compares two PDOMBinding objects in accordance with 
+	 * {@link IIndexFragmentBindingComparator#compare(IIndexFragmentBinding, IIndexFragmentBinding)}
+	 * @param other
+	 * @return
+	 */
+	public int pdomCompareTo(PDOMBinding other) {
+		PDOMBinding otherBinding = (PDOMBinding) other;
+		int cmp = comparePDOMBindingQNs(this, otherBinding);
+		if(cmp==0) {
+			int t1 = getNodeType();
+			int t2 = otherBinding.getNodeType();
+			return t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
 		}
-		return -1;
+		return cmp;
 	}
 	
-	public boolean equals(Object o) {
-		if (o instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) o;
-			return pdom==node.pdom && record == node.record;
-		}
-		return compareTo(o)==0;
+	/**
+     * Returns whether pdomCompareTo returns zero
+     */
+	public final boolean pdomEquals(PDOMBinding other) {
+		return pdomCompareTo(other)==0;
+	}
+	
+	public final int getBindingConstant() {
+		return getNodeType();
 	}
 }

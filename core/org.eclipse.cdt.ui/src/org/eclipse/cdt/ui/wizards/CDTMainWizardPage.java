@@ -492,7 +492,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 							wd1.setPath(wd2.getPath() + "/" + wd1.getId()); //$NON-NLS-1$
 							wd1.setParent(wd2);
 							if (wd1.getHandler() == null && !wd1.isCategory())
-								wd1.setHandler((ICWizardHandler)h.clone());
+								wd1.setHandler((CWizardHandler)h.clone());
 							if (h != null && !h.isApplicable(wd1))
 								break;
 							

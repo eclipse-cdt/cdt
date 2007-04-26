@@ -18,17 +18,17 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
  * This class stores data for each tree item
  * in "Project types" tree of New Project Wizard.
  */
-public class EntryDescriptor {
+public final class EntryDescriptor {
 	private String id = null;
 	private String name = null;
 	private boolean isCategory = false;
 	private String parentId = null;
 	private Image image = null;
-	private ICWizardHandler handler = null;
+	private CWizardHandler handler = null;
 	private String path = null;
 	private EntryDescriptor parent = null;
 
-	public EntryDescriptor (String _id, String _par, String _name, boolean _cat, ICWizardHandler _h, Image _image) {
+	public EntryDescriptor (String _id, String _par, String _name, boolean _cat, CWizardHandler _h, Image _image) {
 		id = _id;
 		parentId = _par;
 		name = _name;
@@ -76,10 +76,10 @@ public class EntryDescriptor {
 		return parent; 
 	}
 
-	public void setHandler(ICWizardHandler h) {
+	public void setHandler(CWizardHandler h) {
 		handler = h;
 	}
-	public ICWizardHandler getHandler() {
+	public CWizardHandler getHandler() {
 		return handler;
 	}
 }

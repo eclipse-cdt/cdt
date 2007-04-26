@@ -23,51 +23,27 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li><b>TM 2.0M6 was respun as TM 2.0M6a</b> in order to include the following critical fixes for EFS.<br/>
-If you do not want to use the Eclipse Filesystem (EFS) for accessing remote resources through
-your workspace, there is no need to update and you can also use 2.0M6:<ul>
-  <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181917">181917</a>]
-     <b>Fix EFS running out of file descriptors</b>, fix EFS early startup problems,
-     improve EFS performance</li>
-  <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176603">176603</a>][api]
-     ISubSystem.connect(IProgressMonitor, boolean forcePrompt) required for EFS</li>
-  <!--
-  <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id="180994">180994</a>]
-     Potential fix improving thread handling in dstore server</li>
-  -->
-  <li>[sync] Add proper group markers to the toolbar groups.
-     Re-used the context menu group markers for easier orientation</li>
-  </ul>
-  Only the following 3 plug-ins from the rse-runtime-core feature were changed:<ul>
-  <li><code>org.eclipse.rse.ui</code></li>
-  <li><code>org.eclipse.rse.core</code></li>
-  <li><code>org.eclipse.rse.eclipse.filesystem</code></li>
-  </ul></li>
-<li>TM 2.0M6 <b>requires Eclipse 3.3M6</b>. Platform Runtime is the minimum
-  requirement for core RSE and Terminal. The Team CVS feature is no longer needed for
-  SSH [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175686">175686</a>].</li>
+<li>TM @buildId@ <b>requires Eclipse 3.3M6 or later</b>. Platform Runtime is the minimum
+  requirement for core RSE and Terminal. Discovery needs EMF, and the Remotecdt
+  integration needs CDT.</li>
 <li>Added a <b>milestone update site</b> for TM 2.0 milestone builds at
   <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
-  "Check for updates" will automatically reference this milestone update site, so you can get milestone
-  patches from there [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>].</li>
-<li><b>The experimental EFS Feature has been made official</b>, and functionality moved
-  into RSE Core. Thus EFS support is no separate download any more but comes with RSE.
-  EFS works best with SSH connections. FTP and dstore should work as well, but have not yet 
-  received the same amount of testing. For more details, see the
-  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170916">EFS Plan Item [170916]</a>.
-  We recommend the following procedure to bring remote resources into your workspace:<ul>
-        <li>In a normal workspace project, choose <b>"New Folder", "Advanced", "Link to folder in 
-            file system"</b>, then select the RSE file system and browse to a remote folder. This is
-            the preferred and most stable method of working with remote resources for now.
-            One big advantage of this approach is that it works for any kind of project nature,
-            including CDT, JDT etc. and can thus be used very well to test other kinds of
-            EFS integration issues to be done (along the lines of Eclipse Platform
-            <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=154126">Plan Item [154126]</a>).</li>
-  </ul>
-  Creating whole projects based on RSE EFS is possible as well, but there are two
-  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181460">Platform Bugs</a>
-  related to early reading of the remote .project file,
-  which make this approach not adviseable for now.</li>
+  In case any critical updates are announced on the dsdp-tm-dev mailing list, 
+  "Check for updates" will automatically get the patches from there.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>].</li>
+<li><b>Digital Signing</b> of plugins has been re-enabled now that the Platform 
+  issues with it are fixed. All TM stuff on the update sites is digitally
+  signed with the Eclipse certificate.</li>
+<li><b>Added User Actions and Import/Export</b> to downloadable builds -
+  User Actions still need some fixing, but Import/Export should work fine
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170909">170909</a>].</li>
+<li><b>System Type Labels are now translatable</b>
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180688">180688</a>].</li>
+<li><b>Fixed some Encoding Issues</b>, most prominently with BIDI support
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179939">179939</a>].</li>
+<li><b>Terminal now provides an optional input line</b> for dumb systems
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173730">173730</a>].</li>
+<!--
 <li><b>Copy&Paste, Drag&Drop to Project Explorer</b> are finally fixed
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153652">153652</a>].
   Same support for Windows Explorer is still on the list
@@ -77,15 +53,16 @@ your workspace, there is no need to update and you can also use 2.0M6:<ul>
   changes. As part of the improved New Connection Wizard,
   the <b>Default System Type Preference has been removed</b>
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164413">164413</a>].</li>
-<li><b>Apache Commons.Net and ORO</b> are now distributed as single-jar bundles. The separate commons.net and ORO features 
-have been removed. The bundles are now directly included in the RSE FTP feature only.</li>
-<li>At least 94 bugs were fixed: use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-02-25&chfieldto=2007-04-08&chfield=resolution&cmdtype=doit"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+<li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
+  from the Orbit project, so they will not be changed any more.</li>
+-->
+<li>At least <!-- 94 --> 38 bugs were fixed: use 
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-04-09&chfieldto=2007-05-20&chfield=resolution&cmdtype=doit">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M7&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M5-200702240204/index.php">
-  TM 2.0M5</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M5-200702240204/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M6a-200704111818/index.php">
+  TM 2.0M6a</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M6a-200704111818/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -162,13 +139,25 @@ user attention. A short hint on what needs to change is given directly in the li
 More information can be found in the associated bugzilla items.
 
 <ul>
-<!--
-<li>TM 2.0M7 API Changes
+<li>TM @buildId@ API Changes
 <ul>
+<!--
 <li><b>Cleaned up ISystemRegistry</b> - removed or changed signature of several methods [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>].</li>
-</ul></li>
 -->
-<li>TM 2.0M6 Breaking API Changes
+<li><b>Use IRSESystemType</b> instead of String systemTypeName everywhere -
+  this is the prerequisite for allowing system type labels to be translated
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180688">180688</a>].</li>
+<li><b>Move SysteRegistry's Event Interface to non-UI</b> - See the
+  bug entry for migration docs
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168975">168975</a>].</li>
+<li><b>Dont implement interfaces just for Constants</b> - See the bug 
+  entry for migration docs
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=183165">183165</a>].</li>
+<li><b>Dstore miners</b> are now in a single API package. "Organize Imports"
+  should be sufficient to migrate
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180649">180649</a>].</li> 
+</ul></li>
+<li>TM 2.0M6a Breaking API Changes
 <ul>
 <li><b>Making more classes "internal"</b>: Lots of more packages and classes were tagged as
   discouraged access (moved to "internal").
@@ -249,9 +238,12 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=184007">bug 184007</a> - cri - New File on FTP connection overwrites existing files</li>
+<!--
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180994">bug 180994</a> - maj - Expand of filter hangs with dstore</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179939">bug 179939</a> - maj - BIDI locale: Remote text files written in Hebrow look incorrect</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179937">bug 179937</a> - maj - BIDI locale: Path and file names shown incorrectly with hebrew UTF 8 encoding
+-->
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

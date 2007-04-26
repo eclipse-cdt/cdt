@@ -368,7 +368,7 @@
             name="%Build.System.Wizard"
             point="org.eclipse.cdt.ui.CDTWizard">
          <wizard
-               class="org.eclipse.cdt.managedbuilder.ui.wizards.CNewWizard"
+               class="org.eclipse.cdt.managedbuilder.ui.wizards.ManagedBuildWizard"
                name="%Build.System.Wizard">
          </wizard>
          <wizard

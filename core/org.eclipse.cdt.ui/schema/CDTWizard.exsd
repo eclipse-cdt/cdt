@@ -50,7 +50,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.ui.wizards.ICNewWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.wizards.CNewWizard"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
  * items in "Project types" list (left pane on
  * the 1st page in any CDT new project wizard) 
  */
-public interface ICNewWizard {
+public abstract class CNewWizard {
 	/**
 	 * Creates tree items to be displayed in left pane.
 	 * 
@@ -33,7 +33,7 @@ public interface ICNewWizard {
 	 * @param supportedOnly - whether display supported types only
 	 * @param wizard - New Project wizard to be passed to ICWizardHandler 
 	 */
-	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard);
+	public abstract EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard);
 	
 	/**
 	 * Implementor will be informed about widget where additional
@@ -46,5 +46,6 @@ public interface ICNewWizard {
 	 *                 May be null if notification is not required
 	 *                 or implementor does not really support it. 
 	 */
-	public void setDependentControl(Composite parent, IWizardItemsListListener page);
+	public void setDependentControl(Composite parent, IWizardItemsListListener page){
+	}
 }

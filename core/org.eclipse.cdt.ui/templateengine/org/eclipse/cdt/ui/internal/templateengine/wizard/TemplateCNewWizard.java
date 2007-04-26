@@ -19,13 +19,13 @@ import org.eclipse.cdt.core.templateengine.TemplateInfo;
 import org.eclipse.cdt.ui.templateengine.Template;
 import org.eclipse.cdt.ui.templateengine.TemplateEngineUI;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
-import org.eclipse.cdt.ui.wizards.ICNewWizard;
+import org.eclipse.cdt.ui.wizards.CNewWizard;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 
 /**
  *
  */
-public class TemplateCNewWizard implements ICNewWizard {
+public class TemplateCNewWizard extends CNewWizard {
 	/**
 	 * Creates and returns an array of items to be displayed 
 	 */

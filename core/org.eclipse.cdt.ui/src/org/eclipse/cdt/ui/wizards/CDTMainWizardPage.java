@@ -418,9 +418,9 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 				for (int k = 0; k < elements.length; k++) {
 					if (elements[k].getName().equals(ELEMENT_NAME)) {
-						ICNewWizard w = null;
+						CNewWizard w = null;
 						try {
-							w = (ICNewWizard) elements[k].createExecutableExtension(CLASS_NAME);
+							w = (CNewWizard) elements[k].createExecutableExtension(CLASS_NAME);
 						} catch (CoreException e) {
 							System.out.println(UIMessages.getString("CMainWizardPage.5") + e.getLocalizedMessage()); //$NON-NLS-1$
 							return null; 

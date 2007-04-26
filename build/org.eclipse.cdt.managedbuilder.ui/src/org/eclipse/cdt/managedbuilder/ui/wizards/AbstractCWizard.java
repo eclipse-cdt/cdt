@@ -17,13 +17,13 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
-import org.eclipse.cdt.ui.wizards.ICNewWizard;
+import org.eclipse.cdt.ui.wizards.CNewWizard;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 import org.eclipse.cdt.utils.Platform;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-public abstract class AbstractCWizard implements ICNewWizard {
+public abstract class AbstractCWizard extends CNewWizard {
 
 	private static final String os = Platform.getOS();
 	private static final String arch = Platform.getOSArch();

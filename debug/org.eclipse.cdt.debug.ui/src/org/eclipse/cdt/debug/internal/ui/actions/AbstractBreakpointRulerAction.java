@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,122 +7,105 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems) - bug 183397
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.util.Iterator;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 
 /**
  * Abstract base implementation of the breakpoint ruler actions.
+ * 
+ * @see {@link RulerBreakpointAction} 
  */
 public abstract class AbstractBreakpointRulerAction extends Action implements IUpdate {
-
-	private IVerticalRulerInfo fInfo;
-
-	private IWorkbenchPart fTargetPart;
-
-	private IBreakpoint fBreakpoint;
-
-	protected IBreakpoint determineBreakpoint() {
-		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints( CDebugCorePlugin.getUniqueIdentifier() );
-		for( int i = 0; i < breakpoints.length; i++ ) {
-			IBreakpoint breakpoint = breakpoints[i];
-			if ( breakpoint instanceof ILineBreakpoint ) {
-				ILineBreakpoint lineBreakpoint = (ILineBreakpoint)breakpoint;
-				if ( breakpointAtRulerLine( lineBreakpoint ) ) {
-					return lineBreakpoint;
-				}
-			}
-		}
-		return null;
+	
+	private final IWorkbenchPart fTargetPart;
+	private final IVerticalRulerInfo fRulerInfo;
+	
+	/**
+	 * Constructs an action to work on breakpoints in the specified
+	 * part with the specified vertical ruler information.
+	 * 
+	 * @param part  a text editor or DisassemblyView
+	 * @param info  vertical ruler information
+	 */
+	public AbstractBreakpointRulerAction(IWorkbenchPart part, IVerticalRulerInfo info) {
+		Assert.isTrue(part instanceof ITextEditor || part instanceof DisassemblyView);
+		fTargetPart = part;
+		fRulerInfo = info;
 	}
 
-	protected IVerticalRulerInfo getInfo() {
-		return fInfo;
-	}
-
-	protected void setInfo( IVerticalRulerInfo info ) {
-		fInfo = info;
-	}
-
-	protected IWorkbenchPart getTargetPart() {
-		return this.fTargetPart;
-	}
-	protected void setTargetPart( IWorkbenchPart targetPart ) {
-		this.fTargetPart = targetPart;
-	}
-
+	/**
+	 * Returns the breakpoint at the last line of mouse activity in the ruler
+	 * or <code>null</code> if none.
+	 * 
+	 * @return breakpoint associated with activity in the ruler or <code>null</code>
+	 */
 	protected IBreakpoint getBreakpoint() {
-		return fBreakpoint;
-	}
-
-	protected void setBreakpoint( IBreakpoint breakpoint ) {
-		fBreakpoint = breakpoint;
-	}
-
-	protected boolean breakpointAtRulerLine( ILineBreakpoint cBreakpoint ) {
-		int lineNumber = getBreakpointLine( cBreakpoint );
-		int rulerLine = getInfo().getLineOfLastMouseButtonActivity();
-		return ( rulerLine == lineNumber );
-	}
-
-	private int getBreakpointLine( ILineBreakpoint breakpoint ) {
-		if ( getTargetPart() instanceof ISaveablePart && ((ISaveablePart)getTargetPart()).isDirty() ) {
-			try {
-				return breakpoint.getLineNumber();
-			}
-			catch( CoreException e ) {
-				DebugPlugin.log( e );
-			}
-		}
-		else {
-			Position position = getBreakpointPosition( breakpoint );
-			if ( position != null ) {
-				IDocument doc = getDocument();
-				if ( doc != null ) {
+		IAnnotationModel annotationModel = getAnnotationModel();
+		IDocument document = getDocument();
+		if (annotationModel != null) {
+			Iterator iterator = annotationModel.getAnnotationIterator();
+			while (iterator.hasNext()) {
+				Object object = iterator.next();
+				if (object instanceof SimpleMarkerAnnotation) {
+					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
+					IMarker marker = markerAnnotation.getMarker();
 					try {
-						return doc.getLineOfOffset( position.getOffset() );
+						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
+							Position position = annotationModel.getPosition(markerAnnotation);
+							int line = document.getLineOfOffset(position.getOffset());
+							if (line == fRulerInfo.getLineOfLastMouseButtonActivity()) {
+								IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
+								if (breakpoint != null) {
+									return breakpoint;
+								}
+							}
+						}
+					} catch (CoreException e) {
+					} catch (BadLocationException e) {
 					}
-					catch ( BadLocationException x ) {
-						DebugPlugin.log( x );
-					}
-				}
-			}
-		}
-		return -1;
-	}
-
-	private Position getBreakpointPosition( ILineBreakpoint breakpoint ) {
-		IAnnotationModel model = getAnnotationModel();
-		if ( model != null ) {
-			Iterator it = model.getAnnotationIterator();
-			while( it.hasNext() ) {
-				Annotation ann = (Annotation)it.next();
-				if ( ann instanceof MarkerAnnotation && ((MarkerAnnotation)ann).getMarker().equals( breakpoint.getMarker() ) ) {
-					return model.getPosition( ann );
 				}
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the workbench part this action was created for.
+	 * 
+	 * @return workbench part, a text editor or a DisassemblyView
+	 */
+	protected IWorkbenchPart getTargetPart() {
+		return fTargetPart;
+	}
+	
+	/**
+	 * Returns the vertical ruler information this action was created for.
+	 * 
+	 * @return vertical ruler information
+	 */
+	protected IVerticalRulerInfo getVerticalRulerInfo() {
+		return fRulerInfo;
 	}
 
 	private IDocument getDocument() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems) - bug 183397
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -14,18 +15,20 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerAction {
 
+	private IBreakpoint fBreakpoint;
+
 	/**
 	 * Creates the action to enable/disable breakpoints
 	 */
 	public EnableDisableBreakpointRulerAction( IWorkbenchPart part, IVerticalRulerInfo info ) {
-		setInfo( info );
-		setTargetPart( part );
+		super( part, info );
 		setText( ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enable_Breakpoint_1" ) ); //$NON-NLS-1$
 		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.ENABLE_DISABLE_BREAKPOINT_ACTION );
 		setId( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT );
@@ -51,18 +54,16 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		setBreakpoint( determineBreakpoint() );
-		if ( getBreakpoint() == null ) {
-			setEnabled( false );
-			return;
-		}
-		setEnabled( true );
-		try {
-			boolean enabled = getBreakpoint().isEnabled();
-			setText( enabled ? ActionMessages.getString( "EnableDisableBreakpointRulerAction.Disable_Breakpoint_1" ) : ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enable_Breakpoint_1" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		catch( CoreException e ) {
-			DebugPlugin.log( e );
+		fBreakpoint = getBreakpoint();
+		setEnabled( fBreakpoint != null );
+		if ( isEnabled() ) {
+			try {
+				boolean enabled = getBreakpoint().isEnabled();
+				setText( enabled ? ActionMessages.getString( "EnableDisableBreakpointRulerAction.Disable_Breakpoint_1" ) : ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enable_Breakpoint_1" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			catch( CoreException e ) {
+				DebugPlugin.log( e );
+			}
 		}
 	}
 }

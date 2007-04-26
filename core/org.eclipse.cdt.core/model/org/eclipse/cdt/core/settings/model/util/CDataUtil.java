@@ -577,12 +577,38 @@ public class CDataUtil {
 
 	public static boolean canExclude(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries){
 		try {
-			return setExcluded(path, isFolder, excluded, entries, false) != null;
-		} catch (CoreException e) {
-		}
+			ICSourceEntry[] out = setExcluded(path, isFolder, excluded, entries, false);
+			return !isEqual(entries, out);
+		} catch (CoreException e) {	}
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param ein - initial source entries
+	 * @param aus - resulting source entries
+	 * @return - true if they are equal 
+	 */
+	public static boolean isEqual(ICSourceEntry[] ein, ICSourceEntry[] aus) {
+		if (ein == null || aus == null) return (ein == null && aus == null);
+		if (ein.length != aus.length) return false;
+		for (int i=0; i<ein.length; i++) {
+			boolean found = false;
+			for (int j=0; j<aus.length; j++) {
+				if (!ein[i].equalsByName(aus[j]))
+					continue;
+				if (ein[i].equalsByContents(aus[j])) {
+					found = true;
+					break;
+				}
+				return false; // contents is changed !	
+			}
+			if (!found) 
+				return false; // name is not found !
+		}
+		return true; // all entries are equal by name and contents
+	}
+	
 	public static ICSourceEntry[] setExcluded(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries) throws CoreException {
 		return setExcluded(path, isFolder, excluded, entries, true);
 	}
@@ -635,7 +661,7 @@ public class CDataUtil {
 					includeList.add(new CSourceEntry(path, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED));
 				} else {
 					if(throwExceptionOnErr)
-						throw ExceptionFactory.createCoreException("can not create a source entry for individual file");
+						throw ExceptionFactory.createCoreException("can not create a source entry for individual file"); //$NON-NLS-1$
 					return null;
 				}
 			}

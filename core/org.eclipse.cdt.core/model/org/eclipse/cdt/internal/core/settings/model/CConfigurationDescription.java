@@ -772,7 +772,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 	boolean canExclude(IPath path, boolean isFolder, boolean exclude){
 		if(isExcluded(path) == exclude)
 			return true;
-
+		
 		return getUpdatedSourceEntries(path, isFolder, exclude) != null;
 	}
 
@@ -804,6 +804,8 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		if(newEntries == null){
 			try {
 				newEntries = CDataUtil.setExcluded(path, isFolder, exclude, getResolvedSourceEntries(), false);
+				if (CDataUtil.isEqual(newEntries, getResolvedSourceEntries()))
+					newEntries = null;
 			} catch (CoreException e) {
 			}
 		}

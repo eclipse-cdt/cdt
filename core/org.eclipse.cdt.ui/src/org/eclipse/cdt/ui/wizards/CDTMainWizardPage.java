@@ -77,7 +77,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	    private Label right_label;
    
 		private ProjectContentsArea locationArea;
-	    public ICWizardHandler h_selected = null;
+	    public CWizardHandler h_selected = null;
 
 	    /**
 	     * Creates a new project creation wizard page.
@@ -143,7 +143,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 				public void widgetSelected(SelectionEvent e) {
 					TreeItem[] tis = tree.getSelection();
 					if (tis == null || tis.length == 0) return;
-					switchTo((ICWizardHandler)tis[0].getData(), (EntryDescriptor)tis[0].getData(DESC));
+					switchTo((CWizardHandler)tis[0].getData(), (EntryDescriptor)tis[0].getData(DESC));
 					setPageComplete(validatePage());
 				}});
 	        
@@ -401,7 +401,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        return locationArea.isDefault();
 	    }
 
-		public static ICWizardHandler updateData(Tree tree, Composite right, Button show_sup, IWizardItemsListListener ls, IWizard wizard) {
+		public static CWizardHandler updateData(Tree tree, Composite right, Button show_sup, IWizardItemsListListener ls, IWizard wizard) {
 			// remember selected item
 			TreeItem[] sel = tree.getSelection();
 			String savedStr = (sel.length > 0) ? sel[0].getText() : null; 
@@ -449,7 +449,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 					}
 				}
 				tree.setSelection(target);
-				return (ICWizardHandler)target.getData();
+				return (CWizardHandler)target.getData();
 			}
 			return null;
 		}
@@ -485,7 +485,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 						if (wd2.getId().equals(wd1.getParentId())) {
 							found = true;
 							wd1.setParentId(null);
-							ICWizardHandler h = wd2.getHandler();
+							CWizardHandler h = wd2.getHandler();
 							if (h == null && !wd1.isCategory()) 
 								break;
 
@@ -514,7 +514,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			// orphan elements (with not-existing parentId) are ignored
 		}
 
-		private void switchTo(ICWizardHandler h, EntryDescriptor ed) {
+		private void switchTo(CWizardHandler h, EntryDescriptor ed) {
 
 			if (h == null) h = ed.getHandler();
 

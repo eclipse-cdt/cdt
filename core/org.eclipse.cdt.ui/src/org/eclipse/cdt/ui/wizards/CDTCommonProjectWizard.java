@@ -56,7 +56,7 @@ implements IExecutableExtension, IWizardWithMemory
 	
 	private String lastProjectName = null;
 	private IPath lastProjectLocation = null;
-	private ICWizardHandler savedHandler = null;
+	private CWizardHandler savedHandler = null;
 
 	protected List localPages = new ArrayList(); // replacing Wizard.pages since we have to delete them
 	

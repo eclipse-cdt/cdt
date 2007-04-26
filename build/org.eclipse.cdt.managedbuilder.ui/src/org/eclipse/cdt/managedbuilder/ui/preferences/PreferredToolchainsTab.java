@@ -18,7 +18,7 @@ import org.eclipse.cdt.managedbuilder.ui.wizards.ICBuildWizardHandler;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
-import org.eclipse.cdt.ui.wizards.ICWizardHandler;
+import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 
-    protected ICWizardHandler h_selected = null;
+    protected CWizardHandler h_selected = null;
     // widgets
     private Tree tree;
     private Composite right;
@@ -65,7 +65,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] tis = tree.getSelection();
 				if (tis == null || tis.length == 0) return;
-				switchTo((ICWizardHandler)tis[0].getData());
+				switchTo((CWizardHandler)tis[0].getData());
 			}});
         
         right = new Composite(c, SWT.NONE);
@@ -122,7 +122,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 		h_selected.updatePreferred(CDTPrefUtil.getPreferredTCs());
 	}
 	
-	private void switchTo(ICWizardHandler h) {
+	private void switchTo(CWizardHandler h) {
 		if (h == null) return;
 		if (h_selected != null) h_selected.handleUnSelection();
 		h_selected = h;

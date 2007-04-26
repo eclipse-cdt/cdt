@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
  * - processing data received from config page 
  *
  */
-public class CWizardHandler implements ICWizardHandler {
+public class CWizardHandler implements Cloneable {
 	protected static final Image IMG0 = CPluginImages.get(CPluginImages.IMG_EMPTY);
 	protected static final Image IMG1 = CPluginImages.get(CPluginImages.IMG_PREFERRED);
 	

@@ -1719,11 +1719,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getIncludeDirectives()
      */
     public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
-        int size = collectContexts(V_INCLUSIONS, tu, null, 0);
+        int size = collectContexts(V_INCLUDE_DIRECTIVES, tu, null, 0);
         if (size == 0)
             return EMPTY_INCLUDES_ARRAY;
         _Context[] contexts = new _Context[size];
-        collectContexts(V_INCLUSIONS, tu, contexts, 0);
+        collectContexts(V_INCLUDE_DIRECTIVES, tu, contexts, 0);
         IASTPreprocessorIncludeStatement[] result = new IASTPreprocessorIncludeStatement[size];
         for (int i = 0; i < size; ++i) 
             result[i] = (IASTPreprocessorIncludeStatement)createPreprocessorStatement(contexts[i]);
@@ -2482,6 +2482,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     protected static final int V_MACRODEFSUNDEFS = 6;
 
+    protected static final int V_INCLUDE_DIRECTIVES = 7;
+    
     private static final char[] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
     
@@ -2503,6 +2505,13 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             ++count;
             break;
         case V_INCLUSIONS:
+            if (source instanceof _Inclusion) {
+                if (result != null)
+                    result[startAt++] = source;
+                ++count;
+            }
+            break;
+        case V_INCLUDE_DIRECTIVES:
             if (source instanceof _IPreprocessorIncludeDirective) {
                 if (result != null)
                     result[startAt++] = source;

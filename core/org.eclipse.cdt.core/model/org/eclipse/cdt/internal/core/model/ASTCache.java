@@ -411,11 +411,7 @@ public class ASTCache {
 		if (ast == null)
 			return "null"; //$NON-NLS-1$
 
-		IASTNode[] nodes= ast.getDeclarations();
-		if (nodes != null && nodes.length > 0)
-			return nodes[0].getRawSignature();
-		else
-			return "AST without any declaration"; //$NON-NLS-1$
+		return ast.getFilePath();
 	}
 
 }

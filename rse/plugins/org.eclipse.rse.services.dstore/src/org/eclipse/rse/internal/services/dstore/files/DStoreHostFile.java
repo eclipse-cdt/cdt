@@ -38,11 +38,13 @@ public class DStoreHostFile implements IHostFile
 	
 	protected DataElement _element;
 	protected boolean _isArchive;
+	protected String _absolutePath;
 	
 	public DStoreHostFile(DataElement element)
 	{
 		_element = element;
-		_isArchive = internalIsArchive();
+		init();
+		_isArchive = internalIsArchive();	
 	}
 	
 	public DataElement getDataElement()
@@ -233,33 +235,39 @@ public class DStoreHostFile implements IHostFile
 
 
 	public String getAbsolutePath()
+	{
+		return _absolutePath;
+	}
+	
+	private void init()
 	{			
+		// set the absolute path			
 		String name = _element.getName();
 		if (name == null)
 		{
 			// this element is deleted
-			return ""; //$NON-NLS-1$
+			_absolutePath = ""; //$NON-NLS-1$
 		}
-		if (name.length() == 0)
+		else if (name.length() == 0)
 		{
-			return _element.getValue();
+			_absolutePath = _element.getValue();
 		} 
-		String parentPath = getParentPath();
-
-		
-		String type = _element.getType();
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
-		{
-			return name;
-		}
-		
-		if (name.length() == 0)
-		{
-			return PathUtility.normalizeUnknown(parentPath);
-		}
 		else
 		{
-			return PathUtility.normalizeUnknown(parentPath + "/" + name); //$NON-NLS-1$
+			String parentPath = getParentPath();	
+			String type = _element.getType();
+			if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
+			{
+				_absolutePath = name;
+			}
+			else if (name.length() == 0)
+			{
+				_absolutePath = PathUtility.normalizeUnknown(parentPath);
+			}
+			else
+			{
+				_absolutePath = PathUtility.normalizeUnknown(parentPath + "/" + name); //$NON-NLS-1$
+			}
 		}
 	}
 

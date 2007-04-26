@@ -68,7 +68,7 @@ import org.eclipse.swt.widgets.TableItem;
  * - whole view of right pane, including 
  *
  */
-public class MBSWizardHandler extends CWizardHandler implements ICBuildWizardHandler {
+public class MBSWizardHandler extends CWizardHandler {
 	public static final String ARTIFACT = "org.eclipse.cdt.build.core.buildArtefactType";  //$NON-NLS-1$
 	
 	private static final String PROPERTY = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$

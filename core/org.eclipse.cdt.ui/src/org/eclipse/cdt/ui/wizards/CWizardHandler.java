@@ -60,6 +60,11 @@ public class CWizardHandler implements Cloneable {
 		name = _name;
 	}
 
+	/**
+	 * Called when user selects corresponding item in wizard tree
+	 * 
+	 * @parame pane - parent for handler-specific data    
+	 */
 	public void handleSelection() {
 		List preferred = CDTPrefUtil.getPreferredTCs();
 		if (table == null) {
@@ -74,29 +79,105 @@ public class CWizardHandler implements Cloneable {
 		parent.layout();
 	}
 
+	/**
+	 * Called when user leaves corresponding item in wizard tree 
+	 */
 	public void handleUnSelection() {
 		if (table != null) {
 			table.setVisible(false);
 		}
 	}
 	
+	/**
+	 * @return text for label above handler-specific pane
+	 */
 	public String getHeader() { return head; }
+
+	/**
+	 * @return text for label in left tree
+	 */
 	public String getName() { return name; }
+
+	/**
+	 * @return null if data is consistent
+	 *         else returns error message 
+	 */
 	public String getErrorMessage() { return null; }
 
+	/**
+	 * Defines whether only supported project types and toolchains are displayed
+	 * @param supp 
+	 */
 	public void setSupportedOnly(boolean supp) { supportedOnly = supp;}
+
+	/**
+	 * @return true if only supported project types and toolchains are displayed
+	 */
 	public boolean supportedOnly() { return supportedOnly; }
+
+	/**
+	 * @return true if handler is able to process preferred toolchains
+	 */
 	public boolean supportsPreferred() { return false; }
+
+	/**
+	 * @return 1st handler-specific page
+	 */
 	public IWizardPage getSpecificPage() { return null; }
+
+	/**
+	 * Asks handler to update its data according to preferred list.
+	 * Usually, marks preferred toolchains somehow (icon, font etc)
+	 * @param prefs - list of strings (preferred Toolchain IDs)
+	 */
 	public void updatePreferred(List prefs) {}
 
+	/**
+	 * Creates project
+	 * 
+	 * @param proj - simple project to be used as base
+	 * @param defaults - true if called from 1st Wizard page
+	 * @throws CoreException
+	 */
 	public void createProject(IProject proj, boolean defaults)
 			throws CoreException {}
+
+	/**
+	 * 
+	 * @return true if settings were changed 
+	 *         since last call to saveState()
+	 */
 	public boolean isChanged() { return true; } 
+
+	/**
+	 * Stores current internal settings 
+	 */
 	public void saveState() {}
+
+	/**
+	 * Called when Finish button pressed, 
+	 * even if project was created before.
+	 * @param proj
+	 */
 	public void postProcess(IProject proj) {}
+
+	/**
+	 * Checks whether this item can be added to Wizard tree
+	 * 
+	 * @param data - Wizard Item data to be added 
+	 *               as child to current Wizard item
+	 * @return - true if item can be added.
+	 */
 	public boolean isApplicable(EntryDescriptor data) { return true; }
+
+	/**
+	 * Initializes the handler to be used for the specified entry
+	 * 
+	 * @param data - Wizard Item data to be handled 
+	 * @throws CoreException
+	 */
 	public void initialize(EntryDescriptor data) throws CoreException {}
+
 	public boolean canFinich() {return true;}
 
 	public Object clone() {

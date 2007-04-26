@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.properties.AbstractCBuildPropertyTab;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
-import org.eclipse.cdt.managedbuilder.ui.wizards.ICBuildWizardHandler;
+import org.eclipse.cdt.managedbuilder.ui.wizards.MBSWizardHandler;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
@@ -111,8 +111,8 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 	private void setPref(boolean set) {
 		if (h_selected == null || !h_selected.supportsPreferred()) 
 			return;
-		if (h_selected instanceof ICBuildWizardHandler) {
-			IToolChain[] tcs = ((ICBuildWizardHandler)h_selected).getSelectedToolChains();
+		if (h_selected instanceof MBSWizardHandler) {
+			IToolChain[] tcs = ((MBSWizardHandler)h_selected).getSelectedToolChains();
 			for (int i=0; i<tcs.length; i++) {
 				String id = (tcs[i] == null) ? CDTPrefUtil.NULL : tcs[i].getId();
 				if (set) CDTPrefUtil.addPreferredTC(id);

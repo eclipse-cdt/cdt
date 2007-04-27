@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - Fix 162781 - normalize without replaceAll()
  * Martin Oberhuber (Wind River) - Use pre-compiled regex Pattern
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
+ * Martin Oberhuber (Wind River) - Fix 183991 - handle windows C:/ paths for FTP 
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -29,11 +30,19 @@ public class PathUtility
 	//Regex pattern: / or \\
 	private static Pattern badSlashPatternWin=Pattern.compile("/|\\\\\\\\"); //$NON-NLS-1$
 
+	/**
+	 * Normalize a path name that is supposed to be Windows style. 
+	 * Replaces / characters by \ and remove duplicate \ characters.
+	 * 
+	 * @param path a path to normalize
+	 * @return a normalized path.
+	 */
 	public static String normalizeWindows(String path)
 	{
 		if (path == null || path.length() < 2) {
 			return path;
 		}
+		//FIXME Windows UNC Paths should probably be considered. 
 		boolean endsWithSlash = (path.endsWith("\\") || path.endsWith("/")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (badSlashPatternWin.matcher(path).find()) {
 			//Replace /->\, then replace \\->\
@@ -68,6 +77,17 @@ public class PathUtility
 	//Regex pattern: \ or //
 	private static Pattern badSlashPatternUnix=Pattern.compile("\\\\|//"); //$NON-NLS-1$
 
+	/**
+	 * Normalize a path name that is supposed to be UNIX style. 
+	 * Replaces \ characters by / and remove duplicate / characters.
+	 * 
+	 * @deprecated this should not be used since \ is a valid part of
+	 *     UNIX file names. Also, a better normalizer would also consider
+	 *     swquences like a/../b and a/./b -- Try to work without this
+	 *     method. 
+	 * @param path a path to normalize
+	 * @return a normalized path.
+	 */
 	public static String normalizeUnix(String path)
 	{
 		if (path == null || path.length() < 2) {
@@ -140,16 +160,45 @@ public class PathUtility
 		else return path;
 	}
 	
+	/**
+	 * Given a path name, try to guess what separator is used.
+	 * Should only be used for absolute path names, but tries to compute
+	 * a good fallback in case of relative path names as well.
+	 * @param path a path to check
+	 * @return a separator String for the given path: either "/" or "\\"
+	 */
 	public static String getSeparator(String path)
 	{
-		if (path.length() > 1 && path.charAt(1) == ':')
-		{
-			return "\\"; //$NON-NLS-1$
+		if (path!=null && path.length()>0) {
+			//The most common case, first
+			switch(path.charAt(0)) {
+			case '/': return "/"; //UNIX absolute //$NON-NLS-1$
+			case '\\': return "\\"; //UNC //$NON-NLS-1$
+			}
+			if (path.length()>2 && path.charAt(1)==':') {
+				switch(path.charAt(2)) {
+				case '\\': return "\\"; //Windows absolute //$NON-NLS-1$
+				case '/': return "/"; //Windows absolute with / //$NON-NLS-1$
+				}
+			}
+			//We have some relative path. Should never come here,
+			//but try to guess anyways. Note that ':' and '\\' are
+			//valid parts of UNIX filenames, so check for / first.
+			//TODO check if it is a good idea to put an assert in here
+			//or even throw an (unchecked) exception.
+			if (path.indexOf('/')>0) {
+				//Slash is a path illegal character on Windows -> must be UNIX 
+				return "/"; //$NON-NLS-1$
+			} else if (path.indexOf('\\')>0) {
+				//Not a single / but got \\ -> Likely Windows but not sure
+				return "\\"; //$NON-NLS-1$
+			} else if (path.length()==2 && path.charAt(1)==':') {
+				//Windows drive letter only 
+				return "\\"; //$NON-NLS-1$
+			}
 		}
-		else
-		{
-			return "/"; //$NON-NLS-1$
-		}
+		// Path contains no /, no \\ and is not a drive only --> Fallback
+		return "/"; //$NON-NLS-1$
 	}
 
 	/**

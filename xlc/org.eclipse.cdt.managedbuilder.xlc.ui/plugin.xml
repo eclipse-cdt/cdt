@@ -432,7 +432,7 @@
 			      <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.exe.debug"
 				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.PE"            					  
+                      binaryParser="org.eclipse.cdt.core.XCOFF32"            					  
 					  osList="aix"					  
 					  archList="all">
 				  </targetPlatform>
@@ -497,7 +497,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.exe.release"
 		              name="%PlatformName.Rel"		             
-		              binaryParser="org.eclipse.cdt.core.ELF"
+		              binaryParser="org.eclipse.cdt.core.XCOFF32"
 		              osList="aix"
 		              archList="all">		              
 		          </targetPlatform>
@@ -568,7 +568,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.so.debug"
 		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
+		              binaryParser="org.eclipse.cdt.core.XCOFF32"		            
 		              osList="aix"
 		              archList="all">
 		          </targetPlatform>
@@ -609,20 +609,8 @@
 					  superClass="cdt.managedbuild.tool.xlc.c.linker.so">
 				  </tool>
 				  <tool
-					  id="cdt.managedbuild.tool.xlc.cpp.linker.so"
-					  superClass="cdt.managedbuild.tool.xlc.cpp.linker">
-					  <option
-						  id="xlc.cpp.link.so.debug.option.shared"
-						  defaultValue="true"
-						  superClass="xlc.c.link.option.mkshrobj">
-					  </option>
-			          <outputType
-						  outputs="so"
-						  outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.xlc.c.linker.output"
-			              id="cdt.managedbuild.tool.xlc.cpp.linker.so.debug.output">
-			          </outputType>
+					  id="cdt.managedbuild.tool.xlc.cpp.linker.so.debug"
+					  superClass="cdt.managedbuild.tool.xlc.cpp.linker.so">
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.xlc.assembler.so.debug"
@@ -643,7 +631,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.so.release"
 		              name="%PlatformName.Rel"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
+		              binaryParser="org.eclipse.cdt.core.XCOFF32"		            
 		              osList="aix"
 		              archList="all">
 		          </targetPlatform>
@@ -681,35 +669,11 @@
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.xlc.c.linker.so.release"
-					  superClass="ccdt.managedbuild.tool.xlc.c.linker.so">
-					  <option
-						  id="xlc.c.link.so.release.option.shared"
-						  defaultValue="true"
-						  superClass="xlc.c.link.option.mkshrobj">
-					  </option>
-			          <outputType
-						  outputs="so"
-						  outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.xlc.c.linker.output"
-			              id="cdt.managedbuild.tool.xlc.c.linker.so.release.output">
-			          </outputType>
+					  superClass="cdt.managedbuild.tool.xlc.c.linker.so">
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.xlc.cpp.linker.so.release"
 					  superClass="cdt.managedbuild.tool.xlc.cpp.linker.so">
-					  <option
-						  id="xlc.cpp.link.so.release.option.shared"
-						  defaultValue="true"
-						  superClass="xlc.c.link.option.mkshrobj">
-					  </option>
-			          <outputType
-						  outputs="so"
-						  outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.xlc.c.linker.output"
-			              id="cdt.managedbuild.tool.xlc.cpp.linker.so.release.output">
-			          </outputType>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.xlc.assembler.so.release"
@@ -738,7 +702,7 @@
 				  <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.lib.debug"
 				 	  name="%PlatformName.Dbg"
-					  binaryParser="org.eclipse.cdt.core.ELF"		            
+					  binaryParser="org.eclipse.cdt.core.XCOFF32"		            
 					  osList="aix"
 					  archList="all">
 				  </targetPlatform>
@@ -797,7 +761,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.lib.release"
 		              name="%PlatformName.Rel"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
+		              binaryParser="org.eclipse.cdt.core.XCOFF32"		            
 		              osList="aix"
 		              archList="all">
 		          </targetPlatform>
@@ -1264,7 +1228,7 @@
 					  id="xlc.c.alignment.align.full">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
-					  name="%Option.Align.Power"
+					  name="POWER™"
 					  isDefault="false"
 					  command="-qalign=power"
 					  id="xlc.c.alignment.align.power">
@@ -1310,18 +1274,18 @@
 			  id="xlc.c.compiler.option.signedness.bitfields"
 			  valueType="enumerated">
      <enumeratedOptionValue
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue4"
+           id="xlc.c.compiler.option.signedness.bitfields.default"
            isDefault="true"
-           name="%Option.Bitfields.default">
+           name="%Option.default">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qbitfields=signed"
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue2"
+           id="xlc.c.compiler.option.signedness.bitfields.signed"
            name="%Option.Bitfields.signed">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qbitfields=unsigned"
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue6"
+           id="xlc.c.compiler.option.signedness.bitfields.unsigned"
            name="%Option.Bitfields.unsigned">
      </enumeratedOptionValue>
 	 </option>
@@ -1333,8 +1297,18 @@
 			  id="xlc.c.compiler.option.signedness.chars"
 			  valueType="enumerated">
      <enumeratedOptionValue
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue8"
+           id="xlc.c.compiler.option.signedness.chars.default"
            name="%Option.default">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qchars=signed"
+           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue2"
+           name="%Option.chars.signed">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qchars=unsigned"
+           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue4"
+           name="%Option.chars.unsigned">
      </enumeratedOptionValue>
 		  </option>
 		<option
@@ -2004,19 +1978,17 @@
 			id="xlc.c.compiler.option.ifp.longlong"
 			valueType="enumerated">
 			<enumeratedOptionValue
-				name="%Option.none"
-				isDefault="false"
-				id="xlc.c.ifp.y.none">
+				name="%Option.default"
+				isDefault="true"
+				id="xlc.c.ifp.y.default">
 			</enumeratedOptionValue>
 			<enumeratedOptionValue
 				name="%Option.longlong"
-				isDefault="false"
 				command="-qlonglong"
 				id="xlc.c.ifp.qlonglong">
 			</enumeratedOptionValue>
 			<enumeratedOptionValue
-				name="%Option.nolonglong"
-				isDefault="false"
+				name="%Option.longlong.nolonglong"
 				command="-qnolonglong"
 				id="xlc.c.ifp.qnolonglong">
 			</enumeratedOptionValue>

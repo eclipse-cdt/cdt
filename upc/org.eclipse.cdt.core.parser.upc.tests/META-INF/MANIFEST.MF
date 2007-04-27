@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name.0
+Bundle-SymbolicName: org.eclipse.cdt.core.parser.upc.tests
+Bundle-Version: 1.0.0
+Require-Bundle: org.eclipse.core.runtime,
+ org.junit,
+ org.eclipse.cdt.core.parser.c99,
+ org.eclipse.cdt.core.tests,
+ org.eclipse.cdt.core,
+ org.eclipse.core.resources,
+ org.eclipse.cdt.core.parser.c99.tests,
+ org.eclipse.cdt.core.parser.upc
+Eclipse-LazyStart: false
+Bundle-Vendor: %Bundle-Vendor.0
+Bundle-Localization: plugin

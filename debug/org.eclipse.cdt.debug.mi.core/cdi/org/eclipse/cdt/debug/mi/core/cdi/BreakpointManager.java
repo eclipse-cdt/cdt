@@ -373,9 +373,15 @@ public class BreakpointManager extends Manager {
 		}
 	}
 
-	/**
-	 */
 	public void update(Target target) throws CDIException {
+		update(target, null);
+	}
+
+	/**
+	 * Pass the event that causes this update
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=135250
+	 */
+	public void update(Target target, MIEvent event) throws CDIException {
 		MISession miSession = target.getMISession();
 		MIBreakpoint[] allMIBreakpoints = getAllMIBreakpoints(miSession);
 		List bList = getBreakpointsList(target);
@@ -429,29 +435,33 @@ public class BreakpointManager extends Manager {
 					wpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 					bList.add(wpoint);
 				} else {
+					int hint = MIBreakpointChangedEvent.HINT_NONE;
+					if (event instanceof MIBreakpointChangedEvent) {
+						hint = ((MIBreakpointChangedEvent)event).getHint();
+					}
 					String function = allMIBreakpoints[i].getFunction();
 					String file = allMIBreakpoints[i].getFile();
 					int line = allMIBreakpoints[i].getLine();
 					String addr = allMIBreakpoints[i].getAddress();
 					boolean enabled = allMIBreakpoints[i].isEnabled();
 
-					if (file != null && file.length() > 0 && line > 0) {
+					if (hint == MIBreakpointChangedEvent.HINT_NEW_LINE_BREAKPOINT || 
+							(hint == MIBreakpointChangedEvent.HINT_NONE && file != null && file.length() > 0 && line > 0)) {
 						LineLocation location = createLineLocation (allMIBreakpoints[i].getFile(),
 								allMIBreakpoints[i].getLine());
-						// By default new breakpoint are LineBreakpoint
 						Breakpoint newBreakpoint = new LineBreakpoint(target, type, location, condition, enabled);
 						newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 						bList.add(newBreakpoint);
-					} else if (function != null && function.length() > 0) {
+					} else if (hint == MIBreakpointChangedEvent.HINT_NEW_FUNCTION_BREAKPOINT || 
+							(hint == MIBreakpointChangedEvent.HINT_NONE && function != null && function.length() > 0)) {
 						FunctionLocation location = createFunctionLocation(file, function);
-						// By default new breakpoint are LineBreakpoint
 						Breakpoint newBreakpoint = new FunctionBreakpoint(target, type, location, condition, enabled);
 						newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 						bList.add(newBreakpoint);
-					} else if (addr != null && addr.length() > 0) {
+					} else if (hint == MIBreakpointChangedEvent.HINT_NEW_ADDRESS_BREAKPOINT || 
+							(hint == MIBreakpointChangedEvent.HINT_NONE && addr != null && addr.length() > 0)) {
 						BigInteger big = MIFormat.getBigInteger(addr);
 						AddressLocation location = createAddressLocation (big);
-						// By default new breakpoint are LineBreakpoint
 						Breakpoint newBreakpoint = new AddressBreakpoint(target, type, location, condition, enabled);
 						newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 						bList.add(newBreakpoint);

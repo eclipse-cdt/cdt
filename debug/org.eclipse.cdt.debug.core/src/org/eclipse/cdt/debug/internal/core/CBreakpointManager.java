@@ -770,7 +770,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		try {
 			ICDILocator location = cdiBreakpoint.getLocator();
 			String file = location.getFile();
-			if ( !isEmpty( file ) ) {
+			if ( cdiBreakpoint instanceof ICDILineBreakpoint ) {
 				Object sourceElement = getSourceElement( file );
 				String sourceHandle = file;
 				IResource resource = getProject();
@@ -783,17 +783,11 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					resource = ResourcesPlugin.getWorkspace().getRoot();
 				}
 				breakpoint = createLineBreakpoint( sourceHandle, resource, cdiBreakpoint );
-//				else if ( !isEmpty( cdiBreakpoint.getLocation().getFunction() ) ) {
-//					breakpoint = createFunctionBreakpoint( cdiBreakpoint );
-//				}
-//				else if ( ! cdiBreakpoint.getLocation().getAddress().equals( BigInteger.ZERO ) ) {
-//					breakpoint = createAddressBreakpoint( cdiBreakpoint );
-//				}
 			}
-			else if ( !isEmpty( location.getFunction() ) ) {
+			else if ( cdiBreakpoint instanceof ICDIFunctionBreakpoint ) {
 				breakpoint = createFunctionBreakpoint( cdiBreakpoint );
 			}
-			else if ( !location.getAddress().equals( BigInteger.ZERO ) ) {
+			else if ( cdiBreakpoint instanceof ICDIAddressBreakpoint ) {
 				breakpoint = createAddressBreakpoint( cdiBreakpoint );
 			}
 		}

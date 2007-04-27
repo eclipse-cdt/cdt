@@ -126,10 +126,10 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				if (bpoint.getNumber() > 0) {
 					cdiList.add(new ChangedEvent(session, bpoint));
 				} else {
-					// Something change we do not know what
-					// Let the breakpoint manager handle it with an update().
 					try {
-						session.getBreakpointManager().update(currentTarget);
+						// Pass the event to access to the event's hint
+						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=135250
+						session.getBreakpointManager().update(currentTarget, miEvent);
 					} catch (CDIException e) {
 					}
 				}

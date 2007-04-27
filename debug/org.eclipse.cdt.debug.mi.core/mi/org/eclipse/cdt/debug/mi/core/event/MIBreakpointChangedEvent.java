@@ -12,26 +12,40 @@ package org.eclipse.cdt.debug.mi.core.event;
 
 import org.eclipse.cdt.debug.mi.core.MISession;
 
-
-
-/**
- *
- */
 public class MIBreakpointChangedEvent extends MIChangedEvent {
 
-	int no;
+	/**
+	 * We need these flags to notify the upper layer what kind of a breakpoint
+	 * has been set from the console.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=135250 
+	 */
+	public static final int HINT_NONE = 0;
+	public static final int HINT_NEW_LINE_BREAKPOINT = 1;
+	public static final int HINT_NEW_FUNCTION_BREAKPOINT = 2;
+	public static final int HINT_NEW_ADDRESS_BREAKPOINT = 3;
+
+	int no = 0;
+	int hint = HINT_NONE;
 
 	public MIBreakpointChangedEvent(MISession source, int number) {
-		this(source, 0, number);
+		this(source, 0, number, 0);
 	}
 
-	public MIBreakpointChangedEvent(MISession source, int id, int number) {
+	public MIBreakpointChangedEvent(MISession source, int number, int hint) {
+		this(source, 0, number, hint);
+	}
+
+	public MIBreakpointChangedEvent(MISession source, int id, int number, int hint) {
 		super(source, id);
-		no = number;
+		this.no = number;
+		this.hint = hint;
 	}
 
 	public int getNumber() {
 		return no;
 	}
 
+	public int getHint() {
+		return hint;
+	}
 }

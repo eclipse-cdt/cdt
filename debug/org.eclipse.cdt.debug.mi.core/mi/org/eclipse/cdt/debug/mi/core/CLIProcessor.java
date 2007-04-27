@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core;
  
+import java.util.StringTokenizer;
+
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
@@ -47,7 +49,8 @@ public class CLIProcessor {
 		}
 	}
 
-	void processStateChanges(int token, String operation) {
+	void processStateChanges(int token, String op) {
+		String operation = op;
 		// Get the command name.
 		int indx = operation.indexOf(' ');
 		if (indx != -1) {
@@ -83,8 +86,9 @@ public class CLIProcessor {
 		}
 	}
 
-	void processSettingChanges(int token, String operation) {
+	void processSettingChanges(int token, String command) {
 		// Get the command name.
+		String operation = command;
 		int indx = operation.indexOf(' ');
 		if (indx != -1) {
 			operation = operation.substring(0, indx).trim();
@@ -99,8 +103,15 @@ public class CLIProcessor {
 				isChangeBreakpoint(operation) ||
 				isDeletingBreakpoint(operation)) {
 			// We know something change, we just do not know what.
-			// So the easiest way is to let the top layer handle it. 
-			session.fireEvent(new MIBreakpointChangedEvent(session, 0));
+			// So the easiest way is to let the top layer handle it.
+			// But we can parse the command line to hint the top layer 
+			// on the breakpoint type.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=135250
+			int hint = MIBreakpointChangedEvent.HINT_NONE;
+			if (isSettingBreakpoint(operation)) {
+				hint = getBreakpointHint(command);
+			}
+			session.fireEvent(new MIBreakpointChangedEvent(session, 0, hint));
 		} else if (isSettingSignal(operation)) {
 			// We do no know which signal let the upper layer find it.
 			session.fireEvent(new MISignalChangedEvent(session, "")); //$NON-NLS-1$
@@ -201,6 +212,41 @@ public class CLIProcessor {
 		return isChange;
 	}
 
+	int getBreakpointHint(String command) {
+		StringTokenizer st = new StringTokenizer(command);
+		// get operation
+		String op = st.nextToken();
+	    if (op.startsWith("rb")  && "rbreak".indexOf(op) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
+	    	// only function breakpoints can be set using rbreak
+	    	return MIBreakpointChangedEvent.HINT_NEW_FUNCTION_BREAKPOINT;
+	    }
+	    if ( !st.hasMoreTokens() ) {
+	    	// "break" with no arguments
+	    	return MIBreakpointChangedEvent.HINT_NEW_LINE_BREAKPOINT;
+	    }
+	    String token = st.nextToken();
+	    if ("if".equals(token) || "ignore".equals(token) || token.charAt(0) == '+' || token.charAt(0) == '-') { //$NON-NLS-1$ //$NON-NLS-2$
+	    	// conditional "break" with no location argument
+	    	// or "break +/- offset"
+	    	return MIBreakpointChangedEvent.HINT_NEW_LINE_BREAKPOINT;
+	    }
+	    if (token.charAt(0) == '*') {
+	    	return MIBreakpointChangedEvent.HINT_NEW_ADDRESS_BREAKPOINT;
+	    }
+	    int index = token.lastIndexOf( ':' );
+	    String lineNumber = token;
+	    if (index != -1 && index+1 < token.length()) {
+	    	lineNumber = token.substring(index+1, token.length());
+	    }
+	    try {
+	    	Integer.parseInt( lineNumber );
+	    }
+	    catch(NumberFormatException e) {
+	    	return MIBreakpointChangedEvent.HINT_NEW_FUNCTION_BREAKPOINT;
+	    }
+    	return MIBreakpointChangedEvent.HINT_NEW_LINE_BREAKPOINT;
+	}
+
 	boolean isSettingSignal(String operation) {
 		boolean isChange = false;
 		/* changing signal: handle, signal */
@@ -217,6 +263,4 @@ public class CLIProcessor {
 	boolean isDetach(String operation) {
 		return (operation.startsWith("det")  && "detach".indexOf(operation) != -1); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
-
 }

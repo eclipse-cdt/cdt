@@ -12,10 +12,15 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -37,6 +42,8 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.cdt.internal.core.index.IndexFileLocation;
+import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerASTVisitor;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerStatistics;
@@ -49,9 +56,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 4.0
  */
 abstract public class PDOMWriter {
-	private static final IASTPreprocessorIncludeStatement[] NO_INCLUDES = {};
-	private static final IIndexFileLocation[] NO_LOCATIONS = {};
-	
 	public static int SKIP_ALL_REFERENCES= -1;
 	public static int SKIP_TYPE_REFERENCES= 1;
 	public static int SKIP_NO_REFERENCES= 0;
@@ -117,7 +121,8 @@ abstract public class PDOMWriter {
 			IProgressMonitor pm) throws InterruptedException, CoreException {
 		final Map symbolMap= new HashMap();
 		try {
-			IIndexFileLocation[] orderedPaths= extractSymbols(ast, symbolMap, configHash);
+			HashSet contextIncludes= new HashSet();
+			IIndexFileLocation[] orderedPaths= extractSymbols(ast, symbolMap, configHash, contextIncludes);
 			for (int i=0; i<orderedPaths.length; i++) {
 				if (pm.isCanceled()) {
 					return;
@@ -164,7 +169,7 @@ abstract public class PDOMWriter {
 						if (fShowActivity) {
 							System.out.println("Indexer: adding " + path.getURI());  //$NON-NLS-1$
 						}
-						IIndexFile file= addToIndex(index, path, symbolMap, configHash);
+						IIndexFile file= addToIndex(index, path, symbolMap, configHash, contextIncludes);
 						boolean wasRequested= postAddToIndex(path, file);
 
 						synchronized(fInfo) {
@@ -193,11 +198,12 @@ abstract public class PDOMWriter {
 		}
 	}
 
-	private IIndexFileLocation[] extractSymbols(IASTTranslationUnit ast, final Map symbolMap, int confighash) throws CoreException {
+	private IIndexFileLocation[] extractSymbols(IASTTranslationUnit ast, 
+			final Map symbolMap, int confighash, Collection contextIncludes) throws CoreException {
 		LinkedHashSet/*<IIndexFileLocation>*/ orderedIFLs= new LinkedHashSet/*<IIndexFileLocation>*/();
 		ArrayList/*<IIndexFileLocation>*/ iflStack= new ArrayList/*<IIndexFileLocation>*/();
-
-
+		HashMap firstIncludePerTarget= new HashMap();
+		
 		final IIndexFileLocation astLocation = findLocation(ast.getFilePath());
 		IIndexFileLocation aboveStackIFL = astLocation;
 
@@ -234,6 +240,11 @@ abstract public class PDOMWriter {
 			if (include.isResolved()) {
 				iflStack.add(nextIFL);
 				aboveStackIFL= findLocation(include.getPath());
+				if (include.isActive()) {
+					if (!firstIncludePerTarget.containsKey(aboveStackIFL)) {
+						firstIncludePerTarget.put(aboveStackIFL, include);
+					}
+				}
 			}
 			else if (include.isActive()) {
 				reportProblem(include);
@@ -245,6 +256,15 @@ abstract public class PDOMWriter {
 			if (needToUpdate(aboveStackIFL, confighash)) {
 				prepareInMap(symbolMap, aboveStackIFL);
 				orderedIFLs.add(aboveStackIFL);
+			}
+		}
+
+		// extract context includes
+		for (Iterator iterator = orderedIFLs.iterator(); iterator.hasNext();) {
+			IndexFileLocation loc = (IndexFileLocation) iterator.next();
+			Object contextInclude= firstIncludePerTarget.get(loc);
+			if (contextInclude != null) {
+				contextIncludes.add(contextInclude);
 			}
 		}
 
@@ -344,36 +364,37 @@ abstract public class PDOMWriter {
 		return false;
 	}
 
-	private IIndexFragmentFile addToIndex(IWritableIndex index, IIndexFileLocation location, Map symbolMap, int configHash) throws CoreException {
-		ArrayList[] lists= (ArrayList[]) symbolMap.get(location);
-		IASTPreprocessorIncludeStatement[] includes= NO_INCLUDES;
-		IASTPreprocessorMacroDefinition[] macros= null;
-		IASTName[][] names= null;
-		IIndexFileLocation[] includeLocations= NO_LOCATIONS;
-		if (lists != null) {
-			ArrayList list= lists[0];
-			includes= (IASTPreprocessorIncludeStatement[]) list.toArray(new IASTPreprocessorIncludeStatement[list.size()]);
-			list= lists[1];
-			macros= (IASTPreprocessorMacroDefinition[]) list.toArray(new IASTPreprocessorMacroDefinition[list.size()]);
-			list= lists[2];
-			names= (IASTName[][]) list.toArray(new IASTName[list.size()][]);
-
-			includeLocations = new IIndexFileLocation[includes.length];
-			for(int i=0; i<includes.length; i++) {
-				if (includes[i].isResolved()) {
-					includeLocations[i] = findLocation(includes[i].getPath());
-				}
-			}
-		}
+	private IIndexFragmentFile addToIndex(IWritableIndex index, IIndexFileLocation location, Map symbolMap, int configHash, Set contextIncludes) throws CoreException {
+		Set clearedContexts= Collections.EMPTY_SET;
 		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(location);
-		if (file == null) {
+		if (file != null) {
+			clearedContexts= new HashSet();
+			index.clearFile(file, clearedContexts);
+		} else {
 			file= index.addFile(location);
 		}
-		index.clearFile(file, includes, includeLocations);
 		file.setTimestamp(getLastModified(location));
 		file.setScannerConfigurationHashcode(configHash);
+		ArrayList[] lists= (ArrayList[]) symbolMap.get(location);
 		if (lists != null) {
-			index.setFileContent(file, macros, names);
+			ArrayList list= lists[1];
+			IASTPreprocessorMacroDefinition[] macros= (IASTPreprocessorMacroDefinition[]) list.toArray(new IASTPreprocessorMacroDefinition[list.size()]);
+			list= lists[2];
+			IASTName[][] names= (IASTName[][]) list.toArray(new IASTName[list.size()][]);
+
+			list= lists[0];
+			IncludeInformation[] includeInfos= new IncludeInformation[list.size()];
+			for (int i=0; i<list.size(); i++) {
+				final IASTPreprocessorIncludeStatement include = (IASTPreprocessorIncludeStatement) list.get(i);
+				final IncludeInformation info= includeInfos[i]= new IncludeInformation();
+				info.fStatement= include;
+				if (include.isResolved()) {
+					info.fLocation= findLocation(include.getPath());
+					info.fIsContext= contextIncludes.contains(include) ||
+						clearedContexts.contains(info.fLocation);
+				}
+			}
+			index.setFileContent(file, includeInfos, macros, names);
 		}
 		return file;
 	}
@@ -409,18 +430,5 @@ abstract public class PDOMWriter {
 	 */
 	protected long getLastModified(IIndexFileLocation location) throws CoreException {
 		return EFS.getStore(location.getURI()).fetchInfo().getLastModified();
-	}
-
-	/**
-	 * Obtains the scanner configuration hash code for an index file location. With
-	 * that it can be determined at a later point if the scanner configuration has
-	 * potentially been changed for a particular file.
-	 * @param location the location for which the scanner configuration hash code is obtained.
-	 * @return the hashcode or <code>0</code>, if unknown.
-	 * @throws CoreException
-	 * @since 4.0
-	 */
-	protected int getScannerConfigurationHashcode(IIndexFileLocation location) throws CoreException {
-		return 0;
 	}
 }

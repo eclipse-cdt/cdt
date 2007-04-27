@@ -12,8 +12,9 @@
 
 package org.eclipse.cdt.internal.core.index;
 
+import java.util.Collection;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.core.runtime.CoreException;
@@ -56,12 +57,19 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	}
 
 	public void setFileContent(IIndexFragmentFile file, 
+			IncludeInformation[] includes,
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
 
 		IIndexFragment indexFragment = file.getIndexFragment();
 		assert isWritableFragment(indexFragment);
 		
-		((IWritableIndexFragment) indexFragment).addFileContent(file, macros, names);
+		for (int i = 0; i < includes.length; i++) {
+			IncludeInformation ii= includes[i];
+			if (ii.fLocation != null) {
+				ii.fTargetFile= addFile(ii.fLocation);
+			}
+		}
+		((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names);
 	}
 
 	public void clear() throws CoreException {
@@ -71,20 +79,11 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		}
 	}
 
-	public void clearFile(IIndexFragmentFile file,
-			IASTPreprocessorIncludeStatement[] newIncludes,
-			IIndexFileLocation[] newIncludeLocations) throws CoreException {
+	public void clearFile(IIndexFragmentFile file, Collection clearedContexts) throws CoreException {
 		IIndexFragment indexFragment = file.getIndexFragment();
 		assert isWritableFragment(indexFragment);
 		
-		IIndexFragmentFile[] destFiles= new IIndexFragmentFile[newIncludes.length];
-		for (int i = 0; i < newIncludes.length; i++) {
-			if (newIncludeLocations[i] != null) {
-				destFiles[i]= addFile(newIncludeLocations[i]);
-			}
-		}
-
-		((IWritableIndexFragment) indexFragment).clearFile(file, newIncludes, destFiles);
+		((IWritableIndexFragment) indexFragment).clearFile(file, clearedContexts);
 	}
 
 	

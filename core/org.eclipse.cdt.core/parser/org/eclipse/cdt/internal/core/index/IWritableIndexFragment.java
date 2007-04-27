@@ -12,10 +12,12 @@
 
 package org.eclipse.cdt.internal.core.index;
 
+import java.util.Collection;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -30,10 +32,11 @@ public interface IWritableIndexFragment extends IIndexFragment {
 
 	/**
 	 * Clears the given file in the index.
-	 * @param newIncludes list of includes to set
-	 * @param destFiles list of file objects for the includes
+	 * @param file a file to clear, must belong to this fragment.
+	 * @param a collection that receives IndexFileLocation objects for files that
+	 *     had the cleared file as a context.
 	 */
-	void clearFile(IIndexFragmentFile file, IASTPreprocessorIncludeStatement[] newIncludes, IIndexFragmentFile[] destFiles) throws CoreException;
+	void clearFile(IIndexFragmentFile file, Collection contextsRemoved) throws CoreException;
 
 	/**
 	 * Creates a file object for the given location or returns an existing one.
@@ -47,6 +50,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * Adds an include to the given file.
 	 */
 	void addFileContent(IIndexFragmentFile sourceFile, 
+			IncludeInformation[] includes,  
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
 
 	/**

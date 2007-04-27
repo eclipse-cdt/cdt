@@ -13,13 +13,13 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -45,7 +46,6 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public class PDOMFile implements IIndexFragmentFile {
-
 	private final PDOM pdom;
 	private final int record;
 
@@ -165,6 +165,10 @@ public class PDOMFile implements IIndexFragmentFile {
 		int rec = pdom.getDB().getInt(record + FIRST_INCLUDED_BY);
 		return rec != 0 ? new PDOMInclude(pdom, rec) : null;
 	}
+	
+	public IIndexInclude getParsedInContext() throws CoreException {
+		return getFirstIncludedBy();
+	}
 
 	public void setFirstIncludedBy(PDOMInclude includedBy) throws CoreException {
 		int rec = includedBy != null ? includedBy.getRecord() : 0;
@@ -235,63 +239,18 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result;
 	}
 
-	public void clear(IASTPreprocessorIncludeStatement[] newIncludes, IIndexFragmentFile[] destFiles) throws CoreException {
-		int[] records= new int[destFiles.length];
-		PDOMInclude[] oldDirectives= new PDOMInclude[destFiles.length];
-		for (int i = 0; i < records.length; i++) {
-			PDOMFile destFile= (PDOMFile) destFiles[i];
-			if (destFile != null) {
-				records[i]= destFile.getRecord();
-			}
-		}
-
-		// Remove the includes preserving the unchanged
+	public void clear(Collection contextsRemoved) throws CoreException {
+		// Remove the includes
 		PDOMInclude include = getFirstInclude();
 		while (include != null) {
 			PDOMInclude nextInclude = include.getNextInIncludes();
-			final PDOMFile includes= (PDOMFile) include.getIncludes();
-			if (includes != null) {
-				final int rec= includes.record;
-				int i;
-				for (i=0; i < records.length; i++) {
-					if (rec == records[i]) {
-						records[i]= 0;
-						oldDirectives[i]= include;
-						include.setNextInIncludes(null);
-						break;
-					}
-				}
-				if (i >= records.length) {
-					include.delete();
-				}
+			if (contextsRemoved != null && include.getPrevInIncludedByRecord() == 0) {
+				contextsRemoved.add(include.getIncludesLocation());
 			}
+			include.delete();
 			include = nextInclude;
 		}
-		setFirstInclude(null);
-
-		PDOMInclude lastInclude= null;
-		for (int i = 0; i < newIncludes.length; i++) {
-			IASTPreprocessorIncludeStatement statement = newIncludes[i];
-			PDOMFile targetFile= (PDOMFile) destFiles[i];
-			PDOMInclude pdomInclude= oldDirectives[i];
-			if (pdomInclude == null) {
-				pdomInclude= new PDOMInclude(pdom, statement, this, targetFile);
-				if (targetFile != null) {
-					assert targetFile.getIndexFragment() instanceof IWritableIndexFragment;
-					targetFile.addIncludedBy(pdomInclude);
-				}
-			}
-			else {
-				pdomInclude.update(statement);
-			}
-			if (lastInclude == null) {
-				setFirstInclude(pdomInclude);
-			}
-			else {
-				lastInclude.setNextInIncludes(pdomInclude);
-			}
-			lastInclude= pdomInclude;
-		}
+		setFirstInclude(include);
 
 		// Delete all the macros in this file
 		PDOMMacro macro = getFirstMacro();
@@ -318,16 +277,51 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstName(null);
 	}
 
-	public void addIncludedBy(PDOMInclude include) throws CoreException {
-		PDOMInclude firstIncludedBy = getFirstIncludedBy();
-		if (firstIncludedBy != null) {
-			include.setNextInIncludedBy(firstIncludedBy);
-			firstIncludedBy.setPrevInIncludedBy(include);
+	public void addIncludesTo(IncludeInformation[] includeInfos) throws CoreException {
+		assert getFirstInclude() == null;
+
+		PDOMInclude lastInclude= null;
+		for (int i = 0; i < includeInfos.length; i++) {
+			final IncludeInformation info= includeInfos[i];
+			final PDOMFile targetFile= (PDOMFile) info.fTargetFile;
+			
+			PDOMInclude pdomInclude = new PDOMInclude(pdom, info.fStatement, this, targetFile);
+			if (targetFile != null) {
+				assert targetFile.getIndexFragment() instanceof IWritableIndexFragment;
+				targetFile.addIncludedBy(pdomInclude, info.fIsContext);
+			}
+			if (lastInclude == null) {
+				setFirstInclude(pdomInclude);
+			}
+			else {
+				lastInclude.setNextInIncludes(pdomInclude);
+			}
+			lastInclude= pdomInclude;
 		}
-		setFirstIncludedBy(include);
 	}
 
-
+	public void addIncludedBy(PDOMInclude include, boolean isContext) throws CoreException {
+		PDOMInclude firstIncludedBy = getFirstIncludedBy();
+		if (firstIncludedBy != null) {
+			if (isContext) {
+				setFirstIncludedBy(include);
+				include.setNextInIncludedBy(firstIncludedBy);
+				firstIncludedBy.setPrevInIncludedBy(include);				
+			}
+			else {
+				PDOMInclude secondIncludedBy= firstIncludedBy.getNextInIncludedBy();
+				if (secondIncludedBy != null) {
+					include.setNextInIncludedBy(secondIncludedBy);
+					secondIncludedBy.setPrevInIncludedBy(include);
+				}
+				include.setPrevInIncludedBy(firstIncludedBy);
+				firstIncludedBy.setNextInIncludedBy(include);
+			}
+		}
+		else {
+			setFirstIncludedBy(include);
+		}
+	}
 
 	public IIndexInclude[] getIncludes() throws CoreException {
 		List result= new ArrayList();

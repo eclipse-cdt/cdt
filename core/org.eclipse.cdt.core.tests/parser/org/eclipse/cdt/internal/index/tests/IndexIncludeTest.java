@@ -318,11 +318,15 @@ public class IndexIncludeTest extends IndexTestBase {
 	
 	// #include "resolved20070426.h"
 	public void testFixedContext() throws Exception {
-		waitForIndexer();
 		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
 		String source= getContentsForTest(1)[0].toString();
 		IFile header= TestSourceReader.createFile(fProject.getProject(), "resolved20070426.h", "");
 		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", source);
+		// make sure it is parsed in context
+		waitForIndexer();
+		CCorePlugin.getIndexManager().reindex(fProject);
+		waitForIndexer();
+
 		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", source);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
 
@@ -332,8 +336,12 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
-			assertEquals(s2.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
-			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(s2.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			
+			IIndexInclude context= ifile.getParsedInContext();
+			assertNotNull(context);
+			assertEquals(s1.getFullPath().toString(), context.getIncludedByLocation().getFullPath());
 		}
 		finally {
 			fIndex.releaseReadLock();
@@ -348,8 +356,11 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
-			assertEquals(s2.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
-			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(s2.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			IIndexInclude context= ifile.getParsedInContext();
+			assertNotNull(context);
+			assertEquals(s1.getFullPath().toString(), context.getIncludedByLocation().getFullPath());
 		}
 		finally {
 			fIndex.releaseReadLock();
@@ -364,8 +375,11 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
-			assertEquals(s2.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
-			assertEquals(s1.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(s2.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
+			IIndexInclude context= ifile.getParsedInContext();
+			assertNotNull(context);
+			assertEquals(s1.getFullPath().toString(), context.getIncludedByLocation().getFullPath());
 		}
 		finally {
 			fIndex.releaseReadLock();

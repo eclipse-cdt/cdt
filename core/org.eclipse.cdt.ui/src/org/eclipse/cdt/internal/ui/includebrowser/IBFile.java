@@ -18,10 +18,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
@@ -38,7 +37,7 @@ public class IBFile {
 	
 	public IBFile(ICProject preferredProject, IIndexFileLocation location) throws CModelException {
 		fLocation= location;
-		fTU= CModelUtil.findTranslationUnitForLocation(location, preferredProject);
+		fTU= CoreModelUtil.findTranslationUnitForLocation(location, preferredProject);
 		String name= fLocation.getURI().getPath();
 		fName= name.substring(name.lastIndexOf('/')+1);
 	}

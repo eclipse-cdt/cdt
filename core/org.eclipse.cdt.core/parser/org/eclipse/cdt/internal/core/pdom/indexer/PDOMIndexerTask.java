@@ -25,7 +25,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -34,7 +33,6 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -66,8 +64,6 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	private static final Object NO_CONTEXT = new Object();
 	private static final int MAX_ERRORS = 500;
 	private static final String TRUE = "true"; //$NON-NLS-1$
-	private static final IIndexFileLocation[] NO_LOCATIONS= {};
-	private static final IASTPreprocessorIncludeStatement[] NO_INCLUDES= {};
 	
 	private AbstractPDOMIndexer fIndexer;
 	protected Map/*<IIndexFileLocation, Object>*/ fContextMap = new HashMap/*<IIndexFileLocation, Object>*/();
@@ -372,7 +368,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 	}
 
-	private ITranslationUnit findContext(IIndex index, IIndexFileLocation location) {
+	private ITranslationUnit findContext(IIndex index, final IIndexFileLocation location) {
 		Object cachedContext= fContextMap.get(location);
 		if (cachedContext != null) {
 			return cachedContext == NO_CONTEXT ? null : (ITranslationUnit) cachedContext;
@@ -381,19 +377,29 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		fContextMap.put(location, NO_CONTEXT); // prevent recursion
 		IIndexFile pdomFile;
 		try {
+			final ICProject project= getIndexer().getProject();
 			pdomFile = index.getFile(location);
 			if (pdomFile != null) {
-				ICProject project= getIndexer().getProject();
+				final IIndexInclude contextInclude= pdomFile.getParsedInContext();
+				if (contextInclude != null) {
+					final IIndexFileLocation loc= contextInclude.getIncludedByLocation();
+					ITranslationUnit context= getSourceUnit(project, loc);
+					if (context == null) {
+						context= findContext(index, loc);
+					}
+					if (context != null) {
+						fContextMap.put(location, context);
+						return context;
+					}
+				}
+				
+				// fallback to other includes
 				IIndexInclude[] includedBy = index.findIncludedBy(pdomFile, IIndex.DEPTH_ZERO);
 				for (int i = includedBy.length-1; i >=0; i--) {
-					IIndexInclude include = includedBy[i];
-					IIndexFileLocation incLocation = include.getIncludedByLocation();
-					ITranslationUnit context= null;
-					if (CoreModel.isValidSourceUnitName(project.getProject(), incLocation.getURI().toString())) { // FIXME - is this ok?
-						context = CoreModelUtil.findTranslationUnitForLocation(IndexLocationFactory.getAbsolutePath(incLocation), project);
-					}
-					else {
-						context= findContext(index, incLocation);
+					final IIndexFileLocation loc= includedBy[i].getIncludedByLocation();
+					ITranslationUnit context= getSourceUnit(project, loc);
+					if (context == null) {
+						context= findContext(index, loc);
 					}
 					if (context != null) {
 						fContextMap.put(location, context);
@@ -407,6 +413,17 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		return null;
 	}
 
+	private ITranslationUnit getSourceUnit(final ICProject project, final IIndexFileLocation location)
+			throws CoreException {
+		ITranslationUnit tu= CoreModelUtil.findTranslationUnitForLocation(location, getIndexer().getProject());
+		if (tu != null) {
+			if (tu.isSourceUnit()) {
+				return tu;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Conveninence method for subclasses, removes a translation unit from the index.
 	 * @since 4.0
@@ -416,7 +433,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		try {
 			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(IndexLocationFactory.getIFL(tu));
 			if (file != null)
-				index.clearFile(file, NO_INCLUDES, NO_LOCATIONS);
+				index.clearFile(file, null);
 		} finally {
 			index.releaseWriteLock(readlocks);
 		}

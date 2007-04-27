@@ -12,6 +12,8 @@
 
 package org.eclipse.cdt.internal.core.index;
 
+import java.util.Collection;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -25,6 +27,13 @@ import org.eclipse.core.runtime.CoreException;
  * @since 4.0
  */
 public interface IWritableIndex extends IIndex {
+	
+	static class IncludeInformation {
+		public IASTPreprocessorIncludeStatement fStatement;
+		public IIndexFileLocation fLocation;
+		public IIndexFragmentFile fTargetFile;
+		public boolean fIsContext= false;
+	}
 
 	/**
 	 * Creates a file object for the given location or returns an existing one.
@@ -35,6 +44,7 @@ public interface IWritableIndex extends IIndex {
 	 * Adds content to the given file.
 	 */
 	void setFileContent(IIndexFragmentFile sourceFile, 
+			IncludeInformation[] includes, 
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
 
 	/**
@@ -44,10 +54,11 @@ public interface IWritableIndex extends IIndex {
 
 	/**
 	 * Clears the given file in the index.
-	 * @param newIncludes 
-	 * @param newIncludeLocations 
+	 * @param file a file to clear.
+	 * @param a collection that receives IndexFileLocation objects for files that
+	 *     had the cleared file as a context. May be <code>null</code>.
 	 */
-	void clearFile(IIndexFragmentFile file, IASTPreprocessorIncludeStatement[] newIncludes, IIndexFileLocation[] newIncludeLocations) throws CoreException;
+	void clearFile(IIndexFragmentFile file, Collection clearedContexts) throws CoreException;
 
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.

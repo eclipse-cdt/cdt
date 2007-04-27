@@ -14,11 +14,8 @@ package org.eclipse.cdt.internal.corext.util;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
@@ -152,38 +149,4 @@ public class CModelUtil {
 	public static ITranslationUnit findTranslationUnitForLocation(IPath location, ICProject preferredProject) throws CModelException {
 		return CoreModelUtil.findTranslationUnitForLocation(location, preferredProject);
 	}
-	
-	/**
-	 * Returns the translation unit for the location given or <code>null</code>.
-	 * @throws CModelException 
-	 */
-	public static ITranslationUnit findTranslationUnitForLocation(IIndexFileLocation ifl, ICProject preferredProject) throws CModelException {
-		String fullPath= ifl.getFullPath();
-		if (fullPath != null) {
-			IResource file= ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
-			if (file instanceof IFile) {
-				return findTranslationUnit((IFile) file);
-			}
-			return null;
-		}
-		IPath location= IndexLocationFactory.getAbsolutePath(ifl);
-		if (location != null) { 
-			CoreModel coreModel = CoreModel.getDefault();
-			ITranslationUnit tu= null;
-			if (preferredProject != null) {
-				tu= coreModel.createTranslationUnitFrom(preferredProject, location);
-			}
-			if (tu == null) {
-				ICProject[] projects= coreModel.getCModel().getCProjects();
-				for (int i = 0; i < projects.length && tu == null; i++) {
-					ICProject project = projects[i];
-					if (!project.equals(preferredProject)) {
-						tu= coreModel.createTranslationUnitFrom(project, location);
-					}
-				}
-			}
-			return tu;
-		}
-		return null;
-	}	
 }

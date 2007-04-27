@@ -712,6 +712,11 @@
             </or>
          </visibility>
          <action
+             class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
+             id="org.eclipse.cdt.ui.updateIndexAction"
+             label="%FreshenIndex.name"
+             menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
+         <action
              class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
              id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
              label="%SyncIndex.name"
@@ -721,7 +726,7 @@
                label="%Index.menu"
                path="buildGroup">
             <groupMarker name="rebuild"/>
-            <groupMarker name="update"/>
+            <separator name="update"/>
          </menu>
       </objectContribution>
       <objectContribution
@@ -737,7 +742,7 @@
                label="%Index.menu"
                path="buildGroup">
             <groupMarker name="rebuild"/>
-            <groupMarker name="update"/>
+            <separator name="update"/>
          </menu>
       </objectContribution>
       <!-- project explorer shows IProjects, we need to handle this -->
@@ -748,7 +753,12 @@
               <objectState
                  name="projectNature"
                  value="org.eclipse.cdt.core.cnature"/>
-         </visibility>
+         </visibility>          
+         <action
+             class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
+             id="org.eclipse.cdt.ui.updateIndexAction"
+             label="%FreshenIndex.name"
+             menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
              class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
              id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
@@ -764,7 +774,7 @@
                label="%Index.menu"
                path="buildGroup">
             <groupMarker name="rebuild"/>
-            <groupMarker name="update"/>
+            <separator name="update"/>
          </menu>
       </objectContribution>
       <objectContribution

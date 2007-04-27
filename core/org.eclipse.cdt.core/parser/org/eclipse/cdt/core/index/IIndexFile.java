@@ -70,4 +70,10 @@ public interface IIndexFile {
 	 * Find all names within the given range.
 	 */
 	IIndexName[] findNames(int offset, int length) throws CoreException;
+	
+	/**
+	 * Returns the include that was used to parse this file, may be null.
+	 */
+	IIndexInclude getParsedInContext() throws CoreException;
+	 
 }

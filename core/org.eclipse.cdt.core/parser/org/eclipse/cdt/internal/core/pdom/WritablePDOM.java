@@ -15,18 +15,19 @@ package org.eclipse.cdt.internal.core.pdom;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -52,19 +53,19 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	}
 
 	public void addFileContent(IIndexFragmentFile sourceFile, 
+			IncludeInformation[] includes, 
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
 		assert sourceFile.getIndexFragment() == this;
 		
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
+		pdomFile.addIncludesTo(includes);
 		pdomFile.addMacros(macros);
 		pdomFile.addNames(names);
 	}
 
-	public void clearFile(IIndexFragmentFile file, 
-			IASTPreprocessorIncludeStatement[] newIncludes, IIndexFragmentFile[] destFiles) throws CoreException {
+	public void clearFile(IIndexFragmentFile file, Collection contextsRemoved) throws CoreException {
 		assert file.getIndexFragment() == this;
-		assert newIncludes.length == destFiles.length;
-		((PDOMFile) file).clear(newIncludes, destFiles);		
+		((PDOMFile) file).clear(contextsRemoved);		
 	}
 	
 	public void clear() throws CoreException {
@@ -130,7 +131,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		for(Iterator i = notConverted.iterator(); i.hasNext(); ) {
 			PDOMFile file = (PDOMFile) i.next();
 			file.convertIncludersToUnresolved();
-			file.clear(null, null);
+			file.clear(null);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.model;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.core.resources.IFile;
@@ -570,6 +573,40 @@ public class CoreModelUtil {
 	}	
 	
 	/**
+	 * Returns the translation unit for the location given or <code>null</code>.
+	 * @throws CModelException 
+	 */
+	public static ITranslationUnit findTranslationUnitForLocation(IIndexFileLocation ifl, ICProject preferredProject) throws CModelException {
+		String fullPath= ifl.getFullPath();
+		if (fullPath != null) {
+			IResource file= ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
+			if (file instanceof IFile) {
+				return findTranslationUnit((IFile) file);
+			}
+			return null;
+		}
+		IPath location= IndexLocationFactory.getAbsolutePath(ifl);
+		if (location != null) { 
+			CoreModel coreModel = CoreModel.getDefault();
+			ITranslationUnit tu= null;
+			if (preferredProject != null) {
+				tu= coreModel.createTranslationUnitFrom(preferredProject, location);
+			}
+			if (tu == null) {
+				ICProject[] projects= coreModel.getCModel().getCProjects();
+				for (int i = 0; i < projects.length && tu == null; i++) {
+					ICProject project = projects[i];
+					if (!project.equals(preferredProject)) {
+						tu= coreModel.createTranslationUnitFrom(project, location);
+					}
+				}
+			}
+			return tu;
+		}
+		return null;
+	}	
+
+	/**
 	 * Returns the translation unit for the file given or <code>null</code>.
 	 */
     public static ITranslationUnit findTranslationUnit(IFile file) {
@@ -654,10 +691,10 @@ public class CoreModelUtil {
     	
     	if(cfgDes!=null) {
     		CoreModel core= CoreModel.getDefault();
-    		IProject[] cprojects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+    		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 
-    		for (int i=0; i<cprojects.length; i++) {
-    			IProject cproject= (IProject) cprojects[i];
+    		for (int i=0; i<projects.length; i++) {
+    			IProject cproject= projects[i];
     			ICProjectDescription prjDes= core.getProjectDescription(cproject, writable);
     			//in case this is not a CDT project the description will be null, so check for null
     			if(prjDes != null){

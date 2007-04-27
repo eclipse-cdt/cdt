@@ -30,7 +30,6 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -65,9 +64,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 	private static final String PROJECT_VAR_REPLACEMENT_BEGIN = "\\${$1:"; //$NON-NLS-1$
 	private static final String PROJECT_VAR_REPLACEMENT_END = "}"; //$NON-NLS-1$
 	private static final String DOLLAR_OR_BACKSLASH_REPLACEMENT = "\\\\$0"; //$NON-NLS-1$
-	private static final IASTPreprocessorIncludeStatement[] NO_INCLUDES = {};
 	private static final Pattern DOLLAR_OR_BACKSLASH_PATTERN= Pattern.compile("[\\$\\\\]"); //$NON-NLS-1$
-	private static final IIndexFragmentFile[] NO_IDS = {};
 
 	private static final class FileAndChecksum {
 		public ITranslationUnit fFile;
@@ -268,7 +265,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 				
 				IndexFileLocation ifl = (IndexFileLocation) i.next();
 				IIndexFragmentFile file= pdom.getFile(ifl);
-				pdom.clearFile(file, NO_INCLUDES, NO_IDS);
+				pdom.clearFile(file, null);
 			}
 			for (Iterator i = updateTimestamps.iterator(); i.hasNext();) {
 				checkMonitor(monitor);

@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
 public class UPCLanguage extends C99Language {
 	
 	// TODO: this should probably go somewhere else
-	public static final String PLUGIN_ID = "org.eclipse.cdt.core.parser.c99"; //$NON-NLS-1$ 
+	public static final String PLUGIN_ID = "org.eclipse.cdt.core.parser.upc"; //$NON-NLS-1$ 
 	public static final String ID = PLUGIN_ID + ".upc"; //$NON-NLS-1$ 
 	
 	private static UPCKeywordMap keywordMap = new UPCKeywordMap();

@@ -1106,7 +1106,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 						throw new RemoteFileException(e.getMessage(), e);
 					}
 				}				
-				command = _osCmdShell + "xcopy " + src + " " + target + " /Y /K /O /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				command = _osCmdShell + "xcopy " + src + " " + target + " /Y /K /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}			
 		}
 		else

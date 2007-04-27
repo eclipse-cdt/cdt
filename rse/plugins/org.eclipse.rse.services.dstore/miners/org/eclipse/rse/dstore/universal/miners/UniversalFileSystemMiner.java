@@ -355,7 +355,7 @@ public class UniversalFileSystemMiner extends Miner {
 			if (folderCopy) {
 				command = "xcopy " + source //$NON-NLS-1$
 					+ " " + tgt //$NON-NLS-1$
-					+ " /S /E /K /O /Q /H /I"; //$NON-NLS-1$
+					+ " /S /E /K /Q /H /I"; //$NON-NLS-1$
 			}
 			else {
 				String unquotedTgt = tgt.substring(1, tgt.length() - 1);
@@ -375,7 +375,7 @@ public class UniversalFileSystemMiner extends Miner {
 						return;
 					}
 				}				
-				command = "xcopy " + source + " " + tgt + " /Y /K /O /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+				command = "xcopy " + source + " " + tgt + " /Y /K /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 			}
 		}
 		else {

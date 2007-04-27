@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * @author jcamelon
@@ -66,11 +65,8 @@ public class GCCParserExtensionConfiguration extends AbstractCParserExtensionCon
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportDeclspecSpecifiers()
 	 */
-	public boolean supportDeclspecSpecifiers() {
-		// XXX Yes, this is a hack -- should use the target platform
-		if (Platform.getOS().equals(Platform.OS_WIN32))
-			return true;
-		return false;
+	public boolean supportDeclspecSpecifiers() {		
+		return true;
 	}
 
 	/*

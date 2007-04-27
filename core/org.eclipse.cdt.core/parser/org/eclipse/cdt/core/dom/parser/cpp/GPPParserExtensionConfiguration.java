@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * @author jcamelon
@@ -102,8 +101,7 @@ public class GPPParserExtensionConfiguration extends AbstractCPPParserExtensionC
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration#supportDeclspecSpecifiers()
 	 */
 	public boolean supportDeclspecSpecifiers() {
-		// XXX: a hack, should use the target's platform
-		return Platform.getOS().equals(Platform.OS_WIN32);
+		return true;
 	}
 
 	/*

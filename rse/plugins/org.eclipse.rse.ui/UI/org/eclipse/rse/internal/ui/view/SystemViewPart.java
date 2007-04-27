@@ -11,6 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
+ * Kevin Doyle (IBM) - [180875] - Added double click listener that handles opening of files
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - Replace SystemRegistry by ISystemRegistry
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
@@ -38,6 +39,8 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -45,6 +48,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.rse.core.IRSESystemType;
@@ -414,6 +418,12 @@ public class SystemViewPart
 		//hook the part focus to the viewer's control focus.
 		//hookFocus(systemView.getControl());
 
+		systemView.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick(event);
+			}
+		});
+		
 		//prime the selection
 		//selectionChanged(null, getSite().getDesktopWindow().getSelectionService().getSelection());
 
@@ -463,6 +473,24 @@ public class SystemViewPart
 		}
 	}
 
+	/**
+	 * Handles double clicks in viewer.
+	 * Opens editor if file double-clicked.
+	 */
+	protected void handleDoubleClick(DoubleClickEvent event) {
+		if (!systemView.enabledMode) {
+			//event.doit = false;
+			return;
+		}
+		IStructuredSelection s = (IStructuredSelection) event.getSelection();
+		Object element = s.getFirstElement();
+		if (element == null) return;
+		ISystemViewElementAdapter adapter = systemView.getViewAdapter(element);
+		if (adapter != null)
+			adapter.handleDoubleClick(element);
+
+	}
+	
 	/**
 	 * Creates the frame source and frame list, and connects them.
 	 */

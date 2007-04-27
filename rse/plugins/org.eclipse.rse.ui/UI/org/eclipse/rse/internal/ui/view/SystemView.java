@@ -11,6 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
+ * Kevin Doyle (IBM) - [180875] - Removed part of double click listener that opens files
  * Michael Berger (IBM) - Patch to remove non-standard expand/collapse from menu.
  * Tobias Schwarz (Wind River) - Fix 166343 getChildCount() counts invalid items
  * Martin Oberhuber (Wind River) - Improve fix for 166343 getChildCount()
@@ -489,7 +490,7 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Handles double clicks in viewer.
-	 * Opens editor if file double-clicked.
+	 * Expands/Collapses selected item if it can be expanded/collapsed
 	 */
 	protected void handleDoubleClick(DoubleClickEvent event) {
 		if (!enabledMode) {
@@ -499,10 +500,7 @@ public class SystemView extends SafeTreeViewer
 		IStructuredSelection s = (IStructuredSelection) event.getSelection();
 		Object element = s.getFirstElement();
 		if (element == null) return;
-		ISystemViewElementAdapter adapter = getViewAdapter(element);
-		boolean alreadyHandled = false;
-		if (adapter != null) alreadyHandled = adapter.handleDoubleClick(element);
-		if (!alreadyHandled && isExpandable(element)) {
+		if (isExpandable(element)) {
 			boolean expandedState = getExpandedState(element);
 			setExpandedState(element, !expandedState);
 			// DY:  fire collapse / expand event

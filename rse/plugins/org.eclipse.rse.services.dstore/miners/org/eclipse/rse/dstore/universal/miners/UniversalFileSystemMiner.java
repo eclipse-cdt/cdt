@@ -1503,7 +1503,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		{
 			String name = subject.getName();
 			String path = subject.getValue();
-			fileobj = new File(path, name);			
+			fileobj = new File(path, name);	
 		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
 		{
@@ -1632,6 +1632,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				e.printStackTrace();
 			}
 		} else {
+			// change the file type
+			subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
 			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
 			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);
 		}

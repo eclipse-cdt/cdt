@@ -69,6 +69,7 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -446,7 +447,7 @@ public class UniversalFileTransferUtility
 		try
 		{
 			IResource[] members = folder.members();
-			for (int i = 0; i < members.length; i++)
+			for (int i = members.length -1; i >= 0; i--)
 			{
 				IResource member = members[i];
 				if (member instanceof IFile)
@@ -454,13 +455,23 @@ public class UniversalFileTransferUtility
 					// is this a valid replica?
 					SystemIFileProperties properties = new SystemIFileProperties(member);
 					String path = properties.getRemoteFilePath();
-					if (path != null)
-					{
-						IRemoteFile remoteFile = ss.getRemoteFileObject(path, new NullProgressMonitor());
+					if (path != null)						
+					{		
+						IRemoteFile remoteFile = null;
+						if (ss instanceof RemoteFileSubSystem)
+						{
+							// mark any cached remote file stale so we know for sure
+							remoteFile = ((RemoteFileSubSystem)ss).getCachedRemoteFile(path);
+							if (remoteFile != null)
+							{
+								remoteFile.markStale(true);
+							}
+						}
+						remoteFile = ss.getRemoteFileObject(path, new NullProgressMonitor());
 						if (remoteFile != null && !remoteFile.exists())
 						{
 							// this must be old so we should delete this
-							member.delete(false, new NullProgressMonitor());
+							member.delete(true, new NullProgressMonitor());
 						}
 					}
 				}

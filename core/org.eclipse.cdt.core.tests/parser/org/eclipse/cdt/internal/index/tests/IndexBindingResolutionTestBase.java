@@ -29,9 +29,11 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -78,7 +80,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		ICProject cproject = strategy.getCProject();
 		IASTTranslationUnit ast = strategy.getAst();
 		try {
-			language = LanguageManager.getInstance().getLanguageForFile(strategy.getAst().getFilePath(), cproject.getProject());
+			IProject project = cproject.getProject();
+			ICConfigurationDescription configuration = CoreModel.getDefault().getProjectDescription(project, false).getActiveConfiguration();
+			language = LanguageManager.getInstance().getLanguageForFile(strategy.getAst().getFilePath(), project, configuration);
 		} catch (CoreException e) {
 			fail("Unexpected exception while getting language for file.");
 		}
@@ -127,7 +131,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		ICProject cproject = strategy.getCProject();
 		IASTTranslationUnit ast = strategy.getAst();
 		try {
-			language = LanguageManager.getInstance().getLanguageForFile(ast.getFilePath(), cproject.getProject());
+			IProject project = cproject.getProject();
+			ICConfigurationDescription configuration = CoreModel.getDefault().getProjectDescription(project, false).getActiveConfiguration();
+			language = LanguageManager.getInstance().getLanguageForFile(ast.getFilePath(), project, configuration);
 		} catch (CoreException e) {
 			fail("Unexpected exception while getting language for file.");
 		}

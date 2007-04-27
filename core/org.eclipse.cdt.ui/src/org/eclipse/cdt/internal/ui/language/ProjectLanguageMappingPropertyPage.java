@@ -34,16 +34,16 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 
 public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 
-	private LanguageMappingWidget fMappingWidget;
-	private LanguageMappingWidget fInheritedMappingWidget;
+	private ProjectLanguageMappingWidget fMappingWidget;
+	private WorkspaceLanguageMappingWidget fInheritedMappingWidget;
 	private ProjectLanguageConfiguration fMappings;
 	private ILanguageMappingChangeListener fInheritedMappingsChangeListener;
 	
 	public ProjectLanguageMappingPropertyPage() {
 		super();
-		fMappingWidget = new LanguageMappingWidget();
+		fMappingWidget = new ProjectLanguageMappingWidget();
 		
-		fInheritedMappingWidget = new LanguageMappingWidget();
+		fInheritedMappingWidget = new WorkspaceLanguageMappingWidget();
 		fInheritedMappingWidget.setReadOnly(true);
 		
 		fMappingWidget.setChild(fInheritedMappingWidget);

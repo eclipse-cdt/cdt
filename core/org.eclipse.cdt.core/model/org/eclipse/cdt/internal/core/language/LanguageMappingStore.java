@@ -64,6 +64,8 @@ public class LanguageMappingStore {
 
 	private static final String ATTRIBUTE_LANGUAGE = "language"; //$NON-NLS-1$
 
+	private static final String ATTRIBUTE_CONFIGURATION = "configuration"; //$NON-NLS-1$
+
 	public LanguageMappingStore() {
 	}
 	
@@ -78,12 +80,31 @@ public class LanguageMappingStore {
 		NodeList mappingElements = rootElement.getElementsByTagName(PROJECT_MAPPINGS);
 		if (mappingElements.getLength() > 0) {
 			Element element = (Element) mappingElements.item(0);
-			config.setContentTypeMappings(decodeContentTypeMappings(element));
+			config.setContentTypeMappings(decodeProjectContentTypeMappings(element));
 			config.setFileMappings(decodeFileMappings(element));
 		}
 		return config;
 	}
 	
+	private Map decodeProjectContentTypeMappings(Element rootElement) {
+		Map decodedMappings = new TreeMap();
+		NodeList mappingElements = rootElement.getElementsByTagName(CONTENT_TYPE_MAPPING);
+		for (int j = 0; j < mappingElements.getLength(); j++) {
+			Element mapping = (Element) mappingElements.item(j);
+			String configuration = mapping.getAttribute(ATTRIBUTE_CONFIGURATION);
+			
+			Map contentTypeMappings = (Map) decodedMappings.get(configuration);
+			if (contentTypeMappings == null) {
+				contentTypeMappings = new TreeMap();
+				decodedMappings.put(configuration, contentTypeMappings);
+			}
+			String contentType = mapping.getAttribute(ATTRIBUTE_CONTENT_TYPE);
+			String language = mapping.getAttribute(ATTRIBUTE_LANGUAGE);
+			contentTypeMappings.put(contentType, language);
+		}
+		return decodedMappings;
+	}
+
 	protected ICDescriptor getProjectDescription(IProject project) throws CoreException {
 		return CCorePlugin.getDefault().getCProjectDescription(project, true);
 	}
@@ -93,7 +114,22 @@ public class LanguageMappingStore {
 	}
 	
 	private Map decodeFileMappings(Element rootElement) throws CoreException {
-		return decodeMappings(rootElement, FILE_MAPPING, ATTRIBUTE_PATH, ATTRIBUTE_LANGUAGE);
+		Map decodedMappings = new TreeMap();
+		NodeList mappingElements = rootElement.getElementsByTagName(FILE_MAPPING);
+		for (int j = 0; j < mappingElements.getLength(); j++) {
+			Element mapping = (Element) mappingElements.item(j);
+			String path = mapping.getAttribute(ATTRIBUTE_PATH);
+			
+			Map configurationMappings = (Map) decodedMappings.get(path);
+			if (configurationMappings == null) {
+				configurationMappings = new TreeMap();
+				decodedMappings.put(path, configurationMappings);
+			}
+			String configuration = mapping.getAttribute(ATTRIBUTE_CONFIGURATION);
+			String language = mapping.getAttribute(ATTRIBUTE_LANGUAGE);
+			configurationMappings.put(configuration, language);
+		}
+		return decodedMappings;
 	}
 	
 	private Map decodeMappings(Element rootElement, String category, String keyName, String valueName) {
@@ -117,9 +153,31 @@ public class LanguageMappingStore {
 		Element projectMappings = document.createElement(PROJECT_MAPPINGS);
 		rootElement.appendChild(projectMappings);
 		
-		addContentTypeMappings(config.getContentTypeMappings(), projectMappings);
+		addProjectContentTypeMappings(config.getContentTypeMappings(), projectMappings);
 		addFileMappings(config.getFileMappings(), projectMappings);
 		descriptor.saveProjectData();
+	}
+
+	private void addProjectContentTypeMappings(Map contentTypeMappings, Element rootElement) {
+		Document document = rootElement.getOwnerDocument();
+		Iterator entries = contentTypeMappings.entrySet().iterator();
+		while (entries.hasNext()) {
+			Entry entry = (Entry) entries.next();
+			Element mapping = document.createElement(CONTENT_TYPE_MAPPING);
+			
+			String configuration = (String) entry.getKey();
+			Iterator contentTypeEntries = ((Map) entry.getValue()).entrySet().iterator();
+			while (contentTypeEntries.hasNext()) {
+				Entry configurationEntry = (Entry) contentTypeEntries.next();
+				String contentType = (String) configurationEntry.getKey();
+				String language = (String) configurationEntry.getValue();
+				
+				mapping.setAttribute(ATTRIBUTE_CONTENT_TYPE, contentType);
+				mapping.setAttribute(ATTRIBUTE_CONFIGURATION, configuration);
+				mapping.setAttribute(ATTRIBUTE_LANGUAGE, language);
+				rootElement.appendChild(mapping);
+			}
+		}
 	}
 
 	public void storeMappings(WorkspaceLanguageConfiguration config) throws CoreException {
@@ -205,6 +263,24 @@ public class LanguageMappingStore {
 	}
 	
 	private void addFileMappings(Map mappings, Element rootElement) {
-		addMappings(mappings, rootElement, FILE_MAPPING, ATTRIBUTE_PATH, ATTRIBUTE_LANGUAGE);
+		Document document = rootElement.getOwnerDocument();
+		Iterator entries = mappings.entrySet().iterator();
+		while (entries.hasNext()) {
+			Entry entry = (Entry) entries.next();
+			Element mapping = document.createElement(FILE_MAPPING);
+			
+			String path = (String) entry.getKey();
+			Iterator configurationEntries = ((Map) entry.getValue()).entrySet().iterator();
+			while (configurationEntries.hasNext()) {
+				Entry configurationEntry = (Entry) configurationEntries.next();
+				String configuration = (String) configurationEntry.getKey();
+				String language = (String) configurationEntry.getValue();
+				
+				mapping.setAttribute(ATTRIBUTE_PATH, path);
+				mapping.setAttribute(ATTRIBUTE_CONFIGURATION, configuration);
+				mapping.setAttribute(ATTRIBUTE_LANGUAGE, language);
+				rootElement.appendChild(mapping);
+			}
+		}
 	}
 }

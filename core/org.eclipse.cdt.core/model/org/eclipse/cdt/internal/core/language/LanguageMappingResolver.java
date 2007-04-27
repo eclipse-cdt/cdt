@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -48,8 +49,8 @@ public class LanguageMappingResolver {
 	 * @return the effective language for the file specified by the given path.
 	 * @throws CoreException
 	 */
-	public static LanguageMapping[] computeLanguage(IProject project, String filePath, String contentTypeId, boolean fetchAll) throws CoreException {
-		LanguageManager manager = LanguageManager.getInstance();
+	public static LanguageMapping[] computeLanguage(IProject project, String filePath, ICConfigurationDescription configuration, String contentTypeId, boolean fetchAll) throws CoreException {
+  		LanguageManager manager = LanguageManager.getInstance();
 		List inheritedLanguages = new LinkedList();
 		
 		if (project != null) {
@@ -58,21 +59,47 @@ public class LanguageMappingResolver {
 			if (mappings != null) {
 				// File-level mappings
 				if (filePath != null) {
-					String id = mappings.getLanguageForFile(filePath);
+					
+					String id = mappings.getLanguageForFile(configuration, filePath);
 					if (id != null) {
 						inheritedLanguages.add(new LanguageMapping(manager.getLanguage(id), FILE_MAPPING));
 						if (!fetchAll) {
 							return createLanguageMappingArray(inheritedLanguages);
 						}
 					}
+					
+					// Check for a file mapping that's global across all configurations in
+					// the project.
+					if (configuration != null) {
+						id = mappings.getLanguageForFile(null, filePath);
+						if (id != null) {
+							inheritedLanguages.add(new LanguageMapping(manager.getLanguage(id), FILE_MAPPING));
+							if (!fetchAll) {
+								return createLanguageMappingArray(inheritedLanguages);
+							}
+						}
+						
+					}
 				}
 			
 				// Project-level mappings
-				String id = mappings.getLanguageForContentType(contentTypeId);
+				String id = mappings.getLanguageForContentType(configuration, contentTypeId);
 				if (id != null) {
 					inheritedLanguages.add(new LanguageMapping(manager.getLanguage(id), PROJECT_MAPPING));
 					if (!fetchAll) {
 						return createLanguageMappingArray(inheritedLanguages);
+					}
+				}
+				
+				// Check for a content type mapping that's global across all configurations in
+				// the project.
+				if (configuration != null) {
+					id = mappings.getLanguageForContentType(null, contentTypeId);
+					if (id != null) {
+						inheritedLanguages.add(new LanguageMapping(manager.getLanguage(id), PROJECT_MAPPING));
+						if (!fetchAll) {
+							return createLanguageMappingArray(inheritedLanguages);
+						}
 					}
 				}
 			}

@@ -50,6 +50,8 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
@@ -678,13 +680,27 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public ILanguage getLanguage() throws CoreException {
 		ILanguage language = null;
-
+		
+		ICProject cProject = getCProject();
+		IProject project= cProject.getProject();
+		
+		ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project, true);
+		ICConfigurationDescription configuration;
+		
+		if (description == null) {
+			// TODO: Sometimes, CoreModel returns a null ICProjectDescription
+			// so for now, fall back to configuration-less language determination. 
+			configuration = null;
+		} else {
+			configuration = description.getActiveConfiguration();
+		}
+		
 		IFile file= getFile();
 		if (file != null) {
-			language= LanguageManager.getInstance().getLanguageForFile(file, contentTypeId);
+			language = LanguageManager.getInstance().getLanguageForFile(file, configuration, contentTypeId);
 		}
 		else {
-			language = LanguageManager.getInstance().getLanguageForFile(getLocation(), getCProject().getProject(), contentTypeId);
+			language = LanguageManager.getInstance().getLanguageForFile(getLocation(), getCProject().getProject(), configuration, contentTypeId);
 		}
 		return language;
 	}

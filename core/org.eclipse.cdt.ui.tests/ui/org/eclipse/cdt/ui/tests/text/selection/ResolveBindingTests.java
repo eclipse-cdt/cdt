@@ -28,9 +28,11 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
@@ -65,7 +67,9 @@ public class ResolveBindingTests extends BaseUITestCase  {
 		// get the language from the language manager
 		ILanguage language = null;
 		try {
-			language = LanguageManager.getInstance().getLanguageForFile(astTU.getFilePath(), fCProject.getProject());
+			IProject project = fCProject.getProject();
+			ICConfigurationDescription configuration = CoreModel.getDefault().getProjectDescription(project, false).getActiveConfiguration();
+			language = LanguageManager.getInstance().getLanguageForFile(astTU.getFilePath(), project, configuration);
 		} catch (CoreException e) {
 			fail("Unexpected exception while getting language for file.");
 		}

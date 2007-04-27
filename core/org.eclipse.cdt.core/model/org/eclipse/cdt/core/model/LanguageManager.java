@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.language.LanguageMappingResolver;
 import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
@@ -460,10 +461,11 @@ public class LanguageManager {
 	 * @return an ILanguage representing the language to be used for the given file
 	 * @param fullPathToFile the full path to the file for which the language is requested
 	 * @param project the IProject that this file is in the context of.  This field cannot be null.
+	 * @param configuration the active build configuration, or <code>null</code> if build configurations
+	 *        are not relevant to determining the language.
 	 * @throws CoreException 
-	 * TODO:  implement other mapping levels besides project level and content type level
 	 */
-	public ILanguage getLanguageForFile(String fullPathToFile, IProject project) throws CoreException {
+	public ILanguage getLanguageForFile(String fullPathToFile, IProject project, ICConfigurationDescription configuration) throws CoreException {
 		if (project == null)
 			throw new IllegalArgumentException("project must not be null in call to LanguageManager.getLanguageForFile(String, IProject)"); //$NON-NLS-1$
 		
@@ -476,7 +478,7 @@ public class LanguageManager {
 		
 		String contentTypeID = contentType.getId();
 		
-		return LanguageMappingResolver.computeLanguage(project, fullPathToFile, contentTypeID, false)[0].language;
+		return LanguageMappingResolver.computeLanguage(project, fullPathToFile, configuration, contentTypeID, false)[0].language;
 	}
 
 	/**
@@ -486,11 +488,13 @@ public class LanguageManager {
 	 * The path can be either workspace or project relative.
 	 * @param project the project that this file should be parsed in context of.  This field is optional and may
 	 * be set to null.  If the project is null then this method tries to determine the project context via workspace APIs.
+	 * @param configuration the active build configuration, or <code>null</code> if build configurations
+	 *        are not relevant to determining the language.
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public ILanguage getLanguageForFile(IPath pathToFile, IProject project) throws CoreException {
-		return getLanguageForFile(pathToFile, project, null);
+	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, ICConfigurationDescription configuration) throws CoreException {
+		return getLanguageForFile(pathToFile, project, configuration, null);
 	}
 	
 	/**
@@ -500,11 +504,13 @@ public class LanguageManager {
 	 * The path can be either workspace or project relative.
 	 * @param project the project that this file should be parsed in context of.  This field is optional and may
 	 * be set to null.  If the project is null then this method tries to determine the project context via workspace APIs.
+	 * @param configuration the active build configuration, or <code>null</code> if build configurations
+	 *        are not relevant to determining the language.
 	 * @param contentTypeID id of the content type, may be <code>null</code>.
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, String contentTypeID) throws CoreException {
+	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, ICConfigurationDescription configuration, String contentTypeID) throws CoreException {
 		if (project == null) {
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(pathToFile);
 			if (resource == null) {
@@ -520,18 +526,20 @@ public class LanguageManager {
 			contentTypeID= ct.getId();
 		}
 								
-		return LanguageMappingResolver.computeLanguage(project, pathToFile.toPortableString(), contentTypeID, false)[0].language;
+		return LanguageMappingResolver.computeLanguage(project, pathToFile.toPortableString(), configuration, contentTypeID, false)[0].language;
 	}
 
 	/**
 	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @return an ILanguage representing the language to be used for the given file
 	 * @param file the file for which the language is requested
+	 * @param configuration the active build configuration, or <code>null</code> if build configurations
+	 *        are not relevant to determining the language.
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public ILanguage getLanguageForFile(IFile file) throws CoreException {
-		return getLanguageForFile(file, null);
+	public ILanguage getLanguageForFile(IFile file, ICConfigurationDescription configuration) throws CoreException {
+		return getLanguageForFile(file, configuration, null);
 	}
 	
 	
@@ -539,11 +547,13 @@ public class LanguageManager {
 	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @return an ILanguage representing the language to be used for the given file
 	 * @param file the file for which the language is requested
+	 * @param configuration the active build configuration, or <code>null</code> if build configurations
+	 *        are not relevant to determining the language.
 	 * @param contentTypeID id of the content type, may be <code>null</code>.
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public ILanguage getLanguageForFile(IFile file, String contentTypeId) throws CoreException {
+	public ILanguage getLanguageForFile(IFile file, ICConfigurationDescription configuration, String contentTypeId) throws CoreException {
 		IProject project = file.getProject();
 		
 		if (contentTypeId == null) {
@@ -555,7 +565,7 @@ public class LanguageManager {
 			contentTypeId= contentType.getId();
 		}
 		
-		return LanguageMappingResolver.computeLanguage(project, file.getProjectRelativePath().toPortableString(), contentTypeId, false)[0].language;
+		return LanguageMappingResolver.computeLanguage(project, file.getProjectRelativePath().toPortableString(), configuration, contentTypeId, false)[0].language;
 	}
 	
 	/**

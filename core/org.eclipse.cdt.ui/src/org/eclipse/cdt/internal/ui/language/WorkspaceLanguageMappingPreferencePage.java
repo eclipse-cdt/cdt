@@ -27,10 +27,10 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 public class WorkspaceLanguageMappingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	WorkspaceLanguageConfiguration fMappings;
-	LanguageMappingWidget fMappingWidget;
+	WorkspaceLanguageMappingWidget fMappingWidget;
 	
 	public WorkspaceLanguageMappingPreferencePage() {
-		fMappingWidget = new LanguageMappingWidget();
+		fMappingWidget = new WorkspaceLanguageMappingWidget();
 	}
 	
 	protected Control createContents(Composite parent) {

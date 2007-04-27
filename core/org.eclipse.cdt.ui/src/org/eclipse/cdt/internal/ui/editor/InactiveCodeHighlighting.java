@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.swt.widgets.Display;
 
@@ -52,7 +55,7 @@ import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
  * @see LineBackgroundPainter
  * @since 4.0
  */
-public class InactiveCodeHighlighting implements ICReconcilingListener {
+public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInputListener {
 
 	/**
 	 * Implementation of <code>IRegion</code> that can be reused
@@ -82,6 +85,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 	private CEditor fEditor;
 	/** The list of currently highlighted positions */
 	private List fInactiveCodePositions= Collections.EMPTY_LIST;
+	private IDocument fDocument;
 
 	/**
 	 * Create a highlighter for the given key.
@@ -134,13 +138,15 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 		assert editor != null && lineBackgroundPainter != null;
 		fEditor= editor;
 		fLineBackgroundPainter= lineBackgroundPainter;
-		fEditor.addReconcileListener(this);
 		ICElement cElement= fEditor.getInputCElement();
 		if (cElement instanceof ITranslationUnit) {
 			fTranslationUnit = (ITranslationUnit)cElement;
 		} else {
 			fTranslationUnit = null;
 		}
+		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		fEditor.getViewer().addTextInputListener(this);
+		fEditor.addReconcileListener(this);
 	}
 
 	/**
@@ -159,8 +165,12 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 		}
 		if (fEditor != null) {
 			fEditor.removeReconcileListener(this);
+			if (fEditor.getViewer() != null) {
+				fEditor.getViewer().removeTextInputListener(this);
+			}
 			fEditor= null;
 			fTranslationUnit= null;
+			fDocument= null;
 		}
 	}
 
@@ -232,13 +242,17 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 				// preprocessor directive is from a different file
 				continue;
 			}
+			IASTNodeLocation[] nodeLocations = statement.getNodeLocations();
+			if (nodeLocations.length != 1) {
+				continue;
+			}
+			IASTNodeLocation stmtLocation= nodeLocations[0];
 			if (statement instanceof IASTPreprocessorIfStatement) {
 				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifStmt.taken()) {
 					if (!inInactiveCode) {
-						IASTNodeLocation nodeLocation = ifStmt.getNodeLocations()[0];
-						inactiveCodeStart = nodeLocation.getNodeOffset();
+						inactiveCodeStart = stmtLocation.getNodeOffset();
 						inInactiveCode = true;
 					}
 				}
@@ -247,8 +261,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifdefStmt.taken()) {
 					if (!inInactiveCode) {
-						IASTNodeLocation nodeLocation = ifdefStmt.getNodeLocations()[0];
-						inactiveCodeStart = nodeLocation.getNodeOffset();
+						inactiveCodeStart = stmtLocation.getNodeOffset();
 						inInactiveCode = true;
 					}
 				}
@@ -257,43 +270,36 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifndefStmt.taken()) {
 					if (!inInactiveCode) {
-						IASTNodeLocation nodeLocation = ifndefStmt.getNodeLocations()[0];
-						inactiveCodeStart = nodeLocation.getNodeOffset();
+						inactiveCodeStart = stmtLocation.getNodeOffset();
 						inInactiveCode = true;
 					}
 				}
 			} else if (statement instanceof IASTPreprocessorElseStatement) {
 				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
 				if (!elseStmt.taken() && !inInactiveCode) {
-					IASTNodeLocation nodeLocation = elseStmt.getNodeLocations()[0];
-					inactiveCodeStart = nodeLocation.getNodeOffset();
+					inactiveCodeStart = stmtLocation.getNodeOffset();
 					inInactiveCode = true;
 				} else if (elseStmt.taken() && inInactiveCode) {
-					IASTNodeLocation nodeLocation = elseStmt.getNodeLocations()[0];
-					int inactiveCodeEnd = nodeLocation.getNodeOffset();
-					positions.add(new HighlightPosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, fHighlightKey));
+					int inactiveCodeEnd = stmtLocation.getNodeOffset();
+					positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, false, fHighlightKey));
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
 				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement)statement;
 				if (!elifStmt.taken() && !inInactiveCode) {
-					IASTNodeLocation nodeLocation = elifStmt.getNodeLocations()[0];
-					inactiveCodeStart = nodeLocation.getNodeOffset();
+					inactiveCodeStart = stmtLocation.getNodeOffset();
 					inInactiveCode = true;
 				} else if (elifStmt.taken() && inInactiveCode) {
-					IASTNodeLocation nodeLocation = elifStmt.getNodeLocations()[0];
-					int inactiveCodeEnd = nodeLocation.getNodeOffset();
-					positions.add(new HighlightPosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, fHighlightKey));
+					int inactiveCodeEnd = stmtLocation.getNodeOffset();
+					positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, false, fHighlightKey));
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
-				IASTPreprocessorEndifStatement endifStmt = (IASTPreprocessorEndifStatement)statement;
 				try {
 					boolean wasInInactiveCode = ((Boolean)inactiveCodeStack.pop()).booleanValue();
 					if (inInactiveCode && !wasInInactiveCode) {
-						IASTNodeLocation nodeLocation = endifStmt.getNodeLocations()[0];
-						int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
-						positions.add(new HighlightPosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, fHighlightKey));
+						int inactiveCodeEnd = stmtLocation.getNodeOffset() + stmtLocation.getNodeLength();
+						positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, true, fHighlightKey));
 					}
 					inInactiveCode = wasInInactiveCode;
 				}
@@ -304,6 +310,54 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 			// handle dangling #if?
 		}
 		return positions;
+	}
+
+	/**
+	 * Create a highlight position aligned to start at a line offset. The region's start is
+	 * decreased to the line offset, and the end offset decreased to the line start if
+	 * <code>inclusive</code> is <code>false</code>. 
+	 * 
+	 * @param startOffset the start offset of the region to align
+	 * @param endOffset the (exclusive) end offset of the region to align
+	 * @param inclusive whether the last line should be included or not
+	 * @param key the highlight key
+	 * @return a position aligned for background highlighting
+	 */
+	private HighlightPosition createHighlightPosition(int startOffset, int endOffset, boolean inclusive, String key) {
+		final IDocument document= fDocument;
+		try {
+			if (document != null) {
+				int start= document.getLineOfOffset(startOffset);
+				int end= document.getLineOfOffset(endOffset);
+				startOffset= document.getLineOffset(start);
+				if (!inclusive) {
+					endOffset= document.getLineOffset(end);
+				}
+			}
+			return new HighlightPosition(startOffset, endOffset - startOffset, key);
+			
+		} catch (BadLocationException x) {
+			// concurrent modification?
+			return null;
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+	 */
+	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+	 */
+	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+		fDocument= newInput;
+		if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
+			List newInactiveCodePositions= Collections.EMPTY_LIST;
+			fLineBackgroundPainter.replaceHighlightPositions(fInactiveCodePositions, newInactiveCodePositions);
+			fInactiveCodePositions= newInactiveCodePositions;
+		}
 	}
 
 }

@@ -651,6 +651,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	private static class Branch extends ModifiableRegion {
 
 		private boolean fTaken;
+		public boolean fInclusive;
 
 		/**
 		 * @param offset
@@ -671,15 +672,16 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			fTaken= taken;
 		}
 
-		/**
-		 * @param endOffset
-		 */
 		public void setEndOffset(int endOffset) {
 			setLength(endOffset - getOffset());
 		}
 
 		public boolean taken() {
 			return fTaken;
+		}
+
+		public void setInclusive(boolean inclusive) {
+			fInclusive= inclusive;
 		}
 	}
 
@@ -1162,9 +1164,12 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				Branch branch= (Branch)branchStack.pop();
 				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
 				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elseStmt.taken()));
-				branch.setEndOffset(stmtLocation.getNodeOffset() - 1);
-				IRegion converted= converter != null ? converter.historicToActual(branch) : branch;
-				branches.add(new Branch(converted.getOffset(), converted.getLength(), branch.taken()));
+				branch.setEndOffset(stmtLocation.getNodeOffset());
+				if (converter != null) {
+					IRegion converted= converter.historicToActual(branch);
+					branch= new Branch(converted.getOffset(), converted.getLength(), branch.taken());
+				}
+				branches.add(branch);
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
 				if (branchStack.isEmpty()) {
 					// #elif without #if
@@ -1173,9 +1178,12 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				Branch branch= (Branch)branchStack.pop();
 				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement) statement;
 				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elifStmt.taken()));
-				branch.setEndOffset(stmtLocation.getNodeOffset() - 1);
-				IRegion converted= converter != null ? converter.historicToActual(branch) : branch;
-				branches.add(new Branch(converted.getOffset(), converted.getLength(), branch.taken()));
+				branch.setEndOffset(stmtLocation.getNodeOffset());
+				if (converter != null) {
+					IRegion converted= converter.historicToActual(branch);
+					branch= new Branch(converted.getOffset(), converted.getLength(), branch.taken());
+				}
+				branches.add(branch);
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
 				if (branchStack.isEmpty()) {
 					// #endif without #if
@@ -1183,13 +1191,17 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				}
 				Branch branch= (Branch)branchStack.pop();
 				branch.setEndOffset(stmtLocation.getNodeOffset() + stmtLocation.getNodeLength());
-				IRegion converted= converter != null ? converter.historicToActual(branch) : branch;
-				branches.add(new Branch(converted.getOffset(), converted.getLength(), branch.taken()));
+				if (converter != null) {
+					IRegion converted= converter.historicToActual(branch);
+					branch= new Branch(converted.getOffset(), converted.getLength(), branch.taken());
+				}
+				branch.setInclusive(true);
+				branches.add(branch);
 			}
 		}
 		for (Iterator iter = branches.iterator(); iter.hasNext(); ) {
 			Branch branch= (Branch) iter.next();
-			IRegion aligned = alignRegion(branch, ctx);
+			IRegion aligned = alignRegion(branch, ctx, branch.fInclusive);
 			if (aligned != null) {
 				Position alignedPos= new Position(aligned.getOffset(), aligned.getLength());
 				ctx.addProjectionRange(new CProjectionAnnotation(!branch.taken() && ctx.collapseInactiveCode(), computeKey(branch, ctx), false), alignedPos);
@@ -1230,10 +1242,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			ITypedRegion partition = partitions[i];
 			boolean singleLine= false;
 			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())) {
-				Position position= createCommentPosition(alignRegion(partition, ctx));
+				Position position= createCommentPosition(alignRegion(partition, ctx, true));
 				if (position != null) {
 					if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
-						Position projection = createCommentPosition(alignRegion(commentRange, ctx));
+						Position projection = createCommentPosition(alignRegion(commentRange, ctx, true));
 						if (projection != null) {
 							comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
 						}
@@ -1264,7 +1276,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				}
 				if (startLine < 0 || lineNr - endLine > 1) {
 					if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
-						Position projection = createCommentPosition(alignRegion(commentRange, ctx));
+						Position projection = createCommentPosition(alignRegion(commentRange, ctx, true));
 						if (projection != null) {
 							comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
 						}
@@ -1281,7 +1293,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 		}
 		if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
-			Position projection = createCommentPosition(alignRegion(commentRange, ctx));
+			Position projection = createCommentPosition(alignRegion(commentRange, ctx, true));
 			if (projection != null) {
 				comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
 			}
@@ -1368,7 +1380,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		IRegion[] regions= computeProjectionRanges((ISourceReference) element, ctx);
 		if (regions.length > 0) {
-			IRegion normalized= alignRegion(regions[regions.length - 1], ctx);
+			IRegion normalized= alignRegion(regions[regions.length - 1], ctx, true);
 			if (normalized != null) {
 				Position position= element instanceof IMember ? createMemberPosition(normalized, (IMember) element) : createCommentPosition(normalized);
 				if (position != null)
@@ -1405,7 +1417,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 	/**
 	 * Creates a comment folding position from an
-	 * {@link #alignRegion(IRegion, DefaultCFoldingStructureProvider.FoldingStructureComputationContext) aligned}
+	 * {@link #alignRegion(IRegion, DefaultCFoldingStructureProvider.FoldingStructureComputationContext, boolean) aligned}
 	 * region.
 	 * 
 	 * @param aligned an aligned region
@@ -1420,7 +1432,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 	/**
 	 * Creates a folding position that remembers its member from an
-	 * {@link #alignRegion(IRegion, DefaultCFoldingStructureProvider.FoldingStructureComputationContext) aligned}
+	 * {@link #alignRegion(IRegion, DefaultCFoldingStructureProvider.FoldingStructureComputationContext, boolean) aligned}
 	 * region.
 	 * 
 	 * @param aligned an aligned region
@@ -1445,6 +1457,24 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 *         only one line)
 	 */
 	protected final IRegion alignRegion(IRegion region, FoldingStructureComputationContext ctx) {
+		return alignRegion(region, ctx, true);
+	}
+
+	/**
+	 * Aligns <code>region</code> to start and end at a line offset. The region's start is
+	 * decreased to the next line offset, and the end offset increased to the next line start or the
+	 * end of the document. <code>null</code> is returned if <code>region</code> is
+	 * <code>null</code> itself or does not comprise at least one line delimiter, as a single line
+	 * cannot be folded.
+	 * 
+	 * @param region the region to align, may be <code>null</code>
+	 * @param ctx the folding context
+	 * @param inclusive include line of end offset
+	 * @return a region equal or greater than <code>region</code> that is aligned with line
+	 *         offsets, <code>null</code> if the region is too small to be foldable (e.g. covers
+	 *         only one line)
+	 */
+	protected final IRegion alignRegion(IRegion region, FoldingStructureComputationContext ctx, boolean inclusive) {
 		if (region == null)
 			return null;
 		
@@ -1459,11 +1489,14 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			
 			int offset= document.getLineOffset(start);
 			int endOffset;
-			if (document.getNumberOfLines() > end + 1)
-				endOffset= document.getLineOffset(end + 1);
-			else
-				endOffset= document.getLineOffset(end) + document.getLineLength(end);
-			
+			if (inclusive) {
+				if (document.getNumberOfLines() > end + 1)
+					endOffset= document.getLineOffset(end + 1);
+				else
+					endOffset= document.getLineOffset(end) + document.getLineLength(end);
+			} else {
+				endOffset= document.getLineOffset(end);
+			}
 			return new Region(offset, endOffset - offset);
 			
 		} catch (BadLocationException x) {

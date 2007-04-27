@@ -2128,12 +2128,15 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				// preprocessor directive is from a different file
 				continue;
 			}
+			IASTNodeLocation nodeLocation = statement.getFileLocation();
+			if (nodeLocation == null) {
+				continue;
+			}
 			if (statement instanceof IASTPreprocessorIfStatement) {
 				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifStmt.taken()) {
 					if (!inInactiveCode) {
-						IASTNodeLocation nodeLocation = ifStmt.getFileLocation();
 						inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 						inInactiveCode = true;
 					}
@@ -2143,7 +2146,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifdefStmt.taken()) {
 					if (!inInactiveCode) {
-						IASTNodeLocation nodeLocation = ifdefStmt.getFileLocation();
 						inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 						inInactiveCode = true;
 					}
@@ -2153,7 +2155,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifndefStmt.taken()) {
 					if (!inInactiveCode) {
-						IASTNodeLocation nodeLocation = ifndefStmt.getFileLocation();
 						inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 						inInactiveCode = true;
 					}
@@ -2161,11 +2162,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			} else if (statement instanceof IASTPreprocessorElseStatement) {
 				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
 				if (!elseStmt.taken() && !inInactiveCode) {
-					IASTNodeLocation nodeLocation = elseStmt.getFileLocation();
 					inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					inInactiveCode = true;
 				} else if (elseStmt.taken() && inInactiveCode) {
-					IASTNodeLocation nodeLocation = elseStmt.getFileLocation();
 					int inactiveCodeEnd = nodeLocation.getNodeOffset();
 					positions.add(new Position(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
 					inInactiveCode = false;
@@ -2173,21 +2172,17 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
 				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement)statement;
 				if (!elifStmt.taken() && !inInactiveCode) {
-					IASTNodeLocation nodeLocation = elifStmt.getFileLocation();
 					inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					inInactiveCode = true;
 				} else if (elifStmt.taken() && inInactiveCode) {
-					IASTNodeLocation nodeLocation = elifStmt.getFileLocation();
 					int inactiveCodeEnd = nodeLocation.getNodeOffset();
 					positions.add(new Position(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
-				IASTPreprocessorEndifStatement endifStmt = (IASTPreprocessorEndifStatement)statement;
 				try {
 					boolean wasInInactiveCode = ((Boolean)inactiveCodeStack.pop()).booleanValue();
 					if (inInactiveCode && !wasInInactiveCode) {
-						IASTNodeLocation nodeLocation = endifStmt.getFileLocation();
 						int inactiveCodeEnd = nodeLocation.getNodeOffset();
 						positions.add(new Position(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
 					}

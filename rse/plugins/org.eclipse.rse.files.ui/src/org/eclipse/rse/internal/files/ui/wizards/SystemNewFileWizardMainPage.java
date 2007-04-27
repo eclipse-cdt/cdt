@@ -16,11 +16,15 @@
 
 package org.eclipse.rse.internal.files.ui.wizards;
 
+import java.util.Vector;
+
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileChildrenContentsType;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -123,7 +127,42 @@ public class SystemNewFileWizardMainPage
 	protected void initializeInput()
 	{
 		connectionName.setEditable(false);
-        nameValidator = new ValidatorFileName();
+		
+		// get existing names
+		if (parentFolders != null && parentFolders.length > 0)
+		{
+			IRemoteFile parentFolder = parentFolders[0];
+			try
+			{
+				Object[] contents = null;
+				if (parentFolder.isStale())
+				{
+					contents = parentFolder.getParentRemoteFileSubSystem().resolveFilterString(new NullProgressMonitor(), parentFolder, "*");
+				}
+				else
+				{
+					contents = parentFolder.getContents(RemoteFileChildrenContentsType.getInstance());
+				}
+				Vector names = new Vector();
+				for (int i = 0; i < contents.length; i++)
+				{
+					IRemoteFile child = (IRemoteFile)contents[i];
+					if (child.isFile())
+					{
+						names.add(child.getName());
+					}
+				}
+				nameValidator = new ValidatorFileName(names);
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}
+		else
+		{
+			nameValidator = new ValidatorFileName();
+		}
         		
 		if ((parentFolders == null) || (parentFolders.length == 0))
 		{

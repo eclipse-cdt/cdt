@@ -1556,8 +1556,13 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			} 
 			else { // directory
 				subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
-				subject.setAttribute(DE.A_NAME, ""); //$NON-NLS-1$
-				subject.setAttribute(DE.A_VALUE, fullName);
+				String name = fullName
+				.substring(
+						fullName.lastIndexOf(File.separatorChar) + 1,
+						fullName.length());
+				String path = fullName.substring(0, fullName.lastIndexOf(File.separatorChar));
+				subject.setAttribute(DE.A_NAME, name);
+				subject.setAttribute(DE.A_VALUE, path);
 			}
 
 			// DKM - do basic property stuff here

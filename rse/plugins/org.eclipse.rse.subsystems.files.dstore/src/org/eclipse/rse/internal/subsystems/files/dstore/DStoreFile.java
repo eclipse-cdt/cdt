@@ -22,7 +22,9 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
+import org.eclipse.rse.internal.services.dstore.files.DStoreFileService;
 import org.eclipse.rse.internal.services.dstore.files.DStoreHostFile;
+import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.AbstractRemoteFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -31,6 +33,13 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
 public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 {
+	
+	private DStoreFileService getDStoreFileService()
+	{
+		FileServiceSubSystem ss = (FileServiceSubSystem)_context.getParentRemoteFileSubSystem();
+		return (DStoreFileService)ss.getFileService();
+	}
+	
 	public IRemoteFile getParentRemoteFile() 
 	{
 		// because this can get called by eclipse from the main thread, and dstore can have problems with main-thread queries,
@@ -47,6 +56,7 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 	    	String pathOnly = getParentPath();
 	    	if (pathOnly != null)
 	    	{    	  
+	    	  DStoreFileService fileService = getDStoreFileService();
 	     	  IRemoteFileSubSystem ss = _context.getParentRemoteFileSubSystem();
 	    	  if (ss != null)
 	    	  {
@@ -61,36 +71,45 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  	{
 		    	  		// parentFile is already null
 		    	  		//parentFile = null;
-		    	  		DataStore ds = _dstoreHostFile.getDataElement().getDataStore();
-		    	  		DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, "");
-		    	  		element.setAttribute(DE.A_VALUE, pathOnly);
-		    	  		DStoreHostFile hostParent = new DStoreHostFile(element);
-		    	  		parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, hostParent);
+		    	  		
+		    	  		IHostFile hostParent = fileService.getHostFile(pathOnly);
+		    	  		if (hostParent == null)
+		    	  		{
+		    	  			DataStore ds = _dstoreHostFile.getDataElement().getDataStore();
+		    	  			DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, "");
+		    	  			element.setAttribute(DE.A_VALUE, pathOnly);
+
+		    	  			hostParent = new DStoreHostFile(element);
+		    	  		}
+		    	  		parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, (DStoreHostFile)hostParent);
 		    	  	}
 		    	  	else if (!(pathOnly.charAt(pathOnly.length()-1)==sep))
 		    	  	{
 		    	  		DataStore ds = _dstoreHostFile.getDataElement().getDataStore();
-		    	  		
-		    	  		int nameSep = pathOnly.lastIndexOf(sep);
-		    	  		String parentName = pathOnly;
-		    	  		String parentPath = pathOnly;
-		    	  		if (nameSep > 0)
+
+		    	  		IHostFile hostParent = fileService.getHostFile(pathOnly);
+		    	  		if (hostParent == null)
 		    	  		{
-		    	  			parentName = pathOnly.substring(nameSep + 1);
-		    	  			parentPath = pathOnly.substring(0, nameSep);
+		    	  			int nameSep = pathOnly.lastIndexOf(sep);
+		    	  			String parentName = pathOnly;
+		    	  			String parentPath = pathOnly;
+		    	  			if (nameSep > 0)
+		    	  			{
+		    	  				parentName = pathOnly.substring(nameSep + 1);
+		    	  				parentPath = pathOnly.substring(0, nameSep);
+		    	  			}
+		    	  			else
+		    	  			{
+		    	  				parentName = pathOnly.substring(nameSep + 1);
+		    	  				parentPath = "" + sep;
+		    	  			}
+		    	  		
+		    	  			DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, parentName);
+		    	  			element.setAttribute(DE.A_VALUE, parentPath);
+		    	  			    	  	
+		    	  			hostParent = new DStoreHostFile(element);
 		    	  		}
-		    	  		else
-		    	  		{
-		    	  			parentName = pathOnly.substring(nameSep + 1);
-		    	  			parentPath = "" + sep;
-		    	  		}
-		    	  		
-		    	  		DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, parentName);
-		    	  		element.setAttribute(DE.A_VALUE, parentPath);
-		    	  		
-		    	  		
-		    	  		DStoreHostFile hostParent = new DStoreHostFile(element);
-		    	  		parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, hostParent);
+		    	  		parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, (DStoreHostFile)hostParent);
 		              //parentFile = ss.getRemoteFileObject(pathOnly+sep);
 		    	  	}
 		            else

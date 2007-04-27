@@ -19,6 +19,8 @@ package org.eclipse.rse.internal.subsystems.files.dstore;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
@@ -68,6 +70,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		List results = getStatusObject().getNestedData();
 		if (results != null)
 		{
+			IProgressMonitor monitor = new NullProgressMonitor();
 			IRemoteFile[] convertedResults = new IRemoteFile[results.size()];
 			for (int i = 0; i < results.size(); i++)
 			{
@@ -77,7 +80,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 					IRemoteFile parentRemoteFile = null;
 					try
 					{
-						parentRemoteFile = _fileSubSystem.getRemoteFileObject(fileNode.getValue());
+						parentRemoteFile = _fileSubSystem.getRemoteFileObject(fileNode.getValue(),monitor);
 						if (!parentRemoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
 						{
 							// query all files to save time (so we can retrieve cached files
@@ -85,7 +88,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 						}
 						
 						String path = fileNode.getValue() + "/" + fileNode.getName(); //$NON-NLS-1$
-						IRemoteFile remoteFile = _fileSubSystem.getRemoteFileObject(path);
+						IRemoteFile remoteFile = _fileSubSystem.getRemoteFileObject(path, monitor);
 	
 						List contained = fileNode.getNestedData();
 						if (contained != null)

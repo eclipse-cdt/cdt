@@ -62,6 +62,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	protected org.eclipse.dstore.core.model.DataElement _uploadLogElement = null;
 	protected Map _fileElementMap;
+	protected Map _dstoreFileMap;
+	
 	private int _bufferUploadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	protected ISystemFileTypes _fileTypeRegistry;
@@ -83,6 +85,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	{
 		super(dataStoreProvider, msgProvider);
 		_fileElementMap = new HashMap();
+		_dstoreFileMap = new HashMap();
 		_fileTypeRegistry = fileTypeRegistry;
 	}
 	
@@ -90,6 +93,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	{
 		super.uninitService(monitor);
 		_fileElementMap.clear();
+		_dstoreFileMap.clear();
 	}
 	
 	public String getName()
@@ -777,6 +781,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		String path =  file.getAbsolutePath();
 		_fileElementMap.put(path, element);
+		_dstoreFileMap.put(path, file);
 		return file;
 	}
 	protected IHostFile[] convertToHostFiles(DataElement[] elements, String fileFilter)
@@ -1176,6 +1181,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			element = getDataStore().createObject(universaltemp, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR, normalizedPath, normalizedPath, "", false); //$NON-NLS-1$
 		}
 		return element;
+	}
+	
+	
+	/**
+	 * 
+	 * @param path
+	 * @return could be null if there isn't one mapped right now
+	 */
+	public IHostFile getHostFile(String path)
+	{
+		return (IHostFile)_dstoreFileMap.get(path);
 	}
 	
 	protected IHostFile[] fetch(IProgressMonitor monitor, String remoteParent, String fileFilter, String queryType)

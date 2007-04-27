@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -144,7 +145,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 			
 			targetFolder   = (IRemoteFile)targetContainer;
 			ss = targetFolder.getParentRemoteFileSubSystem();
-			targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName);
+			targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName, monitor);
 	
 	
 			//RSEUIPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
@@ -259,8 +260,8 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
    			else
    			{
    				
-   				IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath);
-   				targetFS.createFolder(newTargetFolder);
+   				IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
+   				targetFS.createFolder(newTargetFolder, monitor);
    				IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder, monitor);
    				if (children != null)
    				{
@@ -398,6 +399,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		IRemoteFileSubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
 		ISystemFilterPoolReferenceManager mgr = fileSS.getSystemFilterPoolReferenceManager();
 		ISystemFilterPool[] pools = mgr.getReferencedSystemFilterPools();
+		IProgressMonitor monitor = new NullProgressMonitor();
 		for (int i = 0; i < pools.length; i++)
 		{
 			ISystemFilterPool pool = pools[i];
@@ -416,7 +418,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 					IRemoteFile par = null;
 					try
 					{
-						par = fileSS.getRemoteFileObject(str);
+						par = fileSS.getRemoteFileObject(str, monitor);
 					}
 					catch (Exception e)
 					{			

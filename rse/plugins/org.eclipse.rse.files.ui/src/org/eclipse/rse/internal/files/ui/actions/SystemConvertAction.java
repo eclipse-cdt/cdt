@@ -16,6 +16,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -142,7 +143,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 						continue;
 					}
 				}
-				destSS.createFile(destination);
+				destSS.createFile(destination, new NullProgressMonitor());
 			}
 			catch (SystemMessageException e)
 			{

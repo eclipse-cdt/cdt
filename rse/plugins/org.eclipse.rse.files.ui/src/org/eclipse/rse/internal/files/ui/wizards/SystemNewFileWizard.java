@@ -18,6 +18,8 @@ package org.eclipse.rse.internal.files.ui.wizards;
 
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
@@ -167,10 +169,11 @@ public class SystemNewFileWizard
             	  return false;
             }
             // ok, proceed with actual creation...
-            IRemoteFile newFile = null;            
+            IRemoteFile newFile = null;         
+            IProgressMonitor monitor = new NullProgressMonitor();
             try {    	
-                IRemoteFile newFilePath = rfss.getRemoteFileObject(absName); 
-                newFile = rfss.createFile(newFilePath);
+                IRemoteFile newFilePath = rfss.getRemoteFileObject(absName, monitor); 
+                newFile = rfss.createFile(newFilePath, monitor);
             } catch (RemoteFileIOException exc ) {
                SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED_EXIST)).makeSubstitution(absName);
@@ -381,7 +384,7 @@ public class SystemNewFileWizard
 			  {
 				  uniqueNames.add(pathName);
 				  try {
-			        folder = parentSubSystem.getRemoteFileObject(pathName);
+			        folder = parentSubSystem.getRemoteFileObject(pathName, new NullProgressMonitor());
 			        // decided to do folder existence checking when Finish pressed
 			        //if (folder.exists())
 			          v.add(folder);

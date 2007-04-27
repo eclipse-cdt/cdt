@@ -19,6 +19,7 @@ package org.eclipse.rse.files.ui.widgets;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -621,7 +622,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	   }     	   
     	}
     	if (ss.isConnected())    	  
-    	  remoteFolder = ss.getRemoteFileObject(dirName);
+    	  remoteFolder = ss.getRemoteFileObject(dirName, new NullProgressMonitor());
     	return remoteFolder;
     }
     

@@ -27,6 +27,8 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -182,21 +184,22 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	     	  IRemoteFileSubSystem ss = _context.getParentRemoteFileSubSystem();
 	    	  if (ss != null)
 	    	  {
+	    		 IProgressMonitor monitor = new NullProgressMonitor(); 
 	    	  	try {
 		    	  	char sep = getSeparatorChar();
 		    	  	if (pathOnly.length() == 0)
-		    	  	  parentFile = ss.getRemoteFileObject(pathOnly);
+		    	  	  parentFile = ss.getRemoteFileObject(pathOnly, monitor);
 		    	  	else if (pathOnly.length() == 1)
 		    	  	{
 		    	  		if (pathOnly.charAt(0) == sep)
 		    	  		{
-		    	  			parentFile = ss.getRemoteFileObject(pathOnly); // root file
+		    	  			parentFile = ss.getRemoteFileObject(pathOnly, monitor); // root file
 		    	  		}
 		    	  	}
 		    	  	else if (!(pathOnly.charAt(pathOnly.length()-1)==sep))
-		              parentFile = ss.getRemoteFileObject(pathOnly+sep);
+		              parentFile = ss.getRemoteFileObject(pathOnly+sep, monitor);
 		            else
-		              parentFile = ss.getRemoteFileObject(pathOnly);
+		              parentFile = ss.getRemoteFileObject(pathOnly, monitor);
 	    	  	} catch (SystemMessageException e) {
 	    	  		SystemBasePlugin.logError("RemoteFileImpl.getParentRemoteFile()", e); //$NON-NLS-1$
 	    	  	}

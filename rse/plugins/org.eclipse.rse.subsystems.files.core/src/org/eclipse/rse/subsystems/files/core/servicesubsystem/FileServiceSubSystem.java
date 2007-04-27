@@ -134,7 +134,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @return an IRemoteFile object for the file.
 	 * @see IRemoteFile
 	 */
-	public IRemoteFile getRemoteFileObject(IRemoteFile parent, String folderOrFileName) throws SystemMessageException 
+	public IRemoteFile getRemoteFileObject(IRemoteFile parent, String folderOrFileName, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String fullPath = parent.getAbsolutePath() + getSeparator() + folderOrFileName;
 		IRemoteFile file = getCachedRemoteFile(fullPath);
@@ -143,7 +143,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			return file;
 		}
 		
-		IHostFile node = getFile(null, parent.getAbsolutePath(), folderOrFileName);
+		IHostFile node = getFile(monitor, parent.getAbsolutePath(), folderOrFileName);
 		return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), parent, node);
 	}
 
@@ -154,7 +154,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @return The constructed IRemoteFile
 	 * @see IRemoteFile
 	 */
-	public IRemoteFile getRemoteFileObject(String folderOrFileName) throws SystemMessageException 
+	public IRemoteFile getRemoteFileObject(String folderOrFileName, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String fofName = folderOrFileName;
 		if (folderOrFileName.length() > 1)
@@ -222,7 +222,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 				if (parentPath.length() == 0) parentPath = "/"; //$NON-NLS-1$
 				String name = fofName.substring(lastSep + 1, fofName.length());
 			
-				IHostFile node = getFile(new NullProgressMonitor(), parentPath, name);
+				IHostFile node = getFile(monitor, parentPath, name);
 				if (node != null)
 				{
 					IRemoteFile parent = null;
@@ -595,11 +595,11 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return false;
 	}
 
-	public IRemoteFile getParentFolder(IRemoteFile folderOrFile) 
+	public IRemoteFile getParentFolder(IRemoteFile folderOrFile, IProgressMonitor monitor) 
 	{
 		try
 		{
-			return getRemoteFileObject(folderOrFile.getParentPath());
+			return getRemoteFileObject(folderOrFile.getParentPath(), monitor);
 		}
 		catch (Exception e)
 		{
@@ -607,7 +607,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 	}
 
-	public IRemoteFile createFile(IRemoteFile fileToCreate) throws RemoteFileSecurityException, RemoteFileIOException 
+	public IRemoteFile createFile(IRemoteFile fileToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
 	{
 		IFileService service = getFileService();
 		String parent = fileToCreate.getParentPath();
@@ -629,7 +629,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), fileToCreate.getParentRemoteFile(), newFile);
 	}
 
-	public IRemoteFile createFolder(IRemoteFile folderToCreate) throws RemoteFileSecurityException, RemoteFileIOException 
+	public IRemoteFile createFolder(IRemoteFile folderToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
 	{
 		IFileService service = getFileService();
 		String parent = folderToCreate.getParentPath();
@@ -648,9 +648,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), folderToCreate.getParentRemoteFile(), newFolder);
 	}
 
-	public IRemoteFile createFolders(IRemoteFile folderToCreate) throws RemoteFileSecurityException, RemoteFileIOException 
+	public IRemoteFile createFolders(IRemoteFile folderToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
 	{
-		return createFolder(folderToCreate);
+		return createFolder(folderToCreate, monitor);
 	}
 
 	public boolean delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws RemoteFolderNotEmptyException, RemoteFileSecurityException, RemoteFileIOException 
@@ -700,7 +700,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return result;
 	}
 
-	public boolean rename(IRemoteFile folderOrFile, String newName) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
 	{
 		boolean result = false;
 		removeCachedRemoteFile(folderOrFile);

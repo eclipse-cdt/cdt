@@ -1757,7 +1757,7 @@ public class SystemViewRemoteFileAdapter
 			try
 			{
 				//targetFolder.markStale(true);
-				targetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath());
+				targetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath(), monitor);
 			}
 			catch (Exception e)
 			{
@@ -1896,7 +1896,7 @@ public class SystemViewRemoteFileAdapter
 									{
 								
 										// should be better doing a query for all in the set																					
-										IRemoteFile existingFileOrFolder = ((IRemoteFileSubSystem)srcSubSystem).getRemoteFileObject(targetFolder, name);
+										IRemoteFile existingFileOrFolder = ((IRemoteFileSubSystem)srcSubSystem).getRemoteFileObject(targetFolder, name, monitor);
 										if (existingFileOrFolder.exists())
 										{
 											RenameRunnable rr = new RenameRunnable(existingFileOrFolder);
@@ -1944,7 +1944,7 @@ public class SystemViewRemoteFileAdapter
 							{
 								if (targetFS.copy(srcFileOrFolder, targetFolder, name, monitor))
 								{
-									IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name);
+									IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
 									resultSet.addResource(copiedFile); 
 								}
 								else
@@ -1975,7 +1975,7 @@ public class SystemViewRemoteFileAdapter
 								{
 									for (int x = 0; x < toCopyBatch.size(); x++)
 									{
-										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, srcFileOrFolders[x].getName());
+										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, srcFileOrFolders[x].getName(), monitor);
 										resultSet.addResource(copiedFile);
 									}
 								}
@@ -2023,7 +2023,7 @@ public class SystemViewRemoteFileAdapter
 			try
 			{
 				//targetFolder.markStale(true);
-				targetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath());
+				targetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath(), monitor);
 			}
 			catch (Exception e)
 			{
@@ -2052,7 +2052,7 @@ public class SystemViewRemoteFileAdapter
 					try
 					{
 						if (localFS != null) {
-							IRemoteFile srcFileOrFolder = localFS.getRemoteFileObject((String)src);
+							IRemoteFile srcFileOrFolder = localFS.getRemoteFileObject((String)src, monitor);
 							return doDrop(srcFileOrFolder, target, true, sameSystem, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE, monitor);
 						}
 						else {
@@ -2155,7 +2155,7 @@ public class SystemViewRemoteFileAdapter
 						{
 							if (!targetFolder.getAbsolutePath().equals(srcFileOrFolder.getAbsolutePath()))
 							{
-								IRemoteFile existingFileOrFolder = localFS.getRemoteFileObject(targetFolder, name);
+								IRemoteFile existingFileOrFolder = localFS.getRemoteFileObject(targetFolder, name, monitor);
 
 								if (existingFileOrFolder.exists())
 								{
@@ -2169,7 +2169,7 @@ public class SystemViewRemoteFileAdapter
 									monitor.subTask(copyMessage.getLevelOneText());
 									if (targetFS.copy(srcFileOrFolder, targetFolder, name, monitor))
 									{
-										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name);
+										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
 										return copiedFile;
  
 									}
@@ -2208,7 +2208,7 @@ public class SystemViewRemoteFileAdapter
 									monitor.subTask(copyMessage.getLevelOneText());
 									targetFS.upload(srcFileOrFolder.getAbsolutePath(), SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
 
-									result = targetFS.getRemoteFileObject(targetFolder, name);
+									result = targetFS.getRemoteFileObject(targetFolder, name, monitor);
 									return result;
 
 								}
@@ -2245,8 +2245,8 @@ public class SystemViewRemoteFileAdapter
 
 								String newPath = newPathBuf.toString();
 
-								IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath);
-								targetFS.createFolder(newTargetFolder);
+								IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
+								targetFS.createFolder(newTargetFolder, monitor);
 
 								IRemoteFile[] children = localFS.listFoldersAndFiles(srcFileOrFolder, monitor);
 								if (children != null)
@@ -2292,7 +2292,7 @@ public class SystemViewRemoteFileAdapter
 		{
 
 			IRemoteFileSubSystem ss = targetFolder.getParentRemoteFileSubSystem();
-			IRemoteFile targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName);
+			IRemoteFile targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName, new NullProgressMonitor());
 
 			//RSEUIPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
 			//RSEUIPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");  		
@@ -2495,7 +2495,7 @@ public class SystemViewRemoteFileAdapter
 				{
 					SystemEditableRemoteFile editable = (SystemEditableRemoteFile)editableObj;	
 					// there's an in-memory editable, so change the associated remote file
-					IRemoteFile newRemoteFile = ss.getRemoteFileObject(remotePath);
+					IRemoteFile newRemoteFile = ss.getRemoteFileObject(remotePath, new NullProgressMonitor());
 					editable.setRemoteFile(newRemoteFile);
 				}				
 			}
@@ -2526,7 +2526,7 @@ public class SystemViewRemoteFileAdapter
 				localResource = UniversalFileTransferUtility.getTempFileFor(file);
 			}
 					
-			ss.rename(file, newName);
+			ss.rename(file, newName, new NullProgressMonitor());
 			if (localResource != null && localResource.exists())
 			{
 				
@@ -2902,7 +2902,7 @@ public class SystemViewRemoteFileAdapter
 			IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
 			try
 			{
-				remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
+				remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 			}
 			catch (Exception e)
 			{

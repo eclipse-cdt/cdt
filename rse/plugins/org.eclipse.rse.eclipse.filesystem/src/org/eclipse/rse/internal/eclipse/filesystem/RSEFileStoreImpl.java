@@ -279,7 +279,7 @@ public class RSEFileStoreImpl extends FileStore
 						"Could not get remote file"));
 			}
 			try {
-				remoteFile = parent.getParentRemoteFileSubSystem().getRemoteFileObject(parent, _parent.getName());
+				remoteFile = parent.getParentRemoteFileSubSystem().getRemoteFileObject(parent, _parent.getName(), monitor);
 			} catch(Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
@@ -290,7 +290,7 @@ public class RSEFileStoreImpl extends FileStore
 			IRemoteFileSubSystem subSys = RSEFileStoreImpl.getConnectedFileSubSystem(_parent.getHost(), monitor);
 			try {
 				//TODO method missing a progressmonitor!
-				remoteFile = subSys.getRemoteFileObject(_parent.getAbsolutePath());
+				remoteFile = subSys.getRemoteFileObject(_parent.getAbsolutePath(), monitor);
 			}
 			catch (Exception e) {
 				throw new CoreException(new Status(
@@ -536,7 +536,7 @@ public class RSEFileStoreImpl extends FileStore
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
 		if (!remoteFile.exists()) {
 			try {
-				remoteFile = subSys.createFolder(remoteFile);
+				remoteFile = subSys.createFolder(remoteFile, monitor);
 			}
 			catch (Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR,
@@ -570,7 +570,7 @@ public class RSEFileStoreImpl extends FileStore
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
 		if (!remoteFile.exists()) {
 			try {
-				remoteFile = subSys.createFile(remoteFile);
+				remoteFile = subSys.createFile(remoteFile, monitor);
 			}
 			catch (Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR,

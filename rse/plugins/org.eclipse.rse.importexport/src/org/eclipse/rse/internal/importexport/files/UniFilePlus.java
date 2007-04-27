@@ -65,7 +65,7 @@ public class UniFilePlus extends File {
 	public boolean createNewFile() throws IOException {
 		IRemoteFile newFile = null;
 		try {
-			newFile = remoteFile.getParentRemoteFileSubSystem().createFile(remoteFile);
+			newFile = remoteFile.getParentRemoteFileSubSystem().createFile(remoteFile, new NullProgressMonitor());
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if (e != null) {
@@ -88,7 +88,7 @@ public class UniFilePlus extends File {
 	public boolean delete() {
 		boolean ok = true;
 		try {
-			ok = remoteFile.getParentRemoteFileSubSystem().delete(remoteFile, null);
+			ok = remoteFile.getParentRemoteFileSubSystem().delete(remoteFile, new NullProgressMonitor());
 			//hmm, should we set remoteFile to null?
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
@@ -280,7 +280,7 @@ public class UniFilePlus extends File {
 	public boolean mkdir() {
 		IRemoteFile dir = null;
 		try {
-			if (!remoteFile.exists()) dir = remoteFile.getParentRemoteFileSubSystem().createFolder(remoteFile);
+			if (!remoteFile.exists()) dir = remoteFile.getParentRemoteFileSubSystem().createFolder(remoteFile, new NullProgressMonitor());
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
@@ -293,7 +293,7 @@ public class UniFilePlus extends File {
 	public boolean mkdirs() {
 		IRemoteFile dir = null;
 		try {
-			if (!remoteFile.exists()) dir = remoteFile.getParentRemoteFileSubSystem().createFolder(remoteFile);
+			if (!remoteFile.exists()) dir = remoteFile.getParentRemoteFileSubSystem().createFolder(remoteFile, new NullProgressMonitor());
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
@@ -306,7 +306,7 @@ public class UniFilePlus extends File {
 	public boolean renameTo(File dest) {
 		boolean ok = false;
 		try {
-			ok = remoteFile.getParentRemoteFileSubSystem().rename(remoteFile, dest.getName());
+			ok = remoteFile.getParentRemoteFileSubSystem().rename(remoteFile, dest.getName(), new NullProgressMonitor());
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;

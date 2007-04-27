@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -145,7 +146,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 			
 			try
 			{
-				if (!destinationArchive.exists()) destSS.createFile(destinationArchive);
+				if (!destinationArchive.exists()) destSS.createFile(destinationArchive, new NullProgressMonitor());
 			}
 			catch (SystemMessageException e)
 			{
@@ -168,6 +169,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 	
 	public void addToArchive(IRemoteFile source, IRemoteFile destinationArchive, boolean saveFullPathInfo, String relativeTo)
 	{	
+		IProgressMonitor monitor = new NullProgressMonitor();
 		IRemoteFile destination = null;
 		
 		if (destinationArchive == null)
@@ -192,7 +194,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 		}
 		try
 		{
-			if (!destinationArchive.exists()) destinationArchive.getParentRemoteFileSubSystem().createFile(destinationArchive);
+			if (!destinationArchive.exists()) destinationArchive.getParentRemoteFileSubSystem().createFile(destinationArchive, monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -212,10 +214,10 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 				String newDestinationPath = destinationArchive.getAbsolutePath() + ArchiveHandlerManager.VIRTUAL_SEPARATOR + destinationVirtualDirectory;
 				try
 				{
-					destination = destinationArchive.getParentRemoteFileSubSystem().getRemoteFileObject(newDestinationPath);
+					destination = destinationArchive.getParentRemoteFileSubSystem().getRemoteFileObject(newDestinationPath, monitor);
 					if (!destination.exists())
 					{
-						destinationArchive.getParentRemoteFileSubSystem().createFolders(destination);
+						destinationArchive.getParentRemoteFileSubSystem().createFolders(destination, monitor);
 					}
 				}
 				catch (SystemMessageException e)

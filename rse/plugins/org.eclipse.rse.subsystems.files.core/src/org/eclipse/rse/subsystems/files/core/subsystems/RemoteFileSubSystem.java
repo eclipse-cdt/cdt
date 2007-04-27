@@ -36,7 +36,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -115,7 +115,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	// all created IRemoteFiles mapped in cache to quick retreival
 	protected HashMap _cachedRemoteFiles = new HashMap();
 	
-	protected IProgressMonitor monitor;
 
 	/**
 	 * @generated This field/method will be replaced during code generation.
@@ -160,17 +159,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		return false;
 	}
 
-	/**
-	 * Long running list processing calls this method to check for a user-cancel event.
-	 * If user did cancel, an exception is thrown.
-	 * @return true if caller wants to cancel
-	 */
-	public boolean checkForCancel()
-	{
-		if ((monitor != null) && monitor.isCanceled())
-			throw new OperationCanceledException(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED).getLevelOneText());
-		return false;
-	}
 
 	protected RemoteFileFilterString getCurrentFilterString()
 	{
@@ -349,7 +337,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		{
 		    try 
 		    {
-		    container = getRemoteFileObject(container).getAbsolutePath();
+		    container = getRemoteFileObject(container, new NullProgressMonitor()).getAbsolutePath();
 		    }
 		    catch (Exception e)
 		    {
@@ -607,7 +595,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString) throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
 	{
-		this.monitor = monitor;
 		boolean debugMode = false;
 		IRemoteFileSubSystemConfiguration rfssf = getParentRemoteFileSubSystemConfiguration();
 		boolean windows = !rfssf.isUnixStyle();
@@ -643,7 +630,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			IRemoteFile parent = null;
 			try
 			{
-				parent = getRemoteFileObject(path);
+				parent = getRemoteFileObject(path, monitor);
 				
 				/* DKM - now filters should get invalidated via SystemRegistry event firing so this should not be needed
 				 * 
@@ -778,8 +765,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString) throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
 	{
-
-		this.monitor = monitor;
 		RemoteFileFilterString fs = null;
 		try
 		{
@@ -995,7 +980,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
         
         if (idx != -1) {
             String remoteFilePath = key.substring(0, idx);
-            IRemoteFile remoteFile = getRemoteFileObject(remoteFilePath);
+            IRemoteFile remoteFile = getRemoteFileObject(remoteFilePath, new NullProgressMonitor());
             
             if (remoteFile != null) {
                 
@@ -1039,30 +1024,19 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * Given a set of fully qualified file or folder names, return an ISystemResourceSet object for it.
 	 * @param folderOrFileNames Fully qualified folder or file names
 	 */
-	public SystemRemoteResourceSet getRemoteFileObjects(List folderOrFileNames) throws SystemMessageException
+	public SystemRemoteResourceSet getRemoteFileObjects(List folderOrFileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
 		SystemRemoteResourceSet results = new SystemRemoteResourceSet(this);
 		for (int i = 0; i < folderOrFileNames.size(); i++)
 		{
 			String path = (String)folderOrFileNames.get(i);
-			IRemoteFile nextFile = getRemoteFileObject(path);
+			IRemoteFile nextFile = getRemoteFileObject(path, monitor);
 			if (nextFile != null) results.addResource(nextFile);
 		}
 		return results;
 	}
     
-	/**
-	 * Given a un-qualified file or folder name, and its parent folder object, 
-	 *  return an IRemoteFile object for the file.
-	 * <b>note</b>This method should be abstract but MOF doesn't allow abstract impl classes at this point
-	 * @param parent Folder containing the folder or file
-	 * @param folderOrFileName Un-qualified folder or file name
-	 */
-	public IRemoteFile getRemoteFileObject(IRemoteFile parent, String folderOrFileName) throws SystemMessageException
-	{
-		// child subclasses must override
-		return null;
-	}
+
 
 	/**
 	 * Return the object within the subsystem that corresponds to
@@ -1096,7 +1070,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		// if not, the key must be for a file
 		if (key.lastIndexOf(IHostSearchResult.SEARCH_RESULT_DELIMITER) < 0) {
 		    
-		    IRemoteFile remoteFile = getRemoteFileObject(key);
+		    IRemoteFile remoteFile = getRemoteFileObject(key, new NullProgressMonitor());
 		
 		    if (remoteFile != null) {
 		        return remoteFile;
@@ -1173,7 +1147,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	protected boolean accept(String name, boolean isFile)
 	{
-		checkForCancel();
 		boolean match = true;
 		if (includeFilesOrFolders == IClientServerConstants.INCLUDE_FILES_ONLY)
 		{
@@ -1492,7 +1465,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	    try
 	    {
 	        // change target to be referenced remote folder
-	       return getRemoteFileObject(fs.getPath());
+	       return getRemoteFileObject(fs.getPath(), new NullProgressMonitor());
 	    }
 	    catch (Exception e)
 	    {	        

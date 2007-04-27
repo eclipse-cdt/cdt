@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.internal.files.ui.wizards;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
@@ -154,8 +156,9 @@ public class SystemNewFolderWizard
             IRemoteFile newFolder = null;
             //IRemoteFile newFolderPath = null; 
             try {               
-	            IRemoteFile newFolderPath = rfss.getRemoteFileObject(absName); 	              
-                newFolder = rfss.createFolder(newFolderPath);
+            	IProgressMonitor monitor = new NullProgressMonitor();
+	            IRemoteFile newFolderPath = rfss.getRemoteFileObject(absName, monitor); 	              
+                newFolder = rfss.createFolder(newFolderPath, monitor);
             } catch (RemoteFileIOException exc ) {
                SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileIOException " );  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                if (exc.getRemoteException() instanceof SystemMessageException)

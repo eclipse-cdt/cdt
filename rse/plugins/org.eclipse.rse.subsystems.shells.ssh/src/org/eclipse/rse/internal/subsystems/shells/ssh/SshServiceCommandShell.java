@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -68,7 +69,7 @@ public class SshServiceCommandShell extends ServiceCommandShell
 		{
 			try
 			{
-				return _fs.getRemoteFileObject(workingDir);
+				return _fs.getRemoteFileObject(workingDir, new NullProgressMonitor());
 			}
 			catch (Exception e)
 			{			

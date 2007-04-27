@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -368,7 +370,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 					{
 						try
 						{
-							contextDirectory = RemoteFileUtility.getFileSubSystem(_remoteCommand.getCommandSubSystem().getHost()).getRemoteFileObject(contextPath);
+							contextDirectory = RemoteFileUtility.getFileSubSystem(_remoteCommand.getCommandSubSystem().getHost()).getRemoteFileObject(contextPath, new NullProgressMonitor());
 							_lastFolderContext = contextDirectory;
 						}
 						catch (Exception e)
@@ -497,7 +499,8 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 			IRemoteFileSubSystem fs = RemoteFileUtility.getFileSubSystem(_remoteCommand.getCommandSubSystem().getHost());
 			try
 			{
-				IRemoteFile parent = fs.getRemoteFileObject(parentPath);
+				IProgressMonitor monitor = new NullProgressMonitor();
+				IRemoteFile parent = fs.getRemoteFileObject(parentPath, monitor);
 				
 				 Object[] fileList = null;
 				 
@@ -507,7 +510,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 				 }
 				 else
 				 {
-				 	fileList = parent.getParentRemoteFileSubSystem().listFoldersAndFiles(parent, currentText + "*", null); //$NON-NLS-1$
+				 	fileList = parent.getParentRemoteFileSubSystem().listFoldersAndFiles(parent, currentText + "*", monitor); //$NON-NLS-1$
 				 }
 			
 

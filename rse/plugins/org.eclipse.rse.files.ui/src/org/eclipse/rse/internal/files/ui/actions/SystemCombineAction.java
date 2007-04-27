@@ -16,6 +16,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -107,12 +109,13 @@ public class SystemCombineAction extends SystemExtractToAction {
 			
 			try
 			{
-				if (!destination.exists()) destSS.createFile(destination);
+				if (!destination.exists()) destSS.createFile(destination, new NullProgressMonitor());
 			}
 			catch (SystemMessageException e)
 			{
 				System.out.println(e.getMessage());
 			}
+			IProgressMonitor monitor = new NullProgressMonitor();
 			for (int i = 0; i < _selected.size(); i++)
 			{
 				IRemoteFile selection = (IRemoteFile) _selected.get(i);
@@ -128,12 +131,12 @@ public class SystemCombineAction extends SystemExtractToAction {
 				IRemoteFile nextDestination = null;
 				try
 				{
-					while (destSS.getRemoteFileObject(nextDest).exists())
+					while (destSS.getRemoteFileObject(nextDest, monitor).exists())
 					{
 						nextDest = nextDest + "1"; //$NON-NLS-1$
 					}
-					nextDestination = destSS.getRemoteFileObject(nextDest);
-					destSS.createFolder(nextDestination);
+					nextDestination = destSS.getRemoteFileObject(nextDest, monitor);
+					destSS.createFolder(nextDestination, monitor);
 				}
 				catch (SystemMessageException e)
 				{

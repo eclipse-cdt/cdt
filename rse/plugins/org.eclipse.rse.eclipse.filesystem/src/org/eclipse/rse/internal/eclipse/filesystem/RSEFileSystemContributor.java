@@ -23,6 +23,7 @@ package org.eclipse.rse.internal.eclipse.filesystem;
 
 import java.net.URI;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
@@ -47,7 +48,7 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 				URI uri = new URI(initialPath);
 				IHost host = RSEFileStoreImpl.getConnectionFor(uri.getHost(), null);
 				IRemoteFileSubSystem fs = RSEFileStoreImpl.getRemoteFileSubSystem(host);
-				dlg.setInputObject(fs.getRemoteFileObject(uri.getPath()));			
+				dlg.setInputObject(fs.getRemoteFileObject(uri.getPath(), new NullProgressMonitor()));			
 			}
 			catch (Exception e) {
 			}

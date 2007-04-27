@@ -19,6 +19,7 @@ package org.eclipse.rse.internal.subsystems.shells.local.model;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefreshJob;
 import org.eclipse.rse.services.shells.IHostOutput;
@@ -62,7 +63,7 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 		{
 			try
 			{
-				return _fs.getRemoteFileObject(workingDir);
+				return _fs.getRemoteFileObject(workingDir, new NullProgressMonitor());
 			}
 			catch (Exception e)
 			{			

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.ITextSelection;
@@ -642,7 +643,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		IRemoteFile remoteFile;
 		
 		try {
-			remoteFile = subsys.getRemoteFileObject(data.folderName);
+			remoteFile = subsys.getRemoteFileObject(data.folderName, new NullProgressMonitor());
 		}
 		catch (SystemMessageException e) {
 			// TODO: show error

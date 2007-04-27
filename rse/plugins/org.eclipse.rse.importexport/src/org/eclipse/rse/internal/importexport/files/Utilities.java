@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.importexport.IRemoteImportExportConstants;
@@ -50,7 +51,7 @@ public class Utilities {
 					path = path.replace('/', sep);
 				}
 				
-				ret = ss.getRemoteFileObject(path);
+				ret = ss.getRemoteFileObject(path, new NullProgressMonitor());
 			} catch (SystemMessageException e) {
 				// get RemoteFileObject has been changed to raise
 				// SystemMessageException.

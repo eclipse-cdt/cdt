@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.files.ui.dialogs;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.files.ui.widgets.SaveAsForm;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -80,7 +81,7 @@ public class SaveAsDialog extends SystemSelectRemoteFileOrFolderDialog implement
     	
     	try
     	{
-	   		return file.getParentRemoteFileSubSystem().getRemoteFileObject(file, form.getFileName());
+	   		return file.getParentRemoteFileSubSystem().getRemoteFileObject(file, form.getFileName(), new NullProgressMonitor());
     	}
     	catch (Exception e)
     	{

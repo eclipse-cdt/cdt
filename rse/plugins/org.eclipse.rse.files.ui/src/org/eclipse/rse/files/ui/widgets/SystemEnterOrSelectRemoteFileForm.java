@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.files.ui.widgets;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.internal.files.ui.FileResources;
@@ -102,7 +103,7 @@ public class SystemEnterOrSelectRemoteFileForm extends SystemSelectRemoteFileOrF
 			IRemoteFile saveasFile = null;
 			
 			try {
-				saveasFile = file.getParentRemoteFileSubSystem().getRemoteFileObject(file, fileName);
+				saveasFile = file.getParentRemoteFileSubSystem().getRemoteFileObject(file, fileName, new NullProgressMonitor());
 			}
 			catch (Exception e) {
 			}

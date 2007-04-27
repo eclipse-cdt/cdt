@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.dialogs;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.internal.files.ui.widgets.CombineForm;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -109,7 +110,7 @@ public class CombineDialog extends SystemSelectRemoteFileOrFolderDialog {
 		try
 		{
 			// return a remote file that is the child of the parent folder
-			return file.getParentRemoteFileSubSystem().getRemoteFileObject(file, fileName);
+			return file.getParentRemoteFileSubSystem().getRemoteFileObject(file, fileName, new NullProgressMonitor());
 		}
 		catch (Exception e)
 		{

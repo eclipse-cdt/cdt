@@ -19,6 +19,7 @@ package org.eclipse.rse.internal.files.ui.actions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.window.Window;
@@ -88,7 +89,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 {                	
                     if (!_saveasFile.exists())
                     {
-                        _saveasFile = fs.createFile(_saveasFile);
+                        _saveasFile = fs.createFile(_saveasFile, monitor);
                     }                        
                 }
                 catch (SystemMessageException e)
@@ -180,7 +181,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             	SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
                 fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _remoteFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
                 _remoteFile.markStale(true);
-                _remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath());
+                _remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath(), new NullProgressMonitor());
                 properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
                 properties.setDirty(false);
             }
@@ -500,7 +501,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
         {
             try
             {
-                _saveasFile = _saveasFile.getParentRemoteFileSubSystem().getRemoteFileObject(_saveasFile.getAbsolutePath());
+                _saveasFile = _saveasFile.getParentRemoteFileSubSystem().getRemoteFileObject(_saveasFile.getAbsolutePath(), new NullProgressMonitor());
                 RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_saveasFile.getParentRemoteFile(), ISystemResourceChangeEvents.EVENT_REFRESH, null));
                         
             }

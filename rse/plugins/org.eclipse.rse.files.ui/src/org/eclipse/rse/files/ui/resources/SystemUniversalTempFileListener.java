@@ -158,14 +158,14 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 			
 			try
 			{				
-				IRemoteFile remoteFile = fs.getRemoteFileObject(resourceId);		
+				IRemoteFile remoteFile = fs.getRemoteFileObject(resourceId, monitor);		
 
 				if (remoteFile != null)
 				{
 					
 					// make sure we have uptodate file
 					remoteFile.markStale(true);
-					remoteFile = fs.getRemoteFileObject(resourceId);	
+					remoteFile = fs.getRemoteFileObject(resourceId, monitor);	
 
 					// get modification stamp and dirty state         
 					long storedModifiedStamp = properties.getRemoteFileTimeStamp();
@@ -269,7 +269,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 					registry.fireEvent(new SystemResourceChangeEvent(parent, ISystemResourceChangeEvents.EVENT_REFRESH, null));
 				}
 
-				remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath());
+				remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
 				
 				registry.fireEvent(new SystemResourceChangeEvent(remoteFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, remoteFile));
 			

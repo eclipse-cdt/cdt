@@ -206,8 +206,11 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	/**
 	 * Given a folder or file, return its parent folder object.
 	 * @param folderOrFile folder or file to return parent of.
+	 * @param monitor the progress monitor
+	 * 
+	 * @return the remote file
 	 */
-	public IRemoteFile getParentFolder(IRemoteFile folderOrFile);
+	public IRemoteFile getParentFolder(IRemoteFile folderOrFile, IProgressMonitor monitor);
 
 	/**
 	 * Given a folder or file, return its parent folder name, fully qualified
@@ -240,8 +243,11 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	/**
 	 * Given a set of fully qualified file or folder names, return an ISystemResourceSet object for it.
 	 * @param folderOrFileNames Fully qualified folder or file names
+	 * @param monitor the progress monitor
+	 * 
+	 * @return the set of resources
 	 */
-	public SystemRemoteResourceSet getRemoteFileObjects(List folderOrFileNames) throws SystemMessageException;
+	public SystemRemoteResourceSet getRemoteFileObjects(List folderOrFileNames, IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
 	 * Given a fully qualified file or folder name, return an IRemoteFile
@@ -251,19 +257,23 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * if the file with the given key is not found in the internal cache.
 	 * </p>
 	 * @param folderOrFileName Fully qualified folder or file name.
+	 * @param monitor the progress monitor
 	 * @return the requested IRemoteFile object.
 	 * @throws SystemMessageException in case an error occurs contacting the
 	 *     remote system while retrieving the requested remote object.
 	 */
-	public IRemoteFile getRemoteFileObject(String folderOrFileName) throws SystemMessageException;
+	public IRemoteFile getRemoteFileObject(String folderOrFileName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Given a un-qualified file or folder name, and its parent folder object, 
 	 *  return an IRemoteFile object for the file.
 	 * @param parent Folder containing the folder or file
 	 * @param folderOrFileName Un-qualified folder or file name
+	 * @param monitor the progress monitor
+	 * 
+	 * @return the requested IRemoteFile object
 	 */
-	public IRemoteFile getRemoteFileObject(IRemoteFile parent, String folderOrFileName) throws SystemMessageException;
+	public IRemoteFile getRemoteFileObject(IRemoteFile parent, String folderOrFileName, IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
 	 * Given a key, returns a search result object for it. For the key, see <
@@ -280,12 +290,12 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 *    <li>If the given object is a folder, not a file, this is a no-op.
 	 * </ul>
 	 * 
-	 * @see #createFolders(IRemoteFile)
+	 * @see #createFolders(IRemoteFile,IProgressMonitor)
 	 * 
 	 * @param fileToCreate The object representing the file to be created.
 	 * @return The same input object returned for convenience. Will throw exception if it fails.
 	 */
-	public IRemoteFile createFile(IRemoteFile fileToCreate) throws RemoteFileSecurityException, RemoteFileIOException;
+	public IRemoteFile createFile(IRemoteFile fileToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
 
 	/**
 	 * Create a new folder, given its IRemoteFile object (these do not have to represent existing folders)
@@ -296,12 +306,13 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 *    <li>If the given object is a file, not a folder, this is a no-op.
 	 * </ul>
 	 * 
-	 * @see #createFolders(IRemoteFile)
+	 * @see #createFolders(IRemoteFile, IProgressMonitor)
 	 * 
 	 * @param folderToCreate The object representing the folder to be created.
+	 * @param monitor the progress monitor
 	 * @return The same input object returned for convenience. Will throw exception if it fails.
 	 */
-	public IRemoteFile createFolder(IRemoteFile folderToCreate) throws RemoteFileSecurityException, RemoteFileIOException;	
+	public IRemoteFile createFolder(IRemoteFile folderToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;	
 	
 	/**
 	 * Given an IRemoteFile for a folder, this will create that folder and any missing parent folders in its path.
@@ -312,12 +323,13 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 *    <li>If the given object is a file, not a folder, this is a no-op.
 	 * </ul>
 	 * 
-	 * @see #getParentFolder(IRemoteFile)
+	 * @see #getParentFolder(IRemoteFile, IProgressMonitor)
 	 * 
 	 * @param folderToCreate The object representing the folder to be created, along with its parents.
+	 * @param monitor the progress monitr
 	 * @return The same input object returned for convenience. Will throw exception if it fails.
 	 */
-	public IRemoteFile createFolders(IRemoteFile folderToCreate) throws RemoteFileSecurityException, RemoteFileIOException;		
+	public IRemoteFile createFolders(IRemoteFile folderToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;		
 	
 
 	
@@ -351,9 +363,10 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * Rename the given remote file or folder. This renames it in memory and, iff it exists, on disk.
 	 * @param folderOrFile represents the object to be renamed.
 	 * @param newName new name to give it.
+	 * @param monitor the progress monitor
 	 * @return false if the given folder/file didn't exist on disk (still renamed in memory), else true. Throws an exception if anything fails.
 	 */
-	public boolean rename(IRemoteFile folderOrFile, String newName) throws RemoteFileSecurityException, RemoteFileIOException;	
+	public boolean rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;	
 
 	
 	/**

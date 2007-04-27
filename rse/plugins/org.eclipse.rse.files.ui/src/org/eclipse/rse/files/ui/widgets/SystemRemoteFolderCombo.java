@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -521,7 +522,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	          {
 				IRemoteFile currentFolderObject = null;
 	          	try {
-		          	currentFolderObject = fileSubSystem.getRemoteFileObject(currentFolder);
+		          	currentFolderObject = fileSubSystem.getRemoteFileObject(currentFolder, new NullProgressMonitor());
 	          	} catch(SystemMessageException e) {
 	          		SystemBasePlugin.logError("SystemRemoteFolderCombo.wdigetSelected", e); //$NON-NLS-1$
 	          	}

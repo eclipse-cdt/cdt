@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.internal.subsystems.shells.dstore;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.internal.services.dstore.shells.DStoreHostOutput;
 import org.eclipse.rse.internal.services.dstore.shells.DStoreHostShell;
@@ -51,7 +52,7 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 				IRemoteFileSubSystem ss = getFileSubSystem();
 				if (ss.isConnected())
 				{
-					return ss.getRemoteFileObject(workingDir);
+					return ss.getRemoteFileObject(workingDir, new NullProgressMonitor());
 				}
 			}
 			catch (Exception e)

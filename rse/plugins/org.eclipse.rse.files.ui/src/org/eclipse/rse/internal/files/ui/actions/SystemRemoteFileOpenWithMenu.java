@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -232,7 +233,7 @@ private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile r
 		IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
 		try
 		{
-			remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
+			remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 		}
 		catch (Exception e)
 		{

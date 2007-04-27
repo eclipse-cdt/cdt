@@ -17,6 +17,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.core.model;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -248,7 +249,7 @@ public class RemotePath implements IRemotePath {
 		IRemoteFile remoteFile = null;
 		
 		try {
-			remoteFile = subsys.getRemoteFileObject(absolutePath);
+			remoteFile = subsys.getRemoteFileObject(absolutePath, new NullProgressMonitor());
 		}
 		catch (SystemMessageException e) {
 			SystemBasePlugin.logError("Error occured trying to get remote file", e); //$NON-NLS-1$

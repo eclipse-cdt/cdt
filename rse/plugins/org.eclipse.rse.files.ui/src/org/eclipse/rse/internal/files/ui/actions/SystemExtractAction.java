@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -83,6 +84,7 @@ public class SystemExtractAction extends SystemBaseAction
 
 	public void run() 
 	{
+		IProgressMonitor monitor = new NullProgressMonitor();
 		for (int i = 0; i < _selected.size(); i++)
 		{
 			IRemoteFile selection = (IRemoteFile) _selected.get(i);
@@ -92,8 +94,8 @@ public class SystemExtractAction extends SystemBaseAction
 			IRemoteFile destination = null;
 			try
 			{
-				destination = ss.getRemoteFileObject(destinationParent.getAbsolutePath() + destinationParent.getSeparator() + newName);
-				ss.createFolder(destination);
+				destination = ss.getRemoteFileObject(destinationParent.getAbsolutePath() + destinationParent.getSeparator() + newName, monitor);
+				ss.createFolder(destination, monitor);
 			}
 			catch (SystemMessageException e)
 			{

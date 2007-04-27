@@ -330,7 +330,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			
 			try {
 				if (remotePath != null && fs instanceof IRemoteFileSubSystem) {
-					IRemoteFile remoteFile = ((IRemoteFileSubSystem)fs).getRemoteFileObject(remotePath);
+					IRemoteFile remoteFile = ((IRemoteFileSubSystem)fs).getRemoteFileObject(remotePath, new NullProgressMonitor());
 					
 					if (remoteFile != null) {
 						return new SystemEditableRemoteFile(remoteFile);
@@ -525,7 +525,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
  
 			// get updated remoteFile so we get the current remote timestamp
 			//remoteFile.markStale(true);
-			remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
+			remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
 
 			// get the remote modified stamp
 			long remoteModifiedStamp = remoteFile.getLastModified();
@@ -604,7 +604,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			return false;
 		}
 
-		remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
+		remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
 
 		refresh();
 
@@ -649,7 +649,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		// reget the remote file so that we have the right timestamps
 		try
 		{
-			remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath());
+			remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 		}
 		catch (Exception e)
 		{
@@ -681,7 +681,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 		
 		//DKM- saveAS fix
-		remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
+		remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 		properties.setRemoteFileTimeStamp(remoteFile.getLastModified());
 	}
 
@@ -1053,7 +1053,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			// ensure the file is stale
 			remoteFile.markStale(true, false);
 			{
-				remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath());
+				remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 			}
 			
 			if (!remoteFile.exists())
@@ -1088,7 +1088,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				else
 				{ // we do not have write access
 
-					IRemoteFile fakeRemoteFile = subsystem.getRemoteFileObject(remotePath);
+					IRemoteFile fakeRemoteFile = subsystem.getRemoteFileObject(remotePath, new NullProgressMonitor());
 					if (!fakeRemoteFile.exists())
 					{ // this could be because file doesn't exist
 						download(shell);
@@ -1173,7 +1173,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			// ensure the file is stale 
 			remoteFile.markStale(true, false);
 			{
-				remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath());
+				remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
 			}
 			
 			if (!remoteFile.exists())
@@ -1210,7 +1210,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				else
 				{ // we do not have write access
 
-					IRemoteFile fakeRemoteFile = subsystem.getRemoteFileObject(remotePath);
+					IRemoteFile fakeRemoteFile = subsystem.getRemoteFileObject(remotePath, monitor);
 					if (!fakeRemoteFile.exists())
 					{ // this could be because file doesn't exist
 						download(monitor);
@@ -1498,7 +1498,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		remoteFile.markStale(true); // make sure we get the latest remote file (with proper permissions and all)
 		try
 		{
-			remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
+			remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 		}
 		catch (Exception e)
 		{

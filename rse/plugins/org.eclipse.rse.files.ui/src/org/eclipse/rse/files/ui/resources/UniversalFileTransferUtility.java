@@ -456,7 +456,7 @@ public class UniversalFileTransferUtility
 					String path = properties.getRemoteFilePath();
 					if (path != null)
 					{
-						IRemoteFile remoteFile = ss.getRemoteFileObject(path);
+						IRemoteFile remoteFile = ss.getRemoteFileObject(path, new NullProgressMonitor());
 						if (remoteFile != null && !remoteFile.exists())
 						{
 							// this must be old so we should delete this
@@ -953,7 +953,7 @@ public class UniversalFileTransferUtility
 		{
 			try
 			{
-				targetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath());
+				targetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath(), monitor);
 			}
 			catch (Exception e)
 			{
@@ -998,7 +998,7 @@ public class UniversalFileTransferUtility
 		SystemRemoteResourceSet existingFiles = null;
 		try
 		{
-			existingFiles = targetFS.getRemoteFileObjects(newFilePathList);
+			existingFiles = targetFS.getRemoteFileObjects(newFilePathList, monitor);
 		}
 		catch (Exception e)
 		{
@@ -1120,7 +1120,7 @@ public class UniversalFileTransferUtility
 					IRemoteFile newTargetFolder = (IRemoteFile)existingFiles.get(newPath);
 					if (!newTargetFolder.exists())
 					{
-						newTargetFolder = targetFS.createFolder(newTargetFolder);
+						newTargetFolder = targetFS.createFolder(newTargetFolder, monitor);
 					}
 
 					 
@@ -1163,7 +1163,7 @@ public class UniversalFileTransferUtility
 		
 		try
 		{
-			resultSet = targetFS.getRemoteFileObjects(newFilePathList);
+			resultSet = targetFS.getRemoteFileObjects(newFilePathList, monitor);
 		}
 		catch (Exception e)
 		{
@@ -1191,7 +1191,7 @@ public class UniversalFileTransferUtility
 		{
 			try
 			{
-				targetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath());
+				targetFolder = targetFS.getRemoteFileObject(targetFolder.getAbsolutePath(), monitor);
 			}
 			catch (Exception e)
 			{
@@ -1269,7 +1269,7 @@ public class UniversalFileTransferUtility
 
 				
 				targetFS.upload(srcFileLocation, srcCharSet, newPath, targetFS.getRemoteEncoding(), monitor);				
-				IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name);
+				IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
 			
 				// should check preference first
 				
@@ -1322,12 +1322,12 @@ public class UniversalFileTransferUtility
 			// recursively copy
 			try
 			{
-				IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath);
+				IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
 				if (!newTargetFolder.exists())
 				{
-					targetFS.createFolder(newTargetFolder);
+					targetFS.createFolder(newTargetFolder, monitor);
 					newTargetFolder.markStale(true);
-					newTargetFolder = targetFS.getRemoteFileObject(newPath);
+					newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
 				}
 
 	
@@ -1393,7 +1393,7 @@ public class UniversalFileTransferUtility
 		{
 			monitor.beginTask(FileResources.RESID_SUPERTRANSFER_PROGMON_MAIN,IProgressMonitor.UNKNOWN);
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_CREATE);
-			destinationArchive = getLocalFileSubSystem().getRemoteFileObject(File.createTempFile("supertransfer", getArchiveExtensionFromProperties()).getAbsolutePath()); //$NON-NLS-1$
+			destinationArchive = getLocalFileSubSystem().getRemoteFileObject(File.createTempFile("supertransfer", getArchiveExtensionFromProperties()).getAbsolutePath(), monitor); //$NON-NLS-1$
 			FileServiceSubSystem localSS = (FileServiceSubSystem)getLocalFileSubSystem();
 			try
 			{
@@ -1403,7 +1403,7 @@ public class UniversalFileTransferUtility
 			{
 			    
 			}
-			localSS.createFile(destinationArchive);
+			localSS.createFile(destinationArchive, monitor);
 			
 			if (destinationArchive == null)
 			{
@@ -1415,7 +1415,7 @@ public class UniversalFileTransferUtility
 			}		
 			IRemoteFile newTargetParent = newTargetFolder.getParentRemoteFile();
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_POPULATE);
-			IRemoteFile sourceDir = localSS.getRemoteFileObject(directory.getLocation().toOSString());
+			IRemoteFile sourceDir = localSS.getRemoteFileObject(directory.getLocation().toOSString(), monitor);
 			IRemoteFileSubSystem targetFS = newTargetFolder.getParentRemoteFileSubSystem();
 			
 			
@@ -1428,11 +1428,11 @@ public class UniversalFileTransferUtility
 			
 			// copy local zip to remote
 			targetFS.upload(destinationArchive.getAbsolutePath(), SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
-			IRemoteFile remoteArchive = targetFS.getRemoteFileObject(newPath);
+			IRemoteFile remoteArchive = targetFS.getRemoteFileObject(newPath, monitor);
 			
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_EXTRACT);
 			String compressedFolderPath = newPath + ArchiveHandlerManager.VIRTUAL_SEPARATOR + directory.getName();
-			IRemoteFile compressedFolder = targetFS.getRemoteFileObject(compressedFolderPath);
+			IRemoteFile compressedFolder = targetFS.getRemoteFileObject(compressedFolderPath, monitor);
 			
 			// extract the compressed folder from the temp archive on remote
 			targetFS.copy(compressedFolder, newTargetParent, newTargetFolder.getName(), monitor);
@@ -1487,7 +1487,7 @@ public class UniversalFileTransferUtility
 				else
 				{
 					IResource child = children[i];
-					IRemoteFile newtarget = target.getParentRemoteFileSubSystem().getRemoteFileObject(target, child.getName());
+					IRemoteFile newtarget = target.getParentRemoteFileSubSystem().getRemoteFileObject(target, child.getName(), monitor);
 					if (!newtarget.exists()) return;
 					transferProperties(child, newtarget, monitor);
 				}
@@ -1537,12 +1537,12 @@ public class UniversalFileTransferUtility
 				try
 				{
 				    String destArchPath = destinationParent.getAbsolutePath() + separator + file.getName();
-					destinationArchive = directory.getParentRemoteFileSubSystem().getRemoteFileObject(destArchPath);
+					destinationArchive = directory.getParentRemoteFileSubSystem().getRemoteFileObject(destArchPath, monitor);
 					if (destinationArchive.exists()) 
 					{
 					    directory.getParentRemoteFileSubSystem().delete(destinationArchive, monitor);
 					}
-					directory.getParentRemoteFileSubSystem().createFile(destinationArchive);
+					directory.getParentRemoteFileSubSystem().createFile(destinationArchive, monitor);
 				}
 				catch (RemoteFileSecurityException e)
 				{
@@ -1551,11 +1551,11 @@ public class UniversalFileTransferUtility
 			}
 			if (destinationArchive == null)
 			{
-			    String homeFolder = directory.getParentRemoteFileSubSystem().getRemoteFileObject("./").getAbsolutePath(); //$NON-NLS-1$
+			    String homeFolder = directory.getParentRemoteFileSubSystem().getRemoteFileObject("./", monitor).getAbsolutePath(); //$NON-NLS-1$
 			    String destArchPath = homeFolder + separator + file.getName();
-				destinationArchive = directory.getParentRemoteFileSubSystem().getRemoteFileObject(destArchPath);
+				destinationArchive = directory.getParentRemoteFileSubSystem().getRemoteFileObject(destArchPath, monitor);
 				if (destinationArchive.exists()) directory.getParentRemoteFileSubSystem().delete(destinationArchive,monitor);
-				destinationArchive = directory.getParentRemoteFileSubSystem().createFile(destinationArchive);
+				destinationArchive = directory.getParentRemoteFileSubSystem().createFile(destinationArchive, monitor);
 			}
 			
 			targetResource = getTempFileFor(directory);
@@ -1571,14 +1571,14 @@ public class UniversalFileTransferUtility
 			
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_POPULATE);
 			IRemoteFileSubSystem sourceFS = directory.getParentRemoteFileSubSystem();
-			IRemoteFile sourceDir = sourceFS.getRemoteFileObject(directory.getAbsolutePath());
+			IRemoteFile sourceDir = sourceFS.getRemoteFileObject(directory.getAbsolutePath(), monitor);
 		
 			// DKM - copy src dir to remote temp archive
 			sourceFS.copy(sourceDir, destinationArchive, sourceDir.getName(), monitor);
 			destinationArchive.markStale(true);
 			
 			// reget it so that it's properties (namely "size") are correct
-			cpdest = destinationArchive = destinationArchive.getParentRemoteFileSubSystem().getRemoteFileObject(destinationArchive.getAbsolutePath());
+			cpdest = destinationArchive = destinationArchive.getParentRemoteFileSubSystem().getRemoteFileObject(destinationArchive.getAbsolutePath(), monitor);
 			
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_TRANSFER);
 			String name = destinationArchive.getName();
@@ -1597,7 +1597,7 @@ public class UniversalFileTransferUtility
 			{
 				if (arcContents[i].isDirectory && handler.getVirtualChildren(arcContents[i].fullName) == null) continue;
 				String currentTargetPath = targetResource.getParent().getLocation().toOSString() + localSS.getSeparator() + useLocalSeparator(arcContents[i].fullName);
-				IRemoteFile currentTarget = localSS.getRemoteFileObject(currentTargetPath);
+				IRemoteFile currentTarget = localSS.getRemoteFileObject(currentTargetPath, monitor);
 				boolean replace = false;
 				
 				if (currentTarget != null && currentTarget.exists())
@@ -1621,7 +1621,7 @@ public class UniversalFileTransferUtility
 				    if (!monitor.isCanceled())
 				    {
 						String currentSourcePath = dest.getAbsolutePath() + ArchiveHandlerManager.VIRTUAL_SEPARATOR + arcContents[i].fullName;
-						IRemoteFile currentSource = localSS.getRemoteFileObject(currentSourcePath);
+						IRemoteFile currentSource = localSS.getRemoteFileObject(currentSourcePath, monitor);
 						boolean shouldExtract = currentSource.isFile();
 						
 						if (!shouldExtract)
@@ -2078,7 +2078,7 @@ public class UniversalFileTransferUtility
 		{
 
 			IRemoteFileSubSystem ss = targetFolder.getParentRemoteFileSubSystem();
-			final IRemoteFile targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName);
+			final IRemoteFile targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName, new NullProgressMonitor());
 
 			//RSEUIPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
 			//RSEUIPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");  		

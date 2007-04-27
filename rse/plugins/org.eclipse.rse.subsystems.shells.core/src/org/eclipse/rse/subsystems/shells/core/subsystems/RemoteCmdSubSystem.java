@@ -343,7 +343,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		ArrayList addedFolders = new ArrayList();
 
 		char separator = isWindows() ? ';' : ':';
-		StringTokenizer tokenizer = new StringTokenizer(path, separator + ""); //$NON-NLS-1$
+		StringTokenizer tokenizer = new StringTokenizer(path, separator + ""); //$NON-NLS-1$\
+		IProgressMonitor monitor = new NullProgressMonitor();
 		while (tokenizer.hasMoreTokens())
 		{
 			String token = tokenizer.nextToken();
@@ -355,7 +356,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 				IRemoteFileSubSystem fs = getFileSubSystem();
 				try
 				{
-					IRemoteFile file = fs.getRemoteFileObject(token);
+					IRemoteFile file = fs.getRemoteFileObject(token, monitor);
 					addedFolders.add(file);
 				}
 				catch (Exception e)

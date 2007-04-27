@@ -23,6 +23,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -144,7 +145,7 @@ public class RemoteFileImportDescriptionReader implements IRemoteFileImportDescr
 		if (path != null && subsystem != null) {
 			IRemoteFile remoteFile = null;
 			try {
-				remoteFile = subsystem.getRemoteFileObject(path);
+				remoteFile = subsystem.getRemoteFileObject(path, new NullProgressMonitor());
 				if (remoteFile != null && remoteFile.exists()) {
 					UniFilePlus file = new UniFilePlus(remoteFile);
 					selectedElements.add(file);

@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
@@ -207,7 +208,7 @@ public class SystemRemoteFileSelectAction extends SystemBaseDialogAction
 		{
 			try
 			{
-			IRemoteFile rootFolder = ss.getRemoteFileObject(rootFolderAbsPath);
+			IRemoteFile rootFolder = ss.getRemoteFileObject(rootFolderAbsPath, new NullProgressMonitor());
 			if (rootFolder != null)
 			{
 				setPreSelection(rootFolder);

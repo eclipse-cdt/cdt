@@ -19,6 +19,7 @@ package org.eclipse.rse.internal.files.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
@@ -121,7 +122,7 @@ public class SystemEditFilesAction extends SystemBaseAction {
 			IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
 			try
 			{
-				remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
+				remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 			}
 			catch (Exception e)
 			{

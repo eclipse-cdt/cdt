@@ -317,16 +317,16 @@
 			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.testing-feature"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.debug.gdbjtag"/>
+			<param name="tagmodule" value="org.eclipse.cdt/jtag/org.eclipse.cdt.debug.gdbjtag"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.debug.gdbjtag.core"/>
+			<param name="tagmodule" value="org.eclipse.cdt/jtag/org.eclipse.cdt.debug.gdbjtag.core"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.debug.gdbjtag.ui"/>
+			<param name="tagmodule" value="org.eclipse.cdt/jtag/org.eclipse.cdt.debug.gdbjtag.ui"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.debug.gdbjtag-feature"/>
+			<param name="tagmodule" value="org.eclipse.cdt/jtag/org.eclipse.cdt.debug.gdbjtag-feature"/>
 		</antcall>
 	</target>
 </project>

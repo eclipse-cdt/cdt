@@ -501,7 +501,7 @@
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.cdt.core.model.IMethod"
-            id="org.eclipse.cdt.debug.ui.FunctionBreakpointActions">
+            id="org.eclipse.cdt.debug.ui.MethodBreakpointActions">
          <action
                label="%ManageFunctionBreakpointAction.label"
                icon="icons/elcl16/function_brkpt_co.gif"

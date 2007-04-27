@@ -24,7 +24,8 @@ public class StdBuildWizard extends AbstractCWizard {
 		h.addTc(null); // add default toolchain
 		IToolChain[] tcs = ManagedBuildManager.getRealToolChains();
 		for (int i=0; i<tcs.length; i++)
-			if (!supportedOnly || isValid(tcs[i])) h.addTc(tcs[i]);
+			if (isValid(tcs[i], supportedOnly, wizard)) 
+				h.addTc(tcs[i]);
 		EntryDescriptor wd = new EntryDescriptor(NAME, null, NAME, false, h, null); 
 		return new EntryDescriptor[] {wd};
 		

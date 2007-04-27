@@ -14,12 +14,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
+import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.cdt.ui.wizards.CNewWizard;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 import org.eclipse.cdt.utils.Platform;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
@@ -41,15 +45,31 @@ public abstract class AbstractCWizard extends CNewWizard {
 		listener = _listener;
 	}
 	
-	protected boolean isValid(IToolChain tc) {
+	/**
+	 * Checks whether toolchain can be displayed 
+	 * @param tc
+	 * @return
+	 */
+	protected boolean isValid(IToolChain tc, boolean supportedOnly, IWizard w) {
+		// Check for langiuage compatibility first in any case
+		if (!isLanguageCompatible(tc, w))
+			return false;
+		
+		// Do not do further check if all toolchains are permitted	
+		if (!supportedOnly) 
+			return true;
+		
+		// Filter off unsupported and system toolchains
 		if (tc == null || !tc.isSupported() || tc.isAbstract() || tc.isSystemObject()) 
 			return false;
+		
+		// Check for platform compatibility
 		ITargetPlatform tp = tc.getTargetPlatform();
 		if (tp != null) {
 			List osList = Arrays.asList(tc.getOSList());
 			if (osList.contains(ALL) || osList.contains(os)) {
 				List archList = Arrays.asList(tc.getArchList());
-				if (archList.contains(ALL) || archList.contains(arch)) 
+				if (archList.contains(ALL) || archList.contains(arch))
 					return true; // OS and ARCH fits
 			}
 			return false; // OS or ARCH does not fit
@@ -57,7 +77,88 @@ public abstract class AbstractCWizard extends CNewWizard {
 		return true; // No platform: nothing to check 
 	}
 
-/* comment it out for now..
+	/**
+	 * Checks toolchain for Language ID, Content type ID 
+	 * and Extensions, if they are required by wizard.
+	 * 
+	 * @param tc - toolchain to check
+	 * @param w - wizard which provides selection criteria
+	 * @return
+	 */
+	protected boolean isLanguageCompatible(IToolChain tc, IWizard w) {
+		if (w == null) 
+			return true;
+		if (!(w instanceof CDTCommonProjectWizard))
+			return true;
+
+		ITool[] tools = tc.getTools(); 
+		CDTCommonProjectWizard wz = (CDTCommonProjectWizard)w;
+		String[] langIDs = wz.getLanguageIDs(); 
+		String[] ctypeIDs = wz.getContentTypeIDs();
+		String[] exts = wz.getExtensions();
+		
+		// nothing requied ?   
+		if (empty(langIDs) && empty(ctypeIDs) && empty(exts))
+			return true;
+		
+		for (int i=0; i<tools.length; i++) {
+			IInputType[] its = tools[i].getInputTypes();
+			
+			// no input types - check only extensions
+			if (empty(its)) {  
+				if (!empty(exts)) {
+					String[] s = tools[i].getAllInputExtensions();
+					if (contains(exts, s))
+						return true; // extension fits
+				}
+				continue;
+			}
+			// normal tool with existing input type(s)
+			for (int j = 0; j<its.length; j++) {
+				// Check language IDs
+				if (!empty(langIDs)) {
+					String lang = its[j].getLanguageId(tools[i]);
+					if (contains(langIDs, new String[] {lang})) {
+						return true; // Language ID fits
+					}
+				}
+				// Check content types
+				if (!empty(ctypeIDs)) {
+					String[] ct1 = its[j].getSourceContentTypeIds();
+					String[] ct2 = its[j].getHeaderContentTypeIds();
+					if (contains(ctypeIDs, ct1) ||
+						contains(ctypeIDs, ct2)) 
+					{
+						return true; // content type fits
+					}
+				}					
+				// Check extensions
+				if (!empty(exts)) {
+					String[] ex1 =its[j].getHeaderExtensions(tools[i]);
+					String[] ex2 =its[j].getSourceExtensions(tools[i]);
+					if (contains(exts, ex1) ||
+						contains(exts, ex2)) {
+						return true; // extension fits fits
+					}
+				}
+			}
+		}
+		return false; // no one value fits to required
+	}
+	
+	private boolean empty(Object[] s) {
+		return (s == null || s.length == 0);
+	}
+	
+	private boolean contains(String[] s1, String[] s2) {
+		for (int i=0; i<s1.length; i++) 
+			for (int j=0; j<s2.length; j++) 
+				if (s1[i].equals(s2[j])) 
+					return true;
+		return false;
+	}
+
+	/* comment it out for now..
 	protected boolean isSupportedForTemplate(TemplateInfo templateInfo, IToolChain tc) {
 		String[] tcIds = templateInfo.getToolChainIds();
 		if (tcIds.length != 0) {

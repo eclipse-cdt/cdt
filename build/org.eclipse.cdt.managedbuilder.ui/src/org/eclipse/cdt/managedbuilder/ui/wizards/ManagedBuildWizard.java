@@ -49,7 +49,8 @@ public class ManagedBuildWizard extends AbstractCWizard {
 			if (tcs == null || tcs.length == 0) continue;
 			MBSWizardHandler h = new MBSWizardHandler(vs[i], parent, wizard);
 			for (int j=0; j<tcs.length; j++) {
-				if (!supportedOnly || isValid(tcs[j])) h.addTc(tcs[j]);
+				if (isValid(tcs[j], supportedOnly, wizard)) 
+					h.addTc(tcs[j]);
 			}
 			if (h.getToolChainsCount() > 0) {
 				items.add(new EntryDescriptor(vs[i].getId(), null, vs[i].getName(), true, h, null));
@@ -74,7 +75,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 			for (int i=0; i<cfgs.length; i++) {
 				if (cfgs[i].isSystemObject()) continue;
 				IToolChain t = cfgs[i].getToolChain();
-				if (!supportedOnly || isValid(t)) {
+				if (isValid(t, supportedOnly, wizard)) {
 					tc = t;
 					break;
 				}

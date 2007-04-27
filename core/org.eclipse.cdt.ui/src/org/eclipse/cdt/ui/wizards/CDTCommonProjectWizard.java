@@ -46,6 +46,7 @@ implements IExecutableExtension, IWizardWithMemory
 	private static final String OP_ERROR= "CProjectWizard.op_error"; //$NON-NLS-1$
 	private static final String title= CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$
 	private static final String message= CUIPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
+	private static final String[] EMPTY_ARR = new String[0]; 
 	
 	protected IConfigurationElement fConfigElement;
 	protected CDTMainWizardPage fMainPage;
@@ -231,4 +232,16 @@ implements IExecutableExtension, IWizardWithMemory
 	public IPath getLastProjectLocation() {
 		return lastProjectLocation;
 	}
+	
+	// Methods below should provide data for language check
+	public String[] getLanguageIDs (){
+		return EMPTY_ARR;
+	}
+	public String[] getContentTypeIDs (){
+		return EMPTY_ARR;
+	}
+	public String[] getExtensions (){
+		return EMPTY_ARR;
+	}
+	
 }

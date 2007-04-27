@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import java.util.Arrays;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -20,10 +18,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -44,7 +38,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
@@ -396,32 +389,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static String getVariableDialog(Shell shell, ICConfigurationDescription cfgd) {
 		
 		ICdtVariableManager vm = CCorePlugin.getDefault().getCdtVariableManager();
-		
-		ListDialog dialog = new ListDialog(shell);
-		dialog.setContentProvider(new IStructuredContentProvider() {
-					public Object[] getElements(Object inputElement) {
-						Object[] obs = (Object[])inputElement;
-						Arrays.sort(obs, CDTListComparator.getInstance());
-						return obs;
-					}
-					public void dispose() {}
-					public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-				});
-		dialog.setLabelProvider(new ILabelProvider() {
-					public Image getImage(Object element) { return null; }
-					public String getText(Object element) {
-							if (element instanceof ICdtVariable) 
-								return ((ICdtVariable)element).getName();
-							return null;
-						}
-					public void addListener(ILabelProviderListener listener) {}
-					public void dispose() {}
-					public boolean isLabelProperty(Object element, String property) { return false; }
-					public void removeListener(ILabelProviderListener listener) {
-				}});
-		
-		dialog.setInput(vm.getVariables(cfgd));
-		dialog.setHeightInChars(10);
+		BuildVarListDialog dialog = new BuildVarListDialog(shell, vm.getVariables(cfgd));
 		dialog.setTitle(UIMessages.getString("AbstractCPropertyTab.0")); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();

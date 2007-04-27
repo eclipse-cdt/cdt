@@ -325,33 +325,24 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		 setupControl(b, span, mode);
 		 b.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
-		    	triButtonPressed(event);
+		    	checkPressed(event);
 		 }});
 		 return b;
 	}
 
 	/**
-	 * Selection handler for checkbox created by method "setupCheck()" 
-	 * Descendants should override this method if they use "setupCheck".  
+	 * Selection handler for checkbox created 
+	 * by methods "setupCheck()" or "setupTri()" 
+	 * Descendants should override this method 
+	 * if they use "setupCheck".  
 	 * Usually the method body will look like:
 	 * { 
-	 * 		Button b = (Button)e.widget;
+	 * 		Control b = (Control)e.widget;
 	 *   	if (b.equals(myFirstCheckbox) { ... } 
 	 *   	else if (b.equals(mySecondCheckbox) { ... }
 	 *   ... } 
 	 */
     protected void checkPressed(SelectionEvent e) {}
-    
-    /**
-     * Substitutes combo or button
-     * with its parent (triButton)
-     * @param e
-     */
-    protected void triButtonPressed(SelectionEvent e) {
-    	Control w = (Control)e.widget;
-    	e.widget = w.getParent();
-    	checkPressed(e);
-    }
     
 	protected void setupControl(Control c, int span, int mode) {
 		// although we use GridLayout usually,

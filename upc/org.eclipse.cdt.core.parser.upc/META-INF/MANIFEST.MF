@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name.1
+Bundle-SymbolicName: org.eclipse.cdt.core.parser.upc;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: .
+Require-Bundle: org.eclipse.cdt.core,
+ net.sourceforge.lpg.lpgjavaruntime;bundle-version="1.1.0";visibility:=reexport,
+ org.eclipse.core.runtime,
+ org.eclipse.cdt.core.parser.c99
+Export-Package: org.eclipse.cdt.core.dom.upc,
+ org.eclipse.cdt.core.dom.upc.ast,
+ org.eclipse.cdt.internal.core.dom.parser.upc;x-internal:=true,
+ org.eclipse.cdt.internal.core.dom.parser.upc.ast;x-internal:=true
+Bundle-Localization: plugin
+Bundle-Vendor: %Bundle-Vendor.0

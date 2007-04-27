@@ -232,10 +232,13 @@ public class ProcessArgument {
 	public boolean areAllMacrosExpandable() {
 		switch (type) {
 			case ProcessParameter.SIMPLE:
-				if (externalParam != null) {
+			case ProcessParameter.SIMPLE_ARRAY:
+				// the code for these cases is in this form as
+				// fall-through generates warning, with no way to
+		        // suppress pre-java 1.5
+				if (type==ProcessParameter.SIMPLE && externalParam != null) {
 					return externalParam.isNullable() || template.getValueStore().get(name) != null;
 				}
-			case ProcessParameter.SIMPLE_ARRAY:
 				if (macros == null || macros.size() == 0) {
 					return true;
 				}

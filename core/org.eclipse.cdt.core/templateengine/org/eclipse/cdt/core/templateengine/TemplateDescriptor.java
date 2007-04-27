@@ -169,7 +169,7 @@ public class TemplateDescriptor {
 			Element propertyElement = (Element) children.get(i);
 			String key = propertyElement.getAttribute(ID);
 			String value = propertyElement.getAttribute(DEFAULT);
-			if (key != null && !key.equals("")) {
+			if (key != null && !key.equals("")) { //$NON-NLS-1$
 				defaults.put(key, value);
 			}
 

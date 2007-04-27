@@ -37,18 +37,18 @@ public class TemplateEngineHelper {
 	// This is used while getting the Plugin Path.
 	public static final String PROJRESOURCE = "plugin.xml"; //$NON-NLS-1$
 	public static final String BOOLTRUE = "true"; //$NON-NLS-1$
-	public static final String ID = "id"; //NON-NLS-1$
-	public static final String VALUE = "value"; //NON-NLS-1$
+	public static final String ID = "id"; //$NON-NLS-1$
+	public static final String VALUE = "value"; //$NON-NLS-1$
 	public static final String SDLOG_FILE_NAME = "sharedDefaults"; //$NON-NLS-1$
-	public static final String LOCATION = "location"; //NON-NLS-1$
-	public static final String WIZARD_ID = "wizardId"; //NON-NLS-1$
-	public static final String FILTER_PATTERN = "filterPattern"; //NON-NLS-1$
-	public static final String USAGE_DESCRIPTION = "usageDescription"; //NON-NLS-1$
-	public static final String PROJECT_TYPE = "projectType"; //NON-NLS-1$
-	public static final String TOOL_CHAIN = "toolChain"; //NON-NLS-1$
-	public static final String EXTRA_PAGES_PROVIDER = "pagesAfterTemplateSelectionProvider"; //NON-NLS-1$
-	public static final String IS_CATEGORY = "isCategory"; //NON-NLS-1$
-	public static final String CONFIGURATIONS = "Configurations"; //NON-NLS-1$
+	public static final String LOCATION = "location"; //$NON-NLS-1$
+	public static final String WIZARD_ID = "wizardId"; //$NON-NLS-1$
+	public static final String FILTER_PATTERN = "filterPattern"; //$NON-NLS-1$
+	public static final String USAGE_DESCRIPTION = "usageDescription"; //$NON-NLS-1$
+	public static final String PROJECT_TYPE = "projectType"; //$NON-NLS-1$
+	public static final String TOOL_CHAIN = "toolChain"; //$NON-NLS-1$
+	public static final String EXTRA_PAGES_PROVIDER = "pagesAfterTemplateSelectionProvider"; //$NON-NLS-1$
+	public static final String IS_CATEGORY = "isCategory"; //$NON-NLS-1$
+	public static final String CONFIGURATIONS = "Configurations"; //$NON-NLS-1$
 
 	/**
 	 * Gets the backup shareddefaults XML file. Presence of the file indicates

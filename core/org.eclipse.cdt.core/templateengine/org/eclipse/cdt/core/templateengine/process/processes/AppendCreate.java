@@ -68,7 +68,7 @@ public class AppendCreate extends ProcessRunner {
 				if (!iFile.getParent().exists()) {
 					ProcessHelper.mkdirs(projectHandle, projectHandle.getFolder(iFile.getParent().getProjectRelativePath()));
 				} 
-				InputStream contents = new ByteArrayInputStream(fileContents.getBytes());;
+				InputStream contents = new ByteArrayInputStream(fileContents.getBytes());
 				if (!iFile.exists()) {
 					// Create the file
 					iFile.create(contents, true, null);

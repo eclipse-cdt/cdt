@@ -111,7 +111,7 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 		if (!selection.isEmpty() && isProjectSelection && hasBuilder) {
 			fCleanAction.selectionChanged(selection);
 			if (fCleanAction.isEnabled()) {
-				menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, fCleanAction);
+				menu.insertAfter(BuildAction.ID_BUILD, fCleanAction);
 			}
 		}
 		menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, new Separator(BUILD_GROUP_MARKER));

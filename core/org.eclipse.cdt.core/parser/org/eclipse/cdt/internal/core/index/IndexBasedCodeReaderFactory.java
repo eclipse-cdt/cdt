@@ -10,6 +10,7 @@
  * Markus Schorn (Wind River Systems)
  * Andrew Ferguson (Symbian)
  * Anton Leherbauer (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -60,8 +61,13 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		public IIndexFile fFile= null;
 		public int fRequested= 0;
 	}
+	private static class NeedToParseException extends Exception {
+		private static final long serialVersionUID = 1L;
+	}
 	
 	private final static boolean CASE_SENSITIVE_FILES= !new File("a").equals(new File("A"));  //$NON-NLS-1$//$NON-NLS-2$
+	private final static char[] EMPTY_CHARS = new char[0];
+
 	private final IIndex index;
 	private Map/*<IIndexFileLocation,FileInfo>*/ fileInfoCache;
 	private Map/*<String,IIndexFileLocation>*/ iflCache;
@@ -71,11 +77,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	private ICodeReaderFactory fFallBackFactory;
 	private CallbackHandler fCallbackHandler;
 	
-	private static final char[] EMPTY_CHARS = new char[0];
 	
-	private static class NeedToParseException extends Exception {
-		private static final long serialVersionUID = 1L;
-	}
 	public IndexBasedCodeReaderFactory(IIndex index) {
 		this(index, new HashMap/*<String,IIndexFileLocation>*/());
 	}
@@ -95,6 +97,10 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		this.fFallBackFactory= fallbackFactory;
 	}
 
+	final protected Map getIFLCache() {
+		return iflCache;
+	}
+	
 	public int getUniqueIdentifier() {
 		return 0;
 	}

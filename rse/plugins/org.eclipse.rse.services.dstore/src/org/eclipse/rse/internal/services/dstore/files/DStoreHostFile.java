@@ -189,8 +189,10 @@ public class DStoreHostFile implements IHostFile
 	{
 		String parentPath = _element.getValue();
 		String name = _element.getName();
-		if (parentPath == null || parentPath.length() == 0 || 
-				(name.length() == 0 && (parentPath.equals("/") || parentPath.endsWith(":\\"))) //$NON-NLS-1$ //$NON-NLS-2$
+		if (parentPath == null || 
+				parentPath.length() == 0 || 
+				(name.length() == 0 && (parentPath.equals("/") || parentPath.endsWith(":\\")) ||
+				(name.equals(parentPath) && parentPath.endsWith(":\\"))) //$NON-NLS-1$ //$NON-NLS-2$ // %NON-NLS-3$
 				)
 						
 		{
@@ -243,6 +245,7 @@ public class DStoreHostFile implements IHostFile
 	{			
 		// set the absolute path			
 		String name = _element.getName();
+		String value = _element.getValue();
 		if (name == null)
 		{
 			// this element is deleted
@@ -250,7 +253,7 @@ public class DStoreHostFile implements IHostFile
 		}
 		else if (name.length() == 0)
 		{
-			_absolutePath = _element.getValue();
+			_absolutePath = value;
 		} 
 		else
 		{
@@ -263,6 +266,10 @@ public class DStoreHostFile implements IHostFile
 			else if (name.length() == 0)
 			{
 				_absolutePath = PathUtility.normalizeUnknown(parentPath);
+			}
+			else if (name == value)
+			{
+				_absolutePath = name;
 			}
 			else
 			{

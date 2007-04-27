@@ -12,7 +12,7 @@
 <target name="allElements">
 	<ant antfile="${genericTargets}" target="${target}" >
 		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.cdt.upc.feature" />
+		<property name="id" value="org.eclipse.cdt.core.parser.upc.feature" />
 	</ant>
 </target>
 

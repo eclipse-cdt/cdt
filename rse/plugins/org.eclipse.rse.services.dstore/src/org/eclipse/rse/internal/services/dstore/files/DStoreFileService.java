@@ -11,6 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
+ * Kevin Doyle (IBM) - Fix 183870 - Display File Exists Error
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
@@ -835,6 +836,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (status == null) return null;
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
 			return new DStoreHostFile(de);
+		else if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.FAILED_WITH_EXIST))
+		{
+			throw new SystemMessageException(getMessage("RSEF1303").makeSubstitution(remotePath)); //$NON-NLS-1$
+		}
 		else
 		{
 			throw new SystemMessageException(getMessage("RSEF1302").makeSubstitution(remotePath)); //$NON-NLS-1$
@@ -851,6 +856,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (status == null) return null;
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
 			return new DStoreHostFile(de);
+		else if(FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.FAILED_WITH_EXIST))
+		{
+			throw new SystemMessageException(getMessage("RSEF1309").makeSubstitution(remotePath)); //$NON-NLS-1$
+		}
 		else
 		{
 			throw new SystemMessageException(getMessage("RSEF1304").makeSubstitution(remotePath)); //$NON-NLS-1$

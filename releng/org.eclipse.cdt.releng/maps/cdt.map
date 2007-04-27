@@ -56,3 +56,9 @@ feature@org.eclipse.cdt.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot
 plugin@org.eclipse.cdt.windows.build=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.windows.build
 plugin@org.eclipse.cdt.windows=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.windows
 feature@org.eclipse.cdt.windows=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.windows-feature
+
+! GDB Hardware Debugging Feature
+plugin@org.eclipse.cdt.debug.gdbjtag=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/jtag/org.eclipse.cdt.debug.gdbjtag
+plugin@org.eclipse.cdt.debug.gdbjtag.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/jtag/org.eclipse.cdt.debug.gdbjtag.core
+plugin@org.eclipse.cdt.debug.gdbjtag.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/jtag/org.eclipse.cdt.debug.gdbjtag.ui
+feature@org.eclipse.cdt.debug.gdbjtag=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/jtag/org.eclipse.cdt.debug.gdbjtag-feature

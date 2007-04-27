@@ -30,11 +30,11 @@ public class IndexTests extends TestSuite {
 		suite.addTest(TeamSharedIndexTest.suite());
 		suite.addTest(IndexProviderManagerTest.suite());
 		
-		IndexCBindingResolutionTest.addTests(suite);
-		IndexCPPTemplateResolutionTest.addTests(suite);
+		IndexCPPBindingResolutionBugs.addTests(suite);
 		IndexCPPBindingResolutionTest.addTests(suite);
+		IndexCPPTemplateResolutionTest.addTests(suite);
 		IndexCBindingResolutionBugs.addTests(suite);
-		IndexBindingResolutionBugs.addTests(suite);
+		IndexCBindingResolutionTest.addTests(suite);
 		
 		return suite;
 	}	

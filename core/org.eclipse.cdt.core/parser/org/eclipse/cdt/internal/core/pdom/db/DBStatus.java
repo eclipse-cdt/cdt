@@ -27,7 +27,7 @@ public class DBStatus extends Status {
 	 * @param exception
 	 */
 	public DBStatus(IOException exception) {
-		super(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "IOException", exception);
+		super(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "IOException", exception); //$NON-NLS-1$
 	}
 
 }

@@ -162,6 +162,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 			} else if (binding instanceof ICPPTemplateDefinition) {
 				if(binding instanceof ICPPClassTemplate) {
 					return new CompositeCPPClassTemplate(this, (ICPPClassType) findOneDefinition(binding));
+				} else if (binding instanceof ICPPConstructor) {
+					return new CompositeCPPConstructorTemplate(this, (ICPPConstructor) binding);
+				} else if (binding instanceof ICPPMethod) {
+						return new CompositeCPPMethodTemplate(this, (ICPPMethod) binding);
 				} else if (binding instanceof ICPPFunctionTemplate) {
 					return new CompositeCPPFunctionTemplate(this, (ICPPFunction) binding);
 				} else {

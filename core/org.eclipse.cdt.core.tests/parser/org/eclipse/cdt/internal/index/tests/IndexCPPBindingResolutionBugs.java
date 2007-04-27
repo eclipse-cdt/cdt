@@ -19,9 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -29,12 +32,12 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 /**
  * For testing PDOM binding resolution
  */
-public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
+public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBase {
 
-	public static class SingleProject extends IndexBindingResolutionBugs {
+	public static class SingleProject extends IndexCPPBindingResolutionBugs {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
 	}
-	public static class ProjectWithDepProj extends IndexBindingResolutionBugs {
+	public static class ProjectWithDepProj extends IndexCPPBindingResolutionBugs {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
 	}
 	
@@ -44,11 +47,37 @@ public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 	}
 	
 	public static TestSuite suite() {
-		return suite(IndexBindingResolutionBugs.class);
+		return suite(IndexCPPBindingResolutionBugs.class);
 	}
 	
-	public IndexBindingResolutionBugs() {
+	public IndexCPPBindingResolutionBugs() {
 		setStrategy(new SinglePDOMTestStrategy(true));
+	}
+	
+	//	class MyClass {
+	//	public:
+	//		template<class T>
+	//		T* MopGetObject(T*& aPtr) 
+	//			{ return 0; }
+	//			
+	//		
+	//		template<class T>	
+	//		T*  MopGetObjectNoChaining(T*& aPtr)
+	//		{ return 0; }
+	//
+	//	};
+	
+	//	int main() {
+	//		MyClass* cls;
+	//	}
+	public void test184216() throws Exception {
+		IBinding b0= getBindingFromASTName("MyClass", 7);
+		assertInstance(b0, ICPPClassType.class);
+		ICPPClassType ct= (ICPPClassType) b0;
+		ICPPMethod[] ms= ct.getDeclaredMethods(); // 184216 reports CCE thrown
+		assertEquals(2, ms.length);
+		assertInstance(ms[0], ICPPTemplateDefinition.class);
+		assertInstance(ms[1], ICPPTemplateDefinition.class);
 	}
 	
 	// // header file

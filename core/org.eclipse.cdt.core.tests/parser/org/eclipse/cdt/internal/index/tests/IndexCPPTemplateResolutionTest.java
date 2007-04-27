@@ -42,7 +42,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		suite.addTest(suite(SingleProject.class));
 		suite.addTest(suite(ProjectWithDepProj.class));
 	}
-	
 
 	//	template<typename X>
 	//	void foo(X x) {}

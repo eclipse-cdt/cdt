@@ -374,7 +374,7 @@
 		<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.errorparsers.xlc"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/c99/org.eclipse.cdt.xlc.feature"/>
+			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.feature"/>
 		</antcall>
 	</target>
 </project>

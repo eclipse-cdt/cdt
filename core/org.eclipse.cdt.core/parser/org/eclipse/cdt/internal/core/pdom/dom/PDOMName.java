@@ -173,16 +173,6 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		setNameField(FILE_NEXT_OFFSET, name);
 	}
 		
-	public PDOMBinding resolveBinding() {
-		try {
-			int bindingRecord = pdom.getDB().getInt(record + BINDING_REC_OFFSET);
-			return pdom.getBinding(bindingRecord);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
-	}
-
 	public char[] toCharArray() {
 		try {
 			Database db = pdom.getDB();

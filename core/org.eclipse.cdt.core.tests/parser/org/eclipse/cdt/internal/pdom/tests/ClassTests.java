@@ -151,7 +151,7 @@ public class ClassTests extends PDOMTestBase {
 		loc = refs[0].getFileLocation();
 		assertEquals(offset("constructor.cpp","number(num)"), loc.getNodeOffset()); //character offset	
 		
-		assertEquals(bindings[0], ((PDOMName)refs[0]).resolveBinding());
+		assertEquals(bindings[0], ((PDOMName)refs[0]).getBinding());
 	}
 	
 	public void testAbsenceOfDefaultConstructorWhenExplicitNonDefaultPresentA() throws Exception {

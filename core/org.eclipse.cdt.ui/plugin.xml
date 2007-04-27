@@ -744,6 +744,11 @@
       <objectContribution 
           id="org.eclipse.cdt.ui.cproject.in.explorer.contrib"
           objectClass="org.eclipse.core.resources.IProject">
+         <visibility>
+              <objectState
+                 name="projectNature"
+                 value="org.eclipse.cdt.core.cnature"/>
+         </visibility>
          <action
              class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
              id="org.eclipse.cdt.ui.syncIndexWithDiskAction"

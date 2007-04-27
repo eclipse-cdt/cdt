@@ -999,6 +999,7 @@ public class CommandMinerThread extends MinerThread
 			
 				_lastPrompt = object;
 				_cwdStr = object.getSource();
+				_status.setAttribute(DE.A_SOURCE, fileName);
 			}
 		}
 	}

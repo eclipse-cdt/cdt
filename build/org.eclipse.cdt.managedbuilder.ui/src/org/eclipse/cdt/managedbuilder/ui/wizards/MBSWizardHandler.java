@@ -543,7 +543,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	public void initialize(EntryDescriptor data) throws CoreException {
 		EntryInfo info = new EntryInfo(data);
 		if(!info.isValid())
-			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), "inappropriate descriptor"));
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), "inappropriate descriptor")); //$NON-NLS-1$
 		
 		entryInfo = info;
 	}

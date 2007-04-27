@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
@@ -195,10 +196,12 @@ public abstract class AbstractCLanguage extends AbstractLanguage implements ICLa
 	public String[] getKeywords() {
 		Set keywords= KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, ParserLanguage.C);
 		keywords= new HashSet(keywords);
-		List additionalKeywords= getScannerExtensionConfiguration().getAdditionalKeywords().toList();
-		for (Iterator iterator = additionalKeywords.iterator(); iterator.hasNext(); ) {
-			char[] name = (char[]) iterator.next();
-			keywords.add(new String(name));
+		CharArrayIntMap additionalKeywords= getScannerExtensionConfiguration().getAdditionalKeywords();
+		if (additionalKeywords != null) {
+			for (Iterator iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
+				char[] name = (char[]) iterator.next();
+				keywords.add(new String(name));
+			}
 		}
 		return (String[]) keywords.toArray(new String[keywords.size()]);
 	}
@@ -217,10 +220,12 @@ public abstract class AbstractCLanguage extends AbstractLanguage implements ICLa
 	public String[] getPreprocessorKeywords() {
 		Set keywords= KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, ParserLanguage.C);
 		keywords= new HashSet(keywords);
-		List additionalKeywords= getScannerExtensionConfiguration().getAdditionalPreprocessorKeywords().toList();
-		for (Iterator iterator = additionalKeywords.iterator(); iterator.hasNext(); ) {
-			char[] name = (char[]) iterator.next();
-			keywords.add(new String(name));
+		CharArrayIntMap additionalKeywords= getScannerExtensionConfiguration().getAdditionalPreprocessorKeywords();
+		if (additionalKeywords != null) {
+			for (Iterator iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
+				char[] name = (char[]) iterator.next();
+				keywords.add(new String(name));
+			}
 		}
 		return (String[]) keywords.toArray(new String[keywords.size()]);
 	}

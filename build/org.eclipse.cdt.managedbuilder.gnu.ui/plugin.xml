@@ -3738,6 +3738,9 @@
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
             <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
             <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
       </template>
       <template
             filterPattern=".*"
@@ -3745,6 +3748,9 @@
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
             <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
             <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
       </template>
       <template
             filterPattern=".*"
@@ -3752,6 +3758,9 @@
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
             <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
             <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
       </template>
    </extension>
 

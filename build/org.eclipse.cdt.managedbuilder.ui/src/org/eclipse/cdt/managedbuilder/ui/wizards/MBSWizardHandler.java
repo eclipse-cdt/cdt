@@ -581,7 +581,28 @@ public class MBSWizardHandler extends CWizardHandler {
 	 * @return - true if toolchain can be displayed
 	 */
 	protected boolean isToolChainAcceptable(String tcId, EntryDescriptor ed) {
-		return true;
+		if (entryInfo == null || entryInfo.template == null ||
+			entryInfo.template.getTemplateInfo() == null) 
+			return true;
+		
+		String[] ss = entryInfo.template.getTemplateInfo().getToolChainIds();
+		if (ss == null && ss.length == 0) 
+			return true;
+		
+		Object ob = full_tcs.get(tcId);
+		if (ob == null || !(ob instanceof IToolChain))
+			return false;
+		
+		String id1 = ((IToolChain)ob).getId();
+		IToolChain sup = ((IToolChain)ob).getSuperClass();
+		String id2 = sup == null ? null : sup.getId();
+		
+		for (int i=0; i<ss.length; i++) {
+			if ((ss[i] != null && ss[i].equals(id1)) ||
+				(ss[i] != null && ss[i].equals(id2)))
+				return true;
+		}
+		return false;
 	}
 	/**
 	 * Clones itself.

@@ -23,7 +23,7 @@
 <!-- Add one target for each root element and each configuration -->
 <!-- ===================================================================== -->
 
-<target name="assemble.org.eclipse.cdt.upc.feature">
+<target name="assemble.org.eclipse.cdt.core.parser.upc.feature">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="cdt-upc-${branchVersion}-${buildId}.zip"/>
 	</ant>

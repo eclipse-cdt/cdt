@@ -3737,18 +3737,21 @@
             location="templates/projecttemplates/HelloWorldCCProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
             <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
       </template>
       <template
             filterPattern=".*"
             location="templates/projecttemplates/HelloWorldCAnsiProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
             <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
       </template>
       <template
             filterPattern=".*"
             location="templates/projecttemplates/EmptyProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
             <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
       </template>
    </extension>
 

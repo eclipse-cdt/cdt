@@ -581,6 +581,11 @@ public class MBSWizardHandler extends CWizardHandler {
 	 * @return - true if toolchain can be displayed
 	 */
 	protected boolean isToolChainAcceptable(String tcId, EntryDescriptor ed) {
+		// This method is temporary diabled
+		// (always returns true) until the
+		// end of discusion tracked by bug #184457
+		if (true) return true;
+		
 		if (entryInfo == null || entryInfo.template == null ||
 			entryInfo.template.getTemplateInfo() == null) 
 			return true;

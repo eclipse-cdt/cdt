@@ -6541,6 +6541,117 @@
             </toolChain>
          </configuration>
       </projectType>
+      
+      <tool
+                     id="lv.tests.tool.base"
+                     isAbstract="false"
+                     name="lv.tests tool">
+             <option
+                  name="List Option in Top"
+                  command="-L"
+                  valueType="stringList"
+                  id="lv.tests.list.option">
+               <listOptionValue
+                     value="a">
+               </listOptionValue>
+               <listOptionValue
+                     value="b"
+                     builtIn="false">
+               </listOptionValue>
+               <listOptionValue
+                     value="c"
+                     builtIn="true">
+               </listOptionValue>
+            </option>
+             <option
+                  name="List Option in Top"
+                  command="-L"
+                  valueType="libFiles"
+                  id="lv.tests.libFiles.option">
+               <listOptionValue
+                     value="lf_a">
+               </listOptionValue>
+               <listOptionValue
+                     value="lf_b"
+                     builtIn="false">
+               </listOptionValue>
+               <listOptionValue
+                     value="lf_c"
+                     builtIn="true">
+               </listOptionValue>
+            </option>
+            <inputType
+                  id="lv.test.it"
+                  sources="c,cpp">
+            </inputType>
+       </tool>
+      
+      <projectType
+            id="lv.tests.ptype"
+            isAbstract="false"
+            isTest="true"
+            name="lv_tests">
+         <configuration
+               id="lv.tests.cfg1"
+               name="lvTests">
+            <toolChain isSystem="true"
+                  id="lv.tests.tc"
+                  isAbstract="false"
+                  name="lv tests tc">
+               <builder
+                     id="lv.tests.builder"
+                     isAbstract="false"
+                     isVariableCaseSensitive="false"
+                     name="lv tests b"/>
+               <targetPlatform
+                     id="lv.tests.targetplatform"
+                     isAbstract="false"
+                     name="lv.tests targetplatform"/>
+               <tool
+                     id="lv.tests.tool"
+                     isAbstract="false"
+                     name="lv.tests tool"
+                     superClass="lv.tests.tool.base">
+             <!--option
+                  name="List Option in Top"
+                  command="-L"
+                  valueType="stringList"
+                  id="lv.tests.list.option.2">
+               <listOptionValue
+                     value="a2">
+               </listOptionValue>
+               <listOptionValue
+                     value="b2"
+                     builtIn="false">
+               </listOptionValue>
+               <listOptionValue
+                     value="c2"
+                     builtIn="true">
+               </listOptionValue>
+            </option>
+             <option
+                  name="List Option in Top"
+                  command="-L"
+                  valueType="libFiles"
+                  id="lv.tests.libFile.option.2">
+               <listOptionValue
+                     value="lf_a2">
+               </listOptionValue>
+               <listOptionValue
+                     value="lf_b2"
+                     builtIn="false">
+               </listOptionValue>
+               <listOptionValue
+                     value="lf_c2"
+                     builtIn="true">
+               </listOptionValue>
+            </option-->
+               </tool>
+            </toolChain>
+         </configuration>
+
+      </projectType>
+
    </extension>
    
    <extension

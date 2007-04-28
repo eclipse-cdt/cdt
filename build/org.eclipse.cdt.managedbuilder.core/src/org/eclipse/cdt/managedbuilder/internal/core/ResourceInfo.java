@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -412,6 +413,45 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		} 
 		return retOpt;
 	}
+	
+	public IOption setOption(IHoldsOptions parent, IOption option, OptionStringValue[] value) throws BuildException {
+		IOption retOpt = option;
+		// Is there a change?
+		OptionStringValue[] oldValue;
+		switch (option.getBasicValueType()) {
+			case IOption.STRING_LIST :
+				oldValue = ((Option)option).getBasicStringListValueElements();
+				break;
+//			case IOption.STRING_LIST :
+//				oldValue = option.getStringListValue();
+//				break;
+//			case IOption.INCLUDE_PATH :
+//				oldValue = option.getIncludePaths();
+//				break;
+//			case IOption.PREPROCESSOR_SYMBOLS :
+//				oldValue = option.getDefinedSymbols();
+//				break;
+//			case IOption.LIBRARIES :
+//				oldValue = option.getLibraries();
+//				break;
+//			case IOption.OBJECTS :
+//				oldValue = option.getUserObjects();
+//				break;
+			default :
+				oldValue = new OptionStringValue[0];
+				break;
+		}
+		if(!Arrays.equals(value, oldValue)) {
+			retOpt = parent.getOptionToSet(option, false);
+			((Option)retOpt).setValue(value);
+//			if(resourceData != null)
+//				((ISettingsChangeListener)resourceData).optionChanged(this, parent, option, oldValue);
+			NotificationManager.getInstance().optionChanged(this, parent, option, oldValue);
+//			rebuildNeeded = true;
+		} 
+		return retOpt;
+	}
+
 	
 	public void propertiesChanged(){
 		if(isExtensionElement())

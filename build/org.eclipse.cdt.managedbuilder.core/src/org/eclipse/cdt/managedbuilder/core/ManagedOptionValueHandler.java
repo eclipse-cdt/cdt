@@ -12,6 +12,7 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -99,6 +100,10 @@ public class ManagedOptionValueHandler implements
                       IOption option, String extraArgument) {
 		// Get the default Value
 	   Object defaultValue = option.getDefaultValue();
+	   if(defaultValue instanceof List){
+		   List list = (List)defaultValue;
+		   defaultValue = list.toArray(new String[list.size()]);
+	   }
 	   
 		try {
 			// Figure out which type the option is and implement default behaviour for it.

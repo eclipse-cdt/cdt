@@ -106,4 +106,6 @@ public interface IResourceInfo extends IBuildObject {
 	public IOption setOption(IHoldsOptions parent, IOption option, String[] value)
 		throws BuildException;
 
+	public IOption setOption(IHoldsOptions parent, IOption option, OptionStringValue[] value)
+		throws BuildException;
 }

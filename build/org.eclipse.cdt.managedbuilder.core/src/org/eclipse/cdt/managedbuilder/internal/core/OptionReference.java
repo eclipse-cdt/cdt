@@ -25,6 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
@@ -882,4 +883,13 @@ public class OptionReference implements IOption {
 		}
 	}
 
+	public OptionStringValue[] getBasicStringListValueElements()
+			throws BuildException {
+		String[] str = getBasicStringListValue();
+		OptionStringValue[] ve = new OptionStringValue[str.length];
+		for(int i = 0; i < str.length; i++){
+			ve[i] = new OptionStringValue(str[i]);
+		}
+		return ve;
+	}
 }

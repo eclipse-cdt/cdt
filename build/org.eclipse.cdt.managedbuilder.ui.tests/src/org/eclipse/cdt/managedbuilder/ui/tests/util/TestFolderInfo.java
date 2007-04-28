@@ -11,6 +11,7 @@ import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
@@ -224,6 +225,12 @@ public class TestFolderInfo implements IFolderInfo {
 	public boolean canExclude(boolean exclude) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public IOption setOption(IHoldsOptions parent, IOption option,
+			OptionStringValue[] value) throws BuildException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

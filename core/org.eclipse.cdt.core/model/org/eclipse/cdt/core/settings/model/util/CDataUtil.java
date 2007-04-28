@@ -188,6 +188,7 @@ public class CDataUtil {
 		
 		String value = null;
 		IPath[] exclusionFilters = null;
+		IPath srcPath = null, srcRootPath = null, srcPrefixMapping = null;
 		
 		switch (entry.getKind()) {
 		case ICSettingEntry.MACRO:
@@ -197,6 +198,18 @@ public class CDataUtil {
 			} catch (CdtVariableException e) {
 				CCorePlugin.log(e);
 			}
+			break;
+		case ICSettingEntry.LIBRARY_FILE:
+			ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
+			srcPath = libFile.getSourceAttachmentPath();
+			srcRootPath = libFile.getSourceAttachmentRootPath();
+			srcPrefixMapping = libFile.getSourceAttachmentPrefixMapping();
+			if(srcPath != null)
+				srcPath = resolvePath(mngr, cfg, srcPath);
+			if(srcRootPath != null)
+				srcRootPath = resolvePath(mngr, cfg, srcRootPath);
+			if(srcPrefixMapping != null)
+				srcPrefixMapping = resolvePath(mngr, cfg, srcPrefixMapping);
 			break;
 		case ICSettingEntry.SOURCE_PATH:
 		case ICSettingEntry.OUTPUT_PATH:
@@ -215,7 +228,23 @@ public class CDataUtil {
 //			throw new IllegalArgumentException();
 		}
 		
-		return createEntry(entry.getKind(), name, value, exclusionFilters, entry.getFlags() | ICSettingEntry.RESOLVED);
+		return createEntry(entry.getKind(), name, value, exclusionFilters, entry.getFlags() | ICSettingEntry.RESOLVED, srcPath, srcRootPath, srcPrefixMapping);
+	}
+	
+	private static IPath resolvePath(ICdtVariableManager mngr, ICConfigurationDescription cfg, IPath path){
+		if(path == null)
+			return null;
+		
+		try {
+			String unresolved = path.toString();
+			String resolved = mngr.resolveValue(unresolved, "", " ", cfg);  //$NON-NLS-1$  //$NON-NLS-2$
+			if(resolved != null && !resolved.equals(unresolved))
+				path = new Path(resolved);
+		} catch (CdtVariableException e) {
+			CCorePlugin.log(e);
+		}
+		
+		return path;
 	}
 
 	public static ICLanguageSettingEntry createEntry(ICLanguageSettingEntry entry, int flagsToAdd, int flafsToClear){
@@ -253,6 +282,11 @@ public class CDataUtil {
 	}
 
 	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags){
+		return createEntry(kind, name, value, exclusionPatterns, flags, null, null, null);
+	}
+
+	
+	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags, IPath srcPath, IPath srcRootPath, IPath srcPrefixMapping){
 		switch (kind){
 		case ICLanguageSettingEntry.INCLUDE_PATH:
 			return new CIncludePathEntry(name, flags);
@@ -265,7 +299,7 @@ public class CDataUtil {
 		case ICLanguageSettingEntry.LIBRARY_PATH:
 			return new CLibraryPathEntry(name, flags);
 		case ICLanguageSettingEntry.LIBRARY_FILE:
-			return new CLibraryFileEntry(name, flags);
+			return new CLibraryFileEntry(name, flags, srcPath, srcRootPath, srcPrefixMapping);
 		case ICLanguageSettingEntry.OUTPUT_PATH:
 			return new COutputEntry(name, exclusionPatterns, flags);
 		case ICLanguageSettingEntry.SOURCE_PATH:

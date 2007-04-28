@@ -472,4 +472,6 @@ public interface IOption extends IBuildObject {
 	 * @return
 	 */
 	String[] getBasicStringListValue() throws BuildException;
+	
+	public OptionStringValue[] getBasicStringListValueElements() throws BuildException;
 }

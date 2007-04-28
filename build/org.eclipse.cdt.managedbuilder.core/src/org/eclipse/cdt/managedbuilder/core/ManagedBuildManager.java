@@ -1188,6 +1188,29 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 		return retOpt;
 	}
+	
+	public static IOption setOption(IResourceInfo resConfig, IHoldsOptions holder, IOption option, OptionStringValue[] value) {
+		IOption retOpt;
+		try {
+			retOpt = resConfig.setOption(holder, option, value);
+			if (retOpt.getValueHandler().handleValue(
+					resConfig, 
+					holder, 
+					retOpt,
+					retOpt.getValueHandlerExtraArgument(), 
+					IManagedOptionValueHandler.EVENT_APPLY)) {
+				// TODO : Event is handled successfully and returned true.
+				// May need to do something here say log a message.
+			} else {
+				// Event handling Failed. 
+			} 
+//			initializePathEntries(resConfig,retOpt);
+			notifyListeners(resConfig, retOpt);				
+		} catch (BuildException e) {
+			return null;
+		}
+		return retOpt;
+	}
 
 	/**
 	 * @param config

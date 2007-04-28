@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.COutputEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.core.runtime.IPath;
@@ -36,6 +37,9 @@ public class LanguageSettingEntriesSerializer {
 	public static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_FLAGS = "flags"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_EXCLUDING = "excluding"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_SOURCE_ATTACHMENT_PATH = "srcPath"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_SOURCE_ATTACHMENT_ROOT_PATH = "srcRootPath"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_SOURCE_ATTACHMENT_PREFIX_MAPPING = "srcPrefixMapping"; //$NON-NLS-1$
 	
 //	public static final String ATTRIBUTE_FULL_PATH = "fullPath"; //$NON-NLS-1$
 //	public static final String ATTRIBUTE_LOCATION = "location"; //$NON-NLS-1$
@@ -111,7 +115,10 @@ public class LanguageSettingEntriesSerializer {
 		case ICLanguageSettingEntry.LIBRARY_PATH:
 			return new CLibraryPathEntry(name, flags);
 		case ICLanguageSettingEntry.LIBRARY_FILE:
-			return new CLibraryFileEntry(name, flags);
+			IPath srcPath = loadPath(el, ATTRIBUTE_SOURCE_ATTACHMENT_PATH);
+			IPath srcRootPath = loadPath(el, ATTRIBUTE_SOURCE_ATTACHMENT_ROOT_PATH);
+			IPath srcPrefixMapping = loadPath(el, ATTRIBUTE_SOURCE_ATTACHMENT_PREFIX_MAPPING);
+			return new CLibraryFileEntry(name, flags, srcPath, srcRootPath, srcPrefixMapping);
 		case ICLanguageSettingEntry.OUTPUT_PATH:
 			return new COutputEntry(name, loadExclusions(el), flags);
 		case ICLanguageSettingEntry.SOURCE_PATH:
@@ -120,6 +127,18 @@ public class LanguageSettingEntriesSerializer {
 		return null;
 	}
 	
+	private static IPath loadPath(ICStorageElement el, String attr){
+		String value = el.getAttribute(attr);
+		if(value != null)
+			return new Path(value);
+		return null;
+	}
+
+	private static void storePath(ICStorageElement el, String attr, IPath path){
+		if(path != null)
+			el.setAttribute(attr, path.toString());
+	}
+
 	private static IPath[] loadExclusions(ICStorageElement el){
 		String attr = el.getAttribute(ATTRIBUTE_EXCLUDING);
 		if(attr != null){
@@ -173,6 +192,19 @@ public class LanguageSettingEntriesSerializer {
 			IPath paths[] = ((ICExclusionPatternPathEntry)entry).getExclusionPatterns();
 			storeExclusions(element, paths);
 			break;
+		case ICLanguageSettingEntry.LIBRARY_FILE:
+			ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
+			IPath path = libFile.getSourceAttachmentPath();
+			if(path != null)
+				element.setAttribute(ATTRIBUTE_SOURCE_ATTACHMENT_PATH, path.toString());
+			
+			path = libFile.getSourceAttachmentRootPath();
+			if(path != null)
+				element.setAttribute(ATTRIBUTE_SOURCE_ATTACHMENT_ROOT_PATH, path.toString());
+
+			path = libFile.getSourceAttachmentPrefixMapping();
+			if(path != null)
+				element.setAttribute(ATTRIBUTE_SOURCE_ATTACHMENT_PREFIX_MAPPING, path.toString());
 		}
 	}
 	

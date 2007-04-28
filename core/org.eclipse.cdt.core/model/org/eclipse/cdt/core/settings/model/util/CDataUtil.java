@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
@@ -239,7 +240,13 @@ public class CDataUtil {
 			entry = new CLibraryPathEntry(entry.getName(), flags);
 			break;
 		case ICLanguageSettingEntry.LIBRARY_FILE:
-			entry = new CLibraryFileEntry(entry.getName(), flags);
+			ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
+			entry = new CLibraryFileEntry(entry.getName(), 
+					flags,
+					libFile.getSourceAttachmentPath(), 
+					libFile.getSourceAttachmentRootPath(), 
+					libFile.getSourceAttachmentPrefixMapping()
+					);
 			break;
 		}
 		return entry;

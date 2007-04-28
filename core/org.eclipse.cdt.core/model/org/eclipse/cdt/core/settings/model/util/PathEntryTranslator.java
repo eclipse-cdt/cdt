@@ -409,6 +409,7 @@ public class PathEntryTranslator {
 		
 		switch(entry.fEntry.getEntryKind()){
 			case IPathEntry.CDT_LIBRARY:{
+				ILibraryEntry libEntry = (ILibraryEntry)entry.fEntry;
 				IPath path = value.getFullPath();
 				if(path != null){
 					flags |= ICLanguageSettingEntry.VALUE_WORKSPACE_PATH;
@@ -417,7 +418,10 @@ public class PathEntryTranslator {
 				}
 				
 				if(path != null){
-					return new CLibraryFileEntry(value.getName(), flags);
+					return new CLibraryFileEntry(value.getName(), flags, 
+							libEntry.getSourceAttachmentPath(),
+							libEntry.getSourceAttachmentRootPath(),
+							libEntry.getSourceAttachmentPrefixMapping());
 				}
 				break;
 			}

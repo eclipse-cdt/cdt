@@ -263,7 +263,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	public Object[][] getOptions(IResourceInfo resinfo, IHoldsOptions optionHolder) {
 		IHoldsOptions[] optionHolders = new IHoldsOptions[1];
 		optionHolders[0] = optionHolder;
-		return getOptions(optionHolders, FILTER_FILE);
+		return getOptions(optionHolders, ((ResourceInfo)resinfo).isRoot() ? FILTER_PROJECT : FILTER_FILE);
 	}
 		
 	/* (non-Javadoc)

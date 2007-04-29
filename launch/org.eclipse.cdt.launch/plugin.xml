@@ -82,7 +82,7 @@
                <count value="1"/>
                <iterate>
                  <or>
-                 	<test property="org.eclipse.cdt.launch.isExecutable"/>
+                 	<test property="org.eclipse.cdt.launch.isCElement"/>
                  	<instanceof value="org.eclipse.cdt.internal.core.model.CProject"/>
                  </or>
                </iterate>
@@ -107,7 +107,7 @@
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
       		namespace="org.eclipse.cdt.launch"
-            properties="isExecutable"
+            properties="isCElement"
             type="org.eclipse.core.runtime.IAdaptable"
             class="org.eclipse.cdt.launch.internal.CPropertyTester"
             id="org.eclipse.cdt.launch.CPropertyTester">

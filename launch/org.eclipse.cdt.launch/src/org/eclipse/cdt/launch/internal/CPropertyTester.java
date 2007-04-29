@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial implementation
+ *     Ken Ryall (Nokia) - Modified to launch on a project context.
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal;
 
@@ -26,10 +27,24 @@ public class CPropertyTester extends PropertyTester {
 	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
 	 */
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+		if ("isCElement".equals(property)) { //$NON-NLS-1$
+			return isCElement(receiver);
+		}
 		if ("isExecutable".equals(property)) { //$NON-NLS-1$
 			return isExecutable(receiver);
 		}
 		return false;
+	}
+
+	private boolean isCElement(Object receiver) {
+		ICElement celement = null;
+		if (receiver instanceof IAdaptable) {
+			IResource res = (IResource) ((IAdaptable)receiver).getAdapter(IResource.class);
+			if (res != null) {
+				celement = CoreModel.getDefault().create(res);
+			}
+		}
+		return (celement != null);
 	}
 
 	/**

@@ -86,33 +86,33 @@ screenText[21]='Console View with Program Terminated';
 
 
 function nav_a() {	
+					document.home.src='../images/icon_home.png';  
+					document.home.title='Start Over'; 
+					
 					document.back.src='../images/icon_back.png';  
 					document.back.title='Back';
-					
-					document.home.src='../images/icon_previous.png';  
-					document.home.title='Start Over'; 
 					
 					document.next.src='../images/icon_forward.png';  
 					document.next.title='Next';  
 				 };
 				 
 function nav_b() {
-					document.back.src='../images/trans.gif'; 
-					document.back.title='';
-					
 					document.home.src='../images/trans.gif'; 
 					document.home.title=''; 
+					
+					document.back.src='../images/trans.gif'; 
+					document.back.title='';
 					
 					document.next.src='../images/icon_forward.png';  
 					document.next.title='Next';  
 				 };
 				 
 function nav_e() {	
+					document.home.src='../images/icon_home.png';  
+					document.home.title='Start Over'; 
+					
 					document.back.src='../images/icon_back.png';  
 					document.back.title='Back';
-					
-					document.home.src='../images/icon_previous.png';  
-					document.home.title='Start Over'; 
 					
 					document.next.src='../images/trans.gif';
 					document.next.title='';  
@@ -147,17 +147,18 @@ function goBack() {
 </head>
 <body>
 <h2>CDT Managed Make Tutorial</h2>
-<center>
-<IFRAME name=textFrame SRC="cdt_w_basic01.htm" TITLE="cdt_w_basic Text" MARGINWIDTH=0 MARGINHEIGHT=0 width=800 height=200 frameborder=0 SCROLLING=auto></IFRAME>
-<table width="600px" border="0" cellspacing="0" summary="">
+<IFRAME name=textFrame SRC="cdt_w_basic01.htm" TITLE="cdt_w_basic Text" MARGINWIDTH=0 MARGINHEIGHT=0 width="90%" height="180" frameborder=0 SCROLLING=auto></IFRAME>
+<hr>
+<table width="120px" border="0" cellspacing="0" summary="" >
 	<tr>
-		<td><img src="../images/trans.gif" align="left" width="22" height="22" onClick="goBack();" title="" name="back"></td>
-		<td><center><img src="../images/trans.gif" width="22" height="22" onClick="reset();" title="" name="home"></center></td>
-		<td><img src="../images/icon_forward.png" align="right" width="22" height="22" onClick="goNext();" title="Next" name="next" ></td>
+		<td align="center"><img src="../images/trans.gif" width="22" height="22" onClick="reset();" title="" name="home"></img></td>
+		<td align="right"><img src="../images/trans.gif" align="left" width="22" height="22" onClick="goBack();" title="" name="back"></td>
+		<td align="right"><img src="../images/icon_forward.png" width="22" height="22" onClick="goNext();" title="Next" name="next" ></td>
 	</tr>
 </table>
-<p><img src="../images/cdt_w_basic01.png" align="center" width="800" height="600" alt="Eclipse Logo" name="screen" ></p>
-</center>
+<p><img src="../images/cdt_w_basic01.png" align="center" alt="Tutorial image" name="screen" ></p>
+
+<hr>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
 </body>
 </html>

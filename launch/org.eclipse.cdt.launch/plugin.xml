@@ -101,7 +101,10 @@
          <perspective
                id="org.eclipse.debug.ui.DebugPerspective">
          </perspective>
-      </shortcut>
+         <configurationType
+               id="org.eclipse.cdt.launch.localCLaunch">
+         </configurationType>
+	</shortcut>
    </extension>
 <!-- Property testers -->
    <extension point="org.eclipse.core.expressions.propertyTesters">

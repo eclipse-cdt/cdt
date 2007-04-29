@@ -71,5 +71,48 @@
             plugin="org.eclipse.cdt.launch">
       </contexts>
    </extension>
+   
+<!-- ============================================================================= -->
+<!-- KEYWORD INDEX EXTENSION                                                       -->
+<!-- ============================================================================= -->
+	<!--
+	<extension 
+		point="org.eclipse.help.index" >
+		<index file="index.xml" />
+	</extension>
+	-->
+
+
+!-- ============================================================================= -->
+<!-- CHEATSHEET EXTENSION                                                       -->
+<!-- ============================================================================= -->
+
+	<extension
+       point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+    	<category
+    		id="org.eclipse.cdt-doc.category.tutorials"
+    		name="C/C++ Development">
+    	</category>
+    	<cheatsheet
+    		category="org.eclipse.cdt-doc.category.tutorials"
+    		composite="false"
+    		contentFile="$nl$/org.eclipse.cdt.doc.user/cheatsheets/cs_cdt_basic.xml"
+    		id="org.eclipse.cdt-doc.cheatsheet.cdt_basic"
+    		name="Creating a C/C++ Managed Make project">
+       		<description>
+          		Use this tutorial to learn how to create a simple C/C++ project that uses the Managed Make system.
+       		</description>
+    	</cheatsheet>
+    	<cheatsheet
+    		category="org.eclipse.cdt-doc.category.tutorials"
+    		composite="false"
+    		contentFile="$nl$/org.eclipse.cdt.doc.user/cheatsheets/cs_cdt_import_project.xml"
+    		id="org.eclipse.cdt-doc.cheatsheet.cdt_basic"
+    		name="Importing a C/C++ Managed Make Project">
+       		<description>
+          		Use this tutorial to learn how to successfully import a CDT project.
+       		</description>
+    	</cheatsheet>
+	</extension>
 
 </plugin>

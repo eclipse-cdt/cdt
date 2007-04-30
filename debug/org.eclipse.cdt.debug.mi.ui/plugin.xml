@@ -20,6 +20,11 @@
             class="org.eclipse.cdt.debug.mi.internal.ui.StandardGDBDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
             id="org.eclipse.cdt.debug.mi.GDBDebuggerPageNew"/>
+      <debuggerPage
+            class="org.eclipse.cdt.debug.mi.internal.ui.MinGWDebuggerPage"
+            debuggerID="org.eclipse.cdt.debug.mi.core.MinGW"
+            id="org.eclipse.cdt.debug.mi.MinGWDebuggerPage">
+      </debuggerPage>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

@@ -41,6 +41,9 @@
 
    <element name="debugger">
       <complexType>
+         <sequence>
+            <element ref="buildIdPattern" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
@@ -87,6 +90,18 @@
             </annotation>
          </attribute>
          <attribute name="coreFileFilter" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="buildIdPattern">
+      <complexType>
+         <attribute name="pattern" type="string">
             <annotation>
                <documentation>
                   

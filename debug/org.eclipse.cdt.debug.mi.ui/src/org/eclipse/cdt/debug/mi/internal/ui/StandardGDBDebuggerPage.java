@@ -89,7 +89,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	}
 
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand());
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand(configuration));
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, MIPlugin.getDefault().getCommandFactoryManager().getDefaultDescriptor( getDebuggerIdentifier() ).getIdentifier() );
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT );
@@ -97,7 +97,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 			fSolibBlock.setDefaults( configuration );
 	}
 	
-	private static String defaultGdbCommand() {
+	protected String defaultGdbCommand(ILaunchConfiguration configuration) {
 		String gdbCommand = null;
 
 		if (Platform.getOS().equals(Platform.OS_LINUX) &&
@@ -158,10 +158,10 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 
 	public void initializeFrom( ILaunchConfiguration configuration ) {
 		setInitializing( true );
-		String gdbCommand = defaultGdbCommand();
+		String gdbCommand = defaultGdbCommand(configuration);
 		String gdbInit = IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT;
 		try {
-			gdbCommand = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand());
+			gdbCommand = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand(configuration));
 		}
 		catch( CoreException e ) {
 		}

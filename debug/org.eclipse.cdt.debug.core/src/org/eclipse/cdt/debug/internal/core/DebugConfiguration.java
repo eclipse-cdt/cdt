@@ -162,4 +162,14 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		}
 		return fCoreExt;
 	}
+	
+	public String[] getSupportedBuildConfigPatterns() {
+		IConfigurationElement[] patternElems = fElement.getChildren("buildIdPattern"); //$NON-NLS-1$
+		String[] patterns = new String[patternElems.length];
+		for (int i = 0; i < patternElems.length; ++i) {
+			patterns[i] = patternElems[i].getAttribute("pattern"); //$NON-NLS-1$
+		}
+		return patterns;
+	}
+	
 }

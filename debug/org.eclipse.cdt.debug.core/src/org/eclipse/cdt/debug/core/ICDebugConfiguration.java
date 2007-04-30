@@ -31,4 +31,13 @@ public interface ICDebugConfiguration {
 	String[] getCoreFileExtensions();
 	boolean supportsCPU(String cpu);
 	boolean supportsMode(String mode);
+	
+	/**
+	 * Returns a list of supported build configuration ids.
+	 * Returns an empty array if a list has not been specified,
+	 * which means that this debug configuration supports all
+	 * build configurations.
+	 */
+	String[] getSupportedBuildConfigPatterns();
+	
 }

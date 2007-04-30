@@ -72,7 +72,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	 */
 	protected void update() {
 		IAction action = getAction();
-		if ( getView() != null && action != null ) {
+		if ( getView() != null && getView().getViewer() != null && action != null ) {
 			ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
 			action.setEnabled( ( target != null ) ? target.isSuspended() : false );
 		}

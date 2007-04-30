@@ -33,6 +33,17 @@
             modes="run,core,attach"
             name="%GDBDebugger.name"
             platform="*"/>
+      <debugger
+            class="org.eclipse.cdt.debug.mi.core.MinGWDebugger"
+            cpu="native"
+            id="org.eclipse.cdt.debug.mi.core.MinGW"
+            modes="run,core,attach"
+            name="%MinGWDebugger.name"
+            platform="win32">
+         <buildIdPattern
+               pattern="cdt\.managedbuild\.config\.gnu\.mingw.*">
+         </buildIdPattern>
+      </debugger>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
@@ -110,6 +121,13 @@
             miVersions="mi,mi1,mi2"
             name="%StandardMacOSCommandFactory.name"
             platforms="macosx"/>
+      <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.win32.StandardWinCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.MinGW"
+            id="org.eclipse.cdt.debug.mi.core.mingwCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%StandardWindowsCommandFactory.name"
+            platforms="win32"/>
    </extension>
 
 </plugin>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
+ *     Warren Paul (Nokia) - 150860
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -25,6 +26,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIFormattable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIBoolValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatValue;
@@ -209,6 +211,8 @@ public class CValue extends AbstractCValue {
 
 	private String processUnderlyingValue( ICDIValue cdiValue ) throws CDIException {
 		if ( cdiValue != null ) {
+			if ( cdiValue instanceof ICDIBoolValue )
+				return getBoolValueString( (ICDIBoolValue)cdiValue );
 			if ( cdiValue instanceof ICDICharValue )
 				return getCharValueString( (ICDICharValue)cdiValue );
 			else if ( cdiValue instanceof ICDIShortValue )
@@ -231,6 +235,29 @@ public class CValue extends AbstractCValue {
 				return getWCharValueString( (ICDIWCharValue)cdiValue );
 			else
 				return cdiValue.getValueString();
+		}
+		return null;
+	}
+
+	private String getBoolValueString( ICDIBoolValue value ) throws CDIException {
+		CVariableFormat format = getParentVariable().getFormat(); 
+		if ( CVariableFormat.NATURAL.equals( format ) ) {
+			short byteValue = value.shortValue();
+			if (byteValue == 0)
+				return "false";//$NON-NLS-1$
+			else if (byteValue == 1)
+				return "true";//$NON-NLS-1$
+			else
+				return Integer.toString( value.shortValue() );
+		}
+		else if ( CVariableFormat.DECIMAL.equals( format ) ) {
+			return Integer.toString( value.shortValue() );
+		}
+		else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
+			StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
+			String stringValue = (isUnsigned()) ? Integer.toHexString( value.shortValue() ) : Integer.toHexString( (byte)value.byteValue() );
+			sb.append( (stringValue.length() > 2) ? stringValue.substring( stringValue.length() - 2 ) : stringValue );
+			return sb.toString();
 		}
 		return null;
 	}

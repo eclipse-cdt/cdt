@@ -35,8 +35,8 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
  		String editorArea = layout.getEditorArea();
 		
 		IFolderLayout folder1= layout.createFolder("topLeft", IPageLayout.LEFT, (float)0.25, editorArea); //$NON-NLS-1$
-		folder1.addView(CUIPlugin.CVIEW_ID);
-		folder1.addView(IPageLayout.ID_RES_NAV);
+//		folder1.addView(CUIPlugin.CVIEW_ID);
+//		folder1.addView(IPageLayout.ID_RES_NAV);
 		folder1.addView("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
 		folder1.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 		

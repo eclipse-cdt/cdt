@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
- *     Warren Paul (Nokia) - 150860
+ *     Warren Paul (Nokia) - 150860, 150864
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -266,7 +266,7 @@ public class CValue extends AbstractCValue {
 		CVariableFormat format = getParentVariable().getFormat(); 
 		if ( CVariableFormat.NATURAL.equals( format ) ) {
 			byte byteValue = (byte)value.byteValue();
-			return ((Character.isISOControl( (char)byteValue ) && byteValue != '\b' && byteValue != '\t' && byteValue != '\n' && byteValue != '\f' && byteValue != '\r') || byteValue < 0) ? "" : new String( new byte[]{ '\'', byteValue, '\'' } ); //$NON-NLS-1$
+			return ((Character.isISOControl( (char)byteValue ) && byteValue != '\b' && byteValue != '\t' && byteValue != '\n' && byteValue != '\f' && byteValue != '\r') || byteValue < 0) ? Byte.toString(byteValue) : new String( new byte[]{ '\'', byteValue, '\'' } ); //$NON-NLS-1$
 		}
 		else if ( CVariableFormat.DECIMAL.equals( format ) ) {
 			return (isUnsigned()) ? Integer.toString( value.shortValue() ) : Integer.toString( (byte)value.byteValue() );

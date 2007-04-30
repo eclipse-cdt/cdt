@@ -24,6 +24,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
@@ -223,10 +226,41 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, false);
-		ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
-		if (dc != null) {
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, dc.getID());
+		
+		// Set the default debugger based on the active toolchain on the project (if possible)
+		String defaultDebugger = null;
+		try {
+			String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+			if (projectName.length() > 0) {
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+            	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
+            	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
+            	String configId = configDesc.getId();
+        		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
+        		outer: for (int i = 0; i < debugConfigs.length; ++i) {
+        			ICDebugConfiguration debugConfig = debugConfigs[i];
+        			String[] patterns = debugConfig.getSupportedBuildConfigPatterns();
+        			if (patterns != null) {
+        				for (int j = 0; j < patterns.length; ++j) {
+        					if (configId.matches(patterns[j])) {
+        						defaultDebugger = debugConfig.getID();
+        						break outer;
+        					}
+        				}
+        			}
+        		}
+			}
+		} catch (CoreException e) {
 		}
+		
+		if (defaultDebugger == null) {
+			ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+			if (dc != null) {
+				defaultDebugger = dc.getID();
+			}
+		}
+		
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, defaultDebugger);
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {

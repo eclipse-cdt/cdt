@@ -19,13 +19,18 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -106,23 +111,31 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		// user to choose one.
 		int candidateCount = candidateConfigs.size();
 		if (candidateCount < 1) {
-			String programCPU = bin.getCPU();
-			// Try default debugger first
-			ICDebugConfiguration defaultConfig = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
-			String os = Platform.getOS();
+			// Set the default debugger based on the active toolchain on the project (if possible)
 			ICDebugConfiguration debugConfig = null;
-			if ( defaultConfig != null ) {
-				String platform = defaultConfig.getPlatform();
-				if (defaultConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-					if (platform.equals("*") || platform.equals(os)) { //$NON-NLS-1$
-						if (defaultConfig.supportsCPU(programCPU)) 
-							debugConfig = defaultConfig;
-					}
-				}
+			IProject project = bin.getResource().getProject();
+           	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
+           	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
+           	String configId = configDesc.getId();
+       		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
+       		outer: for (int i = 0; i < debugConfigs.length; ++i) {
+       			ICDebugConfiguration dc = debugConfigs[i];
+       			String[] patterns = dc.getSupportedBuildConfigPatterns();
+       			if (patterns != null) {
+       				for (int j = 0; j < patterns.length; ++j) {
+       					if (configId.matches(patterns[j])) {
+       						debugConfig = dc;
+       						break outer;
+       					}
+       				}
+       			}
 			}
+
 			if ( debugConfig == null ) {
 				// Prompt the user if more then 1 debugger.
-				ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
+				String programCPU = bin.getCPU();
+				String os = Platform.getOS();
+				debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
 				List debugList = new ArrayList(debugConfigs.length);
 				for (int i = 0; i < debugConfigs.length; i++) {
 					String platform = debugConfigs[i].getPlatform();
@@ -140,6 +153,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 					debugConfig = chooseDebugConfig(debugConfigs, mode);
 				}
 			}
+			
 			if (debugConfig != null) {
 				configuration = createConfiguration(bin, debugConfig);
 			}
@@ -168,13 +182,19 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(bin.getElementName()));
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, projectName);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, bin.getCProject().getElementName());
-			wc.setMappedResources(new IResource[] {bin.getCProject().getProject()});
+			wc.setMappedResources(new IResource[] {bin.getResource()});
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
 			wc.setAttribute(
 				ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
+			
+			// Load up the debugger page to set the defaults. There should probably be a separate
+			// extension point for this.
+			ICDebuggerPage page = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID());
+			page.setDefaults(wc);
+			
 			config = wc.doSave();
 		} catch (CoreException ce) {
 			LaunchUIPlugin.log(ce);

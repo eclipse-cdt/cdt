@@ -85,10 +85,19 @@ implements IExecutableExtension, IWizardWithMemory
 	 * @return true if user has changed settings since project creation
 	 */
 	private boolean isChanged() {
-		if (savedHandler != fMainPage.h_selected
-			|| !fMainPage.getProjectName().equals(lastProjectName)
-			|| !fMainPage.getProjectLocation().equals(lastProjectLocation))
+		if (savedHandler != fMainPage.h_selected)
 			return true;
+
+		if (!fMainPage.getProjectName().equals(lastProjectName))
+			return true;
+			
+		IPath projectLocation = fMainPage.getProjectLocation();
+		if (projectLocation == null) {
+			if (lastProjectLocation != null)
+				return true;
+		} else if (!projectLocation.equals(lastProjectLocation))
+			return true;
+		
 		return savedHandler.isChanged(); 
 	}
 	

@@ -47,6 +47,18 @@ public interface IUserActionModel extends IRSEModelObject {
 	public String getSupplier();
 	
 	/**
+	 * Returns the command of the user action.
+	 * @return the command of the user action.
+	 */
+	public String getCommand();
+	
+	/**
+	 * Returns the contexts to which the user action applies.
+	 * @return array of user action contexts, or an empty array if there are no contexts to which the user action applies.
+	 */
+	public IUserActionContext[] getContexts();
+	
+	/**
 	 * Returns whether the user action is modifiable.
 	 * @return <code>true<code> if the user action is modifiable, <code>false</code> otherwise.
 	 */

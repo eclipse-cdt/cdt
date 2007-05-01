@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -28,7 +31,23 @@ public class UserActionModel extends RSEModelObject implements IUserActionModel 
 	private String name;
 	private String description;
 	private String supplier;
+	private String command;
+	private List contextList;
 	private boolean isModifiable;
+	
+	/**
+	 * Creates a modifiable user action.
+	 * @param profile the parent profile for which the user action applies.
+	 * @param subsysConfig the subsystem configuration for which the user action applies.
+	 * @param name the name of the user action.
+	 */
+	public UserActionModel(ISystemProfile profile, ISubSystemConfiguration subsysConfig, String name) {
+		super();
+		this.profile = profile;
+		this.subsysConfig = subsysConfig;
+		this.name = name;
+		this.isModifiable = true;
+	}
 
 	/**
 	 * Creates a user action model object.
@@ -38,10 +57,12 @@ public class UserActionModel extends RSEModelObject implements IUserActionModel 
 	 * @param name the name of the user action.
 	 * @param description the description of the user action.
 	 * @param supplier the supplier of the user action.
+	 * @param command the command of the user action.
+	 * @param contexts the array of user action contexts to which this user action applies, or an empty array if there are no contexts to which the user action applies.
 	 * @param sets the property sets associated with the user action.
 	 * @param isModifiable <code>true</code> if the user action is modifiable, <code>false</code> otherwise.
 	 */
-	public UserActionModel(ISystemProfile profile, ISubSystemConfiguration subsysConfig, String type, String name, String description, String supplier, IPropertySet[] sets, boolean isModifiable) {
+	public UserActionModel(ISystemProfile profile, ISubSystemConfiguration subsysConfig, String type, String name, String description, String supplier, String command, IUserActionContext[] contexts, IPropertySet[] sets, boolean isModifiable) {
 		super();
 		this.profile = profile;
 		this.subsysConfig = subsysConfig;
@@ -49,6 +70,13 @@ public class UserActionModel extends RSEModelObject implements IUserActionModel 
 		this.name = name;
 		this.description = description;
 		this.supplier = supplier;
+		this.command = command;
+		contextList = new ArrayList();
+		
+		for (int i = 0; i < contexts.length; i++) {
+			contextList.add(contexts[i]);
+		}
+		
 		addPropertySets(sets);
 		this.isModifiable = isModifiable;
 	}
@@ -127,7 +155,7 @@ public class UserActionModel extends RSEModelObject implements IUserActionModel 
 	}
 
 	/**
-	 * Sets the supplier of the user action.
+	 * Sets the supplier of the user action. It has no effect if the user action is not modifiable.
 	 * @param supplier the supplier of the user action.
 	 */
 	public void setSupplier(String supplier) {
@@ -143,6 +171,33 @@ public class UserActionModel extends RSEModelObject implements IUserActionModel 
 	 */
 	public String getSupplier() {
 		return supplier;
+	}
+	
+	/**
+	 * Sets the command of the user action. It has no effect if the user action is not modifiable.
+	 * @param command the command of the user action.
+	 */
+	public void setCommand(String command) {
+		
+		if (isModifiable()) {
+			this.command = command;
+		}
+	}
+
+	/**
+	 * Returns the command of the user action.
+	 * @return the command of the user action.
+	 */
+	public String getCommand() {
+		return command;
+	}
+
+	/**
+	 * Returns the contexts to which the user action applies.
+	 * @return array of user action contexts, or an empty array if there are no contexts to which the user action applies.
+	 */
+	public IUserActionContext[] getContexts() {
+		return (IUserActionContext[])(contextList.toArray());
 	}
 
 	/**

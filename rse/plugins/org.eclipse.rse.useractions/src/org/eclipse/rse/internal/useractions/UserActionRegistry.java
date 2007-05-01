@@ -128,8 +128,8 @@ public class UserActionRegistry {
 	 */
 	public boolean containsUserActionModel(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionContext context) {
 		
-		Map map = getUserActionContextMap(profile);
-		List list = getUserActionContexts(map, configuration);
+		Map map = getUserActionModelMap(profile);
+		List list = getUserActionModels(map, configuration);
 		return list.contains(context);
 	}
 	

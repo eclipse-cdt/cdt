@@ -14,6 +14,9 @@ public class DsfDebugUIPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static DsfDebugUIPlugin plugin;
+    
+    // BundleContext of this plugin
+    private static BundleContext fgBundleContext; 
 	
 	/**
 	 * The constructor
@@ -29,6 +32,7 @@ public class DsfDebugUIPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+        fgBundleContext = context;
 	}
 
 	/*
@@ -50,6 +54,15 @@ public class DsfDebugUIPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
+    /**
+     * Returns the bundle context
+     *
+     * @return the bundle context
+     */
+    public static BundleContext getBundleContext() {
+        return fgBundleContext;
+    }
+    
 	/**
 	 * Returns an image descriptor for the image file at the given
 	 * plug-in relative path

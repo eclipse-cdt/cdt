@@ -16,6 +16,10 @@
 
 package org.eclipse.rse.internal.ui.actions;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -32,6 +36,32 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemConnectAction extends SystemBaseAction
 {
+	public class ConnectJob extends Job
+	{
+		private ISubSystem _subsystem;
+		public ConnectJob(ISubSystem subsystem)
+		{
+			super(SystemResources.ACTION_CONNECT_LABEL);
+			_subsystem = subsystem;
+		}
+
+		
+		public IStatus run(IProgressMonitor monitor)
+		{
+			try {
+				if (_subsystem.getHost().getSystemType().getId().equals(IRSESystemType.SYSTEMTYPE_WINDOWS_ID))
+					_subsystem.connect(monitor, false);
+				else	
+				  	_subsystem.connect(monitor, true);
+			} catch (Exception exc) {} // msg already shown
+			if (monitor.isCanceled())
+			{
+				return Status.CANCEL_STATUS;
+			}
+			return Status.OK_STATUS;
+		}
+	}
+	
 	/**
 	 * Constructor.
 	 * @param shell  Shell of parent window, used as the parent for the dialog.
@@ -64,11 +94,8 @@ public class SystemConnectAction extends SystemBaseAction
 	public void run()
 	{
 		ISubSystem ss = (ISubSystem)getFirstSelection();
-		try {
-			if (ss.getHost().getSystemType().getName().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
-				ss.connect();
-			else	
-			  	ss.connect(true);
-		} catch (Exception exc) {} // msg already shown
+		ConnectJob job = new ConnectJob(ss);
+		job.schedule();
+
 	}
 }

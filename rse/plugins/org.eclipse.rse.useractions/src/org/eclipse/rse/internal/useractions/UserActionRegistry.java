@@ -106,6 +106,34 @@ public class UserActionRegistry {
 	}
 	
 	/**
+	 * Returns whether a user action context for the given profile and subsystem configuration exists.
+	 * @param profile the system profile.
+	 * @param configuration the subsystem configuration.
+	 * @param context the user action context.
+	 * @return <code>true</code> if the user action context exists, <code>false</code> otherwise.
+	 */
+	public boolean containsUserActionContext(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionContext context) {
+		
+		Map map = getUserActionContextMap(profile);
+		List list = getUserActionContexts(map, configuration);
+		return list.contains(context);
+	}
+	
+	/**
+	 * Returns whether a user action for the given profile and subsystem configuration exists.
+	 * @param profile the system profile.
+	 * @param configuration the subsystem configuration.
+	 * @param context the user action.
+	 * @return <code>true</code> if the user action context exists, <code>false</code> otherwise.
+	 */
+	public boolean containsUserActionModel(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionContext context) {
+		
+		Map map = getUserActionContextMap(profile);
+		List list = getUserActionContexts(map, configuration);
+		return list.contains(context);
+	}
+	
+	/**
 	 * Adds a user action context for the given profile and subsystem configuration.
 	 * @param profile the system profile.
 	 * @param configuration the subsystem configuration.
@@ -122,6 +150,7 @@ public class UserActionRegistry {
 	 * Adds a user action for the given profile and subsystem configuration.
 	 * @param profile the system profile.
 	 * @param configuration the subsystem configuration.
+	 * @param model the user action model.
 	 */
 	public void addUserActionModel(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionModel model) {
 		
@@ -147,11 +176,36 @@ public class UserActionRegistry {
 	 * Adds a user action for the given profile and subsystem configuration.
 	 * @param profile the system profile.
 	 * @param configuration the subsystem configuration.
+	 * @param model the user action model.
 	 */
 	public void removeUserActionModel(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionModel model) {
 		
 		Map map = getUserActionModelMap(profile);
 		List list = getUserActionModels(map, configuration);
 		list.remove(model);
+	}
+	
+	/**
+	 * Returns an array of user action contexts for the given profile and subsystem configuration.
+	 * @param profile the system profile.
+	 * @param configuration the subsystem configuration.
+	 * @return the array of user action contexts, or an empty array if none.
+	 */
+	public IUserActionContext[] getUserActionContexts(ISystemProfile profile, ISubSystemConfiguration configuration) {
+		Map map = getUserActionContextMap(profile);
+		List list = getUserActionContexts(map, configuration);
+		return (IUserActionContext[])(list.toArray());
+	}
+	
+	/**
+	 * Returns an array of user actions for the given profile and subsystem configuration.
+	 * @param profile the system profile.
+	 * @param configuration the subsystem configuration.
+	 * @return the array of user action models, or an empty array if none.
+	 */
+	public IUserActionModel[] getUserActionModels(ISystemProfile profile, ISubSystemConfiguration configuration) {
+		Map map = getUserActionModelMap(profile);
+		List list = getUserActionModels(map, configuration);
+		return (IUserActionModel[])(list.toArray());
 	}
 }

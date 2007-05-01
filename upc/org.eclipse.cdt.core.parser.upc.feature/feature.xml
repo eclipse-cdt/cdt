@@ -26,13 +26,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="net.sourceforge.lpg.lpgjavaruntime"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.cdt.core.parser.upc"
          download-size="0"
          install-size="0"

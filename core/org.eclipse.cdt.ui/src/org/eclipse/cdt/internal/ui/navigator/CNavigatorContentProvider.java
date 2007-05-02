@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
@@ -347,24 +348,40 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		return false;
 	}
 
+	protected void postContainerRefresh(final IParent container, final ICProject cproject) {
+		postRefreshable(new RefreshContainer(container, cproject.getProject()));
+	}
 	protected void postRefresh(final Object element) {
 		if (element instanceof ICModel) {
 			super.postRefresh(fRealInput);
-			return;
+		} else if (element instanceof ICProject) {
+			super.postRefresh(((ICProject)element).getProject());
+		} else {
+			super.postRefresh(element);
 		}
-		super.postRefresh(element);
 	}
 
 	protected void postAdd(final Object parent, final Object element) {
 		if (parent instanceof ICModel) {
 			super.postAdd(fRealInput, element);
-			return;
+		} else if (parent instanceof ICProject) {
+			super.postAdd(((ICProject)parent).getProject(), element);
+		} else {
+			super.postAdd(parent, element);
 		}
-		super.postAdd(parent, element);
 	}
 
 	protected void postRemove(final Object element) {
 		postRefresh(internalGetParent(element));
 	}
 
+	protected void postProjectStateChanged(final Object element) {
+		if (element instanceof ICModel) {
+			super.postProjectStateChanged(fRealInput);
+		} else if (element instanceof ICProject) {
+			super.postProjectStateChanged(((ICProject)element).getProject());
+		} else {
+			super.postProjectStateChanged(element);
+		}
+	}
 }

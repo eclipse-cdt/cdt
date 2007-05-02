@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,31 +300,31 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	// We keep track of what we're going to refresh and avoid posting multiple refresh
 	// messages for the same elements. This avoids major performance issues where
 	// we update tree views hundreds or thousands of times.
-	interface IRefreshable {
+	protected interface IRefreshable {
 	    public void refresh();
 	}
-	final class RefreshContainer implements IRefreshable {
+	protected final class RefreshContainer implements IRefreshable {
 		private IParent container;
-		private ICProject cproject;
-		public RefreshContainer(IParent container, ICProject cproject) {
+		private Object project;
+		public RefreshContainer(IParent container, Object project) {
 			this.container = container;
-			this.cproject = cproject;
+			this.project = project;
 		}
 	    public void refresh() {
 			if (container.hasChildren()) {
 				if (fViewer.testFindItem(container) != null) {
 					fViewer.refresh(container);
 				} else {
-					fViewer.refresh(cproject);
+					fViewer.refresh(project);
 				}
 			} else {
-				fViewer.refresh(cproject);
+				fViewer.refresh(project);
 			}
 	    }
 	    public boolean equals(Object o) {
 	    	if (o instanceof RefreshContainer) {
 	    		RefreshContainer c = (RefreshContainer)o;
-	    		return c.container.equals(container) && c.cproject.equals(cproject);
+	    		return c.container.equals(container) && c.project.equals(project);
 	    	}
 	        return false;
 	    }
@@ -332,7 +332,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	    	return container.hashCode()*10903143 + 31181;
 	    }
 	}
-	final class RefreshElement implements IRefreshable {
+	protected final class RefreshElement implements IRefreshable {
 		private Object element;
 		public RefreshElement(Object element) {
 			this.element = element;
@@ -362,7 +362,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	    }
 	}
 
-	final class RefreshProjectState implements IRefreshable {
+	protected final class RefreshProjectState implements IRefreshable {
 		private Object element;
 		public RefreshProjectState(Object element) {
 			this.element = element;
@@ -391,7 +391,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	}
 
 	protected void postRefresh(final Object element) {
-		//System.out.println("UI refresh:" + root);
+		//System.out.println("UI refresh:" + element);
 		postRefreshable(new RefreshElement(element));
 	}
 
@@ -409,7 +409,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		postRefreshable(new RefreshProjectState(root));
 	}
 
-	private void postRefreshable(final IRefreshable r) {
+	protected final void postRefreshable(final IRefreshable r) {
 		Control ctrl= fViewer.getControl();
 		if (ctrl != null && !ctrl.isDisposed()) {
 			if (pendingRefreshes.contains(r))

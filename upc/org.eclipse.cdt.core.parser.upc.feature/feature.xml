@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.cdt.core.parser.upc.feature"
-      label="Feature Feature"
+      label="%featureName"
       version="4.0.0.qualifier"
       provider-name="%providerName">
 

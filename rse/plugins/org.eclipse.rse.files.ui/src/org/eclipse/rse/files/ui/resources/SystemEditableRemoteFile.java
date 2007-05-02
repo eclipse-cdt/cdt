@@ -1423,8 +1423,6 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		
 		String tempPath = file.getLocation().toOSString();
 		
-		
-		
 		if (util.isXML(tempPath)) {
 			
 			try {
@@ -1436,10 +1434,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 		}
 		else {
-			
-			if (!properties.getUsedBinaryTransfer()) {
-				encoding = remoteFile.getEncoding();
-			}
+			encoding = remoteFile.getEncoding();
 		}
 		
 		try

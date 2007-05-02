@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.datamodel.IDMService;
@@ -24,13 +23,13 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
  * dependencies on the Modules service, RunControl service, and Stack service, as all may be used to
  * provide context for an expression to be evaluated.
  */
-public interface IExpressions extends IDMService {
+public interface IExpressions extends IDMService, IFormattedValues {
     
     /**
      * Expression context. Since some expressions have children, expression contexts can be have an
      * arbitrary number of parents of type ExpressionContext.
      */
-    public interface IExpressionDMContext extends IDMContext<IExpressionDMData> {
+    public interface IExpressionDMContext extends IFormattedDataDMContext<IExpressionDMData> {
         String getExpression();
     }
     
@@ -51,7 +50,7 @@ public interface IExpressions extends IDMService {
         /**
          * This enumerates the possible basic types that an expression can have.
          * 
-         * @see Method getBasicType().
+         * @see getBasicType().
          */
         enum BasicType {
             unknown,                // Unknown type.
@@ -106,24 +105,6 @@ public interface IExpressions extends IDMService {
          *         floating point values are shown in non-scientific notation.
          */
         String getNaturalValue();
-        
-        /**
-         * @return A string containing the hexadecimal representation of the expression value.  If the
-         *         expression value is not convertable to an integer, this returns "UNKNOWN".
-         */
-        String getHexValue();
-        
-        /**
-         * @return A string containing the octal representation of the expression value.  If the
-         *         expression value is not convertable to an integer, this returns "UNKNOWN".
-         */
-        String getOctalValue();
-        
-        /**
-         * @return A string containing the binary representation of the expression value.  If the
-         *         expression value is not convertable to an integer, this returns "UNKNOWN".
-         */
-        String getBinaryValue();
         
         /**
          * @return A string containing the value of the expression as returned by the debugger backend.

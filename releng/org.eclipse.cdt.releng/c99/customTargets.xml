@@ -104,7 +104,7 @@
 <!-- ===================================================================== -->
 	<target name="postAssemble">
 		<!-- Add the LPG Java Runtime bundle into runtime zip -->
-		<zip destfile="${buildDirectory}/${buildLabel}/${archiveName}" update="true">
+		<zip destfile="${buildDirectory}/${buildLabel}/cdt-c99-${branchVersion}-${buildId}.zip" update="true">
 			<zipfileset dir="${buildDirectory}/plugins"
 				includes="net.sourceforge.lpg.lpgjavaruntime_1.1.*.jar"
 				prefix="eclipse/plugins"/>

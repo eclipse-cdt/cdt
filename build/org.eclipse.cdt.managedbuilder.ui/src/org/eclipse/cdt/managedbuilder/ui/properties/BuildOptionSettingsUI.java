@@ -67,7 +67,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		super.createFieldEditors();
 		// Iterate over the options in the category and create a field editor
 		// for each
-		Object[][] options = category.getOptions(fInfo.getParent(), optionHolder);
+		Object[][] options = category.getOptions(fInfo, optionHolder);
 		
 		for (int index = 0; index < options.length; ++index) {
 			// Get the option

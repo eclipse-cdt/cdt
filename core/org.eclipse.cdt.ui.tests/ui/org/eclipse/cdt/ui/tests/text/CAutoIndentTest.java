@@ -508,6 +508,15 @@ public class CAutoIndentTest extends TestCase {
 		tester.type("int i[5]={\n"); //$NON-NLS-1$
 		assertEquals("int i[5]={\n\t\t\r\n};", tester.fDoc.get()); //$NON-NLS-1$
 	}
+
+	public void testBracketIndentForConstructorDefinition_Bug183814() throws BadLocationException {
+		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();
+		CCorePlugin.setOptions(new HashMap(whitesmiths.getMap()));
+		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		
+		tester.type("Foo::Foo()\n{");
+		assertEquals("Foo::Foo()\n    {", tester.fDoc.get());
+	}
 	
 	public void testSmartPasteWhitesmiths_Bug180531() throws Exception {
 		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();

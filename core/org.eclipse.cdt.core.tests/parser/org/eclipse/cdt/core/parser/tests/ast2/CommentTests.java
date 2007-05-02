@@ -199,13 +199,13 @@ public class CommentTests extends AST2BaseTest {
 	// #else 
 	// // comment2
 	// #endif
-	public void _testCommentsInInactiveCode_bug183930() throws Exception {
+	public void testCommentsInInactiveCode_bug183930() throws Exception {
 		StringBuffer code= getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true, true);
 		IASTComment[] comments = tu.getComments();
 		
 		assertEquals(2, comments.length);
 		assertEquals("// comment1", new String(comments[0].getComment()));
-		assertEquals("// comment2", new String(comments[0].getComment()));
+		assertEquals("// comment2", new String(comments[1].getComment()));
 	}
 }

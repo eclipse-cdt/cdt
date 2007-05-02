@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
@@ -197,6 +198,8 @@ abstract class BaseScanner implements IScanner {
     protected final boolean supportMinAndMax;
 
     protected boolean scanComments;
+    
+    protected IToken[] commentsFromInactiveCode = new IToken[0];
 
     protected final CharArrayIntMap additionalKeywords;
 
@@ -662,6 +665,13 @@ abstract class BaseScanner implements IScanner {
                 throw new ParseError(
                         ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
 
+            //return the stored comments
+			if(commentsFromInactiveCode.length > 0 && commentsFromInactiveCode[0] != null){
+				IToken commentToken = commentsFromInactiveCode[0];
+            	ArrayUtil.remove(commentsFromInactiveCode, commentToken);
+            	return commentToken;
+            }
+            
             // Find the first thing we would care about
             skipOverWhiteSpaceFetchToken();
 
@@ -2544,7 +2554,7 @@ abstract class BaseScanner implements IScanner {
 
         while (bufferPos[bufferStackPos] < limit) {
 
-            skipOverWhiteSpace();
+            skipOverWhiteSpaceFetchToken();
 
             if (++bufferPos[bufferStackPos] >= limit)
                 return;
@@ -2675,7 +2685,11 @@ abstract class BaseScanner implements IScanner {
                     }
                 }
             } else if (c != '\n')
-                skipToNewLine();
+            	if(scanComments){
+            		skipToNewLineAndCollectComments();
+            	}else{
+            		skipToNewLine();
+            	}
         }
     }
 
@@ -3169,6 +3183,70 @@ abstract class BaseScanner implements IScanner {
         }
         bufferPos[bufferStackPos]= pos-1;
     }
+    
+    protected void skipToNewLineAndCollectComments() {
+        char[] buffer = bufferStack[bufferStackPos];
+        int limit = bufferLimit[bufferStackPos];   
+        int pos = bufferPos[bufferStackPos];
+        
+        boolean escaped = false;
+        boolean insideString= false;
+        boolean insideSingleQuote= false;
+        for (;pos < limit;++pos) {
+        	char ch= buffer[pos];
+            switch (ch) {
+            case '/':
+            	if (insideString || insideSingleQuote) {
+            		break;
+            	}
+                if (pos + 1 < limit) {
+                	char c= buffer[pos + 1];
+                	if (c == '*'||c == '/') {
+                		bufferPos[bufferStackPos] = pos;
+                        IToken comment = scanComment();
+                        commentsFromInactiveCode = (IToken[]) ArrayUtil.append(comment.getClass(), commentsFromInactiveCode, comment);
+                        pos = bufferPos[bufferStackPos];
+                	}
+                }
+                break;
+            case '\\':
+                escaped = !escaped;
+                continue;
+            case '"': 
+            	if (!insideSingleQuote) {
+            		insideString= insideString ? escaped : true;
+            	}
+            	break;
+            case '\'':
+            	if (!insideString) {
+            		insideSingleQuote= insideSingleQuote ? escaped : true;
+            	}
+            	break;
+            case '\n':
+                if (escaped) {
+                    break;
+                }
+                bufferPos[bufferStackPos]= pos;
+                return;
+            case '\r':
+            	if (pos+1 < limit && buffer[pos+1] == '\n') {
+            		if (escaped) {
+            			pos++;
+            			break;
+            		}
+                	bufferPos[bufferStackPos]= pos;
+                    return;
+                }
+                break;
+            default:
+            	break;
+            }
+            escaped = false;
+        }
+        bufferPos[bufferStackPos]= pos;
+		
+	}
+
 
     protected char[] handleFunctionStyleMacro(FunctionStyleMacro macro,
             boolean pushContext) {

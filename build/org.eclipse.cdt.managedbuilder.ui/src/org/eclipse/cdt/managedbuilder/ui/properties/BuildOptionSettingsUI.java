@@ -216,7 +216,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		realCfg = buildPropPage.getCfg(); //.getRealConfig(clonedConfig);
 		if(realCfg == null)	return false;
 		handler = realCfg;
-		clonedOptions = category.getOptions(fInfo.getParent(), optionHolder);
+		clonedOptions = category.getOptions(fInfo, optionHolder);
 		
 		for (int i = 0; i < clonedOptions.length; i++) {
 			IHoldsOptions clonedHolder = (IHoldsOptions)clonedOptions[i][0];
@@ -323,7 +323,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 * Update field editors in this page when the page is loaded.
 	 */
 	public void updateFields() {
-		Object[][] options = category.getOptions(fInfo.getParent(), optionHolder);
+		Object[][] options = category.getOptions(fInfo, optionHolder);
 		// some option has changed on this page... update enabled/disabled state for all options
 
 		for (int index = 0; index < options.length; ++index) {
@@ -441,7 +441,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			}
 		}
 
-		Object[][] options = category.getOptions(fInfo.getParent(), optionHolder);
+		Object[][] options = category.getOptions(fInfo, optionHolder);
 
 		// some option has changed on this page... update enabled/disabled state for all options
 

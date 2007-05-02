@@ -122,11 +122,9 @@ implements IExecutableExtension, IWizardWithMemory
 	 */
 	private void clearProject() {
 		if (lastProjectName == null) return;
-		if (!existingPath) {
-			try {
-				ResourcesPlugin.getWorkspace().getRoot().getProject(lastProjectName).delete(true, true, null);
-			} catch (CoreException ignore) {}
-		}
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().getProject(lastProjectName).delete(!existingPath, true, null);
+		} catch (CoreException ignore) {}
 		newProject = null;
 		lastProjectName = null;
 		lastProjectLocation = null;

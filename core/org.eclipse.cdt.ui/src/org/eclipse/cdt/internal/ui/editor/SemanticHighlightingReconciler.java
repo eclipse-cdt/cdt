@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 import org.eclipse.cdt.core.IPositionConverter;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -43,6 +42,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -64,7 +65,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	/**
 	 * Collects positions from the AST.
 	 */
-	private class PositionCollector extends ASTVisitor {
+	private class PositionCollector extends CPPASTVisitor {
 		{
 			shouldVisitTranslationUnit= true;
 			shouldVisitNames= true;
@@ -73,6 +74,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitStatements= true;
 			shouldVisitDeclSpecifiers= true;
 			shouldVisitDeclarators= true;
+			shouldVisitNamespaces= true;
 		}
 		
 		/** The semantic token */
@@ -122,6 +124,19 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				return PROCESS_SKIP;
 			}
 			if (checkForMacro(declaration)) {
+				return PROCESS_SKIP;
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		/*
+		 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
+		 */
+		public int visit(ICPPASTNamespaceDefinition namespace) {
+			if (!fFilePath.equals(namespace.getContainingFilename())) {
+				return PROCESS_SKIP;
+			}
+			if (checkForMacro(namespace)) {
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;

@@ -124,6 +124,13 @@ public class TriButton extends Composite implements SelectionListener {
 		else button.setImage(image);
 	}
 	
+	public void setEnabled(boolean enabled) {
+		if (triMode) {
+			label.setEnabled(enabled);
+			combo.setEnabled(enabled);
+		} else button.setEnabled(enabled);
+	}
+	
 	public void addSelectionListener (SelectionListener listener) {
 		listeners.add(listener);
 	}

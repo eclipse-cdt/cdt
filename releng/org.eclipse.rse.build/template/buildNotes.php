@@ -144,6 +144,9 @@ More information can be found in the associated bugzilla items.
 <!--
 <li><b>Cleaned up ISystemRegistry</b> - removed or changed signature of several methods [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>].</li>
 -->
+<li><b>Added IProgressMonitor parameter</b> to all long-running IRemoteFileSubSystem
+  methods. Clients need to pass in a NullProgressMonitor in all these methods now.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=184322">184322</a>].</li>
 <li><b>Use IRSESystemType</b> instead of String systemTypeName everywhere -
   this is the prerequisite for allowing system type labels to be translated
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180688">180688</a>].</li>

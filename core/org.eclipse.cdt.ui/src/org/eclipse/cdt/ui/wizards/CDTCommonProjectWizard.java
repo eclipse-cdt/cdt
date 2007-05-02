@@ -55,6 +55,7 @@ implements IExecutableExtension, IWizardWithMemory
 	private String wz_title;
 	private String wz_desc;
 	
+	private boolean existingPath = false;
 	private String lastProjectName = null;
 	private IPath lastProjectLocation = null;
 	private CWizardHandler savedHandler = null;
@@ -121,9 +122,11 @@ implements IExecutableExtension, IWizardWithMemory
 	 */
 	private void clearProject() {
 		if (lastProjectName == null) return;
-		try {
-			ResourcesPlugin.getWorkspace().getRoot().getProject(lastProjectName).delete(true, true, null);
-		} catch (CoreException ignore) {}
+		if (!existingPath) {
+			try {
+				ResourcesPlugin.getWorkspace().getRoot().getProject(lastProjectName).delete(true, true, null);
+			} catch (CoreException ignore) {}
+		}
 		newProject = null;
 		lastProjectName = null;
 		lastProjectLocation = null;
@@ -184,7 +187,8 @@ implements IExecutableExtension, IWizardWithMemory
 	 */	
 	public IProject createIProject(final String name, final IPath location) throws CoreException{
 		if (newProject != null)	return newProject;
-
+		existingPath = (location != null && location.toFile().exists());
+		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		final IProject newProjectHandle = root.getProject(name);

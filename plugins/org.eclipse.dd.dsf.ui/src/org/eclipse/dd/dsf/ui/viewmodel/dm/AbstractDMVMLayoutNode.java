@@ -478,8 +478,12 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
         int startIdx = update.getOffset() != -1 ? update.getOffset() : 0;
         int endIdx = update.getLength() != -1 ? startIdx + update.getLength() : dmcs.length;
         for (int i = startIdx; i < endIdx; i++) {
-            update.setChild(new DMVMContext(dmcs[i]), i);
+            update.setChild(createVMContext(dmcs[i]), i);
         }
+    }
+    
+    protected IVMContext createVMContext(IDMContext<V> dmc) {
+        return new DMVMContext(dmc);
     }
 
     /**

@@ -105,7 +105,7 @@
 	<target name="postAssemble">
 		<!-- Add the LPG Java Runtime bundle into runtime zip -->
 		<zip destfile="${buildDirectory}/${buildLabel}/${archiveName}" update="true">
-			<zipfileset src="${downloadsDir}/" includes="**/net.sourceforge.lpg.lpgjavaruntime_1.1.*.jar"/>
+			<zipfileset src="${buildDirectory}/" includes="**/net.sourceforge.lpg.lpgjavaruntime_1.1.*.jar"/>
 		</zip>
 	</target>
 <!-- ===================================================================== -->

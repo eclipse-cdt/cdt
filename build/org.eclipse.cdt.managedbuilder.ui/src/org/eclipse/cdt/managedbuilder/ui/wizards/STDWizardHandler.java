@@ -72,7 +72,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 			} else {
 				System.out.println(UIMessages.getString("StdProjectTypeHandler.3")); //$NON-NLS-1$
 			}
-			cfg.setArtifactName(project.getName());
+			cfg.setArtifactName(removeSpaces(project.getName()));
 			CConfigurationData data = cfg.getConfigurationData();
 			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 		}

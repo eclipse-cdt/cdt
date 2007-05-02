@@ -364,9 +364,8 @@ public class MBSWizardHandler extends CWizardHandler {
 			IBuilder bld = config.getEditableBuilder();
 			if (bld != null) { 	bld.setManagedBuildOn(true); }
 			
-			String s = project.getName();
 			config.setName(cfgs[i].getName());
-			config.setArtifactName(s);
+			config.setArtifactName(removeSpaces(project.getName()));
 			
 			IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
 			if (b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))

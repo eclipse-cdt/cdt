@@ -189,4 +189,15 @@ public class CWizardHandler implements Cloneable {
 			return clone;
 		} catch (CloneNotSupportedException e) { return null; }
 	}
+	
+	public static String removeSpaces(String s) {
+		char[] cs = s.toCharArray();
+		StringBuffer sb = new StringBuffer();
+		for (int i=0; i<cs.length; i++) {
+			if (Character.isWhitespace(cs[i])) 
+				continue;
+			sb.append(cs[i]);
+		}
+		return sb.toString();	
+	}
 }

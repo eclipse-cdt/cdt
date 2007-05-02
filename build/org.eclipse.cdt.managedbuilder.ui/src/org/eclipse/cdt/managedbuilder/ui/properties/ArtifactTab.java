@@ -16,6 +16,7 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -117,7 +118,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		String s = fCfg.getArtifactName();
 		if (s == null || s.trim().length() == 0) {
 			s = getResDesc().getConfiguration().getProjectDescription().getName();
-			getCfg().setArtifactName(s);
+			getCfg().setArtifactName(CWizardHandler.removeSpaces(s));
 		}
 		t2.setText(s);
 		

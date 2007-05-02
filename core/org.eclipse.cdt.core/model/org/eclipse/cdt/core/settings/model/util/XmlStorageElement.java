@@ -204,6 +204,13 @@ public class XmlStorageElement implements ICStorageElement {
 			if(isPropertyAlowed(attr.getNodeName()))
 				map.removeNamedItem(attr.getNodeName());
 		}
+		
+		NodeList list = fElement.getChildNodes();
+		for(int i = 0; i < list.getLength(); i++){
+			Node node = list.item(i);
+			if(node.getNodeType() == Node.TEXT_NODE)
+				fElement.removeChild(node);
+		}
 	}
 	
 	public ICStorageElement createChild(String name, 

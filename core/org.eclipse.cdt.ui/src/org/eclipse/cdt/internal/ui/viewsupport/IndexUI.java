@@ -57,6 +57,8 @@ import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+
 public class IndexUI {
 	private static final ICElementHandle[] EMPTY_ELEMENTS = new ICElementHandle[0];
 
@@ -229,8 +231,8 @@ public class IndexUI {
 		if (workingCopy == null)
 			return null;
 		
-		int options= ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-		IASTTranslationUnit ast = workingCopy.getAST(index, options);
+		IASTTranslationUnit ast= ASTProvider.getASTProvider().getAST(
+				workingCopy, index, ASTProvider.WAIT_YES, new NullProgressMonitor());
 		FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
 		ast.accept(finder);
 		return finder.getSelectedName();

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: CDT GDB JTAG Core Plug-in
+Bundle-Name: CDT GDB Hardware Debug Core Plug-in
 Bundle-SymbolicName: org.eclipse.cdt.debug.gdbjtag.core;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 4.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.gdbjtag.core.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,

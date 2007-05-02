@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.debug.gdbjtag"
       label="GDB Hardware Debugging"
-      version="1.0.0"
+      version="4.0.0.qualifier"
       provider-name="Eclipse.org">
 
    <description>

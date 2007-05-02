@@ -74,7 +74,6 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected void openCallHierarchy(CEditor editor) {
 		CallHierarchyUI.setIsJUnitTest(true);
 		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
-		runEventQueue(200);
 	}
 
 	protected void openCallHierarchy(CEditor editor, boolean showReferencedBy) {
@@ -110,11 +109,11 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
 		try {
-			for (int i=0; i<100; i++) {
+			for (int i=0; i<800; i++) {
 				root= tree.getItem(i0);
 				try {
-					if (!"...".equals(root.getText())) {
-						break;
+					if (label.equals(root.getText())) {
+						return root;
 					}
 				} catch (SWTException e) {
 					// in case widget was disposed, item may be replaced

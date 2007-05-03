@@ -74,7 +74,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 
 		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
 		IScope classScope = specialized.getCompositeScope();
-		IBinding[] bindings = classScope != null ? classScope.find(name.toString()) : null;
+		IBinding[] bindings = classScope != null ? classScope.getBindings(name, forceResolve, false) : null;
 		
 		if (bindings == null) return null;
     	
@@ -86,6 +86,27 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
     	return CPPSemantics.resolveAmbiguities( name, specs );
 	}
 
+	public IBinding[] getBindings( IASTName name, boolean forceResolve, boolean prefixLookup ) throws DOMException {
+		char [] c = name.toCharArray();
+		IBinding[] result = null;
+		
+	    if( (!prefixLookup && CharArrayUtils.equals( c, specialization.getNameCharArray() ))
+	    		|| (prefixLookup && CharArrayUtils.equals(specialization.getNameCharArray(), 0, c.length, c, true)) )
+	    	result = new IBinding[] { specialization };
+
+		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
+		IScope classScope = specialized.getCompositeScope();
+		IBinding[] bindings = classScope != null ? classScope.getBindings(name, forceResolve, prefixLookup) : null;
+		
+		if (bindings != null) {
+			for (int i = 0; i < bindings.length; i++) {
+				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, getInstance(bindings[i]));
+			}
+		}
+
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getClassType()
 	 */
@@ -162,23 +183,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
-		return find(name, false);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-	 */
-	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {		
-		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
-		IBinding[] bindings = specialized.getCompositeScope().find(name.toString(), prefixLookup);
-		
-		if (bindings == null) return null;
-		
-		IBinding[] specs = new IBinding[0];
-		for (int i = 0; i < bindings.length; i++) {
-			specs = (IBinding[]) ArrayUtil.append(IBinding.class, specs, getInstance(bindings[i]));
-		}
-    	return (IBinding[]) ArrayUtil.trim(IBinding.class, specs);
+		return CPPSemantics.findBindings( this, name, false );
 	}
 
 	/* (non-Javadoc)

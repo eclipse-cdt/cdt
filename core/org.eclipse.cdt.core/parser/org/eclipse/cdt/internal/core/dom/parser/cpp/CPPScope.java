@@ -27,12 +27,15 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -172,6 +175,96 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	    return null;
 	}
 
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		IBinding[] result = getBindingsInAST(name, resolve, prefixLookup);
+
+		IIndex index = name.getTranslationUnit().getIndex();
+		if (index != null) {
+			if (physicalNode instanceof IASTTranslationUnit) {
+				try {
+					IndexFilter filter = IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID);
+					IBinding[] bindings = prefixLookup ?
+							index.findBindingsForPrefix(name.toCharArray(), true, filter, null) :
+							index.findBindings(name.toCharArray(), filter, null);
+					result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			} else if (physicalNode instanceof ICPPASTNamespaceDefinition) {
+				ICPPASTNamespaceDefinition ns = (ICPPASTNamespaceDefinition) physicalNode;
+				try {
+					IIndexBinding binding = index.findBinding(ns.getName());
+					if (binding instanceof ICPPNamespace) {
+						ICPPNamespaceScope indexNs = ((ICPPNamespace)binding).getNamespaceScope();
+						IBinding[] bindings = indexNs.getBindings(name, resolve, prefixLookup);
+						result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
+					}
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+		}
+
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	}
+	
+	public IBinding[] getBindingsInAST(IASTName name, boolean forceResolve, boolean prefixLookup) throws DOMException {
+	    char [] c = name.toCharArray();
+	    IBinding[] result = null;
+	    
+	    Object[] obj = null;
+	    if (prefixLookup) {
+	    	Object[] keys = bindings != null ? bindings.keyArray() : new Object[0];
+	    	for (int i = 0; i < keys.length; i++) {
+	    		char[] key = (char[]) keys[i];
+	    		if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
+	    			obj = ArrayUtil.append(obj, bindings.get(key));
+	    		}
+	    	}
+	    } else {
+	    	obj = bindings != null ? new Object[] {bindings.get( c )} : null;
+	    }
+	    
+	    obj = ArrayUtil.trim(Object.class, obj);
+	    for (int i = 0; i < obj.length; i++) {
+	        if( obj[i] instanceof ObjectSet ) {
+	        	ObjectSet os = (ObjectSet) obj[i];
+        		for( int j = 0; j < os.size(); j++ ){
+        			Object o = os.keyAt( j );
+        			if( o instanceof IASTName ){
+        				IASTName n = (IASTName) o;
+        				if( n instanceof ICPPASTQualifiedName ){
+        					IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
+        					n = ns[ ns.length - 1 ];
+        				}
+        				IBinding binding = forceResolve ? n.resolveBinding() : n.getBinding();
+        				result = (IBinding[]) ArrayUtil.append( IBinding.class, result, binding );
+        			} else
+        				result = (IBinding[]) ArrayUtil.append( IBinding.class, result, o );
+        		}
+	        } else if( obj[i] instanceof IASTName ){
+	        	IBinding binding = null;
+	        	if( forceResolve && obj[i] != name && obj[i] != name.getParent())
+	        		binding = ((IASTName) obj[i]).resolveBinding();
+	        	else {
+	        		IASTName n = (IASTName) obj[i];
+    				if( n instanceof ICPPASTQualifiedName ){
+    					IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
+    					n = ns[ ns.length - 1 ];
+    				}
+	        		binding = n.getBinding();
+	        	}
+	        	if( binding instanceof ICPPUsingDeclaration ){
+	        		result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, ((ICPPUsingDeclaration)binding).getDelegates());
+	        	}
+	        	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
+	        } else {
+	        	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, obj[i]);
+	        }
+	    }
+	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	}
+	
 	private boolean isfull = false;
 	public void setFullyCached( boolean full ){
 		isfull = full;
@@ -218,14 +311,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
-	    return CPPSemantics.findBindings( this, name, false, false );
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-	 */
-	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
-	    return CPPSemantics.findBindings( this, name, false, prefixLookup );
+	    return CPPSemantics.findBindings( this, name, false );
 	}
 	
 	public void flushCache() {

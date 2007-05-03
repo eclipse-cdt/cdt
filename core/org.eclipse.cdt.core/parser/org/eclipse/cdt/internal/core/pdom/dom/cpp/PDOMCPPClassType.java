@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
@@ -328,19 +329,27 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 		return null;
 	}
 	
-	public IBinding[] find(String name) throws DOMException {
-		return find(name, false);
-	}
-	
-	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		IBinding[] result = null;
 		try {
+			if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
+					|| (prefixLookup && getDBName().comparePrefix(name.toCharArray(), false) == 0)) {
+				// 9.2 ... The class-name is also inserted into the scope of
+				// the class itself
+				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, this);
+			}
+			
 			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
 			accept(visitor);
-			return visitor.getBindings();
+			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return null;
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	}
+	
+	public IBinding[] find(String name) throws DOMException {
+		return CPPSemantics.findBindings( this, name, false );
 	}
 	
 	// Not implemented

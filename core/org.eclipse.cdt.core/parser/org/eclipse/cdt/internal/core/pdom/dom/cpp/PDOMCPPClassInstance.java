@@ -225,21 +225,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	}
 	
 	public IBinding[] find(String name) throws DOMException {
-		return find(name, false);
-	}
-
-	public IBinding[] find(String name, boolean prefixLookup)
-			throws DOMException {
-		try {						
-			IBinding[] specialized = ((ICPPClassType) getTemplateDefinition())
-					.getCompositeScope().find(name.toString(), prefixLookup);			
-			SpecializationFinder visitor = new SpecializationFinder(specialized);
-			accept(visitor);
-			return visitor.getSpecializations();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
+		return CPPSemantics.findBindings( this, name, false );
 	}
 	
 	public IBinding getBinding(IASTName name, boolean resolve)
@@ -253,7 +239,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		    }
 			
 			IBinding[] specialized = ((ICPPClassType) getTemplateDefinition())
-					.getCompositeScope().find(name.toString());			
+					.getCompositeScope().getBindings(name, resolve, false);			
 			SpecializationFinder visitor = new SpecializationFinder(specialized);
 			accept(visitor);
 			return CPPSemantics.resolveAmbiguities(name, visitor.getSpecializations());
@@ -261,6 +247,28 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 			CCorePlugin.log(e);
 		}
 		return null;
+	}
+	
+	public IBinding[] getBindings(IASTName name, boolean resolve,
+			boolean prefixLookup) throws DOMException {
+		IBinding[] result = null;
+		try {
+			if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
+					|| (prefixLookup && getDBName().comparePrefix(name.toCharArray(), false) == 0)) {
+					// 9.2 ... The class-name is also inserted into the scope of
+					// the class itself
+					result = (IBinding[]) ArrayUtil.append(IBinding.class, result, this);
+			}
+
+			IBinding[] specialized = ((ICPPClassType) getTemplateDefinition())
+					.getCompositeScope().getBindings(name, resolve, prefixLookup);
+			SpecializationFinder visitor = new SpecializationFinder(specialized);
+			accept(visitor);
+			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getSpecializations());
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 	
 	//ICPPClassScope unimplemented

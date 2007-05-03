@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunctionInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
@@ -186,21 +187,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 	}
 
 	public IBinding[] find(String name) throws DOMException {
-		return find(name, false);
-	}
-
-	public IBinding[] find(String name, boolean prefixLookup)
-			throws DOMException {
-		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			list.accept(visitor);
-			
-			return visitor.getBindings();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
+		return CPPSemantics.findBindings( this, name, false );
 	}
 
 	public IBinding getBinding(IASTName name, boolean resolve)
@@ -215,6 +202,20 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 			CCorePlugin.log(e);
 		}
 		return null;
+	}
+	
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup)
+			throws DOMException {
+		IBinding[] result = null;
+		try {
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
+			list.accept(visitor);
+			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 
 	public IIndexBinding getScopeBinding() {

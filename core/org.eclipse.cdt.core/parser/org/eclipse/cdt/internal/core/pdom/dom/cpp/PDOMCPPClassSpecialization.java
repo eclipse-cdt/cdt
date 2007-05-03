@@ -276,34 +276,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 	
 	public IBinding[] find(String name) throws DOMException {
-		return find(name, false);
-	}
-
-	public IBinding[] find(String name, boolean prefixLookup)
-			throws DOMException {
-		if (!(this instanceof ICPPTemplateDefinition) && 
-				getSpecializedBinding() instanceof ICPPTemplateDefinition) {
-			//this is an explicit specialization
-			try {
-				BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
-				accept(visitor);
-				return visitor.getBindings();
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-		} else {
-			//this is an implicit specialization
-			try {						
-				IBinding[] specialized = ((ICPPClassType) getSpecializedBinding())
-						.getCompositeScope().find(name.toString(), prefixLookup);			
-				SpecializationFinder visitor = new SpecializationFinder(specialized);
-				accept(visitor);
-				return visitor.getSpecializations();
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-		}
-		return null;
+		return CPPSemantics.findBindings( this, name, false );
 	}
 	
 	public IBinding getBinding(IASTName name, boolean resolve)
@@ -337,7 +310,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			    }
 				
 				IBinding[] specialized = ((ICPPClassType) getSpecializedBinding())
-						.getCompositeScope().find(name.toString());			
+						.getCompositeScope().getBindings(name, resolve, false);			
 				SpecializationFinder visitor = new SpecializationFinder(specialized);
 				accept(visitor);
 				return CPPSemantics.resolveAmbiguities(name, visitor.getSpecializations());
@@ -385,4 +358,45 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			result+=" <"+map.keyAt(i)+"=>"+getArgumentMap().getAt(i)+">";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		return result;
 	}
+
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		IBinding[] result = null;
+		if (!(this instanceof ICPPTemplateDefinition)
+				&& getSpecializedBinding() instanceof ICPPTemplateDefinition) {
+			// this is an explicit specialization
+			try {
+				if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
+						|| (prefixLookup && getDBName().comparePrefix(name.toCharArray(), false) == 0)) {
+					// 9.2 ... The class-name is also inserted into the scope of
+					// the class itself
+					result = (IBinding[]) ArrayUtil.append(IBinding.class, result, this);
+				}
+				BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
+				accept(visitor);
+				result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		} else {
+			// this is an implicit specialization
+			try {
+				if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
+						|| (prefixLookup && getDBName().comparePrefix(name.toCharArray(), false) == 0)) {
+					// 9.2 ... The class-name is also inserted into the
+					// scope of the class itself
+					result = (IBinding[]) ArrayUtil.append(IBinding.class, result, this);
+				}
+
+				IBinding[] specialized = ((ICPPClassType) getSpecializedBinding())
+						.getCompositeScope().getBindings(name, resolve, prefixLookup);
+				SpecializationFinder visitor = new SpecializationFinder(specialized);
+				accept(visitor);
+				result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getSpecializations());
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	}
+
 }

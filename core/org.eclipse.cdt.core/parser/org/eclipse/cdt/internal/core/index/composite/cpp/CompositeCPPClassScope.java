@@ -49,13 +49,12 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 		IBinding binding = ((ICPPClassType)rbinding).getCompositeScope().getBinding(name, resolve);
 		return processUncertainBinding(binding);
 	}
-	
-	public IBinding[] find(String name, boolean prefixLookup)
-	throws DOMException {
-		IBinding[] preresult = ((ICPPClassType)rbinding).getCompositeScope().find(name, prefixLookup);
-		return processUncertainBindings(preresult);
-	}
 
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		IBinding[] bindings = ((ICPPClassType)rbinding).getCompositeScope().getBindings(name, resolve, prefixLookup);
+		return processUncertainBindings(bindings);
+	}
+	
 	public IBinding[] find(String name) throws DOMException {
 		IBinding[] preresult = ((ICPPClassType)rbinding).getCompositeScope().find(name);
 		return processUncertainBindings(preresult);	

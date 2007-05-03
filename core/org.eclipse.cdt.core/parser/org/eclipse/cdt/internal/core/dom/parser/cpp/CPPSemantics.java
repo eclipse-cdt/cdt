@@ -16,7 +16,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -119,9 +118,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -133,7 +130,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author aniefer
@@ -1023,67 +1019,50 @@ public class CPPSemantics {
 			
 			ArrayWrapper directives = null;
 			if( !data.usingDirectivesOnly ){
-				if( ASTInternal.isFullyCached(scope) && !data.contentAssist && data.astName != null ){
-					IBinding binding = data.contentAssist ? null : scope.getBinding( data.astName, true );
-					if( binding != null && 
-						( CPPSemantics.declaredBefore( binding, data.astName ) || 
-						  (scope instanceof ICPPClassScope && data.checkWholeClassScope) ) )
-					{
-						mergeResults( data, binding, true );	
+				if( ASTInternal.isFullyCached(scope) ){
+					if (!data.contentAssist && data.astName != null) {
+						IBinding binding = scope.getBinding( data.astName, true );
+						if( binding != null && 
+							( CPPSemantics.declaredBefore( binding, data.astName ) || 
+							  (scope instanceof ICPPClassScope && data.checkWholeClassScope) ) )
+						{
+							mergeResults( data, binding, true );	
+						}
+					} else if (data.astName != null) {
+						IBinding[] bindings = scope.getBindings( data.astName, true, data.prefixLookup );
+						mergeResults(data, bindings, true);
 					}
 				} else if (data.astName != null) {
-					boolean useASTResults = true;
-					IBinding b = null;
+					IBinding[] b = null;
 					if (!data.contentAssist) {
-						b= scope.getBinding( data.astName, false );
-						if (b instanceof CPPImplicitFunction || b instanceof CPPImplicitTypedef) 
-							mergeResults( data, b, true );
+						IBinding binding = scope.getBinding( data.astName, false );
+						if (binding instanceof CPPImplicitFunction || binding instanceof CPPImplicitTypedef) 
+							mergeResults( data, binding, true );
+						else
+							b = new IBinding[] { binding };
 					} else {
-						IASTNode parent = ASTInternal.getPhysicalNodeOfScope(scope);
-						if (parent == null) {
-							IBinding[] bindings = scope.find(data.astName.toString(), data.prefixLookup);
-							bindings = appendClassType(bindings, scope, data);
-							mergeResults(data, bindings, true);
-							useASTResults = false;
-						} else {
-							IIndex index = parent.getTranslationUnit().getIndex();
-							if (index != null) {
-								if (parent instanceof IASTTranslationUnit) {
-									try {
-										IndexFilter filter = IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID);
-										IBinding[] bindings = data.prefixLookup ?
-												index.findBindingsForPrefix(data.astName.toCharArray(), true, filter, null) :
-												index.findBindings(data.astName.toCharArray(), filter, null);
-										mergeResults(data, bindings, true);
-										useASTResults = false;
-									} catch (CoreException e) {
-									}
-								} else if (parent instanceof ICPPASTNamespaceDefinition) {
-									ICPPASTNamespaceDefinition ns = (ICPPASTNamespaceDefinition) parent;
-									try {
-										IIndexBinding binding = index.findBinding(ns.getName());
-										if (binding instanceof ICPPNamespace) {
-											ICPPNamespaceScope indexNs = ((ICPPNamespace)binding).getNamespaceScope();
-											IBinding[] bindings = indexNs.find(data.astName.toString(), data.prefixLookup);
-											mergeResults(data, bindings, true);
-											useASTResults = false;
-										}
-									} catch (CoreException e) {
-									}
-								}
-							}
-						}
+						b = scope.getBindings( data.astName, false, data.prefixLookup );
 					}
 					
 					IASTName[] inScope = lookupInScope( data, scope, blockItem );
-					// must call lookupInScope(...) even if the index results
-					// have already been used in order to handle using directives
-					if (useASTResults) {
-						if (inScope != null) {
-						    mergeResults( data, inScope, true );
-						} else if (b instanceof IIndexBinding) {
-						    mergeResults( data, b, true);
+					
+					if (inScope != null) {
+						if (data.contentAssist) {
+							Object[] objs = ArrayUtil.addAll(Object.class, null, inScope);
+							for (int i = 0; i < b.length; i++) {
+								if (b[i] instanceof IIndexBinding)
+									objs = ArrayUtil.append(Object.class, objs, b[i]);
+							}
+							mergeResults(data, objs, true);
+						} else {
+							mergeResults(data, inScope, true);
 						}
+					} else if (!data.contentAssist) {
+						if (b != null && b[0] instanceof IIndexBinding) {
+							mergeResults(data, b, true);
+						}
+					} else if (b != null){
+						mergeResults(data, b, true);
 					}
 				}
 
@@ -1162,19 +1141,6 @@ public class CPPSemantics {
 			scope = parentScope;
 		}
 	}
-
-	private static IBinding[] appendClassType(IBinding[] bindings, ICPPScope scope, CPPSemantics.LookupData data) throws DOMException {
-		if (scope instanceof ICPPClassScope) {
-			IBinding binding = ((ICPPClassScope)scope).getClassType();
-			char[] c = binding.getNameCharArray();
-			char[] n = data.astName.toCharArray();
-			if ((data.prefixLookup && CharArrayUtils.equals(c, 0, n.length, n, true))
-					|| (!data.prefixLookup && CharArrayUtils.equals(c, n))) {
-				return (IBinding[]) ArrayUtil.append(IBinding.class, bindings, binding);
-			}
-		}
-		return bindings;
-	}
 	
 	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
@@ -1231,11 +1197,12 @@ public class CPPSemantics {
 				//is circular inheritance
 				if( ! data.inheritanceChain.containsKey( parent ) ){
 					//is this name define in this scope?
-					if( ASTInternal.isFullyCached(parent) && data.astName != null && !data.contentAssist )
-						inherited = parent.getBinding( data.astName, true );
-					else if (ASTInternal.getPhysicalNodeOfScope(parent) == null) {
-						inherited = parent.find(data.astName.toString(), data.prefixLookup);
-						inherited = appendClassType((IBinding[]) inherited, parent, data);
+					if( ASTInternal.isFullyCached(parent)) {
+						if (data.astName != null && !data.contentAssist ) {
+							inherited = parent.getBinding( data.astName, true );
+						} else if (data.astName != null) {
+							inherited = parent.getBindings( data.astName, true, data.prefixLookup);
+						}
 					} else
 						inherited = lookupInScope( data, parent, null );
 					
@@ -1631,21 +1598,22 @@ public class CPPSemantics {
 				ArrayWrapper usings = new ArrayWrapper();
 				
 				boolean found = false;
-				if( ASTInternal.isFullyCached(temp) && !data.contentAssist ){
-					IBinding binding = temp.getBinding( data.astName, true );
-					if( binding != null && 
-						( CPPSemantics.declaredBefore( binding, data.astName ) || 
-						  (scope instanceof ICPPClassScope && data.checkWholeClassScope) ) )
-					{
-						mergeResults( data, binding, true );
-						found = true;
-					}
-				} else if (ASTInternal.getPhysicalNodeOfScope(temp) == null) {
-					IBinding[] bindings = temp.find(data.astName.toString(), data.prefixLookup);
-					bindings = appendClassType(bindings, temp, data);
-					if (bindings != null && bindings.length > 0) {
-						mergeResults( data, bindings, true );
-						found = true;
+				if( ASTInternal.isFullyCached(temp) ) {
+					if ( !data.contentAssist ){
+						IBinding binding = temp.getBinding( data.astName, true );
+						if( binding != null && 
+							( CPPSemantics.declaredBefore( binding, data.astName ) || 
+							  (scope instanceof ICPPClassScope && data.checkWholeClassScope) ) )
+						{
+							mergeResults( data, binding, true );
+							found = true;
+						}
+					} else {
+						IBinding[] bindings = temp.getBindings( data.astName, true, data.prefixLookup );
+						if (bindings != null && bindings.length > 0) {
+							mergeResults( data, bindings, true );
+							found = true;
+						}
 					}
 				} else {
 					IASTName [] f = lookupInScope( data, temp, null );
@@ -3333,28 +3301,19 @@ public class CPPSemantics {
 		return null;
 	}
 	
-	public static IBinding[] findBindings( IScope scope, String name, boolean qualified, boolean prefixLookup ) throws DOMException{
-		return findBindings( scope, name.toCharArray(), qualified, prefixLookup );
+	public static IBinding[] findBindings( IScope scope, String name, boolean qualified ) throws DOMException{
+		return findBindings( scope, name.toCharArray(), qualified );
 	}
 	
-	public static IBinding[] findBindings( IScope scope, char []name, boolean qualified, boolean prefixLookup ) throws DOMException{
+	public static IBinding[] findBindings( IScope scope, char []name, boolean qualified ) throws DOMException{
 	    CPPASTName astName = new CPPASTName();
 	    astName.setName( name );
 	    astName.setParent( ASTInternal.getPhysicalNodeOfScope(scope));
 	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
 	    
-		if (prefixLookup) {
-	        LookupData data = createLookupData( astName, true );
-	        data.contentAssist = true;
-	        data.prefixLookup = true;
-	        data.foundItems = new CharArrayObjectMap( 2 );
-	        data.forceQualified = qualified;
-			return contentAssistLookup(data, scope);
-		} else {
-		    LookupData data = new LookupData( astName );
-		    data.forceQualified = qualified;
-			return standardLookup(data, scope);
-		}
+		LookupData data = new LookupData( astName );
+		data.forceQualified = qualified;
+		return standardLookup(data, scope);
 	}
 	
 	public static IBinding[] findBindingsForContentAssist(IASTName name, boolean prefixLookup) {

@@ -23,7 +23,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 /**
@@ -60,13 +62,6 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
     public IBinding[] find( String name ) {
-        return null;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-     */
-    public IBinding[] find( String name, boolean prefixLookup ) {
         return null;
     }
 
@@ -108,6 +103,29 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
         map.put( c, b );
 
         return b;
+    }
+    
+    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
+        if( map == null )
+            map = new CharArrayObjectMap(2);
+        
+        char [] c = name.toCharArray();
+        
+	    IBinding[] result = null;
+	    if (prefixLookup) {
+	    	Object[] keys = map.keyArray();
+	    	for (int i = 0; i < keys.length; i++) {
+	    		char[] key = (char[]) keys[i];
+	    		if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
+	    			result = (IBinding[]) ArrayUtil.append(IBinding.class, result, map.get(key));
+	    		}
+	    	}
+	    } else {
+	    	result = new IBinding[] { (IBinding) map.get( c ) };
+	    }
+        
+	    result = (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	    return result;
     }
 
     /* (non-Javadoc)

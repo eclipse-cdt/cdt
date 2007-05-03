@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
-import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -203,19 +202,12 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		fail(); return null;
 	}
 	
-	public IBinding[] find(String name) throws DOMException {
-		return find(name, false);
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		fail(); return null;
 	}
 	
-	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
-		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
-			accept(visitor);
-			return visitor.getBindings();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
+	public IBinding[] find(String name) throws DOMException {
+		fail(); return null;
 	}
 	
 	public IIndexBinding getScopeBinding() {

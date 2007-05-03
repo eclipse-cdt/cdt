@@ -141,13 +141,6 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     public IBinding[] find( String name ) throws DOMException {
         throw new DOMException( this );
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-     */
-    public IBinding[] find( String name, boolean prefixLookup ) throws DOMException {
-        throw new DOMException( this );
-    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
@@ -174,6 +167,13 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
     public IBinding getBinding( IASTName name, boolean resolve ) throws DOMException {
+        throw new DOMException( this );
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
+     */
+    public IBinding[] getBindings( IASTName name, boolean resolve, boolean prefixLookup ) throws DOMException {
         throw new DOMException( this );
     }
 

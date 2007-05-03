@@ -77,25 +77,17 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
-	    return find(name, false);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-	 */
-	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
 	    char [] n = name.toCharArray();
 	    List bindings = new ArrayList();
 	    
 	    for (int i = 0; i < labels.size(); i++) {
 	    	char[] key = labels.keyAt(i);
-	    	if ((prefixLookup && CharArrayUtils.equals(key, 0, n.length, n, true))
-		    		|| (!prefixLookup && CharArrayUtils.equals(key, n))) {
+	    	if (CharArrayUtils.equals(key, n)) {
 	    		bindings.add(labels.get(key));
 	    	}
 	    }
 	    
-	    IBinding[] additional = super.find( name, prefixLookup );
+	    IBinding[] additional = super.find( name );
 	    for (int i = 0; i < additional.length; i++) {
 	    	bindings.add(additional[i]);
 	    }

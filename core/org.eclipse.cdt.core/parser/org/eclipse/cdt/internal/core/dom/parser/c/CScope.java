@@ -63,6 +63,7 @@ public class CScope implements ICScope, IASTInternalScope {
 	 */
 	public static final int NAMESPACE_TYPE_TAG = 0;
 	public static final int NAMESPACE_TYPE_OTHER = 1;
+	public static final int NAMESPACE_TYPE_BOTH = 2;
 	
     private IASTNode physicalNode = null;
     private boolean isFullyCached = false;
@@ -114,13 +115,6 @@ public class CScope implements ICScope, IASTInternalScope {
      */
     public IBinding[] find( String name ) throws DOMException {
     	return CVisitor.findBindings( this, name, false );
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-     */
-    public IBinding[] find( String name, boolean prefixLookup ) throws DOMException {
-    	return CVisitor.findBindings( this, name, prefixLookup );
     }
 
     public IBinding getBinding( int namespaceType, char [] name ){
@@ -213,6 +207,55 @@ public class CScope implements ICScope, IASTInternalScope {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
+     */
+    public IBinding[] getBindings( IASTName name, boolean resolve, boolean prefixLookup ) {
+        char [] c = name.toCharArray();
+        
+        Object[] obj = null;
+        
+        for (int i = 0; i < bindings.length; i++) {
+        	if (prefixLookup) {
+        		Object[] keys = bindings[i].keyArray();
+        		for (int j = 0; j < keys.length; j++) {
+        			char[] key = (char[]) keys[j];
+        			if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
+        				obj = ArrayUtil.append(obj, bindings[i].get(key));
+        			}
+        		}
+        	} else {
+        		obj = ArrayUtil.append(obj, bindings[i].get(c));
+        	}
+        }
+
+       	if(physicalNode instanceof IASTTranslationUnit) {
+        	IIndex index= ((IASTTranslationUnit)physicalNode).getIndex();
+        	if(index!=null) {
+        		try {
+        			IBinding[] bindings = prefixLookup ?
+							index.findBindingsForPrefix(name.toCharArray(), true, getIndexFilter(NAMESPACE_TYPE_BOTH), null) :
+							index.findBindings(name.toCharArray(), getIndexFilter(NAMESPACE_TYPE_BOTH), null);
+					obj = ArrayUtil.addAll(Object.class, obj, bindings);
+        		} catch(CoreException ce) {
+        			CCorePlugin.log(ce);
+        		}
+        	}
+        }
+       	obj = ArrayUtil.trim(Object.class, obj);
+       	IBinding[] result = null;
+        
+       	for (int i = 0; i < obj.length; i++) {
+            if( obj[i] instanceof IBinding )
+            	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, obj[i]);
+
+            if( (resolve || ((IASTName)obj[i]).getBinding() != null) && ( obj[i] != name ) )
+            	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, ((IASTName)obj[i]).resolveBinding());
+       	}
+
+        return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+    }
+    
     /**
      * Index results from global scope, differ from ast results from translation unit scope. This routine
      * is intended to fix results from the index to be consistent with ast scope behaviour.

@@ -31,12 +31,6 @@ public class CompositeCPPTemplateScope extends CompositeScope implements ICPPTem
 		return (ICPPTemplateDefinition) processUncertainBinding(preresult);
 	}
 
-	public IBinding[] find(String name, boolean prefixLookup)
-	throws DOMException {
-		IBinding[] preresult = ((ICPPTemplateScope)rbinding).find(name, prefixLookup);
-		return processUncertainBindings(preresult);
-	}
-
 	public IBinding[] find(String name) throws DOMException {
 		IBinding[] preresult = ((ICPPTemplateScope)rbinding).find(name);
 		return processUncertainBindings(preresult);	
@@ -45,6 +39,11 @@ public class CompositeCPPTemplateScope extends CompositeScope implements ICPPTem
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		IBinding binding = ((ICPPTemplateScope)rbinding).getBinding(name, resolve);
 		return processUncertainBinding(binding);
+	}
+	
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		IBinding[] bindings = ((ICPPTemplateScope)rbinding).getBindings(name, resolve, prefixLookup);
+		return processUncertainBindings(bindings);
 	}
 
 	public IIndexBinding getScopeBinding() {

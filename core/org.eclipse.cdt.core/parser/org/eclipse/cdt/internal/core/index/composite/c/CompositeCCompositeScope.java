@@ -38,11 +38,10 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 		IBinding binding = ((ICompositeType)rbinding).getCompositeScope().getBinding(name, resolve);
 		return processUncertainBinding(binding);
 	}
-
-	public IBinding[] find(String name, boolean prefixLookup)
-			throws DOMException {
-		IBinding[] preresult = ((ICompositeType)rbinding).getCompositeScope().find(name, prefixLookup);
-		return processUncertainBindings(preresult);
+	
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		IBinding[] bindings = ((ICompositeType)rbinding).getCompositeScope().getBindings(name, resolve, prefixLookup);
+		return processUncertainBindings(bindings);
 	}
 	
 	public IBinding[] find(String name) throws DOMException {

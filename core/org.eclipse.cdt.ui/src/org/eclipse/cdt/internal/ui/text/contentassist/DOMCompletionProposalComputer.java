@@ -58,6 +58,11 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates.CPPImplicitFunctionTemplate;
+
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
@@ -200,6 +205,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	protected void handleBinding(IBinding binding,
 			CContentAssistInvocationContext cContext,
 			IASTCompletionContext astContext, List proposals) {
+		if ((binding instanceof CPPImplicitFunction
+				|| binding instanceof CPPImplicitFunctionTemplate || binding instanceof CPPImplicitTypedef)
+				&& !(binding instanceof CPPImplicitMethod)) {
+			return;
+		}
+		
 		if (!isAnonymousBinding(binding)) {
 			if (binding instanceof ICPPClassType) {
 				handleClass((ICPPClassType) binding, cContext, proposals);
@@ -212,7 +223,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 					handleNamespace((ICPPNamespace) binding, astContext, cContext, proposals);
 				} else {
 					proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), cContext));
-				}	
+				}
 			}
 		}
 	}
@@ -236,7 +247,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 	}
 	
-	private void handleFunction(IFunction function, CContentAssistInvocationContext context, List proposals) {
+	private void handleFunction(IFunction function, CContentAssistInvocationContext context, List proposals) {	
 		Image image = getImage(function);
 		
 		StringBuffer repStringBuff = new StringBuffer();

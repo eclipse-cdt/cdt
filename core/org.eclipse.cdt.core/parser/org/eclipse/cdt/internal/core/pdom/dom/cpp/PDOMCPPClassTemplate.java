@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
@@ -171,8 +172,15 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType implements
 		return null;
 	}
 	
-	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		IBinding[] result = null;
 		try {
+			if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
+					|| (prefixLookup && getDBName().comparePrefix(name.toCharArray(), false) == 0)) {
+				// 9.2 ... The class-name is also inserted into the scope of
+				// the class itself
+				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, this);
+			}
 			IndexFilter filter = new IndexFilter() {
 				public boolean acceptBinding(IBinding binding) {
 					return !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPSpecialization);
@@ -187,30 +195,16 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType implements
 			
 			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), filter, prefixLookup, !prefixLookup);
 			accept(visitor);
-			return visitor.getBindings();
+			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return null;
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 	
 	private class PDOMCPPTemplateScope implements ICPPTemplateScope, IIndexScope {
 		public IBinding[] find(String name) throws DOMException {
-			return find(name, false);
-		}
-
-		public IBinding[] find(String name, boolean prefixLookup)
-				throws DOMException {
-			try {
-				BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
-				PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
-				list.accept(visitor);
-				
-				return visitor.getBindings();
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-			return null;
+			return CPPSemantics.findBindings( this, name, false );
 		}
 
 		public IBinding getBinding(IASTName name, boolean resolve)
@@ -225,6 +219,20 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType implements
 				CCorePlugin.log(e);
 			}
 			return null;
+		}
+		
+		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup)
+				throws DOMException {
+			IBinding[] result = null;
+			try {
+				BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
+				PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
+				list.accept(visitor);
+				result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+			return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 		}
 		
 		public IScope getParent() throws DOMException {

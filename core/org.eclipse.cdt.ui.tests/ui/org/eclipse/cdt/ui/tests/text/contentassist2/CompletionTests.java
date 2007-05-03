@@ -699,7 +699,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 
 	//// to_be_replaced_
 	//void gfunc(){aNew/*cursor*/
-	public void _testGlobalVariableBeforeSave_Bug180883() throws Exception {
+	public void testGlobalVariableBeforeSave_Bug180883() throws Exception {
 		String replace=   "// to_be_replaced_";
 		String globalVar= "int aNewGlobalVar;";
 		IDocument doc= getDocument();

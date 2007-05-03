@@ -46,18 +46,6 @@ public interface IScope {
 	 * @return List of IBinding
 	 */
 	public IBinding[] find(String name) throws DOMException;
-        	
-	/**
-	 * This is the general lookup entry point. It returns the list of
-	 * valid bindings for a given name or prefix.  The lookup proceeds as an unqualified
-	 * lookup.  Constructors are not considered during this lookup and won't be returned.
-	 * No attempt is made to resolve potential ambiguities or perform access checking.
-	 * 
-	 * @param name the name for which to search
-	 * @param prefixLookup whether or not to only check prefixes
-	 * @return List of IBinding
-	 */
-	public IBinding[] find(String name, boolean prefixLookup) throws DOMException;
 	
 	/**
 	 * Get the binding in this scope that the given name would resolve to. Could
@@ -73,4 +61,20 @@ public interface IScope {
 	 * @throws DOMException
 	 */
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException;
+	
+	/**
+	 * Get the bindings in this scope that the given name or prefix could resolve to. Could
+	 * return null if there is no matching bindings in this scope, if the bindings have not
+	 * yet been cached in this scope, or if resolve == false and the appropriate bindings 
+	 * have not yet been resolved.
+	 * 
+	 * @param name
+	 * @param resolve :
+	 *            whether or not to resolve the matching bindings if they have not
+	 *            been so already.
+	 * @param prefixLookup whether the lookup is for a full name or a prefix
+	 * @return : the bindings in this scope that match the name or prefix, or null
+	 * @throws DOMException
+	 */
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException;
 }

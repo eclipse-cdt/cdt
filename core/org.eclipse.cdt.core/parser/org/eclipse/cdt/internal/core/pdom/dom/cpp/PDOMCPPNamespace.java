@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -102,12 +103,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 	}
 
 	public IBinding[] find(String name) {
-		return find(name, false);
-	}
-	
-	public IBinding[] find(String name, boolean prefixLookup) {
 		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray());
 			getIndex().accept(visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {
@@ -127,6 +124,18 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 			CCorePlugin.log(e);
 		}
 		return null;
+	}
+	
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		IBinding[] result = null;
+		try {
+			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
+			getIndex().accept(visitor);
+			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 
 	public boolean isFullyCached() throws DOMException {

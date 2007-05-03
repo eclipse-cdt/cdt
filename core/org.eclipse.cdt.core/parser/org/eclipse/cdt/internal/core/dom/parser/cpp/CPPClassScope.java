@@ -216,6 +216,31 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    return super.getBinding( name, resolve );
 	}
 
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+	    char [] c = name.toCharArray();
+		
+	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+	    IASTName compName = compType.getName();
+	    if( compName instanceof ICPPASTQualifiedName ){
+	    	IASTName [] ns = ((ICPPASTQualifiedName)compName).getNames();
+	    	compName = ns[ ns.length - 1 ];
+	    }
+	    IBinding[] result = null;
+	    if( (!prefixLookup && CharArrayUtils.equals( c, compName.toCharArray() ))
+	    	|| (prefixLookup && CharArrayUtils.equals(compName.toCharArray(), 0, c.length, c, true)) ){
+	        if( isConstructorReference( name ) ){
+	            result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, getConstructors( bindings, resolve, name ));
+	        }
+            //9.2 ... The class-name is also inserted into the scope of the class itself
+            result = (IBinding[]) ArrayUtil.append(IBinding.class, result, compName.resolveBinding());
+            if (!prefixLookup)
+            	return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	    }
+	    result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result,
+	    		super.getBindings( name, resolve, prefixLookup ));
+	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	}
+	
 	static protected boolean shouldResolve(boolean force, IASTName candidate, IASTName forName) {
 		if(!force || candidate == forName)
 			return false;
@@ -276,13 +301,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
-	    return find(name, false);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-	 */
-	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
 	    char [] n = name.toCharArray();
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName();
@@ -290,15 +308,12 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    	IASTName [] ns = ((ICPPASTQualifiedName)compName).getNames();
 	    	compName = ns[ ns.length - 1 ];
 	    }
-	    
-	    IBinding[] results = null;
-	    results = (IBinding[]) ArrayUtil.addAll( IBinding.class, results, super.find( name, prefixLookup ));
 
-	    if((prefixLookup && CharArrayUtils.equals(compName.toCharArray(), 0, n.length, n, true))
-	    		|| (!prefixLookup && CharArrayUtils.equals(compName.toCharArray(), n))) {
-	        results = (IBinding[]) ArrayUtil.addAll( IBinding.class, results, getConstructors( bindings, true ) );
+	    if(CharArrayUtils.equals(compName.toCharArray(), n)) {
+	        return getConstructors( bindings, true );
 	    }
-	    return results != null ? results : IBinding.EMPTY_BINDING_ARRAY;
+	    
+	    return super.find(name);
 	}
 	
 	public static boolean isConstructorReference( IASTName name ){

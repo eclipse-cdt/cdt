@@ -875,17 +875,17 @@ public class CommonBuilder extends ACBuilder {
 		try {
 			int flags = 0;
 			IResourceDelta delta = getDelta(currentProject);
-			
-			if(delta != null){
-				flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS;
-//				delta = getDelta(currentProject);
-			}
-			
-			boolean buildIncrementaly = delta != null;
-			
 			BuildStateManager bsMngr = BuildStateManager.getInstance();
 			IProjectBuildState pBS = bsMngr.getProjectBuildState(currentProject);
 			IConfigurationBuildState cBS = pBS.getConfigurationBuildState(cfg.getId(), true);
+			
+//			if(delta != null){
+				flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS;
+//				delta = getDelta(currentProject);
+//			}
+			
+			boolean buildIncrementaly = delta != null;
+			
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, cBS, delta, flags);
 	
 			DescriptionBuilder dBuilder = null;
@@ -1454,6 +1454,16 @@ public class CommonBuilder extends ACBuilder {
 	
 	protected void clean(CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException{
 		if (shouldBuild(CLEAN_BUILD, bInfo.getBuilder())) {
+			BuildStateManager bsMngr = BuildStateManager.getInstance();
+			IProject project = bInfo.getProject();
+			IConfiguration cfg = bInfo.getConfiguration();
+			IProjectBuildState pbs = bsMngr.getProjectBuildState(project);
+			IConfigurationBuildState cbs = pbs.getConfigurationBuildState(cfg.getId(), false);
+			if(cbs != null){
+				pbs.removeConfigurationBuildState(cfg.getId());
+				bsMngr.setProjectBuildState(project, pbs);
+			}
+			
 			boolean performExternalClean = true;
 			if(shouldCleanProgrammatically(bInfo)){
 				try {

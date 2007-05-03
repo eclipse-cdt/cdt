@@ -398,15 +398,12 @@ public class DOMScanner extends BaseScanner {
      */
     protected void processIfdef(int startPos, int endPos, boolean positive,
             boolean taken) {
+    	final char[] condition= extractPreprocessorCondition(bufferStack[bufferStackPos], startPos, endPos);
         if (positive){
-        	int startCond = startPos + 7 + countSpaces(startPos);
-			char[] condition = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - startCond);
             locationMap.encounterPoundIfdef(getGlobalOffset(startPos),
                     getGlobalOffset(endPos), taken, condition);
         }
         else{
-        	int startCond = startPos + 8 + countSpaces(startPos);
-			char[] condition = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - startCond);
             locationMap.encounterPoundIfndef(getGlobalOffset(startPos),
                     getGlobalOffset(endPos), taken, condition);
         }
@@ -420,8 +417,7 @@ public class DOMScanner extends BaseScanner {
      *      int, boolean)
      */
     protected void processIf(int startPos, int endPos, boolean taken) {
-    	int startCond = startPos + 4 + countSpaces(startPos);
-		char[] condition = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - startCond);
+    	final char[] condition= extractPreprocessorCondition(bufferStack[bufferStackPos], startPos, endPos);
         locationMap.encounterPoundIf(getGlobalOffset(startPos),
                 getGlobalOffset(endPos), taken, condition);
     }
@@ -433,8 +429,7 @@ public class DOMScanner extends BaseScanner {
      *      int, boolean)
      */
     protected void processElsif(int startPos, int endPos, boolean taken) {
-    	int startCond = startPos + 6 + countSpaces(startPos);
-		char[] condition = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - startCond);
+    	final char[] condition= extractPreprocessorCondition(bufferStack[bufferStackPos], startPos, endPos);
         locationMap.encounterPoundElif(getGlobalOffset(startPos),
                 getGlobalOffset(endPos), taken, condition);
     }
@@ -471,8 +466,7 @@ public class DOMScanner extends BaseScanner {
      *      int)
      */
     protected void processError(int startPos, int endPos) {
-    	int start = startPos+7 + countSpaces(startPos);
-		char[] msg = CharArrayUtils.extract(bufferStack[bufferStackPos], start, endPos- start);
+    	final char[] msg= extractPreprocessorCondition(bufferStack[bufferStackPos], startPos, endPos);
         locationMap.encounterPoundError(getGlobalOffset(startPos),
                 getGlobalOffset(endPos), msg);
     }
@@ -481,21 +475,64 @@ public class DOMScanner extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processWarning(int, int)
      */
     protected void processWarning(int startPos, int endPos) {
-    	int start = startPos+9 + countSpaces(startPos);
-		char[] msg = CharArrayUtils.extract(bufferStack[bufferStackPos], start, endPos - start);
+    	final char[] msg= extractPreprocessorCondition(bufferStack[bufferStackPos], startPos, endPos);
         locationMap.encounterPoundWarning(getGlobalOffset(startPos),
                 getGlobalOffset(endPos), msg);
     }
     
-    private int countSpaces(int startPos) {
-    	int spaces = 0;
-    	while(bufferStack[bufferStackPos][startPos + spaces + 1] == ' ' || bufferStack[bufferStackPos][startPos + spaces + 1] == '\t' ) {
-    		++spaces;
+    private char[] extractPreprocessorCondition(final char[] buffer, int from, int to) {
+    	if (buffer[from] == '#') {
+    		from= skipWhiteSpace(buffer, from+1, to);
+    		from= skipNonWhiteSpace(buffer, from, to);
+    		from= skipWhiteSpace(buffer, from, to);
+    		to= reverseSkipWhiteSpace(buffer, to-1, from-1)+1;
+        	return CharArrayUtils.extract(buffer, from, to-from);
     	}
-    	return spaces;
+    	return CharArrayUtils.EMPTY;
     }
     
-    /*
+    
+    private int skipWhiteSpace(char[] buffer, int from, int to) {
+    	while (from < to) {
+    		char c= buffer[from];
+    		switch(c) {
+    		case ' ': case '\r': case '\n': case '\t':
+    			break;
+    		default:
+    			return from;
+    		}
+    		from++;
+    	}
+    	return from;
+	}
+
+    private int skipNonWhiteSpace(char[] buffer, int from, int to) {
+    	while (from < to) {
+    		char c= buffer[from];
+    		switch(c) {
+    		case ' ': case '\r': case '\n': case '\t':
+    			return from;
+    		}
+    		from++;
+    	}
+    	return from;
+	}
+
+    private int reverseSkipWhiteSpace(char[] buffer, int from, int to) {
+    	while (from > to) {
+    		char c= buffer[from];
+    		switch(c) {
+    		case ' ': case '\r': case '\n': case '\t':
+    			break;
+    		default:
+    			return from;
+    		}
+    		from--;
+    	}
+    	return from;
+	}
+
+	/*
      * (non-Javadoc)
      * 
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processEndif(int,
@@ -512,8 +549,7 @@ public class DOMScanner extends BaseScanner {
      *      int)
      */
     protected void processPragma(int startPos, int endPos) {
-    	int startCond = startPos + 8 + countSpaces(startPos);
-		char[] msg = CharArrayUtils.extract(bufferStack[bufferStackPos], startCond, endPos - (startCond));
+    	final char[] msg= extractPreprocessorCondition(bufferStack[bufferStackPos], startPos, endPos);
         locationMap.encounterPoundPragma(getGlobalOffset(startPos), getGlobalOffset(endPos), msg);
     }
 

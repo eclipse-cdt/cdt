@@ -2153,10 +2153,21 @@ abstract class BaseScanner implements IScanner {
         }
 
         // Capture the replacement text
-        skipOverWhiteSpace();
-        int textstart = bufferPos[bufferStackPos] + 1;
-        int textend = textstart - 1;
+        
+        // Set the offsets to the current position in case there 
+        // is no replacement sequence (bug #184804)
+        int textend = bufferPos[bufferStackPos];
+        int textstart = textend + 1;
+        
         int varArgDefinitionInd = -1;
+        skipOverWhiteSpace();
+        
+        // if there is a replacement sequence then adjust the offsets accordingly
+        if(bufferPos[bufferStackPos] + 1 < limit
+           && buffer[bufferPos[bufferStackPos] + 1] != '\n') {
+        	textend = bufferPos[bufferStackPos];
+            textstart = textend + 1;
+        }
 
         boolean encounteredComment = false;
         boolean usesVarArgInDefinition = false;

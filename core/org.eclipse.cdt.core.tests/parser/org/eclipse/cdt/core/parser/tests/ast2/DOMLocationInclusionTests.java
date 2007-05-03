@@ -309,7 +309,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
                     c_file_code.indexOf("X"), 1); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             assertSoleFileLocation(
                     macroDefinitions[1],
-                    "blarg.h", h_file_code.indexOf("#define _BLARG_H_"), "#define _BLARG_H_\r".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    "blarg.h", h_file_code.indexOf("#define _BLARG_H_"), "#define _BLARG_H_".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             assertSoleFileLocation(
                     macroDefinitions[1].getName(),
                     "blarg.h", h_file_code.indexOf("e _BLARG_H_") + 2, "_BLARG_H_".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -390,7 +390,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
                     c_file_code.indexOf("X"), 1); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    //$NON-NLS-4$
             assertSoleFileLocation(
                     macroDefinitions[1],
-                    "blarg.h", h_file_code.indexOf("#define _BLARG_H_"), "#define _BLARG_H_\r".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    "blarg.h", h_file_code.indexOf("#define _BLARG_H_"), "#define _BLARG_H_".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             assertSoleFileLocation(
                     macroDefinitions[1].getName(),
                     "blarg.h", h_file_code.indexOf("e _BLARG_H_") + 2, "_BLARG_H_".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Nokia and others.
+ * Copyright (c) 2007 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -143,6 +145,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 	}
 
 	public void createControl(Composite parent) {
+		
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(new GridLayout());
 		//
@@ -282,6 +285,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		});
 		addLaunchConfigTypes();
 		updateControls();
+		CDebugUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp( getControl(), ICDebugHelpContextIds.IMPORT_EXECUTABLE_PAGE_TWO );
 
 	}
 

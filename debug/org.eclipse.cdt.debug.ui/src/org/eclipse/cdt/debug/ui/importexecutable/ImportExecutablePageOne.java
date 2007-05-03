@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Nokia and others.
+ * Copyright (c) 2007 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Collection;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -168,7 +169,7 @@ public class ImportExecutablePageOne extends WizardPage {
 	}
 
 	public void createControl(Composite parent) {
-
+		
 		initializeDialogUnits(parent);
 
 		Composite workArea = new Composite(parent, SWT.NONE);
@@ -195,6 +196,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		Dialog.applyDialogFont(workArea);
 		selectSingleButton.setSelection(true);
 		checkControlState();
+		CDebugUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp( getControl(), ICDebugHelpContextIds.IMPORT_EXECUTABLE_PAGE_ONE );
 	}
 
 	private void createExecutablesList(Composite workArea) {

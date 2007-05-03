@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,5 +70,9 @@ public interface ICDebugHelpContextIds {
 	public static final String ADD_SOURCE_CONTAINER_DIALOG = PREFIX + "add_source_container_dialog"; //$NON-NLS-1$
 	public static final String ADD_DIRECTORY_CONTAINER_DIALOG = PREFIX + "add_directory_container_dialog"; //$NON-NLS-1$
 	public static final String REGISTER_GROUP = PREFIX + "register_group_dialog"; //$NON-NLS-1$
-	
+
+	// Wizards
+	public static final String IMPORT_EXECUTABLE_PAGE_ONE = PREFIX + "import_executable_page_one"; //$NON-NLS-1$
+	public static final String IMPORT_EXECUTABLE_PAGE_TWO = PREFIX + "import_executable_page_two"; //$NON-NLS-1$
+
 }

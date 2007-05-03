@@ -2246,13 +2246,14 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 
 	public void setParallelizationNum(int num) throws CoreException {
 //		if(num == 0 || supportsParallelBuild()){
-			parallelNum = new Integer(num);
+			Integer newParallelNum = new Integer(num);
 			String curCmd = getParallelizationCmd(getParallelizationNum());
 			String args = getArgumentsAttribute();
 			String updatedArgs = removeCmd(args, curCmd);
 			if(!updatedArgs.equals(args)){
 				setArgumentsAttribute(updatedArgs);
 			}
+			parallelNum = newParallelNum;
 			setDirty(true);
 //		}
 	}

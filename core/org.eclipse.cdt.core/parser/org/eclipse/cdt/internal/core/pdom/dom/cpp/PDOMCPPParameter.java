@@ -178,7 +178,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IIndexFra
 	}
 
 	public IScope getScope() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return null;
 	}
 
 	public Object getAdapter(Class adapter) {

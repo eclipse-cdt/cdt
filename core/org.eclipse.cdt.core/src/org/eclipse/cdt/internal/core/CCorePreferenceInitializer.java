@@ -57,6 +57,8 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 			optionNames.add(optionName);
 		}
 
+		defaultPreferences.putBoolean(CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true);
+
 		// indexer defaults
 		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);
 	}

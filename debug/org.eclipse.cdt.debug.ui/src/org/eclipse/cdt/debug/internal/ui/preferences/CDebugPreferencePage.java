@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import java.text.MessageFormat;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
@@ -77,6 +80,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private PropertyChangeListener fPropertyChangeListener;
 
+	private Button fShowBinarySourceFilesButton;
+
 	protected class PropertyChangeListener implements IPropertyChangeListener {
 
 		private boolean fHasStateChanged = false;
@@ -127,6 +132,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		createViewSettingPreferences( composite );
 		createSpacer( composite, 1 );
 		createDisassemblySettingPreferences( composite );
+		createSpacer( composite, 1 );
+		createBinarySettings( composite );
 		setValues();
 		return composite;
 	}
@@ -157,6 +164,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
 		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
+		fShowBinarySourceFilesButton.setSelection( CCorePlugin.getDefault().getPluginPreferences().getBoolean( CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES ) );
 	}
 
 	/*
@@ -205,6 +213,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fRegisterFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.10" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
 	}
 
+	private void createBinarySettings( Composite parent ) {
+		fShowBinarySourceFilesButton = createCheckButton( parent, "Show source files in binaries" );		
+	}
 	/**
 	 * Create the disassembly setting preferences composite widget
 	 */
@@ -334,6 +345,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, getFormatId( fExpressionFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, getFormatId( fRegisterFormatCombo.getSelectionIndex() ) );
 		getDisassemblySourceColor().store();
+		CCorePlugin.getDefault().getPluginPreferences().setValue( CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, fShowBinarySourceFilesButton.getSelection() );
 	}
 
 	/**

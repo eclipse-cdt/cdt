@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
@@ -248,7 +250,9 @@ public class Binary extends Openable implements IBinary {
 				// First check if we can get the list of source
 				// files used to build the binary from the symbol
 				// information.  if not, fall back on information from the binary parser.
-				if (!addSourceFiles(info, obj, hash))
+				boolean showSourceFiles = CCorePlugin.getDefault().getPluginPreferences().getBoolean( CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES );
+				if (!showSourceFiles ||
+						!addSourceFiles(info, obj, hash))
 				{
 					ISymbol[] symbols = obj.getSymbols();
 					for (int i = 0; i < symbols.length; i++) {

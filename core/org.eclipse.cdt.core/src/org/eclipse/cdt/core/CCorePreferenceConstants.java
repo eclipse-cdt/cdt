@@ -75,4 +75,9 @@ public class CCorePreferenceConstants {
 	 * Default workspace-wide language mappings.
 	 */
 	public static final String DEFAULT_WORKSPACE_LANGUAGE_MAPPINGS = ""; //$NON-NLS-1$
+
+	/**
+	 * Attempt to show source files for executable binaries.
+	 */
+	public static final String SHOW_SOURCE_FILES_IN_BINARIES = CCorePlugin.PLUGIN_ID + ".showSourceFilesInBinaries"; //$NON-NLS-1$
 }

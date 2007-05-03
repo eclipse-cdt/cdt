@@ -207,6 +207,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 						return new CompositeCPPField(this, (ICPPField) binding);
 					} if(binding instanceof ICPPParameter) {
 						return new CompositeCPPParameterSpecialization(this, (ICPPParameter) binding);
+					} if(binding instanceof ITypedef) {
+						return new CompositeCPPTypedefSpecialization(this, (ICPPBinding) binding);
 					} else {
 						throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 					}

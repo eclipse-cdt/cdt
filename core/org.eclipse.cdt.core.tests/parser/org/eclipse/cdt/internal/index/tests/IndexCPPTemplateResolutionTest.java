@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -43,6 +44,44 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		suite.addTest(suite(ProjectWithDepProj.class));
 	}
 
+	public IndexCPPTemplateResolutionTest() {
+		setStrategy(new ReferencedProject(true));
+	}
+	
+	// template<typename T> class A {
+	//    public:
+    //       typedef T TD;
+	// };
+	// 
+	// class B {};
+	// A<B>::TD foo;
+	
+	// class C {};
+	// A<C>::TD bar;
+	// 
+	// void qux() {
+	//   A<B>::TD foo2= foo;
+	//   A<C>::TD bar2= bar;
+	// }
+	public void testTypedefSpecialization() {
+		IBinding b0= getBindingFromASTName("TD foo2", 2);
+		IBinding b1= getBindingFromASTName("TD bar2", 2);
+		assertInstance(b0, ITypedef.class);
+		assertInstance(b1, ITypedef.class);
+		assertInstance(b0, ICPPSpecialization.class);
+		assertInstance(b1, ICPPSpecialization.class);
+		ObjectMap om0= ((ICPPSpecialization)b0).getArgumentMap();
+		ObjectMap om1= ((ICPPSpecialization)b1).getArgumentMap();
+		assertEquals(1, om0.size());
+		assertEquals(1, om1.size());
+		assertInstance(om0.keyAt(0), ICPPTemplateTypeParameter.class);
+		assertInstance(om0.getAt(0), ICPPClassType.class);
+		assertInstance(om1.keyAt(0), ICPPTemplateTypeParameter.class);
+		assertInstance(om1.getAt(0), ICPPClassType.class);
+		assertEquals("B", ((ICPPClassType)om0.getAt(0)).getName());
+		assertEquals("C", ((ICPPClassType)om1.getAt(0)).getName());
+	}
+	
 	//	template<typename X>
 	//	void foo(X x) {}
 	//

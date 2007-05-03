@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeProblem;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * @author aniefer
@@ -484,8 +485,8 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
     public boolean isSameType( IType type ) {
         if( type == this )
             return true;
-        if( type instanceof ITypedef )
-            return ((ITypedef)type).isSameType( this );
+        if( type instanceof ITypedef || type instanceof IIndexType)
+            return type.isSameType( this );
         return false;
     }
 

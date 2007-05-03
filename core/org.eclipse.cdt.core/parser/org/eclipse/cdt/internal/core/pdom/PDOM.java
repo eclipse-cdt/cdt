@@ -75,7 +75,7 @@ import org.eclipse.core.runtime.Status;
 public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	protected Database db;
 
-	public static final int VERSION = 34;
+	public static final int VERSION = 36;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -112,6 +112,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 33 - templates: constructor instances
 	// 34 - fix for base classes represented by qualified names (183843)
 	// 35 - add scanner configuration hashcode (62366)
+	// 36 - changed chunk size back to 4K (184892)
 	
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

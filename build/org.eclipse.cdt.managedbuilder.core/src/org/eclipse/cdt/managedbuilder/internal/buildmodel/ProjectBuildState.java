@@ -144,7 +144,7 @@ public class ProjectBuildState implements IProjectBuildState {
 		
 		try {
 			OutputStream oStream = new FileOutputStream(file);
-			fCfgIdToFileNameProps.store(oStream, "");
+			fCfgIdToFileNameProps.store(oStream, ""); //$NON-NLS-1$
 			oStream.close();
 		} catch (FileNotFoundException e) {
 			ManagedBuilderCorePlugin.log(e);

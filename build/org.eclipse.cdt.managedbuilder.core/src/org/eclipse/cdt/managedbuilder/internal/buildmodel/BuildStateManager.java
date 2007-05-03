@@ -26,7 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 public class BuildStateManager {
-	private static final String PREFS_LOCATION = "buildState";
+	private static final String PREFS_LOCATION = "buildState"; //$NON-NLS-1$
 
 	private static BuildStateManager fInstance;
 	

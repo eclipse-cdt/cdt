@@ -148,7 +148,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 	
 	public void store(OutputStream oStream) throws IOException{
 		if(fPathToStateProps != null)
-			fPathToStateProps.store(oStream, "");
+			fPathToStateProps.store(oStream, ""); //$NON-NLS-1$
 //		Properties props = new Properties();
 //		store(props);
 //		props.store(oStream, "");

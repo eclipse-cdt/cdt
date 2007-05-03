@@ -3395,6 +3395,6 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 		if(createIfNotFound)
 			return el.createChild(PREFERENCES_ELEMENT);
-		throw ExceptionFactory.createCoreException("workspace info element does not exist");
+		throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.14")); //$NON-NLS-1$
 	}
 }

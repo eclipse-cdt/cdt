@@ -2702,7 +2702,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	
 	private Set getUnusedChilrenSet(){
 		if(unusedChildrenSet == null){
-			String childIds[] = CDataUtil.stringToArray(unusedChildren, ";");
+			String childIds[] = CDataUtil.stringToArray(unusedChildren, ";"); //$NON-NLS-1$
 			if(childIds == null)
 				unusedChildrenSet = new HashSet();
 			else {
@@ -2721,6 +2721,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 	
 	private String translateUnusedIdSetToString(Set set){
-		return CDataUtil.arrayToString(set.toArray(), ";");
+		return CDataUtil.arrayToString(set.toArray(), ";"); //$NON-NLS-1$
 	}
 }

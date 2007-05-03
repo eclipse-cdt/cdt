@@ -21,8 +21,8 @@ import org.eclipse.ui.IMemento;
 /**
  * A {@link IDialogSettings} based {@link ISettingsStore}.
  * 
- * Setting Store dased on IMemento. IMemento documentations says only alpha numeric
- * values mey be used as keys. Therefore the implementation converts dots (.) into
+ * Setting Store based on IMemento. IMemento documentations says only alpha numeric
+ * values may be used as keys. Therefore the implementation converts dots (.) into
  * child elements of the memento.
  * 
  * @author Michael Scharf

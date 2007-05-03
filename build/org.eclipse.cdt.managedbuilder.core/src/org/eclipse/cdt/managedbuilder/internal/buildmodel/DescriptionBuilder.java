@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.buildmodel.IStepVisitor;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
@@ -50,6 +51,7 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 	private Map fStepToStepBuilderMap = new HashMap();
 	private int fNumCommands = -1;
 	private GenDirInfo fDir;
+	private IResourceRebuildStateContainer fRebuildStateContainer;
 	
 	private class BuildStepVisitor implements IStepVisitor{
 		private OutputStream fOut;
@@ -111,19 +113,19 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 		
 	}
 
-	public DescriptionBuilder(IBuildDescription des){
-		this(des, true);
+	public DescriptionBuilder(IBuildDescription des, IResourceRebuildStateContainer rs){
+		this(des, true, rs);
 	}
 
-	public DescriptionBuilder(IBuildDescription des, boolean buildIncrementaly){
-		this(des, buildIncrementaly, true);
+	public DescriptionBuilder(IBuildDescription des, boolean buildIncrementaly, IResourceRebuildStateContainer rs){
+		this(des, buildIncrementaly, true, rs);
 	}
 
-	public DescriptionBuilder(IBuildDescription des, boolean buildIncrementaly, boolean resumeOnError){
-		this(des, buildIncrementaly, resumeOnError, null);
+	public DescriptionBuilder(IBuildDescription des, boolean buildIncrementaly, boolean resumeOnError, IResourceRebuildStateContainer rs){
+		this(des, buildIncrementaly, resumeOnError, null, rs);
 	}
 
-	public DescriptionBuilder(IBuildDescription des, boolean buildIncrementaly, boolean resumeOnErrs, IPath cwd){
+	public DescriptionBuilder(IBuildDescription des, boolean buildIncrementaly, boolean resumeOnErrs, IPath cwd, IResourceRebuildStateContainer rs){
 		fDes = des;
 		fCWD = cwd;
 		fBuildIncrementaly = buildIncrementaly;
@@ -132,6 +134,8 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 		
 		if(fCWD == null)
 			fCWD = fDes.getDefaultBuildDirLocation();
+		
+		fRebuildStateContainer = rs;
 	}
 
 	/* (non-Javadoc)
@@ -140,6 +144,7 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 	public int build(OutputStream out, OutputStream err,
 			IProgressMonitor monitor){
 		
+		initRebuildStates();
 		int num = getNumCommands();
 		int status = STATUS_OK;
 		
@@ -167,6 +172,9 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 
 		monitor.done();
 
+		if(status == STATUS_OK)
+			clearRebuildStates();
+		
 		return status;
 	}
 
@@ -189,7 +197,7 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 	protected StepBuilder getStepBuilder(IBuildStep step){
 		StepBuilder b = (StepBuilder)fStepToStepBuilderMap.get(step);
 		if(b == null){
-			b = new StepBuilder(step, fCWD, fResumeOnErrs, fDir);
+			b = new StepBuilder(step, fCWD, fResumeOnErrs, fDir, fRebuildStateContainer);
 			fStepToStepBuilderMap.put(step, b);
 		}
 		return b;
@@ -206,4 +214,41 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 			}
 		}
 	}
+	
+	private void initRebuildStates(){
+		if(fRebuildStateContainer == null)
+			return;
+		
+		fRebuildStateContainer.setState(0);
+		
+		IBuildResource[] rcs = fDes.getResources();
+		putAll(fRebuildStateContainer, rcs, IRebuildState.NEED_REBUILD, true);
+	}
+
+	private void clearRebuildStates(){
+		if(fRebuildStateContainer == null)
+			return;
+		
+		fRebuildStateContainer.setState(0);
+		
+//		IBuildResource[] rcs = fDes.getResources();
+//		putAll(fRebuildStateContainer, rcs, IRebuildState.NEED_REBUILD, true);
+	}
+
+	static void putAll(IResourceRebuildStateContainer cbs, IBuildResource[] rcs, int state, boolean rebuildRcOnly){
+		for(int i = 0; i < rcs.length; i++){
+			IBuildResource rc = rcs[i];
+			if(rebuildRcOnly && !rc.needsRebuild())
+				continue;
+			
+			if(!rc.isProjectResource())
+				continue;
+			IPath fullPath = rc.getFullPath();
+			if(fullPath == null)
+				continue;
+			
+			cbs.setStateForFullPath(fullPath, state);
+		}
+	}
+	
 }

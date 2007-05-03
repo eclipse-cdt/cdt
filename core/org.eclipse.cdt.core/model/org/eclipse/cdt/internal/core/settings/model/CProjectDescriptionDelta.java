@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.settings.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 
 public class CProjectDescriptionDelta implements ICDescriptionDelta {

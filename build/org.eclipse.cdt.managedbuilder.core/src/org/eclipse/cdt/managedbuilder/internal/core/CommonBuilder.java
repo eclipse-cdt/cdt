@@ -49,8 +49,12 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStateManager;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.IConfigurationBuildState;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.IProjectBuildState;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.IRebuildState;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.ParallelBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.StepBuilder;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
@@ -879,11 +883,14 @@ public class CommonBuilder extends ACBuilder {
 			
 			boolean buildIncrementaly = delta != null;
 			
-			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, delta, flags);
+			BuildStateManager bsMngr = BuildStateManager.getInstance();
+			IProjectBuildState pBS = bsMngr.getProjectBuildState(currentProject);
+			IConfigurationBuildState cBS = pBS.getConfigurationBuildState(cfg.getId(), true);
+			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, cBS, delta, flags);
 	
 			DescriptionBuilder dBuilder = null;
 			if (!isParallel)
-				dBuilder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr);
+				dBuilder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr, cBS);
 
 			// Get a build console for the project
 			StringBuffer buf = new StringBuffer();
@@ -982,6 +989,8 @@ public class CommonBuilder extends ACBuilder {
 						.getResourceString(MARKERS));
 //TODO:				addBuilderMarkers(epm);
 				epm.reportProblems();
+
+				bsMngr.setProjectBuildState(currentProject, pBS);
 			} else {
 				buf = new StringBuffer();
 				buf.append(ManagedMakeMessages.getFormattedString(NOTHING_BUILT, currentProject.getName()));
@@ -1169,7 +1178,7 @@ public class CommonBuilder extends ACBuilder {
 				{
 					IBuildStep step = (IBuildStep) stepIter.next();
 					
-					StepBuilder stepBuilder = new StepBuilder(step);
+					StepBuilder stepBuilder = new StepBuilder(step, null);
 					
 					int status = stepBuilder.build(consoleOutStream, epmOutputStream, new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 					

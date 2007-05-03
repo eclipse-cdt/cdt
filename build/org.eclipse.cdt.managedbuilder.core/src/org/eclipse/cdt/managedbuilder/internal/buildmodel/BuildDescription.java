@@ -87,6 +87,7 @@ public class BuildDescription implements IBuildDescription {
 
 	private Configuration fCfg;
 	private IResourceDelta fDelta;
+	private IConfigurationBuildState fBuildState; 
 	
 	private Map fToolToMultiStepMap = new HashMap();
 	private BuildStep fOrderedMultiActions[];
@@ -235,14 +236,15 @@ public class BuildDescription implements IBuildDescription {
 		IPath rcLocation = rc.getLocation();
 		if(rcLocation == null){
 			IPath fullPath = rc.getFullPath();
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot(); 
-			IProject proj = root.getProject(fullPath.segment(0));
-			rcLocation = proj.getLocation();
-			if(rcLocation != null){
-				rcLocation = rcLocation.append(fullPath.removeFirstSegments(1));
-			} else {
-				rcLocation = root.getLocation().append(fullPath);
-			}
+			rcLocation = calcLocationForFullPath(fullPath);
+//			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot(); 
+//			IProject proj = root.getProject(fullPath.segment(0));
+//			rcLocation = proj.getLocation();
+//			if(rcLocation != null){
+//				rcLocation = rcLocation.append(fullPath.removeFirstSegments(1));
+//			} else {
+//				rcLocation = root.getLocation().append(fullPath);
+//			}
 		}
 		return rcLocation;
 	}
@@ -402,7 +404,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 	
 	public BuildDescription(IConfiguration cfg){
-		initBase(cfg, null, 0);
+		initBase(cfg, null, null, 0);
 	}
 	
 	public void synchRebuildState() throws CoreException{
@@ -704,9 +706,10 @@ public class BuildDescription implements IBuildDescription {
 		return (fFlags & flags) == flags;
 	}
 	
-	protected void initBase(IConfiguration cfg, IResourceDelta delta, int flags){
+	protected void initBase(IConfiguration cfg, IConfigurationBuildState bs, IResourceDelta delta, int flags){
 		fCfg = (Configuration)cfg;
 		fDelta = delta;
+		fBuildState = bs;
 		fProject = cfg.getOwner().getProject();
 		fInfo = ManagedBuildManager.getBuildInfo(fProject);
 		fFlags = flags;
@@ -726,6 +729,9 @@ public class BuildDescription implements IBuildDescription {
 		if(fCfg.needsFullRebuild())
 			fInputStep.setRebuildState(true);
 
+		if(fBuildState != null && fBuildState.getState() == IRebuildState.NEED_REBUILD)
+			fInputStep.setRebuildState(true);
+		
 		initToolInfos();
 		
 		initMultiSteps();
@@ -742,17 +748,63 @@ public class BuildDescription implements IBuildDescription {
 		
 		visitor.setMode(true);
 		if((checkFlags(BuildDescriptionManager.REMOVED) 
-				|| checkFlags(BuildDescriptionManager.REBUILD))
-				&& fDelta != null)
-			fDelta.accept(visitor);
+				|| checkFlags(BuildDescriptionManager.REBUILD))){
+			if(fDelta != null)
+				fDelta.accept(visitor);
+			if(fBuildState != null)
+				processBuildState();
+		}
 		
 		completeLinking();
 		synchRebuildState();
 		//TODO: trim();
 	}
 
-	protected void init(IConfiguration cfg, IResourceDelta delta, int flags) throws CoreException {
-		initBase(cfg, delta, flags);
+	protected void processBuildState(){
+		IPath paths[] = fBuildState.getFullPathsForState(IRebuildState.NEED_REBUILD);
+		processBuildState(IRebuildState.NEED_REBUILD, paths);
+		
+		paths = fBuildState.getFullPathsForState(IRebuildState.REMOVED);
+		processBuildState(IRebuildState.REMOVED, paths);
+	}
+
+	protected void processBuildState(int state, IPath fullPaths[]){
+		for(int i = 0; i < fullPaths.length; i++){
+			processBuildState(state, fullPaths[i]);
+		}
+	}
+
+	protected void processBuildState(int state, IPath fullPath){
+		BuildResource bRc = (BuildResource)getBuildResourceForFullPath(fullPath);
+		if(bRc == null)
+			return;
+		
+		if(bRc.getProducerIOType() != null 
+				&& bRc.getProducerIOType().getStep() == fInputStep){
+			if(state == IRebuildState.REMOVED){
+				if(checkFlags(BuildDescriptionManager.REMOVED)){
+					bRc.setRemoved(true);
+				}
+			} else if (state == IRebuildState.NEED_REBUILD){
+				if(checkFlags(BuildDescriptionManager.REBUILD)){
+					bRc.setRebuildState(true);
+				}
+			}
+		} else {
+			if(state == IRebuildState.NEED_REBUILD 
+					|| state == IRebuildState.REMOVED
+					|| checkFlags(BuildDescriptionManager.REBUILD)){
+				bRc.setRebuildState(true);
+				IBuildIOType type = bRc.getProducerIOType();
+				if(type != null){
+					((BuildStep)type.getStep()).setRebuildState(true);
+				}
+			}
+		}
+	}
+
+	protected void init(IConfiguration cfg, IConfigurationBuildState bs, IResourceDelta delta, int flags) throws CoreException {
+		initBase(cfg, bs, delta, flags);
 		
 		initDescription();
 	}
@@ -2084,6 +2136,23 @@ public class BuildDescription implements IBuildDescription {
 	 */
 	public IBuildResource getBuildResource(IResource resource){
 		return getBuildResource(calcResourceLocation(resource));
+	}
+
+	public IBuildResource getBuildResourceForFullPath(IPath fullPath){
+		IPath location = calcLocationForFullPath(fullPath);
+		return getBuildResource(location);
+	}
+	
+	protected IPath calcLocationForFullPath(IPath fullPath){
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot(); 
+		IProject proj = root.getProject(fullPath.segment(0));
+		IPath rcLocation = proj.getLocation();
+		if(rcLocation != null){
+			rcLocation = rcLocation.append(fullPath.removeFirstSegments(1));
+		} else {
+			rcLocation = root.getLocation().append(fullPath);
+		}
+		return rcLocation;
 	}
 	
 	private void initToolInfos(){

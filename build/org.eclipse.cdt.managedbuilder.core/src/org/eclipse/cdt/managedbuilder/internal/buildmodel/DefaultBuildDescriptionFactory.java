@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,15 @@ public class DefaultBuildDescriptionFactory implements IBuildDescriptionFactory 
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescriptionFactory#createBuildDescription(org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.core.resources.IResourceDelta, int)
 	 */
 	public IBuildDescription createBuildDescription(IConfiguration cfg, IResourceDelta delta, int flags) throws CoreException {
+		return createBuildDescription(cfg, null, delta, flags);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescriptionFactory#createBuildDescription(org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.core.resources.IResourceDelta, int)
+	 */
+	public IBuildDescription createBuildDescription(IConfiguration cfg, IConfigurationBuildState bs, IResourceDelta delta, int flags) throws CoreException {
 		BuildDescription info = new BuildDescription();
-		info.init(cfg, delta, flags);
+		info.init(cfg, bs, delta, flags);
 		return info;
 	}
 

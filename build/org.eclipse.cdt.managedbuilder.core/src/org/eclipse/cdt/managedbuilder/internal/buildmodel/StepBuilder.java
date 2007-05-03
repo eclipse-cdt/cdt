@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,16 +43,17 @@ public class StepBuilder implements IBuildModelBuilder {
 	private boolean fResumeOnErrs;
 	private int fNumCommands = -1;
 	private CommandBuilder fCommandBuilders[];
-
-	public StepBuilder(IBuildStep step){
-		this(step, null);
+	private IResourceRebuildStateContainer fRebuildStateContainer;
+	
+	public StepBuilder(IBuildStep step, IResourceRebuildStateContainer rs){
+		this(step, null, rs);
 	}
 
-	public StepBuilder(IBuildStep step, IPath cwd){
-		this(step, cwd, true, null);
+	public StepBuilder(IBuildStep step, IPath cwd, IResourceRebuildStateContainer rs){
+		this(step, cwd, true, null, rs);
 	}
 
-	public StepBuilder(IBuildStep step, IPath cwd, boolean resumeOnErrs, GenDirInfo dirs){
+	public StepBuilder(IBuildStep step, IPath cwd, boolean resumeOnErrs, GenDirInfo dirs, IResourceRebuildStateContainer rs){
 		fStep = step;
 		fCWD = cwd;
 		fDirs = dirs;
@@ -63,6 +64,8 @@ public class StepBuilder implements IBuildModelBuilder {
 		
 		if(fCWD == null)
 			fCWD = fStep.getBuildDescription().getDefaultBuildDirLocation();
+		
+		fRebuildStateContainer = rs;
 	}
 
 	/* (non-Javadoc)
@@ -114,6 +117,7 @@ public class StepBuilder implements IBuildModelBuilder {
 		}
 		switch(status){
 		case STATUS_OK:
+			clearRebuildState();
 			break;
 		case STATUS_CANCELLED:
 		case STATUS_ERROR_BUILD:
@@ -123,6 +127,16 @@ public class StepBuilder implements IBuildModelBuilder {
 			break;
 		}
 		return status;
+	}
+	
+	private void clearRebuildState(){
+		if(fRebuildStateContainer == null)
+			return;
+		
+		IBuildResource[] rcs = fStep.getOutputResources();
+		DescriptionBuilder.putAll(fRebuildStateContainer, rcs, 0, false);
+		rcs = fStep.getInputResources();
+		DescriptionBuilder.putAll(fRebuildStateContainer, rcs, 0, false);
 	}
 	
 	protected void refreshOutputs(IProgressMonitor monitor){
@@ -200,7 +214,7 @@ public class StepBuilder implements IBuildModelBuilder {
 			else {
 				fCommandBuilders = new CommandBuilder[cmds.length];
 				for(int i = 0; i < cmds.length; i++){
-					fCommandBuilders[i] = new CommandBuilder(cmds[i]);
+					fCommandBuilders[i] = new CommandBuilder(cmds[i], fRebuildStateContainer);
 				}
 			}
 		}

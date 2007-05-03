@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStateManager;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DbgUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
@@ -97,6 +98,8 @@ public class ManagedBuilderCorePlugin extends Plugin {
 				| IResourceChangeEvent.PRE_DELETE
 				| IResourceChangeEvent.PRE_CLOSE
 				/*| IResourceChangeEvent.POST_BUILD*/);
+		
+		BuildStateManager.getInstance().startup();
 /*		try {
 			jobManager.beginRule(root, null);
 
@@ -165,6 +168,8 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		BuildStateManager.getInstance().shutdown();
+
 		CfgDiscoveredPathManager.stop();
 //		if (fDiscoveryPathManager != null) {
 //			fDiscoveryPathManager.shutdown();

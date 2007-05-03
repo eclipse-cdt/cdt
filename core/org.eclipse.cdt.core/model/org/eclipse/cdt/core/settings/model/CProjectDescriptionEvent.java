@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionDelta;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
-import org.eclipse.cdt.internal.core.settings.model.ICDescriptionDelta;
 import org.eclipse.core.resources.IProject;
 
 public final class CProjectDescriptionEvent {

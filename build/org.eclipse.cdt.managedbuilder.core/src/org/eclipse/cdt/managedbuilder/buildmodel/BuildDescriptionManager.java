@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,9 @@ import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildMultiStatus;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStatus;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DbgUtil;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DefaultBuildDescriptionFactory;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.IConfigurationBuildState;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -93,6 +92,13 @@ public class BuildDescriptionManager {
 			IResourceDelta delta,
 			int flags) throws CoreException {
 		return DefaultBuildDescriptionFactory.getInstance().createBuildDescription(cfg, delta, flags);
+	}
+
+	static public IBuildDescription createBuildDescription(IConfiguration cfg,
+			IConfigurationBuildState bs,
+			IResourceDelta delta,
+			int flags) throws CoreException {
+		return DefaultBuildDescriptionFactory.getInstance().createBuildDescription(cfg, bs, delta, flags);
 	}
 	
 	/**

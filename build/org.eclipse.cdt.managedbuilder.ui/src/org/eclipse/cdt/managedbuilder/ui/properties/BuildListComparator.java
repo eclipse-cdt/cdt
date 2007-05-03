@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.ui.newui.CDTListComparator;
 
@@ -31,7 +32,13 @@ public class BuildListComparator extends CDTListComparator {
 			ITool c1 = (ITool)a;
 			ITool c2 = (ITool)b;
 			return c1.getName().compareToIgnoreCase(c2.getName());
-		} 
+		}
+		if (a instanceof IBuildPropertyValue) {
+			IBuildPropertyValue c1 = (IBuildPropertyValue)a;
+			IBuildPropertyValue c2 = (IBuildPropertyValue)b;
+			return c1.getName().compareToIgnoreCase(c2.getName());
+		}
+		
 		return super.compare(a, b);
 	}
 }

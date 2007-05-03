@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.SortedMap;
 
@@ -22,6 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildListComparator;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
@@ -41,6 +43,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 		IBuildPropertyManager bpm = ManagedBuildManager.getBuildPropertyManager();
 		IBuildPropertyType bpt = bpm.getPropertyType(MBSWizardHandler.ARTIFACT);
 		IBuildPropertyValue[] vs = bpt.getSupportedValues();
+		Arrays.sort(vs, BuildListComparator.getInstance());
 		
 		ArrayList items = new ArrayList();
 		// new style project types

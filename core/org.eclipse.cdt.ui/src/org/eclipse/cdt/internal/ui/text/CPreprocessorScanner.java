@@ -74,7 +74,7 @@ public class CPreprocessorScanner extends AbstractCScanner {
 		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
 		
 		token= getToken(ICColorConstants.PP_DIRECTIVE);
-		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), token);
+		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), defaultToken);
 		String[] ppKeywords= fKeywords.getPreprocessorKeywords();
 		for (int i = 0; i < ppKeywords.length; i++) {
 			preprocessorRule.addWord(ppKeywords[i], token);

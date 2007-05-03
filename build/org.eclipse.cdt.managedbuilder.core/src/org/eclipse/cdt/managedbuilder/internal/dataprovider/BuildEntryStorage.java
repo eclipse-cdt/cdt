@@ -296,21 +296,55 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 
 	private String entryValueToOptionStringValue(IOption option, ICLanguageSettingEntry entry){
+		String result;
+		boolean checkQuote = true;
 		if(entry.getKind() == ICLanguageSettingEntry.MACRO && entry.getValue().length() > 0){
-			return new StringBuffer(entry.getName()).append('=').append(entry.getValue()).toString();
+			result = new StringBuffer(entry.getName()).append('=').append(entry.getValue()).toString();
 		} else if(entry instanceof ICLanguageSettingPathEntry){
 			IOptionPathConverter converter = fLangData.getTool().getOptionPathConverter();
 			if(converter instanceof IReverseOptionPathConverter){
-				return ((IReverseOptionPathConverter)converter).convertToOptionValue(entry, option, fLangData.getTool());
+				result = ((IReverseOptionPathConverter)converter).convertToOptionValue(entry, option, fLangData.getTool());
+				checkQuote = false;
+			} else {
+				ICLanguageSettingPathEntry pathEntry = (ICLanguageSettingPathEntry)entry;
+				if(pathEntry.isValueWorkspacePath()){
+					result = ManagedBuildManager.fullPathToLocation(pathEntry.getValue());
+				} else {
+					result = entry.getName();
+				}
 			}
-			ICLanguageSettingPathEntry pathEntry = (ICLanguageSettingPathEntry)entry;
-			if(pathEntry.isValueWorkspacePath()){
-				return ManagedBuildManager.fullPathToLocation(pathEntry.getValue());
-			}
+		} else {
+			result = entry.getName();
 		}
-		return entry.getName();
+		
+		if(checkQuote){
+			result = doubleQuotePath(result);
+		}
+		return result;
 	}
-
+	
+	private String doubleQuotePath(String pathName)	{
+		/* Trim */
+		pathName = pathName.trim();
+		
+		/* Check if path is already double-quoted */
+		boolean bStartsWithQuote = pathName.indexOf('"') == 0;
+		boolean bEndsWithQuote = pathName.lastIndexOf('"') == pathName.length() - 1;
+		
+		/* Check for spaces, backslashes or macros */ 
+		int i = pathName.indexOf(' ') + pathName.indexOf('\\') //$NON-NLS-1$ //$NON-NLS-2$
+			+ pathName.indexOf("${"); //$NON-NLS-1$
+		
+		/* If indexof didn't fail all three times, double-quote path */
+		if (i != -3) {
+			if (!bStartsWithQuote)
+				pathName = "\"" + pathName; //$NON-NLS-1$
+			if (!bEndsWithQuote)
+				pathName = pathName + "\""; //$NON-NLS-1$
+		}
+		
+		return pathName;
+	}
 	
 	public static String[] macroNameValueFromValue(String value){
 		String nv[] = new String[2];

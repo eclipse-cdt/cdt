@@ -3,7 +3,7 @@
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v10.html 
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.index.tests;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -19,12 +20,18 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
@@ -48,6 +55,210 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		setStrategy(new ReferencedProject(true));
 	}
 	
+	// // Brian W.'s example from bugzilla#167098
+	//    template<class K>
+	//    class D { //CPPClassTemplate
+	//    public:
+	//            template<class T, class X>
+	//            D(T t, X x) {} // CPPConstructorTemplate
+	//
+	//            template<class T, class X>
+	//            void foo(T t, X x) {} // CPPMethodTemplate
+	//    };
+
+	//    void bar() {
+	//            D<int> *var = new D<int>(5, 6);
+	//            // First D<int>: CPPClassInstance
+	//            // Second D<int>: CPPConstructorInstance
+	//            // Now, getting the instance's specialized binding should
+	//            // result in a CPPConstructorTemplateSpecialization
+	//            var->foo<int,int>(7, 8);
+	//            // foo -> CPPMethodTemplateSpecialization
+	//            // foo<int,int> -> CPPMethodInstance
+	//    }
+    public void testCPPConstructorTemplateSpecialization() throws Exception {
+    	IBinding b0= getBindingFromASTName("D<int>(", 1, true);
+    	IBinding b1= getBindingFromASTName("D<int>(", 6, true);
+    	
+    	assertInstance(b0, ICPPClassTemplate.class); // *D*<int>(5, 6)
+    	assertInstance(b0, ICPPClassType.class); // *D*<int>(5, 6)
+    	assertInstance(b1, ICPPTemplateInstance.class); // *D<int>*(5, 6)
+    	assertInstance(b1, ICPPConstructor.class); // *D<int>*(5, 6)
+    	
+    	IBinding tidSpc= ((ICPPTemplateInstance)b1).getSpecializedBinding();
+    	assertInstance(tidSpc, ICPPConstructor.class);
+    	assertInstance(tidSpc, ICPPSpecialization.class);
+    	assertInstance(tidSpc, ICPPFunctionTemplate.class);
+    }
+	
+	// class B {};
+    //
+	//	template<typename T>
+	//	class A {
+	//	public:
+	//		T (*f)(int x);
+	//	};
+	//
+	//	template<typename T> T foo(int x) {return *new T();}
+	//	template<typename T> T foo(int x, int y) {return *new T();}
+
+	//	void qux() {
+	//		A<B> a;
+	//		a.f= foo<B>;
+	//	}
+	public void _testOverloadedFunctionTemplate() {
+		IBinding b0= getBindingFromASTName("foo<B>;", 6, true);
+		assertInstance(b0, ICPPFunction.class);
+		assertInstance(b0, ICPPSpecialization.class);
+	}
+	
+	//	template<typename T, template<typename U> class S>
+	//	class Foo {
+	//	public:
+	//		S<T> s;
+	//	};
+	//
+	//	template<typename Z> class X {
+	//	public:
+	//		void foo(Z z) {}
+	//	};
+	//
+	//	class A {};
+	
+	//	void qux() {
+	//		Foo<A,X> f;
+	//		f.s.foo(*new A());
+	//	}
+	public void _testTemplateTemplateParameter() throws Exception {
+		IBinding b0= getBindingFromASTName("Foo<A,X>", 3);
+		IBinding b1= getBindingFromASTName("Foo<A,X>", 8, true);
+		IBinding b2= getBindingFromASTName("f.s.foo", 1);
+		IBinding b3= getBindingFromASTName("s.foo", 1);
+		IBinding b4= getBindingFromASTName("foo(*", 3);
+		
+		assertInstance(b0, ICPPClassTemplate.class);
+		assertInstance(b0, ICPPClassType.class);
+		ICPPTemplateParameter[] ps= ((ICPPClassTemplate)b0).getTemplateParameters();
+		assertEquals(2, ps.length);
+		assertInstance(ps[0], ICPPTemplateTypeParameter.class);
+		assertInstance(ps[1], ICPPTemplateTemplateParameter.class);
+		
+		assertInstance(b1, ICPPTemplateInstance.class);
+		assertInstance(b1, ICPPClassType.class);
+		
+		IType[] type= ((ICPPTemplateInstance)b1).getArguments();
+		assertInstance(type[0], ICPPClassType.class);
+		assertInstance(type[1], ICPPClassTemplate.class);
+		assertInstance(type[1], ICPPClassType.class);
+		
+		ObjectMap om= ((ICPPTemplateInstance)b1).getArgumentMap();
+		assertEquals(2, om.size());
+		assertInstance(om.keyAt(0), ICPPTemplateTypeParameter.class);
+		assertInstance(om.getAt(0), ICPPClassType.class);
+		assertInstance(om.keyAt(1), ICPPTemplateTemplateParameter.class);
+		assertInstance(om.getAt(1), ICPPClassType.class);
+		assertInstance(om.getAt(1), ICPPClassTemplate.class);
+		
+		IBinding b1_spcd= ((ICPPTemplateInstance)b1).getSpecializedBinding();
+		assertInstance(b1_spcd, ICPPClassTemplate.class);
+		assertInstance(b1_spcd, ICPPClassType.class);
+		assertTrue(((IType)b1_spcd).isSameType((IType)b0));
+	}
+	
+	
+	// template<typename T1, typename T2>
+	// class Foo {
+	// public:
+	//  T1* foo (T2 t) {
+	//   return 0;
+	//  }
+	// };
+	//
+	// class A {};
+	// class B {};
+	//
+	// class X : public Foo<A,B> {};
+
+	// class Y : public Foo<B,A> {};
+	//
+	// class AA {};
+	// class BB {};
+	// 
+	// class Z : public Foo<AA,BB> {};
+	//
+	// X x;
+	// Y y;
+	// Z z;
+	public void testInstanceInheritance() throws Exception {
+		IBinding[] bs= {
+				getBindingFromASTName("X x;", 1),
+				getBindingFromASTName("Y y;", 1),
+				getBindingFromASTName("Z z;", 1)
+		};
+ 
+		for(int i=0; i<bs.length; i++) {
+			IBinding b= bs[i];
+ 			assertInstance(b, ICPPClassType.class);
+ 			ICPPClassType C= (ICPPClassType) b;
+ 			assertEquals(1, C.getBases().length);
+ 			ICPPClassType xb= (ICPPClassType) C.getBases()[0].getBaseClass();
+ 			assertInstance(xb, ICPPTemplateInstance.class);
+ 			ObjectMap args= ((ICPPTemplateInstance) xb).getArgumentMap();
+ 			assertInstance(args.keyAt(0), ICPPTemplateTypeParameter.class);
+ 			assertInstance(args.keyAt(1), ICPPTemplateTypeParameter.class);
+ 			assertInstance(args.getAt(0), ICPPClassType.class);
+ 			assertInstance(args.getAt(1), ICPPClassType.class);
+ 		}
+ 	}
+ 	
+	//	class B {};
+	//
+	//	template<typename T>
+	//	class A {
+	//      T t;
+	//      int x;
+	//		T foo(T t) { return t; }
+	//      void bar(T t, int& x) {}
+	//	};
+	//
+	//	template<>
+	//	class A<B> {
+	//      B t;
+	//      int x;
+	//		B foo(B t) { B x= *new B(); return x; }
+ 	//      void bar(B t, int& x) { x++; }
+ 	//	};
+ 	
+ 	// A<B> ab;
+ 	public void testClassSpecializationMethods() throws Exception {
+ 		IBinding b0= getBindingFromASTName("A<B> ab", 4, true);
+ 		assertInstance(b0, ICPPClassType.class);
+ 		assertInstance(b0, ICPPSpecialization.class);
+ 		assertFalse(b0 instanceof ICPPTemplateInstance);
+ 		
+ 		ICPPClassType ct= (ICPPClassType) b0;
+ 		ICPPMethod[] dms= ct.getDeclaredMethods();
+ 		assertEquals(2, dms.length);
+ 		
+ 		ICPPMethod foo= dms[0].getName().equals("foo") ? dms[0] : dms[1];
+ 		ICPPMethod bar= dms[0].getName().equals("bar") ? dms[0] : dms[1];
+ 		
+ 		assertEquals(foo.getName(), "foo");
+ 		assertEquals(bar.getName(), "bar");
+ 		
+ 		assertInstance(foo.getType().getReturnType(), ICPPClassType.class);
+ 		assertEquals(((ICPPClassType)foo.getType().getReturnType()).getName(), "B");
+ 		assertEquals(foo.getType().getParameterTypes().length, 1);
+ 		assertInstance(foo.getType().getParameterTypes()[0], ICPPClassType.class);
+ 		assertEquals(((ICPPClassType)foo.getType().getParameterTypes()[0]).getName(), "B");
+ 		
+ 		assertInstance(bar.getType().getReturnType(), ICPPBasicType.class);
+ 		assertEquals(((ICPPBasicType)bar.getType().getReturnType()).getType(), IBasicType.t_void);
+ 		
+ 		ICPPField[] fs= ct.getDeclaredFields();
+ 		assertEquals(2, fs.length);
+ 	}
+ 	
 	// template<typename T> class A {
 	//    public:
     //       typedef T TD;
@@ -287,9 +498,9 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// class Foo<A> {};
 	//
 	// Foo<B> b2;
-	public void _testClassSpecializationInHeader() {
+	public void _testClassSpecializations() {
 		IBinding b1a = getBindingFromASTName("Foo<B> b1;", 3);
-		IBinding b1b = getBindingFromASTNameWithRawSignature("Foo<B> b1;", "Foo<B>");
+		IBinding b1b = getBindingFromASTName("Foo<B> b1;", 5, true);
 		
 		assertInstance(b1a, ICPPClassType.class);
 		assertInstance(b1a, ICPPClassTemplate.class);
@@ -304,7 +515,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("B", b1pct.getName());
 		
 		IBinding b2a = getBindingFromASTName("Foo<B> b2;", 3);
-		IBinding b2b = getBindingFromASTNameWithRawSignature("Foo<B> b2;", "Foo<B>");
+		IBinding b2b = getBindingFromASTName("Foo<B> b2;", 5, true);
 		
 		assertInstance(b2a, ICPPClassType.class);
 		assertInstance(b2a, ICPPClassTemplate.class);

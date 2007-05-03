@@ -44,7 +44,7 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_METHOD_INSTANCE;
+		return PDOMCPPLinkage.CPP_CONSTRUCTOR_INSTANCE;
 	}
 	
 	public boolean isExplicit() throws DOMException {

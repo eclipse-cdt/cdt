@@ -2015,4 +2015,45 @@ public class AST2TemplateTests extends AST2BaseTest {
         
         assertTrue( col.getName(2).resolveBinding() instanceof ICPPSpecialization );
     }
+    
+   	// // Brian W.'s example from bugzilla#167098
+	//    template<class K>
+	//    class D { //CPPClassTemplate
+	//    public:
+	//            template<class T, class X>
+	//            D(T t, X x) {} // CPPConstructorTemplate
+	//
+	//            template<class T, class X>
+	//            void foo(T t, X x) {} // CPPMethodTemplate
+	//    };
+	//
+	//    void bar() {
+	//            D<int> *var = new D<int>(5, 6);
+	//            // First D<int>: CPPClassInstance
+	//            // Second D<int>: CPPConstructorInstance
+	//            // Now, getting the instance's specialized binding should
+	//            // result in a CPPConstructorTemplateSpecialization
+	//            var->foo<int,int>(7, 8);
+	//            // foo -> CPPMethodTemplateSpecialization
+	//            // foo<int,int> -> CPPMethodInstance
+	//    }
+    public void testCPPConstructorTemplateSpecialization() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, true, true );
+
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+
+    	ICPPASTTemplateId tid= (ICPPASTTemplateId) col.getName(20);
+    	IASTName cn= col.getName(21);
+    	assertInstance(cn.resolveBinding(), ICPPClassTemplate.class); // *D*<int>(5, 6)
+    	assertInstance(cn.resolveBinding(), ICPPClassType.class); // *D*<int>(5, 6)
+    	assertInstance(tid.resolveBinding(), ICPPTemplateInstance.class); // *D<int>*(5, 6)
+    	assertInstance(tid.resolveBinding(), ICPPConstructor.class); // *D<int>*(5, 6)
+    	
+    	IBinding tidSpc= ((ICPPTemplateInstance)tid.resolveBinding()).getSpecializedBinding();
+    	assertInstance(tidSpc, ICPPConstructor.class);
+    	assertInstance(tidSpc, ICPPSpecialization.class);
+    	assertInstance(tidSpc, ICPPFunctionTemplate.class);
+    }
 }

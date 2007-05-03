@@ -392,4 +392,9 @@ public class AST2BaseTest extends BaseTestCase {
 		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
 	}
+	
+	protected static void assertInstance(Object o, Class c) {
+		assertNotNull(o);
+		assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+	}
 }

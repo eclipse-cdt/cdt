@@ -211,6 +211,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		StringBuffer result = new StringBuffer();
 		try {
 			result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
+			result.append(" "+getNodeType()); //$NON-NLS-1$
 		} catch(DOMException de) {
 			result.append(de);
 		}

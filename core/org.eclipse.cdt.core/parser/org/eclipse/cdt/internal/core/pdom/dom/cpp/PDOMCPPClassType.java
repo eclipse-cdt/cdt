@@ -158,7 +158,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
 		try {
-			MethodCollector methods = new MethodCollector(false);
+			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
 			accept(methods);
 			return methods.getMethods();
 		} catch (CoreException e) {
@@ -168,7 +168,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	public ICPPMethod[] getMethods() throws DOMException {
 		try {
-			MethodCollector methods = new MethodCollector(true);
+			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(true);
 			acceptInHierarchy(new HashSet(), methods);
 			return methods.getMethods();
 		} catch (CoreException e) {
@@ -179,7 +179,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	public ICPPMethod[] getImplicitMethods() {
 		try {
-			MethodCollector methods = new MethodCollector(true, false);
+			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(true, false);
 			accept(methods);
 			return methods.getMethods();
 		} catch (CoreException e) {
@@ -207,7 +207,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	}
 
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-		MethodCollector myMethods = new MethodCollector(false, true);
+		PDOMClassUtil.MethodCollector myMethods = new PDOMClassUtil.MethodCollector(false, true);
 		Set visited = new HashSet();
 		try {
 			acceptInHierarchy(visited, myMethods);
@@ -217,52 +217,10 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 			return new ICPPMethod[0];
 		}
 	}
-	
-	private static class MethodCollector implements IPDOMVisitor {
-		private final List methods;
-		private final boolean acceptImplicit;
-		private final boolean acceptAll;
-		public MethodCollector(boolean acceptImplicit) {
-			this(acceptImplicit, true);
-		}
-		public MethodCollector(boolean acceptImplicit, boolean acceptExplicit) {
-			this.methods = new ArrayList();
-			this.acceptImplicit= acceptImplicit;
-			this.acceptAll= acceptImplicit && acceptExplicit;
-		}
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof ICPPMethod) {
-				if (acceptAll || ((ICPPMethod) node).isImplicit() == acceptImplicit) {
-					methods.add(node);
-				}
-			}
-			return false; // don't visit the method
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public ICPPMethod[] getMethods() {
-			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]); 
-		}
-	}
-
-
-	private static class FieldCollector implements IPDOMVisitor {
-		private List fields = new ArrayList();
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof ICPPField)
-				fields.add(node);
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public ICPPField[] getFields() {
-			return (ICPPField[])fields.toArray(new ICPPField[fields.size()]);
-		}
-	}
 
 	public IField[] getFields() throws DOMException {
 		try {
-			FieldCollector visitor = new FieldCollector();
+			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
 			acceptInHierarchy(new HashSet(), visitor);
 			return visitor.getFields();
 		} catch (CoreException e) {
@@ -273,7 +231,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	public ICPPField[] getDeclaredFields() throws DOMException {
 		try {
-			FieldCollector visitor = new FieldCollector();
+			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
 			accept(visitor);
 			return visitor.getFields();
 		} catch (CoreException e) {
@@ -336,22 +294,8 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 		addMember(member);
 	}
 
-	private static class ConstructorCollector implements IPDOMVisitor {
-		private List fConstructors = new ArrayList();
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof ICPPConstructor)
-				fConstructors.add(node);
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public ICPPConstructor[] getConstructors() {
-			return (ICPPConstructor[])fConstructors.toArray(new ICPPConstructor[fConstructors.size()]);
-		}
-	}
-
 	public ICPPConstructor[] getConstructors() throws DOMException {
-		ConstructorCollector visitor= new ConstructorCollector();
+		PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
 		try {
 			accept(visitor);
 		} catch (CoreException e) {

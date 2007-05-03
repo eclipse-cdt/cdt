@@ -171,23 +171,9 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return new ICPPBase[0];
 	}
 
-	private static class ConstructorCollector implements IPDOMVisitor {
-		private List fConstructors = new ArrayList();
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof ICPPConstructor)
-				fConstructors.add(node);
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public ICPPConstructor[] getConstructors() {
-			return (ICPPConstructor[])fConstructors.toArray(new ICPPConstructor[fConstructors.size()]);
-		}
-	}
-
 	public ICPPConstructor[] getConstructors() throws DOMException {
 		try {
-			ConstructorCollector visitor= new ConstructorCollector();
+			PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
 			accept(visitor);
 			return visitor.getConstructors();
 		} catch (CoreException e) {
@@ -196,9 +182,28 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 	}
 	
-	//ICPPClassType unimplemented
-	public ICPPField[] getDeclaredFields() throws DOMException { fail(); return null; }
-	public ICPPMethod[] getDeclaredMethods() throws DOMException { fail(); return null; }
+	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+		try {
+			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
+			accept(methods);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			return new ICPPMethod[0];
+		}
+	}
+	
+	public ICPPField[] getDeclaredFields() throws DOMException {
+		try {
+			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
+			accept(visitor);
+			return visitor.getFields();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new ICPPField[0];
+		}
+	}
+	
+	//ICPPClassType unimplemented	
 	public IField[] getFields() throws DOMException { fail(); return null; }
 	public IBinding[] getFriends() throws DOMException { fail(); return null; }
 	public ICPPMethod[] getMethods() throws DOMException { fail(); return null; }
@@ -344,36 +349,9 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return null;
 	}
 	
-	private static class MethodCollector implements IPDOMVisitor {
-		private final List methods;
-		private final boolean acceptImplicit;
-		private final boolean acceptAll;
-		public MethodCollector(boolean acceptImplicit) {
-			this(acceptImplicit, true);
-		}
-		public MethodCollector(boolean acceptImplicit, boolean acceptExplicit) {
-			this.methods = new ArrayList();
-			this.acceptImplicit= acceptImplicit;
-			this.acceptAll= acceptImplicit && acceptExplicit;
-		}
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof ICPPMethod) {
-				if (acceptAll || ((ICPPMethod) node).isImplicit() == acceptImplicit) {
-					methods.add(node);
-				}
-			}
-			return false; // don't visit the method
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public ICPPMethod[] getMethods() {
-			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]); 
-		}
-	}
-	
 	public ICPPMethod[] getImplicitMethods() {
 		try {
-			MethodCollector methods = new MethodCollector(true, false);
+			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(true, false);
 			accept(methods);
 			return methods.getMethods();
 		} catch (CoreException e) {

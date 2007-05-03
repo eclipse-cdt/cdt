@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     IBM Corporation
+ *     Warren Paul (Nokia) - 173555
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
@@ -450,7 +451,7 @@ public class NewClassCodeGenerator {
                 includePath = baseClassLocation;
             
             // make the new #include path in the source file only point to a relative file (i.e. now that the path has been included above in the project)
-            includePath = includePath.removeFirstSegments(includePath.segmentCount() - 1);
+            includePath = includePath.removeFirstSegments(includePath.segmentCount() - 1).setDevice(null);
             
             if (isSystemIncludePath)
                 systemIncludes.add(includePath);
@@ -528,12 +529,13 @@ public class NewClassCodeGenerator {
                 	continue;
                 
                 ICProject includeProject = PathUtil.getEnclosingProject(folderToAdd);
-
-                // make sure that the include is made the same way that build properties for projects makes them, so .contains below is a valid check
-                IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null, includeProject.getProject().getLocation(), true);
-                
-                if (!checkEntryList.contains(entry)) // if the path already exists in the #includes then don't add it
-                	pathEntryList.add(entry);
+                if (includeProject != null) {
+                    // make sure that the include is made the same way that build properties for projects makes them, so .contains below is a valid check
+                    IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null, includeProject.getProject().getLocation(), true);
+                    
+                    if (!checkEntryList.contains(entry)) // if the path already exists in the #includes then don't add it
+                    	pathEntryList.add(entry);
+                }
             }
             pathEntries = (IPathEntry[]) pathEntryList.toArray(new IPathEntry[pathEntryList.size()]);
             cProject.setRawPathEntries(pathEntries, new SubProgressMonitor(monitor, 80));

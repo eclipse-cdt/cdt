@@ -7,10 +7,10 @@
 
 <script language="JavaScript">
 var first = 0;
-var last = 21;
+var last = 19;
 var position = 0;
 
-var cdt_w_basicText= new Array(22) 
+var cdt_w_basicText= new Array(20) 
 cdt_w_basicText[0]='cdt_w_basic01.htm';
 cdt_w_basicText[1]='cdt_w_basic02.htm';
 cdt_w_basicText[2]='cdt_w_basic03.htm';
@@ -18,24 +18,21 @@ cdt_w_basicText[3]='cdt_w_basic04.htm';
 cdt_w_basicText[4]='cdt_w_basic05.htm';
 cdt_w_basicText[5]='cdt_w_basic06.htm';
 cdt_w_basicText[6]='cdt_w_basic07.htm';
-cdt_w_basicText[7]='cdt_w_basic09.htm';
-cdt_w_basicText[8]='cdt_w_basic10.htm';
-cdt_w_basicText[9]='cdt_w_basic11.htm';
-cdt_w_basicText[10]='cdt_w_basic12.htm';
-cdt_w_basicText[11]='cdt_w_basic13.htm';
-cdt_w_basicText[12]='cdt_w_basic14.htm';
-cdt_w_basicText[13]='cdt_w_basic15.htm';
-cdt_w_basicText[14]='cdt_w_basic16.htm';
-cdt_w_basicText[15]='cdt_w_basic17.htm';
-cdt_w_basicText[16]='cdt_w_basic18.htm';
-cdt_w_basicText[17]='cdt_w_basic19.htm';
-cdt_w_basicText[18]='cdt_w_basic20.htm';
-cdt_w_basicText[19]='cdt_w_basic21.htm';
-cdt_w_basicText[20]='cdt_w_basic22.htm';
-cdt_w_basicText[21]='cdt_w_basic23.htm';
-
-
-var cdt_w_basicPic= new Array(22) 
+cdt_w_basicText[7]='cdt_w_basic08.htm';
+cdt_w_basicText[8]='cdt_w_basic09.htm';
+cdt_w_basicText[9]='cdt_w_basic10.htm';
+cdt_w_basicText[10]='cdt_w_basic11.htm';
+cdt_w_basicText[11]='cdt_w_basic12.htm';
+cdt_w_basicText[12]='cdt_w_basic13.htm';
+cdt_w_basicText[13]='cdt_w_basic14.htm';
+cdt_w_basicText[14]='cdt_w_basic15.htm';
+cdt_w_basicText[15]='cdt_w_basic16.htm';
+cdt_w_basicText[16]='cdt_w_basic17.htm';
+cdt_w_basicText[17]='cdt_w_basic18.htm';
+cdt_w_basicText[18]='cdt_w_basic19.htm';
+cdt_w_basicText[19]='cdt_w_basic20.htm';
+                                          
+var cdt_w_basicPic= new Array(20) 
 cdt_w_basicPic[0]='../images/cdt_w_basic01.png';
 cdt_w_basicPic[1]='../images/cdt_w_basic02.png';
 cdt_w_basicPic[2]='../images/cdt_w_basic03.png';
@@ -43,46 +40,41 @@ cdt_w_basicPic[3]='../images/cdt_w_basic04.png';
 cdt_w_basicPic[4]='../images/cdt_w_basic05.png';
 cdt_w_basicPic[5]='../images/cdt_w_basic06.png';
 cdt_w_basicPic[6]='../images/cdt_w_basic07.png';
-cdt_w_basicPic[7]='../images/cdt_w_basic09.png';
-cdt_w_basicPic[8]='../images/cdt_w_basic10.png';
-cdt_w_basicPic[9]='../images/cdt_w_basic11.png';
-cdt_w_basicPic[10]='../images/cdt_w_basic12.png';
-cdt_w_basicPic[11]='../images/cdt_w_basic13.png';
-cdt_w_basicPic[12]='../images/cdt_w_basic14.png';
-cdt_w_basicPic[13]='../images/cdt_w_basic15.png';
-cdt_w_basicPic[14]='../images/cdt_w_basic16.png';
-cdt_w_basicPic[15]='../images/cdt_w_basic17.png';
-cdt_w_basicPic[16]='../images/cdt_w_basic18.png';
-cdt_w_basicPic[17]='../images/cdt_w_basic19.png';
-cdt_w_basicPic[18]='../images/cdt_w_basic20.png';
-cdt_w_basicPic[19]='../images/cdt_w_basic21.png';
-cdt_w_basicPic[20]='../images/cdt_w_basic22.png';
-cdt_w_basicPic[21]='../images/cdt_w_basic23.png';
+cdt_w_basicPic[7]='../images/cdt_w_basic08.png';
+cdt_w_basicPic[8]='../images/cdt_w_basic09.png';
+cdt_w_basicPic[9]='../images/cdt_w_basic10.png';
+cdt_w_basicPic[10]='../images/cdt_w_basic11.png';
+cdt_w_basicPic[11]='../images/cdt_w_basic12.png';
+cdt_w_basicPic[12]='../images/cdt_w_basic13.png';
+cdt_w_basicPic[13]='../images/cdt_w_basic14.png';
+cdt_w_basicPic[14]='../images/cdt_w_basic15.png';
+cdt_w_basicPic[15]='../images/cdt_w_basic16.png';
+cdt_w_basicPic[16]='../images/cdt_w_basic17.png';
+cdt_w_basicPic[17]='../images/cdt_w_basic18.png';
+cdt_w_basicPic[18]='../images/cdt_w_basic19.png';
+cdt_w_basicPic[19]='../images/cdt_w_basic20.png';
 
-var screenText= new Array(22) 
+var screenText= new Array(20) 
 screenText[0]='Eclipse Workbench';
-screenText[1]='Opening the C/C++ Perspective';
-screenText[2]='The C++ Perspective';
-screenText[3]='Creating a New Project';
-screenText[4]='New Project Wizard';
-screenText[5]='New Managed Make C++ Project';
-screenText[6]='Select a Target';
-screenText[7]='C/C++ Indexer Configuration';
-screenText[8]='New C++ Project in the Workbench';
-screenText[9]='Create a New File';
-screenText[10]='New File Wizard';
-screenText[11]='New File in the Workbench';
-screenText[12]='Entering Code in the New .cpp File';
-screenText[13]='Stepping Through the Code in Outline View';
-screenText[14]='Save the File';
-screenText[15]='Displaying New Executables in the Projects View';
-screenText[16]='Selecting Run from the Menu';
-screenText[17]='Run Wizard';
-screenText[18]='Selecting the Program to Run';
-screenText[19]='Run Configuration';
-screenText[20]='Console View with Program Running';
-screenText[21]='Console View with Program Terminated';
-
+screenText[1]='Creating a New Project';
+screenText[2]='New Project Wizard';
+screenText[3]='Define project name';
+screenText[4]='Select project type';
+screenText[5]='Select toolchain';
+screenText[6]='Select configurations';
+screenText[7]='New Project created in Workspace';
+screenText[8]='New File creation menu';
+screenText[9]='New File creation dialog';
+screenText[10]='New File created in Workspace';
+screenText[11]='Entering Code in the New .cpp File';
+screenText[12]='Stepping Through the Code in Outline View';
+screenText[13]='Save the File, build the Project';
+screenText[14]='Displaying New Executables in the Projects View';
+screenText[15]='Selecting Run from the Menu';
+screenText[16]='Run Wizard';
+screenText[17]='New Run Configuration created';
+screenText[18]='Console View with Program Running';
+screenText[19]='Console View with Program Terminated';
 
 
 function nav_a() {	
@@ -146,7 +138,7 @@ function goBack() {
 
 </head>
 <body>
-<h2>CDT Managed Make Tutorial</h2>
+<h2>CDT New Project Tutorial</h2>
 <IFRAME name=textFrame SRC="cdt_w_basic01.htm" TITLE="cdt_w_basic Text" MARGINWIDTH=0 MARGINHEIGHT=0 width="90%" height="180" frameborder=0 SCROLLING=auto></IFRAME>
 <hr>
 <table width="120px" border="0" cellspacing="0" summary="" >

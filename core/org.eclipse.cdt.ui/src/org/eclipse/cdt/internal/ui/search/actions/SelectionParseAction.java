@@ -8,9 +8,12 @@
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search.actions;
+
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -70,7 +73,7 @@ public class SelectionParseAction extends Action {
 		return fSite;
 	}
 	
-	protected void operationNotAvailable(final String message) {
+	protected void showStatusLineMessage(final String message) {
 		// run the code to update the status line on the Display thread
 		// this way any other thread can invoke operationNotAvailable(String)
 		CUIPlugin.getStandardDisplay().asyncExec(new Runnable(){
@@ -86,7 +89,7 @@ public class SelectionParseAction extends Action {
 				 	statusManager = ((IEditorSite) fSite).getActionBars().getStatusLineManager();
 				 }	
 				 if( statusManager != null )
-				 	statusManager.setErrorMessage(CSearchMessages.getString(message));
+				 	statusManager.setErrorMessage(message);
 			}
 		});
 	}
@@ -226,10 +229,13 @@ public class SelectionParseAction extends Action {
      * @param name
      */
     protected void open(IName name) throws CoreException {
+		clearStatusLine();
+
     	IASTFileLocation fileloc = name.getFileLocation();
-    	if (fileloc == null)
-    		// no source location - TODO spit out an error in the status bar
+    	if (fileloc == null) {
+    		reportSymbolLookupFailure(new String(name.toCharArray()));
     		return;
+    	}
     	
 		IPath path = new Path(fileloc.getFileName());
     	int currentOffset = fileloc.getNodeOffset();
@@ -239,17 +245,41 @@ public class SelectionParseAction extends Action {
     }
 
 	protected void open(IPath path, int currentOffset, int currentLength) throws CoreException {
+		clearStatusLine();
+
 		IEditorPart editor = EditorUtility.openInEditor(path, fEditor.getInputCElement());
 		if (editor instanceof ITextEditor) {
 			ITextEditor textEditor = (ITextEditor)editor;
 			textEditor.selectAndReveal(currentOffset, currentLength);
 		} else {
-			// TODO: report error
+			reportSourceFileOpenFailure(path);
 		}
 	}
     
     public void update() {
 		setEnabled(getSelectedStringFromEditor() != null);
 	}
+
+    protected void reportSourceFileOpenFailure(IPath path) {
+    	showStatusLineMessage(MessageFormat.format(
+    			CSearchMessages.getString("SelectionParseAction.FileOpenFailure.format"), //$NON-NLS-1$
+    			new String[] { path.toOSString() }));
+    }
+    
+    protected void reportSelectionMatchFailure() {
+    	showStatusLineMessage(CSearchMessages.getString("SelectionParseAction.SelectedTextNotSymbol.message")); //$NON-NLS-1$
+    }
+    
+    protected void reportSymbolLookupFailure(String symbol) {
+    	showStatusLineMessage(MessageFormat.format(
+    			CSearchMessages.getString("SelectionParseAction.SymbolNotFoundInIndex.format"), //$NON-NLS-1$
+    			new String[] { symbol }));
+    }
+    
+    protected void reportIncludeLookupFailure(String filename) {
+    	showStatusLineMessage(MessageFormat.format(
+    			CSearchMessages.getString("SelectionParseAction.IncludeNotFound.format"), //$NON-NLS-1$
+    			new String[] { filename }));
+    }
 
 }

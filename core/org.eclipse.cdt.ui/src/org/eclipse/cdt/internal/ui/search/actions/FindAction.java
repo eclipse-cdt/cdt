@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchElementQuery;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchTextSelectionQuery;
 import org.eclipse.jface.text.ITextSelection;
@@ -57,7 +58,7 @@ public abstract class FindAction extends SelectionParseAction {
 		} 
 
 	 	if (searchJob == null) {
-	 		operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+	 		showStatusLineMessage(CSearchMessages.getString(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE));
 	 		return;
 	 	}
 

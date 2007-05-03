@@ -64,6 +64,8 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
+				clearStatusLine();
+				
 				int selectionStart = selNode.getOffset();
 				int selectionLength = selNode.getLength();
 					
@@ -79,14 +81,16 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}
-				
+
+
 				try {
 					IASTTranslationUnit ast=
 						ASTProvider.getASTProvider().getAST(
 								workingCopy, index, ASTProvider.WAIT_YES, monitor);
 					IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
-					
+					 
 					if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
+						boolean found = false;
 						IASTName searchName = selectedNames[0];
 						boolean isDefinition= searchName.isDefinition();
 						IBinding binding = searchName.resolveBinding();
@@ -105,6 +109,8 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 							for (int i = 0; i < declNames.length; i++) {
 								IASTFileLocation fileloc = declNames[i].getFileLocation();
 								if (fileloc != null) {
+									found = true;
+									
 									final IPath path = new Path(fileloc.getFileName());
 									final int offset = fileloc.getNodeOffset();
 									final int length = fileloc.getNodeLength();
@@ -122,22 +128,29 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 								}
 							}
 						}
+						if (!found) {
+							reportSymbolLookupFailure(new String(searchName.toCharArray()));
+						}
+						
 					} else {
 						// Check if we're in an include statement
 						IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
+						boolean foundInInclude = false;
 						for (int i = 0; i < preprocs.length; ++i) {
 							if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
 								continue;
 							IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
-							if (!incStmt.isResolved())
-								continue;
 							IASTFileLocation loc = preprocs[i].getFileLocation();
 							if (loc != null
 									&& loc.getFileName().equals(ast.getFilePath())
 									&& loc.getNodeOffset() < selectionStart
 									&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
 								// Got it
-								String name = incStmt.getPath();
+								foundInInclude = true;
+								String name = null;
+								if (incStmt.isResolved())
+									name = incStmt.getPath();
+								
 								if (name != null) {
 									final IPath path = new Path(name);
 									runInUIThread(new Runnable() {
@@ -149,8 +162,14 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 											}
 										}
 									});
+								} else {
+									reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
 								}
+								
 								break;
+							}
+							if (!foundInInclude) {
+								reportSelectionMatchFailure();
 							}
 						}
 					}

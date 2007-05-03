@@ -65,6 +65,8 @@ public class OpenDefinitionAction extends SelectionParseAction {
 
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
+				clearStatusLine();
+
 				int selectionStart = selNode.getOffset();
 				int selectionLength = selNode.getLength();
 					
@@ -83,6 +85,7 @@ public class OpenDefinitionAction extends SelectionParseAction {
 					IASTTranslationUnit ast = workingCopy.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
 					IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
 
+					boolean found = false;
 					if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
 						IASTName searchName = selectedNames[0];
 
@@ -91,8 +94,9 @@ public class OpenDefinitionAction extends SelectionParseAction {
 							final IName[] declNames = ast.getDefinitions(binding);
 							for (int i = 0; i < declNames.length; i++) {
 						    	IASTFileLocation fileloc = declNames[i].getFileLocation();
-					    		// no source location - TODO spit out an error in the status bar
 						    	if (fileloc != null) {
+						    		found = true;
+						    		
 						    		final IPath path = new Path(fileloc.getFileName());
 						    		final int offset = fileloc.getNodeOffset();
 						    		final int length = fileloc.getNodeLength();
@@ -110,12 +114,18 @@ public class OpenDefinitionAction extends SelectionParseAction {
 						    	}
 							}
 						}
+						if (!found) {
+							reportSymbolLookupFailure(new String(searchName.toCharArray()));
+						}
+					} else {
+						reportSelectionMatchFailure();
 					}
 				}
 				finally {
 					index.releaseReadLock();
 				}
-					
+
+
 				return Status.OK_STATUS;
 			} catch (CoreException e) {
 				return e.getStatus();

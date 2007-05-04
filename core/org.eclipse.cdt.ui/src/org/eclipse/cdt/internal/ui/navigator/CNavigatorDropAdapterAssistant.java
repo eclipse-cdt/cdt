@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -175,6 +176,14 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
 				IResource[] selectedResources= getSelectedResources();
 				if (selectedResources.length > 0) {
+					for (int iRes = 0; iRes < selectedResources.length; iRes++) {
+						IResource res = selectedResources[iRes];
+						if(res instanceof IProject) {
+							// drop of projects not supported on other IResources
+							// "Path for project must have only one segment."
+							return Status.CANCEL_STATUS;
+						}
+					}
 					if (operation == DND.DROP_COPY) {
 						CopyFilesAndFoldersOperation op = new CopyFilesAndFoldersOperation(getShell());
 						if (op.validateDestination(destination, selectedResources) == null) {

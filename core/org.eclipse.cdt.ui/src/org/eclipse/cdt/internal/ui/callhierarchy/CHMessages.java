@@ -16,6 +16,7 @@ import org.eclipse.osgi.util.NLS;
 public class CHMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.callhierarchy.CHMessages"; //$NON-NLS-1$
 	public static String CallHierarchyUI_label;
+	public static String CallHierarchyUI_openFailureMessage;
 	public static String CallHierarchyUI_selectMessage;
 	public static String CHHistoryListAction_HistoryDialog_title;
 	public static String CHHistoryListAction_HistoryList_label;

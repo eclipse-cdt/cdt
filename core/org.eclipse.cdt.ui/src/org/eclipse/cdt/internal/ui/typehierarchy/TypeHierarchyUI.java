@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.FindNameForSelectionVisitor;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
@@ -115,6 +116,7 @@ public class TypeHierarchyUI {
 				Job job= new Job(Messages.TypeHierarchyUI_OpenTypeHierarchy) {
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
+							StatusLineHandler.clearStatusLine(editor.getSite());
 							IRegion reg= new Region(sel.getOffset(), sel.getLength());
 							final ICElement[] elems= findInput(project, editorInput, reg);
 							if (elems != null && elems.length == 2) {
@@ -122,6 +124,9 @@ public class TypeHierarchyUI {
 									public void run() {
 										openInViewPart(editor.getSite().getWorkbenchWindow(), elems[0], elems[1]);
 									}});
+							} else {
+								StatusLineHandler.showStatusLineMessage(editor.getSite(), 
+										Messages.TypeHierarchyUI_OpenFailure_message);
 							}
 							return Status.OK_STATUS;
 						} 

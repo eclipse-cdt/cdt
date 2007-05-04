@@ -63,6 +63,7 @@ public class Messages extends NLS {
 	public static String THViewPart_SupertypeHierarchy;
 	public static String THViewPart_SupertypeHierarchy_tooltip;
 	public static String THViewPart_VerticalOrientation;
+	public static String TypeHierarchyUI_OpenFailure_message;
 	public static String TypeHierarchyUI_OpenTypeHierarchy;
 	public static String TypeHierarchyUI_SelectFromList;
 	static {

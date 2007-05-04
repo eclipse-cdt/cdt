@@ -20,6 +20,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -40,6 +41,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class CallHierarchyUI {
@@ -68,7 +70,9 @@ public class CallHierarchyUI {
         return null;        
     }
 
-    private static CHViewPart openInViewPart(IWorkbenchWindow window, ICElement[] input) {
+    private static CHViewPart openInViewPart(IWorkbenchSite site, ICElement[] input) {
+    	IWorkbenchWindow window = site.getWorkbenchWindow();
+    	StatusLineHandler.clearStatusLine(site);
 		ICElement elem = null;
 		switch (input.length) {
 		case 0:
@@ -87,6 +91,9 @@ public class CallHierarchyUI {
 		}
 		if (elem != null) {
 			return openInViewPart(window, elem);
+		} else {
+			StatusLineHandler.showStatusLineMessage(site, 
+					CHMessages.CallHierarchyUI_openFailureMessage);
 		}
 		return null;
 	}
@@ -102,12 +109,16 @@ public class CallHierarchyUI {
 				Job job= new Job(CHMessages.CallHierarchyUI_label) {
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
+							StatusLineHandler.clearStatusLine(editor.getSite());
 							final ICElement[] elems= findDefinitions(project, editorInput, sel);
 							if (elems != null && elems.length > 0) {
 								display.asyncExec(new Runnable() {
 									public void run() {
-										openInViewPart(editor.getSite().getWorkbenchWindow(), elems);
+										openInViewPart(editor.getSite(), elems);
 									}});
+							} else {
+								StatusLineHandler.showStatusLineMessage(editor.getSite(), 
+										CHMessages.CallHierarchyUI_openFailureMessage);
 							}
 							return Status.OK_STATUS;
 						} 

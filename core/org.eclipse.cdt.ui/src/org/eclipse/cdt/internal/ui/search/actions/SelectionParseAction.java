@@ -19,15 +19,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -35,11 +32,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 
 /**
  * @author aniefer
@@ -74,44 +71,10 @@ public class SelectionParseAction extends Action {
 	}
 	
 	protected void showStatusLineMessage(final String message) {
-		// run the code to update the status line on the Display thread
-		// this way any other thread can invoke operationNotAvailable(String)
-		CUIPlugin.getStandardDisplay().asyncExec(new Runnable(){
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				IStatusLineManager statusManager = null;
-				 if (fSite instanceof IViewSite){
-				 	statusManager = ((IViewSite) fSite).getActionBars().getStatusLineManager();
-				 }
-				 else if (fSite instanceof IEditorSite){
-				 	statusManager = ((IEditorSite) fSite).getActionBars().getStatusLineManager();
-				 }	
-				 if( statusManager != null )
-				 	statusManager.setErrorMessage(message);
-			}
-		});
+		StatusLineHandler.showStatusLineMessage(fSite, message);
 	}
 	protected void clearStatusLine() {
-		// run the code to update the status line on the Display thread
-		// this way any other thread can invoke clearStatusLine()
-		CUIPlugin.getStandardDisplay().asyncExec(new Runnable(){
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				IStatusLineManager statusManager = null;
-				 if (fSite instanceof IViewSite){
-				 	statusManager = ((IViewSite) fSite).getActionBars().getStatusLineManager();
-				 }
-				 else if (fSite instanceof IEditorSite){
-				 	statusManager = ((IEditorSite) fSite).getActionBars().getStatusLineManager();
-				 }	
-				 if( statusManager != null )
-				 	statusManager.setErrorMessage( "" ); //$NON-NLS-1$
-			}
-		});
+		StatusLineHandler.clearStatusLine(fSite);
 	}
 
 	//TODO: Change this to work with qualified identifiers

@@ -81,16 +81,18 @@
              <with variable="selection">
                <count value="1"/>
                <iterate
-                     ifEmpty="false"
-                     operator="or">
-                  <or>
-                     <test
-                           forcePluginActivation="true"
-                           property="org.eclipse.cdt.launch.isExecutable"/>
-                     <test
-                           forcePluginActivation="true"
-                           property="org.eclipse.cdt.launch.isCProject"/>
-                  </or>
+                     ifEmpty="false">
+                  <adapt
+                        type="org.eclipse.cdt.core.model.ICElement">
+                     <or>
+                        <instanceof
+                              value="org.eclipse.cdt.core.model.IBinary">
+                        </instanceof>
+                        <instanceof
+                              value="org.eclipse.cdt.core.model.ICProject">
+                        </instanceof>
+                     </or>
+                  </adapt>
                </iterate>
              </with>
            </enablement>
@@ -139,7 +141,9 @@
 	</extension>
 	
 	<!-- Adapters for contextual launch -->
-	<extension point="org.eclipse.core.runtime.adapters">
+	<!-- Doug: I'm not sure these are needed anymore.
+		 Contextual launch seems to use a different mechanism now -->
+	<!--extension point="org.eclipse.core.runtime.adapters">
          <factory 
             class="" 
             adaptableType="org.eclipse.cdt.core.model.IBinary">
@@ -155,6 +159,6 @@
             adaptableType="org.eclipse.cdt.internal.core.model.CProject">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>         
-    </extension>
+    </extension-->
 	
 </plugin>

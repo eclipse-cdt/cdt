@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -70,10 +71,30 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 		fetchWorkspaceMappings();
 		fInheritedMappingWidget.createContents(group, null);
 		fInheritedMappingsChangeListener = new ILanguageMappingChangeListener() {
-			public void handleLanguageMappingChangeEvent(ILanguageMappingChangeEvent event) {
+			public void handleLanguageMappingChangeEvent(final ILanguageMappingChangeEvent event) {
 				if (event.getType() == ILanguageMappingChangeEvent.TYPE_WORKSPACE) {
-					fetchWorkspaceMappings();
-					fInheritedMappingWidget.refreshMappings();
+					if (ProjectLanguageMappingPropertyPage.this.isControlCreated()) {
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								if (!ProjectLanguageMappingPropertyPage.this.getControl().isDisposed()) {
+									fetchWorkspaceMappings();
+									fInheritedMappingWidget.refreshMappings();
+								}
+							}
+						});
+					}
+				}
+				else if (event.getType() == ILanguageMappingChangeEvent.TYPE_PROJECT) {
+					if (ProjectLanguageMappingPropertyPage.this.isControlCreated()) {
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								if (!ProjectLanguageMappingPropertyPage.this.getControl().isDisposed()) {
+									fetchMappings(event.getProject());
+									fMappingWidget.refreshMappings();
+								}
+							}
+						});
+					}
 				}
 			}
 		};

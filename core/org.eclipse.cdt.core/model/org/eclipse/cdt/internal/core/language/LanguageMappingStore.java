@@ -163,7 +163,6 @@ public class LanguageMappingStore {
 		Iterator entries = contentTypeMappings.entrySet().iterator();
 		while (entries.hasNext()) {
 			Entry entry = (Entry) entries.next();
-			Element mapping = document.createElement(CONTENT_TYPE_MAPPING);
 			
 			String configuration = (String) entry.getKey();
 			Iterator contentTypeEntries = ((Map) entry.getValue()).entrySet().iterator();
@@ -172,6 +171,7 @@ public class LanguageMappingStore {
 				String contentType = (String) configurationEntry.getKey();
 				String language = (String) configurationEntry.getValue();
 				
+				Element mapping = document.createElement(CONTENT_TYPE_MAPPING);
 				mapping.setAttribute(ATTRIBUTE_CONTENT_TYPE, contentType);
 				mapping.setAttribute(ATTRIBUTE_CONFIGURATION, configuration);
 				mapping.setAttribute(ATTRIBUTE_LANGUAGE, language);
@@ -194,7 +194,7 @@ public class LanguageMappingStore {
 			serializer.transform(source, result);
 			String encodedMappings = buffer.getBuffer().toString();
 			
-			Preferences node = CCorePlugin.getDefault().getPluginPreferences();;
+			Preferences node = CCorePlugin.getDefault().getPluginPreferences();
 			node.setValue(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, encodedMappings);
 			CCorePlugin.getDefault().savePluginPreferences();
 		} catch (ParserConfigurationException e) {
@@ -205,7 +205,7 @@ public class LanguageMappingStore {
 	}
 	
 	public WorkspaceLanguageConfiguration decodeWorkspaceMappings() throws CoreException {
-		Preferences node = CCorePlugin.getDefault().getPluginPreferences();;
+		Preferences node = CCorePlugin.getDefault().getPluginPreferences();
 		String encodedMappings = node.getString(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS);
 		WorkspaceLanguageConfiguration config = new WorkspaceLanguageConfiguration();
 		

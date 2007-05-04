@@ -206,13 +206,6 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		customizeCElements(getChildren(parent), currentChildren);
 	}
 
- 
-
-//	private boolean isCElement(IResource resource) {
-//		// TODO Implement me properly.
-//		return CoreModel.getDefault().create(resource) != null;
-//	}
-
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements(java.lang.Object, java.util.Set)
 	 */
@@ -304,14 +297,18 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		Object parent= modification.getParent();
 		// don't convert projects
 		if (parent instanceof IContainer) {
-			ICElement element= CoreModel.getDefault().create((IContainer) parent);
-			if (element != null) {
-				// don't convert the root  
-				if( !(element instanceof ICModel) && !(element instanceof ICProject) ) {
-					modification.setParent(element);
+			IContainer container= (IContainer)parent;
+			IProject project= container.getProject();
+			if (container != project && CoreModel.hasCNature(container.getProject())) {
+				ICElement element= CoreModel.getDefault().create(container);
+				if (element != null) {
+					// don't convert the root  
+					if( !(element instanceof ICModel) && !(element instanceof ICProject) ) {
+						modification.setParent(element);
+					}
+					return convertToCElements(modification.getChildren());
+					
 				}
-				return convertToCElements(modification.getChildren());
-				
 			}
 		}
 		return false;
@@ -333,7 +330,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			// do not convert IProject
 			if (child instanceof IFile || child instanceof IFolder) {
 				IResource resource= (IResource)child;
-				if ( resource.isAccessible() ) {
+				if (resource.isAccessible() && CoreModel.hasCNature(resource.getProject())) {
 					if ((newChild= CoreModel.getDefault().create(resource)) != null) {
 						iter.remove();
 						convertedChildren.add(newChild);

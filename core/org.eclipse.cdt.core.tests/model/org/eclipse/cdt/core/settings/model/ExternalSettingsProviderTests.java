@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.Path;
 
 public class ExternalSettingsProviderTests extends BaseTestCase{
 	private static final String PROJ_NAME_PREFIX = "espt_";
-	ICProject p1;
+	ICProject p1, p2;
 	
 	public static TestSuite suite() {
 		return suite(ExternalSettingsProviderTests.class, "_");
@@ -34,6 +35,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 	
 	protected void setUp() throws Exception {
 		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
+		p2 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "b", IPDOMManager.ID_NO_INDEXER);
 	}
 	
 	public void testRefs() throws Exception {
@@ -101,10 +103,51 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		assertTrue(Arrays.equals(expectedEntries, entries));
 	}
 	
+	public void testCreateCfg() throws Exception {
+		CoreModel model = CoreModel.getDefault();
+		IProject project = p2.getProject();
+		
+		ICProjectDescription des = model.getProjectDescription(project);
+		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
+		ICLanguageSetting ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
+		ICLanguageSettingEntry[] entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
+		assertEquals(0, entries.length);
+		ICSourceEntry[] sourceEntries = cfgDes.getSourceEntries();
+		ICSourceEntry[] expectedSourceEntries = new ICSourceEntry[]{
+			new CSourceEntry(project.getFullPath(), null, ICSettingEntry.RESOLVED)
+		};
+		assertEquals(1, sourceEntries.length);
+		assertTrue(Arrays.equals(expectedSourceEntries, sourceEntries));
+		String[] extPIds = new String[]{CTestPlugin.PLUGIN_ID + ".testExtSettingsProvider"};
+		cfgDes.setExternalSettingsProviderIds(extPIds);
+		
+		model.setProjectDescription(project, des);
+		
+		des = model.getProjectDescription(project, false);
+		cfgDes = des.getConfigurations()[0];
+		assertEquals(extPIds.length, cfgDes.getExternalSettingsProviderIds().length);
+		assertTrue(Arrays.equals(extPIds, cfgDes.getExternalSettingsProviderIds()));
+		
+		des = model.getProjectDescription(project);
+		cfgDes = des.getConfigurations()[0];
+		assertEquals(extPIds.length, cfgDes.getExternalSettingsProviderIds().length);
+		assertTrue(Arrays.equals(extPIds, cfgDes.getExternalSettingsProviderIds()));
+		
+		String newCfgId = CDataUtil.genId(null);
+		ICConfigurationDescription cfgDes2 = des.createConfiguration(newCfgId, "cfg2", cfgDes);
+		assertEquals(extPIds.length, cfgDes2.getExternalSettingsProviderIds().length);
+		assertTrue(Arrays.equals(extPIds, cfgDes2.getExternalSettingsProviderIds()));
+	}
+	
 	protected void tearDown() throws Exception {
 		try {
 			p1.getProject().delete(true, null);
 		} catch (CoreException e){
 		}
+		try {
+			p2.getProject().delete(true, null);
+		} catch (CoreException e){
+		}
+
 	}
 }

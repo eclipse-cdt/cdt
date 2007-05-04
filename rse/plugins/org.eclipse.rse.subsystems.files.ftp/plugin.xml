@@ -15,6 +15,7 @@ Contributors:
 Javier Montalvo Orus (Symbian) - add Windows to list of valid FTP systems
 Martin Oberhuber (Wind River) - add FTP Only system type
 Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
+Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -42,5 +43,34 @@ Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
             serviceType="_ftp._tcp">
       </configuration>
       </extension>
+       
+       <extension-point id="ftpFileEntryParser" name="ftpFileEntryParser" schema="schema/ftpFileEntryParser.exsd"/>
+   
+   	<extension point="org.eclipse.rse.subsystems.files.ftp.ftpFileEntryParser">
+      <parser
+            class="org.apache.commons.net.ftp.parser.UnixFTPEntryParser"
+            name="UNIX">
+      </parser>
+      <parser
+            class="org.apache.commons.net.ftp.parser.MVSFTPEntryParser"
+            name="MVS">
+      </parser>
+      <parser
+            class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSENTFTPEntryParser"
+            name="WinNT">
+      </parser>
+      <parser
+            class="org.apache.commons.net.ftp.parser.OS2FTPEntryParser"
+            name="OS2">
+      </parser>
+      <parser
+            class="org.apache.commons.net.ftp.parser.OS400FTPEntryParser"
+            name="OS400">
+      </parser>
+       <parser
+            class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSEVMSFTPEntryParser"
+            name="VMS">
+      </parser>
+   </extension>
  
 </plugin> 

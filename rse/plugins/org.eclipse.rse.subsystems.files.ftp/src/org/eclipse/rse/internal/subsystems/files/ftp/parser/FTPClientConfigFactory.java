@@ -8,21 +8,21 @@
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
-package org.eclipse.rse.internal.services.files.ftp.parser;
+package org.eclipse.rse.internal.subsystems.files.ftp.parser;
 
 import java.util.Hashtable;
 import java.util.Set;
 
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
-import org.apache.commons.net.ftp.parser.FTPFileEntryParserFactory;
 import org.apache.commons.net.ftp.parser.ParserInitializationException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory;
 
-public class FTPClientConfigFactory implements FTPFileEntryParserFactory {
+public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 
 private static FTPClientConfigFactory factory = null;
 	
@@ -47,7 +47,7 @@ private static FTPClientConfigFactory factory = null;
 		
 		FTPClientConfig config = null;
 		
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.services.files.ftp","ftpFileEntryParser"); //$NON-NLS-1$ //$NON-NLS-2$
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.subsystems.files.ftp","ftpFileEntryParser"); //$NON-NLS-1$ //$NON-NLS-2$
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		for (int i = 0; i < ce.length; i++) {
 			
@@ -86,19 +86,18 @@ private static FTPClientConfigFactory factory = null;
 		}
 	}
 	
-	/**
-	 * 
-	 * @param key name attribute of the extension point to be returned
-	 * @return FTPClientConfig instance created from the attributes passed in the extension point
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory#getFTPClientConfig(java.lang.String)
 	 */
 	public FTPClientConfig getFTPClientConfig(String key)
 	{
 		return (FTPClientConfig)ftpConfig.get(key);
 	}
 	
-	/**
-	 * Returns a Set of key names
-	 * @return a Set containing the name attribute of the extension points
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory#getKeySet()
 	 */
 	public Set getKeySet()
 	{

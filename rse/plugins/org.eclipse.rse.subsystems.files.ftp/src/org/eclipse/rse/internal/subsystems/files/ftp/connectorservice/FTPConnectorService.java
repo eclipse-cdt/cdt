@@ -31,7 +31,7 @@ import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.internal.services.files.ftp.FTPService;
-import org.eclipse.rse.internal.services.files.ftp.parser.FTPClientConfigFactory;
+import org.eclipse.rse.internal.subsystems.files.ftp.parser.FTPClientConfigFactory;
 import org.eclipse.rse.internal.subsystems.files.ftp.FTPSubsystemResources;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.ui.subsystems.StandardConnectorService;
@@ -88,6 +88,9 @@ public class FTPConnectorService extends StandardConnectorService
 		_ftpService.setPortNumber(getPort());
 		_ftpService.setLoggingStream(getLoggingStream(info.getHostname(),getPort()));
 		_ftpService.setPropertySet(_propertySet);
+		_ftpService.setFTPClientConfigFactory(FTPClientConfigFactory.getParserFactory());
+		
+		
 		_ftpService.connect();	
 	}
 	

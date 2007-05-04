@@ -9,14 +9,15 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.rse.services,
- org.eclipse.rse.services.files.ftp,
  org.eclipse.rse.subsystems.files.core,
  org.eclipse.rse.core,
  org.eclipse.rse.ui,
- org.eclipse.ui.console
+ org.eclipse.ui.console,
+ org.eclipse.rse.services.files.ftp
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.subsystems.files.ftp;x-internal:=true,
  org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;x-internal:=true,
  org.eclipse.rse.internal.subsystems.files.ftp.model;x-internal:=true,
+ org.eclipse.rse.internal.subsystems.files.ftp.parser;x-friends:="org.eclipse.rse.services.files.ftp",
  org.eclipse.rse.subsystems.files.ftp
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

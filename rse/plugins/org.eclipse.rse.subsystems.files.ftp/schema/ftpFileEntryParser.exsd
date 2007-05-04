@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.rse.services.files.ftp">
+<schema targetNamespace="org.eclipse.rse.subsystems.files.ftp">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.services.files.ftp" id="ftpFileEntryParser" name="ftpFileEntryParser"/>
+         <meta.schema plugin="org.eclipse.rse.subsystems.files.ftp" id="ftpFileEntryParser" name="ftpFileEntryParser"/>
       </appInfo>
       <documentation>
          Extension point that allows providing extra parsers for the FTP LIST command output.
@@ -167,7 +167,7 @@ The string attributes &lt;code&gt;defaultDateFormatStr&lt;/code&gt; &lt;code&gt;
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         Customized VMS and WinNT implementations are supplied in the &lt;code&gt;org.eclipse.rse.services.files.ftp&lt;/code&gt; plug-in.
+         Customized VMS and WinNT implementations are supplied in the &lt;code&gt;org.eclipse.rse.subsystems.files.ftp&lt;/code&gt; plug-in.
       </documentation>
    </annotation>
 

@@ -62,7 +62,7 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.model.IPropertySet;
-import org.eclipse.rse.internal.services.files.ftp.parser.FTPClientConfigFactory;
+import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory;
 import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
@@ -95,6 +95,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	private boolean _isBinaryFileType = true;
 	private boolean _isPassiveDataConnectionMode = false;
+	private IFTPClientConfigFactory _entryParserFactory;
+	
 	
 	private class FTPBufferedInputStream extends BufferedInputStream {
 		
@@ -224,6 +226,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		 _ftpLoggingOutputStream =  ftpLoggingOutputStream;
 	}
+	
+	public void setFTPClientConfigFactory(IFTPClientConfigFactory entryParserFactory)
+	{
+		_entryParserFactory = entryParserFactory;
+	}
 
 	public void connect() throws Exception
 	{
@@ -283,8 +290,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if(!_parser.equalsIgnoreCase("AUTO")) //$NON-NLS-1$
 		{
-			_ftpClient.setParserFactory(FTPClientConfigFactory.getParserFactory());
-			_ftpClient.configure(FTPClientConfigFactory.getParserFactory().getFTPClientConfig(_parser));
+			
+			_ftpClient.setParserFactory(_entryParserFactory);
+			_ftpClient.configure(_entryParserFactory.getFTPClientConfig(_parser));
+			
 		}
 		else
 		{
@@ -299,8 +308,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			//FTPClientConfig.SYST_NT = "WINDOWS"
 			if(systemName.startsWith(FTPClientConfig.SYST_NT))
 			{
-				_ftpClient.setParserFactory(FTPClientConfigFactory.getParserFactory());
-				_ftpClient.configure(FTPClientConfigFactory.getParserFactory().getFTPClientConfig("WinNT")); //$NON-NLS-1$
+				_ftpClient.setParserFactory(_entryParserFactory);
+				_ftpClient.configure(_entryParserFactory.getFTPClientConfig("WinNT")); //$NON-NLS-1$
 			}else 
 			//FTPClientConfig.SYST_MVS = "MVS" 	
 			if(systemName.startsWith(FTPClientConfig.SYST_MVS))
@@ -320,8 +329,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			//FTPClientConfig.SYST_VMS = "VMS"   	
 			if(systemName.startsWith(FTPClientConfig.SYST_VMS))
 			{
-				_ftpClient.setParserFactory(FTPClientConfigFactory.getParserFactory());
-				_ftpClient.configure(FTPClientConfigFactory.getParserFactory().getFTPClientConfig("VMS_improved")); //$NON-NLS-1$
+				_ftpClient.setParserFactory(_entryParserFactory);
+				_ftpClient.configure(_entryParserFactory.getFTPClientConfig("VMS")); //$NON-NLS-1$
 			}else
 			//Default UNIX-like parsing	
 			//FTPClientConfig.SYST_UNIX = "UNIX"	

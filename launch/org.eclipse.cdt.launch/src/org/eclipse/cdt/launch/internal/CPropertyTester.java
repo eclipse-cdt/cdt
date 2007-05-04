@@ -14,7 +14,9 @@ package org.eclipse.cdt.launch.internal;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -23,35 +25,15 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public class CPropertyTester extends PropertyTester {
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if ("isCElement".equals(property)) { //$NON-NLS-1$
-			return isCElement(receiver);
-		}
-		if ("isExecutable".equals(property)) { //$NON-NLS-1$
+		if ("isExecutable".equals(property)) //$NON-NLS-1$
 			return isExecutable(receiver);
-		}
-		return false;
+		else if ("isCProject".equals(property)) //$NON-NLS-1$
+			return isCProject(receiver);
+		else
+			return false;
 	}
 
-	private boolean isCElement(Object receiver) {
-		ICElement celement = null;
-		if (receiver instanceof IAdaptable) {
-			IResource res = (IResource) ((IAdaptable)receiver).getAdapter(IResource.class);
-			if (res != null) {
-				celement = CoreModel.getDefault().create(res);
-			}
-		}
-		return (celement != null);
-	}
-
-	/**
-	 * Look for executable.
-	 * @return true if the target resource has a <code>main</code> method,
-	 * <code>false</code> otherwise.
-	 */
 	private boolean isExecutable(Object receiver) {
 		ICElement celement = null;
 		if (receiver instanceof IAdaptable) {
@@ -61,6 +43,15 @@ public class CPropertyTester extends PropertyTester {
 			}
 		}
 		return (celement != null && celement instanceof IBinary);
+	}
+	
+	private boolean isCProject(Object receiver) {
+		if (receiver instanceof IProject)
+			return CoreModel.hasCNature((IProject)receiver);
+		else if (receiver instanceof ICProject)
+			return true;
+		else
+			return false;
 	}
 	
 }

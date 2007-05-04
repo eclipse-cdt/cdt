@@ -11,9 +11,7 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 public class ProviderBasedRcDesHolder extends ResourceDescriptionHolder {

@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.settings.model;
 
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.internal.core.CConfigBasedDescriptor;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IInternalCCfgInfo {

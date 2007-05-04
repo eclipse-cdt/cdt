@@ -36,14 +36,13 @@ public interface ITerminalControl {
 	/**
 	 * A shell to show dialogs.
 	 * @return the shell in which the terminal is shown.
-	 * TODO: Michael Scharf: it's not clear to me what the meaning of the open state is
 	 */
 	Shell getShell();
 
 	/**
-	 * Show a text in the terminal. If pots newlines at the beginning and the end.
+	 * Show a text in the terminal. If puts newlines at the beginning and the end.
 	 * @param text
-	 * TODO: Michael Scharf: Is this really needed? (use {@link #displayTextInTerminal(String)}
+	 * TODO: Michael Scharf: Is this really needed? 
 	 */
 	void displayTextInTerminal(String text);
 
@@ -63,7 +62,7 @@ public interface ITerminalControl {
 	/**
 	 * Show an error message during connect.
 	 * @param msg
-	 * TODO: Michael Scharf: Should be replaced by a better error notification mechansim!
+	 * TODO: Michael Scharf: Should be replaced by a better error notification mechanism!
 	 */
 	void setMsg(String msg);
 	

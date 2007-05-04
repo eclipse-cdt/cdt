@@ -92,6 +92,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	private EntryInfo entryInfo; 
 	
 	protected static final class EntryInfo {
+		private SortedMap tcs;
 		private EntryDescriptor entryDescriptor;
 		private Template template;
 		private boolean initialized;
@@ -102,8 +103,9 @@ public class MBSWizardHandler extends CWizardHandler {
 		private IWizardPage predatingPage;
 		private IWizardPage followingPage;
 		
-		public EntryInfo(EntryDescriptor dr){
+		public EntryInfo(EntryDescriptor dr, SortedMap _tcs){
 			entryDescriptor = dr;
+			tcs = _tcs;
 		}
 		
 		public boolean isValid(){
@@ -203,6 +205,59 @@ public class MBSWizardHandler extends CWizardHandler {
 			}
 			return true;
 		}
+		
+		/**
+		 * Filters toolchains   
+		 * 
+		 * @return - set of compatible toolchain's IDs
+		 */
+		protected Set tc_filter() {
+			Set full = tcs.keySet();
+			if (entryDescriptor == null) 
+				return full;
+			Set out = new LinkedHashSet(full.size());
+			Iterator it = full.iterator();
+			while (it.hasNext()) {
+				String s = (String)it.next();
+				if (isToolChainAcceptable(s)) 
+					out.add(s);
+			}
+			return out;
+		}
+
+		/**
+		 * Checks whether given toolchain can be displayed
+		 * 
+		 * @param tcId - toolchain _NAME_ to check
+		 * @return - true if toolchain can be displayed
+		 */
+		public boolean isToolChainAcceptable(String tcId) {
+			if (template == null || template.getTemplateInfo() == null) 
+				return true;
+			
+			String[] ss = template.getTemplateInfo().getToolChainIds();
+			if (ss == null || ss.length == 0) 
+				return true;
+			
+			Object ob = tcs.get(tcId);
+			if (ob == null || !(ob instanceof IToolChain))
+				return false;
+			
+			String id1 = ((IToolChain)ob).getId();
+			IToolChain sup = ((IToolChain)ob).getSuperClass();
+			String id2 = sup == null ? null : sup.getId();
+			
+			for (int i=0; i<ss.length; i++) {
+				if ((ss[i] != null && ss[i].equals(id1)) ||
+					(ss[i] != null && ss[i].equals(id2)))
+					return true;
+			}
+			return false;
+		}
+
+		public int getToolChainsCount() {
+			return tc_filter().size();
+		}
 	}
 	
 	public MBSWizardHandler(IProjectType _pt, Composite p, IWizard w) {
@@ -269,29 +324,30 @@ public class MBSWizardHandler extends CWizardHandler {
 		if (table == null) {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 			table.setToolTipText(tooltip);
-			Iterator it = tc_filter(full_tcs.keySet()).iterator();
-			int counter = 0;
-			int position = 0;
-			while (it.hasNext()) {
-				TableItem ti = new TableItem(table, SWT.NONE);
-				String s = (String)it.next();
-				Object obj = full_tcs.get(s);
-				String id = CDTPrefUtil.NULL;
-				if (obj instanceof IToolChain) {
-					IToolChain tc = (IToolChain)obj;
-					String name = tc.getUniqueRealName();
-					id = tc.getId();
-					//TODO: add version
-					ti.setText(name);
-					ti.setData(tc);
-				} else { // NULL for -NO TOOLCHAIN-
-					ti.setText(s);
+			if (entryInfo != null) {
+				Iterator it = entryInfo.tc_filter().iterator();
+				int counter = 0;
+				int position = 0;
+				while (it.hasNext()) {
+					TableItem ti = new TableItem(table, SWT.NONE);
+					String s = (String)it.next();
+					Object obj = full_tcs.get(s);
+					String id = CDTPrefUtil.NULL;
+					if (obj instanceof IToolChain) {
+						IToolChain tc = (IToolChain)obj;
+						String name = tc.getUniqueRealName();
+						id = tc.getId();
+						//TODO: add version
+						ti.setText(name);
+						ti.setData(tc);
+					} else { // NULL for -NO TOOLCHAIN-
+						ti.setText(s);
+					}
+					if (position == 0 && preferred.contains(id)) position = counter;
+					counter++;
 				}
-				if (position == 0 && preferred.contains(id)) position = counter;
-				counter++;
-			}
-			if (counter > 0) table.select(position);
-			
+				if (counter > 0) table.select(position);
+			}			
 			table.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (listener != null)
@@ -465,7 +521,10 @@ public class MBSWizardHandler extends CWizardHandler {
 		return ts;
 	}
 	public int getToolChainsCount() {
-		return tc_filter(full_tcs.keySet()).size();
+		if (entryInfo == null)
+			return full_tcs.size();
+		else 
+			return entryInfo.tc_filter().size();
 	}
 	public String getPropertyId() {
 		return propertyId;
@@ -535,79 +594,18 @@ public class MBSWizardHandler extends CWizardHandler {
 	}
 	
 	public boolean isApplicable(EntryDescriptor data) { 
-		EntryInfo info = new EntryInfo(data);
-		return info.isValid();
+		EntryInfo info = new EntryInfo(data, full_tcs);
+		return info.isValid() && (info.getToolChainsCount() > 0);
 	}
 	
 	public void initialize(EntryDescriptor data) throws CoreException {
-		EntryInfo info = new EntryInfo(data);
+		EntryInfo info = new EntryInfo(data, full_tcs);
 		if(!info.isValid())
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), "inappropriate descriptor")); //$NON-NLS-1$
 		
 		entryInfo = info;
 	}
 
-	/**
-	 * Filters toolchains according to entryDescriptor data  
-	 * 
-	 * @param full - full set of toolchain IDs
-	 * @return - set of compatible toolchain's IDs
-	 * 
-	 * Note that full_tcs map should remain unchanged
-	 */
-	protected Set tc_filter(Set full) {
-		if(entryInfo == null)
-			return full;
-		
-		EntryDescriptor entryDescriptor = entryInfo.getDescriptor();
-		if (entryDescriptor == null) 
-			return full;
-		Set out = new LinkedHashSet(full.size());
-		Iterator it = full.iterator();
-		while (it.hasNext()) {
-			String s = (String)it.next();
-			if (isToolChainAcceptable(s, entryDescriptor)) 
-				out.add(s);
-		}
-		return out;
-	}
-	
-	/**
-	 * Checks whether given toolchain can be displayed
-	 * 
-	 * @param tcId - toolchain to check
-	 * @param ed   - Entry descriptor (Who Am I) 
-	 * @return - true if toolchain can be displayed
-	 */
-	protected boolean isToolChainAcceptable(String tcId, EntryDescriptor ed) {
-		// This method is temporary diabled
-		// (always returns true) until the
-		// end of discusion tracked by bug #184457
-		if (true) return true;
-		
-		if (entryInfo == null || entryInfo.template == null ||
-			entryInfo.template.getTemplateInfo() == null) 
-			return true;
-		
-		String[] ss = entryInfo.template.getTemplateInfo().getToolChainIds();
-		if (ss == null && ss.length == 0) 
-			return true;
-		
-		Object ob = full_tcs.get(tcId);
-		if (ob == null || !(ob instanceof IToolChain))
-			return false;
-		
-		String id1 = ((IToolChain)ob).getId();
-		IToolChain sup = ((IToolChain)ob).getSuperClass();
-		String id2 = sup == null ? null : sup.getId();
-		
-		for (int i=0; i<ss.length; i++) {
-			if ((ss[i] != null && ss[i].equals(id1)) ||
-				(ss[i] != null && ss[i].equals(id2)))
-				return true;
-		}
-		return false;
-	}
 	/**
 	 * Clones itself.
 	 */

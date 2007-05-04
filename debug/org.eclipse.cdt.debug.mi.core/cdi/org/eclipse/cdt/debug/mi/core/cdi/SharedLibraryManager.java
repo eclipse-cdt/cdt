@@ -43,6 +43,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetStopOnSolibEvents;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShow;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowSolibSearchPath;
+import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
@@ -53,6 +54,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowSolibSearchPathInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIInfoSharedLibraryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIShared;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -86,21 +88,41 @@ public class SharedLibraryManager extends Manager {
 	MIShared[] getMIShareds(MISession miSession) throws CDIException {
 		MIShared[] miLibs = new MIShared[0];
 		CommandFactory factory = miSession.getCommandFactory();
-		CLIInfoSharedLibrary infoShared = factory.createCLIInfoSharedLibrary();
-		try {
-			RxThread rxThread = miSession.getRxThread();
-			rxThread.setEnableConsole(false);
-			miSession.postCommand(infoShared);
-			CLIInfoSharedLibraryInfo info = infoShared.getMIInfoSharedLibraryInfo();
-			if (info == null) {
-				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+		MIInfoSharedLibrary infoSharedMI = factory.createMIInfoSharedLibrary();
+		
+		if (infoSharedMI != null)
+		{
+			try {
+				miSession.postCommand(infoSharedMI);
+				MIInfoSharedLibraryInfo info = infoSharedMI.getMIInfoSharedLibraryInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
+				miLibs = info.getMIShared();			
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
 			}
-			miLibs = info.getMIShared();
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		} finally {
-			RxThread rxThread = miSession.getRxThread();
-			rxThread.setEnableConsole(true);
+		}
+		else
+		{
+
+			CLIInfoSharedLibrary infoShared = factory.createCLIInfoSharedLibrary();
+			try {
+				RxThread rxThread = miSession.getRxThread();
+				rxThread.setEnableConsole(false);
+				miSession.postCommand(infoShared);
+				CLIInfoSharedLibraryInfo info = infoShared.getMIInfoSharedLibraryInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
+				miLibs = info.getMIShared();
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			} finally {
+				RxThread rxThread = miSession.getRxThread();
+				rxThread.setEnableConsole(true);
+			}
+			
 		}
 		return miLibs;
 	}

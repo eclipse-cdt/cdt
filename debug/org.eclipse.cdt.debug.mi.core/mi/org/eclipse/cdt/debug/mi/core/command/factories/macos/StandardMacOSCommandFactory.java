@@ -10,7 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.mi.core.command.factories.macos;
 
+import java.io.File;
+
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
+import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
 import org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory;
 
 public class StandardMacOSCommandFactory extends StandardCommandFactory {
@@ -22,6 +25,10 @@ public class StandardMacOSCommandFactory extends StandardCommandFactory {
 		super();
 	}
 
+	public String getWorkingDirectory(File cwd) {
+		return "--cd=" + '"' + cwd.getAbsolutePath() + '"'; //$NON-NLS-1$
+	}
+
 	/**
 	 * Constructor for StandardMacOSCommandFactory.
 	 */
@@ -31,6 +38,10 @@ public class StandardMacOSCommandFactory extends StandardCommandFactory {
 
 	public MIEnvironmentCD createMIEnvironmentCD(String pathdir) {
 		return new MacOSMIEnvironmentCD(getMIVersion(), pathdir);
+	}
+
+	public MIInfoSharedLibrary createMIInfoSharedLibrary() {
+		return new MIInfoSharedLibrary(getMIVersion());
 	}
 
 }

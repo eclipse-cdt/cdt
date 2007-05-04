@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import java.io.File;
+
 import org.eclipse.cdt.core.IAddress;
 
 
@@ -427,5 +429,13 @@ public class CommandFactory {
 
 	public MIGDBSetNewConsole createMIGDBSetNewConsole() {
 		return new MIGDBSetNewConsole(getMIVersion());
+	}
+
+	public MIInfoSharedLibrary createMIInfoSharedLibrary() {
+		return null;
+	}
+
+	public String getWorkingDirectory(File cwd) {
+		return "--cd=" + cwd.getAbsolutePath(); //$NON-NLS-1$
 	}
 }

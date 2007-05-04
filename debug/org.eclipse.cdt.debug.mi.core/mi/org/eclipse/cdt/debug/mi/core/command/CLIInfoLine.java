@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class CLIInfoLine extends CLICommand {
 
 	public CLIInfoLine(IAddress address) {
-		super("info line *" + address.toHexAddressString());
+		super("info line *" + address.toHexAddressString()); //$NON-NLS-1$
 	}
 
 	public CLIInfoLineInfo getMIInfoLineInfo() throws MIException {

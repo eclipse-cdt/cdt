@@ -71,27 +71,27 @@ public class CLIInfoLineInfo extends MIInfo {
 	}
 
 	protected void parseLineInfo(String str, List aList) {
-		String[] strbits = str.split("\\s");
+		String[] strbits = str.split("\\s"); //$NON-NLS-1$
 		for (int i = 0; i < strbits.length; i++) {
-			if (strbits[i].equals("Line"))
+			if (strbits[i].equals("Line")) //$NON-NLS-1$
 			{
 				lineNumber = Integer.parseInt(strbits[i+1]);
 			}
 			else
-			if (strbits[i].equals("starts"))
+			if (strbits[i].equals("starts")) //$NON-NLS-1$
 			{
 				
 				startAddress = new BigInteger(strbits[i+3].substring(2), 16);
 				startLocation = strbits[i+4];
 			}
 			else
-			if (strbits[i].equals("ends"))
+			if (strbits[i].equals("ends")) //$NON-NLS-1$
 			{
 				endAddress = new BigInteger(strbits[i+2].substring(2), 16);
 				endLocation = strbits[i+3];
 			}
 		}
-		strbits = str.split("\"");
+		strbits = str.split("\""); //$NON-NLS-1$
 		for (int i = 0; i < strbits.length; i++) {
 			fileName = strbits[1];
 		}

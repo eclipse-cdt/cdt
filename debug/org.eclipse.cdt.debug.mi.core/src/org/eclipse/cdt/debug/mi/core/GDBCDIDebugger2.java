@@ -236,7 +236,8 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 
 	protected String getWorkingDirectory( ILaunchConfiguration config ) throws CoreException {
 		File cwd = getProjectPath( config ).toFile();
-		return "--cd=" + cwd.getAbsolutePath(); //$NON-NLS-1$
+		CommandFactory factory = getCommandFactory( config );
+		return factory.getWorkingDirectory(cwd);
 	}
 
 	protected String getCommandFile( ILaunchConfiguration config ) throws CoreException {

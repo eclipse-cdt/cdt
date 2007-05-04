@@ -137,6 +137,15 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		ICConfigurationDescription cfgDes2 = des.createConfiguration(newCfgId, "cfg2", cfgDes);
 		assertEquals(extPIds.length, cfgDes2.getExternalSettingsProviderIds().length);
 		assertTrue(Arrays.equals(extPIds, cfgDes2.getExternalSettingsProviderIds()));
+		
+		ls = cfgDes2.getLanguageSettingForFile(new Path("a.c"), true);
+		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
+		ICLanguageSettingEntry[] expectedEntries = new ICLanguageSettingEntry[]{
+				new CIncludePathEntry("ip_a", 0),
+				new CIncludePathEntry("ip_b", 0),
+		};
+		assertTrue(Arrays.equals(expectedEntries, entries));
+
 	}
 	
 	protected void tearDown() throws Exception {

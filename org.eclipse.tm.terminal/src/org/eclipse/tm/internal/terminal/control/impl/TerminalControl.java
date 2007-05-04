@@ -18,6 +18,7 @@ package org.eclipse.tm.internal.terminal.control.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.SocketException;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -449,24 +450,24 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	 * @see org.eclipse.tm.terminal.ITerminalControl#displayTextInTerminal(java.lang.String)
 	 */
 	public void displayTextInTerminal(String text) {
-		writeToTerminal(text+"\r\n"); //$NON-NLS-1$
+		writeToTerminal("\r\n"+text+"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
-	public void writeToTerminal(String txt) {
-
-		// Do _not_ use asyncExec() here.  Class TerminalText requires that
-		// its run() and setNewText() methods be called in strictly
-		// alternating order.  If we were to call asyncExec() here, this
-		// loop might race around and call setNewText() twice in a row,
-		// which would lose data.
-		getTerminalText().setNewText(new StringBuffer(txt));
-		if(Display.getDefault().getThread()==Thread.currentThread())
-			getTerminalText().run();
-		else
-			fDisplay.syncExec(getTerminalText());
+	private void writeToTerminal(String text) {
+		try {
+			getRemoteToTerminalOutputStream().write(text.getBytes("ISO-8859-1")); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException e) {
+			// should never happen!
+			e.printStackTrace();
+		} catch (IOException e) {
+			// should never happen!
+			e.printStackTrace();
+		} 
 		
 	}
-
+	
+	public OutputStream getRemoteToTerminalOutputStream() {
+		return getTerminalText().getOutputStream();
+	}
 	protected boolean isLogCharEnabled() {
 		return TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_CHAR);
 	}

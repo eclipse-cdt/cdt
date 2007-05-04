@@ -280,8 +280,8 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 		return localEcho;
 	}
 
-	private void writeToTerminal(String string) {
-		terminalControl.writeToTerminal(string);
+	private void displayTextInTerminal(String string) {
+		terminalControl.displayTextInTerminal(string);
 	}
 	
 	/**
@@ -304,7 +304,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 					// Announce to the user that the remote endpoint has closed the
 					// connection.
 
-					writeToTerminal("\r"+TelnetMessages.CONNECTION_CLOSED_BY_FOREIGN_HOST+"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
+					displayTextInTerminal(TelnetMessages.CONNECTION_CLOSED_BY_FOREIGN_HOST);
 
 					// Tell the ITerminalControl object that the connection is
 					// closed.
@@ -321,7 +321,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 					int nProcessedBytes = processTelnetProtocol(nRawBytes);
 
 					if (nProcessedBytes > 0) {
-						writeToTerminal(new String(processedBytes, 0, nProcessedBytes));
+						terminalControl.getRemoteToTerminalOutputStream().write(processedBytes, 0, nProcessedBytes);
 					}
 				}
 			}

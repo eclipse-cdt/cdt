@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal;
 
+import java.io.OutputStream;
+
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -46,10 +48,11 @@ public interface ITerminalControl {
 	void displayTextInTerminal(String text);
 
 	/**
-	 * Write a string directly to the terminal.
-	 * @param txt
+	 * @return a stream used to write to the terminal. Any bytes written to this
+	 * stream appear in the terminal or are interpreted by the emulator as
+	 * control sequences.
 	 */
-	void writeToTerminal(String txt);
+	OutputStream getRemoteToTerminalOutputStream();
 
 	/**
 	 * Set the title of the terminal view.

@@ -17,7 +17,11 @@
 package org.eclipse.tm.internal.terminal.control.impl;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,7 +52,7 @@ import org.eclipse.tm.terminal.TerminalState;
  * @author Fran Litterio <francis.litterio@windriver.com>
  * @author Chris Thew <chris.thew@windriver.com>
  */
-public class TerminalText implements Runnable, ControlListener {
+public class TerminalText implements ControlListener {
 	/** This is a character processing state: Initial state. */
 	protected static final int ANSISTATE_INITIAL = 0;
 
@@ -87,19 +91,6 @@ public class TerminalText implements Runnable, ControlListener {
 	 * display text to the user.
 	 */
 	protected StyledText text;
-
-	/**
-	 * This field holds the characters received from the remote host before they
-	 * are displayed to the user. Method {@link #processNewText()} scans this
-	 * text looking for ANSI control characters and escape sequences.
-	 */
-	protected StringBuffer newText;
-
-	/**
-	 * This field holds the index of the current character while the text stored
-	 * in field {@link #newText} is being processed.
-	 */
-	protected int characterIndex = 0;
 
 	/**
 	 * This field holds the width of a character (in pixels) for the font used
@@ -215,12 +206,6 @@ public class TerminalText implements Runnable, ControlListener {
 	protected boolean reverseVideo = false;
 
 	/**
-	 * This field holds the time (in milliseconds) of the previous call to
-	 * method {@link #SetNewText()}.
-	 */
-	static long LastNewOutputTime = 0;
-
-	/**
 	 * Color object representing the color black. The Color class requires us to
 	 * call dispose() on this object when we no longer need it. We do that in
 	 * method {@link #dispose()}.
@@ -278,6 +263,8 @@ public class TerminalText implements Runnable, ControlListener {
 
 	protected boolean fLimitOutput;
 	protected int fBufferLineLimit;
+	final TerminalInputStream fTerminalInputStream;
+	final Reader fReader;
 	/**
 	 * The constructor.
 	 */
@@ -291,6 +278,19 @@ public class TerminalText implements Runnable, ControlListener {
 		for (int i = 0; i < ansiParameters.length; ++i) {
 			ansiParameters[i] = new StringBuffer();
 		}
+		fTerminalInputStream=new TerminalInputStream(1024, 100, new Runnable() {
+			public void run() {
+				processText();
+			}});
+		Reader reader=null;
+		try {
+			// TODO convert byte to char using "ISO-8859-1"
+			reader=new InputStreamReader(fTerminalInputStream,"ISO-8859-1"); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException e) {
+			// should never happen!
+			e.printStackTrace();
+		}
+		fReader=reader;
 	}
 
 	/**
@@ -346,64 +346,17 @@ public class TerminalText implements Runnable, ControlListener {
 
 	/**
 	 * This method is required by interface ControlListener. It allows us to
-	 * know when the StyledText widget is resized. This method must be
-	 * synchronized to prevent it from executing at the same time as run(),
-	 * which displays new text. We can't have the fields that represent the
-	 * dimensions of the terminal changing while we are rendering text.
+	 * know when the StyledText widget is resized. 
 	 */
-	public synchronized void controlResized(ControlEvent event) {
+	public void controlResized(ControlEvent event) {
 		Logger.log("entered"); //$NON-NLS-1$
 		adjustTerminalDimensions();
 	}
 
 	/**
-	 * This method sets field {@link #newText} to a new value. This method must
-	 * not execute at the same time as methods {@link #run()} and {@link
-	 * #clearTerminal()}.
-	 * <p>
-	 * 
-	 * IMPORTANT: This method must be called in strict alternation with method
-	 * {@link #run()}.
-	 * <p>
-	 * 
-	 * @param newBuffer
-	 *            The new buffer containing characters received from the remote
-	 *            host.
+	 * This method erases all text from the Terminal view. 
 	 */
-	public synchronized void setNewText(StringBuffer newBuffer) {
-		if (Logger.isLogEnabled()) {
-			Logger.log("new text: '" + Logger.encode(newBuffer.toString()) + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		newText = newBuffer;
-
-		// When continuous output is being processed by the Terminal view code, it
-		// consumes nearly 100% of the CPU. This fixes that. If this method is called
-		// too frequently, we explicitly sleep for a short time so that the thread
-		// executing this function (which is the thread reading from the socket or
-		// serial port) doesn't consume 100% of the CPU. Without this code, the
-		// Workbench GUI is practically hung when there is continuous output in the
-		// Terminal view.
-
-		long CurrentTime = System.currentTimeMillis();
-
-		if (CurrentTime - LastNewOutputTime < 250 && newBuffer.length() > 10) {
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException ex) {
-				// Ignore.
-			}
-		}
-
-		LastNewOutputTime = CurrentTime;
-	}
-
-	/**
-	 * This method erases all text from the Terminal view. This method is called
-	 * when the user chooses "Clear all" from the Terminal view context menu, so
-	 * we need to serialize this method with methods {@link #run()} and {@link
-	 * #setNewText(StringBuffer)}.
-	 */
-	public synchronized void clearTerminal() {
+	public void clearTerminal() {
 		Logger.log("entered"); //$NON-NLS-1$
 		text.setText(""); //$NON-NLS-1$
 		cursorColumn = 0;
@@ -412,12 +365,9 @@ public class TerminalText implements Runnable, ControlListener {
 	/**
 	 * This method is called when the user changes the Terminal view's font. We
 	 * attempt to recompute the pixel width of the new font's characters and fix
-	 * the terminal's dimensions. This method must be synchronized to prevent it
-	 * from executing at the same time as run(), which displays new text. We
-	 * can't have the fields that represent the dimensions of the terminal
-	 * changing while we are rendering text.
+	 * the terminal's dimensions.
 	 */
-	public synchronized void fontChanged() {
+	public void fontChanged() {
 		Logger.log("entered"); //$NON-NLS-1$
 
 		characterPixelWidth = 0;
@@ -425,7 +375,6 @@ public class TerminalText implements Runnable, ControlListener {
 		if (text != null)
 			adjustTerminalDimensions();
 	}
-
 	/**
 	 * This method executes in the Display thread to process data received from
 	 * the remote host by class {@link TelnetConnection} and 
@@ -434,7 +383,7 @@ public class TerminalText implements Runnable, ControlListener {
 	 * <p>
 	 * These connectors write text to the terminal's buffer through
 	 * {@link TerminalControl#writeToTerminal(String)} and then have 
-	 * this run method exectued in the display thread. This method 
+	 * this run method executed in the display thread. This method 
 	 * must not execute at the same time as methods 
 	 * {@link #setNewText(StringBuffer)} and {@link #clearTerminal()}.
 	 * <p>
@@ -442,9 +391,7 @@ public class TerminalText implements Runnable, ControlListener {
 	 * {@link #setNewText(StringBuffer)}.
 	 * <p>
 	 */
-	public synchronized void run() {
-		Logger.log("entered"); //$NON-NLS-1$
-
+	void processText() {
 		try {
 			// This method can be called just after the user closes the view, so we
 			// make sure not to cause a widget-disposed exception.
@@ -471,20 +418,23 @@ public class TerminalText implements Runnable, ControlListener {
 			// ISSUE: Is this causing the scroll-to-bottom-on-output behavior?
 
 			text.setCaretOffset(caretOffset);
-
-			processNewText();
+			try {
+				processNewText();
+			} catch (IOException e) {
+				Logger.logException(e);
+			}
 
 			caretOffset = text.getCaretOffset();
 		} catch (Exception ex) {
 			Logger.logException(ex);
 		}
 	}
-
 	/**
 	 * This method scans the newly received text, processing ANSI control
 	 * characters and escape sequences and displaying normal text.
+	 * @throws IOException 
 	 */
-	protected void processNewText() {
+	protected void processNewText() throws IOException {
 		Logger.log("entered"); //$NON-NLS-1$
 
 		// Stop the StyledText widget from redrawing while we manipulate its contents.
@@ -494,10 +444,8 @@ public class TerminalText implements Runnable, ControlListener {
 
 		// Scan the newly received text.
 
-		characterIndex = 0;
-
-		while (characterIndex < newText.length()) {
-			char character = newText.charAt(characterIndex);
+		while (hasNextChar()) {
+			char character = getNextChar();
 
 			switch (ansiState) {
 			case ANSISTATE_INITIAL:
@@ -530,7 +478,7 @@ public class TerminalText implements Runnable, ControlListener {
 					break;
 
 				default:
-					processNonControlCharacters();
+					processNonControlCharacters(character);
 					break;
 				}
 				break;
@@ -614,15 +562,12 @@ public class TerminalText implements Runnable, ControlListener {
 				ansiState = ANSISTATE_INITIAL;
 				break;
 			}
-
-			++characterIndex;
 		}
 
 		// Allow the StyledText widget to redraw itself.
 
 		text.setRedraw(true);
 	}
-
 	/**
 	 * This method is called when we have parsed an OS Command escape sequence.
 	 * The only one we support is "\e]0;...\u0007", which sets the terminal
@@ -1093,7 +1038,7 @@ public class TerminalText implements Runnable, ControlListener {
 
 	/**
 	 * Delete one or more lines of text. Any lines below the deleted lines move
-	 * up, which we implmement by appending newlines to the end of the text.
+	 * up, which we implement by appending newlines to the end of the text.
 	 */
 	protected void processAnsiCommand_M() {
 		int totalLines = text.getLineCount();
@@ -1355,9 +1300,9 @@ public class TerminalText implements Runnable, ControlListener {
 
 	/**
 	 * This method processes a single parameter character in an ANSI escape
-	 * sequence. Paramters are the (optional) characters between the leading
+	 * sequence. Parameters are the (optional) characters between the leading
 	 * "\e[" and the command character in an escape sequence (e.g., in the
-	 * escape sequence "\e[20;10H", the paramter characters are "20;10").
+	 * escape sequence "\e[20;10H", the parameter characters are "20;10").
 	 * Parameters are integers separated by one or more ';'s.
 	 */
 	protected void processAnsiParameterCharacter(char ch) {
@@ -1368,44 +1313,35 @@ public class TerminalText implements Runnable, ControlListener {
 				ansiParameters[nextAnsiParameter].append(ch);
 		}
 	}
-
 	/**
 	 * This method processes a contiguous sequence of non-control characters.
 	 * This is a performance optimization, so that we don't have to insert or
 	 * append each non-control character individually to the StyledText widget.
 	 * A non-control character is any character that passes the condition in the
 	 * below while loop.
+	 * @throws IOException 
 	 */
-	protected void processNonControlCharacters() {
-		int firstNonControlCharacterIndex = characterIndex;
-		int newTextLength = newText.length();
-		char character = newText.charAt(characterIndex);
-
+	protected void processNonControlCharacters(char character) throws IOException {
+		StringBuffer buffer=new StringBuffer();
+		buffer.append(character);
 		// Identify a contiguous sequence of non-control characters, starting at
 		// firstNonControlCharacterIndex in newText.
-
-		while (character != '\u0000' && character != '\b' && character != '\t'
-				&& character != '\u0007' && character != '\n'
-				&& character != '\r' && character != '\u001b') {
-			++characterIndex;
-
-			if (characterIndex >= newTextLength)
+		while(hasNextChar()) {
+			character=getNextChar();
+			if(character == '\u0000' || character == '\b' || character == '\t'
+				|| character == '\u0007' || character == '\n'
+				|| character == '\r' || character == '\u001b') {
+				pushBackChar(character);
 				break;
-
-			character = newText.charAt(characterIndex);
+			}
+			buffer.append(character);
 		}
-
-		// Move characterIndex back by one character because it gets incremented at the
-		// bottom of the loop in processNewText().
-
-		--characterIndex;
-
 		int preDisplayCaretOffset = text.getCaretOffset();
 
 		// Now insert the sequence of non-control characters in the StyledText widget
 		// at the location of the cursor.
 
-		displayNewText(firstNonControlCharacterIndex, characterIndex);
+		displayNewText(buffer.toString());
 
 		// If any one of the current font style, foreground color or background color
 		// differs from the defaults, apply the current style to the newly displayed
@@ -1438,23 +1374,18 @@ public class TerminalText implements Runnable, ControlListener {
 	 * text being displayed by this method (this includes newlines, carriage
 	 * returns, and tabs).
 	 * <p>
-	 * 
-	 * @param first
-	 *            The index (within newText) of the first character to display.
-	 * @param last
-	 *            The index (within newText) of the last character to display.
 	 */
-	protected void displayNewText(int first, int last) {
+	protected void displayNewText(String buffer) {
 		if (text.getCaretOffset() == text.getCharCount()) {
 			// The cursor is at the very end of the terminal's text, so we append the
 			// new text to the StyledText widget.
 
-			displayNewTextByAppending(first, last);
+			displayNewTextByAppending(buffer);
 		} else {
 			// The cursor is not at the end of the screen's text, so we have to
 			// overwrite existing text.
 
-			displayNewTextByOverwriting(first, last);
+			displayNewTextByOverwriting(buffer);
 		}
 	}
 
@@ -1467,14 +1398,11 @@ public class TerminalText implements Runnable, ControlListener {
 	 * text being displayed by this method (this includes newlines, carriage
 	 * returns, and tabs).
 	 * <p>
-	 * 
-	 * @param first
-	 *            The index (within newText) of the first character to display.
-	 * @param last
-	 *            The index (within newText) of the last character to display.
 	 */
-	protected void displayNewTextByAppending(int first, int last) {
-		int numCharsToOutput = last - first + 1;
+	protected void displayNewTextByAppending(String newText) {
+		int first=0;
+		int last=newText.length()-1;
+		int numCharsToOutput = newText.length();
 		int availableSpaceOnLine = widthInColumns - cursorColumn;
 
 		if (numCharsToOutput >= availableSpaceOnLine) {
@@ -1525,16 +1453,13 @@ public class TerminalText implements Runnable, ControlListener {
 	 * text being displayed by this method (this includes newlines, carriage
 	 * returns, and tabs).
 	 * <p>
-	 * 
-	 * @param first
-	 *            The index (within newText) of the first character to display.
-	 * @param last
-	 *            The index (within newText) of the last character to display.
 	 */
-	protected void displayNewTextByOverwriting(int first, int last) {
+	protected void displayNewTextByOverwriting(String newText) {
 		// First, break new text into segments, based on where it needs to line wrap,
 		// so that each segment contains text that will appear on a separate
 		// line.
+		int first=0;
+		int last=newText.length()-1;
 
 		List textSegments = new ArrayList(100);
 
@@ -1569,7 +1494,7 @@ public class TerminalText implements Runnable, ControlListener {
 
 			if (caretOffset == text.getCharCount()) {
 				// The cursor is at the end of the text, so just append the current
-				// segement along with a newline.
+				// segment along with a newline.
 
 				text.append(segment);
 
@@ -1823,7 +1748,7 @@ public class TerminalText implements Runnable, ControlListener {
 		// terminal.
 
 		ITerminalConnector telnetConnection = terminal.getTerminalConnection();
-
+		// TODO MSA: send only if dimensions have really changed!
 		if (telnetConnection != null && widthInColumns != 0 && heightInLines != 0) {
 			telnetConnection.setTerminalSize(widthInColumns, heightInLines);
 		}
@@ -1898,7 +1823,7 @@ public class TerminalText implements Runnable, ControlListener {
 	}
 
 	/**
-	 * This method returns the relative line number of the line comtaining the
+	 * This method returns the relative line number of the line containing the
 	 * cursor. The returned line number is relative to the topmost visible line,
 	 * which has relative line number 0.
 	 * 
@@ -2076,5 +2001,44 @@ public class TerminalText implements Runnable, ControlListener {
 
 	protected void setLimitOutput(boolean limitOutput) {
 		fLimitOutput = limitOutput;
+	}
+
+	public OutputStream getOutputStream() {
+		return fTerminalInputStream.getOutputStream();
+	}
+
+	/**
+	 * Buffer for {@link #pushBackChar(char)}.
+	 */
+	private int fNextChar=-1;
+	private char getNextChar() throws IOException {
+		int c=-1; 
+		if(fNextChar!=-1) {
+			c= fNextChar;
+			fNextChar=-1;
+		} else {
+			c = fReader.read();
+		}
+		// TODO: better end of file handling
+		if(c==-1)
+			c=0;
+		return (char)c;
+	}
+
+	private boolean hasNextChar() throws IOException  {
+		if(fNextChar>=0)
+			return true;
+		return fReader.ready();
+	}
+
+	/**
+	 * Put back one character to the stream. This method can push
+	 * back exactly one character. The character is the next character
+	 * returned by {@link #getNextChar}
+	 * @param c the character to be pushed back.
+	 */
+	void pushBackChar(char c) {
+		//assert fNextChar!=-1: "Already a character waiting:"+fNextChar; //$NON-NLS-1$
+		fNextChar=c;			
 	}
 }

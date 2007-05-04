@@ -3203,6 +3203,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				if(!settingsCustomized(project, (CFolderData)parentRcData, (CFolderData)childRcData)){
 					try {
 						data.removeResourceData(childRcData);
+						child.remove();
 						modified = true;
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
@@ -3213,6 +3214,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				if(!settingsCustomized(project, (CResourceData)parent.getValue(), (CFileData)childRcData)){
 					try {
 						data.removeResourceData(childRcData);
+						child.remove();
 						modified = true;
 					} catch (CoreException e) {
 						CCorePlugin.log(e);

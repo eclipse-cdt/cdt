@@ -308,10 +308,7 @@ public class TerminalText implements ControlListener {
 
 		text.addControlListener(this);
 
-		currentForegroundColor = text.getForeground();
-		currentBackgroundColor = text.getBackground();
-		currentFontStyle = SWT.NORMAL;
-		reverseVideo = false;
+		resetState();
 	}
 
 
@@ -1986,7 +1983,17 @@ public class TerminalText implements ControlListener {
 
 		cursorColumn -= columnsToMove;
 	}
-
+	/**
+	 * Resets the state of the terminal text (foreground color, background color,
+	 * font style and other internal state). It essentially makes it ready for new input.
+	 */
+	public void resetState() {
+		ansiState=ANSISTATE_INITIAL;
+		currentForegroundColor = text.getForeground();
+		currentBackgroundColor = text.getBackground();
+		currentFontStyle = SWT.NORMAL;
+		reverseVideo = false;
+	}
 	protected int getBufferLineLimit() {
 		return fBufferLineLimit;
 	}

@@ -238,6 +238,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		Logger.log("entered."); //$NON-NLS-1$
 		if(fConnector==null)
 			return;
+		fTerminalText.resetState();
 		fConnector.connect(this);
 		// clean the error message
 		setMsg(""); //$NON-NLS-1$

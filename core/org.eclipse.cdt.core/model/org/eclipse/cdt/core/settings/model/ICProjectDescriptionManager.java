@@ -138,4 +138,16 @@ public interface ICProjectDescriptionManager {
 	 * @return
 	 */
 	boolean setProjectDescriptionWorkspacePreferences(ICProjectDescriptionWorkspacePreferences prefs, boolean updateProjects, IProgressMonitor monitor);
+	
+	/**
+	 * forces the external settings providers of the specified IDs to be rescanned
+	 * and all configurations referencing the specified providers to be updated
+	 * 
+	 * @param ids the ids of externalSettinsProvider extensions
+	 * 
+	 * @see ICConfigurationDescription#getExternalSettingsProviderIds()
+	 * @see ICConfigurationDescription#setExternalSettingsProviderIds(String[])
+	 * @see ICConfigurationDescription#updateExternalSettingsProviders(String[])
+	 */
+	void updateExternalSettingsProviders(String[] ids, IProgressMonitor monitor);
 }

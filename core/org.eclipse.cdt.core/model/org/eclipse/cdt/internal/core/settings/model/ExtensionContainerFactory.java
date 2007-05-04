@@ -27,9 +27,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
-public class ExtensionContainerFactory extends CExternalSettingContainerFactory {
+public class ExtensionContainerFactory extends CExternalSettingContainerFactoryWithListener {
 	static final String FACTORY_ID = CCorePlugin.PLUGIN_ID + ".extension.container.factory"; //$NON-NLS-1$
 	private static final String EXTENSION_ID = CCorePlugin.PLUGIN_ID + ".externalSettingsProvider"; //$NON-NLS-1$
 	
@@ -160,6 +161,13 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactory 
 		}
 		return fInstance;
 	}
+	
+	public static ExtensionContainerFactory getInstanceInitialized(){
+		CExternalSettingContainerFactory f = CExternalSettingsManager.getInstance().getFactory(FACTORY_ID);
+		if(f instanceof ExtensionContainerFactory)
+			return (ExtensionContainerFactory)f;
+		return getInstance();
+	}
 
 	public CExternalSettingsContainer createContainer(String id,
 			IProject project, ICConfigurationDescription cfgDes) throws CoreException {
@@ -196,6 +204,24 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactory 
 				createReference(cfg, (String)iter.next());
 			}
 		}
+	}
+
+	public static void updateReferencedProviderIds(String ids[], IProgressMonitor monitor){
+		ExtensionContainerFactory instance = getInstanceInitialized();
+		CExternalSettingsContainerChangeInfo[] changeInfos = 
+			new CExternalSettingsContainerChangeInfo[ids.length];
+		
+		for(int i = 0; i < changeInfos.length; i++){
+			changeInfos[i] = new CExternalSettingsContainerChangeInfo(
+					CExternalSettingsContainerChangeInfo.CONTAINER_CONTENTS,
+					new CContainerRef(FACTORY_ID, ids[i]),
+					null);
+		}
+
+		instance.notifySettingsChange(null, null, changeInfos);
+		
+		if(monitor != null)
+			monitor.done();
 	}
 	
 	public static void updateReferencedProviderIds(ICConfigurationDescription cfg, String ids[]){

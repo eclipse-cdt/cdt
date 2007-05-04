@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Path;
 
 public class ExternalSettingsProviderTests extends BaseTestCase{
 	private static final String PROJ_NAME_PREFIX = "espt_";
-	ICProject p1, p2;
+	ICProject p1, p2, p3;
 	
 	public static TestSuite suite() {
 		return suite(ExternalSettingsProviderTests.class, "_");
@@ -36,9 +36,11 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 	protected void setUp() throws Exception {
 		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
 		p2 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "b", IPDOMManager.ID_NO_INDEXER);
+		p3 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
 	}
 	
 	public void testRefs() throws Exception {
+		TestExtSettingsProvider.setVariantNum(0);
 		CoreModel model = CoreModel.getDefault();
 		IProject project = p1.getProject();
 		
@@ -104,6 +106,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 	}
 	
 	public void testCreateCfg() throws Exception {
+		TestExtSettingsProvider.setVariantNum(0);
 		CoreModel model = CoreModel.getDefault();
 		IProject project = p2.getProject();
 		
@@ -148,6 +151,58 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 
 	}
 	
+	public void testProviderUpdate() throws Exception {
+		TestExtSettingsProvider.setVariantNum(0);
+
+		CoreModel model = CoreModel.getDefault();
+		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
+		IProject project = p2.getProject();
+		
+		ICProjectDescription des = model.getProjectDescription(project);
+		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
+		ICLanguageSetting ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
+		ICLanguageSettingEntry[] entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
+		assertEquals(0, entries.length);
+		ICSourceEntry[] sourceEntries = cfgDes.getSourceEntries();
+		ICSourceEntry[] expectedSourceEntries = new ICSourceEntry[]{
+			new CSourceEntry(project.getFullPath(), null, ICSettingEntry.RESOLVED)
+		};
+		assertEquals(1, sourceEntries.length);
+		assertTrue(Arrays.equals(expectedSourceEntries, sourceEntries));
+		String[] extPIds = new String[]{CTestPlugin.PLUGIN_ID + ".testExtSettingsProvider"};
+		cfgDes.setExternalSettingsProviderIds(extPIds);
+		
+
+		ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
+		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
+		ICLanguageSettingEntry[] expectedEntries = new ICLanguageSettingEntry[]{
+				new CIncludePathEntry("ip_a", 0),
+				new CIncludePathEntry("ip_b", 0),
+		};
+		assertTrue(Arrays.equals(expectedEntries, entries));
+
+		model.setProjectDescription(project, des);
+		
+		des = model.getProjectDescription(project);
+		cfgDes = des.getConfigurations()[0];
+		ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
+		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
+		assertTrue(Arrays.equals(expectedEntries, entries));
+		
+		ICLanguageSettingEntry[] expectedEntries2 = new ICLanguageSettingEntry[]{
+				new CIncludePathEntry("ip_a2", 0),
+				new CIncludePathEntry("ip_b2", 0),
+		};
+		TestExtSettingsProvider.setVariantNum(1);
+		
+		mngr.updateExternalSettingsProviders(extPIds, null);
+		des = model.getProjectDescription(project);
+		cfgDes = des.getConfigurations()[0];
+		ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
+		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
+		assertTrue(Arrays.equals(expectedEntries2, entries));
+	}
+	
 	protected void tearDown() throws Exception {
 		try {
 			p1.getProject().delete(true, null);
@@ -157,6 +212,9 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 			p2.getProject().delete(true, null);
 		} catch (CoreException e){
 		}
-
+		try {
+			p3.getProject().delete(true, null);
+		} catch (CoreException e){
+		}
 	}
 }

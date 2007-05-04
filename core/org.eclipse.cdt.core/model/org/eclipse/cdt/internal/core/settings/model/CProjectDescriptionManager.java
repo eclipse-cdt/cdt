@@ -3399,4 +3399,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			return el.createChild(PREFERENCES_ELEMENT);
 		throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.14")); //$NON-NLS-1$
 	}
+	
+	public void updateExternalSettingsProviders(String[] ids, IProgressMonitor monitor){
+		ExtensionContainerFactory.updateReferencedProviderIds(ids, monitor);
+	}
 }

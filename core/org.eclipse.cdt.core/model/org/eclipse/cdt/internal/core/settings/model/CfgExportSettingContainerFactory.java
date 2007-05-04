@@ -33,10 +33,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ListenerList;
 
 public class CfgExportSettingContainerFactory extends
-		CExternalSettingContainerFactory implements ICProjectDescriptionListener {
+		CExternalSettingContainerFactoryWithListener implements ICProjectDescriptionListener {
 	static final String FACTORY_ID = CCorePlugin.PLUGIN_ID + ".cfg.export.settings.sipplier"; //$NON-NLS-1$
 	private static final char DELIMITER = ';';
-	private ListenerList fListenerList;
+//	private ListenerList fListenerList;
 	
 	private static CfgExportSettingContainerFactory fInstance;
 
@@ -175,19 +175,19 @@ public class CfgExportSettingContainerFactory extends
 		return new String[]{projName, cfgId};
 	}
 
-	public void addListener(ICExternalSettingsListener listener){
-		if(fListenerList == null)
-			fListenerList = new ListenerList();
-		
-		fListenerList.add(listener);
-	}
-	
-	public void removeListener(ICExternalSettingsListener listener){
-		if(fListenerList == null)
-			return;
-		
-		fListenerList.remove(listener);
-	}
+//	public void addListener(ICExternalSettingsListener listener){
+//		if(fListenerList == null)
+//			fListenerList = new ListenerList();
+//		
+//		fListenerList.add(listener);
+//	}
+//	
+//	public void removeListener(ICExternalSettingsListener listener){
+//		if(fListenerList == null)
+//			return;
+//		
+//		fListenerList.remove(listener);
+//	}
 	
 	public void handleEvent(CProjectDescriptionEvent event) {
 		switch(event.getEventType()){
@@ -204,7 +204,7 @@ public class CfgExportSettingContainerFactory extends
 								new CContainerRef(FACTORY_ID, ids[i]),
 								null);
 					}
-					notifySettingsChange(changeInfos);
+					notifySettingsChange(null, null, changeInfos);
 				}
 		}
 		// TODO Auto-generated method stub
@@ -273,18 +273,18 @@ public class CfgExportSettingContainerFactory extends
 		return c;
 	}
 
-	protected void notifySettingsChange(CExternalSettingsContainerChangeInfo[] infos){
-		if(fListenerList == null)
-			return;
-		
-		if(infos.length == 0)
-			return;
-		
-		CExternalSettingChangeEvent event = new CExternalSettingChangeEvent(infos);
-		
-		Object[] listeners = fListenerList.getListeners();
-		for(int i = 0; i < listeners.length; i++){
-			((ICExternalSettingsListener)listeners[i]).settingsChanged(null, null, event);
-		}
-	}
+//	protected void notifySettingsChange(CExternalSettingsContainerChangeInfo[] infos){
+//		if(fListenerList == null)
+//			return;
+//		
+//		if(infos.length == 0)
+//			return;
+//		
+//		CExternalSettingChangeEvent event = new CExternalSettingChangeEvent(infos);
+//		
+//		Object[] listeners = fListenerList.getListeners();
+//		for(int i = 0; i < listeners.length; i++){
+//			((ICExternalSettingsListener)listeners[i]).settingsChanged(null, null, event);
+//		}
+//	}
 }

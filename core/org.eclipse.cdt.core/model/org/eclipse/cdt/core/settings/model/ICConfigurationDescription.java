@@ -384,6 +384,8 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * those ids will be ignored and will NOT be added to the configuration settings
 	 * 
 	 * @param ids the ids of externalSettinsProvider extensions
+	 * 
+	 * @see ICProjectDescriptionManager#updateExternalSettingsProviders(String[])
 	 */
 	void updateExternalSettingsProviders(String[] ids) throws WriteAccessException;
 }

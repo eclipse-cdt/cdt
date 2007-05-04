@@ -454,6 +454,11 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		return dr;
 	}
 	
+	CExternalSettingContainerFactory getFactory(String id){
+		FactoryDescriptor dr = getFactoryDescriptor(id);
+		return dr.getFactory();
+	}
+	
 	private ContainerDescriptor createDescriptor(String factoryId,
 			String containerId,
 			IProject project,

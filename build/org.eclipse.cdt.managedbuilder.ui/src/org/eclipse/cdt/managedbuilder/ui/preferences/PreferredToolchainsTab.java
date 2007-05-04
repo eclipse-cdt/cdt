@@ -17,6 +17,7 @@ import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSWizardHandler;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.swt.SWT;
@@ -51,7 +52,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
     	c.setLayout(new GridLayout(2, true));
 
         Label l1 = new Label(c, SWT.NONE);
-        l1.setText(Messages.getString("CMainWizardPage.0")); //$NON-NLS-1$
+        l1.setText(UIMessages.getString("CMainWizardPage.0")); //$NON-NLS-1$
         l1.setFont(parent.getFont());
         l1.setLayoutData(new GridData(GridData.BEGINNING));
         

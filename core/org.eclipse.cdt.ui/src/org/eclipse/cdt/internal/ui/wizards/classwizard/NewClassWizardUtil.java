@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     IBM Corporation
  *     Markus Schorn (Wind River Systems)
+ *     Warren Paul (Nokia) - 174238
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
@@ -114,7 +115,9 @@ public class NewClassWizardUtil {
                         if (sourceFolder != null)
                             return sourceFolder;
                         if (resType == IResource.PROJECT) {
-                            return (ICContainer)elem;
+                        	if (elem instanceof ICContainer) {
+                                return (ICContainer)elem;
+                        	}
                         }
                     }
                 }

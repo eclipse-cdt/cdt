@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     IBM Corporation
+ *     Warren Paul (Nokia) - 174238
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
@@ -1198,6 +1199,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		        }
 		        changedFields = HEADER_FILE_ID | SOURCE_FILE_ID;
 			    updateFileGroupEnableState();
+			    handleFieldChanged(SOURCE_FOLDER_ID);
 		    }
 		    if (field == fHeaderFileDialogField) {
 	            changedFields |= HEADER_FILE_ID;
@@ -1451,8 +1453,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
 				}
 			    if (NewClassWizardUtil.getSourceFolder(res) == null) {
-					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotASourceFolder", folderPath)); //$NON-NLS-1$
-					return status;
+			    	if (isUseDefaultSelected()) {
+						status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotASourceFolder", folderPath)); //$NON-NLS-1$
+						return status;
+			    	}
 				}
 			} else {
 				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFolder", folderPath)); //$NON-NLS-1$
@@ -1698,6 +1702,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			return status;
 		}
 		
+		// Make sure the file location is under a source root
+		if (NewClassWizardUtil.getSourceFolder(path) == null) {
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.HeaderFileNotInSourceFolder")); //$NON-NLS-1$
+			return status;
+		}
+		
 		boolean fileExists = false;
 		// check if file already exists
 		IResource file = NewClassWizardUtil.getWorkspaceRoot().findMember(path);
@@ -1761,6 +1771,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		
 		IPath sourceFolderPath = getSourceFolderFullPath();
 		if (sourceFolderPath == null || !sourceFolderPath.isPrefixOf(path)) {
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.SourceFileNotInSourceFolder")); //$NON-NLS-1$
+			return status;
+		}
+		
+		// Make sure the file location is under a source root
+		if (NewClassWizardUtil.getSourceFolder(path) == null) {
 			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.SourceFileNotInSourceFolder")); //$NON-NLS-1$
 			return status;
 		}

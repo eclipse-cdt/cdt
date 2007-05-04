@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Mar 29, 2005
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 
 /**
  * @author aniefer
@@ -140,15 +142,11 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
      */
     public boolean isStatic( boolean resolveAll ) {
     	ICPPFunction func = (ICPPFunction) getTemplateDefinition();
-    	if (func instanceof ICPPInternalFunction) {
-    		return ((ICPPInternalFunction)getTemplateDefinition()).isStatic( resolveAll );
-    	} else {
-    		try {
-    			return func.isStatic();
-    		} catch (DOMException e) {
-    			return false;
-    		}
-    	}
+    	try {
+			return ASTInternal.isStatic(func, resolveAll);
+		} catch (DOMException e) {
+			return false;
+		}
     }
 
     /* (non-Javadoc)

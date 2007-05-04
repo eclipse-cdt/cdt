@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,21 +16,13 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -45,8 +37,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPFunction extends PDOMCPPBinding
-		implements ICPPFunction, ICPPInternalFunction, IPDOMOverloader {
+class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverloader {
 
 	/**
 	 * Offset of total number of function parameters (relative to the
@@ -242,55 +233,4 @@ class PDOMCPPFunction extends PDOMCPPBinding
 		}
 		return 0;
 	}
-
-	// Internal binding stuff, not implemented/needed
-	
-	public void addDeclaration(IASTNode node) {
-		// Do nothing
-	}
-
-	public void addDefinition(IASTNode node) {
-		// Do nothing
-	}
-
-	public ICPPDelegate createDelegate(IASTName name) {
-		throw new PDOMNotImplementedError(getClass().toString());
-	}
-
-	public IASTNode[] getDeclarations() {
-		return null;
-	}
-
-	public IASTNode getDefinition() {
-		return null;
-	}
-
-	public void removeDeclaration(IASTNode node) {
-		// Do nothing
-	}
-
-	// ICPPInternalFunction
-	
-	public boolean isStatic(boolean resolveAll) {
-		try {
-			return isStatic();
-		} catch (DOMException e) {
-			return false;
-		}
-	}
-
-	public IBinding resolveParameter(IASTParameterDeclaration param) {
-		try {
-			for (PDOMCPPParameter pp = getFirstParameter(); pp != null; pp = pp.getNextParameter()) {
-				if (CharArrayUtils.equals(param.getDeclarator().getName().toCharArray(),
-						pp.getNameCharArray()))
-					return pp;
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		// TODO - this points to a problem with overloads, I think...
-		return new CPPParameter(param.getDeclarator().getName());
-	}
-	
 }

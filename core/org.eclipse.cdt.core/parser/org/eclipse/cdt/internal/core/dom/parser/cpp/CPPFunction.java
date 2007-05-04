@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -85,7 +86,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
             return ((ICPPFunction)getBinding()).takesVarArgs();
         }
         public boolean isStatic( boolean resolveAll ) {
-            return ((ICPPInternalFunction)getBinding()).isStatic( resolveAll );
+        	try {
+    			return ASTInternal.isStatic((IFunction) getBinding(), resolveAll);
+    		} catch (DOMException e) {
+    			return false;
+    		}
         }
         public IBinding resolveParameter( IASTParameterDeclaration param ) {
             return ((ICPPInternalFunction)getBinding()).resolveParameter( param );

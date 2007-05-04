@@ -1336,7 +1336,7 @@ public class CPPSemantics {
 				}
 			    //it is not ambiguous if they are the same thing and it is static or an enumerator
 		        if( binding instanceof IEnumerator ||
-		           (binding instanceof IFunction && ((ICPPInternalFunction)binding).isStatic( false )) ||
+		           (binding instanceof IFunction && ASTInternal.isStatic((IFunction) binding, false)) ||
 			       (binding instanceof IVariable && ((IVariable)binding).isStatic()) ) 
 		        {
 		        	ok = true;
@@ -2367,11 +2367,7 @@ public class CPPSemantics {
 				} else 
 					varArgs = true;
 				
-				if( useImplicitObj && j == 0 &&
-						(currFn instanceof ICPPInternalFunction
-								? ((ICPPInternalFunction)currFn).isStatic(false) 
-								: currFn.isStatic())
-							) {
+				if( useImplicitObj && j == 0 &&  ASTInternal.isStatic(currFn, false)) {
 				    //13.3.1-4 for static member functions, the implicit object parameter is considered to match any object
 				    cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost

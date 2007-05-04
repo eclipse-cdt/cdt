@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation.
+ * Copyright (c) 2006, 2007 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -16,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 
 /**
  * A utility class for packing various annotations into bit fields.  This
@@ -59,8 +60,7 @@ public class PDOMCAnnotation {
 			modifiers |= (function.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
 			modifiers |= (function.isExtern() ? 1 : 0) << PDOMCAnnotation.EXTERN_OFFSET;
 			modifiers |= (function.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
-			if (binding instanceof ICPPInternalFunction)
-				modifiers |= (((ICPPInternalFunction)function).isStatic(false) ? 1 : 0) << PDOMCAnnotation.STATIC_OFFSET;
+			modifiers |= (ASTInternal.isStatic(function, false) ? 1 : 0) << PDOMCAnnotation.STATIC_OFFSET;
 			modifiers |= (function.isInline() ? 1 : 0) << PDOMCAnnotation.INLINE_OFFSET;
 			modifiers |= (function.takesVarArgs() ? 1 : 0) << PDOMCAnnotation.VARARGS_OFFSET;
 		}

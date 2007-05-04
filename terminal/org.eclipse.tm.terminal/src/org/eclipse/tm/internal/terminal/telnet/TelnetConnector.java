@@ -135,8 +135,11 @@ public class TelnetConnector implements ITerminalConnector {
 	public void setTelnetConnection(TelnetConnection connection) {
 		fTelnetConnection=connection;		
 	}
-	public void writeToTerminal(String txt) {
-		fControl.writeToTerminal(txt);
+	public void displayTextInTerminal(String text) {
+		fControl.displayTextInTerminal(text);
+	}
+	public OutputStream getRemoteToTerminalOutputStream () {
+		return fControl.getRemoteToTerminalOutputStream();
 		
 	}
 	public void setState(TerminalState state) {

@@ -148,8 +148,7 @@ class SshConnection extends Thread {
 		int n;
 		// read until the thread gets interrupted....
 		while( (n=in.read(bytes))!=-1) {
-			// we assume we get ASCII UTF8 bytes
-			fControl.writeToTerminal(new String(bytes,0,n,"UTF8")); //$NON-NLS-1$
+			fControl.getRemoteToTerminalOutputStream().write(bytes,0,n);
 		}
 	}
 

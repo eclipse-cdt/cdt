@@ -58,7 +58,7 @@ public class SerialPortHandler implements
 		try {
 			while (fConn.getInputStream() != null && fConn.getInputStream().available() > 0) {
 				int nBytes = fConn.getInputStream().read(bytes);
-				fControl.writeToTerminal(new String(bytes, 0, nBytes));
+				fControl.getRemoteToTerminalOutputStream().write(bytes, 0, nBytes);
 			}
 		} catch (IOException ex) {
 			fControl.displayTextInTerminal(ex.getMessage());

@@ -133,7 +133,7 @@
             id="org.eclipse.cdt.launch.statusHandler.processPrompter">
       </statusHandler>  
       <statusHandler
-            code="101"
+            code="108"
             plugin="org.eclipse.cdt.launch"
             class="org.eclipse.cdt.launch.internal.ui.CoreFilePrompter"
             id="org.eclipse.cdt.launch.statusHandler.coreFilePrompter">

@@ -9,6 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Matthias Spycher (matthias@coware.com) - patch for bug #112008
  * Ken Ryall (Nokia) - bugs 170027, 105196
+ * Ling Wang (Nokia) - bug 176081
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core; 
 
@@ -619,19 +620,26 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				marker.delete();
 			} catch (CoreException e) {}
 		}
-		ArrayList list = new ArrayList();
+		
+		ArrayList installedCDIBplist = new ArrayList();
+		ArrayList installedCBplist = new ArrayList();
 		ICBreakpoint[] breakpoints = new ICBreakpoint[0];
 		synchronized( getBreakpointMap() ) {
 			breakpoints = getBreakpointMap().getAllCBreakpoints();			
 			for ( int i = 0; i < breakpoints.length; ++i ) {
-				if ( !getBreakpointMap().isInProgress( breakpoints[i] ) )
-					list.add( getBreakpointMap().getCDIBreakpoint( breakpoints[i] ) );			
+				if ( !getBreakpointMap().isInProgress( breakpoints[i] ) ) {
+					installedCDIBplist.add( getBreakpointMap().getCDIBreakpoint( breakpoints[i] ) );
+					
+					installedCBplist.add(breakpoints[i]);
+				}
 			}
 		}
-		if ( list.isEmpty() )
+		if ( installedCDIBplist.isEmpty() )
 			return;
-		final ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])list.toArray( new ICDIBreakpoint[list.size()] );
+		
+		final ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])installedCDIBplist.toArray( new ICDIBreakpoint[installedCDIBplist.size()] );
 		final ICDITarget cdiTarget = getCDITarget();
+		
 		DebugPlugin.getDefault().asyncExec( new Runnable() {				
 			public void run() {
 				try {
@@ -640,8 +648,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				catch( CDIException e ) {
 				} 
 			}
-		} );			
-		getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), breakpoints );
+		} );
+		
+		getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), (ICBreakpoint[])installedCBplist.toArray( new ICBreakpoint[installedCBplist.size()] ) );
 	}
 
 	private ICBreakpoint[] register( IBreakpoint[] breakpoints ) {

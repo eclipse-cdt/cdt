@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Stefan Bylund (Enea, steby@enea.se) - patch for bug 155464
  *     Ken Ryall (Nokia) - Support for breakpoint actions (bug 118308)
+ *     Ling Wang (Nokia) - Bug 176077
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -132,7 +133,11 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * @see org.eclipse.debug.core.model.IThread#hasStackFrames()
 	 */
 	public boolean hasStackFrames() throws DebugException {
-		// Always return true to postpone the stack frames request
+		// Always return true to postpone the stack frames request.
+		// But not if the thread is already resumed. This fixes flickering in the Debug View.
+		if (getState().equals( CDebugElementState.RESUMED ))
+			return false;
+		
 		return true;
 	}
 

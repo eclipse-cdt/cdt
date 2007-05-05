@@ -93,6 +93,8 @@ public class SharedLibraryManager extends Manager {
 		if (infoSharedMI != null)
 		{
 			try {
+				RxThread rxThread = miSession.getRxThread();
+				rxThread.setEnableConsole(false);
 				miSession.postCommand(infoSharedMI);
 				MIInfoSharedLibraryInfo info = infoSharedMI.getMIInfoSharedLibraryInfo();
 				if (info == null) {

@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
- *     Warren Paul (Nokia) - 150860, 150864, 150862
+ *     Warren Paul (Nokia) - 150860, 150864, 150862, 150863
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -449,26 +449,27 @@ public class CValue extends AbstractCValue {
 
 	private String getDoubleValueString( ICDIDoubleValue value ) throws CDIException {
 		double doubleValue = value.doubleValue();
-		Double dbl = new Double( doubleValue );
-		if ( dbl.isNaN() || dbl.isInfinite() )
-			return ""; //$NON-NLS-1$
-		long longValue = dbl.longValue();
+		if ( Double.isNaN(doubleValue) )
+			return "NaN"; //$NON-NLS-1$
+		if ( Double.isInfinite(doubleValue) )
+			return "inf"; //$NON-NLS-1$
+
 		CVariableFormat format = getParentVariable().getFormat(); 
 		if ( CVariableFormat.NATURAL.equals( format ) ) {
-			return dbl.toString();
+			return Double.toString(doubleValue);
 		}
 		else if ( CVariableFormat.DECIMAL.equals( format ) ) {
-			return Long.toString( longValue );
+			return Long.toString( Double.doubleToLongBits(doubleValue) );
 		}
 		else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
 			StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
-			String stringValue = Long.toHexString( longValue );
+			String stringValue = Long.toHexString( Double.doubleToLongBits(doubleValue) );
 			sb.append( (stringValue.length() > 16) ? stringValue.substring( stringValue.length() - 16 ) : stringValue );
 			return sb.toString();
 		}
 		else if ( CVariableFormat.BINARY.equals( format ) ) {
 			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-			String stringValue = Long.toHexString( longValue );
+			String stringValue = Long.toHexString( new Double( doubleValue ).longValue() );
 			sb.append( (stringValue.length() > 64) ? stringValue.substring( stringValue.length() - 64 ) : stringValue );
 			return sb.toString();
 		}

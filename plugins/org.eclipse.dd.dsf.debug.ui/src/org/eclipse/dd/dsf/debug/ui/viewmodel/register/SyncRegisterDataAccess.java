@@ -29,6 +29,8 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IMnemonic;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
@@ -390,6 +392,13 @@ public class SyncRegisterDataAccess {
         }
     }
 
+    public IRegisterGroupDMContext getRegisterGroupDMC(Object element) {
+        if (element instanceof IAdaptable) {
+            return (IRegisterGroupDMContext) ((IAdaptable) element).getAdapter(IRegisterGroupDMContext.class);
+        }
+        return null;
+    }
+
     public IRegisterDMContext getRegisterDMC(Object element) {
         if (element instanceof IAdaptable) {
             return (IRegisterDMContext) ((IAdaptable) element).getAdapter(IRegisterDMContext.class);
@@ -399,9 +408,98 @@ public class SyncRegisterDataAccess {
 
     public IFormattedDataDMContext<?> getFormattedDMC(Object element) {
         if (element instanceof IAdaptable) {
-            return (IFormattedDataDMContext) ((IAdaptable) element).getAdapter(IFormattedDataDMContext.class);
+            return (IFormattedDataDMContext<?>) ((IAdaptable) element).getAdapter(IFormattedDataDMContext.class);
         }
         return null;
+    }
+    
+    public class GetRegisterGroupValueQuery extends Query<IRegisterGroupDMData> {
+
+        IRegisterGroupDMContext fDmc;
+
+        public GetRegisterGroupValueQuery(DsfExecutor executor, IRegisterGroupDMContext dmc) {
+            super(executor);
+            fDmc = dmc;
+        }
+
+        @Override
+        protected void execute(final DataRequestMonitor<IRegisterGroupDMData> rm) {
+            /*
+             * Guard agains the session being disposed. If session is disposed
+             * it could mean that the executor is shut-down, which in turn could
+             * mean that we can't complete the RequestMonitor argument. in that
+             * case, cancel to notify waiting thread.
+             */
+            final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
+            if (session == null) {
+                cancel(false);
+                return;
+            }
+
+            IRegisters service = getService(fDmc.getServiceFilter());
+            if (service == null) {
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service not available", null)); //$NON-NLS-1$
+                rm.done();
+                return;
+            }
+
+            service.getModelData(fDmc, new DataRequestMonitor<IRegisterGroupDMData>( session.getExecutor(), rm) {
+                @Override
+                protected void handleCompleted() {
+                    /*
+                     * We're in another dispatch, so we must guard against
+                     * executor shutdown again.
+                     */
+                    if (!DsfSession.isSessionActive(session.getId())) {
+                        GetRegisterGroupValueQuery.this.cancel(false);
+                        return;
+                    }
+                    super.handleCompleted();
+                }
+
+                @Override
+                protected void handleOK() {
+                    /*
+                     * All good set return value.
+                     */
+                    rm.setData(getData());
+                    rm.done();
+                }
+            });
+        }
+    }
+
+    public IRegisterGroupDMData readRegisterGroup(Object element) {
+        /*
+         * Get the DMC and the session. If element is not an register DMC, or
+         * session is stale, then bail out.
+         */
+        IRegisterGroupDMContext dmc = getRegisterGroupDMC(element);
+        if (dmc == null) return null;
+        DsfSession session = DsfSession.getSession(dmc.getSessionId());
+        if (session == null) return null;
+
+        /*
+         * Create the query to request the value from service. Note: no need to
+         * guard agains RejectedExecutionException, because
+         * DsfSession.getSession() above would only return an active session.
+         */
+        GetRegisterGroupValueQuery query = new GetRegisterGroupValueQuery(session.getExecutor(), dmc);
+        session.getExecutor().execute(query);
+
+        /*
+         * Now we have the data, go and get it. Since the call is completed now
+         * the ".get()" will not suspend it will immediately return with the
+         * data.
+         */
+        try {
+            return query.get();
+        } catch (InterruptedException e) {
+            assert false;
+            return null;
+        } catch (ExecutionException e) {
+            return null;
+        }
     }
 
     public class GetRegisterValueQuery extends Query<IRegisterDMData> {

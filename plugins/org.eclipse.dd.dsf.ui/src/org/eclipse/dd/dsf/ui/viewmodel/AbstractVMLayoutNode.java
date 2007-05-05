@@ -82,10 +82,19 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
     /** 
      * If any of the children nodes have delta flags, that means that this 
      * node has to generate a delta as well. 
+     * <p> Note: If a child node has a <code>IModelDelta.CONTENT</code> delta 
+     * flag, it means that this flag will be added to this node's element.  
+     * To allow for optimization change the child's <code>IModelDelta.CONTENT</code>
+     * flag into a <code>IModelDelta.STATE</code> flag.
      */
     public int getDeltaFlags(Object e) {
         int retVal = 0;
         for (IVMLayoutNode childNode : getChildLayoutNodes()) {
+            int childNodeDeltaFlags = childNode.getDeltaFlags(e);
+            if ((childNodeDeltaFlags | IModelDelta.CONTENT) != 0) {
+                childNodeDeltaFlags &= ~IModelDelta.CONTENT;
+                childNodeDeltaFlags |= IModelDelta.STATE;
+            }
             retVal |= childNode.getDeltaFlags(e);
         }
         return retVal;
@@ -116,7 +125,7 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         // Similarly, the index argument is not necessary either.
         boolean mustGetElements = false;
         for (int childDelta : childNodesWithDeltaFlags.values()) {
-            if ((childDelta & ~IModelDelta.CONTENT & ~IModelDelta.STATE) != 0) {
+            if ((childDelta & ~IModelDelta.STATE) != 0) {
                 mustGetElements = true;
             }
         }
@@ -391,6 +400,17 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         abstract public int hashCode();
     }
     
+    protected TreePath getTreePathFromDelta(IModelDelta delta) {
+        List<Object> elementList = new LinkedList<Object>();
+        IModelDelta listDelta = delta;
+        elementList.add(0, listDelta.getElement());
+        while (listDelta.getParentDelta() != null) {
+            elementList.add(0, listDelta.getElement());
+            listDelta = listDelta.getParentDelta();
+        }
+        return new TreePath(elementList.toArray());
+    }
+    
     protected class ViewerUpdate implements IViewerUpdate {
         
 		final private RequestMonitor fRequestMonitor;
@@ -486,7 +506,7 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         
         @Override
         public String toString() {
-            return "ElementsUpdate for all elements under parent = " + getElement(); //$NON-NLS-1$
+            return "VMElementsUpdate for all elements under parent = " + getElement(); //$NON-NLS-1$
         }
     }
 

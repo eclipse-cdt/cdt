@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.variable;
 
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
@@ -20,30 +20,29 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  */
 @SuppressWarnings("restriction")
-public class RegisterColumnPresentation implements IColumnPresentation {
-
-    public static final String ID = DsfDebugUIPlugin.PLUGIN_ID + ".REGISTERS_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
-
-    public void init(IPresentationContext context) {
-    }
+public class VariableColumnPresentation implements IColumnPresentation {
+    public static final String ID = DsfDebugUIPlugin.PLUGIN_ID + ".VARIABLES_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
     
-    public void dispose() {
-    }
+    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#init(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+    public void init(IPresentationContext context) {}
+
+    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#dispose()
+    public void dispose() {}
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
     public String[] getAvailableColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION,  };
+        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE };
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
     public String getHeader(String id) {
         if (IDebugVMConstants.COLUMN_ID__NAME.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_name; 
+            return MessagesForVariablesVM.VariableColumnPresentation_name; 
+        } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(id)) {
+            return MessagesForVariablesVM.VariableColumnPresentation_type;
         } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_value;
-        } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_description;
-        }
+            return MessagesForVariablesVM.VariableColumnPresentation_value;
+        } 
         return null;
     }
 
@@ -51,18 +50,17 @@ public class RegisterColumnPresentation implements IColumnPresentation {
     public String getId() {
         return ID;
     }
-    
+
+    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getImageDescriptor(java.lang.String)
     public ImageDescriptor getImageDescriptor(String id) {
         return null;
-    } 
+    }
 
-
-    
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getInitialColumns()
     public String[] getInitialColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION };
+        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE };
     }
-    
+
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()
     public boolean isOptional() {
         return true;

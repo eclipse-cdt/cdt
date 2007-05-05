@@ -452,9 +452,9 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
                 callChildNodesToBuildDelta(childNodeDeltas, delta, event, requestMonitor);
             }            
         } else {
-            // The for this node was not found in the event.  Call the 
+            // The DMC for this node was not found in the event.  Call the 
             // super-class to resort to the default behavior which may add a 
-            // delta node for every element in this node.
+            // delta for every element in this node.
             super.buildDelta(event, parentDelta, nodeOffset, requestMonitor);
         }
     }

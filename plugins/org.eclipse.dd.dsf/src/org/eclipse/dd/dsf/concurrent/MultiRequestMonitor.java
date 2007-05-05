@@ -11,6 +11,8 @@
 package org.eclipse.dd.dsf.concurrent;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.MultiStatus;
@@ -37,8 +39,9 @@ import org.eclipse.dd.dsf.DsfPlugin;
  *     }
  * </pre>
  */
-public abstract class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonitor {
-    private Map<V,Boolean> fRequestMonitors = new HashMap<V,Boolean>();
+public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonitor {
+    private List<V> fRequestMonitorList = new LinkedList<V>();
+    private Map<V,Boolean> fStatusMap = new HashMap<V,Boolean>();
     private int fDoneCounter;
 
     public MultiRequestMonitor(DsfExecutor executor, RequestMonitor parentRequestMonitor) {
@@ -55,8 +58,9 @@ public abstract class MultiRequestMonitor<V extends RequestMonitor> extends Requ
      * inlined in service method calls
      */
     public <T extends V> T add(T rm) {
-        assert !fRequestMonitors.containsKey(rm);
-        fRequestMonitors.put(rm, false);
+        assert !fStatusMap.containsKey(rm);
+        fRequestMonitorList.add(rm);
+        fStatusMap.put(rm, false);
         fDoneCounter++;
         return rm;
     }
@@ -70,23 +74,29 @@ public abstract class MultiRequestMonitor<V extends RequestMonitor> extends Requ
      */
     public void requestMonitorDone(V requestMonitor) {
         ((MultiStatus)getStatus()).merge(requestMonitor.getStatus());
-        assert fRequestMonitors.containsKey(requestMonitor);
-        fRequestMonitors.put(requestMonitor, true);
+        assert fStatusMap.containsKey(requestMonitor);
+        fStatusMap.put(requestMonitor, true);
         assert fDoneCounter > 0;
         fDoneCounter--;
         if (fDoneCounter == 0) {
-            assert !fRequestMonitors.containsValue(false);
+            assert !fStatusMap.containsValue(false);
             super.done();
         }
     }    
-    
+
     /**
-     * Returns the map of RequestMonitor callbacks.  Access to this data is provided
-     * in case overriding classes need access to the collected data in the
-     * request monitors.
-     * @return map of the request monitors
+     * Returns the list of requested monitors, sorted in order as they were added.
      */
-    public Map<V,Boolean> getRequestMonitors() { return fRequestMonitors; }
+    public List<V> getRequestMonitors() {
+        return fRequestMonitorList;
+    }
+
+    /**
+     * Returns true if given monitor is finished.
+     */
+    public boolean isRequestMonitorDone(V rm) {
+        return fStatusMap.get(rm);
+    }
     
     @Override
     public String toString() {

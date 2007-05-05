@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
@@ -23,20 +28,137 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
+import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.AbstractExpressionLayoutNode;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings("restriction")
-public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> {
+public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDMData> 
+    implements IElementEditor
+{
+    protected class RegisterVMC extends DMVMContext
+        implements IVariable
+    {
+        private IExpression fExpression;
+        public RegisterVMC(IDMContext<?> dmc) {
+            super(dmc);
+        }
+        
+        public void setExpression(IExpression expression) {
+            fExpression = expression;
+        }
+        
+        @Override
+        @SuppressWarnings("unchecked") 
+        public Object getAdapter(Class adapter) {
+            if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
+                return fExpression;
+            } else if (adapter.isAssignableFrom(IWatchExpressionFactoryAdapterExtension.class)) {
+                return fRegisterExpressionFactory;
+            } else {
+                return super.getAdapter(adapter);
+            }
+        }
 
-    public RegisterLayoutNode(AbstractVMProvider provider, DsfSession session) {
+        @Override
+        public boolean equals(Object other) {
+            if (other instanceof RegisterVMC && super.equals(other)) {
+                RegisterVMC otherReg = (RegisterVMC)other;
+                return (otherReg.fExpression == null && fExpression == null) ||
+                       (otherReg.fExpression != null && otherReg.fExpression.equals(fExpression));
+            }
+            return false;
+        }
+        
+        @Override
+        public int hashCode() {
+            return super.hashCode() + (fExpression != null ? fExpression.hashCode() : 0);
+        }
+
+        public String getName() throws DebugException { return toString(); }
+        public String getReferenceTypeName() throws DebugException { return ""; } //$NON-NLS-1$
+        public IValue getValue() throws DebugException { return null; }
+        public boolean hasValueChanged() throws DebugException { return false; }
+        public void setValue(IValue value) throws DebugException {}
+        public void setValue(String expression) throws DebugException {}
+        public boolean supportsValueModification() { return false; }
+        public boolean verifyValue(IValue value) throws DebugException { return false; }
+        public boolean verifyValue(String expression) throws DebugException { return false; }
+        public IDebugTarget getDebugTarget() { return null;}
+        public ILaunch getLaunch() { return null; }
+        public String getModelIdentifier() { return DsfDebugUIPlugin.PLUGIN_ID; }
+    }
+    
+    protected class RegisterExpressionFactory implements IWatchExpressionFactoryAdapterExtension {
+        
+        public boolean canCreateWatchExpression(IVariable variable) {
+            return variable instanceof RegisterVMC;
+        }
+        
+        public String createWatchExpression(IVariable variable) throws CoreException {
+            RegisterVMC registerVmc = ((RegisterVMC)variable);
+
+            StringBuffer exprBuf = new StringBuffer();
+            IRegisterGroupDMContext groupDmc = 
+                DMContexts.getAncestorOfType(registerVmc.getDMC(), IRegisterGroupDMContext.class);
+            if (groupDmc != null) {
+                IRegisterGroupDMData groupData = fSyncRegisterDataAccess.readRegisterGroup(groupDmc);
+                if (groupData != null) {
+                    exprBuf.append("$$\""); //$NON-NLS-1$
+                    exprBuf.append(groupData.getName());
+                    exprBuf.append('"');
+                }
+            }
+            
+            IRegisterDMContext registerDmc = 
+                DMContexts.getAncestorOfType(registerVmc.getDMC(), IRegisterDMContext.class);
+            IRegisterDMData regData = fSyncRegisterDataAccess.readRegister(registerDmc);
+            if (regData != null) {
+                exprBuf.append('$');
+                exprBuf.append(regData.getName());
+                return exprBuf.toString();
+            }
+            
+            return null;            
+        }
+    }
+    
+    private WatchExpressionCellModifier fWatchExpressionCellModifier = new WatchExpressionCellModifier();
+    final protected RegisterExpressionFactory fRegisterExpressionFactory = new RegisterExpressionFactory(); 
+    final private SyncRegisterDataAccess fSyncRegisterDataAccess; 
+    
+    public RegisterLayoutNode(AbstractVMProvider provider, DsfSession session, SyncRegisterDataAccess syncDataAccess) {
         super(provider, session, IRegisters.IRegisterDMContext.class);
+        fSyncRegisterDataAccess = syncDataAccess;
+    }
+    
+    protected SyncRegisterDataAccess getSyncRegisterDataAccess() {
+        return fSyncRegisterDataAccess;
     }
     
     /**
@@ -177,12 +299,20 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
                         boolean weAreExtractingFormattedData = false;
                         
                         for (int idx = 0; idx < localColumns.length; idx++) {
-                            if (RegisterColumnPresentation.COL_NAME.equals(localColumns[idx])) {
+                            if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
                                 update.setLabel(getData().getName(), idx);
-                            } else if (RegisterColumnPresentation.COL_VALUE.equals(localColumns[idx])) {
+                            } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
                                 weAreExtractingFormattedData = true;
-                            } else if (RegisterColumnPresentation.COL_DESCRIPTION.equals(localColumns[idx])) {
+                            } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
                                 update.setLabel(getData().getDescription(), idx);
+                            } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
+                                IVMContext vmc = (IVMContext)update.getElement();
+                                IExpression expression = (IExpression)vmc.getAdapter(IExpression.class);
+                                if (expression != null) {
+                                    update.setLabel(expression.getExpressionText(), idx);
+                                } else {
+                                    update.setLabel(getData().getName(), idx); //$NON-NLS-1$
+                                } 
                             }
                         }
                         
@@ -190,7 +320,7 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
                             update.done();
                         } else {
                             for (int idx = 0; idx < localColumns.length; idx++) {
-                                if (RegisterColumnPresentation.COL_VALUE.equals(localColumns[idx])) {
+                                if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
                                     updateFormattedRegisterValue(update, idx, dmc);
                                 }
                             }
@@ -226,6 +356,11 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
     }
     
     @Override
+    protected IVMContext createVMContext(IDMContext<IRegisterDMData> dmc) {
+        return new RegisterVMC(dmc);
+    }
+
+    @Override
     protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
@@ -246,5 +381,96 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
         } 
         
         super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
+    }
+    
+    public int getExpressionLength(String expression) {
+        if (expression.charAt(0) == '$' && Character.isLetterOrDigit(expression.charAt(1))) {
+            int length = 1;
+            while( length < expression.length() && Character.isLetterOrDigit(expression.charAt(length)) ) {
+                length++;
+            }
+            return length;
+        } else {
+            return -1;
+        }
+    }
+    
+    @Override
+    protected void testContextForExpression(Object element, final String expression, final DataRequestMonitor<Boolean> rm) {
+        if (!(element instanceof AbstractDMVMLayoutNode.DMVMContext)) {
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+        final IRegisterDMContext dmc = DMContexts.getAncestorOfType(((DMVMContext)element).getDMC(), IRegisterDMContext.class);
+        if (dmc == null) {
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+        
+        ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
+            dmc, 
+            new DataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), rm) { 
+                @Override
+                protected void handleOK() {
+                    String regName = expression.substring(1);
+                    if (regName.equals(getData().getName())) {
+                        rm.setData(Boolean.TRUE);
+                    } else {
+                        rm.setData(Boolean.FALSE);
+                    }
+                    rm.done();
+                }
+            });
+    }
+
+    @Override
+    protected void associateExpression(Object element, IExpression expression) {
+        if (element instanceof RegisterVMC) {
+            ((RegisterVMC)element).setExpression(expression);
+        }
+    }
+    
+    @Override
+    protected int getDeltaFlagsForExpressionPart(Object event) {
+        if (event instanceof IRunControl.ISuspendedDMEvent) {
+            return IModelDelta.CONTENT;
+        }
+
+        return IModelDelta.NO_CHANGE;
+    }
+    
+    @Override
+    public void buildDeltaForExpression(final IExpression expression, final int elementIdx, final String expressionText, final Object event, final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) 
+    {
+        if (event instanceof IRunControl.ISuspendedDMEvent) {
+            // Mark the partent delta indicating that elements were added and/or removed.
+            parentDelta.addFlags(IModelDelta.CONTENT);
+        } 
+        
+        super.buildDeltaForExpression(expression, elementIdx, expressionText, event, parentDelta, path, rm);
+    }
+
+    @Override
+    protected void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
+    {
+        if (event instanceof IRegisters.IRegisterChangedDMEvent) {
+            parentDelta.addNode(element, IModelDelta.STATE);
+        } 
+        
+        super.buildDeltaForExpressionElement(element, elementIdx, event, parentDelta, rm);
+    }
+
+    
+    public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
+        if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
+            return new TextCellEditor(parent);
+        } 
+        return null;
+    }
+    
+    public ICellModifier getCellModifier(IPresentationContext context, Object element) {
+        return fWatchExpressionCellModifier;
     }
 }

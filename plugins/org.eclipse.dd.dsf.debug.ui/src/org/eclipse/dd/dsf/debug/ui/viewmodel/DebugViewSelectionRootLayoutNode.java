@@ -20,8 +20,6 @@ import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode.DMVMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.contexts.DebugContextEvent;
-import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -39,25 +37,14 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 @SuppressWarnings("restriction")
 public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode 
-    implements IVMRootLayoutNode, IDebugContextListener 
+    implements IVMRootLayoutNode
 {
-    private ISelection fSelection;
-    
+    private final IWorkbenchWindow fWindow;
     public DebugViewSelectionRootLayoutNode(AbstractVMProvider provider) {
         super(provider);
-        IWorkbenchWindow activeWindow = DsfDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-        if (activeWindow != null) {
-            fSelection = DebugUITools.getDebugContextManager().getContextService(activeWindow).getActiveContext();
-        }
-        DebugUITools.getDebugContextManager().addDebugContextListener(this);
+        fWindow = DsfDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
     }
 
-    @Override
-    public void dispose() {
-        DebugUITools.getDebugContextManager().removeDebugContextListener(this);
-        super.dispose();
-    }
-    
     /**
      * If the input object is a Data Model context, and the event is a DMC event.
      * Then we can filter the event to make sure that the view does not
@@ -109,22 +96,19 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
      * @return
      */
     public ISelection getSelection() {
-        return fSelection;
+        return DebugUITools.getDebugContextManager().getContextService(fWindow).getActiveContext();
     }
     
     public Object getRootObject() {
-        if (fSelection instanceof IStructuredSelection) {
-            return ((IStructuredSelection)fSelection).getFirstElement();
+        ISelection selection = getSelection();
+        if (selection instanceof IStructuredSelection) {
+            return ((IStructuredSelection)selection).getFirstElement();
         }
         return null;
     }
     
-    public void debugContextChanged(DebugContextEvent event) {
-        fSelection = event.getContext();
-    }
-    
     private IDMContext<?> getSelectedDMC() {
-        Object selection = fSelection;
+        Object selection = getSelection();
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection structSelection = (IStructuredSelection)selection; 
             if (structSelection.getFirstElement() instanceof DMVMContext) 

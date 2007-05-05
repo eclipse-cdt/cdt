@@ -66,7 +66,7 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
                 return IModelDelta.NO_CHANGE;
             } 
             else if (de.getSource() instanceof IDebugElement && 
-                     !((IDebugElement)de.getSource()).getLaunch().equals(fLaunch) ) 
+                     !fLaunch.equals(((IDebugElement)de.getSource()).getLaunch()))
             {
                 return IModelDelta.NO_CHANGE;
             }

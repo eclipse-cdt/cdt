@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
@@ -20,7 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  */
 @SuppressWarnings("restriction")
-public class RegisterColumnPresentation implements IColumnPresentation {
+public class ExpressionColumnPresentation implements IColumnPresentation {
 
     public static final String ID = DsfDebugUIPlugin.PLUGIN_ID + ".REGISTERS_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
 
@@ -32,17 +32,21 @@ public class RegisterColumnPresentation implements IColumnPresentation {
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
     public String[] getAvailableColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION,  };
+        return new String[] { IDebugVMConstants.COLUMN_ID__EXPRESSION, IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION,  };
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
     public String getHeader(String id) {
-        if (IDebugVMConstants.COLUMN_ID__NAME.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_name; 
+        if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(id)) {
+            return MessagesForExpressionVM.ExpressionColumnPresentation_expression; 
+        } else if (IDebugVMConstants.COLUMN_ID__NAME.equals(id)) {
+            return MessagesForExpressionVM.ExpressionColumnPresentation_name; 
+        } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(id)) {
+            return MessagesForExpressionVM.ExpressionColumnPresentation_type;
         } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_value;
+            return MessagesForExpressionVM.ExpressionColumnPresentation_value;
         } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_description;
+            return MessagesForExpressionVM.ExpressionColumnPresentation_description;
         }
         return null;
     }
@@ -60,7 +64,7 @@ public class RegisterColumnPresentation implements IColumnPresentation {
     
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getInitialColumns()
     public String[] getInitialColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION };
+        return new String[] { IDebugVMConstants.COLUMN_ID__EXPRESSION, IDebugVMConstants.COLUMN_ID__VALUE };
     }
     
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()

@@ -16,7 +16,7 @@ package org.eclipse.dd.dsf.concurrent;
  * 
  * @param V The type of the data object that this monitor handles. 
  */
-public abstract class DataRequestMonitor<V> extends RequestMonitor {
+public class DataRequestMonitor<V> extends RequestMonitor {
 
     /** Data object reference */
     private V fData; 

@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.variable;
 
 import org.eclipse.dd.dsf.debug.ui.viewmodel.DebugViewSelectionRootLayoutNode;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -23,28 +23,22 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * 
  */
 @SuppressWarnings("restriction")
-public class RegisterVMProvider extends AbstractDMVMProvider 
-{
-    public RegisterVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
+public class VariableVMProvider extends AbstractDMVMProvider {
+    public VariableVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
         super(adapter, context, session);
-        
-        SyncRegisterDataAccess syncDataAccess = new SyncRegisterDataAccess();
-        
-        IVMRootLayoutNode debugViewSelection = new DebugViewSelectionRootLayoutNode(this); 
-        IVMLayoutNode registerGroupNode = new RegisterGroupLayoutNode(this, getSession(), syncDataAccess);
-        debugViewSelection.setChildNodes(new IVMLayoutNode[] { registerGroupNode });
-        IVMLayoutNode registerNode = new RegisterLayoutNode(this, getSession(), syncDataAccess);
-        registerGroupNode.setChildNodes(new IVMLayoutNode[] { registerNode });
-        setRootLayoutNode(debugViewSelection);
+        IVMRootLayoutNode debugViewSelectionNode = new DebugViewSelectionRootLayoutNode(this); 
+        IVMLayoutNode localsNode = new LocalsLayoutNode(this, getSession());
+        debugViewSelectionNode.setChildNodes(new IVMLayoutNode[] { localsNode });
+        setRootLayoutNode(debugViewSelectionNode);
     }
 
     @Override
     public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
-        return new RegisterColumnPresentation();
+        return new VariableColumnPresentation();
     }
     
     @Override
     public String getColumnPresentationId(IPresentationContext context, Object element) {
-        return RegisterColumnPresentation.ID;
+        return VariableColumnPresentation.ID;
     }
 }

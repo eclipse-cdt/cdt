@@ -12,8 +12,8 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.launch;
 
 import java.util.List;
 
-import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;

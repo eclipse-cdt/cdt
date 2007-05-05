@@ -42,8 +42,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
-import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  * View model provider implements the asynchronous view model functionality for 
@@ -66,7 +64,7 @@ abstract public class AbstractVMProvider implements IVMProvider
 {
     private final AbstractVMAdapter fVMAdapter;
     private final IPresentationContext fPresentationContext;
-    private final ModelProxy fModelProxy = new ModelProxy();
+    private ModelProxy fModelProxy = new ModelProxy();
     private boolean fDisposed = false;
 
     /**
@@ -106,7 +104,7 @@ abstract public class AbstractVMProvider implements IVMProvider
         }
     }
     
-    protected ModelProxy getModelProxy() {
+    protected synchronized ModelProxy getModelProxy() {
         return fModelProxy;
     }
     
@@ -138,7 +136,7 @@ abstract public class AbstractVMProvider implements IVMProvider
         Map<IVMLayoutNode,List<IHasChildrenUpdate>> nodeUpdatesMap = new HashMap<IVMLayoutNode,List<IHasChildrenUpdate>>();
         for (IHasChildrenUpdate update : updates) {
             // Get the VM Context for last element in path.  
-            IVMLayoutNode layoutNode = getLayoutNodeObject(update.getElement());
+            IVMLayoutNode layoutNode = getLayoutNodeForElement(update.getElement());
             if (layoutNode == null) {
                 // Stale update, most likely as a result of the layout nodes being
                 // changed.  Just ignore it.
@@ -167,8 +165,8 @@ abstract public class AbstractVMProvider implements IVMProvider
             return;
         }
 
-        HasElementsUpdate[][] elementsUpdates = 
-            new HasElementsUpdate[node.getChildLayoutNodes().length][updates.length];
+        VMHasElementsUpdate[][] elementsUpdates = 
+            new VMHasElementsUpdate[node.getChildLayoutNodes().length][updates.length];
         for (int i = 0; i < updates.length; i ++) 
         {
             final IHasChildrenUpdate update = updates[i];
@@ -181,7 +179,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                             // Status is OK, only if all request monitors are OK. 
                             if (getStatus().isOK()) { 
                                 boolean isContainer = false;
-                                for (DataRequestMonitor<Boolean> hasElementsDone : getRequestMonitors().keySet()) {
+                                for (DataRequestMonitor<Boolean> hasElementsDone : getRequestMonitors()) {
                                     isContainer |= hasElementsDone.getStatus().isOK() &&
                                                    hasElementsDone.getData().booleanValue();
                                 }
@@ -191,7 +189,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                         }
                     };
                 
-                elementsUpdates[j][i] = new HasElementsUpdate(
+                elementsUpdates[j][i] = new VMHasElementsUpdate(
                     update,
                     hasChildrenMultiRequestMon.add(
                         new DataRequestMonitor<Boolean>(getExecutor(), null) {
@@ -214,7 +212,7 @@ abstract public class AbstractVMProvider implements IVMProvider
             if (update.isCanceled()) continue;
 
             getChildrenCountsForNode(
-                update, update.getElementPath(),
+                update, 
                 new DataRequestMonitor<Integer[]>(getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
@@ -236,7 +234,7 @@ abstract public class AbstractVMProvider implements IVMProvider
     public void update(IChildrenUpdate[] updates) {
         for (final IChildrenUpdate update : updates) {
             getChildrenCountsForNode(
-                update, update.getElementPath(), 
+                update,  
                 new DataRequestMonitor<Integer[]>(getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
@@ -251,11 +249,11 @@ abstract public class AbstractVMProvider implements IVMProvider
     }
     
 
-    private void getChildrenCountsForNode(IViewerUpdate update, TreePath elementPath, final DataRequestMonitor<Integer[]> rm) {
+    private void getChildrenCountsForNode(IViewerUpdate update, final DataRequestMonitor<Integer[]> rm) {
         if (isDisposed()) return;
         
         // Get the VM Context for last element in path.  
-        final IVMLayoutNode layoutNode = getLayoutNodeObject(update.getElement());
+        final IVMLayoutNode layoutNode = getLayoutNodeForElement(update.getElement());
         if (layoutNode == null) {
             // Stale update. Just ignore.
             rm.setStatus(new Status(
@@ -294,7 +292,7 @@ abstract public class AbstractVMProvider implements IVMProvider
         for (int i = 0; i < childNodes.length; i++) {
             final int nodeIndex = i;
             childNodes[i].updateElementCount(
-                new ElementsCountUpdate(
+                new VMElementsCountUpdate(
                     update,  
                     childrenCountMultiReqMon.add(
                         new DataRequestMonitor<Integer>(getExecutor(), null) {
@@ -308,14 +306,13 @@ abstract public class AbstractVMProvider implements IVMProvider
                                 super.handleCompleted();
                                 childrenCountMultiReqMon.requestMonitorDone(this);
                             }
-                        }), 
-                    elementPath)
+                        }))
                 );
         }
     }
     
     private void updateChildrenWithCounts(final IChildrenUpdate update, Integer[] nodeElementCounts) {
-        final IVMLayoutNode layoutNode = getLayoutNodeObject(update.getElement());
+        final IVMLayoutNode layoutNode = getLayoutNodeForElement(update.getElement());
         if (layoutNode == null) {
             // Stale update. Just ignore.
             if (!update.isCanceled()) update.done();
@@ -347,18 +344,22 @@ abstract public class AbstractVMProvider implements IVMProvider
             if (updateStartIdx <= nodeEndIdx && updateEndIdx > nodeStartIdx) {
                 final int elementsStartIdx = Math.max(updateStartIdx - nodeStartIdx, 0);
                 final int elementsEndIdx = Math.min(updateEndIdx - nodeStartIdx, nodeElementCounts[i]);
-                
-                layoutNodes[i].updateElements(
-                    new ElementsUpdate(
-                        update,  
-                        elementsMultiRequestMon.add(new RequestMonitor(getExecutor(), null) { 
-                            @Override
-                            protected void handleCompleted() {
-                                elementsMultiRequestMon.requestMonitorDone(this);
-                            }
-                        }),
-                        nodeStartIdx, elementsStartIdx, elementsEndIdx - elementsStartIdx)
-                    ); 
+                final int elementsLength = elementsEndIdx - elementsStartIdx;
+                if (elementsLength > 0) {
+                    layoutNodes[i].updateElements(
+                        new VMElementsUpdate(
+                            update, elementsStartIdx, elementsLength,   
+                            elementsMultiRequestMon.add(new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
+                                @Override
+                                protected void handleCompleted() {
+                                    for (int i = 0; i < elementsLength; i++) {
+                                        update.setChild(getData().get(i), elementsStartIdx + nodeStartIdx + i);
+                                    }
+                                    elementsMultiRequestMon.requestMonitorDone(this);
+                                }
+                            }))
+                        ); 
+                }
             }
         }
         
@@ -378,6 +379,9 @@ abstract public class AbstractVMProvider implements IVMProvider
         if (getRootLayoutNode() != null && 
             element.equals(getRootLayoutNode().getRootObject()))
         {
+            synchronized(this) {
+                fModelProxy = new ModelProxy();
+            }
             return fModelProxy;
         } 
         return null;
@@ -429,7 +433,7 @@ abstract public class AbstractVMProvider implements IVMProvider
      * @return parent VMC, if null it indicates that the object did not originate 
      * from this view or is stale.
      */
-    private IVMLayoutNode getLayoutNodeObject(Object element) {
+    protected IVMLayoutNode getLayoutNodeForElement(Object element) {
         /*
          * First check to see if the parent object is the root object of the 
          * hierarchy.  If that's the case, then retrieve the correcponding
@@ -474,14 +478,39 @@ abstract public class AbstractVMProvider implements IVMProvider
     }
         
     
+    protected void handleEvent(final Object event) {
+        // We're in session's executor thread.  Re-dispach to VM Adapter 
+        // executor thread and then call root layout node.
+        try {
+            getExecutor().execute(new Runnable() {
+                public void run() {
+                    if (isDisposed()) return;
+    
+                    IVMRootLayoutNode rootLayoutNode = getRootLayoutNode();
+                    if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != 0) {
+                        rootLayoutNode.createDelta(
+                            event, 
+                            new DataRequestMonitor<IModelDelta>(getExecutor(), null) {
+                                @Override
+                                public void handleCompleted() {
+                                    if (getStatus().isOK()) {
+                                        getModelProxy().fireModelChangedNonDispatch(getData());
+                                    }
+                                }
+                                @Override public String toString() {
+                                    return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + AbstractVMProvider.this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                }
+                            });
+                    }
+                }});
+        } catch (RejectedExecutionException e) {
+            // Ignore.  This exception could be thrown if the provider is being 
+            // shut down.  
+        }
+    }
+    
     @ThreadSafe
     protected class ModelProxy extends AbstractModelProxy {
-        /**
-         * Counter for whether the model proxy is currently installed in the viewer.
-         * Data model events are processed only if the model proxy is active.   
-         */
-        private int fProxyActive = 0;
-        
         /** 
          * Scheduling rule for running the update jobs.  
          */
@@ -490,25 +519,12 @@ abstract public class AbstractVMProvider implements IVMProvider
             public boolean isConflicting(ISchedulingRule rule) { return rule == this; }
         };
 
-        @Override
-        public void installed(Viewer viewer) {
-            fProxyActive++;
-        }
-        
-        @Override
-        public void dispose() {
-            fProxyActive--;
-            super.dispose();
-        }
-        
         /**
          * Fires given delta using a job.  Processing the delta on the dispatch
          * thread can lead to dead-locks.
          * @param delta
          */
         public void fireModelChangedNonDispatch(final IModelDelta delta) {
-            if (fProxyActive <= 0) return;
-            
             Job job = new Job("Processing view model delta.") { //$NON-NLS-1$
                 @Override
                 protected IStatus run(IProgressMonitor monitor) {
@@ -519,127 +535,6 @@ abstract public class AbstractVMProvider implements IVMProvider
             job.setPriority(Job.INTERACTIVE);
             job.setRule(fModelChangeRule);
             job.schedule();
-        }
-
-    }
-    
-    class ViewerUpdate implements IViewerUpdate {
-        
-		private IStatus fStatus;
-        final private RequestMonitor fRequestMonitor;
-        final protected IViewerUpdate fClientUpdate;
-        
-        public ViewerUpdate(IViewerUpdate clientUpdate, RequestMonitor requestMonitor) {
-            fRequestMonitor = requestMonitor;
-            fClientUpdate = clientUpdate;
-        }
-
-        public Object getElement() { return fClientUpdate.getElement(); }
-        public TreePath getElementPath() { return fClientUpdate.getElementPath(); }
-        public IPresentationContext getPresentationContext() { return fClientUpdate.getPresentationContext(); }
-
-        public IStatus getStatus() { return fStatus; }
-        public void setStatus(IStatus status) { fStatus = status; }
-        public boolean isCanceled() { return fClientUpdate.isCanceled(); }
-        public void cancel() {
-            fClientUpdate.cancel();
-        }
-
-        public void done() { 
-            try {
-                fRequestMonitor.done();
-            } catch (RejectedExecutionException e) { // Ignore
-            }
-        }
-
-    }
-
-    class HasElementsUpdate extends ViewerUpdate implements IHasChildrenUpdate {
-
-        final private DataRequestMonitor<Boolean> fHasElemsRequestMonitor;
-        
-        HasElementsUpdate(IHasChildrenUpdate clientUpdate, DataRequestMonitor<Boolean> rm) {
-            super(clientUpdate, rm);
-            fHasElemsRequestMonitor = rm;
-        }
-        
-        @Override
-        public TreePath getElementPath() {
-            return ((IHasChildrenUpdate)fClientUpdate).getElementPath();
-        }
-
-        public void setHasChilren(boolean hasChildren) {
-            fHasElemsRequestMonitor.setData(hasChildren);
-        }
-
-        @Override
-        public void done() {
-            assert fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.getStatus().isOK();
-            super.done();            
-        }
-    }
-
-    class ElementsCountUpdate extends ViewerUpdate implements IChildrenCountUpdate {
-        final private DataRequestMonitor<Integer> fCountRequestMonitor;
-        final private TreePath fElementPath;
-        
-        ElementsCountUpdate(IViewerUpdate clientUpdate, DataRequestMonitor<Integer> rm, TreePath elementPath) {
-            super(clientUpdate, rm);
-            fElementPath = elementPath;
-            fCountRequestMonitor = rm;
-        }
-
-        @Override
-        public TreePath getElementPath() {
-            return fElementPath;
-        }
-
-        public void setChildCount(int count) {
-            fCountRequestMonitor.setData(count);
-        }
-        
-        @Override
-        public void done() {
-            assert fCountRequestMonitor.getData() != null || !fCountRequestMonitor.getStatus().isOK();
-            super.done();
-        }
-
-    }
-    
-    class ElementsUpdate extends ViewerUpdate implements IChildrenUpdate {
-        private final int fClientOffset;
-        private final int fOffset;
-        private final int fLength;
-        
-        ElementsUpdate(IChildrenUpdate clientUpdate, RequestMonitor requestMonitor, int clientOffset, int offset, int length) {
-            super(clientUpdate, requestMonitor);
-            fClientOffset = clientOffset;
-            fOffset = offset;
-            fLength = length;
-        }
-
-        public int getOffset() {
-            return fOffset;
-        }
-
-        public int getLength() {
-            return fLength;
-        }
-
-        @Override
-        public TreePath getElementPath() {
-            return ((IChildrenUpdate)fClientUpdate).getElementPath();
-        }
-
-        public void setChild(Object child, int offset) {
-            if (offset >= fOffset && offset < (fOffset + fLength)) {
-                ((IChildrenUpdate)fClientUpdate).setChild(child, fClientOffset + offset);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "ElementsUpdate for elements under parent = " + getElement() + ", in range " + getOffset() + " -> " + (getOffset() + getLength());  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
         }
 
     }

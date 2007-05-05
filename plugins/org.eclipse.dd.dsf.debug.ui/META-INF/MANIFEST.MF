@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Debug Services Framework Debug UI
 Bundle-Vendor: Eclipse.org
-Bundle-SymbolicName: org.eclipse.dd.dsf.debug.ui
+Bundle-SymbolicName: org.eclipse.dd.dsf.debug.ui; singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-Activator: org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin
 Bundle-Localization: plugin
@@ -17,7 +17,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.dd.dsf.debug
 Eclipse-LazyStart: true
 Export-Package: 
+ org.eclipse.dd.dsf.debug.ui,
  org.eclipse.dd.dsf.debug.ui.viewmodel,
+ org.eclipse.dd.dsf.debug.ui.viewmodel.expression,
+ org.eclipse.dd.dsf.debug.ui.viewmodel.launch,
  org.eclipse.dd.dsf.debug.ui.viewmodel.register,
- org.eclipse.dd.dsf.debug.ui.viewmodel.launch
+ org.eclipse.dd.dsf.debug.ui.viewmodel.variable
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

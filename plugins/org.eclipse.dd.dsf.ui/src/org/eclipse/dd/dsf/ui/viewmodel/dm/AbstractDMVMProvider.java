@@ -13,15 +13,12 @@ package org.eclipse.dd.dsf.ui.viewmodel.dm;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
-import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
@@ -111,33 +108,6 @@ abstract public class AbstractDMVMProvider extends AbstractVMProvider
     public void eventDispatched(final IDMEvent<?> event) {
         if (isDisposed()) return;
         
-        // We're in session's executor thread.  Re-dispach to VM Adapter 
-        // executor thread and then call root layout node.
-        try {
-            getExecutor().execute(new Runnable() {
-                public void run() {
-                    if (isDisposed()) return;
-    
-                    IVMRootLayoutNode rootLayoutNode = getRootLayoutNode();
-                    if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != 0) {
-                        rootLayoutNode.createDelta(
-                            event, 
-                            new DataRequestMonitor<IModelDelta>(getExecutor(), null) {
-                                @Override
-                                public void handleCompleted() {
-                                    if (getStatus().isOK()) {
-                                        getModelProxy().fireModelChangedNonDispatch(getData());
-                                    }
-                                }
-                                @Override public String toString() {
-                                    return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + AbstractDMVMProvider.this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                }
-                            });
-                    }
-                }});
-        } catch (RejectedExecutionException e) {
-            // Ignore.  This exception could be thrown if the provider is being 
-            // shut down.  
-        }
+        handleEvent(event);
     }
 }

@@ -214,7 +214,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	private void createBinarySettings( Composite parent ) {
-		fShowBinarySourceFilesButton = createCheckButton( parent, "Show source files in binaries" );		
+		fShowBinarySourceFilesButton = createCheckButton( parent, PreferenceMessages.getString("CDebugPreferencePage.15") );		 //$NON-NLS-1$
 	}
 	/**
 	 * Create the disassembly setting preferences composite widget

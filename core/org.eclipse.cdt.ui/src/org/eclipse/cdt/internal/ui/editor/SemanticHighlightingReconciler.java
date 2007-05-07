@@ -14,6 +14,8 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -457,6 +459,13 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				newPositions.add(current);
 		}
 		fRemovedPositions= newPositions;
+		// positions need to be sorted by ascending offset
+		Collections.sort(fAddedPositions, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				final Position p1= (Position)o1;
+				final Position p2= (Position)o2;
+				return p1.getOffset() - p2.getOffset();
+			}});
 	}
 
 	/**

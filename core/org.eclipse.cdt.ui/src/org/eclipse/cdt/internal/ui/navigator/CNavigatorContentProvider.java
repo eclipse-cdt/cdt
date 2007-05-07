@@ -299,7 +299,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		if (parent instanceof IContainer) {
 			IContainer container= (IContainer)parent;
 			IProject project= container.getProject();
-			if (container != project && CoreModel.hasCNature(container.getProject())) {
+			if (project != null && CoreModel.hasCNature(project)) {
 				ICElement element= CoreModel.getDefault().create(container);
 				if (element != null) {
 					// don't convert the root  

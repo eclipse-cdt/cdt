@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Michael Scharf (Wind River) - initial implementation 
-*/
+ * Michael Scharf (Wind River) - initial API and implementation 
+ *******************************************************************************/
 
 package org.eclipse.tm.internal.terminal.control.impl;
 

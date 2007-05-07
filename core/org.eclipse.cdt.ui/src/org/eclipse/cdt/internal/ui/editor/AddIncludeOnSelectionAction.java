@@ -145,6 +145,9 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 
 	public void run() {
 		ITranslationUnit tu= getTranslationUnit();
+		if (tu == null) {
+			return;
+		}
 		IIndex index;
 		try {
 			index = CCorePlugin.getIndexManager().getIndex(tu.getCProject(), IIndexManager.ADD_DEPENDENCIES);
@@ -377,7 +380,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	}
 	
 	public void update() {
-		setEnabled(true);
+		setEnabled(getTranslationUnit() != null);
 	}
 	
 	/**

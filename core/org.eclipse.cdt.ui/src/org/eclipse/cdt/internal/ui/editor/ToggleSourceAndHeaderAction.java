@@ -195,14 +195,10 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		IEditorPart editor = getTextEditor();
-		if (editor == null) {
+		IWorkingCopy currentUnit= getWorkingCopy();
+		if (currentUnit == null) {
 			return;
 		}
-		IEditorInput input= editor.getEditorInput();
-		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
-		IWorkingCopy currentUnit= manager.getWorkingCopy(input);
-
 		ITranslationUnit partnerUnit= computePartnerFile(currentUnit);
 		if (partnerUnit != null) {
 			fgLastSourceUnit= currentUnit.getOriginalElement();
@@ -215,6 +211,23 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 				CUIPlugin.getDefault().log(exc.getStatus());
 			}
 		}
+	}
+
+	private IWorkingCopy getWorkingCopy() {
+		IEditorPart editor = getTextEditor();
+		if (editor == null) {
+			return null;
+		}
+		IEditorInput input= editor.getEditorInput();
+		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
+		return manager.getWorkingCopy(input);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
+	 */
+	public void update() {
+		setEnabled(getWorkingCopy() != null);
 	}
 
 	/**

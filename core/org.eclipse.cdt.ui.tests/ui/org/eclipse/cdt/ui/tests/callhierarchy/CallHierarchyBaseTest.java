@@ -55,6 +55,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	}
 	
 	protected void tearDown() throws Exception {
+		closeAllEditors();
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}

@@ -57,6 +57,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 	}
 
 	protected void tearDown() throws Exception {
+		closeAllEditors();
 		CProjectHelper.delete(fCProject);
 		super.tearDown();
 	}

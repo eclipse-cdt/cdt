@@ -20,6 +20,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
@@ -107,5 +112,24 @@ public class BaseUITestCase extends BaseTestCase {
 		event.item = item;
 		item.getParent().notifyListeners(SWT.Expand, event);	
 		runEventQueue(0);
+	}
+
+	protected void closeEditor(IEditorPart editor) {
+		IWorkbenchPartSite site;
+		IWorkbenchPage page;
+		if (editor != null && (site= editor.getSite()) != null && (page= site.getPage()) != null) {
+			page.closeEditor(editor, false);
+		}
+	}
+	
+	protected void closeAllEditors() {
+		IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
+		for (int i= 0; i < windows.length; i++) {
+			IWorkbenchPage[] pages= windows[i].getPages();
+			for (int j= 0; j < pages.length; j++) {
+				IWorkbenchPage page= pages[j];
+				page.closeAllEditors(false);
+			}
+		}
 	}
 }

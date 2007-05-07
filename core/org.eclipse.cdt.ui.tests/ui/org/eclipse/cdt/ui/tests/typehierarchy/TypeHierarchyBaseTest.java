@@ -60,6 +60,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	}
 	
 	protected void tearDown() throws Exception {
+		closeAllEditors();
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -162,9 +161,7 @@ public class EditorTestHelper {
 		for (int i= 0; i < windows.length; i++) {
 			IWorkbenchPage[] pages= windows[i].getPages();
 			for (int j= 0; j < pages.length; j++) {
-				IEditorReference[] editorReferences= pages[j].getEditorReferences();
-				for (int k= 0; k < editorReferences.length; k++)
-					closeEditor(editorReferences[k].getEditor(false));
+				pages[j].closeAllEditors(false);
 			}
 		}
 	}

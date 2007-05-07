@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.InputStream;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
@@ -48,6 +47,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -61,7 +61,7 @@ import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
  * 
  * @author dsteffle
  */
-public class CSelectionTestsNoIndexer extends TestCase {
+public class CSelectionTestsNoIndexer extends BaseUITestCase {
     
 	private static final String INDEX_FILE_ID = "2324852323"; //$NON-NLS-1$
     static NullProgressMonitor      monitor;
@@ -107,6 +107,7 @@ public class CSelectionTestsNoIndexer extends TestCase {
     }
     
     public void cleanupProject() throws Exception {
+    	closeAllEditors();
     	CProjectHelper.delete(cPrj);
     	project= null;
     }
@@ -114,7 +115,9 @@ public class CSelectionTestsNoIndexer extends TestCase {
     protected void tearDown() throws Exception {
         if( project == null || !project.exists() ) 
             return;
-        
+
+    	closeAllEditors();
+
         IResource [] members = project.members();
         for( int i = 0; i < members.length; i++ ){
             if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$

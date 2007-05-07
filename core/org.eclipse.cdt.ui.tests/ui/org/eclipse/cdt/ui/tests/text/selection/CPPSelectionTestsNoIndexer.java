@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -64,7 +64,7 @@ import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
  * 
  * @author dsteffle
  */
-public class CPPSelectionTestsNoIndexer extends BaseTestCase {
+public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     
     private static final String INDEX_FILE_ID = "2946365241"; //$NON-NLS-1$
 	static NullProgressMonitor      monitor;
@@ -116,6 +116,7 @@ public class CPPSelectionTestsNoIndexer extends BaseTestCase {
     }
     
     public void cleanupProject() throws Exception {
+    	closeAllEditors();
         try{
             project.delete( true, false, monitor );
             project = null;
@@ -128,6 +129,8 @@ public class CPPSelectionTestsNoIndexer extends BaseTestCase {
         if( project == null || !project.exists() ) 
             return;
         
+        closeAllEditors();
+
         IResource [] members = project.members();
         for( int i = 0; i < members.length; i++ ){
             if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$

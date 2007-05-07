@@ -108,6 +108,7 @@ public class ContentAssistTests extends BaseUITestCase {
     }
     
     public void cleanupProject() throws Exception {
+        closeAllEditors();
         try{
 	        project.delete( true, false, monitor );
 	        project = null;
@@ -120,6 +121,8 @@ public class ContentAssistTests extends BaseUITestCase {
         if( project == null || !project.exists() ) 
             return;
         
+        closeAllEditors();
+
         IResource [] members = project.members();
         for( int i = 0; i < members.length; i++ ){
             if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$

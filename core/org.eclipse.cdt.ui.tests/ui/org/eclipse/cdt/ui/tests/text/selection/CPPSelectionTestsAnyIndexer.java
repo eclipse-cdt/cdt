@@ -61,6 +61,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	}
 
 	protected void tearDown() throws Exception {
+		closeAllEditors();
 		CProjectHelper.delete(fCProject);
 		super.tearDown();
 	}

@@ -11,6 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
+ * Kevin Doyle (IBM) - Changed name Validator to ValidatorFileUniqueName
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
@@ -25,12 +26,12 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileChildrenContentsType;
+import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.rse.ui.validators.ValidatorFileName;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -132,36 +133,11 @@ public class SystemNewFileWizardMainPage
 		if (parentFolders != null && parentFolders.length > 0)
 		{
 			IRemoteFile parentFolder = parentFolders[0];
-			try
-			{
-				Object[] contents = null;
-				if (parentFolder.isStale())
-				{
-					contents = parentFolder.getParentRemoteFileSubSystem().resolveFilterString(new NullProgressMonitor(), parentFolder, "*");
-				}
-				else
-				{
-					contents = parentFolder.getContents(RemoteFileChildrenContentsType.getInstance());
-				}
-				Vector names = new Vector();
-				for (int i = 0; i < contents.length; i++)
-				{
-					IRemoteFile child = (IRemoteFile)contents[i];
-					if (child.isFile())
-					{
-						names.add(child.getName());
-					}
-				}
-				nameValidator = new ValidatorFileName(names);
-			}
-			catch (Exception e)
-			{
-				
-			}
+			nameValidator = new ValidatorFileUniqueName(getShell(),parentFolder,false);
 		}
 		else
 		{
-			nameValidator = new ValidatorFileName();
+			nameValidator = null;
 		}
         		
 		if ((parentFolders == null) || (parentFolders.length == 0))

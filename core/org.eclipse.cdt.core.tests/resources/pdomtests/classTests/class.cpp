@@ -1,10 +1,14 @@
 class A {
 public:
+    A() {}
 	void f() {
 	}
 };
 
 class B : public A {
+public:
+   B() {}
+   void bf() {}
 };
 
 int main() {

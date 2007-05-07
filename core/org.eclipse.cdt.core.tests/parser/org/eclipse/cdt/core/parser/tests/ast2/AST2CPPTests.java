@@ -3394,6 +3394,55 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame(bs[1], f1);
         assertSame(bs[2], f2);
     }
+    
+	// class A {
+    // public:
+    //    A();
+    //    void f();
+    // };
+	// class B : public A {
+    // public:
+    //    B();
+    //    void bf();
+    // };
+    public void testFind_bug185408() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IFunction f1 = (IFunction) col.getName(6).resolveBinding();
+        IScope classScope= f1.getScope();
+		assertTrue(classScope instanceof ICPPClassScope);
+		IBinding[] bindings = classScope.find("bf");
+		ICPPMethod method= extractSingleMethod(bindings);
+		assertEquals(method.getQualifiedName()[0], "B");
+
+		bindings= classScope.find("f");
+		method= extractSingleMethod(bindings);
+		assertEquals(method.getQualifiedName()[0], "A");
+
+		bindings= classScope.find("B");
+		ICPPClassType classType= extractSingleClass(bindings);
+		assertEquals(classType.getQualifiedName()[0], "B");
+
+		bindings= classScope.find("A");
+		classType= extractSingleClass(bindings);
+		assertEquals(classType.getQualifiedName()[0], "A");
+	}
+
+	private ICPPMethod extractSingleMethod(IBinding[] bindings) {
+		assertEquals(1, bindings.length);
+		assertTrue(bindings[0] instanceof ICPPMethod);
+		return (ICPPMethod) bindings[0];
+	}
+	
+	private ICPPClassType extractSingleClass(IBinding[] bindings) {
+		assertEquals(1, bindings.length);
+		assertTrue(bindings[0] instanceof ICPPClassType);
+		return (ICPPClassType) bindings[0];
+	}
 
     public void testGets() throws Exception {
         StringBuffer buffer = new StringBuffer();

@@ -310,7 +310,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    }
 
 	    if(CharArrayUtils.equals(compName.toCharArray(), n)) {
-	        return getConstructors( bindings, true );
+	        return new IBinding[] {getClassType()};
 	    }
 	    
 	    return super.find(name);
@@ -401,7 +401,7 @@ class ImplicitsAnalysis {
 		
 		outer: for(int i=0; i<ctors.length; i++) {
 			ICPPASTFunctionDeclarator dcltor= ctors[i];
-			IASTParameterDeclaration [] ps = ((ICPPASTFunctionDeclarator)dcltor).getParameters();
+			IASTParameterDeclaration [] ps = dcltor.getParameters();
         	if( ps.length >= 1 ){
         		if(paramHasTypeReferenceToTheAssociatedClassType(ps[0])) {
             		// and all remaining arguments have initializers

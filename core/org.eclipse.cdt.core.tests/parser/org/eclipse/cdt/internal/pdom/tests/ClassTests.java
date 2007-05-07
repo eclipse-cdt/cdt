@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -57,19 +59,32 @@ public class ClassTests extends PDOMTestBase {
 	}
 	
 	public void test1() throws Exception {
-		IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), false, IndexFilter.ALL, NPM);
+		IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), true, IndexFilter.ALL, NPM);
 		assertEquals(1, Bs.length);
 		ICPPClassType B = (ICPPClassType)Bs[0];
 		ICPPMethod[] Bmethods = B.getAllDeclaredMethods();
-		assertEquals(1, Bmethods.length);
-		ICPPMethod Bf = Bmethods[0];
-		assertEquals("f", Bf.getName());
+		assertEquals(4, Bmethods.length);
+		assertNotNull(findMethod(Bmethods, "B"));
+		assertNotNull(findMethod(Bmethods, "A"));
+		assertNotNull(findMethod(Bmethods, "bf"));
+		ICPPMethod Bf = findMethod(Bmethods, "f");
+		assertNotNull(Bf);
 		IName [] Bf_refs = pdom.findNames(Bf, IIndex.FIND_REFERENCES);
 		assertEquals(1, Bf_refs.length);
 		IASTFileLocation loc = Bf_refs[0].getFileLocation();
 		assertEquals(offset("class.cpp", "b.f()") + 2, loc.getNodeOffset());
 	}
 	
+	private ICPPMethod findMethod(ICPPMethod[] bmethods, String name) {
+		for (int i = 0; i < bmethods.length; i++) {
+			ICPPMethod method = bmethods[i];
+			if (method.getName().equals(name)) {
+				return method;
+			}
+		}
+		return null;
+	}
+
 	public void testNested() throws Exception {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"), false, IndexFilter.ALL, NPM);
 		assertEquals(1, bindings.length);
@@ -180,5 +195,41 @@ public class ClassTests extends PDOMTestBase {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("D"), false, JUST_CONSTRUCTORS, NPM);
 		// expecting just D(D &)
 		assertEquals(1, bindings.length);
+	}
+	
+	public void testClassScope_bug185408() throws Exception {
+		char[][] name= {"B".toCharArray(), "bf".toCharArray()};
+		IBinding[] bindings= pdom.findBindings(name, IndexFilter.ALL, NPM);
+		assertEquals(1, bindings.length);
+		IScope classScope= bindings[0].getScope();
+		
+		assertTrue(classScope instanceof ICPPClassScope);
+		bindings= classScope.find("bf");
+		ICPPMethod method= extractSingleMethod(bindings);
+		assertEquals(method.getQualifiedName()[0], "B");
+
+		bindings= classScope.find("f");
+		method= extractSingleMethod(bindings);
+		assertEquals(method.getQualifiedName()[0], "A");
+
+		bindings= classScope.find("B");
+		ICPPClassType classType= extractSingleClass(bindings);
+		assertEquals(classType.getQualifiedName()[0], "B");
+
+		bindings= classScope.find("A");
+		classType= extractSingleClass(bindings);
+		assertEquals(classType.getQualifiedName()[0], "A");
+	}
+
+	private ICPPMethod extractSingleMethod(IBinding[] bindings) {
+		assertEquals(1, bindings.length);
+		assertTrue(bindings[0] instanceof ICPPMethod);
+		return (ICPPMethod) bindings[0];
+	}
+	
+	private ICPPClassType extractSingleClass(IBinding[] bindings) {
+		assertEquals(1, bindings.length);
+		assertTrue(bindings[0] instanceof ICPPClassType);
+		return (ICPPClassType) bindings[0];
 	}
 }

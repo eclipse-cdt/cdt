@@ -54,7 +54,6 @@ import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IConfigurationBuildState;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IProjectBuildState;
-import org.eclipse.cdt.managedbuilder.internal.buildmodel.IRebuildState;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.ParallelBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.StepBuilder;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;

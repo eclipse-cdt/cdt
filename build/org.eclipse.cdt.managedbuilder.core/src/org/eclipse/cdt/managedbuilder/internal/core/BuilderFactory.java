@@ -274,8 +274,11 @@ public class BuilderFactory {
 
 	private static IBuilder createBuilder(IConfiguration cfg, Map args){
 		IToolChain tCh = cfg.getToolChain();
-		if(args.get(IBuilder.ID) == null)
+		boolean isMakeTargetBuild = false;
+		if(args.get(IBuilder.ID) == null){
 			args.put(IBuilder.ID, ManagedBuildManager.calculateChildId(cfg.getId(), null));
+			isMakeTargetBuild = true;
+		}
 		MapStorageElement el = new BuildArgsStorageElement(args, null);
 		Builder builder = new Builder(tCh, el, ManagedBuildManager.getVersion().toString());
 		IBuilder cfgBuilder = cfg.getEditableBuilder();
@@ -289,6 +292,16 @@ public class BuilderFactory {
 			} catch (CoreException e) {
 				ManagedBuilderCorePlugin.log(e);
 			}
+		}
+		if(isMakeTargetBuild){
+			String [] ids = builder.getCustomizedErrorParserIds();
+			if(ids != null && ids.length == 0){
+				builder.setCustomizedErrorParserIds(null);
+			}
+			
+			String id = builder.getErrorParserIds();
+			if(id == null)
+				builder.setErrorParserIds(cfgBuilder.getErrorParserIds());
 		}
 		return builder;
 	}

@@ -256,7 +256,7 @@ implements
 			manageButton.setLayoutData(gd);
 			manageButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					Object[] obs = new Object[] { getProject() };
+					IProject[] obs = new IProject[] { getProject() };
 					IConfigManager cm = ManageConfigSelector.getManager(obs);
 					if (cm != null && cm.manage(obs, false)) {
 						cfgDescs = null;

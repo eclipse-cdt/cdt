@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -29,13 +30,13 @@ import org.eclipse.cdt.ui.newui.ManageConfigSelector;
  */
 public class ManageConfigsAction 
 implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
-	Object[] obs = null; 
+	IProject[] obs = null; 
 	
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (!selection.isEmpty()) {
 	    	// case for context menu
 			if (selection instanceof StructuredSelection) {
-				obs = ((StructuredSelection)selection).toArray();
+				obs = ManageConfigSelector.getProjects(((StructuredSelection)selection).toArray());
 				action.setEnabled(ManageConfigSelector.getManager(obs) != null);
 				return;
 			}

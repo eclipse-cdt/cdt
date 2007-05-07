@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -68,7 +69,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		Object[] obs = fProjects.toArray();
+		IProject[] obs = (IProject[])fProjects.toArray(new IProject[fProjects.size()]);
 		IConfigManager cm = ManageConfigSelector.getManager(obs);
 		if (cm != null) {
 			cm.manage(obs, true);

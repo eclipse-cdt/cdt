@@ -75,7 +75,8 @@ public class SystemWizardDialog extends WizardDialog implements ISystemPromptDia
 		super(shell, wizard);
 		if (wizard instanceof ISystemWizard) {
 			((ISystemWizard)wizard).setSystemWizardDialog(this);
-			setInputObject(inputObject);
+			if (inputObject != null)
+				setInputObject(inputObject);
 		}
 	}
 

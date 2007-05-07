@@ -14,7 +14,7 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  ********************************************************************************/
 
-package org.eclipse.rse.core.filters;
+package org.eclipse.rse.internal.core.filters;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,12 +24,19 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterContainer;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEPersistableObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
-import org.eclipse.rse.internal.core.filters.ISystemFilterConstants;
-import org.eclipse.rse.internal.core.filters.SystemFilterPool;
 import org.eclipse.rse.logging.Logger;
 
 /**

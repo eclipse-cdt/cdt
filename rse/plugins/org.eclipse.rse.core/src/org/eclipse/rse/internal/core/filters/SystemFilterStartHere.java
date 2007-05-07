@@ -23,7 +23,6 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.ISystemFilterStartHere;
 import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
-import org.eclipse.rse.core.filters.SystemFilterPoolManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.logging.Logger;
 

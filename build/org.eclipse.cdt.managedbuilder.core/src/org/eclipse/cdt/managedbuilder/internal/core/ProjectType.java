@@ -782,4 +782,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 		return null;
 	}
+
+	public boolean isSystemObject() {
+		return isTestProjectType() || getConvertToId().length() != 0;
+	}
 }

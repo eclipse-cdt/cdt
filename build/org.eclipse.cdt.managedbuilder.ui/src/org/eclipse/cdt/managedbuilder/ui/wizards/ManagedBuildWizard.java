@@ -67,7 +67,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 		while(it.hasNext()) {
 			String s = (String)it.next();
 			IProjectType pt = (IProjectType)sm.get(s);
-			if (pt.isAbstract() || pt.isTestProjectType()) continue;
+			if (pt.isAbstract() || pt.isSystemObject()) continue;
 			if (supportedOnly && !pt.isSupported()) continue; // not supported
 			String nattr = pt.getNameAttribute(); 
 			if (nattr == null || nattr.length() == 0) continue; // new proj style 

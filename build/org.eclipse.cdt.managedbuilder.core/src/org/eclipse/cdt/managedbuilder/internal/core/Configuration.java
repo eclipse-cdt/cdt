@@ -2490,7 +2490,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			return true;
 		
 		if(getProjectType() != null)
-			return getProjectType().isTestProjectType();
+			return getProjectType().isSystemObject();
 		
 		return false;
 	}

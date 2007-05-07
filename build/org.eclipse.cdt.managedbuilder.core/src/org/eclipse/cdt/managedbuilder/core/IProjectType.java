@@ -195,4 +195,6 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	public String getNameAttribute();
 	
 	public IBuildPropertyValue getBuildArtefactType();
+	
+	boolean isSystemObject();
 }

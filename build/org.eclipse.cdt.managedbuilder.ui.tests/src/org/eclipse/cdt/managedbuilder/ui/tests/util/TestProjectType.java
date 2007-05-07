@@ -46,4 +46,8 @@ public class TestProjectType implements IProjectType {
 	public IBuildPropertyValue getBuildArtefactType() {
 		return null;
 	}
+
+	public boolean isSystemObject() {
+		return isTestProjectType();
+	}
 }

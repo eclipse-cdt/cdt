@@ -18,6 +18,7 @@ package org.eclipse.rse.internal.persistence.dom;
 
 import java.util.Vector;
 
+import org.eclipse.rse.core.IRSECoreRegistry;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -101,17 +102,24 @@ public class RSEDOMImporter {
 
 		// get host node attributes
 		String connectionName = hostNode.getName();
-		String systemTypeName = hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
-		String hostName = hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_HOSTNAME).getValue();
-		String description = hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION).getValue();
-		boolean isOffline = getBooleanValue(hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_OFFLINE).getValue());
-		boolean isPromptable = getBooleanValue(hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE).getValue());
+		String systemTypeName = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_TYPE);
+		String systemTypeId = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_SYSTEM_TYPE);
+		String hostName = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_HOSTNAME);
+		String description = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_DESCRIPTION);
+		boolean isOffline = getBooleanValue(getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_OFFLINE));
+		boolean isPromptable = getBooleanValue(getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_PROMPTABLE));
 
 		// create host and set it's attributes
 		try {
 			// NOTE create host effectively recreates the subsystems
 			// so instead of creating subsystems on restore, we should be updating their properties
-			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeName);
+			IRSECoreRegistry registry = RSECorePlugin.getDefault().getRegistry();
+			IRSESystemType systemType = null;
+			if (systemTypeId != null) {
+				systemType = registry.getSystemTypeById(systemTypeId);
+			} else if (systemTypeName != null) {
+				systemType = registry.getSystemType(systemTypeName);
+			}
 			host = profile.createHost(systemType, connectionName, hostName, description);
 			host.setOffline(isOffline);
 			host.setPromptable(isPromptable);
@@ -158,11 +166,11 @@ public class RSEDOMImporter {
 			RSEDOMNode ssChild = ssChildren[s];
 			ISubSystem subSystem = restoreSubSystem(host, ssChild);
 			if (subSystem != null && service == null) {
-				ISubSystemConfiguration factory = subSystem.getSubSystemConfiguration();
-				service = factory.getConnectorService(host);
+				ISubSystemConfiguration subsystemConfiguration = subSystem.getSubSystemConfiguration();
+				service = subsystemConfiguration.getConnectorService(host);
 				if (service != null) {
-					if (factory.supportsServerLaunchProperties(host)) {
-						IServerLauncherProperties sl = factory.createServerLauncher(service);
+					if (subsystemConfiguration.supportsServerLaunchProperties(host)) {
+						IServerLauncherProperties sl = subsystemConfiguration.createServerLauncher(service);
 						if (sl != null) {
 							// get server launcher properties
 							// right now we just set them for subsystem, but later that will change
@@ -469,5 +477,14 @@ public class RSEDOMImporter {
 	 */
 	private ISubSystemConfiguration getSubSystemConfiguration(String subsystemName) {
 		return _registry.getSubSystemConfiguration(subsystemName);
+	}
+	
+	private String getAttributeValue(RSEDOMNode node, String attributeName) {
+		String result = null;
+		RSEDOMNodeAttribute attribute = node.getAttribute(attributeName);
+		if (attribute != null) {
+			result = attribute.getValue();
+		}
+		return result;
 	}
 }

@@ -47,6 +47,7 @@ public interface IRSEDOMConstants {
 	public static final String ATTRIBUTE_HOSTNAME = "hostname"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_OFFLINE = "offline"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_SYSTEM_TYPE = "systemType"; //$NON-NLS-1$
 
 	// ConnectorService attributes
 	public static final String ATTRIBUTE_GROUP = "group"; //$NON-NLS-1$

@@ -287,6 +287,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 
 		if (clean || node.isDirty()) {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, host.getSystemType().getName());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SYSTEM_TYPE, host.getSystemType().getId());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_OFFLINE, getBooleanString(host.isOffline()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE, getBooleanString(host.isPromptable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_HOSTNAME, host.getHostName());
@@ -317,11 +318,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 	public RSEDOMNode createNode(RSEDOMNode parent, IConnectorService connectorService, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_CONNECTOR_SERVICE, connectorService, clean);
 		if (clean || node.isDirty()) {
-			// store it's attributes
-			IRSESystemType systemType = connectorService.getHost().getSystemType();
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, systemType.getName());
-
-			// can't do this til connector service owns the properties (right now it's still subsystem)
+			// can't do this until connector service owns the properties (right now it's still subsystem)
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_GROUP, connectorService.getName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_USE_SSL, getBooleanString(connectorService.isUsingSSL()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PORT, Integer.toString(connectorService.getPort()));

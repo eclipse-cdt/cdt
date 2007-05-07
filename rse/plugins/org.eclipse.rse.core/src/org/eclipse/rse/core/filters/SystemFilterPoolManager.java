@@ -34,62 +34,20 @@ import org.eclipse.rse.logging.Logger;
 
 /**
  * A filter pool manager manages filter pools.
- * <p>
- * Each filter pool that is managed becomes a folder on disk.
- * <p>
- * To create a filter pool manager instance, use the factory method
- *  in SystemFilterPoolManagerImpl in the ...impl package. 
- * You must pass a folder that represents the anchor point for the 
- *  pools managed by this manager instance.
- * <p>
- * Depending on your tools' needs, you have four choices about how
- * the filter pools and filters are persisted to disk. The decision is
- * made at the time you instantiate the pool manager and is one of the
- * following constants from the SystemFilterConstants interface:
+ * It is used to
  * <ul>
- *   <li>SAVE_POLICY_ONE_FILE_PER_MANAGER - one file: mgrName.xmi
- *   <li>SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL - one file and folder per pool
- *   <li>SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER - one file per pool, all files in one folder
- *   <li>SAVE_POLICY_ONE_FILE_PER_FILTER - one file per filter, one folder per pool
- * </ul> 
- * <p>
- * With the policy of one file per pool, there are two possibilities regarding
- * the folder structure:
- * <ul>
- *   <li>Each pool gets its own subfolder, and the pool's xmi file goes in 
- *         the pool's unique subfolder: SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL
- *   <li>There are no subfolders per pool, all the xmi pool files go in the 
- *         same folder as specified when creating this manager instance:
- *         SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER
+ * <li>Get a list of existing filter pools
+ * <li>Create filter pools
+ * <li>Delete filter pools
+ * <li>Clone filter pools
+ * <li>Rename filter pools
  * </ul>
  * <p>
- * With the policy of one file per filter, each filter pool must have its own folder.
+ * The filter pool manager ensures that 
+ * changes to filters and pools are 
+ * committed and events are fired properly.
  * <p>
- * With an instantiated filter pool manager (most tools will only need
- *  one such instance), you now simply call its methods to work with
- *  filter pools. For example, use it to:
- *  <ul>
- *    <li>Restore all filter pools from disk
- *    <li>Save all, or individual, filter pools to disk
- *    <li>Get a list of existing filter pools
- *    <li>Create filter pools
- *    <li>Delete filter pools
- *    <li>Clone filter pools
- *    <li>Rename filter pools
- *    <li>Save all, or individual, filter pools
- *  </ul>
- * All the underlying file system work is handled for you.
- * <p>
- * Further, this is the front door for working with filters too. By forcing all
- * filter related activity through a single point like this, we can ensure that
- * all changes are saved to disk, and events are fired properly.
- * <p>
- * The filter framework logs to a {@link org.eclipse.rse.logging.Logger Logger} file.
- * By default the log in the org.eclipse.rse.core plugin is used, but you can change this
- * by calling {@link #setLogger(org.eclipse.rse.logging.Logger)}.
- */
-/** 
- * @lastgen class SystemFilterPoolManagerImpl Impl implements SystemFilterPoolManager {}
+ * This class is not intended to be subclassed by clients.
  */
 public class SystemFilterPoolManager extends RSEPersistableObject implements ISystemFilterPoolManager {
 	private ISystemFilterPool[] poolArray = null; // cache for performance
@@ -192,7 +150,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	/**
 	 * Constructor
 	 */
-	protected SystemFilterPoolManager(ISystemProfile profile) {
+	private SystemFilterPoolManager(ISystemProfile profile) {
 		super();
 		_profile = profile;
 	}
@@ -232,20 +190,9 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	public static ISystemFilterPoolManager createSystemFilterPoolManager(ISystemProfile profile, Logger logger, 
 			ISystemFilterPoolManagerProvider caller, String name, boolean allowNestedFilters,
 			int savePolicy, IRSEFilterNamingPolicy namingPolicy) {
-		SystemFilterPoolManager mgr = SystemFilterPoolManager.createManager(profile);
+		SystemFilterPoolManager mgr = new SystemFilterPoolManager(profile);
 		mgr.initialize(logger, caller, name, allowNestedFilters);
 		return mgr;
-	}
-
-	/*
-	 * Private helper method.
-	 * Uses MOF to create an instance of this class.
-	 */
-	public static SystemFilterPoolManager createManager(ISystemProfile profile) {
-		ISystemFilterPoolManager mgr = new SystemFilterPoolManager(profile);
-
-		//FIXME SystemFilterImpl.initMOF().createSystemFilterPoolManager();
-		return (SystemFilterPoolManager) mgr;
 	}
 
 	/*

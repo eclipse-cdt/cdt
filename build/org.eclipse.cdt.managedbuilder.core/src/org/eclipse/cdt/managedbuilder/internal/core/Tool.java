@@ -3863,6 +3863,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	public boolean isSystemObject() {
 		if(isTest)
 			return true;
+		
+		if(getConvertToId().length() != 0)
+			return true;
+		
 		IBuildObject bo = getParent();
 		if(bo instanceof IToolChain)
 			return ((IToolChain)bo).isSystemObject();

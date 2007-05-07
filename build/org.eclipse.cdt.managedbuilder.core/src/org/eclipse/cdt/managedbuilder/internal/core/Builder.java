@@ -2363,6 +2363,10 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	public boolean isSystemObject() {
 		if(isTest)
 			return true;
+		
+		if(getConvertToId().length() != 0)
+			return true;
+		
 		if(getParent() != null)
 			return getParent().isSystemObject();
 		return false;

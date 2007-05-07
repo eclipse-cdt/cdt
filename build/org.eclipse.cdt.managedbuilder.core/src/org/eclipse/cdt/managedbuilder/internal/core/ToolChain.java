@@ -2333,6 +2333,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		if(isTest)
 			return true;
 		
+		if(getConvertToId().length() != 0)
+			return true;
+		
 		if(getParent() != null)
 			return getParent().isSystemObject();
 		

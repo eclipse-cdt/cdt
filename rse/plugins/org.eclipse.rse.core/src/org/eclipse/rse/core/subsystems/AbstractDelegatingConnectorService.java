@@ -11,6 +11,7 @@
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -207,18 +208,6 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		if (conServ != null)
 		{
 			return conServ.getHostName();
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHostType()
-	 */
-	public String getHostType() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.getHostType();
 		}
 		return null;
 	}

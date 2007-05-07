@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -262,13 +263,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
 		children.toArray(result);
 		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getHostType()
-	 */
-	public final String getHostType() {
-		return getHost().getSystemType().getName();
 	}
 
 	/* (non-Javadoc)

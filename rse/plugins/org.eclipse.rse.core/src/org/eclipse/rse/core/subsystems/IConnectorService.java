@@ -12,7 +12,8 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
+ * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -113,13 +114,6 @@ public interface IConnectorService extends IRSEModelObject {
 	 * if available.
 	 */
 	public String getTempDirectory();
-
-	/**
-	 * @return the system type for this connection.
-	 * //FIXME Remove this method
-	 * @deprecated use getHost().getSystemType() instead
-	 */
-	public String getHostType();
 
 	/**
 	 * Sets the host used by this connector service.

@@ -21,6 +21,7 @@
    <extension-point id="ProposalFilter" name="%proposalFilter.name" schema="schema/ProposalFilter.exsd"/>
    <extension-point id="completionProposalComputer" name="%completionProposalComputer" schema="schema/completionProposalComputer.exsd"/>
    <extension-point id="newCfgDialog" name="%NewCfgDialog.name" schema="schema/newCfgDialog.exsd"/>
+   <extension-point id="ConfigManager" name="%ConfigManager" schema="schema/ConfigManager.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">

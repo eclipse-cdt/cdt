@@ -38,7 +38,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class ManageConfigDialog extends Dialog {
-	public static final String MANAGE_TITLE = UIMessages.getString("ManageConfigDialog.0");  //$NON-NLS-1$
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.newCfgDialog"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME = "dialog"; //$NON-NLS-1$
 	public static final String CLASS_NAME = "class"; //$NON-NLS-1$
@@ -68,22 +67,6 @@ public class ManageConfigDialog extends Dialog {
 	protected Button renBtn;
 	protected Button delBtn;
 
-	private static Composite comp;
-	
-	public static boolean manage(IProject _prj, boolean doOk) {
-		ManageConfigDialog d = new ManageConfigDialog(CUIPlugin.getActiveWorkbenchShell(),
-				_prj.getName()+ " : " + MANAGE_TITLE, _prj); //$NON-NLS-1$
-		boolean result = false;
-		if (d.open() == OK) {
-			if (doOk) {
-				CDTPropertyManager.performOk(comp);
-			}
-			AbstractPage.updateViews(_prj);
-			result = true;
-		}
-		return result;
-	}
-	
 	/**
 	 * @param parentShell
 	 */
@@ -164,7 +147,7 @@ public class ManageConfigDialog extends Dialog {
 			}} ); 
 
 		des = CDTPropertyManager.getProjectDescription(composite, prj);
-		comp = composite;
+//		comp = composite;
 		
 		updateData();
     	return composite;
@@ -289,5 +272,5 @@ public class ManageConfigDialog extends Dialog {
 		if (table.getItemCount() > 0) table.select(0);
 		table.setFocus();
 		updateButtons();
-	}	
+	}
 }

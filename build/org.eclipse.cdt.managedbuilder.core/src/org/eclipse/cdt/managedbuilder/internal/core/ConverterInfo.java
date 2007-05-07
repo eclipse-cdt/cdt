@@ -11,13 +11,15 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 public class ConverterInfo {
-	IBuildObject fFromObject;
-	IBuildObject fToObject;
-	IConfigurationElement fConverterElement;
-	boolean fIsConversionPerformed;
+	private IBuildObject fFromObject;
+	private IBuildObject fConvertedFromObject;
+	private IBuildObject fToObject;
+	private IConfigurationElement fConverterElement;
+	private boolean fIsConversionPerformed;
 	
 	public ConverterInfo(IBuildObject fromObject, IBuildObject toObject, IConfigurationElement el){
 		fFromObject = fromObject;
@@ -35,5 +37,13 @@ public class ConverterInfo {
 	
 	public IConfigurationElement getConverterElement(){
 		return fConverterElement;
+	}
+	
+	public IBuildObject getConvertedFromObject(){
+		if(!fIsConversionPerformed){
+			fConvertedFromObject = ManagedBuildManager.convert(fFromObject, fToObject.getId(), true);
+			fIsConversionPerformed = true;
+		}
+		return fConvertedFromObject;
 	}
 }

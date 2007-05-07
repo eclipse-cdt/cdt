@@ -1058,8 +1058,17 @@
               menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm1"
               style="pulldown"
               tooltip="%BuildConfigAction.tooltip"/>
-
-        <action
+       <action
+              class="org.eclipse.cdt.ui.actions.BuildActiveConfigMenuAction"
+              disabledIcon="icons/dlcl16/build_exec.png"
+              enablesFor="+"
+              icon="icons/elcl16/build_exec.png"
+              id="org.eclipse.cdt.ui.buildActiveConfigToolbarAction"
+              label="%BuildActiveConfiguration.label"
+              style="pulldown"
+              toolbarPath="buildConfig"
+              tooltip="%BuildActiveConfiguration.tooltip"/>
+         <action
               class="org.eclipse.cdt.ui.actions.ManageConfigsAction"
               enablesFor="+"
               id="org.eclipse.cdt.ui.manageConfigsAction2"

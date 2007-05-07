@@ -122,7 +122,7 @@ public class ChangeBuildConfigActionBase {
 					builder.append(" (...)");	//$NON-NLS-1$
 				}
 					
-				IAction action = new BuildConfigAction(fProjects, sName, builder.toString(), accel + 1);
+				IAction action = makeAction(sName ,builder, accel);
 				if (bCurrentConfig && sCurrentConfig.equals(sName)) {
 					action.setChecked(true);
 				}
@@ -131,6 +131,10 @@ public class ChangeBuildConfigActionBase {
 				accel++;
 			}
 		}
+	}
+
+	protected IAction makeAction(String sName, StringBuffer builder, int accel) {
+		return new ChangeConfigAction(fProjects, sName, builder.toString(), accel + 1);
 	}
 
 	/**

@@ -19,7 +19,6 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -72,19 +71,29 @@ public class ManagedBuildWizard extends AbstractCWizard {
 			String nattr = pt.getNameAttribute(); 
 			if (nattr == null || nattr.length() == 0) continue; // new proj style 
 			MBSWizardHandler h = new MBSWizardHandler(pt, parent, wizard);
-			IConfiguration[] cfgs = pt.getConfigurations();
-			if (cfgs == null || cfgs.length == 0) continue;
-			IToolChain tc = null;
-			for (int i=0; i<cfgs.length; i++) {
-				if (cfgs[i].isSystemObject()) continue;
-				IToolChain t = cfgs[i].getToolChain();
-				if (isValid(t, supportedOnly, wizard)) {
-					tc = t;
-					break;
-				}
+			IToolChain[] tcs = ManagedBuildManager.getExtensionToolChains(pt);
+			for(int i = 0; i < tcs.length; i++){
+				IToolChain t = tcs[i];
+				if(t.isSystemObject()) 
+					continue;
+				if (!isValid(t, supportedOnly, wizard))
+					continue;
+				
+				h.addTc(t);
 			}
-			if (tc ==  null) continue;
-			h.addTc(tc);
+//			IConfiguration[] cfgs = pt.getConfigurations();
+//			if (cfgs == null || cfgs.length == 0) continue;
+//			IToolChain tc = null;
+//			for (int i=0; i<cfgs.length; i++) {
+//				if (cfgs[i].isSystemObject()) continue;
+//				IToolChain t = cfgs[i].getToolChain();
+//				if (isValid(t, supportedOnly, wizard)) {
+//					tc = t;
+//					break;
+//				}
+//			}
+//			if (tc ==  null) continue;
+//			h.addTc(tc);
 
 			String pId = null;
 			if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS)) {

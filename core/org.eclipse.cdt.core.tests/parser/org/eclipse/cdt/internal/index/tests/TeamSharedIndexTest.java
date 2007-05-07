@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -223,7 +225,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
 		
 		// change file
-		prj.getProject().getFile("a.cpp").setContents(new ByteArrayInputStream("int d;".getBytes()), true, false, NPM);
+		changeFile(prj);
 		deleteAndWait(prj);
 		unregisterProject(prj);
 		
@@ -234,6 +236,16 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "b", 1);
 		checkVariable(prj, "c", 1);
 		checkVariable(prj, "d", 1);
+	}
+
+	private void changeFile(ICProject prj) throws CoreException {
+		final IFile file = prj.getProject().getFile("a.cpp");
+		final File location = file.getLocation().toFile();
+		final long lm= location.lastModified();
+		file.setContents(new ByteArrayInputStream("int d;".getBytes()), true, false, NPM);
+		if (location.lastModified() == lm) {
+			location.setLastModified(lm+1000);
+		}
 	}
 	
 	private void deleteAndWait(ICProject prj) throws CoreException {
@@ -267,8 +279,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
 		
-		// change file
-		prj.getProject().getFile("a.cpp").setContents(new ByteArrayInputStream("int d;".getBytes()), true, false, NPM);
+		changeFile(prj);
 		deleteAndWait(prj);
 		unregisterProject(prj);
 		

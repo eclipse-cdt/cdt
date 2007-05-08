@@ -2047,6 +2047,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		ITool buildTools[] = h.buildTools;
 		
 		if(tool == null){
+			h = getToolInfo(Path.EMPTY);
+			buildTools = h.buildTools;
+
 			for (int j=0; j<buildTools.length; j++) {
 				if (buildTools[j].buildsFileType(ext)) {
 					if (tool == null) {

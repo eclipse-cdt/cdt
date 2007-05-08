@@ -36,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
@@ -259,8 +260,46 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		}
 
 	}
+	
+	private boolean conflictsWithRootTools(ITool tool){
+		IFolderInfo rf = getParent().getRootFolderInfo();
+		ITool[] rootTools = rf.getFilteredTools();
+		ITool tt = getParent().getTargetTool();
+		for(int i = 0; i < rootTools.length; i++){
+			ITool rootTool = rootTools[i];
+			if(rootTool == tt || getMultipleOfType(rootTool) != null){
+				if(getConflictingInputExts(rootTool, tool).length != 0)
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	private IInputType getMultipleOfType(ITool tool){
+		IInputType[] types = tool.getInputTypes();
+		IInputType mType = null; 
+		boolean foundNonMultiplePrimary = false;
+		for(int i = 0; i < types.length; i++){
+			IInputType type = types[i];
+			if(type.getMultipleOfType()){
+				if(type.getPrimaryInput() == true){
+					foundNonMultiplePrimary = false;
+					mType = type;
+					break;
+				} else if (mType == null){
+					mType = type;
+				}
+			} else {
+				if(type.getPrimaryInput() == true){
+					foundNonMultiplePrimary = true;
+				}
+			}
+		}
+		
+		return foundNonMultiplePrimary ? null : mType;
+	}
 
-	public ITool[] filtereTools(ITool localTools[], IManagedProject manProj) {
+	public ITool[] filterTools(ITool localTools[], IManagedProject manProj) {
 //		ITool[] localTools = toolChain.getTools();
 //		IManagedProject manProj = getParent().getManagedProject();
 		if (manProj == null) {
@@ -272,6 +311,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		for (int i = 0; i < localTools.length; i++) {
 			Tool tool = (Tool)localTools[i];
 			if(!tool.isEnabled(this))
+				continue;
+			
+			if(!isRoot() && conflictsWithRootTools(tool))
 				continue;
 			
 			try {
@@ -308,7 +350,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		}
 		ITool[] localTools = toolChain.getTools();
 		IManagedProject manProj = getParent().getManagedProject();
-		return filtereTools(localTools, manProj);
+		return filterTools(localTools, manProj);
 //		if (manProj == null) {
 //			//  If this is not associated with a project, then there is nothing to filter with
 //			return localTools;
@@ -1246,7 +1288,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		added = checked[1];
 //		Map converterMap = calculateConverterTools(removed, added, null, null);
 		ITool newTools[] = calculateToolsArray(removed, added);
-		ITool[][] conflicting = calculateConflictingTools(filtereTools(newTools, getParent().getManagedProject()));
+		ITool[][] conflicting = calculateConflictingTools(filterTools(newTools, getParent().getManagedProject()));
 		Map unspecifiedRequiredProps = new HashMap();
 		Map unspecifiedProps = new HashMap();
 		Set undefinedSet = new HashSet();

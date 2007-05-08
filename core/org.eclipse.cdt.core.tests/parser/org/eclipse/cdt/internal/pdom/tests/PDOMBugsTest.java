@@ -66,7 +66,7 @@ public class PDOMBugsTest extends BaseTestCase {
 			wpdom.setProperty("c", "e");
 			assertEquals("e", wpdom.getProperty("c"));
 		} finally {
-			pdom.releaseWriteLock(0);
+			pdom.releaseWriteLock(0, true);
 		}
 	}
 	

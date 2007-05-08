@@ -95,7 +95,7 @@ public class Database {
 				setWritable();
 				createNewChunk();
 				setVersion(version);
-				setReadOnly();
+				setReadOnly(true);
 			}
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
@@ -158,24 +158,25 @@ public class Database {
 		
 		// for performance reasons try to find chunk and mark it without
 		// synchronizing. This means that we might pick up a chunk that
-		// has been paged out, which is ok.
-		// Furthermore the hitflag may not be seen by the clock-alorithm,
+		// has been paged out, which is fine.
+		// Furthermore the hit-flag may not be seen by the clock-algorithm,
 		// which might lead to the eviction of a chunk. With the next
 		// cache failure we are in sync again, though.
 		Chunk chunk = chunks[index];		
-		if (chunk != null && chunk.fWritable == fWritable) {
+		if (chunk != null && (chunk.fLocked || !fWritable)) {
 			chunk.fCacheHitFlag= true;
 			cacheHits++;
 			return chunk;
 		}
 		
 		// here is the safe code that has to be performed if we cannot
-		// get ahold of the chunk.
+		// get hold of the chunk.
 		synchronized(fCache) {
 			chunk= chunks[index];
 			if (chunk == null) {
 				cacheMisses++;
 				chunk = chunks[index] = new Chunk(this, index);
+				chunk.read();
 			}
 			else {
 				cacheHits++;
@@ -239,18 +240,16 @@ public class Database {
 	}
 	
 	private int createNewChunk() throws CoreException {
-		try {
-			Chunk[] oldtoc = chunks;
-			int n = oldtoc.length;
-			int offset = n * CHUNK_SIZE;
-			file.seek(offset);
-			file.write(new byte[CHUNK_SIZE]);
-			chunks = new Chunk[n + 1];
-			System.arraycopy(oldtoc, 0, chunks, 0, n);
-			return offset;
-		} catch (IOException e) {
-			throw new CoreException(new DBStatus(e));
-		}
+		Chunk[] oldtoc = chunks;
+		int n = oldtoc.length;
+		int offset = n * CHUNK_SIZE;
+		chunks = new Chunk[n + 1];
+		System.arraycopy(oldtoc, 0, chunks, 0, n);
+		final Chunk chunk= new Chunk(this, n);
+		chunk.fDirty= true;
+		chunks[n]= chunk;
+		fCache.add(chunk, true);
+		return offset;
 	}
 	
 	private int getFirstBlock(int blocksize) throws CoreException {
@@ -390,12 +389,12 @@ public class Database {
 	/**
 	 * Closes the database. 
 	 * <p>
-	 * The behaviour of any further calls to the Database is undefined
+	 * The behavior of any further calls to the Database is undefined
 	 * @throws IOException
 	 * @throws CoreException 
 	 */
 	public void close() throws CoreException {
-		setReadOnly();
+		setReadOnly(true);
 		removeChunksFromCache();
 		chunks= new Chunk[0];
 		try {
@@ -415,9 +414,10 @@ public class Database {
 	/**
 	 * Called from any thread via the cache, protected by {@link #fCache}.
 	 */
-	void releaseChunk(Chunk chunk) {
-		if (!chunk.fWritable)
+	void releaseChunk(final Chunk chunk) {
+		if (!chunk.fLocked) {
 			chunks[chunk.fSequenceNumber]= null;
+		}			
 	}
 
 	/**
@@ -432,38 +432,88 @@ public class Database {
 		fWritable= true;
 	}
 
-	public void setReadOnly() throws CoreException {
+	public void setReadOnly(final boolean flush) throws CoreException {
 		if (fWritable) {
 			fWritable= false;
-			flushDirtyChunks();
-		}
-	}
-	
-	public void flushDirtyChunks() throws CoreException {
-		ArrayList dirtyChunks= new ArrayList();
-		synchronized (fCache) {
-			for (int i = 0; i < chunks.length; i++) {
-				Chunk chunk= chunks[i];
-				if (chunk != null && chunk.fWritable) {
-					chunk.fWritable= false;
-					if (chunk.fCacheIndex < 0) {
-						chunks[i]= null;
-					}
-					if (chunk.fDirty) {
-						dirtyChunks.add(chunk);
+			
+			ArrayList dirtyChunks= new ArrayList();
+			synchronized (fCache) {
+				for (int i= chunks.length-1; i >= 0 ; i--) {
+					Chunk chunk= chunks[i];
+					if (chunk != null) {
+						if (chunk.fCacheIndex < 0) {
+							chunk.fLocked= false;
+							chunks[i]= null;
+							if (chunk.fDirty) {
+								dirtyChunks.add(chunk);
+							}
+						}
+						else if (chunk.fLocked) {
+							if (!chunk.fDirty) {
+								chunk.fLocked= false;
+							}
+							else if (flush) {
+								chunk.fLocked= false;
+								dirtyChunks.add(chunk);
+							}
+						}
+						else if (flush && chunk.fDirty) {
+							dirtyChunks.add(chunk);
+						}
 					}
 				}
 			}
+			
+			if (!dirtyChunks.isEmpty()) {
+				for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
+					Chunk chunk = (Chunk) it.next();
+					chunk.flush();
+				}
+			}
 		}
-		
+	}
+	
+	public void flush() throws CoreException {
+		if (fWritable) {
+			try {
+				setReadOnly(true);
+			}
+			finally {
+				setWritable();
+			}
+			return;
+		}
+
+		// be careful as other readers may access chunks concurrently
+		ArrayList dirtyChunks= new ArrayList();
+		synchronized (fCache) {
+			for (int i= chunks.length-1; i >= 0 ; i--) {
+				Chunk chunk= chunks[i];
+				if (chunk != null && chunk.fDirty) {
+					dirtyChunks.add(chunk);
+				}
+			}
+		}
+
 		if (!dirtyChunks.isEmpty()) {
 			for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
 				Chunk chunk = (Chunk) it.next();
 				chunk.flush();
 			}
 		}
+		
+		// only after the chunks are flushed we may unlock and release them.
+		synchronized (fCache) {
+			for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
+				Chunk chunk = (Chunk) it.next();
+				chunk.fLocked= false;
+				if (chunk.fCacheIndex < 0) {
+					chunks[chunk.fSequenceNumber]= null;
+				}
+			}
+		}
 	}
-	
+		
 	public void resetCacheCounters() {
 		cacheHits= cacheMisses= 0;
 	}

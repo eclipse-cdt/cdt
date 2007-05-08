@@ -113,24 +113,37 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 				// rollback
 				fIsWriteLocked= false;
 				while (--i >= 0) {
-					fWritableFragments[i].releaseWriteLock(giveupReadlockCount);
+					fWritableFragments[i].releaseWriteLock(giveupReadlockCount, false);
 				}
 			}
 		}
 	}
 
 	public synchronized void releaseWriteLock(int establishReadlockCount) {
+		releaseWriteLock(establishReadlockCount, true);
+	}
+
+	public synchronized void releaseWriteLock(int establishReadlockCount, boolean flush) {
 		assert fIsWriteLocked: "No write lock to be released"; //$NON-NLS-1$
 		assert establishReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
 
 		fIsWriteLocked= false;
-		int i= 0;
-		for (i = 0; i < fWritableFragments.length; i++) {
-			fWritableFragments[i].releaseWriteLock(establishReadlockCount);
+		for (int i = 0; i < fWritableFragments.length; i++) {
+			fWritableFragments[i].releaseWriteLock(establishReadlockCount, flush);
 		}
 	}
 	
 	public IWritableIndexFragment getPrimaryWritableFragment() {
 		return fWritableFragments.length > 0 ? fWritableFragments[0] : null;
 	}
+
+	public void flush() throws CoreException {
+		assert !fIsWriteLocked;
+		int i= 0;
+		for (i = 0; i < fWritableFragments.length; i++) {
+			fWritableFragments[i].flush();
+		}
+	}
+	
+	
 }

@@ -564,12 +564,12 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	final public void releaseWriteLock() {
-		releaseWriteLock(0);
+		releaseWriteLock(0, true);
 	}
-
-	public void releaseWriteLock(int establishReadLocks) {
+	
+	public void releaseWriteLock(int establishReadLocks, boolean flush) {
 		try {
-			db.setReadOnly();
+			db.setReadOnly(flush);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -736,5 +736,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	public void resetCacheCounters() {
 		db.resetCacheCounters();
+	}
+
+	public void flush() throws CoreException {
+		db.flush();
 	}		
 }

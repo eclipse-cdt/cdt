@@ -69,18 +69,22 @@ public class GeneratePDOM implements ISafeRunnable {
 		try {
 			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
 			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-
-			exportedPDOM.acquireWriteLock(0);
 			try {
-				Map exportProperties= pm.getExportProperties();
-				if(exportProperties!=null) {
-					for(Iterator i = exportProperties.entrySet().iterator(); i.hasNext(); ) {
-						Map.Entry entry = (Map.Entry) i.next();
-						exportedPDOM.setProperty((String) entry.getKey(), (String) entry.getValue());
+				exportedPDOM.acquireWriteLock(0);
+				try {
+					Map exportProperties= pm.getExportProperties();
+					if(exportProperties!=null) {
+						for(Iterator i = exportProperties.entrySet().iterator(); i.hasNext(); ) {
+							Map.Entry entry = (Map.Entry) i.next();
+							exportedPDOM.setProperty((String) entry.getKey(), (String) entry.getValue());
+						}
 					}
+				} finally {
+					exportedPDOM.releaseWriteLock(0, true);
 				}
-			} finally {
-				exportedPDOM.releaseWriteLock(0);
+			}
+			finally {
+				exportedPDOM.close();
 			}
 		} catch(InterruptedException ie) {
 			String msg= MessageFormat.format(Messages.GeneratePDOM_GenericGenerationFailed, new Object[] {ie.getMessage()});

@@ -28,20 +28,24 @@ final class Chunk {
 	
 	boolean fCacheHitFlag= false;
 	boolean fDirty= false;
-	boolean fWritable= false;
+	boolean fLocked= false;	// locked chunks must not be released from cache.
 	int fCacheIndex= -1;
 		
-	Chunk(Database db, int sequenceNumber) throws CoreException {
+	Chunk(Database db, int sequenceNumber) {
 		fDatabase= db;
 		fBuffer= ByteBuffer.allocate(Database.CHUNK_SIZE);
 		fSequenceNumber= sequenceNumber;
+	}
+
+	void read() throws CoreException {
 		try {
+			fBuffer.position(0);
 			fDatabase.getChannel().read(fBuffer, fSequenceNumber*Database.CHUNK_SIZE);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
-	
+
 	void flush() throws CoreException {
 		try {
 			fBuffer.position(0);

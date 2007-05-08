@@ -60,8 +60,10 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	
 	/**
 	 * Releases a write lock, reestablishing a certain amount of read locks.
+	 * @param establishReadLockCount amount of read-locks to establish
+	 * @param flush if <code>true</code> changes are flushed to disk
 	 */
-	void releaseWriteLock(int establishReadLockCount);
+	void releaseWriteLock(int establishReadLockCount, boolean flush);
 	
 	/**
 	 * Write the key, value mapping to the fragment properties. If a mapping for the
@@ -72,4 +74,9 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * @throws NullPointerException if key is null
 	 */
 	public void setProperty(String propertyName, String value) throws CoreException;
+
+	/**
+	 * Flushes caches to disk.
+	 */
+	void flush() throws CoreException;
 }

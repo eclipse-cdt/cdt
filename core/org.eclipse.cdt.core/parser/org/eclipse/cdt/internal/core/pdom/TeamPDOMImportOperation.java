@@ -282,7 +282,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 			}
 		}
 		finally {
-			pdom.releaseWriteLock(giveupReadlocks);
+			pdom.releaseWriteLock(giveupReadlocks, true);
 		}
 	}
 	

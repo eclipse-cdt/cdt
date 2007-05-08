@@ -176,6 +176,15 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	 * @since 4.0
 	 */
 	protected void parseTUs(IWritableIndex index, int readlockCount, Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
+		try {
+			internalParseTUs(index, readlockCount, sources, headers, monitor);
+		}
+		finally {
+			index.flush();
+		}
+	}
+	
+	private void internalParseTUs(IWritableIndex index, int readlockCount, Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		int options= 0;
 		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
 			options |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
@@ -273,7 +282,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					IASTTranslationUnit ast= createAST(tu, scanner, options, pm);
 					fStatistics.fParsingTime += System.currentTimeMillis()-start;
 					if (ast != null) {
-						addSymbols(ast, index, readlockCount, configHash, pm);
+						addSymbols(ast, index, readlockCount, false, configHash, pm);
 					}
 				}
 			}
@@ -330,7 +339,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 				
 			fStatistics.fParsingTime += System.currentTimeMillis()-start;
 			if (ast != null) {
-				addSymbols(ast, index, readlockCount, 0, pm);
+				addSymbols(ast, index, readlockCount, false, 0, pm);
 				updateInfo(-1, +1, 0);
 			}
 		}

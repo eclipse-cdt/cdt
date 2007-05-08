@@ -109,16 +109,31 @@ abstract public class PDOMWriter {
 	protected abstract IIndexFileLocation findLocation(String absolutePath);
 		
 	/**
+	 * Fully equivalent to 
+	 * <code>addSymbols(IASTTranslationUnit, IWritableIndex, int, true, int, IProgressMonitor)</code>.
+	 * @since 4.0
+	 */
+	public void addSymbols(IASTTranslationUnit ast, 
+			IWritableIndex index, int readlockCount,
+			int configHash, IProgressMonitor pm) throws InterruptedException, CoreException {
+		addSymbols(ast, index, readlockCount, true, configHash, pm);
+	}
+
+	/**
 	 * Extracts symbols from the given ast and adds them to the index. It will
 	 * make calls to 	  
 	 * {@link #needToUpdate(IIndexFileLocation)},
 	 * {@link #postAddToIndex(IIndexFileLocation, IIndexFile)},
 	 * {@link #getLastModified(IIndexFileLocation)} and
 	 * {@link #findLocation(String)} to obtain further information.
+	 * 
+	 * When flushIndex is set to <code>false</code>, you must make sure to flush the 
+	 * index after your last write operation.
 	 * @since 4.0
 	 */
-	public void addSymbols(IASTTranslationUnit ast, IWritableIndex index, int readlockCount, int configHash,
-			IProgressMonitor pm) throws InterruptedException, CoreException {
+	public void addSymbols(IASTTranslationUnit ast, 
+			IWritableIndex index, int readlockCount, boolean flushIndex,
+			int configHash, IProgressMonitor pm) throws InterruptedException, CoreException {
 		final Map symbolMap= new HashMap();
 		try {
 			HashSet contextIncludes= new HashSet();
@@ -187,7 +202,7 @@ abstract public class PDOMWriter {
 					}
 				}
 			} finally {
-				index.releaseWriteLock(readlockCount);
+				index.releaseWriteLock(readlockCount, flushIndex);
 			}
 			fStatistics.fAddToIndexTime+= System.currentTimeMillis()-start;
 		}

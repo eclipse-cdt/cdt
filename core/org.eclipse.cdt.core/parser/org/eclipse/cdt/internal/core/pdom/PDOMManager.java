@@ -1037,8 +1037,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			PDOM pdom= (PDOM) getPDOM(cproject);
 			pdom.acquireWriteLock();
 			try {
+				pdom.flush();
 				Database db= pdom.getDB();
-				db.flushDirtyChunks();
 				FileChannel from= db.getChannel();
 				FileChannel to = new FileOutputStream(targetLocation).getChannel();
 				from.transferTo(0, from.size(), to);

@@ -249,7 +249,7 @@ public class DBTest extends BaseTestCase {
 		IString biss = db.newString(b);
 		IString aisc = db.newString(acs);
 		IString bisc = db.newString(bcs);
-		db.setReadOnly();
+		db.setReadOnly(true);
 		
 		assertSignEquals(expected, aiss.compare(bcs, caseSensitive));
 		assertSignEquals(expected, aiss.compare(biss, caseSensitive));

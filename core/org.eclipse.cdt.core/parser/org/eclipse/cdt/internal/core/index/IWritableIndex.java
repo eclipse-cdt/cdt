@@ -67,8 +67,16 @@ public interface IWritableIndex extends IIndex {
 
 	/**
 	 * Releases a write lock, reestablishing a certain amount of read locks.
+	 * Fully equivalent to <code>releaseWriteLock(int, true)</code>.
 	 */
 	void releaseWriteLock(int establishReadLockCount);
+
+	/**
+	 * Releases a write lock, reestablishing a certain amount of read locks.
+	 * @param establishReadLockCount amount of read-locks to establish.
+	 * @param flushDatabase when true the changes are flushed to disk.
+	 */
+	void releaseWriteLock(int establishReadLockCount, boolean flushDatabase);
 	
 	/**
 	 * Resets the counters for cache-hits
@@ -90,4 +98,9 @@ public interface IWritableIndex extends IIndex {
 	 * no writable fragment.
 	 */
 	IWritableIndexFragment getPrimaryWritableFragment();
+
+	/**
+	 * Flushes all caches to the disk. 
+	 */
+	void flush() throws CoreException;
 }

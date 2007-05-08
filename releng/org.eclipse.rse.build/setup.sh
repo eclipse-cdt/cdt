@@ -159,19 +159,19 @@ if [ ! -d working/build ]; then
 fi
 if [ ! -d publish ]; then
   D=/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops
-  if [ -d ${D} ]; then; ln -s ${D} publish; else; mkdir publish; fi
+  if [ -d ${D} ]; then ln -s ${D} publish; else mkdir publish; fi
 fi
 if [ ! -d testUpdates ]; then
   D=/home/data/httpd/download.eclipse.org/dsdp/tm/testUpdates
-  if [ -d ${D} ]; then; ln -s ${D} testUpdates; else; mkdir testUpdates; fi
+  if [ -d ${D} ]; then ln -s ${D} testUpdates; else mkdir testUpdates; fi
 fi
 if [ ! -d updates ]; then
   D=/home/data/httpd/download.eclipse.org/dsdp/tm/updates
-  if [ -d ${D} ]; then; ln -s ${D} updates; else; mkdir updates; fi
+  if [ -d ${D} ]; then ln -s ${D} updates; else mkdir updates; fi
 fi
 if [ ! -d staging ]; then
   D=/home/data/httpd/download-staging.priv/dsdp/tm
-  if [ -d ${D} ]; then; ln -s ${D} staging; else; mkdir staging; fi
+  if [ -d ${D} ]; then ln -s ${D} staging; else mkdir staging; fi
 fi
 
 # create symlinks as needed

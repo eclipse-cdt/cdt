@@ -145,7 +145,20 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 */
 	void setSessionProperty(QualifiedName name, Object value);
 	
+	/**
+	 * Returns the default setting ICConfigurationDescription. This is the configuration
+	 * used by the CDT editor and views. 
+	 * 
+	 * @see ICProjectDescriptionPreferences#setConfigurationRelations(int)
+	 * @return
+	 */
 	ICConfigurationDescription getDefaultSettingConfiguration();
 
+	/**
+	 * Sets the default setting ICConfigurationDescription. This is the configuration
+     * used by the CDT editor and views.
+     *
+	 * @param cfg
+	 */
 	void setDefaultSettingConfiguration(ICConfigurationDescription cfg);
 }

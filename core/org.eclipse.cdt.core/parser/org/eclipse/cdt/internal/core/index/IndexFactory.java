@@ -58,7 +58,6 @@ public class IndexFactory {
 		boolean addDependent=    (options & ADD_DEPENDENT) != 0;
 		boolean skipProvided= (options & SKIP_PROVIDED) != 0;
 		
-		IndexProviderManager m = CCoreInternals.getPDOMManager().getIndexProviderManager();
 		HashMap map= new HashMap();
 		Collection selectedProjects= getProjects(projects, addDependencies, addDependent, map, new Integer(1));
 		
@@ -70,14 +69,7 @@ public class IndexFactory {
 				safeAddFragment(fragments, pdom);
 				
 				if(!skipProvided) {
-					ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
-					if(pd!=null) {
-						ICConfigurationDescription activeCfg= pd.getActiveConfiguration();
-						IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
-						for(int i=0; i<pFragments.length; i++) {
-							safeAddFragment(fragments, pFragments[i]);
-						}
-					}
+					safeAddProvidedFragments(cproject, fragments);
 				}
 			}
 		}
@@ -96,15 +88,9 @@ public class IndexFactory {
 				ICProject cproject = (ICProject) iter.next();
 				IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
 				safeAddFragment(fragments, pdom);
+				
 				if(!skipProvided) {
-					ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
-					if(pd!=null) {
-						ICConfigurationDescription activeCfg= pd.getActiveConfiguration();
-						IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
-						for(int i=0; i<pFragments.length; i++) {
-							safeAddFragment(fragments, pFragments[i]);
-						}
-					}
+					safeAddProvidedFragments(cproject, fragments);
 				}
 			}
 		}
@@ -113,6 +99,38 @@ public class IndexFactory {
 		return new CIndex((IIndexFragment[]) pdoms.toArray(new IIndexFragment[pdoms.size()]), primaryFragmentCount); 
 	}
 
+	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {		
+		Collection selectedProjects= Collections.singleton(project);
+		Map readOnlyFrag= new LinkedHashMap();
+		Map fragments= new LinkedHashMap();
+		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
+			ICProject cproject = (ICProject) iter.next();
+			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
+			if (pdom != null) {
+				safeAddFragment(fragments, pdom);
+				safeAddProvidedFragments(cproject, readOnlyFrag);
+			}
+		}
+		
+		selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap(), new Integer(1));		
+		selectedProjects.remove(project);
+		
+		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
+			ICProject cproject = (ICProject) iter.next();
+			safeAddFragment(readOnlyFrag, (IIndexFragment) fPDOMManager.getPDOM(cproject));
+		}
+				
+		if (fragments.isEmpty()) {
+			throw new CoreException(CCorePlugin.createStatus(
+					MessageFormat.format(Messages.IndexFactory_errorNoSuchPDOM0, new Object[]{project.getElementName()})));
+		}
+		
+		Collection pdoms= fragments.values();
+		Collection roPdoms= readOnlyFrag.values();
+		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]),
+				(IIndexFragment[]) roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
+	}
+	
 	private Collection getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent, HashMap map, Integer markWith) {
 		List projectsToSearch= new ArrayList();
 		
@@ -172,47 +190,6 @@ public class IndexFactory {
 			}
 		}
 	}
-
-	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
-		IndexProviderManager m = CCoreInternals.getPDOMManager().getIndexProviderManager();
-		
-		Collection selectedProjects= Collections.singleton(project);
-		Map readOnlyFrag= new LinkedHashMap();
-		Map fragments= new LinkedHashMap();
-		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-			ICProject p = (ICProject) iter.next();
-			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(p);
-			if (pdom != null) {
-				safeAddFragment(fragments, pdom);
-				ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(p.getProject(), false);
-				if(pd!=null) {
-					ICConfigurationDescription activeCfg= pd.getActiveConfiguration();
-					IIndexFragment[] pFragments= m.getProvidedIndexFragments(activeCfg);
-					for(int i=0; i<pFragments.length; i++) {
-						safeAddFragment(readOnlyFrag, pFragments[i]);
-					}
-				}
-			}
-		}
-		
-		selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap(), new Integer(1));		
-		selectedProjects.remove(project);
-		
-		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-			ICProject cproject = (ICProject) iter.next();
-			safeAddFragment(readOnlyFrag, (IIndexFragment) fPDOMManager.getPDOM(cproject));
-		}
-				
-		if (fragments.isEmpty()) {
-			throw new CoreException(CCorePlugin.createStatus(
-					MessageFormat.format(Messages.IndexFactory_errorNoSuchPDOM0, new Object[]{project.getElementName()})));
-		}
-		
-		Collection pdoms= fragments.values();
-		Collection roPdoms= readOnlyFrag.values();
-		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]),
-				(IIndexFragment[]) roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
-	}
 	
 	/**
 	 * Add an entry for the specified fragment. This copes with problems occuring when reading
@@ -235,6 +212,28 @@ public class IndexFactory {
 				CCorePlugin.log(ce);
 			} catch(InterruptedException ie) {
 				CCorePlugin.log(ie);
+			}
+		}
+	}
+	
+	/**
+	 * Adds ID -> IIndexFragment entries to the specified Map, for fragments provided under the
+	 * CIndex extension point for the specified ICProject
+	 * @param cproject
+	 * @param fragments
+	 */
+	private void safeAddProvidedFragments(ICProject cproject, Map fragments) {
+		ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
+		if(pd!=null) {
+			IndexProviderManager ipm = CCoreInternals.getPDOMManager().getIndexProviderManager();
+			ICConfigurationDescription cfg= pd.getDefaultSettingConfiguration();
+			try {
+				IIndexFragment[] pFragments= ipm.getProvidedIndexFragments(cfg);
+				for(int i=0; i<pFragments.length; i++) {
+					safeAddFragment(fragments, pFragments[i]);
+				}
+			} catch(CoreException ce) {
+				CCorePlugin.log(ce);
 			}
 		}
 	}

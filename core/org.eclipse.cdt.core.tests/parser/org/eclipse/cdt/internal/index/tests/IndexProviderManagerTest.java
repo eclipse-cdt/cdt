@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.provider.IIndexFragmentProvider;
@@ -65,6 +67,8 @@ import org.eclipse.core.runtime.QualifiedName;
  * Example usage and test for IIndexProvider
  */
 public class IndexProviderManagerTest extends IndexTestBase {
+	final CCorePlugin core= CCorePlugin.getDefault();
+	
 	public IndexProviderManagerTest() {
 		super("IndexProviderManagerTest");
 	}
@@ -74,7 +78,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	}
 
 	public void testProvider_SimpleLifeCycle() throws Exception {
-		DummyProvider1.getProjectsTrace().clear();
+		DummyProvider1.reset();
 		List cprojects = new ArrayList(), expectedTrace = new ArrayList();
 		try {
 			for(int i=0; i<3; i++) {
@@ -98,7 +102,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	}
 
 	public void testProvider_OverDeleteAndAdd() throws Exception {
-		DummyProvider1.getProjectsTrace().clear();
+		DummyProvider1.reset();
 		List expectedTrace = new ArrayList();
 		ICProject cproject = null;
 		try {
@@ -121,7 +125,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	}
 
 	public void testProvider_OverMove() throws Exception {
-		DummyProvider1.getProjectsTrace().clear();
+		DummyProvider1.reset();
 		List cprojects = new ArrayList();
 		List expectedTrace = new ArrayList();
 
@@ -151,7 +155,68 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-
+	
+	public void testIndexFactoryConfigurationUsage() throws Exception {
+		IIndex index;
+		
+		ICProject cproject= CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
+		IProject project= cproject.getProject();
+		
+		ICProjectDescription pd= core.getProjectDescription(project);
+		ICConfigurationDescription cfg1= newCfg(pd, "project", "config1");
+		ICConfigurationDescription cfg2= newCfg(pd, "project", "config2");
+		core.setProjectDescription(project, pd);
+		
+		index= CCorePlugin.getIndexManager().getIndex(cproject);
+		CCorePlugin.getIndexManager().joinIndexer(8000, NPM);
+		
+		try {			
+			DummyProvider1.reset();
+			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
+			assertEquals(0, DummyProvider1.getProjectsTrace().size());
+			assertEquals(0, DummyProvider1.getCfgsTrace().size());
+			
+			changeActiveConfiguration(project, cfg1);
+			DummyProvider1.reset();
+			index= CCorePlugin.getIndexManager().getIndex(cproject);
+			assertEquals(0, DummyProvider1.getProjectsTrace().size());
+			assertEquals(1, DummyProvider1.getCfgsTrace().size());
+			assertEquals("project.config1", ((ICConfigurationDescription)DummyProvider1.getCfgsTrace().get(0)).getId());
+			
+			changeActiveConfiguration(project, cfg2);
+			DummyProvider1.reset();
+			index= CCorePlugin.getIndexManager().getIndex(cproject);
+			assertEquals(0, DummyProvider1.getProjectsTrace().size());
+			assertEquals(1, DummyProvider1.getCfgsTrace().size());
+			assertEquals("project.config2", ((ICConfigurationDescription)DummyProvider1.getCfgsTrace().get(0)).getId());
+			
+			DummyProvider1.reset();
+			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
+			assertEquals(0, DummyProvider1.getProjectsTrace().size());
+			assertEquals(0, DummyProvider1.getCfgsTrace().size());
+			
+			changeActiveConfiguration(project, cfg1);
+			DummyProvider1.reset();
+			index= CCorePlugin.getIndexManager().getIndex(cproject);
+			assertEquals(0, DummyProvider1.getProjectsTrace().size());
+			assertEquals(1, DummyProvider1.getCfgsTrace().size());
+			// should still be config2, as the change in active configuration does not matter
+			assertEquals("project.config2", ((ICConfigurationDescription)DummyProvider1.getCfgsTrace().get(0)).getId());
+			
+			changeActiveConfiguration(project, cfg2);
+			DummyProvider1.reset();
+			index= CCorePlugin.getIndexManager().getIndex(cproject);
+			assertEquals(0, DummyProvider1.getProjectsTrace().size());
+			assertEquals(1, DummyProvider1.getCfgsTrace().size());
+			// there should be no change from the previous state (also config2)
+			assertEquals("project.config2", ((ICConfigurationDescription)DummyProvider1.getCfgsTrace().get(0)).getId());
+		} finally {
+			if (cproject != null) {
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			}
+		}
+	}
+	
 	public void testGetProvidedFragments() throws Exception {
 		ICProject cproject= CProjectHelper.createCProject("IndexProviderManagerTest", "bin", IPDOMManager.ID_NO_INDEXER);
 
@@ -257,6 +322,26 @@ public class IndexProviderManagerTest extends IndexTestBase {
 				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 			}
 		}
+	}
+	
+	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
+		CDefaultConfigurationData data= new CDefaultConfigurationData(project+"."+config, project+" "+config+" name", null);
+		data.initEmptyData();
+		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);		
+	}
+	
+	private void changeActiveConfiguration(IProject project, ICConfigurationDescription cfg) throws CoreException {
+		ICProjectDescription pd= core.getProjectDescription(project);
+		pd.setActiveConfiguration(pd.getConfigurationById(cfg.getId()));
+		core.setProjectDescription(project, pd);
+		CCorePlugin.getIndexManager().joinIndexer(8000, NPM);
+	}
+	
+	private void changeConfigRelations(IProject project, int option) throws CoreException {
+		ICProjectDescription pd= core.getProjectDescription(project);
+		pd.setConfigurationRelations(option);
+		core.setProjectDescription(project, pd);
+		CCorePlugin.getIndexManager().joinIndexer(8000, NPM);
 	}
 }
 

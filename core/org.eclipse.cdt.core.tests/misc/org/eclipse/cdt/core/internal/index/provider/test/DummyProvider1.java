@@ -25,18 +25,29 @@ import org.eclipse.core.runtime.CoreException;
  * project lifecycles.
  */
 public class DummyProvider1 implements IReadOnlyPDOMProvider {
-	static List trace = Collections.synchronizedList(new ArrayList());
+	static List prjTrace= Collections.synchronizedList(new ArrayList());
+	static List cfgTrace= Collections.synchronizedList(new ArrayList());
+	
+	public static void reset() {
+		prjTrace.clear();
+		cfgTrace.clear();
+	}
 	
 	public static List getProjectsTrace() {
-		return trace;
+		return prjTrace;
+	}
+	
+	public static List getCfgsTrace() {
+		return cfgTrace;
 	}
 	
 	public IPDOMDescriptor[] getDescriptors(ICConfigurationDescription config) {
+		cfgTrace.add(config);
 		return new IPDOMDescriptor[0];
 	}
 	
 	public boolean providesFor(ICProject project) throws CoreException {
-		trace.add(project);
+		prjTrace.add(project);
 		return true;
 	}
 }

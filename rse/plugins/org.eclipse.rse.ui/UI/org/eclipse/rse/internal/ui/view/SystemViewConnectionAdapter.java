@@ -136,11 +136,10 @@ public class SystemViewConnectionAdapter
 		RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 		
 		//updateAction.setValue(null); // reset
-		if (sysTypeAdapter == null
-				|| sysTypeAdapter.acceptContextMenuActionContribution(host, anotherConnectionAction.getClass())) {
+		if (sysTypeAdapter == null || sysTypeAdapter.acceptContextMenuActionContribution(host, anotherConnectionAction.getClass())) {
 			menu.add(menuGroup, anotherConnectionAction);
-			menu.appendToGroup(ISystemContextMenuConstants.GROUP_NEW, new GroupMarker(ISystemContextMenuConstants.GROUP_NEW_NONCASCADING));// user or BP/ISV additions
 		}
+		menu.appendToGroup(ISystemContextMenuConstants.GROUP_NEW, new GroupMarker(ISystemContextMenuConstants.GROUP_NEW_NONCASCADING));// user or BP/ISV additions
 
 		if (sysTypeAdapter == null
 				|| sysTypeAdapter.acceptContextMenuActionContribution(host, copyAction.getClass()))

@@ -182,7 +182,7 @@ if [ ! -h doit_nightly.sh ]; then
   ln -s org.eclipse.rse.build/bin/doit_nightly.sh .
 fi
 if [ ! -h setup.sh ]; then
-  if [ -f setup.sh ]; then; rm -f setup.sh; fi
+  if [ -f setup.sh ]; then rm -f setup.sh; fi
   ln -s org.eclipse.rse.build/bin/setup.sh .
 fi
 chmod a+x doit_irsbuild.sh doit_nightly.sh

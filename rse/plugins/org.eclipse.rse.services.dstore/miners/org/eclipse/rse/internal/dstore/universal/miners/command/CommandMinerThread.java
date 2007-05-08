@@ -850,6 +850,20 @@ public class CommandMinerThread extends MinerThread
 	    if (_isShell)
 	    {
 	        sendInput("exit"); //$NON-NLS-1$
+	        
+	        // in case exit doesn't end it
+	        try
+	        {
+	        	Thread.sleep(1000);
+	        }
+	        catch (Exception e)
+	        {
+	        	
+	        }
+	        if (_stdOutputHandler.isAlive())
+	        {
+	        	_theProcess.destroy();
+	        }
 	    }
 	}
 	

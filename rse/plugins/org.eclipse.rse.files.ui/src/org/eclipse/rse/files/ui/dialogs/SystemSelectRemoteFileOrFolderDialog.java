@@ -11,10 +11,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
+ * Kevin Doyle (IBM) - Added a double click listener that closes the dialog if appropriate
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.dialogs;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
@@ -22,6 +26,7 @@ import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.internal.ui.view.SystemViewForm;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -404,6 +409,43 @@ public class SystemSelectRemoteFileOrFolderDialog
     // ------------------
     // PRIVATE METHODS...
     // ------------------
+	/**
+     * Private method. 
+	 * @see SystemPromptDialog#createContents(Composite)
+	 */
+    protected Control createContents(Composite parent) 
+	{
+    	Control control = super.createContents(parent);
+    	form.getSystemViewForm().getSystemView().addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick(event);
+			}
+		});    			
+    	return control;
+	}
+    
+	/**
+	 * Handles double clicks in viewer.
+	 * Closes the dialog if a file is double clicked
+	 */
+	protected void handleDoubleClick(DoubleClickEvent event) 
+	{
+		SystemView tree = form.getSystemViewForm().getSystemView();
+		IStructuredSelection s = (IStructuredSelection) event.getSelection();
+		Object element = s.getFirstElement();
+		if (element == null)
+			return;
+		if (FILE_MODE && form.isPageComplete() && !tree.isExpandable(element))
+		{
+			setReturnCode(OK);
+			if (processOK())
+		    {
+			  	okPressed = true;
+			    close();
+			}
+		}
+	}
+    
 	/**
      * Private method. 
 	 * @see SystemPromptDialog#getInitialFocusControl()

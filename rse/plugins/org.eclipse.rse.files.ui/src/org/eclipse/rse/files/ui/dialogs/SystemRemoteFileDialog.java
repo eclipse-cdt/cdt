@@ -11,15 +11,23 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
+ * Kevin Doyle (IBM) - Added Double Click Listener that closes dialog on file double click
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.dialogs;
 
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.internal.ui.view.SystemActionViewerFilter;
+import org.eclipse.rse.internal.ui.view.SystemView;
+import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -54,5 +62,41 @@ public class SystemRemoteFileDialog extends SystemRemoteResourceDialog
 	public SystemActionViewerFilter getViewerFilter()
 	{
 		return null;
+	}
+	
+	/**
+	 * Override of parent.
+	 */
+	protected Control createContents(Composite parent) 
+	{
+		Control control = super.createContents(parent);
+		_form.getSystemViewForm().getSystemView().addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick(event);
+			}
+		});    		
+		return control;
+	}
+	
+	/**
+	 * Handles double clicks in viewer.
+	 * Closes the dialog if a file is double clicked
+	 */
+	protected void handleDoubleClick(DoubleClickEvent event) 
+	{
+		SystemView tree = _form.getSystemViewForm().getSystemView();
+		IStructuredSelection s = (IStructuredSelection) event.getSelection();
+		Object element = s.getFirstElement();
+		if (element == null)
+			return;
+		if (_form.isPageComplete() && !tree.isExpandable(element))
+		{
+			setReturnCode(OK);
+			if (processOK())
+		    {
+			  	okPressed = true;
+			    close();
+			}
+		}
 	}
 }

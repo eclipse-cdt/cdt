@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 {
-	private SystemResourceSelectionForm	_form;
+	protected SystemResourceSelectionForm	_form;
 	private SystemResourceSelectionInputProvider _inputProvider;
 	private Object _preSelection;
 	private IValidatorRemoteSelection _selectionValidator;

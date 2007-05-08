@@ -11,6 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
+ * Kevin Doyle (IBM) - Added getSystemViewForm()
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  ********************************************************************************/
 
@@ -129,6 +130,15 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
     public Object[] getSelectedObjects()
     {
     	return outputObjects;
+    }
+    
+    /**
+     * Return the embedded System Tree object.
+     * Will be null until createControls is called.
+     */
+    public SystemViewForm getSystemViewForm()
+    {
+    	return _systemViewForm;
     }
     
 	public void createControls(Composite parent)

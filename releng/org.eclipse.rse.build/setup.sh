@@ -41,7 +41,7 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070316.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070430.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-3.3M7-${ep_arch} ]; then
@@ -84,12 +84,12 @@ if [ ! -f eclipse/startup.jar ]; then
   fi
   cd ${curdir2}
 fi
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200703302000.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200705021527.jar ]; then
   # CDT 4.0.0 Runtime
   echo "Getting CDT Runtime..."
-  wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M6/cdt-4.0.0-M6-${cdt_arch}.tar.gz"
-  tar xfvz cdt-4.0.0-M6-${cdt_arch}.tar.gz
-  rm cdt-4.0.0-M6-${cdt_arch}.tar.gz
+  wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0RC0/cdt-4.0.0-RC0-${cdt_arch}.tar.gz"
+  tar xfvz cdt-4.0.0-RC0-${cdt_arch}.tar.gz
+  rm cdt-4.0.0-RC0-${cdt_arch}.tar.gz
 fi
 if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200703291501.jar ]; then
   # EMF 2.3.0 Runtime
@@ -98,7 +98,7 @@ if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200703291501.jar ]; then
   unzip -o emf-sdo-runtime-2.3.0M6.zip
   rm emf-sdo-runtime-2.3.0M6.zip 
 fi
-if [ ! -f eclipse/plugins/org.junit_3.8.2/junit.jar ]; then
+if [ ! -f eclipse/plugins/org.junit_3.8.2.v200701261102/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
   wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M7-200705031400/eclipse-test-framework-3.3M7.zip"

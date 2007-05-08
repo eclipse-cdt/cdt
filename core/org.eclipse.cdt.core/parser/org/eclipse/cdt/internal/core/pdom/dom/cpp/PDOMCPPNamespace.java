@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -60,7 +61,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPNAMESPACE;
+		return IIndexCPPBindingConstants.CPPNAMESPACE;
 	}
 
 	public BTree getIndex() throws CoreException {
@@ -115,10 +116,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		try {
-			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray());
-			getIndex().accept(visitor);
-			
-			IBinding[] bindings= visitor.getBindings();
+			IBinding[] bindings= getBindingsViaCache(name.toCharArray());
 			return CPPSemantics.resolveAmbiguities(name, bindings);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -129,6 +127,9 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
 		IBinding[] result = null;
 		try {
+			if (!prefixLookup) {
+				return getBindingsViaCache(name.toCharArray());
+			}
 			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
 			getIndex().accept(visitor);
 			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
@@ -136,6 +137,19 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 			CCorePlugin.log(e);
 		}
 		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	}
+
+	private IBinding[] getBindingsViaCache(final char[] name) throws CoreException {
+		final String key= pdom.createKeyForCache(record, name);
+		IBinding[] result= (IBinding[]) pdom.getCachedResult(key);
+		if (result != null) {
+			return result;
+		}
+		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name, null, false, true);
+		getIndex().accept(visitor);
+		result = visitor.getBindings();
+		pdom.putCachedResult(key, result);
+		return result;
 	}
 
 	public boolean isFullyCached() throws DOMException {

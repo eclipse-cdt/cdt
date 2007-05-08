@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -74,7 +75,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 	
 	public int getNodeType() {
-		return PDOMCLinkage.CSTRUCTURE;
+		return IIndexCBindingConstants.CSTRUCTURE;
 	}
 	
 	public Object clone() {
@@ -136,19 +137,30 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 	
 	public IField findField(String name) throws DOMException {
-		FindField field = new FindField(name);
+		final String key= pdom.createKeyForCache(record, name.toCharArray());
+		IField result= (IField) pdom.getCachedResult(key);
+		if (result != null) {
+			return result;
+		}
+
+		FindField visitor = new FindField(name);
 		try {
-			accept(field);
+			accept(visitor);
 			// returned => not found
 			return null;
 		} catch (CoreException e) {
-			if (e.getStatus().equals(Status.OK_STATUS))
-				return field.getField();
+			if (e.getStatus().equals(Status.OK_STATUS)) {
+				result= visitor.getField();
+			}
 			else {
 				CCorePlugin.log(e);
 				return null;
 			}
 		}
+		if (result != null) {
+			pdom.putCachedResult(key, result);
+		}
+		return result;
 	}
 
 	public IScope getCompositeScope() throws DOMException {

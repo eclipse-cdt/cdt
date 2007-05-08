@@ -147,7 +147,8 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			return 0;
 	}
 
-	public PDOMBinding adaptBinding(IBinding binding) throws CoreException {
+	public PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
+		IBinding binding= inputBinding;
 		if (binding instanceof PDOMBinding) {
 			// there is no guarantee, that the binding is from the same PDOM object.
 			PDOMBinding pdomBinding = (PDOMBinding) binding;
@@ -163,15 +164,24 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 				return null;
 			}
 		}
+		
+		PDOMBinding result= (PDOMBinding) pdom.getCachedResult(inputBinding);
+		if (result != null) {
+			return result;
+		}
+
 		PDOMNode parent = getAdaptedParent(binding, false, false);
 
 		if (parent == this) {
-			return FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});
+			result= FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});
 		} else if (parent instanceof IPDOMMemberOwner) {
-			return FindBinding.findBinding(parent, getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});
+			result= FindBinding.findBinding(parent, getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});
 		}
 		
-		return null;
+		if (result != null) {
+			pdom.putCachedResult(inputBinding, result);
+		}
+		return result;
 	}
 
 	public PDOMNode getNode(int record) throws CoreException {

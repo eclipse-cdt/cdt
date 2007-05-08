@@ -496,10 +496,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	/**
 	 * Find the equivalent binding, or binding placeholder within this PDOM
 	 */
-	public PDOMBinding adaptBinding(IBinding binding) throws CoreException {
-		if (binding == null || binding instanceof IProblemBinding)
+	public PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
+		if (inputBinding == null || inputBinding instanceof IProblemBinding)
 			return null;
 
+		IBinding binding= inputBinding;
 		if (binding instanceof PDOMBinding) {
 			// there is no guarantee, that the binding is from the same PDOM object.
 			PDOMBinding pdomBinding = (PDOMBinding) binding;
@@ -515,18 +516,24 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				return null;
 			}
 		}
-
-		PDOMNode parent = getAdaptedParent(binding, false, false);
-
-		if (parent == this) {
-			return CPPFindBinding.findBinding(getIndex(), this, binding);
-		} else if (parent instanceof IPDOMMemberOwner) {
-			return CPPFindBinding.findBinding(parent, this, binding);
-		} else if (parent instanceof PDOMCPPNamespace) {
-			return CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding);
+		
+		PDOMBinding result= (PDOMBinding) pdom.getCachedResult(inputBinding);
+		if (result != null) {
+			return result;
 		}
 
-		return null;
+		PDOMNode parent = getAdaptedParent(binding, false, false);
+		if (parent == this) {
+			result= CPPFindBinding.findBinding(getIndex(), this, binding);
+		} else if (parent instanceof IPDOMMemberOwner) {
+			result= CPPFindBinding.findBinding(parent, this, binding);
+		} else if (parent instanceof PDOMCPPNamespace) {
+			result= CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding);
+		}
+		if (result != null) {
+			pdom.putCachedResult(inputBinding, result);
+		}
+		return result;
 	}
 
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {

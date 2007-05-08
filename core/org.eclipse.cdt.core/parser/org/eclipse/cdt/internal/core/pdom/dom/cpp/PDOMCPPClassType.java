@@ -37,11 +37,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -92,7 +92,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPCLASSTYPE;
+		return IIndexCPPBindingConstants.CPPCLASSTYPE;
 	}
 
 	public PDOMCPPBase getFirstBase() throws CoreException {
@@ -312,7 +312,8 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		try {
-		    if (getDBName().equals(name.toCharArray())) {
+		    final char[] nameChars = name.toCharArray();
+			if (getDBName().equals(nameChars)) {
 		        if (CPPClassScope.isConstructorReference(name)){
 		            return CPPSemantics.resolveAmbiguities(name, getConstructors());
 		        }
@@ -320,9 +321,8 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	            return this;
 		    }
 			
-		    BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray());
-			accept(visitor);
-			return CPPSemantics.resolveAmbiguities(name, visitor.getBindings());
+			final IBinding[] candidates = getBindingsViaCache(nameChars);
+			return CPPSemantics.resolveAmbiguities(name, candidates);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -332,22 +332,41 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
 		IBinding[] result = null;
 		try {
-			if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
-					|| (prefixLookup && getDBName().comparePrefix(name.toCharArray(), false) == 0)) {
+			final char[] nameChars = name.toCharArray();
+			if (!prefixLookup) {
+				return getBindingsViaCache(nameChars);
+			}
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(), nameChars, null, prefixLookup, !prefixLookup);
+			if (getDBName().comparePrefix(nameChars, false) == 0) {
 				// 9.2 ... The class-name is also inserted into the scope of
 				// the class itself
-				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, this);
+				visitor.visit(this);
 			}
 			
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
 			accept(visitor);
-			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
+			result= visitor.getBindings();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+		return result;
 	}
 	
+	private IBinding[] getBindingsViaCache(final char[] name) throws CoreException {
+		final String key = pdom.createKeyForCache(record, name);
+		IBinding[] result= (IBinding[]) pdom.getCachedResult(key);
+		if (result != null) {
+			return result;
+		}
+		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name, null, false, true);
+		if (getDBName().compare(name, true) == 0) {
+			visitor.visit(this);
+		}
+		accept(visitor);
+		result = visitor.getBindings();
+		pdom.putCachedResult(key, result);
+		return result;
+	}
+
 	public IBinding[] find(String name) throws DOMException {
 		return CPPSemantics.findBindings( this, name, false );
 	}

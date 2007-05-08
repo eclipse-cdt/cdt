@@ -514,6 +514,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private long lastWriteAccess= 0;
 	private long lastReadAccess= 0;
 
+	private HashMap fResultCache= new HashMap();
+
 	public void acquireReadLock() throws InterruptedException {
 		synchronized (mutex) {
 			++waitingReaders;
@@ -529,12 +531,19 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public void releaseReadLock() {
+		boolean clearCache= false;
 		synchronized (mutex) {
 			assert lockCount > 0: "No lock to release"; //$NON-NLS-1$
 			lastReadAccess= System.currentTimeMillis();
 			if (lockCount > 0)
 				--lockCount;
 			mutex.notifyAll();
+			clearCache= lockCount == 0;
+		}
+		if (clearCache) {
+			synchronized (fResultCache) {
+				fResultCache.clear();
+			}
 		}
 	}
 
@@ -568,6 +577,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 	
 	public void releaseWriteLock(int establishReadLocks, boolean flush) {
+		synchronized(fResultCache) {
+			fResultCache.clear();
+		}
 		try {
 			db.setReadOnly(flush);
 		} catch (CoreException e) {
@@ -740,5 +752,21 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	public void flush() throws CoreException {
 		db.flush();
+	}
+
+	public Object getCachedResult(Object binding) {
+		synchronized(fResultCache) {
+			return fResultCache.get(binding);
+		}
+	}
+
+	public void putCachedResult(Object key, Object result) {
+		synchronized(fResultCache) {
+			fResultCache.put(key, result);
+		}
 	}		
+	
+	public String createKeyForCache(int record, char[] name) {
+		return new StringBuffer(name.length+2).append((char) (record >> 16)).append((char) record).append(name).toString();
+	}
 }

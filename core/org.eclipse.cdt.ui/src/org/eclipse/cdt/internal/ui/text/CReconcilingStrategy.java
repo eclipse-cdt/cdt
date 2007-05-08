@@ -115,15 +115,15 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	
 	private void reconcile(final boolean initialReconcile) {
 		IASTTranslationUnit ast= null;
+		IWorkingCopy workingCopy= fManager.getWorkingCopy(fEditor.getEditorInput());
+		if (workingCopy == null) {
+			return;
+		}
 		try {
-			ITranslationUnit tu = fManager.getWorkingCopy(fEditor.getEditorInput());		
-			if (tu != null && tu.isWorkingCopy()) {
-				IWorkingCopy workingCopy = (IWorkingCopy)tu;
-				final boolean computeAST= initialReconcile || CUIPlugin.getDefault().getASTProvider().isActive(tu);
-				// reconcile
-				synchronized (workingCopy) {
-					ast= workingCopy.reconcile(computeAST, true, fProgressMonitor);
-				}
+			final boolean computeAST= initialReconcile || CUIPlugin.getDefault().getASTProvider().isActive(workingCopy);
+			// reconcile
+			synchronized (workingCopy) {
+				ast= workingCopy.reconcile(computeAST, true, fProgressMonitor);
 			}
 		} catch(OperationCanceledException oce) {
 			// document was modified while parsing
@@ -155,7 +155,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 			if (fProgressMonitor != null && fProgressMonitor.isCanceled()) {
 				return;
 			}
-			if (ast == null && fEditor instanceof IReconcilingParticipant) {
+			if (ast == null && fEditor instanceof IReconcilingParticipant && workingCopy.exists()) {
 				IReconcilingParticipant p= (IReconcilingParticipant) fEditor;
 				p.reconciled(true);
 			}

@@ -346,6 +346,10 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 	 */
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+		if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
+			fLineBackgroundPainter.removeHighlightPositions(fInactiveCodePositions);
+			fInactiveCodePositions= Collections.EMPTY_LIST;
+		}
 	}
 
 	/*
@@ -353,11 +357,6 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	 */
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		fDocument= newInput;
-		if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
-			List newInactiveCodePositions= Collections.EMPTY_LIST;
-			fLineBackgroundPainter.replaceHighlightPositions(fInactiveCodePositions, newInactiveCodePositions);
-			fInactiveCodePositions= newInactiveCodePositions;
-		}
 	}
 
 }

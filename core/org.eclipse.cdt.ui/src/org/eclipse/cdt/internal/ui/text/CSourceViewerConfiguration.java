@@ -326,10 +326,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		reconciler.setRepairer(dr, ICPartitions.C_CHARACTER);
 		
 		dr= new DefaultDamagerRepairer(getPreprocessorScanner(language));
-		if (dr != null) {
-			reconciler.setDamager(new PartitionDamager(), ICPartitions.C_PREPROCESSOR);
-			reconciler.setRepairer(dr, ICPartitions.C_PREPROCESSOR);
-		}
+		reconciler.setDamager(new PartitionDamager(), ICPartitions.C_PREPROCESSOR);
+		reconciler.setRepairer(dr, ICPartitions.C_PREPROCESSOR);
 		
 		return reconciler;
 	}
@@ -426,7 +424,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		if (fTextEditor != null && (fTextEditor.isEditable() || fTextEditor.getEditorInput() instanceof ExternalEditorInput)) {
 			//Delay changed and non-incremental reconciler used due to 
 			//PR 130089
-			MonoReconciler reconciler= new CReconciler(new CReconcilingStrategy(fTextEditor));
+			MonoReconciler reconciler= new CReconciler(fTextEditor, new CReconcilingStrategy(fTextEditor));
 			reconciler.setIsIncrementalReconciler(false);
 			reconciler.setProgressMonitor(new NullProgressMonitor());
 			reconciler.setDelay(500);

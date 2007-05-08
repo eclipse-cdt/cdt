@@ -40,7 +40,7 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 			if (VAL_EXP.equalsIgnoreCase(s))
 				return CDTPrefUtil.getBool(CDTPrefUtil.KEY_EXPORT);
 			if (VAL_TOOL.equalsIgnoreCase(s))
-				return CDTPrefUtil.getBool(CDTPrefUtil.KEY_TOOLM);
+				return !CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOTOOLM);
 		}
 		return false;
 	}

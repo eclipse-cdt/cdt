@@ -87,7 +87,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 	//	show_mul.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI));
 		show_mng.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG));
 		show_sav.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSAVE));
-		show_tool.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_TOOLM));
+		show_tool.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOTOOLM));
 		show_exp.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_EXPORT));
 		
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DISC_NAMES)) {
@@ -103,7 +103,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 	//	CDTPrefUtil.setBool(CDTPrefUtil.KEY_MULTI, show_mul.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, !show_mng.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOSAVE, !show_sav.getSelection());
-		CDTPrefUtil.setBool(CDTPrefUtil.KEY_TOOLM, show_tool.getSelection());
+		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOTOOLM, !show_tool.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_EXPORT, show_exp.getSelection());
 		int x = 0;
 		if (b_1.getSelection()) x = 1;

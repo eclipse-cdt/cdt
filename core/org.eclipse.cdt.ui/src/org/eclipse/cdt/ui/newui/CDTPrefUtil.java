@@ -26,7 +26,7 @@ public class CDTPrefUtil {
 	public static final String KEY_MULTI   = "properties.multi.config.enable"; //$NON-NLS-1$
 	public static final String KEY_DTREE   = "properties.data.hierarchy.enable"; //$NON-NLS-1$
 	public static final String KEY_NOSAVE  = "properties.save.position.disable"; //$NON-NLS-1$
-	public static final String KEY_TOOLM   = "properties.toolchain.modification.enable"; //$NON-NLS-1$
+	public static final String KEY_NOTOOLM   = "properties.toolchain.modification.disable"; //$NON-NLS-1$
 	public static final String KEY_EXPORT  = "properties.export.page.enable"; //$NON-NLS-1$
 	// string keys
 	public static final String KEY_PREFTC  = "wizard.preferred.toolchains";  //$NON-NLS-1$

@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -506,6 +507,22 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	
 	public static IPath normalizePath(IPath path){
 		return path.makeRelative();
+	}
+
+	protected ResourceInfo getParentResourceInfo(){
+		if(isRoot())
+			return null;
+		
+		IPath path = getPath();
+		path = path.removeLastSegments(1);
+		return (ResourceInfo)getParent().getResourceInfo(path, false);
+	}
+
+	protected IFolderInfo getParentFolderInfo(){
+		ResourceInfo parentRc = getParentResourceInfo();
+		for(; parentRc != null && !parentRc.isFolderInfo(); parentRc = parentRc.getParentResourceInfo());
+
+		return (IFolderInfo)parentRc;
 	}
 
 	abstract void resolveProjectReferences(boolean onLoad);

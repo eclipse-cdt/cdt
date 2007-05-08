@@ -60,6 +60,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, false));
 		b_dispCompatible = setupCheck(usercomp, Messages.getString("ToolChainEditTab.0"), 2, GridData.BEGINNING); //$NON-NLS-1$
+		b_dispCompatible.setSelection(true);
 
 		setupLabel(usercomp, Messages.getString("ToolChainEditTab.1"), 2, GridData.BEGINNING); //$NON-NLS-1$
 		c_toolchain = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);

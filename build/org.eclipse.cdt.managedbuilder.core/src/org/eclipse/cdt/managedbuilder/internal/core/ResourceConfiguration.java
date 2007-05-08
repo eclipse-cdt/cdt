@@ -972,14 +972,34 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	}
 
 	public boolean hasCustomSettings() {
-		if(toolList != null && toolList.size() != 0){
-			Tool tool;
-			for(Iterator iter = toolList.iterator(); iter.hasNext();){
-				tool = (Tool)iter.next();
-				if(tool.hasCustomSettings())
-					return true;
-			}
+		IResourceInfo parentRc = getParentResourceInfo();
+		if(parentRc instanceof FolderInfo){
+			IPath path = getPath();
+			String ext = path.getFileExtension();
+			if(ext == null)
+				ext = "";
+			ITool tool = ((FolderInfo)parentRc).getToolFromInputExtension(ext);
+			if(tool == null)
+				return true;
+			
+			ITool[] tti = getToolsToInvoke();
+			if(tti.length != 1)
+				return true;
+			
+			return ((Tool)tool).hasCustomSettings((Tool)tti[0]);
 		}
+		ITool[] tools = getTools();
+		ITool[] otherTools = ((IFileInfo)parentRc).getTools();
+		if(tools.length != otherTools.length)
+			return true;
+		
+		for(int i = 0; i < tools.length; i++){
+			Tool tool = (Tool)tools[i];
+			Tool otherTool = (Tool)otherTools[i];
+			if(tool.hasCustomSettings(otherTool))
+				return true;
+		}
+		
 		return false;
 	}
 	

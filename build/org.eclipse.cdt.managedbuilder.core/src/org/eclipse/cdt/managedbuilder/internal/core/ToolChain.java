@@ -2669,20 +2669,28 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return tch != null && tch.getId().equals(ConfigurationDataProvider.PREF_TC_ID);
 	}
 	
-	public boolean hasCustomSettings(){
+	public boolean hasCustomSettings(ToolChain tCh){
 		if(superClass == null)
 			return true;
 	
-		if(super.hasCustomSettings())
+		IToolChain realTc = ManagedBuildManager.getRealToolChain(this);
+		IToolChain otherRealTc = ManagedBuildManager.getRealToolChain(tCh);
+		if(realTc != otherRealTc)
 			return true;
 		
-		if(toolList != null && toolList.size() != 0){
-			Tool tool;
-			for(Iterator iter = toolList.iterator(); iter.hasNext();){
-				tool = (Tool)iter.next();
-				if(tool.hasCustomSettings())
-					return true;
-			}
+		if(hasCustomSettings())
+			return true;
+		
+		ITool[] tools = getTools();
+		ITool[] otherTools = tCh.getTools();
+		if(tools.length != otherTools.length)
+			return false;
+		
+		for(int i = 0; i < tools.length; i++){
+			Tool tool = (Tool)tools[i];
+			Tool otherTool = (Tool)otherTools[i];
+			if(tool.hasCustomSettings(otherTool))
+				return true;
 		}
 		return false;
 	}

@@ -3966,11 +3966,16 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return id;
 	}
 	
-	public boolean hasCustomSettings(){
+	public boolean hasCustomSettings(Tool tool){
 		if(superClass == null)
 			return true;
 		
-		if(super.hasCustomSettings())
+		ITool realTool = ManagedBuildManager.getRealTool(this);
+		ITool otherRealTool = ManagedBuildManager.getRealTool(tool);
+		if(realTool != otherRealTool)
+			return true;
+		
+		if(hasCustomSettings())
 			return true;
 
 		if(inputTypeList != null && inputTypeList.size() != 0){

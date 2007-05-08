@@ -40,6 +40,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -730,6 +731,21 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	
 	public boolean isToolChainCompatible(IToolChain tCh){
 		boolean compatible = false;
+		if(tCh == toolChain)
+			return true;
+		
+		if(tCh == null){
+			tCh = ManagedBuildManager.getExtensionToolChain(ConfigurationDataProvider.PREF_TC_ID);
+		}
+		
+		if(tCh == null)
+			return false;
+
+		IToolChain curReal = ManagedBuildManager.getRealToolChain(toolChain);
+		IToolChain newReal = ManagedBuildManager.getRealToolChain(tCh);
+		
+		if(curReal == newReal)
+			return true;
 		
 		if(tCh != null){
 			if(getToolChainConverterInfo(tCh) != null)
@@ -843,11 +859,33 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	
 	void updateToolChainWithConverter(ConverterInfo cInfo, String Id, String name) throws BuildException{
 		IBuildObject bo = cInfo.getConvertedFromObject();
-		if(!(bo instanceof ToolChain)){
+		ToolChain updatedToolChain = null;
+		if(bo instanceof Configuration){
+			Configuration cfg = (Configuration)bo;
+			if(cfg != getParent()){
+				IResourceInfo rcInfo = cfg.getResourceInfo(getPath(), true);
+				if(rcInfo instanceof FolderInfo){
+					IToolChain tc = ((FolderInfo)rcInfo).getToolChain();
+					IToolChain realToToolChain = ManagedBuildManager.getRealToolChain((IToolChain)cInfo.getToObject()); 
+					if(ManagedBuildManager.getRealToolChain(tc) == realToToolChain){
+						updatedToolChain = (ToolChain)tc;
+					}
+				}
+				
+				if(updatedToolChain == null){
+					updatedToolChain = (ToolChain)cfg.getRootFolderInfo().getToolChain();
+				}
+			} else {
+				updatedToolChain = toolChain;
+			}
+		} else if(bo instanceof ToolChain){
+			updatedToolChain = (ToolChain)bo;
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("FolderInfo.4")); //$NON-NLS-1$
 		}
-		if(toolChain != bo){
-			setUpdatedToolChain((ToolChain)bo);
+		
+		if(updatedToolChain != null && toolChain != updatedToolChain){
+			setUpdatedToolChain(updatedToolChain);
 		}
 		
 		toolChain.setName(name);
@@ -875,7 +913,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		}
 		
 		if(el != null)
-			return new ConverterInfo(getToolChain(), foundToTc, el);
+			return new ConverterInfo(this, getToolChain(), foundToTc, el);
 		return null;
 	}
 	
@@ -1119,7 +1157,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				
 				IConfigurationElement el = getToolConverterElement(r, a);
 				if(el != null){
-					resultMap.put(r, new ConverterInfo(r, a, el));
+					resultMap.put(r, new ConverterInfo(this, r, a, el));
 					rIter.remove();
 					aIter.remove();
 					break;
@@ -1374,7 +1412,10 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 	
 	public boolean hasCustomSettings(){
-		return toolChain.hasCustomSettings();
+		IFolderInfo parentFo = getParentFolderInfo();
+		if(parentFo == null)
+			return true;
+		return toolChain.hasCustomSettings((ToolChain)parentFo.getToolChain());
 	}
 	
 	public boolean containsDiscoveredScannerInfo(){

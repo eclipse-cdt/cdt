@@ -1,26 +1,44 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
-
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Project Properties</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Project Properties, Build, Settings, Binary Parser</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-
 <body>
+<h1>C/C++ Project Properties, Build, Settings, Binary Parser</h1>
+<p>You can select the Binary Parsers you require for a project to
+ensure the accuracy of the C/C++ Projects view and to successfully run
+and debug your programs. After you select the correct parser for your
+development environment and build your project, you can view the
+symbols of the object file in the C/C++ Projects view.</p>
+<p><img img="" src="../images/prop_bin.png"
+ alt="C/C++ Project Properties, Build, Settings, Binary Parser"></p>
+<dl>
+  <dt>Binary Parser (left pane)</dt>
+  <dd>List of all binary parsers known to CDT.<br>
+      Mark parsers you wish to use with checkmark.<br>
+      Select corresponding line to edit parser's options, if any</dd>
+  <dt>'Move up' and 'Move down' </dt>
+  <dd>Move selected parser upper (or lower) in list. Note that order matters 
+      for checked parsers only: they are applied to binaries in the
+      same sequence as defined by user. Order is not preserved for unchecked 
+      parsers, so it's useless to move them up/down.
+  </dd>
+  <dt>Binary Parser Option</dt>
+  <dd>Parser-specific parameters. Different parsers may have different options list (in particular, they may have no options at all).</dd>
 
-<h1>Project Properties</h1>
-<p>This section describes C/C++ Project Properties. 
-To select project properties, right click a project and select <b>Properties</b>.</p>
-<p><img img src="../images/projects_properties.png" alt="Selecting C/C++ Project Properties"></p>
+  <dt><br>Available for :</dt>
+  <dd>CDT projects</dd>
+</dl>
+<p><img border="0" src="../images/ngtasks.gif" alt="Related tasks"
+ width="143" height="21">
+<br>
+<a href="../tasks/cdt_t_proj_parser.htm">Selecting a binary parser</a></p>
 
-
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
-<a href="../concepts/cdt_c_projects.htm">CDT projects</a></p>
-
-
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+<p><img border="0" src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21"><br>
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
@@ -76,7 +94,6 @@ To select project properties, right click a project and select <b>Properties</b>
 </ul>
 </p>
 <p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
-
 
 </body>
 </html>

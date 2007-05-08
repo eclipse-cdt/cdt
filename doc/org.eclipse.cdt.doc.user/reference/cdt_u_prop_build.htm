@@ -1,25 +1,73 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
 
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Project Properties</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>C/C++ Project Properties, C/C++ Build</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-
 <body>
 
-<h1>Project Properties</h1>
-<p>This section describes C/C++ Project Properties. 
-To select project properties, right click a project and select <b>Properties</b>.</p>
-<p><img img src="../images/projects_properties.png" alt="Selecting C/C++ Project Properties"></p>
+<h1>C/C++ Project Properties, C/C++ Build</h1>
+<p>This page serves as holder for all builder-specific property pages.
+In addition, you can define settings for the Builder just on the place.<br>
+Note that some settings ('Generate makefiles automatically', for example)
+may affect other parameters (setting them disabled in some situations)
+and, moreover, change visibility of other property pages.
+</I>
+</p>
 
 
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
-<a href="../concepts/cdt_c_projects.htm">CDT projects</a></p>
+<p><img img src="../images/prop_cbuild.png" 
+alt="C/C++ Project Properties, C/C++ Build"></p>
 
 
+<dl>
+  <dt>Builder type</dt>
+  <dd>Select either internal or external builder</dd> 
+  <dt>Use default build command</dt>
+  <dd>Select this checkbox to use the default make command. 
+      Clear the check box to specify a new make command.
+      Available for external builder only.
+  </dd>
+  <dt>Build command</dt>
+  <dd>If you clear the <b>Use default</b> checkbox type a new make command in this field. Variables can be used.</dd>
+
+  <dt>Generate makefiles automatically</dt>
+  <dd>Switches between 2 CDT modes: either use customer's makefile for build (it was known as
+  'Standard Make project' in CDT 3.x), or generate makefiles ('Managed build project' in CDT 3.x).
+  </dd>
+
+  <dt>Expand env variable refs in Makefile</dt>
+  <dd>Defines whether environment variables ( ${xxx} ) should be expanded in makefile. Usually yes.</dd>
+
+  <dt>Stop on first build error</dt>
+  <dd>Stops building when any error occurs.</dd>
+
+  <dt>Use parallel build</dt>
+  <dd>Check this box if you want to use parallel project build</dd>
+
+  <dt>Use optimal jobs number</dt>
+  <dd>If parallel build enabled, lets builder to choose appropriate jobs number.</dd>
+
+  <dt>Use parallel jobs</dt>
+  <dd>If parallel build enabled, defines jobs number explicitly.</dd>
+
+  <dt>Workbench Build Behavior</dt>
+  <dd>These settings are what the builder will call by default when told to build, rebuild, clean, etc.  You can change these so that new projects will use different targets if the defaults are not appropriate.</dd>
+
+  <dt>Build directory</dt>
+  <dd>Defines place where build operation is performed. Disabled when Makefiles Generation is ON.</dd>
+</dl>
+
+
+<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="../concepts/cdt_c_build_over.htm">Build overview</a></p>
+<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_t_proj_build_set.htm">Defining build settings</a></p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
 
 <ul>
@@ -79,4 +127,5 @@ To select project properties, right click a project and select <b>Properties</b>
 
 
 </body>
+
 </html>

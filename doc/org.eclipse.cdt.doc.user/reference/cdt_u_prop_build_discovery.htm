@@ -1,26 +1,46 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
-
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Project Properties</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Project Properties, Discovery Options</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-
 <body>
+<h1>C/C++ Project Properties, Discovery Options</h1>
+<p>You can define the discovery options on the Discovery Options page
+of a C/C++ project's properties window.<br>
+</p>
+<dl>
+</dl>
+<p style="margin-left: 40px;"><img img=""
+ src="../images/prop_discovery.png"
+ alt="C/C++ Project Properties, Discovery Options"
+ ><br>
+</p>
+<dl>
+  <dt>Discovery profile scope</dt>
+  <dd>Select either <b>per Language</b> or <b>Configuration-wide</b> scope.</dd>
 
-<h1>Project Properties</h1>
-<p>This section describes C/C++ Project Properties. 
-To select project properties, right click a project and select <b>Properties</b>.</p>
-<p><img img src="../images/projects_properties.png" alt="Selecting C/C++ Project Properties"></p>
+  <dt>Left pane (list)</dt>
+  <dd>When scope is 'per Language', select required language here. 
+      In case of 'Configuration-wide' scope, only one item is displayed.</dd>
 
+  <dt>Automate scanner configuration discovery</dt>
+  <dd>Select this checkbox to configure the automatic discovery of
+paths and symbols. When unchecked, all controls below became disabled.</dd>
 
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
-<a href="../concepts/cdt_c_projects.htm">CDT projects</a></p>
+  <dt>Report path detection problems</dt>
+  <dd>Enables or disables corresponding diagnostic messages.</dd>
 
+  <dt>Discovery profile</dt>
+  <dd>Select discovery profile from list.</dd>
 
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+  <dt>Discovery profile options</dt>
+  <dd>This set of controls is profile-specific. It may vary from one profile to another.</dd>
+</dl>
+<p><img src="../images/ngref.gif" alt="Related reference" border="0"
+ height="21" width="143"><br>
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
@@ -76,7 +96,6 @@ To select project properties, right click a project and select <b>Properties</b>
 </ul>
 </p>
 <p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
-
 
 </body>
 </html>

@@ -1,26 +1,64 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
-
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Project Properties</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Properties, Build, Settings, Build Steps tab</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-
 <body>
+<h1>C/C++ Properties, Build, Settings, Build Steps tab</h1>
+Customizes the selected build configuration allowing the specification
+of user defined build command steps, as well as a descriptive message
+to be displayed in the
+build output, immediately prior to and immediately after normal build
+processing executes.
+<p><img img="" src="../images/prop_steps.png"
+ alt="C/C++ Properties, Build, Settings, Build Steps tab"></p>
+<p></p>
+<dl>
+  <dt>Pre-build Steps</dt>
+  <dt>&nbsp;&nbsp;&nbsp; Command</dt>
+  <dd>Specifies a command, or a list of semicolon separated commands,
+to be executed immediately prior to execution of the build.</dd>
+  <dt>&nbsp;&nbsp;&nbsp; Description</dt>
+  <dd>Specifies optional descriptive text that is associated with the
+pre-build step to be displayed in the build output immediately prior to
+execution of the pre-build step command or commands.</dd>
+  <dt>Post-build Steps</dt>
+  <dt>&nbsp;&nbsp;&nbsp; Command</dt>
+  <dd>Specifies a command, or a list of semicolon separated commands,
+to be executed immediately after the execution of the build.</dd>
+  <dt>&nbsp;&nbsp;&nbsp; Description</dt>
+  <dd>Specifies optional descriptive text that is associated with the
+post-build step to be displayed in the build output immediately prior
+to execution of the post-build step command or commands.</dd>
+  <dt><br>Available for :</dt>
+  <dd>CDT projects</dd>
+</dl>
+<h2></h2>
+<h2>Detailed Specification</h2>
+<p>To ensure reasonable custom build step behavior, sensible input must
+be provided when specifying custom build step input. Custom build steps
+are not verified for correctness in any regard and are passed exactly
+as entered into the build stream. <br>
+<br>
+In the descriptive text, below, the term "main build" is defined as the
+sequence of commands to be executed when a build is invoked, not
+including pre-build or post-build steps.<br>
+<br>
+The pre-build step is not executed if the state of the main build is
+determined to be up to date; otherwise it is executed. An attempt to
+execute the main build will occur regardless of the success or failure
+of executing the pre-build step.
+<br>
+<br>
+The post-build step is not executed if the state of the main build is
+determined to be up to date. It will be executed only if the main-build
+has executed successfully. </p>
 
-<h1>Project Properties</h1>
-<p>This section describes C/C++ Project Properties. 
-To select project properties, right click a project and select <b>Properties</b>.</p>
-<p><img img src="../images/projects_properties.png" alt="Selecting C/C++ Project Properties"></p>
-
-
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
-<a href="../concepts/cdt_c_projects.htm">CDT projects</a></p>
-
-
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+<p><img border="0" src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21"><br>
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
@@ -76,7 +114,6 @@ To select project properties, right click a project and select <b>Properties</b>
 </ul>
 </p>
 <p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
-
 
 </body>
 </html>

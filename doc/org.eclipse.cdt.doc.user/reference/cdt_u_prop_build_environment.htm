@@ -1,26 +1,45 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
-
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Project Properties</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Project Properties, Environment</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 
 <body>
+<h1>C/C++ Project Properties, Environment</h1>
+Customizes the environment variables to be used in building selected configuration.
+<p><img img="" src="../images/prop_environment.png"
+ alt="C/C++ Project Properties, Environment"></p>
+<p></p>
+<dl>
+  <dt>Environment variables to set</dt>
+  <dd>List of existing Eclipse-specific environment variables. 
+     It is not the same as native environment variables list.
+     See details below.<br>
+     User-defined variables are marked with <b>bold font</b>.
+  </dd>
 
-<h1>Project Properties</h1>
-<p>This section describes C/C++ Project Properties. 
-To select project properties, right click a project and select <b>Properties</b>.</p>
-<p><img img src="../images/projects_properties.png" alt="Selecting C/C++ Project Properties"></p>
+  <dt>New...</dt>
+  <dd>Add new environment variable to the list</dd>
+  <dt>Select...</dt>
+  <dd>Add one or more native environment variable(s) to the list</dd>
+  <dt>Edit...</dt>
+  <dd>Change value of existing variable. If system variable is changed, it becames user's.</dd>
+  <dt>Remove</dt>
+  <dd>Removes selected variable. Note that some variables are read-only and cannot be removed.</dd>
+  <dt>Undefine</dt>
+  <dd>Clear variable's value but leave it present.</dd>
+  <dt>Append variables to native environment</dt>
+  <dd>Eclipse will be able to access both native environment and variables defined on this page.</dd>
+  <dt>Replace native environment with specified one</dt>
+  <dd>Eclipse will be able to access only variables defined on this page.</dd>
+</dl>
+<p style="margin-top: 0pt; margin-bottom: 0pt;"><img border="0"
+ src="../images/ngref.gif" alt="Related reference" width="143"
+ height="21"><br>
 
-
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
-<a href="../concepts/cdt_c_projects.htm">CDT projects</a></p>
-
-
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>

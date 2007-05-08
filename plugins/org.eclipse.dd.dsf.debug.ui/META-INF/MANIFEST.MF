@@ -20,6 +20,7 @@ Export-Package:
  org.eclipse.dd.dsf.debug.ui,
  org.eclipse.dd.dsf.debug.ui.viewmodel,
  org.eclipse.dd.dsf.debug.ui.viewmodel.expression,
+ org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport,
  org.eclipse.dd.dsf.debug.ui.viewmodel.launch,
  org.eclipse.dd.dsf.debug.ui.viewmodel.register,
  org.eclipse.dd.dsf.debug.ui.viewmodel.variable

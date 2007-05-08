@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.jface.action.IAction;
@@ -20,7 +20,7 @@ import org.eclipse.ui.IViewPart;
 /**
  * 
  */
-public class SetDefaultFormatDecimal implements IViewActionDelegate {
+public class SetDefaultFormatNatural implements IViewActionDelegate {
 
     private IFormattedValueVMContext fFormattedValueVMC; 
     

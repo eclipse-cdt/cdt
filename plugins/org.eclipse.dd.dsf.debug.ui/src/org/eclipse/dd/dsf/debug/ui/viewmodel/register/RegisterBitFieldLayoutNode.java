@@ -24,16 +24,21 @@ import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
-import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterChangedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldChangedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMContext;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMData;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IMnemonic;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
+import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.AbstractExpressionLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValueVMContext;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterBitFieldLayoutCellModifier.BitFieldEditorStyle;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
@@ -53,58 +58,58 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings("restriction")
-public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDMData> 
-                                implements IElementEditor
-{
-    protected class RegisterVMC extends DMVMContext
-    implements IVariable, IFormattedValueVMContext
+public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBitFieldDMData> implements IElementEditor {
+
+    protected class BitFieldVMC extends DMVMContext
+        implements IVariable, IFormattedValueVMContext
     {
         private IExpression fExpression;
-        public RegisterVMC(IDMContext<?> dmc) {
+        public BitFieldVMC(IDMContext<?> dmc) {
             super(dmc);
         }
-
+        
+        public IFormattedValuePreferenceStore getPreferenceStore() {
+            return fFormattedPrefStore;
+        }
+        
         public void setExpression(IExpression expression) {
             fExpression = expression;
         }
-
+        
         @Override
         @SuppressWarnings("unchecked") 
         public Object getAdapter(Class adapter) {
             if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
                 return fExpression;
             } else if (adapter.isAssignableFrom(IWatchExpressionFactoryAdapterExtension.class)) {
-                return fRegisterExpressionFactory;
+                return fBitFieldExpressionFactory;
             } else {
                 return super.getAdapter(adapter);
             }
         }
-
+    
         @Override
         public boolean equals(Object other) {
-            if (other instanceof RegisterVMC && super.equals(other)) {
-                RegisterVMC otherReg = (RegisterVMC)other;
-                return (otherReg.fExpression == null && fExpression == null) ||
-                (otherReg.fExpression != null && otherReg.fExpression.equals(fExpression));
+            if (other instanceof BitFieldVMC && super.equals(other)) {
+                BitFieldVMC otherBitField = (BitFieldVMC)other;
+                return (otherBitField.fExpression == null && fExpression == null) ||
+                       (otherBitField.fExpression != null && otherBitField.fExpression.equals(fExpression));
             }
             return false;
         }
-
+        
         @Override
         public int hashCode() {
             return super.hashCode() + (fExpression != null ? fExpression.hashCode() : 0);
         }
-
-        public IFormattedValuePreferenceStore getPreferenceStore() {
-            return fFormattedPrefStore;
-        }
-        
+    
         public String getName() throws DebugException { return toString(); }
         public String getReferenceTypeName() throws DebugException { return ""; } //$NON-NLS-1$
         public IValue getValue() throws DebugException { return null; }
@@ -119,65 +124,70 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
         public String getModelIdentifier() { return DsfDebugUIPlugin.PLUGIN_ID; }
     }
 
-    protected class RegisterExpressionFactory implements IWatchExpressionFactoryAdapterExtension {
-
+    protected class BitFieldExpressionFactory implements IWatchExpressionFactoryAdapterExtension {
+        
         public boolean canCreateWatchExpression(IVariable variable) {
-            return variable instanceof RegisterVMC;
+            return variable instanceof BitFieldVMC;
         }
-
+        
         public String createWatchExpression(IVariable variable) throws CoreException {
-            RegisterVMC registerVmc = ((RegisterVMC)variable);
+            BitFieldVMC bitFieldVmc = ((BitFieldVMC)variable);
 
             StringBuffer exprBuf = new StringBuffer();
             IRegisterGroupDMContext groupDmc = 
-                DMContexts.getAncestorOfType(registerVmc.getDMC(), IRegisterGroupDMContext.class);
+                DMContexts.getAncestorOfType(bitFieldVmc.getDMC(), IRegisterGroupDMContext.class);
             if (groupDmc != null) {
-                IRegisterGroupDMData groupData = fSyncRegisterDataAccess.readRegisterGroup(groupDmc);
+                IRegisterGroupDMData groupData = fDataAccess.readRegisterGroup(groupDmc);
                 if (groupData != null) {
                     exprBuf.append("$$\""); //$NON-NLS-1$
                     exprBuf.append(groupData.getName());
                     exprBuf.append('"');
                 }
             }
-
+            
             IRegisterDMContext registerDmc = 
-                DMContexts.getAncestorOfType(registerVmc.getDMC(), IRegisterDMContext.class);
-            IRegisterDMData regData = fSyncRegisterDataAccess.readRegister(registerDmc);
-            if (regData != null) {
-                exprBuf.append('$');
-                exprBuf.append(regData.getName());
-                return exprBuf.toString();
+                DMContexts.getAncestorOfType(bitFieldVmc.getDMC(), IRegisterDMContext.class);
+            if (registerDmc != null) {
+                IRegisterDMData regData = fDataAccess.readRegister(registerDmc);
+                if (regData != null) {
+                    exprBuf.append('$');
+                    exprBuf.append(regData.getName());
+                }
             }
 
-            return null;            
+            IBitFieldDMContext bitFieldDmc = 
+                DMContexts.getAncestorOfType(bitFieldVmc.getDMC(), IBitFieldDMContext.class);
+            if (bitFieldDmc != null) {
+                IBitFieldDMData bitFieldData = fDataAccess.readBitField(bitFieldDmc);
+                if (bitFieldData != null) {
+                    exprBuf.append('.');
+                    exprBuf.append(bitFieldData.getName());
+                }
+            }
+
+            return exprBuf.toString();
         }
     }
-
-//    private WatchExpressionCellModifier fWatchExpressionCellModifier = new WatchExpressionCellModifier();
-    final protected RegisterExpressionFactory fRegisterExpressionFactory = new RegisterExpressionFactory(); 
-    final private SyncRegisterDataAccess fSyncRegisterDataAccess; 
+    
+    private SyncRegisterDataAccess fDataAccess = null;
+    final protected BitFieldExpressionFactory fBitFieldExpressionFactory = new BitFieldExpressionFactory(); 
     private final IFormattedValuePreferenceStore fFormattedPrefStore;
-
-    public RegisterLayoutNode(IFormattedValuePreferenceStore prefStore, AbstractVMProvider provider, DsfSession session, SyncRegisterDataAccess syncDataAccess) {
-        super(provider, session, IRegisters.IRegisterDMContext.class);
-        fSyncRegisterDataAccess = syncDataAccess;
+    
+    public RegisterBitFieldLayoutNode(IFormattedValuePreferenceStore prefStore, AbstractVMProvider provider, DsfSession session, SyncRegisterDataAccess access) {
+        super(provider, session, IRegisters.IBitFieldDMContext.class);
+        fDataAccess = access;
         fFormattedPrefStore = prefStore;
     }
-
-    protected SyncRegisterDataAccess getSyncRegisterDataAccess() {
-        return fSyncRegisterDataAccess;
-    }
-
+    
     /**
      *  Private data access routine which performs the extra level of data access needed to
      *  get the formatted data value for a specific register.
      */
-    private void updateFormattedRegisterValue(final ILabelUpdate update, final int labelIndex, final IRegisterDMContext dmc)
+    private void updateFormattedRegisterValue(final ILabelUpdate update, final int labelIndex, final IBitFieldDMContext dmc)
     {
         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
+        
         /*
-         *  PREFPAGE : We are using a default format until the preference page is created
-         *  
          *  First select the format to be used. This involves checking so see that the preference
          *  page format is supported by the register service. If the format is not supported then 
          *  we will pick the first available format.
@@ -247,7 +257,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
                                 /*
                                  *  Fill the label/column with the properly formatted data value.
                                  */
-                                update.setLabel(getData().getFormattedValue(), labelIndex);
+                                update.setLabel(getData().getFormattedValue() , labelIndex);
                                 update.done();
                             }
                         }
@@ -269,11 +279,11 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             
-            final IRegisterDMContext dmc = findDmcInPath(update.getElementPath(), IRegisters.IRegisterDMContext.class);
+            final IBitFieldDMContext dmc = findDmcInPath(update.getElementPath(), IRegisters.IBitFieldDMContext.class);
             
             ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
                 dmc, 
-                new DataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), null) { 
+                new DataRequestMonitor<IBitFieldDMData>(getSession().getExecutor(), null) { 
                     @Override
                     protected void handleCompleted() {
                         /*
@@ -336,25 +346,26 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
             );
         }
     }
-
+    
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        final IRegisterGroupDMContext execDmc = findDmcInPath(update.getElementPath(), IRegisterGroupDMContext.class);
+        final IRegisterDMContext regDmc = findDmcInPath(update.getElementPath(), IRegisterDMContext.class);
 
-        if (execDmc == null) {
+        if (regDmc == null) {
             handleFailedUpdate(update);
             return;
         }          
         
-        getServicesTracker().getService(IRegisters.class).getRegisters(
-            execDmc,
-            new DataRequestMonitor<IRegisterDMContext[]>(getSession().getExecutor(), null) { 
+        getServicesTracker().getService(IRegisters.class).getBitFields(
+            regDmc,
+            new DataRequestMonitor<IBitFieldDMContext[]>(getSession().getExecutor(), null) {
                 @Override
-                public void handleCompleted() {
-                    if (!getStatus().isOK()) {
-                        handleFailedUpdate(update);
-                        return;
-                    }
+                protected void handleErrorOrCancel() {
+                    handleFailedUpdate(update);
+                }
+
+                @Override
+                protected void handleOK() {
                     fillUpdateWithVMCs(update, getData());
                     update.done();
                 }
@@ -362,15 +373,15 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     }
     
     @Override
-    protected IVMContext createVMContext(IDMContext<IRegisterDMData> dmc) {
-        return new RegisterVMC(dmc);
+    protected IVMContext createVMContext(IDMContext<IBitFieldDMData> dmc) {
+        return new BitFieldVMC(dmc);
     }
     
     @Override
     protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
-        } else if (e instanceof IRegisters.IRegisterChangedDMEvent) {
+        } else if (e instanceof IRegisters.IBitFieldChangedDMEvent) {
             return IModelDelta.STATE;
         }
         return IModelDelta.NO_CHANGE;
@@ -382,15 +393,122 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
             // Create a delta that the whole register group has changed.
             parent.addFlags(IModelDelta.CONTENT);
         } 
-        if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-            parent.addNode( new DMVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
+        if (e instanceof IRegisters.IBitFieldChangedDMEvent) {
+            parent.addNode( createVMContext(((IRegisters.IBitFieldChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         } 
         
         super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
     }
-    
+
+    public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
+        
+        if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
+            /*
+             *   In order to decide what kind of editor to present we need to know if there are 
+             *   mnemonics which can be used to represent the values. If there are then we will
+             *   create a Combo editor for them. Otherwise we will just make a normal text cell
+             *   editor.  If there are bit groups then the modifier will check the size of  the
+             *   value being entered.
+             */
+            IBitFieldDMData bitFieldData = fDataAccess.readBitField(element);
+
+            if ( bitFieldData != null && bitFieldData.isWriteable() ) {
+
+                IMnemonic[] mnemonics = bitFieldData.getMnemonics();
+
+                if ( mnemonics != null  && mnemonics.length != 0 ) {
+
+                    /*
+                     *   Create the list of readable dropdown selections.
+                     */
+                    String[] StringValues = new String[ mnemonics.length ];
+
+                    int idx = 0 ;
+                    for ( IMnemonic mnemonic : mnemonics ) {
+                        StringValues[ idx ++ ] = mnemonic.getLongName();
+                    }
+
+                    /*
+                     *  Not we are complex COMBO and return the right editor.
+                     */
+                    return new ComboBoxCellEditor(parent, StringValues); 
+                }
+                else {
+                    /*
+                     *  Text editor even if we need to clamp the value entered.
+                     */
+                    return new TextCellEditor(parent); 
+                }
+            }
+        } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
+            return new TextCellEditor(parent);            
+        }
+        return null;
+    }
+
+    public ICellModifier getCellModifier(IPresentationContext context, Object element) {
+        
+        /*
+         *   In order to decide what kind of modifier to present we need to know if there
+         *   are mnemonics which can be used to represent the values. 
+         */
+        IBitFieldDMData bitFieldData = fDataAccess.readBitField(element);
+
+        if ( bitFieldData != null && bitFieldData.isWriteable() ) {
+
+            IMnemonic[] mnemonics = bitFieldData.getMnemonics();
+
+            if ( mnemonics != null  && mnemonics.length != 0 ) {
+                /*
+                 *  Note we are complex COMBO and return the right editor.
+                 */
+                return new RegisterBitFieldLayoutCellModifier( fFormattedPrefStore, BitFieldEditorStyle.BITFIELDCOMBO, fDataAccess );
+            }
+            else {
+                /*
+                 *  Text editor even if we need to clamp the value entered.
+                 */
+                return new RegisterBitFieldLayoutCellModifier( fFormattedPrefStore, BitFieldEditorStyle.BITFIELDTEXT, fDataAccess );
+            }
+        }
+        else {
+            return null;
+        }
+    }
+
+    @Override
+    protected void testContextForExpression(Object element, final String expression, final DataRequestMonitor<Boolean> rm) {
+        if (!(element instanceof AbstractDMVMLayoutNode.DMVMContext)) {
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+        
+        final IBitFieldDMContext dmc = DMContexts.getAncestorOfType(((DMVMContext)element).getDMC(), IBitFieldDMContext.class);
+        if (dmc == null) {
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+        
+        ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
+            dmc, 
+            new DataRequestMonitor<IBitFieldDMData>(getSession().getExecutor(), rm) { 
+                @Override
+                protected void handleOK() {
+                    String bitFieldName = expression.substring(1);
+                    if (bitFieldName.equals(getData().getName())) {
+                        rm.setData(Boolean.TRUE);
+                    } else {
+                        rm.setData(Boolean.FALSE);
+                    }
+                    rm.done();
+                }
+            });
+    }
+
     public int getExpressionLength(String expression) {
-        if (expression.charAt(0) == '$' && Character.isLetterOrDigit(expression.charAt(1))) {
+        if (expression.charAt(0) == '.' && Character.isLetterOrDigit(expression.charAt(1))) {
             int length = 1;
             while( length < expression.length() && Character.isLetterOrDigit(expression.charAt(length)) ) {
                 length++;
@@ -402,39 +520,9 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     }
     
     @Override
-    protected void testContextForExpression(Object element, final String expression, final DataRequestMonitor<Boolean> rm) {
-        if (!(element instanceof AbstractDMVMLayoutNode.DMVMContext)) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-        }
-        final IRegisterDMContext dmc = DMContexts.getAncestorOfType(((DMVMContext)element).getDMC(), IRegisterDMContext.class);
-        if (dmc == null) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-        }
-        
-        ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
-            dmc, 
-            new DataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), rm) { 
-                @Override
-                protected void handleOK() {
-                    String regName = expression.substring(1);
-                    if (regName.equals(getData().getName())) {
-                        rm.setData(Boolean.TRUE);
-                    } else {
-                        rm.setData(Boolean.FALSE);
-                    }
-                    rm.done();
-                }
-            });
-    }
-
-    @Override
     protected void associateExpression(Object element, IExpression expression) {
-        if (element instanceof RegisterVMC) {
-            ((RegisterVMC)element).setExpression(expression);
+        if (element instanceof BitFieldVMC) {
+            ((BitFieldVMC)element).setExpression(expression);
         }
     }
     
@@ -450,8 +538,10 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     @Override
     public void buildDeltaForExpression(final IExpression expression, final int elementIdx, final String expressionText, final Object event, final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) 
     {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
+        if (event instanceof ISuspendedDMEvent) {
             // Mark the partent delta indicating that elements were added and/or removed.
+            parentDelta.addFlags(IModelDelta.CONTENT);
+        } else if (event instanceof IRegisters.IRegisterChangedDMEvent) {
             parentDelta.addFlags(IModelDelta.CONTENT);
         } 
         
@@ -461,34 +551,10 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     @Override
     protected void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
-        if (event instanceof IRegisters.IRegisterChangedDMEvent) {
+        if (event instanceof IBitFieldChangedDMEvent) {
             parentDelta.addNode(element, IModelDelta.STATE);
         } 
         
         super.buildDeltaForExpressionElement(element, elementIdx, event, parentDelta, rm);
-    }
-
-    
-    public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
-        if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
-            return new TextCellEditor(parent);
-        } 
-        else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
-          /*
-           *   See if the register is writable and if so we will created a
-           *   cell editor for it.
-           */
-          IRegisterDMData regData = fSyncRegisterDataAccess.readRegister(element);
-
-          if ( regData != null && regData.isWriteable() ) {
-              return new TextCellEditor(parent);
-          }
-      }
-      return null;
-    }
-    
-    public ICellModifier getCellModifier(IPresentationContext context, Object element) {
-        
-        return new RegisterLayoutValueCellModifier( fFormattedPrefStore, fSyncRegisterDataAccess );
     }
 }

@@ -8,14 +8,9 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMAdapter;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
-import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,7 +20,7 @@ import org.eclipse.ui.IViewPart;
 /**
  * 
  */
-public class SetDefaultFormatHex implements IViewActionDelegate {
+public class SetDefaultFormatOctal implements IViewActionDelegate {
 
     private IFormattedValueVMContext fFormattedValueVMC; 
     
@@ -34,7 +29,7 @@ public class SetDefaultFormatHex implements IViewActionDelegate {
 
     public void run(IAction action) {
         if (fFormattedValueVMC != null) {
-            fFormattedValueVMC.getPreferenceStore().setDefaultFormatId(IFormattedValues.HEX_FORMAT);
+            fFormattedValueVMC.getPreferenceStore().setDefaultFormatId(IFormattedValues.OCTAL_FORMAT);
         }
     }
 

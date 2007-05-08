@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 
+import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.DebugViewSelectionRootLayoutNode;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterGroupLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.SyncRegisterDataAccess;
@@ -31,8 +33,10 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  */
 @SuppressWarnings("restriction")
 public class ExpressionVMProvider extends AbstractDMVMProvider 
-    implements IExpressionsListener
+    implements IExpressionsListener, IFormattedValuePreferenceStore
 {
+    private String fDefaultFormatId = IFormattedValues.HEX_FORMAT;
+    
     public static class ExpressionsChangedEvent {
         enum Type {ADDED, CHANGED, REMOVED}
         public final Type fType;
@@ -62,7 +66,7 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         debugViewSelectionNode.setChildNodes(new IVMLayoutNode[] {expressionManagerNode});
         IExpressionLayoutNode registerGroupNode = new RegisterGroupLayoutNode(this, getSession(), syncDataAccess);
         expressionManagerNode.setExpressionLayoutNodes(new IExpressionLayoutNode[] { registerGroupNode });
-        IVMLayoutNode registerNode = new RegisterLayoutNode(this, getSession(), syncDataAccess);
+        IVMLayoutNode registerNode = new RegisterLayoutNode(this, this, getSession(), syncDataAccess);
         registerGroupNode.setChildNodes(new IVMLayoutNode[] { registerNode });
         setRootLayoutNode(debugViewSelectionNode);
     }
@@ -119,5 +123,13 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
     
     public void expressionsRemoved(IExpression[] expressions) {
         handleEvent(new ExpressionsChangedEvent(ExpressionsChangedEvent.Type.REMOVED, expressions));
+    }
+    
+    public String getDefaultFormatId() {
+        return fDefaultFormatId;
+    }
+    
+    public void setDefaultFormatId(String id) {
+        fDefaultFormatId = id;
     }
 }

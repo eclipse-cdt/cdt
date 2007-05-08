@@ -8,13 +8,13 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport;
+
+import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 
 /**
  * 
  */
-public interface IFormattedValuePreferenceStore {
-    public String getDefaultFormatId();
-    
-    public void setDefaultFormatId(String id);
+public interface IFormattedValueVMContext extends IVMContext {
+    IFormattedValuePreferenceStore getPreferenceStore();
 }

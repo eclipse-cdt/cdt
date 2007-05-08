@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
+import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.DebugViewSelectionRootLayoutNode;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
@@ -20,21 +22,50 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * 
+ *  Provides the VIEW MODEL for the DEBUG MODEL REGISTER view.
  */
 @SuppressWarnings("restriction")
-public class RegisterVMProvider extends AbstractDMVMProvider 
+public class RegisterVMProvider extends AbstractDMVMProvider implements IFormattedValuePreferenceStore
 {
+    /*
+     *  Current default for register formatting.
+     */
+    private String fDefaultFormatId = IFormattedValues.HEX_FORMAT;
+    
     public RegisterVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
         super(adapter, context, session);
         
-        SyncRegisterDataAccess syncDataAccess = new SyncRegisterDataAccess();
+        /*
+         *  Create the register data access routines.
+         */
+        SyncRegisterDataAccess regAccess = new SyncRegisterDataAccess() ;
         
-        IVMRootLayoutNode debugViewSelection = new DebugViewSelectionRootLayoutNode(this); 
-        IVMLayoutNode registerGroupNode = new RegisterGroupLayoutNode(this, getSession(), syncDataAccess);
+        /*
+         *  Create the top level node to deal with the root selection.
+         */
+        IVMRootLayoutNode debugViewSelection = new DebugViewSelectionRootLayoutNode(this);
+        
+        /*
+         *  Create the Group nodes next. They represent the first level shown in the view.
+         */
+        IVMLayoutNode registerGroupNode = new RegisterGroupLayoutNode(this, getSession(), regAccess);
         debugViewSelection.setChildNodes(new IVMLayoutNode[] { registerGroupNode });
-        IVMLayoutNode registerNode = new RegisterLayoutNode(this, getSession(), syncDataAccess);
+        
+        /*
+         * Create the next level which is the registers themselves.
+         */
+        IVMLayoutNode registerNode = new RegisterLayoutNode(this, this, getSession(), regAccess);
         registerGroupNode.setChildNodes(new IVMLayoutNode[] { registerNode });
+        
+        /*
+         * Create the next level which is the bitfield level.
+         */
+        IVMLayoutNode bitFieldNode = new RegisterBitFieldLayoutNode(this, this, getSession(), regAccess);
+        registerNode.setChildNodes(new IVMLayoutNode[] { bitFieldNode });
+        
+        /*
+         *  Now set this schema set as the layout set.
+         */
         setRootLayoutNode(debugViewSelection);
     }
 
@@ -46,5 +77,13 @@ public class RegisterVMProvider extends AbstractDMVMProvider
     @Override
     public String getColumnPresentationId(IPresentationContext context, Object element) {
         return RegisterColumnPresentation.ID;
+    }
+    
+    public String getDefaultFormatId() {
+        return fDefaultFormatId;
+    }
+    
+    public void setDefaultFormatId(String id) {
+        fDefaultFormatId = id;
     }
 }

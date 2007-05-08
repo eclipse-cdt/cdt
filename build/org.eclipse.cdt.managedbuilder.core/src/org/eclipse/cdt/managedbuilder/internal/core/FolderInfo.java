@@ -894,9 +894,44 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			newBuilder.copySettings(oldBuilder, false);
 		}
 
-		//TODO: copy includes, symbols, etc.
+		IManagedProject mProj = getParent().getManagedProject();
+		ITool[] filteredTools = getFilteredTools();
+		ITool[] oldFilteredTools = filterTools(oldTc.getTools(), mProj);
+		
+		copySettings(oldFilteredTools, filteredTools);
 
 		toolChain.propertiesChanged();
+	}
+	
+	private void copySettings(ITool[] fromTools, ITool[] toTools){
+		ITool[][] matches = getBestMatches(fromTools, toTools);
+		for(int i = 0; i < matches.length; i++){
+			BuildSettingsUtil.copyCommonSettings(matches[i][0], matches[i][1]);
+		}
+	}
+	
+	private ITool[][] getBestMatches(ITool[] tools1, ITool[] tools2){
+		HashSet set = new HashSet(Arrays.asList(tools2));
+		List list = new ArrayList(tools1.length);
+		for(int i = 0; i < tools1.length; i++){
+			ITool tool1 = tools1[i];
+			ITool bestMatchTool = null;
+			int num = 0;
+			for(Iterator iter = set.iterator(); iter.hasNext();){
+				ITool tool2 = (ITool)iter.next();
+				int extsNum = getConflictingInputExts(tool1, tool2).length;
+				if(extsNum > num){
+					bestMatchTool = tool2;
+					num = extsNum;
+				}
+			}
+			
+			if(bestMatchTool != null){
+				list.add(new ITool[]{tool1, bestMatchTool});
+				set.remove(bestMatchTool);
+			}
+		}
+		return (ITool[][])list.toArray(new ITool[list.size()][]);
 	}
 	
 	void updateToolChainWithConverter(ConverterInfo cInfo, String Id, String name) throws BuildException{

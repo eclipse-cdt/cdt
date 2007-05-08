@@ -730,7 +730,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (root.getLocation().isPrefixOf(testPath)) return "workspace root"; //UniversalSystemPlugin.getString("IFSexport.rootName"); //$NON-NLS-1$
 		IProject[] projects = root.getProjects();
 		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].getLocation().isPrefixOf(testPath)) return projects[i].getName();
+			IPath loc = projects[i].getLocation();			
+			if (loc != null && loc.isPrefixOf(testPath)) 
+				return projects[i].getName();
 		}
 		return null;
 	}

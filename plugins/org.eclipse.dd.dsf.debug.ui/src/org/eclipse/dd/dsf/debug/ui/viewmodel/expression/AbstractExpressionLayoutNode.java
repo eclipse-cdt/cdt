@@ -89,7 +89,7 @@ public abstract class AbstractExpressionLayoutNode<V extends IDMData> extends Ab
     protected void getElementForExpressionPart(final IChildrenUpdate update, final String expressionPartText, final DataRequestMonitor<Object> rm) {
         updateElements(new VMElementsUpdate(
             update, -1, -1,
-            new DataRequestMonitor<List<Object>>(getSession().getExecutor(), rm) {
+            new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
                 @Override
                 protected void handleOK() {
                     if (getData().size() == 0) {

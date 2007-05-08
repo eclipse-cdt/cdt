@@ -161,34 +161,46 @@ abstract public class AbstractVMProvider implements IVMProvider
         if (node.getChildLayoutNodes().length == 0) {
             for (IHasChildrenUpdate update : updates) {
                 update.setHasChilren(false);
+                update.done();
             }
             return;
         }
 
+        // Create a matrix of element updates:  
+        // The first dimension "i" is the list of children updates that came from the viewer.  
+        // For each of these updates, there are "j" number of elment updates corresponding
+        // to the number of child layout nodes in this node.  
+        // Each children update from the viewer is complete when all the child layout nodes
+        // fill in their elements update.
+        // Once the matrix is constructed, the child layout nodes are given the list of updates
+        // equal to the updates requested by the viewer.
         VMHasElementsUpdate[][] elementsUpdates = 
             new VMHasElementsUpdate[node.getChildLayoutNodes().length][updates.length];
         for (int i = 0; i < updates.length; i ++) 
         {
             final IHasChildrenUpdate update = updates[i];
+            
+            final MultiRequestMonitor<DataRequestMonitor<Boolean>> hasChildrenMultiRequestMon = 
+                new MultiRequestMonitor<DataRequestMonitor<Boolean>>(getExecutor(), null) { 
+                    @Override
+                    protected void handleCompleted() {
+                        // Status is OK, only if all request monitors are OK. 
+                        if (getStatus().isOK()) { 
+                            boolean isContainer = false;
+                            for (DataRequestMonitor<Boolean> hasElementsDone : getRequestMonitors()) {
+                                isContainer |= hasElementsDone.getStatus().isOK() &&
+                                               hasElementsDone.getData().booleanValue();
+                            }
+                            update.setHasChilren(isContainer);
+                        } else {
+                            update.setStatus(getStatus());
+                        }
+                        update.done();
+                    }
+                };
+
             for (int j = 0; j < node.getChildLayoutNodes().length; j++) 
             {
-                final MultiRequestMonitor<DataRequestMonitor<Boolean>> hasChildrenMultiRequestMon = 
-                    new MultiRequestMonitor<DataRequestMonitor<Boolean>>(getExecutor(), null) { 
-                        @Override
-                        protected void handleCompleted() {
-                            // Status is OK, only if all request monitors are OK. 
-                            if (getStatus().isOK()) { 
-                                boolean isContainer = false;
-                                for (DataRequestMonitor<Boolean> hasElementsDone : getRequestMonitors()) {
-                                    isContainer |= hasElementsDone.getStatus().isOK() &&
-                                                   hasElementsDone.getData().booleanValue();
-                                }
-                                update.setHasChilren(isContainer);
-                                update.done();
-                            }
-                        }
-                    };
-                
                 elementsUpdates[j][i] = new VMHasElementsUpdate(
                     update,
                     hasChildrenMultiRequestMon.add(

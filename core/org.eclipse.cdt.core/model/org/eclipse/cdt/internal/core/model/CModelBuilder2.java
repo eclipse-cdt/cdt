@@ -90,21 +90,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
  */
 public class CModelBuilder2 implements IContributedModelBuilder {
 
-	private static final boolean PRINT_PROBLEMS= false;
-
-	private static class ProblemPrinter implements IProblemRequestor {
-		public void acceptProblem(IProblem problem) {
-			System.err.println("PROBLEM: " + problem.getMessage()); //$NON-NLS-1$
-		}
-		public void beginReporting() {
-		}
-		public void endReporting() {
-		}
-		public boolean isActive() {
-			return true;
-		}
-	}
-
 	/**
 	 * Adapts {@link IASTProblem} to {@link IProblem).
 	 */
@@ -249,14 +234,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
 					IDebugLogConstants.MODEL, false);
 
-			if (elementInfo instanceof ASTHolderTUInfo) {
-				((ASTHolderTUInfo)elementInfo).fAST= ast;
-			}
-
-			checkCanceled();
 			if (ast == null) {
 				return;
 			}
+
+			checkCanceled();
 			startTime= System.currentTimeMillis();
 			buildModel(ast);
 			elementInfo.setIsStructureKnown(true);
@@ -264,6 +246,12 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					+"children="+ fTranslationUnit.getElementInfo().internalGetChildren().size() //$NON-NLS-1$
 					+" time="+ (System.currentTimeMillis() - startTime) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
 					IDebugLogConstants.MODEL, false);
+
+			if (elementInfo instanceof ASTHolderTUInfo) {
+				((ASTHolderTUInfo)elementInfo).fAST= ast;
+				// preserve index lock for AST receiver
+				index= null;
+			}
 		} finally {
 			if (index != null) {
 				index.releaseReadLock();
@@ -340,9 +328,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		// report problems
 		IProblemRequestor problemRequestor= fTranslationUnit.getProblemRequestor();
-		if (problemRequestor == null && PRINT_PROBLEMS) {
-			problemRequestor= new ProblemPrinter();
-		}
 		if (problemRequestor != null && problemRequestor.isActive()) {
 			problemRequestor.beginReporting();
 			final IASTProblem[] ppProblems= ast.getPreprocessorProblems();
@@ -351,8 +336,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				IASTProblem problem= problems[i];
 				if (isLocalToFile(problem)) {
 					problemRequestor.acceptProblem(new ProblemAdapter(problem));
-				} else if (PRINT_PROBLEMS) {
-					System.err.println("PREPROCESSOR PROBLEM: " + problem.getMessage()); //$NON-NLS-1$
 				}
 			}
 			problems= CPPVisitor.getProblems(ast);
@@ -360,8 +343,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				IASTProblem problem= problems[i];
 				if (isLocalToFile(problem)) {
 					problemRequestor.acceptProblem(new ProblemAdapter(problem));
-				} else if (PRINT_PROBLEMS) {
-					System.err.println("PROBLEM: " + problem.getMessage()); //$NON-NLS-1$
 				}
 			}
 			problemRequestor.endReporting();

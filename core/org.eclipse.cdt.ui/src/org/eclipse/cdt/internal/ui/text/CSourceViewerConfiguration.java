@@ -830,4 +830,12 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		// fallback
 		return GPPLanguage.getDefault();
 	}
+	
+	/**
+	 * Reset cached language dependent scanners.
+	 */
+	public void resetScanners() {
+		fCodeScanner= null;
+		fPreprocessorScanner= null;
+	}
 }

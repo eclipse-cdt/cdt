@@ -117,6 +117,47 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, time);
 	}
 
+	// class A {};
+	// class B {};
+	// A var;
+	
+	// class A {};
+	// class B {};
+	// B var;
+	public void _test173997_2() throws Exception {
+		StringBuffer[] content= getContentsForTest(3);
+		
+		IFile file= createFile(getProject(), "header.h", content[0].toString());
+		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		
+		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bs= index.findBindings("var".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bs.length); 
+			assertTrue(bs[0] instanceof ICPPVariable);
+			assertTrue(((ICPPVariable)bs[0]).getType() instanceof ICPPClassType);
+			assertEquals("A", ((ICPPClassType)(((ICPPVariable)bs[0]).getType())).getName());
+		} finally {
+			index.releaseReadLock();
+		}
+		
+		file.setContents(new ByteArrayInputStream(content[1].toString().getBytes()), true, false, NPM);
+		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		
+		index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bs= index.findBindings("var".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bs.length); 
+			assertTrue(bs[0] instanceof ICPPVariable);
+			assertTrue(((ICPPVariable)bs[0]).getType() instanceof ICPPClassType);
+			assertEquals("B", ((ICPPClassType)(((ICPPVariable)bs[0]).getType())).getName());
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+	
     //  namespace ns162011 {
     //    class Class162011 {
     //      friend void function162011(Class162011); 

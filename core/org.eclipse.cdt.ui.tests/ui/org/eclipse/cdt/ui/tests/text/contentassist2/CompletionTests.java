@@ -649,11 +649,11 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 	
-	//void gfunc(){TClass<int> t(0); t./*cursor*/
-	public void _testTemplateClassMethod() throws Exception {
+	//void gfunc(){TClass<int> t(0); t.a/*cursor*/
+	public void testTemplateClassMethod() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172436
 		final String[] expected= {
-				"add(T)"
+				"add(int)"
 		};
 		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
@@ -664,7 +664,6 @@ public class CompletionTests extends AbstractContentAssistTest {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172436
 		final String[] expected= {
 				"tConvert(void)"
-//				"tConvert<T>(void)"
 		};
 		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);

@@ -74,6 +74,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
@@ -138,7 +139,6 @@ import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -155,8 +155,6 @@ import org.eclipse.cdt.ui.actions.GenerateActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
-
-import org.eclipse.cdt.internal.corext.util.SimplePositionTracker;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -186,9 +184,9 @@ import org.eclipse.cdt.internal.ui.util.CUIHelp;
 
 
 /**
- * C specific text editor.
+ * C/C++ source editor.
  */
-public class CEditor extends TextEditor implements ISelectionChangedListener, IReconcilingParticipant, ICReconcilingListener {
+public class CEditor extends TextEditor implements ISelectionChangedListener, ICReconcilingListener {
 
 	class AdaptedSourceViewer extends CSourceViewer  {
 
@@ -1159,7 +1157,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
+		boolean reuse= getEditorInput() != null;
+
 		super.doSetInput(input);
+
+		if (reuse) {
+			// in case language changed, need to reconfigure the viewer
+			ISourceViewer viewer= getSourceViewer();
+			if (viewer instanceof ISourceViewerExtension2) {
+				ISourceViewerExtension2 viewerExt2= (ISourceViewerExtension2)viewer;
+				viewerExt2.unconfigure();
+				CSourceViewerConfiguration cConfig= (CSourceViewerConfiguration)getSourceViewerConfiguration();
+				cConfig.resetScanners();
+				viewer.configure(cConfig);
+			}
+		}
+		
 		setOutlinePageInput(fOutlinePage, input);
 
 		if (fProjectionModelUpdater != null) {
@@ -1548,7 +1561,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
      * @param element Element to select.
 	 */
     public void setSelection(ICElement element) {
-		if (element instanceof ISourceReference) {
+		if (element instanceof ISourceReference && !(element instanceof ITranslationUnit)) {
 			ISourceReference reference = (ISourceReference) element;
 			// set hightlight range
 			setSelection(reference, true);
@@ -2471,51 +2484,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
-	 */
-	public void reconciled(boolean somethingHasChanged) {
-		if (getSourceViewer() == null || getSourceViewer().getTextWidget() == null) {
-			return;
-		}
-		// this method must be called in a background thread
-		assert getSourceViewer().getTextWidget().getDisplay().getThread() != Thread.currentThread();
-		
-		if (fReconcilingListeners.size() > 0) {
-			// create AST and notify ICReconcilingListeners
-			ICElement cElement= getInputCElement();
-			if (cElement == null) {
-				return;
-			}
-			
-			aboutToBeReconciled();
-
-			// track changes to the document while parsing
-			IDocument doc= getDocumentProvider().getDocument(getEditorInput());
-			SimplePositionTracker positionTracker= new SimplePositionTracker();
-			positionTracker.startTracking(doc);
-			
-			ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-			IIndex index;
-			try {
-				index = CCorePlugin.getIndexManager().getIndex(cElement.getCProject());
-				index.acquireReadLock();
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
-				return;
-			} catch (InterruptedException e) {
-				return;
-			}
-			try {
-				IASTTranslationUnit ast= astProvider.createAST(cElement, index, null);
-				reconciled(ast, positionTracker, null);
-			} finally {
-				index.releaseReadLock();
-				positionTracker.stopTracking();
-			}
-		}
-	}
-	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
 	 */

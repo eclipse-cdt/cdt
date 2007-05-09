@@ -33,8 +33,6 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 
 import org.eclipse.cdt.internal.core.model.CModelManager;
 
-import org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant;
-
 
 public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
@@ -73,6 +71,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
+	 * Called for incremental reconciler only - currently not used (no shift deltas)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
 		// consistent data needs not further checks !  
@@ -114,13 +113,13 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	}
 	
 	private void reconcile(final boolean initialReconcile) {
+		boolean computeAST= fEditor instanceof ICReconcilingListener;
 		IASTTranslationUnit ast= null;
 		IWorkingCopy workingCopy= fManager.getWorkingCopy(fEditor.getEditorInput());
 		if (workingCopy == null) {
 			return;
 		}
 		try {
-			final boolean computeAST= initialReconcile || CUIPlugin.getDefault().getASTProvider().isActive(workingCopy);
 			// reconcile
 			synchronized (workingCopy) {
 				ast= workingCopy.reconcile(computeAST, true, fProgressMonitor);
@@ -131,18 +130,10 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 			IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$
 			CUIPlugin.getDefault().log(status);
 		} finally {
-			if (fEditor instanceof ICReconcilingListener) {
+			if (computeAST) {
 				IIndex index= null;
 				if (ast != null) {
 					index= ast.getIndex();
-					if (index != null) {
-						try {
-							index.acquireReadLock();
-						} catch (InterruptedException exc) {
-							ast= null;
-							index= null;
-						}
-					}
 				}
 				try {
 					((ICReconcilingListener)fEditor).reconciled(ast, null, fProgressMonitor);
@@ -151,13 +142,6 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 						index.releaseReadLock();
 					}
 				}
-			}
-			if (fProgressMonitor != null && fProgressMonitor.isCanceled()) {
-				return;
-			}
-			if (ast == null && fEditor instanceof IReconcilingParticipant && workingCopy.exists()) {
-				IReconcilingParticipant p= (IReconcilingParticipant) fEditor;
-				p.reconciled(true);
 			}
 		}
  	}

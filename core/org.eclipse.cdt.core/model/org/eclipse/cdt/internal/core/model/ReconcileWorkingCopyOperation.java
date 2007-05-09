@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -51,33 +52,23 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 		CElementDeltaBuilder deltaBuilder = null;
 	
 		try {
-			// create the delta builder (this remembers the current content of the cu)
-			if (!wasConsistent){
+			if (!wasConsistent || forceProblemDetection || fComputeAST) {
+				// create the delta builder (this remembers the current content of the tu)
 				deltaBuilder = new CElementDeltaBuilder(workingCopy);
 				
 				// update the element infos with the content of the working copy
-				if (fComputeAST) {
-					fAST= workingCopy.makeConsistent(fComputeAST, fMonitor);
-				} else {
-					workingCopy.makeConsistent(fMonitor);
-				}
+				fAST= workingCopy.makeConsistent(fComputeAST, fMonitor);
+
 				deltaBuilder.buildDeltas();
 
 				// register the deltas
-				if (deltaBuilder != null){
-					if ((deltaBuilder.delta != null) && (deltaBuilder.delta.getAffectedChildren().length > 0)) {
-						addReconcileDelta(workingCopy, deltaBuilder.delta);
-					}
+				if (deltaBuilder.delta != null) {
+					addReconcileDelta(workingCopy, deltaBuilder.delta);
 				}
 
 			}
 	
 			if (fMonitor != null) fMonitor.worked(2);
-			
-			// force problem detection? - if structure was consistent
-			if (forceProblemDetection && wasConsistent){
-				if (fMonitor != null && fMonitor.isCanceled()) return;		
-			}
 			
 		} finally {
 			if (fMonitor != null) fMonitor.done();

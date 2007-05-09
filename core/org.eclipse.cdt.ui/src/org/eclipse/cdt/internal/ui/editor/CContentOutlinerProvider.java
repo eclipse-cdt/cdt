@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,23 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.progress.PendingUpdateAdapter;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -22,27 +33,13 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
 import org.eclipse.cdt.internal.core.model.CShiftData;
 import org.eclipse.cdt.internal.core.model.SourceManipulation;
+
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.progress.DeferredTreeContentManager;
-import org.eclipse.ui.progress.IElementCollector;
-import org.eclipse.ui.progress.PendingUpdateAdapter;
-import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Manages contents of the outliner.
@@ -64,19 +61,6 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	/** Filter for files to outline. */
 	private StringMatcher filter = new StringMatcher("*", true, false); //$NON-NLS-1$
 
-	/**
-	 * Remote content manager to retrieve content in the background.
-	 */
-	private DeferredTreeContentManager fManager;
-
-	/**
-	 * We only want to use the DeferredContentManager, the first time
-	 * because the Outliner is initialize in the UI thread.  So to not block
-	 * the UI thread we deferred, after it is not necessary the reconciler is
-	 * running in a separate thread not affecting the UI.
-	 */
-	private boolean fUseContentManager = false;
-
 	public CContentOutlinerProvider(TreeViewer viewer) {
 		this(viewer, null);
 	}
@@ -91,68 +75,6 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		super(true, true);
 		treeViewer = viewer;
 		setIncludesGrouping(PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
-		fManager = createContentManager(viewer, site);
-	}
-	
-	/**
-	 * Subclass of DeferredTreeContentManager used to refresh
-	 * the outline when the "group includes" setting is enabled.
-	 */
-	class DeferredTreeCContentManager extends DeferredTreeContentManager {
-
-		public DeferredTreeCContentManager(AbstractTreeViewer viewer, IWorkbenchPartSite site) {
-			super(CContentOutlinerProvider.this, viewer, site);
-		}
-
-		public DeferredTreeCContentManager(AbstractTreeViewer viewer) {
-			super(CContentOutlinerProvider.this, viewer);
-		}
-		
-	    protected IElementCollector createElementCollector(final Object parent,
-	            final PendingUpdateAdapter placeholder) {
-	    	
-	    	// Return a special element collector when the parent
-	    	// is the translation unit. In that case we need to
-	    	// refresh the outline when all the content has become
-	    	// available.
-	    	if (!(parent instanceof ITranslationUnit)) {
-	    		return super.createElementCollector(parent, placeholder);
-	    	}
-	        return new IElementCollector() {
-		            public void add(Object element, IProgressMonitor monitor) {
-	                add(new Object[] { element }, monitor);
-	            }
-
-	            public void add(Object[] elements, IProgressMonitor monitor) {
-	                addChildren(parent, elements, monitor);
-	            }
-
-	            public void done() {
-	            	runClearPlaceholderJob(placeholder);
-	            	// runClearPlaceholderJob uses a WorkbenchJob and contentUpdated
-	            	// executes via asyncExec(). There can be race conditions if we
-	            	// don't wrap contentUpdated in a job.
-	            	if (CContentOutlinerProvider.this.fIncludesGrouping) {
-	            		WorkbenchJob job = new WorkbenchJob("") { //$NON-NLS-1$
-	            			
-	            			public IStatus runInUIThread(IProgressMonitor monitor) {
-	            				contentUpdated();
-	            				return Status.OK_STATUS;
-	            			}
-	            		};
-	            		job.setSystem(true);
-	            		job.schedule();
-	            	}
-	            }
-	        };	
-	    }
-	}
-
-	protected DeferredTreeContentManager createContentManager(TreeViewer viewer, IWorkbenchPartSite site) {
-		if (site == null) {
-			return new DeferredTreeCContentManager(viewer);
-		}
-		return new DeferredTreeCContentManager(viewer, site);
 	}
 
 	/**
@@ -229,37 +151,30 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 			PreferenceConstants.getPreferenceStore().removePropertyChangeListener(fPropertyListener);
 			fPropertyListener = null;
 		}
-		if (root != null) {
-			fManager.cancel(root);
-		}
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-	 *      java.lang.Object, java.lang.Object)
+	/*
+	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		boolean isTU = newInput instanceof ITranslationUnit;
 
-		if (isTU && fListener == null) {
-			fUseContentManager = true;
-			if (root != null) {
-				fManager.cancel(root);
-			}
+		if (isTU) {
 			root = (ITranslationUnit) newInput;
-			fListener = new ElementChangedListener();
-			CoreModel.getDefault().addElementChangedListener(fListener);
-			fPropertyListener = new PropertyListener();
-			PreferenceConstants.getPreferenceStore().addPropertyChangeListener(
-					fPropertyListener);
-		} else if (!isTU && fListener != null) {
-			fUseContentManager = false;
-			CoreModel.getDefault().removeElementChangedListener(fListener);
-			fListener = null;
-			root = null;
-			if (oldInput != null) {
-				fManager.cancel(oldInput);
+			if (fListener == null) {
+				fListener= new ElementChangedListener();
+				CoreModel.getDefault().addElementChangedListener(fListener);
+				fPropertyListener= new PropertyListener();
+				PreferenceConstants.getPreferenceStore().addPropertyChangeListener(fPropertyListener);
 			}
+		} else {
+			if (fListener != null) {
+				CoreModel.getDefault().removeElementChangedListener(fListener);
+				PreferenceConstants.getPreferenceStore().removePropertyChangeListener(fPropertyListener);
+				fListener= null;
+				fPropertyListener= null;
+			}
+			root= null;
 		}
 	}
 
@@ -269,9 +184,11 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	public Object[] getChildren(Object element) {
 		Object[] children = null;
 		// Use the deferred manager for the first time (when parsing)
-		if (fUseContentManager && element instanceof ITranslationUnit) {
-			children = fManager.getChildren(element);
-			fUseContentManager = false;
+		if (element instanceof ITranslationUnit) {
+			ITranslationUnit unit= (ITranslationUnit)element;
+			if (!unit.isOpen()) {
+				children= new Object[] { new PendingUpdateAdapter() };
+			}
 		}
 		if (children == null) {
 			children = super.getChildren(element);
@@ -292,9 +209,6 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if (fUseContentManager) {
-			return fManager.mayHaveChildren(element);
-		}
 		return super.hasChildren(element);
 	}
 

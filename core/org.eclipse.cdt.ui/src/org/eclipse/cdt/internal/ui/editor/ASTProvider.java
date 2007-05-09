@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.editor;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -298,6 +299,9 @@ public final class ASTProvider {
 		if (cElement == null)
 			return null;
 		Assert.isTrue(cElement instanceof ITranslationUnit);
+		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive((ITranslationUnit)cElement)) {
+			return null;
+		}
 		return fCache.getAST((ITranslationUnit)cElement, index, waitFlag != WAIT_NO, progressMonitor);
 	}
 
@@ -326,6 +330,9 @@ public final class ASTProvider {
 	public IStatus runOnAST(ICElement cElement, WAIT_FLAG waitFlag, IProgressMonitor monitor,
 			ASTCache.ASTRunnable astRunnable) {
 		Assert.isTrue(cElement instanceof ITranslationUnit);
+		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive((ITranslationUnit)cElement)) {
+			return Status.CANCEL_STATUS;
+		}
 		return fCache.runOnAST((ITranslationUnit)cElement, waitFlag != WAIT_NO, monitor, astRunnable);
 	}
 

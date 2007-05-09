@@ -58,9 +58,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IParent;
@@ -104,13 +102,16 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit, org.eclipse.cdt.core.IPositionConverter, org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public void reconciled(IASTTranslationUnit ast, IPositionConverter positionTracker, IProgressMonitor progressMonitor) {
-			if (fInput == null || ast == null || fReconciling) {
+			if (fInput == null || fReconciling) {
+				return;
+			}
+			if (fPreprocessorBranchFoldingEnabled && ast == null) {
 				return;
 			}
 			fReconciling= true;
 			try {
-				FoldingStructureComputationContext ctx= createContext(fInitialASTReconcile);
-				fInitialASTReconcile= false;
+				FoldingStructureComputationContext ctx= createContext(fInitialReconcilePending);
+				fInitialReconcilePending= false;
 				if (fPreprocessorBranchFoldingEnabled) {
 					ctx.fAST= ast;
 					ctx.fASTPositionConverter= positionTracker;
@@ -349,44 +350,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 	}
 
-	
-	private class ElementChangedListener implements IElementChangedListener {
-		
-		/*
-		 * @see org.eclipse.cdt.core.IElementChangedListener#elementChanged(org.eclipse.cdt.core.ElementChangedEvent)
-		 */
-		public void elementChanged(ElementChangedEvent e) {
-			ICElementDelta delta= findElement(fInput, e.getDelta());
-			if (delta != null)
-	            update(createContext(false));
-		}
-		
-		private ICElementDelta findElement(ICElement target, ICElementDelta delta) {
-			
-			if (delta == null || target == null)
-				return null;
-			
-			ICElement element= delta.getElement();
-			
-			if (element.getElementType() > ICElement.C_UNIT)
-				return null;
-			
-			if (target.equals(element))
-				return delta;				
-			
-			ICElementDelta[] children= delta.getAffectedChildren();
-			if (children == null || children.length == 0)
-				return null;
-				
-			for (int i= 0; i < children.length; i++) {
-				ICElementDelta d= findElement(target, children[i]);
-				if (d != null)
-					return d;
-			}
-			
-			return null;
-		}		
-	}
 	
 	/**
 	 * Projection position that will return two foldable regions: one folding away
@@ -705,7 +668,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	private boolean fCommentFoldingEnabled= true;
 
 	private ICReconcilingListener fReconilingListener;
-	boolean fInitialASTReconcile= true;
+	boolean fInitialReconcilePending= true;
 
 
 	/**
@@ -781,15 +744,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		handleProjectionDisabled();
 
 		if (fEditor instanceof CEditor) {
-			fInitialASTReconcile= true;
+			fInitialReconcilePending= true;
 			initialize();
-			if (fPreprocessorBranchFoldingEnabled || fCommentFoldingEnabled) {
-				fReconilingListener= new PreprocessorBranchesReconciler();
-				((CEditor)fEditor).addReconcileListener(fReconilingListener);
-			} else {
-				fElementListener= new ElementChangedListener();
-				CoreModel.getDefault().addElementChangedListener(fElementListener);
-			}
+			fReconilingListener= new PreprocessorBranchesReconciler();
+			((CEditor)fEditor).addReconcileListener(fReconilingListener);
 		}
 	}
 
@@ -1087,11 +1045,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				// ignore
 			}
 		}
-		IParent parent= (IParent) fInput;
-		try {
-			computeFoldingStructure(parent.getChildren(), ctx);
-		} catch (CModelException x) {
-		}
 		if (fPreprocessorBranchFoldingEnabled) {
 			IASTTranslationUnit ast= ctx.getAST();
 			if (ast == null) {
@@ -1101,17 +1054,24 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 						if (ast != null) {
 							ctx.fAST= ast;
 							ctx.fASTPositionConverter= null;
-							fInitialASTReconcile= false;
+							fInitialReconcilePending= false;
 							computeFoldingStructure(ast, ctx);
 						}
 						return Status.OK_STATUS;
 					}
 				});
-				if (!status.isOK()) {
+				if (status.matches(IStatus.ERROR)) {
 					CUIPlugin.getDefault().log(status);
 				}
 			} else {
 				computeFoldingStructure(ast, ctx);
+			}
+		}
+		if (!fInitialReconcilePending) {
+			IParent parent= (IParent) fInput;
+			try {
+				computeFoldingStructure(parent.getChildren(), ctx);
+			} catch (CModelException x) {
 			}
 		}
 	}

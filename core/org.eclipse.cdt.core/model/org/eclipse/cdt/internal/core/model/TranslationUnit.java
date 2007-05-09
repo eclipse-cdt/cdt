@@ -490,11 +490,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public void makeConsistent(IProgressMonitor monitor, boolean forced) throws CModelException {
-		makeConsistent(false, monitor);
+		makeConsistent(forced, monitor);
 	}
 
 	protected IASTTranslationUnit makeConsistent(boolean computeAST, IProgressMonitor monitor) throws CModelException {
-		if (isConsistent()) {
+		if (!computeAST && isConsistent()) {
 			return null;
 		}
 		

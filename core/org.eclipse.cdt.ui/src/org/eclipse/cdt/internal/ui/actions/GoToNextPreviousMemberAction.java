@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,9 @@ public class GoToNextPreviousMemberAction extends TextEditorAction {
         final ITextSelection selection = (ITextSelection) editor.getSelectionProvider().getSelection();
         final IEditorInput editorInput = editor.getEditorInput();
         final IWorkingCopy workingCopy =  CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
+        if (workingCopy == null) {
+        	return;
+        }
         try {
             final ICElement[] elements =  workingCopy.getChildren();
             final Integer[] elementOffsets = createSourceIndexes(elements);

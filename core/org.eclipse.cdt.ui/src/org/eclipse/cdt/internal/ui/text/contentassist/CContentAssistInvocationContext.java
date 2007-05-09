@@ -109,6 +109,9 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		
 		fCNComputed = true;
 		
+		if (fTU == null) {
+			return null;
+		}
 		int offset = getParseOffset();
 		if (offset < 0) return null;
 		

@@ -433,7 +433,7 @@ public class CReconciler extends MonoReconciler {
 			IEditorInput input= fTextEditor.getEditorInput();
 			IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
 			IWorkingCopy copy= manager.getWorkingCopy(input);
-			if (copy.getOriginalElement().equals(element)) {
+			if (copy == null || copy.getOriginalElement().equals(element)) {
 				return false;
 			}
 			return isRelevantProject(copy.getCProject());

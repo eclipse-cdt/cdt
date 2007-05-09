@@ -51,7 +51,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 			Object selectedObject= selection.getFirstElement();
 			ICElement elem= (ICElement) getAdapter(selectedObject, ICElement.class);
 			if (elem != null) {
-				CallHierarchyUI.open(elem, getSite().getWorkbenchWindow());
+				CallHierarchyUI.open(getSite().getWorkbenchWindow(), elem);
 			}
 		}
 	}

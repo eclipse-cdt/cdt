@@ -20,7 +20,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -34,10 +33,15 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -45,20 +49,35 @@ import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class CallHierarchyUI {
+	private static final ICElement[] NO_ELEMENTS = {};
 	private static boolean sIsJUnitTest= false;
 
 	public static void setIsJUnitTest(boolean val) {
 		sIsJUnitTest= val;
 	}
 	
-	public static CHViewPart open(ICElement input, IWorkbenchWindow window) {
+	public static void open(final IWorkbenchWindow window, final ICElement input) {
         if (input != null) {
-        	return openInViewPart(window, input);
+        	final Display display= Display.getCurrent();
+
+        	Job job= new Job(CHMessages.CallHierarchyUI_label) {
+        		protected IStatus run(IProgressMonitor monitor) {
+        			final ICElement[] elems= findDefinitions(input);
+					if (elems != null && elems.length > 0) {
+						display.asyncExec(new Runnable() {
+							public void run() {
+								internalOpen(window, elems);
+							}});
+					} 
+					return Status.OK_STATUS;
+        		}
+        	};
+        	job.setUser(true);
+        	job.schedule();
         }
-        return null;
     }
 
-    private static CHViewPart openInViewPart(IWorkbenchWindow window, ICElement input) {
+    private static CHViewPart internalOpen(IWorkbenchWindow window, ICElement input) {
         IWorkbenchPage page= window.getActivePage();
         try {
             CHViewPart result= (CHViewPart)page.showView(CUIPlugin.ID_CALL_HIERARCHY);
@@ -70,9 +89,7 @@ public class CallHierarchyUI {
         return null;        
     }
 
-    private static CHViewPart openInViewPart(IWorkbenchSite site, ICElement[] input) {
-    	IWorkbenchWindow window = site.getWorkbenchWindow();
-    	StatusLineHandler.clearStatusLine(site);
+    private static CHViewPart internalOpen(IWorkbenchWindow window, ICElement[] input) {
 		ICElement elem = null;
 		switch (input.length) {
 		case 0:
@@ -82,7 +99,7 @@ public class CallHierarchyUI {
 			break;
 		default:
 			if (sIsJUnitTest) {
-				throw new RuntimeException("ambigous input"); //$NON-NLS-1$
+				throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
 			}
 			elem = OpenActionUtil.selectCElement(input, window.getShell(),
 					CHMessages.CallHierarchyUI_label, CHMessages.CallHierarchyUI_selectMessage,
@@ -90,11 +107,8 @@ public class CallHierarchyUI {
 			break;
 		}
 		if (elem != null) {
-			return openInViewPart(window, elem);
-		} else {
-			StatusLineHandler.showStatusLineMessage(site, 
-					CHMessages.CallHierarchyUI_openFailureMessage);
-		}
+			return internalOpen(window, elem);
+		} 
 		return null;
 	}
 
@@ -111,10 +125,10 @@ public class CallHierarchyUI {
 						try {
 							StatusLineHandler.clearStatusLine(editor.getSite());
 							final ICElement[] elems= findDefinitions(project, editorInput, sel);
-							if (elems != null && elems.length > 0) {
+							if (elems.length > 0) {
 								display.asyncExec(new Runnable() {
 									public void run() {
-										openInViewPart(editor.getSite(), elems);
+										internalOpen(editor.getSite().getWorkbenchWindow(), elems);
 									}});
 							} else {
 								StatusLineHandler.showStatusLineMessage(editor.getSite(), 
@@ -133,7 +147,8 @@ public class CallHierarchyUI {
 		}
     }
     
-	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel) throws CoreException {
+	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel) 
+			throws CoreException {
 		try {
 			IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 
@@ -175,8 +190,50 @@ public class CallHierarchyUI {
 			CUIPlugin.getDefault().log(e);
 		} 
 		catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
-		return null;
+		return NO_ELEMENTS;
+	}
+
+	public static ICElement[] findDefinitions(ICElement input) {
+		try {
+			final ITranslationUnit tu= CModelUtil.getTranslationUnit(input);
+			if (tu != null) {
+				final ICProject project= tu.getCProject();
+				final IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+
+				index.acquireReadLock();
+				try {
+					IBinding binding= IndexUI.elementToBinding(index, input);
+					if (binding != null) {
+						ICElement[] result= IndexUI.findAllDefinitions(index, binding);
+						if (result.length > 0) {
+							return result;
+						}
+						IIndexName name= IndexUI.elementToName(index, input);
+						if (name != null) {
+							ICElementHandle handle= IndexUI.getCElementForName(tu, index, name);
+							return new ICElement[] {handle};
+						}
+					}
+				}
+				finally {
+					if (index != null) {
+						index.releaseReadLock();
+					}
+				}
+			}
+		}
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		catch (DOMException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		return new ICElement[] {input};
 	}
 
 	public static boolean isRelevantForCallHierarchy(IBinding binding) {

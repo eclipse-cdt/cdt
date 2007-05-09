@@ -158,7 +158,7 @@ public class IndexUI {
 			ArrayList result= new ArrayList();
 			for (int i = 0; i < defs.length; i++) {
 				IIndexName in = defs[i];
-				ICElementHandle definition= getCElementForName(null, index, in);
+				ICElementHandle definition= getCElementForName((ICProject) null, index, in);
 				if (definition != null) {
 					result.add(definition);
 				}
@@ -183,7 +183,7 @@ public class IndexUI {
 				if (converter != null) {
 					region= converter.actualToHistoric(region);
 				}
-				return CElementHandleFactory.create(tu, binding, region, timestamp);
+				return CElementHandleFactory.create(tu, binding, declName.isDefinition(), region, timestamp);
 			}
 		}
 		return null;
@@ -203,11 +203,16 @@ public class IndexUI {
 		assert !declName.isReference();
 		ITranslationUnit tu= getTranslationUnit(preferProject, declName);
 		if (tu != null) {
-			IRegion region= new Region(declName.getNodeOffset(), declName.getNodeLength());
-			long timestamp= declName.getFile().getTimestamp();
-			return CElementHandleFactory.create(tu, index.findBinding(declName), region, timestamp);
+			return getCElementForName(tu, index, declName);
 		}
 		return null;
+	}
+
+	public static ICElementHandle getCElementForName(ITranslationUnit tu, IIndex index, IIndexName declName) throws CoreException,
+			DOMException {
+		IRegion region= new Region(declName.getNodeOffset(), declName.getNodeLength());
+		long timestamp= declName.getFile().getTimestamp();
+		return CElementHandleFactory.create(tu, index.findBinding(declName), declName.isDefinition(), region, timestamp);
 	}
 
 	public static ICElementHandle findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding) throws CoreException, DOMException {

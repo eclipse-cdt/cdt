@@ -63,7 +63,7 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 			MessageDialog.openError(getShell(), title, message);
 		} 
 		else {
-			CallHierarchyUI.open(elements[0], fWorkbenchWindow);
+			CallHierarchyUI.open(fWorkbenchWindow, elements[0]);
 		}
 	}
 	

@@ -53,7 +53,7 @@ public class IndexTypeReference extends TypeReference {
 			long timestamp= tu.getResource() != null ? tu.getResource().getLocalTimeStamp() : 0;
 			IRegion region= new Region(getOffset(), getLength());
 			try {
-				return CElementHandleFactory.create(tu, binding, region, timestamp);
+				return CElementHandleFactory.create(tu, binding, true, region, timestamp);
 			} catch (CoreException exc) {
 			} catch (DOMException exc) {
 			}

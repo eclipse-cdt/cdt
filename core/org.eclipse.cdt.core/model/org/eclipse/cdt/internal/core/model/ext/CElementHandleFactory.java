@@ -44,7 +44,7 @@ import org.eclipse.jface.text.IRegion;
 public class CElementHandleFactory {
 	private CElementHandleFactory() {}
 
-	public static ICElementHandle create(ITranslationUnit tu, IBinding binding,
+	public static ICElementHandle create(ITranslationUnit tu, IBinding binding, boolean definition,
 			IRegion region, long timestamp) throws CoreException, DOMException {
 		
 		ICElement parentElement= create(tu, binding.getScope());
@@ -54,10 +54,14 @@ public class CElementHandleFactory {
 		
 		CElementHandle element= null;
 		if (binding instanceof ICPPMethod) {
-			element= new MethodHandle(parentElement, (ICPPMethod) binding);
-		}
+			element= definition 
+					? new MethodHandle(parentElement, (ICPPMethod) binding)
+					: new MethodDeclarationHandle(parentElement, (ICPPMethod) binding);
+		}	
 		else if (binding instanceof IFunction) {
-			element= new FunctionHandle(parentElement, (IFunction) binding);
+			element= definition 
+					? new FunctionHandle(parentElement, (IFunction) binding)
+					: new FunctionDeclarationHandle(parentElement, (IFunction) binding);
 		}
 		else if (binding instanceof IField) {
 			element= new FieldHandle(parentElement, (IField) binding);

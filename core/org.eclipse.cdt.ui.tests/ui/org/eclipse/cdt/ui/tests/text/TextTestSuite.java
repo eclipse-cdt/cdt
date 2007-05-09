@@ -49,5 +49,8 @@ public class TextTestSuite extends TestSuite {
 		
 		// basic editing tests
 		addTest(BasicCEditorTest.suite());
+		
+		// editor hyperlink tests
+		addTest(HyperlinkTest.suite());
     }
 }

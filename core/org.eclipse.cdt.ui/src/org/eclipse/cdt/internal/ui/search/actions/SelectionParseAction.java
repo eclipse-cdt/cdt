@@ -77,10 +77,15 @@ public class SelectionParseAction extends Action {
 		StatusLineHandler.clearStatusLine(fSite);
 	}
 
-	//TODO: Change this to work with qualified identifiers
 	public ITextSelection getSelection( int fPos ) {
- 		IDocumentProvider prov = ( fEditor != null ) ? fEditor.getDocumentProvider() : null;
- 		IDocument doc = ( prov != null ) ? prov.getDocument(fEditor.getEditorInput()) : null;
+		return selectWord(fPos, fEditor);
+	}
+	
+	
+	//TODO: Change this to work with qualified identifiers
+	public static ITextSelection selectWord(int fPos, ITextEditor editor) {
+ 		IDocumentProvider prov = ( editor != null ) ? editor.getDocumentProvider() : null;
+ 		IDocument doc = ( prov != null ) ? prov.getDocument(editor.getEditorInput()) : null;
  		
  		if( doc == null )
  			return null;

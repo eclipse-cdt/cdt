@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,181 +7,122 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import org.eclipse.cdt.core.parser.KeywordSetKey;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class CElementHyperlinkDetector implements IHyperlinkDetector{
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+
+public class CElementHyperlinkDetector implements IHyperlinkDetector {
 
 	private ITextEditor fTextEditor;
-	//TODO: Replace Keywords
-	//Temp. Keywords: Once the selection parser is complete, we can use
-	//it to determine if a word can be underlined	
-	private  Set fgKeywords;
 
 	public CElementHyperlinkDetector(ITextEditor editor) {
 		fTextEditor= editor;
-		fgKeywords = KeywordSets.getKeywords(KeywordSetKey.ALL,ParserLanguage.CPP);
 	}
-
+	
+	
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		if (region == null || canShowMultipleHyperlinks || !(fTextEditor instanceof CEditor))
 			return null;
 		
-		IAction openAction= fTextEditor.getAction("OpenDeclarations"); //$NON-NLS-1$
+		CEditor editor = (CEditor) fTextEditor;
+		int offset = region.getOffset();
+		
+		IAction openAction= editor.getAction("OpenDeclarations"); //$NON-NLS-1$
 		if (openAction == null)
 			return null;
 
-		// TODO: 
-		//Need some code in here to determine if the selected input should
-		//be selected - the JDT does this by doing a code complete on the input -
-		//if there are any elements presented it selects the word
-
-		int offset= region.getOffset();
-		IDocument document= fTextEditor.getDocumentProvider().getDocument(fTextEditor.getEditorInput());
-
-		IRegion cregion = selectWord(document, offset);
-		if (cregion != null) {
-			return new IHyperlink[] {new CElementHyperlink(cregion, openAction)};
+		// reuse the logic from Open Decl that recognizes a word in the editor
+		ITextSelection selection = OpenDeclarationsAction.selectWord(offset, editor);
+		if(selection == null)
+			return null;
+		
+		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+		
+		IIndex index;
+		try {
+			index = CCorePlugin.getIndexManager().getIndex(workingCopy.getCProject(),
+				       IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+		} catch(CoreException e) {
+			return null;
+		} 
+		
+		try {
+			index.acquireReadLock();
+		} catch (InterruptedException e) {
+			return null;
+		}
+		
+		try {
+			IASTTranslationUnit ast =
+				ASTProvider.getASTProvider().getAST(workingCopy, index, ASTProvider.WAIT_YES, null);
+			IASTName[] selectedNames = 
+				workingCopy.getLanguage().getSelectedNames(ast, selection.getOffset(), selection.getLength());
+			
+			IRegion linkRegion;
+			if(selectedNames.length > 0 && selectedNames[0] != null) { // found a name
+				linkRegion = new Region(selection.getOffset(), selection.getLength());
+			}
+			else { // check if we are in an include statement
+				linkRegion = matchIncludeStatement(ast, selection);
+			}
+			
+			if(linkRegion != null)
+				return new IHyperlink[] { new CElementHyperlink(linkRegion, openAction) };
+			
+		} catch(CoreException e) {
+		} finally {
+			index.releaseReadLock();
+		}
+		
+		return null;
+	}
+	
+	
+	/**
+	 * Returns the region that represents an include directive if one is found
+	 * that matches the selection, null otherwise.
+	 */
+	private IRegion matchIncludeStatement(IASTTranslationUnit ast, ITextSelection selection) {
+		IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
+		for (int i = 0; i < preprocs.length; ++i) {
+			
+			if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
+				continue;
+			
+			IASTFileLocation loc = preprocs[i].getFileLocation();
+			if (loc != null
+					&& loc.getFileName().equals(ast.getFilePath())
+					&& loc.getNodeOffset() < selection.getOffset()
+					&& loc.getNodeOffset() + loc.getNodeLength() > selection.getOffset()) {
+				
+				return new Region(loc.getNodeOffset(), loc.getNodeLength());
+			}
 		}
 		return null;
 	}
-
-	private IRegion selectWord(IDocument document, int anchor) {
-		//TODO: Modify this to work with qualified name
-		
-        // fix for 95219, return null if the mouse is pointing to a non-java identifier part
-        try {
-            if (!Character.isJavaIdentifierPart(document.getChar(anchor))) {
-                return null;
-            }
-        } catch (BadLocationException e) { return null; }
-
-        boolean isNumber=false;
-		try {		
-			int offset= anchor;
-			char c;
-            char oldC='a'; // assume this is the first character
-			
-			while (offset >= 0) {
-				c= document.getChar(offset);
-                if (!Character.isJavaIdentifierPart(c)) {
-                    if (Character.isDigit(oldC)) // if the first character is a digit, then assume the word is a number, i.e. 1e13, 0xFF, 123
-                        isNumber=true;
-                    break;
-                }
-                oldC = c;
-				--offset;
-			}
-			
-			int start= offset;
-			
-			offset= anchor;
-			int length= document.getLength();
-			
-			while (offset < length) {
-				c= document.getChar(offset);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
-				++offset;
-			}
-			
-			int end= offset;
-			//Allow for new lines
-			if (start == end)
-				return new Region(start, 0);
-
-			// don't select numbers only i.e. 0x1, 1e13, 1234
-            if (isNumber) return null;
-            
-            String selWord = null;
-			String slas = document.get(start,1);
-			
-			// TODO more need to be added to this list as they are discovered
-			if (slas.equals("\n") || //$NON-NLS-1$
-					slas.equals("\t") || //$NON-NLS-1$
-					slas.equals(" ") || //$NON-NLS-1$
-					slas.equals(">") || //$NON-NLS-1$
-					slas.equals(".") || //$NON-NLS-1$
-                    slas.equals("("))	 //$NON-NLS-1$
-			{
-				
-				selWord =document.get(start+1, end - start - 1);
-			}
-			else{
-				selWord =document.get(start, end - start);  	
-			}
-			//Check for keyword
-			if (isKeyWord(selWord))
-				return null;
-			//Avoid selecting literals, includes etc.
-			char charX = selWord.charAt(0);
-			if (charX == '"' ||
-					charX == '.' ||
-					charX == '<' ||
-					charX == '>')
-				return null;
-			
-			if (selWord.equals("#include")) //$NON-NLS-1$
-			{
-				//get start of next identifier
-				
-				
-				int end2 = end;
-				
-				while (!Character.isJavaIdentifierPart(document.getChar(end2))){
-					++end2;		
-				}
-				
-				while (end2 < length){
-					c = document.getChar(end2);
-					
-					if (!Character.isJavaIdentifierPart(c) &&
-							c != '.')
-						break;
-					++end2;
-				}
-				
-				int finalEnd = end2;
-				selWord =document.get(start, finalEnd - start);
-				end = finalEnd + 1;
-				start--;
-			}
-			
-			return new Region(start + 1, end - start - 1);
-			
-		} catch (BadLocationException x) {
-			return null;
-		}
-	}
-
-	private boolean isKeyWord(String selWord) {
-		Iterator i = fgKeywords.iterator();
-		
-		while (i.hasNext()){
-			 String tempWord = (String) i.next();
-			 if (selWord.equals(tempWord))
-			 	return true;
-		}
-		
-		return false;
-	}
-
 
 }

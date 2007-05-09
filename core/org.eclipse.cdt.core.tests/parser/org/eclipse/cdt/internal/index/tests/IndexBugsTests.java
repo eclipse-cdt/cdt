@@ -117,6 +117,50 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, time);
 	}
 
+	// class A {
+	// public:
+	//   void one() {}
+	//   void two() {}
+	// };	
+	
+	// class A {
+	// public:
+	//   void three() {}
+	//   void four() {}
+	//   void five() {}
+	// };
+	public void _test154563() throws Exception {
+		StringBuffer[] content= getContentsForTest(3);
+		
+		IFile file= createFile(getProject(), "header.h", content[0].toString());
+		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		
+		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bs= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bs.length); 
+			assertTrue(bs[0] instanceof ICPPClassType);
+			assertEquals(2, ((ICPPClassType)bs[0]).getDeclaredMethods().length);
+		} finally {
+			index.releaseReadLock();
+		}
+		
+		file.setContents(new ByteArrayInputStream(content[1].toString().getBytes()), true, false, NPM);
+		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		
+		index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bs= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bs.length); 
+			assertTrue(bs[0] instanceof ICPPClassType);
+			assertEquals(3, ((ICPPClassType)bs[0]).getDeclaredMethods().length);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+	
 	// class A {};
 	// class B {};
 	// A var;

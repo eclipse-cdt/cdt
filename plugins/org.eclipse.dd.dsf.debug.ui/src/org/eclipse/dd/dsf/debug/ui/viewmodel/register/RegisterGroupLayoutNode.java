@@ -40,11 +40,13 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -185,6 +187,7 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
     {
         if (IDebugVMConstants.COLUMN_ID__NAME.equals(columnId)) {
             update.setLabel(dmData.getName(), idx);
+            update.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP), idx);
         } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
             update.setLabel("", idx); //$NON-NLS-1$
         } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(columnId)) {

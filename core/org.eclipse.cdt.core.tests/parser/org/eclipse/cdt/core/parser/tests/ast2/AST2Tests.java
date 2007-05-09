@@ -3689,4 +3689,17 @@ public class AST2Tests extends AST2BaseTest {
     	for (int i = 0; i < LANGUAGES.length; i++)
     		parseAndCheckBindings( buffer.toString(), LANGUAGES[i], true);
     }
+    
+    public void testBug186018() throws Exception {
+		String code = 
+			"int main() { \n" +
+			"    switch(1) { \n" +
+			"        case 1 : \n" +
+			"        case 2 : \n" +
+			"            printf(\"pantera rules\"); \n" +
+			"    } \n" +
+			"}\n";
+		
+		parseAndCheckBindings(code, ParserLanguage.C);
+	}
 }

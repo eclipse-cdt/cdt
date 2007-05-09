@@ -153,7 +153,11 @@ public class AST2Tests extends AST2BaseTest {
     }
     
     protected IASTTranslationUnit parseAndCheckBindings( String code, ParserLanguage lang ) throws Exception {
-        IASTTranslationUnit tu = parse( code, lang ); 
+    	return parseAndCheckBindings(code, lang, false);
+    }
+
+    protected IASTTranslationUnit parseAndCheckBindings( String code, ParserLanguage lang, boolean useGnuExtensions) throws Exception {
+        IASTTranslationUnit tu = parse( code, lang, useGnuExtensions ); 
         CNameCollector col = new CNameCollector();
         tu.accept(col);
         assertNoProblemBindings( col );
@@ -3679,4 +3683,10 @@ public class AST2Tests extends AST2BaseTest {
 		
 	}
         
+    // int __builtin_sin;
+    public void testBug182464() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	for (int i = 0; i < LANGUAGES.length; i++)
+    		parseAndCheckBindings( buffer.toString(), LANGUAGES[i], true);
+    }
 }

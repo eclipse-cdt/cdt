@@ -151,8 +151,8 @@ public class CScope implements ICScope, IASTInternalScope {
             bindings[type] = new CharArrayObjectMap(1);
         
         char [] n = name.toCharArray();
-        IASTName current = (IASTName) bindings[type].get( n );
-        if( current == null || ((CASTName)current).getOffset() > ((CASTName) name).getOffset() ){
+        Object current= bindings[type].get( n );
+        if( !(current instanceof IASTName) || ((CASTName)current).getOffset() > ((CASTName) name).getOffset() ){
             bindings[type].put( n, name );
         }
     }

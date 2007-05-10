@@ -45,8 +45,8 @@
 		<simple name="projectName" value="$(projectName)"/>
 		<complex-array name="files">
 			<element>
-				<simple name="source" value="src/Basename.cpp"/>
-				<simple name="target" value="src/$(projectName).cpp"/>
+				<simple name="source" value="src/Basename.c"/>
+				<simple name="target" value="src/$(projectName).c"/>
 				<simple name="replaceable" value="true"/>
 			</element>
 		</complex-array>

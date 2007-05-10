@@ -33,6 +33,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
@@ -54,7 +56,7 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 		 */
 		List names = new Vector(10);
 		try {
-			IProject project = RSEPersistenceManager.getRemoteSystemsProject();
+			IProject project = SystemResourceManager.getRemoteSystemsProject();
 			IResource[] candidates = project.members();
 			for (int i = 0; i < candidates.length; i++) {
 				IResource candidate = candidates[i];
@@ -111,7 +113,7 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 	}
 
 	private IFile getProfileFile(String domName, IProgressMonitor monitor) {
-		IProject project = RSEPersistenceManager.getRemoteSystemsProject();
+		IProject project = SystemResourceManager.getRemoteSystemsProject();
 
 		// before loading, make sure the project is in synch
 		try {
@@ -143,12 +145,20 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 			outStream.writeObject(dom);
 			outStream.close();
 			profileFile.getParent().refreshLocal(IResource.DEPTH_ONE, monitor);
+			dom.markUpdated();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getSaveJob(org.eclipse.rse.persistence.dom.RSEDOM)
+	 */
+	public Job getSaveJob(RSEDOM dom) {
+		return null;
 	}
 
 	public IStatus deleteProfile(String profileName, IProgressMonitor monitor) {

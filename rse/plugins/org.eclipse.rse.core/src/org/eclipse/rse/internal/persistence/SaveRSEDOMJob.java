@@ -47,13 +47,9 @@ public class SaveRSEDOMJob extends WorkspaceJob {
 
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
 		IStatus result = Status.OK_STATUS;
-		synchronized (_dom) { // synchronize on the DOM to prevent its update while writing
-			if (_dom.needsSave()) {
-				_provider.saveRSEDOM(_dom, monitor);
-				_dom.markUpdated();
-			} else {
-				result = Status.CANCEL_STATUS;
-			}
+		boolean saved = _provider.saveRSEDOM(_dom, monitor);
+		if (!saved) {
+			result = Status.CANCEL_STATUS;
 		}
 		return result;
 	}

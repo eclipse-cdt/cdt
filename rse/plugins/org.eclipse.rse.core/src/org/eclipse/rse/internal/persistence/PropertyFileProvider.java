@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +47,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
@@ -94,36 +98,266 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._"; //$NON-NLS-1$ 
 	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ"; //$NON-NLS-1$
 	
+	interface PersistenceAnchor {
+		String[] getProfileLocationNames();
+		IStatus deleteProfileLocation(String profileName, IProgressMonitor monitor);
+		PersistenceLocation getProfileLocation(String profileName);
+	}
+	
+	interface PersistenceLocation {
+		boolean exists();
+		void ensure();
+		boolean hasContents();
+		URI getLocator();
+		PersistenceLocation[] getChildren();
+		PersistenceLocation getChild(String childName);
+		String getName();
+
+		/**
+		 * Keeps only those children from this location that are in the keep set.
+		 * Typically used to clean renamed nodes from the tree on a save operation.
+		 * @param keepSet The names of the children that should be kept. Others are discarded.
+		 */
+		void keepChildren(Set keepSet);
+		void setContents(InputStream stream);
+		InputStream getContents();
+	}
+	
+	class WorkspaceAnchor implements PersistenceAnchor {
+
+		public String[] getProfileLocationNames() {
+			List names = new Vector(10);
+			IFolder providerFolder = getProviderFolder();
+			try {
+				IResource[] profileCandidates = providerFolder.members();
+				for (int i = 0; i < profileCandidates.length; i++) {
+					IResource profileCandidate = profileCandidates[i];
+					if (profileCandidate.getType() == IResource.FOLDER) {
+						String candidateName = profileCandidate.getName();
+						if (candidateName.startsWith(AB_PROFILE)) {
+							names.add(candidateName);
+						}
+					}
+				}
+			} catch (CoreException e) {
+				logException(e);
+			}
+			String[] result = new String[names.size()];
+			names.toArray(result);
+			return result;
+		}
+		
+		public IStatus deleteProfileLocation(String profileName, IProgressMonitor monitor) {
+			IStatus result = Status.OK_STATUS;
+			IFolder profileFolder = getProfileFolder(profileName);
+			if (profileFolder.exists()) {
+				try {
+					profileFolder.delete(IResource.FORCE, monitor);
+				} catch (CoreException e) {
+					result = new Status(IStatus.ERROR, null, 0, RSECoreMessages.PropertyFileProvider_UnexpectedException, e);
+				}
+			}
+			return result;
+		}
+		
+		public PersistenceLocation getProfileLocation(String profileLocationName) {
+			IFolder profileFolder = getProfileFolder(profileLocationName);
+			PersistenceLocation result = new WorkspaceLocation(profileFolder);
+			return result;
+		}
+		
+		/**
+		 * Returns the IFolder in which a profile is stored. 
+		 * @return The folder that was created or found.
+		 */
+		private IFolder getProfileFolder(String profileLocationName) {
+			IFolder providerFolder = getProviderFolder();
+			IFolder profileFolder = getFolder(providerFolder, profileLocationName);
+			return profileFolder;
+		}
+
+		/**
+		 * Returns the IFolder in which this persistence provider stores its profiles.
+		 * This will create the folder if the folder was not found.
+		 * @return The folder that was created or found.
+		 */
+		private IFolder getProviderFolder() {
+			IProject project = SystemResourceManager.getRemoteSystemsProject();
+			try {
+				project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (Exception e) {
+			}
+			IFolder providerFolder = getFolder(project, "dom.properties"); //$NON-NLS-1$
+			return providerFolder;
+		}
+		
+		/**
+		 * Returns the specified folder of the parent container. If the folder does
+		 * not exist it creates it.
+		 * @param parent the parent container - typically a project or folder
+		 * @param name the name of the folder to find or create
+		 * @return the found or created folder
+		 */
+		private IFolder getFolder(IContainer parent, String name) {
+			IPath path = new Path(name);
+			IFolder folder = parent.getFolder(path);
+			if (!folder.exists()) {
+				try {
+					folder.create(IResource.NONE, true, null);
+				} catch (CoreException e) {
+					logException(e);
+				}
+			}
+			return folder;
+		}
+
+		private void logException(Exception e) {
+			RSECorePlugin.getDefault().getLogger().logError("unexpected exception", e); //$NON-NLS-1$
+		}
+	}
+	
+	class WorkspaceLocation implements PersistenceLocation {
+		IFolder baseFolder = null;
+		
+		public WorkspaceLocation(IFolder baseResource) {
+			this.baseFolder = baseResource;
+		}
+		
+		public boolean exists() {
+			return baseFolder.exists();
+		}
+		
+		public void ensure() {
+			if (!baseFolder.exists()) {
+				try {
+					baseFolder.create(true, true, null);
+				} catch (CoreException e) {
+					logException(e);
+				}
+			}
+		}
+		
+		public PersistenceLocation getChild(String childName) {
+			IPath path = new Path(childName);
+			IFolder member = baseFolder.getFolder(path);
+			PersistenceLocation result = new WorkspaceLocation(member);
+			return result;
+		}
+		
+		public PersistenceLocation[] getChildren() {
+			IResource[] members;
+			try {
+				members = baseFolder.members();
+			} catch (CoreException e) {
+				logException(e);
+				members = new IResource[0];
+			}
+			List children = new ArrayList(members.length);
+			for (int i = 0; i < members.length; i++) {
+				IResource member = members[i];
+				if (member.getType() == IResource.FOLDER) {
+					PersistenceLocation child = new WorkspaceLocation((IFolder)member);
+					children.add(child);
+				}
+			}
+			PersistenceLocation[] result = new PersistenceLocation[children.size()];
+			children.toArray(result);
+			return result;
+		}
+		
+		public URI getLocator() {
+			return baseFolder.getLocationURI();
+		}
+		
+		public String getName() {
+			return baseFolder.getName();
+		}
+		
+		public boolean hasContents() {
+			IPath propertiesFileName = new Path(PROPERTIES_FILE_NAME);
+			IFile propertiesFile = baseFolder.getFile(propertiesFileName);
+			boolean result = propertiesFile.exists();
+			return result;
+		}
+		
+		public void keepChildren(Set keepSet) {
+			try {
+				IResource[] children = baseFolder.members();
+				for (int i = 0; i < children.length; i++) {
+					IResource child = children[i];
+					if (child.getType() == IResource.FOLDER) {
+						String childFolderName = child.getName();
+						if (!keepSet.contains(childFolderName)) {
+							child.delete(true, null);
+						}
+					}
+				}
+			} catch (CoreException e) {
+				logException(e);
+			}
+		}
+		
+		public void setContents(InputStream stream) {
+			IPath propertiesFileName = new Path(PROPERTIES_FILE_NAME);
+			IFile propertiesFile = baseFolder.getFile(propertiesFileName);
+			try {
+				if (propertiesFile.exists()) {
+					propertiesFile.setContents(stream, IResource.FORCE | IResource.KEEP_HISTORY, null);
+				} else {
+					propertiesFile.create(stream, IResource.FORCE | IResource.KEEP_HISTORY, null);
+				}
+			} catch (CoreException e) {
+				logException(e);
+			}
+		}
+		
+		public InputStream getContents() {
+			InputStream result = null;
+			IPath propertiesFileName = new Path(PROPERTIES_FILE_NAME);
+			IFile propertiesFile = baseFolder.getFile(propertiesFileName);
+			if (propertiesFile.exists()) {
+				try {
+					result = propertiesFile.getContents();
+				} catch (CoreException e) {
+					logException(e);
+				}
+			}
+			return result;
+		}
+		
+		private void logException(Exception e) {
+			RSECorePlugin.getDefault().getLogger().logError("unexpected exception", e); //$NON-NLS-1$
+		}
+
+	}
+
 	private Pattern period = Pattern.compile("\\."); //$NON-NLS-1$
 	private Pattern suffixPattern = Pattern.compile("_(\\d+)$"); //$NON-NLS-1$
 	private Pattern unicodePattern = Pattern.compile("#(\\p{XDigit}+)#"); //$NON-NLS-1$
-
 	private Map typeQualifiers = getTypeQualifiers();
+	private Map saveJobs = new HashMap();
+	private PersistenceAnchor anchor = new WorkspaceAnchor();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getSavedProfileNames()
 	 */
 	public String[] getSavedProfileNames() {
-		List names = new Vector(10);
-		IFolder providerFolder = getProviderFolder();
-		try {
-			IResource[] profileCandidates = providerFolder.members();
-			for (int i = 0; i < profileCandidates.length; i++) {
-				IResource profileCandidate = profileCandidates[i];
-				if (profileCandidate.getType() == IResource.FOLDER) {
-					String candidateName = profileCandidate.getName();
-					String[] parts = split(candidateName, 2);
-					if (parts[0].equals(AB_PROFILE)) {
-						String name = thaw(parts[1]);
-						names.add(name);
-					}
-				}
-			}
-		} catch (CoreException e) {
-			logException(e);
+		String[] locationNames = anchor.getProfileLocationNames();
+		String[] result = new String[locationNames.length];
+		for (int i = 0; i < locationNames.length; i++) {
+			String locationName = locationNames[i];
+			String profileName = getNodeName(locationName);
+			result[i] = profileName;
 		}
-		String[] result = new String[names.size()];
-		names.toArray(result);
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#deleteProfile(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus deleteProfile(String profileName, IProgressMonitor monitor) {
+		String profileLocationName = getLocationName(AB_PROFILE, profileName);
+		IStatus result = anchor.deleteProfileLocation(profileLocationName, monitor);
 		return result;
 	}
 
@@ -131,107 +365,128 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#saveRSEDOM(org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor) {
-		IFolder providerFolder = getProviderFolder();
-		try {
-			int n = countNodes(dom);
-			if (monitor != null) monitor.beginTask(RSECoreMessages.PropertyFileProvider_SavingTaskName, n);
-			saveNode(dom, providerFolder, monitor);
-			if (monitor != null) monitor.done();
-		} catch (Exception e) {
-			logException(e);
-			return false;
-		}
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#deleteProfile(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus deleteProfile(String profileName, IProgressMonitor monitor) {
-		IStatus result = Status.OK_STATUS;
-		IFolder profileFolder = getProfileFolder(profileName);
-		if (profileFolder.exists()) {
+		boolean result = false;
+		synchronized (dom) {
+			String profileLocationName = getLocationName(dom);
+			PersistenceLocation profileLocation = anchor.getProfileLocation(profileLocationName);
 			try {
-				profileFolder.delete(IResource.FORCE, monitor);
-			} catch (CoreException e) {
-				result = new Status(IStatus.ERROR, null, 0, RSECoreMessages.PropertyFileProvider_UnexpectedException, e);
+				int n = countNodes(dom);
+				monitor.beginTask(RSECoreMessages.PropertyFileProvider_SavingTaskName, n);
+				saveNode(dom, profileLocation, monitor);
+				monitor.done();
+				dom.markUpdated();
+				result = true;
+			} catch (Exception e) {
+				logException(e);
 			}
 		}
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#loadRSEDOM(org.eclipse.rse.model.ISystemProfileManager, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public RSEDOM loadRSEDOM(String profileName, IProgressMonitor monitor) {
+		RSEDOM dom = null;
+		String profileLocationName = getLocationName(AB_PROFILE, profileName);
+		PersistenceLocation location = anchor.getProfileLocation(profileLocationName);
+		if (location.exists()) {
+			int n = countLocations(location);
+			monitor.beginTask(RSECoreMessages.PropertyFileProvider_LoadingTaskName, n);
+			dom = (RSEDOM)loadNode(null, location, monitor);
+			monitor.done();
+		} else {
+			String message = location.getLocator().toString() + " does not exist."; //$NON-NLS-1$
+			getLogger().logError(message, null);
+		}
+		return dom;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getSaveJob(org.eclipse.rse.persistence.dom.RSEDOM)
+	 */
+	public Job getSaveJob(RSEDOM dom) {
+		Job saveJob = (Job) saveJobs.get(dom);
+		if (saveJob == null) {
+			saveJob = new SaveRSEDOMJob(dom, this);
+			saveJobs.put(dom, saveJob);
+		}
+		return saveJob;
+	}
+
 	/**
 	 * Saves a node from the DOM to the file system.
 	 * @param node The node to save.
-	 * @param parentFolder The folder in which to save this node. The node will be a
-	 * subfolder of this folder.
+	 * @param location The location in which to save this node.
 	 * @param monitor The progress monitor. If the monitor has been cancel then
 	 * this method will do nothing and return null.
-	 * @return The name of the folder saving this node. Can be used for constructing 
-	 * references to children. May return null if the monitor has been canceled.
 	 */
-	private String saveNode(RSEDOMNode node, IFolder parentFolder, IProgressMonitor monitor) {
-		if (monitor != null && monitor.isCanceled()) return null;
-		String nodeFolderName = getSaveFolderName(node);
-		IFolder nodeFolder = getFolder(parentFolder, nodeFolderName);
+	private void saveNode(RSEDOMNode node, PersistenceLocation location, IProgressMonitor monitor) {
+		if (monitor.isCanceled()) return;
+		location.ensure();
 		Properties properties = getProperties(node, false, monitor);
-		RSEDOMNode[] children = node.getChildren();
-		Set childFolderNames = new HashSet();
-		for (int i = 0; i < children.length; i++) {
-			RSEDOMNode child = children[i];
+		RSEDOMNode[] childNodes = node.getChildren();
+		Set childNames = new HashSet();
+		for (int i = 0; i < childNodes.length; i++) {
+			RSEDOMNode childNode = childNodes[i];
 			String index = getIndexString(i);
-			if (!isNodeEmbedded(child)) {
+			if (!isNodeEmbedded(childNode)) {
 				String key = combine(MT_REFERENCE[0], index);
-				String childFolderName = saveNode(child, nodeFolder, monitor);
-				if (childFolderName != null) properties.put(key, childFolderName);
-				childFolderNames.add(childFolderName);
+				String childName = getLocationName(childNode);
+				PersistenceLocation childLocation = location.getChild(childName);
+				saveNode(childNode, childLocation, monitor);
+				properties.put(key, childName);
+				childNames.add(childName);
 			}
 		}
-		removeFolders(nodeFolder, childFolderNames);
-		String propertiesFileName = PROPERTIES_FILE_NAME;
-		IFile propertiesFile = nodeFolder.getFile(propertiesFileName);
-		writeProperties(properties, "RSE DOM Node", propertiesFile); //$NON-NLS-1$
-		return nodeFolderName;
+		location.keepChildren(childNames);
+		writeProperties(properties, "RSE DOM Node", location); //$NON-NLS-1$
 	}
 
 	/**
-	 * Removes childFolders from the parent folder that are not in the keep set.
-	 * Typically used to clean renamed nodes from the tree on a save operation.
-	 * @param parentFolder The folder whose subfolders are to be examined.
-	 * @param keepSet The names of the folders that should be kept. Others are discarded.
+	 * Returns the node name derived from the location name.
+	 * Location names are constructed to be valid file system resource names and 
+	 * node names may be arbitrary. There is a mapping between the two.
+	 * @param locationName The location name from which to derive the node name.
+	 * @return the node name.
 	 */
-	private void removeFolders(IFolder parentFolder, Set keepSet) {
-		try {
-			IResource[] children = parentFolder.members();
-			for (int i = 0; i < children.length; i++) {
-				IResource child = children[i];
-				if (child.getType() == IResource.FOLDER) {
-					String childFolderName = child.getName();
-					if (!keepSet.contains(childFolderName)) {
-						child.delete(true, null);
-					}
-				}
-			}
-		} catch (CoreException e) {
-			logException(e);
-		}
+	private String getNodeName(String locationName) {
+		String[] parts = split(locationName, 2);
+		String frozenName = parts[1];
+		String result = thaw(frozenName);
+		return result;
 	}
 
 	/**
-	 * Returns the name of a folder that can be used to store a node of a particular 
-	 * type. Since this is a folder, its name must conform to the rules of the file
-	 * system. The names are derived from the name and type of the node. Note that the 
+	 * Returns the name of a location that can be used to store a node of a particular 
+	 * type. The name is contructed to conform to the rules for file systems.
+	 * The names are derived from the name and type of the node. Note that the 
 	 * actual name of the node is also stored as a property so we need not attempt
-	 * to recover the node name from the folder name.
-	 * @param node The node that will eventually be stored in this folder.
-	 * @return The name of the folder to store this node.
+	 * to recover the node name from the location name.
+	 * @param node The node that will eventually be stored in this location.
+	 * @return The name of the location to store this node.
 	 */
-	private String getSaveFolderName(RSEDOMNode node) {
+	private String getLocationName(RSEDOMNode node) {
 		String type = node.getType();
 		type = (String) typeQualifiers.get(type);
 		String name = node.getName();
-		name = freeze(name);
-		String result = combine(type, name);
+		String result = getLocationName(type, name);
+		return result;
+	}
+
+	/**
+	 * Returns the name of a location that can be used to store a node of a particular 
+	 * type. The name is contructed to conform to the rules for file systems.
+	 * The names are derived from the name and type of the node. Note that the 
+	 * actual name of the node is also stored as a property so we need not attempt
+	 * to recover the node name from the location name.
+	 * @param nodeName The node that will eventually be stored in this location.
+	 * @param typeName The type abbreviation for the node at this location.
+	 * @return The name of the location to store this node.
+	 */
+	private String getLocationName(String typeName, String nodeName) {
+		String name = freeze(nodeName);
+		String result = combine(typeName, name);
 		return result;
 	}
 
@@ -347,19 +602,18 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	}
 
 	/**
-	 * Write a set of properties to a file.
+	 * Write a set of properties to a location.
 	 * @param properties The Properties object to write.
-	 * @param header The header to include in the properties file.
-	 * @param file The IFile which will contain the properties.
+	 * @param header The header to include in the location contents.
+	 * @param location The PersistenceLocation which will contain the properties.
 	 * @param monitor The progress monitor.
 	 */
-	private void writeProperties(Properties properties, String header, IFile file) {
+	private void writeProperties(Properties properties, String header, PersistenceLocation location) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(500);
 		PrintWriter out = new PrintWriter(outStream);
 		out.println("# " + header); //$NON-NLS-1$
 		Map map = new TreeMap(properties);
 		Set keys = map.keySet();
-
 		for (Iterator z = keys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
 			String value = (String) map.get(key);
@@ -368,21 +622,12 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		out.close();
 		ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
-		try {
-			if (!file.exists()) {
-				file.create(inStream, true, null);
-			} else {
-				file.setContents(inStream, true, true, null);
-			}
-		} catch (CoreException e) {
-			logException(e);
-		}
+		location.setContents(inStream);
 	}
 
 	/**
 	 * Tests if a node's definition should be embedded in its parent's definition or
 	 * if it should be a separate definition. The test is usually based on node type.
-	 * Currently only filter strings are embedded in their parent filter definition.
 	 * @param node The node to be tested.
 	 * @return true if the node is to be embedded.
 	 */
@@ -487,7 +732,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				}
 			}
 		}
-		if (monitor != null) monitor.worked(1);
+		monitor.worked(1);
 		return properties;
 	}
 
@@ -518,7 +763,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 
 	/**
 	 * Count the number of nodes in a tree rooted in the supplied node. The
-	 * supplied node is counted so the mininum result is one.
+	 * supplied node is counted so the minimum result is one.
 	 * @param node The root of the tree.
 	 * @return The node count.
 	 */
@@ -532,94 +777,63 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#loadRSEDOM(org.eclipse.rse.model.ISystemProfileManager, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public RSEDOM loadRSEDOM(String profileName, IProgressMonitor monitor) {
-		RSEDOM dom = null;
-		IFolder profileFolder = getProfileFolder(profileName);
-		if (profileFolder.exists()) {
-			int n = countPropertiesFiles(profileFolder);
-			if (monitor != null) monitor.beginTask(RSECoreMessages.PropertyFileProvider_LoadingTaskName, n);
-			dom = (RSEDOM) loadNode(null, profileFolder, monitor);
-			if (monitor != null) monitor.done();
-		} else {
-			String message = profileFolder.getFullPath().toString() + " does not exist."; //$NON-NLS-1$
-			getLogger().logError(message, null);
-		}
-		return dom;
-	}
-
 	/**
-	 * Counts the number of properties files in this folder and below. This provides
-	 * a lower bound to the number of nodes that have to be created from this 
+	 * Counts the number of locations that have contents in this location and below.
+	 * This provides a lower bound to the number of nodes that have to be created from this 
 	 * persistent form of a DOM.
-	 * @param folder
-	 * @return the number of properties files found.
+	 * @param location
+	 * @return the number of locations that have contents.
 	 */
-	private int countPropertiesFiles(IFolder folder) {
+	private int countLocations(PersistenceLocation location) {
 		int result = 0;
-		IFile propertiesFile = folder.getFile(PROPERTIES_FILE_NAME);
-		if (propertiesFile.exists()) {
+		if (location.hasContents()) {
 			result += 1;
-			try {
-				IResource[] members = folder.members();
-				for (int i = 0; i < members.length; i++) {
-					IResource member = members[i];
-					if (member.getType() == IResource.FOLDER) {
-						IFolder childFolder = (IFolder) member;
-						result += countPropertiesFiles(childFolder);
-					}
-				}
-			} catch (CoreException e) {
-				logException(e);
-			}
+		}
+		PersistenceLocation[] children = location.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			PersistenceLocation child = children[i];
+			result += countLocations(child);
 		}
 		return result;
 	}
-
+	
 	/**
-	 * Loads a node from a folder.
+	 * Loads a node from a location.
 	 * @param parent The parent of the node to be created. If null then this node is assumed to
 	 * be a DOM root node (RSEDOM).
-	 * @param nodeFolder The folder in which the node.properties file of this node is found.
+	 * @param nodeLocation The location in which the contents of this node is found.
 	 * @param monitor The monitor used to report progress and cancelation. If the monitor is
 	 * in canceled state then it this does method does nothing and returns null. If the monitor
 	 * is not canceled then its work count is incremented by one.
 	 * @return The newly loaded node.
 	 */
-	private RSEDOMNode loadNode(RSEDOMNode parent, IFolder nodeFolder, IProgressMonitor monitor) {
+	private RSEDOMNode loadNode(RSEDOMNode parent, PersistenceLocation nodeLocation, IProgressMonitor monitor) {
 		RSEDOMNode node = null;
-		if (monitor == null || !monitor.isCanceled()) {
-			Properties properties = loadProperties(nodeFolder);
+		if (!monitor.isCanceled()) {
+			Properties properties = loadProperties(nodeLocation);
 			if (properties != null) {
-				node = makeNode(parent, nodeFolder, properties, monitor);
+				node = makeNode(parent, nodeLocation, properties, monitor);
 			}
-			if (monitor != null) monitor.worked(1);
+			monitor.worked(1);
 		}
 		return node;
 	}
 
 	/**
-	 * Loads the properties found in the folder. Returns null if no properties
-	 * file was found.
-	 * @param folder The folder in which to look for properties.
+	 * Loads the properties found in the location. Returns null if no properties
+	 * were found.
+	 * @param location The location in which to look for properties.
 	 * @return The Properties object.
 	 */
-	private Properties loadProperties(IFolder folder) {
+	private Properties loadProperties(PersistenceLocation location) {
 		Properties properties = null;
-		IFile attributeFile = folder.getFile(PROPERTIES_FILE_NAME);
-		if (attributeFile.exists()) {
+		if (location.hasContents()) {
 			properties = new Properties();
+			InputStream inStream = location.getContents();
 			try {
-				InputStream inStream = attributeFile.getContents();
-				try {
-					properties.load(inStream);
-					inStream.close();
-				} catch (IOException e) {
-					logException(e);
-				}
-			} catch (CoreException e) {
+				properties.load(inStream);
+				inStream.close();
+			} catch (IOException e) {
 				logException(e);
 			}
 		}
@@ -630,13 +844,12 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * Makes a new RSEDOMNode from a set of properties. The properties must (at least) include
 	 * a "name" property and a "type" property. Any child nodes are created and attached as well.
 	 * @param parent The parent node of the node to be created.
-	 * @param nodeFolder The folder in which referenced child folders can be found. This will
-	 * almost always be the folder in which the properties for the node to be created were found.
+	 * @param location The location in which referenced child folders can be found.
 	 * @param properties The properties from which to create the node.
 	 * @param monitor a monitor to support cancelation and progress reporting.
 	 * @return the newly created DOM node and its children.
 	 */
-	private RSEDOMNode makeNode(RSEDOMNode parent, IFolder nodeFolder, Properties properties, IProgressMonitor monitor) {
+	private RSEDOMNode makeNode(RSEDOMNode parent, PersistenceLocation location, Properties properties, IProgressMonitor monitor) {
 		String nodeType = getProperty(properties, MT_NODE_TYPE);
 		String nodeName = getProperty(properties, MT_NODE_NAME);
 		RSEDOMNode node = (parent == null) ? new RSEDOM(nodeName) : new RSEDOMNode(parent, nodeType, nodeName);
@@ -681,13 +894,13 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		for (Iterator z = childNames.iterator(); z.hasNext();) {
 			String childName = (String) z.next();
 			Properties p = getProperties(childPropertiesMap, childName);
-			makeNode(node, nodeFolder, p, monitor);
+			makeNode(node, location, p, monitor);
 		}
 		for (Iterator z = referenceKeys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
-			String childFolderName = properties.getProperty(key);
-			IFolder childFolder = getFolder(nodeFolder, childFolderName);
-			loadNode(node, childFolder, monitor);
+			String childLocationName = properties.getProperty(key);
+			PersistenceLocation childLocation = location.getChild(childLocationName);
+			loadNode(node, childLocation, monitor);
 		}
 		node.setRestoring(false);
 		return node;
@@ -740,53 +953,6 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	}
 
 	/**
-	 * Returns the IFolder in which this persistence provider stores its profiles.
-	 * This will create the folder if the folder was not found.
-	 * @return The folder that was created or found.
-	 */
-	private IFolder getProviderFolder() {
-		IProject project = RSEPersistenceManager.getRemoteSystemsProject();
-		try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		} catch (Exception e) {
-		}
-		//IFolder providerFolder = getFolder(project, "org.eclipse.rse.dom.properties");
-		IFolder providerFolder = getFolder(project, "dom.properties"); //$NON-NLS-1$
-		return providerFolder;
-	}
-
-	/**
-	 * Returns the IFolder in which a profile is stored. 
-	 * @return The folder that was created or found.
-	 */
-	private IFolder getProfileFolder(String profileName) {
-		String profileFolderName = combine(AB_PROFILE, freeze(profileName));
-		IFolder providerFolder = getProviderFolder();
-		IFolder profileFolder = getFolder(providerFolder, profileFolderName);
-		return profileFolder;
-	}
-
-	/**
-	 * Returns the specified folder of the parent container. If the folder does
-	 * not exist it creates it.
-	 * @param parent the parent container - typically a project or folder
-	 * @param name the name of the folder to find or create
-	 * @return the found or created folder
-	 */
-	private IFolder getFolder(IContainer parent, String name) {
-		IPath path = new Path(name);
-		IFolder folder = parent.getFolder(path);
-		if (!folder.exists()) {
-			try {
-				folder.create(IResource.NONE, true, null);
-			} catch (CoreException e) {
-				logException(e);
-			}
-		}
-		return folder;
-	}
-
-	/**
 	 * Convenience method to combine two names into one. The individual names in the
 	 * combined name are separated by periods.
 	 * @param typeName The first name.
@@ -833,4 +999,5 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private void logException(Exception e) {
 		getLogger().logError("unexpected exception", e); //$NON-NLS-1$
 	}
+
 }

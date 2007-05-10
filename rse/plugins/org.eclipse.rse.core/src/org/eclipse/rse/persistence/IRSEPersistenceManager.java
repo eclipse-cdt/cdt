@@ -42,12 +42,11 @@ public interface IRSEPersistenceManager {
 	public ISystemProfile[] restoreProfiles();
 
 	/**
-	 * Restore a profiles particular provider by name.
+	 * Restore the profiles for a particular provider.
 	 * @param provider a persistence provider
-	 * @param profileName the name of the profile to restore
-	 * @return the restored profile or null if no profile of that name is known to this provider.
+	 * @return an array of the restored profiles
 	 */
-	public ISystemProfile restoreProfile(IRSEPersistenceProvider provider, String profileName);
+	public ISystemProfile[] restoreProfiles(IRSEPersistenceProvider provider);
 
 	/**
 	 * Delete the persistent form of a profile.
@@ -100,5 +99,15 @@ public interface IRSEPersistenceManager {
 	 * @return true if this instance of the persistence manager is currently importing a profile.
 	 */
 	public boolean isImporting();
-
+	
+	/**
+	 * Indicate if all profiles for a particular persistence provider have been restored.
+	 * Profiles are typically restored when RSE is activated and when profiles
+	 * are reloaded by the user. This will not load the persistence provider. If the persistence
+	 * provider is not loaded it will return false.
+	 * @param providerId the persistence providerId
+	 * @return true if the profiles have been fully restored
+	 */
+	public boolean isRestoreComplete(String providerId);
+	
 }

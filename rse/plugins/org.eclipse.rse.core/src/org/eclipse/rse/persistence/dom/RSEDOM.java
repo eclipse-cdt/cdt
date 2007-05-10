@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.persistence.dom;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.model.ISystemProfile;
 
 /**
@@ -29,7 +28,6 @@ public class RSEDOM extends RSEDOMNode {
 	 * Recommended for serializable objects. This should be updated if there is a schema change. 
 	 */
 	private static final long serialVersionUID = 1L;
-	private transient Job saveJob = null;
 	private transient ISystemProfile _profile;
 
 	public RSEDOM(ISystemProfile profile) {
@@ -86,14 +84,6 @@ public class RSEDOM extends RSEDOMNode {
 			print(child, cindent);
 		}
 		System.out.println(indent + "}"); //$NON-NLS-1$
-	}
-
-	public Job getSaveJob() {
-		return saveJob;
-	}
-
-	public void setSaveJob(Job saveJob) {
-		this.saveJob = saveJob;
 	}
 
 }

@@ -19,23 +19,23 @@
 package org.eclipse.rse.internal.persistence;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -59,26 +59,26 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	private static final int STATE_NONE = 0;
 	private static final int STATE_LOADING = 1;
 	private static final int STATE_SAVING = 2;
-
-	private static IProject remoteSystemsProject = null;
-
-	/**
-	 * Get the default remote systems project.
-	 * @return IProject handle of the project.
-	 */
-	public static IProject getRemoteSystemsProject() {
-		if (remoteSystemsProject == null) 
-		{
-			remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject();
+	
+	private class ProviderRecord {
+		private String providerId = null;
+		private IConfigurationElement configurationElement = null;
+		private IRSEPersistenceProvider provider = null;
+		private boolean restored = false;
+		synchronized boolean getRestored() {
+			return restored;
 		}
-		return remoteSystemsProject;
+		synchronized void setRestored(boolean restored) {
+			this.restored = restored;
+		}
 	}
-
+	
 	private Map knownProviders = new HashMap(10);
+	private Map loadedProviders = new HashMap(10);
 	private int _currentState = STATE_NONE;
 	private RSEDOMExporter _exporter;
 	private RSEDOMImporter _importer;
-
+	
 	public RSEPersistenceManager(ISystemRegistry registry) {
 		_exporter = RSEDOMExporter.getInstance();
 		_importer = RSEDOMImporter.getInstance();
@@ -86,20 +86,61 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		getProviderExtensions();
 	}
 
-	public boolean isExporting() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#isExporting()
+	 */
+	public synchronized boolean isExporting() {
 		return _currentState == STATE_SAVING;
 	}
 
-	public boolean isImporting() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#isImporting()
+	 */
+	public synchronized boolean isImporting() {
 		return _currentState == STATE_LOADING;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#registerPersistenceProvider(java.lang.String, org.eclipse.rse.persistence.IRSEPersistenceProvider)
+	 */
 	public void registerPersistenceProvider(String id, IRSEPersistenceProvider provider) {
-		knownProviders.put(id, provider);
+		ProviderRecord pr = getProviderRecord(id);
+		pr.provider = provider;
+		loadedProviders.put(provider, id);
 	}
 
 	/**
-	 * Attempt to save single profile to disk.
+	 * Returns the persistence provider denoted by the id. Only one instance of this 
+	 * persistence provider is created.
+	 * @param id The id of the persistence provider, as denoted by the id attribute on its declaration.
+	 * @return an IRSEPersistenceProvider which may be null if this id is not found.
+	 */
+	public IRSEPersistenceProvider getPersistenceProvider(String id) {
+		ProviderRecord pr = getProviderRecord(id);
+		if (pr.provider == null && pr.configurationElement != null) {
+			try {
+				pr.provider = (IRSEPersistenceProvider) pr.configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
+				loadedProviders.put(pr.provider, pr.providerId);
+			} catch (CoreException e) {
+				Logger logger = RSECorePlugin.getDefault().getLogger();
+				logger.logError("Exception loading persistence provider", e); //$NON-NLS-1$
+			}
+		}
+		return pr.provider;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#getPersistenceProviderIds()
+	 */
+	public String[] getPersistenceProviderIds() {
+		Set ids = knownProviders.keySet();
+		String[] result = new String[ids.size()];
+		ids.toArray(result);
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#commitProfile(org.eclipse.rse.core.model.ISystemProfile)
 	 */
 	public boolean commitProfile(ISystemProfile profile) {
 		boolean result = false;
@@ -109,6 +150,9 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#commitProfiles()
+	 */
 	public boolean commitProfiles() {
 		boolean ok = true;
 		ISystemProfile[] profiles = RSECorePlugin.getTheSystemRegistry().getAllSystemProfiles();
@@ -135,9 +179,10 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		IRSEPersistenceProvider newProvider = persistenceProvider;
 		newProvider = (newProvider == null) ? getDefaultPersistenceProvider() : newProvider;
 		if (oldProvider != newProvider) {
+			String profileName = profile.getName();
 			profile.setPersistenceProvider(newProvider);
 			profile.commit();
-			deleteProfile(oldProvider, profile.getName());
+			deleteProfile(oldProvider, profileName);
 		}
 	}
 
@@ -159,67 +204,66 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#restoreProfiles()
 	 */
 	public ISystemProfile[] restoreProfiles() {
-		List profiles = loadProfiles();
+		List profiles = new ArrayList(10);
+		String[] ids = getPersistenceProviderIds();
+		for (int i = 0; i < ids.length; i++) {
+			String id = ids[i];
+			IRSEPersistenceProvider provider = getPersistenceProvider(id);
+			if (provider != null) {
+				ISystemProfile[] providerProfiles = restoreProfiles(provider);
+				profiles.addAll(Arrays.asList(providerProfiles));
+			}
+		}
 		ISystemProfile[] result = new ISystemProfile[profiles.size()];
 		profiles.toArray(result);
 		return result;
 	}
 	
-	public ISystemProfile restoreProfile(IRSEPersistenceProvider provider, String profileName) {
-		ISystemProfile result = load(provider, profileName);
-		return result;
-	}
-
-	/**
-	 * Returns the persistence provider denoted by the id. Only one instance of this 
-	 * persistence provider is created.
-	 * @param id The id of the persistence provider, as denoted by the id attribute on its declaration.
-	 * @return an IRSEPersistenceProvider which may be null if this id is not found.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#restoreProfiles(org.eclipse.rse.persistence.IRSEPersistenceProvider)
 	 */
-	public IRSEPersistenceProvider getPersistenceProvider(String id) {
-		IRSEPersistenceProvider provider = null;
-		Object providerCandidate = knownProviders.get(id);
-		if (providerCandidate instanceof IConfigurationElement) {
-			IConfigurationElement element = (IConfigurationElement) providerCandidate;
-			try {
-				provider = (IRSEPersistenceProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
-			} catch (CoreException e) {
-				Logger logger = RSECorePlugin.getDefault().getLogger();
-				logger.logError("Exception loading persistence provider", e); //$NON-NLS-1$
-			}
-			if (provider != null) {
-				knownProviders.put(id, provider);
-			}
-		} else if (providerCandidate instanceof IRSEPersistenceProvider) {
-			provider = (IRSEPersistenceProvider) providerCandidate;
-		}
-		return provider;
+	public ISystemProfile[] restoreProfiles(IRSEPersistenceProvider provider) {
+		ProviderRecord pr = getProviderRecord(provider);
+		pr.setRestored(false);
+		List profiles = loadProfiles(provider);
+		pr.setRestored(true);
+		ISystemProfile[] result = new ISystemProfile[profiles.size()];
+		profiles.toArray(result);
+		return result;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#getPersistenceProviderIds()
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#isRestoreComplete(java.lang.String)
 	 */
-	public String[] getPersistenceProviderIds() {
-		Set ids = knownProviders.keySet();
-		String[] result = new String[ids.size()];
-		ids.toArray(result);
+	public boolean isRestoreComplete(String providerId) {
+		ProviderRecord providerRecord = getProviderRecord(providerId);
+		boolean result = providerRecord.getRestored();
 		return result;
 	}
 	
+	private ProviderRecord getProviderRecord(String providerId) {
+		ProviderRecord providerRecord = (ProviderRecord) knownProviders.get(providerId);
+		if (providerRecord == null) {
+			providerRecord = new ProviderRecord();
+			knownProviders.put(providerId, providerRecord);
+		}
+		return providerRecord;
+	}
+
 	/**
-	 * Retrieves the default persistence provider for this workbench configuration.
-	 * Several persistence providers may be registered, but the default one is used for all
-	 * profiles that do not have one explicitly specified.
-	 * This persistence provider's identifier is specified in the org.eclipse.rse.core/DEFAULT_PERSISTENCE_PROVIDER
-	 * preference and can be specified a product's plugin_customization.ini file.
-	 * @see IRSEPreferenceNames
-	 * @return the default IRSEPersistenceProvider for this installation.
+	 * Returns the provider record for a given persistence provider.
+	 * @param provider the provider for which to retrieve the provider record.
+	 * @return the provider record.
 	 */
-	private IRSEPersistenceProvider getDefaultPersistenceProvider() {
-		Preferences preferences = RSECorePlugin.getDefault().getPluginPreferences();
-		String providerId = preferences.getString(IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER);
-		IRSEPersistenceProvider provider = getPersistenceProvider(providerId);
-		return provider;
+	private ProviderRecord getProviderRecord(IRSEPersistenceProvider provider) {
+		ProviderRecord pr = null;
+		String id = (String) loadedProviders.get(provider);
+		if (id != null) {
+			pr = getProviderRecord(id);
+		} else {
+			pr = new ProviderRecord();
+		}
+		return pr;
 	}
 
 	/**
@@ -237,7 +281,8 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			if (configurationElement.getName().equals("persistenceProvider")) { //$NON-NLS-1$
 				String candidateId = configurationElement.getAttribute("id"); //$NON-NLS-1$
 				if (candidateId != null) {
-					knownProviders.put(candidateId, configurationElement);
+					ProviderRecord pr = getProviderRecord(candidateId);
+					pr.configurationElement = configurationElement;
 				} else {
 					logger.logError("Missing id attribute in persistenceProvider element", null); //$NON-NLS-1$
 				}
@@ -247,19 +292,27 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		}
 	}
 
-	private List loadProfiles() {
-		List profiles = new ArrayList(10);
-		String[] ids = getPersistenceProviderIds();
-		for (int i = 0; i < ids.length; i++) {
-			String id = ids[i];
-			IRSEPersistenceProvider provider = getPersistenceProvider(id);
-			if (provider != null) {
-				profiles.addAll(loadProfiles(provider));
-			}
-		}
-		return profiles;
+	/**
+	 * Retrieves the default persistence provider for this workbench configuration.
+	 * Several persistence providers may be registered, but the default one is used for all
+	 * profiles that do not have one explicitly specified.
+	 * This persistence provider's identifier is specified in the org.eclipse.rse.core/DEFAULT_PERSISTENCE_PROVIDER
+	 * preference and can be specified a product's plugin_customization.ini file.
+	 * @see IRSEPreferenceNames
+	 * @return the default IRSEPersistenceProvider for this installation.
+	 */
+	private IRSEPersistenceProvider getDefaultPersistenceProvider() {
+		Preferences preferences = RSECorePlugin.getDefault().getPluginPreferences();
+		String providerId = preferences.getString(IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER);
+		IRSEPersistenceProvider provider = getPersistenceProvider(providerId);
+		return provider;
 	}
 
+	/**
+	 * Loads the profiles for a given persistence provider.
+	 * @param persistenceProvider
+	 * @return a list of profiles
+	 */
 	private List loadProfiles(IRSEPersistenceProvider persistenceProvider) {
 		List profiles = new ArrayList(10);
 		String[] profileNames = persistenceProvider.getSavedProfileNames();
@@ -282,7 +335,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		ISystemProfile profile = null;
 		if (_currentState == STATE_NONE) {
 			_currentState = STATE_LOADING;
-			RSEDOM dom = provider.loadRSEDOM(profileName, null);
+			RSEDOM dom = provider.loadRSEDOM(profileName, new NullProgressMonitor());
 			if (dom != null) {
 				SystemProfileManager.getDefault().setRestoring(true);
 				profile = _importer.restoreProfile(dom);
@@ -302,6 +355,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * @return true if the profile is written to a DOM
 	 */
 	private synchronized boolean save(ISystemProfile profile, boolean force) {
+		boolean result = false;
 		if (_currentState == STATE_NONE) {
 			_currentState = STATE_SAVING;
 			IRSEPersistenceProvider provider = profile.getPersistenceProvider();
@@ -312,16 +366,17 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			RSEDOM dom = _exporter.createRSEDOM(profile, force);
 			cleanTree(profile);
 			if (dom.needsSave()) {
-				Job job = dom.getSaveJob();
-				if (job == null) {
-					job = new SaveRSEDOMJob(dom, getDefaultPersistenceProvider());
-					dom.setSaveJob(job);
+				Job job = provider.getSaveJob(dom);
+				if (job != null) {
+					job.schedule(3000); // three second delay
+				} else {
+					provider.saveRSEDOM(dom, new NullProgressMonitor());
 				}
-				job.schedule(3000); // three second delay
 			}
+			result = true;
 			_currentState = STATE_NONE;
 		}
-		return true;
+		return result;
 	}
 	
 	private void cleanTree(IRSEPersistableContainer node) {

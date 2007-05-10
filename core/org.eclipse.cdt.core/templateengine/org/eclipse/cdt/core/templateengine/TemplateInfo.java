@@ -27,10 +27,12 @@ public class TemplateInfo {
 	private String pagesProvider;
 	private boolean isCategory;
 	private String icon;
+	private String templateId;
 	
-	public TemplateInfo(String projectTypeId, String filterPattern, String templatePath, 
+	public TemplateInfo(String templateId, String projectTypeId, String filterPattern, String templatePath, 
 			String pluginId, Set toolChainIdSet, String usageDescription, 
 			String pagesProvider, boolean isCategory) {
+		this.templateId = templateId;
 		this.filterPattern = filterPattern;
 		this.templatePath = templatePath;
 		this.pluginId = pluginId;
@@ -47,6 +49,14 @@ public class TemplateInfo {
 	 */
 	public String getPluginId() {
 		return pluginId;
+	}
+
+	/**
+	 * Returns the Template ID
+	 * @return   String contains the template id.
+	 */
+	public String getTemplateId() {
+		return templateId;
 	}
 
 	/**
@@ -90,6 +100,10 @@ public class TemplateInfo {
 		return (String[]) toolChainIdSet.toArray(new String[toolChainIdSet.size()]);
 	}
 
+	public void setToolChainSet(Set toolChainIdSet) {
+		this.toolChainIdSet = toolChainIdSet;
+	}
+	
 	/**
 	 * @return the isCategory
 	 */

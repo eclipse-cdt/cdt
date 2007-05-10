@@ -3733,35 +3733,48 @@
 
    <extension point="org.eclipse.cdt.core.templates">
       <template
+            id="org.eclipse.cdt.build.core.templates.HelloWorldCCProject"
             filterPattern=".*"
             location="templates/projecttemplates/HelloWorldCCProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
-            <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
-            <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
-            <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
-            <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
-            <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
       </template>
       <template
+            id="org.eclipse.cdt.build.templates.HelloWorldCAnsiProject"
             filterPattern=".*"
             location="templates/projecttemplates/HelloWorldCAnsiProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
-            <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
-            <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
-            <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
-            <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
-            <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
       </template>
       <template
+            id="org.eclipse.cdt.build.core.templates.EmptyProject"
             filterPattern=".*"
             location="templates/projecttemplates/EmptyProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+      </template>
+   </extension>
+
+<extension
+      point="org.eclipse.cdt.core.templateAssociations">
+      <template id="org.eclipse.cdt.build.core.templates.EmptyProject">
             <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
             <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
             <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
             <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
             <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
       </template>
-   </extension>
+      <template id="org.eclipse.cdt.build.core.templates.HelloWorldCAnsiProject">
+            <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
+      </template>
+      <template id="org.eclipse.cdt.build.core.templates.HelloWorldCCProject">
+            <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
+      </template>
+</extension>
 
 </plugin>

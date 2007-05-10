@@ -97,6 +97,7 @@ public abstract class UIPage extends DialogPage {
 
 		title = name;
 		uiElement = element;
+		uiElement.setValues(valueStore);
 		this.valueStore = valueStore;
 		//TODO: Check the from which plugin the PLUGIN_ID comes from i.e. from CCorePlugin or CUIPlugin
 		pageId = CUIPlugin.getPluginId() + "." + //$NON-NLS-1$
@@ -131,7 +132,7 @@ public abstract class UIPage extends DialogPage {
 	 * @return HashMap. The data contained in the widgets on this page.
 	 */
 	public Map/*<String, String>*/ getPageData() {
-		return uiComposite.getPageData();
+		return uiElement.getValues();
 	}
 
 	/**

@@ -50,7 +50,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	/**
 	 * Attributes associated with this widget.
 	 */
-	private UIAttributes/*<String, String>*/ uiAttribute;
+	protected UIAttributes/*<String, String>*/ uiAttribute;
 
 	/**
 	 * Text widget.
@@ -67,6 +67,8 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * Composite to which this widget control is added. Classes extending this class, should make sure that they initialize this from the respective class createWidgets method.
 	 */
 	protected UIComposite uiComposite;
+	
+	protected String textValue;
 
 	/**
 	 * Constructor.
@@ -77,6 +79,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	public UITextWidget(UIAttributes/*<String, String>*/ uiAttribute) {
 		super(uiAttribute);
 		this.uiAttribute = uiAttribute;
+		this.textValue = new String();
 	}
 
 	/**
@@ -84,7 +87,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	public Map/*<String, String>*/ getValues() {
 		Map/*<String, String>*/ retMap = new HashMap/*<String, String>*/();
-		retMap.put(uiAttribute.get(InputUIElement.ID), text.getText());
+		retMap.put(uiAttribute.get(InputUIElement.ID), textValue);
 
 		return retMap;
 	}
@@ -108,7 +111,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 					val = subString;
 			}
 			val = val.trim();
-			text.setText(val);
+			textValue = val;
 		}
 	}
 
@@ -141,6 +144,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		text = getTextWidget((String) uiAttribute.get(UIElement.TYPE));
 		text.addModifyListener(this);
 		text.setData(".uid", uiAttribute.get(UIElement.ID)); //$NON-NLS-1$
+		text.setText(textValue);
 	}
 
 	/**
@@ -213,17 +217,17 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		// other classes, having Text widget. They can just make use of
 		// modifyText,
 		// evaluatePattern and isValid.
-		String inputText = text.getText();
+		textValue = text.getText();
 
-		if ((patternValue == null) || (inputText == null)) 
+		if ((patternValue == null) || (textValue == null)) 
 			return;
 		
 		String mandatory = (String) attribute.get(InputUIElement.MANDATORY);
-		if ((mandatory == null || !mandatory.equalsIgnoreCase("true")) && inputText.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ((mandatory == null || !mandatory.equalsIgnoreCase("true")) && textValue.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 
-		evaluatePattern(label.getText(), inputText, patternValue);
+		evaluatePattern(label.getText(), textValue, patternValue);
 	}
 
 	/**
@@ -261,8 +265,8 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
 
 		if (((mandatory != null) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE)))
-				&& ((text.getText() == null) || (text.getText().equals("")) || //$NON-NLS-1$
-				(text.getText().trim().length() < 1))) {
+				&& ((textValue == null) || (textValue.equals("")) || //$NON-NLS-1$
+				(textValue.trim().length() < 1))) {
 
 			retVal = false;
 		}

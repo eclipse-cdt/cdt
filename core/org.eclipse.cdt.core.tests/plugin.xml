@@ -65,12 +65,14 @@
    <extension
          point="org.eclipse.cdt.core.templates">
       <template
+            id="org.eclipse.cdt.core.tests.templates.AddFile"
             filterPattern=".*AddFile"
             isCategory="true"
             location="testdata/AddFile.xml"
             projectType="org.eclipse.cdt.core.tests.projectType">
       </template>
       <template
+            id="org.eclipse.cdt.core.tests.templates.AddFiles"
             filterPattern=".*AddFiles"
             location="testdata/AddFiles.xml"
             projectType="org.eclipse.cdt.core.tests.projectType">
@@ -78,30 +80,49 @@
          <toolChain id="org.eclipse.cdt.core.tests.toolChain2"/>
       </template>
       <template
+            id="org.eclipse.cdt.core.tests.templates.AddLink"
             filterPattern=".*AddLink"
             location="testdata/AddLink.xml"
             projectType="org.eclipse.cdt.core.tests.projectType">
       </template>
       <template
+            id="org.eclipse.cdt.core.tests.templates.Append"
             filterPattern=".*Append"
             location="testdata/Append.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
       <template
+            id="org.eclipse.cdt.core.tests.templates.AppendCreate"
             filterPattern=".*AppendCreate"
             location="testdata/AppendCreate.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
       <template
+            id="org.eclipse.cdt.core.tests.templates.Copy"
             filterPattern=".*Copy"
             location="testdata/Copy.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
       <template
+            id="org.eclipse.cdt.core.tests.templates.CreateResourceIdentifier"
             filterPattern=".*CreateResourceIdentifier"
             location="testdata/CreateResourceIdentifier.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
       <template
+            id="org.eclipse.cdt.core.tests.templates.CreateSourceFolder"
             filterPattern=".*CreateSourceFolder"
             location="testdata/CreateSourceFolder.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.templateAssociations">
+      <template
+            id="org.eclipse.cdt.core.tests.templates.AddFile">
+         <toolChain id="org.eclipse.cdt.core.tests.toolChain3"/>
+         <toolChain id="org.eclipse.cdt.core.tests.toolChain4"/>
+      </template>
+      <template
+            id="org.eclipse.cdt.core.tests.templates.AddFiles">
+         <toolChain id="org.eclipse.cdt.core.tests.toolChain5"/>
+         <toolChain id="org.eclipse.cdt.core.tests.toolChain6"/>
+      </template>
    </extension>
 
 </plugin>

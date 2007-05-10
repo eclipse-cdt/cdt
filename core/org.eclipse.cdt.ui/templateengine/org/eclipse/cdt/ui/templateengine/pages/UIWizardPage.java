@@ -54,7 +54,7 @@ public class UIWizardPage extends UIPage implements IWizardPage, PatternEventLis
 	/**
 	 * Indicates whether this page is complete.
 	 */
-	private boolean isPageComplete = true;
+	private boolean isPageComplete;
 
 	/**
 	 * That page that was shown right before this page became visible. null if none.
@@ -63,8 +63,6 @@ public class UIWizardPage extends UIPage implements IWizardPage, PatternEventLis
 
 	private IWizardPage nextPage = null;
 	
-	private Map valueStore;
-
 	/**
 	 * Title of the page, Page Name and UIElement group are the parameters.
 	 * 
@@ -79,7 +77,7 @@ public class UIWizardPage extends UIPage implements IWizardPage, PatternEventLis
 		super(title, uiElement, valueStore);
 		name = pageName;
 		validInvalid = new HashMap/*<Object, String>*/();
-		this.valueStore = valueStore;
+		isPageComplete = uiElement.isValid();
 	}
 
 	/**
@@ -219,7 +217,7 @@ public class UIWizardPage extends UIPage implements IWizardPage, PatternEventLis
 	 * @return boolean, true if this page is complete, otherwise false.
 	 */
 	public boolean isPageComplete() {
-		return isPageComplete && getComposite() != null;
+		return isPageComplete;
 	}
 
 	/**
@@ -268,8 +266,6 @@ public class UIWizardPage extends UIPage implements IWizardPage, PatternEventLis
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		(super.getComposite()).addPatternListener(this);
-		(super.getComposite()).getUIElement().setValues(valueStore);
-
 
 		// Page complete is set true of false, based on Mandatory attribute
 		// and Widgets contents.

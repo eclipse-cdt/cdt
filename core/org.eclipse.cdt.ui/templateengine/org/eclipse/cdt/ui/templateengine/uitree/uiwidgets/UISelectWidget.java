@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -35,32 +37,32 @@ public class UISelectWidget extends InputUIElement {
 	/**
 	 * Attributes associated with this widget.
 	 */
-	UIAttributes/*<String, String>*/ uiAttribute;
+	protected UIAttributes/*<String, String>*/ uiAttribute;
 
 	/**
 	 * Select widget.
 	 */
-	Combo combo;
+	protected Combo combo = null;
 
 	/**
 	 * Label of this widget.
 	 */
-	Label label;
+	protected Label label;
 
 	/**
 	 * Composite to which this widget control is added.
 	 */
-	UIComposite uiComposite;
+	protected UIComposite uiComposite;
 
 	/**
 	 * Map contains the values of Select Widget
 	 */
-	HashMap/*<String, String>*/ itemMap;
+	protected HashMap/*<String, String>*/ itemMap;
 
 	/**
 	 * Default value of Select Widget
 	 */
-	String itemSelected;
+	protected String itemSelected;
 
 	/**
 	 * Constructor for Select Widget.
@@ -70,20 +72,16 @@ public class UISelectWidget extends InputUIElement {
 	 */
 	public UISelectWidget(UIAttributes/*<String, String>*/ attribute, HashMap/*<String, String>*/ itemMap,
 			String itemSelected) {
-
 		super(attribute);
 		uiAttribute = attribute;
 		this.itemMap = itemMap;
 		this.itemSelected = itemSelected;
 	}
 
-	/**
-	 * @return Boolean value contained in the Boolean Widget.
-	 */
 	public Map/*<String, String>*/ getValues() {
 
 		Map/*<String, String>*/ retMap = new HashMap/*<String, String>*/();
-		retMap.put(uiAttribute.get(InputUIElement.ID), itemMap.get(combo.getItem(combo.getSelectionIndex())));
+		retMap.put(uiAttribute.get(InputUIElement.ID), itemSelected);
 
 		return retMap;
 	}
@@ -94,17 +92,17 @@ public class UISelectWidget extends InputUIElement {
 	 * @param valueMap
 	 */
 	public void setValues(Map/*<String, String>*/ valueMap) {
-
-		String val = (String) valueMap.get(uiAttribute.get(InputUIElement.ID));
-		if (val != null)
-			val = val.trim();
-		String[] items = combo.getItems();
-		int index = 0;
-		for (int i = 0; i < items.length; i++)
-			if (itemMap.get(items[i]).equals(val))
-				index = i;
-
-		combo.select(index);
+		itemSelected = (String) valueMap.get(uiAttribute.get(InputUIElement.ID));
+		
+		if (combo != null) {
+			String[] items = combo.getItems();
+			for (int i=0; i < items.length; i++) {
+				if (items[i].equals(itemSelected)) {
+					combo.select(i);
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -149,6 +147,14 @@ public class UISelectWidget extends InputUIElement {
 
 		combo.select(index);
 		combo.setData(".uid", uiAttribute.get(UIElement.ID)); //$NON-NLS-1$
+		combo.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				itemSelected = combo.getItem(combo.getSelectionIndex());
+			}
+			
+			public void widgetDefaultSelected(SelectionEvent e) {	
+			}
+		});
 	}
 
 	/**
@@ -163,9 +169,8 @@ public class UISelectWidget extends InputUIElement {
 		boolean retVal = true;
 		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
 
-		if (((combo.getText() == null) || (combo.getText().equals("")) //$NON-NLS-1$
-		|| (combo.getText().trim().length() < 1)) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
-
+		if ((itemSelected == null || itemSelected.equals("") //$NON-NLS-1$
+		|| itemSelected.trim().length() < 1) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
 			retVal = false;
 		}
 		return retVal;

@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -35,22 +37,24 @@ public class UIBooleanWidget extends InputUIElement {
 	/**
 	 * Attributes associated with this widget.
 	 */
-	UIAttributes/*<String, String>*/ uiAttribute;
+	protected UIAttributes/*<String, String>*/ uiAttribute;
 
 	/**
 	 * Boolean widget.
 	 */
-	Button button;
+	protected Button button;
 
 	/**
 	 * Label of this widget.
 	 */
-	Label label;
+	protected Label label;
 
 	/**
 	 * Composite to which this widget control is added.
 	 */
-	UIComposite uiComposite;
+	protected UIComposite uiComposite;
+	
+	private boolean booleanValue;
 
 	/**
 	 * Constructor.
@@ -61,6 +65,7 @@ public class UIBooleanWidget extends InputUIElement {
 	public UIBooleanWidget(UIAttributes/*<String, String>*/ uiAttribute) {
 		super(uiAttribute);
 		this.uiAttribute = uiAttribute;
+		this.booleanValue = false;
 	}
 
 	/**
@@ -69,8 +74,7 @@ public class UIBooleanWidget extends InputUIElement {
 	public Map/*<String, String>*/ getValues() {
 
 		Map/*<String, String>*/ retMap = new HashMap/*<String, String>*/();
-		Boolean isCheck = new Boolean(button.getSelection());
-		retMap.put(uiAttribute.get(InputUIElement.ID), isCheck.toString());
+		retMap.put(uiAttribute.get(InputUIElement.ID), new Boolean(booleanValue).toString());
 
 		return retMap;
 	}
@@ -81,11 +85,7 @@ public class UIBooleanWidget extends InputUIElement {
 	 * @param valueMap
 	 */
 	public void setValues(Map/*<String, String>*/ valueMap) {
-		String val = (String) valueMap.get(uiAttribute.get(InputUIElement.ID));
-		Boolean bool = new Boolean(val);
-		if (val != null) {
-			button.setSelection(bool.booleanValue());
-		}
+		booleanValue = new Boolean((String) valueMap.get(uiAttribute.get(InputUIElement.ID))).booleanValue();
 	}
 
 	/**
@@ -116,6 +116,12 @@ public class UIBooleanWidget extends InputUIElement {
 		booleanConatiner.setLayoutData(gridcData);
 		button = new Button(booleanConatiner, SWT.CHECK);
 		button.setData(".uid", uiAttribute.get(UIElement.ID)); //$NON-NLS-1$
+		button.setSelection(new Boolean(booleanValue).booleanValue());
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				booleanValue = button.getSelection();
+			}
+		});
 	}
 
 	/**
@@ -130,7 +136,7 @@ public class UIBooleanWidget extends InputUIElement {
 		boolean retVal = true;
 		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
 
-		if ((button.getSelection() == false) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
+		if (!booleanValue && mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE)) {
 			retVal = false;
 		}
 		return retVal;

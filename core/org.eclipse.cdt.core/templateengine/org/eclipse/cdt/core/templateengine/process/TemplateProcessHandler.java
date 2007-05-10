@@ -77,13 +77,10 @@ public class TemplateProcessHandler {
 	 * @return
 	 */
 	public Set/*<String>*/ getAllMacros() {
-		Set/*<String>*/ set = null;
+		Set/*<String>*/ set = new HashSet/*<String>*/();
 		for (Iterator i = conditionalProcessGroupList.iterator(); i.hasNext();) {
 			Set/*<String>*/ subSet = ((ConditionalProcessGroup)i.next()).getAllMacros();
 			if (subSet != null) {
-				if (set == null) {
-					set = new HashSet/*<String>*/();
-				}
 				set.addAll(subSet);
 			}
 		}

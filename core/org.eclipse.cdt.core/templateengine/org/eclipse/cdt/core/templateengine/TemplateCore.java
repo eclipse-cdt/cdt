@@ -43,6 +43,7 @@ public class TemplateCore {
 	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	private static final String LABEL = "label"; //$NON-NLS-1$
 	private static final String ID = "id"; //$NON-NLS-1$
+	private static final String TYPE = "type"; //$NON-NLS-1$
 	
 	private static Map/*<TemplateInfo, Template>*/ templateCache = new HashMap/*<TemplateInfo, Template>*/();
 
@@ -60,6 +61,7 @@ public class TemplateCore {
 	private String description;
 	private String label;
 	private String templateId;
+	private String templateType;
 	private boolean fireDirtyEvents;
 	
 	/**
@@ -91,11 +93,9 @@ public class TemplateCore {
 	 */
 	public Set/*<String>*/ getAllMissingMacrosInProcesses() {
 		Set/*<String>*/ set = new TreeSet/*<String>*/(allMacrosInProcesses);
-		if (set != null) {
-			for (Iterator iter = set.iterator(); iter.hasNext();) {
-				if (valueStore.get(iter.next()) != null) {
-					iter.remove();
-				}
+		for (Iterator iter = set.iterator(); iter.hasNext();) {
+			if (valueStore.get(iter.next()) != null) {
+				iter.remove();
 			}
 		}
 		return set;
@@ -152,6 +152,16 @@ public class TemplateCore {
         	templateId = templateDescriptor.getRootElement().getAttribute(ID).trim();
         }
         return templateId;
+	}
+	
+	/**
+	 * @return   String, which contains the id of the template
+	 */
+	public String getTemplateType() {
+        if (templateType == null) {
+        	templateType = templateDescriptor.getRootElement().getAttribute(TYPE).trim();
+        }
+        return templateType;
 	}
 	
 	/**

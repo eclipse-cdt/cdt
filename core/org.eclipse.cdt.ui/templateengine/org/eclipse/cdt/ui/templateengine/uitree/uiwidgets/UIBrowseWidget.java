@@ -32,15 +32,11 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
  */
 
 public class UIBrowseWidget extends UITextWidget implements ModifyListener {
-	/**
-	 * Attributes associated with this widget.
-	 */
-	UIAttributes/*<String, String>*/ uiAttribute;
 
 	/**
 	 * Browse Button of this widget.
 	 */
-	Button button;
+	protected  Button button;
 
 	/**
 	 * Constructor.
@@ -51,6 +47,7 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 	public UIBrowseWidget(UIAttributes/*<String, String>*/ uiAttribute) {
 		super(uiAttribute);
 		this.uiAttribute = uiAttribute;
+		this.textValue = (String) uiAttribute.get(InputUIElement.DEFAULT);
 	}
 
 	/**
@@ -83,10 +80,7 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 		text = new Text(textConatiner, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		text.addModifyListener(this);
-
-		// set Default values
-		if (uiAttribute.get(InputUIElement.DEFAULT) != null)
-			text.setText((String) uiAttribute.get(InputUIElement.DEFAULT));
+		text.setText(textValue);
 
 		button = new Button(textConatiner, SWT.PUSH | SWT.LEFT);
 		button.setText(InputUIElement.BROWSELABEL);
@@ -95,7 +89,8 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 			public void widgetSelected(SelectionEvent event) {
 				String fileName = new FileDialog(uiComposite.getShell()).open();
 				if (fileName != null) {
-					text.setText(fileName.toString());
+					textValue = fileName.toString();
+					text.setText(textValue);
 				}
 			}
 		});

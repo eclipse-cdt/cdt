@@ -1,5 +1,4 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +9,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -25,6 +27,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.utils.ui.controls.FileListControl;
+import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
 
 
 /**
@@ -37,22 +40,24 @@ public class UIStringListWidget extends InputUIElement {
 	/**
 	 * Attributes associated with this widget.
 	 */
-	UIAttributes/*<String, String>*/ uiAttribute;
+	protected UIAttributes/*<String, String>*/ uiAttribute;
 
 	/**
 	 * StringList widget.
 	 */
-	FileListControl fileListControl;
+	protected FileListControl fileListControl;
 
 	/**
 	 * Label of this widget.
 	 */
-	Label label;
+	protected Label label;
 
 	/**
 	 * Composite to which this widget control is added.
 	 */
-	UIComposite uiComposite;
+	protected UIComposite uiComposite;
+	
+	protected List itemsList;
 
 	/**
 	 * Constructor.
@@ -63,6 +68,7 @@ public class UIStringListWidget extends InputUIElement {
 	public UIStringListWidget(UIAttributes/*<String, String>*/ attribute) {
 		super(attribute);
 		uiAttribute = attribute;
+		itemsList = new ArrayList();
 	}
 
 	/**
@@ -70,12 +76,10 @@ public class UIStringListWidget extends InputUIElement {
 	 */
 	public Map/*<String, String>*/ getValues() {
 		Map/*<String, String>*/ retMap = new HashMap/*<String, String>*/();
-		String[] items = fileListControl.getItems();
 		String itemString = new String();
-
-		for (int i = 0; i < items.length; i++)
-			itemString = itemString + items[i] + "|"; //$NON-NLS-1$
-
+		for (int i = 0; i < itemsList.size(); i++) {
+			itemString = itemString + itemsList.get(i) + "|"; //$NON-NLS-1$
+		}
 		retMap.put(uiAttribute.get(InputUIElement.ID), itemString);
 
 		return retMap;
@@ -87,19 +91,14 @@ public class UIStringListWidget extends InputUIElement {
 	 * @param valueMap
 	 */
 	public void setValues(Map/*<String, String>*/ valueMap) {
-
 		String items = (String) valueMap.get(uiAttribute.get(InputUIElement.ID));
 
 		if (items != null) {
 			items = items.trim();
 			StringTokenizer st = new StringTokenizer(items, "|"); //$NON-NLS-1$
-			String[] itemList = new String[st.countTokens()];
-
-			for (int i = 0; st.hasMoreTokens(); i++)
-				itemList[i] = st.nextToken();
-
-			fileListControl.setList(itemList);
-			fileListControl.setSelection(0);
+			for (int i = 0; st.hasMoreTokens(); i++) {
+				itemsList.add(st.nextToken());
+			}
 		}
 	}
 
@@ -133,6 +132,14 @@ public class UIStringListWidget extends InputUIElement {
 		flcComposite.setLayoutData(gridData);
 
 		fileListControl = new FileListControl(flcComposite, (String) uiAttribute.get(InputUIElement.WIDGETLABEL), 0);
+		fileListControl.setList((String[])itemsList.toArray());
+		fileListControl.setSelection(0);
+		fileListControl.addChangeListener(new IFileListChangeListener(){
+			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
+				itemsList.addAll(Arrays.asList(newValue));
+			}
+		});
+
 	}
 
 	/**
@@ -147,8 +154,7 @@ public class UIStringListWidget extends InputUIElement {
 		boolean retVal = true;
 		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
 
-		if ((fileListControl.getItems() == null) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
-
+		if ((itemsList == null || itemsList.size() == 0) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
 			retVal = false;
 		}
 		return retVal;

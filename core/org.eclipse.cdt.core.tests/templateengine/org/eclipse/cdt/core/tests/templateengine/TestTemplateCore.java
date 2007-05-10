@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.tests.templateengine;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.templateengine.TemplateCore;
-import org.eclipse.cdt.core.templateengine.TemplateEngine;
 
 /**
  * Test the functionality of Tempalte Class.
@@ -24,7 +23,7 @@ public class TestTemplateCore extends TestCase {
     
     protected void setUp() throws Exception {
 		super.setUp();
-		templates = TemplateEngine.getDefault().getTemplates();
+		templates = TemplateEngineTestsHelper.getTestTemplates();
 	}
 
 	/*

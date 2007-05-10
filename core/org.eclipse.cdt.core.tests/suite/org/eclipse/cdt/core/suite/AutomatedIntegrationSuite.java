@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.parser.failedTests.ASTFailedTests;
 import org.eclipse.cdt.core.parser.failedTests.FailedCompleteParseASTTest;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
+import org.eclipse.cdt.core.tests.templateengine.AllTemplateEngineTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
 
@@ -91,7 +92,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(FailedCompleteParseASTTest.class);
 
-//        suite.addTest(AllTemplateEngineTests.suite());
+        suite.addTest(AllTemplateEngineTests.suite());
 
 		return suite;
 	}

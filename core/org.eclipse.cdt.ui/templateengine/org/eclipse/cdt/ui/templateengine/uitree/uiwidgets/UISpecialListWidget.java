@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,6 +22,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.utils.ui.controls.FileListControl;
+import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
 
 
 /**
@@ -69,6 +72,13 @@ public class UISpecialListWidget extends UIStringListWidget {
 		flcComposite.setLayoutData(gridData);
 
 		fileListControl = new FileListControl(flcComposite, (String) uiAttribute.get(InputUIElement.WIDGETLABEL), 1);
+		fileListControl.setList((String[])itemsList.toArray());
+		fileListControl.setSelection(0);
+		fileListControl.addChangeListener(new IFileListChangeListener(){
+			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
+				itemsList.addAll(Arrays.asList(newValue));
+			}
+		});
 	}
 
 	/**

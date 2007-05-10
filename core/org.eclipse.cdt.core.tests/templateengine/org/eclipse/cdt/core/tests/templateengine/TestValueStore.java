@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
-import org.eclipse.cdt.core.templateengine.TemplateEngine;
 
 
 /**
@@ -49,7 +48,7 @@ public class TestValueStore extends TestCase {
 	 *
 	 */
 	public void testValueStoreNotNull(){
-		TemplateCore[] templates = TemplateEngine.getDefault().getTemplates();
+		TemplateCore[] templates = TemplateEngineTestsHelper.getTestTemplates();
 		for (int i=0; i <templates.length; i++) {
 			Map valueStore = templates[i].getValueStore();
 			assertNotNull(valueStore);
@@ -61,7 +60,7 @@ public class TestValueStore extends TestCase {
 	 * FactoryDefaults. Test the same.
 	 */
 	public void testCompareValueStoreWithTemplateDefaluts(){
-		TemplateCore[] templates = TemplateEngine.getDefault().getTemplates();
+		TemplateCore[] templates = TemplateEngineTestsHelper.getTestTemplates();
 		for (int i=0; i <templates.length; i++) {
 			Map valueStore = templates[i].getValueStore();
 			TemplateDescriptor templateDescriptor = templates[i].getTemplateDescriptor();

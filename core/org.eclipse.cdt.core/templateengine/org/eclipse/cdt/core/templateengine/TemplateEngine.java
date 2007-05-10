@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.templateengine;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,11 +41,17 @@ import org.w3c.dom.NodeList;
 public class TemplateEngine {
 
 	public static String TEMPLATES_EXTENSION_ID = CCorePlugin.PLUGIN_ID + ".templates"; //$NON-NLS-1$
+	public static String TEMPLATE_ASSOCIATIONS_EXTENSION_ID = CCorePlugin.PLUGIN_ID + ".templateAssociations"; //$NON-NLS-1$
 	
 	/**
 	 * static reference to the Singleton TemplateEngine instance.
 	 */
-	private static TemplateEngine TEMPLATE_ENGINE = new TemplateEngine();
+	private static TemplateEngine TEMPLATE_ENGINE;
+	
+	static {
+		 TEMPLATE_ENGINE = new TemplateEngine();
+		 TEMPLATE_ENGINE.initializeTemplateInfoMap();
+	}
 	
 	/**
 	 * This is a Map <WizardID, TemplateInfo>.
@@ -56,7 +63,6 @@ public class TemplateEngine {
 	 */
 	private TemplateEngine() {
 		templateInfoMap = new HashMap/*<String, List<TemplateInfo>>*/();
-		initializeTemplateInfoMap();
 	}
 
 	/**
@@ -190,6 +196,7 @@ public class TemplateEngine {
 	 * extension point "templates"
 	 */
 	private void initializeTemplateInfoMap() {
+		String templateId = null;
 		String location = null;
 		String pluginId = null;
 		String projectType = null;
@@ -205,6 +212,7 @@ public class TemplateEngine {
 			pluginId = extension.getNamespaceIdentifier(); // Plugin-id of the extending plugin.
 			for(int j=0; j<configElements.length; j++) {
 				IConfigurationElement config = configElements[j];
+				templateId = config.getAttribute(TemplateEngineHelper.ID);
 				location = config.getAttribute(TemplateEngineHelper.LOCATION);
 				projectType = config.getAttribute(TemplateEngineHelper.PROJECT_TYPE);
 				filterPattern = config.getAttribute(TemplateEngineHelper.FILTER_PATTERN);
@@ -218,7 +226,7 @@ public class TemplateEngine {
 					toolChainIdSet.add(toolChainConfigs[k].getAttribute(TemplateEngineHelper.ID));
 				}
 				
-				TemplateInfo templateInfo = new TemplateInfo(projectType, filterPattern, location, 
+				TemplateInfo templateInfo = new TemplateInfo(templateId, projectType, filterPattern, location, 
 														pluginId, toolChainIdSet,
 														usage, extraPagesProvider, isCategory);
 				if (!templateInfoMap.containsKey(projectType)) {
@@ -227,8 +235,42 @@ public class TemplateEngine {
 				((List/*<TemplateInfo>*/)templateInfoMap.get(projectType)).add(templateInfo);
 			}
 		}
+		// Check for tool Chains added to the templates outside template info definition
+		addToolChainsToTemplates();
 	}
 
+	private void addToolChainsToTemplates() {
+		String templateId = null;
+		TemplateCore[] templates = getTemplates();
+
+		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(TEMPLATE_ASSOCIATIONS_EXTENSION_ID).getExtensions();
+		for(int i=0; i<extensions.length; i++) {
+			IExtension extension = extensions[i];
+			IConfigurationElement[] configElements = extension.getConfigurationElements();
+			for(int j=0; j<configElements.length; j++) {
+				IConfigurationElement config = configElements[j];
+				templateId = config.getAttribute(TemplateEngineHelper.ID);
+				
+				IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
+				Set toolChainIdSet = new HashSet();
+				for (int k=0; k < toolChainConfigs.length; k++) {
+					toolChainIdSet.add(toolChainConfigs[k].getAttribute(TemplateEngineHelper.ID));
+				}
+				
+				for (int k=0; k < templates.length; k++) {
+					String id = templates[k].getTemplateInfo().getTemplateId();
+					if (id == null) {
+						id = templates[k].getTemplateId();
+					}
+					if (id != null && id.equals(templateId)) {
+						toolChainIdSet.addAll(Arrays.asList(templates[k].getTemplateInfo().getToolChainIds()));
+						templates[k].getTemplateInfo().setToolChainSet(toolChainIdSet);
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Gets an array of template info objects matching the criteria passed as params.
 	 */

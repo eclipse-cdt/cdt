@@ -629,6 +629,7 @@
    <extension-point id="templates" name="Templates Extension point" 
                     schema="schema/templates.exsd"/>
    <extension-point id="templateProcessTypes" name="Process Types Extension point" schema="schema/templateProcessTypes.exsd"/>
+   <extension-point id="templateAssociations" name="Template Associations" schema="schema/templateAssociations.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">

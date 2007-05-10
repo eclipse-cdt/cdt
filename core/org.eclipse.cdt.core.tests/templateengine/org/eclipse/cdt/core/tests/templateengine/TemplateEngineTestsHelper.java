@@ -12,10 +12,12 @@ package org.eclipse.cdt.core.tests.templateengine;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -59,6 +61,17 @@ public class TemplateEngineTestsHelper {
 			}
 		}
 		return url;
+	}
+	
+	public static TemplateCore[] getTestTemplates() {
+		TemplateCore[] templates = TemplateEngine.getDefault().getTemplates();
+	    List testTemplates = new ArrayList();
+		for (int i =0; i < templates.length; i++) {
+			if (templates[i].getTemplateType().equals("TestTemplate")) {
+				testTemplates.add(templates[i]);
+			}
+		}
+		return (TemplateCore[]) testTemplates.toArray(new TemplateCore[testTemplates.size()]); 
 	}
 	
 	public static int getChildCount(TemplateDescriptor templateDescriptor, String propertyGroupID){

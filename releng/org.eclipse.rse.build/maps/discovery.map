@@ -1,9 +1,9 @@
 feature@org.eclipse.tm.discovery=v20070406,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery-feature
-plugin@org.eclipse.rse.discovery=v20070425,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.rse.discovery
-plugin@org.eclipse.tm.discovery.engine=v20070401,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.engine
-plugin@org.eclipse.tm.discovery.model=v20070223,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.model
+plugin@org.eclipse.rse.discovery=v20070509,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.rse.discovery
+plugin@org.eclipse.tm.discovery.engine=v20070509,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.engine
+plugin@org.eclipse.tm.discovery.model=v20070509,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.model
 plugin@org.eclipse.tm.discovery.model.edit=v20070404,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.model.edit
-plugin@org.eclipse.tm.discovery.protocol.dnssd=v20070401,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.protocol.dnssd
-plugin@org.eclipse.tm.discovery.transport.udp=v20070223,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.transport.udp
+plugin@org.eclipse.tm.discovery.protocol.dnssd=v20070509,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.protocol.dnssd
+plugin@org.eclipse.tm.discovery.transport.udp=v20070509,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.transport.udp
 plugin@org.eclipse.tm.discovery.view=v20070321,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.view
-plugin@org.eclipse.tm.discovery.wizard=v20070401,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.wizard
+plugin@org.eclipse.tm.discovery.wizard=v20070509,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.wizard

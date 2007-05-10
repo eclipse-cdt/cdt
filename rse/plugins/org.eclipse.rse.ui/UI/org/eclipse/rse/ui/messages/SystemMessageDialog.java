@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  ********************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -46,8 +46,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-
 
 /**
  */
@@ -585,7 +583,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 */
 	public static Shell getDefaultShell()
 	{
-		return Display.getCurrent().getActiveShell();
+		return SystemBasePlugin.getActiveWorkbenchShell();
 	}
 
 	/**
@@ -627,15 +625,22 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		displayErrorMessage(shell,msg);
 	}	
 	
-
-    	
     /**
      * Display this wrapped system message to the user
      */
-    public static void displayMessage(org.eclipse.swt.widgets.Shell shell, SystemMessageException msgEx)
+    public static void displayMessage(Shell shell, SystemMessageException msgEx)
     {
     	if (msgEx != null)
     	  SystemMessageDialog.displayErrorMessage(shell, msgEx.getSystemMessage());
+    }
+
+    /**
+     * Display this wrapped system message to the user
+     */
+    public static void displayMessage(SystemMessageException msgEx)
+    {
+    	if (msgEx != null)
+    	  SystemMessageDialog.displayErrorMessage(getDefaultShell(), msgEx.getSystemMessage());
     }
 
 	/**

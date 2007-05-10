@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -27,9 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.services.files.RemoteFileIOException;
-import org.eclipse.rse.services.files.RemoteFileSecurityException;
-import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
+import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
 
@@ -45,10 +44,6 @@ import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
  * The idea is to encourage a common API and GUI layer that works
  * with any remote unix-like file system on any remote operating system.
  */
-/**
- * @lastgen interface RemoteFileSubSystem extends SubSystem {}
- */
-
 public interface IRemoteFileSubSystem extends ISubSystem {
 
     // ----------------------
@@ -191,6 +186,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param monitor the progress monitor
 	 */
 	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, IProgressMonitor monitor) throws SystemMessageException;
+
 	/**
 	 * Given a search configuration, searches for its results.
 	 * @param searchConfig a search configuration.
@@ -202,7 +198,6 @@ public interface IRemoteFileSubSystem extends ISubSystem {
   	 * @param searchConfig a search configuration.
 	 */
 	public void cancelSearch(IHostSearchResultConfiguration searchConfig);
-
 
 	/**
 	 * Given a folder or file, return its parent folder object.
@@ -295,8 +290,11 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * 
 	 * @param fileToCreate The object representing the file to be created.
 	 * @return The same input object returned for convenience. Will throw exception if it fails.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public IRemoteFile createFile(IRemoteFile fileToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
+	public IRemoteFile createFile(IRemoteFile fileToCreate, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Create a new folder, given its IRemoteFile object (these do not have to represent existing folders)
@@ -312,8 +310,11 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param folderToCreate The object representing the folder to be created.
 	 * @param monitor the progress monitor
 	 * @return The same input object returned for convenience. Will throw exception if it fails.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public IRemoteFile createFolder(IRemoteFile folderToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;	
+	public IRemoteFile createFolder(IRemoteFile folderToCreate, IProgressMonitor monitor) throws SystemMessageException;	
 	
 	/**
 	 * Given an IRemoteFile for a folder, this will create that folder and any missing parent folders in its path.
@@ -327,12 +328,13 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @see #getParentFolder(IRemoteFile, IProgressMonitor)
 	 * 
 	 * @param folderToCreate The object representing the folder to be created, along with its parents.
-	 * @param monitor the progress monitr
+	 * @param monitor the progress monitor
 	 * @return The same input object returned for convenience. Will throw exception if it fails.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public IRemoteFile createFolders(IRemoteFile folderToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;		
-	
-
+	public IRemoteFile createFolders(IRemoteFile folderToCreate, IProgressMonitor monitor) throws SystemMessageException;		
 	
 	/**
 	 * Delete the given remote file or folder. 
@@ -343,8 +345,11 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param folderOrFile represents the object to be deleted.
 	 * @param monitor progressMonitor
 	 * @return false if the given folder/file didn't exist to begin with, else true. Throws an exception if anything fails.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public boolean delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws RemoteFolderNotEmptyException, RemoteFileSecurityException, RemoteFileIOException;
+	public boolean delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Delete the given batch of remote file or folder. 
@@ -356,20 +361,24 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param folderOrFiles represents the objects to be deleted.
 	 * @param monitor progressMonitor
 	 * @return false if any of the given folder/file dont exist to begin with, else true. Throws an exception if anything fails.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public boolean deleteBatch(IRemoteFile[] folderOrFiles, IProgressMonitor monitor) throws RemoteFolderNotEmptyException, RemoteFileSecurityException, RemoteFileIOException;
+	public boolean deleteBatch(IRemoteFile[] folderOrFiles, IProgressMonitor monitor) throws SystemMessageException;
 
-	
 	/**
 	 * Rename the given remote file or folder. This renames it in memory and, iff it exists, on disk.
 	 * @param folderOrFile represents the object to be renamed.
 	 * @param newName new name to give it.
 	 * @param monitor the progress monitor
 	 * @return false if the given folder/file didn't exist on disk (still renamed in memory), else true. Throws an exception if anything fails.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public boolean rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;	
+	public boolean rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws SystemMessageException;	
 
-	
 	/**
 	 * Move a file or folder to a new target parent folder.
 	 * 
@@ -377,9 +386,12 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param targetFolder The folder to move to. No guarantee it is on the same system, so be sure to check getSystemConnection()!
 	 * @param newName The new name for the moved file or folder
 	 * @param monitor progress monitor
-	 * @return false true iff the move succeeded
+	 * @return true if the move succeeded
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public boolean move(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName,IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
+	public boolean move(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName,IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
 	 * Set the last modified date for the given file or folder. Like a Unix "touch" operation.
@@ -387,21 +399,25 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param folderOrFile represents the object to be renamed.
 	 * @param newDate new date, in milliseconds from epoch, to assign.
 	 * @param monitor the progress monitor
-	 * 
 	 * @return false if the given folder/file didn't exist on disk (operation fails), else true. Throws an exception if anything fails.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public boolean setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
+	public boolean setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Set a files readonly permissions.
+	 * Set a files read-only permissions.
 	 * Folder or file must exist on disk for this to succeed.
 	 * @param folderOrFile represents the object to be renamed.
-	 * @param readOnly whether to set it to be readonly or not
+	 * @param readOnly whether to set it to be read-only or not
 	 * @param monitor the progress monitor
-	 * 
 	 * @return false if the given folder/file didn't exist on disk (operation fails), else true. Throws an exception if anything fails.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public boolean setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
+	public boolean setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException;
 
 	
 	// ----------------------------
@@ -411,72 +427,92 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	// Beginning of methods for downloading remote files from the server
 	
 	/**
-		 * Copy a file or folder to a new target parent folder.
-		 * 
-		 * @param sourceFolderOrFile The file or folder to copy
-		 * @param targetFolder The folder to copy to. No guarantee it is on the same system, so be sure to check getSystemConnection()!
-		 * @param newName The new name for the copied file or folder
-		 * @return false true iff the copy succeeded
-		 */
-	public boolean copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
+	 * Copy a file or folder to a new target parent folder.
+	 * 
+	 * @param sourceFolderOrFile The file or folder to copy
+	 * @param targetFolder The folder to copy to. No guarantee it is on the same system, so be sure to check getSystemConnection()!
+	 * @param newName The new name for the copied file or folder
+	 * @param monitor progress monitor
+	 * @return true if the copy succeeded
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
+	 */
+	public boolean copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Copy a set of remote files or folders to a new target parent folder. Precondition: Sources and target must all be on the same system!
 	 * @param sourceFolderOrFile The file or folder to copy
 	 * @param targetFolder The folder to copy to. 
-	 * @return false true iff all copies succeeded
+	 * @param monitor progress monitor
+	 * @return true if all copies succeeded
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public boolean copyBatch(IRemoteFile[] sourceFolderOrFile, IRemoteFile targetFolder, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
+	public boolean copyBatch(IRemoteFile[] sourceFolderOrFile, IRemoteFile targetFolder, IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * specified. Two exceptions: if the remote file is binary, encoding does not apply.
-	 * If the remote file is a XML file, then it will be copied to local in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
+	 * Get the remote file and save it locally.
+	 * 
+	 * The file is saved in the encoding specified, with two exceptions:
+	 * <ul>
+	 *   <li>If the remote file is binary, encoding does not apply.</li>
+	 *   <li>If the remote file is a XML file, then it will be 
+	 *       copied to local in the encoding specified in the XML
+	 *       declaration, or as determined from the XML specification.</li>
+	 * </ul>
 	 * @param source remote file that represents the file to be obtained
 	 * @param destination the absolute path of the local file
 	 * @param encoding the encoding of the local file
 	 * @param monitor the progress monitor
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public void download(IRemoteFile source, String destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
+	public void download(IRemoteFile source, String destination, String encoding, IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding specified.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
+	 * Put the local copy of the remote file back to the remote location.
+	 * 
+	 * The file is assumed to be in the encoding specified, with
+	 * two exceptions:
+	 * <ul>
+	 *   <li>If the local file is binary, encoding does not apply.</li>
+	 *   <li>If the local file is a XML file, then it will be copied
+	 *        to remote in the encoding specified in the XML declaration,
+	 *        or as determined from the XML specification.</li>
+	 * </ul>
 	 * @param source the absolute path of the local copy
 	 * @param destination remote file that represents the file on the server
 	 * @param encoding the encoding of the local copy
 	 * @param monitor the progress monitor
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
-	public void upload(String source, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
+	public void upload(String source, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system.
-	 * Two exceptions: if the local file is binary, encoding does not apply.
-	 * If the local file is a XML file, then it will be copied to remote in the encoding
-	 * specified in the XML declaration, or as determined from the XML specification.
+	 * Put the local copy of the remote file back to the remote location.
+	 * 
+	 * The file is assumed to be in the encoding of the local operating system,
+	 * with two exceptions:
+	 * <ul>
+	 *   <li>If the local file is binary, encoding does not apply.</li>
+	 *   <li>If the local file is a XML file, then it will be copied
+	 *       to remote in the encoding specified in the XML declaration,
+	 *       or as determined from the XML specification.</li>
+	 * </ul>
 	 * @param source the absolute path of the local copy
 	 * @param srcEncoding the encoding of the local copy
 	 * @param remotePath remote file that represents the file on the server
 	 * @param rmtEncoding the encoding of the remote file.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the
+	 *     {@link RemoteFileException} family.
 	 */
-	public void upload(String source, String srcEncoding, String remotePath, String rmtEncoding,  IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
-	
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @return The value of the HomeFolder attribute
-	 */
-	String getHomeFolder();
-
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @param value The new value of the HomeFolder attribute
-	 */
-	void setHomeFolder(String value);
+	public void upload(String source, String srcEncoding, String remotePath, String rmtEncoding,  IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
 	 * Returns a language utility factory associated with this subsystem.
@@ -490,7 +526,6 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @return an unused port number on the host, or -1 if none could be found.
 	 */
 	public int getUnusedPort();
-	
 	
 	/**
 	 * Return a list of roots/drives on the remote system.

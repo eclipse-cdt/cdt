@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -78,6 +79,8 @@ public class UniFilePlus extends File {
 				throw new SecurityException(exc.getMessage());
 			else
 				throw new IOException(exc.getMessage());
+		} catch (SystemMessageException e) {
+			throw new IOException(e.getMessage());
 		}
 		if (newFile != null) {
 			remoteFile = newFile;
@@ -95,6 +98,10 @@ public class UniFilePlus extends File {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
 			throw new SecurityException(exc.getMessage());
+		} catch (SystemMessageException e) {
+			//TODO should there be more user feedback?
+			SystemBasePlugin.logMessage(e.getSystemMessage());
+			ok = false;
 		}
 		return ok;
 	}
@@ -286,6 +293,9 @@ public class UniFilePlus extends File {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
 			throw new SecurityException(exc.getMessage());
+		} catch (SystemMessageException e) {
+			//TODO should there be more user feedback?
+			SystemBasePlugin.logMessage(e.getSystemMessage());
 		}
 		if (dir != null) remoteFile = dir;
 		return (dir != null);
@@ -299,6 +309,9 @@ public class UniFilePlus extends File {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
 			throw new SecurityException(exc.getMessage());
+		} catch (SystemMessageException e) {
+			//TODO should there be more user feedback?
+			SystemBasePlugin.logMessage(e.getSystemMessage());
 		}
 		if (dir != null) remoteFile = dir;
 		return (dir != null);
@@ -312,6 +325,9 @@ public class UniFilePlus extends File {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
 			throw new SecurityException(exc.getMessage());
+		} catch (SystemMessageException e) {
+			//TODO should there be more user feedback?
+			SystemBasePlugin.logMessage(e.getSystemMessage());
 		}
 		return ok;
 	}
@@ -326,6 +342,9 @@ public class UniFilePlus extends File {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
 			throw new SecurityException(exc.getMessage());
+		} catch (SystemMessageException e) {
+			//TODO should there be more user feedback?
+			SystemBasePlugin.logMessage(e.getSystemMessage());
 		}
 		return ok;
 	}
@@ -338,6 +357,9 @@ public class UniFilePlus extends File {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
 			throw new SecurityException(exc.getMessage());
+		} catch (SystemMessageException e) {
+			//TODO should there be more user feedback?
+			SystemBasePlugin.logMessage(e.getSystemMessage());
 		}
 		return ok;
 	}

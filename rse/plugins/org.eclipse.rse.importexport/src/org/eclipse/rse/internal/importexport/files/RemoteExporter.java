@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.importexport.files;
-
 /*******************************************************************************
  * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +7,10 @@ package org.eclipse.rse.internal.importexport.files;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  *******************************************************************************/
+package org.eclipse.rse.internal.importexport.files;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -20,8 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
-import org.eclipse.rse.services.files.RemoteFileException;
-import org.eclipse.rse.services.files.RemoteFileSecurityException;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
@@ -61,8 +61,9 @@ class RemoteExporter {
 
 	/**
 	 *  Writes the passed resource to the specified location recursively
+	 * @throws SystemMessageException TODO
 	 */
-	public void write(IResource resource, IPath destinationPath) throws IOException, CoreException, RemoteFileSecurityException, RemoteFileException {
+	public void write(IResource resource, IPath destinationPath) throws IOException, CoreException, SystemMessageException {
 		if (resource.getType() == IResource.FILE)
 			writeFile((IFile) resource, destinationPath);
 		else
@@ -71,8 +72,9 @@ class RemoteExporter {
 
 	/**
 	 *  Exports the passed container's children
+	 * @throws SystemMessageException TODO
 	 */
-	protected void writeChildren(IContainer folder, IPath destinationPath) throws IOException, CoreException, RemoteFileSecurityException, RemoteFileException {
+	protected void writeChildren(IContainer folder, IPath destinationPath) throws IOException, CoreException, SystemMessageException {
 		if (folder.isAccessible()) {
 			IResource[] children = folder.members();
 			for (int i = 0; i < children.length; i++) {
@@ -85,8 +87,9 @@ class RemoteExporter {
 	/**
 	 *  Writes the passed file resource to the specified destination on the remote
 	 *  file system
+	 * @throws SystemMessageException TODO
 	 */
-	protected void writeFile(IFile file, IPath destinationPath) throws IOException, CoreException, RemoteFileSecurityException, RemoteFileException {
+	protected void writeFile(IFile file, IPath destinationPath) throws IOException, CoreException, SystemMessageException {
 		IRemoteFileSubSystem rfss = RemoteFileUtility.getFileSubSystem((IHost) _host);
 		String dest = destinationPath.toString();
 		char sep = rfss.getSeparatorChar();
@@ -100,8 +103,9 @@ class RemoteExporter {
 
 	/**
 	 *  Writes the passed resource to the specified location recursively
+	 * @throws SystemMessageException TODO
 	 */
-	protected void writeResource(IResource resource, IPath destinationPath) throws IOException, CoreException, RemoteFileSecurityException, RemoteFileException {
+	protected void writeResource(IResource resource, IPath destinationPath) throws IOException, CoreException, SystemMessageException {
 		if (resource.getType() == IResource.FILE)
 			writeFile((IFile) resource, destinationPath);
 		else {

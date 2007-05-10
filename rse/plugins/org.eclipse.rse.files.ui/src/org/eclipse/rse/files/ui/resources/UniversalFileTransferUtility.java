@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -217,7 +218,7 @@ public class UniversalFileTransferUtility
 				}
 		    }
 		}
-		catch (final RemoteFileIOException e)
+		catch (final SystemMessageException e)
 		{
 			runInDisplayThread(new Runnable() {
 				public void run() {
@@ -1162,6 +1163,10 @@ public class UniversalFileTransferUtility
 					newFilePathList.add(newPath);
 					}
 				}
+				catch (SystemMessageException e)
+				{
+					SystemMessageDialog.displayMessage(e);
+				}
 				catch (CoreException e)
 				{
 					e.printStackTrace();
@@ -1378,6 +1383,10 @@ public class UniversalFileTransferUtility
 				return newTargetFolder;
 		
 			}
+			catch (SystemMessageException e)
+			{
+				SystemMessageDialog.displayMessage(e);
+			}
 			catch (CoreException e)
 			{
 				e.printStackTrace();
@@ -1456,15 +1465,19 @@ public class UniversalFileTransferUtility
 			monitor.done();
 	
 		}
+		catch (SystemMessageException e)
+		{
+			SystemMessageDialog.displayMessage(e);
+		}
 		catch (Exception e)
 		{
 		    e.printStackTrace();
-			if (newPath == null) cleanup(destinationArchive, null);
-			else cleanup(destinationArchive, new File(newPath));
 			throw e;
 		}
-		if (newPath == null) cleanup(destinationArchive, null);
-		else cleanup(destinationArchive, new File(newPath));
+		finally {
+			if (newPath == null) cleanup(destinationArchive, null);
+			else cleanup(destinationArchive, new File(newPath));
+		}
 	}
 	
 	protected static void setReadOnly(IFile file, boolean flag)
@@ -1698,6 +1711,11 @@ public class UniversalFileTransferUtility
 				}
 			}
 		}
+		catch (SystemMessageException e)
+		{
+			SystemMessageDialog.displayMessage(e);
+			cleanup(cpdest, dest);
+		}
 		catch (Exception e)
 		{
 		    e.printStackTrace();
@@ -1718,6 +1736,10 @@ public class UniversalFileTransferUtility
 		    {
 		        arc1.getParentRemoteFileSubSystem().delete(arc1, null);
 		    }
+			catch (SystemMessageException e)
+			{
+				SystemMessageDialog.displayMessage(e);
+			}
 		    catch (Exception e)
 		    {
 		        e.printStackTrace();

@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -96,8 +97,6 @@ import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.services.files.RemoteFileIOException;
-import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.services.search.HostSearchResultSet;
 import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
@@ -1957,6 +1956,10 @@ public class SystemViewRemoteFileAdapter
 									resultSet.setMessage(msg);
 								}
 							}
+							catch (SystemMessageException e)
+							{
+								SystemMessageDialog.displayMessage(e);
+							}
 							catch (Exception e)
 							{
 								e.printStackTrace();
@@ -1981,6 +1984,10 @@ public class SystemViewRemoteFileAdapter
 										resultSet.addResource(copiedFile);
 									}
 								}
+							}
+							catch (SystemMessageException e)
+							{
+								SystemMessageDialog.displayMessage(e);
 							}
 							catch (Exception e)
 							{
@@ -2214,14 +2221,10 @@ public class SystemViewRemoteFileAdapter
 									return result;
 
 								}
-								catch (RemoteFileIOException e)
+								catch (SystemMessageException e)
 								{
 									return e.getSystemMessage();
 
-								}
-								catch (RemoteFileSecurityException e)
-								{
-									return e.getSystemMessage();
 								}
 								catch (Exception e)
 								{

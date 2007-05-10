@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -169,8 +170,8 @@ public class SystemExtractAction extends SystemBaseAction
 					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
 					SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 					dlg.open();
-					System.out.println(e.getMessage());
-					System.out.println("Could not extract " + sources[j].getAbsolutePath()); //$NON-NLS-1$
+					//System.out.println(e.getMessage());
+					//System.out.println("Could not extract " + sources[j].getAbsolutePath()); //$NON-NLS-1$
 				}
 			}
 			}

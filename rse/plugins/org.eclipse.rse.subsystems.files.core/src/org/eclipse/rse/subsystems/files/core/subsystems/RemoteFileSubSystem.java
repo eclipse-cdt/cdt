@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - Fix 162962 - recursive removeCachedRemoteFile()
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -25,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -88,16 +90,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFileSubSystem, ICommunicationsListener
 {
-	/**
-	 * The default value of the '{@link #getHomeFolder() <em>Home Folder</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getHomeFolder()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String HOME_FOLDER_EDEFAULT = null;
-
 	public boolean osVarsSet, osWindows, osWindows95, osWindowsNT;
 	public String osName, osCmdShell;
 	// variables to affect the list method for subsetting folder contents
@@ -112,21 +104,13 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 
 	protected ArrayList _searchHistory;
 	
-	// all created IRemoteFiles mapped in cache to quick retreival
+	// all created IRemoteFiles mapped in cache to quick retrieval
 	protected HashMap _cachedRemoteFiles = new HashMap();
 	
-
 	/**
-	 * @generated This field/method will be replaced during code generation.
+	 * Default constructor. Do not call directly! Rather, use the mof generated factory method to create.
+	 * After instantiation, be sure to call {@link #setSubSystemConfiguration(ISubSystemConfiguration)}.
 	 */
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected String homeFolder = HOME_FOLDER_EDEFAULT;
-	/**
-		 * Default constructor. Do not call directly! Rather, use the mof generated factory method to create.
-		 * After instantiation, be sure to call {@link #setSubSystemConfiguration(ISubSystemConfiguration)}.
-		 */
 	public RemoteFileSubSystem(IHost host, IConnectorService connectorService)
 	{
 		super(host, connectorService);
@@ -833,7 +817,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * Do one filter string relative resolve
 	 */
 	protected Object[] internalResolveOneFilterString(IProgressMonitor monitor, Object parent, RemoteFileFilterString fs, boolean sort)
-		throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException, SystemMessageException
+		throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
 		currFilterString = fs;
 		String filterString = fs.toStringNoSwitches();
@@ -958,9 +942,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		return listFoldersAndFiles(parent, fileNameFilter, context, monitor);
 	}
 
-
-
-
 	/**
 	 * Given a folder or file, return its parent folder name, fully qualified
 	 * @param folderOrFile folder or file to return parent of.
@@ -970,8 +951,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		return folderOrFile.getParentPath();
 	}
 
-
-      /**
+    /*
      * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getRemoteSearchResultObject(java.lang.String)
      */
     public IRemoteSearchResult getRemoteSearchResultObject(String key) throws SystemMessageException {
@@ -1245,22 +1225,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		return rc;
 	} // end runCmd method        
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 */
-	public String getHomeFolder()
-	{
-		return homeFolder;
-	}
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	public void setHomeFolder(String newHomeFolder)
-	{
-		homeFolder = newHomeFolder;
-	}
-
 	public void initializeSubSystem(IProgressMonitor monitor)
 	{
 		getConnectorService().addCommunicationsListener(this);
@@ -1407,26 +1371,11 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	public String toString()
-	{
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (homeFolder: "); //$NON-NLS-1$
-		result.append(homeFolder);
-		result.append(')');
-		return result.toString();
-	}
-
-
-	
-	/**
 	 * Returns -1 by default. Subclasses should override if necessary.
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getUnusedPort()
 	 */
 	public int getUnusedPort() 
 	{
-
 		return -1;
 	}
 	
@@ -1492,7 +1441,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	}
 	
 	/**
-	 * Returns the local platform encoding by default. Subclasses should override to return the actual remote encoding.
+	 * Returns the local platform encoding by default.
+	 * Subclasses should override to return the actual remote encoding.
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getRemoteEncoding()
 	 */
 	public String getRemoteEncoding() {

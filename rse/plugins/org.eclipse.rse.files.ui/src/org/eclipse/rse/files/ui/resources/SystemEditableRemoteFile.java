@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -599,7 +600,14 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			return false;	
 		}
 		
-		subsystem.download(remoteFile, localPath, remoteFile.getEncoding(), monitor);
+		try
+		{
+			subsystem.download(remoteFile, localPath, remoteFile.getEncoding(), monitor);
+		}
+		catch (SystemMessageException e)
+		{
+			SystemMessageDialog.displayMessage(e);
+		}
 		if (monitor.isCanceled())
 		{
 			return false;

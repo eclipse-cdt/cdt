@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [168596] FileServiceSubSystem.isCaseSensitive()
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -27,6 +28,7 @@ import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
@@ -40,9 +42,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
-import org.eclipse.rse.services.files.RemoteFileIOException;
-import org.eclipse.rse.services.files.RemoteFileSecurityException;
-import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
@@ -54,8 +53,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.swt.widgets.Display;
 
 public final class FileServiceSubSystem extends RemoteFileSubSystem implements IFileServiceSubSystem 
 {
@@ -434,15 +431,11 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	
 
 
-	/**
-	 * Get the remote file and save it locally. The file is saved in the encoding
-	 * specified.
-	 * @param file remote file that represents the file to be obtained
-	 * @param localpath the absolute path of the local file
-	 * @param encoding the encoding of the local file
-	 * @param monitor progress monitor
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#download(org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void download(IRemoteFile file, String localpath, String encoding, IProgressMonitor monitor) 
+	public void download(IRemoteFile file, String localpath, String encoding, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		//Fixing bug 158534. TODO remove when bug 162688 is fixed.
 		if (monitor==null) {
@@ -450,16 +443,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		String parentPath = file.getParentPath();
 		File localFile = new File(localpath);
-		try
-		{
-			getFileService().download(parentPath, file.getName(), localFile, isBinary(file), file.getEncoding(), monitor);
-		}
-		catch (SystemMessageException e)
-		{
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-		}
-		
+		getFileService().download(parentPath, file.getName(), localFile, isBinary(file), file.getEncoding(), monitor);
 		if (monitor.isCanceled())
 		{
 			localFile.delete();
@@ -487,15 +471,11 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 	}
 
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system
-	 * @param source the absolute path of the local copy
-	 * @param srcEncoding The encoding of the local copy
-	 * @param remotePath remote file that represents the file on the server
-	 * @param rmtEncoding The encoding of the remote file.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#upload(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void upload(String source, String srcEncoding, String remotePath, String rmtEncoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException {
+	public void upload(String source, String srcEncoding, String remotePath, String rmtEncoding, IProgressMonitor monitor) throws SystemMessageException {
 		int slashIndex = remotePath.lastIndexOf(getSeparator());
 		if (slashIndex > -1) {
 			String remoteParentPath = remotePath.substring(0, slashIndex);
@@ -507,27 +487,15 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 				remoteParentPath = avp.getPath();
 				remoteFileName = avp.getName();
 			}
-			try
-			{
-				getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, srcEncoding, rmtEncoding, monitor);
-			}
-			catch (SystemMessageException e)
-			{
-				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-				dlg.open();
-			}
+			getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, srcEncoding, rmtEncoding, monitor);
 		}
 	}
 	
-	/**
-	 * Put the local copy of the remote file back to the remote location. The file
-	 * is assumed to be in the encoding of the local operating system
-	 * @param source the absolute path of the local copy
-	 * @param destination location to copy to
-	 * @param encoding The encoding of the local copy
-	 * @param monitor progress monitor
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#upload(java.lang.String, org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void upload(String source, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	public void upload(String source, IRemoteFile destination, String encoding, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String remoteParentPath = destination.getParentPath();
 		String remoteFileName = destination.getName();
@@ -537,39 +505,22 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		if (!destination.canWrite())
 		{
 			SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEF5003").makeSubstitution(remoteFileName, getHostName()); //$NON-NLS-1$
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
-			dlg.open();
-			return;
+			throw new SystemMessageException(msg);
 		}
-		
-		try
-		{
-			getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, encoding, hostEncoding, monitor);
-		}
-		catch (SystemMessageException e)
-		{
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-		}
+		getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, encoding, hostEncoding, monitor);
 	}
 
-	public boolean copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#copy(org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean copy(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		IFileService service = getFileService();
-		try
-		{
-			return service.copy(sourceFolderOrFile.getParentPath(), sourceFolderOrFile.getName(), targetFolder.getAbsolutePath(), newName, monitor);
-		}
-		catch (SystemMessageException e)
-		{
-			Display dis = Display.getDefault();
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dis.syncExec(new SystemMessageDialogRunnable(dlg));
-		}
-		return false;
+		return service.copy(sourceFolderOrFile.getParentPath(), sourceFolderOrFile.getName(), targetFolder.getAbsolutePath(), newName, monitor);
 	}
 	
-	public boolean copyBatch(IRemoteFile[] sourceFolderOrFiles, IRemoteFile targetFolder, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean copyBatch(IRemoteFile[] sourceFolderOrFiles, IRemoteFile targetFolder, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		IFileService service = getFileService();
 		String[] sourceParents = new String[sourceFolderOrFiles.length];
@@ -580,17 +531,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			sourceParents[i] = sourceFolderOrFiles[i].getParentPath();
 			sourceNames[i] = sourceFolderOrFiles[i].getName();
 		}
-		try
-		{
-			return service.copyBatch(sourceParents, sourceNames, targetFolder.getAbsolutePath(), monitor);
-		}
-		catch (SystemMessageException e)
-		{
-			Display dis = Display.getDefault();
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dis.syncExec(new SystemMessageDialogRunnable(dlg));
-		}
-		return false;
+		return service.copyBatch(sourceParents, sourceNames, targetFolder.getAbsolutePath(), monitor);
 	}
 
 	public IRemoteFile getParentFolder(IRemoteFile folderOrFile, IProgressMonitor monitor) 
@@ -605,75 +546,42 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 	}
 
-	public IRemoteFile createFile(IRemoteFile fileToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	public IRemoteFile createFile(IRemoteFile fileToCreate, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		IFileService service = getFileService();
 		String parent = fileToCreate.getParentPath();
 		String name = fileToCreate.getName();
-		IHostFile newFile = null;
-		
-		try
-		{
-			newFile = service.createFile(parent, name, monitor);
-		}
-		catch (SystemMessageException e)
-		{
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			SystemMessageDialogRunnable runnable = new SystemMessageDialogRunnable(dlg);
-			Display.getDefault().asyncExec(runnable);
-			
-			return null;
-		}
+		IHostFile newFile = service.createFile(parent, name, monitor);
 		return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), fileToCreate.getParentRemoteFile(), newFile);
 	}
 
-	public IRemoteFile createFolder(IRemoteFile folderToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	public IRemoteFile createFolder(IRemoteFile folderToCreate, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		IFileService service = getFileService();
 		String parent = folderToCreate.getParentPath();
 		String name = folderToCreate.getName();
-		IHostFile newFolder = null;
-		try
-		{	
-			newFolder = service.createFolder(parent, name, monitor);
-		}
-		catch (SystemMessageException e)
-		{
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();	
-			return null;
-		}
+		IHostFile newFolder = service.createFolder(parent, name, monitor);
 		return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), folderToCreate.getParentRemoteFile(), newFolder);
 	}
 
-	public IRemoteFile createFolders(IRemoteFile folderToCreate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	public IRemoteFile createFolders(IRemoteFile folderToCreate, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		return createFolder(folderToCreate, monitor);
 	}
 
-	public boolean delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws RemoteFolderNotEmptyException, RemoteFileSecurityException, RemoteFileIOException 
+	public boolean delete(IRemoteFile folderOrFile, IProgressMonitor monitor) throws SystemMessageException 
 	{
-		boolean result = false;
 		IFileService service = getFileService();
 		String parent = folderOrFile.getParentPath();
 		String name = folderOrFile.getName();
-		try
-		{
-			result = service.delete(parent, name, monitor);
-			folderOrFile.markStale(true);
-		}
-		catch (SystemMessageException e)
-		{
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-			return false;
-		}
+		boolean result = service.delete(parent, name, monitor);
+		folderOrFile.markStale(true);
 		return result;
 	}
 	
-	public boolean deleteBatch(IRemoteFile[] folderOrFiles, IProgressMonitor monitor) throws RemoteFolderNotEmptyException, RemoteFileSecurityException, RemoteFileIOException 
+	public boolean deleteBatch(IRemoteFile[] folderOrFiles, IProgressMonitor monitor) throws SystemMessageException 
 	{
-		boolean result = false;
+		
 		String[] parents = new String[folderOrFiles.length];
 		String[] names = new String[folderOrFiles.length];
 		for (int i = 0; i < folderOrFiles.length; i++)
@@ -685,95 +593,46 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			removeCachedRemoteFile(folderOrFiles[i]);
 		}
 		IFileService service = getFileService();
-		try
-		{
-			result = service.deleteBatch(parents, names, monitor);
-		}
-		catch (SystemMessageException e)
-		{
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-			return false;
-		}
-		return result;
+		return service.deleteBatch(parents, names, monitor);
 	}
 
-	public boolean rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean rename(IRemoteFile folderOrFile, String newName, IProgressMonitor monitor) throws SystemMessageException 
 	{
-		boolean result = false;
 		removeCachedRemoteFile(folderOrFile);
 		IFileService service = getFileService();
 		String srcParent = folderOrFile.getParentPath();
 		String oldName = folderOrFile.getName();
 		String newPath = srcParent + folderOrFile.getSeparator() + newName;
-		try
-		{
-			result = service.rename(srcParent, oldName, newName, monitor);
-			folderOrFile.getHostFile().renameTo(newPath);
-		}
-		catch (SystemMessageException e)
-		{
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-			return false;
-		}
+		boolean result = service.rename(srcParent, oldName, newName, monitor);
+		folderOrFile.getHostFile().renameTo(newPath);
 		return result;
 	}
 	
-	public boolean move(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean move(IRemoteFile sourceFolderOrFile, IRemoteFile targetFolder, String newName, IProgressMonitor monitor) throws SystemMessageException 
 	{
-		boolean result = false;
 		IFileService service = getFileService();
 		String srcParent = sourceFolderOrFile.getParentPath();
 		String srcName = sourceFolderOrFile.getName();
 		String tgtParent = targetFolder.getAbsolutePath();
-		try
-		{
-			removeCachedRemoteFile(sourceFolderOrFile);
-			result = service.move(srcParent, srcName, tgtParent, newName, monitor);
-			sourceFolderOrFile.markStale(true);
-			targetFolder.markStale(true);
-		}
-		catch (SystemMessageException e)
-		{
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-			return false;
-		}
+		removeCachedRemoteFile(sourceFolderOrFile);
+		boolean result = service.move(srcParent, srcName, tgtParent, newName, monitor);
+		sourceFolderOrFile.markStale(true);
+		targetFolder.markStale(true);
 		return result;
 	}
 
-	
-	public boolean setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String name = folderOrFile.getName();
 		String parent = folderOrFile.getParentPath();
-		try
-		{
-			return _hostFileService.setLastModified(parent, name, newDate, monitor);
-		}
-		catch (SystemMessageException e)
-		{			
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-			return false;
-		}
+		return _hostFileService.setLastModified(parent, name, newDate, monitor);
 	}
 
-	public boolean setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String name = folderOrFile.getName();
 		String parent = folderOrFile.getParentPath();
-		try
-		{
-			return _hostFileService.setReadOnly(parent, name, readOnly, monitor);
-		}
-		catch (SystemMessageException e)
-		{			
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-			return false;
-		}
+		return _hostFileService.setReadOnly(parent, name, readOnly, monitor);
 	}
 
 	public ILanguageUtilityFactory getLanguageUtilityFactory() 
@@ -886,18 +745,12 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @see RemoteFileSubSystem#getRemoteEncoding()
 	 */
 	public String getRemoteEncoding() {
-		String encoding = null;
-		
 		try {
-			encoding = getFileService().getEncoding(null);
+			return getFileService().getEncoding(null);
+		} catch (SystemMessageException e) {
+			SystemBasePlugin.logMessage(e.getSystemMessage());
 		}
-		catch (SystemMessageException e) {
-			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
-			encoding = super.getRemoteEncoding();
-		}
-		
-		return encoding;
+		return super.getRemoteEncoding();
 	}
 
 	/**

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -113,7 +114,7 @@ public class SystemCombineAction extends SystemExtractToAction {
 			}
 			catch (SystemMessageException e)
 			{
-				System.out.println(e.getMessage());
+				SystemMessageDialog.displayMessage(e);
 			}
 			IProgressMonitor monitor = new NullProgressMonitor();
 			for (int i = 0; i < _selected.size(); i++)

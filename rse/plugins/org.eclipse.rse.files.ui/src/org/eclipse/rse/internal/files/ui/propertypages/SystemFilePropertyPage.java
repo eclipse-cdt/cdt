@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -26,6 +27,7 @@ import java.util.List;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -462,6 +464,9 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
    		  catch (RemoteFileSecurityException exc) {
              setMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR));
     	  }
+   		  catch (SystemMessageException e) {
+   			  setMessage(e.getSystemMessage());
+   		  }
 		}
 		
 	    // set the encoding

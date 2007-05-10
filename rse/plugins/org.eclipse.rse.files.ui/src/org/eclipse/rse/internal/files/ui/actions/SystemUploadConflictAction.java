@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -147,13 +148,13 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                  properties.setDirty(false);
                  properties.setUsedBinaryTransfer(_remoteFile.isBinary());
                      }
-             catch (RemoteFileSecurityException e)
+             catch (final SystemMessageException e)
              {
-                 e.printStackTrace();
-             }
-             catch (RemoteFileIOException e)
-             {
-                 e.printStackTrace();
+            	Display.getDefault().asyncExec(new Runnable() {
+            		public void run() {
+            			SystemMessageDialog.displayMessage(e);
+            		}
+            	});
              }
              catch (Exception e)
              {

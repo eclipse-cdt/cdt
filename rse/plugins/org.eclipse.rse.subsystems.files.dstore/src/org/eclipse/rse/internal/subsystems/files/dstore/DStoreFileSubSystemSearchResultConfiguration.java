@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -26,6 +27,7 @@ import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.internal.services.dstore.search.DStoreSearchResultConfiguration;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
@@ -35,6 +37,7 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.OutputRefresh;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsContentsType;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchResultConfiguration
@@ -102,6 +105,10 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 							remoteFile.setContents(RemoteSearchResultsContentsType.getInstance(), getSearchString().getTextString(), searchResults);			
 						}
 						convertedResults[i] = remoteFile;
+					}
+					catch (SystemMessageException e)
+					{
+						SystemMessageDialog.displayMessage(e);
 					}
 					catch (Exception e)
 					{

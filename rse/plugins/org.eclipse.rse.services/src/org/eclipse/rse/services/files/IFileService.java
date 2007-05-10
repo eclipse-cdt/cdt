@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -24,7 +25,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-
 
 /**
  * A IFileService is an abstraction of a file service that runs over some sort of connection.
@@ -69,7 +69,8 @@ public interface IFileService extends IService
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return true if the file was uploaded
 	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 *     Typically this would be one of those in the
+	 *     {@link RemoteFileException} family.
 	 */
 	public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -84,7 +85,8 @@ public interface IFileService extends IService
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return true if the file was copied from the remote system.
 	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
 	 */
 	public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 

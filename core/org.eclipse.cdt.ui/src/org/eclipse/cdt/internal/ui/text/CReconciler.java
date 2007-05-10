@@ -28,8 +28,8 @@ import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -98,44 +98,54 @@ public class CReconciler extends MonoReconciler {
 	/**
 	 * Internal part listener for activating the reconciler.
 	 */
-	private class PartListener implements IPartListener {
-
+	private class PartListener implements IPartListener2 {
 		/*
-		 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
-		public void partActivated(IWorkbenchPart part) {
-			if (part == fTextEditor) {
+		public void partActivated(IWorkbenchPartReference partRef) {
+		}
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		}
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partClosed(IWorkbenchPartReference partRef) {
+		}
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partDeactivated(IWorkbenchPartReference partRef) {
+		}
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partHidden(IWorkbenchPartReference partRef) {
+			if (partRef.getPart(false) == fTextEditor) {
+				setEditorActive(false);
+			}
+		}
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+		}
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partOpened(IWorkbenchPartReference partRef) {
+		}
+		/*
+		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partVisible(IWorkbenchPartReference partRef) {
+			if (partRef.getPart(false) == fTextEditor) {
 				if (hasCModelChanged())
 					CReconciler.this.scheduleReconciling();
 				setEditorActive(true);
 			}
-		}
-
-		/*
-		 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
-		 */
-		public void partBroughtToTop(IWorkbenchPart part) {
-		}
-
-		/*
-		 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
-		 */
-		public void partClosed(IWorkbenchPart part) {
-		}
-
-		/*
-		 * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
-		 */
-		public void partDeactivated(IWorkbenchPart part) {
-			if (part == fTextEditor) {
-				setEditorActive(false);
-			}
-		}
-
-		/*
-		 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
-		 */
-		public void partOpened(IWorkbenchPart part) {
 		}
 	}
 
@@ -193,7 +203,7 @@ public class CReconciler extends MonoReconciler {
 		private boolean isRelevantDelta(ICElementDelta delta) {
 			final int flags = delta.getFlags();
 			if ((flags & ICElementDelta.F_CONTENT) != 0) {
-				if (isRelevantElement(delta.getElement())) {
+				if (!fIsReconciling && isRelevantElement(delta.getElement())) {
 					// mark model changed, but don't update immediately
 					fIndexerListener.ignoreChanges(false);
 					setCModelChanged(true);
@@ -259,7 +269,7 @@ public class CReconciler extends MonoReconciler {
 	/** The reconciler's editor */
 	private ITextEditor fTextEditor;
 	/** The part listener */
-	private IPartListener fPartListener;
+	private IPartListener2 fPartListener;
 	/** The shell listener */
 	private ShellListener fActivationListener;
 	/** The C element changed listener.  */
@@ -415,9 +425,9 @@ public class CReconciler extends MonoReconciler {
 	 *
 	 * @param state <code>true</code> iff the editor is active
 	 */
-	private synchronized void setEditorActive(boolean state) {
-		fIsEditorActive= state;
-		if (!state) {
+	private synchronized void setEditorActive(boolean active) {
+		fIsEditorActive= active;
+		if (!active) {
 			fTriggerReconcilerJob.cancel();
 		}
 	}

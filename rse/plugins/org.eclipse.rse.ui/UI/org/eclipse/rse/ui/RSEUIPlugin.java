@@ -16,6 +16,7 @@
  * David Dykstal (IBM) - 168870: move core function from UI to core
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions extension point
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -54,7 +55,6 @@ import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxyComparator;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.actions.SystemDynamicPopupMenuExtensionManager;
 import org.eclipse.rse.internal.ui.actions.SystemShowPreferencesPageAction;
 import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapterFactory;
 import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapterFactory;
@@ -64,7 +64,6 @@ import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
-import org.eclipse.rse.ui.actions.ISystemDynamicPopupMenuExtension;
 import org.eclipse.rse.ui.internal.model.SystemRegistry;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.osgi.framework.Bundle;
@@ -107,7 +106,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
 			    SystemResourceManager.startResourceEventListening(listener);
 				
-				registerDynamicPopupMenuExtensions();
 				registerKeystoreProviders();
 				
 				// new support to allow products to not pre-create a local connection
@@ -969,47 +967,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	if (viewSuppliers.contains(vs))
     	  viewSuppliers.remove(vs);
     }
-	
-	/**
-	 * Initializes the System View Adapter Menu Extension Manager, by registering menu extensions
-	 */
-	protected void registerDynamicPopupMenuExtensions()
-	{
-		// Get reference to the plug-in registry
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		
-		// Get configured extenders
-		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "dynamicPopupMenuExtensions"); //$NON-NLS-1$ //$NON-NLS-2$
-		     	
-		for (int i = 0; i < systemTypeExtensions.length; i++) 
-		{
-			try
-			{
-				// get the name space of the declaring extension
-			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespaceIdentifier();
-				
-			    String menuExtensionType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
-			    
-				// use the name space to get the bundle
-			    Bundle bundle = Platform.getBundle(nameSpace);
-			    
-			    // if the bundle has not been uninstalled, then load the handler referred to in the
-			    // extension, and load it using the bundle
-			    // then register the handler
-			    if (bundle.getState() != Bundle.UNINSTALLED) 
-			    {
-			        Class menuExtension = bundle.loadClass(menuExtensionType);
-					
-			        ISystemDynamicPopupMenuExtension extension = (ISystemDynamicPopupMenuExtension)menuExtension.getConstructors()[0].newInstance(null);
-			        SystemDynamicPopupMenuExtensionManager.getInstance().registerMenuExtension(extension);
-			    }
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
 	
 	protected void registerKeystoreProviders()
 	{

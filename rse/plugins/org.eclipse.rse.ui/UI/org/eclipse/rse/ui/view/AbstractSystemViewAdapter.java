@@ -54,7 +54,6 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.actions.SystemDynamicPopupMenuExtensionManager;
 import org.eclipse.rse.internal.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
@@ -349,10 +348,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 
 	
 	/**
-     * <i>Called by system viewers. No need to override or call.</i><br>
-	 * Contributes actions provided via the <code>dynamicPopupMenuExtensions</code> extension point.  Unlike
-	 * addCommonRemoteActions(), these contributions are for any artifact in the RSE views and are contributed
-	 * independently of subsystem factories.
+     * Add or remove custom actions dynamically to a context menu.
+     * 
+     * This method is called by the system viewers. Extenders may 
+     * override this method in order to modify the context menu 
+     * shown for elements of the type they adapt to.
+     * Unlike addCommonRemoteActions(), these contributions are for
+     * any artifact in the RSE views and are contributed independently
+     * of subsystem factories.
 	 * 
 	 * @param menu The menu to contribute actions to
 	 * @param selection The window's current selection.
@@ -361,9 +364,8 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	public void addDynamicPopupMenuActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup)
 	{
-		// system view adapter menu extensions
+		// empty by default, extenders may override.
 		// these extensions are independent of subsystem factories and are contributed via extension point
-		SystemDynamicPopupMenuExtensionManager.getInstance().populateMenu(shell, menu, selection, menuGroup);	
 	}
 
 	/**

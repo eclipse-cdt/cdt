@@ -12,7 +12,6 @@
 		<!-- TODODeferred after RSE 1.0
 		<topic label="org.eclipse.rse.ui.compile" href="reference/extension-points/org_eclipse_rse_ui_compile.html" />
 		-->
-		<topic label="org.eclipse.rse.ui.dynamicPopupMenuExtensions" href="reference/extension-points/org_eclipse_rse_ui_dynamicPopupMenuExtensions.html" />
 		<topic label="org.eclipse.rse.ui.keystoreProviders" href="reference/extension-points/org_eclipse_rse_ui_keystoreProviders.html" />
 		<topic label="org.eclipse.rse.ui.mountPathMappers" href="reference/extension-points/org_eclipse_rse_ui_mountPathMappers.html" />
 		<topic label="org.eclipse.rse.ui.newConnectionWizards" href="reference/extension-points/org_eclipse_rse_ui_newConnectionWizards.html" />

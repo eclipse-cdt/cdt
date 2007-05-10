@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006 IBM Corporation. All rights reserved.
+Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,7 +12,7 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-{Name} (company) - description of contribution.
+Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions extension point
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -444,11 +444,6 @@ Contributors:
 <!-- 		Define Mount Path Mappers extension point				   -->
 <!-- ================================================================= -->
    <extension-point id="mountPathMappers" name="%extPoint.mountPathMappers" schema="schema/mountPathMappers.exsd"/>
-
-<!-- ================================================================= -->
-<!-- 		Define Dynamic Popup Menu Extension extension point -->
-<!-- ================================================================= -->
-   <extension-point id="dynamicPopupMenuExtensions" name="%extPoint.dynamicPopupMenuExtensions" schema="schema/dynamicPopupMenuExtensions.exsd"/>
 
 <!-- ================================================================= -->
 <!-- 		Define Keystore Provider extension point -->

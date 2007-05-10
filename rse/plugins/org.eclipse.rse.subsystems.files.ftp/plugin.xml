@@ -48,28 +48,34 @@ Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to 
    
    	<extension point="org.eclipse.rse.subsystems.files.ftp.ftpFileEntryParser">
       <parser
+      		id="org.eclipse.rse.ftp.parser.Unix"
             class="org.apache.commons.net.ftp.parser.UnixFTPEntryParser"
-            name="UNIX">
+            label="UNIX">
       </parser>
       <parser
+      		id="org.eclipse.rse.ftp.parser.MVS"
             class="org.apache.commons.net.ftp.parser.MVSFTPEntryParser"
-            name="MVS">
+            label="MVS">
       </parser>
       <parser
+      		id="org.eclipse.rse.ftp.parser.WinNT"
             class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSENTFTPEntryParser"
-            name="WinNT">
+            label="WinNT">
       </parser>
       <parser
+      		id="org.eclipse.rse.ftp.parser.OS2"
             class="org.apache.commons.net.ftp.parser.OS2FTPEntryParser"
-            name="OS2">
+            label="OS2">
       </parser>
       <parser
+      		id="org.eclipse.rse.ftp.parser.OS400"
             class="org.apache.commons.net.ftp.parser.OS400FTPEntryParser"
-            name="OS400">
+            label="OS400">
       </parser>
        <parser
+       		id="org.eclipse.rse.ftp.parser.VMS"
             class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSEVMSFTPEntryParser"
-            name="VMS">
+            label="VMS">
       </parser>
    </extension>
  

@@ -51,7 +51,7 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		for (int i = 0; i < ce.length; i++) {
 			
-				String label = ce[i].getAttribute("name");  //$NON-NLS-1$
+				String label = ce[i].getAttribute("label");  //$NON-NLS-1$
 				keySet.add(label);
 		}
 	}
@@ -68,7 +68,7 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 			for (int i = 0; i < ce.length; i++) 
 			{
 				
-					String label = ce[i].getAttribute("name"); //$NON-NLS-1$
+					String label = ce[i].getAttribute("label"); //$NON-NLS-1$
 					
 					if(label.equals(key))
 					{
@@ -137,7 +137,7 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 			for (int i = 0; i < ce.length; i++) 
 			{
 				
-					String label = ce[i].getAttribute("name"); //$NON-NLS-1$
+					String label = ce[i].getAttribute("label"); //$NON-NLS-1$
 					
 					if(label.equals(key))
 					{

@@ -51,11 +51,21 @@ The string attributes &lt;code&gt;defaultDateFormatStr&lt;/code&gt; &lt;code&gt;
 
    <element name="parser">
       <complexType>
-         <attribute name="name" type="string" use="required">
+      	<attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
                   Name that will be displayed in the UI
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">

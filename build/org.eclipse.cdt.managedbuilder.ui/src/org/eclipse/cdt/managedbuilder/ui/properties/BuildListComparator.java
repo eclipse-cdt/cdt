@@ -31,7 +31,11 @@ public class BuildListComparator extends CDTListComparator {
 		if (a instanceof ITool) {
 			ITool c1 = (ITool)a;
 			ITool c2 = (ITool)b;
-			return c1.getName().compareToIgnoreCase(c2.getName());
+			String s1 = c1.getName();
+			if (s1 == null) s1 = "";  //$NON-NLS-1$
+			String s2 = c2.getName();
+			if (s2 == null) s2 = "";  //$NON-NLS-1$ 
+			return s2.compareToIgnoreCase(s2);
 		}
 		if (a instanceof IBuildPropertyValue) {
 			IBuildPropertyValue c1 = (IBuildPropertyValue)a;

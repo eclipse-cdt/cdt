@@ -561,4 +561,8 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	private static int addToHashcode(int result, String key) {
 		return result*31 + key.hashCode();
 	}
+	
+	protected ICProject getCProject() {
+		return fIndexer.project;
+	}
 }

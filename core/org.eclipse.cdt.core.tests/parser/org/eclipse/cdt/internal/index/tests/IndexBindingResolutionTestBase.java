@@ -69,15 +69,19 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	protected ITestStrategy strategy;
 	
 	public void setStrategy(ITestStrategy strategy) {
-		this.strategy = strategy;
+		if(this.strategy==null) {
+			this.strategy = strategy;
+		}
 	}
 	
 	protected void setUp() throws Exception {
+		super.setUp();
 		strategy.setUp();
 	}
 	
 	protected void tearDown() throws Exception {
 		strategy.tearDown();
+		super.tearDown();
 	}
 	
 	protected IASTName[] findNames(String section, int len) {

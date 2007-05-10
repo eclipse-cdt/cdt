@@ -73,15 +73,15 @@ public class StandaloneIndexBasedCodeReaderFactory extends IndexBasedCodeReaderF
 	}
 	
 	public StandaloneIndexBasedCodeReaderFactory(IIndex index) {
-		super(index);
+		super(null, index);
 	}
 	
 	public StandaloneIndexBasedCodeReaderFactory(IIndex index, ICodeReaderFactory fallbackFactory) {
-		super(index, new HashMap/*<String,IIndexFileLocation>*/(), fallbackFactory);
+		super(null, index, new HashMap/*<String,IIndexFileLocation>*/(), fallbackFactory);
 	}
 	
 	public StandaloneIndexBasedCodeReaderFactory(IIndex index, Map iflCache) {
-		super(index, iflCache, new DefaultFallBackFactory());
+		super(null, index, iflCache, new DefaultFallBackFactory());
 	}
 
 	public IIndexFileLocation findLocation(String absolutePath) {

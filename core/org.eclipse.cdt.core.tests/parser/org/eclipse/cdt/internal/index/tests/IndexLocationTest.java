@@ -177,7 +177,7 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 	
-	public void _testSameFileLinkedToOnceInTwoProjects_186214() throws Exception {
+	public void testSameFileLinkedToOnceInTwoProjects_186214() throws Exception {
 		File location = new File(CProjectHelper.freshDir(),"external2.h"); 
 		createExternalFile(location, "struct External {};\n");
 		IFolder content= cproject.getProject().getFolder("content");

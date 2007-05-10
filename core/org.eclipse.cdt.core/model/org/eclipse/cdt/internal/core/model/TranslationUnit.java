@@ -747,7 +747,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			codeReaderFactory= SavedCodeReaderFactory.getInstance();
 		}
 		if (index != null && (style & ITranslationUnit.AST_SKIP_INDEXED_HEADERS) != 0) {
-			codeReaderFactory= new IndexBasedCodeReaderFactory(index, codeReaderFactory);
+			codeReaderFactory= new IndexBasedCodeReaderFactory(getCProject(), index, codeReaderFactory);
 		}
 		
 		IScannerInfo scanInfo = getScannerInfo( (style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
@@ -786,7 +786,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			} else {
 				fallbackFactory= SavedCodeReaderFactory.getInstance();
 			}
-			codeReaderFactory= new IndexBasedCodeReaderFactory(index, fallbackFactory);
+			codeReaderFactory= new IndexBasedCodeReaderFactory(getCProject(), index, fallbackFactory);
 		}
 		else {
 			codeReaderFactory = SavedCodeReaderFactory.getInstance();

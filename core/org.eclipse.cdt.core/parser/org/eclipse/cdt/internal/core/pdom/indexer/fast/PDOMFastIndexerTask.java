@@ -107,7 +107,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 		fIndex= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
 		fIndex.resetCacheCounters();
 		fIflCache = new HashMap/*<String,IIndexFileLocation>*/();
-		fCodeReaderFactory = new IndexBasedCodeReaderFactory(fIndex, fIflCache);
+		fCodeReaderFactory = new IndexBasedCodeReaderFactory(getCProject(), fIndex, fIflCache);
 		fCodeReaderFactory.setCallbackHandler(this);
 	}
 
@@ -137,7 +137,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 	protected IIndexFileLocation findLocation(String absolutePath) {
 		IIndexFileLocation result = (IIndexFileLocation) fIflCache.get(absolutePath); 
 		if(result==null) {
-			result = IndexLocationFactory.getIFLExpensive(absolutePath);
+			result = IndexLocationFactory.getIFLExpensive(getCProject(), absolutePath);
 			fIflCache.put(absolutePath, result);
 		}
 		return result;

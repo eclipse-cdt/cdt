@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.core.filesystem.URIUtil;
@@ -63,6 +64,14 @@ public class IndexLocationFactory {
 	}
 	
 	/**
+	 * Equivalent to the overloaded form with the ICProject parameter set to null
+	 * @see IndexLocationFactory#getIFLExpensive(ICProject, String)
+	 */
+	public static IIndexFileLocation getIFLExpensive(String absolutePath) {
+		return getIFLExpensive(null, absolutePath);
+	}
+		
+	/**
 	 * Returns an IIndexFileLocation by searching the workspace for resources that are mapped
 	 * onto the specified absolute path.
 	 * <p>
@@ -73,13 +82,21 @@ public class IndexLocationFactory {
 	 * <p>
 	 * N.B. As this searches the workspace, following links and potentially reading from alternate
 	 * file systems, this method may be expensive.
+	 * @param cproject the ICProject to prefer when resolving external includes to workspace resources (may be null)
 	 * @param absolutePath
 	 * @return an IIndexFileLocation for the specified resource, containing a workspace relative path if possible.
 	 */
-	public static IIndexFileLocation getIFLExpensive(String absolutePath) {
+	public static IIndexFileLocation getIFLExpensive(ICProject cproject, String absolutePath) {
 		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(absolutePath));
 		if(files.length==1) {
 			return getWorkspaceIFL(files[0]);
+		} else {
+			if(cproject!=null) {
+				for(int i=0; i<files.length; i++) {
+					if(files[i].getProject().equals(cproject.getProject()))
+						return getWorkspaceIFL(files[i]);
+				}
+			}
 		}
 		return new IndexFileLocation(URIUtil.toURI(absolutePath), null);
 	}

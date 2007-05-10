@@ -143,7 +143,7 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 	protected IIndexFileLocation findLocation(String absolutePath) {
 		IIndexFileLocation result = (IIndexFileLocation) fIflCache.get(absolutePath);
 		if(result==null) {
-			result = IndexLocationFactory.getIFLExpensive(absolutePath);
+			result = IndexLocationFactory.getIFLExpensive(getCProject(), absolutePath);
 			fIflCache.put(absolutePath, result);
 		}
 		return result;

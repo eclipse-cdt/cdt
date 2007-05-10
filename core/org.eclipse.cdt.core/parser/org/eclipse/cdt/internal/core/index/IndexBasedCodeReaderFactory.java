@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.IMacro;
@@ -76,21 +77,28 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	/** The fallback code reader factory used in case a header file is not indexed */
 	private ICodeReaderFactory fFallBackFactory;
 	private CallbackHandler fCallbackHandler;
+	private final ICProject cproject;
 	
-	
-	public IndexBasedCodeReaderFactory(IIndex index) {
-		this(index, new HashMap/*<String,IIndexFileLocation>*/());
+	public IndexBasedCodeReaderFactory(ICProject cproject, IIndex index) {
+		this(cproject, index, new HashMap/*<String,IIndexFileLocation>*/());
 	}
 
-	public IndexBasedCodeReaderFactory(IIndex index, ICodeReaderFactory fallbackFactory) {
-		this(index, new HashMap/*<String,IIndexFileLocation>*/(), fallbackFactory);
+	public IndexBasedCodeReaderFactory(ICProject cproject, IIndex index, ICodeReaderFactory fallbackFactory) {
+		this(cproject, index, new HashMap/*<String,IIndexFileLocation>*/(), fallbackFactory);
 	}
 
-	public IndexBasedCodeReaderFactory(IIndex index, Map iflCache) {
-		this(index, iflCache, null);
+	public IndexBasedCodeReaderFactory(ICProject cproject, IIndex index, Map iflCache) {
+		this(cproject, index, iflCache, null);
 	}
 
-	public IndexBasedCodeReaderFactory(IIndex index, Map iflCache, ICodeReaderFactory fallbackFactory) {
+	/** 
+	 * @param cproject the ICProject to prefer when resolving external includes to workspace resources (may be null)
+	 * @param index the IIndex that backs this code reader
+	 * @param iflCache
+	 * @param fallbackFactory
+	 */
+	public IndexBasedCodeReaderFactory(ICProject cproject, IIndex index, Map iflCache, ICodeReaderFactory fallbackFactory) {
+		this.cproject= cproject;
 		this.index = index;
 		this.fileInfoCache = new HashMap/*<IIndexFileLocation,FileInfo>*/();
 		this.iflCache = iflCache;
@@ -249,7 +257,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	
 	public IIndexFileLocation findLocation(String absolutePath) {
 		if(!iflCache.containsKey(absolutePath)) {
-			iflCache.put(absolutePath, IndexLocationFactory.getIFLExpensive(absolutePath));
+			iflCache.put(absolutePath, IndexLocationFactory.getIFLExpensive(cproject, absolutePath));
 		}
 		return (IIndexFileLocation) iflCache.get(absolutePath);
 	}

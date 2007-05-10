@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -32,6 +33,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -135,7 +137,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 				}
 				else
 				{
-					if (!RSEUIPlugin.getThePersistenceManager().isExporting())
+					if (!RSECorePlugin.getThePersistenceManager().isExporting())
 					{
 						List changes = new ArrayList();
 						checkLocalChanges(delta, changes);
@@ -648,7 +650,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		}
 		
 		// does temp files exist
-		if (!SystemRemoteEditManager.getDefault().doesRemoteEditProjectExist())
+		if (!SystemRemoteEditManager.getInstance().doesRemoteEditProjectExist())
 			return false;
 		
 		IResourceDelta[] subdeltas = delta.getAffectedChildren();

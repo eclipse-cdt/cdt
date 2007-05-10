@@ -7,6 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial API and implementation
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -154,7 +155,7 @@ public class RSEPreferencesManager {
 	 * @return the table of system types formatted as a single string
 	 */
 	public static String getSystemTypeValues() {
-		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 		StringBuffer buffer = new StringBuffer(100);
 		for (int i = 0; i < systemTypes.length; i++) {
 			IRSESystemType systemType = systemTypes[i];
@@ -176,7 +177,7 @@ public class RSEPreferencesManager {
 	 * table format.
 	 */
 	public static void setSystemTypeValues(String systemTypeValues) {
-		IRSECoreRegistry registry = RSECorePlugin.getDefault().getRegistry();
+		IRSECoreRegistry registry = RSECorePlugin.getTheCoreRegistry();
 		Hashtable table = parseString(systemTypeValues);
 		Enumeration e = table.keys();
 		while (e.hasMoreElements()) {

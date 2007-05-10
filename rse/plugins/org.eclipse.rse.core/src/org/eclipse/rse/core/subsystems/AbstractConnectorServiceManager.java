@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2003, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -44,9 +44,9 @@ import org.eclipse.rse.core.model.IHost;
  * <p>
  * Because you only need a singleton of these class, the constructor is protected.
  * <p>
- * Your subclass <b>must supply</b> a method like the following:</p>
+ * Your subclass <b>must supply</b> a singleton factory method like the following:</p>
  * <pre><code>
- * public static MyConnectorServiceManager <b>getTheMyConnectorServiceManager</b>()
+ * public static MyConnectorServiceManager <b>getInstance</b>()
  *  {
  *  	if (inst == null)
  *  	  inst = new MyConnectorServiceManager();
@@ -65,7 +65,7 @@ public abstract class AbstractConnectorServiceManager implements IConnectorServi
           
     /**
      * Protected constructor to ensure not instantiated this way.
-     * Use subclass-supplied static method getTheSystemConfiguration() instead.
+     * Use subclass-supplied static singleton factory method getInstance() instead.
      */
     protected AbstractConnectorServiceManager()
     {

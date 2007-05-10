@@ -52,7 +52,7 @@ public class Activator extends AbstractUIPlugin
 
 	    // refresh the remote edit project at plugin startup, to ensure
 	    // it's never closed
-		SystemRemoteEditManager.getDefault().refreshRemoteEditProject();
+		SystemRemoteEditManager.getInstance().refreshRemoteEditProject();
 
 	    // universal temp file listener
 	    _tempFileListener = SystemUniversalTempFileListener.getListener();	

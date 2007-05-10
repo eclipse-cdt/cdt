@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - Replace SystemRegistry by ISystemRegistry
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -48,7 +49,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.rse.core.IRSESystemType;
@@ -673,7 +673,7 @@ public class SystemViewPart
 		populateSystemViewPulldownMenu(menuMgr, getShell(), showConnectionActions, this, systemView);
 
 		// [179181] [api] Dynamic system type provider need a hook to add dynamic system type specific toolbar groups.
-		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 		for (int i = 0; i < systemTypes.length; i++) {
 			IRSESystemType systemType = systemTypes[i];
 			Object adapter = systemType.getAdapter(IRSESystemType.class);
@@ -1187,9 +1187,9 @@ public class SystemViewPart
 				{
 					RemoteObject ro = (RemoteObject)remoteElements.elementAt(idx);
 					//event = new SystemResourceChangeEvent(ro.name,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE,
-					//                                      SystemViewDummyObject.getSingleton()); // This tells SystemView to expand this remote object, but don't select a child
+					//                                      SystemViewDummyObject.getInstance()); // This tells SystemView to expand this remote object, but don't select a child
 					//systemView.systemResourceChanged(event);
-		   	        systemView.refreshRemoteObject(ro.name, SystemViewDummyObject.getSingleton(), true);
+		   	        systemView.refreshRemoteObject(ro.name, SystemViewDummyObject.getInstance(), true);
 				}
 			}
 		}
@@ -1668,7 +1668,7 @@ public class SystemViewPart
 					{
 						RemoteObject ro = (RemoteObject) remoteElements.elementAt(idx);
 						//event = new SystemResourceChangeEvent(ro.name,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE,
-						//                                      SystemViewDummyObject.getSingleton()); // This tells SystemView to expand this remote object, but don't select a child
+						//                                      SystemViewDummyObject.getInstance()); // This tells SystemView to expand this remote object, but don't select a child
 						//systemView.systemResourceChanged(event);
 						
 						// yantzi: artemis 6.0:  notify subsystems that this is a restore from memento so they 
@@ -1678,7 +1678,7 @@ public class SystemViewPart
 							ro.subsystem.getCacheManager().setRestoreFromMemento(true);
 						}
 						
-						systemView.refreshRemoteObject(ro.name, SystemViewDummyObject.getSingleton(), true);
+						systemView.refreshRemoteObject(ro.name, SystemViewDummyObject.getInstance(), true);
 						
 						// yantzi: artemis 6.0:  reset restore from memento flag
 						if (ro.subsystem != null && ro.subsystem.supportsCaching())

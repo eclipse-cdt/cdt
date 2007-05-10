@@ -15,6 +15,7 @@
  * Uwe Stieber (Wind River) - bugfixing.
  * David Dykstal (IBM) - 168870: move core function from UI to core
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -112,7 +113,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 				// new support to allow products to not pre-create a local connection
 				if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
 					// create the connection only if the local system type is enabled!
-					IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+					IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 					if (systemType != null) {
 						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
 						if (adapter != null && adapter.isEnabled(systemType)) {
@@ -750,13 +751,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     {
     	return getDefault().getSystemRegistryInternal();
     }
-    
-    public static IRSEPersistenceManager getThePersistenceManager()
-    {
-    	return RSECorePlugin.getThePersistenceManager();
-    }
-    
-  
     
 	/**
 	 * A static version for convenience

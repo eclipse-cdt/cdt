@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -85,7 +86,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
      */
     public IHost createHost(IRSESystemType systemType, String connectionName, String hostName, String description) throws Exception
     {
-		return RSECorePlugin.getDefault().getSystemRegistry().createHost(getName(), systemType, connectionName,  hostName, description);
+		return RSECorePlugin.getTheSystemRegistry().createHost(getName(), systemType, connectionName,  hostName, description);
     }
     
 	/**
@@ -93,7 +94,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	 */
 	public IHost[] getHosts()
 	{
-		return RSECorePlugin.getDefault().getSystemRegistry().getHostsByProfile(this);
+		return RSECorePlugin.getTheSystemRegistry().getHostsByProfile(this);
 	}
 
 	/**
@@ -101,7 +102,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	 */
 	public ISystemFilterPool[] getFilterPools()
 	{
-		ISubSystemConfiguration[] ssFactories = RSECorePlugin.getDefault().getSystemRegistry().getSubSystemConfigurations();
+		ISubSystemConfiguration[] ssFactories = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurations();
 		Vector poolsVector = new Vector();
 		for (int idx = 0; idx < ssFactories.length; idx++)
 		{

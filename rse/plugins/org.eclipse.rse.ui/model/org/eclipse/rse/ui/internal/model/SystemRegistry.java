@@ -20,6 +20,7 @@
  * Tobias Schwarz (Wind River) - [183134] getLocalHost() does not return Local
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -1648,7 +1649,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	public IHost getLocalHost()
 	{
 		IHost localConn = null;
-		IRSESystemType localType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+		IRSESystemType localType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 		IHost[] conns = getHostsBySystemType(localType);
 		if (conns != null && conns.length > 0) return conns[0];
 		else return localConn;
@@ -2128,7 +2129,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		 
 		try
 		{
-			IRSESystemType localType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+			IRSESystemType localType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 			localConn = createHost(
 		  			profile.getName(), localType,
 		  			name, // connection name
@@ -3280,7 +3281,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	 */
 	public boolean save()
 	{
-		return RSEUIPlugin.getThePersistenceManager().commitProfiles();
+		return RSECorePlugin.getThePersistenceManager().commitProfiles();
 	}
 
 	/**
@@ -3344,7 +3345,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		return rule == this;
 	}
 	public ISystemFilterStartHere getSystemFilterStartHere() {
-		return SystemFilterStartHere.getDefault();
+		return SystemFilterStartHere.getInstance();
 	}
 	
 }//SystemRegistryImpl

@@ -1,11 +1,12 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * David Dykstal (IBM) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -74,7 +75,7 @@ public abstract class RSEModelOperation {
 	 * Ends a transaction. Schedules all changed profiles for save.
 	 */
 	private static void endTransaction() {
-		IRSEPersistenceManager persistenceManager = RSECorePlugin.getDefault().getPersistenceManager();
+		IRSEPersistenceManager persistenceManager = RSECorePlugin.getThePersistenceManager();
 		persistenceManager.commitProfiles();
 	}
 

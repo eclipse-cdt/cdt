@@ -15,10 +15,10 @@
  * Martin Oberhuber (Wind River) - Fix 158534 - NPE in upload/download after conflict
  * Martin Oberhuber (Wind River) - Fix 162962 - recursive removeCachedRemoteFile()
  * Martin Oberhuber (Wind River) - [168596] FileServiceSubSystem.isCaseSensitive()
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
-
 
 import java.io.File;
 import java.io.InputStream;
@@ -55,9 +55,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
-
-
-
 
 public final class FileServiceSubSystem extends RemoteFileSubSystem implements IFileServiceSubSystem 
 {
@@ -471,7 +468,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	protected boolean isBinary(String localEncoding, String hostEncoding, String remotePath)
 	{
 		boolean isText = !hostEncoding.equals(localEncoding) && 
-		SystemFileTransferModeRegistry.getDefault().isText(remotePath) && 
+		SystemFileTransferModeRegistry.getInstance().isText(remotePath) && 
 		!SystemEncodingUtil.getInstance().isXML(remotePath) ;
 		return !isText;
 	}

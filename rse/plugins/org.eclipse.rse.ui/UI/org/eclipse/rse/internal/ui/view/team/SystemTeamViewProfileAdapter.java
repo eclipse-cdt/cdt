@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -376,7 +377,7 @@ public class SystemTeamViewProfileAdapter
 	 */
     public ISystemValidator getNameValidator(Object element)
     {
-    	Vector names = RSECorePlugin.getDefault().getSystemRegistry().getSystemProfileManager().getSystemProfileNamesVector();
+    	Vector names = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().getSystemProfileNamesVector();
     	ISystemValidator validator = new ValidatorProfileName(names);
 		return validator;
     }

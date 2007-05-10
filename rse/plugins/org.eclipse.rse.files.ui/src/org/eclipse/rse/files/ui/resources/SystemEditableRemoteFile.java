@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -194,7 +195,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		this.remoteFile = remoteFile;
 		this.remotePath = remoteFile.getAbsolutePath();		
 		this.subsystem = remoteFile.getParentRemoteFileSubSystem();
-		SystemRemoteEditManager mgr = SystemRemoteEditManager.getDefault();
+		SystemRemoteEditManager mgr = SystemRemoteEditManager.getInstance();
 		
 		// if remote edit project doesn't exist, create it
 		if (!mgr.doesRemoteEditProjectExist())
@@ -222,7 +223,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		this.remoteFile = remoteFile;
 		this.remotePath = remoteFile.getAbsolutePath();
 		this.subsystem = remoteFile.getParentRemoteFileSubSystem();
-		this.root = SystemRemoteEditManager.getDefault().getRemoteEditProjectLocation().makeAbsolute().toOSString();
+		this.root = SystemRemoteEditManager.getInstance().getRemoteEditProjectLocation().makeAbsolute().toOSString();
 		this.localPath = getDownloadPath();
 
 		// dkm - use registered
@@ -901,7 +902,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	{
 		if (subsystem != null && subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 		{
-			return SystemRemoteEditManager.getDefault().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
+			return SystemRemoteEditManager.getInstance().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
 		}
 		return remotePath;
 	}
@@ -911,7 +912,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		String hostname = subsystem.getHost().getHostName();
 		if (subsystem != null && subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 		{
-			String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
+			String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
 			if (!result.equals(hostname))
 			{
 				_isRemoteFileMounted = true;
@@ -1586,7 +1587,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	private void refresh()
 	{
 
-		SystemRemoteEditManager.getDefault().refreshRemoteEditContainer(localFile.getParent());
+		SystemRemoteEditManager.getInstance().refreshRemoteEditContainer(localFile.getParent());
 	}
 
 	/**

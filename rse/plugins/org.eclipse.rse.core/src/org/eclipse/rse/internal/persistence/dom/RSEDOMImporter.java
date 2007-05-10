@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -113,7 +114,7 @@ public class RSEDOMImporter {
 		try {
 			// NOTE create host effectively recreates the subsystems
 			// so instead of creating subsystems on restore, we should be updating their properties
-			IRSECoreRegistry registry = RSECorePlugin.getDefault().getRegistry();
+			IRSECoreRegistry registry = RSECorePlugin.getTheCoreRegistry();
 			IRSESystemType systemType = null;
 			if (systemTypeId != null) {
 				systemType = registry.getSystemTypeById(systemTypeId);

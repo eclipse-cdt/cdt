@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved from core package in the UI plugin
  *                     - updated to use new RSEPreferencesManager
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -172,7 +173,7 @@ public class PasswordPersistenceManager {
 	 */
 	private void initExtensions()
 	{
-		IRSESystemType[] sysTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		IRSESystemType[] sysTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 		systemTypes = new RegisteredSystemType[sysTypes.length];
 		
 		for (int i = 0; i < sysTypes.length; i++) {

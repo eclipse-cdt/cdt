@@ -77,12 +77,12 @@ public class DStoreShellSubSystemConfiguration extends ShellServiceSubSystemConf
 
 	public IConnectorService getConnectorService(IHost host)
 	{
-		return DStoreConnectorServiceManager.getTheUniversalSystemManager().getConnectorService(host, getServiceImplType());
+		return DStoreConnectorServiceManager.getInstance().getConnectorService(host, getServiceImplType());
 	}
 	
 	public void setConnectorService(IHost host, IConnectorService connectorService)
 	{
-		DStoreConnectorServiceManager.getTheUniversalSystemManager().setConnectorService(host, getServiceImplType(), connectorService);
+		DStoreConnectorServiceManager.getInstance().setConnectorService(host, getServiceImplType(), connectorService);
 	}
 	
 	public IShellService createShellService(IHost host)

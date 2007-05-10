@@ -43,7 +43,7 @@ public class DeveloperConnectorServiceManager extends
 	 * Return singleton instance
 	 * @return the singleton instance
 	 */
-	public static DeveloperConnectorServiceManager getTheDeveloperConnectorServiceManager()
+	public static DeveloperConnectorServiceManager getInstance()
 	{
 		if (inst == null)
 		  inst = new DeveloperConnectorServiceManager();

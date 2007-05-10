@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - Fix 163844: InvalidThreadAccess in checkForCollision
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -86,7 +87,7 @@ public class UniversalFileTransferUtility
 {
 	static final boolean doCompressedTransfer = true;//false;
 
-	static final String _rootPath = SystemRemoteEditManager.getDefault().getRemoteEditProjectLocation().makeAbsolute().toOSString();
+	static final String _rootPath = SystemRemoteEditManager.getInstance().getRemoteEditProjectLocation().makeAbsolute().toOSString();
 	
 	public static class RenameStatus extends Status {
 		
@@ -564,7 +565,7 @@ public class UniversalFileTransferUtility
 				long remoteModifiedStamp = srcFileOrFolder.lastModified();
 
 				boolean usedBin = properties.getUsedBinaryTransfer();
-				boolean shouldUseBin = SystemFileTransferModeRegistry.getDefault().isBinary(srcFileOrFolder);
+				boolean shouldUseBin = SystemFileTransferModeRegistry.getInstance().isBinary(srcFileOrFolder);
 				if (storedModifiedStamp == remoteModifiedStamp && (usedBin == shouldUseBin))
 				{
 					return tempFile;
@@ -594,7 +595,7 @@ public class UniversalFileTransferUtility
 		    }
 		    if (tempFile.exists())
 		    {
-				if (SystemFileTransferModeRegistry.getDefault().isText(srcFileOrFolder))
+				if (SystemFileTransferModeRegistry.getInstance().isText(srcFileOrFolder))
 				{
 					try
 					{
@@ -642,7 +643,7 @@ public class UniversalFileTransferUtility
 			}
 
 			// encoding conversion required if it a text file but not an xml file
-			boolean isBinary = SystemFileTransferModeRegistry.getDefault().isBinary(file) || SystemEncodingUtil.getInstance().isXML(file.getAbsolutePath());
+			boolean isBinary = SystemFileTransferModeRegistry.getInstance().isBinary(file) || SystemEncodingUtil.getInstance().isXML(file.getAbsolutePath());
 			boolean isEncodingConversionRequired = !isBinary;
 			
 			inputStream = new FileInputStream(file);
@@ -1260,7 +1261,7 @@ public class UniversalFileTransferUtility
 
 				String srcCharSet = null;
 				
-				boolean isText = SystemFileTransferModeRegistry.getDefault().isText(newPath);
+				boolean isText = SystemFileTransferModeRegistry.getInstance().isText(newPath);
 				if (isText)
 				{
 					try
@@ -1739,7 +1740,7 @@ public class UniversalFileTransferUtility
 	 */
 	public static IResource getTempFileFor(IRemoteFile srcFileOrFolder)
 	{	
-		SystemRemoteEditManager editMgr = SystemRemoteEditManager.getDefault();
+		SystemRemoteEditManager editMgr = SystemRemoteEditManager.getInstance();
 		if (!editMgr.doesRemoteEditProjectExist())
 		{
 			editMgr.getRemoteEditProject();
@@ -1811,7 +1812,7 @@ public class UniversalFileTransferUtility
 	 */
 	public static IResource getTempFileFor(File srcFileOrFolder)
 	{	
-		SystemRemoteEditManager editMgr = SystemRemoteEditManager.getDefault();
+		SystemRemoteEditManager editMgr = SystemRemoteEditManager.getInstance();
 		if (!editMgr.doesRemoteEditProjectExist())
 		{
 			editMgr.getRemoteEditProject();
@@ -1935,7 +1936,7 @@ public class UniversalFileTransferUtility
 			String hostname = subsystem.getHost().getHostName();
 			if (subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 			{
-				String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
+				String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
 				return result;
 			}
 			return hostname;	
@@ -1943,7 +1944,7 @@ public class UniversalFileTransferUtility
 	
 	public static String getActualHostFor(String hostname, String remotePath)
 	{
-		return SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
+		return SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
 	}
 
 	private static void refreshResourceInWorkspace(IResource parent)
@@ -1969,7 +1970,7 @@ public class UniversalFileTransferUtility
 		String hostname = subsystem.getHost().getHostName();
 		if (subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
 		{
-			String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
+			String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
 			if (!result.equals(hostname))
 			{
 				return true;
@@ -1980,7 +1981,7 @@ public class UniversalFileTransferUtility
 	
 	protected static boolean isRemoteFileMounted(String hostname, String remotePath)
 	{
-		String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
+		String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
 		
 		if (!result.equals(hostname)) {
 			return true;
@@ -1992,14 +1993,14 @@ public class UniversalFileTransferUtility
 	protected static String getWorkspaceRemotePath(ISubSystem subsystem, String remotePath) {
 		
 		if (subsystem != null && subsystem.getHost().getSystemType().getName().equals("Local")) { //$NON-NLS-1$
-			return SystemRemoteEditManager.getDefault().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
+			return SystemRemoteEditManager.getInstance().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
 		}
 		
 		return remotePath;
 	}
 	
 	protected static String getWorkspaceRemotePath(String hostname, String remotePath) {
-		return SystemRemoteEditManager.getDefault().getWorkspacePathFor(hostname, remotePath);
+		return SystemRemoteEditManager.getInstance().getWorkspacePathFor(hostname, remotePath);
 	}
 
 	protected static RenameStatus checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath)

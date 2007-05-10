@@ -11,6 +11,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used RSEPreferencesManager
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
 
 package org.eclipse.rse.tests.preferences;
@@ -66,7 +67,7 @@ public class PreferencesTest extends RSECoreTestCase {
 	}
 	
 	public void testDefaultUserIds() {
-		IRSECoreRegistry registry = RSECorePlugin.getDefault().getRegistry();
+		IRSECoreRegistry registry = RSECorePlugin.getTheCoreRegistry();
 		//TODO should we test deprecated methods as well? Probably yes...
 		IRSESystemType systemTypeDeprecated = registry.getSystemType("Local"); //$NON-NLS-1$
 		IRSESystemType systemType = registry.getSystemTypeById("org.eclipse.rse.systemtype.local"); //$NON-NLS-1$
@@ -74,7 +75,7 @@ public class PreferencesTest extends RSECoreTestCase {
 		String oldValue = RSEPreferencesManager.getDefaultUserId(systemType);
 		RSEPreferencesManager.setDefaultUserId(systemType, "bogus1"); //$NON-NLS-1$
 		assertEquals("bogus1", RSEPreferencesManager.getDefaultUserId(systemType)); //$NON-NLS-1$
-		IRSESystemType localType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+		IRSESystemType localType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 		RSEPreferencesManager.setDefaultUserId(localType, "bogus2"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("bogus2", RSEPreferencesManager.getDefaultUserId(systemType)); //$NON-NLS-1$
 		RSEPreferencesManager.setDefaultUserId(systemType, oldValue);

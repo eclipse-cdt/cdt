@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -41,7 +42,7 @@ import org.eclipse.rse.internal.core.RSECoreRegistry;
 /**
  * Registry or front door for all remote system connections.
  * There is a singleton of the class implementation of this interface.
- * To get it, call the {@link org.eclipse.rse.core.RSECorePlugin#getSystemRegistry()}.
+ * To get it, call the {@link org.eclipse.rse.core.RSECorePlugin#getTheSystemRegistry()}.
  * <p>
  * The idea here is that connections are grouped by system profile. At any 
  *  time, there is a user-specified number of profiles "active" and connections
@@ -400,7 +401,7 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * Returns all connections for all active profiles, for the given system type.
 	 * If the specified system type is null, an empty array is returned.
 	 * In order to get an IRSESystemType, use
-	 * <code>RSECorePlugin.getDefault().getRegistry().{@link RSECoreRegistry#getSystemTypeById(String) getSystemTypeById(String)}</code>
+	 * <code>RSECorePlugin.getTheCoreRegistry().{@link RSECoreRegistry#getSystemTypeById(String) getSystemTypeById(String)}</code>
 	 * 
 	 * @param systemType The system type instance.
 	 * @return The list of connections or an empty array.
@@ -411,7 +412,7 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * Return all connections for all active profiles, for the given system types.
 	 * 
 	 * In order to get an IRSESystemType, use
-	 * <code>RSECorePlugin.getDefault().getRegistry().{@link RSECoreRegistry#getSystemTypeById(String) getSystemTypeById(String)}</code>
+	 * <code>RSECorePlugin.getTheCoreRegistry().{@link RSECoreRegistry#getSystemTypeById(String) getSystemTypeById(String)}</code>
 	 */
 	public IHost[] getHostsBySystemTypes(IRSESystemType[] systemTypes);
 

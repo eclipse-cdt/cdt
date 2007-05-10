@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.uda;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +7,10 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
+package org.eclipse.rse.internal.useractions.ui.uda;
+
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
 
 /**
@@ -30,7 +31,7 @@ public class SystemUDASubstVarListCommon extends SystemCmdSubstVarList {
 
 	/**
 	 * Constructor .
-	 * Not to be used directly. Rather, use getSingleton().
+	 * Not to be used directly. Rather, use {@link #getInstance()}.
 	 */
 	SystemUDASubstVarListCommon() {
 		super(COMMON_VARNAMES, COMMON_VARNAME_DESCRIPTIONS);
@@ -39,7 +40,7 @@ public class SystemUDASubstVarListCommon extends SystemCmdSubstVarList {
 	/**
 	 * Return the singleton of this object. No need ever for more than one instance
 	 */
-	public static SystemUDASubstVarListCommon getSingleton() {
+	public static SystemUDASubstVarListCommon getInstance() {
 		if (inst == null) inst = new SystemUDASubstVarListCommon();
 		return inst;
 	}

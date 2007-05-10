@@ -13,6 +13,7 @@
  * Contributors:
  * Javier Montalvo Orús (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -1112,9 +1113,9 @@ public class SystemWidgetHelpers {
 	 */
 	public static IRSESystemType[] getValidSystemTypes(String[] restrictIds) {
 		if (validSystemTypes==null) {
-			IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+			IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 			ArrayList list = new ArrayList(systemTypes.length);
-			ISystemRegistry sr = RSECorePlugin.getDefault().getSystemRegistry();
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 			for (int i=0; i<systemTypes.length; i++) {
 				ISubSystemConfiguration[] configurations = sr.getSubSystemConfigurationsBySystemType(systemTypes[i], false);
 				if (configurations != null && configurations.length > 0) {

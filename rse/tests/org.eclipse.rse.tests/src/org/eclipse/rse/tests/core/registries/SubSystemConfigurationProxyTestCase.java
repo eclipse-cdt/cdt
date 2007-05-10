@@ -8,6 +8,7 @@
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
 package org.eclipse.rse.tests.core.registries;
 
@@ -26,7 +27,7 @@ import org.eclipse.rse.tests.core.RSECoreTestCase;
 public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 	
 	public void testSubSystemConfigurationProxy() {
-		ISystemRegistry systemRegistry = RSECorePlugin.getDefault().getSystemRegistry();
+		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
 		assertNotNull("Failed to fetch RSE system registry instance!", systemRegistry); //$NON-NLS-1$
 		
 		// get all subsystem configuration proxies and pick out the ones from our
@@ -53,7 +54,7 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 					assertNotNull("Unexpected return value null for proxy.getSubSystemConfiguration()!", proxy.getSubSystemConfiguration()); //$NON-NLS-1$
 					
 					// walk through all known system types. Only "Local" and "Windows" should match!
-					IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+					IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 					assertNotNull("Failed to fetch list of registered system types!", systemTypes); //$NON-NLS-1$
 					for (int j = 0; j < systemTypes.length; j++) {
 						IRSESystemType systemType = systemTypes[j];
@@ -77,7 +78,7 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 					assertNotNull("Unexpected return value null for proxy.getSubSystemConfiguration()!", proxy.getSubSystemConfiguration()); //$NON-NLS-1$
 					
 					// walk through all known system types. All system types declared by the tests plugin are expected to match
-					IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+					IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 					assertNotNull("Failed to fetch list of registered system types!", systemTypes); //$NON-NLS-1$
 					for (int j = 0; j < systemTypes.length; j++) {
 						IRSESystemType systemType = systemTypes[j];
@@ -101,7 +102,7 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 					assertNotNull("Unexpected return value null for proxy.getSubSystemConfiguration()!", proxy.getSubSystemConfiguration()); //$NON-NLS-1$
 					
 					// walk through all known system types. Only "Unix" and "Linux" should match!
-					IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+					IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 					assertNotNull("Failed to fetch list of registered system types!", systemTypes); //$NON-NLS-1$
 					for (int j = 0; j < systemTypes.length; j++) {
 						IRSESystemType systemType = systemTypes[j];

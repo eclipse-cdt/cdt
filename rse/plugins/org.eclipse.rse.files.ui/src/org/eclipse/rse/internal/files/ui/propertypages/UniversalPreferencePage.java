@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -71,8 +71,6 @@ import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
 
-
-
 /**
  * "Files" Preference page within the Remote Systems preference node.
  * This allows users to specify, per file extension, whether files are
@@ -129,7 +127,7 @@ public class UniversalPreferencePage
 	
 	protected void createFieldEditors() {
 		
-		modeRegistry = SystemFileTransferModeRegistry.getDefault();
+		modeRegistry = SystemFileTransferModeRegistry.getInstance();
 		editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
 		
 		modeMappings = new ArrayList();

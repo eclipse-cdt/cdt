@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -719,7 +720,7 @@ public class SystemViewConnectionAdapter
 	
 	protected boolean existsMoreThanOneLocalConnection()
 	{
-		IRSESystemType localType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+		IRSESystemType localType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 		IHost[] localCons = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(localType);
 		return localCons.length > 1;		
 	}

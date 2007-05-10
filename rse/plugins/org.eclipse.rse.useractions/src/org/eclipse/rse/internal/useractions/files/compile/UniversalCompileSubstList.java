@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.files.compile;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +7,10 @@ package org.eclipse.rse.internal.useractions.files.compile;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
+package org.eclipse.rse.internal.useractions.files.compile;
+
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 
@@ -38,7 +39,7 @@ public class UniversalCompileSubstList extends SystemCmdSubstVarList {
 
 	/**
 	 * Constructor .
-	 * Not to be used directly. Rather, use getSingleton().
+	 * Not to be used directly. Rather, use {@link #getInstance()}.
 	 */
 	UniversalCompileSubstList() {
 		super(UNIVERSAL_FILES_VARNAMES, UNIVERSAL_FILES_DESCRIPTIONS);
@@ -47,7 +48,7 @@ public class UniversalCompileSubstList extends SystemCmdSubstVarList {
 	/**
 	 * Return the singleton of this object. No need ever for more than one instance
 	 */
-	public static UniversalCompileSubstList getSingleton() {
+	public static UniversalCompileSubstList getInstance() {
 		if (inst == null) inst = new UniversalCompileSubstList();
 		return inst;
 	}

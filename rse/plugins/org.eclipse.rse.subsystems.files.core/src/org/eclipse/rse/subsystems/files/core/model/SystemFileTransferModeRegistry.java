@@ -84,7 +84,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 	/**
 	 * Get the singleton instance
 	 */
-	public static SystemFileTransferModeRegistry getDefault() {
+	public static SystemFileTransferModeRegistry getInstance() {
 		
 		if (instance == null) {
 			instance = new SystemFileTransferModeRegistry();

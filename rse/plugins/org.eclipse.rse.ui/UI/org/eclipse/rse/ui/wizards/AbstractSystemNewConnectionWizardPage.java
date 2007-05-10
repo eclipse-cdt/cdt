@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -133,7 +134,7 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
     	RSEAbstractNewConnectionWizard ourWizard = getNewConnectionWizard();
     	if (ourWizard != null) {
       	  //String[] systemTypes = parentFactory.getSystemTypes();
-    	  //IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
+    	  //IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemType(systemTypes[0]);
     	  IWizardPage wizardPage = ourWizard.getStartingPage();
     	  
     	  if (wizardPage instanceof RSEDefaultNewConnectionWizardMainPage) {

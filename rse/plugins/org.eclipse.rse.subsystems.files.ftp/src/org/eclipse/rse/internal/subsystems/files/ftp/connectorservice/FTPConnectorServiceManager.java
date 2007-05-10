@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -29,7 +29,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * There should be only one of these instantiated.
  * The job of this manager is to manage and return IConnectorService objects.
  * It ensures there is only ever one per unique SystemConnection,
- *  so that both the file and cmd subsystems can share the same system object.
+ *  so that both the file and command subsystems can share the same system object.
  */
 public class FTPConnectorServiceManager extends AbstractConnectorServiceManager
 {
@@ -46,7 +46,7 @@ public class FTPConnectorServiceManager extends AbstractConnectorServiceManager
     /**
      * Return singleton instance of this class
      */
-    public static FTPConnectorServiceManager getDefault()
+    public static FTPConnectorServiceManager getInstance()
     {
     	if (inst == null)
     	  inst = new FTPConnectorServiceManager();

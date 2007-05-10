@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -110,7 +111,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 
 	public boolean commitProfiles() {
 		boolean ok = true;
-		ISystemProfile[] profiles = RSECorePlugin.getDefault().getSystemRegistry().getAllSystemProfiles();
+		ISystemProfile[] profiles = RSECorePlugin.getTheSystemRegistry().getAllSystemProfiles();
 		for (int idx = 0; idx < profiles.length && ok; idx++) {
 			try {
 				ok = commitProfile(profiles[idx]);

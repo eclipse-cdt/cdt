@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  *
  * Contributors:
  * David Dykstal (IBM) - added utility method for finding qualifiedHostNames
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -63,7 +64,25 @@ public class RSECorePlugin extends Plugin {
 	 * @return the persistence manager currently in use for RSE
 	 */
 	public static IRSEPersistenceManager getThePersistenceManager() {
-		return getDefault() != null ? getDefault().getPersistenceManager() : null;
+		return getDefault().getPersistenceManager();
+	}
+	
+	/**
+	 * A static convenience method - fully equivalent to 
+	 * <code>RSECorePlugin.getDefault().getRegistry()</code>.
+	 * @return the RSE Core Registry.
+	 */
+	public static IRSECoreRegistry getTheCoreRegistry() {
+		return getDefault().getCoreRegistry();
+	}
+	
+	/**
+	 * A static convenience method - fully equivalent to 
+	 * <code>RSECorePlugin.getDefault().getSystemRegistry()</code>.
+	 * @return the RSE System Registry.
+	 */
+	public static ISystemRegistry getTheSystemRegistry() {
+		return getDefault().getSystemRegistry();
 	}
 	
 	/**
@@ -170,7 +189,7 @@ public class RSECorePlugin extends Plugin {
 	 * This may return null if the registry has not yet been set.
 	 * @return the RSE core registry.
 	 */
-	public IRSECoreRegistry getRegistry() {
+	public IRSECoreRegistry getCoreRegistry() {
 		return RSECoreRegistry.getInstance();
 	}
 	

@@ -99,7 +99,7 @@ public class LocalProcessSubSystemConfiguration extends ProcessServiceSubSystemC
 	 */
 	public IConnectorService getConnectorService(IHost host)
 	{
-		return LocalConnectorServiceManager.getTheLocalSystemManager().getConnectorService(host, getServiceImplType());
+		return LocalConnectorServiceManager.getInstance().getConnectorService(host, getServiceImplType());
 	}
 
 	/* (non-Javadoc)
@@ -125,7 +125,7 @@ public class LocalProcessSubSystemConfiguration extends ProcessServiceSubSystemC
 	
 	public void setConnectorService(IHost host, IConnectorService connectorService)
 	{
-		LocalConnectorServiceManager.getTheLocalSystemManager().setConnectorService(host, getServiceImplType(), connectorService);
+		LocalConnectorServiceManager.getInstance().setConnectorService(host, getServiceImplType(), connectorService);
 	}
 	
 	public Class getServiceImplType()

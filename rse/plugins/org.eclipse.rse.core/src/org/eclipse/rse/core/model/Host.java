@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -117,7 +118,7 @@ public class Host extends RSEModelObject implements IHost {
 	 * @see org.eclipse.rse.core.model.IHost#getConnectorServices()
 	 */
 	public IConnectorService[] getConnectorServices() {
-		return RSECorePlugin.getDefault().getSystemRegistry().getConnectorServices(this);
+		return RSECorePlugin.getTheSystemRegistry().getConnectorServices(this);
 	}
 
 	/*
@@ -125,7 +126,7 @@ public class Host extends RSEModelObject implements IHost {
 	 * @see org.eclipse.rse.core.model.IHost#getSubSystems()
 	 */
 	public ISubSystem[] getSubSystems() {
-		return RSECorePlugin.getDefault().getSystemRegistry().getSubSystems(this);
+		return RSECorePlugin.getTheSystemRegistry().getSubSystems(this);
 	}
 
 	/*

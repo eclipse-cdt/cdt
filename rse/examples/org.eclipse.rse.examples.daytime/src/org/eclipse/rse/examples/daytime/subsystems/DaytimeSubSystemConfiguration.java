@@ -70,11 +70,11 @@ public class DaytimeSubSystemConfiguration extends ServiceSubSystemConfiguration
 	}
 
 	public IConnectorService getConnectorService(IHost host) {
-		return DaytimeConnectorServiceManager.getTheDaytimeConnectorServiceManager()
+		return DaytimeConnectorServiceManager.getInstance()
 			.getConnectorService(host, IDaytimeService.class);
 	}
 	public void setConnectorService(IHost host, IConnectorService connectorService) {
-		DaytimeConnectorServiceManager.getTheDaytimeConnectorServiceManager()
+		DaytimeConnectorServiceManager.getInstance()
 			.setConnectorService(host, IDaytimeService.class, connectorService);
 	}
 

@@ -1,11 +1,12 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 Symbian Software Ltd. All rights reserved.
+ * Copyright (c) 2006, 2007 Symbian Software Ltd. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.tm.internal.discovery.view;
@@ -91,7 +92,7 @@ public class ServiceDiscoveryView extends ViewPart {
 	private ServiceDiscoveryWizardMainPage serviceDiscoveryWizardMainPage;
 	private Resource resource;
 
-	private ServiceDiscoveryEngine serviceDiscoveryEngine = ServiceDiscoveryEngine.getServiceDiscoveryEngine();
+	private ServiceDiscoveryEngine serviceDiscoveryEngine = ServiceDiscoveryEngine.getInstance();
 	
 public void createPartControl(Composite parent) {
 	

@@ -12,10 +12,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +43,6 @@ import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
-
 
 /**
  * A remote file represents a named file on a remote file system. This class 
@@ -371,7 +371,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		if (isDirectory())
 		  return false; 
 		else 
-		  return SystemFileTransferModeRegistry.getDefault().isBinary(this);
+		  return SystemFileTransferModeRegistry.getInstance().isBinary(this);
 	}
 	
 	/**
@@ -382,7 +382,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		if (isDirectory())
 		  return false; 
 		else 
-		  return SystemFileTransferModeRegistry.getDefault().isText(this);
+		  return SystemFileTransferModeRegistry.getInstance().isText(this);
 	}
  
  

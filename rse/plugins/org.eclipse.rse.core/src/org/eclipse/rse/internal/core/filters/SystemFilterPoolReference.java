@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -166,7 +167,7 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		if (filterPool == null) {
 			String filterPoolName = getReferencedFilterPoolName();
 			String profileName = getReferencedFilterPoolManagerName();
-			ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			ISystemProfile profile = registry.getSystemProfile(profileName);
 			ISubSystem subsystem = (ISubSystem) getProvider();
 			ISubSystemConfiguration config = subsystem.getSubSystemConfiguration();

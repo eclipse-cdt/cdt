@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 176488: adding some text for the cache limit checkbox
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -74,7 +75,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-
 
 /**
  * Preference page for generic Remote System cache preferences
@@ -266,7 +266,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	{
 		public void run(IProgressMonitor monitor)
 		{
-			SystemRemoteEditManager mgr = SystemRemoteEditManager.getDefault();
+			SystemRemoteEditManager mgr = SystemRemoteEditManager.getInstance();
 			// if no temp file project, nothing to do
 			if (!mgr.doesRemoteEditProjectExist())
 			{
@@ -476,7 +476,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 	protected boolean getDirtyReplicas(List results)
 	{
-		SystemRemoteEditManager mgr = SystemRemoteEditManager.getDefault();
+		SystemRemoteEditManager mgr = SystemRemoteEditManager.getInstance();
 		IProject tempFilesProject = mgr.getRemoteEditProject();
 		if (!getDirtyReplicas(tempFilesProject, results))
 		{
@@ -491,7 +491,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 	protected boolean getDirtyEditors(List results)
 	{
-		SystemRemoteEditManager editMgr = SystemRemoteEditManager.getDefault();
+		SystemRemoteEditManager editMgr = SystemRemoteEditManager.getInstance();
 		
 		// if there's no temp file project, there's no dirty editors
 		if (!editMgr.doesRemoteEditProjectExist())
@@ -595,7 +595,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 	protected boolean checkDirtyEditors()
 	{
-		SystemRemoteEditManager mgr = SystemRemoteEditManager.getDefault();
+		SystemRemoteEditManager mgr = SystemRemoteEditManager.getInstance();
 		if (!mgr.doesRemoteEditProjectExist())
 		{
 			return true;

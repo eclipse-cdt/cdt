@@ -612,9 +612,9 @@ public class UDActionSubsystemFiles extends SystemUDActionSubsystem {
 	 */
 	public SystemCmdSubstVarList getActionSubstVarList(int actionDomainType) {
 		if (actionDomainType == DOMAIN_FOLDER)
-			return UDSubstListFolders.getSingleton();
+			return UDSubstListFolders.getInstance();
 		else if (actionDomainType == DOMAIN_FILE)
-			return UDSubstListFiles.getSingleton();
+			return UDSubstListFiles.getInstance();
 		else
 			return null;
 	}

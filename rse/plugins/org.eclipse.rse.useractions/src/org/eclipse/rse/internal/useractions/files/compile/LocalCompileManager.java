@@ -41,6 +41,6 @@ public class LocalCompileManager extends UniversalCompileManager {
 	 * Return the substitution variables supported by compile commands managed by this manager.
 	 */
 	public SystemCmdSubstVarList getSubstitutionVariableList() {
-		return UniversalCompileSubstList.getSingleton();
+		return UniversalCompileSubstList.getInstance();
 	}
 }

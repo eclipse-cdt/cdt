@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -35,7 +36,7 @@ public class SystemStartHere
     */
    public static ISystemRegistry getSystemRegistry()
    {
-   	   return RSECorePlugin.getDefault().getSystemRegistry();
+   	   return RSECorePlugin.getTheSystemRegistry();
    }
    
    /**
@@ -68,7 +69,7 @@ public class SystemStartHere
     */
    public static IHost[] getConnectionsBySystemType(String systemTypeId)
    {
-	   IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(systemTypeId);
+	   IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(systemTypeId);
 	   return getSystemRegistry().getHostsBySystemType(systemType);
    }
 

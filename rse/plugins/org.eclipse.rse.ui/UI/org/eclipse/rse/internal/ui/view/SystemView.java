@@ -21,6 +21,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1005,7 +1006,7 @@ public class SystemView extends SafeTreeViewer
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_PROPERTIES)); // Properties
 
 		// [177537] [api] Dynamic system type provider need a hook to add dynamic system type specific menu groups.
-		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 		for (int i = 0; i < systemTypes.length; i++) {
 			IRSESystemType systemType = systemTypes[i];
 			Object adapter = systemType.getAdapter(IRSESystemType.class);

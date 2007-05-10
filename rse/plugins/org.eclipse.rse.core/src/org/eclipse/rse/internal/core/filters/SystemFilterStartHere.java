@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,9 +12,11 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - removing implementation of ISystemFilterConstants
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
+
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
@@ -25,8 +27,6 @@ import org.eclipse.rse.core.filters.ISystemFilterStartHere;
 import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.logging.Logger;
-
-
 
 /**
  * Static methods for creating and restoring the "front doors" to the filter framework
@@ -54,7 +54,7 @@ public class SystemFilterStartHere
 	{		
 	}
 	
-	public static SystemFilterStartHere getDefault()	
+	public static SystemFilterStartHere getInstance()	
 	{
 		if (_instance == null)
 		{

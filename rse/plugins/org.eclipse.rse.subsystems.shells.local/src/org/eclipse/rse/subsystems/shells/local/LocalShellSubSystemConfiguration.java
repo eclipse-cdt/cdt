@@ -98,7 +98,7 @@ public class LocalShellSubSystemConfiguration extends ShellServiceSubSystemConfi
 
 	public IConnectorService getConnectorService(IHost host)
 	{
-		return LocalConnectorServiceManager.getTheLocalSystemManager().getConnectorService(host, getServiceImplType());
+		return LocalConnectorServiceManager.getInstance().getConnectorService(host, getServiceImplType());
 	}
 	
 	public IShellService createShellService(IHost host)
@@ -117,7 +117,7 @@ public class LocalShellSubSystemConfiguration extends ShellServiceSubSystemConfi
 	
 	public void setConnectorService(IHost host, IConnectorService connectorService)
 	{
-		LocalConnectorServiceManager.getTheLocalSystemManager().setConnectorService(host, getServiceImplType(), connectorService);
+		LocalConnectorServiceManager.getInstance().setConnectorService(host, getServiceImplType(), connectorService);
 	}
 	
 	public Class getServiceImplType()

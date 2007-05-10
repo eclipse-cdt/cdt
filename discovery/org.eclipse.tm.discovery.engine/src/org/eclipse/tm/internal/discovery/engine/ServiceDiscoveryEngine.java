@@ -1,11 +1,12 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 Symbian Software Ltd. All rights reserved.
+ * Copyright (c) 2006, 2007 Symbian Software Ltd. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.tm.internal.discovery.engine;
@@ -41,7 +42,7 @@ public class ServiceDiscoveryEngine {
 	/**
 	 * Gets an instance of the service discovery engine
 	 */
-	public static ServiceDiscoveryEngine getServiceDiscoveryEngine() {
+	public static ServiceDiscoveryEngine getInstance() {
 		if (SERVICE_DISCOVERY_ENGINE == null)
 			SERVICE_DISCOVERY_ENGINE = new ServiceDiscoveryEngine();
 

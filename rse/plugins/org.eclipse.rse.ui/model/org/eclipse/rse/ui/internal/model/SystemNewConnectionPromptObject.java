@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -60,7 +61,7 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 	 * Constructor
 	 */
 	public SystemNewConnectionPromptObject() {
-		setSystemTypes(RSECorePlugin.getDefault().getRegistry().getSystemTypes());
+		setSystemTypes(RSECorePlugin.getTheCoreRegistry().getSystemTypes());
 		isRootPrompt = true;
 	}
 
@@ -125,7 +126,7 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 			// Basically, once initialized, the list of system types cannot change, but
 			// it doesn't hurt to check this in case it changes because of future extensions.
 			if (isRootPrompt) {
-				systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+				systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 			}
 
 			// Note: Do not filter out the disabled system types here. The system

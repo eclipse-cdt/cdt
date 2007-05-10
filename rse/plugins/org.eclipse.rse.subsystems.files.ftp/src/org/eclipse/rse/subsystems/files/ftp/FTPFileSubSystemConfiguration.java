@@ -107,11 +107,11 @@ public class FTPFileSubSystemConfiguration extends FileServiceSubSystemConfigura
 
 	public IConnectorService getConnectorService(IHost host)
 	{
-		return FTPConnectorServiceManager.getDefault().getConnectorService(host, getServiceImplType());
+		return FTPConnectorServiceManager.getInstance().getConnectorService(host, getServiceImplType());
 	}
 	public void setConnectorService(IHost host, IConnectorService connectorService)
 	{
-		FTPConnectorServiceManager.getDefault().setConnectorService(host, getServiceImplType(), connectorService);
+		FTPConnectorServiceManager.getInstance().setConnectorService(host, getServiceImplType(), connectorService);
 	}
 	
 	 

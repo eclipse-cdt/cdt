@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
 package org.eclipse.rse.ui.wizards.newconnection;
 
@@ -79,7 +80,7 @@ public class RSENewConnectionWizardSelectionTreeDataManager extends RSEAbstractW
 		
 		// The new connection wizard selection is combining system types
 		// with registered new connection wizard.
-		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 		for (int i = 0; i < systemTypes.length; i++) {
 			IRSESystemType systemType = systemTypes[i];
 			// for the system type, lookup the corresponding wizard descriptor

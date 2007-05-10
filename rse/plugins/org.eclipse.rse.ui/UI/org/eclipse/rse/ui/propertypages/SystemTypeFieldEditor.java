@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used RSEPreferencesManager
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 
@@ -316,7 +317,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 * @return The list of system types known to be in existence
 	 */
 	private IRSESystemType[] getSystemTypes(boolean restoreDefaults) {
-		IRSESystemType[] types = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		IRSESystemType[] types = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 		ArrayList list = new ArrayList();
 		if (systemTypes == null || restoreDefaults) {
 			for (int i = 0; i < types.length; i++) {
@@ -527,7 +528,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 //					}
 //				}
 //				// find this system type in the array...
-//				IRSESystemType matchingType = RSECorePlugin.getDefault().getRegistry().getSystemType(key);
+//				IRSESystemType matchingType = RSECorePlugin.getTheCoreRegistry().getSystemType(key);
 //				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(matchingType.getAdapter(IRSESystemType.class));
 //				
 //				// update this system type's attributes as per preferences...

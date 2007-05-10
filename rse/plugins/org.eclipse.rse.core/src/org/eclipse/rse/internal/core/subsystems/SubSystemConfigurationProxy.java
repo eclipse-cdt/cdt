@@ -15,6 +15,7 @@
  *                            of system types.
  * David Dykstal (IBM) - 168870: move core function from UI to core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.subsystems;
@@ -148,7 +149,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	 */
 	public IRSESystemType[] getSystemTypes() {
 		if (resolvedSystemTypes == null) {
-			IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+			IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 			
 			// If the subsystem configuration supports all system types, just add all
 			// currently registered system types to the resolved list

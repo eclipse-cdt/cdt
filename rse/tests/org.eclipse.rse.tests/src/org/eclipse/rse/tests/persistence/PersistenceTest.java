@@ -7,6 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - initial API and implementation.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.tests.persistence;
@@ -174,7 +175,7 @@ public class PersistenceTest extends RSECoreTestCase {
 		assertNotNull(profile);
 		
 		try {
-			IRSESystemType linuxType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LINUX_ID);
+			IRSESystemType linuxType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LINUX_ID);
 			registry.createHost("bogus", linuxType, "myhost", "myhost.mynet.mycompany.net", null);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

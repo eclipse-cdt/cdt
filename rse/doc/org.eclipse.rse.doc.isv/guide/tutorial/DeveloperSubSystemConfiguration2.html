@@ -51,7 +51,7 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.core.model.IHost)
 	 */
 	public IConnectorService getConnectorService(IHost host) {
-		return DeveloperConnectorServiceManager.getTheDeveloperConnectorServiceManager()
+		return DeveloperConnectorServiceManager.getInstance()
 			.getConnectorService(host, IDeveloperSubSystem.class);
 	}
 

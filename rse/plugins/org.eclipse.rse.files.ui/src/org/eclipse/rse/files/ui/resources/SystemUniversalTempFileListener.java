@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -139,7 +140,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 					{				
 						String mappedHostPath = properties.getResolvedMountedRemoteFilePath();
 						String mappedHostName = properties.getResolvedMountedRemoteFileHost();
-						String systemRemotePath = SystemRemoteEditManager.getDefault().getMountPathFor(mappedHostName, mappedHostPath);	
+						String systemRemotePath = SystemRemoteEditManager.getInstance().getMountPathFor(mappedHostName, mappedHostPath);	
 						
 						if (systemRemotePath == null)
 						{

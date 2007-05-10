@@ -11,6 +11,7 @@
  * Uwe Stieber (Wind River) - refactoring and cleanup.
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -223,7 +224,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid remote system ip address or dns name!", "unknown", address); //$NON-NLS-1$ //$NON-NLS-2$
 				String systemTypeId = properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID);
 				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid system type!", "unknown", systemTypeId); //$NON-NLS-1$ //$NON-NLS-2$
-				IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(systemTypeId);
+				IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(systemTypeId);
 				
 				exception = null;
 				cause = null;
@@ -259,7 +260,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				throw new RuntimeException(MessageFormat.format("The subsystem is connected as {0}. Disconnect before changing.", new Object[] { activeId })); //$NON-NLS-1$
 			}
 
-			ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			ISubSystemConfiguration desiredConfiguration = registry.getSubSystemConfiguration(desiredConfigurationId);
 			if (desiredConfiguration instanceof IServiceSubSystemConfiguration) {
 				IServiceSubSystemConfiguration t = (IServiceSubSystemConfiguration)desiredConfiguration;

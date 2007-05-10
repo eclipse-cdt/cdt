@@ -8,6 +8,7 @@
  * David Dykstal (IBM) - initial API and implementation from AbstractConnectorService.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -198,7 +199,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 
 	private void updatePasswordForOtherSystemsInConnection(String uid, String password, boolean persist) {
 		IHost connection = getPrimarySubSystem().getHost();
-		ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] subsystems = registry.getSubSystems(connection);
 		List uniqueSystems = new ArrayList();
 		for (int i = 0; i < subsystems.length; i++) {
@@ -224,7 +225,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 	private void clearPasswordForOtherSystemsInConnection(String uid, boolean persist) {
 		if (uid != null) {
 			IHost connection = getHost();
-			ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			ISubSystem[] subsystems = registry.getSubSystems(connection);
 			List uniqueSystems = new ArrayList();
 			for (int i = 0; i < subsystems.length; i++) {
@@ -256,7 +257,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		} else {
 			int whereToUpdate = IRSEUserIdConstants.USERID_LOCATION_HOST;
 			IHost host = subsystem.getHost();
-			ISystemRegistry sr = RSECorePlugin.getDefault().getSystemRegistry();
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 			sr.updateHost(host, host.getSystemType(), host.getAliasName(), host.getHostName(), host.getDescription(), userId, whereToUpdate);
 		}
 	}

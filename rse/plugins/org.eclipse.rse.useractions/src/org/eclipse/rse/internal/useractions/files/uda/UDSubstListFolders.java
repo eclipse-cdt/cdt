@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.files.uda;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +7,10 @@ package org.eclipse.rse.internal.useractions.files.uda;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
+package org.eclipse.rse.internal.useractions.files.uda;
+
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
 
 /**
@@ -24,17 +25,17 @@ public class UDSubstListFolders extends SystemCmdSubstVarList {
 
 	/**
 	 * Constructor .
-	 * Not to be used directly. Rather, use getSingleton().
+	 * Not to be used directly. Rather, use {@link #getInstance()}.
 	 */
 	UDSubstListFolders() {
-		super(UDSubstListCommonFiles.getSingleton(), FOLDER_VARNAMES, DESCRIPTIONS);
+		super(UDSubstListCommonFiles.getInstance(), FOLDER_VARNAMES, DESCRIPTIONS);
 		testForDuplicates();
 	}
 
 	/**
 	 * Return the singleton of this object. No need ever for more than one instance
 	 */
-	public static UDSubstListFolders getSingleton() {
+	public static UDSubstListFolders getInstance() {
 		if (inst == null) inst = new UDSubstListFolders();
 		return inst;
 	}

@@ -1208,7 +1208,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				// that are stored with a subsystem.
 				//SystemFilterPoolManager[] relatedFilterPoolManagers =
 				//  getReferencableFilterPoolManagers(conn.getSystemProfile());
-				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getDefault().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
+				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getInstance().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
 				subsys.setFilterPoolReferenceManager(fprMgr);
 				ISystemFilterPoolManager defaultFilterPoolManager = getFilterPoolManager(conn.getSystemProfile());
 				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
@@ -1301,7 +1301,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				// that are stored with a subsystem.
 				//SystemFilterPoolManager[] relatedFilterPoolManagers =
 				//  getReferencableFilterPoolManagers(newConnection.getSystemProfile());
-				ISystemFilterPoolReferenceManager newRefMgr = SystemFilterStartHere.getDefault().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
+				ISystemFilterPoolReferenceManager newRefMgr = SystemFilterStartHere.getInstance().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
 				ISystemFilterPoolManager defaultFilterPoolManager = null;
 				if (copyProfileOperation)
 					defaultFilterPoolManager = getFilterPoolManager(newConnection.getSystemProfile());
@@ -2868,7 +2868,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				// that are stored with a subsystem.
 				//SystemFilterPoolManager[] relatedFilterPoolManagers =
 				//  getReferencableFilterPoolManagers(conn.getSystemProfile());
-				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getDefault().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
+				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getInstance().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
 				subsys.setFilterPoolReferenceManager(fprMgr);
 				ISystemFilterPoolManager defaultFilterPoolManager = getFilterPoolManager(conn.getSystemProfile());
 				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);

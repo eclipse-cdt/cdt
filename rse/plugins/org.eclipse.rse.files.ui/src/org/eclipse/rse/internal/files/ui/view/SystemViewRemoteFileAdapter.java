@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2521,7 +2522,7 @@ public class SystemViewRemoteFileAdapter
 			
 			String newRemotePath = file.getParentPath() + "/" + newName; //$NON-NLS-1$
 			IResource localResource = null;
-			if (SystemRemoteEditManager.getDefault().doesRemoteEditProjectExist())
+			if (SystemRemoteEditManager.getInstance().doesRemoteEditProjectExist())
 			{
 				localResource = UniversalFileTransferUtility.getTempFileFor(file);
 			}
@@ -2966,7 +2967,7 @@ public class SystemViewRemoteFileAdapter
 	
 	public IFile getCachedCopy(IRemoteFile remoteFile) throws SystemMessageException
 	{
-		if (SystemRemoteEditManager.getDefault().doesRemoteEditProjectExist())
+		if (SystemRemoteEditManager.getInstance().doesRemoteEditProjectExist())
 		{
 			IResource replica = UniversalFileTransferUtility.getTempFileFor(remoteFile);
 			if (replica != null && replica.exists())
@@ -3206,7 +3207,7 @@ public class SystemViewRemoteFileAdapter
 				
 				if (subsystem != null) {
 					IHost host = subsystem.getHost();
-					ISystemRegistry registry = RSECorePlugin.getDefault().getSystemRegistry();
+					ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 					
 					ISubSystem[] subsystems = registry.getSubSystems(host);
 					

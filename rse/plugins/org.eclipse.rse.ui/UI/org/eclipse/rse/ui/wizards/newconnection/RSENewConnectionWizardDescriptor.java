@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
 package org.eclipse.rse.ui.wizards.newconnection;
 
@@ -59,14 +60,14 @@ public class RSENewConnectionWizardDescriptor extends RSEWizardDescriptor implem
 			// If the subsystem configuration supports all system types, just add all
 			// currently registered system types to th resolved list
 			if (systemTypeMatcher.supportsAllSystemTypes()) {
-				IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+				IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 				for (int i = 0; i < systemTypes.length; i++) resolvedSystemTypeIds.add(systemTypes[i].getId());
 			} else {
 				// We have to match the given lists of system type ids against
 				// the list of available system types. As the list of system types cannot
 				// change ones it has been initialized, we filter out the not matching ones
 				// here directly.
-				IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+				IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 				for (int i = 0; i < systemTypes.length; i++) {
 					IRSESystemType systemType = systemTypes[i];
 					RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));

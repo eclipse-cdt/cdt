@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.dstore;
@@ -120,18 +120,18 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 
 	public void setConnectorService(IHost host, IConnectorService connectorService)
 	{
-		DStoreConnectorServiceManager.getTheUniversalSystemManager().setConnectorService(host, getServiceImplType(), connectorService);
+		DStoreConnectorServiceManager.getInstance().setConnectorService(host, getServiceImplType(), connectorService);
 	}
 	
 	public IConnectorService getConnectorService(IHost host)
 	{
-		return DStoreConnectorServiceManager.getTheUniversalSystemManager().getConnectorService(host, getServiceImplType());
+		return DStoreConnectorServiceManager.getInstance().getConnectorService(host, getServiceImplType());
 	}
 	
 	public IFileService createFileService(IHost host)
 	{
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
-		return new DStoreFileService(connectorService, SystemFileTransferModeRegistry.getDefault(), RSEUIPlugin.getDefault());
+		return new DStoreFileService(connectorService, SystemFileTransferModeRegistry.getInstance(), RSEUIPlugin.getDefault());
 	}
 	
 	public ISearchService createSearchService(IHost host)

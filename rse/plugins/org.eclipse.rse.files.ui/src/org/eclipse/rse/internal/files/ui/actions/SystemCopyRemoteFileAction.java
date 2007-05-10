@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -221,7 +222,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
    			String newPath = targetFolder.getAbsolutePath() + "/" + newName; //$NON-NLS-1$
    			if (srcFileOrFolder.isFile())
    			{
-   				SystemRemoteEditManager mgr = SystemRemoteEditManager.getDefault();
+   				SystemRemoteEditManager mgr = SystemRemoteEditManager.getInstance();
    				// if remote edit project doesn't exist, create it
    				if (!mgr.doesRemoteEditProjectExist())
    					mgr.getRemoteEditProject();

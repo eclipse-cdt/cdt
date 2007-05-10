@@ -8,6 +8,7 @@
  * Javier Montalvo Orus (Symbian) - initial API and implementation
  * Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.discovery;
@@ -104,7 +105,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 			
 			IHost conn = null;
 			try {
-				IRSESystemType discoveryType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById("org.eclipse.rse.systemtype.discovery"); //$NON-NLS-1$
+				IRSESystemType discoveryType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById("org.eclipse.rse.systemtype.discovery"); //$NON-NLS-1$
 				conn = registry.createHost(discoveryType, "Discovery@" + hostName, hostName, "Discovered services in "+hostName);//$NON-NLS-1$ //$NON-NLS-2$
 			} catch (Exception e) {
 				RSEUIPlugin.getTheSystemRegistry().deleteHost(conn);

@@ -208,4 +208,15 @@ public class CommentTests extends AST2BaseTest {
 		assertEquals("// comment1", new String(comments[0].getComment()));
 		assertEquals("// comment2", new String(comments[1].getComment()));
 	}
+	
+	// //comment
+	public void _testCommentLocation_bug186337() throws Exception{
+		StringBuffer code= getContents(1)[0];
+		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true, true);
+		IASTComment[] comments = tu.getComments();
+		
+		assertEquals(1, comments.length);
+		assertNotNull(comments[0].getFileLocation());
+		assertNotNull(comments[0].getNodeLocations());
+	}
 }

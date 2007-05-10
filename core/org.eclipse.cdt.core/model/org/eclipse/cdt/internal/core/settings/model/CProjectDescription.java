@@ -194,11 +194,11 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 		}
 		
-		doneInitializing();
+//		doneInitializing();
 		
 		factory.clear();
 		
-		fIsLoadding = false;
+//		fIsLoadding = false;
 	}
 
 	void applyDatas(){
@@ -216,13 +216,25 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 		}
 		
-		doneInitializing();
+//		doneInitializing();
 		
 		factory.clear();
 		
-		fIsApplying = false;
+//		fIsApplying = false;
 	}
 	
+	
+
+	void doneApplying(){
+		doneInitializing();
+		fIsApplying = false;
+	}
+
+	void doneLoadding(){
+		doneInitializing();
+		fIsLoadding = false;
+	}
+
 	private void doneInitializing(){
 		for(Iterator iter = fCfgMap.values().iterator(); iter.hasNext();){
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
@@ -420,7 +432,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 
 	ICStorageElement getRootStorageElement() throws CoreException{
 		if(fRootStorageElement == null){
-			fRootStorageElement = CProjectDescriptionManager.getInstance().createStorage(fProject, true, true, fIsReadOnly);
+			fRootStorageElement = CProjectDescriptionManager.getInstance().createStorage(fProject, true, true, isReadOnly());
 		}
 		return fRootStorageElement;
 	}

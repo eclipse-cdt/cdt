@@ -450,6 +450,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	void doneInitialization(){
 		CProjectDescriptionManager.getInstance().notifyCached(this, fData, null);
 		fInitializing = false;
+		fSpecSettings.doneInitialization();
 	}
 	
 	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExcludeStatus) {

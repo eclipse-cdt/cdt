@@ -63,7 +63,7 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 	public void setReadOnly(boolean readOnly){
 		fIsReadOnly = readOnly;
 
-		ICStorageElement children[] = getChildren();
+		ICStorageElement children[] = getChildren(false);
 		for(int i = 0; i < children.length; i++){
 			((InternalXmlStorageElement)children[i]).setReadOnly(readOnly);
 		}

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems Ltd and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems Ltd - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  ***********************************************************************/
 
 package org.eclipse.cdt.core.cdescriptor.tests;
@@ -68,6 +69,7 @@ public class CDescriptorTests extends TestCase {
 		suite.addTest(new CDescriptorTests("testExtensionRemove"));
 		suite.addTest(new CDescriptorTests("testProjectDataCreate"));
 		suite.addTest(new CDescriptorTests("testProjectDataDelete"));
+		suite.addTest(new CDescriptorTests("testConcurrentDescriptorCreation"));
 
 		TestSetup wrapper = new TestSetup(suite) {
 
@@ -145,6 +147,28 @@ public class CDescriptorTests extends TestCase {
 		Assert.assertEquals(fProject, desc.getProject());
 		Assert.assertEquals("*", desc.getPlatform());
 	}
+
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=185930
+	public void testConcurrentDescriptorCreation() throws Exception {
+		fProject.close(null);
+		fProject.open(null);
+		Thread t= new Thread() {
+			public void run() {
+				try {
+					CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+				} catch (CoreException exc) {
+				}
+			}
+		};
+		t.start();
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+		t.join();
+		
+		Element data = desc.getProjectData("testElement0");
+		data.appendChild(data.getOwnerDocument().createElement("test"));
+		desc.saveProjectData();
+		fLastEvent = null;
+ 	}
 
 	public void testDescriptorOwner() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
@@ -236,4 +260,5 @@ public class CDescriptorTests extends TestCase {
 		Assert.assertEquals(fLastEvent.getFlags(), 0);
 		fLastEvent = null;
 	}
+
 }

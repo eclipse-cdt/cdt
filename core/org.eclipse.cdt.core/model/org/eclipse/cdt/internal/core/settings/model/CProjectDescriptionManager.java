@@ -576,6 +576,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				des = new CProjectDescription(des, true, el);
 				setDescriptionApplying(project, des);
 				des.applyDatas();
+				des.doneApplying();
 				clearDescriptionApplying(project);
 				
 				try {
@@ -886,12 +887,13 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	private ICProjectDescription loadProjectDescription(IProject project) throws CoreException{
-		ICStorageElement storage = CProjectDescriptionManager.getInstance().createStorage(project, true, false, true);
+		ICStorageElement storage = CProjectDescriptionManager.getInstance().createStorage(project, true, false, false);
 		CProjectDescription des = new CProjectDescription(project, storage, true);
 		if(des != null){
 			try {
 				setDescriptionLoadding(project, des);
 				des.loadDatas();
+				des.doneLoadding();
 			}finally{
 				clearDescriptionLoadding(project);
 			}

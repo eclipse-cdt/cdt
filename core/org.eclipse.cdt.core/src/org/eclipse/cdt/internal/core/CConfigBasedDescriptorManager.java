@@ -173,11 +173,11 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		dr.apply(true);
 	}
 
-	public ICDescriptor getDescriptor(IProject project) throws CoreException {
+	public synchronized ICDescriptor getDescriptor(IProject project) throws CoreException {
 		return getDescriptor(project, true);
 	}
 
-	public ICDescriptor getDescriptor(IProject project, boolean create)
+	public synchronized ICDescriptor getDescriptor(IProject project, boolean create)
 			throws CoreException {
 		return findDescriptor(project, create);
 	}

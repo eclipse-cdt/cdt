@@ -109,9 +109,18 @@ public class XmlStorageElement implements ICStorageElement {
 	public ICStorageElement[] getChildren() {
 		return getChildren(XmlStorageElement.class);
 	}
-	
+
 	protected ICStorageElement[] getChildren(Class clazz){
-		createChildren();
+		return getChildren(clazz, true);
+	}
+
+	protected ICStorageElement[] getChildren(boolean load){
+		return getChildren(XmlStorageElement.class, load);
+	}
+
+	protected ICStorageElement[] getChildren(Class clazz, boolean load){
+		if(load)
+			createChildren();
 
 		ICStorageElement[] children = (ICStorageElement[])java.lang.reflect.Array.newInstance(
                                 clazz, fChildList.size());

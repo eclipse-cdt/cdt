@@ -276,6 +276,17 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		return fStorage;
 	}
 	
+	void doneInitialization(){
+		if(isReadOnly()){
+			if(fRootStorageElement != null)
+				((InternalXmlStorageElement)fRootStorageElement).setReadOnly(true);
+			if(fSettingsStorageElement != null)
+				((InternalXmlStorageElement)fSettingsStorageElement).setReadOnly(true);
+			if(fStorage != null)
+				fStorage.setReadOnly(true);
+		}
+	}
+	
 	public String getBuildSystemId(){
 		return fBuildSystemId;
 	}

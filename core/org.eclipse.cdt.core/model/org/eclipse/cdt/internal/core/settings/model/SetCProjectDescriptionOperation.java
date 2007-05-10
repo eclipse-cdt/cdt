@@ -109,6 +109,8 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		} catch (CoreException e1) {
 		}
 
+		fNewDescriptionCache.doneApplying();
+		
 		event = mngr.createAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
 		mngr.notifyListeners(event);
 

@@ -136,7 +136,8 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 				 }
 				 else
 				 {
-					 addressText.setText(tempAddress);
+					 if(tempAddress!=null)
+						 addressText.setText(tempAddress);
 				 }
 			}
 		});
@@ -149,6 +150,30 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 		transportCombo = new Combo(comp, SWT.READ_ONLY);
 		transportCombo.setItems(TransportFactory.getTransportList());
 		transportCombo.select(0);
+		
+		transportCombo.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+
+			public void widgetSelected(SelectionEvent event) {
+				
+				if(multicastButton.getSelection())
+				{
+					String multicastAddress = null;
+					
+					try {
+						multicastAddress = ProtocolFactory.getMulticastAddress(protocolCombo.getText(), transportCombo.getText());
+					} catch (CoreException e1) {}
+						
+					if(multicastAddress!=null)
+					{
+						tempAddress = addressText.getText();
+						addressText.setText(multicastAddress);
+					}
+				}
+			}
+		});
 		
 		transportCombo.setLayoutData(data);
 		

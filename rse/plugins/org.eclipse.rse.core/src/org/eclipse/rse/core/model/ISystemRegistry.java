@@ -114,7 +114,7 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * Return all subsystem factories which have declared themselves part of the given category.
 	 * <p>
 	 * This looks for a match on the "category" of the subsystem factory's xml declaration
-	 *  in its plugin.xml file. Thus, it is effecient as it need not bring to life a 
+	 *  in its plugin.xml file. Thus, it is efficient as it need not bring to life a 
 	 *  subsystem factory just to test its parent class type.
 	 * 
 	 * @see ISubSystemConfigurationCategories
@@ -391,7 +391,7 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * <p>
 	 * This looks for a match on the "category" of the subsystem
 	 * configuration's xml declaration in its plugin.xml file.
-	 * Thus, it is effecient as it need not bring to life a 
+	 * Thus, it is efficient as it need not bring to life a 
 	 * subsystem configuration just to test its parent class type.
 	 * 
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
@@ -464,9 +464,9 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public Vector getHostAliasNamesForAllActiveProfiles();
 
 	/**
-	 * Return array of previously specified hostnames for a given system type.
+	 * Return array of previously specified host names for a given system type.
 	 * After careful consideration, it is decided that if the system type is null,
-	 * then no hostnames should be returned. Previously all for all types were returned.
+	 * then no host names should be returned. Previously all for all types were returned.
 	 */
 	public String[] getHostNames(IRSESystemType systemType);
 

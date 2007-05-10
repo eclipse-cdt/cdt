@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,12 +99,12 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 	protected void checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
 		try {
-			for (int i=0; i<20; i++) {
+			for (int i=0; i<200; i++) {
 				root= tree.getItem(i0);
 				if (!"...".equals(root.getText())) {
 					break;
 				}
-				runEventQueue(50);
+				runEventQueue(10);
 			}
 		}
 		catch (IllegalArgumentException e) {
@@ -117,11 +117,11 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 		try {
 			TreeItem root= tree.getItem(i0);
 			TreeItem item= root.getItem(i1);
-			for (int i=0; i<40; i++) {
+			for (int i=0; i<200; i++) {
 				if (!"...".equals(item.getText())) {
 					break;
 				}
-				runEventQueue(50);
+				runEventQueue(10);
 			}
 			assertEquals(label, item.getText());
 		}

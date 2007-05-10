@@ -12,19 +12,28 @@ package org.eclipse.cdt.ui.tests;
 
 import java.io.IOException;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerService;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
@@ -94,16 +103,38 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 	
 	protected void runEventQueue(int time) {
-		long endTime= System.currentTimeMillis()+time;
-		do {
+		final long endTime= System.currentTimeMillis()+time;
+		while(true) {
 			while (Display.getCurrent().readAndDispatch());
+			long diff= endTime-System.currentTimeMillis();
+			if (diff <= 0) {
+				break;
+			}
 			try {
-				Thread.sleep(20);
+				Thread.sleep(Math.min(20, diff));
 			} catch (InterruptedException e) {
 				return;
 			}
 		}
-		while(System.currentTimeMillis() < endTime);
+	}
+
+	protected void expandTreeItem(Tree tree, int idx) {
+		expandTreeItem(tree, new int[] {idx});
+	}
+
+	protected void expandTreeItem(Tree tree, int idx1, int idx2) {
+		expandTreeItem(tree, new int[] {idx1, idx2});
+	}
+
+	protected void expandTreeItem(Tree tree, int[] idxs) {
+		TreeItem item= tree.getItem(idxs[0]);
+		assertNotNull(item);
+		expandTreeItem(item);
+		for (int i=1; i < idxs.length; i++) {
+			item= item.getItem(idxs[i]);
+			assertNotNull(item);
+			expandTreeItem(item);
+		}
 	}
 	
 	protected void expandTreeItem(TreeItem item) {
@@ -111,6 +142,28 @@ public class BaseUITestCase extends BaseTestCase {
 		Event event = new Event();
 		event.item = item;
 		item.getParent().notifyListeners(SWT.Expand, event);	
+		runEventQueue(0);
+	}
+
+	protected void selectTreeItem(Tree tree, int idx) {
+		selectTreeItem(tree, new int[] {idx});
+	}
+
+	protected void selectTreeItem(Tree tree, int idx1, int idx2) {
+		selectTreeItem(tree, new int[] {idx1, idx2});
+	}
+
+	protected void selectTreeItem(Tree tree, int[] idxs) {
+		TreeItem item= tree.getItem(idxs[0]);
+		assertNotNull(item);
+		for (int i=1; i < idxs.length; i++) {
+			item= item.getItem(idxs[i]);
+			assertNotNull(item);
+		}
+		tree.setSelection(item);
+		Event event = new Event();
+		event.item = item;
+		item.getParent().notifyListeners(SWT.Selection, event);	
 		runEventQueue(0);
 	}
 
@@ -132,4 +185,34 @@ public class BaseUITestCase extends BaseTestCase {
 			}
 		}
 	}
+	
+	protected IViewPart activateView(String id) throws PartInitException {
+		IViewPart view= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(id);
+		assertNotNull(view);
+		runEventQueue(0);
+		return  view;
+	}
+	
+	protected void executeCommand(IViewPart viewPart, String commandID) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
+		IHandlerService hs= (IHandlerService)viewPart.getSite().getService(IHandlerService.class);
+		assertNotNull(hs);
+		hs.executeCommand(commandID, null);
+	}
+	
+	protected Control getFocusControl(Class clazz, int wait) {
+		return getFocusControl(clazz, null, wait);
+	}
+	
+	protected Control getFocusControl(Class clazz, Control differentTo, int wait) {
+		for (int i = 0; i <= wait/10; i++) {
+			Control fc= Display.getCurrent().getFocusControl();
+			if (clazz.isInstance(fc) && fc != differentTo) {
+				return fc;
+			}
+			runEventQueue(10);
+		}
+		fail();
+		return null;
+	}
+
 }

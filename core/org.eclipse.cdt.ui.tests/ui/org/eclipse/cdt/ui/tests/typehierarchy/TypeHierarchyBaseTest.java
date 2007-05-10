@@ -155,7 +155,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
 		try {
-			for (int i=0; i<100; i++) {
+			for (int i=0; i<200; i++) {
 				root= tree.getItem(i0);
 				try {
 					if (!"...".equals(root.getText())) {
@@ -178,7 +178,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		TreeItem item= null;
 		try {
 			TreeItem root= tree.getItem(i0);
-			for (int i=0; i<40; i++) {
+			for (int i=0; i<200; i++) {
 				item= root.getItem(i1);
 				try {
 					if (!"...".equals(item.getText())) {
@@ -187,7 +187,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 				} catch (SWTException e) {
 					// in case widget was disposed, item may be replaced
 				}
-				runEventQueue(50);
+				runEventQueue(10);
 			}
 		}
 		catch (IllegalArgumentException e) {
@@ -200,7 +200,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected TreeItem checkTreeNode(TreeItem root, int i1, String label) {
 		TreeItem item= null;
 		try {
-			for (int i=0; i<40; i++) {
+			for (int i=0; i<200; i++) {
 				item= root.getItem(i1);
 				try {
 					if ("".equals(item.getText())) {
@@ -215,7 +215,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 				} catch (SWTException e) {
 					// in case widget was disposed, item may be replaced
 				}
-				runEventQueue(50);
+				runEventQueue(10);
 			}
 		}
 		catch (IllegalArgumentException e) {

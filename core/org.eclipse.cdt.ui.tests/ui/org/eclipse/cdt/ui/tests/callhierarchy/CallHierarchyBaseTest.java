@@ -48,6 +48,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		CallHierarchyUI.setIsJUnitTest(true);
 		String prjName= "chTest"+sProjectCounter++;
 		fCProject= CProjectHelper.createCCProject(prjName, "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
@@ -73,7 +74,6 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	}	
 
 	protected void openCallHierarchy(CEditor editor) {
-		CallHierarchyUI.setIsJUnitTest(true);
 		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
 	}
 
@@ -109,45 +109,47 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 
 	protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
-		try {
-			for (int i=0; i<800; i++) {
+		for (int i=0; i<200; i++) {
+			try {
 				root= tree.getItem(i0);
-				try {
-					if (label.equals(root.getText())) {
-						return root;
-					}
-				} catch (SWTException e) {
-					// in case widget was disposed, item may be replaced
+				if (label.equals(root.getText())) {
+					return root;
 				}
-				runEventQueue(10);
+			} 
+			catch (SWTException e) {
+				// in case widget was disposed, item may be replaced
 			}
+			catch (IllegalArgumentException e) {
+				// item does not yet exist.
+			}
+			runEventQueue(10);
 		}
-		catch (IllegalArgumentException e) {
-			fail("Tree node " + label + "{" + i0 + "} does not exist!");
-		}
+		assertNotNull("Tree node " + label + "{" + i0 + "} does not exist!", root);
 		assertEquals(label, root.getText());
 		return root;
 	}
 
 	protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
 		TreeItem item= null;
-		try {
-			TreeItem root= tree.getItem(i0);
-			for (int i=0; i<40; i++) {
+		TreeItem root= tree.getItem(i0);
+		for (int i=0; i<200; i++) {
+			try {
 				item= root.getItem(i1);
-				try {
-					if (!"...".equals(item.getText())) {
-						break;
-					}
-				} catch (SWTException e) {
-					// in case widget was disposed, item may be replaced
+				if (!"...".equals(item.getText())) {
+					break;
 				}
-				runEventQueue(50);
+			} catch (SWTException e) {
+				// in case widget was disposed, item may be replaced
 			}
+			catch (IllegalArgumentException e) {
+				if (label == null) {
+					return null;
+				}
+			}
+			runEventQueue(10);
 		}
-		catch (IllegalArgumentException e) {
-			fail("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!");
-		}
+		assertNotNull("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!", item);
+		assertNotNull("Unexpected tree node " + item.getText(), label);
 		assertEquals(label, item.getText());
 		return item;
 	}
@@ -155,7 +157,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected TreeItem checkTreeNode(TreeItem root, int i1, String label) {
 		TreeItem item= null;
 		try {
-			for (int i=0; i<40; i++) {
+			for (int i=0; i<200; i++) {
 				item= root.getItem(i1);
 				try {
 					if (!"...".equals(item.getText())) {
@@ -164,7 +166,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 				} catch (SWTException e) {
 					// in case widget was disposed, item may be replaced
 				}
-				runEventQueue(50);
+				runEventQueue(10);
 			}
 		}
 		catch (IllegalArgumentException e) {

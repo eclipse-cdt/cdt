@@ -204,17 +204,19 @@ public class CallHierarchyUI {
 
 				index.acquireReadLock();
 				try {
-					IBinding binding= IndexUI.elementToBinding(index, input);
-					if (binding != null) {
-						ICElement[] result= IndexUI.findAllDefinitions(index, binding);
-						if (result.length > 0) {
-							return result;
+					if (needToFindDefinition(input)) {
+						IBinding binding= IndexUI.elementToBinding(index, input);
+						if (binding != null) {
+							ICElement[] result= IndexUI.findAllDefinitions(index, binding);
+							if (result.length > 0) {
+								return result;
+							}
 						}
-						IIndexName name= IndexUI.elementToName(index, input);
-						if (name != null) {
-							ICElementHandle handle= IndexUI.getCElementForName(tu, index, name);
-							return new ICElement[] {handle};
-						}
+					}
+					IIndexName name= IndexUI.elementToName(index, input);
+					if (name != null) {
+						ICElementHandle handle= IndexUI.getCElementForName(tu, index, name);
+						return new ICElement[] {handle};
 					}
 				}
 				finally {
@@ -234,6 +236,17 @@ public class CallHierarchyUI {
 			Thread.currentThread().interrupt();
 		}
 		return new ICElement[] {input};
+	}
+
+	private static boolean needToFindDefinition(ICElement elem) {
+		switch (elem.getElementType()) {
+		case ICElement.C_FUNCTION_DECLARATION:
+		case ICElement.C_METHOD_DECLARATION:
+		case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+		case ICElement.C_TEMPLATE_METHOD_DECLARATION:
+			return true;
+		}
+		return false;
 	}
 
 	public static boolean isRelevantForCallHierarchy(IBinding binding) {

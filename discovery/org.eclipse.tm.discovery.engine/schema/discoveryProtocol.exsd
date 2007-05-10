@@ -61,6 +61,13 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="multicast" type="string">
+            <annotation>
+               <documentation>
+                  Allows specifying multicast addresses to be used with different transports in the format &quot;transportName1#address1;transportName2#address2&quot;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

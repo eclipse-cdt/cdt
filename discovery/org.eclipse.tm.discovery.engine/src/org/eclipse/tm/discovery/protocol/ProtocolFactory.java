@@ -112,5 +112,48 @@ public class ProtocolFactory {
 		}
 		return protocol;
 	}
+	
+	/**
+	 * Gets the multicast address given a protocol name and a transport name or returns null if this information is not available
+	 * 
+	 * @param protocolName
+	 * Name of the protocol 
+	 * @param transportName
+	 * Name of the transport
+	 * @return
+	 * String representing the multicast address of the given protocol and transport or null if not available
+	 * @throws CoreException
+	 * 
+	 * @see IProtocol
+	 */
+	public static String getMulticastAddress(String protocolName, String transportName) throws CoreException {
+		
+		String multiCastAddress = null;
+		
+		IConfigurationElement[] ce = ep.getConfigurationElements();
+		for (int i = 0; i < ce.length; i++) {
+			String name = ce[i].getAttribute("name"); //$NON-NLS-1$
+			if(name!=null)
+				if(name.equalsIgnoreCase(protocolName))
+				{
+					String multicastAddresses = ce[i].getAttribute("multicast"); //$NON-NLS-1$
+					if(multicastAddresses==null)
+						break;
+					
+					String[] pairs = multicastAddresses.split(";"); //$NON-NLS-1$
+					for (int j = 0; j < pairs.length; j++) {
+						String[] pair = pairs[j].split("#"); //$NON-NLS-1$
+						if(pair[0].equals(transportName))
+						{
+							multiCastAddress = pair[1];
+							break;
+						}
+					}
+					
+					
+				}
+		}
+		return multiCastAddress;
+	}
 
 }

@@ -14,7 +14,8 @@ Contributors:
 <plugin>
    <extension  point="org.eclipse.tm.discovery.engine.discoveryProtocol">
    <protocol
-            class="org.eclipse.tm.internal.discovery.protocol.dnssd.DNSSDProtocol"
-            name="DNS-SD"/>
+         class="org.eclipse.tm.internal.discovery.protocol.dnssd.DNSSDProtocol"
+         multicast="UDP#224.0.0.251"
+         name="DNS-SD"/>
    </extension>
 </plugin>

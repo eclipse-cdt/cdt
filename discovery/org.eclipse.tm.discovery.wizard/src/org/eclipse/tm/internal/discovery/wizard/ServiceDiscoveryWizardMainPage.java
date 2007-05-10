@@ -17,7 +17,9 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -46,6 +48,9 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 	// widgets
 	private Combo queryCombo, transportCombo, protocolCombo;
 	private Text addressText, timeOutText;
+	private Button multicastButton;
+	
+	private String tempAddress;
 	
 	/**
 	 * Wizard main page constructor
@@ -62,11 +67,21 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 	 */
 	public void createControl(Composite parent) {
 		
-		FillLayout layout = new FillLayout();
-		layout.type = SWT.VERTICAL;
 		
 		Composite comp = new Composite(parent,SWT.NULL);
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
 		comp.setLayout(layout);
+		
+		//GridData
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
+		data.verticalAlignment = SWT.BEGINNING;
+		data.grabExcessVerticalSpace = false;
+		
+		comp.setLayoutData(data);
 		
 		new Label(comp,SWT.NULL).setText(Messages.getString("ServiceDiscoveryWizardMainPage.AddressLabel")); //$NON-NLS-1$
 		
@@ -88,11 +103,54 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 			}
 		});
 		
+		addressText.setLayoutData(data);
+		
+		
+		Composite comp2 = new Composite(comp,SWT.NULL);
+		GridLayout layout2 = new GridLayout();
+		layout2.numColumns = 2;
+		comp2.setLayout(layout2);
+		
+		multicastButton = new Button(comp2,SWT.CHECK);
+		
+		multicastButton.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				
+				 Object src = e.getSource();
+				 if(((Button)src).getSelection())
+				 {
+					 String multicastAddress = null;
+						
+						try {
+							multicastAddress = ProtocolFactory.getMulticastAddress(protocolCombo.getText(), transportCombo.getText());
+						} catch (CoreException e1) {}
+							
+						if(multicastAddress!=null)
+						{
+							tempAddress = addressText.getText();
+							addressText.setText(multicastAddress);
+						}
+				 }
+				 else
+				 {
+					 addressText.setText(tempAddress);
+				 }
+			}
+		});
+		
+		new Label(comp2,SWT.NULL).setText(Messages.getString("ServiceDiscoveryWizardMainPage.MuticastAddressLabel0")); //$NON-NLS-1$
+		
+
 		new Label(comp,SWT.NULL).setText(Messages.getString("ServiceDiscoveryWizardMainPage.TransportLabel")); //$NON-NLS-1$
 		
 		transportCombo = new Combo(comp, SWT.READ_ONLY);
 		transportCombo.setItems(TransportFactory.getTransportList());
 		transportCombo.select(0);
+		
+		transportCombo.setLayoutData(data);
 		
 		new Label(comp,SWT.NULL).setText(Messages.getString("ServiceDiscoveryWizardMainPage.ProtocolLabel")); //$NON-NLS-1$
 		
@@ -115,9 +173,25 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 				queryCombo.removeAll();
 				queryCombo.setItems(queries);
 				queryCombo.select(0);
+				
+				if(multicastButton.getSelection())
+				{
+					String multicastAddress = null;
+					
+					try {
+						multicastAddress = ProtocolFactory.getMulticastAddress(protocolCombo.getText(), transportCombo.getText());
+					} catch (CoreException e1) {}
+						
+					if(multicastAddress!=null)
+					{
+						tempAddress = addressText.getText();
+						addressText.setText(multicastAddress);
+					}
+				}
 			}
 		});
 		
+		protocolCombo.setLayoutData(data);
 		
 		new Label(comp,SWT.NULL).setText(Messages.getString("ServiceDiscoveryWizardMainPage.DiscoveryQueryLabel")); //$NON-NLS-1$
 		
@@ -131,12 +205,15 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 		}
 		queryCombo.select(0);
 		
+		queryCombo.setLayoutData(data);
 		
 		new Label(comp,SWT.NULL).setText(Messages.getString("ServiceDiscoveryWizardMainPage.TimeOutLabel")); //$NON-NLS-1$
 		
 		timeOutText = new Text(comp, SWT.BORDER | SWT.SINGLE | SWT.WRAP);
 		timeOutText.setText(Messages.getString("ServiceDiscoveryWizardMainPage.TimeOutValue")); //$NON-NLS-1$
 		timeOutText.redraw();
+		
+		timeOutText.setLayoutData(data);
 		
 		setPageComplete(false);
 		

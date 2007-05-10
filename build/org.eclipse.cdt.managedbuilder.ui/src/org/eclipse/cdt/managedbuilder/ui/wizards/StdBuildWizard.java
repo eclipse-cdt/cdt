@@ -18,6 +18,7 @@ import org.eclipse.jface.wizard.IWizard;
 
 public class StdBuildWizard extends AbstractCWizard {
 	private static final String NAME = Messages.getString("StdBuildWizard.0"); //$NON-NLS-1$
+	private static final String ID = "org.eclipse.cdt.build.makefile.projectType"; //$NON-NLS-1$
 	
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
 		STDWizardHandler h = new STDWizardHandler(parent, wizard);
@@ -26,7 +27,7 @@ public class StdBuildWizard extends AbstractCWizard {
 		for (int i=0; i<tcs.length; i++)
 			if (isValid(tcs[i], supportedOnly, wizard)) 
 				h.addTc(tcs[i]);
-		EntryDescriptor wd = new EntryDescriptor(NAME, null, NAME, false, h, null); 
+		EntryDescriptor wd = new EntryDescriptor(ID, null, NAME, false, h, null); 
 		return new EntryDescriptor[] {wd};
 		
 // test only: creating items like of Templates	

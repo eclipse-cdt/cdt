@@ -544,6 +544,11 @@
             </baseType>
          </complexArray>
       </processType>
+            <processType
+            name="GenerateMakefileWithBuildDescription"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.GenerateMakefileWithBuildDescription">
+         <simple name="projectName"/>
+      </processType>
    </extension>
 
 </plugin>

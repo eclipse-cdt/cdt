@@ -3750,7 +3750,13 @@
             location="templates/projecttemplates/EmptyProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
       </template>
-   </extension>
+      <template
+            id="org.eclipse.cdt.build.core.templates.MakefileHelloWorldCCProject"
+            filterPattern=".*"
+            location="templates/projecttemplates/MakefileHelloWorldCCProject/template.xml"
+            projectType="org.eclipse.cdt.build.makefile.projectType">
+      </template>
+      </extension>
 
 <extension
       point="org.eclipse.cdt.core.templateAssociations">
@@ -3769,6 +3775,14 @@
             <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
       </template>
       <template id="org.eclipse.cdt.build.core.templates.HelloWorldCCProject">
+            <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
+            <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
+      </template>
+      <template
+            id="org.eclipse.cdt.build.core.templates.MakefileHelloWorldCCProject">
             <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
             <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
             <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>

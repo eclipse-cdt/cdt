@@ -266,7 +266,7 @@ public class BuildStep implements IBuildStep {
 				}
 				return (IBuildCommand[])list.toArray(new BuildCommand[list.size()]);
 			}
-			return null;
+			return new IBuildCommand[0];
 		}
 		
 		if(cwd == null)

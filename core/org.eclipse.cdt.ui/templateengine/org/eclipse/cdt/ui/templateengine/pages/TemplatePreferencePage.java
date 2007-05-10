@@ -539,15 +539,14 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		if (result == SWT.OK) {
 			int itemSelected[] = table.getSelectionIndices();
 			table.remove(itemSelected);
+			
+			if (delItemNames != null) {
+				sharedDefaults.deleteBackEndStorage(delItemNames);
+			}
 		}
 
 		else if (result == SWT.CANCEL)
 			isDeleted = false;
-
-		if (delItemNames != null) {
-			sharedDefaults.deleteBackEndStorage(delItemNames);
-		}
-
 	}
 
 	/**

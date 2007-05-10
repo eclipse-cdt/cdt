@@ -35,7 +35,10 @@ cd "$mydir/../publish" ; publishDirectory=`pwd`
 cd "$mydir" ; builder=`pwd`
 
 # Find the base build scripts: genericTargets.xml and build.xml
-pdeBuild="${basebuilder}/plugins/org.eclipse.pde.build"
+cd "${basebuilder}/plugins"
+pdeBuild=`ls org.eclipse.pde.build* | sort | tail -1`
+cd "${builder}"
+pdeBuild="${basebuilder}/plugins/${pdeBuild}"
 buildDirectory="${working}/build"
 packageDirectory="${working}/package"
 

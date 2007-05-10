@@ -36,7 +36,7 @@ cd "$mydir" ; builder=`pwd`
 
 # Find the base build scripts: genericTargets.xml and build.xml
 cd "${basebuilder}/plugins"
-pdeBuild=`ls org.eclipse.pde.build* | sort | tail -1`
+pdeBuild=`ls -d org.eclipse.pde.build* | sort | tail -1`
 cd "${builder}"
 pdeBuild="${basebuilder}/plugins/${pdeBuild}"
 buildDirectory="${working}/build"

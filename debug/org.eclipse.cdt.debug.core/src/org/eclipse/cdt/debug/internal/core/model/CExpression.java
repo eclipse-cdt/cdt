@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,21 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Ling Wang (Nokia) - 126262
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
@@ -67,14 +70,35 @@ public class CExpression extends CLocalVariable implements IExpression {
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
+			ICDIObject source = event.getSource();
+
 			if ( event instanceof ICDIResumedEvent ) {
-				ICDIObject source = event.getSource();
 				if ( source != null ) {
 					ICDITarget cdiTarget = source.getTarget();
 					if (  getCDITarget().equals( cdiTarget ) ) {
 						setChanged( false );
 						resetValue();
 					}
+				}
+			}
+
+			if ( event instanceof ICDIChangedEvent ) {
+				// If a variable is changed (by user or program),
+				// we should re-evaluate expressions.
+				// Though it's better we check if the changed variable 
+				// is part of the expression, the effort required is not
+				// worth the gain.	
+				// This is partial fix to bug 126262. It makes CDT behavior 
+				// in line with JDT. 
+				// The remaining problem (with both CDT & JDT) is: 
+				// Due to platform bug, the change will not show up in
+				// Expression View until the view is redrawn (e.g. after stepping,
+				// or when the view is uncovered from background). In other words,
+				// if the Expression View is at the front (not covered) when the
+				// variable is changed, the change won't be reflected in the view.
+				if ( source instanceof ICDIVariable) {			
+					setChanged( false );
+					resetValue();
 				}
 			}
 		}

@@ -93,7 +93,7 @@
                command="-L"
                id="gnu.c.link.option.paths"
                browseType="directory"
-               valueType="stringList">
+               valueType="libPaths">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"
@@ -278,7 +278,7 @@
                command="-L"
                id="gnu.cpp.link.option.paths"
                browseType="directory"
-               valueType="stringList">
+               valueType="libPaths">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"
@@ -651,7 +651,7 @@
                command="-L"
                id="macosx.c.link.option.paths"
                browseType="directory"
-               valueType="stringList">
+               valueType="libPaths">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.macosx.c.linker"
@@ -816,7 +816,7 @@
                command="-L"
                id="macosx.cpp.link.option.paths"
                browseType="directory"
-               valueType="stringList">
+               valueType="libPaths">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.macosx.cpp.linker"
@@ -964,7 +964,7 @@
 			  category="gnu.c.compiler.category.symbols"
 			  command="-U"
 			  id="gnu.c.compiler.option.preprocessor.undef.symbol"
-			  valueType="stringList">
+			  valueType="undefDefinedSymbols">
 		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.c.compiler"
@@ -1259,7 +1259,7 @@
 			  category="gnu.cpp.compiler.category.preprocessor"
 			  command="-U"
 			  id="gnu.cpp.compiler.option.preprocessor.undef"
-			  valueType="stringList">
+			  valueType="undefDefinedSymbols">
 		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.cpp.compiler"

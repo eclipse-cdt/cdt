@@ -360,7 +360,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		_userHome = _ftpClient.printWorkingDirectory();
 		
 		//For VMS, normalize the home location
-		if(_userHome.indexOf(':')!=-1)
+		if(_userHome.indexOf(':')!=-1 && _userHome.indexOf(']')!=-1)
 		{
 			_userHome = _userHome.replaceAll(":\\[", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			_userHome = '/'+_userHome.substring(0,_userHome.lastIndexOf(']'));

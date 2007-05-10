@@ -31,20 +31,14 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
-
-
 /**
- * This action will launch the Prefences dialog, but only rooted at a given
+ * This action will launch the Preferences dialog, but only rooted at a given
  * preference page (it will include its children underneath), including the
  * child pages registered under that page ("category").
  * <p>
  * This is used by the org.eclipse.rse.core.remoteSystemsViewPreferencesActions
  *  extension point.
  * @see org.eclipse.rse.ui.actions.SystemCascadingPreferencesAction 
- */
-/**
- * @author kmunir
- *
  */
 public class SystemShowPreferencesPageAction extends SystemBaseAction implements IViewActionDelegate                                  
 {

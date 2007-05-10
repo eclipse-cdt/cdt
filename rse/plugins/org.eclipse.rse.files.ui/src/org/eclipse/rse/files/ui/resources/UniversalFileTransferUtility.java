@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1087,7 +1088,7 @@ public class UniversalFileTransferUtility
 					if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
 					{
 						SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
-						((FileServiceSubSystem)targetFS).getFileService().setLastModified(monitor, newPathBuf.toString(), name, properties.getRemoteFileTimeStamp());
+						((FileServiceSubSystem)targetFS).getFileService().setLastModified(newPathBuf.toString(), name, properties.getRemoteFileTimeStamp(), monitor);
 					}
 				}
 			
@@ -1288,7 +1289,7 @@ public class UniversalFileTransferUtility
 				if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
 				{
 					SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
-					targetFS.setLastModified(monitor, copiedFile, properties.getRemoteFileTimeStamp());
+					targetFS.setLastModified(copiedFile, properties.getRemoteFileTimeStamp(), monitor);
 				}
 				
 				return copiedFile;
@@ -1484,7 +1485,7 @@ public class UniversalFileTransferUtility
 		if (source instanceof IFile)
 		{
 			SystemIFileProperties properties = new SystemIFileProperties(source);
-			target.getParentRemoteFileSubSystem().setLastModified(monitor, target, properties.getRemoteFileTimeStamp());
+			target.getParentRemoteFileSubSystem().setLastModified(target, properties.getRemoteFileTimeStamp(), monitor);
 		}
 		else if (source instanceof IContainer)
 		{

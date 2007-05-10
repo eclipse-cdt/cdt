@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -65,7 +65,7 @@ public class SystemViewAPIProviderForConnections
 	public Object[] getSystemViewRoots()
 	{
 		//return sr.getSubSystems(connection);
-		return getViewAdapter(connection).getChildren(new NullProgressMonitor(), connection); // pc42690
+		return getViewAdapter(connection).getChildren(connection, new NullProgressMonitor()); // pc42690
 	}
 	/**
 	 * Return true if {@link #getSystemViewRoots()} will return a non-empty list
@@ -84,7 +84,7 @@ public class SystemViewAPIProviderForConnections
 	public Object[] getConnectionChildren(IHost selectedConnection)
 	{
 		//return sr.getSubSystems(selectedConnection);
-		return getViewAdapter(selectedConnection).getChildren(new NullProgressMonitor(), selectedConnection); // pc42690
+		return getViewAdapter(selectedConnection).getChildren(selectedConnection, new NullProgressMonitor()); // pc42690
 	}
 	/**
 	 * This method is called by the connection adapter when deciding to show a plus-sign

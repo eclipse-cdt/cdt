@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,13 +11,10 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
-
-//
-
 
 import java.util.List;
 
@@ -27,57 +24,51 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * @lastgen interface RemoteCmdSubSystem extends SubSystem {}
+ * interface RemoteCmdSubSystem extends SubSystem {}
  */
 
 public interface IRemoteCmdSubSystem extends ISubSystem{
-
-
-
 
 	/**
 	 * Return parent subsystem factory, cast to a RemoteCmdSubSystemConfiguration
 	 */
 	public IRemoteCmdSubSystemConfiguration getParentRemoteCmdSubSystemConfiguration();
 
-
-
-	
 	/**
 	 * Execute a remote command. This is only applicable if the subsystem factory reports
 	 *  true for supportsCommands().
-	 * @param monitor the progress monitor
 	 * @param command Command to be executed remotely.
 	 * @param context context of a command (i.e. working directory).  Null is valid and means to run the 
 	 * 			command as a shell command in the default shell.
+	 * @param monitor the progress monitor
 	 * @return Array of objects that are the result of running this command. Typically, these
 	 *   are messages logged by the command.
 	 */
-	public Object[] runCommand(IProgressMonitor monitor, String command, Object context) throws Exception;
+	public Object[] runCommand(String command, Object context, IProgressMonitor monitor) throws Exception;
 	
 	/**
 	 * Execute a remote command. This is only applicable if the subsystem factory reports
 	 *  true for supportsCommands().
-	 * @param monitor the progress monitor
 	 * @param command Command to be executed remotely.
 	 * @param context context of a command (i.e. working directory).  Null is valid and means to run the 
 	 * 			command as a shell command in the default shell.
 	 * @param interpretOutput whether to interpret the output or not
+	 * @param monitor the progress monitor
 	 * @return Array of objects that are the result of running this command. Typically, these
 	 *   are messages logged by the command.
 	 */
-	public Object[] runCommand(IProgressMonitor monitor, String command, Object context, boolean interpretOutput) throws Exception;
+	public Object[] runCommand(String command, Object context, boolean interpretOutput, IProgressMonitor monitor) throws Exception;
 
 
 	/**
 	 * Launch a new command shell. This is only applicable if the subsystem factory reports
 	 *  true for supportsCommands().
-	 * @param monitor the progress monitor
 	 * @param context context of a shell (i.e. working directory).  Null is valid and means to use the default context.
+	 * @param monitor the progress monitor
 	 * @return An object that represents the command and it's output.
      * 
 	 */
-	public IRemoteCommandShell runShell(IProgressMonitor monitor, Object context) throws Exception;
+	public IRemoteCommandShell runShell(Object context, IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Send a command as input to a running command shell. 
@@ -90,20 +81,19 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	
 	/**
 	 * Send a command as input to a running command shell.
-	 * @param monitor the progress monitor 
 	 * @param input the command to invoke in the shell.
 	 * @param commandObject the shell or command to send the invocation to.
+	 * @param monitor the progress monitor 
 	 */
-	public void sendCommandToShell(IProgressMonitor monitor, String input, Object commandObject) throws Exception;
+	public void sendCommandToShell(String input, Object commandObject, IProgressMonitor monitor) throws Exception;
 
-	
 	/**
 	 * Cancel a shell or running command.
-	 * @param monitor the progress monitor
 	 * @param commandObject the shell or command to cancel
+	 * @param monitor the progress monitor
 	 * 
 	 */
-	public void cancelShell(IProgressMonitor monitor, Object commandObject) throws Exception;
+	public void cancelShell(Object commandObject, IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Remove a shell.  If the shell is running cancel it first.

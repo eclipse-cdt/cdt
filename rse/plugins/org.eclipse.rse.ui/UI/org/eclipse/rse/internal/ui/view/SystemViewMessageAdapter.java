@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -104,7 +105,7 @@ public class SystemViewMessageAdapter
 	/**
 	 * Return the children of this object. Not applicable for us.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		return null;		
 	}

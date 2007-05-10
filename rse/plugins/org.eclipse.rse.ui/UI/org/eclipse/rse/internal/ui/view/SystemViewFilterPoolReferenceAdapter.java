@@ -13,6 +13,7 @@
  * Contributors:
  * Tobias Schwarz (Wind River) - [181394] Include Context in getAbsoluteName() for filter and pool references
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -209,7 +210,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	 * Return the children of this object.
 	 * For filter pools, this is a list of filters.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		ISystemFilterPoolReference fpRef = (ISystemFilterPoolReference)element;
 		ISubSystem ss = getSubSystem(element);

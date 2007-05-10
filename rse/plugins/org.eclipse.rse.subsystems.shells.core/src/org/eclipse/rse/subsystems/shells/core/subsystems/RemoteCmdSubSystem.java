@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -796,7 +797,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
 	 */
-	public Object[] runCommand(IProgressMonitor monitor, String command, Object context, boolean interpretOutput) throws Exception
+	public Object[] runCommand(String command, Object context, boolean interpretOutput, IProgressMonitor monitor) throws Exception
 	{
 		return internalRunCommand(monitor, command, context, interpretOutput);
 	}
@@ -827,7 +828,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
 	 */
-	public IRemoteCommandShell runShell(IProgressMonitor monitor, Object context) throws Exception
+	public IRemoteCommandShell runShell(Object context, IProgressMonitor monitor) throws Exception
 	{
 		IRemoteCommandShell cmdShell = internalRunShell(monitor, context);
 		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
@@ -863,9 +864,9 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * @return Array of objects that are the result of running this command.
 	 *         Typically, these are messages logged by the command.
 	 */
-	public Object[] runCommand(IProgressMonitor monitor, String command, Object context) throws Exception
+	public Object[] runCommand(String command, Object context, IProgressMonitor monitor) throws Exception
 	{
-		return runCommand(monitor, command,  context, true);
+		return runCommand(command, context,  true, monitor);
 	}
 
 	/**
@@ -874,7 +875,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * @param input the command to invoke in the shell.
 	 * @param commandObject the shell or command to send the invocation to.
 	 * 
-	 * @deprecated use {@link #sendCommandToShell(IProgressMonitor, String, Object)}
+	 * @deprecated use {@link #sendCommandToShell(String, Object, IProgressMonitor)}
 	 */
 	public void sendCommandToShell(String input,  Object commandObject) throws Exception
 	{
@@ -913,12 +914,11 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	
 	/**
 	 * Send a command as input to a running command shell.
-	 * 
-	 * @param monitor the progress monitor
 	 * @param input the command to invoke in the shell.
 	 * @param commandObject the shell or command to send the invocation to.
+	 * @param monitor the progress monitor
 	 */
-	public void sendCommandToShell(IProgressMonitor monitor, String input,  Object commandObject) throws Exception
+	public void sendCommandToShell(String input, Object commandObject,  IProgressMonitor monitor) throws Exception
 	{
 		boolean ok = true;
 		if (!isConnected())
@@ -971,11 +971,10 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	
 	/**
 	 * Cancel a shell or running command.
-	 * 
-	 * @param monitor the progress monitor
 	 * @param commandObject the shell or command to cancel.
+	 * @param monitor the progress monitor
 	 */
-	public void cancelShell(IProgressMonitor monitor, Object commandObject) throws Exception
+	public void cancelShell(Object commandObject, IProgressMonitor monitor) throws Exception
 	{
 		boolean ok = true;
 		if (!isConnected())

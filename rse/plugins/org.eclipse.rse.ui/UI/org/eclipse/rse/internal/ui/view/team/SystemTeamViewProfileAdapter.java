@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -213,7 +214,7 @@ public class SystemTeamViewProfileAdapter
 	/**
 	 * Return the children of this profile. 
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		ISystemProfile profile = (ISystemProfile)element;	
 		return getCategoryChildren(profile);

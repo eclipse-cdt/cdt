@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -156,7 +157,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter
 	 * Return the children of this object.
 	 * For filter pools, this is a list of filters.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		ISystemFilterPool fp = (ISystemFilterPool)element;
 		return fp.getSystemFilters();		

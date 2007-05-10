@@ -1,5 +1,20 @@
-package org.eclipse.rse.subsystems.shells.core.model;
+/********************************************************************************
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * The following IBM employees contributed to the Remote System Explorer
+ * component that contains this file: David McKnight, Kushal Munir, 
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+ * 
+ * Contributors:
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ ********************************************************************************/
 
+package org.eclipse.rse.subsystems.shells.core.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,19 +89,19 @@ public class SimpleCommandOperation
 	{
 		if (_runAsShell)
 		{
-			_cmdShell = _subsystem.runShell(null, _workingDirectory);
+			_cmdShell = _subsystem.runShell(_workingDirectory, null);
 			
 			
-			_subsystem.sendCommandToShell(new NullProgressMonitor(), command, _cmdShell);
+			_subsystem.sendCommandToShell(command, _cmdShell, new NullProgressMonitor());
 			if (exitShell)
 			{
-				_subsystem.sendCommandToShell(new NullProgressMonitor(), "exit", _cmdShell); //$NON-NLS-1$
+				_subsystem.sendCommandToShell("exit", _cmdShell, new NullProgressMonitor()); //$NON-NLS-1$
 			}
 		}
 		else
 		{
 			
-			Object[] result =_subsystem.runCommand(new NullProgressMonitor(), command, _workingDirectory, false);
+			Object[] result =_subsystem.runCommand(command, _workingDirectory, false, new NullProgressMonitor());
 			_cmdShell= (IRemoteCommandShell)result[0];
 		}		
 	}
@@ -101,13 +116,13 @@ public class SimpleCommandOperation
 	public void runCommandInShell(String exports, String command, boolean exitShell) throws Exception
 	{
 		_runAsShell = true;
-		_cmdShell = _subsystem.runShell(null, _workingDirectory);
+		_cmdShell = _subsystem.runShell(_workingDirectory, null);
 			
 		if (exports != null)
 		{
-			_subsystem.sendCommandToShell(new NullProgressMonitor(), exports, _cmdShell);			
+			_subsystem.sendCommandToShell(exports, _cmdShell, new NullProgressMonitor());			
 		}
-		_subsystem.sendCommandToShell(new NullProgressMonitor(), command, _cmdShell);
+		_subsystem.sendCommandToShell(command, _cmdShell, new NullProgressMonitor());
 		if (exitShell)
 		{
 			exitShell();
@@ -131,7 +146,7 @@ public class SimpleCommandOperation
 		{
 			try
 			{
-				_subsystem.sendCommandToShell(new NullProgressMonitor(), "exit", _cmdShell);						 //$NON-NLS-1$
+				_subsystem.sendCommandToShell("exit", _cmdShell, new NullProgressMonitor());						 //$NON-NLS-1$
 			}
 			catch (Exception e)
 			{							
@@ -143,7 +158,7 @@ public class SimpleCommandOperation
 	{
 		if (isActive())
 		{
-			_subsystem.sendCommandToShell(new NullProgressMonitor(), input, _cmdShell);
+			_subsystem.sendCommandToShell(input, _cmdShell, new NullProgressMonitor());
 		}
 	}
 	
@@ -176,7 +191,7 @@ public class SimpleCommandOperation
 	{
 		if (_cmdShell != null && _cmdShell.isActive())
 		{
-			_cmdShell.getCommandSubSystem().cancelShell(null, _cmdShell);
+			_cmdShell.getCommandSubSystem().cancelShell(_cmdShell, null);
 		}
 	}
 

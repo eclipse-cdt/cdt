@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.importexport.files;
-
 /*******************************************************************************
  * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,7 +7,10 @@ package org.eclipse.rse.internal.importexport.files;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
+package org.eclipse.rse.internal.importexport.files;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
@@ -320,7 +321,7 @@ public class UniFilePlus extends File {
 		if (time < 0) throw new IllegalArgumentException();
 		try {
 			IProgressMonitor monitor = new NullProgressMonitor();
-			ok = remoteFile.getParentRemoteFileSubSystem().setLastModified(monitor, remoteFile, time);
+			ok = remoteFile.getParentRemoteFileSubSystem().setLastModified(remoteFile, time, monitor);
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
@@ -332,7 +333,7 @@ public class UniFilePlus extends File {
 	public boolean setReadOnly() {
 		boolean ok = false;
 		try {
-			ok = remoteFile.getParentRemoteFileSubSystem().setReadOnly(new NullProgressMonitor(), remoteFile, true);
+			ok = remoteFile.getParentRemoteFileSubSystem().setReadOnly(remoteFile, true, new NullProgressMonitor());
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;

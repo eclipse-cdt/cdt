@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemThemeConstants 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -450,7 +451,7 @@ FocusListener
 			IRemoteCmdSubSystem commandSubSystem = remoteCommand.getCommandSubSystem();
 			try
 			{
-				commandSubSystem.sendCommandToShell(new NullProgressMonitor(), inputStr, remoteCommand);
+				commandSubSystem.sendCommandToShell(inputStr, remoteCommand, new NullProgressMonitor());
 			}
 			catch (Exception e)
 			{
@@ -471,7 +472,7 @@ FocusListener
 			IRemoteCmdSubSystem commandSubSystem = remoteCommand.getCommandSubSystem();
 			try
 			{
-				commandSubSystem.sendCommandToShell(new NullProgressMonitor(), "#break", remoteCommand); //$NON-NLS-1$
+				commandSubSystem.sendCommandToShell("#break", remoteCommand, new NullProgressMonitor()); //$NON-NLS-1$
 			}
 			catch (Exception e)
 			{

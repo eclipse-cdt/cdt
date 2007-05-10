@@ -13,6 +13,7 @@
  * Contributors: 
  * Yu-Fen Kuo (MontaVista) - adapted from RSE UniversalLinuxProcessHandler
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -90,7 +91,7 @@ public class LinuxProcessHelper {
 
         IShellService shellService = Activator.getShellService(host);
         IHostShell hostShell = shellService.launchShell(
-                new NullProgressMonitor(), "", null); //$NON-NLS-1$
+                "", null, new NullProgressMonitor()); //$NON-NLS-1$
         hostShell.writeToShell(getUserNameCommand());
         Process p = null;
         try {

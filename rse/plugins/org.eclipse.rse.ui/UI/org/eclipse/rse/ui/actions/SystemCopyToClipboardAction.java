@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -109,7 +110,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 				{
 					IContainer parentFolder = null;
 					// corresponds to a folder
-					Object[] children = viewAdapter.getChildren(new NullProgressMonitor(), dragObject);
+					Object[] children = viewAdapter.getChildren(dragObject, new NullProgressMonitor());
 					for (int i = 0; i < children.length; i++)
 					{
 						IAdaptable child = (IAdaptable)children[i];

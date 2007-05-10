@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemThemeConstants 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -143,7 +144,7 @@ FocusListener
 				   {
 					    public IStatus run(IProgressMonitor monitor) 
 					    {			
-						    Object[] children = _adapter.getChildren(monitor, (IAdaptable)_inputObject);
+						    Object[] children = _adapter.getChildren((IAdaptable)_inputObject, monitor);
 		   					if (children != null)
 		   					{
 		   						SystemTableViewProvider provider = (SystemTableViewProvider)_viewer.getContentProvider();

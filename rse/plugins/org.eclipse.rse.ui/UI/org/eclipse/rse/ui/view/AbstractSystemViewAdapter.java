@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -488,7 +489,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	public final Object[] getChildren(Object object)
 	{
-		return getChildren(new NullProgressMonitor(), (IAdaptable)object);
+		return getChildren((IAdaptable)object, new NullProgressMonitor());
 	}
 	
 	
@@ -496,12 +497,12 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      * This should be overridden by subclasses in order to provide
      * deferred query support via the Eclipse Jobs mechanism
 	 * Return the children of this object. Return null if children not supported.
-	 * 
-	 * @param monitor the progress monitor
 	 * @param element the model object to get children from
+	 * @param monitor the progress monitor
+	 * 
 	 * @return the children of element
 	 */
-	public abstract Object[] getChildren(IProgressMonitor monitor, IAdaptable element);
+	public abstract Object[] getChildren(IAdaptable element, IProgressMonitor monitor);
 	
 	/**
      * This should be overridden by subclasses in order to provide
@@ -511,14 +512,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * 
 	 * This method should be overridden if your adapter supports context objects.  If not, this will
 	 * fall back to the model object version of the method.
-	 * 
 	 * @param monitor the progress monitor
 	 * @param element the context object that wrappers a model object, it's subsystem and filter reference
+	 * 
 	 * @return the children of the model object within the context object that matches the containing filter reference criteria
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IContextObject element)
+	public Object[] getChildren(IContextObject element, IProgressMonitor monitor)
 	{
-		return getChildren(monitor, element.getModelObject());
+		return getChildren(element.getModelObject(), monitor);
 	}
 	
 

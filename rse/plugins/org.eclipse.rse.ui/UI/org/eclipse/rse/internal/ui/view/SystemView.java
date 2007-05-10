@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -5524,7 +5525,7 @@ public class SystemView extends SafeTreeViewer
 				// need to apply filter
 				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)parentElementOrTreePath).getAdapter(ISystemViewElementAdapter.class);
 				IContextObject contextObject = getContextObject((TreeItem)match);
-				Object[] newChildren = adapter.getChildren(new NullProgressMonitor(), contextObject);
+				Object[] newChildren = adapter.getChildren(contextObject, new NullProgressMonitor());
 				internalAdd(match, parentElementOrTreePath, newChildren);
 			}
 			else

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -33,7 +33,6 @@ import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
-
 
 public class DStoreShellService extends AbstractDStoreService implements IShellService
 {
@@ -58,16 +57,16 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	}
 	
 	
-	public IHostShell launchShell(IProgressMonitor monitor, String initialWorkingDirectory, String[] environment)
+	public IHostShell launchShell(String initialWorkingDirectory, String[] environment, IProgressMonitor monitor)
 	{
 		if (!isInitialized())
 		{
 			waitForInitialize(null);
 		}
-		return launchShell(monitor, initialWorkingDirectory, null, environment);
+		return launchShell(initialWorkingDirectory, null, environment, monitor);
 	}
 
-	public IHostShell launchShell(IProgressMonitor monitor, String initialWorkingDirectory, String encoding, String[] environment)
+	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor)
 	{
 		if (!isInitialized())
 		{
@@ -76,18 +75,18 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 		return new DStoreHostShell(getStatusMonitor(getDataStore()), getDataStore(), initialWorkingDirectory, ">", encoding, environment); //$NON-NLS-1$
 	}
 
-	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command,
-			String[] environment)
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String[] environment,
+			IProgressMonitor monitor)
 	{
 		if (!isInitialized())
 		{
 			waitForInitialize(null);
 		}
-		return runCommand(monitor, initialWorkingDirectory, command, null, environment);
+		return runCommand(initialWorkingDirectory, command, null, environment, monitor);
 	}
 
-	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command,
-			String encoding, String[] environment)
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding,
+			String[] environment, IProgressMonitor monitor)
 	{
 		if (!isInitialized())
 		{

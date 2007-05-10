@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -178,31 +178,29 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	
 	/**
 	 * Return the children of this model object. 
-	 * 
-	 * @param monitor the progress monitor
 	 * @param element the model object to query
+	 * @param monitor the progress monitor
 	 * 
 	 * @return the children of element
 	 * 
 	 * The implementation needs to take this into
 	 * account so that SWT thread exceptions are avoided.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element);
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor);
 	
 	/**
 	 * Return the children of this object.  When a contextObject is passed in
 	 * instead of an adaptable model object, the adapter needs handle both the model object
 	 * as well as the associated filter.
-	 * 
-	 * @param monitor the progress monitor
 	 * @param contextObject a wrapper object that contains the model object plus context information
+	 * @param monitor the progress monitor
 	 * 
 	 * @return the children of the model object in contextObject that matches the filter in contextObject
 	 * 
 	 * The implementation needs to take this into
 	 * account so that SWT thread exceptions are avoided.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IContextObject contextObject);
+	public Object[] getChildren(IContextObject contextObject, IProgressMonitor monitor);
 	
 	/**
 	 * Return the children of this object, using the given Expand-To filter

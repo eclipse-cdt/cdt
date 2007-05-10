@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.local;
@@ -28,7 +28,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsContentsType;
-
 
 public class LocalSearchResultConfiguration extends AbstractSearchResultConfiguration 
 {	
@@ -98,14 +97,14 @@ public class LocalSearchResultConfiguration extends AbstractSearchResultConfigur
 		}
 		
 		// cancel search
-		getSearchService().cancelSearch(null, this);
+		getSearchService().cancelSearch(this, null);
 	}
 
 	public Object getSearchTarget()
 	{
 		try
 		{
-		return _fileSubSystem.getFileService().getFile(null, _searchObject.getParentPath(), _searchObject.getName());
+		return _fileSubSystem.getFileService().getFile(_searchObject.getParentPath(), _searchObject.getName(), null);
 		//return _searchObject.getAbsolutePath();
 		}
 		catch (Exception e)

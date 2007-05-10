@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package samples.model;
@@ -104,7 +105,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getChildren(java.lang.Object)
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		return ((TeamResource)element).getDevelopers();
 	}

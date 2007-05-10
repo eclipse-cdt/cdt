@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui;
@@ -155,9 +156,9 @@ public class RemoteCommandHelpers
 	                   		cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$                  		                    		 
 	                	 }	 
 	                            
-						cmdSubSystem.sendCommandToShell(monitor, cdCmd, defaultShell);				   
+						cmdSubSystem.sendCommandToShell(cdCmd, defaultShell, monitor);				   
 	                }
-                	cmdSubSystem.sendCommandToShell(monitor, cmdString, defaultShell);
+                	cmdSubSystem.sendCommandToShell(cmdString, defaultShell, monitor);
               	 
               
               }

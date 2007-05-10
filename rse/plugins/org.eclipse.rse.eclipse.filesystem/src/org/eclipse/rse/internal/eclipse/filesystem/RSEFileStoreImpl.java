@@ -16,6 +16,7 @@
  *    - Fix early startup issues by deferring FileStore evaluation and classloading,
  *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.eclipse.filesystem;
@@ -335,7 +336,7 @@ public class RSEFileStoreImpl extends FileStore
 				
 				if (subSys instanceof FileServiceSubSystem) {
 					FileServiceSubSystem fileServiceSubSystem = ((FileServiceSubSystem)subSys);
-					IHostFile[] results = fileServiceSubSystem.getFileService().getFilesAndFolders(monitor, remoteFile.getAbsolutePath(), "*"); //$NON-NLS-1$
+					IHostFile[] results = fileServiceSubSystem.getFileService().getFilesAndFolders(remoteFile.getAbsolutePath(), "*", monitor); //$NON-NLS-1$
 					IRemoteFileSubSystemConfiguration config = subSys.getParentRemoteFileSubSystemConfiguration();
 					RemoteFileFilterString filterString = new RemoteFileFilterString(config, remoteFile.getAbsolutePath(), "*"); //$NON-NLS-1$
 					filterString.setShowFiles(true);
@@ -410,7 +411,7 @@ public class RSEFileStoreImpl extends FileStore
 				
 				if (subSys instanceof FileServiceSubSystem) {
 					FileServiceSubSystem fileServiceSubSystem = ((FileServiceSubSystem)subSys);
-					IHostFile[] results = fileServiceSubSystem.getFileService().getFilesAndFolders(monitor, remoteFile.getAbsolutePath(), "*"); //$NON-NLS-1$
+					IHostFile[] results = fileServiceSubSystem.getFileService().getFilesAndFolders(remoteFile.getAbsolutePath(), "*", monitor); //$NON-NLS-1$
 					IRemoteFileSubSystemConfiguration config = subSys.getParentRemoteFileSubSystemConfiguration();
 					RemoteFileFilterString filterString = new RemoteFileFilterString(config, remoteFile.getAbsolutePath(), "*"); //$NON-NLS-1$
 					filterString.setShowFiles(true);

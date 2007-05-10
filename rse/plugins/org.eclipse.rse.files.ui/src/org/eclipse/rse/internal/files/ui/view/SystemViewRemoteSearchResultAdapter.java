@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemOutputRemoteTypes
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -235,7 +236,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	/**
 	 * Returns nothing
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		return null;
 	}

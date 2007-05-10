@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -580,7 +581,7 @@ public class SystemViewRemoteFileAdapter
 	 * Return the children of this object.
 	 * If this is a folder or root, we list all child folders and files.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		return internalGetChildren(monitor, element, null);
 	}
@@ -589,7 +590,7 @@ public class SystemViewRemoteFileAdapter
 	 * Return the children of this object.
 	 * If this is a folder or root, we list all child folders and files.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IContextObject context)
+	public Object[] getChildren(IContextObject context, IProgressMonitor monitor)
 	{
 		return internalGetChildren(monitor, context.getModelObject(), context.getFilterReference());
 	}
@@ -716,11 +717,11 @@ public class SystemViewRemoteFileAdapter
 			    if (monitor != null)
 			    {
 			        
-			        children = ss.resolveFilterString(monitor, file, filter);
+			        children = ss.resolveFilterString(file, filter, monitor);
 			    }
 			    else
 			    {
-			        children = ss.resolveFilterString(new NullProgressMonitor(), file, filter);
+			        children = ss.resolveFilterString(file, filter, new NullProgressMonitor());
 			    }
 			    
 				if ((children == null) || (children.length == 0))

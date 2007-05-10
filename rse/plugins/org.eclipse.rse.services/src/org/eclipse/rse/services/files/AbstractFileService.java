@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -32,17 +32,17 @@ public abstract class AbstractFileService implements IFileService
 	public static final int FILE_TYPE_FILES = 1;
 	public static final int FILE_TYPE_FOLDERS = 2;
  
-	public IHostFile[] getFiles(IProgressMonitor monitor, String remoteParent, String fileFilter) throws SystemMessageException 
+	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		return internalFetch(monitor, remoteParent, fileFilter, FILE_TYPE_FILES);
 	}
 
-	public IHostFile[] getFolders(IProgressMonitor monitor, String remoteParent, String fileFilter) throws SystemMessageException 
+	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		return internalFetch(monitor, remoteParent, fileFilter, FILE_TYPE_FOLDERS);
 	}
 	
-	public IHostFile[] getFilesAndFolders(IProgressMonitor monitor, String parentPath, String fileFilter) throws SystemMessageException
+	public IHostFile[] getFilesAndFolders(String parentPath, String fileFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
 		return internalFetch(monitor, parentPath, fileFilter, FILE_TYPE_FILES_AND_FOLDERS);
 	}
@@ -87,12 +87,12 @@ public abstract class AbstractFileService implements IFileService
 		return null;
 	}
 
-	public boolean deleteBatch(IProgressMonitor monitor, String[] remoteParents, String[] fileNames) throws SystemMessageException
+	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean ok = true;
 		for (int i = 0; i < remoteParents.length; i++)
 		{
-			ok = ok && delete(monitor, remoteParents[i], fileNames[i]);
+			ok = ok && delete(remoteParents[i], fileNames[i], monitor);
 		}
 		return ok;
 	}
@@ -108,17 +108,17 @@ public abstract class AbstractFileService implements IFileService
 
 	/**
 	 * The default implementation returns <code>null</code>. Clients can override to return an input stream to the file.
-	 * @see org.eclipse.rse.services.files.IFileService#getInputStream(IProgressMonitor, String, String, boolean)
+	 * @see org.eclipse.rse.services.files.IFileService#getInputStream(String, String, boolean, IProgressMonitor)
 	 */
-	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
 	}
 
 	/**
 	 * The default implementation returns <code>null</code>. Clients can override to return an output stream to the file.
-	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(IProgressMonitor, String, String, boolean)
+	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(String, String, boolean, IProgressMonitor)
 	 */
-	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
 	}
 }

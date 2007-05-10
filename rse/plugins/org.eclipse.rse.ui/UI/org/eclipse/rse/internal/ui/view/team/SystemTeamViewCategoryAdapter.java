@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -139,7 +140,7 @@ public class SystemTeamViewCategoryAdapter
 	/**
 	 * Return the children of this profile. 
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		SystemTeamViewCategoryNode category = (SystemTeamViewCategoryNode)element;	
 		ISystemProfile profile = category.getProfile();

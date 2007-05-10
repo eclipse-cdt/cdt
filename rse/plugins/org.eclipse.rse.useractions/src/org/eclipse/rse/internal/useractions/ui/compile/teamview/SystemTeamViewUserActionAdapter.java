@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile.teamview;
@@ -125,7 +126,7 @@ public class SystemTeamViewUserActionAdapter extends AbstractSystemViewAdapter i
 	/**
 	 * Return the children of this profile. 
 	 */
-	public Object[] getChildren(IProgressMonitor mon, IAdaptable element) {
+	public Object[] getChildren(IAdaptable element, IProgressMonitor mon) {
 		//SystemUDActionElement action = (SystemUDActionElement)element;
 		return null;
 	}

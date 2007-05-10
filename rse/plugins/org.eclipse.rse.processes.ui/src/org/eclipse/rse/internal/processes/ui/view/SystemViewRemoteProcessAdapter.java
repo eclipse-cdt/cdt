@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.view;
@@ -161,7 +162,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		return false;
 	}
 
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		IRemoteProcess process = (IRemoteProcess) element;
 		IRemoteProcessSubSystem ss = process.getParentRemoteProcessSubSystem();

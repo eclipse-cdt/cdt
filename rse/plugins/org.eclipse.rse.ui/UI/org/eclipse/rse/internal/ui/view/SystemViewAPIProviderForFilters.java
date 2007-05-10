@@ -12,9 +12,11 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -185,7 +187,7 @@ public class SystemViewAPIProviderForFilters
 		     {
 		    	 if (nestedFilterReferences != null)
 		    	 {
-		     	Object[] allChildren = ss.resolveFilterStrings(filterStrings);
+		     	Object[] allChildren = ss.resolveFilterStrings(filterStrings, new NullProgressMonitor());
                 int nbrNestedFilters = nestedFilterReferences.length;
                 children = new Object[nbrNestedFilters + allChildren.length];
                 int idx = 0;

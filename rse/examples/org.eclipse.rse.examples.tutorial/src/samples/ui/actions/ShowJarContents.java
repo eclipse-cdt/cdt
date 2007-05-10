@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package samples.ui.actions;
@@ -141,7 +142,7 @@ public class ShowJarContents implements IObjectActionDelegate
 	        environment[0] = "AAA=BBB"; //$NON-NLS-1$
 	        String initialWorkingDirectory = "."; //$NON-NLS-1$
 
-	        IHostShell hostShell = shellService.launchShell(new NullProgressMonitor(), initialWorkingDirectory, environment);
+	        IHostShell hostShell = shellService.launchShell(initialWorkingDirectory, environment, new NullProgressMonitor());
 			hostShell.addOutputListener(new StdOutOutputListener());
 	        //hostShell.writeToShell("pwd"); //$NON-NLS-1$
 	        //hostShell.writeToShell("echo ${AAA}"); //$NON-NLS-1$
@@ -155,7 +156,7 @@ public class ShowJarContents implements IObjectActionDelegate
 	public void runCommandInvisibly(IRemoteCmdSubSystem cmdss, String command) throws Exception
 	{
 		command = command + cmdss.getParentRemoteCmdSubSystemConfiguration().getCommandSeparator() + "exit"; //$NON-NLS-1$
-		Object[] result = cmdss.runCommand(new NullProgressMonitor(), command, null, false);
+		Object[] result = cmdss.runCommand(command, null, false, new NullProgressMonitor());
 		if (result.length>0 && result[0] instanceof IRemoteCommandShell) {
 			IRemoteCommandShell cs = (IRemoteCommandShell)result[0];
 			while (cs.isActive()) {

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -136,7 +137,7 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 	/**
 	 * Returns the search results for the given search handle
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element) {
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor) {
 		
 		if (element instanceof IHostSearchResultSet) {
 			IHostSearchResultSet output = (IHostSearchResultSet)element;

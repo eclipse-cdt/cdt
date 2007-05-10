@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -449,7 +450,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		{
    		  try
     	  {
-    	     getRemoteFile().getParentRemoteFileSubSystem().setReadOnly(new NullProgressMonitor(), getRemoteFile(), readOnlySelected);
+    	     getRemoteFile().getParentRemoteFileSubSystem().setReadOnly(getRemoteFile(), readOnlySelected, new NullProgressMonitor());
 		     RSEUIPlugin.getTheSystemRegistry().fireEvent(
                    new org.eclipse.rse.core.events.SystemResourceChangeEvent(
                    getRemoteFile(),ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE,null)); 

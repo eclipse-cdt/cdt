@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.services.shells;
@@ -28,43 +28,43 @@ public interface IShellService extends IService
 {
 	/**
 	 * Launch a new shell in the specified directory
-	 * @param monitor
 	 * @param initialWorkingDirectory
 	 * @param environment Array of environment variable Strings of the form "var=text"
+	 * @param monitor
 	 * @return the shell object
 	 */
-	public IHostShell launchShell(IProgressMonitor monitor, String initialWorkingDirectory, String[] environment);
+	public IHostShell launchShell(String initialWorkingDirectory, String[] environment, IProgressMonitor monitor);
 	
 	/**
 	 * Launch a new shell in the specified directory
-	 * @param monitor
 	 * @param initialWorkingDirectory
 	 * @param encoding
 	 * @param environment Array of environment variable Strings of the form "var=text"
+	 * @param monitor
 	 * @return the shell object
 	 */
-	public IHostShell launchShell(IProgressMonitor monitor, String initialWorkingDirectory, String encoding, String[] environment);
+	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor);
 
 	/**
 	 * Run a command in it's own shell
-	 * @param monitor
 	 * @param initialWorkingDirectory
 	 * @param command
 	 * @param environment Array of environment variable Strings of the form "var=text"
+	 * @param monitor
 	 * @return the shell object for getting output and error streams
 	 */
-	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command, String[] environment);
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String[] environment, IProgressMonitor monitor);
 	
 	/**
 	 * Run a command in it's own shell
-	 * @param monitor
 	 * @param initialWorkingDirectory
 	 * @param command
 	 * @param encoding
 	 * @param environment Array of environment variable Strings of the form "var=text"
+	 * @param monitor
 	 * @return the shell object for getting output and error streams
 	 */
-	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command, String encoding, String[] environment);
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding, String[] environment, IProgressMonitor monitor);
 
 	/**
 	 * Return an array of environment variables that describe the environment on the host.

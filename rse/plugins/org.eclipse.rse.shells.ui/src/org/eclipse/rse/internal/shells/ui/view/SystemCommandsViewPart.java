@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -149,7 +150,7 @@ public class SystemCommandsViewPart
 		{
 			try
 			{
-				IRemoteCommandShell cmd = _cmdSubSystem.runShell(new NullProgressMonitor(), null);
+				IRemoteCommandShell cmd = _cmdSubSystem.runShell(null, new NullProgressMonitor());
 				if (cmd != null)
 				{
 					showInView(cmd);

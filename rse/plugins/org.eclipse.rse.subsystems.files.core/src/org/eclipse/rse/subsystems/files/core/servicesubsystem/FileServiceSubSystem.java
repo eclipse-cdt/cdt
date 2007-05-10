@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - Fix 162962 - recursive removeCachedRemoteFile()
  * Martin Oberhuber (Wind River) - [168596] FileServiceSubSystem.isCaseSensitive()
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -282,22 +283,22 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	
 	protected IHostFile[] getFolders(IProgressMonitor monitor, String parentPath, String fileNameFilter) throws SystemMessageException
 	{
-		return getFileService().getFolders(monitor, parentPath, fileNameFilter);
+		return getFileService().getFolders(parentPath, fileNameFilter, monitor);
 	}
 	
 	protected IHostFile[] getFiles(IProgressMonitor monitor, String parentPath, String fileNameFilter) throws SystemMessageException
 	{
-		return getFileService().getFiles(monitor, parentPath, fileNameFilter);
+		return getFileService().getFiles(parentPath, fileNameFilter, monitor);
 	}
 	
 	protected IHostFile[] getFilesAndFolders(IProgressMonitor monitor, String parentPath, String fileNameFilter) throws SystemMessageException
 	{
-		return getFileService().getFilesAndFolders(monitor, parentPath, fileNameFilter);
+		return getFileService().getFilesAndFolders(parentPath, fileNameFilter, monitor);
 	}
 	
 	protected IHostFile getFile(IProgressMonitor monitor, String parentPath, String fileName) throws SystemMessageException
 	{
-		return getFileService().getFile(monitor, parentPath, fileName);
+		return getFileService().getFile(parentPath, fileName, monitor);
 	}
 	
 	protected IHostFile[] getRoots(IProgressMonitor monitor) throws InterruptedException, SystemMessageException
@@ -451,7 +452,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		File localFile = new File(localpath);
 		try
 		{
-			getFileService().download(monitor, parentPath, file.getName(), localFile, isBinary(file), file.getEncoding());
+			getFileService().download(parentPath, file.getName(), localFile, isBinary(file), file.getEncoding(), monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -508,7 +509,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			}
 			try
 			{
-				getFileService().upload(monitor, new File(source), remoteParentPath, remoteFileName, isBinary, srcEncoding, rmtEncoding);
+				getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, srcEncoding, rmtEncoding, monitor);
 			}
 			catch (SystemMessageException e)
 			{
@@ -543,7 +544,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		
 		try
 		{
-			getFileService().upload(monitor, new File(source), remoteParentPath, remoteFileName, isBinary, encoding, hostEncoding);
+			getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, encoding, hostEncoding, monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -557,7 +558,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		IFileService service = getFileService();
 		try
 		{
-			return service.copy(monitor, sourceFolderOrFile.getParentPath(), sourceFolderOrFile.getName(), targetFolder.getAbsolutePath(), newName);
+			return service.copy(sourceFolderOrFile.getParentPath(), sourceFolderOrFile.getName(), targetFolder.getAbsolutePath(), newName, monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -581,7 +582,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		try
 		{
-			return service.copyBatch(monitor, sourceParents, sourceNames, targetFolder.getAbsolutePath());
+			return service.copyBatch(sourceParents, sourceNames, targetFolder.getAbsolutePath(), monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -613,7 +614,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		
 		try
 		{
-			newFile = service.createFile(monitor, parent, name);
+			newFile = service.createFile(parent, name, monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -634,7 +635,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		IHostFile newFolder = null;
 		try
 		{	
-			newFolder = service.createFolder(monitor, parent, name);
+			newFolder = service.createFolder(parent, name, monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -658,7 +659,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		String name = folderOrFile.getName();
 		try
 		{
-			result = service.delete(monitor, parent, name);
+			result = service.delete(parent, name, monitor);
 			folderOrFile.markStale(true);
 		}
 		catch (SystemMessageException e)
@@ -686,7 +687,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		IFileService service = getFileService();
 		try
 		{
-			result = service.deleteBatch(monitor, parents, names);
+			result = service.deleteBatch(parents, names, monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -707,7 +708,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		String newPath = srcParent + folderOrFile.getSeparator() + newName;
 		try
 		{
-			result = service.rename(monitor, srcParent, oldName, newName);
+			result = service.rename(srcParent, oldName, newName, monitor);
 			folderOrFile.getHostFile().renameTo(newPath);
 		}
 		catch (SystemMessageException e)
@@ -729,7 +730,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		try
 		{
 			removeCachedRemoteFile(sourceFolderOrFile);
-			result = service.move(monitor, srcParent, srcName, tgtParent, newName);
+			result = service.move(srcParent, srcName, tgtParent, newName, monitor);
 			sourceFolderOrFile.markStale(true);
 			targetFolder.markStale(true);
 		}
@@ -743,13 +744,13 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	}
 
 	
-	public boolean setLastModified(IProgressMonitor monitor, IRemoteFile folderOrFile, long newDate) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
 	{
 		String name = folderOrFile.getName();
 		String parent = folderOrFile.getParentPath();
 		try
 		{
-			return _hostFileService.setLastModified(monitor, parent, name, newDate);
+			return _hostFileService.setLastModified(parent, name, newDate, monitor);
 		}
 		catch (SystemMessageException e)
 		{			
@@ -759,13 +760,13 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 	}
 
-	public boolean setReadOnly(IProgressMonitor monitor, IRemoteFile folderOrFile, boolean readOnly) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException 
 	{
 		String name = folderOrFile.getName();
 		String parent = folderOrFile.getParentPath();
 		try
 		{
-			return _hostFileService.setReadOnly(monitor, parent, name, readOnly);
+			return _hostFileService.setReadOnly(parent, name, readOnly, monitor);
 		}
 		catch (SystemMessageException e)
 		{			
@@ -804,7 +805,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		ISearchService searchService = getSearchService();
 		if (searchService != null)
 		{
-			searchService.cancelSearch(null, searchConfig);
+			searchService.cancelSearch(searchConfig, null);
 		}
 	}
 	
@@ -904,7 +905,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#getInputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		return getFileService().getInputStream(monitor, remoteParent, remoteFile, isBinary);
+		return getFileService().getInputStream(remoteParent, remoteFile, isBinary, monitor);
 	}
 
 	/**
@@ -912,6 +913,6 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#getOutputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		return getFileService().getOutputStream(monitor, remoteParent, remoteFile, isBinary);
+		return getFileService().getOutputStream(remoteParent, remoteFile, isBinary, monitor);
 	}
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.shells;
@@ -48,26 +48,26 @@ public class LocalShellService implements IShellService, ILocalService
 		return LocalServiceResources.Local_Shell_Service_Description;
 	}
 	
-	public IHostShell launchShell(IProgressMonitor monitor, String initialWorkingDirectory, String[] environment)
+	public IHostShell launchShell(String initialWorkingDirectory, String[] environment, IProgressMonitor monitor)
 	{
 		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-		return launchShell(monitor, initialWorkingDirectory, defaultEncoding, environment);
+		return launchShell(initialWorkingDirectory, defaultEncoding, environment, monitor);
 	}
 
-	public IHostShell launchShell(IProgressMonitor monitor, String initialWorkingDirectory, String encoding, String[] environment)
+	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor)
 	{
 		LocalHostShell hostShell = new LocalHostShell(initialWorkingDirectory,SHELL_INVOCATION, encoding, environment);
 		hostShell.run(monitor);
 		return hostShell;
 	}
 
-	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command, String[] environment)
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String[] environment, IProgressMonitor monitor)
 	{
 		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-		return runCommand(monitor, initialWorkingDirectory, command, defaultEncoding, environment);
+		return runCommand(initialWorkingDirectory, command, defaultEncoding, environment, monitor);
 	}
 	
-	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command, String encoding, String[] environment)
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding, String[] environment, IProgressMonitor monitor)
 	{
 		LocalHostShell hostShell = new LocalHostShell(initialWorkingDirectory,command, encoding, environment);
 		hostShell.run(monitor);

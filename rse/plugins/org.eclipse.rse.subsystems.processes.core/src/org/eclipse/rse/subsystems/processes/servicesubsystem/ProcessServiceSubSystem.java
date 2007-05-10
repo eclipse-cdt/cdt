@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
@@ -91,7 +92,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
 		rpfs.setPid("" + pid); //$NON-NLS-1$
 		IRemoteProcessContext context = new RemoteProcessContext(this, null, rpfs);
-		IHostProcess process = getProcessService().getProcess(null, pid);
+		IHostProcess process = getProcessService().getProcess(pid, null);
 		return getHostProcessToRemoteProcessAdapter().convertToRemoteProcess(context, null, process);
 	}
 
@@ -109,7 +110,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	public boolean kill(IRemoteProcess process, String signal) throws SystemMessageException 
 	{
 		checkIsConnected();
-		return getProcessService().kill(null, process.getPid(), signal);
+		return getProcessService().kill(process.getPid(), signal, null);
 	}
 
 	/* (non-Javadoc)
@@ -118,7 +119,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	public IRemoteProcess[] listAllProcesses(IHostProcessFilter processFilter, IRemoteProcessContext context, IProgressMonitor monitor) throws InterruptedException, SystemMessageException 
 	{
 		checkIsConnected();
-		IHostProcess[] processes = getProcessService().listAllProcesses(monitor, processFilter);
+		IHostProcess[] processes = getProcessService().listAllProcesses(processFilter, monitor);
 		return getHostProcessToRemoteProcessAdapter().convertToRemoteProcesses(context, null, processes);
 	}
 
@@ -128,7 +129,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IHostProcessFilter processFilter, IRemoteProcessContext context, IProgressMonitor monitor) throws SystemMessageException
 	{
 		checkIsConnected();
-		IHostProcess[] processes = getProcessService().listChildProcesses(monitor, parent.getPid(), processFilter);
+		IHostProcess[] processes = getProcessService().listChildProcesses(parent.getPid(), processFilter, monitor);
 		return getHostProcessToRemoteProcessAdapter().convertToRemoteProcesses(context, parent, processes);
 	}
 
@@ -138,7 +139,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IRemoteProcessContext context, IProgressMonitor monitor) throws SystemMessageException
 	{
 		checkIsConnected();
-		IHostProcess[] processes = getProcessService().listChildProcesses(monitor, parent.getPid());
+		IHostProcess[] processes = getProcessService().listChildProcesses(parent.getPid(), monitor);
 		return getHostProcessToRemoteProcessAdapter().convertToRemoteProcesses(context, parent, processes);
 	}
 

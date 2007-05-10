@@ -8,6 +8,7 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -57,7 +58,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	
 	public void tearDown() {
 		try {
-			fs.delete(mon, tempDir.getParent(), tempDir.getName());
+			fs.delete(tempDir.getParent(), tempDir.getName(), mon);
 		} catch(SystemMessageException msg) {
 			assertFalse("Exception: "+msg.getLocalizedMessage(), true); //$NON-NLS-1$
 		}
@@ -99,7 +100,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		String testName = getTestFileName();
-		IHostFile hf = fs.createFile(mon, tempDirPath, testName);
+		IHostFile hf = fs.createFile(tempDirPath, testName, mon);
 		assertTrue(hf.exists());
 		assertTrue(hf.canRead());
 		assertTrue(hf.canWrite());
@@ -119,21 +120,21 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 		
 		String testName = getTestFileName();
 		String testName2 = testName.toUpperCase();
-		IHostFile hf = fs.createFile(mon, tempDirPath, testName);
+		IHostFile hf = fs.createFile(tempDirPath, testName, mon);
 		if (fss.isCaseSensitive()) {
 			//UNIX: uppercase version must be distinct
-			IHostFile hf2 = fs.getFile(mon, tempDirPath, testName2);
+			IHostFile hf2 = fs.getFile(tempDirPath, testName2, mon);
 			assertFalse(hf2.exists());
-			hf2 = fs.createFolder(mon, tempDirPath, testName2);
+			hf2 = fs.createFolder(tempDirPath, testName2, mon);
 			assertTrue(hf2.exists());
 			assertTrue(hf2.isDirectory());
 			assertFalse(hf.equals(hf2));
 		} else {
 			//Windows: uppercase version must be the same
-			IHostFile hf2 = fs.getFile(mon, tempDirPath, testName2);
+			IHostFile hf2 = fs.getFile(tempDirPath, testName2, mon);
 			assertTrue(hf2.exists());
 			try {
-				hf2 = fs.createFolder(mon, tempDirPath, testName2);
+				hf2 = fs.createFolder(tempDirPath, testName2, mon);
 			} catch(SystemMessageException e) {
 				//Windows cannot create a folder when the file is already there
 				assertNotNull(e);

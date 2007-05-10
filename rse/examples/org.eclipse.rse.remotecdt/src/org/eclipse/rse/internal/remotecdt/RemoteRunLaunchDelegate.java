@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 PalmSource, Inc.
+ * Copyright (c) 2006, 2007 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Ewa Matejska (PalmSource) - Adapted from LocalRunLaunchDelegate
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 
@@ -218,7 +219,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		{
 			public void run()
 			{	try {
-				subsystem.connect(false);
+				subsystem.connect(false, null);
 				} catch (Exception e) {
 					// Ignore
 				}
@@ -247,8 +248,8 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		File file = new File(localExePath);
 		Path remotePath = new Path(remoteExePath);
 		try {
-			fileService.upload(new NullProgressMonitor(), file, remotePath.removeLastSegments(1).toString(),
-					remotePath.lastSegment(), true, null, null);
+			fileService.upload(file, remotePath.removeLastSegments(1).toString(), remotePath.lastSegment(),
+					true, null, null, new NullProgressMonitor());
 			// Need to change the permissions to match the original file permissions because of a bug in upload
 			Process p = remoteShellExec(config, "chmod", "+x " + spaceEscapify(remotePath.toString())); //$NON-NLS-1$ //$NON-NLS-2$
 			Thread.sleep(500);
@@ -277,7 +278,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		
 		// This is necessary because runCommand does not actually run the command right now.
 		String env[] = new String[0];
-		IHostShell hostShell = shellService.launchShell(new NullProgressMonitor(), "",env); //$NON-NLS-1$
+		IHostShell hostShell = shellService.launchShell("", env,new NullProgressMonitor()); //$NON-NLS-1$
 		hostShell.writeToShell(remote_command);
 		
 		Process p = null;

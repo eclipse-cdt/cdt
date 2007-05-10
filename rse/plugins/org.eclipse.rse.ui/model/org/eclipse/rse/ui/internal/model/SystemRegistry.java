@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -906,15 +907,12 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 				ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE,
 				profile, oldName);
 	}
-	/**
-	 * Copy a SystemProfile. All connections connection data is copied.
-	 * @param monitor Progress monitor to reflect each step of the operation
-	 * @param profile Source profile to copy
-	 * @param newName Unique name to give copied profile
-	 * @param makeActive whether to make the copied profile active or not
-	 * @return new SystemProfile object
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#copySystemProfile(org.eclipse.rse.core.model.ISystemProfile, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public ISystemProfile copySystemProfile(IProgressMonitor monitor, ISystemProfile profile, String newName, boolean makeActive) throws Exception
+	public ISystemProfile copySystemProfile(ISystemProfile profile, String newName, boolean makeActive, IProgressMonitor monitor) throws Exception
 	{
 		Exception lastExc = null;
 		boolean failed = false;
@@ -2568,7 +2566,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#copyHost(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.model.ISystemProfile, java.lang.String)
 	 */
-	public IHost copyHost(IProgressMonitor monitor, IHost conn, ISystemProfile targetProfile, String newName) throws Exception
+	public IHost copyHost(IHost conn, ISystemProfile targetProfile, String newName, IProgressMonitor monitor) throws Exception
 	{
 		Exception lastExc = null;
 		boolean failed = false;
@@ -2655,12 +2653,12 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#moveHost(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.model.ISystemProfile, java.lang.String)
 	 */
-	public IHost moveHost(IProgressMonitor monitor, IHost conn, ISystemProfile targetProfile, String newName) throws Exception
+	public IHost moveHost(IHost conn, ISystemProfile targetProfile, String newName, IProgressMonitor monitor) throws Exception
 	{
 		IHost newConn = null;
 		try
 		{
-			newConn = copyHost(monitor, conn, targetProfile, newName);
+			newConn = copyHost(conn, targetProfile, newName, monitor);
 			if (newConn != null)
 			{
 				deleteHost(conn); // delete old connection now that new one created successfully

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -152,7 +153,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
              steps = conns.length;
            steps += 2; // for filterpools and subsystems
 	       monitor.beginTask(msg, steps);
-		   newProfile = sr.copySystemProfile(monitor, profile,newName,makeActive);
+		   newProfile = sr.copySystemProfile(profile, newName,makeActive,monitor);
            monitor.done();
         }
         catch(java.lang.InterruptedException exc)

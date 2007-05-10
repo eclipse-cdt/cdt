@@ -8,6 +8,7 @@
  * Contributors: 
  * Tobias Schwarz (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
@@ -125,7 +126,7 @@ public class TestSubSystemNodeAdapter extends AbstractSystemViewAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getChildren(java.lang.Object)
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element) {
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor) {
 		if (isTestSubSystemNodeContainer(element))
 			return ((ITestSubSystemNodeContainer)element).getChildNodes();
 		return null;

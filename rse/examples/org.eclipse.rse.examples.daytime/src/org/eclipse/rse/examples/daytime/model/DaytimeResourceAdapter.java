@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - adapted template for daytime example.
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.examples.daytime.model;
@@ -73,7 +74,7 @@ public class DaytimeResourceAdapter extends AbstractSystemViewAdapter implements
 		return false;
 	}
 
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element) {
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor) {
 		return null;
 	}
 

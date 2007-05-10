@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Dave Dykstal (IBM) - fixing bug 162510: correctly process filter strings
  * Kushal Munir (IBM) - for API bug   
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -241,7 +242,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return new RemoteFileIOException(e);
 	}
 	
-	public IHostFile getFile(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
+	public IHostFile getFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		//TODO getFile() must return a dummy even for non-existent files,
 		//or the move() operation will fail. This needs to be described in 
@@ -392,7 +393,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return "/"; //$NON-NLS-1$
 	}
 	
-	public boolean upload(IProgressMonitor monitor, File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding) throws SystemMessageException
+	public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		//TODO what to do with isBinary?
 		ChannelSftp channel = null;
@@ -483,7 +484,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		  }
 	}
 
-	public boolean upload(IProgressMonitor monitor, InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding) throws SystemMessageException
+	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		//TODO hack for now
 		try
@@ -500,7 +501,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			      bos.write(buffer, 0, readCount);
 			 }
 			 bos.close();
-			 upload(monitor, tempFile, remoteParent, remoteFile, isBinary, "", hostEncoding); //$NON-NLS-1$
+			 upload(tempFile, remoteParent, remoteFile, isBinary, "", hostEncoding, monitor); //$NON-NLS-1$
 		}
 		catch (Exception e) {
 			throw makeSystemMessageException(e);
@@ -509,7 +510,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return true;
 	}
 	
-	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding) throws SystemMessageException
+	public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		ChannelSftp channel = null;
 		try {
@@ -568,7 +569,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		String name = fUserHome.substring(lastSlash + 1);	
 		String parent = fUserHome.substring(0, lastSlash);
 		try {
-			return getFile(null, parent, name);
+			return getFile(parent, name, null);
 		} catch(SystemMessageException e) {
 			//Could not determine user home
 			//return new SftpHostFile(".",".",true,false,false,0,0); //$NON-NLS-1$ //$NON-NLS-2$
@@ -581,7 +582,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return new IHostFile[] { root };
 	}
 	
-	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException 
+	public IHostFile createFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		IHostFile result = null;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
@@ -605,7 +606,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return result;
 	}
 
-	public IHostFile createFolder(IProgressMonitor monitor, String remoteParent, String folderName) throws SystemMessageException
+	public IHostFile createFolder(String remoteParent, String folderName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IHostFile result = null;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
@@ -625,7 +626,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return result;
 	}
 
-	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
+	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean ok=false;
 		Activator.trace("SftpFileService.delete.waitForLock"); //$NON-NLS-1$
@@ -677,7 +678,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return ok;
 	}
 
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) throws SystemMessageException
+	public boolean rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean ok=false;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
@@ -699,7 +700,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) throws SystemMessageException {
 		// TODO dont know how to update
-		return rename(monitor, remoteParent, oldName, newName);
+		return rename(remoteParent, oldName, newName, monitor);
 	}
 
 	private boolean progressWorked(IProgressMonitor monitor, int work) {
@@ -766,7 +767,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return result;
 	}
 	
-	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException
+	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		// move is not supported by sftp directly. Use the ssh shell instead.
 		// TODO check if newer versions of sftp support move directly
@@ -779,7 +780,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return (rv==0);
 	}
 
-	public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException {
+	public boolean copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException {
 		// copy is not supported by sftp directly. Use the ssh shell instead.
 		// TODO check if newer versions of sftp support copy directly
 		// TODO Interpret some error messages like "command not found" (use (x)copy instead of cp on windows)
@@ -790,7 +791,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return (rv==0);
 	}
 	
-	public boolean copyBatch(IProgressMonitor monitor, String[] srcParents, String[] srcNames, String tgtParent) throws SystemMessageException 
+	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		Activator.trace("SftpFileService.copyBatch "+srcNames); //$NON-NLS-1$
 		boolean ok = true;
@@ -798,7 +799,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		{
 			//TODO check what should happen if one file throws an Exception 
 			//should the batch job continue? 
-			ok = ok && copy(monitor, srcParents[i], srcNames[i], tgtParent, srcNames[i]);
+			ok = ok && copy(srcParents[i], srcNames[i], tgtParent, srcNames[i], monitor);
 		}
 		return ok;
 	}
@@ -824,8 +825,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return true;
 	}
 
-	public boolean setLastModified(IProgressMonitor monitor, String parent,
-			String name, long timestamp) throws SystemMessageException 
+	public boolean setLastModified(String parent, String name,
+			long timestamp, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		boolean ok=false;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
@@ -844,8 +845,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return ok;
 	}
 
-	public boolean setReadOnly(IProgressMonitor monitor, String parent,
-			String name, boolean readOnly) throws SystemMessageException {
+	public boolean setReadOnly(String parent, String name,
+			boolean readOnly, IProgressMonitor monitor) throws SystemMessageException {
 		boolean ok=false;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
@@ -880,9 +881,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	/**
 	 * Gets the input stream to access the contents of a remote file.
 	 * @since 2.0
-	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(IProgressMonitor, String, String, boolean) 
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(String, String, boolean, IProgressMonitor) 
 	 */
-	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		
 		InputStream stream = null;
 		
@@ -905,9 +906,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	/**
 	 * Gets the output stream to write to a remote file.
 	 * @since 2.0
-	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(IProgressMonitor, String, String, boolean)
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(String, String, boolean, IProgressMonitor)
 	 */
-	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();

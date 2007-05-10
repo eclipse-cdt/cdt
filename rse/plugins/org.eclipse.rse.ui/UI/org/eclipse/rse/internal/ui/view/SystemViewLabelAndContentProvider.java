@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -336,11 +337,11 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 
     	  if (object instanceof IContextObject)
     	  {
-    		  children = adapter.getChildren(new NullProgressMonitor(), (IContextObject)object);
+    		  children = adapter.getChildren((IContextObject)object, new NullProgressMonitor());
     	  }
     	  else 
     	  {
-    		  children = adapter.getChildren(new NullProgressMonitor(), (IAdaptable)object);
+    		  children = adapter.getChildren((IAdaptable)object, new NullProgressMonitor());
     	  }
     	  
 

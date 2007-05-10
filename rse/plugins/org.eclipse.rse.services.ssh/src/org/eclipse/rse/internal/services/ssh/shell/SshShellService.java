@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from LocalShellService.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.shell;
@@ -39,29 +40,29 @@ public class SshShellService implements ISshService, IShellService {
 	}
 
 	//TODO abstract base class should handle default encodings
-	public IHostShell launchShell(IProgressMonitor monitor,
-			String initialWorkingDirectory, String[] environment) {
+	public IHostShell launchShell(String initialWorkingDirectory,
+			String[] environment, IProgressMonitor monitor) {
 		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-		return launchShell(monitor, initialWorkingDirectory, defaultEncoding, environment);
+		return launchShell(initialWorkingDirectory, defaultEncoding, environment, monitor);
 	}
 
-	public IHostShell launchShell(IProgressMonitor monitor,
-			String initialWorkingDirectory, String encoding,
-			String[] environment) {
+	public IHostShell launchShell(String initialWorkingDirectory,
+			String encoding, String[] environment,
+			IProgressMonitor monitor) {
 		SshHostShell hostShell = new SshHostShell(fSessionProvider, initialWorkingDirectory, SshHostShell.SHELL_INVOCATION, encoding, environment);
 		return hostShell;
 	}
 
 	//TODO abstract base class should handle default encodings
-	public IHostShell runCommand(IProgressMonitor monitor,
-			String initialWorkingDirectory, String command, String[] environment) {
+	public IHostShell runCommand(String initialWorkingDirectory,
+			String command, String[] environment, IProgressMonitor monitor) {
 		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-		return runCommand(monitor, initialWorkingDirectory, command, defaultEncoding, environment);
+		return runCommand(initialWorkingDirectory, command, defaultEncoding, environment, monitor);
 	}
 
-	public IHostShell runCommand(IProgressMonitor monitor,
-			String initialWorkingDirectory, String command, String encoding,
-			String[] environment) {
+	public IHostShell runCommand(String initialWorkingDirectory,
+			String command, String encoding, String[] environment,
+			IProgressMonitor monitor) {
 		SshHostShell hostShell = new SshHostShell(fSessionProvider, initialWorkingDirectory, command, encoding, environment);
 		return hostShell;
 	}

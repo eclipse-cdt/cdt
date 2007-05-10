@@ -8,6 +8,7 @@
  * Contributors: 
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere 
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -65,8 +66,8 @@ public class LinuxShellProcessService extends AbstractProcessService {
         return statusTypes;
     }
 
-    public boolean kill(final IProgressMonitor monitor, final long PID,
-            final String signal) throws SystemMessageException {
+    public boolean kill(final long PID, final String signal,
+            final IProgressMonitor monitor) throws SystemMessageException {
         String signalString;
         if (signal
                 .equals(ISystemProcessRemoteConstants.PROCESS_SIGNAL_TYPE_DEFAULT))
@@ -75,7 +76,7 @@ public class LinuxShellProcessService extends AbstractProcessService {
             signalString = "-" + signal; //$NON-NLS-1$
         IShellService shellService = Activator.getShellService(host);
         IHostShell hostShell = shellService.launchShell(
-                new NullProgressMonitor(), "", null); //$NON-NLS-1$
+                "", null, new NullProgressMonitor()); //$NON-NLS-1$
         hostShell.writeToShell(getKillCommand(PID, signalString));
         Process p = null;
         try {
@@ -98,8 +99,8 @@ public class LinuxShellProcessService extends AbstractProcessService {
         return false;
     }
 
-    public IHostProcess[] listAllProcesses(final IProgressMonitor monitor,
-            final IHostProcessFilter filter) throws SystemMessageException {
+    public IHostProcess[] listAllProcesses(final IHostProcessFilter filter,
+            final IProgressMonitor monitor) throws SystemMessageException {
         // this is to workaround RSE bug 147531
         if (filter.getUsername().equals("${user.id}") && host != null) { //$NON-NLS-1$
         	IShellServiceSubSystem ss = Activator.getShellServiceSubSystem(host);
@@ -117,7 +118,7 @@ public class LinuxShellProcessService extends AbstractProcessService {
         }
         IShellService shellService = Activator.getShellService(host);
         IHostShell hostShell = shellService.launchShell(
-                new NullProgressMonitor(), "", null); //$NON-NLS-1$
+                "", null, new NullProgressMonitor()); //$NON-NLS-1$
         hostShell.writeToShell(getProcessesCommand());
         Process p = null;
         try {
@@ -213,7 +214,7 @@ public class LinuxShellProcessService extends AbstractProcessService {
     protected String[] internalGetSignalTypes() {
         IShellService shellService = Activator.getShellService(host);
         IHostShell hostShell = shellService.launchShell(
-                new NullProgressMonitor(), "", null); //$NON-NLS-1$
+                "", null, new NullProgressMonitor()); //$NON-NLS-1$
         hostShell.writeToShell(getSignalTypesCommand());
         Process p = null;
         try {

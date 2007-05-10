@@ -8,6 +8,7 @@
  * Don Yantzi (IBM) - initial contribution.
  * David Dykstal (IBM) - initial contribution.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
@@ -176,7 +177,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 
 		Object[] objects = null;
 		try {
-			objects = subsystem.resolveFilterString(null, "/bin/*"); //$NON-NLS-1$
+			objects = subsystem.resolveFilterString("/bin/*", null); //$NON-NLS-1$
 		} catch(Exception e) {
 			exception = e;
 			cause = e.getLocalizedMessage();

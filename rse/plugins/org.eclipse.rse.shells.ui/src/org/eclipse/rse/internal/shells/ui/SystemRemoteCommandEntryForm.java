@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui;
@@ -152,7 +153,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 				{
 					try
 					{
-						currSubSystem.runCommand(new NullProgressMonitor(), cmd, null);
+						currSubSystem.runCommand(cmd, null, new NullProgressMonitor());
 					}
 					catch ( Exception e )
 					{

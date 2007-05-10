@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -186,7 +187,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 	 * Return the children of this filter.
 	 * This is a combination of nested filters and resolved filter objects.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		ISystemFilter filter = getFilter(element);
 		// transient filters...
@@ -228,7 +229,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 		     	}
 		     	// otherwise, get children and then cache
 		     	else {
-		     		children = checkForNull(ss.resolveFilterStrings(monitor, filterStrings), true);
+		     		children = checkForNull(ss.resolveFilterStrings(filterStrings, monitor), true);
 		     		
 		     		if (ss.getSubSystemConfiguration().supportsFilterCaching()) {
 		     			simpleFilter.setContents(SystemChildrenContentsType.getInstance(), children);

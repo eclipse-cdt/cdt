@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -356,7 +357,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
         Object[] children = null;
 
 		if (filterString == null)
-	 	  children = subsystemAdapter.getChildren(new NullProgressMonitor(), (IAdaptable)subsystem);
+	 	  children = subsystemAdapter.getChildren((IAdaptable)subsystem, new NullProgressMonitor());
 	 	else
 	 	{
 	 	  children = resolveFilterString(subsystem, filterString);
@@ -592,7 +593,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		Object[] children = null;
 		try
 		{
-	 	     children = subsystem.resolveFilterString(new NullProgressMonitor(), filterString);	 	     
+	 	     children = subsystem.resolveFilterString(filterString, new NullProgressMonitor());	 	     
 		} catch (InterruptedException exc)
 		{
 		     if (canceledObject == null)

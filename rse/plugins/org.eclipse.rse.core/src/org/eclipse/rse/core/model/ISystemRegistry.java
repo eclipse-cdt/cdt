@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -221,13 +222,13 @@ public interface ISystemRegistry extends ISchedulingRule {
 
 	/**
 	 * Copy a SystemProfile. All connections connection data is copied.
-	 * @param monitor Progress monitor to reflect each step of the operation    
 	 * @param profile Source profile to copy
 	 * @param newName Unique name to give copied profile
 	 * @param makeActive whether to make the copied profile active or not
+	 * @param monitor Progress monitor to reflect each step of the operation    
 	 * @return new SystemProfile object
 	 */
-	public ISystemProfile copySystemProfile(IProgressMonitor monitor, ISystemProfile profile, String newName, boolean makeActive) throws Exception;
+	public ISystemProfile copySystemProfile(ISystemProfile profile, String newName, boolean makeActive, IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Rename a SystemProfile. Rename is propogated to all subsystem factories so
@@ -649,27 +650,27 @@ public interface ISystemRegistry extends ISchedulingRule {
 
 	/**
 	 * Copy a SystemConnection. All subsystems are copied, and all connection data is copied.
-	 * @param monitor Progress monitor to reflect each step of the operation
 	 * @param conn The connection to copy
 	 * @param targetProfile What profile to copy into
 	 * @param newName Unique name to give copied profile
+	 * @param monitor Progress monitor to reflect each step of the operation
 	 * @return new SystemConnection object
 	 */
-	public IHost copyHost(IProgressMonitor monitor, IHost conn, ISystemProfile targetProfile, String newName) throws Exception;
+	public IHost copyHost(IHost conn, ISystemProfile targetProfile, String newName, IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Move a SystemConnection to another profile.
 	 * All subsystems are moved, and all connection data is moved.
 	 * This is actually accomplished by doing a copy operation first,
 	 * and if successful deleting the original.
-	 * @param monitor Progress monitor to reflect each step of the operation
 	 * @param conn The connection to move
 	 * @param targetProfile What profile to move into
 	 * @param newName Unique name to give copied profile. Typically this is the same as the original name, but 
 	 *                will be different on name collisions
+	 * @param monitor Progress monitor to reflect each step of the operation
 	 * @return new SystemConnection object
 	 */
-	public IHost moveHost(IProgressMonitor monitor, IHost conn, ISystemProfile targetProfile, String newName) throws Exception;
+	public IHost moveHost(IHost conn, ISystemProfile targetProfile, String newName, IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Return true if any subsystem supports connecting.

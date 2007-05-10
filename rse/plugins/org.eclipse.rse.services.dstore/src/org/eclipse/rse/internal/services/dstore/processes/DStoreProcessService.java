@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.processes;
@@ -61,7 +61,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		return ServiceResources.DStore_Process_Service_Description;
 	}
 	
-	public IHostProcess[] listAllProcesses(IProgressMonitor monitor, IHostProcessFilter filter) throws SystemMessageException 
+	public IHostProcess[] listAllProcesses(IHostProcessFilter filter, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		if (!isInitialized())
 		{
@@ -183,14 +183,14 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		return _statusMonitor;
 	}
 
-	public boolean kill(IProgressMonitor monitor, long PID, String signal) throws SystemMessageException 
+	public boolean kill(long PID, String signal, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		try
 		{
 			DataStore ds = getDataStore();
 		
 			// run kill command on host
-			DStoreHostProcess process = (DStoreHostProcess) getProcess(monitor, PID);
+			DStoreHostProcess process = (DStoreHostProcess) getProcess(PID, monitor);
 			
 			// if there is no process, simply return true
 			if (process == null) {

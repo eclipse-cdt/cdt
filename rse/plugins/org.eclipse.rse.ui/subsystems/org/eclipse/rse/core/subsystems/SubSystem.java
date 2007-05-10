@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [183165] Do not implement constant interfaces
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -1576,7 +1577,7 @@ public abstract class SubSystem extends RSEModelObject
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			IStatus result = Status.OK_STATUS;
 			try {
-				connect(false);
+				connect(monitor, false);
 			} catch (InterruptedException e) {
 				result = Status.CANCEL_STATUS;
 			} catch (Exception e) {
@@ -1989,98 +1990,6 @@ public abstract class SubSystem extends RSEModelObject
     	  return null;
     }
 
-    /**
-     * Resolve an <i>absolute</i> filter string. This is only applicable if the subsystem
-     *  factory reports true for {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsFilters()}, 
-     *  which is the default. Otherwise, {@link org.eclipse.rse.core.subsystems.SubSystem#getChildren()}
-     *  is called when the subsystem itself is expanded.
-     * <p>
-     * When a user <u>expands a filter</u> this method is invoked for each filter string and the 
-     *  results are concatenated and displayed to the user. You can affect the post-concatenated
-     *  result by overriding {@link #sortResolvedFilterStringObjects(Object[])} if you desire to
-     *  sort the result, say, or pick our redundancies.
-     * <p>
-     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.internal.ui.view.SystemView view}. 
-     * There are <u>two requirements</u> on the returned objects:</p>
-     * <ol>
-     *   <li>They must implement {@link org.eclipse.core.runtime.IAdaptable}.
-     *   <li>Their must be an RSE {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter remote-adapter} registered
-     *        for the object's class or interface type. Further, if this subsystem is {@link org.eclipse.rse.core.subsystems.SubSystem#isHidden() visible}
-     *        in the RSE, which is the default, then there must also be an RSE {@link org.eclipse.rse.ui.view.ISystemViewElementAdapter GUI-adapter} registered
-     *        with the platform. The base class implementation of this interface is {@link org.eclipse.rse.ui.view.AbstractSystemViewAdapter}.
-     * </ol>
-     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.subsystems.AbstractResource}, as it
-     * already implements IAdaptable, and maintains a reference to this owning subsystem, which helps when 
-     * implementing the {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter remote-adapter}.
-     * <p>
-     * Be sure to register your adapter factory in your plugin's startup method.
-     * <p>
-     * <b>You do not need to override this, as it does the progress monitor and error message
-     *  displaying for you. Just override internalResolveFilterString.</b>
-     * <p>
-     * @param filterString filter pattern for objects to return.
-     * @return the results of resolving the filter string. 
-     * 
-     * @deprecated use resolveFilterString(IProgressMonitor monitor, String filterString) instead
-     */
-    public Object[] resolveFilterString(String filterString)
-           throws Exception
-    {
-        boolean ok = true;
-    	if (!isConnected())
-    	  ok = promptForPassword();
-        if (ok)
-        {
-        		return internalResolveFilterString(new NullProgressMonitor(), filterString);
-        }
-        else
-        {
-        	return null;
-        }
-    }
-    /**
-     * Resolve multiple absolute filter strings. This is only applicable if the subsystem
-     *  factory reports true for supportsFilters().
-     * <p>
-     * This is the same as {@link #resolveFilterString(String)} but takes an array of
-     *  filter strings versus a single filter string.
-     * <p>
-     * The default implementation of this simply calls {@link #internalResolveFilterStrings(IProgressMonitor, String[])}.
-     * <p>
-     * After successful resolve, the sort method is called to sort the concatenated results before
-     *  returning them.
-     *
-     * @param filterStrings array of filter patterns for objects to return.
-     * @return Array of objects that are the result of resolving all the filter strings
-     * 
-     * @deprecated should use resolveFilterStrings(IProgressMonitor monitor, String[] filterStrings) instead
-     */
-    public Object[] resolveFilterStrings(String[] filterStrings)
-           throws Exception
-    {
-        
-    	boolean ok = true;
-        
-        if ((filterStrings == null) || (filterStrings.length == 0)) {
-        	SystemBasePlugin.logInfo("Filter strings are null"); //$NON-NLS-1$
-        	return null;
-        }
-        
-    	if (!isConnected()) {
-    	  ok = promptForPassword();
-    	}
-        
-        if (ok)
-        {
-        	return internalResolveFilterStrings(new NullProgressMonitor(), filterStrings);
-        }
-        else
-        {
-        	return null;
-        }
-        
-    }
-    
     protected void scheduleJob(SubSystemOperationJob job, ISchedulingRule rule) throws InterruptedException
     {
     	IRunnableContext context = getRunnableContext(/*shell*/); // dwd needed for side effect or for prompt?
@@ -2115,29 +2024,42 @@ public abstract class SubSystem extends RSEModelObject
     
     
     /**
-     * Modal thread version of resolve filter strings
-     * Resolve an absolute filter string. This is only applicable if the subsystem
-     *  factory reports true for supportsFilters().
+     * Resolve an <i>absolute</i> filter string.
+     * 
+     * This is only applicable if the subsystem
+     *  factory reports true for {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsFilters()}, 
+     *  which is the default. Otherwise, {@link org.eclipse.rse.core.subsystems.SubSystem#getChildren()}
+     *  is called when the subsystem itself is expanded.
      * <p>
-     * When a user expands a filter containing filter strings, this method is
-     *  invoked for each filter string.
+     * When a user <u>expands a filter</u> this method is invoked for each filter string and the 
+     *  results are concatenated and displayed to the user. You can affect the post-concatenated
+     *  result by overriding {@link #sortResolvedFilterStringObjects(Object[])} if you desire to
+     *  sort the result, say, or pick our redundancies.
      * <p>
-     * The resulting objects are displayed in the remote system view tree. They
-     *  can be anything, but at a minimum must support IAdaptable in order to
-     *  drive the property sheet. You can just defer the getAdapter request to
-     *  the platform's Adapter manager if desired.
+     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.internal.ui.view.SystemView view}. 
+     * There are <u>two requirements</u> on the returned objects:</p>
+     * <ol>
+     *   <li>They must implement {@link org.eclipse.core.runtime.IAdaptable}.
+     *   <li>Their must be an RSE {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter remote-adapter} registered
+     *        for the object's class or interface type. Further, if this subsystem is {@link org.eclipse.rse.core.subsystems.SubSystem#isHidden() visible}
+     *        in the RSE, which is the default, then there must also be an RSE {@link org.eclipse.rse.ui.view.ISystemViewElementAdapter GUI-adapter} registered
+     *        with the platform. The base class implementation of this interface is {@link org.eclipse.rse.ui.view.AbstractSystemViewAdapter}.
+     * </ol>
+     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.subsystems.AbstractResource}, as it
+     * already implements IAdaptable, and maintains a reference to this owning subsystem, which helps when 
+     * implementing the {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter remote-adapter}.
      * <p>
-     * You should supply an adapter class for the returned object's class,
-     *  to render objects in the Remote System Explorer view. It will uses a
-     *  label and content provider that defers all requests to the adapter,
-     *  which it gets by querying the platform's adapter manager for the object
-     *  type. Be sure to register your adapter factory.
-     *
-     * @param monitor the process monitor associated with this operation
+     * Be sure to register your adapter factory in your plugin's startup method.
+     * <p>
+     * <b>You do not need to override this, as it does the progress monitor and error message
+     *  displaying for you. Just override internalResolveFilterString.</b>
+     * <p>
      * @param filterString filter pattern for objects to return.
+     * @param monitor the process monitor associated with this operation
+     *
      * @return Array of objects that are the result of this filter string
      */
-    public Object[] resolveFilterString(IProgressMonitor monitor, String filterString) throws Exception
+    public Object[] resolveFilterString(String filterString, IProgressMonitor monitor) throws Exception
     {
         boolean ok = true;
     	if (!isConnected())
@@ -2156,32 +2078,30 @@ public abstract class SubSystem extends RSEModelObject
     }
 
     /**
-     * Modal thread version of resolve filter strings
-     * Resolve an absolute filter string. This is only applicable if the subsystem
+     * Resolve multiple absolute filter strings. This is only applicable if the subsystem
      *  factory reports true for supportsFilters().
      * <p>
-     * When a user expands a filter containing filter strings, this method is
-     *  invoked for each filter string.
+     * This is the same as {@link #resolveFilterString(String, IProgressMonitor)} but takes an array of
+     *  filter strings versus a single filter string.
      * <p>
-     * The resulting objects are displayed in the remote system view tree. They
-     *  can be anything, but at a minimum must support IAdaptable in order to
-     *  drive the property sheet. You can just defer the getAdapter request to
-     *  the platform's Adapter manager if desired.
+     * The default implementation of this simply calls {@link #internalResolveFilterStrings(IProgressMonitor, String[])}.
      * <p>
-     * You should supply an adapter class for the returned object's class,
-     *  to render objects in the Remote System Explorer view. It will uses a
-     *  label and content provider that defers all requests to the adapter,
-     *  which it gets by querying the platform's adapter manager for the object
-     *  type. Be sure to register your adapter factory.
+     * After successful resolve, the sort method is called to sort the concatenated results before
+     *  returning them.
      *
+     * @param filterStrings array of filter patterns for objects to return.
      * @param monitor the process monitor associated with this operation
-     * @param filterStrings filter patterns for objects to return.
+     *
      * @return Array of objects that are the result of this filter string
      */
-    public Object[] resolveFilterStrings(IProgressMonitor monitor, String[] filterStrings)
+    public Object[] resolveFilterStrings(String[] filterStrings, IProgressMonitor monitor)
     throws Exception
     {
         boolean ok = true;
+        if ((filterStrings == null) || (filterStrings.length == 0)) {
+        	SystemBasePlugin.logInfo("Filter strings are null"); //$NON-NLS-1$
+        	return null;
+        }
     	if (!isConnected())
     	  ok = promptForPassword();
         if (ok)
@@ -2197,50 +2117,6 @@ public abstract class SubSystem extends RSEModelObject
         }
     }
 
-    /**
-     * Modal thread version of resolve filter strings
-     * Resolve an absolute filter string. This is only applicable if the subsystem
-     *  factory reports true for supportsFilters().
-     * <p>
-     * When a user expands a filter containing filter strings, this method is
-     *  invoked for each filter string.
-     * <p>
-     * The resulting objects are displayed in the remote system view tree. They
-     *  can be anything, but at a minimum must support IAdaptable in order to
-     *  drive the property sheet. You can just defer the getAdapter request to
-     *  the platform's Adapter manager if desired.
-     * <p>
-     * You should supply an adapter class for the returned object's class,
-     *  to render objects in the Remote System Explorer view. It will uses a
-     *  label and content provider that defers all requests to the adapter,
-     *  which it gets by querying the platform's adapter manager for the object
-     *  type. Be sure to register your adapter factory.
-     *
-     * @param monitor the process monitor associated with this operation
-     * @param parent the object to query
-     * @param filterString filter pattern for objects to return.
-     * @return Array of objects that are the result of this filter string
-     */
-	public Object[] resolveFilterString(IProgressMonitor monitor, Object parent, String filterString)
-    throws Exception
-    {
-	    boolean ok = true;
-	    if (!isConnected())
-	        ok = promptForPassword();
- 
-	    if (ok)
-	    {
-	        Object[] results= internalResolveFilterString(monitor, parent, filterString);
-	        if (sortResults && (results!=null))
-                results =  sortResolvedFilterStringObjects(results);
-	        return results;
-	    }
-	    else
-	    {
-	        return null;
-	    }
-    }
-    
     /**
      * Resolve a <i>relative</i> filter string. 
      * <p>
@@ -2269,29 +2145,30 @@ public abstract class SubSystem extends RSEModelObject
      * <p>
      * @param parent Object that is being expanded.
      * @param filterString filter pattern for children of parent. Typically just "*".
-     * 
-     * @deprecated use resolveFilterString(IProgressMonitor monitor, Object parent, String filterString) instead
+     * @param monitor the process monitor associated with this operation
+     *
+     * @return Array of objects that are the result of this filter string
      */
-    public Object[] resolveFilterString(Object parent, String filterString)
-           throws Exception
+	public Object[] resolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
+    throws Exception
     {
-        boolean ok = true;
-    	if (!isConnected())
-    	  ok = promptForPassword();
-        if (ok)
-        {
-        	return internalResolveFilterString(new NullProgressMonitor(), parent, filterString);
-        }
-        else
-        {
-    	    return null;
-        }
+	    boolean ok = true;
+	    if (!isConnected())
+	        ok = promptForPassword();
+ 
+	    if (ok)
+	    {
+	        Object[] results= internalResolveFilterString(monitor, parent, filterString);
+	        if (sortResults && (results!=null))
+                results =  sortResolvedFilterStringObjects(results);
+	        return results;
+	    }
+	    else
+	    {
+	        return null;
+	    }
     }
     
-	
-	
-	
-
 	/**
 	 * Provide list of executed commands on subsystem.This is only applicable if the subsystem factory reports
      *  true for supportsCommands().
@@ -2388,7 +2265,7 @@ public abstract class SubSystem extends RSEModelObject
 				job.schedule();
 				job.join();
 			} else {
-				connect(false);
+				connect(false, null);
 			}
 //			Display display = Display.getCurrent();
 //			while (job.getResult() == null) {
@@ -2400,18 +2277,6 @@ public abstract class SubSystem extends RSEModelObject
 		}
 	}
 
-
-	
-	/**
-	 * Required for Bug 176603
-	 * 
-	 * @deprecated
-	 */
-	public void connect(IProgressMonitor monitor) throws Exception 
-	{
-		connect(monitor, false);
-	}
-	
 	/**
 	 * Connect to a remote system with a monitor.
 	 * Required for Bug 176603
@@ -2461,25 +2326,11 @@ public abstract class SubSystem extends RSEModelObject
 		}
 	}
 	
-	
-	public void connect(IRSECallback callback) throws Exception
-	{
-		connect(false, callback);	
-	}
-	
-	/**
-	 * @deprecated
-	 */
-	public void connect(boolean forcePrompt) throws Exception 
-	{
-		connect(forcePrompt, null);
-	}
-	
 	/**
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password
 	 * is cached in memory or on disk.
 	 * You do not need to override this, as it does the progress monitor and error message
-	 *  displaying for you.
+	 * displaying for you.
 	 * <p>
 	 * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
 	 * 
@@ -2518,9 +2369,7 @@ public abstract class SubSystem extends RSEModelObject
 		}
 	}
     
- 
-
-    /**
+     /**
      * A convenience method, fully equivalent to promptForPassword(false).
      */
     public boolean promptForPassword() throws Exception

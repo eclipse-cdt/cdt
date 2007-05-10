@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
@@ -526,7 +527,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 		if (cmdSubSystem != null) {
 			ok = true;
 			try {
-				cmdSubSystem.runCommand(new NullProgressMonitor(), cmdString, context);
+				cmdSubSystem.runCommand(cmdString, context, new NullProgressMonitor());
 			} catch (Exception e) {
 				SystemBasePlugin.logError("RunUserAction", e); //$NON-NLS-1$
 				SystemMessageDialog.displayExceptionMessage(shell, e);

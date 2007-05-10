@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -82,7 +82,7 @@ public class SystemTerminateShellAction extends SystemBaseShellAction
 			IRemoteCmdSubSystem cmdSubSystem = command.getCommandSubSystem();
 			if (cmdSubSystem != null)
 			{
-				cmdSubSystem.cancelShell(new NullProgressMonitor(), command);
+				cmdSubSystem.cancelShell(command, new NullProgressMonitor());
 			}
 		}
 		catch (Exception e)

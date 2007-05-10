@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -362,59 +363,36 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 */
 	public void connect() throws Exception;
 	
-	
 	/**
-	 * Connect to the remote system, optionally forcing a signon prompt even if the password
-	 * is cached in memory or on disk.
+	 * Synchronously connect to the remote system.
 	 * 
-	 * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
-	 * in memory.
+	 * Clients are expected to call this method on a background
+	 * thread with an existing progress monitor. A signon prompt
+	 * may optionally be forced even if the password is cached
+	 * in memory or on disk.
 	 * 
-	 * @deprecated use {@link #connect(IProgressMonitor, boolean)}
-	 */
-	public void connect(boolean forcePrompt) throws Exception;
-	
-	
-	/**
-	 * Connect to the remote system from a background job
+	 * The framework will take care of switching to the UI thread
+	 * for requesting a password from the user if necessary.
 	 * 
-	 * @param monitor the process monitor. Must not be <code>null</code>.
-	 * 
-	 * @deprecated use {@link #connect(IProgressMonitor, boolean)}
-	 */
-	public void connect(IProgressMonitor monitor) throws Exception;
-
-	/**
-	 * Connect to the remote system from a background job
-	 * 
-	 * @param monitor the process monitor. Must not be <code>null</code>.
+	 * @param monitor the progress monitor. Must not be <code>null</code>.
 	 * @param forcePrompt forces the prompt dialog to be displayed
 	 *     even if the password is currently in memory.
 	 */
 	public void connect(IProgressMonitor monitor, boolean forcePrompt) throws Exception;
 
-	
 	/**
-	 * Connect to the remote system on a background job.  The callback is
-	 * called when the connect is complete.
+	 * Asynchronously connect to the remote system.
 	 * 
-	 * @param callback to call after connect is complete
-	 * @throws Exception
-	 */
-	public void connect(IRSECallback callback) throws Exception;
-	
-	/**
-	 * Connect to the remote system on a background job.  The callback is
-	 * called when the connect is complete.
+	 * An Eclipse background job with a progress monitor will 
+	 * be created automatically. If the optional callback is 
+	 * given, will be called when the connect is complete.
 	 * 
 	 * @param forcePrompt forces the prompt dialog even if the password is in mem
-	 * @param callback to call after connect is complete
+	 * @param callback to call after connect is complete.
+	 *     May be <code>null</code>.
 	 * @throws Exception
 	 */
 	public void connect(boolean forcePrompt, IRSECallback callback) throws Exception;
-
-	
-
 
 	/**
 	 * Disconnect from the remote system.
@@ -432,105 +410,28 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public void disconnect(boolean collapseTree) throws Exception;
 
 	/**
-	 * Modal thread version of resolve filter strings
 	 * Resolve an absolute filter string. This is only applicable if the subsystem
-	 *  factory reports true for supportsFilters().
+	 * factory reports true for supportsFilters().
 	 * <p>
 	 * When a user expands a filter containing filter strings, this method is
-	 *  invoked for each filter string.
+	 * invoked for each filter string.
 	 * <p>
 	 * The resulting objects are displayed in the remote system view tree. They
-	 *  can be anything, but at a minimum must support IAdaptable in order to
-	 *  drive the property sheet. You can just defer the getAdapter request to
-	 *  the platform's Adapter manager if desired.
+	 * can be anything, but at a minimum must support IAdaptable in order to
+	 * drive the property sheet. You can just defer the getAdapter request to
+	 * the platform's Adapter manager if desired.
 	 * <p>
 	 * You should supply an adapter class for the returned object's class,
-	 *  to render objects in the Remote System Explorer view. It will uses a
-	 *  label and content provider that defers all requests to the adapter,
-	 *  which it gets by querying the platform's adapter manager for the object
-	 *  type. Be sure to register your adapter factory.
-	 *
-	 * @param monitor the process monitor associated with this operation
-	 * @param filterString filter pattern for objects to return.
-	 * @return Array of objects that are the result of this filter string
-	 */
-	public Object[] resolveFilterString(IProgressMonitor monitor, String filterString) throws Exception;
-
-	/**
-	 * Modal thread version of resolve filter strings
-	 * Resolve an absolute filter string. This is only applicable if the subsystem
-	 *  factory reports true for supportsFilters().
-	 * <p>
-	 * When a user expands a filter containing filter strings, this method is
-	 *  invoked for each filter string.
-	 * <p>
-	 * The resulting objects are displayed in the remote system view tree. They
-	 *  can be anything, but at a minimum must support IAdaptable in order to
-	 *  drive the property sheet. You can just defer the getAdapter request to
-	 *  the platform's Adapter manager if desired.
-	 * <p>
-	 * You should supply an adapter class for the returned object's class,
-	 *  to render objects in the Remote System Explorer view. It will uses a
-	 *  label and content provider that defers all requests to the adapter,
-	 *  which it gets by querying the platform's adapter manager for the object
-	 *  type. Be sure to register your adapter factory.
-	 *
-	 * @param monitor the process monitor associated with this operation
-	 * @param filterStrings filter patterns for objects to return.
-	 * @return Array of objects that are the result of this filter string
-	 */
-	public Object[] resolveFilterStrings(IProgressMonitor monitor, String[] filterStrings) throws Exception;
-
-	/**
-	 * Modal thread version of resolve filter strings
-	 * Resolve an absolute filter string. This is only applicable if the subsystem
-	 *  factory reports true for supportsFilters().
-	 * <p>
-	 * When a user expands a filter containing filter strings, this method is
-	 *  invoked for each filter string.
-	 * <p>
-	 * The resulting objects are displayed in the remote system view tree. They
-	 *  can be anything, but at a minimum must support IAdaptable in order to
-	 *  drive the property sheet. You can just defer the getAdapter request to
-	 *  the platform's Adapter manager if desired.
-	 * <p>
-	 * You should supply an adapter class for the returned object's class,
-	 *  to render objects in the Remote System Explorer view. It will uses a
-	 *  label and content provider that defers all requests to the adapter,
-	 *  which it gets by querying the platform's adapter manager for the object
-	 *  type. Be sure to register your adapter factory.
-	 *
-	 * @param monitor the process monitor associated with this operation
-	 * @param parent the parent object to query
-	 * @param filterString filter pattern for objects to return.
-	 * @return Array of objects that are the result of this filter string
-	 */
-	public Object[] resolveFilterString(IProgressMonitor monitor, Object parent, String filterString) throws Exception;
-
-	/**
-	 * Resolve an absolute filter string. This is only applicable if the subsystem
-	 *  factory reports true for supportsFilters().
-	 * <p>
-	 * When a user expands a filter containing filter strings, this method is
-	 *  invoked for each filter string.
-	 * <p>
-	 * The resulting objects are displayed in the remote system view tree. They
-	 *  can be anything, but at a minimum must support IAdaptable in order to
-	 *  drive the property sheet. You can just defer the getAdapter request to
-	 *  the platform's Adapter manager if desired.
-	 * <p>
-	 * You should supply an adapter class for the returned object's class,
-	 *  to render objects in the Remote System Explorer view. It will uses a
-	 *  label and content provider that defers all requests to the adapter,
-	 *  which it gets by querying the platform's adapter manager for the object
-	 *  type. Be sure to register your adapter factory.
+	 * to render objects in the Remote System Explorer view. It will uses a
+	 * label and content provider that defers all requests to the adapter,
+	 * which it gets by querying the platform's adapter manager for the object
+	 * type. Be sure to register your adapter factory.
 	 *
 	 * @param filterString filter pattern for objects to return.
+	 * @param monitor the process monitor associated with this operation
 	 * @return Array of objects that are the result of this filter string
-	 * 
-	 * @deprecated use resolveFilterString(IProgressMonitor monitor, String filterString) instead
 	 */
-	public Object[] resolveFilterString(String filterString) throws Exception;
+	public Object[] resolveFilterString(String filterString, IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Resolve multiple absolute filter strings. This is only applicable if the subsystem
@@ -540,14 +441,14 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * filter strings versus a single filter string.
 	 *
 	 * @param filterStrings array of filter patterns for objects to return.
-	 * @return Array of objects that are the result of resolving all the filter strings
-	 * 
-	 * @deprecated use resolveFilterStrings(IProgressMonitor monitor, String[] filterStrings) instead
+	 * @param monitor the process monitor associated with this operation
+	 *
+	 * @return Array of objects that are the result of this filter string
 	 */
-	public Object[] resolveFilterStrings(String[] filterStrings) throws Exception;
+	public Object[] resolveFilterStrings(String[] filterStrings, IProgressMonitor monitor) throws Exception;
 
 	/**
-	 * Resolve an relative filter string. This is only applicable if the subsystem
+	 * Resolve a relative filter string. This is only applicable if the subsystem
 	 *  factory reports true for supportsFilters().
 	 * <p>
 	 * When a user expands an object that came from a previous filter string expansion,
@@ -569,11 +470,11 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *
 	 * @param parent Object that is being expanded.
 	 * @param filterString filter pattern for children of parent.
-	 *  @return Array of objects that are the result of this filter string
-	 *  
-	 *  @deprecated use resolveFilterString(IProgressMonitor monitor, String filterString) instead
+	 * @param monitor the process monitor associated with this operation
+	 *
+	 * @return Array of objects that are the result of this filter string
 	 */
-	public Object[] resolveFilterString(Object parent, String filterString) throws Exception;
+	public Object[] resolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws Exception;
 
 	/*
 	 * Execute a remote command. This is only applicable if the subsystem factory reports

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.services.processes;
@@ -25,19 +25,19 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 
 public abstract class AbstractProcessService implements IProcessService 
 {
-	public IHostProcess[] listAllProcesses(IProgressMonitor monitor, String exeNameFilter, String userNameFilter, String stateFilter) throws SystemMessageException 
+	public IHostProcess[] listAllProcesses(String exeNameFilter, String userNameFilter, String stateFilter, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
 		rpfs.setName(exeNameFilter);
 		rpfs.setUsername(userNameFilter);
 		rpfs.setSpecificState(stateFilter);
-		return listAllProcesses(monitor, rpfs);
+		return listAllProcesses(rpfs, monitor);
 	}
 
 	public IHostProcess[] listAllProcesses(IProgressMonitor monitor) throws SystemMessageException 
 	{
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
-		return listAllProcesses(monitor, rpfs);
+		return listAllProcesses(rpfs, monitor);
 	}
 
 	/**
@@ -50,39 +50,39 @@ public abstract class AbstractProcessService implements IProcessService
 	public IHostProcess[] listRootProcesses(IProgressMonitor monitor) throws SystemMessageException 
 	{
 		IHostProcess[] roots = new IHostProcess[1];
-		roots[0] = getProcess(monitor, 1);
+		roots[0] = getProcess(1, monitor);
 		return roots;
 	}
 
-	public IHostProcess[] listChildProcesses(IProgressMonitor monitor, long parentPID) throws SystemMessageException 
+	public IHostProcess[] listChildProcesses(long parentPID, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String pPidString = "" + parentPID; //$NON-NLS-1$
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
 		rpfs.setPpid(pPidString);
 		
-		return listAllProcesses(monitor, rpfs);
+		return listAllProcesses(rpfs, monitor);
 	}
 	
-	public IHostProcess[] listChildProcesses(IProgressMonitor monitor, long parentPID, IHostProcessFilter filter) throws SystemMessageException 
+	public IHostProcess[] listChildProcesses(long parentPID, IHostProcessFilter filter, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String pPidString = "" + parentPID; //$NON-NLS-1$
 		filter.setPpid(pPidString);
 		
-		return listAllProcesses(monitor, filter);
+		return listAllProcesses(filter, monitor);
 	}
 
-	public IHostProcess getParentProcess(IProgressMonitor monitor, long PID) throws SystemMessageException 
+	public IHostProcess getParentProcess(long pid, IProgressMonitor monitor) throws SystemMessageException 
 	{
-		return getProcess(monitor, getProcess(monitor, PID).getPPid());
+		return getProcess(getProcess(pid, monitor).getPPid(), monitor);
 	}
 
-	public IHostProcess getProcess(IProgressMonitor monitor, long PID) throws SystemMessageException 
+	public IHostProcess getProcess(long pid, IProgressMonitor monitor) throws SystemMessageException 
 	{
-		String pidString = "" + PID; //$NON-NLS-1$
+		String pidString = "" + pid; //$NON-NLS-1$
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
 		rpfs.setPid(pidString);
 		
-		IHostProcess[] results = listAllProcesses(monitor, rpfs);
+		IHostProcess[] results = listAllProcesses(rpfs, monitor);
 		if ((results == null) || (results.length == 0)) return null;
 		else return results[0];
 	}

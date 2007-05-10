@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -67,7 +68,7 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 		{
 			ISystemViewElementAdapter adapter = getSystemViewAdapter(element);
 			if (adapter != null)
-				children = adapter.getChildren(new NullProgressMonitor(), (IAdaptable)element);
+				children = adapter.getChildren((IAdaptable)element, new NullProgressMonitor());
 			else
 				children = super.getChildren(element);
 		}

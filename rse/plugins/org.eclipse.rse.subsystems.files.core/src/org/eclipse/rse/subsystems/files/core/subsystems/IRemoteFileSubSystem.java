@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -383,24 +384,24 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	/**
 	 * Set the last modified date for the given file or folder. Like a Unix "touch" operation.
 	 * Folder or file must exist on disk for this to succeed.
-	 * 
-	 * @param monitor the progress monitor
 	 * @param folderOrFile represents the object to be renamed.
 	 * @param newDate new date, in milliseconds from epoch, to assign.
+	 * @param monitor the progress monitor
+	 * 
 	 * @return false if the given folder/file didn't exist on disk (operation fails), else true. Throws an exception if anything fails.
 	 */
-	public boolean setLastModified(IProgressMonitor monitor, IRemoteFile folderOrFile, long newDate) throws RemoteFileSecurityException, RemoteFileIOException;
+	public boolean setLastModified(IRemoteFile folderOrFile, long newDate, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
 
 	/**
 	 * Set a files readonly permissions.
 	 * Folder or file must exist on disk for this to succeed.
-	 * 
-	 * @param monitor the progress monitor
 	 * @param folderOrFile represents the object to be renamed.
 	 * @param readOnly whether to set it to be readonly or not
+	 * @param monitor the progress monitor
+	 * 
 	 * @return false if the given folder/file didn't exist on disk (operation fails), else true. Throws an exception if anything fails.
 	 */
-	public boolean setReadOnly(IProgressMonitor monitor, IRemoteFile folderOrFile, boolean readOnly) throws RemoteFileSecurityException, RemoteFileIOException;
+	public boolean setReadOnly(IRemoteFile folderOrFile, boolean readOnly, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException;
 
 	
 	// ----------------------------

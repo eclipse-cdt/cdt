@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.services.search;
@@ -33,14 +33,14 @@ public abstract class AbstractSearchService implements ISearchService
 		_searches = new HashMap();
 	}
 	
-	public final void search(IProgressMonitor monitor, IHostSearchResultConfiguration searchConfig, IFileService fileService)
+	public final void search(IHostSearchResultConfiguration searchConfig, IFileService fileService, IProgressMonitor monitor)
 	{		
 		ISearchHandler handler = internalSearch(monitor, searchConfig, fileService);
 		_searches.put(searchConfig, handler);
 	}
 
 	
-	public final void cancelSearch(IProgressMonitor monitor, IHostSearchResultConfiguration searchConfig)
+	public final void cancelSearch(IHostSearchResultConfiguration searchConfig, IProgressMonitor monitor)
 	{
 		ISearchHandler handler = (ISearchHandler)_searches.get(searchConfig);
 		handler.cancel(monitor);

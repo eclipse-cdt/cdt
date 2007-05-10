@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.model;
@@ -107,7 +108,7 @@ public abstract class RemoteCommandShellOperation
 		try
 		{
 			RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-			_remoteCmdShell = _cmdSubSystem.runShell(new NullProgressMonitor(), _pwd);	
+			_remoteCmdShell = _cmdSubSystem.runShell(_pwd, new NullProgressMonitor());	
 		}
 		catch (Exception e)
 		{	
@@ -139,7 +140,7 @@ public abstract class RemoteCommandShellOperation
 		{
 			try
 			{
-				_cmdSubSystem.cancelShell(new NullProgressMonitor(), _remoteCmdShell);
+				_cmdSubSystem.cancelShell(_remoteCmdShell, new NullProgressMonitor());
 			}
 			catch (Exception e)
 			{				
@@ -185,7 +186,7 @@ public abstract class RemoteCommandShellOperation
 				
 				// echo command appended after ; so that
 				// it isn't treated like stdin for the intial command
-				_cmdSubSystem.sendCommandToShell(new NullProgressMonitor(), cmd + _cmdSeparator + echoCmd,  _remoteCmdShell);
+				_cmdSubSystem.sendCommandToShell(cmd + _cmdSeparator + echoCmd, _remoteCmdShell,  new NullProgressMonitor());
 																		
 			}
 			catch (Exception e)
@@ -206,7 +207,7 @@ public abstract class RemoteCommandShellOperation
 		{
 			try
 			{
-				_cmdSubSystem.sendCommandToShell(new NullProgressMonitor(), input,  _remoteCmdShell);
+				_cmdSubSystem.sendCommandToShell(input, _remoteCmdShell,  new NullProgressMonitor());
 																		
 			}
 			catch (Exception e)

@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -122,7 +122,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 	{
 		try
 		{
-		return _fileSubSystem.getFileService().getFile(null, _searchObject.getParentPath(), _searchObject.getName());
+		return _fileSubSystem.getFileService().getFile(_searchObject.getParentPath(), _searchObject.getName(), null);
 		}
 		catch (Exception e)
 		{

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Javier Montalvo Orús (Symbian) - patch for bug 163103 - NPE in filters
  * Martin Oberhuber (Wind River) - fix 168586 - isCaseSensitive() on Windows
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -169,7 +170,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		
 	}
 
-	public boolean upload(IProgressMonitor monitor, InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding) throws SystemMessageException 
+	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		boolean isCancelled = false;
 
@@ -284,7 +285,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 
 
-	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File destinationFile, boolean isBinary, String hostEncoding) throws SystemMessageException 
+	public boolean download(String remoteParent, String remoteFile, File destinationFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		File file = new File(remoteParent, remoteFile);
 		FileInputStream inputStream = null;
@@ -485,7 +486,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			return true;
 	}
 
-	public boolean upload(IProgressMonitor monitor, File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding) throws SystemMessageException
+	public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean isCancelled = false;
 		FileInputStream inputStream = null;
@@ -747,7 +748,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 
 
-	public IHostFile getFile(IProgressMonitor monitor, String remoteParent, String name) 
+	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor) 
 	{
 		if (name.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
 		{
@@ -788,7 +789,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 
 
-	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
+	public IHostFile createFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		File parentFile = new File(remoteParent);
 		File fileToCreate = new File(parentFile, fileName);
@@ -860,7 +861,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return avp.getVirtualPart();
 	}
 
-	public IHostFile createFolder(IProgressMonitor monitor, String remoteParent, String folderName) throws SystemMessageException
+	public IHostFile createFolder(String remoteParent, String folderName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		File folderToCreate = new File(remoteParent, folderName);
 		if (!folderToCreate.exists())
@@ -891,7 +892,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return new LocalVirtualHostFile(child);
 	}
 
-	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
+	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (fileName.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
 		{
@@ -964,7 +965,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return file.delete();
 	}
 
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) throws SystemMessageException
+	public boolean rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		File fileToRename = new File(remoteParent, oldName);
 		if (ArchiveHandlerManager.isVirtual(fileToRename.getAbsolutePath()))
@@ -977,7 +978,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) throws SystemMessageException
 	{
-		boolean retVal = rename(monitor, remoteParent, oldName, newName);
+		boolean retVal = rename(remoteParent, oldName, newName, monitor);
 		File newFile = new File(remoteParent, newName);
 		oldFile.renameTo(newFile.getAbsolutePath());
 		return retVal;
@@ -1011,7 +1012,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return false;
 	}
 
-	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException 
+	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		File sourceFolderOrFile = new File(srcParent, srcName);
 		File targetFolder = new File(tgtParent, tgtName);
@@ -1025,9 +1026,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				 *
 				 */
 		{
-			if (copy(monitor, srcParent, srcName, tgtParent, tgtName))
+			if (copy(srcParent, srcName, tgtParent, tgtName, monitor))
 			{
-				return delete(monitor, srcParent, srcName);
+				return delete(srcParent, srcName, monitor);
 			}
 			else return false;
 		}
@@ -1041,7 +1042,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 
 
-	public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException 
+	public boolean copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		File srcFile = new File(srcParent, srcName);
 		File tgtFile = new File(tgtParent, tgtName);
@@ -1303,24 +1304,24 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return !isWindows();
 	}
 
-	public boolean copyBatch(IProgressMonitor monitor, String[] srcParents, String[] srcNames, String tgtParent) throws SystemMessageException 
+	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		boolean ok = true;
 		for (int i = 0; i < srcParents.length; i++)
 		{
-			ok = ok && copy(monitor, srcParents[i], srcNames[i], tgtParent, srcNames[i]);
+			ok = ok && copy(srcParents[i], srcNames[i], tgtParent, srcNames[i], monitor);
 		}
 		return ok;
 	}
 
-	public boolean setLastModified(IProgressMonitor monitor, String parent, String name, long timestamp) 
+	public boolean setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) 
 	{
 		File file = new File(parent, name);
 		return file.setLastModified(timestamp);
 	}
 
-	public boolean setReadOnly(IProgressMonitor monitor, String parent,
-			String name, boolean readOnly) throws SystemMessageException 
+	public boolean setReadOnly(String parent, String name,
+			boolean readOnly, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		File file = new File(parent, name);
 		if (readOnly)
@@ -1371,9 +1372,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	/**
 	 * Gets the input stream to access the contents of a remote file.
 	 * @since 2.0
-	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(IProgressMonitor, String, String, boolean)
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(String, String, boolean, IProgressMonitor)
 	 */
-	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		
 		File file = new File(remoteParent, remoteFile);
 		InputStream stream = null;
@@ -1391,9 +1392,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	/**
 	 * Gets the output stream to write to a remote file.
 	 * @since 2.0
-	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(IProgressMonitor, String, String, boolean)
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(String, String, boolean, IProgressMonitor)
 	 */
-	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		
 		File file = new File(remoteParent, remoteFile);
 		OutputStream stream = null;

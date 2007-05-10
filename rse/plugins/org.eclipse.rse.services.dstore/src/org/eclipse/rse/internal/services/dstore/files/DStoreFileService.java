@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,7 +12,7 @@
  * 
  * Contributors:
  * Kevin Doyle (IBM) - Fix 183870 - Display File Exists Error
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -188,8 +188,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	
 
-	public boolean upload(IProgressMonitor monitor, InputStream inputStream, String remoteParent, String remoteFile,
-			boolean isBinary, String hostEncoding)
+	public boolean upload(InputStream inputStream, String remoteParent, String remoteFile, boolean isBinary,
+			String hostEncoding, IProgressMonitor monitor)
 	{
 		BufferedInputStream bufInputStream = null;
 
@@ -343,8 +343,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return true;
 	}
 
-	public boolean upload(IProgressMonitor monitor, File file, String remoteParent, String remoteFile,
-			boolean isBinary, String srcEncoding, String hostEncoding)
+	public boolean upload(File file, String remoteParent, String remoteFile, boolean isBinary,
+			String srcEncoding, String hostEncoding, IProgressMonitor monitor)
 	{
 		FileInputStream inputStream = null;
 		BufferedInputStream bufInputStream = null;
@@ -360,7 +360,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			// if the file is empty, create new empty file on host
 			if (totalBytes == 0)
 			{
-				IHostFile created = createFile(monitor, remoteParent, remoteFile);
+				IHostFile created = createFile(remoteParent, remoteFile, monitor);
 				return created.exists();
 			}
 		
@@ -560,8 +560,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	}
 
 
-	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile,
-			boolean isBinary, String encoding) throws SystemMessageException
+	public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary,
+			String encoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		DataElement universaltemp = getMinerElement();
 
@@ -606,7 +606,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
 			// need to refetch
-			DStoreHostFile hostFile = (DStoreHostFile)getFile(monitor, remoteParent, remoteFile);
+			DStoreHostFile hostFile = (DStoreHostFile)getFile(remoteParent, remoteFile, monitor);
 			de = hostFile._element;
 		}
 		long fileLength = DStoreHostFile.getFileLength(de.getSource());
@@ -715,7 +715,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return true;
 	}
 
-	public IHostFile getFile(IProgressMonitor monitor, String remoteParent, String name)
+	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor)
 	{
 		DataElement de = null;
 		if (name.equals(".") && name.equals(remoteParent)) //$NON-NLS-1$
@@ -822,10 +822,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	public IHostFile getUserHome()
 	{
-		return getFile(null, ".","."); //$NON-NLS-1$ //$NON-NLS-2$
+		return getFile(".", ".",null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
+	public IHostFile createFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + fileName;
 		DataElement de = getElementFor(remotePath);
@@ -846,7 +846,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}	
 	}
 
-	public IHostFile createFolder(IProgressMonitor monitor, String remoteParent, String folderName) throws SystemMessageException
+	public IHostFile createFolder(String remoteParent, String folderName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + folderName;
 		DataElement de = getElementFor(remotePath);
@@ -867,7 +867,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	}
 
-	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
+	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + fileName;
 		DataElement de = getElementFor(remotePath);
@@ -885,9 +885,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	}
 	
-	public boolean deleteBatch(IProgressMonitor monitor, String[] remoteParents, String[] fileNames) throws SystemMessageException
+	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
-		if (remoteParents.length == 1) return delete(monitor, remoteParents[0], fileNames[0]);
+		if (remoteParents.length == 1) return delete(remoteParents[0], fileNames[0], monitor);
 		
 		ArrayList dataElements = new ArrayList(remoteParents.length);
 		for (int i = 0; i < remoteParents.length; i++)
@@ -903,7 +903,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		else return true;
 	}
 
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) throws SystemMessageException
+	public boolean rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + oldName;
 		DataElement de = getElementFor(remotePath);
@@ -922,24 +922,24 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) throws SystemMessageException
 	{
-		boolean retVal = rename(monitor, remoteParent, oldName, newName);
+		boolean retVal = rename(remoteParent, oldName, newName, monitor);
 		String newPath = remoteParent + getSeparator(remoteParent) + newName;
 		oldFile.renameTo(newPath);
 		return retVal;
 	}
 
-	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException
+	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
 	{
 //		String src = srcParent + getSeparator(srcParent) + srcName;
 //		String tgt = tgtParent + getSeparator(tgtParent) + tgtName;
 //		boolean isVirtual = ArchiveHandlerManager.isVirtual(src) || ArchiveHandlerManager.isVirtual(tgt);
 		//if (isVirtual || isArchive)
 		{
-			if (copy(monitor, srcParent, srcName, tgtParent, tgtName))
+			if (copy(srcParent, srcName, tgtParent, tgtName, monitor))
 			{
 				try
 				{
-					delete(monitor, srcParent, srcName);
+					delete(srcParent, srcName, monitor);
 				}
 				catch (Exception e)
 				{
@@ -1042,7 +1042,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 	}
 
-	public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException
+	public boolean copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		DataStore ds = getDataStore();
 		String srcRemotePath = srcParent + getSeparator(srcParent) + srcName;
@@ -1096,7 +1096,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return false;
 	}
 
-	public boolean copyBatch(IProgressMonitor monitor, String[] srcParents, String[] srcNames, String tgtParent) throws SystemMessageException
+	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException
 	{
 		DataStore ds = getDataStore();
 		
@@ -1154,17 +1154,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 
 	
-	public IHostFile[] getFolders(IProgressMonitor monitor, String remoteParent, String fileFilter)
+	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
 	{
 		return fetch(monitor, remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS);
 	}
 	
-	public IHostFile[] getFiles(IProgressMonitor monitor, String remoteParent, String fileFilter)
+	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor)
 	{
 		return fetch(monitor, remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FILES);
 	}
 	
-	public IHostFile[] getFilesAndFolders(IProgressMonitor monitor, String remoteParent, String fileFilter)
+	public IHostFile[] getFilesAndFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
 	{
 		return fetch(monitor, remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_ALL);
 	}
@@ -1229,8 +1229,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return true;
 	}
 
-	public boolean setLastModified(IProgressMonitor monitor, String parent,
-			String name, long timestamp) throws SystemMessageException 
+	public boolean setLastModified(String parent, String name,
+			long timestamp, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String remotePath = parent + getSeparator(parent) + name;
 		DataElement de = getElementFor(remotePath);
@@ -1249,8 +1249,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return false;
 	}
 
-	public boolean setReadOnly(IProgressMonitor monitor, String parent,
-			String name, boolean readOnly) throws SystemMessageException 
+	public boolean setReadOnly(String parent, String name,
+			boolean readOnly, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String remotePath = parent + getSeparator(parent) + name;
 		DataElement de = getElementFor(remotePath);
@@ -1308,7 +1308,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#getInputStream(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, boolean)
 	 */
-	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException 
+	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
 		int mode;
@@ -1328,7 +1328,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, boolean)
 	 */
-	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
 		int mode;
 

@@ -15,6 +15,7 @@
  * Tobias Schwarz (Wind River) - [181394] Include Context in getAbsoluteName() for filter and pool references
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -242,17 +243,17 @@ public class SystemViewFilterReferenceAdapter
 	 *  <li>resolved objects for each filter string if user has elected NOT to show filter strings in his preferences
 	 * </ul>
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
+	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
 		return internalGetChildren(monitor, element);
 	}
 
 	/**
 	 * Gets all the children and then passes the children to the subsystem configuration adapter for filtering.
-	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getChildren(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.rse.ui.view.IContextObject)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getChildren(org.eclipse.rse.ui.view.IContextObject, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, IContextObject element) {
-		Object[] children = getChildren(monitor, element.getModelObject());
+	public Object[] getChildren(IContextObject element, IProgressMonitor monitor) {
+		Object[] children = getChildren(element.getModelObject(), monitor);
 		ISubSystem subsystem = element.getSubSystem();
 		ISubSystemConfiguration configuration = subsystem.getSubSystemConfiguration();
 		Object adapter = Platform.getAdapterManager().getAdapter(configuration, ISubSystemConfigurationAdapter.class);
@@ -400,11 +401,11 @@ public class SystemViewFilterReferenceAdapter
 					    
 						if (monitor == null)
 						{
-						    allChildren = ss.resolveFilterStrings(new NullProgressMonitor(), filterStrings);
+						    allChildren = ss.resolveFilterStrings(filterStrings, new NullProgressMonitor());
 						}
 						else
 						{
-						    allChildren = ss.resolveFilterStrings(monitor, filterStrings);
+						    allChildren = ss.resolveFilterStrings(filterStrings, monitor);
 						}
 						
 						if (allChildren == null)

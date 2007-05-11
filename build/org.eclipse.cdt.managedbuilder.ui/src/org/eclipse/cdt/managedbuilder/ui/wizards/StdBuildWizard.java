@@ -27,7 +27,7 @@ public class StdBuildWizard extends AbstractCWizard {
 		for (int i=0; i<tcs.length; i++)
 			if (isValid(tcs[i], supportedOnly, wizard)) 
 				h.addTc(tcs[i]);
-		EntryDescriptor wd = new EntryDescriptor(ID, null, NAME, false, h, null); 
+		EntryDescriptor wd = new EntryDescriptor(ID, null, NAME, true, h, null); 
 		return new EntryDescriptor[] {wd};
 		
 // test only: creating items like of Templates	

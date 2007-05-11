@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1535,7 +1536,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IHost connection = connections[i];
 			IRemoteFileSubSystem anFS = RemoteFileUtility.getFileSubSystem(connection);
-			if ( anFS != null && IRSESystemType.SYSTEMTYPE_LOCAL_ID.equals(anFS.getHost().getSystemType().getId()))
+			if ( anFS != null && anFS.getHost().getSystemType().isLocal())
 			{
 				return anFS;
 			}

@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -108,13 +109,11 @@ import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.PluginTransferData;
 import org.eclipse.ui.part.ResourceTransfer;
 
-
 /**
  * Registry for all connections.
  */
 public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvider
 {
-
 	private static Exception lastException = null;
 	private static SystemRegistry registry = null;
 	private SystemResourceChangeManager listenerManager = null;
@@ -1943,7 +1942,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 				}
 			}
 		}
-		if ((systemType != null) && (systemType.getId().equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID) && (v.size() == 0)))
+		if ((systemType != null) && (systemType.isLocal() && (v.size() == 0)))
 			v.addElement("localhost"); //$NON-NLS-1$
 		return (String[])v.toArray(new String[v.size()]);
 	}

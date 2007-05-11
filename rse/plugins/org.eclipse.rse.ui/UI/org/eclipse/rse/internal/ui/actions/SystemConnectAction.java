@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -20,16 +21,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
-
-//import org.eclipse.rse.core.ui.SystemMessage;
-
 
 /**
  * This is the action for connecting to the remote subsystem
@@ -49,7 +46,7 @@ public class SystemConnectAction extends SystemBaseAction
 		public IStatus run(IProgressMonitor monitor)
 		{
 			try {
-				if (_subsystem.getHost().getSystemType().getId().equals(IRSESystemType.SYSTEMTYPE_WINDOWS_ID))
+				if (_subsystem.getHost().getSystemType().isWindows())
 					_subsystem.connect(monitor, false);
 				else	
 				  	_subsystem.connect(monitor, true);

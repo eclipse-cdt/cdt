@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -712,7 +713,7 @@ public class SystemViewConnectionAdapter
 	    if (element instanceof IHost)
 	    {
 	    	IHost sysCon = (IHost) element;
-	    	if (sysCon.getSystemType().getId().equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID)) return existsMoreThanOneLocalConnection();
+	    	if (sysCon.getSystemType().isLocal()) return existsMoreThanOneLocalConnection();
 	        ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 	    	return !sr.isAnySubSystemConnected((IHost)element);
 	    }

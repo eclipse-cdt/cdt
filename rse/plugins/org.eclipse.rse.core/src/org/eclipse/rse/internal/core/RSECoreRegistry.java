@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  *
  * Contributors:
  * Uwe Stieber (Wind River) - Added system types provider extension.
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -146,7 +147,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 			IConfigurationElement element = elements[i];
 
 			if (element.getName().equals(ELEMENT_SYTEM_TYPE)) {
-				IRSESystemType type = new RSESystemType(element);
+				IRSESystemType type = new RSEStaticSystemType(element);
 				if (!typeIds.contains(type.getId())) {
 					types.add(type);
 					typeIds.add(type.getId());

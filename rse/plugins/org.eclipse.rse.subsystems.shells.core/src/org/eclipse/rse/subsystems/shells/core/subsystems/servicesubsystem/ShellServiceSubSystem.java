@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
@@ -34,13 +35,10 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.RemoteCmdSubSystem;
 
-
-
 public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements IShellServiceSubSystem 
 {
 	protected String _userHome = null;
 	protected IShellService _hostService;
-
 
 	public ShellServiceSubSystem(IHost host, IConnectorService connectorService, IShellService hostService)
 	{
@@ -62,13 +60,14 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 	{
 		if (_userHome == null)
 		{
-			if (getSystemType().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
-			{
-				_userHome = "c:\\"; //$NON-NLS-1$
-			}
-			else if (getSystemType().equals(IRSESystemType.SYSTEMTYPE_LOCAL))
+			IRSESystemType type = getHost().getSystemType();
+			if (type.isLocal())
 			{
 				_userHome = System.getProperty("user.home"); //$NON-NLS-1$
+			}
+			else if (type.isWindows())
+			{
+				_userHome = "c:\\"; //$NON-NLS-1$
 			}
 			else
 			{

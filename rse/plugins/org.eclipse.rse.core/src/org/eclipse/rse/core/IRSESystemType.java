@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Extended system type -> subsystemConfiguration association.
  * Martin Oberhuber (Wind River) - [185098] Provide constants for all well-known system types
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -24,7 +25,8 @@ import org.osgi.framework.Bundle;
  * Interface for a system type. Constants are defined for various system types.
  * These constants are kept in sync with definitions in plugin.xml.
  * 
- * This interface is not intended to be implemented by clients.
+ * This interface is not intended to be implemented directly by clients.
+ * Clients should extend the abstract base class {@link RSESystemType} instead.
  */
 public interface IRSESystemType extends IAdaptable {
 
@@ -35,7 +37,7 @@ public interface IRSESystemType extends IAdaptable {
 	public static final String SYSTEMTYPE_LINUX = "Linux"; //$NON-NLS-1$
 	
 	/**
-	 * Linus system type, "org.eclipse.rse.systemtype.linux".
+	 * Linux system type, "org.eclipse.rse.systemtype.linux".
 	 */
 	public static final String SYSTEMTYPE_LINUX_ID = "org.eclipse.rse.systemtype.linux"; //$NON-NLS-1$
 
@@ -133,9 +135,7 @@ public interface IRSESystemType extends IAdaptable {
 	 */
 	public static final String SYSTEMTYPE_WINDOWS = "Windows"; //$NON-NLS-1$
 
-	/**
-	 * Windows system type, "org.eclipse.rse.systemtype.windows".
-	 */
+	/** Windows system type, "org.eclipse.rse.systemtype.windows". */
 	public static final String SYSTEMTYPE_WINDOWS_ID = "org.eclipse.rse.systemtype.windows"; //$NON-NLS-1$
 	
 	/** Discovery system type, "org.eclipse.rse.systemtype.discovery". */
@@ -146,6 +146,28 @@ public interface IRSESystemType extends IAdaptable {
 	public static final String SYSTEMTYPE_SSH_ONLY_ID = "org.eclipse.rse.systemtype.ssh"; //$NON-NLS-1$
 	/** Telnet Only system type, "org.eclipse.rse.systemtype.telnet". */
 	public static final String SYSTEMTYPE_TELNET_ONLY_ID = "org.eclipse.rse.systemtype.telnet"; //$NON-NLS-1$
+	
+	/** 
+	 * System type Property Key (value: "isWindows") indicating whether 
+	 * a system type is declared in plugin.xml to refers to a Windows
+	 * system.
+	 * On a Windows system, the following properties are expected:
+	 * <ul>
+	 *   <li>File system is not case sensitive</li>
+	 *   <li>File system has root drives</li>
+	 *   <li>Symbolic links are not supported</li>
+	 *   <li>"cmd" is used as the default shell</li>
+	 * </ul>
+	 * @see #getProperty(String, boolean)
+	 */
+	public static final String PROPERTY_IS_WINDOWS = "isWindows"; //$NON-NLS-1$
+	
+	/**
+	 * System type Property Key (value: "isCaseSensitive") indicating
+	 * whether a given system type is in general case sensitive.
+	 * @see #getProperty(String, boolean)
+	 */
+	public static final String PROPERTY_IS_CASE_SENSITIVE = "isCaseSensitive"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the id of the system type.
@@ -182,6 +204,36 @@ public interface IRSESystemType extends IAdaptable {
 	 * @return the value associated with the given key or <code>null</code> if none
 	 */
 	public String getProperty(String key);
+	
+	/**
+	 * Returns the boolean property of this system type with the given key.
+	 * The default value is returned if there is no such key.
+	 * 
+	 * @param key the name of the property to return
+	 * @param defaultValue the default value to expect if the property is not set
+	 * @return the boolean value associated with the given key or the specified default value
+	 */
+	public boolean getProperty(String key, boolean defaultValue);
+	
+	/**
+	 * Tests whether the system type refers to the local system.
+	 * This is a shortcut for getId().equals(SYSTEMTYPE_LOCAL_ID)
+	 * Extenders (contributors of custom system types) may override.
+	 * @return true if the system type refers to the local system.
+	 */
+	public boolean isLocal();
+
+	/**
+	 * Tests whether the system type refers to the Windows system.
+	 * This is a shortcut for
+	 * <pre> 
+	 *   getId().equals(SYSTEMTYPE_WINDOWS_ID) || 
+	 *   isLocal() && System.getProperty("os.name").toLowerCase().startsWith("win")
+	 * </pre>
+	 * Extenders (contributors of custom system types) may override.
+	 * @return true if the system type refers to a Windows system.
+	 */
+	public boolean isWindows();
 
 	/**
 	 * Returns the bundle which is responsible for the definition of this system type.

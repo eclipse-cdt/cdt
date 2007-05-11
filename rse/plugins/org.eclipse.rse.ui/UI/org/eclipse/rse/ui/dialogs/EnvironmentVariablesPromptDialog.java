@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -108,24 +109,16 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 		// Set name and value limits for known system types
 		if (systemType != null)
 		{
-			if (systemType.equals("iSeries")) //$NON-NLS-1$
+			if (systemType.getId().equals(IRSESystemType.SYSTEMTYPE_ISERIES_ID))
 			{
 				nameTextField.setTextLimit(128);
 				valueTextField.setTextLimit(1024);
 			}
-			else if (systemType.equals("Windows")) //$NON-NLS-1$
+			else if (systemType.isWindows())
 			{
 				nameTextField.setTextLimit(300);
 				valueTextField.setTextLimit(1024);
 			}
-			else if (systemType.equals("Local")) //$NON-NLS-1$
-			{
-		        if (System.getProperty("os.name").toLowerCase().indexOf("win") != -1) //$NON-NLS-1$ //$NON-NLS-2$
-		        {
-					nameTextField.setTextLimit(300);
-					valueTextField.setTextLimit(1024);
-		        }
-			}			
 		}
 		
 		return parent;

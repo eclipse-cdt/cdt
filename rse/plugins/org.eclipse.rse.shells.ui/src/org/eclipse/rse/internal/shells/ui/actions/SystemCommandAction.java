@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -518,8 +519,7 @@ public class SystemCommandAction extends SystemBaseAction
 						}
 
 						String cdCmd = "cd " + PathUtility.enQuoteUnix(path); //$NON-NLS-1$
-						if ((cmdSubSystem.getHost().getSystemType().equals("Local") && System.getProperty("os.name").toLowerCase().startsWith("win")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							|| cmdSubSystem.getHost().getSystemType().equals("Windows")) //$NON-NLS-1$
+						if (cmdSubSystem.getHost().getSystemType().isWindows())
 						{
 							cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
 						}

@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -65,11 +66,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public boolean isWindows() {
-		String systemTypeId = fss.getHost().getSystemType().getName(); 
-		if (systemTypeId.equals("Local")) { //$NON-NLS-1$
-			return System.getProperty("os.name").toLowerCase().startsWith("win"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return systemTypeId.toLowerCase().startsWith("windows"); //$NON-NLS-1$
+		return fss.getHost().getSystemType().isWindows(); 
 	}
 	
 	public String getTestFileName() {

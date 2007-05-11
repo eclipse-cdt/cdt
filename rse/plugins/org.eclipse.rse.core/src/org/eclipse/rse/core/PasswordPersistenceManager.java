@@ -15,6 +15,7 @@
  *                     - updated to use new RSEPreferencesManager
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -32,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.internal.core.RSECoreMessages;
-import org.osgi.framework.Bundle;
 
 
 /**
@@ -78,28 +78,15 @@ public class PasswordPersistenceManager {
 	/**
 	 * Default System Type
 	 */
-	private static class DefaultSystemType implements IRSESystemType
+	private static class DefaultSystemType extends RSESystemType implements IRSESystemType
 	{
+		private static final String DEFAULT_ID = "DEFAULT"; //$NON-NLS-1$
 		private DefaultSystemType() {
-		}
-		public Bundle getDefiningBundle() {
-			return null;
-		}
-		public String getDescription() {
-			return getLabel();
+			super(DEFAULT_ID, DEFAULT_ID, RSECoreMessages.DefaultSystemType_Label, null, null);
 		}
 		public String getId() {
 			//TODO consider a space character at the beginning to ensure uniqueness
-			return "DEFAULT"; //$NON-NLS-1$
-		}
-		public String getLabel() {
-			return RSECoreMessages.DefaultSystemType_Label;
-		}
-		public String getName() {
-			return getId();
-		}
-		public String getProperty(String key) {
-			return null;
+			return DEFAULT_ID;
 		}
 		public String[] getSubsystemConfigurationIds() {
 			return null;

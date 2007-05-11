@@ -13,26 +13,24 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Dynamic system type provider extension.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.osgi.framework.Bundle;
+import org.eclipse.rse.core.RSESystemType;
 
 /**
- * Class representing a system type.
+ * Class representing a system type statically contributed through plugin.xml.
  */
-public class RSESystemType extends PlatformObject implements IRSESystemType {
+public class RSEStaticSystemType extends RSESystemType {
 
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
@@ -44,20 +42,14 @@ public class RSESystemType extends PlatformObject implements IRSESystemType {
 	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 	private static final String ATTR_SUBSYSTEMCONFIGURATIONS = "subsystemConfigurationIds"; //$NON-NLS-1$
 
-	private String id = null;
-	private String name = null;
-	private String label = null;
-	private String description = null;
-	private Map properties;
-	private Bundle definingBundle = null;
 	private String[] subsystemConfigurationIds;
-	
+
 	/**
 	 * Constructor for an object representing a system type.
 	 * @param element the configuration element describing the system type
 	 */
-	public RSESystemType(IConfigurationElement element) {
-
+	public RSEStaticSystemType(IConfigurationElement element) {
+		super();
 		id = element.getAttribute(ATTR_ID);
 		name = element.getAttribute(ATTR_NAME);
 		if (id==null) {
@@ -95,27 +87,6 @@ public class RSESystemType extends PlatformObject implements IRSESystemType {
 	}
 
 	/**
-	 * Checks whether two system types are the same.
-	 * 
-	 * System types are considered the same if they have the same ID.
-	 */
-	public boolean equals(Object obj) {
-		if (obj instanceof IRSESystemType) {
-			return id.equals( ((IRSESystemType)obj).getId() );
-		}
-		return false;
-	}
-
-	/**
-	 * Returns the hashCode for this system type.
-	 * 
-	 * The hashCode is the hashCode of its ID.
-	 */
-	public int hashCode() {
-		return id.hashCode();
-	}
-
-	/**
 	 * Loads properties defined for the system type.
 	 * @param element the configuration element
 	 */
@@ -133,63 +104,10 @@ public class RSESystemType extends PlatformObject implements IRSESystemType {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSESystemType#getId()
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSESystemType#getLabel()
-	 */
-	public String getLabel() {
-		// For default RSE system types, the UI label is equal to the
-		// name. Therefore, fallback to the name if the label is not
-		// explicitly set.
-		if (label == null) return getName();
-		return label;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSESystemType#getNameOfSystemTypeDeprecated()
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSESystemType#getDescription()
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSESystemType#getProperty(java.lang.String)
-	 */
-	public String getProperty(String key) {
-		return (String) (properties.get(key));
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSESystemType#getDefiningBundle()
-	 */
-	public Bundle getDefiningBundle() {
-		return definingBundle;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSESystemType#getSubsystemConfigurationIds()
 	 */
 	public String[] getSubsystemConfigurationIds() {
 		return subsystemConfigurationIds;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return getLabel() + " (" + getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-	}
 }

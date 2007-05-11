@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -131,7 +132,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 				  }
 				
 				  // check that everything was disconnedted okay and this is not the local connection
-				  if(sr.isAnySubSystemConnected(conn) && !IRSESystemType.SYSTEMTYPE_LOCAL_ID.equals(conn.getSystemType().getId()))
+				  if(sr.isAnySubSystemConnected(conn) && !conn.getSystemType().isLocal())
 				  {
 					  // backout changes, likely because user cancelled the disconnect
 					  sr.setHostOffline(conn, false);

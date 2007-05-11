@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -366,7 +367,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 				new EnvironmentVariablesPromptDialog(
 							getShell(), 
 							SystemResources.RESID_SUBSYSTEM_ENVVAR_ADD_TITLE, 
-							systemType.getName(),  
+							systemType,  
 							invalidNameChars, 
 							getVariableNames(),
 							false);
@@ -518,7 +519,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 					EnvironmentVariablesPromptDialog(
 						getShell(), 
 						SystemResources.RESID_SUBSYSTEM_ENVVAR_CHANGE_TITLE, 
-						systemType.getName(),  
+						systemType,  
 						invalidNameChars,  
 						getVariableNames(),
 						true);		

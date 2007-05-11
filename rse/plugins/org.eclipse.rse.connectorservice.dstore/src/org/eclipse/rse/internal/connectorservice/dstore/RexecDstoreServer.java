@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -360,7 +361,7 @@ public class RexecDstoreServer implements IServerLauncher
 		this.propertyInfo = propertyInfo;
 		// set path...
 		this.cwd = ((IRemoteServerLauncher)propertyInfo).getServerPath();
-		char separatorChar = signonInfo.getSystemType().equals("Windows") ? '\\' : '/';			 //$NON-NLS-1$
+		char separatorChar = signonInfo.getSystemType().isWindows() ? '\\' : '/';			 //$NON-NLS-1$
 		if (cwd.length() > 0 && cwd.charAt(cwd.length() - 1) != separatorChar)
 			cwd += separatorChar;
 	    // set script...

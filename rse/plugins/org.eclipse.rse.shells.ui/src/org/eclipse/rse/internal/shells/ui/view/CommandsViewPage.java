@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemThemeConstants 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -378,9 +379,7 @@ FocusListener
 						ISubSystem cmdSubSystem = adapter.getSubSystem(element);
 
 						String cdCmd = "cd " + PathUtility.enQuoteUnix(path); //$NON-NLS-1$
-						if (cmdSubSystem.getHost().getSystemType().getName().equals("Local") //$NON-NLS-1$
-							&& System.getProperty("os.name").toLowerCase().startsWith("win") //$NON-NLS-1$ //$NON-NLS-2$
-							|| cmdSubSystem.getHost().getSystemType().getName().equals("Windows")) //$NON-NLS-1$
+						if (cmdSubSystem.getHost().getSystemType().isWindows())
 						{
 							cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
 						}
@@ -397,9 +396,7 @@ FocusListener
 					ISubSystem cmdSubSystem = adapter.getSubSystem(element);
 
 					String cdCmd = "cd " + PathUtility.enQuoteUnix(path);  //$NON-NLS-1$
-					if (cmdSubSystem.getHost().getSystemType().getName().equals("Local") //$NON-NLS-1$
-						&& System.getProperty("os.name").toLowerCase().startsWith("win") //$NON-NLS-1$ //$NON-NLS-2$
-						|| cmdSubSystem.getHost().getSystemType().getName().equals("Windows")) //$NON-NLS-1$
+					if (cmdSubSystem.getHost().getSystemType().isWindows())
 					{
 						cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
 					}

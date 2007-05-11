@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -56,12 +57,16 @@ public class SystemStartHere
     * SAME AS: <code>getSystemRegistry().getConnectionsBySystemType(systemType)</code>
     * @param systemType One of the system types defined via system type extension point:
     * <ul>
-    *  <li>"iSeries" ({@link IRSESystemType#SYSTEMTYPE_ISERIES_ID})
-    *  <li>"Windows" ({@link IRSESystemType#SYSTEMTYPE_WINDOWS_ID})
-    *  <li>"z/OS" ({@link IRSESystemType#SYSTEMTYPE_ZSERIES_ID})
-    *  <li>"Unix" ({@link IRSESystemType#SYSTEMTYPE_UNIX_ID})
-    *  <li>"Linux" ({@link IRSESystemType#SYSTEMTYPE_LINUX_ID})
-    *  <li>"Local" ({@link IRSESystemType#SYSTEMTYPE_LOCAL_ID})
+    *  <li>"org.eclipse.rse.systemtype.iseries" ({@link IRSESystemType#SYSTEMTYPE_ISERIES_ID})
+    *  <li>"org.eclipse.rse.systemtype.windows" ({@link IRSESystemType#SYSTEMTYPE_WINDOWS_ID})
+    *  <li>"org.eclipse.rse.systemtype.zseries" ({@link IRSESystemType#SYSTEMTYPE_ZSERIES_ID})
+    *  <li>"org.eclipse.rse.systemtype.unix" ({@link IRSESystemType#SYSTEMTYPE_UNIX_ID})
+    *  <li>"org.eclipse.rse.systemtype.linux" ({@link IRSESystemType#SYSTEMTYPE_LINUX_ID})
+    *  <li>"org.eclipse.rse.systemtype.aix" ({@link IRSESystemType#SYSTEMTYPE_AIX_ID})
+    *  <li>"org.eclipse.rse.systemtype.local" ({@link IRSESystemType#SYSTEMTYPE_LOCAL_ID})
+    *  <li>"org.eclipse.rse.systemtype.ftp" ({@link IRSESystemType#SYSTEMTYPE_FTP_ID})
+    *  <li>"org.eclipse.rse.systemtype.ssh" ({@link IRSESystemType#SYSTEMTYPE_SSH_ID})
+    *  <li>"org.eclipse.rse.systemtype.telnet" ({@link IRSESystemType#SYSTEMTYPE_TELNET_ID})
     * </ul>
     * @see org.eclipse.rse.core.IRSESystemType
     * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySystemType(String)

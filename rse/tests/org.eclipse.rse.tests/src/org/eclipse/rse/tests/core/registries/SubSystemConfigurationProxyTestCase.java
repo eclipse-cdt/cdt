@@ -9,6 +9,7 @@
  * Uwe Stieber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  *******************************************************************************/
 package org.eclipse.rse.tests.core.registries;
 
@@ -59,7 +60,7 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 					for (int j = 0; j < systemTypes.length; j++) {
 						IRSESystemType systemType = systemTypes[j];
 						assertNotNull("Invalid null value in list of registered system types!", systemType); //$NON-NLS-1$
-						if ("Local".equalsIgnoreCase(systemType.getName()) || "Windows".equalsIgnoreCase(systemType.getName())) { //$NON-NLS-1$ //$NON-NLS-2$
+						if (systemType.isLocal() || systemType.isWindows()) {
 							assertTrue("Proxy is expected to be applicable, but returned not to be!", proxy.appliesToSystemType(systemType)); //$NON-NLS-1$
 						} else {
 							assertFalse("Proxy is expected not to be applicable, but returned to be!", proxy.appliesToSystemType(systemType)); //$NON-NLS-1$

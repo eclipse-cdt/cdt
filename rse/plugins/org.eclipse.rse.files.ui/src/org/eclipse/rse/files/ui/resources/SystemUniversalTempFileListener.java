@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -38,7 +39,6 @@ import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-
 /**
  * This class manages listening for resource changes within our temp file project
  * It is used for listening to saves made in the editor so that we can upload 
@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemUniversalTempFileListener extends SystemTempFileListener
 {
-
 	private static SystemUniversalTempFileListener _instance = null;
 
 	private ArrayList _editedFiles = new ArrayList();
@@ -133,7 +132,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 			else
 			{
 				// for mounting...
-				if (fs.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
+				if (fs.getHost().getSystemType().isLocal())
 				{
 					boolean isMounted = properties.getRemoteFileMounted();
 					if (isMounted)

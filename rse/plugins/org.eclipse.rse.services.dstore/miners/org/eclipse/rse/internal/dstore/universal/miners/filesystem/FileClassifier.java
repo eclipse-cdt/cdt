@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
+ * Martin Oberhuber (Wind River) - [186640] Fix case sensitive issue comparing z/OS 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -137,7 +138,7 @@ public class FileClassifier extends Thread
         {
             _systemSupportsClassify = false;
         }
-        else if (osName.equals("z/OS")) { //$NON-NLS-1$
+        else if (osName.equals("z/os")) { //$NON-NLS-1$
         	_systemSupportsClassFilesOnly = true;
         }
         

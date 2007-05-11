@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -40,8 +41,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.actions.SystemDownloadConflictAction;
@@ -80,11 +81,8 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-
 public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IPartListener, IResourceChangeListener, IResourceDeltaVisitor
 {
-
-
 	private IRemoteFile remoteFile;
 	private String remotePath;
 	private IRemoteFileSubSystem subsystem;
@@ -294,10 +292,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			if (remotePath == null)
 			{
 				// derive the path from the temporary file path
-				IHost connection = fs.getHost();
+				IRSESystemType systemType = fs.getHost().getSystemType();
 
 				// on windows systems, we need to take into account drives and different separators
-				boolean isWindows = connection.getSystemType().getName().equals("Local") || fs.getHost().getSystemType().getName().equals("Windows"); //$NON-NLS-1$  //$NON-NLS-2$
+				boolean isWindows = systemType.isWindows();
 
 				char fileSeparator = isWindows ? '\\' : '/';
 				StringBuffer tempRemotePath = new StringBuffer(""); //$NON-NLS-1$
@@ -908,7 +906,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public String getWorkspaceRemotePath(String remotePath)
 	{
-		if (subsystem != null && subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
+		if (subsystem != null && subsystem.getHost().getSystemType().isLocal())
 		{
 			return SystemRemoteEditManager.getInstance().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
 		}
@@ -918,7 +916,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	public String getActualHostFor(String remotePath)
 	{
 		String hostname = subsystem.getHost().getHostName();
-		if (subsystem != null && subsystem.getHost().getSystemType().getName().equals("Local")) //$NON-NLS-1$
+		if (subsystem != null && subsystem.getHost().getSystemType().isLocal())
 		{
 			String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
 			if (!result.equals(hostname))
@@ -1319,7 +1317,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		try
 		{
-			if (remoteFile.getSystemConnection().getSystemType().getName().equals("Local")) //$NON-NLS-1$
+			if (remoteFile.getSystemConnection().getSystemType().isLocal())
 			{
 				// Open local files "in-place", i.e. don't copy them to the 
 				// RemoteSystemsTempFiles project first

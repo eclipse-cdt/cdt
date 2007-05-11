@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [183165] Do not implement constant interfaces
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -920,19 +921,6 @@ public abstract class SubSystem extends RSEModelObject
     // Utility methods...
     // ------------------
     
-    /**
-     * Return the system type for this connection.
-     * FIXME Return an IRSESystemType instead
-     * @deprecated
-     */
-    public String getSystemType()
-    {
-    	IHost conn = getHost();
-    	if (conn == null || conn.getSystemType()==null)
-    	  return null;
-    	else
-    	  return conn.getSystemType().getName();
-    }
     /**
      * Return the host name for the connection this system's subsystem is associated with
      */

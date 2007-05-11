@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -33,6 +34,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -55,14 +57,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-
 /**
  * This class manages listening for resource changes within our temp file project
  * It is used for listening to saves made in the editor so that we can upload 
  * changes to the remote files.    */
 public abstract class SystemTempFileListener implements IResourceChangeListener
 {
-
 	private ArrayList _changedResources;
 	private ArrayList _ignoredFiles = new ArrayList();
 	private boolean _isSynching;
@@ -525,10 +525,10 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 			if (uploadPath == null)
 			{
 				// derive the path from the temporary file path
-				IHost connection = fs.getHost();
+				IRSESystemType systemType = fs.getHost().getSystemType();
 
 				// on windows systems, we need to take into account drives and different separators
-				boolean isWindows = connection.getSystemType().getName().equals("Local") || fs.getHost().getSystemType().getName().equals("Windows"); //$NON-NLS-1$  //$NON-NLS-2$
+				boolean isWindows = systemType.isWindows();
 
 				char fileSeparator = isWindows ? '\\' : '/';
 				StringBuffer remotePath = new StringBuffer(""); //$NON-NLS-1$

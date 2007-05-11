@@ -19,6 +19,7 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -215,7 +216,7 @@ public class Host extends RSEModelObject implements IHost {
 			String systemTypeId = systemType.getId();
 			boolean forceUC = systemTypeId.equals(IRSESystemType.SYSTEMTYPE_ISERIES_ID);
 			boolean caseSensitiveUID = systemTypeId.equals(IRSESystemType.SYSTEMTYPE_UNIX_ID) || systemTypeId.equals(IRSESystemType.SYSTEMTYPE_LINUX_ID)
-																	|| (systemTypeId.equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID) && !System.getProperty("os.name").toLowerCase().startsWith("windows")); //$NON-NLS-1$  //$NON-NLS-2$
+																	|| (systemType.isLocal() && !systemType.isWindows());
 			setForceUserIdToUpperCase(forceUC);
 			setUserIdCaseSensitive(caseSensitiveUID);
 		}

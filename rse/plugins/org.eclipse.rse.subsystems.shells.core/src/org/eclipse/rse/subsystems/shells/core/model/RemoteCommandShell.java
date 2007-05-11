@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.model;
@@ -33,11 +34,8 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
-
 public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandShell
 {
-
-
 	protected String _id;
 	protected String _name;
 	protected String _type;
@@ -47,8 +45,6 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	protected IRemoteCmdSubSystem  _cmdSubSystem;
 	protected ArrayList _cmdHistory;
 	protected IProject _project;
-
-	
 	
 	public RemoteCommandShell(IRemoteCmdSubSystem cmdSubSystem)
 	{
@@ -294,10 +290,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	
 	protected boolean isWindows()
 	{
-		String type = getCommandSubSystem().getHost().getSystemType().getName();
-		
-		return (type.equals("Windows") || //$NON-NLS-1$
-				type.equals("Local") && System.getProperty("os.name").toLowerCase().startsWith("win")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return getCommandSubSystem().getHost().getSystemType().isWindows();
 	}
 
 	

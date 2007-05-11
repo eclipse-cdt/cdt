@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -51,7 +52,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-
 /**
  * This is the abstraction of a subsystem specialized for remote execution of
  * commands.
@@ -59,7 +59,6 @@ import org.eclipse.swt.widgets.Shell;
 
 public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmdSubSystem, ICommunicationsListener
 {
-
 	private static String COMMAND_SHELLS_MEMENTO = "commandshells"; //$NON-NLS-1$
 	private static String ENVIRONMENT_VARS = "EnvironmentVariables"; //$NON-NLS-1$
 	
@@ -316,9 +315,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	public boolean isWindows()
 	{
-		String type = getSystemType();
-		return (type.equals("Windows") || type.equals("Local") //$NON-NLS-1$ //$NON-NLS-2$
-				&& System.getProperty("os.name").toLowerCase().startsWith("win")); //$NON-NLS-1$ //$NON-NLS-2$
+		return getHost().getSystemType().isWindows();
 	}
 
 	/**

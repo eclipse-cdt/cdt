@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -44,7 +45,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.connectorservice.dstore.util.ConnectionStatusListener;
 import org.eclipse.rse.connectorservice.dstore.util.StatusMonitor;
 import org.eclipse.rse.connectorservice.dstore.util.StatusMonitorFactory;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
@@ -1291,49 +1291,6 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		}
 	}
 
-//	/**
-//	* @see org.eclipse.rse.core.subsystems.AbstractConnectorService#getPasswordInformation()
-//	*/
-//	public SystemSignonInformation getPasswordInformation()
-//	{
-//		// For Windows we want to avoid the signon prompt (because we never
-//		// really authenticate with the remote system and this would be deceiving 
-//		// for the end user
-//
-//		if (getPrimarySubSystem().getHost().getSystemType().getName().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
-//		{
-//			String userid = getPrimarySubSystem().getUserId();
-//			if (userid == null)
-//			{
-//				userid = "remoteuser"; //$NON-NLS-1$
-//			}
-//			SystemSignonInformation info = new SystemSignonInformation(getPrimarySubSystem().getHost().getHostName(),
-//																	   userid, "", IRSESystemType.SYSTEMTYPE_WINDOWS); //$NON-NLS-1$
-//			return info;
-//		}
-//		else
-//		{
-//			return super.getPasswordInformation();
-//		}
-//	}
-
-//	/**
-//	 * @see AbstractConnectorService#hasPassword(boolean)
-//	 */
-//	public boolean isPasswordCached()
-//	{
-//		// For Windows we never prompt for userid / password so we don't need 
-//		// to clear the password cache
-//		if (getPrimarySubSystem().getHost().getSystemType().getName().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
-//		{
-//			return false;
-//		}
-//		else
-//		{
-//			return super.isPasswordCached();
-//		}
-//	}
-
 	public boolean supportsRemoteServerLaunching() 
 	{
 		return true;
@@ -1350,8 +1307,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	public boolean supportsPassword() {
 		boolean result = super.supportsPassword();
 		IHost host = getHost();
-		String systemType = host.getSystemType().getName();
-		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
+		if (host.getSystemType().isWindows()) {
 			result = false;
 		}
 		return result;
@@ -1362,9 +1318,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	 */
 	public boolean supportsUserId() {
 		boolean result = super.supportsUserId();
-		IHost host = getHost();
-		String systemType = host.getSystemType().getName();
-		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
+		if (getHost().getSystemType().isWindows()) {
 			result = false;
 		}
 		return result;

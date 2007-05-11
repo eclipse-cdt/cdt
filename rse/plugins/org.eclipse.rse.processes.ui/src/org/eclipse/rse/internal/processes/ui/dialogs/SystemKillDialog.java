@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.dialogs;
@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-
 
 /**
  * Dialog for confirming killing of a process or group of processes. User
@@ -128,7 +127,7 @@ public class SystemKillDialog extends SystemPromptDialog
         if (promptLabel == null) {
         	Object input = getInputObject();
         	
-        	if (input != null && input instanceof IStructuredSelection) {
+        	if (input instanceof IStructuredSelection) {
         		int size = ((IStructuredSelection)input).size();
         		
         		if (size > 1) {

@@ -12,12 +12,12 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -102,7 +102,7 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 			}
 			
 			// check that everything was disconnedted okay and this is not the local connection
-			if(sr.isAnySubSystemConnected(conn) && !IRSESystemType.SYSTEMTYPE_LOCAL.equals(conn.getSystemType().getName()))
+			if(sr.isAnySubSystemConnected(conn) && !conn.getSystemType().isLocal())
 			{
 				// backout changes, likely because user cancelled the disconnect
 				setChecked(false);

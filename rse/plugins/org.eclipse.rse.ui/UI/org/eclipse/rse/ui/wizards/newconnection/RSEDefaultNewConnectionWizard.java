@@ -14,6 +14,7 @@
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -47,7 +48,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-
 
 /**
  * Standard RSE new connection wizard implementation.
@@ -165,7 +165,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		} else {
 			IRSESystemType onlySystemType = getSystemType();
 
-			if (onlySystemType.getId().equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID)) {
+			if (onlySystemType.isLocal()) {
 				pageTitle = SystemResources.RESID_NEWCONN_PAGE1_LOCAL_TITLE;
 			} else {
 				pageTitle = SystemResources.RESID_NEWCONN_PAGE1_REMOTE_TITLE;

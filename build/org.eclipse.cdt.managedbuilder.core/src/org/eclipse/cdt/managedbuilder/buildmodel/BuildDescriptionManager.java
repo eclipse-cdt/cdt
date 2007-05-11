@@ -286,19 +286,23 @@ public class BuildDescriptionManager {
 		if(!location.isAbsolute())
 			return location;
 		
-		IPath path = null;
+//		IPath path = null;
 		IPath tmp = cwd;
+		StringBuffer buf = null;
 		while(tmp.segmentCount() != 0){
 			if(tmp.isPrefixOf(location)){
 				IPath p = location.removeFirstSegments(tmp.segmentCount()).setDevice(null);
-				if(path == null)
+				if(buf == null)
 					return p;
-				return path.append(p);
+				buf.append(p.makeRelative().toString());
+				return new Path(buf.toString());
 			}
-			if(path == null)
-				path = new Path("..");	//$NON-NLS-1$
-			else
-				path.append("..");	//$NON-NLS-1$
+			if(buf == null){
+				buf = new StringBuffer();
+				buf.append("../");	//$NON-NLS-1$
+			} else {
+				buf.append("../");	//$NON-NLS-1$
+			}
 			tmp = tmp.removeLastSegments(1);
 		}
 		

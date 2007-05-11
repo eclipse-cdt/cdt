@@ -22,7 +22,10 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -66,6 +69,52 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemCommandAction extends SystemBaseAction
 {
+	private class UpdateOutputRunnable implements Runnable
+	{
+		private SystemCommandsViewPart _cmdsPart;
+		private IRemoteCommandShell  _cmd;
+		public UpdateOutputRunnable(SystemCommandsViewPart cmdsPart, IRemoteCommandShell cmd)
+		{
+			_cmdsPart = cmdsPart;
+			_cmd = cmd;
+		}
+		
+		public void run()
+		{
+			_cmdsPart.updateOutput(_cmd);
+		}
+		
+	}
+	
+	private class RunShellJob extends Job
+	{
+		private IRemoteCmdSubSystem _ss;
+		private SystemCommandsViewPart _cmdsPart;
+		public RunShellJob(IRemoteCmdSubSystem ss, SystemCommandsViewPart cmdsPart)
+		{
+			super(ShellResources.ACTION_RUN_SHELL_LABEL);
+			_ss = ss;
+			_cmdsPart = cmdsPart;
+		}
+		
+		public IStatus run(IProgressMonitor monitor)
+		{
+			try
+			{
+				if (!_ss.isConnected())
+				{
+					connect(monitor, (SubSystem)_ss);
+				}
+				IRemoteCommandShell cmd = _ss.runShell(_selected, monitor);
+				Display.getDefault().asyncExec(new UpdateOutputRunnable(_cmdsPart, cmd));
+			}
+			catch (Exception e)
+			{
+				
+			}
+			return Status.OK_STATUS;
+		}
+	}
 	
 	public class PromptForPassword implements Runnable
 	{
@@ -526,25 +575,11 @@ public class SystemCommandAction extends SystemBaseAction
 			IRemoteCmdSubSystem cmdSubSystem = getCommandSubSystem();
 			if (cmdSubSystem != null)
 			{
-				if (cmdSubSystem.isConnected())
-				{
-					SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
-					SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
-					IRemoteCommandShell cmd = cmdSubSystem.runShell(_selected, new NullProgressMonitor());
-					cmdsPart.updateOutput(cmd);
-				}
-				else
-				{
-					connect(new NullProgressMonitor(), (SubSystem)cmdSubSystem);
-					if (cmdSubSystem.isConnected())
-					{
-						SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
-						SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
-						IRemoteCommandShell cmd = cmdSubSystem.runShell(_selected, new NullProgressMonitor());
-						cmdsPart.updateOutput(cmd);
-					}
-					//showInView(cmd);
-				}
+				SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
+				SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
+				
+				RunShellJob job = new RunShellJob(cmdSubSystem, cmdsPart);
+				job.schedule();
 			}
 
 		}

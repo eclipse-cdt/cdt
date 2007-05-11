@@ -34,9 +34,14 @@
 <li><b>Digital Signing</b> of plugins has been re-enabled now that the Platform 
   issues with it are fixed. All TM stuff on the update sites is digitally
   signed with the Eclipse certificate.</li>
-<li><b>Added User Actions and Import/Export</b> to downloadable builds -
-  User Actions still need some fixing, but Import/Export should work fine
+<li><b>Added Import/Export</b> to downloadable builds -
+  User Actions needs to be deferred to after TM 2.0
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170909">170909</a>].</li>
+<li><b>Added a Telnet Subsystem</b>. It can be activated by selecting the new
+  system type "Telnet Only", or by choosing it from the available services
+  on Linux, Unix or AIX. The telnet subsystem is currently still experimental
+  because of problems when passing invalid credentials.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178201">178201</a>].</li>
 <li><b>System Type Labels are now translatable</b>
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180688">180688</a>].</li>
 <li><b>Fixed some Encoding Issues</b>, most prominently with BIDI support

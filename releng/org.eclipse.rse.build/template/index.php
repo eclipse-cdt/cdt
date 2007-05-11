@@ -219,6 +219,9 @@
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
         <td>All</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-ssh-@buildId@.zip">RSE-runtime-ssh-@buildId@.zip</a></td></tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-telnet-@buildId@.zip">RSE-runtime-telnet-@buildId@.zip</a> (<i>Experimental</i>)</td></tr>
 </table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">

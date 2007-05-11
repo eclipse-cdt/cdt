@@ -10,6 +10,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Sheldon D'souza (Celunite) - adapted from SshConnectorService
  * Martin Oberhuber (Wind River) - apply refactorings for StandardConnectorService
+ * Martin Oberhuber (Wind River) - [178606] fix endless loop in readUntil()
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -54,7 +55,7 @@ public class TelnetConnectorService extends StandardConnectorService implements 
     private PrintStream out;
     private static final String PROMPT = "$"; //$NON-NLS-1$
     private static final String ARM_PROMT = "#"; //$NON-NLS-1$
-    private static final boolean arm_flag = true;
+    private static final boolean arm_flag = false;
 	
 	public TelnetConnectorService(IHost host) {
 		super(TelnetConnectorResources.TelnetConnectorService_Name, TelnetConnectorResources.TelnetConnectorService_Description, host, 0);
@@ -85,9 +86,10 @@ public class TelnetConnectorService extends StandardConnectorService implements 
             in = fTelnetClient.getInputStream();
             out = new PrintStream( fTelnetClient.getOutputStream() );
             if( !arm_flag ) {
-	            readUntil( "login: "); //$NON-NLS-1$
+            	//FIXME Bug 186536: Strings for "Login" and "Password" should be configurable
+	            readUntil( "ogin: "); //$NON-NLS-1$
 	            write( user );
-	            readUntil( "Password: "); //$NON-NLS-1$
+	            readUntil( "assword: "); //$NON-NLS-1$
 	            write( password );
 	            readUntil( PROMPT );
             }else {
@@ -109,29 +111,29 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 		
 	}
 	
-	public String readUntil( String pattern ) {
-		   try {
-			 char lastChar = pattern.charAt( pattern.length() - 1 );
-			 StringBuffer sb = new StringBuffer();
-			 boolean found = false;
-			 char ch = ( char )in.read();
-			 while( true ) {
-			  System.out.print( ch );
-			  sb.append( ch );
-			  if( ch == lastChar ) {
-			    if( sb.toString().endsWith( pattern ) ) {
-				 return sb.toString();
-			    }
-			  }
-			  ch = ( char )in.read();
-			 }
-		   }
-		   catch( Exception e ) {
-			 e.printStackTrace();
-		   }
-		   return null;
+	public String readUntil(String pattern) {
+		try {
+			char lastChar = pattern.charAt(pattern.length() - 1);
+			StringBuffer sb = new StringBuffer();
+			int ch = (char) in.read();
+			while (ch >= 0) {
+				char tch = (char) ch;
+				if (Activator.isTracingOn())
+					System.out.print(tch);
+				sb.append(tch);
+				if (tch == lastChar) {
+					if (sb.toString().endsWith(pattern)) {
+						return sb.toString();
+					}
+				}
+				ch = in.read();
+			}
+		} catch (Exception e) {
+			SystemBasePlugin.logError(e.getMessage()==null ? e.getClass().getName() : e.getMessage(), e);
+		}
+		return null;
 	}
-
+	
 	public void write( String value ) {
 	   try {
 		 out.println( value );

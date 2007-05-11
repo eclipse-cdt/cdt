@@ -103,6 +103,7 @@
 			<topic label="org.eclipse.rse.subsystems.shells.dstore" href="reference/api/org/eclipse/rse/subsystems/shells/dstore/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.shells.local" href="reference/api/org/eclipse/rse/subsystems/shells/local/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.shells.ssh" href="reference/api/org/eclipse/rse/subsystems/shells/ssh/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.shells.telnet" href="reference/api/org/eclipse/rse/subsystems/shells/telnet/package-summary.html"/>
 		</topic>
 		<topic label="User Interface" href="provisional_api.html">
 			<topic label="org.eclipse.rse.ui" href="reference/api/org/eclipse/rse/ui/package-summary.html"/>

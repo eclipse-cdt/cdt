@@ -24,6 +24,7 @@
 ;../org.eclipse.rse.subsystems.shells.dstore/src
 ;../org.eclipse.rse.subsystems.shells.local/src
 ;../org.eclipse.rse.subsystems.shells.ssh/src
+;../org.eclipse.rse.subsystems.shells.telnet/src
 ;../org.eclipse.rse.ui/model
 ;../org.eclipse.rse.ui/UI
 ;../org.eclipse.rse.ui/subsystems
@@ -120,6 +121,7 @@ org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem
 org.eclipse.rse.subsystems.shells.dstore
 org.eclipse.rse.subsystems.shells.local
 org.eclipse.rse.subsystems.shells.ssh
+org.eclipse.rse.subsystems.shells.telnet
 org.eclipse.rse.ui
 org.eclipse.rse.ui.actions
 org.eclipse.rse.ui.dialogs

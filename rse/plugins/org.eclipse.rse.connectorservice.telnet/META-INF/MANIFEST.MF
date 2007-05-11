@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.rse.connectorservice.telnet;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.rse.internal.connectorservice.telnet.Activator
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.rse.services.telnet,
+ org.eclipse.rse.services,
+ org.eclipse.rse.core,
+ org.eclipse.rse.ui,
+ org.eclipse.ui,
+ org.apache.commons.net
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.rse.internal.connectorservice.telnet;x-friends:="org.eclipse.rse.subsystems.shells.telnet"
+Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+

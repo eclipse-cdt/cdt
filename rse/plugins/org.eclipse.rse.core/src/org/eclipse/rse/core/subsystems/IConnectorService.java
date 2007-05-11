@@ -362,12 +362,14 @@ public interface IConnectorService extends IRSEModelObject {
 	IServerLauncher getRemoteServerLauncher();
 
 	/**
+	 * Test if this connector service requires a password.
 	 * @return true if this connector service supports passwords and 
 	 * requires a password to connect to its target system.
 	 */
 	boolean requiresPassword();
 
 	/**
+	 * Test if this connector service requires a user id.
 	 * @return true if this connector service understands the concept of a 
 	 * user id and requires one to connect to its target system.
 	 */

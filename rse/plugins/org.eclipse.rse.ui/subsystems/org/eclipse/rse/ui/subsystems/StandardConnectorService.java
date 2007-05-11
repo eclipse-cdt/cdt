@@ -43,21 +43,21 @@ public abstract class StandardConnectorService extends AuthenticatingConnectorSe
 	}
 	
 	/**
-	 * Indicates if this connector service understands passwords.
+	 * Determines if this connector service understand the concept of a password.
 	 * This implementation always returns true.
 	 * Override if necessary.
-	 * @return true
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsPassword()
+	 * @return true
 	 */
 	public boolean supportsPassword() {
 		return true;
 	}
 	
 	/**
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresPassword()
-	 * Indicates if this connector service requires a password.
+	 * Test if this connector service requires a password.
 	 * This implementation always returns true.
 	 * Override if necessary.
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresPassword()
 	 * @return true
 	 */
 	public boolean requiresPassword() {
@@ -65,21 +65,21 @@ public abstract class StandardConnectorService extends AuthenticatingConnectorSe
 	}
 	
 	/**
-	 * Indicates if this connector service understands user ids.
+	 * Reports if this connector service can use a user identifier.
 	 * This implementation always returns true.
 	 * Override if necessary.
-	 * @return true
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsUserId()
+	 * @return true
 	 */
 	public boolean supportsUserId() {
 		return true;
 	}
 	
 	/**
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresUserId()
-	 * Indicates if this connector service requires a user id.
+	 * Test if this connector service requires a user id.
 	 * This implementation always returns true.
 	 * Override if necessary.
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresUserId()
 	 * @return true
 	 */
 	public boolean requiresUserId() {

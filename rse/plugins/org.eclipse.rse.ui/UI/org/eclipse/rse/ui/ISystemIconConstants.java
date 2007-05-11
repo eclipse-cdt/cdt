@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -283,14 +284,6 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_SHOW_SHELL_ROOT 	= "systemshell"; //$NON-NLS-1$
 	public static final String ICON_SYSTEM_SHOW_SHELL      	= ICON_ACTIONS_DIR + ICON_SYSTEM_SHOW_SHELL_ROOT + ICON_EXT;
 	public static final String ICON_SYSTEM_SHOW_SHELL_ID  	= PREFIX + ICON_SYSTEM_SHOW_SHELL_ROOT + ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_EXPORT_SHELL_OUTPUT_ROOT 	= "exportshelloutput"; //$NON-NLS-1$
-	public static final String ICON_SYSTEM_EXPORT_SHELL_OUTPUT      	= ICON_ACTIONS_DIR + ICON_SYSTEM_EXPORT_SHELL_OUTPUT_ROOT + ICON_EXT;
-	public static final String ICON_SYSTEM_EXPORT_SHELL_OUTPUT_ID  	= PREFIX + ICON_SYSTEM_EXPORT_SHELL_OUTPUT_ROOT + ICON_SUFFIX;
-	
-	public static final String ICON_SYSTEM_EXPORT_SHELL_HISTORY_ROOT 	= "exportshellhistory"; //$NON-NLS-1$
-	public static final String ICON_SYSTEM_EXPORT_SHELL_HISTORY      	= ICON_ACTIONS_DIR + ICON_SYSTEM_EXPORT_SHELL_HISTORY_ROOT + ICON_EXT;
-	public static final String ICON_SYSTEM_EXPORT_SHELL_HISTORY_ID  	= PREFIX + ICON_SYSTEM_EXPORT_SHELL_HISTORY_ROOT + ICON_SUFFIX;
 
 	public static final String ICON_SYSTEM_REFRESH_ROOT = "refresh_nav"; //$NON-NLS-1$
 	public static final String ICON_SYSTEM_REFRESH = ICON_ACTIONS_DIR + ICON_SYSTEM_REFRESH_ROOT + ICON_EXT;

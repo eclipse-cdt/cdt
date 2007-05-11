@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions extension point
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -404,11 +405,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 						   path+ISystemIconConstants.ICON_SYSTEM_SHELLLIVE);
 		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_REMOVE_SHELL_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_REMOVE_SHELL);
-		
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_EXPORT_SHELL_OUTPUT_ID,
-				   			path+ISystemIconConstants.ICON_SYSTEM_EXPORT_SHELL_OUTPUT);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_EXPORT_SHELL_HISTORY_ID,
-				   			path+ISystemIconConstants.ICON_SYSTEM_EXPORT_SHELL_HISTORY);
 		
 		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_BLANK_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_BLANK);

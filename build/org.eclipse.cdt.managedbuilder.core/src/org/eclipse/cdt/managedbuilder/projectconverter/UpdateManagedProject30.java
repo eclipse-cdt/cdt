@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,13 @@ package org.eclipse.cdt.managedbuilder.projectconverter;
 
 import java.io.File;
 
+import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -49,9 +54,9 @@ public class UpdateManagedProject30 {
 
 		// No physical conversion is need since the 3.1 model is a superset of the 3.0 model 
 		// We need to upgrade the version
-		((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
-		info.setValid(true);		
-
+		((ManagedBuildInfo)info).setVersion("3.1.0");
+//		info.setValid(true);		
+		
 		// Save the updated file.
 		IWorkspace workspace = project.getWorkspace();
 //		boolean treeLock = workspace.isTreeLocked();

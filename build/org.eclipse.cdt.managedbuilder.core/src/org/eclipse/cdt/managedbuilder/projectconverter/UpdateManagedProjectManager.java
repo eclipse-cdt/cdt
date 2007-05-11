@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -42,7 +43,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class UpdateManagedProjectManager {
-	static private HashMap fUpdateManagers = new HashMap();
+	static private ThreadLocal fThreadInfo = new ThreadLocal();
 	static private IOverwriteQuery fBackupFileOverwriteQuery = null;
 	static private IOverwriteQuery fOpenQuestionQuery = null;
 	static private IOverwriteQuery fUpdateProjectQuery = null;
@@ -82,12 +83,13 @@ public class UpdateManagedProjectManager {
 	}
 	
 	static private UpdateManagedProjectManager getExistingUpdateManager(IProject project){
-		return (UpdateManagedProjectManager)fUpdateManagers.get(project.getName());
+		Map map = getManagerMap(false);
+		return map != null ? (UpdateManagedProjectManager)map.get(project.getName()) : null;
 	}
 
 	static private UpdateManagedProjectManager createUpdateManager(IProject project){
 		UpdateManagedProjectManager mngr = new UpdateManagedProjectManager(project);
-		fUpdateManagers.put(project.getName(),mngr);
+		getManagerMap(true).put(project.getName(),mngr);
 		return mngr;
 	}
 
@@ -95,7 +97,16 @@ public class UpdateManagedProjectManager {
 		UpdateManagedProjectManager mngr = getExistingUpdateManager(project);
 		if(mngr == null)
 			return;
-		fUpdateManagers.remove(project.getName());
+		getManagerMap(false).remove(project.getName());
+	}
+	
+	static private Map getManagerMap(boolean create){
+		Map map = (Map)fThreadInfo.get();
+		if(map == null && create){
+			map = new HashMap();
+			fThreadInfo.set(map);
+		}
+		return map;
 	}
 	
 	static protected PluginVersionIdentifier getManagedBuildInfoVersion(String version){
@@ -317,9 +328,13 @@ public class UpdateManagedProjectManager {
 			if(version.isEquivalentTo(new PluginVersionIdentifier(3,0,0))){
 				UpdateManagedProject30.doProjectUpdate(monitor, fProject);
 				version = getManagedBuildInfoVersion(info.getVersion());
+			} 
+			if (new PluginVersionIdentifier(4,0,0).isGreaterThan(version)){
+				UpdateManagedProject31.doProjectUpdate(monitor, fProject);
+				version = getManagedBuildInfoVersion(info.getVersion());
 			}
 	
-			if(/*!isCompatibleProject(info)*/ !version.equals(new PluginVersionIdentifier(3,1,0))){
+			if(!isCompatibleProject(info)){
 				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 						ConverterMessages.getFormattedString("UpdateManagedProjectManager.5",  //$NON-NLS-1$
 								new String [] {

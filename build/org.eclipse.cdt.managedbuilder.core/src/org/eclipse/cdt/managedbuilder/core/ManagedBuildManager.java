@@ -2590,6 +2590,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					return null;
 				}
 			}
+			
+			if(buildInfo == null){
+				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
+			}
 		}
 //		if (buildInfo == null && resource instanceof IProject)
 //			buildInfo = findBuildInfoSynchronized((IProject)resource, forceLoad);

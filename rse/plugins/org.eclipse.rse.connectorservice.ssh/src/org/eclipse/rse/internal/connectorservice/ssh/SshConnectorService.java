@@ -120,8 +120,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
         	Activator.trace("SshConnectorService.connected"); //$NON-NLS-1$
         } catch (JSchException e) {
         	Activator.trace("SshConnectorService.connect failed: "+e.toString()); //$NON-NLS-1$
-            if (session.isConnected())
-                session.disconnect();
+        	sessionDisconnect();
 			if(e.toString().indexOf("Auth cancel")>=0) {  //$NON-NLS-1$
 				throw new OperationCanceledException();
 			}
@@ -132,6 +131,23 @@ public class SshConnectorService extends StandardConnectorService implements ISs
         notifyConnection();
     }
 
+	/**
+	 * Disconnect the ssh session.
+	 * Synchronized in order to avoid NPE's from Jsch when called
+	 * quickly in succession.
+	 */
+	private synchronized void sessionDisconnect() {
+    	Activator.trace("SshConnectorService.sessionDisconnect"); //$NON-NLS-1$
+    	try {
+            if (session.isConnected())
+                session.disconnect();
+    	} catch(Exception e) {
+    		//Bug 175328: NPE on disconnect shown in UI
+    		//This is a non-critical exception so print only in debug mode
+    		if (Activator.isTracingOn()) e.printStackTrace();
+    	}
+	}
+	
 	protected void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
 		//TODO Will services like the sftp service be disconnected too? Or notified?
@@ -151,10 +167,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 					// Fire comm event to signal state about to change
 					fireCommunicationsEvent(CommunicationsEvent.BEFORE_DISCONNECT);
 				}
-
-				if (session.isConnected()) {
-					session.disconnect();
-				}
+				sessionDisconnect();
 				
 				// Fire comm event to signal state changed
 				notifyDisconnection();

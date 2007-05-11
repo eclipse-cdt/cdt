@@ -83,7 +83,15 @@ public class TelnetHostShell extends AbstractHostShell implements IHostShell {
 	public void exit() {
 		fShellWriter.stopThread();
 		try {
-			fSessionProvider.getTelnetClient().disconnect();
+			//TODO disconnect should better be done via the ConnectorService!!
+			//Because like we do it here, the connector service is not notified!
+			TelnetClient client = fSessionProvider.getTelnetClient();
+			if (client!=null) {
+				synchronized(client) {
+					if (client.isConnected())
+						client.disconnect();
+				}
+			}
 		} catch (IOException e) {
 		}
 

@@ -154,8 +154,12 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 	private synchronized void sessionDisconnect() {
     	Activator.trace("TelnetConnectorService.sessionDisconnect"); //$NON-NLS-1$
     	try {
-        	if (fTelnetClient!=null && fTelnetClient.isConnected())
-        		fTelnetClient.disconnect();
+        	if (fTelnetClient!=null) {
+        		synchronized(fTelnetClient) {
+        			if (fTelnetClient.isConnected())
+                		fTelnetClient.disconnect();
+        		}
+        	}
     	} catch(Exception e) {
     		//Avoid NPE on disconnect shown in UI
     		//This is a non-critical exception so print only in debug mode
@@ -438,9 +442,11 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 	}
 	
 	public boolean isConnected() {
-		boolean connected;
-		synchronized(this) {
-			connected = fTelnetClient.isConnected();
+		boolean connected = false;
+		if (fTelnetClient!=null) {
+			synchronized(fTelnetClient) {
+				connected = fTelnetClient.isConnected();
+			}
 		}
 		if (!connected && fSessionLostHandler!=null) {
 			Activator.trace("TelnetConnectorService.isConnected: false -> sessionLost"); //$NON-NLS-1$
@@ -450,11 +456,59 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 	}
 
 	/**
-	 * @return false
+	 * Test if this connector service requires a password.
+	 * Telnet connector service returns false since a password is
+	 * not necessarily required, i.e. the corresponding 
+	 * password field may be empty.
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
+	 * @return false
 	 */
 	public boolean requiresPassword() {
 		return false;
+	}
+
+	/**
+	 * Test if this connector service requires a user id.
+	 * Telnet connector service returns false since a user id
+	 * is not necessarily required, i.e. the corresponding 
+	 * user id field may be empty.
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
+	 * @return false
+	 */
+	public boolean requiresUserId() {
+		return false;
+	}
+
+	/**
+	 * Test if this connector service requires logging in.
+	 * @return false if the Property {@link #PROPERTY_LOGIN_REQUIRED}
+	 *   is set and false. Returns true otherwise.
+	 */
+	protected boolean supportsLogin() {
+		boolean result = true;
+		if (telnetPropertySet!=null) {
+			String login_required = telnetPropertySet.getPropertyValue(PROPERTY_LOGIN_REQUIRED);
+			if (login_required!=null && login_required.equalsIgnoreCase("false")) { //$NON-NLS-1$
+				result = false;
+			}
+		}
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.ui.subsystems.StandardConnectorService#supportsPassword()
+	 */
+	public boolean supportsPassword() {
+		return supportsLogin();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.ui.subsystems.StandardConnectorService#supportsUserId()
+	 */
+	public boolean supportsUserId() {
+		return supportsLogin();
 	}
 	
 }

@@ -133,6 +133,10 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 							tempAddress = addressText.getText();
 							addressText.setText(multicastAddress);
 						}
+						else
+						{
+							((Button)src).setSelection(false);
+						}
 				 }
 				 else
 				 {

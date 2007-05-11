@@ -10,6 +10,8 @@
 
 package org.eclipse.tm.discovery.protocol;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
@@ -142,15 +144,21 @@ public class ProtocolFactory {
 					
 					String[] pairs = multicastAddresses.split(";"); //$NON-NLS-1$
 					for (int j = 0; j < pairs.length; j++) {
-						String[] pair = pairs[j].split("#"); //$NON-NLS-1$
-						if(pair[0].equals(transportName))
+						
+						URI uri=null;
+						try {
+							uri = new URI(pairs[j]);
+						} catch (URISyntaxException e) {}
+						
+						if(uri!=null)
 						{
-							multiCastAddress = pair[1];
-							break;
+							if(uri.getScheme().equals(transportName))
+							{
+								multiCastAddress = uri.getSchemeSpecificPart();
+								break;
+							}
 						}
 					}
-					
-					
 				}
 		}
 		return multiCastAddress;

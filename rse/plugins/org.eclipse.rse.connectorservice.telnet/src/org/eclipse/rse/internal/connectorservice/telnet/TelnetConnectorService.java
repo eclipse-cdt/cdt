@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Sheldon D'souza (Celunite) - adapted from SshConnectorService
+ * Martin Oberhuber (Wind River) - apply refactorings for StandardConnectorService
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -24,27 +25,26 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.model.SystemSignonInformation;
-import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.ICredentialsProvider;
+import org.eclipse.rse.core.subsystems.ICredentials;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.services.telnet.ITelnetSessionProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.subsystems.StandardCredentialsProvider;
+import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-public class TelnetConnectorService extends AbstractConnectorService implements ITelnetSessionProvider  {
+public class TelnetConnectorService extends StandardConnectorService implements ITelnetSessionProvider  {
 	
 	private static final int TELNET_DEFAULT_PORT = 23;
 	private static final int CONNECT_DEFAULT_TIMEOUT = 60; //seconds
@@ -55,7 +55,6 @@ public class TelnetConnectorService extends AbstractConnectorService implements 
     private static final String PROMPT = "$"; //$NON-NLS-1$
     private static final String ARM_PROMT = "#"; //$NON-NLS-1$
     private static final boolean arm_flag = true;
-	private ICredentialsProvider credentialsProvider = null;
 	
 	public TelnetConnectorService(IHost host) {
 		super(TelnetConnectorResources.TelnetConnectorService_Name, TelnetConnectorResources.TelnetConnectorService_Description, host, 0);
@@ -78,9 +77,9 @@ public class TelnetConnectorService extends AbstractConnectorService implements 
         try {
         	Activator.trace("Telnet Service: Connecting....."); //$NON-NLS-1$
         	fTelnetClient.connect(host,TELNET_DEFAULT_PORT );
-        	SystemSignonInformation ssi = getPasswordInformation();
-            if (ssi!=null) {
-            	password = getPasswordInformation().getPassword();
+        	ICredentials cred = getCredentialsProvider().getCredentials();
+            if (cred!=null) {
+            	password = cred.getPassword();
             }
             
             in = fTelnetClient.getInputStream();
@@ -169,13 +168,6 @@ public class TelnetConnectorService extends AbstractConnectorService implements 
 		notifyDisconnection();
 	}
 	
-	protected ICredentialsProvider getCredentialsProvider() {
-		if (credentialsProvider == null) {
-			credentialsProvider = new StandardCredentialsProvider(this);
-		}
-		return credentialsProvider;
-	}
-	
 	public TelnetClient getTelnetClient() {
 		return fTelnetClient;
 	}
@@ -244,7 +236,7 @@ public class TelnetConnectorService extends AbstractConnectorService implements 
 		    	//runnableContext.run(false,true,this); // inthread, cancellable, IRunnableWithProgress
 		    	runnableContext.run(true,true,this); // fork, cancellable, IRunnableWithProgress
 		    	_connection.reset();
-				ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	    
+				ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();    	    
 	            sr.connectedStatusChange(_connection.getPrimarySubSystem(), false, true, true);
 			}
 	    	catch (InterruptedException exc) // user cancelled
@@ -408,7 +400,5 @@ public class TelnetConnectorService extends AbstractConnectorService implements 
 	public boolean requiresPassword() {
 		return false;
 	}
-	
-	
 	
 }

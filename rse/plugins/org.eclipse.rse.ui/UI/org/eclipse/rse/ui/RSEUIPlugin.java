@@ -255,12 +255,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_ROOTDRIVEOPEN_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_ROOTDRIVEOPEN);
 						
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_ENVVAR_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_ENVVAR);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_ENVVAR_LIBPATH_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_ENVVAR_LIBPATH);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_ENVVAR_PATH_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_ENVVAR_PATH);
 		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_PROCESS);
 
@@ -399,13 +393,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_WARNING_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_WARNING);	
 						
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_SHELL_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_SHELL);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_SHELLLIVE_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_SHELLLIVE);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_REMOVE_SHELL_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_REMOVE_SHELL);
-		
 		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_BLANK_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_BLANK);
 						   

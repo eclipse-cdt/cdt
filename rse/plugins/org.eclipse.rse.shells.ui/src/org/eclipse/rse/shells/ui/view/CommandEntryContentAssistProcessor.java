@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - fix 158766: content assist works 1st time only
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -33,6 +34,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
+import org.eclipse.rse.internal.shells.ui.ShellsUIPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -320,7 +322,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 	{
 		if (_envImage == null)
 		{
-			_envImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_ID).createImage();
+			_envImage = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_ENVVAR_ID).createImage();
 		}
 		return _envImage;
 	}

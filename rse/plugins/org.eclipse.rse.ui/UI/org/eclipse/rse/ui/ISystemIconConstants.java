@@ -101,18 +101,6 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_FOLDER      = ICON_MODEL_DIR + ICON_SYSTEM_FOLDER_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_FOLDER_ID   = PREFIX+ICON_SYSTEM_FOLDER_ROOT+ICON_SUFFIX;
 
-	public static final String ICON_SYSTEM_ENVVAR_ROOT = "systemenvvar";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_ENVVAR      = ICON_MODEL_DIR + ICON_SYSTEM_ENVVAR_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_ENVVAR_ID   = PREFIX+ICON_SYSTEM_ENVVAR+ICON_SUFFIX;
-	
-	public static final String ICON_SYSTEM_ENVVAR_LIBPATH_ROOT = "systemenvvarlibpath";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_ENVVAR_LIBPATH      = ICON_MODEL_DIR + ICON_SYSTEM_ENVVAR_LIBPATH_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_ENVVAR_LIBPATH_ID   = PREFIX+ICON_SYSTEM_ENVVAR_LIBPATH+ICON_SUFFIX;
-	
-	public static final String ICON_SYSTEM_ENVVAR_PATH_ROOT = "systemenvvarpath";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_ENVVAR_PATH      = ICON_MODEL_DIR + ICON_SYSTEM_ENVVAR_PATH_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_ENVVAR_PATH_ID   = PREFIX+ICON_SYSTEM_ENVVAR_PATH+ICON_SUFFIX;
-	
 	public static final String ICON_SYSTEM_PROCESS_ROOT = "systemprocess";	 //$NON-NLS-1$
 	public static final String ICON_SYSTEM_PROCESS      = ICON_MODEL_DIR + ICON_SYSTEM_PROCESS_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_PROCESS_ID   = PREFIX+ICON_SYSTEM_PROCESS+ICON_SUFFIX;
@@ -249,14 +237,6 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_WORKWITHCOMPILECMDS      = ICON_ACTIONS_DIR + ICON_SYSTEM_WORKWITHCOMPILECMDS_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_WORKWITHCOMPILECMDS_ID   = PREFIX+ICON_SYSTEM_WORKWITHCOMPILECMDS_ROOT+ICON_SUFFIX;
 	
-	public static final String ICON_SYSTEM_REMOVE_SHELL_ROOT = "removeshell";  //$NON-NLS-1$
-	public static final String ICON_SYSTEM_REMOVE_SHELL_ID = PREFIX + ICON_SYSTEM_REMOVE_SHELL_ROOT + ICON_SUFFIX;
-	public static final String ICON_SYSTEM_REMOVE_SHELL    = ICON_ACTIONS_DIR + ICON_SYSTEM_REMOVE_SHELL_ROOT + ICON_EXT;		
-
-	public static final String ICON_SYSTEM_CANCEL_SHELL_ROOT = "cancelshell";  //$NON-NLS-1$
-	public static final String ICON_SYSTEM_CANCEL_SHELL_ID = PREFIX + ICON_SYSTEM_CANCEL_SHELL_ROOT + ICON_SUFFIX;
-	public static final String ICON_SYSTEM_CANCEL_SHELL    = ICON_ACTIONS_DIR + ICON_SYSTEM_CANCEL_SHELL_ROOT + ICON_EXT;		
-
 	public static final String ICON_SYSTEM_EXTRACT_ROOT = "xtrctarchv_tsk";	 //$NON-NLS-1$
 	public static final String ICON_SYSTEM_EXTRACT      = ICON_ACTIONS_DIR + ICON_SYSTEM_EXTRACT_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_EXTRACT_ID   = PREFIX+ICON_SYSTEM_EXTRACT_ROOT+ICON_SUFFIX;
@@ -337,14 +317,6 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_SEARCH_RESULT_ID = PREFIX + ICON_SYSTEM_SEARCH_RESULT_ROOT + ICON_SUFFIX;
 	public static final String ICON_SYSTEM_SEARCH_RESULT    = ICON_OBJS_DIR + ICON_SYSTEM_SEARCH_RESULT_ROOT + ICON_EXT;	
 	
-	public static final String ICON_SYSTEM_SHELL_ROOT = "systemshell"; // not used yet //$NON-NLS-1$
-	public static final String ICON_SYSTEM_SHELL_ID = PREFIX + ICON_SYSTEM_SHELL_ROOT + ICON_SUFFIX;
-	public static final String ICON_SYSTEM_SHELL    = ICON_OBJS_DIR + ICON_SYSTEM_SHELL_ROOT + ICON_EXT;		
-
-	public static final String ICON_SYSTEM_SHELLLIVE_ROOT = "systemshelllive"; // not used yet //$NON-NLS-1$
-	public static final String ICON_SYSTEM_SHELLLIVE_ID = PREFIX + ICON_SYSTEM_SHELLLIVE_ROOT + ICON_SUFFIX;
-	public static final String ICON_SYSTEM_SHELLLIVE    = ICON_OBJS_DIR + ICON_SYSTEM_SHELLLIVE_ROOT + ICON_EXT;		
-
 	public static final String ICON_SYSTEM_PERSPECTIVE_ROOT ="system_persp"; //$NON-NLS-1$
 	public static final String ICON_SYSTEM_PERSPECTIVE_ID   = PREFIX + ICON_SYSTEM_PERSPECTIVE_ROOT + ICON_SUFFIX;
 	public static final String ICON_SYSTEM_PERSPECTIVE      = ICON_OBJS_DIR + ICON_SYSTEM_PERSPECTIVE_ROOT + ICON_EXT;

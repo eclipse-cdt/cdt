@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -41,6 +42,7 @@ import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.internal.files.ui.actions.SystemRemoteFileLineOpenWithMenu;
 import org.eclipse.rse.internal.shells.ui.ShellResources;
+import org.eclipse.rse.internal.shells.ui.ShellsUIPlugin;
 import org.eclipse.rse.internal.shells.ui.actions.SystemShowInShellViewAction;
 import org.eclipse.rse.internal.shells.ui.actions.SystemTerminateRemoveShellAction;
 import org.eclipse.rse.internal.shells.ui.actions.SystemTerminateShellAction;
@@ -79,7 +81,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 
@@ -593,7 +594,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		
 		public IStatus run(IProgressMonitor monitor)
 		{
-			Workbench.getInstance().getDisplay().asyncExec(_gotoLine);
+			PlatformUI.getWorkbench().getDisplay().asyncExec(_gotoLine);
 			return Status.OK_STATUS;
 		}
 	}
@@ -871,11 +872,11 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_COMMAND))
 			{
-				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
+				imageDescriptor = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_SHELL_ID);
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_PROMPT))
 			{
-				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
+				imageDescriptor = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_SHELL_ID);
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_PROCESS))
 			{
@@ -883,15 +884,15 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_ENVVAR))
 			{
-				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_ID);
+				imageDescriptor = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_ENVVAR_ID);
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_ENVVAR_LIBPATH))
 			{
-				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_LIBPATH_ID);
+				imageDescriptor = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_ENVVAR_LIBPATH_ID);
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_ENVVAR_PATH))
 			{
-				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_PATH_ID);
+				imageDescriptor = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_ENVVAR_PATH_ID);
 			}
 			else
 			{

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -35,6 +36,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.internal.shells.ui.ShellResources;
+import org.eclipse.rse.internal.shells.ui.ShellsUIPlugin;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.services.clientserver.PathUtility;
@@ -361,7 +363,7 @@ public class SystemCommandAction extends SystemBaseAction
 		this(
 			title,
 			tooltip,
-			isShell ? RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID) : RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RUN_ID),
+			isShell ? ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_SHELL_ID) : RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RUN_ID),
 			parent,
 			isShell,
 			cmdSubSystem);

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -24,13 +24,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.shells.ui.ShellsUIPlugin;
 import org.eclipse.rse.internal.shells.ui.actions.SystemCommandAction;
 import org.eclipse.rse.internal.shells.ui.actions.SystemExportShellHistoryAction;
 import org.eclipse.rse.internal.shells.ui.actions.SystemExportShellOutputAction;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
@@ -119,8 +119,7 @@ public class ShellServiceSubSystemConfigurationAdapter extends SubSystemConfigur
     {
         if (_activeShellImageDescriptor == null)
         {
-            _activeShellImageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELLLIVE_ID);
-            
+            _activeShellImageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_SHELLLIVE_ID);
         }
         return _activeShellImageDescriptor;
     }
@@ -132,7 +131,7 @@ public class ShellServiceSubSystemConfigurationAdapter extends SubSystemConfigur
     {
         if (_inactiveShellImageDescriptor == null)
         {
-            _inactiveShellImageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
+            _inactiveShellImageDescriptor = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_SHELL_ID);
         }
         return _inactiveShellImageDescriptor;
     }

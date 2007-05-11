@@ -39,6 +39,8 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 //int pi(aClass a);
 //int pie(aClass a);
 //int pies(aClass a);
+//template<class T>class tClass {public:tClass(T t);};
+//template<class T>void tFunc(T x, T y);
 	
 	public ParameterHintTests(String name) {
 		super(name);
@@ -68,8 +70,6 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		});
 	}
 	
-	////TODO move function into header once indexer supports templates
-	//template<class T>void tFunc(T x, T y);
 	//void foo(){tFunc(
 	public void testTemplateFunction() throws Exception {
 		assertParameterHints(new String[] {
@@ -77,10 +77,8 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		});
 	}
 	
-	////TODO move function into header once indexer supports templates
-	//template<class T>void tFunc(T x, T y);
 	//void foo(){tFunc<int>(
-	public void _testTemplateFunction2() throws Exception {
+	public void testTemplateFunction2() throws Exception {
 		assertParameterHints(new String[] {
 				"tFunc(T x,T y) void"
 		});
@@ -138,19 +136,14 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		});
 	}
 	
-	////TODO move class into header once indexer supports templates
-	//template<class T>class tClass {public:tClass(T t);};
 	//void foo(){tClass<int> t=new tClass<int>(
-	public void _testTemplateConstructor() throws Exception {
+	public void testTemplateConstructor() throws Exception {
 		assertParameterHints(new String[] {
-				"tClass(void)",
 				"tClass(T t)",
 				"tClass(const tClass &)"
 		});
 	}
 	
-	////TODO move class into header once indexer supports templates
-	//template<class T>class tClass {public:tClass(T t);};
 	//void foo(){tClass<int> t(
 	public void _testTemplateConstructor2() throws Exception {
 		assertParameterHints(new String[] {

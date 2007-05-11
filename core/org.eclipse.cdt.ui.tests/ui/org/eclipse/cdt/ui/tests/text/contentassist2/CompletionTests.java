@@ -31,6 +31,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	private static final String CURSOR_LOCATION_TAG = "/*cursor*/";
 	
 	protected int fCursorOffset;
+	private boolean fCheckExtraResults= true;
 
 //{CompletionTest.h}
 //class C1;
@@ -137,6 +138,26 @@ public class CompletionTests extends AbstractContentAssistTest {
 		sourceContent.delete(fCursorOffset, fCursorOffset+CURSOR_LOCATION_TAG.length());
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
+	}
+
+	/*
+	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest#doCheckExtraResults()
+	 */
+	protected boolean doCheckExtraResults() {
+		return fCheckExtraResults;
+	}
+	
+	private void setCheckExtraResults(boolean check) {
+		fCheckExtraResults= check;
+	}
+	
+	private void assertMinimumCompletionResults(int offset, String[] expected, int compareType) throws Exception {
+		setCheckExtraResults(false);
+		try {
+			assertCompletionResults(offset, expected, compareType);
+		} finally {
+			setCheckExtraResults(true);
+		}
 	}
 
 	protected void assertCompletionResults(int offset, String[] expected, int compareType) throws Exception {
@@ -672,7 +693,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//using namespace ns;void gfunc(){NSC/*cursor*/
 	public void testUsingDirective() throws Exception {
 		final String[] expected= {
-				"NSCONST"	
+				"NSCONST"
 		};
 		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
@@ -681,7 +702,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//void gfunc(){n/*cursor*/
 	public void testAutoColons() throws Exception {
 		final String[] expected= {
-				"ns::"	
+				"ns::"
 		};
 		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_REP_STRINGS);
@@ -690,7 +711,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//using namespace /*cursor*/
 	public void testAutoColons2() throws Exception {
 		final String[] expected= {
-				"ns"	
+				"ns"
 		};
 		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_REP_STRINGS);
@@ -710,7 +731,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 //		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor)fEditor);
 
 		final String[] expected= {
-				"aNewGlobalVar"	
+				"aNewGlobalVar"
 		};
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
@@ -718,9 +739,24 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//void Printer::InitPrinter(unsigned char port) {
 	//	Printer::/*cursor*/
 	public void testPrivateStaticMember_Bug109480() throws Exception {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109480
 		final String[] expected= {
-				"InitPrinter()", "port"	
+				"InitPrinter()", "port"
 		};
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
+
+	// class vector3 {
+	// public:
+	//   void blah(const vector3& v) { x += v./*cursor*/; }
+	//   float x;
+	// };
+	public void _testForwardMembersInInlineMethods_Bug185652() throws Exception {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=185652
+		final String[] expected= {
+				"x"
+		};
+		assertMinimumCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+
 }

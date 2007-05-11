@@ -193,7 +193,16 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			
 			token= scanner.previousToken(pos, bound);
 			
-			if (token == Symbols.TokenIDENT || token == Symbols.TokenGREATERTHAN) {
+			if (token == Symbols.TokenGREATERTHAN) {
+				// skip template arguments
+				pos= scanner.findOpeningPeer(pos - 1, '<', '>');
+				if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
+				pos= scanner.findNonWhitespaceBackward(pos - 1, bound);
+				if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
+				token= scanner.previousToken(pos, bound);
+			}
+			
+			if (token == Symbols.TokenIDENT) {
 				return pos + 1;
 			}
 		}

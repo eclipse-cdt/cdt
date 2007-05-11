@@ -92,6 +92,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		if (fDelegate instanceof PDOMIndexerTask) {
 			final PDOMIndexerTask task = (PDOMIndexerTask) fDelegate;
 			task.setUpateFlags(fUpdateOptions);
+			task.setAllFilesProvided(allFiles);
 		}
 	}
 

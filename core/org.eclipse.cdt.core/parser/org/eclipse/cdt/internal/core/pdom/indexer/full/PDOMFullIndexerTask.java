@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -65,20 +66,28 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 	public void run(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		try {
-			setupIndex();
-			registerTUsInReaderFactory(fChanged);
-			
-			// separate headers
+			// separate headers remove files that have no scanner configuration
+			final boolean filterFiles= !getIndexAllFiles() && getAllFilesProvided();
 			List headers= new ArrayList();
 			List sources= fChanged;
 			for (Iterator iter = fChanged.iterator(); iter.hasNext();) {
 				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				if (!tu.isSourceUnit()) {
+				if (tu.isSourceUnit()) {
+					if (filterFiles && CoreModel.isScannerInformationEmpty(tu.getResource())) {
+						iter.remove();
+						updateInfo(0, 0, -1);
+					}
+				}
+				else {
 					headers.add(tu);
 					iter.remove();
 				}
 			}
-					
+
+			setupIndex();
+			registerTUsInReaderFactory(sources);
+			registerTUsInReaderFactory(headers);
+								
 			Iterator i= fRemoved.iterator();
 			while (i.hasNext()) {
 				if (monitor.isCanceled())

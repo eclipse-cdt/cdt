@@ -117,7 +117,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			fProject= prj;
 		}
 		public void preferenceChange(PreferenceChangeEvent event) {
-			onPreferenceChange(fProject, event);
+			if (fProject.getProject().isOpen()) {
+				onPreferenceChange(fProject, event);
+			}
 		}
 	}
 
@@ -389,9 +391,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private void changeIndexer(ICProject cproject) throws CoreException {
 		assert !Thread.holdsLock(fProjectToPDOM);
-		IPDOMIndexer oldIndexer= null;
-		IProject prj= cproject.getProject();
 		
+		// if there is no indexer, don't touch the preferences.
+		IPDOMIndexer oldIndexer= getIndexer(cproject);
+		if (oldIndexer == null) {
+			return;
+		}
+		
+		IProject prj= cproject.getProject();
 		String newid= IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
 		Properties props= IndexerPreferences.getProperties(prj);
 		
@@ -640,8 +647,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			return;
 		}
 		
-		boolean allFiles= IndexerPreferences.getIndexAllFiles(project.getProject());
-		DeltaAnalyzer deltaAnalyzer = new DeltaAnalyzer(allFiles);
+		DeltaAnalyzer deltaAnalyzer = new DeltaAnalyzer();
 		deltaAnalyzer.analyzeDelta(delta);
 		ITranslationUnit[] added= deltaAnalyzer.getAddedTUs();
 		ITranslationUnit[] changed= deltaAnalyzer.getChangedTUs();

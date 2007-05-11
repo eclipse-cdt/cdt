@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -24,13 +23,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class DeltaAnalyzer {
-	private boolean fAllFiles;
 	private List fAdded= new ArrayList();
 	private List fChanged= new ArrayList();
 	private List fRemoved= new ArrayList();
 	
-	public DeltaAnalyzer(boolean allFiles) {
-		fAllFiles= allFiles;
+	public DeltaAnalyzer() {
 	}
 	
 	public void analyzeDelta(ICElementDelta delta) throws CoreException {
@@ -55,15 +52,11 @@ public class DeltaAnalyzer {
 				switch (delta.getKind()) {
 				case ICElementDelta.CHANGED:
 					if ((flags & ICElementDelta.F_CONTENT) != 0) {
-						if (fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource()) || tu.isHeaderUnit()) {
-							fChanged.add(tu);
-						}
+						fChanged.add(tu);
 					}
 					break;
 				case ICElementDelta.ADDED:
-					if (fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource()) || tu.isHeaderUnit()) {
-						fAdded.add(tu);
-					}
+					fAdded.add(tu);
 					break;
 				case ICElementDelta.REMOVED:
 					fRemoved.add(tu);
@@ -81,7 +74,7 @@ public class DeltaAnalyzer {
 	}
 
 	private void collectSources(ICContainer container, Collection sources) throws CoreException {
-		container.accept(new TranslationUnitCollector(sources, sources, fAllFiles, new NullProgressMonitor()));
+		container.accept(new TranslationUnitCollector(sources, sources, true, new NullProgressMonitor()));
 	}
 
 	public ITranslationUnit[] getAddedTUs() {

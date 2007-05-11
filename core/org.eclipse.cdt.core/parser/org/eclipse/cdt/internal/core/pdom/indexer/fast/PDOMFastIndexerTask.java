@@ -14,8 +14,10 @@ package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -39,7 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
-	private List fChanged = new ArrayList();
+	private List fChanged = new LinkedList();
 	private List fRemoved = new ArrayList();
 	private IWritableIndex fIndex;
 	private IndexBasedCodeReaderFactory fCodeReaderFactory;
@@ -58,10 +61,29 @@ class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 	public void run(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		try {
+			// separate headers remove files that have no scanner configuration
+			final boolean filterFiles= !getIndexAllFiles() && getAllFilesProvided();
+			List headers= new ArrayList();
+			List sources= fChanged;
+			for (Iterator iter = fChanged.iterator(); iter.hasNext();) {
+				ITranslationUnit tu = (ITranslationUnit) iter.next();
+				if (tu.isSourceUnit()) {
+					if (filterFiles && CoreModel.isScannerInformationEmpty(tu.getResource())) {
+						iter.remove();
+						updateInfo(0, 0, -1);
+					}
+				}
+				else {
+					headers.add(tu);
+					iter.remove();
+				}
+			}
+
 			setupIndexAndReaderFactory();
 			fIndex.acquireReadLock();
 			try {
-				registerTUsInReaderFactory();
+				registerTUsInReaderFactory(sources);
+				registerTUsInReaderFactory(headers);
 
 				Iterator i= fRemoved.iterator();
 				while (i.hasNext()) {
@@ -74,17 +96,6 @@ class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 					}
 					else {
 						updateInfo(0, 1, -1);
-					}
-				}
-
-				// separate headers
-				List headers= new ArrayList();
-				List sources= fChanged;
-				for (Iterator iter = fChanged.iterator(); iter.hasNext();) {
-					ITranslationUnit tu = (ITranslationUnit) iter.next();
-					if (!tu.isSourceUnit()) {
-						headers.add(tu);
-						iter.remove();
 					}
 				}
 
@@ -111,9 +122,9 @@ class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 		fCodeReaderFactory.setCallbackHandler(this);
 	}
 
-	private void registerTUsInReaderFactory() throws CoreException {
+	private void registerTUsInReaderFactory(Collection tus) throws CoreException {
 		int removed= 0;
-		for (Iterator iter = fChanged.iterator(); iter.hasNext();) {
+		for (Iterator iter = tus.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
 			IndexFileInfo info= fCodeReaderFactory.createFileInfo(ifl);

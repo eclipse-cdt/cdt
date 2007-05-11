@@ -71,6 +71,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	private String fDummyFileName;
 	private URI fDummyFileURI;
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
+	private boolean fAllFilesProvided= true;
 
 	protected PDOMIndexerTask(AbstractPDOMIndexer indexer) {
 		fIndexer= indexer;
@@ -116,6 +117,14 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		fFilesUpFront.addAll(Arrays.asList(fIndexer.getFilesToParseUpFront()));
 	}
 	
+	final public void setAllFilesProvided(boolean allFiles) {
+		fAllFilesProvided= allFiles;
+	}
+	
+	final public boolean getAllFilesProvided() {
+		return fAllFilesProvided;
+	}
+
 	/**
 	 * Checks whether a given debug option is enabled. See {@link IPDOMIndexerTask}
 	 * for valid values.
@@ -128,7 +137,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	}
 
 	/**
-	 * Figurues out whether all files (sources without config, headers not included)
+	 * Figures out whether all files (sources without configuration, headers not included)
 	 * should be parsed.
 	 * @since 4.0
 	 */

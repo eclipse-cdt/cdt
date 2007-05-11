@@ -380,7 +380,7 @@ public class IndexerPreferences {
 
 	public static int getUpdatePolicy(IProject project) {
 		// no support for project specific policies
-		Preferences[] prefs= getPreferences(null);
+		Preferences[] prefs= getInstancePreferencesArray();
 		return getUpdatePolicy(prefs);
 	}
 
@@ -401,9 +401,5 @@ public class IndexerPreferences {
 			}
 		}
 		return DEFAULT_UPDATE_POLICY;
-	}
-
-	public static boolean getIndexAllFiles(IProject project) {
-		return "true".equals(IndexerPreferences.get(project.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)); //$NON-NLS-1$
 	}
 }

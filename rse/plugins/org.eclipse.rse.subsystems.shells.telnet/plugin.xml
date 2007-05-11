@@ -13,26 +13,27 @@ Martin Oberhuber - initial API and implementation
 <plugin>
 	<extension point="org.eclipse.rse.core.systemTypes">
 		<systemType
-		      label="%TelnetSystemLabel"
-        	description="%TelnetSystemDescription"
-            icon="icons/full/obj16/systemcommands_obj.gif"
-            iconLive="icons/full/obj16/systemcommandslive_obj.gif"
-        	id="org.eclipse.rse.systemtype.telnet"
-	        name="Telnet Only"/>
+			description="%TelnetSystemDescription"
+			icon="icons/full/obj16/systemcommands_obj.gif"
+			iconLive="icons/full/obj16/systemcommandslive_obj.gif"
+			id="org.eclipse.rse.systemtype.telnet"
+			label="%TelnetSystemLabel"
+			name="Telnet Only"/>
 	</extension>
 	<extension
 		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
-			systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.telnet"
-			name="%TelnetShellSubsystemName"
-			description="%TelnetShellSubsystemDescription"
-			iconlive="icons/full/obj16/systemcommandslive_obj.gif"
-			icon="icons/full/obj16/systemcommands_obj.gif"
 			category="shells"
 			class="org.eclipse.rse.subsystems.shells.telnet.TelnetShellSubSystemConfiguration"
-			vendor="%providerName"
+			description="%TelnetShellSubsystemDescription"
+			icon="icons/full/obj16/systemcommands_obj.gif"
+			iconlive="icons/full/obj16/systemcommandslive_obj.gif"
+			id="telnet.shells"
+			name="%TelnetShellSubsystemName"
 			priority="300"
-			id="telnet.shells">
+			serviceType="_telnet._tcp"
+			systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.telnet"
+			vendor="%providerName">
 		</configuration>
 	</extension>
 

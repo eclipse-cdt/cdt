@@ -486,7 +486,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public boolean isConsistent() throws CModelException {
-		return CModelManager.getDefault().getElementsOutOfSynchWithBuffers().get(this) == null;
+		return isOpen() && CModelManager.getDefault().getElementsOutOfSynchWithBuffers().get(this) == null;
 	}
 
 	public void makeConsistent(IProgressMonitor monitor, boolean forced) throws CModelException {

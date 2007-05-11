@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions extension point
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
+ * Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -41,8 +42,6 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceListener;
 import org.eclipse.rse.core.SystemResourceManager;
-import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
-import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -106,8 +105,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	        	IProject remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject();
 	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
 			    SystemResourceManager.startResourceEventListening(listener);
-				
-				registerKeystoreProviders();
 				
 				// new support to allow products to not pre-create a local connection
 				if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
@@ -951,39 +948,4 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	  viewSuppliers.remove(vs);
     }
 	
-	protected void registerKeystoreProviders()
-	{
-		// Get reference to the plug-in registry
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		
-		// Get configured extenders
-		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "keystoreProviders"); //$NON-NLS-1$  //$NON-NLS-2$
-		     	
-		for (int i = 0; i < systemTypeExtensions.length; i++) 
-		{
-			try
-			{
-				// get the name space of the declaring extension
-			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespaceIdentifier();
-				
-			    String keystoreProviderType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
-			    
-				// use the name space to get the bundle
-			    Bundle bundle = Platform.getBundle(nameSpace);
-			    
-				
-			    if (bundle.getState() != Bundle.UNINSTALLED) 
-			    {
-			        Class keystoreProvider = bundle.loadClass(keystoreProviderType);
-					
-			        ISystemKeystoreProvider extension = (ISystemKeystoreProvider)keystoreProvider.getConstructors()[0].newInstance(null);
-			        SystemKeystoreProviderManager.getInstance().registerKeystoreProvider(extension);
-			    }
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
 }

@@ -13,6 +13,7 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
 Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions extension point
+Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -171,47 +172,6 @@ Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions exten
       <initializer class="org.eclipse.rse.internal.ui.propertypages.SystemPreferenceInitializer"/>   
    </extension>
    
-<!-- predefine known system types -->
-   <extension
-         point="org.eclipse.rse.core.systemTypes">
-      <systemType
-            description="%systemType.windows.description"
-            icon="icons/full/obj16/systemwin_obj.gif"
-            iconLive="icons/full/obj16/systemwinlive_obj.gif"
-            id="org.eclipse.rse.systemtype.windows"
-            label="%systemType.windows.label"
-            name="Windows"/>
-      <systemType
-            description="%systemType.linux.description"
-            icon="icons/full/obj16/systemlinux_obj.gif"
-            iconLive="icons/full/obj16/systemlinuxlive_obj.gif"
-            id="org.eclipse.rse.systemtype.linux"
-            label="%systemType.linux.label"
-            name="Linux"/>
-      <!--
-      <systemType id="org.eclipse.rse.systemtype.linux.power"
-            name="Power Linux"
-			description="%systemType.powerlinux.description"
-			icon="icons/full/obj16/systemlinux_obj.gif"
-			iconLive="icons/full/obj16/systemlinuxlive_obj.gif"/>
-      -->      
-      <systemType
-            description="%systemType.unix.description"
-            icon="icons/full/obj16/systemunix_obj.gif"
-            iconLive="icons/full/obj16/systemunixlive_obj.gif"
-            id="org.eclipse.rse.systemtype.unix"
-            label="%systemType.unix.label"
-            name="Unix"/>
-      <systemType
-            description="%systemType.local.description"
-            icon="icons/full/obj16/systemlocal_obj.gif"
-            iconLive="icons/full/obj16/systemlocallive_obj.gif"
-            id="org.eclipse.rse.systemtype.local"
-            label="%systemType.local.label"
-            name="Local"/>
-   </extension>
-
-
 <!-- ============================================ -->
 <!-- Define Workbench Properties Pages            -->
 <!-- ============================================ -->
@@ -436,22 +396,14 @@ Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions exten
    </extension>
 
 <!-- ================================================================= -->
-<!-- 		Define Archive Handlers extension point					   -->
-<!-- ================================================================= -->
-
-
-<!-- ================================================================= -->
 <!-- 		Define Mount Path Mappers extension point				   -->
 <!-- ================================================================= -->
    <extension-point id="mountPathMappers" name="%extPoint.mountPathMappers" schema="schema/mountPathMappers.exsd"/>
 
 <!-- ================================================================= -->
-<!-- 		Define Keystore Provider extension point -->
+<!-- 		Define newConnectionWizards extension point				   -->
 <!-- ================================================================= -->
-   <extension-point id="keystoreProviders" name="%extPoint.keystoreProviders" schema="schema/keystoreProviders.exsd"/>
-
    <extension-point id="newConnectionWizards" name="%extPoint.newConnectionWizard" schema="schema/newConnectionWizards.exsd"/>
-
 
 <!-- ================================================================= -->
 <!-- Define the Drop Actions                                           -->

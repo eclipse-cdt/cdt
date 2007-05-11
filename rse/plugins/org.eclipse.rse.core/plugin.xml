@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension-point id="systemTypes" name="%extPoint.systemTypes" schema="schema/systemTypes.exsd"/>
+<!-- ================================================================= -->
+<!-- 		Define keystoreProviders extension point                   -->
+<!-- ================================================================= -->
+   <extension-point id="keystoreProviders" name="%extPoint.keystoreProviders" schema="schema/keystoreProviders.exsd"/>
 
 <!-- ================================================================= -->
 <!-- 		Define Persistence Provider extension point -->
 <!-- ================================================================= -->
    <extension-point id="persistenceProviders" name="%extPoint.persistenceProviders" schema="schema/persistenceProviders.exsd"/>
-   <extension-point id="systemTypeProviders"
-   								  name="%extPoint.systemTypeProviders"
-   								  schema="schema/systemTypeProviders.exsd"/>
- 
-
-
-<!-- ========================================================================= -->
-<!-- Persistence Providers                                                     -->
-<!-- ========================================================================= -->  
- <extension
+   <!-- Pre-defined Persistence Providers -->
+   <extension
        point="org.eclipse.rse.core.persistenceProviders">
     <persistenceProvider
           autostart="false"
@@ -28,13 +23,62 @@
           class="org.eclipse.rse.internal.persistence.PropertyFileProvider"
           id="org.eclipse.rse.persistence.PropertyFileProvider"
           name="Property File Persistence Provider"/>
- </extension>
- <extension
+   </extension>
+
+<!-- ================================================================= -->
+<!-- 		Define systemTypes extension point                         -->
+<!-- ================================================================= -->
+   <extension-point id="systemTypes" name="%extPoint.systemTypes" schema="schema/systemTypes.exsd"/>
+   <extension-point id="systemTypeProviders"
+   								  name="%extPoint.systemTypeProviders"
+   								  schema="schema/systemTypeProviders.exsd"/>
+   <!-- Pre-defined system types -->
+   <extension
+         point="org.eclipse.rse.core.systemTypes">
+      <systemType
+            description="%systemType.windows.description"
+            icon="icons/full/obj16/systemwin_obj.gif"
+            iconLive="icons/full/obj16/systemwinlive_obj.gif"
+            id="org.eclipse.rse.systemtype.windows"
+            label="%systemType.windows.label"
+            name="Windows"/>
+      <systemType
+            description="%systemType.linux.description"
+            icon="icons/full/obj16/systemlinux_obj.gif"
+            iconLive="icons/full/obj16/systemlinuxlive_obj.gif"
+            id="org.eclipse.rse.systemtype.linux"
+            label="%systemType.linux.label"
+            name="Linux"/>
+      <!--
+      <systemType id="org.eclipse.rse.systemtype.linux.power"
+            name="Power Linux"
+			description="%systemType.powerlinux.description"
+			icon="icons/full/obj16/systemlinux_obj.gif"
+			iconLive="icons/full/obj16/systemlinuxlive_obj.gif"/>
+      -->      
+      <systemType
+            description="%systemType.unix.description"
+            icon="icons/full/obj16/systemunix_obj.gif"
+            iconLive="icons/full/obj16/systemunixlive_obj.gif"
+            id="org.eclipse.rse.systemtype.unix"
+            label="%systemType.unix.label"
+            name="Unix"/>
+      <systemType
+            description="%systemType.local.description"
+            icon="icons/full/obj16/systemlocal_obj.gif"
+            iconLive="icons/full/obj16/systemlocallive_obj.gif"
+            id="org.eclipse.rse.systemtype.local"
+            label="%systemType.local.label"
+            name="Local"/>
+   </extension>
+
+<!-- ================================================================= -->
+<!-- 		PreferencesInitializers                                    -->
+<!-- ================================================================= -->
+   <extension
        point="org.eclipse.core.runtime.preferences">
-    <initializer
-          class="org.eclipse.rse.internal.core.RSEPreferenceInitializer">
-    </initializer>
-  <initializer class="org.eclipse.rse.internal.logging.LoggingPreferenceInitializer"/>
- </extension>
+      <initializer class="org.eclipse.rse.internal.core.RSEPreferenceInitializer"/>
+	  <initializer class="org.eclipse.rse.internal.logging.LoggingPreferenceInitializer"/>
+   </extension>
  
 </plugin>

@@ -18,7 +18,6 @@ Require-Bundle: org.eclipse.ui,
 Import-Package: com.ibm.icu.text
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.core,
- org.eclipse.rse.core.comm,
  org.eclipse.rse.core.internal.subsystems;x-internal:=true,
  org.eclipse.rse.core.servicesubsystem,
  org.eclipse.rse.core.subsystems,

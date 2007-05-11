@@ -23,7 +23,7 @@ Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
         id="ssh.shells"
         name="%SshShellSubsystemName"
         priority="300"
-        serviceType="_ssh._tcp"
+        serviceType="_ssh._tcp;_sftp-ssh._tcp"
         systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.ssh"
         vendor="%providerName">
 		</configuration>

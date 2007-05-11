@@ -489,7 +489,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.AbstractFileService#internalFetch(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, int)
 	 */
-	protected IHostFile[] internalFetch(IProgressMonitor monitor, String parentPath, String fileFilter, int fileType) throws SystemMessageException
+	protected IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (monitor!=null){
 			if (monitor.isCanceled()) {

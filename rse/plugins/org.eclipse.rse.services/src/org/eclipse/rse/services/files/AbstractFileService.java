@@ -34,20 +34,20 @@ public abstract class AbstractFileService implements IFileService
  
 	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
 	{
-		return internalFetch(monitor, remoteParent, fileFilter, FILE_TYPE_FILES);
+		return internalFetch(remoteParent, fileFilter, FILE_TYPE_FILES, monitor);
 	}
 
 	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
 	{
-		return internalFetch(monitor, remoteParent, fileFilter, FILE_TYPE_FOLDERS);
+		return internalFetch(remoteParent, fileFilter, FILE_TYPE_FOLDERS, monitor);
 	}
 	
 	public IHostFile[] getFilesAndFolders(String parentPath, String fileFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
-		return internalFetch(monitor, parentPath, fileFilter, FILE_TYPE_FILES_AND_FOLDERS);
+		return internalFetch(parentPath, fileFilter, FILE_TYPE_FILES_AND_FOLDERS, monitor);
 	}
 	
-	protected abstract IHostFile[] internalFetch(IProgressMonitor monitor, String parentPath, String fileFilter, int fileType) throws SystemMessageException;
+	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 	
 	
 	protected boolean isRightType(int fileType, IHostFile node)

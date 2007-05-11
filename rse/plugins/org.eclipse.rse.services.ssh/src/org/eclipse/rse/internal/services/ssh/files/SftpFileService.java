@@ -282,7 +282,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return false;
 	}
 	
-	protected IHostFile[] internalFetch(IProgressMonitor monitor, String parentPath, String fileFilter, int fileType) throws SystemMessageException
+	protected IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (fileFilter == null) {
 			fileFilter = "*"; //$NON-NLS-1$

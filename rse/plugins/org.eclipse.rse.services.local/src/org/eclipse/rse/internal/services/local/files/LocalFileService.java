@@ -614,7 +614,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return true;
 	}
 	
-	protected IHostFile[] internalFetch(IProgressMonitor monitor, String remoteParent, String fileFilter, int type) {
+	protected IHostFile[] internalFetch(String remoteParent, String fileFilter, int type, IProgressMonitor monitor) {
 		LocalFileNameFilter fFilter = new LocalFileNameFilter(fileFilter, type);
 		File localParent = new File(remoteParent);
 		// if the system type is Windows, we get the canonical path so that we have the correct case in the path

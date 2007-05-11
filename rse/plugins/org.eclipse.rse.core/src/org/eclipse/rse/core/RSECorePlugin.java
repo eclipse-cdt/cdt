@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - added utility method for finding qualifiedHostNames
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
+ * Martin Oberhuber (Wind River) - [181939] Deferred class loading for keystoreProviders
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -24,7 +25,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.core.RSECoreRegistry;
@@ -119,7 +119,7 @@ public class RSECorePlugin extends Plugin {
 	}
 
 	/**
-	 * Returns a qualified hostname given a potentially unqualified hostname
+	 * Returns a qualified host name given a potentially unqualified host name
 	 */
 	public static String getQualifiedHostName(String hostName) {
 		try {
@@ -220,8 +220,11 @@ public class RSECorePlugin extends Plugin {
 	private void log(Throwable t) {
 		getLogger().logError("Unexpected Exception", t); //$NON-NLS-1$
 	}
-	
-	protected void registerKeystoreProviders()
+
+	/**
+	 * Register declared keystore providers.
+	 */
+	private void registerKeystoreProviders()
 	{
 		// Get reference to the plug-in registry
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -231,28 +234,16 @@ public class RSECorePlugin extends Plugin {
 		     	
 		for (int i = 0; i < systemTypeExtensions.length; i++) 
 		{
-			try
-			{
-				// get the name space of the declaring extension
-			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespaceIdentifier();
-				
-			    String keystoreProviderType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
-			    
-				// use the name space to get the bundle
-			    Bundle bundle = Platform.getBundle(nameSpace);
-				
-			    if (bundle.getState() != Bundle.UNINSTALLED) 
-			    {
-			        Class keystoreProvider = bundle.loadClass(keystoreProviderType);
-					
-			        ISystemKeystoreProvider extension = (ISystemKeystoreProvider)keystoreProvider.getConstructors()[0].newInstance(null);
-			        SystemKeystoreProviderManager.getInstance().registerKeystoreProvider(extension);
-			    }
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+			// get the name space of the declaring extension
+		    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespaceIdentifier();
+		    String keystoreProviderType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
+		    
+			// use the name space to get the bundle
+		    Bundle bundle = Platform.getBundle(nameSpace);
+		    if (bundle.getState() != Bundle.UNINSTALLED) 
+		    {
+		        SystemKeystoreProviderManager.getInstance().registerKeystoreProvider(bundle, keystoreProviderType);
+		    }
 		}
 	}
 	

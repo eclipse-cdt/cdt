@@ -2595,7 +2595,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 								new FileContextData(inputFileLocation, outputFileLocation, option, this));
 						if(info != null){
 							macroSubstitutor.setMacroContextInfo(info);
-							String[] list = CdtVariableResolver.resolveStringListValues(option.getStringListValue(), macroSubstitutor, true);
+							String[] list = CdtVariableResolver.resolveStringListValues(option.getBasicStringListValue(), macroSubstitutor, true);
 							if(list != null){
 								for (int j = 0; j < list.length; j++) {
 									String temp = list[j];
@@ -2614,7 +2614,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 							new FileContextData(inputFileLocation, outputFileLocation, option, this));
 					if(info != null) {
 						macroSubstitutor.setMacroContextInfo(info);
-						String[] paths = CdtVariableResolver.resolveStringListValues(option.getIncludePaths(), macroSubstitutor, true);
+						String[] paths = CdtVariableResolver.resolveStringListValues(option.getBasicStringListValue(), macroSubstitutor, true);
 						if(paths != null){
 							for (int j = 0; j < paths.length; j++) {
 								String temp = paths[j];
@@ -2633,7 +2633,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 							new FileContextData(inputFileLocation, outputFileLocation, option, this));
 					if(info != null){
 						macroSubstitutor.setMacroContextInfo(info);
-						String[] symbols = CdtVariableResolver.resolveStringListValues(option.getDefinedSymbols(), macroSubstitutor, true);
+						String[] symbols = CdtVariableResolver.resolveStringListValues(option.getBasicStringListValue(), macroSubstitutor, true);
 						if(symbols != null){
 							for (int j = 0; j < symbols.length; j++) {
 								String temp = symbols[j];

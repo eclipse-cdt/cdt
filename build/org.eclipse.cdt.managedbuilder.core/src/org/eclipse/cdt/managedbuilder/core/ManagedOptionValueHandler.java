@@ -125,7 +125,7 @@ public class ManagedOptionValueHandler implements
 					break;
 				case IOption.INCLUDE_PATH:
 				case IOption.UNDEF_INCLUDE_PATH:
-					if (Arrays.equals(option.getIncludePaths(), (String[])defaultValue)) {
+					if (Arrays.equals(option.getBasicStringListValue(), (String[])defaultValue)) {
 						return true;
 					}
 					break;
@@ -136,7 +136,7 @@ public class ManagedOptionValueHandler implements
 					break;
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
-					if (Arrays.equals(option.getDefinedSymbols(), (String[])defaultValue)) {
+					if (Arrays.equals(option.getBasicStringListValue(), (String[])defaultValue)) {
 						return true;
 					}
 					break;

@@ -105,7 +105,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 			
 			IHost conn = null;
 			try {
-				IRSESystemType discoveryType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById("org.eclipse.rse.systemtype.discovery"); //$NON-NLS-1$
+				IRSESystemType discoveryType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_DISCOVERY_ID);
 				conn = registry.createHost(discoveryType, "Discovery@" + hostName, hostName, "Discovered services in "+hostName);//$NON-NLS-1$ //$NON-NLS-2$
 			} catch (Exception e) {
 				RSEUIPlugin.getTheSystemRegistry().deleteHost(conn);

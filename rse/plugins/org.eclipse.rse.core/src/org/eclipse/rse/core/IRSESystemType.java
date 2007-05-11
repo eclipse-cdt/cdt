@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Uwe Stieber (Wind River) - Extended system type -> subsystemConfiguration association.
+ * Martin Oberhuber (Wind River) - [185098] Provide constants for all well-known system types
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -136,6 +137,15 @@ public interface IRSESystemType extends IAdaptable {
 	 * Windows system type, "org.eclipse.rse.systemtype.windows".
 	 */
 	public static final String SYSTEMTYPE_WINDOWS_ID = "org.eclipse.rse.systemtype.windows"; //$NON-NLS-1$
+	
+	/** Discovery system type, "org.eclipse.rse.systemtype.discovery". */
+	public static final String SYSTEMTYPE_DISCOVERY_ID = "org.eclipse.rse.systemtype.discovery"; //$NON-NLS-1$
+	/** FTP Only system type, "org.eclipse.rse.systemtype.ftp". */
+	public static final String SYSTEMTYPE_FTP_ONLY_ID = "org.eclipse.rse.systemtype.ftp"; //$NON-NLS-1$
+	/** SSH Only system type, "org.eclipse.rse.systemtype.ssh". */
+	public static final String SYSTEMTYPE_SSH_ONLY_ID = "org.eclipse.rse.systemtype.ssh"; //$NON-NLS-1$
+	/** Telnet Only system type, "org.eclipse.rse.systemtype.telnet". */
+	public static final String SYSTEMTYPE_TELNET_ONLY_ID = "org.eclipse.rse.systemtype.telnet"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the id of the system type.

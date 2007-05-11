@@ -189,14 +189,14 @@ public class RSEInternalFrameworkTestCase extends RSEBaseConnectionTestCase {
 		
 		// test the loading with partial connection information (with defauls)
 		Properties props = new Properties();
-		props.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID, "org.eclipse.rse.systemtype.ssh"); //$NON-NLS-1$
+		props.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID, IRSESystemType.SYSTEMTYPE_SSH_ONLY_ID);
 		props.setProperty(IRSEConnectionProperties.ATTR_USERID, "local_user"); //$NON-NLS-1$
 		props.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, "local_passwd"); //$NON-NLS-1$
 		properties = getConnectionManager().loadConnectionProperties(props, true);
 		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
 		assertEquals("Property name does not match!", "Local", properties.getProperty(IRSEConnectionProperties.ATTR_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull("Property profile name does not match!", properties.getProperty(IRSEConnectionProperties.ATTR_PROFILE_NAME)); //$NON-NLS-1$
-		assertEquals("Property system type does not match!", "org.eclipse.rse.systemtype.ssh", properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property system type does not match!", IRSESystemType.SYSTEMTYPE_SSH_ONLY_ID, properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Property remote system address does not match!", "localhost", properties.getProperty(IRSEConnectionProperties.ATTR_ADDRESS)); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Property user id does not match!", "local_user", properties.getProperty(IRSEConnectionProperties.ATTR_USERID)); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Property password does not match!", "local_passwd", properties.getProperty(IRSEConnectionProperties.ATTR_PASSWORD)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -206,7 +206,7 @@ public class RSEInternalFrameworkTestCase extends RSEBaseConnectionTestCase {
 		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
 		assertNull("Property name does not match!", properties.getProperty(IRSEConnectionProperties.ATTR_NAME)); //$NON-NLS-1$
 		assertNull("Property profile name does not match!", properties.getProperty(IRSEConnectionProperties.ATTR_PROFILE_NAME)); //$NON-NLS-1$
-		assertEquals("Property system type does not match!", "org.eclipse.rse.systemtype.ssh", properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property system type does not match!", IRSESystemType.SYSTEMTYPE_SSH_ONLY_ID, properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull("Property remote system address does not match!", properties.getProperty(IRSEConnectionProperties.ATTR_ADDRESS)); //$NON-NLS-1$
 		assertEquals("Property user id does not match!", "local_user", properties.getProperty(IRSEConnectionProperties.ATTR_USERID)); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Property password does not match!", "local_passwd", properties.getProperty(IRSEConnectionProperties.ATTR_PASSWORD)); //$NON-NLS-1$ //$NON-NLS-2$

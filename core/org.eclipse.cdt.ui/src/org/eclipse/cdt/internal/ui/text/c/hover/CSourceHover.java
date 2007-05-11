@@ -250,9 +250,9 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			if (DEBUG) System.out.println("[CSourceHover] Computing source for " + new String(name.toCharArray()) + " in " + fileName);  //$NON-NLS-1$//$NON-NLS-2$
 			IPath location= Path.fromOSString(fileName);
 			LocationKind locationKind= LocationKind.LOCATION;
-			if (name instanceof IASTName) {
+			if (name instanceof IASTName && !name.isReference()) {
 				IASTName astName= (IASTName)name;
-				if (astName.getContainingFilename().equals(fileName) && fTU.getResource() != null) {
+				if (astName.getTranslationUnit().getFilePath().equals(fileName) && fTU.getResource() != null) {
 					// reuse editor buffer for names local to the translation unit
 					location= fTU.getResource().getFullPath();
 					locationKind= LocationKind.IFILE;

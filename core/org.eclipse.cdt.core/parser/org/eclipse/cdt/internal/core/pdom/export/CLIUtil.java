@@ -16,11 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.export.Messages;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /**
  * Helper methods for command-line options
@@ -43,7 +40,7 @@ public class CLIUtil {
 		List list = (List) arguments.get(opt);
 		if(list==null || list.size()!=number) {
 			String msg= MessageFormat.format(Messages.CLIUtil_OptionParametersMismatch, new Object[] {opt, ""+number}); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg));
+			GeneratePDOMApplication.fail(msg);
 		}
 		return list;
 	}

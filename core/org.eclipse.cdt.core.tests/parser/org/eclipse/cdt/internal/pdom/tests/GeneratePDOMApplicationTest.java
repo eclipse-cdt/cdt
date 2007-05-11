@@ -76,29 +76,21 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	}	
 
 	public void testBrokenExportProjectProvider1() throws Exception {
-		try {
-			File target= File.createTempFile("test", "pdom");
-			doGenerate(new String[] {
-					GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-					GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider1.class.getName()
-			});
-			fail("Expected exception - IExportProjectProvider implementation returns null for createProject");
-		} catch(CoreException ce) {
-			// correct behaviour
-		}
+		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for createProject 
+		File target= File.createTempFile("test", "pdom");
+		doGenerate(new String[] {
+			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
+			GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider1.class.getName()
+		});
 	}
 
 	public void testBrokenExportProjectProvider2() throws Exception {
-		try {
-			File target= File.createTempFile("test", "pdom");
-			doGenerate(new String[] {
-					GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-					GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider2.class.getName()
-			});
-			fail("Expected exception - IExportProjectProvider implementation returns null for getLocationConverter");
-		} catch(CoreException ce) {
-			// correct behaviour
-		}
+		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for getLocationConverter 
+		File target= File.createTempFile("test", "pdom");
+		doGenerate(new String[] {
+			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
+			GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider2.class.getName()
+		});
 	}
 
 	public void testSimpleExportProjectProvider1() throws Exception {
@@ -137,33 +129,42 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 
 	public void testExternalExportProjectProvider_BadCmdLine1() throws Exception {
 		File target= File.createTempFile("test", "pdom");
-		try {
-			doGenerate(new String[] {
-					GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-					GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName()
-			});
-			assertTrue(target.exists());
-			fail("Expected failure: -source must be specified");
-		} catch(CoreException ce) {
-			// correct behaviour
-		}
+		
+		setExpectedNumberOfLoggedNonOKStatusObjects(1); // Expected failure: -source must be specified
+		
+		doGenerate(new String[] {
+			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
+			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName()
+		});
+		assertTrue(target.exists());
 	}
 
 	public void testExternalExportProjectProvider_BadCmdLine2() throws Exception {
 		File target= File.createTempFile("test", "pdom");
 		TestProjectProvider4 tpp4= new TestProjectProvider4();
 		ICProject cproject= tpp4.createProject();
-		try {
-			doGenerate(new String[] {
-					GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
-					GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
-					ExternalExportProjectProvider.OPT_SOURCE, cproject.getProject().getLocation().toFile().getAbsolutePath()
-			});
-			assertTrue(target.exists());
-			fail("Expected failure: -id must be specified");
-		} catch(CoreException ce) {
-			// correct behaviour
-		}
+		
+		setExpectedNumberOfLoggedNonOKStatusObjects(1); // Expected failure: -id must be specified
+		
+		doGenerate(new String[] {
+			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
+			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
+			ExternalExportProjectProvider.OPT_SOURCE, cproject.getProject().getLocation().toFile().getAbsolutePath()
+		});
+		assertTrue(target.exists());
+	}
+	
+	public void testExternalExportProjectProvider_BadCmdLine3() throws Exception {
+		File target= File.createTempFile("test", "pdom");
+		TestProjectProvider4 tpp4= new TestProjectProvider4();
+		ICProject cproject= tpp4.createProject();
+		
+		setExpectedNumberOfLoggedNonOKStatusObjects(1); // Expected failure: -target must be specified
+		doGenerate(new String[] {
+			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName(),
+			ExternalExportProjectProvider.OPT_SOURCE, cproject.getProject().getLocation().toFile().getAbsolutePath()
+		});
+		assertTrue(target.exists());
 	}
 
 	public void testExternalExportProjectProvider() throws Exception {

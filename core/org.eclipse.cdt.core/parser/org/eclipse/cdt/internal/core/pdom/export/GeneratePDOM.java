@@ -98,6 +98,6 @@ public class GeneratePDOM implements ISafeRunnable {
 	}
 	
 	private void fail(String message) throws CoreException {
-		throw new CoreException(CCorePlugin.createStatus(message));
+		GeneratePDOMApplication.fail(message);
 	}
 }

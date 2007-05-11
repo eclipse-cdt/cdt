@@ -27,8 +27,10 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
 import org.eclipse.equinox.app.IApplication;
@@ -45,12 +47,34 @@ public class GeneratePDOMApplication implements IApplication {
 	public static final String OPT_QUIET= "-quiet"; //$NON-NLS-1$
 	public static final String OPT_INDEXER_ID= "-indexer"; //$NON-NLS-1$
 
+	/**
+	 * Applications needing to fail in an expected way (without stack dump), should throw
+	 * CoreExceptions with this error code.
+	 */
+	public static final int ECODE_EXPECTED_FAILURE= 1;
+	
 	private static Map/*<String,IProjectForExportManager>*/ projectInitializers;
 
 	/**
 	 * Starts this application
+	 * @throws CoreException on an unexpected failure
 	 */
 	public Object start(IApplicationContext context) throws CoreException {
+		Object result= IApplication.EXIT_OK;
+		try {
+			result= startImpl(context);
+		} catch(CoreException ce) {
+			IStatus s= ce.getStatus();
+			if(s.getCode()==ECODE_EXPECTED_FAILURE) {
+				output(s.getMessage());
+			} else {
+				throw ce;
+			}
+		}
+		return result;
+	}
+	
+	private Object startImpl(IApplicationContext context) throws CoreException {
 		String[] appArgs= (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		Map arguments= CLIUtil.parseToMap(appArgs);
 		output(Messages.GeneratePDOMApplication_Initializing);
@@ -104,8 +128,16 @@ public class GeneratePDOMApplication implements IApplication {
 		// do nothing
 	}
 
-	private void fail(String message) throws CoreException {
-		throw new CoreException(CCorePlugin.createStatus(message));
+	/**
+	 * Causes the appliation to fail in a way that has been anticipated (e.g. a command-line or interface
+	 * contract violation by a extension implementation)
+	 * @param message
+	 * @throws CoreException
+	 */
+	public static final void fail(String message) throws CoreException {
+		IStatus status= new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, ECODE_EXPECTED_FAILURE, message, null);
+		CCorePlugin.log(status);
+		throw new CoreException(status);
 	}
 	
 	/**

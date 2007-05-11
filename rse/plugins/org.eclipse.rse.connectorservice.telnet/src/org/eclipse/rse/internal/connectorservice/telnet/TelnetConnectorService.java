@@ -11,6 +11,7 @@
  * Sheldon D'souza (Celunite) - adapted from SshConnectorService
  * Martin Oberhuber (Wind River) - apply refactorings for StandardConnectorService
  * Martin Oberhuber (Wind River) - [178606] fix endless loop in readUntil()
+ * Sheldon D'souza (Celunite) - [186536] login and password should be configurable
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -29,7 +30,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ICredentials;
@@ -47,34 +50,64 @@ import org.eclipse.ui.PlatformUI;
 
 public class TelnetConnectorService extends StandardConnectorService implements ITelnetSessionProvider  {
 	
+	public static final String PROPERTY_SET_NAME="Telnet Settings"; //$NON-NLS-1$
+	public static final String PROPERTY_LOGIN_REQUIRED="Login.Required"; //$NON-NLS-1$
+	public static final String PROPERTY_LOGIN_PROMPT="Login.Prompt"; //$NON-NLS-1$
+	public static final String PROPERTY_PASSWORD_PROMPT="Password.Prompt"; //$NON-NLS-1$
+	public static final String PROPERTY_COMMAND_PROMPT="Command.Prompt"; //$NON-NLS-1$
+	
 	private static final int TELNET_DEFAULT_PORT = 23;
-	private static final int CONNECT_DEFAULT_TIMEOUT = 60; //seconds
 	private static TelnetClient fTelnetClient = new TelnetClient();
 	private SessionLostHandler fSessionLostHandler;
 	private InputStream in;
     private PrintStream out;
-    private static final String PROMPT = "$"; //$NON-NLS-1$
-    private static final String ARM_PROMT = "#"; //$NON-NLS-1$
-    private static final boolean arm_flag = false;
+	private IPropertySet telnetPropertySet = null;
 	
 	public TelnetConnectorService(IHost host) {
-		super(TelnetConnectorResources.TelnetConnectorService_Name, TelnetConnectorResources.TelnetConnectorService_Description, host, 0);
+		super(TelnetConnectorResources.TelnetConnectorService_Name,
+				TelnetConnectorResources.TelnetConnectorService_Description,
+				host, 0);
 		fSessionLostHandler = null;
+		telnetPropertySet = getTelnetPropertySet();
+	}
+	
+	/**
+	 * Return the telnet property set, and fill it with default
+	 * values if it has not been created yet.
+	 * Extenders may override in order to set different default values. 
+	 * @return a property set holding properties understood by the telnet
+	 *    connector service.
+	 */
+	protected IPropertySet getTelnetPropertySet() {
+		IPropertySet telnetSet = getPropertySet(PROPERTY_SET_NAME);
+		if (telnetSet == null) {
+			telnetSet = createPropertySet(PROPERTY_SET_NAME, TelnetConnectorResources.PropertySet_Description);
+			telnetSet.addProperty(PROPERTY_LOGIN_REQUIRED,
+					"true", PropertyType.getEnumPropertyType(new String[] { "true", "false" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			telnetSet.addProperty(PROPERTY_LOGIN_PROMPT,
+					"ogin: ", PropertyType.getStringPropertyType()); //$NON-NLS-1$ 
+			telnetSet.addProperty(PROPERTY_PASSWORD_PROMPT,
+					"assword: ", PropertyType.getStringPropertyType()); //$NON-NLS-1$ 
+			telnetSet.addProperty(PROPERTY_COMMAND_PROMPT,
+					"$", PropertyType.getStringPropertyType()); //$NON-NLS-1$
+		}
+		return telnetSet;
 	}
 
 	public static void checkCanceled(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			throw new OperationCanceledException();
 	}
-	
 		
 	protected void internalConnect(IProgressMonitor monitor) throws Exception {
-		
-		
 		String host = getHostName();
 	    String user = getUserId();
 	    String password = ""; //$NON-NLS-1$
-       
+		telnetPropertySet = getTelnetPropertySet();
+		String login_required = telnetPropertySet.getPropertyValue(PROPERTY_LOGIN_REQUIRED); 
+		String login_prompt = telnetPropertySet.getPropertyValue(PROPERTY_LOGIN_PROMPT);
+		String password_prompt = telnetPropertySet.getPropertyValue(PROPERTY_PASSWORD_PROMPT);
+		String command_prompt = telnetPropertySet.getPropertyValue(PROPERTY_COMMAND_PROMPT);
         try {
         	Activator.trace("Telnet Service: Connecting....."); //$NON-NLS-1$
         	fTelnetClient.connect(host,TELNET_DEFAULT_PORT );
@@ -85,15 +118,19 @@ public class TelnetConnectorService extends StandardConnectorService implements 
             
             in = fTelnetClient.getInputStream();
             out = new PrintStream( fTelnetClient.getOutputStream() );
-            if( !arm_flag ) {
-            	//FIXME Bug 186536: Strings for "Login" and "Password" should be configurable
-	            readUntil( "ogin: "); //$NON-NLS-1$
-	            write( user );
-	            readUntil( "assword: "); //$NON-NLS-1$
-	            write( password );
-	            readUntil( PROMPT );
-            }else {
-            	readUntil( ARM_PROMT );
+            //Send login and password if needed
+            if( Boolean.valueOf(login_required ).booleanValue() ) {
+            	if (login_prompt!=null && login_prompt.length()>0) {
+    	            readUntil(login_prompt);
+    	            write(user);
+            	}
+            	if (password_prompt!=null && password_prompt.length()>0) {
+    	            readUntil(password_prompt);
+    	            write(password);
+            	}
+            }
+            if (command_prompt!=null && command_prompt.length()>0) {
+	            readUntil(command_prompt);
             }
         	Activator.trace("Telnet Service: Connected"); //$NON-NLS-1$
         }catch( SocketException se) {

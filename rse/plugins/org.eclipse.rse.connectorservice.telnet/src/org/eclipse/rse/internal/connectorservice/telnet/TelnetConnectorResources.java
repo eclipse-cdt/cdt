@@ -25,6 +25,8 @@ public class TelnetConnectorResources extends NLS {
 
 	public static String TelnetConnectorService_Name;
 	public static String TelnetConnectorService_Description;
+
+	public static String PropertySet_Description;
 	
 	public static String TelnetConnectorService_ErrorDisconnecting;
 

@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -38,7 +40,6 @@ import org.eclipse.rse.subsystems.shells.core.model.RemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.RemoteCmdSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -74,7 +75,7 @@ public class RemoteCommandHelpers
 
 	public static IRemoteCmdSubSystem getCmdSubSystem(IHost connection)
 	{
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{
@@ -90,7 +91,7 @@ public class RemoteCommandHelpers
 	public static IRemoteCmdSubSystem[] getCmdSubSystems(IHost connection)
 	{
 		List results = new ArrayList();
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -54,7 +55,7 @@ public class SystemTerminateShellAction extends SystemBaseShellAction
     public void run()
     {
         // DKM - need to deselect in tree 
-        //SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+        //ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
         //registry.fireEvent(new SystemResourceChangeEvent())
         List selected = new ArrayList();
          selected.addAll(_selected);

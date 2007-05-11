@@ -31,7 +31,6 @@ import org.eclipse.rse.internal.shells.ui.actions.SystemExportShellOutputAction;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
@@ -119,7 +118,7 @@ public class ShellServiceSubSystemConfigurationAdapter extends SubSystemConfigur
     {
         if (_activeShellImageDescriptor == null)
         {
-            _activeShellImageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_SHELLLIVE_ID);
+            _activeShellImageDescriptor = ShellsUIPlugin.getDefault().getImageDescriptor(ShellsUIPlugin.ICON_SYSTEM_SHELLLIVE_ID);
         }
         return _activeShellImageDescriptor;
     }

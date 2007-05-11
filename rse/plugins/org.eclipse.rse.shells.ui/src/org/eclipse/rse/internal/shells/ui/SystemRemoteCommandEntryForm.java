@@ -13,10 +13,12 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -26,7 +28,6 @@ import org.eclipse.rse.core.model.ISubSystemConfigurationCategories;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.model.ISystemRemoteCommand;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.widgets.SystemHostCombo;
@@ -128,7 +129,7 @@ public class SystemRemoteCommandEntryForm extends Composite
         // ----------------------------------------
 		// register with system registry for events
         // ----------------------------------------
-		RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+		RSECorePlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
 	}
 	
 	private void runCommand()
@@ -139,7 +140,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 			IHost sysConn = sysConnCombo.getHost();
 			if ( sysConn != null )
 			{
-				//SubSystem[] cmdSubSystems = RSEUIPlugin.getTheSystemRegistry().getSubSystemsBySubSystemConfigurationCategory(ISubSystemConfigurationCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
+				//SubSystem[] cmdSubSystems = RSECorePlugin.getTheSystemRegistry().getSubSystemsBySubSystemConfigurationCategory(ISubSystemConfigurationCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
 				IRemoteCmdSubSystem[] cmdSubSystems = RemoteCommandHelpers.getCmdSubSystems(sysConn);
 				IRemoteCmdSubSystem currSubSystem = null;
 				String subSystemName = subSysCombo.getText();
@@ -213,7 +214,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 		IHost sysConn = sysConnCombo.getHost();
 		if ( sysConn != null )
 		{
-			//subSystems = RSEUIPlugin.getTheSystemRegistry().getSubSystemsBySubSystemConfigurationCategory(ISubSystemConfigurationCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
+			//subSystems = RSECorePlugin.getTheSystemRegistry().getSubSystemsBySubSystemConfigurationCategory(ISubSystemConfigurationCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
 			subSystems = RemoteCommandHelpers.getCmdSubSystems(sysConn);
 			for (int i = 0; i < subSystems.length; i++)
 			{

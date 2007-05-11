@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.propertypages;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.DummyHost;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -28,7 +30,6 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.propertypages.ServicesPropertyPage;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;
@@ -83,7 +84,7 @@ public class ShellServicesPropertyPage extends ServicesPropertyPage
 	protected IShellServiceSubSystemConfiguration[] getShellServiceSubSystemConfigurations(IRSESystemType systemType)
 	{
 		List results = new ArrayList();
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType, false);
 		
 		for (int i = 0; i < factories.length; i++)

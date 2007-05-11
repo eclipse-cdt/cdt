@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -38,6 +39,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
@@ -318,10 +321,8 @@ public class SystemCommandsViewPart
 
 		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 
-
-	
 		registry.addSystemResourceChangeListener(this);
 
 		RestoreStateRunnable restore = new RestoreStateRunnable();
@@ -340,7 +341,7 @@ public class SystemCommandsViewPart
 		selectionService.removeSelectionListener(this);
 		_folder.dispose();
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
 		super.dispose();
 	}
@@ -513,7 +514,7 @@ public class SystemCommandsViewPart
 	    {
 			boolean hasItem = false;
 	
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			IHost[] connections = registry.getHosts();
 	
 			for (int i = 0; i < connections.length; i++)
@@ -639,7 +640,7 @@ public class SystemCommandsViewPart
 
 	protected void initDefaultCommandShells()
 	{
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		IHost[] connections = registry.getHosts();
 		CommandsViewPage curpage = _folder.getCurrentTabItem();
 		 
@@ -705,7 +706,7 @@ public class SystemCommandsViewPart
 			Object source = event.getSource();
 			if (source instanceof IRemoteCmdSubSystem)
 			{
-				Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
+				Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
 				shell.getDisplay().asyncExec(new CommandSubSystemDisconnectedRunnable((IRemoteCmdSubSystem) source));
 			}
 			else if (source instanceof IRemoteCommandShell)
@@ -752,7 +753,7 @@ public class SystemCommandsViewPart
 			else if (parent instanceof ISubSystem)
 			{
 			    // DKM - for now assuming only 1 cmd subsystem
-			    //SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			    //SystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			    //registry.getCmdSubSystems()
 			    cmdSS = RemoteCommandHelpers.getCmdSubSystem(((ISubSystem)parent).getHost());
 			}
@@ -767,7 +768,7 @@ public class SystemCommandsViewPart
 		    Object source = event.getSource();
 			if (source instanceof IRemoteCmdSubSystem)
 			{
-				Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
+				Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
 				shell.getDisplay().asyncExec(new CommandSubSystemDisconnectedRunnable((IRemoteCmdSubSystem) source));
 			}		    
 		}

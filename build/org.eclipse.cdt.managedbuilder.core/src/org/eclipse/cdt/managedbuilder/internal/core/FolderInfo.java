@@ -556,10 +556,12 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		}
 	}
 	
-	private Map typeIdsToMap(String [] ids){
+	private Map typeIdsToMap(String [] ids, IBuildObjectProperties props){
 		Map map = new HashMap(ids.length);
 		for(int i = 0; i < ids.length; i++){
-			map.put(ids[i], null);
+			String id = ids[i];
+			IBuildProperty prop = props.getProperty(id);
+			map.put(id, props != null ? prop.getValue().getId() : null);
 		}
 		
 		return map;
@@ -589,7 +591,13 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			
 			IBuildPropertyType[] supportedTypes = props.getSupportedTypes();
 			if(supportedTypes.length != 0 || requiredIds.length != 0){
-				Map requiredMap = typeIdsToMap(requiredIds);
+				if(requiredIds.length == 0){
+					if(props.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID) != null){
+						requiredIds = new String[]{ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID};
+					}
+				}
+
+				Map requiredMap = typeIdsToMap(requiredIds, props);
 				getUnsupportedProperties(requiredMap, r, unspecifiedRequiredProps, undefinedSet);
 				unspecifiedProps.putAll(unspecifiedRequiredProps);
 				

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -34,6 +35,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -303,7 +305,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 					errorTable.add(e.getStatus());
 				} catch (IOException e) {
 					SystemBasePlugin.logError("Error occured trying to save description " + descriptionFilePath, e); //$NON-NLS-1$
-					errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getSymbolicName(), 0, e.getLocalizedMessage(), e));
+					errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, e.getLocalizedMessage(), e));
 				}
 			}
 		} catch (CoreException e) {
@@ -415,7 +417,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 		errorTable.toArray(errors);
 		// IFS:
 		String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_PROBLEMS).getLevelOneText();
-		return new MultiStatus(RSEUIPlugin.getDefault().getBundle().getSymbolicName(), IStatus.OK, errors, msg, null);
+		return new MultiStatus(RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), IStatus.OK, errors, msg, null);
 	}
 
 	/**
@@ -446,7 +448,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 		// Use Files for comparison to avoid platform specific case issues
 		if (targetPath != null && (targetPath.toFile().equals(new File(fileObjectPath)))) {
 			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_SELF, fileObjectPath).toString();
-			errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, null));
+			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, null));
 			return;
 		}
 		if (!ensureTargetDoesNotExist(targetResource, policy)) {
@@ -474,15 +476,15 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 			}
 		} catch (RemoteFileIOException e) {
 			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_ERROR, new Object[] { fileObjectPath, e.getRemoteException().getLocalizedMessage(), e }).toString();
-			errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
+			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 			return;
 		} catch (RemoteFileSecurityException e) {
 			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_ERROR, new Object[] { fileObjectPath, e.getRemoteException().getLocalizedMessage(), e }).toString();
-			errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
+			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 			return;
 		} catch (Exception e) {
 			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_ERROR, new Object[] { fileObjectPath, e.getMessage() == null ? e.toString() : e.getMessage(), e }).toString();
-			errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
+			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 			return;
 		}
 	}
@@ -508,7 +510,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 					// file systems root. Roots can't copied (at least not
 					// under windows).
 					String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_ROOT).toString();
-					errorTable.add(new Status(IStatus.INFO, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, null));
+					errorTable.add(new Status(IStatus.INFO, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, null));
 					continue;
 				}
 				source = sourcePath.toFile();

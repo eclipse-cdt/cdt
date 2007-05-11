@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -33,6 +34,7 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
+import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -178,7 +180,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 				} catch (Exception e) {
 					String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { destination, e.getLocalizedMessage() == null ? e.toString() : e.getMessage(), e })
 							.toString();
-					errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
+					errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 				}
 				try {
 					exportChildren(((IContainer) child).members(), destination);
@@ -188,7 +190,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 					// i.  this method is called recursively iterating over the result of #members,
 					//		which only answers existing children
 					// ii. there is an #isAccessible check done before #members is invoked
-					errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, e.getMessage(), e));
+					errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, e.getMessage(), e));
 					//errorTable.add(e.getStatus());
 				}
 			}
@@ -218,7 +220,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 				// Assume that communication has failed.  
 				String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR,
 						new Object[] { fullPath, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION).getLevelOneText(), e }).toString();
-				errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
+				errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 				throw e;
 			}
 		}
@@ -273,10 +275,10 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 			errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
 		} catch (RemoteFileIOException e) {
 			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { fullPath, e.getLocalizedMessage(), e }).toString();
-			errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
+			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 		} catch (RemoteFileSecurityException e) {
 			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { fullPath, e.getLocalizedMessage(), e }).toString();
-			errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
+			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 		} catch (Exception e) {
 			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { fullPath, e.getLocalizedMessage(), e }).toString();
 			errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
@@ -427,7 +429,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 					errorTable.add(e.getStatus());
 				} catch (IOException e) {
 					SystemBasePlugin.logError("Error occured trying to save description " + descriptionFilePath, e); //$NON-NLS-1$
-					errorTable.add(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getSymbolicName(), 0, e.getLocalizedMessage(), e));
+					errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, e.getLocalizedMessage(), e));
 				}
 			}
 		} finally {

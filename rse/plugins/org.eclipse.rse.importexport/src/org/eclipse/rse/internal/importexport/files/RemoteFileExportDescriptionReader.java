@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -30,7 +31,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -59,10 +60,10 @@ public class RemoteFileExportDescriptionReader implements IRemoteFileExportDescr
 			readXML(exportData);
 		} catch (IOException ex) {
 			String message = (ex.getLocalizedMessage() != null ? ex.getLocalizedMessage() : ""); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getSymbolicName(), 0, message, ex));
+			throw new CoreException(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, message, ex));
 		} catch (SAXException ex) {
 			String message = (ex.getLocalizedMessage() != null ? ex.getLocalizedMessage() : ""); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getSymbolicName(), 0, message, ex));
+			throw new CoreException(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, message, ex));
 		}
 	}
 
@@ -188,7 +189,7 @@ public class RemoteFileExportDescriptionReader implements IRemoteFileExportDescr
 				fInputStream.close();
 			} catch (IOException ex) {
 				String message = (ex.getLocalizedMessage() != null ? ex.getLocalizedMessage() : ""); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getSymbolicName(), 0, message, ex));
+				throw new CoreException(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, message, ex));
 			}
 		}
 	}
@@ -197,6 +198,6 @@ public class RemoteFileExportDescriptionReader implements IRemoteFileExportDescr
 	 * @see org.eclipse.rse.internal.importexport.files.IRemoteFileExportDescriptionReader#getStatus()
 	 */
 	public IStatus getStatus() {
-		return new Status(IStatus.OK, RSEUIPlugin.getDefault().getSymbolicName(), 0, "", null); //$NON-NLS-1$
+		return new Status(IStatus.OK, RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, "", null); //$NON-NLS-1$
 	}
 }

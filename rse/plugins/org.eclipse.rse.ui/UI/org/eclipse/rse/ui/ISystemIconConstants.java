@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
+ * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -331,10 +332,6 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_WARNING_ID = PREFIX + ICON_SYSTEM_WARNING_ROOT + ICON_SUFFIX;
 	public static final String ICON_SYSTEM_WARNING    = ICON_OBJS_DIR + ICON_SYSTEM_WARNING_ROOT + ICON_EXT;		
 
-	public static final String ICON_SYSTEM_FAILED_ROOT = "systemfailed"; // not used yet //$NON-NLS-1$
-	public static final String ICON_SYSTEM_FAILED_ID = PREFIX + ICON_SYSTEM_FAILED_ROOT + ICON_SUFFIX;
-	public static final String ICON_SYSTEM_FAILED    = ICON_OBJS_DIR + ICON_SYSTEM_FAILED_ROOT + ICON_EXT;	
-	
 	public static final String ICON_SYSTEM_BLANK_ROOT = "systemblank"; // not used yet //$NON-NLS-1$
 	public static final String ICON_SYSTEM_BLANK_ID = PREFIX + ICON_SYSTEM_BLANK_ROOT + ICON_SUFFIX;
 	public static final String ICON_SYSTEM_BLANK    = ICON_OBJS_DIR + ICON_SYSTEM_BLANK_ROOT + ICON_EXT;

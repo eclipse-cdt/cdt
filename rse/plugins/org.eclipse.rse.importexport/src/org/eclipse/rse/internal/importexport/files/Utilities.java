@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [180562][api] dont implement IRemoteImportExportConstants
+ * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.importexport.IRemoteImportExportConstants;
@@ -120,7 +122,7 @@ public class Utilities {
 	 * connectionName string.
 	 */
 	public static IHost getConnection(String profileName, String connectionName) {
-		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHosts();
+		IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHosts();
 		if (profileName != null) {
 			// given both profile and connection name...
 			for (int loop = 0; loop < connections.length; loop++) {

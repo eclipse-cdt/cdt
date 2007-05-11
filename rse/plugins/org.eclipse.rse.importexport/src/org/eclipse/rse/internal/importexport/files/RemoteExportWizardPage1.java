@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -31,6 +32,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
+import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
@@ -136,13 +138,13 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (helpId != null) {
 			SystemWidgetHelpers.setHelp(parentComposite, helpId);
 		} else {
-			SystemWidgetHelpers.setHelp(parentComposite, RSEUIPlugin.HELPPREFIX + "import_context"); //$NON-NLS-1$
+			SystemWidgetHelpers.setHelp(parentComposite, RemoteImportExportPlugin.HELPPREFIX + "import_context"); //$NON-NLS-1$
 		}
 		setControl(parentComposite);
 		//		super.createControl(parent);
 		//		parentComposite = parent;
 		//		giveFocusToDestination();
-		//		SystemWidgetHelpers.setHelp(getControl(), RSEUIPlugin.HELPPREFIX + "export_context");
+		//		SystemWidgetHelpers.setHelp(getControl(), RemoteImportExportPlugin.HELPPREFIX + "export_context");
 		//		Control c = getControl();
 		//		if (c instanceof Composite)
 		//		{

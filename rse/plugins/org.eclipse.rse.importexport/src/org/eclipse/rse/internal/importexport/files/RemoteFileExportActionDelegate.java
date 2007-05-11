@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportProblemDialog;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -52,7 +54,7 @@ public class RemoteFileExportActionDelegate extends RemoteFileImportExportAction
 		} else {
 			message = RemoteImportExportResources.IMPORT_EXPORT_ERROR_CREATE_FILE_FAILED;
 		}
-		MultiStatus readStatus = new MultiStatus(RSEUIPlugin.getDefault().getSymbolicName(), 0, message, null);
+		MultiStatus readStatus = new MultiStatus(RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, message, null);
 		RemoteFileExportData[] exportDatas = readExportDatas(descriptions, readStatus);
 		if (exportDatas.length > 0) {
 			IStatus status = export(exportDatas);
@@ -65,7 +67,7 @@ public class RemoteFileExportActionDelegate extends RemoteFileImportExportAction
 				message = status.getMessage();
 			}
 			// create new status because we want another message - no API to set message
-			mergedStatus = new MultiStatus(RSEUIPlugin.getDefault().getSymbolicName(), status.getCode(), readStatus.getChildren(), message, null);
+			mergedStatus = new MultiStatus(RemoteImportExportPlugin.getDefault().getSymbolicName(), status.getCode(), readStatus.getChildren(), message, null);
 			mergedStatus.merge(status);
 		} else {
 			mergedStatus = readStatus;
@@ -130,10 +132,10 @@ public class RemoteFileExportActionDelegate extends RemoteFileImportExportAction
 				status = op.getStatus();
 			} catch (InvocationTargetException e) {
 				SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
-				status = new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
+				status = new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
 			} catch (InterruptedException e) {
 				SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
-				status = new Status(IStatus.OK, RSEUIPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
+				status = new Status(IStatus.OK, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
 			}
 			if (!status.isOK()) {
 				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_FAILED);

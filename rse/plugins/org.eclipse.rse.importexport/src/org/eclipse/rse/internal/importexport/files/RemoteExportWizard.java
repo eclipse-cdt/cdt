@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.importexport.files;
-
 /*******************************************************************************
  * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,14 +7,17 @@ package org.eclipse.rse.internal.importexport.files;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  *******************************************************************************/
+package org.eclipse.rse.internal.importexport.files;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IExportWizard;
@@ -54,7 +55,7 @@ public class RemoteExportWizard extends AbstractSystemWizard implements IExportW
 	 * Creates a wizard for exporting workspace resources to the local file system.
 	 */
 	public RemoteExportWizard() {
-		IDialogSettings workbenchSettings = RSEUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = RemoteImportExportPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection("RemoteExportWizard"); //$NON-NLS-1$
 		if (section == null) section = workbenchSettings.addNewSection("RemoteExportWizard"); //$NON-NLS-1$
 		setDialogSettings(section);
@@ -69,11 +70,10 @@ public class RemoteExportWizard extends AbstractSystemWizard implements IExportW
 	}
 
 	/**
-	 * Returns the image descriptor with the given relative path.
+	 * Returns the image descriptor with the given key.
 	 */
-	private ImageDescriptor getImageDescriptor(String relativePath) {
-		String iconPath = "icons/full/"; //$NON-NLS-1$
-		return RSEUIPlugin.getDefault().getPluginImage(iconPath + relativePath);
+	private ImageDescriptor getImageDescriptor(String key) {
+		return RemoteImportExportPlugin.getDefault().getImageDescriptor(key);
 	}
 
 	/* (non-Javadoc)
@@ -94,7 +94,7 @@ public class RemoteExportWizard extends AbstractSystemWizard implements IExportW
 		}
 		setInitializeFromExportData(false);
 		setWindowTitle(SystemImportExportResources.RESID_FILEEXPORT_TITLE);
-		setDefaultPageImageDescriptor(getImageDescriptor("wizban/export_wiz.gif")); //$NON-NLS-1$
+		setDefaultPageImageDescriptor(getImageDescriptor(RemoteImportExportPlugin.ICON_EXPORTWIZARD_ID));
 		setNeedsProgressMonitor(true);
 	}
 
@@ -103,7 +103,7 @@ public class RemoteExportWizard extends AbstractSystemWizard implements IExportW
 		this.exportData = exportData;
 		setInitializeFromExportData(true);
 		setWindowTitle(SystemImportExportResources.RESID_FILEEXPORT_TITLE);
-		setDefaultPageImageDescriptor(getImageDescriptor("wizban/export_wiz.gif")); //$NON-NLS-1$
+		setDefaultPageImageDescriptor(getImageDescriptor(RemoteImportExportPlugin.ICON_EXPORTWIZARD_ID));
 		setNeedsProgressMonitor(true);
 	}
 

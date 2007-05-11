@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -30,7 +31,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -57,7 +58,7 @@ public class RemoteFileImportDescriptionWriter implements IRemoteFileImportDescr
 			writeXML(importData);
 		} catch (IOException ex) {
 			String message = (ex.getLocalizedMessage() != null ? ex.getLocalizedMessage() : ""); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getSymbolicName(), 0, message, ex));
+			throw new CoreException(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, message, ex));
 		}
 	}
 
@@ -157,7 +158,7 @@ public class RemoteFileImportDescriptionWriter implements IRemoteFileImportDescr
 				fOutputStream.close();
 			} catch (IOException ex) {
 				String message = (ex.getLocalizedMessage() != null ? ex.getLocalizedMessage() : ""); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getSymbolicName(), 0, message, ex));
+				throw new CoreException(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, message, ex));
 			}
 		}
 	}
@@ -166,6 +167,6 @@ public class RemoteFileImportDescriptionWriter implements IRemoteFileImportDescr
 	 * @see org.eclipse.rse.internal.importexport.files.IRemoteFileImportDescriptionWriter#getStatus()
 	 */
 	public IStatus getStatus() {
-		return new Status(IStatus.OK, RSEUIPlugin.getDefault().getSymbolicName(), 0, "", null); //$NON-NLS-1$
+		return new Status(IStatus.OK, RemoteImportExportPlugin.getDefault().getSymbolicName(), 0, "", null); //$NON-NLS-1$
 	}
 }

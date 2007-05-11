@@ -168,8 +168,12 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 	}
 
 	public void exit() {
-		fShellWriter.stopThread();
-		fChannel.disconnect();
+		if (fShellWriter!=null) {
+			fShellWriter.stopThread();
+		}
+		if (fChannel!=null) {
+			fChannel.disconnect();
+		}
 	}
 
 }

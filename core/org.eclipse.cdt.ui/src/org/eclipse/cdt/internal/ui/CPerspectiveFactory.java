@@ -8,13 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
- *     Ken Ryall (Nokia) - Bug 179340 add breakpoint actions to C++ perspective
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
 import org.eclipse.cdt.internal.ui.wizards.CWizardRegistry;
 import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -70,10 +68,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		// link - things we should do
 		layout.addShowInPart(CUIPlugin.CVIEW_ID);
 		layout.addShowInPart(IPageLayout.ID_RES_NAV);
-
-		// Add in the breakpoint action set, these are commonly used even if not debugging yet.
-		layout.addActionSet("org.eclipse.debug.ui.breakpointActionSet"); //$NON-NLS-1$
-
+		
 		addCWizardShortcuts(layout);
 	}
 	

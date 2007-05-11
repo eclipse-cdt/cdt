@@ -40,6 +40,12 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
+            targetID="org.eclipse.cdt.ui.CPerspective">
+         <actionSet
+               id="org.eclipse.debug.ui.breakpointActionSet">
+         </actionSet>
+      </perspectiveExtension>
+      <perspectiveExtension
             targetID="org.eclipse.debug.ui.DebugPerspective">
          <view
                relative="org.eclipse.debug.ui.VariableView"

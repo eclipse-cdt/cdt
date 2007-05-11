@@ -56,6 +56,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressFactoryManagement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
@@ -1362,18 +1363,23 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		ICDITarget cdiTarget = getCDITarget();
 		IGlobalVariableDescriptor[] globals = new IGlobalVariableDescriptor[0];
 		// If the backend can give us the globals...
+		ArrayList list = new ArrayList();
 		if (cdiTarget instanceof ICDITarget2)
-			globals = ((ICDITarget2) cdiTarget).getGlobalVariables();
+		{
+			ICDIGlobalVariableDescriptor[] cdiGlobals = ((ICDITarget2) cdiTarget).getGlobalVariables();
+			for (int i = 0; i < cdiGlobals.length; i++) {
+				list.add(CVariableFactory.createGlobalVariableDescriptor(cdiGlobals[i].getName(), null));
+			}
+		}
 		// otherwise ask the binary
 		if (globals.length == 0)
 		{
-			ArrayList list = new ArrayList();
 			IBinaryObject file = getBinaryFile();
 			if (file != null) {
 				list.addAll( getCFileGlobals( file ) );
 			}
-			globals =  (IGlobalVariableDescriptor[])list.toArray( new IGlobalVariableDescriptor[list.size()] );			
 		}
+		globals =  (IGlobalVariableDescriptor[])list.toArray( new IGlobalVariableDescriptor[list.size()] );			
 		return globals;
 	}
 

@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 
 public interface ICDITarget2 extends ICDITarget {
 
@@ -19,6 +18,6 @@ public interface ICDITarget2 extends ICDITarget {
 	/** Returns a list of global variables for the targeted process
 	 * @return list of globals for the targeted process
 	 */
-	IGlobalVariableDescriptor[] getGlobalVariables();
+	ICDIGlobalVariableDescriptor[] getGlobalVariables();
 
 }

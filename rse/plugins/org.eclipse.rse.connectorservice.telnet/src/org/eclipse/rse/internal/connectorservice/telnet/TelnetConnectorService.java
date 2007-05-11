@@ -98,17 +98,32 @@ public class TelnetConnectorService extends StandardConnectorService implements 
         	Activator.trace("Telnet Service: Connected"); //$NON-NLS-1$
         }catch( SocketException se) {
         	Activator.trace("Telnet Service failed: "+se.toString()); //$NON-NLS-1$
-            if (fTelnetClient.isConnected())
-            	fTelnetClient.disconnect();
+        	sessionDisconnect();
         }catch( IOException ioe ) {
         	Activator.trace("Telnet Service failed: "+ioe.toString()); //$NON-NLS-1$
-        	 if (fTelnetClient.isConnected())
-             	fTelnetClient.disconnect();
+        	sessionDisconnect();
         }
         
 		fSessionLostHandler = new SessionLostHandler( this );
 		notifyConnection();
 		
+	}
+	
+	/**
+	 * Disconnect the telnet session.
+	 * Synchronized in order to avoid NPE's from commons.net when called
+	 * quickly in succession.
+	 */
+	private synchronized void sessionDisconnect() {
+    	Activator.trace("TelnetConnectorService.sessionDisconnect"); //$NON-NLS-1$
+    	try {
+        	if (fTelnetClient!=null && fTelnetClient.isConnected())
+        		fTelnetClient.disconnect();
+    	} catch(Exception e) {
+    		//Avoid NPE on disconnect shown in UI
+    		//This is a non-critical exception so print only in debug mode
+    		if (Activator.isTracingOn()) e.printStackTrace();
+    	}
 	}
 	
 	public String readUntil(String pattern) {
@@ -138,7 +153,12 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 	   try {
 		 out.println( value );
 		 out.flush();
-		 Activator.trace("write: "+value ); //$NON-NLS-1$
+		 if (Activator.isTracingOn()) {
+			 //Avoid printing password to stdout
+			 //Activator.trace("write: "+value ); //$NON-NLS-1$
+			 int len = value.length()+6;
+			 Activator.trace("write: ******************".substring(0, len<=24 ? len : 24)); //$NON-NLS-1$
+		 }
 	   }
 	   catch( Exception e ) {
 		 e.printStackTrace();
@@ -148,8 +168,6 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 	protected void internalDisconnect(IProgressMonitor monitor) throws Exception {
 		
 		Activator.trace("Telnet Service: Disconnecting ....."); //$NON-NLS-1$
-		
-		
 		boolean sessionLost = (fSessionLostHandler!=null && fSessionLostHandler.isSessionLost());
 		// no more interested in handling session-lost, since we are disconnecting anyway
 		fSessionLostHandler = null;
@@ -161,11 +179,9 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 			// Fire comm event to signal state about to change
 			fireCommunicationsEvent(CommunicationsEvent.BEFORE_DISCONNECT);
 		}
-
-		if( fTelnetClient.isConnected() ) {
-			fTelnetClient.disconnect();
-		}
 		
+    	sessionDisconnect();
+
 		// Fire comm event to signal state changed
 		notifyDisconnection();
 	}
@@ -385,14 +401,15 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 	}
 	
 	public boolean isConnected() {
-		if (fTelnetClient.isConnected()) {
-				return true;
-		} else if (fSessionLostHandler!=null) {
-				Activator.trace("TelnetConnectorService.isConnected: false -> sessionLost"); //$NON-NLS-1$
-				fSessionLostHandler.sessionLost();
+		boolean connected;
+		synchronized(this) {
+			connected = fTelnetClient.isConnected();
 		}
-		
-		return false;
+		if (!connected && fSessionLostHandler!=null) {
+			Activator.trace("TelnetConnectorService.isConnected: false -> sessionLost"); //$NON-NLS-1$
+			fSessionLostHandler.sessionLost();
+		}
+		return connected;
 	}
 
 	/**

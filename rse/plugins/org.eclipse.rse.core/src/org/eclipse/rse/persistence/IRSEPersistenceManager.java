@@ -43,7 +43,7 @@ public interface IRSEPersistenceManager {
 	public ISystemProfile[] commitProfiles(long timeout);
 
 	/**
-	 * Restore all profiles.
+	 * Restore all profiles known to autostart persistence providers.
 	 * @param timeout the maximum number of milliseconds to wait for the manager to become idle for each profile.
 	 * @return an array of restored profiles.
 	 */
@@ -106,14 +106,13 @@ public interface IRSEPersistenceManager {
 	public boolean isBusy();
 
 	/**
-	 * Indicate if all profiles for a particular persistence provider have been restored.
-	 * Profiles are typically restored when RSE is activated and when profiles
-	 * are reloaded by the user. This will not load the persistence provider. If the persistence
-	 * provider has not yet been loaded it will return false. This can be used from a different thread
+	 * Indicate if all profiles for all autostart persistence provider have been restored.
+	 * These profiles are restored when RSE is activated and when profiles
+	 * are reloaded by the user. 
+	 * This can be used from a different thread
 	 * than the one that requested the restore.
-	 * @param providerId the persistence providerId
 	 * @return true if the profiles have been fully restored
 	 */
-	public boolean isRestoreComplete(String providerId);
+	public boolean isRestoreComplete();
 	
 }

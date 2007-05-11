@@ -65,6 +65,13 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="autostart" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  The autostart attribute determines if the persistence provider will be loaded and asked to restore the profiles known to it at the time RSE starts.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -81,7 +88,8 @@
       &lt;persistenceProvider
          id=&quot;org.eclipse.rse.persistence.DefaultRSEpersistenceProvider&quot;
          name=&quot;Default persistence Provider&quot;
-         class=&quot;org.eclipse.rse.persistence.DefaultRSEpersistenceProvider&quot;&gt;
+         class=&quot;org.eclipse.rse.persistence.DefaultRSEpersistenceProvider&quot;
+         autostart=&quot;true&quot;&gt;
       &lt;/persistenceProvider&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
@@ -112,13 +120,14 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2006 IBM Corporation. All Rights Reserved.
+         Copyright (c) 2006, 2007 IBM Corporation. All Rights Reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
 
 Contributors:
 IBM Corporation - initial API and implementation
+David Dykstal (IBM) - added autostart attribute
       </documentation>
    </annotation>
 

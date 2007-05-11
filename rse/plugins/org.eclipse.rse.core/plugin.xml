@@ -19,10 +19,12 @@
  <extension
        point="org.eclipse.rse.core.persistenceProviders">
     <persistenceProvider
+          autostart="false"
           class="org.eclipse.rse.internal.persistence.SerializingProvider"
           id="org.eclipse.rse.persistence.SerializingProvider"
           name="Serializing Persistence Provider"/>
     <persistenceProvider
+          autostart="true"
           class="org.eclipse.rse.internal.persistence.PropertyFileProvider"
           id="org.eclipse.rse.persistence.PropertyFileProvider"
           name="Property File Persistence Provider"/>

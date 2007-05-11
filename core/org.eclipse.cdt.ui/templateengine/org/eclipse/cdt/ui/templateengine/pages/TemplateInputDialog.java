@@ -96,7 +96,7 @@ public class TemplateInputDialog extends Dialog {
 
 	protected TemplateInputDialog(Shell parentShell) {
 		super(parentShell);
-
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/*
@@ -108,9 +108,7 @@ public class TemplateInputDialog extends Dialog {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		this.shell = shell;
-		shell.setBounds(420, 280, 300, 160);
 		display = shell.getDisplay();
-
 	}
 
 	/*

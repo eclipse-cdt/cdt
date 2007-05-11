@@ -158,7 +158,7 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
         
         if (execDmc != null) {
             getServicesTracker().getService(IRegisters.class).getRegisterGroups(
-                execDmc, null,
+                execDmc,
                 new DataRequestMonitor<IRegisterGroupDMContext[]>(getSession().getExecutor(), null) { 
                     @Override
                     public void handleCompleted() {

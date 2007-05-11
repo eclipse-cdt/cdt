@@ -11,6 +11,7 @@
 package org.eclipse.dd.dsf.debug.service;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 
@@ -22,11 +23,6 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
  */
 public interface ISourceLookup extends IDsfService {
     
-    /**
-     * Context needed for debuggers that debug multiple processes.
-     */
-    public interface ISourceLookupContext {}
-
     public interface ISourceLookupResult {
         Object getSourceObject();
         ISourceContainer getMatchingContainer();
@@ -37,22 +33,19 @@ public interface ISourceLookup extends IDsfService {
         ISourceContainer getMatchingContainer();
     }
     
-    /** Returns the source lookup context for the given modules context. */
-    ISourceLookupContext getContextForSymbolContext(IModules.ISymbolDMContext symCtx);
-    
     /** 
      * Initializes the given context with the given list of source lookup 
      * containers.
      */ 
-    void initializeSourceContainers(ISourceLookupContext ctx, ISourceContainer[] containers);
+    void initializeSourceContainers(IDMContext<?> ctx, ISourceContainer[] containers);
     
     /**
      * Retrieves the host source object for given debugger path string.
      */
-    void getSource(ISourceLookupContext srcCtx, String debuggerPath, boolean searchDuplicates, DataRequestMonitor<ISourceLookupResult[]> rm);
+    void getSource(IDMContext<?> ctx, String debuggerPath, boolean searchDuplicates, DataRequestMonitor<ISourceLookupResult[]> rm);
     
     /**
      * Retrieves the debugger path string(s) for given host source object.
      */
-    void getDebuggerPath(ISourceLookupContext srcCtx, Object source, boolean searchDuplicates, DataRequestMonitor<IDebuggerPathLookupResult[]> rm);
+    void getDebuggerPath(IDMContext<?> ctx, Object source, boolean searchDuplicates, DataRequestMonitor<IDebuggerPathLookupResult[]> rm);
 }

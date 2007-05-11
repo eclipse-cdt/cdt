@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.datamodel.IDMService;
@@ -23,6 +24,7 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
  * dependencies on the Modules service, RunControl service, and Stack service, as all may be used to
  * provide context for an expression to be evaluated.
  */
+@SuppressWarnings("nls")
 public interface IExpressions extends IDMService, IFormattedValues {
     
     /**
@@ -40,12 +42,12 @@ public interface IExpressions extends IDMService, IFormattedValues {
         // These static fields define the possible return values of method getTypeId().  QUESTION: Why can't
         // these have type int?
         
-        final static String TYPEID_UNKNOWN = "TYPEID_UNKNOWN";  //$NON-NLS-1$
-        final static String TYPEID_INTEGER = "TYPEID_INTEGER";  //$NON-NLS-1$
-        final static String TYPEID_CHAR = "TYPEID_CHAR";  //$NON-NLS-1$
-        final static String TYPEID_FLOAT = "TYPEID_FLOAT";  //$NON-NLS-1$
-        final static String TYPEID_DOUBLE = "TYPEID_DOUBLE";  //$NON-NLS-1$
-        final static String TYPEID_OPAQUE = "TYPEID_OPAQUE";  //$NON-NLS-1$
+        final static String TYPEID_UNKNOWN = "TYPEID_UNKNOWN";
+        final static String TYPEID_INTEGER = "TYPEID_INTEGER";
+        final static String TYPEID_CHAR = "TYPEID_CHAR";
+        final static String TYPEID_FLOAT = "TYPEID_FLOAT";
+        final static String TYPEID_DOUBLE = "TYPEID_DOUBLE";
+        final static String TYPEID_OPAQUE = "TYPEID_OPAQUE";
         
         /**
          * This enumerates the possible basic types that an expression can have.
@@ -99,14 +101,6 @@ public interface IExpressions extends IDMService, IFormattedValues {
         int getBitCount();
         
         /**
-         * @return A string containing the value of the expression in a format that is natural for its type.
-         *         For example, type "char" is shown as a single-quoted character, type "int" (and its cousins)
-         *         is shown in decimal, type "unsigned int" (and its cousins) and pointers are shown in hex,
-         *         floating point values are shown in non-scientific notation.
-         */
-        String getNaturalValue();
-        
-        /**
          * @return A string containing the value of the expression as returned by the debugger backend.
          */
         String getStringValue();
@@ -140,48 +134,18 @@ public interface IExpressions extends IDMService, IFormattedValues {
     interface IExpressionChangedDMEvent extends IDMEvent<IExpressionDMContext> {}
 
     /**
-     * Returns the data model context object for the specified expression in the context of the symbols
-     * specified by <b>symbolsDmc</b>.
+     * Returns the data model context object for the specified expression in the context of 
+     * specified by <b>ctx</b>.
      * 
-     * @param symbolsDmc: Symbol context in which to evaluate the expression.  This parameter can be null if
-     *                    there is no symbol context available.
+     * @param symbolsDmc: Context in which to evaluate the expression.  This context could include the
+     * PC location, stack frame, thread, or just a symbol context.
      *                
      * @param expression: The expression to evaluate.
      * 
      * @return  An expression data model context object that must be passed to getModelData() to obtain the
      *          value of the expression.
      */
-    IExpressionDMContext createExpression(IModules.ISymbolDMContext symbolsDmc, String expression);
-
-    /**
-     * Returns the data model context object for the specified expression in the context of the thread
-     * specified by <b>execDmc</b>.
-     * 
-     * @param execDmc: Optional execution context for the evaluation.  This parameter cannot be null.  If
-     *                 there is no execution context available, the client should instead call
-     *                 createExpression(ISymbolDMContext, String).
-     * 
-     * @param expression: The expression to evaluate.
-     * 
-     * @return  An expression data model context object that must be passed to getModelData() to obtain the
-     *          value of the expression.
-     */
-    IExpressionDMContext createExpression(IRunControl.IExecutionDMContext execDmc, String expression);
-
-    /**
-     * Returns the data model context object for the specified expression in the context of the stack frame
-     * specified by <b>frameDmc</b>.
-     * 
-     * @param frameDmc: Optional stack frame context for the evaluation.    This parameter cannot be null.  If
-     *                 there is no stack frame context available, the client should instead call
-     *                 createExpression(ISymbolDMContext, String) or createExpression(IExecutionDMContext, String).
-     * 
-     * @param expression: The expression to evaluate.
-     * 
-     * @return  An expression data model context object that must be passed to getModelData() to obtain the
-     *          value of the expression.
-     */
-    IExpressionDMContext createExpression(IStack.IFrameDMContext frameDmc, String expression);
+    IExpressionDMContext createExpression(IDMContext<?> ctx, String expression);
 
     /**
      * Retrieves the sub-expressions of the given expression.  Sub-expressions are fields of a struct, union,

@@ -40,7 +40,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
-@SuppressWarnings("restriction")
+@SuppressWarnings({"restriction", "nls"})
 public class VariableLocalsLayoutNode extends AbstractDMVMLayoutNode<IExpressionDMData> {
 
     public VariableLocalsLayoutNode(AbstractVMProvider provider, DsfSession session) {
@@ -91,10 +91,12 @@ public class VariableLocalsLayoutNode extends AbstractDMVMLayoutNode<IExpression
                         for (int idx = 0; idx < localColumns.length; idx++) {
                             if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
                                 update.setLabel(getData().getName(), idx);
+                            } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
+                                update.setLabel(getData().getTypeName(), idx);
                             } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
                                 weAreExtractingFormattedData = true;
                             } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
-                                update.setLabel("", idx); //$NON-NLS-1$
+                                update.setLabel("", idx);
                             }
                         }
                         

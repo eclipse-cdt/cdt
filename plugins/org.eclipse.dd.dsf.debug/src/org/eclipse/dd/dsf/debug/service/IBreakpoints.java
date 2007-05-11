@@ -14,8 +14,7 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.dd.dsf.service.IDsfService;
+import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
@@ -25,7 +24,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * breakpoint status in more detail and more dynamically than it it possible with
  * just the marker-based breakpoint object.
  */
-public interface IBreakpoints extends IDsfService {
+public interface IBreakpoints extends IDMService {
    
     public enum BreakpointStatus { INSTALLED, FAILED_TO_INSTALL, FILTERED_OUT }
     
@@ -44,7 +43,7 @@ public interface IBreakpoints extends IDsfService {
     
     public interface IBreakpointHitEvent extends IBreakpointDMEvent {}
     
-    public void getAllBreakpoints(IExecutionDMContext execDmc, DataRequestMonitor<IBreakpointDMContext[]> rm);
-    public void getBreakpoints(IExecutionDMContext execDmc, IBreakpoint platformBp, DataRequestMonitor<IBreakpointDMContext[]> rm);
+    public void getAllBreakpoints(IDMContext<?> execDmc, DataRequestMonitor<IBreakpointDMContext[]> rm);
+    public void getBreakpoints(IDMContext<?> execDmc, IBreakpoint platformBp, DataRequestMonitor<IBreakpointDMContext[]> rm);
 }
 

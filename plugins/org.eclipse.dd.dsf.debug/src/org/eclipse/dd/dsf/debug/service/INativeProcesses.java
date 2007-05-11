@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.datamodel.IDMService;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 
 /**
  * This interface provides access to the native OS's process 
@@ -38,15 +39,15 @@ public interface INativeProcesses extends IDMService {
         String getName();
         String getId();
         boolean isDebuggerAttached();
-        IRunControl.IExecutionDMContext getExecutionContext();
-        IMemory.IMemoryContext getMemoryContext();
-        IModules.ISymbolDMContext getSymbolContext();
+        IDMContext<?> getDebuggingContext();
     }
     
     /**
      * Event indicating that process data has changed.
      */
     public interface ProcessChangedDMEvent extends IDMEvent<IProcessDMContext> {}
+
+    public IThreadDMContext getThreadForExecutionContext(IExecutionDMContext execCtx);
 
     /**
      * Retrieves the current list of processes running on target.
@@ -79,13 +80,6 @@ public interface INativeProcesses extends IDMService {
      * @param rm Request completion monitor.
      */
     void getProcessesBeingDebugged(DataRequestMonitor<IProcessDMContext[]> rm);
-    
-    /** 
-     * Returns a thread context for given run control execution context.
-     * @param execCtx Execution context to return thread for.
-     * @return Corresponding thread context.
-     */
-    IThreadDMContext getThreadForExecutionContext(IRunControl.IExecutionDMContext execCtx); 
     
     /**
      * Checks whether the given process or thread can be terminated.

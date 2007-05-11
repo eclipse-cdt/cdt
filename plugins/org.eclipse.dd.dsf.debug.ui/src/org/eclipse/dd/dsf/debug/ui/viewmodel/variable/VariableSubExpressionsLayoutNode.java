@@ -101,6 +101,8 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
                         for (int idx = 0; idx < localColumns.length; idx++) {
                             if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
                                 update.setLabel(getData().getName(), idx);
+                            } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
+                                update.setLabel(getData().getTypeName(), idx);
                             } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
                                 weAreExtractingFormattedData = true;
                             } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {

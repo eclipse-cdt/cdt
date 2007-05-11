@@ -54,9 +54,6 @@ public interface IOS extends IDMService {
         String getDescription();
         String getSingularName();
         String getPluralName();
-        boolean hasExecutionContext();
-        boolean hasModulesContext();
-        boolean hasMemoryContext();
     }
 
     /**
@@ -72,9 +69,7 @@ public interface IOS extends IDMService {
         String getID();
         boolean canAttachDebugger();
         boolean isDebuggerAttached(); 
-        IRunControl.IExecutionDMContext getExecutionDMC();
-        IModules.ISymbolDMContext getSymbolDMC();
-        IMemory.IMemoryContext getMemoryContext();
+        IDMContext<?> getDebuggingContext();
     }
     
     /**

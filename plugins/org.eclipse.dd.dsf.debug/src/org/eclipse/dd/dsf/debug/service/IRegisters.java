@@ -12,6 +12,7 @@ package org.eclipse.dd.dsf.debug.service;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 
@@ -96,56 +97,55 @@ public interface IRegisters extends IFormattedValues {
     
     /** 
      * Retrieves the list of register groups.
-     * @param execCtx Execution DMC, this is required.
-     * @param frameCtx Stack frame DMC, this is optional and may be null.
+     * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getRegisterGroups(IRunControl.IExecutionDMContext execCtx, IStack.IFrameDMContext frameCtx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
+    void getRegisterGroups(IDMContext<?> ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
     
     /** 
      * Retrieves list of sub-groups of given register group. 
-     * @param groupCtx Group DMC, this is required.
+     * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getRegisterSubGroups(IRegisterGroupDMContext groupCtx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
+    void getRegisterSubGroups(IDMContext<?> ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
     
     /** 
      * Retrieves registers in given register group.
-     * @param groupCtx Group DMC, this is required.
+     * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getRegisters(IRegisterGroupDMContext groupCtx, DataRequestMonitor<IRegisterDMContext[]> rm);
+    void getRegisters(IDMContext<?> ctx, DataRequestMonitor<IRegisterDMContext[]> rm);
     
     /** 
      * Retrieves bit fields for given register
-     * @param regCtx Register DMC, this is required.
+     * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getBitFields(IRegisterDMContext regCtx, DataRequestMonitor<IBitFieldDMContext[]> rm);
+    void getBitFields(IDMContext<?> ctx, DataRequestMonitor<IBitFieldDMContext[]> rm);
     
     /** 
      * Writes a register value for a given register to the target
-     * @param regCtx Register DMC, this is required.
+     * @param regCtx Context containing the register.
      * @param regValue Value of the register to be written.
      * @param formatId Format of the value to be written.
      * @param rm Request completion monitor.
      */
-    void writeRegister(IRegisterDMContext regCtx, String regValue, String formatId, RequestMonitor rm);
+    void writeRegister(IDMContext<?> regCtx, String regValue, String formatId, RequestMonitor rm);
     
     /** 
      * Writes a bit field value for a given bit field to the target
-     * @param bitFieldCtx Bit field DMC, this is required.
+     * @param bitFieldCtx Context containing the bit field.
      * @param bitFieldValue Value of the bit field to be written.
      * @param formatId Format of the value to be written.
      * @param rm Request completion monitor.
      */
-    void writeBitField(IBitFieldDMContext bitFieldCtx, String bitFieldValue, String formatId, RequestMonitor rm);
+    void writeBitField(IDMContext<?> bitFieldCtx, String bitFieldValue, String formatId, RequestMonitor rm);
     
     /** 
      * Writes a bit field value for a given bit field to the target
-     * @param bitFieldCtx Bit field DMC, this is required.
+     * @param bitFieldCtx Context containing the bit field.
      * @param mnemonic Mnemonic which represents the value to be written.
      * @param rm Request completion monitor.
      */
-    void writeBitField(IBitFieldDMContext bitFieldCtx, IMnemonic mnemonic, RequestMonitor rm);
+    void writeBitField(IDMContext<?> bitFieldCtx, IMnemonic mnemonic, RequestMonitor rm);
 }

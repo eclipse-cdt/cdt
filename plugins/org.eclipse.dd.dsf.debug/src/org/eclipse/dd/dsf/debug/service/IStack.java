@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
-import org.eclipse.dd.dsf.debug.service.IMemory.IAddress;
 
 /**
  * Stack service provides access to stack information for a 
@@ -59,13 +59,13 @@ public interface IStack extends IDMService {
     /**
      * Returns whether the stack frames can be retrieved for given thread.
      */
-    boolean isStackAvailable(IRunControl.IExecutionDMContext execContext);
+    boolean isStackAvailable(IDMContext<?> execContext);
     
     /**
      * Retrieves list of stack frames for the given execution context.  Request
      * will fail if the stack frame data is not available.
      */
-    void getFrames(IRunControl.IExecutionDMContext execContext, DataRequestMonitor<IFrameDMContext[]> rm);
+    void getFrames(IDMContext<?> execContext, DataRequestMonitor<IFrameDMContext[]> rm);
     
     /**
      * Retrieves the top stack frame for the given execution context.  
@@ -76,15 +76,15 @@ public interface IStack extends IDMService {
      * @param execContext
      * @param rm
      */
-    void getTopFrame(IRunControl.IExecutionDMContext execContext, DataRequestMonitor<IFrameDMContext> rm);
+    void getTopFrame(IDMContext<?> execContext, DataRequestMonitor<IFrameDMContext> rm);
     
     /**
      * Retrieves variables which were arguments to the stack frame's function.
      */
-    void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
+    void getArguments(IDMContext<?> frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
     
     /**
      * Retrieves variables local to the stack frame.
      */
-    void getLocals(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
+    void getLocals(IDMContext<?> frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
 }

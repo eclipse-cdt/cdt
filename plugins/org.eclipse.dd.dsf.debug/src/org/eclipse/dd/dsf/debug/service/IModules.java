@@ -12,12 +12,12 @@ package org.eclipse.dd.dsf.debug.service;
 
 import java.math.BigInteger;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.datamodel.IDMService;
-import org.eclipse.dd.dsf.debug.service.IMemory.IAddress;
 
 /**
  * Debugger service representing module handling logic of a debugger.  
@@ -134,16 +134,16 @@ public interface IModules extends IDMService {
     /** 
      * Retreives the list of modules loaded in given symbol context. 
      */ 
-    void getModules(ISymbolDMContext symCtx, DataRequestMonitor<IModuleDMContext[]> rm);
+    void getModules(IDMContext<?> symCtx, DataRequestMonitor<IModuleDMContext[]> rm);
 
     /**
      * Calculates the line numbers corresponding to the given address. 
      */
-    void calcLineInfo(ISymbolDMContext symCtx, IAddress address, DataRequestMonitor<LineInfo[]> rm);
+    void calcLineInfo(IDMContext<?> symCtx, IAddress address, DataRequestMonitor<LineInfo[]> rm);
     
     /**
      * Calculates the addresses corresponding to the given source file location.
      */
-    void calcAddressInfo(ISymbolDMContext symCtx, String file, int line, int col, DataRequestMonitor<AddressRange[]> rm);
+    void calcAddressInfo(IDMContext<?> symCtx, String file, int line, int col, DataRequestMonitor<AddressRange[]> rm);
 
 }

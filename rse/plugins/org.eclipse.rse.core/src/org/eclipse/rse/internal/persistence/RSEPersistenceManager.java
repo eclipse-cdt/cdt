@@ -47,6 +47,7 @@ import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
+import org.eclipse.rse.services.Mutex;
 
 /**
  * The persistence manager controls all aspects of persisting the RSE data model. It will both
@@ -56,10 +57,6 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
  */
 public class RSEPersistenceManager implements IRSEPersistenceManager {
 
-	private static final int STATE_NONE = 0;
-	private static final int STATE_LOADING = 1;
-	private static final int STATE_SAVING = 2;
-	
 	private class ProviderRecord {
 		private String providerId = null;
 		private IConfigurationElement configurationElement = null;
@@ -75,9 +72,9 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	
 	private Map knownProviders = new HashMap(10);
 	private Map loadedProviders = new HashMap(10);
-	private int _currentState = STATE_NONE;
 	private RSEDOMExporter _exporter;
 	private RSEDOMImporter _importer;
+	private Mutex mutex = new Mutex();
 	
 	public RSEPersistenceManager(ISystemRegistry registry) {
 		_exporter = RSEDOMExporter.getInstance();
@@ -89,15 +86,8 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#isExporting()
 	 */
-	public synchronized boolean isExporting() {
-		return _currentState == STATE_SAVING;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#isImporting()
-	 */
-	public synchronized boolean isImporting() {
-		return _currentState == STATE_LOADING;
+	public synchronized boolean isBusy() {
+		return mutex.isLocked();
 	}
 
 	/* (non-Javadoc)
@@ -142,32 +132,36 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#commitProfile(org.eclipse.rse.core.model.ISystemProfile)
 	 */
-	public boolean commitProfile(ISystemProfile profile) {
+	public boolean commitProfile(ISystemProfile profile, long timeout) {
 		boolean result = false;
-		if (profile != null) {
-			result = save(profile, true);
-		}
+		result = save(profile, true, timeout);
 		return result;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#commitProfiles()
 	 */
-	public boolean commitProfiles() {
-		boolean ok = true;
+	public ISystemProfile[] commitProfiles(long timeout) {
+		List failed = new ArrayList(10);
 		ISystemProfile[] profiles = RSECorePlugin.getTheSystemRegistry().getAllSystemProfiles();
-		for (int idx = 0; idx < profiles.length && ok; idx++) {
+		for (int idx = 0; idx < profiles.length; idx++) {
+			ISystemProfile profile = profiles[idx];
 			try {
-				ok = commitProfile(profiles[idx]);
+				boolean ok = commitProfile(profile, timeout);
+				if (!ok) {
+					failed.add(profile);
+				}
 			} catch (Exception exc) {
 				Logger logger = RSECorePlugin.getDefault().getLogger();
-				String profileName = profiles[idx].getName();
+				String profileName = profile.getName();
 				String message = "Error saving profile " + profileName; //$NON-NLS-1$
 				logger.logError(message, exc);
-				ok = false;
+				failed.add(profile);
 			}
 		}
-		return ok;
+		ISystemProfile[] result = new ISystemProfile[failed.size()];
+		failed.toArray(result);
+		return result;
 	}
 	
 	/* (non-Javadoc)
@@ -203,14 +197,14 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#restoreProfiles()
 	 */
-	public ISystemProfile[] restoreProfiles() {
+	public ISystemProfile[] restoreProfiles(long timeout) {
 		List profiles = new ArrayList(10);
 		String[] ids = getPersistenceProviderIds();
 		for (int i = 0; i < ids.length; i++) {
 			String id = ids[i];
 			IRSEPersistenceProvider provider = getPersistenceProvider(id);
 			if (provider != null) {
-				ISystemProfile[] providerProfiles = restoreProfiles(provider);
+				ISystemProfile[] providerProfiles = restoreProfiles(provider, timeout);
 				profiles.addAll(Arrays.asList(providerProfiles));
 			}
 		}
@@ -222,10 +216,10 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#restoreProfiles(org.eclipse.rse.persistence.IRSEPersistenceProvider)
 	 */
-	public ISystemProfile[] restoreProfiles(IRSEPersistenceProvider provider) {
+	public ISystemProfile[] restoreProfiles(IRSEPersistenceProvider provider, long timeout) {
 		ProviderRecord pr = getProviderRecord(provider);
 		pr.setRestored(false);
-		List profiles = loadProfiles(provider);
+		List profiles = loadProfiles(provider, timeout);
 		pr.setRestored(true);
 		ISystemProfile[] result = new ISystemProfile[profiles.size()];
 		profiles.toArray(result);
@@ -313,12 +307,12 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * @param persistenceProvider
 	 * @return a list of profiles
 	 */
-	private List loadProfiles(IRSEPersistenceProvider persistenceProvider) {
+	private List loadProfiles(IRSEPersistenceProvider persistenceProvider, long timeout) {
 		List profiles = new ArrayList(10);
 		String[] profileNames = persistenceProvider.getSavedProfileNames();
 		for (int i = 0; i < profileNames.length; i++) {
 			String profileName = profileNames[i];
-			ISystemProfile profile = load(persistenceProvider, profileName);
+			ISystemProfile profile = load(persistenceProvider, profileName, timeout);
 			profiles.add(profile);
 		}
 		return profiles;
@@ -331,19 +325,21 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * @param profileName the name of the profile to produce
 	 * @return the profile or null
 	 */
-	private synchronized ISystemProfile load(IRSEPersistenceProvider provider, String profileName) {
+	private synchronized ISystemProfile load(IRSEPersistenceProvider provider, String profileName, long timeout) {
 		ISystemProfile profile = null;
-		if (_currentState == STATE_NONE) {
-			_currentState = STATE_LOADING;
-			RSEDOM dom = provider.loadRSEDOM(profileName, new NullProgressMonitor());
-			if (dom != null) {
-				SystemProfileManager.getDefault().setRestoring(true);
-				profile = _importer.restoreProfile(dom);
-				profile.setPersistenceProvider(provider);
-				cleanTree(profile);
-				SystemProfileManager.getDefault().setRestoring(false);
+		if (mutex.waitForLock(null, timeout)) {
+			try {
+				RSEDOM dom = provider.loadRSEDOM(profileName, new NullProgressMonitor());
+				if (dom != null) {
+					SystemProfileManager.getDefault().setRestoring(true);
+					profile = _importer.restoreProfile(dom);
+					profile.setPersistenceProvider(provider);
+					cleanTree(profile);
+					SystemProfileManager.getDefault().setRestoring(false);
+				}
+			} finally {
+				mutex.release();
 			}
-			_currentState = STATE_NONE;
 		}
 		return profile;
 	}
@@ -354,27 +350,29 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * If in the process of importing, skip writing.
 	 * @return true if the profile is written to a DOM
 	 */
-	private synchronized boolean save(ISystemProfile profile, boolean force) {
+	private boolean save(ISystemProfile profile, boolean force, long timeout) {
 		boolean result = false;
-		if (_currentState == STATE_NONE) {
-			_currentState = STATE_SAVING;
-			IRSEPersistenceProvider provider = profile.getPersistenceProvider();
-			if (provider == null) {
-				provider = getDefaultPersistenceProvider();
-				profile.setPersistenceProvider(provider);
-			}
-			RSEDOM dom = _exporter.createRSEDOM(profile, force);
-			cleanTree(profile);
-			if (dom.needsSave()) {
-				Job job = provider.getSaveJob(dom);
-				if (job != null) {
-					job.schedule(3000); // three second delay
-				} else {
-					provider.saveRSEDOM(dom, new NullProgressMonitor());
+		if (mutex.waitForLock(null, timeout)) {
+			try {
+				IRSEPersistenceProvider provider = profile.getPersistenceProvider();
+				if (provider == null) {
+					provider = getDefaultPersistenceProvider();
+					profile.setPersistenceProvider(provider);
 				}
+				RSEDOM dom = _exporter.createRSEDOM(profile, force);
+				cleanTree(profile);
+				if (dom.needsSave()) {
+					Job job = provider.getSaveJob(dom);
+					if (job != null) {
+						job.schedule(3000); // three second delay
+					} else {
+						provider.saveRSEDOM(dom, new NullProgressMonitor());
+					}
+				}
+				result = true;
+			} finally {
+				mutex.release();
 			}
-			result = true;
-			_currentState = STATE_NONE;
 		}
 		return result;
 	}

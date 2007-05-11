@@ -21,32 +21,42 @@ import org.eclipse.rse.core.model.ISystemProfile;
 public interface IRSEPersistenceManager {
 
 	/**
-	 * Save a particular profile. If the profile has an existing persistence provider
+	 * Schedules a save of particular profile. If the profile has an existing persistence provider
 	 * it is saved by that persistence provider. If the profile has no persistence provider
-	 * then the default persistence provider is used.
+	 * then the default persistence provider is used. If the persistence manager is in a state where
+	 * it is saving or restoring another profile on another thread this call will block for the 
+	 * timeout value specified. If the timeout expires this call will return false.
 	 * @param profile the profile to save
-	 * @return true if successful
+	 * @param timeout the timeout value in milliseconds. If the operation cannot be started in this time 
+	 * it will return false.
+	 * @return true if the save was scheduled and false if the timeout expired without scheduling the save.
 	 */
-	public boolean commitProfile(ISystemProfile profile);
+	public boolean commitProfile(ISystemProfile profile, long timeout);
 
 	/**
-	 * Save all profiles.
-	 * @return true if successful
+	 * Save all profiles. Will attempt to schedule a save of all profiles. Each attempt will time out after 
+	 * the number of milliseconds specified if the operation cannot be started.
+	 * @param timeout the maximum number of milliseconds to wait until the persistence manager becomes available
+	 * to schedule a save for an individual profile. 
+	 * @return the list of profiles that could not be scheduled for save.
 	 */
-	public boolean commitProfiles();
+	public ISystemProfile[] commitProfiles(long timeout);
 
 	/**
-	 * Restore all profiles
+	 * Restore all profiles.
+	 * @param timeout the maximum number of milliseconds to wait for the manager to become idle for each profile.
 	 * @return an array of restored profiles.
 	 */
-	public ISystemProfile[] restoreProfiles();
+	public ISystemProfile[] restoreProfiles(long timeout);
 
 	/**
 	 * Restore the profiles for a particular provider.
 	 * @param provider a persistence provider
-	 * @return an array of the restored profiles
+	 * @param timeout the maximum number of milliseconds to wait for the manager to become idle before restoring this
+	 * the each profile managed by this provider.
+	 * @return an array of the restored profiles.
 	 */
-	public ISystemProfile[] restoreProfiles(IRSEPersistenceProvider provider);
+	public ISystemProfile[] restoreProfiles(IRSEPersistenceProvider provider, long timeout);
 
 	/**
 	 * Delete the persistent form of a profile.
@@ -91,20 +101,16 @@ public interface IRSEPersistenceManager {
 	public IRSEPersistenceProvider getPersistenceProvider(String id);
 
 	/**
-	 * @return true if this instance of the persistence manager is currently exporting a profile.
+	 * @return true if this instance of the persistence manager is currently saving or restoring a profile.
 	 */
-	public boolean isExporting();
+	public boolean isBusy();
 
-	/**
-	 * @return true if this instance of the persistence manager is currently importing a profile.
-	 */
-	public boolean isImporting();
-	
 	/**
 	 * Indicate if all profiles for a particular persistence provider have been restored.
 	 * Profiles are typically restored when RSE is activated and when profiles
 	 * are reloaded by the user. This will not load the persistence provider. If the persistence
-	 * provider is not loaded it will return false.
+	 * provider has not yet been loaded it will return false. This can be used from a different thread
+	 * than the one that requested the restore.
 	 * @param providerId the persistence providerId
 	 * @return true if the profiles have been fully restored
 	 */

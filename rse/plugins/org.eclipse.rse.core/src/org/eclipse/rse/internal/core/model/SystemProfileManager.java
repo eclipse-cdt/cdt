@@ -56,7 +56,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	public static SystemProfileManager getDefault() {
 		if (singleton == null) {
 			singleton = new SystemProfileManager();
-			RSECorePlugin.getThePersistenceManager().restoreProfiles();
+			RSECorePlugin.getThePersistenceManager().restoreProfiles(5000);
 		}
 		return singleton;
 	}
@@ -403,7 +403,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	public void setRestoring(boolean flag) {
 		restoring = flag;
 	}
-
+	
 	private ISystemProfile internalCreateSystemProfile(String name) {
 			ISystemProfile newProfile = new SystemProfile();
 			newProfile.setName(name);

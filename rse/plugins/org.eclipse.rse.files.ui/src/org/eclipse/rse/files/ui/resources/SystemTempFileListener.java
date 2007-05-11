@@ -137,7 +137,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 				}
 				else
 				{
-					if (!RSECorePlugin.getThePersistenceManager().isExporting())
+					if (!RSECorePlugin.getThePersistenceManager().isBusy())
 					{
 						List changes = new ArrayList();
 						checkLocalChanges(delta, changes);

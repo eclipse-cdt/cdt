@@ -3279,7 +3279,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	 */
 	public boolean save()
 	{
-		return RSECorePlugin.getThePersistenceManager().commitProfiles();
+		ISystemProfile[] notSaved = RSECorePlugin.getThePersistenceManager().commitProfiles(5000);
+		return notSaved.length > 0;
 	}
 
 	/**

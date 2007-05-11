@@ -211,7 +211,11 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	
 	public boolean commit() 
 	{
-		return RSECorePlugin.getThePersistenceManager().commitProfile(this);
+		boolean result = false;
+		if (!RSECorePlugin.getThePersistenceManager().isBusy()) {
+			result = RSECorePlugin.getThePersistenceManager().commitProfile(this, 5000);
+		}
+		return result;
 	}
 	
 	/**

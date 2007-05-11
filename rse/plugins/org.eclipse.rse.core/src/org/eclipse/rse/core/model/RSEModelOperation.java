@@ -76,7 +76,7 @@ public abstract class RSEModelOperation {
 	 */
 	private static void endTransaction() {
 		IRSEPersistenceManager persistenceManager = RSECorePlugin.getThePersistenceManager();
-		persistenceManager.commitProfiles();
+		persistenceManager.commitProfiles(5000);
 	}
 
 	/**

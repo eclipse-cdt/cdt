@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -109,7 +106,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			public void modifyText(ModifyEvent e) {
 	        	String fullCommand = t_buildCmd.getText().trim();
 	        	String buildCommand = parseMakeCommand(fullCommand);
-	        	String buildArgs = parseMakeArgs(fullCommand);
+	        	String buildArgs = fullCommand.substring(buildCommand.length()).trim();
 	        	if(!buildCommand.equals(bld.getCommand()) 
 	        			|| !buildArgs.equals(bld.getArguments())){
 		        	bld.setCommand(buildCommand);
@@ -470,78 +467,6 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		} catch (CoreException ex) {
 			ManagedBuilderUIPlugin.log(ex);
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @param rawCommand
-	 * @return
-	 */
-	private String parseMakeArgs(String rawCommand) {
-		StringBuffer result = new StringBuffer();		
-		
-		// Parse out the command
-		String actualCommand = parseMakeCommand(rawCommand);
-		
-		// The flags and targets are anything not in the command
-		String arguments = rawCommand.substring(actualCommand.length());
-
-		// If there aren't any, we can stop
-		if (arguments.length() == 0) {
-			return result.toString().trim();
-		}
-
-		String[] tokens = arguments.trim().split("\\s"); //$NON-NLS-1$
-		/*
-		 * Cases to consider
-		 * --<flag>					Sensible, modern single flag. Add to result and continue.
-		 * -<flags>					Flags in single token, add to result and stop
-		 * -<flag_with_arg> ARG		Flag with argument. Add next token if valid arg.
-		 * -<mixed_flags> ARG		Mix of flags, one takes arg. Add next token if valid arg.
-		 * -<flag_with_arg>ARG		Corrupt case where next token should be arg but isn't
-		 * -<flags> [target]..		Flags with no args, another token, add flags and stop.
-		 */
-		Pattern flagPattern = Pattern.compile("C|f|I|j|l|O|W"); //$NON-NLS-1$
-		// Look for a '-' followed by 1 or more flags with no args and exactly 1 that expects args
-		Pattern mixedFlagWithArg = Pattern.compile("-[^CfIjloW]*[CfIjloW]{1}.+"); //$NON-NLS-1$
-		for (int i = 0; i < tokens.length; ++i) {
-			String currentToken = tokens[i];
-			if (currentToken.startsWith("--")) { //$NON-NLS-1$
-				result.append(currentToken);
-				result.append(" "); //$NON-NLS-1$
-			} else if (currentToken.startsWith("-")) { //$NON-NLS-1$
-				// Is there another token
-				if (i + 1 >= tokens.length) {
-					//We are done
-					result.append(currentToken);
-				} else {
-					String nextToken = tokens[i + 1];
-					// Are we expecting arguments
-					Matcher flagMatcher = flagPattern.matcher(currentToken);
-					if (!flagMatcher.find()) {
-						// Evalutate whether the next token should be added normally
-						result.append(currentToken);
-						result.append(" "); //$NON-NLS-1$
-					} else {
-						// Look for the case where there is no space between flag and arg
-						if (mixedFlagWithArg.matcher(currentToken).matches()) {
-							// Add this single token and keep going
-							result.append(currentToken);
-							result.append(" ");							 //$NON-NLS-1$
-						} else {
-							// Add this token and the next one right now
-							result.append(currentToken);
-							result.append(" "); //$NON-NLS-1$
-							result.append(nextToken);
-							result.append(" "); //$NON-NLS-1$
-							// Skip the next token the next time through, though
-							++i;
-						}
-					}
-				}
-			}
-		}
-		
-		return result.toString().trim();
 	}
 
 	/* (non-Javadoc)

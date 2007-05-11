@@ -35,6 +35,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 
 /**
@@ -99,6 +100,8 @@ public class CreateSourceFolder extends ProcessRunner {
 			ICSourceEntry[] entries = config.getSourceEntries();
 			Set set = new HashSet();
 			for (int j=0; j < entries.length; j++) {
+				if(new Path(entries[j].getValue()).segmentCount() == 1)
+					continue;
 				set.add(entries[j]);
 			}
 			set.add(newEntry);

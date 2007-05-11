@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
+import org.eclipse.cdt.core.templateengine.TemplateInfo;
 
 /**
  * 
@@ -24,4 +30,31 @@ import java.util.HashMap;
 public class UIAttributes/*<K, V>*/ extends HashMap/*<String, String>*/ {
 
 	private static final long serialVersionUID = 0000000000L;
+	private TemplateInfo templateInfo;
+	
+	UIAttributes(TemplateInfo templateInfo) {
+		this.templateInfo = templateInfo;
+	}
+	
+	public Object/*V*/ put(Object/*K*/ key, Object/*V*/ value) {
+		value = TemplateEngineHelper.externalizeTemplateString(templateInfo, (String)value);
+		Object/*V*/ v = super.put(key, value);
+		return v;
+	}
+
+	public void putAll(Map/*<? extends K, ? extends V>*/ map) {
+		Collection keys = map.keySet();
+		for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
+			Object key = iterator.next();
+			Object value = map.get(key);
+			value = TemplateEngineHelper.externalizeTemplateString(templateInfo, (String) value);
+			super.put(key, value);
+		}
+	}
+
+	public Object/*V*/ remove(Object key) {
+		Object/*V*/ v = super.remove(key);
+		return v;
+	}
+	
 }

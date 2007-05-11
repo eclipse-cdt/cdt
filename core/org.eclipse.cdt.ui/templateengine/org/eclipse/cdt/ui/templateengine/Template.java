@@ -59,7 +59,7 @@ public class Template extends TemplateCore {
 	public Template(TemplateInfo templateInfo) throws IOException, ProcessFailureException, SAXException, ParserConfigurationException {
 		super(templateInfo);
 		templateDescriptor = getTemplateDescriptor();
-		uiElementTreeBuilderManager = new UIElementTreeBuilderManager(new UIElementTreeBuilderHelper(templateDescriptor));
+		uiElementTreeBuilderManager = new UIElementTreeBuilderManager(new UIElementTreeBuilderHelper(templateDescriptor, templateInfo));
 		uiPagesProvider = new UIPagesProvider();
 	}
 

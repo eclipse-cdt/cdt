@@ -12,7 +12,10 @@ package org.eclipse.cdt.core.templateengine;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Locale;
+import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.resources.IWorkspace;
@@ -23,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.osgi.framework.Bundle;
 
 /**
  * Acts as an Helper class for Template Engine
@@ -33,9 +37,11 @@ public class TemplateEngineHelper {
 
 	public static final String OPEN_MARKER = "$("; //$NON-NLS-1$
 	public static final String CLOSE_MARKER = ")"; //$NON-NLS-1$
+	public static final String STRING_EXTERNALIZATION_MARKER = "%"; //$NON-NLS-1$
 	public static final String LOGGER_FILE_NAME = "Process"; //$NON-NLS-1$
 	// This is used while getting the Plugin Path.
 	public static final String PROJRESOURCE = "plugin.xml"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 	public static final String BOOLTRUE = "true"; //$NON-NLS-1$
 	public static final String ID = "id"; //$NON-NLS-1$
 	public static final String VALUE = "value"; //$NON-NLS-1$
@@ -217,5 +223,83 @@ public class TemplateEngineHelper {
 			return null;
 		}
 		return FileLocator.toFileURL(entry);
+	}
+
+	public static String externalizeTemplateString(TemplateInfo ti, String key) {
+		if (key.startsWith(STRING_EXTERNALIZATION_MARKER)) {
+			String pluginId = ti.getPluginId();
+			String path = ti.getTemplatePath();
+			IPath p = new Path(path);
+			String propertiesPath = "template.properties";
+			if(p.segmentCount() != 0){
+				p = p.removeLastSegments(1);
+				propertiesPath = p.append(propertiesPath).toString();
+			}
+			return externalizeTemplateString(pluginId, propertiesPath, key);
+		}
+		return key;
+	}
+
+	public static String externalizeTemplateString(String pluginId, String location, String key) {
+		String value = key;
+		if (key.startsWith(STRING_EXTERNALIZATION_MARKER)) {
+			try {
+				value = location != null ? getValueFromProperties(pluginId, location, key.substring(1)) : null;
+				if (value == null) {
+					value = getValueFromProperties(pluginId, "plugin.properties", key.substring(1));
+				}
+			} catch (IOException e) {
+				value = key;
+				e.printStackTrace();
+			}
+
+			if (value == null) {
+				value = key;
+			}
+		}
+		return value;
+	}
+	
+	private static String getValueFromProperties(String pluginId, String propertiesFile, String key) throws IOException {
+		String value = null;
+		Bundle b = Platform.getBundle(pluginId);
+//		URL url= b.getResource(propertiesFile);
+		URL url= getResourceURL(b, propertiesFile);
+		if (url != null) {
+			InputStream in= url.openStream();
+			Properties p = new Properties();
+			p.load(in);
+			value = (String) p.get(key);
+		}
+		return value;
+		
+	}
+	
+	private static URL getResourceURL(Bundle bundle, String propertiesFile) {
+		// Get the properties in the following order
+		// propertiesFile_lang_country_variant
+		// propertiesFile_lang_country
+		// propertiesFile_lang
+		// propertiesFile
+	
+		URL url = null;
+		Locale locale = Locale.getDefault();
+		String lang = locale.getLanguage();
+		String country = locale.getCountry();
+		String variant = locale.getVariant();
+		
+		url = bundle.getResource(propertiesFile + "_" + lang + "_" + country + "_" + variant);
+		
+		if (url == null) {
+			url = bundle.getResource(propertiesFile + "_" + lang + "_" + country);
+		}
+		if (url == null) {
+			url = bundle.getResource(propertiesFile + "_" + lang);
+		}
+		if (url == null) {
+			url = bundle.getResource(propertiesFile);
+		}
+		
+		return url;
 	}
 }

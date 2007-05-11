@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.templateengine;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -75,7 +76,7 @@ public class TemplateCore {
 
 	protected TemplateCore(TemplateInfo templateInfo) throws IOException, SAXException, ParserConfigurationException {
 		this.templateInfo = templateInfo;
-		templateDescriptor = new TemplateDescriptor(TemplateEngineHelper.getTemplateResourceURL(templateInfo.getPluginId(), templateInfo.getTemplatePath()));
+		templateDescriptor = new TemplateDescriptor(TemplateEngineHelper.getTemplateResourceURL(templateInfo.getPluginId(), templateInfo.getTemplatePath()), templateInfo.getPluginId());
 		valueStore = new ValueStore/*<String, String>*/(this);
 		valueStore.putAll(templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement()));
 		valueStore.putAll(TemplateEngine.getDefault().getSharedDefaults());
@@ -141,7 +142,7 @@ public class TemplateCore {
         if (description == null) {
         	description = templateDescriptor.getRootElement().getAttribute(DESCRIPTION).trim();
         }
-        return description;
+        return TemplateEngineHelper.externalizeTemplateString(templateInfo, description);
 	}
 
 	/**
@@ -171,7 +172,7 @@ public class TemplateCore {
         if (label == null) {
         	label = templateDescriptor.getRootElement().getAttribute(LABEL).trim();
         }
-        return label;
+        return TemplateEngineHelper.externalizeTemplateString(templateInfo, label);
 	}
 	
 	/**
@@ -247,13 +248,20 @@ public class TemplateCore {
 		}
 		
 		public Object/*V*/ put(Object/*K*/ key, Object/*V*/ value) {
+			value = TemplateEngineHelper.externalizeTemplateString(template.getTemplateInfo(), (String)value);
 			Object/*V*/ v = super.put(key, value);
 			template.setDirty();
 			return v;
 		}
 
 		public void putAll(Map/*<? extends K, ? extends V>*/ map) {
-			super.putAll(map);
+			Collection keys = map.keySet();
+			for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
+				Object key = iterator.next();
+				Object value = map.get(key);
+				value = TemplateEngineHelper.externalizeTemplateString(template.getTemplateInfo(), (String) value);
+				super.put(key, value);
+			}
 			template.setDirty();
 		}
 
@@ -262,6 +270,5 @@ public class TemplateCore {
 			template.setDirty();
 			return v;
 		}
-		
 	}
 }

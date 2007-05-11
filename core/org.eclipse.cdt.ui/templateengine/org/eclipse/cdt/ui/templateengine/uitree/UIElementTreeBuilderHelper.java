@@ -20,6 +20,7 @@ import org.w3c.dom.Node;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
+import org.eclipse.cdt.core.templateengine.TemplateInfo;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIBooleanWidget;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIBrowseWidget;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UISelectWidget;
@@ -39,6 +40,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	 * TemplateDescriptor representing the TemplaeDescriptor XML.
 	 */
 	private TemplateDescriptor templateDescriptor = null;
+	private TemplateInfo templateInfo;
 
 	private Element element;
 
@@ -47,8 +49,9 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	 * 
 	 * @param templateDescriptor
 	 */
-	public UIElementTreeBuilderHelper(TemplateDescriptor templateDescriptor) {
+	public UIElementTreeBuilderHelper(TemplateDescriptor templateDescriptor, TemplateInfo templateInfo) {
 		this.templateDescriptor = templateDescriptor;
+		this.templateInfo = templateInfo;
 	}
 
 	/**
@@ -72,7 +75,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 
 		this.element = element;
 		UIElement retUIElement = null;
-		UIAttributes/*<String, String>*/ uiAttributes = new UIAttributes/*<String, String>*/();
+		UIAttributes/*<String, String>*/ uiAttributes = new UIAttributes/*<String, String>*/(templateInfo);
 
 		NamedNodeMap list = element.getAttributes();
 		for (int i = 0, s = list.getLength(); i < s; i++) {

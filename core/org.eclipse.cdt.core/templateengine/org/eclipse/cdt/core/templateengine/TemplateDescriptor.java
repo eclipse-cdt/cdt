@@ -41,6 +41,7 @@ public class TemplateDescriptor {
     private Document document;
 	private Element rootElement;
 	private List/*<String>*/ persistVector;
+	private String pluginId;
 
 	/**
 	 * Constructor  which construct the Document based the URL
@@ -49,10 +50,11 @@ public class TemplateDescriptor {
 	 * @throws IOException
 	 * @throws ParserConfigurationException
 	 */
-	public TemplateDescriptor(URL descriptorURL) throws SAXException, IOException, ParserConfigurationException {
+	public TemplateDescriptor(URL descriptorURL, String id) throws SAXException, IOException, ParserConfigurationException {
 		document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(descriptorURL.openStream());
 		rootElement = document.getDocumentElement();
 		persistVector = new ArrayList/*<String>*/();
+		pluginId = id;
 	}
 
 	/**
@@ -194,5 +196,9 @@ public class TemplateDescriptor {
 	 */
 	public List/*<String>*/ getPersistTrueIDs() {
 		return persistVector;
+	}
+	
+	public String getPluginId() {
+		return pluginId;
 	}
 }

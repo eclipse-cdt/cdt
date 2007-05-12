@@ -14,6 +14,7 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 Contributors:
 Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
 Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -52,7 +53,7 @@ Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
 <!-- ============================================== -->
 <!-- let's wait until this is supported on windows
       <extension
-         point="org.eclipse.rse.ui.subsystemConfigurations">
+         point="org.eclipse.rse.core.subsystemConfigurations">
       <factory
             systemTypeIds="org.eclipse.rse.systemtype.local"
             name="%Factory.LocalProcesses"

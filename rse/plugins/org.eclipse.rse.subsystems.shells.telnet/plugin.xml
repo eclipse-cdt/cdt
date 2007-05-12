@@ -7,7 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html 
 
 Contributors: 
-Martin Oberhuber - initial API and implementation 
+Martin Oberhuber - initial API and implementation
+Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core 
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -21,7 +22,7 @@ Martin Oberhuber - initial API and implementation
 			name="Telnet Only"/>
 	</extension>
 	<extension
-		point="org.eclipse.rse.ui.subsystemConfigurations">
+		point="org.eclipse.rse.core.subsystemConfigurations">
 		<configuration
 			category="shells"
 			class="org.eclipse.rse.subsystems.shells.telnet.TelnetShellSubSystemConfiguration"

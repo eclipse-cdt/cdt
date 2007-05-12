@@ -14,68 +14,10 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 Contributors:
 Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions extension point
 Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
+Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
 -->
 <?eclipse version="3.1"?>
 <plugin>
-
-<!-- ================================================================================== -->
-<!-- EXTENSION POINT: org.eclipse.rse.ui.subsystemConfigurations                      -->
-<!-- ================================================================================== -->
-<!-- Extension point for defining subsystem factories. A configuration is responsible for     -->
-<!--  creating subsystem instances.                                                     -->
-<!--                                                                                    -->
-<!-- Example of extension configuration:                                                -->
-<!--   <extension                                                                       -->
-<!--      point="org.eclipse.rse.ui.subsystemConfigurations">                            -->
-<!--      <configuration                                                                -->
-<!--         systemTypeIds="org.eclipse.rse.systemtype.local;org.eclipse.rse.systemtype.unix"-->
-<!--         name="Files"                                                               -->
-<!--         description="This subsystem allows you to work with files on local or remote systems."-->
-<!--         icon="icons/filesubsys.gif"                                                -->
-<!--         iconlive="icons/filesubsyslive.gif"                                        -->
-<!--         id="com.acme.etools.mypkg.myconfiguration"                                       -->
-<!--         class="com.acme.etools.mypkg.MyClass"                                      -->
-<!--         category="files"                                                           -->
-<!--         vendor="ACME"                                                              -->
-<!--      >                                                                             -->
-<!--      </configuration>                                                                    -->
-<!--   </extension>                                                                     -->
-<!-- Each extension can contain multiple configuration tags that identify a subsystem configuration -->
-<!--                                                                                    -->
-<!-- <configuration> tag attributes:                                                          -->
-<!-- ================================================================================== -->
-<!--  systemTypes => semicolon-separated list of system types or * for all              -->
-<!--  class       => class implementing org.eclipse.rse.subsystems.SubSystemFactory -->
-<!--  category    => optionally identifies category to allow efficient subsetting of    -->
-<!--                  connection lists. Pre-defined categories are "files", "cmds" and  -->
-<!--                  "jobs". Can also specify your own category like "database"        -->
-<!--  icon        => icon to display for subsystems of this configuration when not connected  -->
-<!--  iconlive    => icon to display for subsystems of this configuration when connected      -->
-<!--  name        => translatable display name for subsystems of this configuration     -->
-<!--  description => translatable descriptin for subsystems of this configuration       -->
-<!--  id          => unique id for this extension point. Will be used for a folder name -->
-<!--  vendor      => name of company supplying this configuration                       -->
-<!--  systemClass => OBSOLETE - Removed in OpenRSE.                                     -->
-<!--      Was only used when naming a predefined subsystem configuration                -->
-<!--      in the <samp>class</samp> attribute, when you want to subclass or replace the -->
-<!--      predefined IConnectorService object used to manage the live connection with   -->
-<!--      the remote system. Name a class that implements                               -->
-<!--        org.eclipse.rse.core.subsystems.IConnectorService or extends the appropriate     -->
-<!--      predefined class such as org.eclipse.rse.universal.UniversalSystem            -->
-<!--      for unix, windows and system types.                                           -->
-<!-- ================================================================================== -->
-<!--                                                                                    -->
-<!-- For systemTypes, if you specify * for all, you still have a chance at runtime to   -->
-<!--  not create a subsystem for a given system type. Simply return false from your     -->
-<!--  appliesToSystemType method.                                                       -->
-<!--                                                                                    -->
-<!--                                                                                    -->
-<!-- ================================================================================== -->
-
-   <extension-point id="subsystemConfigurations" name="%extPoint.subsystemConfigurations" schema="schema/subsystemConfigurations.exsd"/>
-
-
-
 <!-- ================================================================================== -->
 <!-- EXTENSION POINT: org.eclipse.rse.ui.remoteSystemsViewPreferencesActions   -->
 <!-- ================================================================================== -->

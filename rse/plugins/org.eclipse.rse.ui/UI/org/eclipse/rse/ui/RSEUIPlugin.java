@@ -19,12 +19,12 @@
  * Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions extension point
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
+ * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
@@ -51,8 +51,6 @@ import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
-import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxy;
-import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxyComparator;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemShowPreferencesPageAction;
@@ -137,11 +135,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     
 //    private SystemType[]	            allSystemTypes = null;
     private SystemRegistry           _systemRegistry = null;
-    
-    
- 
-	private ISubSystemConfigurationProxy[]    subsystemConfigurations = null;
- 
 
     private Vector viewSuppliers = new Vector();
     private SystemViewAdapterFactory svaf; // for fastpath access
@@ -631,55 +624,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	}
     }
     
-    
-
-    /**
-     * Return an array of SubSystemConfigurationProxy objects.
-     * These represent all extensions to our subsystemConfigurations extension point.
-     */
-    public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxies()
-    {
-    	if (subsystemConfigurations != null) // added by PSC
-    		return subsystemConfigurations;
-
-    	IConfigurationElement[] factoryPlugins = getSubSystemConfigurationPlugins();
-    	if (factoryPlugins != null)
-    	{
-          Vector v = new Vector();
-          for (int idx=0; idx<factoryPlugins.length; idx++)
-          {
-             SubSystemConfigurationProxy ssf =
-               new SubSystemConfigurationProxy(factoryPlugins[idx]);           	
-          	
-             v.addElement(ssf);
-          }    	  	
-          if (v.size() != 0)
-          {
-            subsystemConfigurations = new ISubSystemConfigurationProxy[v.size()];
-            for (int idx=0; idx<v.size(); idx++)
-               subsystemConfigurations[idx] = (ISubSystemConfigurationProxy)v.elementAt(idx);
-          }
-    	}
-    	
-    	Arrays.sort(subsystemConfigurations, new SubSystemConfigurationProxyComparator());
-    	
-    	return subsystemConfigurations;
-    }
-
-    /**
-     *  Return all elements that extend the org.eclipse.rse.ui.subsystemConfigurations extension point
-     */
-    private IConfigurationElement[] getSubSystemConfigurationPlugins()
-    {
-   	    // Get reference to the plug-in registry
-	    IExtensionRegistry registry = Platform.getExtensionRegistry();
-	    // Get configured extenders
-	    IConfigurationElement[] subsystemFactoryExtensions =
-		  registry.getConfigurationElementsFor("org.eclipse.rse.ui","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$   	
-
-	    return subsystemFactoryExtensions;
-    }
-
     /**
      * Returns true if the SystemRegistry has been instantiated already.
      * Use this when you don't want to start the system registry as a side effect of retrieving it.
@@ -711,7 +655,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 
     	  _systemRegistry = SystemRegistry.getInstance(logfilePath);
 
-          ISubSystemConfigurationProxy[] proxies = getSubSystemConfigurationProxies();
+          ISubSystemConfigurationProxy[] proxies = RSECorePlugin.getDefault().getSubSystemConfigurationProxies();
           if (proxies != null)
           {
             _systemRegistry.setSubSystemConfigurationProxies(proxies);

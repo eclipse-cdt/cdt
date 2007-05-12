@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006, 2007 IBM Corporation, Symbian Software Ltd. and Wind River Systems, Inc. All rights reserved.
+Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@ Javier Montalvo Orus (Symbian) - add Windows to list of valid FTP systems
 Martin Oberhuber (Wind River) - add FTP Only system type
 Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
 Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
+Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -28,7 +29,7 @@ Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to 
         	id="org.eclipse.rse.systemtype.ftp"
 	        name="FTP Only"/>
 	</extension>
-    <extension point="org.eclipse.rse.ui.subsystemConfigurations">
+    <extension point="org.eclipse.rse.core.subsystemConfigurations">
       <configuration
             systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.windows;org.eclipse.rse.systemtype.ftp"
             name="%Files"

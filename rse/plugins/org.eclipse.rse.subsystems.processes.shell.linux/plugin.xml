@@ -9,11 +9,12 @@ http://www.eclipse.org/legal/epl-v10.html
 
 Contributors: 
 Yufen Kuo (MontaVista) - initial API and implementation
-Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere 
+Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere
+Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core 
 -->
 <plugin>
    <extension
-         point="org.eclipse.rse.ui.subsystemConfigurations">
+         point="org.eclipse.rse.core.subsystemConfigurations">
       <configuration
             systemTypeIds="org.eclipse.rse.systemtype.linux"
             name="%ShellProcessSubsystemName"

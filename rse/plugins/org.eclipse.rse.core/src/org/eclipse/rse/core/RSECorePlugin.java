@@ -20,6 +20,8 @@ package org.eclipse.rse.core;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -27,7 +29,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.RSECoreRegistry;
+import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxy;
+import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxyComparator;
 import org.eclipse.rse.internal.persistence.RSEPersistenceManager;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
@@ -43,20 +48,21 @@ import org.osgi.framework.BundleContext;
 public class RSECorePlugin extends Plugin {
 
 	/**
-	 * Current release as a number (multiplied by 10). E.g. 30 is for release 3.0.
+	 * Current release as a number (multiplied by 100). E.g. 300 is for release 3.0.0
 	 */
-	public static final int CURRENT_RELEASE = 100; // updated to new release
+	public static final int CURRENT_RELEASE = 200; // updated to new release
 
 	/**
 	 * Current release as a string.
 	 */
-	public static final String CURRENT_RELEASE_NAME = "1.0.0";  //$NON-NLS-1$
+	public static final String CURRENT_RELEASE_NAME = "2.0.0";  //$NON-NLS-1$
 
 	private static RSECorePlugin plugin = null; // the singleton instance of this plugin
 	private Logger logger = null;
 	private ISystemRegistry _registry = null;
 	private IRSEPersistenceManager _persistenceManager = null;
-
+	private ISubSystemConfigurationProxy[] _subsystemConfigurations = null;
+ 
 	/**
 	 * Returns the singleton instance of RSECorePlugin.
 	 * @return the singleton instance.
@@ -246,5 +252,53 @@ public class RSECorePlugin extends Plugin {
 		    }
 		}
 	}
-	
+
+    /**
+     *  Return all elements that extend the org.eclipse.rse.core.subsystemConfigurations extension point
+     */
+    private IConfigurationElement[] getSubSystemConfigurationPlugins()
+    {
+   	    // Get reference to the plug-in registry
+	    IExtensionRegistry registry = Platform.getExtensionRegistry();
+	    // Get configured extenders
+	    IConfigurationElement[] subsystemFactoryExtensions =
+		  registry.getConfigurationElementsFor("org.eclipse.rse.core","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$   	
+
+	    return subsystemFactoryExtensions;
+    }
+
+    /**
+     * Return an array of SubSystemConfigurationProxy objects.
+     * These represent all extensions to our subsystemConfigurations extension point.
+     */
+    public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxies()
+    {
+    	if (_subsystemConfigurations != null) // added by PSC
+    		return _subsystemConfigurations;
+
+    	IConfigurationElement[] factoryPlugins = getSubSystemConfigurationPlugins();
+    	if (factoryPlugins != null)
+    	{
+          Vector v = new Vector();
+          for (int idx=0; idx<factoryPlugins.length; idx++)
+          {
+             SubSystemConfigurationProxy ssf =
+               new SubSystemConfigurationProxy(factoryPlugins[idx]);           	
+          	
+             v.addElement(ssf);
+          }    	  	
+          if (v.size() != 0)
+          {
+            _subsystemConfigurations = new ISubSystemConfigurationProxy[v.size()];
+            for (int idx=0; idx<v.size(); idx++)
+               _subsystemConfigurations[idx] = (ISubSystemConfigurationProxy)v.elementAt(idx);
+          }
+    	}
+    	
+    	Arrays.sort(_subsystemConfigurations, new SubSystemConfigurationProxyComparator());
+    	
+    	return _subsystemConfigurations;
+    }
+
+
 }

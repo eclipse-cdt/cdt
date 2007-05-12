@@ -9,6 +9,7 @@
  * Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.discovery;
@@ -88,7 +89,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.ui","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.core","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		
 		SystemRefreshAllAction systemRefreshAllAction = new SystemRefreshAllAction(null);

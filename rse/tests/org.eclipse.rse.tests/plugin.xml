@@ -16,7 +16,7 @@
    </extension>
 
 	<!-- Do not replace the use of systemTypes here as long it only deprecated! -->
-	<extension point="org.eclipse.rse.ui.subsystemConfigurations">
+	<extension point="org.eclipse.rse.core.subsystemConfigurations">
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem"
 			systemTypeIds="org.eclipse.rse.systemtype.local;org.eclipse.rse.systemtype.windows"

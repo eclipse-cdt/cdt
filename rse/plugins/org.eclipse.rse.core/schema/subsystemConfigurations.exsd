@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.rse.ui">
+<schema targetNamespace="org.eclipse.rse.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.ui" id="subsystemConfigurations" name="Subsystem Configurations"/>
+         <meta.schema plugin="org.eclipse.rse.core" id="subsystemConfigurations" name="Subsystem Configurations"/>
       </appInfo>
       <documentation>
          This extension point allows tool-writers to extend the capability of the Remote System Explorer, by identifying a subsystem configuration that produces a subsystem whenever a new connection is created. This subsystem appears under the connection when it is expanded in the Remote Systems view of the Remote System Explorer perspective. The subsystem configuration is called by the Remote System framework when the user creates a new connection, when the connection&apos;s system type is one of the types identified as supported by this subsystem configuration extension.
@@ -183,7 +183,7 @@ For example, this attribute could be &lt;code&gt;serviceType=&quot;_ftp._tcp;_ft
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension 
-      point=&quot;org.eclipse.rse.ui.subsystemConfigurations&quot;&gt;
+      point=&quot;org.eclipse.rse.core.subsystemConfigurations&quot;&gt;
       &lt;configuration
          systemTypeIds=&quot;org.eclipse.rse.systemtype.unix;*.rse.systemtype.linux&quot; 
          name=&quot;Databases&quot;
@@ -247,6 +247,7 @@ Contributors:
 IBM Corporation - initial API and implementation
 Uwe Stieber (Wind River) - systemTypeIds attribute extensions
 Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
+Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
       </documentation>
    </annotation>
 

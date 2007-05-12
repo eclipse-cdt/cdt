@@ -8,6 +8,7 @@
  * Javier Montalvo Orus (Symbian) - initial API and implementation
  * Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
  ********************************************************************************/
 
 package org.eclipse.tm.internal.discovery.wizard;
@@ -114,7 +115,7 @@ public class ServiceDiscoveryWizardDisplayPage extends WizardPage {
 	private int timeOut = 500; 
 	
 	//format of serviceType attribute list of names and transports 
-	//of extension point org.eclipse.ui.subsystemConfigurations
+	//of extension point org.eclipse.core.subsystemConfigurations
 	private final Pattern serviceTypeFormat = Pattern.compile("_(.+)\\._(.+)"); //$NON-NLS-1$
 	
 	private Service lastSelectedService = null;
@@ -144,7 +145,7 @@ public class ServiceDiscoveryWizardDisplayPage extends WizardPage {
 		//load all service id's from the extension point registry
 		//this id will be used to filter the supported sytem types
 		
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.ui","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.core","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		for (int i = 0; i < ce.length; i++) {
 			String type = ce[i].getAttribute("serviceType"); //$NON-NLS-1$

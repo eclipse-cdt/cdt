@@ -13,6 +13,7 @@
  * Contributors: 
  * Yu-Fen Kuo (MontaVista) - adapted from RSE ProcessServiceSubSystemConfiguration
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere
+ * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.shell.linux;
@@ -32,7 +33,7 @@ import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSy
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 
 /**
- * This class is used by org.eclipse.rse.ui.subsystemConfigurations extension
+ * This class is used by org.eclipse.rse.core.subsystemConfigurations extension
  * that defines the process subsystem using ssh protocol on linux remote
  * targets.
  * 

@@ -336,13 +336,12 @@ public class CCorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
+		// make sure to register the resource listener as the first one in CDT:
 		fNewCProjectDescriptionManager= CProjectDescriptionManager.getInstance();
+		fNewCProjectDescriptionManager.registerResourceListener();
 
-		// Start file type manager first !!
 		fPathEntryVariableManager = new CdtVarPathEntryVariableManager();
-
 		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
-				
 		fCoreModel = CoreModel.getDefault();
 
 		// Fire up the PDOM

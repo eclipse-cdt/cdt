@@ -286,44 +286,46 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return fInstance;
 	}
 
-	public void startup(){
-		if(fRcChangeHandler == null){
-			fRcChangeHandler = new ResourceChangeHandler();
+	public void registerResourceListener() {
+		assert fRcChangeHandler == null;
+		fRcChangeHandler = new ResourceChangeHandler();
+		
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				fRcChangeHandler, 
+				IResourceChangeEvent.POST_CHANGE 
+				| IResourceChangeEvent.PRE_DELETE
+				| IResourceChangeEvent.PRE_CLOSE
+				/*| IResourceChangeEvent.POST_BUILD*/);
+	}
 	
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(
-					fRcChangeHandler, 
-					IResourceChangeEvent.POST_CHANGE 
-					| IResourceChangeEvent.PRE_DELETE
-					| IResourceChangeEvent.PRE_CLOSE
-					/*| IResourceChangeEvent.POST_BUILD*/);
+	public void startup(){
+		assert fRcChangeHandler != null;
+		fDescriptorManager.startup();
 
-			fDescriptorManager.startup();
-			
-			CExternalSettingsManager.getInstance().startup();
-			
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			Job rcJob = new Job(SettingsModelMessages.getString("CProjectDescriptionManager.0")){ //$NON-NLS-1$
-				protected IStatus run(IProgressMonitor monitor) {
-					try{
-						startSaveParticipant();
-					} catch (CoreException e){
-						CCorePlugin.log(e);
-						return e.getStatus();
-					}
-					return new Status(
-							IStatus.OK,
-							CCorePlugin.PLUGIN_ID,
-							IStatus.OK,
-							new String(),
-							null);
+		CExternalSettingsManager.getInstance().startup();
+
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		Job rcJob = new Job(SettingsModelMessages.getString("CProjectDescriptionManager.0")){ //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				try{
+					startSaveParticipant();
+				} catch (CoreException e){
+					CCorePlugin.log(e);
+					return e.getStatus();
 				}
-			};
-						
-			rcJob.setRule(root);
-			rcJob.setPriority(Job.INTERACTIVE);
-			rcJob.setSystem(true);
-			rcJob.schedule();
-		}
+				return new Status(
+						IStatus.OK,
+						CCorePlugin.PLUGIN_ID,
+						IStatus.OK,
+						new String(),
+						null);
+			}
+		};
+
+		rcJob.setRule(root);
+		rcJob.setPriority(Job.INTERACTIVE);
+		rcJob.setSystem(true);
+		rcJob.schedule();
 	}
 
 	/*

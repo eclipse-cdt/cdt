@@ -9,6 +9,7 @@
  * Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
+ * Javier Montalvo Orus (Symbian) - [186652] Next button should not be enabled on final page of discovery wizard
  ********************************************************************************/
 
 package org.eclipse.tm.internal.discovery.wizard;
@@ -654,7 +655,7 @@ public class ServiceDiscoveryWizardDisplayPage extends WizardPage {
 	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
 	 */
 	public boolean canFlipToNextPage() {
-	        return isPageComplete();
+	        return false;
 	    }
 	
 }

@@ -1098,6 +1098,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	private ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
 
 	/**
+	 * Flag indicating whether the reconciler is currently running.
+	 * @since 4.0
+	 */
+	private volatile boolean fIsReconciling;
+
+	/**
 	 * Semantic highlighting manager
 	 * @since 4.0
 	 */
@@ -1526,7 +1532,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 4.0
 	 */
 	protected void synchronizeOutlinePage() {
-		if(fOutlinePage != null && fOutlinePage.isLinkingEnabled()) {
+		if(fOutlinePage != null && fOutlinePage.isLinkingEnabled() && !fIsReconciling) {
 			fOutlinePage.removeSelectionChangedListener(this);
 			fOutlinePage.synchronizeSelectionWithEditor();
 			fOutlinePage.addSelectionChangedListener(this);
@@ -2510,7 +2516,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 4.0
 	 */
 	public void aboutToBeReconciled() {
-
+		fIsReconciling= true;
+		
 		// Notify AST provider
 		CUIPlugin.getDefault().getASTProvider().aboutToBeReconciled(getInputCElement());
 
@@ -2526,7 +2533,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 4.0
 	 */
 	public void reconciled(IASTTranslationUnit ast, IPositionConverter positionTracker, IProgressMonitor progressMonitor) {
-
+		fIsReconciling= false;
+		
 		CUIPlugin cuiPlugin= CUIPlugin.getDefault();
 		if (cuiPlugin == null)
 			return;

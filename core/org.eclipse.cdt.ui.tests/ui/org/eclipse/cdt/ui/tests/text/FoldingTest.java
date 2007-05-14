@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class FoldingTest extends TestCase {
 		return (Position[]) positions.toArray(new Position[positions.size()]);
 	}
 
-	public void testFoldingPositions() throws BadLocationException {
+	public void testInitialFolding() throws BadLocationException {
 		Position[] actual= getFoldingPositions();
 		Position[] expected= new Position[] {
 				createPosition(0, 2),
@@ -170,4 +170,26 @@ public class FoldingTest extends TestCase {
 		assertEqualPositions(expected, actual);
 	}
 	
+	public void testToggleFolding_Bug186729() throws BadLocationException {
+		fEditor.getAction("FoldingToggle").run();
+		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		store.setValue(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);
+		fEditor.getAction("FoldingToggle").run();
+		
+		Position[] actual= getFoldingPositions();
+		Position[] expected= new Position[] {
+				createPosition(0, 2),
+				createPosition(4, 7),
+				createPosition(29, 31),
+				createPosition(35, 40),
+				createPosition(42, 46),
+				createPosition(48, 55),
+				createPosition(51, 53),
+				createPosition(57, 59),
+				createPosition(61, 63),
+				createPosition(65, 67),
+		};
+		if (false) System.out.println(toString(actual));
+		assertEqualPositions(expected, actual);
+	}
 }

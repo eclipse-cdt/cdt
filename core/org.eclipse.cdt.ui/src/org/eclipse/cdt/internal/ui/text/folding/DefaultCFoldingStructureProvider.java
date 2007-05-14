@@ -112,10 +112,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			try {
 				FoldingStructureComputationContext ctx= createContext(fInitialReconcilePending);
 				fInitialReconcilePending= false;
-				if (fPreprocessorBranchFoldingEnabled) {
-					ctx.fAST= ast;
-					ctx.fASTPositionConverter= positionTracker;
-				}
+				ctx.fAST= ast;
+				ctx.fASTPositionConverter= positionTracker;
 	            update(ctx);
 			} finally {
 				fReconciling= false;
@@ -1067,7 +1065,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				computeFoldingStructure(ast, ctx);
 			}
 		}
-		if (!fInitialReconcilePending) {
+		if (!fInitialReconcilePending || isConsistent(fInput)) {
 			IParent parent= (IParent) fInput;
 			try {
 				computeFoldingStructure(parent.getChildren(), ctx);
@@ -1075,7 +1073,17 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 		}
 	}
-
+	
+	static boolean isConsistent(ICElement element) {
+		if (element instanceof ITranslationUnit) {
+			try {
+				return ((ITranslationUnit)element).isConsistent();
+			} catch (CModelException exc) {
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Compute folding structure of the preprocessor branches for the given AST.
 	 * 

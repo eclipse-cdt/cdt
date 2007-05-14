@@ -196,6 +196,11 @@ public class MainActionGroup extends CViewActionGroup {
 
 			openViewActionGroup.fillContextMenu(menu);
 			crefactoringActionGroup.fillContextMenu(menu);
+
+			if (OpenIncludeAction.canActionBeAdded(celements)) {
+				menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, openIncludeAction);
+			}
+
 			return;
 		}
 

@@ -14,6 +14,8 @@
 # Before running this script, customize the "cvs tag" commands below.
 #
 curdir=`pwd`
+CVSROOT=:ext:moberhuber@dev.eclipse.org:/cvsroot/dsdp
+export CVSROOT
 TOPMODULES="\
   org.eclipse.tm.rse \
   org.eclipse.tm.rse/doc \
@@ -31,10 +33,9 @@ cvs co -l $TOPMODULES
 ##exit 0
 for topmod in $TOPMODULES ; do
   cd $topmod
-  #cvs tag R1_0 readme.txt
   #cvs update -l -r R1_0 .
   #cvs tag -b R1_0_maintenance readme.txt
   #cvs tag -d v20060630 readme.txt
-  #cvs tag R2_0 readme.txt
+  cvs tag S2_0M6a
   cd $curdir
 done

@@ -475,38 +475,12 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	 * @return
 	 */
 	private String parseMakeCommand(String rawCommand) {
-		StringBuffer command = new StringBuffer();
-		
-		// Try to separate out the command from the arguments 
 		String[] result = rawCommand.split("\\s"); //$NON-NLS-1$
-		/*
-		 * Here are the cases to consider:
-		 * 	cmd								First segment is last segment, assume is command
-		 * 	cmd [flags]						First segment is the command
-		 * 	path/cmd [flags]				Same as above
-		 * 	path with space/make [flags]	Must append each segment up-to flags as command
-		 */
-		for (int i = 0; i < result.length; ++i) {
-			// Get the segment
-			String cmdSegment = result[i];
-			// If there is not another segment, we found the end
-			if (i + 1 >= result.length) {
-				command.append(cmdSegment);
-			} else {
-				// See if the next segment is the start of the flags
-				String nextSegment = result[i + 1];
-				if (nextSegment.startsWith("-")) { //$NON-NLS-1$
-					// we have found the end of the command
-					command.append(cmdSegment);
-					break;
-				} else {
-					command.append(cmdSegment);
-					// Add the whitespace back
-					command.append(" "); //$NON-NLS-1$
-				}
-			}
-		}
-		return command.toString().trim();
+		if (result != null && result.length > 0)
+			return result[0];
+		else
+			return rawCommand;
+		
 	}
 	// This page can be displayed for project only
 	public boolean canBeVisible() {

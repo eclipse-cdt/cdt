@@ -54,6 +54,27 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		setStrategy(new SinglePDOMTestStrategy(true));
 	}
 	
+	//	 template<typename T>
+	//	 class C : public C<T> {};
+	
+	// 	 void foo() {
+	//      C<int>::unresolvable();
+	//   };
+	public void _test185828() throws Exception {
+		// Bug 185828 reports a StackOverflowException is thrown before we get here.
+		// That the SOE is thrown is detected in BaseTestCase via an Error IStatus
+		
+		IBinding b0= getBindingFromASTName("C", 1);
+		IBinding b1= getBindingFromASTName("C<int>", 6, true);
+		IBinding b2= getProblemFromASTName("unresolvable", 12);
+		
+		assertInstance(b0, ICPPClassType.class);
+		assertInstance(b0, ICPPClassTemplate.class);
+		
+		assertInstance(b1, ICPPClassType.class);
+		assertInstance(b1, ICPPSpecialization.class);
+	}
+	
 	//	class MyClass {
 	//	public:
 	//		template<class T>

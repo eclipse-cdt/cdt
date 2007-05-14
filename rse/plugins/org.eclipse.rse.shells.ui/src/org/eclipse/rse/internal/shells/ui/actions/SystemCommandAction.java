@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;

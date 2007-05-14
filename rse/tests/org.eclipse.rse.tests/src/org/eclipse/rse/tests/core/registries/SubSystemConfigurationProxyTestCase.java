@@ -9,7 +9,7 @@
  * Uwe Stieber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  *******************************************************************************/
 package org.eclipse.rse.tests.core.registries;
 

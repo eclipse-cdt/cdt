@@ -32,12 +32,10 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
- * The page for setting c plugin preferences.
+ * The page for general C/C++ preferences.
  */
 public class CPluginPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
-
-	private static final String LINK_TO_EDITOR_LABEL= PreferencesMessages.CPluginPreferencePage_linkToEditor_label;
 	private static final String USE_STRUCTURAL_PARSE_MODE_LABEL= PreferencesMessages.CPluginPreferencePage_structuralParseMode_label;
 	
 	public CPluginPreferencePage() {
@@ -56,10 +54,12 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	protected void createFieldEditors() {
 		Composite parent= getFieldEditorParent();
 
-		BooleanFieldEditor linkEditor= new BooleanFieldEditor(PreferenceConstants.PREF_LINK_TO_EDITOR, LINK_TO_EDITOR_LABEL, parent);
-		addField(linkEditor);
+		Label caption= new Label(parent, SWT.NULL);
+		caption.setText(PreferencesMessages.CPluginPreferencePage_caption);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 1;
+		caption.setLayoutData(gd);
 
-		// blank space
 		addFiller(parent);
 		
 		BooleanFieldEditor useStructuralParseMode= new BooleanFieldEditor(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, USE_STRUCTURAL_PARSE_MODE_LABEL, parent);
@@ -68,8 +68,8 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		String noteTitle= PreferencesMessages.CPluginPreferencePage_note; 
 		String noteMessage= PreferencesMessages.CPluginPreferencePage_performanceHint; 
 		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), parent, noteTitle, noteMessage);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 1;
 		noteControl.setLayoutData(gd);
 	}
 	
@@ -77,7 +77,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		PixelConverter pixelConverter= new PixelConverter(composite);
 		Label filler= new Label(composite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
+		gd.horizontalSpan= 1;
 		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
 		filler.setLayoutData(gd);
 	}
@@ -98,7 +98,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	 * @see IWorkbenchPreferencePage#init
 	 */
 	public void init(IWorkbench workbench) {
-		CUIPlugin.getDefault().getPreferenceStore().setValue(CCorePlugin.PREF_USE_STRUCTURAL_PARSE_MODE, CCorePlugin.getDefault().useStructuralParseMode());
 	}
 	
 	/**
@@ -106,10 +105,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public static void initDefaults(IPreferenceStore prefs) {
 		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, false);
-		// The field is under Appearance page/preference
-		prefs.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
 		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, false);
-		prefs.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);
 	}
 	
 	/* (non-Javadoc)

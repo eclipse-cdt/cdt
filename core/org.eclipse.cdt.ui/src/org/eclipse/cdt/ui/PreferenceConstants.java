@@ -923,6 +923,8 @@ public class PreferenceConstants {
     public static void initializeDefaultValues(IPreferenceStore store) {
 
 		store.setDefault(PreferenceConstants.EDITOR_CORRECTION_INDICATION, false);
+		store.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);
+		store.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
 		
 		// Turned off by default since there are too many false reports right now 
 		store.setDefault(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, false);

@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -30,8 +31,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.breakpointactions.AbstractBreakpointAction;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -78,10 +84,8 @@ public class SoundAction extends AbstractBreakpointAction {
 			}
 
 		}
-		;
-
+		
 		if (soundFile.exists()) {
-
 			new SoundPlayer().start();
 		}
 	}
@@ -91,8 +95,14 @@ public class SoundAction extends AbstractBreakpointAction {
 	public SoundAction() {
 	}
 
-	public void execute(IBreakpoint breakpoint, IAdaptable context) {
+	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
+		if (soundFile == null || !soundFile.exists()) {
+			String errorMsg = MessageFormat.format(Messages.getString("SoundAction.error.0"), new Object[] {getSummary()}); //$NON-NLS-1$
+			return new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null);
+		}
+
 		playSoundFile(soundFile);
+		return Status.OK_STATUS;
 	}
 
 	public String getDefaultName() {

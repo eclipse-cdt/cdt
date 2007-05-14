@@ -22,9 +22,17 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.breakpointactions.AbstractBreakpointAction;
 import org.eclipse.cdt.debug.core.breakpointactions.IResumeActionEnabler;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
+import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,16 +41,50 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ResumeAction extends AbstractBreakpointAction {
 
+	final int INCRIMENT_MSEC = 100;
+	
 	int pauseTime = 0;
-
-	public void execute(IBreakpoint breakpoint, IAdaptable context) {
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction#execute(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
+		IStatus errorStatus = null;
+		long endTime = System.currentTimeMillis() + getPauseTime()*1000;
 		IResumeActionEnabler enabler = (IResumeActionEnabler) context.getAdapter(IResumeActionEnabler.class);
-		if (enabler != null)
+
+		if (enabler != null) {
 			try {
-				enabler.resume();
+				monitor.beginTask(getName(), getPauseTime()*1000/INCRIMENT_MSEC);
+				
+				long currentTime = System.currentTimeMillis();
+            	while (!monitor.isCanceled() && currentTime < endTime ){
+            		monitor.setTaskName(MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), new Object[] { new Long((endTime - currentTime)/1000) })); //$NON-NLS-1$)
+            		monitor.worked(1);
+            		Thread.sleep(INCRIMENT_MSEC);
+            		currentTime = System.currentTimeMillis();
+                }
+            	
+				if (!monitor.isCanceled()) {
+					monitor.setTaskName( Messages.getString("ResumeAction.SummaryImmediately")); //$NON-NLS-1$)
+					enabler.resume();
+				}
+				monitor.worked(1);
 			} catch (Exception e) {
-				e.printStackTrace();
+				errorStatus = new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e );
 			}
+		} else
+			errorStatus = new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),  IInternalCDebugUIConstants.INTERNAL_ERROR, Messages.getString("ResumeAction.error.0"), null ); //$NON-NLS-1$
+		
+		if (errorStatus != null) {
+			MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, Messages.getString("ResumeAction.error.1"), null ); //$NON-NLS-1$
+			ms.add( errorStatus);
+			errorStatus = ms;			
+		} else {
+			errorStatus = monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+		}	
+		return errorStatus;
 	}
 
 	public String getDefaultName() {

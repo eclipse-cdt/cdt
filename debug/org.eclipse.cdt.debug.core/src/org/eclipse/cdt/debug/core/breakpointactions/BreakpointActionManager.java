@@ -14,7 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,7 +30,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -96,20 +99,50 @@ public class BreakpointActionManager {
 		return false;
 	}
 	
-	public void executeActions(IBreakpoint breakpoint, IAdaptable context) {
-
+	public void executeActions(final IBreakpoint breakpoint, final IAdaptable context) {
 		if (breakpoint != null) {
 			IMarker marker = breakpoint.getMarker();
 			String actionNames = marker.getAttribute(BREAKPOINT_ACTION_ATTRIBUTE, ""); //$NON-NLS-1$
-			StringTokenizer tok = new StringTokenizer(actionNames, ","); //$NON-NLS-1$
-			while (tok.hasMoreTokens()) {
-				String actionName = tok.nextToken();
-				IBreakpointAction action = findBreakpointAction(actionName);
-				if (action != null) {
-					action.execute(breakpoint, context);
+			final String[] actions = actionNames.split(",");
+			if (actions.length > 0){
+				Job job = new Job("Execute breakpoint actions") { 
+					public IStatus run(final IProgressMonitor monitor) {
+						return doExecuteActions(breakpoint, context, actions, monitor);
+					}
+				};
+				job.schedule();
+				try {
+					// wait for actions to execute
+					job.join();
+				}catch (InterruptedException e)
+				{
+					e.printStackTrace();
 				}
 			}
 		}
+	}
+
+	private IStatus doExecuteActions(final IBreakpoint breakpoint, final IAdaptable context, String[] actions, IProgressMonitor monitor) {
+		try {
+			for (int i = 0; i < actions.length && !monitor.isCanceled(); i++) {
+				String actionName = actions[i];
+				IBreakpointAction action = findBreakpointAction(actionName);
+				if (action != null) {
+					monitor.setTaskName(action.getSummary());
+					IStatus status = action.execute(breakpoint, context, monitor);
+					if (status.getCode() != IStatus.OK)	{
+						// do not log status if user canceled.
+						if (status.getCode() != IStatus.CANCEL)
+							CDebugCorePlugin.log(status);
+						return status;
+					}
+				}
+				monitor.worked(1);
+			}
+		} catch (Exception e) {
+			return new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(),  CDebugCorePlugin.INTERNAL_ERROR, "Internal Error", e );
+		}
+		return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 	}
 
 	public IBreakpointAction findBreakpointAction(String name) {

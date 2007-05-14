@@ -11,8 +11,8 @@
 package org.eclipse.cdt.debug.ui.breakpointactions;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,9 +22,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.breakpointactions.AbstractBreakpointAction;
 import org.eclipse.cdt.debug.core.breakpointactions.ILogActionEnabler;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -49,7 +54,12 @@ public class LogAction extends AbstractBreakpointAction {
 		this.evaluateExpression = evaluateExpression;
 	}
 
-	public void execute(IBreakpoint breakpoint, IAdaptable context) {
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction#execute(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
+		IStatus result = Status.OK_STATUS;
 		try {
 			openConsole(Messages.getString("LogAction.ConsoleTitle")); //$NON-NLS-1$
 			String logMessage = getMessage();
@@ -63,11 +73,11 @@ public class LogAction extends AbstractBreakpointAction {
 			MessageConsoleStream stream = console.newMessageStream();
 			stream.println(logMessage);
 			stream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
-			e.printStackTrace();
+			String errorMsg = MessageFormat.format(Messages.getString("LogAction.error.0"), new Object[] {getSummary()}); //$NON-NLS-1$
+			result = new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, e );
 		}
+		return result;
 	}
 
 	private void openConsole(String consoleName) {

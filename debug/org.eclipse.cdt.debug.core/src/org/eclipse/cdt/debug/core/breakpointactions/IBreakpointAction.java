@@ -11,6 +11,8 @@
 package org.eclipse.cdt.debug.core.breakpointactions;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
@@ -23,7 +25,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public interface IBreakpointAction {
 
-	public void execute(IBreakpoint breakpoint, IAdaptable context);
+	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor);
 
 	public String getMemento();
 

@@ -22,9 +22,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.breakpointactions.AbstractBreakpointAction;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -39,18 +45,38 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 
 	private String externalToolName = new String(""); //$NON-NLS-1$
 
-	public void execute(IBreakpoint breakpoint, IAdaptable context) {
+	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
+		IStatus errorStatus = null;
 		ILaunchManager lcm = DebugPlugin.getDefault().getLaunchManager();
 		try {
+			boolean launched = false;
 			ILaunchConfiguration[] launchConfigurations = lcm.getLaunchConfigurations();
 			for (int i = 0; i < launchConfigurations.length; i++) {
 				if (launchConfigurations[i].getName().equals(externalToolName)) {
 					DebugUITools.launch(launchConfigurations[i], ILaunchManager.RUN_MODE);
+					launched = true;
+					break;
 				}
 			}
+			if (!launched) {
+				String errorMsg = MessageFormat.format(Messages.getString("ExternalToolAction.error.0"), new Object[] { externalToolName }); //$NON-NLS-1$
+				errorStatus = new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null); 
+			}
+			
 		} catch (CoreException e) {
+			errorStatus = e.getStatus();
+		} catch (Exception e) {
+			errorStatus = new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e );
+		}
+		
+		if (errorStatus != null) {
+			String errorMsg = MessageFormat.format(Messages.getString("ExternalToolAction.error.1"), new Object[] { externalToolName }); //$NON-NLS-1$
+			MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null ); 
+			ms.add(errorStatus);
+			return ms;
 		}
 
+		return Status.OK_STATUS;
 	}
 
 	public String getDefaultName() {

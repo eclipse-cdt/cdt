@@ -811,6 +811,13 @@ public class InputType extends BuildObject implements IInputType {
 		setDirty(true);
 		return addlInput;
 	}
+	
+	IAdditionalInput createAdditionalInput(IAdditionalInput base) {
+		AdditionalInput newAdditionalInput = new AdditionalInput(this, (AdditionalInput)base);
+		getAdditionalInputList().add(newAdditionalInput);
+		setDirty(true);
+		return newAdditionalInput;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IInputType#getAdditionalInputs()

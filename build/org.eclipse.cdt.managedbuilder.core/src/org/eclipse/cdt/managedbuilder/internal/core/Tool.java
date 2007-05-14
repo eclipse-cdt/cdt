@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
@@ -3535,7 +3536,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		} else {
 			id = ManagedBuildManager.calculateChildId(getId(), null);
 		}
-		return createInputType(base, id, base.getName(), false);
+		InputType newType = (InputType)createInputType(base, id, base.getName(), false);
+		IAdditionalInput addlInputs[] = base.getAdditionalInputs();
+		for(int i = 0; i < addlInputs.length; i++){
+			IAdditionalInput addlInput = addlInputs[i];
+			newType.createAdditionalInput(addlInput);
+		}
+		return newType;
 	}
 
 	public boolean supportsType(IBuildPropertyType type) {

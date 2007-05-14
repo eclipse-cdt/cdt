@@ -854,8 +854,22 @@ public class SystemView extends SafeTreeViewer
 			// OPEN IN NEW WINDOW ACTION...
 			if (fromSystemViewPart) {
 				GoIntoAction goIntoAction = getGoIntoAction();
-				goIntoAction.setEnabled(selection.size() == 1);
-				menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
+				boolean singleSelection = selection.size() == 1;
+				goIntoAction.setEnabled(singleSelection);
+				if (singleSelection)
+				{
+					// dkm - first find out if the selection will have children
+					//      only add this action if there are children
+					Object selectedObject = selection.getFirstElement();
+					ISystemViewElementAdapter adapter = getViewAdapter(selectedObject);
+					if (adapter != null)
+					{
+						if (adapter.hasChildren((IAdaptable)selectedObject))
+						{
+							menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
+						}
+					}
+				}
 
 				if (showOpenViewActions()) {
 					SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();

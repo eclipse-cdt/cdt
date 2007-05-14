@@ -425,7 +425,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			ITool targetTool = cfg.calculateTargetTool();
 			if(targetTool != null){
 				IOutputType pot = targetTool.getPrimaryOutputType();
-				String prefix = pot.getOutputPrefix();
+				String prefix = pot != null ? pot.getOutputPrefix() : "";	//$NON-NLS-1$
 				
 
 				// Resolve any macros in the outputPrefix
@@ -486,7 +486,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			ITool targetTool = cfg.calculateTargetTool();
 			if(targetTool != null){
 				IOutputType pot = targetTool.getPrimaryOutputType();
-				String prefix = pot.getOutputPrefix();
+				String prefix = pot != null ? pot.getOutputPrefix() : "";	//$NON-NLS-1$
 				
 				// Resolve any macros in the outputPrefix
 				// Note that we cannot use file macros because if we do a clean

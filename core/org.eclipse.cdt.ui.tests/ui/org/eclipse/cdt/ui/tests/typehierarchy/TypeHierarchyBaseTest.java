@@ -151,52 +151,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		assertNotNull(th);
 		return th.getMemberViewer();
 	}
-
-	protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
-		TreeItem root= null;
-		try {
-			for (int i=0; i<200; i++) {
-				root= tree.getItem(i0);
-				try {
-					if (!"...".equals(root.getText())) {
-						break;
-					}
-				} catch (SWTException e) {
-					// in case widget was disposed, item may be replaced
-				}
-				runEventQueue(10);
-			}
-		}
-		catch (IllegalArgumentException e) {
-			fail("Tree node " + label + "{" + i0 + "} does not exist!");
-		}
-		assertEquals(label, root.getText());
-		return root;
-	}
-
-	protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
-		TreeItem item= null;
-		try {
-			TreeItem root= tree.getItem(i0);
-			for (int i=0; i<200; i++) {
-				item= root.getItem(i1);
-				try {
-					if (!"...".equals(item.getText())) {
-						break;
-					}
-				} catch (SWTException e) {
-					// in case widget was disposed, item may be replaced
-				}
-				runEventQueue(10);
-			}
-		}
-		catch (IllegalArgumentException e) {
-			fail("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!");
-		}
-		assertEquals(label, item.getText());
-		return item;
-	}
-	
+		
 	protected TreeItem checkTreeNode(TreeItem root, int i1, String label) {
 		TreeItem item= null;
 		try {

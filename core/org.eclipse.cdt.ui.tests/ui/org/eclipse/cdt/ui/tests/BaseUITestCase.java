@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -213,6 +214,53 @@ public class BaseUITestCase extends BaseTestCase {
 		}
 		fail();
 		return null;
+	}
+
+	final protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
+		TreeItem root= null;
+		for (int i=0; i<200; i++) {
+			try {
+				root= tree.getItem(i0);
+				if (label.equals(root.getText())) {
+					return root;
+				}
+			} 
+			catch (SWTException e) {
+				// in case widget was disposed, item may be replaced
+			}
+			catch (IllegalArgumentException e) {
+				// item does not yet exist.
+			}
+			runEventQueue(10);
+		}
+		assertNotNull("Tree node " + label + "{" + i0 + "} does not exist!", root);
+		assertEquals(label, root.getText());
+		return root;
+	}
+	
+	final protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
+		TreeItem item= null;
+		TreeItem root= tree.getItem(i0);
+		for (int i=0; i<200; i++) {
+			try {
+				item= root.getItem(i1);
+				if (!"...".equals(item.getText())) {
+					break;
+				}
+			} catch (SWTException e) {
+				// in case widget was disposed, item may be replaced
+			}
+			catch (IllegalArgumentException e) {
+				if (label == null) {
+					return null;
+				}
+			}
+			runEventQueue(10);
+		}
+		assertNotNull("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!", item);
+		assertNotNull("Unexpected tree node " + item.getText(), label);
+		assertEquals(label, item.getText());
+		return item;
 	}
 
 }

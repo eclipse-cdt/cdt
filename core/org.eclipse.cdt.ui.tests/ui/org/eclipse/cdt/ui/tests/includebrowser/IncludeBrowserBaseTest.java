@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -94,39 +93,5 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 		assertNotNull(ib);
 		Tree tree= ib.getTreeViewer().getTree();
 		return tree;
-	}
-
-	protected void checkTreeNode(Tree tree, int i0, String label) {
-		TreeItem root= null;
-		try {
-			for (int i=0; i<200; i++) {
-				root= tree.getItem(i0);
-				if (!"...".equals(root.getText())) {
-					break;
-				}
-				runEventQueue(10);
-			}
-		}
-		catch (IllegalArgumentException e) {
-			assertTrue("Tree node " + label + "{" + i0 + "} does not exist!", false);
-		}
-		assertEquals(label, root.getText());
-	}
-
-	protected void checkTreeNode(Tree tree, int i0, int i1, String label) {
-		try {
-			TreeItem root= tree.getItem(i0);
-			TreeItem item= root.getItem(i1);
-			for (int i=0; i<200; i++) {
-				if (!"...".equals(item.getText())) {
-					break;
-				}
-				runEventQueue(10);
-			}
-			assertEquals(label, item.getText());
-		}
-		catch (IllegalArgumentException e) {
-			assertTrue("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!", false);
-		}
 	}
 }

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -31,7 +32,6 @@ import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
-
 
 /**
  * Move selected files and folders action.
@@ -68,13 +68,13 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 	}
     
 	/**
-	 * @see SystemBaseCopyAction#doCopy(IProgressMonitor, Object, Object, String)
-	 * @param monitor Usually not needed
 	 * @param targetContainer will be the IRemoteFile folder selected to move into
 	 * @param oldObject will be the IRemoteFile object currently being moved
 	 * @param newName will be the new name to give the oldObject on move
+	 * @param monitor Usually not needed
+	 * @see SystemBaseCopyAction#doCopy(Object, Object, String, IProgressMonitor)
 	 */
-	protected boolean doCopy(IProgressMonitor monitor, Object targetContainer, Object oldObject, String newName)
+	protected boolean doCopy(Object targetContainer, Object oldObject, String newName, IProgressMonitor monitor)
 		throws Exception 
     {
 		IRemoteFile targetFolder    = (IRemoteFile)targetContainer;

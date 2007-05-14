@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -211,9 +212,9 @@ public class SystemFilterCopyFilterStringAction extends SystemBaseCopyAction
 		return newName;
 	}
 	/**
-	 * @see SystemBaseCopyAction#doCopy(IProgressMonitor, Object, Object, String)
+	 * @see SystemBaseCopyAction#doCopy(Object, Object, String, IProgressMonitor)
 	 */
-	protected boolean doCopy(IProgressMonitor monitor, Object targetContainer, Object oldObject, String newName)
+	protected boolean doCopy(Object targetContainer, Object oldObject, String newName, IProgressMonitor monitor)
 		throws Exception 
     {
     	ISystemFilterString oldFilterString = (ISystemFilterString)oldObject;

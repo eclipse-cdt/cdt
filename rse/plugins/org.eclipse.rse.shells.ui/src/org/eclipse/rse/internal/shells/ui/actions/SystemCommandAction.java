@@ -107,7 +107,7 @@ public class SystemCommandAction extends SystemBaseAction
 			{
 				if (!_ss.isConnected())
 				{
-					connect(monitor, (SubSystem)_ss);
+					connect((SubSystem)_ss, monitor);
 				}
 				IRemoteCommandShell cmd = _ss.runShell(_selected, monitor);
 				Display.getDefault().asyncExec(new UpdateOutputRunnable(_cmdsPart, cmd));
@@ -594,7 +594,7 @@ public class SystemCommandAction extends SystemBaseAction
 
 	}
 	
-	private boolean connect(IProgressMonitor monitor, SubSystem ss)
+	private boolean connect(SubSystem ss, IProgressMonitor monitor)
 	{
 		if (!ss.isConnected())
 		{

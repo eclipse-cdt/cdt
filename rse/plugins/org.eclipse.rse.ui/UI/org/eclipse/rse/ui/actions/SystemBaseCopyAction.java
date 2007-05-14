@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -310,7 +311,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 	       	  if (newName == null)
 	       	    copiedOk = false;
 	       	  else
-		        copiedOk = doCopy(monitor, targetContainer, oldObject, newName);
+		        copiedOk = doCopy(targetContainer, oldObject, newName, monitor);
 		      newNames[idx] = newName;
 		      monitor.worked(1);
 	       }
@@ -360,7 +361,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
     /**
      * DO THE ACTUAL COPY OR MOVE. THIS MUST BE IMPLEMENTED BY CHILD CLASSES
      */
-	protected abstract boolean doCopy(IProgressMonitor monitor, Object targetContainer, Object oldObject, String newName)
+	protected abstract boolean doCopy(Object targetContainer, Object oldObject, String newName, IProgressMonitor monitor)
 	 throws Exception;
 	 
 	/**

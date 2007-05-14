@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1165,13 +1166,13 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public void open(IProgressMonitor monitor)
 	{
-		open(monitor, false);
+		open(false, monitor);
 	}
 
 	/**
 	 * Open in editor
 	 */
-	public void open(IProgressMonitor monitor, boolean readOnly)
+	public void open(boolean readOnly, IProgressMonitor monitor)
 	{
 		
 		try

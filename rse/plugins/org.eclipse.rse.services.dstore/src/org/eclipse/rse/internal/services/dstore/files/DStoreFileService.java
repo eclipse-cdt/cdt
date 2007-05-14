@@ -636,7 +636,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		try
 		{
-			DownloadListener dlistener = new DownloadListener(monitor, status, localFile, remotePath, fileLength);
+			DownloadListener dlistener = new DownloadListener(status, localFile, remotePath, fileLength, monitor);
 			try
 			{
 				dlistener.waitForUpdate();
@@ -729,7 +729,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			buf.append(name);
 			de = getElementFor(buf.toString());
 		}
-		dsQueryCommand(monitor, de, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT);
+		dsQueryCommand(de, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
 		return new DStoreHostFile(de);
 	}
 
@@ -831,7 +831,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement de = getElementFor(remotePath);
 		
 		
-		DataElement status = dsStatusCommand(monitor, de, IUniversalDataStoreConstants.C_CREATE_FILE);
+		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_CREATE_FILE, monitor);
 
 		if (status == null) return null;
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
@@ -851,7 +851,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		String remotePath = remoteParent + getSeparator(remoteParent) + folderName;
 		DataElement de = getElementFor(remotePath);
 		
-		DataElement status = dsStatusCommand(monitor, de, IUniversalDataStoreConstants.C_CREATE_FOLDER);
+		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_CREATE_FOLDER, monitor);
 
 		if (status == null) return null;
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
@@ -871,7 +871,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + fileName;
 		DataElement de = getElementFor(remotePath);
-		DataElement status = dsStatusCommand(monitor, de, IUniversalDataStoreConstants.C_DELETE);
+		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_DELETE, monitor);
 		if (status == null) return false;
 		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR))
 		{
@@ -896,7 +896,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			DataElement de = getElementFor(remotePath);
 			if (de != null) dataElements.add(de);
 		}	
-		DataElement status = dsStatusCommand(monitor, (DataElement) dataElements.get(0), dataElements, IUniversalDataStoreConstants.C_DELETE_BATCH);
+		DataElement status = dsStatusCommand((DataElement) dataElements.get(0), dataElements, IUniversalDataStoreConstants.C_DELETE_BATCH, monitor);
 		if (status == null) return false;
 		if (FileSystemMessageUtil.getSourceMessage(status).startsWith(IServiceConstants.FAILED))
 			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status))); //$NON-NLS-1$
@@ -909,7 +909,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement de = getElementFor(remotePath);
 		de.setAttribute(DE.A_SOURCE, newName);
 		
-		DataElement status = dsStatusCommand(monitor, de, IUniversalDataStoreConstants.C_RENAME);
+		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_RENAME, monitor);
 
 		if (status == null) return false;
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
@@ -920,7 +920,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}	
 	}
 	
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) throws SystemMessageException
+	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean retVal = rename(remoteParent, oldName, newName, monitor);
 		String newPath = remoteParent + getSeparator(remoteParent) + newName;
@@ -1051,7 +1051,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement tgtDE = getElementFor(tgtParent);
 		if (tgtDE.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
-			dsQueryCommand(monitor, tgtDE, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT);
+			dsQueryCommand(tgtDE, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
 		}
 		
 		DataElement cpCmd = getCommandDescriptor(tgtDE, IUniversalDataStoreConstants.C_COPY);
@@ -1146,7 +1146,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 		// create filter descriptor
 		DataElement deObj = ds.createObject(universaltemp, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR, "", "", "", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		DataElement[] results = dsQueryCommand(monitor, deObj, IUniversalDataStoreConstants.C_QUERY_ROOTS);
+		DataElement[] results = dsQueryCommand(deObj, IUniversalDataStoreConstants.C_QUERY_ROOTS, monitor);
 		
 		return convertToHostFiles(results, "*"); //$NON-NLS-1$
 	}
@@ -1156,17 +1156,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
 	{
-		return fetch(monitor, remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS);
+		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS, monitor);
 	}
 	
 	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor)
 	{
-		return fetch(monitor, remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FILES);
+		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FILES, monitor);
 	}
 	
 	public IHostFile[] getFilesAndFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
 	{
-		return fetch(monitor, remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_ALL);
+		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_ALL, monitor);
 	}
 	
 	protected DataElement getElementFor(String path)
@@ -1203,7 +1203,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return (IHostFile)_dstoreFileMap.get(path);
 	}
 	
-	protected IHostFile[] fetch(IProgressMonitor monitor, String remoteParent, String fileFilter, String queryType)
+	protected IHostFile[] fetch(String remoteParent, String fileFilter, String queryType, IProgressMonitor monitor)
 	{
 		DataStore ds = getDataStore();
 	
@@ -1220,7 +1220,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		ArrayList args = new ArrayList(1);
 		args.add(attributes);
 		
-		DataElement[] results = dsQueryCommand(monitor, deObj, args, queryType);		
+		DataElement[] results = dsQueryCommand(deObj, args, queryType, monitor);		
 		return convertToHostFiles(results, fileFilter);
 	}
 

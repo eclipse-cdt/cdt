@@ -657,7 +657,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 							//Bug 153649: Recursive directory delete
 							//throw new RemoteFolderNotEmptyException();
 							String fullPathQuoted = PathUtility.enQuoteUnix(fullPath);
-							int rv = runCommand(monitor, "rm -rf "+fullPathQuoted); //$NON-NLS-1$
+							int rv = runCommand("rm -rf "+fullPathQuoted, monitor); //$NON-NLS-1$
 							ok = (rv==0);
 						} else {
 							throw e;
@@ -698,7 +698,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return ok;
 	}
 	
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) throws SystemMessageException {
+	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException {
 		// TODO dont know how to update
 		return rename(remoteParent, oldName, newName, monitor);
 	}
@@ -712,7 +712,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return cancelRequested;
 	}
 	
-	public int runCommand(IProgressMonitor monitor, String command) throws SystemMessageException
+	public int runCommand(String command, IProgressMonitor monitor) throws SystemMessageException
 	{
 		Activator.trace("SftpFileService.runCommand "+command); //$NON-NLS-1$
 		int result = -1;
@@ -776,7 +776,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		Activator.trace("SftpFileService.move "+srcName); //$NON-NLS-1$
 		String fullPathOld = PathUtility.enQuoteUnix(srcParent + '/' + srcName);
 		String fullPathNew = PathUtility.enQuoteUnix(tgtParent + '/' + tgtName);
-		int rv = runCommand(monitor, "mv "+fullPathOld+' '+fullPathNew); //$NON-NLS-1$
+		int rv = runCommand("mv "+fullPathOld+' '+fullPathNew, monitor); //$NON-NLS-1$
 		return (rv==0);
 	}
 
@@ -787,7 +787,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		Activator.trace("SftpFileService.copy "+srcName); //$NON-NLS-1$
 		String fullPathOld = PathUtility.enQuoteUnix(srcParent + '/' + srcName);
 		String fullPathNew = PathUtility.enQuoteUnix(tgtParent + '/' + tgtName);
-		int rv = runCommand(monitor, "cp -Rp "+fullPathOld+' '+fullPathNew); //$NON-NLS-1$
+		int rv = runCommand("cp -Rp "+fullPathOld+' '+fullPathNew, monitor); //$NON-NLS-1$
 		return (rv==0);
 	}
 	

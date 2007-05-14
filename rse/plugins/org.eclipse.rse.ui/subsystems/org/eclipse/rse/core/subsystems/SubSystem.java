@@ -103,12 +103,12 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * These are optional:
  * <ul>
  * <li>{@link #getObjectWithAbsoluteName(String)}
- * <li>{@link #internalResolveFilterString(IProgressMonitor monitor, String filterString)}
- * <li>{@link #internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString)}
- * <li>{@link #internalGetProperty(IProgressMonitor monitor, Object subject, String key)}
- * <li>{@link #internalSetProperty(IProgressMonitor monitor, Object subject, String key, String value)}
- * <li>{@link #internalGetProperties(IProgressMonitor monitor, Object subject, String[] keys)}
- * <li>{@link #internalSetProperties(IProgressMonitor monitor, Object subject, String[] keys, String[] values)}
+ * <li>{@link #internalResolveFilterString(String filterString, IProgressMonitor monitor)}
+ * <li>{@link #internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor)}
+ * <li>{@link #internalGetProperty(Object subject, String key, IProgressMonitor monitor)}
+ * <li>{@link #internalSetProperty(Object subject, String key, String value, IProgressMonitor monitor)}
+ * <li>{@link #internalGetProperties(Object subject, String[] keys, IProgressMonitor monitor)}
+ * <li>{@link #internalSetProperties(Object subject, String[] keys, String[] values, IProgressMonitor monitor)}
  * </ul>
  * 
  */
@@ -1349,7 +1349,7 @@ public abstract class SubSystem extends RSEModelObject
     	    msg = getResolvingMessage(_filterString);
     	    
     	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());
-    	    runOutputs = internalResolveFilterString(mon, _filterString);  		
+    	    runOutputs = internalResolveFilterString(_filterString, mon);  		
     	}
     }
 
@@ -1380,7 +1380,7 @@ public abstract class SubSystem extends RSEModelObject
     	    msg = getResolvingMessage(_filterString);
 
     	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());
-    	    runOutputs = internalResolveFilterStrings(mon, _filterStrings);
+    	    runOutputs = internalResolveFilterStrings(_filterStrings, mon);
     	}
     }
 
@@ -1418,7 +1418,7 @@ public abstract class SubSystem extends RSEModelObject
     	    msg = getResolvingMessage(_filterString);
 
     	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());
-    	    runOutputs = internalResolveFilterString(mon, _parent, _filterString);
+    	    runOutputs = internalResolveFilterString(_parent, _filterString, mon);
     	}
     }
 
@@ -1450,7 +1450,7 @@ public abstract class SubSystem extends RSEModelObject
     	    msg = getQueryingMessage(_key);
     	    
     	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());   		
-    	    runOutputStrings = new String[] {internalGetProperty(mon, _subject, _key)};
+    	    runOutputStrings = new String[] {internalGetProperty(_subject, _key, mon)};
     	}
     }
 
@@ -1484,7 +1484,7 @@ public abstract class SubSystem extends RSEModelObject
     	    msg = getSettingMessage(_key);
 
     	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
-    	    runOutputs = new Object[] {internalSetProperty(mon, _subject, _key, _value)};
+    	    runOutputs = new Object[] {internalSetProperty(_subject, _key, _value, mon)};
     	}
     }
 
@@ -1515,7 +1515,7 @@ public abstract class SubSystem extends RSEModelObject
     	    msg = getQueryingMessage();
 
     	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
-    	    runOutputStrings = internalGetProperties(mon, _subject, _keys);
+    	    runOutputStrings = internalGetProperties(_subject, _keys, mon);
     	}
     }
 
@@ -1550,7 +1550,7 @@ public abstract class SubSystem extends RSEModelObject
     	    msg = getSettingMessage();
 
     	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
-    	    runOutputs = new Object[] {internalSetProperties(mon, _subject, _keys, _values)};
+    	    runOutputs = new Object[] {internalSetProperties(_subject, _keys, _values, mon)};
     	}
     }
 
@@ -2054,7 +2054,7 @@ public abstract class SubSystem extends RSEModelObject
     	  ok = promptForPassword();
         if (ok)
         {
-            Object[] results = internalResolveFilterString(monitor, filterString);
+            Object[] results = internalResolveFilterString(filterString, monitor);
             if (sortResults && (results!=null))
                 results = sortResolvedFilterStringObjects(results);
             return results;
@@ -2072,7 +2072,7 @@ public abstract class SubSystem extends RSEModelObject
      * This is the same as {@link #resolveFilterString(String, IProgressMonitor)} but takes an array of
      *  filter strings versus a single filter string.
      * <p>
-     * The default implementation of this simply calls {@link #internalResolveFilterStrings(IProgressMonitor, String[])}.
+     * The default implementation of this simply calls {@link #internalResolveFilterStrings(String[], IProgressMonitor)}.
      * <p>
      * After successful resolve, the sort method is called to sort the concatenated results before
      *  returning them.
@@ -2094,7 +2094,7 @@ public abstract class SubSystem extends RSEModelObject
     	  ok = promptForPassword();
         if (ok)
         {
-            Object[] results = internalResolveFilterStrings(monitor, filterStrings);
+            Object[] results = internalResolveFilterStrings(filterStrings, monitor);
             if (sortResults && (results!=null))
                 results = sortResolvedFilterStringObjects(results);
             return results;
@@ -2146,7 +2146,7 @@ public abstract class SubSystem extends RSEModelObject
  
 	    if (ok)
 	    {
-	        Object[] results= internalResolveFilterString(monitor, parent, filterString);
+	        Object[] results= internalResolveFilterString(parent, filterString, monitor);
 	        if (sortResults && (results!=null))
                 results =  sortResolvedFilterStringObjects(results);
 	        return results;
@@ -2649,7 +2649,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT FILTERS!
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString)
+	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
     {
@@ -2659,20 +2659,20 @@ public abstract class SubSystem extends RSEModelObject
      * Resolve multiple absolute filter strings. This is only applicable if the subsystem
      *  factory reports true for supportsFilters().
      * <p>
-     * This is the same as {@link #internalResolveFilterString(IProgressMonitor, Object, String)} but takes an array of
+     * This is the same as {@link #internalResolveFilterString(Object, String, IProgressMonitor)} but takes an array of
      *  filter strings versus a single filter string.
      * <p>
-     * The default implementation of this simply calls {@link #internalResolveFilterString(IProgressMonitor, String)}
+     * The default implementation of this simply calls {@link #internalResolveFilterString(String, IProgressMonitor)}
      *  once for each filter string, and concatenates the result. The method sortResolvedFilterStringObject
      *  is called on the concatenated result, given subclasses an opportunity to sort the result.
      * <p>
      * After successful resolve, the sort method is called to sort the concatenated results before
      *  returning them.
-     * @param monitor the progress monitor we are running under
      * @param filterStrings array of filter patterns for objects to return.
+     * @param monitor the progress monitor we are running under
      * @return Array of objects that are the result of resolving all the filter strings
      */
-    public Object[] internalResolveFilterStrings(IProgressMonitor monitor, String[] filterStrings)
+    public Object[] internalResolveFilterStrings(String[] filterStrings, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
     {
@@ -2684,7 +2684,7 @@ public abstract class SubSystem extends RSEModelObject
         	{
            		monitor.setTaskName(getResolvingMessage(filterStrings[idx]));
         	}
-		   children = internalResolveFilterString(monitor, filterStrings[idx]);
+		   children = internalResolveFilterString(filterStrings[idx], monitor);
 		   //monitor.worked(1);
 		   if (children != null)
 		     addResolvedFilterStringObjects(vChildren, children, filterStrings, idx);
@@ -2743,7 +2743,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT FILTERS!
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString)
+	protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
     {
@@ -2773,7 +2773,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT PROPERTIES!
 	 */
-	protected String internalGetProperty(IProgressMonitor monitor, Object subject, String key)
+	protected String internalGetProperty(Object subject, String key, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
     {
@@ -2792,7 +2792,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT PROPERTIES!
 	 */
-	protected Object internalSetProperty(IProgressMonitor monitor, Object subject, String key, String value)
+	protected Object internalSetProperty(Object subject, String key, String value, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
     {
@@ -2811,7 +2811,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT PROPERTIES!
 	 */
-	protected String[] internalGetProperties(IProgressMonitor monitor, Object subject, String[] keys)
+	protected String[] internalGetProperties(Object subject, String[] keys, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
     {
@@ -2830,7 +2830,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT PROPERTIES!
 	 */
-	protected Object internalSetProperties(IProgressMonitor monitor, Object subject, String[] keys, String[] values)
+	protected Object internalSetProperties(Object subject, String[] keys, String[] values, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
     {

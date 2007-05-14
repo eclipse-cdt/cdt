@@ -12,7 +12,6 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
- * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  ********************************************************************************/
 
 package samples.subsystems;
@@ -89,11 +88,10 @@ public class DeveloperSubSystem extends SubSystem
 	 * When a filter is expanded, this is called for each filter string in the filter.
 	 * Using the criteria of the filter string, it must return objects representing remote resources.
 	 * For us, this will be an array of TeamResource objects.
-	 * 
-	 * @param monitor - the progress monitor in effect while this operation performs
 	 * @param filterString - one of the filter strings from the expanded filter.
+	 * @param monitor - the progress monitor in effect while this operation performs
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString)
+	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException                
 	{
@@ -150,12 +148,11 @@ public class DeveloperSubSystem extends SubSystem
 	 * When a remote resource is expanded, this is called to return the children of the resource, if
 	 * the resource's adapter states the resource object is expandable. <br>
 	 * For us, it is a Team resource that was expanded, and an array of Developer resources will be returned.
-	 * 
-	 * @param monitor - the progress monitor in effect while this operation performs
 	 * @param parent - the parent resource object being expanded
 	 * @param filterString - typically defaults to "*". In future additional user-specific quick-filters may be supported.
+	 * @param monitor - the progress monitor in effect while this operation performs
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString)
+	protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
 	{

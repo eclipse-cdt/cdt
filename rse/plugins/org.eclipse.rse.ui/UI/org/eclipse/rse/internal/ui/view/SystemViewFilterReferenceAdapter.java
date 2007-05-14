@@ -246,7 +246,7 @@ public class SystemViewFilterReferenceAdapter
 	 */
 	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
-		return internalGetChildren(monitor, element);
+		return internalGetChildren(element, monitor);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class SystemViewFilterReferenceAdapter
 	 * the context is assumed to be modal and, as such, the modal version of ss.resolveFilterStrings
 	 * is called rather than the main thread version.
 	 */
-	protected synchronized Object[] internalGetChildren(IProgressMonitor monitor, Object element)
+	protected synchronized Object[] internalGetChildren(Object element, IProgressMonitor monitor)
 	{
 		Object[] children = null;
 		ISystemFilterReference fRef = getFilterReference(element);

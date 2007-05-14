@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -144,7 +145,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-
 
 /**
  * Adapter for displaying remote file system objects in tree views.
@@ -583,7 +583,7 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
-		return internalGetChildren(monitor, element, null);
+		return internalGetChildren(element, null, monitor);
 	}
 	
 	/**
@@ -592,10 +592,10 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public Object[] getChildren(IContextObject context, IProgressMonitor monitor)
 	{
-		return internalGetChildren(monitor, context.getModelObject(), context.getFilterReference());
+		return internalGetChildren(context.getModelObject(), context.getFilterReference(), monitor);
 	}
 
-	private synchronized Object[] internalGetChildren(IProgressMonitor monitor, IAdaptable element, ISystemFilterReference filterReference)
+	private synchronized Object[] internalGetChildren(IAdaptable element, ISystemFilterReference filterReference, IProgressMonitor monitor)
 	{
 		//System.out.println("Inside getChildren for: "+element);
 		IRemoteFile file = (IRemoteFile) element;
@@ -1822,7 +1822,7 @@ public class SystemViewRemoteFileAdapter
 							Object[] children = null;
 							try
 							{
-								children = ((SubSystem)srcSubSystem).internalResolveFilterStrings(monitor, filterReference.getReferencedFilter().getFilterStrings());
+								children = ((SubSystem)srcSubSystem).internalResolveFilterStrings(filterReference.getReferencedFilter().getFilterStrings(), monitor);
 							}
 							catch (Exception e)
 							{
@@ -2110,7 +2110,7 @@ public class SystemViewRemoteFileAdapter
 						Object[] children = null;
 						try
 						{
-							children = filterSubSystem.internalResolveFilterStrings(monitor, filterReference.getReferencedFilter().getFilterStrings());
+							children = filterSubSystem.internalResolveFilterStrings(filterReference.getReferencedFilter().getFilterStrings(), monitor);
 						}
 						catch (Exception e)
 						{

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,11 +11,10 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.core.servicesubsystem;
-
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
@@ -25,12 +24,8 @@ import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-
-
-
 public abstract class ServiceSubSystem extends SubSystem implements IServiceSubSystem 
 {
-
 	/**
 	 * Constructor 
 	 * Subclasses must call this via super().
@@ -102,11 +97,10 @@ public abstract class ServiceSubSystem extends SubSystem implements IServiceSubS
 	 *   <li>do not worry about calling monitor.done() ... caller will do that!
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT FILTERS!
-	 * 
-	 * @param monitor - the progress monitor in effect while this operation performs
 	 * @param filterString - one of the filter strings from the expanded filter
+	 * @param monitor - the progress monitor in effect while this operation performs
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString)
+	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
     {
@@ -146,12 +140,11 @@ public abstract class ServiceSubSystem extends SubSystem implements IServiceSubS
 	 *   <li>do not worry about calling monitor.done() ... caller will do that!
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT FILTERS!
-	 * 
-	 * @param monitor - the progress monitor in effect while this operation performs
 	 * @param parent - the parent resource object being expanded
 	 * @param filterString - typically defaults to "*". In future additional user-specific quick-filters may be supported.
+	 * @param monitor - the progress monitor in effect while this operation performs
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString)
+	protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
     {

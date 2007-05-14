@@ -909,7 +909,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		if (fileToDelete.isDirectory())
 		{
-			return deleteContents(monitor, fileToDelete);
+			return deleteContents(fileToDelete, monitor);
 		}
 		else
 		{
@@ -917,7 +917,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 	}
 	
-	private boolean deleteContents(IProgressMonitor monitor, File folder)
+	private boolean deleteContents(File folder, IProgressMonitor monitor)
 	{
 		boolean result = true;
 		File[] files = folder.listFiles();
@@ -926,7 +926,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			File file = files[i];
 			if (file.isDirectory())
 			{
-				result = deleteContents(monitor, file);
+				result = deleteContents(file, monitor);
 			}
 			else
 			{
@@ -976,7 +976,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return fileToRename.renameTo(newFile);
 	}
 	
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) throws SystemMessageException
+	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean retVal = rename(remoteParent, oldName, newName, monitor);
 		File newFile = new File(remoteParent, newName);

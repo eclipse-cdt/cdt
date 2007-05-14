@@ -79,12 +79,12 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 	}
 
 	
-	protected Object[] internalRunCommand(IProgressMonitor monitor, String cmd, Object context) throws InvocationTargetException, InterruptedException, SystemMessageException
+	protected Object[] internalRunCommand(String cmd, Object context, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
-		return internalRunCommand(monitor, cmd, context, false);
+		return internalRunCommand(cmd, context, false, monitor);
 	}
 
-	protected Object[] internalRunCommand(IProgressMonitor monitor, String cmd, Object context, boolean interpretOutput) throws InvocationTargetException, InterruptedException, SystemMessageException
+	protected Object[] internalRunCommand(String cmd, Object context, boolean interpretOutput, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
 		String cwd = ""; //$NON-NLS-1$
 		if (context instanceof IRemoteFile)
@@ -121,7 +121,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 		return new Object[] {cmdShell};
 	}
 
-	protected IRemoteCommandShell internalRunShell(IProgressMonitor monitor, Object context) throws InvocationTargetException, InterruptedException, SystemMessageException
+	protected IRemoteCommandShell internalRunShell(Object context, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
 		String cwd = ""; //$NON-NLS-1$
 		if (context instanceof IRemoteFile)
@@ -161,7 +161,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 	}
 	
 
-	protected void internalCancelShell(IProgressMonitor monitor, Object command) throws InvocationTargetException, InterruptedException
+	protected void internalCancelShell(Object command, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 	{
 		if (command instanceof IServiceCommandShell)
 		{
@@ -170,7 +170,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 		}
 	}
 
-	protected void internalSendCommandToShell(IProgressMonitor monitor, String cmd, Object command) throws InvocationTargetException, InterruptedException
+	protected void internalSendCommandToShell(String cmd, Object command, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 	{
 		if (command instanceof IServiceCommandShell)
 		{

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.actions;
@@ -48,7 +49,6 @@ import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.swt.widgets.Shell;
-
 
 public class SystemKillProcessAction extends SystemBaseDialogAction implements IRunnableWithProgress
 {
@@ -182,7 +182,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 	    	  if (signalType.equals(SystemProcessesResources.RESID_KILL_SIGNAL_TYPE_DEFAULT))
 	    		  signalType = ISystemProcessRemoteConstants.PROCESS_SIGNAL_TYPE_DEFAULT;
 	       	  monitor.subTask(getKillingMessage(signalType, currentProcess.getName()).getLevelOneText());
-		      killedOk = doKill(monitor, signalType, currentProcess);
+		      killedOk = doKill(currentProcess, signalType, monitor);
 		      monitor.worked(1);
 	       }
            monitor.done();
@@ -203,11 +203,11 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 	}
     
     /**
+     * @param process the process to send the signal to
+     * @param signal the signal to be sent to the remote process
      * @param monitor Usually not needed
-	 * @param signal the signal to be sent to the remote process
-	 * @param process the process to send the signal to
 	 */
-	protected boolean doKill(IProgressMonitor monitor, String signal, IRemoteProcess process)
+	protected boolean doKill(IRemoteProcess process, String signal, IProgressMonitor monitor)
 		throws Exception 
     {
 

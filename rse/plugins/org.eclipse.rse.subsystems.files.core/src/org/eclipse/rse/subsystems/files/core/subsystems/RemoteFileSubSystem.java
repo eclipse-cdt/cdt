@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -401,18 +402,18 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 
 	/**
 	 * Resolves filter strings.
-     * The default implementation of this simply calls {@link #internalResolveFilterString(IProgressMonitor, String)}.
+     * The default implementation of this simply calls {@link #internalResolveFilterString(String, IProgressMonitor)}.
      * If the result for each filter string is a SystemMessage (e.g. an error), then the messages are returned.
      * If the result for any filter string is not a message (i.e. an array of children), then the children are returned,
      * and the messages are not. This avoids mixing chuldren as a result of successful resolution of a filter string with
      * messages that might result for other filter strings.
      * So the returned results are always the successful results, or messages (never a mix of the two).
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterStrings(org.eclipse.core.runtime.IProgressMonitor, java.lang.String[])
-	 * @param monitor the progress monitor we are running under
 	 * @param filterStrings array of filter patterns for objects to return.
+	 * @param monitor the progress monitor we are running under
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterStrings(java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 * @return Array of objects that are the result of resolving all the filter strings
 	 */
-	public Object[] internalResolveFilterStrings(IProgressMonitor monitor, String[] filterStrings)
+	public Object[] internalResolveFilterStrings(String[] filterStrings, IProgressMonitor monitor)
 		 throws java.lang.reflect.InvocationTargetException,
 				java.lang.InterruptedException
 	{
@@ -441,7 +442,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				monitor.setTaskName(getResolvingMessage(filterStrings[idx]));
 			}
 		   
-		   children = internalResolveFilterString(monitor, filterStrings[idx]);
+		   children = internalResolveFilterString(filterStrings[idx], monitor);
 		   
 		   if (!(children != null && children.length == 1 && children[0] instanceof SystemMessageObject)) {
 		   		success = true;
@@ -575,9 +576,9 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	/**
 	 * Actually resolve an absolute filter string. This is called by the
 	 *  run(IProgressMonitor monitor) method, which in turn is called by resolveFilterString.
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(IProgressMonitor,String)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(String,IProgressMonitor)
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString) throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
+	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
 	{
 		boolean debugMode = false;
 		IRemoteFileSubSystemConfiguration rfssf = getParentRemoteFileSubSystemConfiguration();
@@ -747,7 +748,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT FILTERS!
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString) throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
+	protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
 	{
 		RemoteFileFilterString fs = null;
 		try
@@ -773,7 +774,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				{
 					fs = (RemoteFileFilterString) allFilterStrings[idx].clone();
 					fs.setPath(null);
-					children = internalResolveOneFilterString(monitor, parent, fs, onlyOne);
+					children = internalResolveOneFilterString(parent, fs, onlyOne, monitor);
 					if (!onlyOne && (children != null))
 					{
 						addResolvedFilterStringObjects(vChildren, children, allStrings, idx);
@@ -803,7 +804,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		{
 			fs = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), filterString);
 		}
-		return internalResolveOneFilterString(monitor, parent, fs, true);
+		return internalResolveOneFilterString(parent, fs, true, monitor);
 		}
 		
 		catch (SystemMessageException e)
@@ -816,7 +817,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	/**
 	 * Do one filter string relative resolve
 	 */
-	protected Object[] internalResolveOneFilterString(IProgressMonitor monitor, Object parent, RemoteFileFilterString fs, boolean sort)
+	protected Object[] internalResolveOneFilterString(Object parent, RemoteFileFilterString fs, boolean sort, IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
 		currFilterString = fs;

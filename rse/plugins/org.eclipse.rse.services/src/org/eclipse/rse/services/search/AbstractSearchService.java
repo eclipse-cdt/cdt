@@ -35,7 +35,7 @@ public abstract class AbstractSearchService implements ISearchService
 	
 	public final void search(IHostSearchResultConfiguration searchConfig, IFileService fileService, IProgressMonitor monitor)
 	{		
-		ISearchHandler handler = internalSearch(monitor, searchConfig, fileService);
+		ISearchHandler handler = internalSearch(searchConfig, fileService, monitor);
 		_searches.put(searchConfig, handler);
 	}
 
@@ -47,5 +47,5 @@ public abstract class AbstractSearchService implements ISearchService
 	}
 
 
-	protected abstract ISearchHandler internalSearch(IProgressMonitor monitor, IHostSearchResultConfiguration searchConfig, IFileService fileService);
+	protected abstract ISearchHandler internalSearch(IHostSearchResultConfiguration searchConfig, IFileService fileService, IProgressMonitor monitor);
 }

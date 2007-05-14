@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.search;
@@ -28,7 +28,7 @@ import org.eclipse.rse.services.search.ISearchHandler;
 public class LocalSearchService extends AbstractSearchService
 {
 		
-	public ISearchHandler internalSearch(IProgressMonitor monitor, IHostSearchResultConfiguration searchConfig, IFileService fileService)
+	public ISearchHandler internalSearch(IHostSearchResultConfiguration searchConfig, IFileService fileService, IProgressMonitor monitor)
 	{
 		LocalSearchHandler handler = new LocalSearchHandler(searchConfig, fileService);
 		searchConfig.setSearchHandler(handler);

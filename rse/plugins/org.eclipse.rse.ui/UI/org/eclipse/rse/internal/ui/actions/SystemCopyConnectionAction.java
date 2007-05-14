@@ -111,9 +111,9 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
 		return newName;
 	}
 	/**
-	 * @see SystemBaseCopyAction#doCopy(IProgressMonitor, Object, Object, String)
+	 * @see SystemBaseCopyAction#doCopy(Object, Object, String, IProgressMonitor)
 	 */
-	protected boolean doCopy(IProgressMonitor monitor, Object targetContainer, Object oldObject, String newName)
+	protected boolean doCopy(Object targetContainer, Object oldObject, String newName, IProgressMonitor monitor)
 		throws Exception 
     {
     	IHost oldConnection = (IHost)oldObject;

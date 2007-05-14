@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -53,7 +54,6 @@ import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
-
 
 /**
  * Copy selected files and folders action.
@@ -176,13 +176,13 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 
 	
 	/**
-	 * @see SystemBaseCopyAction#doCopy(IProgressMonitor, Object, Object, String)
-	 * @param monitor Usually not needed
 	 * @param targetContainer will be the IRemoteFile folder selected to copy into
 	 * @param oldObject will be the IRemoteFile object currently being copied
 	 * @param newName will be the new name to give the oldObject on copy
+	 * @param monitor Usually not needed
+	 * @see SystemBaseCopyAction#doCopy(Object, Object, String, IProgressMonitor)
 	 */
-	protected boolean doCopy(IProgressMonitor monitor, Object targetContainer, Object oldObject, String newName)
+	protected boolean doCopy(Object targetContainer, Object oldObject, String newName, IProgressMonitor monitor)
 		throws Exception 
     {
    		targetFolder    = (IRemoteFile)targetContainer;   		   		
@@ -270,7 +270,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	   				{
 	   					IRemoteFile child = children[i];
 	   					monitor.subTask("copying " + child.getName());	 //$NON-NLS-1$
-	   					doCopy(monitor, newTargetFolder, child, child.getName());	
+	   					doCopy(newTargetFolder, child, child.getName(), monitor);	
 	   					monitor.worked(1);
 	   				}	
    				}

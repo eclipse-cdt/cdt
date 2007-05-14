@@ -406,9 +406,9 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * run(IProgressMonitor monitor) method, which in turn is called by
 	 * resolveFilterString.
 	 * 
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(IProgressMonitor,String)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(String,IProgressMonitor)
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString)
+	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException
 	{
 		return null;
@@ -582,7 +582,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			IRemoteCommandShell cmdShell = (IRemoteCommandShell) command;
 			if (cmdShell.isActive())
 			{
-				internalCancelShell(null, command);
+				internalCancelShell(command, null);
 			}
 			if (_defaultShell == command)
 			{
@@ -622,7 +622,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 				{
 					try
 					{
-						IRemoteCommandShell rmtCmd = internalRunShell(null, context);
+						IRemoteCommandShell rmtCmd = internalRunShell(context, null);
 						results[numShells] = rmtCmd;
 						numShells++;
 					}
@@ -788,7 +788,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public Object[] runCommand(String command, Object context, boolean interpretOutput) throws Exception
 	{
-		return internalRunCommand(null, command, context, interpretOutput);
+		return internalRunCommand(command, context, interpretOutput, null);
 	}
 	
 	/**
@@ -796,7 +796,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public Object[] runCommand(String command, Object context, boolean interpretOutput, IProgressMonitor monitor) throws Exception
 	{
-		return internalRunCommand(monitor, command, context, interpretOutput);
+		return internalRunCommand(command, context, interpretOutput, monitor);
 	}
 
 	/**
@@ -809,7 +809,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		IRemoteCommandShell cmdShell = null;
 		if (isConnected())
 		{
-			cmdShell = internalRunShell(null, context);
+			cmdShell = internalRunShell(context, null);
 		}
 		else
 		{
@@ -827,7 +827,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public IRemoteCommandShell runShell(Object context, IProgressMonitor monitor) throws Exception
 	{
-		IRemoteCommandShell cmdShell = internalRunShell(monitor, context);
+		IRemoteCommandShell cmdShell = internalRunShell(context, monitor);
 		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
@@ -884,7 +884,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			Display display = Display.getCurrent();
 			if (display != null)
 			{
-				internalSendCommandToShell(new NullProgressMonitor(), input, commandObject);
+				internalSendCommandToShell(input, commandObject, new NullProgressMonitor());
 			}
 			else
 			{
@@ -922,7 +922,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			ok = promptForPassword();
 		if (ok)
 		{
-			internalSendCommandToShell(monitor, input, commandObject);
+			internalSendCommandToShell(input, commandObject, monitor);
 		}		
 		else
 			SystemBasePlugin.logDebugMessage(this.getClass().getName(),
@@ -938,7 +938,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	{
 		if (isConnected())
 		{
-			internalCancelShell(null, commandObject);
+			internalCancelShell(commandObject, null);
 		}
 		else
 		{
@@ -979,7 +979,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		
 		if (ok)
 		{
-			internalCancelShell(monitor, commandObject);
+			internalCancelShell(commandObject, monitor);
 		}
 		else
 		{
@@ -1067,7 +1067,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			if (!implicitConnect(false, mon, msg, totalWorkUnits))
 				throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
 						getHostName()).getLevelOneText());
-			runOutputs = internalRunCommand(mon, _cmd, _runContext, _runInterpret);
+			runOutputs = internalRunCommand(_cmd, _runContext, _runInterpret, mon);
 		}
 	}
 
@@ -1101,7 +1101,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 						getHostName()).getLevelOneText());
 			runOutputs = new Object[]
 			{
-				internalRunShell(mon, _runContext)
+				internalRunShell(_runContext, mon)
 			};
 		}
 	}
@@ -1134,7 +1134,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			if (!implicitConnect(false, mon, msg, totalWorkUnits))
 				throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
 						getHostName()).getLevelOneText());
-			internalCancelShell(mon, _runContext);
+			internalCancelShell(_runContext, mon);
 		}
 	}
 
@@ -1174,7 +1174,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			if (!implicitConnect(false, mon, msg, totalWorkUnits))
 				throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
 						getHostName()).getLevelOneText());
-			internalSendCommandToShell(mon, _cmd, _runContext);
+			internalSendCommandToShell(_cmd, _runContext, mon);
 		}
 	}
 
@@ -1225,7 +1225,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT COMMANDS!
 	 */
-	protected Object[] internalRunCommand(IProgressMonitor monitor, String cmd, Object context)
+	protected Object[] internalRunCommand(String cmd, Object context, IProgressMonitor monitor)
 			throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException, SystemMessageException
 	{
 		return null;
@@ -1245,24 +1245,24 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * </ul>
 	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT COMMANDS!
 	 */
-	protected Object[] internalRunCommand(IProgressMonitor monitor, String cmd, Object context, boolean interpretOutput)
+	protected Object[] internalRunCommand(String cmd, Object context, boolean interpretOutput, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
 		return null;
 	}
 
-	protected IRemoteCommandShell internalRunShell(IProgressMonitor monitor, Object context)
+	protected IRemoteCommandShell internalRunShell(Object context, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
 		return null;
 	}
 
-	protected void internalCancelShell(IProgressMonitor monitor, Object command)
+	protected void internalCancelShell(Object command, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException
 	{
 	}
 
-	protected void internalSendCommandToShell(IProgressMonitor monitor, String cmd, Object command)
+	protected void internalSendCommandToShell(String cmd, Object command, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException
 	{
 	}

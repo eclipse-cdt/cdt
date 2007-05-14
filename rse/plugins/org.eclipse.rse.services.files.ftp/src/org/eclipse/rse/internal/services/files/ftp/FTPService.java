@@ -886,7 +886,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#rename(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String, org.eclipse.rse.services.files.IHostFile)
 	 */
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) {
+	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) {
 		boolean hasSucceeded = false;
 				
 		oldFile.renameTo(newName);

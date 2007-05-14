@@ -13,7 +13,8 @@
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -533,7 +534,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			if (autoDetectSSL) timeout = 3000;
 			else setSSLProperties(isUsingSSL());
 
-			int iServerPort = launchUsingRexec(monitor, info, serverLauncher);
+			int iServerPort = launchUsingRexec(info, serverLauncher, monitor);
 			
 			if(iServerPort != 0)
 			{				
@@ -552,7 +553,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				{
 					if (setSSLProperties(true))
 					{
-						iServerPort = launchUsingRexec(monitor, info, serverLauncher);
+						iServerPort = launchUsingRexec(info, serverLauncher, monitor);
 						if (iServerPort != 0)
 						{
 							clientConnection.setPort("" + iServerPort); //$NON-NLS-1$
@@ -1142,7 +1143,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		}
 	}
 	
-	protected int launchUsingRexec(IProgressMonitor monitor, SystemSignonInformation info, IServerLauncherProperties serverLauncherProperties) throws Exception
+	protected int launchUsingRexec(SystemSignonInformation info, IServerLauncherProperties serverLauncherProperties, IProgressMonitor monitor) throws Exception
 	{
 		IServerLauncher starter = getRemoteServerLauncher();
 		starter.setSignonInformation(info);

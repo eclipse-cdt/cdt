@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -103,7 +104,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 		return newSet;
 	}
 	
-	protected boolean transferRSEResources(IProgressMonitor monitor, Object target, ISubSystem targetSubSystem, ISystemDragDropAdapter targetAdapter)
+	protected boolean transferRSEResources(Object target, ISubSystem targetSubSystem, ISystemDragDropAdapter targetAdapter, IProgressMonitor monitor)
 	{
 		
 		
@@ -277,7 +278,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 		return _ok;
 	}
 	
-	protected boolean transferRSEResourcesToEclipseResource(IProgressMonitor monitor, IResource target, ISubSystem targetSubSystem)
+	protected boolean transferRSEResourcesToEclipseResource(IResource target, ISubSystem targetSubSystem, IProgressMonitor monitor)
 	{
 		for (int i = 0; i < _srcObjects.size() && _ok; i++)
 		{
@@ -314,7 +315,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 		return true;
 	}
 	
-	protected boolean transferNonRSEResources(IProgressMonitor monitor, Object target, ISubSystem targetSubSystem, ISystemDragDropAdapter targetAdapter)
+	protected boolean transferNonRSEResources(Object target, ISubSystem targetSubSystem, ISystemDragDropAdapter targetAdapter, IProgressMonitor monitor)
 	{
 
 		for (int i = 0; i < _srcObjects.size() && _ok; i++)
@@ -567,16 +568,16 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				
 				if (_sourceType == SRC_TYPE_RSE_RESOURCE)
 				{
-					transferRSEResources(monitor, target, targetSubSystem, targetAdapter);
+					transferRSEResources(target, targetSubSystem, targetAdapter, monitor);
 				}				
 				else
 				{
-					transferNonRSEResources(monitor, target, targetSubSystem, targetAdapter);
+					transferNonRSEResources(target, targetSubSystem, targetAdapter, monitor);
 				}
 			}
 			else if (target instanceof IResource)
 			{
-				transferRSEResourcesToEclipseResource(monitor, (IResource)target, targetSubSystem);
+				transferRSEResourcesToEclipseResource((IResource)target, targetSubSystem, monitor);
 			}
 		}
 

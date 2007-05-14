@@ -214,16 +214,16 @@ public interface IFileService extends IService
 	
 	/**
 	 * Renames a file or folder on the host
-	 * @param monitor the progress monitor
 	 * @param remoteParent the folder containing the file to rename
 	 * @param oldName the old name of the file or folder to rename
 	 * @param newName the new name for the file
 	 * @param oldFile the file to update with the change
+	 * @param monitor the progress monitor
 	 * @return true if successful
 	 * @throws SystemMessageException if an error occurs. 
 	 * Typically this would be one of those in the RemoteFileException family.
 	 */
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) throws SystemMessageException;
+	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
 	 * Move the file or folder specified

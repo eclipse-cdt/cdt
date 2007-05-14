@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore;
@@ -74,7 +74,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 	    return getDataStore().findMinerInformation(id);	        
 	}
 	 
-	protected DataElement[] dsQueryCommand(IProgressMonitor monitor, DataElement subject, ArrayList args, String command)
+	protected DataElement[] dsQueryCommand(DataElement subject, ArrayList args, String command, IProgressMonitor monitor)
 	{
 		// query roots
 		DataElement queryCmd = getCommandDescriptor(subject, command);
@@ -112,7 +112,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 		return new DataElement[0];
 	}
 	
-	protected DataElement dsStatusCommand(IProgressMonitor monitor, DataElement subject, ArrayList args, String command)
+	protected DataElement dsStatusCommand(DataElement subject, ArrayList args, String command, IProgressMonitor monitor)
 	{
 		// query roots
 		DataElement queryCmd = getCommandDescriptor(subject, command);
@@ -133,7 +133,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 		return null;
 	}
 	
-	protected DataElement[] dsQueryCommand(IProgressMonitor monitor, DataElement subject, String command)
+	protected DataElement[] dsQueryCommand(DataElement subject, String command, IProgressMonitor monitor)
 	{
 		// query roots
 		DataElement queryCmd = getCommandDescriptor(subject, command);
@@ -161,7 +161,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 		return new DataElement[0];
 	}
 	
-	protected DataElement dsStatusCommand(IProgressMonitor monitor, DataElement subject, String command)
+	protected DataElement dsStatusCommand(DataElement subject, String command, IProgressMonitor monitor)
 	{
 		// query roots
 		DataElement queryCmd = getCommandDescriptor(subject, command);

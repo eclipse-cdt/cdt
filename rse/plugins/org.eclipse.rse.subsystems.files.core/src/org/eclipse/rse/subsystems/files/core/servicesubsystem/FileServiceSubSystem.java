@@ -138,7 +138,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			return file;
 		}
 		
-		IHostFile node = getFile(monitor, parent.getAbsolutePath(), folderOrFileName);
+		IHostFile node = getFile(parent.getAbsolutePath(), folderOrFileName, monitor);
 		return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), parent, node);
 	}
 
@@ -217,7 +217,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 				if (parentPath.length() == 0) parentPath = "/"; //$NON-NLS-1$
 				String name = fofName.substring(lastSep + 1, fofName.length());
 			
-				IHostFile node = getFile(monitor, parentPath, name);
+				IHostFile node = getFile(parentPath, name, monitor);
 				if (node != null)
 				{
 					IRemoteFile parent = null;
@@ -233,7 +233,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		else
 		{
 			AbsoluteVirtualPath avp = new AbsoluteVirtualPath(fofName);
-			IHostFile node = getFile(null, avp.getPath(), avp.getName());
+			IHostFile node = getFile(avp.getPath(), avp.getName(), null);
 			if (node != null)
 			{
 				return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), null, node);
@@ -278,22 +278,22 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return root;
 	}
 	
-	protected IHostFile[] getFolders(IProgressMonitor monitor, String parentPath, String fileNameFilter) throws SystemMessageException
+	protected IHostFile[] getFolders(String parentPath, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
 		return getFileService().getFolders(parentPath, fileNameFilter, monitor);
 	}
 	
-	protected IHostFile[] getFiles(IProgressMonitor monitor, String parentPath, String fileNameFilter) throws SystemMessageException
+	protected IHostFile[] getFiles(String parentPath, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
 		return getFileService().getFiles(parentPath, fileNameFilter, monitor);
 	}
 	
-	protected IHostFile[] getFilesAndFolders(IProgressMonitor monitor, String parentPath, String fileNameFilter) throws SystemMessageException
+	protected IHostFile[] getFilesAndFolders(String parentPath, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
 		return getFileService().getFilesAndFolders(parentPath, fileNameFilter, monitor);
 	}
 	
-	protected IHostFile getFile(IProgressMonitor monitor, String parentPath, String fileName) throws SystemMessageException
+	protected IHostFile getFile(String parentPath, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		return getFileService().getFile(parentPath, fileName, monitor);
 	}
@@ -328,7 +328,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			throw new SystemMessageException(msg);
 		}
 		
-		IHostFile[] results = getFilesAndFolders(monitor, parentPath, fileNameFilter); 
+		IHostFile[] results = getFilesAndFolders(parentPath, fileNameFilter, monitor); 
 
 		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
 		if (parent != null)
@@ -362,7 +362,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		IHostFile[] results = null;
 		try
 		{
-			results = getFiles(monitor, parentPath, fileNameFilter);
+			results = getFiles(parentPath, fileNameFilter, monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -401,7 +401,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		IHostFile[] results = null;
 		try
 		{
-			results = getFolders(monitor, parentPath, fileNameFilter);
+			results = getFolders(parentPath, fileNameFilter, monitor);
 		}
 		catch (SystemMessageException e)
 		{			

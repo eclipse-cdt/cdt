@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.compare;
@@ -40,8 +40,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Composite;
-
-
 
 public class SystemCompareInput extends CompareEditorInput
 { 
@@ -208,7 +206,7 @@ public class SystemCompareInput extends CompareEditorInput
 		{
 			try
 			{
-				commit(pm, (DiffNode) fRoot);
+				commit((DiffNode) fRoot, pm);
 			}
 			finally
 			{
@@ -223,7 +221,7 @@ public class SystemCompareInput extends CompareEditorInput
 	/*
 	 * Recursively walks the diff tree and commits all changes.
 	 */
-	private void commit(IProgressMonitor pm, DiffNode node) throws CoreException
+	private void commit(DiffNode node, IProgressMonitor pm) throws CoreException
 	{
 		if (node instanceof MyDiffNode)
 			 ((MyDiffNode) node).clearDirty();
@@ -243,7 +241,7 @@ public class SystemCompareInput extends CompareEditorInput
 			{
 				IDiffElement element = children[i];
 				if (element instanceof DiffNode)
-					commit(pm, (DiffNode) element);
+					commit((DiffNode) element, pm);
 			}
 		}
 	}

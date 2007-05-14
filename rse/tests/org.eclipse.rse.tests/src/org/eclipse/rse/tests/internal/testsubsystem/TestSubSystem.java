@@ -8,6 +8,7 @@
  * Contributors: 
  * Tobias Schwarz (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
@@ -80,7 +81,7 @@ public class TestSubSystem extends SubSystem implements ITestSubSystem {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.String)
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString) throws InvocationTargetException, InterruptedException {
+	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		ArrayList filteredChilds = new ArrayList();
 		ITestSubSystemNode[] childs = getChildNodes();
 		for (int i = 0; i < childs.length; i++) {
@@ -95,7 +96,7 @@ public class TestSubSystem extends SubSystem implements ITestSubSystem {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object, java.lang.String)
 	 */
-	protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString) throws InvocationTargetException, InterruptedException {
+	protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		ArrayList filteredChilds = new ArrayList();
 		if (parent instanceof ITestSubSystemNodeContainer) {
 			ITestSubSystemNodeContainer container = (ITestSubSystemNodeContainer)parent;

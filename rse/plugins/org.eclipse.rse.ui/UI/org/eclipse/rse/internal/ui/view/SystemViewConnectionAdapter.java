@@ -713,20 +713,18 @@ public class SystemViewConnectionAdapter
 	{
 	    if (element instanceof IHost)
 	    {
-	    	IHost sysCon = (IHost) element;
-	    	if (sysCon.getSystemType().isLocal()) return existsMoreThanOneLocalConnection();
 	        ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+	        if (((IHost)element).getSystemType().isLocal())
+	        {
+	        	// local is always connected so always allow delete
+	         	return true;
+	        }
 	    	return !sr.isAnySubSystemConnected((IHost)element);
 	    }
 		return true;
 	}
 	
-	protected boolean existsMoreThanOneLocalConnection()
-	{
-		IRSESystemType localType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
-		IHost[] localCons = RSECorePlugin.getTheSystemRegistry().getHostsBySystemType(localType);
-		return localCons.length > 1;		
-	}
+
 	
 	/**
 	 * Perform the delete action.

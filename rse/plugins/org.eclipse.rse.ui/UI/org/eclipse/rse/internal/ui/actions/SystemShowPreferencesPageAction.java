@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -36,9 +36,8 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
  * preference page (it will include its children underneath), including the
  * child pages registered under that page ("category").
  * <p>
- * This is used by the org.eclipse.rse.core.remoteSystemsViewPreferencesActions
- *  extension point.
- * @see org.eclipse.rse.ui.actions.SystemCascadingPreferencesAction 
+ * @deprecated this will be moved to use the command/handler extension point.
+ * @see SystemCascadingPreferencesAction 
  */
 public class SystemShowPreferencesPageAction extends SystemBaseAction implements IViewActionDelegate                                  
 {
@@ -48,8 +47,9 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 	private String preferencePageCategory;
 	
 	/**
-	 * Constructor. We are instantiated inside {@link RSEUIPlugin#getShowPreferencePageActions()}
-	 *  for each extension of our extension point <code>org.eclipse.rse.core.remoteSystemsViewPreferencesActions</code>
+	 * Constructor.
+	 * We are instantiated inside {@link RSEUIPlugin#getShowPreferencePageActions()}
+	 * for each menu shortcut to show a particular preference page.
 	 */
 	public SystemShowPreferencesPageAction()
 	{

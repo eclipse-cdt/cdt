@@ -15,47 +15,10 @@ Contributors:
 Martin Oberhuber (Wind River) - [185554] Remove dynamicPopupMenuExtensions extension point
 Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
 Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
+Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
 -->
 <?eclipse version="3.1"?>
 <plugin>
-<!-- ================================================================================== -->
-<!-- EXTENSION POINT: org.eclipse.rse.ui.remoteSystemsViewPreferencesActions   -->
-<!-- ================================================================================== -->
-<!-- Extension point for defining actions that appear in the cascading Preferences menu -->
-<!--  in the local pulldown menu for the Remote Systems view. These actions should      -->
-<!--  take the directly to a preference page root, as a shortcut to navigating the      -->
-<!--  Windows->Preferences preferences dialog. The action's class should extend the     -->
-<!--  class org.eclipse.rse.ui.actions.SystemBasePreferencesPageAction.     -->
-<!--                                                                                    -->
-<!-- Example of extension configuration:												-->
-<!-- 	<extension point="org.eclipse.rse.ui.remoteSystemsViewPreferencesActions"> -->
-<!-- 		<action																		-->
-<!--			id="com.acme.showMyPreferencePage"         								-->
-<!--			label="My Preferences"													-->
-<!--			preferencePageId="com.acme.myPreferencePage">	  				        -->
-<!--		</action>                                                                   -->
-<!--	</extension>																	-->
-<!--																					-->
-<!-- <action> tag attributes:															-->
-<!-- ================================================================================== -->
-<!-- id					=>	unique id for this action.									-->
-<!-- label				=>	label for the action. This will be displayed in the			-->
-<!--						preferences cascading menu.									-->
-<!-- preferencePageId   =>  the "id" value of your org.eclipse.ui.preferencePages       -->
-<!--                           extension, for the preference page to root the           -->
-<!--                           preferences dialog to when the action is selected        -->
-<!-- preferencePageCategory => if this is not a root page, then specify the id of the   -->
-<!--                         root page this is part of. This should be the absolute     -->
-<!--                         root, not the immediate parent. It tells us what root tree -->
-<!--                         to search in to find the child.                            -->
-<!-- icon               =>  optional. Icon to display for this action.                  -->
-<!-- tooltip            =>  optional. Tooltip text to show in hover help.               -->
-<!-- helpContextId      =>  optional. ID of contextual help to show when F1 is pressed  -->
-<!--																					-->
-<!-- See the extension point reference for more details.								-->
-	
-	<extension-point id="remoteSystemsViewPreferencesActions" name="%extPoint.remoteSystemsViewPreferencesActions" schema="schema/remoteSystemsViewPreferencesActions.exsd"/>
-	
 <!-- ============================================ -->
 <!-- Define a RemoteSystems project nature        -->
 <!-- ============================================ -->
@@ -301,15 +264,19 @@ Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to
 <!-- ================================================================================= -->
 <!-- Define Remote System Explorer view pulldown menu submenu for preferences actions -->
 <!-- ================================================================================= -->
+<!-- TODO migrate to command/handler
 	<extension point="org.eclipse.rse.ui.remoteSystemsViewPreferencesActions">
  		<action	
 			id="org.eclipse.rse.ui.preferences.actions.rse"
 			label="%PreferencePageAction.rse.label"
 			preferencePageId="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
+			preferencePageCategory=""
+			icon=""
             tooltip="%PreferencePageAction.rse.tooltip"
             helpContextId="org.eclipse.rse.ui.aprefrse"
 		/>
 	</extension>
+-->
 
 <!-- ============================================ -->
 <!-- Define Remote Systems Perspective            -->

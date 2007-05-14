@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - Replace SystemRegistry by ISystemRegistry
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -726,8 +727,8 @@ public class SystemViewPart
 		menuMgr.add(showFilterPoolsAction);
 		menuMgr.add(restoreStateAction); // d51541		
 
-		// Now query our remoteSystemsViewPreferencesActions for extenders who wish to appear in the
-		//  preferences cascading menu...
+		// Now display any contributed action shortcuts for bringing up
+		// a particular preference page...
 		SystemCascadingPreferencesAction preferencesAction = new SystemCascadingPreferencesAction(shell);
 		menuMgr.add(preferencesAction.getSubMenu());
 

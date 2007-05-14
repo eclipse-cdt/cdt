@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [181066] NLS missing messages with DAEMON and Shells
+ * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -912,6 +913,9 @@ public class SystemResources extends NLS
 
 	public static String ACTION_PREFERENCE_SHOW_FILTERPOOLS_LABEL;
 	public static String ACTION_PREFERENCE_SHOW_FILTERPOOLS_TOOLTIP;
+
+	public static String ACTION_SHOW_PREFERENCEPAGE_LABEL;
+	public static String ACTION_SHOW_PREFERENCEPAGE_TOOLTIP;
 
 	public static String ACTION_NEWCONN_LABEL;
 	public static String ACTION_NEWCONN_TOOLTIP;

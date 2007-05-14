@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
  * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
+ * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -694,86 +695,28 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	  return getDefault().isSystemRegistryActive();
     }
 
-  
-
 	/**
-	 *  Return all elements that extend the org.eclipse.rse.ui.remoteSystemsViewPreferencesActions extension point
-	 */
-	private IConfigurationElement[] getPreferencePageActionPlugins()
-	{
-		// Get reference to the plug-in registry
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		// Get configured extenders
-		IConfigurationElement[] prefPageExtensions =
-		  registry.getConfigurationElementsFor(PLUGIN_ID,"remoteSystemsViewPreferencesActions"); //$NON-NLS-1$   	
-
-		return prefPageExtensions;
-	}
-	
-	/**
-	 * Return an array of action objects registered via our org.eclipse.rse.ui.remoteSystemsViewPreferencesActions
-	 *  extension point. <br>
-	 * This may return null if there are no extenders.
+	 * Return an array of action objects to show for the "Preferences..."
+	 * submenu of the RSE System View.
+	 * For contributing a fastpath action to jump to your preferences page,
+	 * from the local pulldown menu of the Remote Systems view.
+	 * This may return null if no such actions are registered.
+	 * @deprecated will be moved to using command/hander extension point
 	 */
 	public SystemShowPreferencesPageAction[] getShowPreferencePageActions()
 	{
 		if (showPrefPageActions == null)
 		{
-			IConfigurationElement[] showPrefPagePlugins = getPreferencePageActionPlugins();
-			if (showPrefPagePlugins != null)
-			{
-		  		Vector v = new Vector();
-		  		for (int idx=0; idx<showPrefPagePlugins.length; idx++)
-		  		{
-					SystemShowPreferencesPageAction action = new SystemShowPreferencesPageAction();
-
-					String prefPageId = showPrefPagePlugins[idx].getAttribute("preferencePageId"); //$NON-NLS-1$
-					if ((prefPageId!=null)&&(prefPageId.length()>0))
-					{
-						action.setPreferencePageID(prefPageId);
-					}
-					String prefPageCategory = showPrefPagePlugins[idx].getAttribute("preferencePageCategory"); //$NON-NLS-1$
-					if ((prefPageCategory!=null)&&(prefPageCategory.length()>0))
-					{
-						action.setPreferencePageCategory(prefPageCategory);
-					}
-					String iconFile = showPrefPagePlugins[idx].getAttribute("icon"); //$NON-NLS-1$
-					
-					if ((iconFile!=null)&&(iconFile.length()>0))
-					{
-					    // get namespace of extension (i.e. the id of the declaring plugin)
-					    String nameSpace = showPrefPagePlugins[idx].getDeclaringExtension().getNamespaceIdentifier();
-					    
-					    // now get the associated bundle
-					    Bundle bundle = Platform.getBundle(nameSpace);
-					        
-						ImageDescriptor id = getPluginImage(bundle, iconFile);
-						
-					    if (id != null) {
-							action.setImageDescriptor(id);
-					    }
-					}
-					String label = showPrefPagePlugins[idx].getAttribute("label"); //$NON-NLS-1$
-					if ((label!=null)&&(label.length()>0))
-					{
-						action.setText(label);				
-					}
-					String tooltip = showPrefPagePlugins[idx].getAttribute("tooltip"); //$NON-NLS-1$
-					if ((tooltip!=null)&&(tooltip.length()>0))
-					{
-						action.setToolTipText(tooltip);				
-					}
-					String heldId = showPrefPagePlugins[idx].getAttribute("helpContextId"); //$NON-NLS-1$
-					if ((heldId!=null)&&(heldId.length()>0))
-					{
-						action.setHelp(heldId);				
-					}
-					v.addElement(action);
-		  		} // end for all plugins loop
-				showPrefPageActions = new SystemShowPreferencesPageAction[v.size()];
-				for (int idx=0; idx<v.size(); idx++)
-					showPrefPageActions[idx] = (SystemShowPreferencesPageAction)v.elementAt(idx);
-			}
+			//add our own preferences page action hardcoded
+			SystemShowPreferencesPageAction action = new SystemShowPreferencesPageAction();
+			action.setPreferencePageID("org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"); //$NON-NLS-1$
+			//action.setPreferencePageCategory(preferencePageCategory)
+			//action.setImageDescriptor(id);
+			action.setText(SystemResources.ACTION_SHOW_PREFERENCEPAGE_LABEL);				
+			action.setToolTipText(SystemResources.ACTION_SHOW_PREFERENCEPAGE_TOOLTIP);				
+			action.setHelp("org.eclipse.rse.ui.aprefrse"); //$NON-NLS-1$				
+			showPrefPageActions = new SystemShowPreferencesPageAction[1];
+			showPrefPageActions[0] = action;
 		}
 		return showPrefPageActions;
 	}

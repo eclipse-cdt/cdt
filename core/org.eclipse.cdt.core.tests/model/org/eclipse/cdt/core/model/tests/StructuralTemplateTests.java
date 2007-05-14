@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,7 +100,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 			String[] myExpectedValues = {
 				"fum",
 				"scrum",
-				"nonVector::first",
+				"nonVector<T>::first",
 				"Foo::fum",
 				"IsGreaterThan",
 			};
@@ -216,7 +216,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 			"fum<Bar>(int) : void",
 			"scrum<int>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
 			// TODO: shouldn't signature indicate const function as well?
-			"nonVector::first<T>() : const T&", // TODO: where should <T> be?
+			"nonVector<T>::first<T>() : const T&", // TODO: where should <T> be?
 			"Foo::fum<Bar>(int) : void",
 			"IsGreaterThan<X>(X, X) : bool",
 			/*"default_alloc_template<threads,inst>::S_start_free<bool, int> : char*",*/

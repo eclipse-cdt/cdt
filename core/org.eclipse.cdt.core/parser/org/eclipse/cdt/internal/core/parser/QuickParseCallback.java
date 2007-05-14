@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,32 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.eclipse.cdt.core.parser.*;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.internal.core.parser.ast.quick.IASTQScope;
 
 
 public class QuickParseCallback extends NullSourceElementRequestor implements IQuickParseCallback
@@ -216,5 +233,92 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 	 */
 	public void setHasNoProblems(boolean hasProblems) {
 		this.hasNoProblems = hasProblems;
+	}
+	
+	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {
+		if (abstractDeclaration.getOwnerTemplateDeclaration() == null) {
+			addElement(abstractDeclaration);
+		}
+	}
+	
+	public void acceptASMDefinition(IASTASMDefinition asmDefinition) {
+		addElement(asmDefinition);
+	}
+	
+	public void acceptField(IASTField field) {
+		addElement(field);
+	}
+	
+	public void acceptFriendDeclaration(IASTDeclaration declaration) {
+		addElement(declaration);
+	}
+	
+	public void acceptFunctionDeclaration(IASTFunction function) {
+		if (function.getOwnerTemplateDeclaration() == null) {
+			addElement(function);
+		}
+	}
+	
+	public void acceptMethodDeclaration(IASTMethod method) {
+		addElement(method);
+	}
+
+	public void acceptNamespaceAlias(IASTNamespaceAlias alias) {
+		addElement(alias);
+	}
+	
+	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef) {
+		addElement(typedef);
+	}
+	
+	public void acceptUsingDirective(IASTUsingDirective usageDirective) {
+		addElement(usageDirective);
+	}
+	
+	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) {
+		addElement(usageDeclaration);
+	}
+	
+	public void acceptVariable(IASTVariable variable) {
+		addElement(variable);
+	}
+	
+	public void enterFunctionBody(IASTFunction function) {
+		if (function.getOwnerTemplateDeclaration() == null) {
+			addElement(function);
+		}
+	}
+	
+	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {
+		addElement(linkageSpec);
+	}
+	
+	public void enterMethodBody(IASTMethod method) {
+		if (method.getOwnerTemplateDeclaration() == null) {
+			addElement(method);
+		}
+	}
+	
+	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
+		addElement(namespaceDefinition);
+	}
+
+	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) {
+		addElement(declaration);
+	}
+	
+	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) {
+		addElement(specialization);
+	}
+	
+	public void enterTemplateInstantiation(IASTTemplateInstantiation instantiation) {
+		addElement(instantiation);
+	}
+	
+	protected void addElement(IASTDeclaration declaration) {
+		IASTScope scope = declaration.getOwnerScope();
+		if (scope != null && scope instanceof IASTQScope) {
+			((IASTQScope) scope).addDeclaration(declaration);
+		}
 	}
 }

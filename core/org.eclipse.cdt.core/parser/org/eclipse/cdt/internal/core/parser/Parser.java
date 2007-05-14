@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3926,6 +3926,7 @@ public class Parser implements IParserData, IParser
                 alias = astFactory.createNamespaceAlias( 
                 	scope, identifier.getCharImage(), duple, first.getOffset(), 
                 	first.getLineNumber(), identifier.getOffset(), identifier.getEndOffset(), identifier.getLineNumber(), duple.getLastToken().getEndOffset(), duple.getLastToken().getLineNumber() );
+                requestor.acceptNamespaceAlias(alias);
             }
             catch (Exception e1)
             {

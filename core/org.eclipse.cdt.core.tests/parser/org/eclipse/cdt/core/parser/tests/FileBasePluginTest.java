@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
@@ -290,6 +291,7 @@ public class FileBasePluginTest extends TestCase {
         public void acceptParameterReference( IASTParameterReference reference ) 		{ callbacks.add( ACCEPT_REFERENCE ); }
         public void acceptTemplateParameterReference( IASTTemplateParameterReference reference ) 	{ callbacks.add( ACCEPT_REFERENCE ); }
         public void acceptFriendDeclaration( IASTDeclaration declaration ) 				{ callbacks.add( ACCEPT_FRIEND ); }
+		public void acceptNamespaceAlias(IASTNamespaceAlias alias)                      {}
         public void exitTemplateDeclaration( IASTTemplateDeclaration declaration ) 		{ callbacks.add( EXIT_TEMPLATE_DECL); }
         public void exitTemplateSpecialization( IASTTemplateSpecialization specialization ) 		{ callbacks.add( EXIT_TEMPLATE_SPEC ); }
         public void exitTemplateExplicitInstantiation( IASTTemplateInstantiation instantiation ) 	{ callbacks.add( EXIT_TEMPLATE_INSTANCE ); }

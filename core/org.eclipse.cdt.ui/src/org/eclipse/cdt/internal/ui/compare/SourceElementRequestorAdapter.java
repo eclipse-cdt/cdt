@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial implementation base on code from rational/IBM
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.compare;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
@@ -358,5 +360,8 @@ public class SourceElementRequestorAdapter implements ISourceElementRequestor {
 	public void acceptFriendDeclaration(IASTDeclaration declaration) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void acceptNamespaceAlias(IASTNamespaceAlias alias) {
 	}
 }

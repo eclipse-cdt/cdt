@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
-import org.eclipse.cdt.internal.core.parser.ast.complete.ASTLinkageSpecification;
-import org.eclipse.cdt.internal.core.parser.ast.complete.ASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.quick.ASTLinkageSpecification;
+import org.eclipse.cdt.internal.core.parser.ast.quick.IASTQScope;
 
 /**
  * @author hamer
@@ -47,20 +47,17 @@ public class StructuralParseCallback extends QuickParseCallback{
 	protected int inclusionLevel = 0;
 
 	
-	private void addElement (IASTDeclaration element){
+	protected void addElement (IASTDeclaration element){
 		if(inclusionLevel == 0){
-			if( currentScope instanceof ASTScope )
-				((ASTScope)currentScope).addDeclaration(element);
-			else if( currentScope instanceof ASTLinkageSpecification )
+			if( currentScope instanceof ASTLinkageSpecification )
 				((ASTLinkageSpecification)currentScope).addDeclaration( element );
+			else if( currentScope instanceof IASTQScope )
+				((IASTQScope)currentScope).addDeclaration(element);
 		}
 	}
 	
 	private void enterScope(IASTNode node){
 		if(node instanceof IASTScope){
-			if(node instanceof ASTScope){
-				((ASTScope)node).initDeclarations();
-			}
 			pushScope((IASTScope)node);
 		}
 	}
@@ -107,6 +104,11 @@ public class StructuralParseCallback extends QuickParseCallback{
 			addElement((IASTTemplateDeclaration)function.getOwnerTemplateDeclaration());
 	}
 
+	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) {
+		// Ignore top-level template declarations because they are already
+		// handled by the enclosed type being parameterized.
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedefDeclaration(org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration)
 	 */

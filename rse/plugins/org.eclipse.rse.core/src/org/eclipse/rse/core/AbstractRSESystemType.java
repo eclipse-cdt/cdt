@@ -14,6 +14,7 @@
  * Uwe Stieber (Wind River) - Dynamic system type provider extension.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186868] Fix IRSESystemType.testProperty() semantics 
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -143,12 +144,12 @@ public abstract class AbstractRSESystemType extends PlatformObject implements IR
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSESystemType#getProperty(java.lang.String, boolean)
 	 */
-	public boolean testProperty(String key, boolean defaultValue) {
+	public boolean testProperty(String key, boolean expectedValue) {
 		Object val = properties.get(key);
 		if (val instanceof String) {
-			return Boolean.valueOf((String)val).booleanValue();
+			return Boolean.valueOf((String)val).booleanValue() == expectedValue;
 		}
-		return defaultValue;
+		return false;
 	}
 
 	/*

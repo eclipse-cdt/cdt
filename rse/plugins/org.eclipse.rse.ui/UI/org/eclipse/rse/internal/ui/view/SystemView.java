@@ -5521,15 +5521,25 @@ public class SystemView extends SafeTreeViewer
 		{
 		for (int i = 0; i < matches.size(); i++) {
 			Widget match = (Widget) matches.get(i);
-			ISystemFilterReference ref = getContainingFilterReference((TreeItem)match);
+			ISystemFilterReference ref = null;
+			if (match instanceof TreeItem)
+			{
+				ref = getContainingFilterReference((TreeItem)match);
+			}
 			if (matches.size() > 1 && ref != null && ref != originalFilter)
 			{
 				// could have the same object under multiple filters
 				// need to apply filter
 				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)parentElementOrTreePath).getAdapter(ISystemViewElementAdapter.class);
-				IContextObject contextObject = getContextObject((TreeItem)match);
-				Object[] newChildren = adapter.getChildren(contextObject, new NullProgressMonitor());
-				internalAdd(match, parentElementOrTreePath, newChildren);
+				
+				Object[] newChildren = null;
+				if (match instanceof TreeItem)
+				{
+					IContextObject contextObject = getContextObject((TreeItem)match);
+					newChildren = adapter.getChildren(contextObject, new NullProgressMonitor());
+					internalAdd(match, parentElementOrTreePath, newChildren);
+				}	
+				
 			}
 			else
 			{

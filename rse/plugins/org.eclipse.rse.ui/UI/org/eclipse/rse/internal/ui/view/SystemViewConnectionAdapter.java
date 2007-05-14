@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -135,7 +136,7 @@ public class SystemViewConnectionAdapter
 		//                  _Never_ add any action without the system type provider having said ok to this.
 		IHost host = (IHost)selection.getFirstElement();
 		IRSESystemType sysType = getSystemTypeForHost(host);
-		Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+		Object adapter = sysType != null ? sysType.getAdapter(RSESystemTypeAdapter.class) : null;
 		RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 		
 		//updateAction.setValue(null); // reset
@@ -174,7 +175,7 @@ public class SystemViewConnectionAdapter
 	private void addConnectOrDisconnectAction(SystemMenuManager menu, String menuGroup, IStructuredSelection selection) {
 		IHost host = (IHost)selection.getFirstElement();
 		IRSESystemType sysType = getSystemTypeForHost(host);
-		Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+		Object adapter = sysType != null ? sysType.getAdapter(RSESystemTypeAdapter.class) : null;
 		RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 		
 		ISystemRegistry sysReg = RSECorePlugin.getTheSystemRegistry();
@@ -225,7 +226,7 @@ public class SystemViewConnectionAdapter
 		//                  _Never_ add any action without the system type provider having said ok to this.
 		if (element instanceof IHost) {
 			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
-			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			Object adapter = sysType != null ? sysType.getAdapter(RSESystemTypeAdapter.class) : null;
 			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 			if (sysTypeAdapter != null) {
 				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, SystemCommonDeleteAction.class);
@@ -242,7 +243,7 @@ public class SystemViewConnectionAdapter
 		//                  _Never_ add any action without the system type provider having said ok to this.
 		if (element instanceof IHost) {
 			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
-			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			Object adapter = sysType != null ? sysType.getAdapter(RSESystemTypeAdapter.class) : null;
 			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 			if (sysTypeAdapter != null) {
 				boolean accepted = false;
@@ -264,7 +265,7 @@ public class SystemViewConnectionAdapter
 		//                  _Never_ add any action without the system type provider having said ok to this.
 		if (element instanceof IHost) {
 			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
-			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			Object adapter = sysType != null ? sysType.getAdapter(RSESystemTypeAdapter.class) : null;
 			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 			if (sysTypeAdapter != null) {
 				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, SystemOpenExplorerPerspectiveAction.class);
@@ -281,7 +282,7 @@ public class SystemViewConnectionAdapter
 		//                  _Never_ add any action without the system type provider having said ok to this.
 		if (element instanceof IHost) {
 			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
-			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			Object adapter = sysType != null ? sysType.getAdapter(RSESystemTypeAdapter.class) : null;
 			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 			if (sysTypeAdapter != null) {
 				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, PropertyDialogAction.class);
@@ -298,7 +299,7 @@ public class SystemViewConnectionAdapter
 		//                  _Never_ add any action without the system type provider having said ok to this.
 		if (element instanceof IHost) {
 			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
-			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			Object adapter = sysType != null ? sysType.getAdapter(RSESystemTypeAdapter.class) : null;
 			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 			if (sysTypeAdapter != null) {
 				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, SystemRefreshAction.class);
@@ -315,7 +316,7 @@ public class SystemViewConnectionAdapter
 		//                  _Never_ add any action without the system type provider having said ok to this.
 		if (element instanceof IHost) {
 			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
-			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			Object adapter = sysType != null ? sysType.getAdapter(RSESystemTypeAdapter.class) : null;
 			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 			if (sysTypeAdapter != null) {
 				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, SystemCommonRenameAction.class);
@@ -334,7 +335,7 @@ public class SystemViewConnectionAdapter
 		ImageDescriptor descriptor = null;
 		IRSESystemType systemType = getSystemTypeForHost(connection);
 		if (systemType != null) {
-			RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+			RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
 			if (anyConnected) {
 				descriptor = sysTypeAdapter.getLiveImageDescriptor(systemType);
 			} else {

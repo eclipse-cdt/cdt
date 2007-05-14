@@ -8,6 +8,7 @@
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  *******************************************************************************/
 package org.eclipse.rse.ui.wizards.newconnection;
 
@@ -70,7 +71,7 @@ public class RSENewConnectionWizardDescriptor extends RSEWizardDescriptor implem
 				IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 				for (int i = 0; i < systemTypes.length; i++) {
 					IRSESystemType systemType = systemTypes[i];
-					RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+					RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
 					if (systemTypeMatcher.matches(systemType)
 							|| (adapter != null
 									&& adapter.acceptWizardDescriptor(getConfigurationElement().getName(), this))) {

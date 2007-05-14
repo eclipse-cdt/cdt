@@ -25,6 +25,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -268,7 +269,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISyst
 			IHost con = connections[i];
 			IRSESystemType sysType = con.getSystemType();
 			if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
-				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
+				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(RSESystemTypeAdapter.class));
 				// Note: System types without registered subsystems get disabled by the adapter itself!
 				//       There is no need to re-check this here again.
 				if (adapter.isEnabled(sysType)) result.add(con);

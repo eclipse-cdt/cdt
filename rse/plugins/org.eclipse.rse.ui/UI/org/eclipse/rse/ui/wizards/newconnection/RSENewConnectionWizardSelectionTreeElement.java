@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  *******************************************************************************/
 package org.eclipse.rse.ui.wizards.newconnection;
 
@@ -62,7 +63,7 @@ public class RSENewConnectionWizardSelectionTreeElement extends RSEWizardSelecti
 		String key = getSystemType().getId() + "::" + getWizardRegistryElement().getId(); //$NON-NLS-1$
 		Image image = imageRegistry.get(key);
 		if (image == null) {
-			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(getSystemType().getAdapter(IRSESystemType.class));
+			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(getSystemType().getAdapter(RSESystemTypeAdapter.class));
 			if (adapter != null) {
 				ImageDescriptor descriptor = adapter.getImageDescriptor(getSystemType());
 				image = descriptor.createImage();
@@ -81,7 +82,7 @@ public class RSENewConnectionWizardSelectionTreeElement extends RSEWizardSelecti
 		// not come up with a description itself.
 		String description = super.getDescription();
 		if (description == null) {
-			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(getSystemType().getAdapter(IRSESystemType.class));
+			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(getSystemType().getAdapter(RSESystemTypeAdapter.class));
 			if (adapter != null) {
 				description = adapter.getDescription(getSystemType());
 			}

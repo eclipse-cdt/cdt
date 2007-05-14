@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -107,7 +108,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 					// create the connection only if the local system type is enabled!
 					IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 					if (systemType != null) {
-						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
 						if (adapter != null && adapter.isEnabled(systemType)) {
 							ISystemProfileManager profileManager = SystemProfileManager.getDefault();
 							ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
@@ -462,7 +463,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    ssfaf.registerWithManager(manager);
 	    
 	    RSESystemTypeAdapterFactory rseSysTypeFactory = new RSESystemTypeAdapterFactory();
-	    manager.registerAdapters(rseSysTypeFactory, IRSESystemType.class);
+	    rseSysTypeFactory.registerWithManager(manager);
 	    
 	    manager.registerAdapters(new SubSystemConfigurationProxyAdapterFactory(), ISubSystemConfigurationProxy.class);
 	    

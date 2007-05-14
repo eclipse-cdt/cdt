@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -501,7 +502,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		if (!updateMode) {
 			return false;
 		}
-		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(defaultSystemType.getAdapter(IRSESystemType.class));
+		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(defaultSystemType.getAdapter(RSESystemTypeAdapter.class));
 		return sysTypeAdapter.isEnableOffline(defaultSystemType);
 	}
 

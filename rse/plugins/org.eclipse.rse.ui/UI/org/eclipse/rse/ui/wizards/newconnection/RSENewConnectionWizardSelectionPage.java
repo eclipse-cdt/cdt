@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  *******************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -111,7 +112,7 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				}
 
 				// Second, double check if the system type passed the viewer filter but is disabled.
-				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
 				if (adapter != null && !adapter.isEnabled(systemType)) {
 					return false;
 				}

@@ -17,6 +17,7 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -192,7 +193,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           
           // delegate the creation of the host object instance to the system type provider!!!
           if (systemType != null) {
-          	Object adapter = systemType.getAdapter(IRSESystemType.class);
+          	Object adapter = systemType.getAdapter(RSESystemTypeAdapter.class);
           	if (adapter instanceof RSESystemTypeAdapter) {
           		conn = ((RSESystemTypeAdapter)adapter).createNewHostInstance(profile);
           	}

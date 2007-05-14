@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1011,7 +1012,7 @@ public class SystemView extends SafeTreeViewer
 		IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 		for (int i = 0; i < systemTypes.length; i++) {
 			IRSESystemType systemType = systemTypes[i];
-			Object adapter = systemType.getAdapter(IRSESystemType.class);
+			Object adapter = systemType.getAdapter(RSESystemTypeAdapter.class);
 			if (adapter instanceof RSESystemTypeAdapter) {
 				((RSESystemTypeAdapter)adapter).addCustomMenuGroups(menu);
 			}

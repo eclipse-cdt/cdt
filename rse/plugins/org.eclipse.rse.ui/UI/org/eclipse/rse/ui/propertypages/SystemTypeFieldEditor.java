@@ -16,8 +16,8 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  ********************************************************************************/
-
 
 package org.eclipse.rse.ui.propertypages;
 
@@ -361,7 +361,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	public Object getValue(Object element, String property)
 	{
 		IRSESystemType row = (IRSESystemType)element;
-		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(row.getAdapter(IRSESystemType.class));
+		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(row.getAdapter(RSESystemTypeAdapter.class));
 		Object value = ""; //$NON-NLS-1$
 		
 		if (property.equals(P_NAME))
@@ -387,7 +387,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	public void modify(Object element, String property, Object value)
 	{
 		IRSESystemType row = (IRSESystemType)(((TableItem)element).getData());			
-		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(row.getAdapter(IRSESystemType.class));
+		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(row.getAdapter(RSESystemTypeAdapter.class));
 
 		if (property.equals(P_ENABLED))
 		{
@@ -424,7 +424,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	public String getColumnText(Object element, int columnIndex)
 	{
 		IRSESystemType currType = (IRSESystemType)element;
-		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(currType.getAdapter(IRSESystemType.class));
+		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(currType.getAdapter(RSESystemTypeAdapter.class));
 
 		if (columnIndex == COLUMN_NAME)
 			return currType.getLabel();
@@ -530,7 +530,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 //				}
 //				// find this system type in the array...
 //				IRSESystemType matchingType = RSECorePlugin.getTheCoreRegistry().getSystemType(key);
-//				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(matchingType.getAdapter(IRSESystemType.class));
+//				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(matchingType.getAdapter(RSESystemTypeAdapter.class));
 //				
 //				// update this system type's attributes as per preferences...
 //				{

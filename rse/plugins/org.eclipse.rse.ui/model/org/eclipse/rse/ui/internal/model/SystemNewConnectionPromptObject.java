@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -185,7 +186,7 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 					}
 
 					if (enabled) {
-						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
 						if (adapter != null && !adapter.isEnabled(systemType)) {
 							enabled = false;
 						}
@@ -224,7 +225,7 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 		if (hasChildren())
 			return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID);
 		else {
-			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemTypes[0].getAdapter(IRSESystemType.class));
+			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemTypes[0].getAdapter(RSESystemTypeAdapter.class));
 			return adapter.getImageDescriptor(systemTypes[0]);
 		}
 	}

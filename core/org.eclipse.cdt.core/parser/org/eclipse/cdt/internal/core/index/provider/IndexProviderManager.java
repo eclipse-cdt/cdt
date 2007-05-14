@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.provider;
 
@@ -50,6 +51,9 @@ public final class IndexProviderManager implements IElementChangedListener {
 	private Map provisionMap= new HashMap();
 	
 	public IndexProviderManager() {
+	}
+	
+	public void startup() {
 		List providers = new ArrayList();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint indexProviders = registry.getExtensionPoint(CCorePlugin.INDEX_UNIQ_ID);

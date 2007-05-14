@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -276,7 +277,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private static CProjectDescriptionManager fInstance;
 
 	private CProjectDescriptionManager(){
-		
+		fDescriptorManager= CConfigBasedDescriptorManager.getInstance();
 	}
 	
 	public static CProjectDescriptionManager getInstance(){
@@ -296,10 +297,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					| IResourceChangeEvent.PRE_CLOSE
 					/*| IResourceChangeEvent.POST_BUILD*/);
 
-			if(fDescriptorManager == null){
-				fDescriptorManager = CConfigBasedDescriptorManager.getInstance();
-				fDescriptorManager.startup();
-			}
+			fDescriptorManager.startup();
 			
 			CExternalSettingsManager.getInstance().startup();
 			

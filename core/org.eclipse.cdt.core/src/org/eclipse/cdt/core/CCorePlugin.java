@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CdtVarPathEntryVariableManager;
@@ -76,6 +75,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 
 public class CCorePlugin extends Plugin {
@@ -191,9 +191,7 @@ public class CCorePlugin extends Plugin {
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
 
-	private CConfigBasedDescriptorManager/*CDescriptorManager*/ fDescriptorManager;// = new CDescriptorManager();
-
-	private CProjectDescriptionManager fNewCProjectDescriptionManager = CProjectDescriptionManager.getInstance();
+	private CProjectDescriptionManager fNewCProjectDescriptionManager;
 
 	private CoreModel fCoreModel;
 	
@@ -325,7 +323,6 @@ public class CCorePlugin extends Plugin {
 			}
 
             fNewCProjectDescriptionManager.shutdown();
-            fDescriptorManager = null;
 
 			savePluginPreferences();
 		} finally {
@@ -339,37 +336,51 @@ public class CCorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
-		fNewCProjectDescriptionManager.startup();
-		fDescriptorManager = fNewCProjectDescriptionManager.getDescriptorManager();
+		fNewCProjectDescriptionManager= CProjectDescriptionManager.getInstance();
 
 		// Start file type manager first !!
 		fPathEntryVariableManager = new CdtVarPathEntryVariableManager();
-		fPathEntryVariableManager.startup();
 
 		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
-		
-		//Set debug tracing options
-		configurePluginDebugOptions();
-		
-//		fDescriptorManager.startup();
-//		CProjectDescriptionManager.getInstance().startup();
-
-		// Fired up the model.
+				
 		fCoreModel = CoreModel.getDefault();
-		fCoreModel.startup();
 
 		// Fire up the PDOM
 		pdomManager = new PDOMManager();
-		pdomManager.startup();
 
+		//Set debug tracing options
+		configurePluginDebugOptions();
+		
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
 
         PositionTrackerManager.getInstance().install();
+        
+        // bug 186755, when started after the platform has been started the jobmanager
+        // is no longer suspended. So we have to start a job at the very end to make
+        // sure we don't trigger a concurrent plugin activation from within the job.
+        Job postStartupJob= new Job(CCorePlugin.getResourceString("CCorePlugin.startupJob")) { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				postStart();
+				return Status.OK_STATUS;
+			}
+			public boolean belongsTo(Object family) {
+				return family == CCorePlugin.this;
+			}
+        };
+        postStartupJob.setSystem(true);
+        postStartupJob.schedule();
 	}
     
     
-    /**
+    protected void postStart() {
+		fNewCProjectDescriptionManager.startup();
+		fPathEntryVariableManager.startup();
+		CoreModel.getDefault().startup();
+		pdomManager.startup();
+	}
+
+	/**
      * TODO: Add all options here
      * Returns a table of all known configurable options with their default values.
      * These options allow to configure the behaviour of the underlying components.
@@ -705,7 +716,7 @@ public class CCorePlugin extends Plugin {
 	 * @deprecated use getCProjetDescription(IProject project, boolean create)
 	 */
 	public ICDescriptor getCProjectDescription(IProject project) throws CoreException {
-		return fDescriptorManager.getDescriptor(project);
+		return fNewCProjectDescriptionManager.getDescriptorManager().getDescriptor(project);
 	}
 
 	/**
@@ -718,19 +729,19 @@ public class CCorePlugin extends Plugin {
 	 * @throws CoreException
 	 */
 	public ICDescriptor getCProjectDescription(IProject project, boolean create) throws CoreException {
-		return fDescriptorManager.getDescriptor(project, create);
+		return fNewCProjectDescriptionManager.getDescriptorManager().getDescriptor(project, create);
 	}
 
 	public void mapCProjectOwner(IProject project, String id, boolean override) throws CoreException {
 		if (!override) {
-			fDescriptorManager.configure(project, id);
+			fNewCProjectDescriptionManager.getDescriptorManager().configure(project, id);
 		} else {
-			fDescriptorManager.convert(project, id);
+			fNewCProjectDescriptionManager.getDescriptorManager().convert(project, id);
 		}
 	}
 	
 	public ICDescriptorManager getCDescriptorManager() {
-		return fDescriptorManager;
+		return fNewCProjectDescriptionManager.getDescriptorManager();
 	}
 
 	/**
@@ -1252,5 +1263,9 @@ public class CCorePlugin extends Plugin {
 	
 	public ICProjectDescriptionManager getProjectDescriptionManager(){
 		return fNewCProjectDescriptionManager;
+	}
+
+	public void joinStartup(IProgressMonitor monitor) throws OperationCanceledException, InterruptedException {
+		Job.getJobManager().join(this, monitor);	
 	}
 }

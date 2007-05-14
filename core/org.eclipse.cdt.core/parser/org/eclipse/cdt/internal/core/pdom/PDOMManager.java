@@ -176,6 +176,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		// that new projects are being created
 		initializeDatabaseCache();
 
+		fIndexProviderManager.startup();
+		
 		final CoreModel model = CoreModel.getDefault();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(fCModelListener, IResourceChangeEvent.POST_BUILD);
 		model.addElementChangedListener(fCModelListener);
@@ -897,6 +899,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 		try {
 			try {
+				CCorePlugin.getDefault().joinStartup(monitor);
 				Job.getJobManager().join(this, monitor);
 				return true;
 			} catch (OperationCanceledException e1) {

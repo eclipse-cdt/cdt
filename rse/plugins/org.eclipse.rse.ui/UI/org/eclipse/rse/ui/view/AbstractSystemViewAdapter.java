@@ -1088,7 +1088,9 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	public boolean showOpenViewActions(Object element)
 	{
-		return true;
+		if (element instanceof IAdaptable)
+			return hasChildren((IAdaptable)element);
+		return false;
 	}    
 	
 	/**

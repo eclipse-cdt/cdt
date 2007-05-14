@@ -10,9 +10,12 @@
  ********************************************************************************/
 package org.eclipse.rse.core;
 
+import org.eclipse.rse.internal.core.RSECoreRegistry;
+
 /**
  * Dynamic RSE system types provider interface.
- * @see Extension point {@link org.eclipse.rse.core.systemTypeProviders}
+ * 
+ * See also extension point <code>org.eclipse.rse.core.systemTypeProviders</code>
  *  
  * Clients may implement this interface.
  * 
@@ -27,6 +30,8 @@ public interface IRSESystemTypeProvider {
 	 * The list of the returned RSE system types will be checked
 	 * for duplicates (via the system type id). Duplicates will
 	 * be dropped.
+	 * 
+	 * Returned system types should be subclasses of {@link AbstractRSESystemType}.
 	 * 
 	 * @return The list of RSE system types to register or <code>null</code>.
 	 */

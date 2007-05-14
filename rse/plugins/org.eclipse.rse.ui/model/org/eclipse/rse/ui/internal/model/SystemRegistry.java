@@ -55,6 +55,7 @@ import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.events.SystemRemoteChangeEvent;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
@@ -95,7 +96,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
-import org.eclipse.rse.ui.model.SystemRemoteChangeEventUI;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
@@ -122,7 +122,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	private SystemModelChangeEventManager modelListenerManager = null;
 	private SystemModelChangeEvent modelEvent;
 	private SystemRemoteChangeEventManager remoteListManager = null;
-	private SystemRemoteChangeEventUI remoteEvent;
+	private SystemRemoteChangeEvent remoteEvent;
 
 	private int listenerCount = 0;
 	private int modelListenerCount = 0;
@@ -3027,7 +3027,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		invalidateFiltersFor(resourceParent, subsystem);
 		
 		if (remoteEvent == null)
-			remoteEvent = new SystemRemoteChangeEventUI();
+			remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);
 		remoteEvent.setResourceParent(resourceParent);
@@ -3048,7 +3048,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent. 
 	 *    This saves sending a separate event to reveal and select the new created resource on a create event, for example.
 	 */
-	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String oldName, Viewer originatingViewer)
+	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String oldName, Object originatingViewer)
 	{
 		if (resourceParent instanceof ISystemContainer)
 		{
@@ -3058,7 +3058,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		invalidateFiltersFor(resourceParent, subsystem);
 		
 		if (remoteEvent == null)
-			remoteEvent = new SystemRemoteChangeEventUI();
+			remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);
 		remoteEvent.setResourceParent(resourceParent);

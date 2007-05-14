@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -474,7 +475,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		invalidateFilterReferences(targetFolder);
 		
 		
-		RSEUIPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
+		RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, copiedFiles, targetFolder.getAbsolutePath(), fileSS, null, originatingViewer);
 		
 		/* Old release 1.0 way...

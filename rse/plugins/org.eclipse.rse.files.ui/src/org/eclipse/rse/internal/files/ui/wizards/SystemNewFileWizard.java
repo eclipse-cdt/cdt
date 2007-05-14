@@ -21,6 +21,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -28,6 +29,7 @@ import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
@@ -44,7 +46,6 @@ import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
@@ -282,7 +283,7 @@ public class SystemNewFileWizard
 	protected static void updateGUI(IRemoteFile parentFolder, IRemoteFile newFileOrFolder, Viewer viewer,  
 	                                  boolean isInputAFilter, ISystemFilterReference selectedFilterRef)
 	{
-		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		if (selectedFilterRef != null)
 		{
 			selectedFilterRef.markStale(true);

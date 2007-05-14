@@ -124,7 +124,6 @@ import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.model.ISystemPromptableObject;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.model.SystemRemoteElementResourceSet;
 import org.eclipse.rse.ui.model.SystemResourceChangeEventUI;
@@ -4603,7 +4602,7 @@ public class SystemView extends SafeTreeViewer
 	 * Required method from ISystemDeleteTarget
 	 */
 	public boolean doDelete(IProgressMonitor monitor) {
-		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -4731,7 +4730,7 @@ public class SystemView extends SafeTreeViewer
 	 * Required method from ISystemRenameTarget
 	 */
 	public boolean doRename(String[] newNames) {
-		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		Object element = null;

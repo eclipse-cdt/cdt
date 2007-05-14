@@ -19,6 +19,7 @@ package org.eclipse.rse.internal.files.ui.actions;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -155,7 +156,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		ISubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
 		//RSEUIPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		  // ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, copiedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
-    	RSEUIPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
+    	RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, movedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
 
     	

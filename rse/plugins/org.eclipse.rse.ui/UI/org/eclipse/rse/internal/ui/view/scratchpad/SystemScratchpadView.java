@@ -42,6 +42,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.SameShellProvider;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
@@ -78,7 +79,6 @@ import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.internal.model.SystemRegistry;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ContextObject;
@@ -823,7 +823,7 @@ public class SystemScratchpadView
 	 */
 	public boolean doDelete(IProgressMonitor monitor)
 	{
-		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -915,7 +915,7 @@ public class SystemScratchpadView
 	*/
 	public boolean doRename(String[] newNames)
 	{
-		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();

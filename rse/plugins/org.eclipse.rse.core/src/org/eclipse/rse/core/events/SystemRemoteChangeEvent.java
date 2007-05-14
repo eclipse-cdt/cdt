@@ -29,6 +29,7 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 	private Object resource, parent;
 	private String oldName;
 	private ISubSystem subsystem;
+	private Object originatingViewer;
 	
 	/**
 	 * Constructor for non-rename event
@@ -152,6 +153,27 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 	public String getOldName()
 	{
 		return oldName;
+	}
+
+	/**
+	 * Set the originating viewer.
+	 * Only this viewer is candidate for updating the selection. Eg, on a 
+	 * create event, if this and the resource parent is set, the newly 
+	 * created object is selected after the parent's contents are refreshed,
+	 * for the originating viewer.
+	 */
+	public void setOriginatingViewer(Object originatingViewer) {
+		this.originatingViewer = originatingViewer;
+	}
+
+	/**
+	 * Get the originating viewer from which this remote resource change event
+	 * comes from. The combination of this, if non-null, plus the resource parent,
+	 * allows viewers to decide whether to update the selection within the
+	 * parent resource, after refreshing that resource.
+	 */
+	public Object getOriginatingViewer() {
+		return originatingViewer;
 	}
 	
 }

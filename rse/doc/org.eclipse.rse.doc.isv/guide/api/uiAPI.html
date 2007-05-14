@@ -3,7 +3,7 @@
 <head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2007. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
 <LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
 <title>RSE User Interface API</title>
 </head>
@@ -126,7 +126,7 @@ To get the system registry, use the
 original client's thread; or you may want to pass the originating viewer's ID
 with the resource change event. Such operations are only possible when the UI 
 is loaded, and therefore you need to use
-<samp><A href="../../reference/api/org/eclipse/rse/ui/model/ISystemRegistryUI.html#fireRemoteResourceChangeEvent(int, java.lang.Object, java.lang.Object, org.eclipse.rse.core.subsystems.ISubSystem, java.lang.String, org.eclipse.jface.viewers.Viewer)">ISystemRegistryUI.fireEvent()</a></samp>
+<samp><A href="../../reference/api/org/eclipse/rse/core/model/ISystemRegistry.html#fireRemoteResourceChangeEvent(int, java.lang.Object, java.lang.Object, org.eclipse.rse.core.subsystems.ISubSystem, java.lang.String, java.lang.Object)">ISystemRegistry.fireEvent()</a></samp>
 method in that case. To get the system registry UI interface, use the
 <samp><A href="../../reference/api/org/eclipse/rse/ui/RSEUIPlugin.html#getTheSystemRegistry()">RSEUIPlugin.getTheSystemRegistry()</a></samp>
 method.

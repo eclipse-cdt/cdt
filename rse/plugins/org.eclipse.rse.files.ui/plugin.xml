@@ -14,6 +14,7 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 Contributors:
 Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
 Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -78,7 +79,7 @@ Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
 		<factory 
 				class="org.eclipse.rse.internal.files.ui.view.RemoteFileSubSystemConfigurationAdapterFactory" 
 				adaptableType="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration">
-            <adapter type="org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter"/>
+            <adapter type="org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter"/>
 		</factory> 
 	</extension>
  

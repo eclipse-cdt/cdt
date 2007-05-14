@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -24,7 +25,6 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemTabFolderLayout;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
@@ -33,6 +33,7 @@ import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.ISystemMessageLineTarget;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.SWT;

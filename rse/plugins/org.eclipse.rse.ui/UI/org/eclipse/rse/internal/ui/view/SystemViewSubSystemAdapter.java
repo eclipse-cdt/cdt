@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -29,11 +30,11 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorPortInput;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;

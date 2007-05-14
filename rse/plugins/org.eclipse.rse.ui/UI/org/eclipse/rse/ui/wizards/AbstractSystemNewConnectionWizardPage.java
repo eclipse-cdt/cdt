@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -30,7 +31,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * A base class for additional pages that are to be appended to the New Connection wizard.
- * @see org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
+ * @see org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
  */
 public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSystemWizardPage 
        implements ISystemNewConnectionWizardPage, IWizardPage

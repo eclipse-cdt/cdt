@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -32,10 +33,10 @@ import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 
 

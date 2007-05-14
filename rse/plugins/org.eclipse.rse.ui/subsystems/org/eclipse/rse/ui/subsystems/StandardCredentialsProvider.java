@@ -8,6 +8,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
@@ -21,7 +22,6 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ICredentials;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and Wind River Systems, Inc. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,13 +12,14 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package samples.subsystems;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 
 /**
  * @see IAdapterFactory

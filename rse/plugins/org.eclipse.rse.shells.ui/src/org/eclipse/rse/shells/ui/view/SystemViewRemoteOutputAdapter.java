@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -37,7 +38,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.subsystems.IRemoteLineReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.internal.files.ui.actions.SystemRemoteFileLineOpenWithMenu;
@@ -64,6 +64,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;

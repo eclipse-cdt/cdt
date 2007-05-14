@@ -12,13 +12,14 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 
 
 public class RemoteFileSubSystemConfigurationAdapterFactory implements IAdapterFactory

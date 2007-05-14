@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -52,7 +53,6 @@ import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.ISystemMementoConstants;
@@ -65,6 +65,7 @@ import org.eclipse.rse.ui.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.operations.Policy;
 import org.eclipse.rse.ui.operations.SystemFetchOperation;
 import org.eclipse.rse.ui.operations.SystemSchedulingRule;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;

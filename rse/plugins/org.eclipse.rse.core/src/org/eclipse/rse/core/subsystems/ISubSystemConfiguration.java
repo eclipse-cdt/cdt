@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 168870: move core function from UI to core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;

@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -76,7 +77,6 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEventManager;
@@ -96,6 +96,7 @@ import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.model.SystemRemoteChangeEventUI;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.dnd.Clipboard;

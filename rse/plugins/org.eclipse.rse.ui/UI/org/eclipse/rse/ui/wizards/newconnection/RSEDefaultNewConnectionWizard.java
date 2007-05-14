@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -39,7 +40,6 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -48,6 +48,7 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 
 /**
  * Standard RSE new connection wizard implementation.

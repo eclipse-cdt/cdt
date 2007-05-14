@@ -18,6 +18,7 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -1184,7 +1185,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * @param creatingConnection true if we are creating a connection, false if just creating
 	 *          another subsystem for an existing connection.
 	 * @param yourNewConnectionWizardPages The wizard pages you supplied to the New Connection wizard, via the
-	 *            {@link org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
+	 *            {@link org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
 	 *             method or null if you didn't override this method.
 	 *            Note there may be more pages than you originally supplied as it is all pages contributed by 
 	 *            this factory object, including subclasses.

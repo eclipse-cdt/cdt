@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -22,8 +23,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 
 
 /**

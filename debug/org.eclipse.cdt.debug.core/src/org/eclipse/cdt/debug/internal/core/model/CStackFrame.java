@@ -657,7 +657,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		}
 	}
 
-	private void setRefreshVariables( boolean refresh ) {
+	public void setRefreshVariables( boolean refresh ) {
 		fRefreshVariables = refresh;
 	}
 

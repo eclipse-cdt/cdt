@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.core.settings.model.util.XmlStorageElement;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -37,9 +36,6 @@ import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class ManagedProject extends BuildObject implements IManagedProject, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
 	
@@ -229,42 +225,36 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#serialize()
 	 */
-/*	public void serialize(Document doc, Element element) {
-		element.setAttribute(IBuildObject.ID, id);
+	public void serialize(ICStorageElement element, boolean saveChildren) {
+		serializeProjectInfo(element);
 		
-		if (name != null) {
-			element.setAttribute(IBuildObject.NAME, name);
+		if(saveChildren){
+			Collection configElements = getConfigurationCollection();
+			Iterator iter = configElements.iterator();
+			while (iter.hasNext()) {
+				Configuration config = (Configuration) iter.next();
+				ICStorageElement configElement = element.createChild(IConfiguration.CONFIGURATION_ELEMENT_NAME);
+				config.serialize(configElement);
+			}
+			
 		}
-
-		if (projectType != null) {
-			element.setAttribute(PROJECTTYPE, projectType.getId());
-		}
-		
 		// Serialize my children
-		List configElements = getConfigurationList();
-		Iterator iter = configElements.listIterator();
-		while (iter.hasNext()) {
-			Configuration config = (Configuration) iter.next();
-			Element configElement = doc.createElement(IConfiguration.CONFIGURATION_ELEMENT_NAME);
-			element.appendChild(configElement);
-			config.serialize(doc, configElement);
-		}
 		
-		//serialize user-defined macros
-		if(userDefinedMacros != null){
-			Element macrosElement = doc.createElement(StorableMacros.MACROS_ELEMENT_NAME);
-			element.appendChild(macrosElement);
-			userDefinedMacros.serialize(doc,macrosElement);
-		}
-		
-		if(userDefinedEnvironment != null){
-			EnvironmentVariableProvider.fUserSupplier.storeEnvironment(this,true);
-		}
+//		//serialize user-defined macros
+//		if(userDefinedMacros != null){
+//			Element macrosElement = doc.createElement(StorableMacros.MACROS_ELEMENT_NAME);
+//			element.appendChild(macrosElement);
+//			userDefinedMacros.serialize(doc,macrosElement);
+//		}
+//		
+//		if(userDefinedEnvironment != null){
+//			EnvironmentVariableProvider.fUserSupplier.storeEnvironment(this,true);
+//		}
 
 		// I am clean now
 		isDirty = false;
 	}
-*/
+
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */

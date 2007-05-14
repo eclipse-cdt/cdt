@@ -12,24 +12,13 @@ package org.eclipse.cdt.managedbuilder.projectconverter;
 
 import java.io.File;
 
-import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.IManagedProject;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
 
 public class UpdateManagedProject30 {
 
@@ -56,29 +45,30 @@ public class UpdateManagedProject30 {
 		// We need to upgrade the version
 		((ManagedBuildInfo)info).setVersion("3.1.0");
 //		info.setValid(true);		
-		
-		// Save the updated file.
-		IWorkspace workspace = project.getWorkspace();
-//		boolean treeLock = workspace.isTreeLocked();
-		ISchedulingRule rule1 = workspace.getRuleFactory().createRule(project);
-		ISchedulingRule rule2 = workspace.getRuleFactory().refreshRule(project);
-		ISchedulingRule rule = MultiRule.combine(rule1, rule2);
-		//since the java synchronized mechanism is now used for the build info loadding,
-		//initiate the job in all cases
-//		if (treeLock) {
-			WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
-				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					ManagedBuildManager.saveBuildInfo(project, true);
-					return Status.OK_STATUS;
-				}
-			};
-			job.setRule(rule);
-			job.schedule();
-//		} else {
-//			checkForCPPWithC(monitor, project);
-//			ManagedBuildManager.saveBuildInfo(project, true);
-//		}
-		monitor.done();
+
+		//no need to persist data here
+//		// Save the updated file.
+//		IWorkspace workspace = project.getWorkspace();
+////		boolean treeLock = workspace.isTreeLocked();
+//		ISchedulingRule rule1 = workspace.getRuleFactory().createRule(project);
+//		ISchedulingRule rule2 = workspace.getRuleFactory().refreshRule(project);
+//		ISchedulingRule rule = MultiRule.combine(rule1, rule2);
+//		//since the java synchronized mechanism is now used for the build info loadding,
+//		//initiate the job in all cases
+////		if (treeLock) {
+//			WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
+//				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+//					ManagedBuildManager.saveBuildInfo(project, true);
+//					return Status.OK_STATUS;
+//				}
+//			};
+//			job.setRule(rule);
+//			job.schedule();
+////		} else {
+////			checkForCPPWithC(monitor, project);
+////			ManagedBuildManager.saveBuildInfo(project, true);
+////		}
+//		monitor.done();
 	}
 
 }

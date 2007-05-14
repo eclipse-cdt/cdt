@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -763,7 +763,7 @@ class UpdateManagedProject12 {
 //			if (treeLock) {
 				WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
 					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-						ManagedBuildManager.saveBuildInfo(project, false);
+						ManagedBuildManager.saveBuildInfoLegacy(project, false);
 						return Status.OK_STATUS;
 					}
 				};

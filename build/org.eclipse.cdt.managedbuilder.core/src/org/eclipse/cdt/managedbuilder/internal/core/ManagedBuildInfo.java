@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
+import org.eclipse.cdt.core.settings.model.util.XmlStorageElement;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -58,8 +59,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * 
@@ -728,13 +729,13 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param doc
 	 * @param element
 	 */
-/*	public void serialize(Document doc, Element element) {
+	public void serializeLegacy(Document doc, Element element) {
 		// Write out the managed build project
 
 		if(managedProject != null){
 			Element projElement = doc.createElement(IManagedProject.MANAGED_PROJECT_ELEMENT_NAME);
 			element.appendChild(projElement);
-			managedProject.serialize(doc, projElement);
+			((ManagedProject)managedProject).serialize(new XmlStorageElement(projElement), true);
 		}
 		else{
 			Iterator iter = getTargets().listIterator();
@@ -751,12 +752,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			
 		
 		// Remember the default configuration
-		persistDefaultConfiguration();
+//		persistDefaultConfiguration();
 
 		// I'm clean now
 		setDirty(false);
 	}
-*/
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */

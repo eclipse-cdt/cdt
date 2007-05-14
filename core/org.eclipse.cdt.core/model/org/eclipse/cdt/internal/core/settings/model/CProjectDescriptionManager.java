@@ -428,6 +428,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					eDes = project.getDescription();
 					des = getConvertedDescription(project, eDes);
 				} catch (CoreException e) {
+					CCorePlugin.log(e);
 				}
 			}
 	
@@ -599,7 +600,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		r.add(new IWorkspaceRunnable(){
 
 			public void run(IProgressMonitor monitor) throws CoreException {
-				proj.setDescription(eDes, monitor);
+				try {
+					proj.setDescription(eDes, monitor);					
+				} catch (CoreException e){
+					CCorePlugin.log(e);
+				}
+				
 			}
 		});
 		
@@ -767,11 +773,13 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CProjectConverterDesciptor.PROJECT_CONVERTER_EXTPOINT_ID);
 		IExtension exts[] = extensionPoint.getExtensions();
-		fConverters = new CProjectConverterDesciptor[exts.length];
+		CProjectConverterDesciptor[] dess = new CProjectConverterDesciptor[exts.length];
 		
 		for(int i = 0; i < exts.length; i++){
-			fConverters[i] = new CProjectConverterDesciptor(exts[i]);
+			dess[i] = new CProjectConverterDesciptor(exts[i]);
 		}
+		
+		fConverters = dess;
 	}
 
 	

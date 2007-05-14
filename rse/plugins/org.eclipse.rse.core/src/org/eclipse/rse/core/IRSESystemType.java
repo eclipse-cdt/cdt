@@ -13,7 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Extended system type -> subsystemConfiguration association.
  * Martin Oberhuber (Wind River) - [185098] Provide constants for all well-known system types
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -26,7 +26,7 @@ import org.osgi.framework.Bundle;
  * These constants are kept in sync with definitions in plugin.xml.
  * 
  * This interface is not intended to be implemented directly by clients.
- * Clients should extend the abstract base class {@link RSESystemType} instead.
+ * Clients should extend the abstract base class {@link AbstractRSESystemType} instead.
  */
 public interface IRSESystemType extends IAdaptable {
 
@@ -148,6 +148,19 @@ public interface IRSESystemType extends IAdaptable {
 	public static final String SYSTEMTYPE_TELNET_ONLY_ID = "org.eclipse.rse.systemtype.telnet"; //$NON-NLS-1$
 	
 	/** 
+	 * System type Property Key (value: "isLocal") indicating whether 
+	 * a system type is declared in plugin.xml to refers to the local
+	 * system.
+	 * On a the local system, the following properties are expected:
+	 * <ul>
+	 *   <li>Subsystem Queries are fast and safe.</li>
+	 *   <li>Files in the file system can be converted to java.io.File.</li>
+	 * </ul>
+	 * @see #testProperty(String, boolean)
+	 */
+	public static final String PROPERTY_IS_LOCAL = "isLocal"; //$NON-NLS-1$
+	
+	/** 
 	 * System type Property Key (value: "isWindows") indicating whether 
 	 * a system type is declared in plugin.xml to refers to a Windows
 	 * system.
@@ -158,14 +171,14 @@ public interface IRSESystemType extends IAdaptable {
 	 *   <li>Symbolic links are not supported</li>
 	 *   <li>"cmd" is used as the default shell</li>
 	 * </ul>
-	 * @see #getProperty(String, boolean)
+	 * @see #testProperty(String, boolean)
 	 */
 	public static final String PROPERTY_IS_WINDOWS = "isWindows"; //$NON-NLS-1$
 	
 	/**
 	 * System type Property Key (value: "isCaseSensitive") indicating
 	 * whether a given system type is in general case sensitive.
-	 * @see #getProperty(String, boolean)
+	 * @see #testProperty(String, boolean)
 	 */
 	public static final String PROPERTY_IS_CASE_SENSITIVE = "isCaseSensitive"; //$NON-NLS-1$
 	
@@ -206,18 +219,26 @@ public interface IRSESystemType extends IAdaptable {
 	public String getProperty(String key);
 	
 	/**
-	 * Returns the boolean property of this system type with the given key.
-	 * The default value is returned if there is no such key.
+	 * Tests whether the given boolean property matches the expected value
+	 * for this system type.
 	 * 
 	 * @param key the name of the property to return
-	 * @param defaultValue the default value to expect if the property is not set
-	 * @return the boolean value associated with the given key or the specified default value
+	 * @param expectedValue the expected boolean value of the property.
+	 * @return <code>true</code> if the Property is set on the system type and
+	 *     matches the expected value. Returns <code>false</code> if the property
+	 *     is not set or does not match.
 	 */
-	public boolean getProperty(String key, boolean defaultValue);
+	public boolean testProperty(String key, boolean expectedValue);
 	
 	/**
 	 * Tests whether the system type refers to the local system.
-	 * This is a shortcut for getId().equals(SYSTEMTYPE_LOCAL_ID)
+	 * This is a shortcut for
+	 * <pre> 
+	 *   getId().equals(SYSTEMTYPE_LOCAL_ID) || 
+	 *   || getProperty(PROPERTY_IS_LOCAL, false)
+	 * </pre>
+	 * See {@link #PROPERTY_IS_LOCAL} for properties expected on 
+	 * a Local system.
 	 * Extenders (contributors of custom system types) may override.
 	 * @return true if the system type refers to the local system.
 	 */
@@ -227,9 +248,12 @@ public interface IRSESystemType extends IAdaptable {
 	 * Tests whether the system type refers to the Windows system.
 	 * This is a shortcut for
 	 * <pre> 
-	 *   getId().equals(SYSTEMTYPE_WINDOWS_ID) || 
-	 *   isLocal() && System.getProperty("os.name").toLowerCase().startsWith("win")
+	 *   getId().equals(SYSTEMTYPE_WINDOWS_ID)
+	 *   || isLocal() && System.getProperty("os.name").toLowerCase().startsWith("win")
+	 *   || getProperty(PROPERTY_IS_WINDOWS, false)
 	 * </pre>
+	 * See {@link #PROPERTY_IS_WINDOWS} for properties expected on 
+	 * a Windows system.
 	 * Extenders (contributors of custom system types) may override.
 	 * @return true if the system type refers to a Windows system.
 	 */

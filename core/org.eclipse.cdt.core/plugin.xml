@@ -592,6 +592,14 @@
       <pdomLinkageFactory
             class="org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory"
             id="C++"/>
+      <language
+            class="org.eclipse.cdt.internal.core.model.AssemblyLanguage"
+            id="assembly"
+            name="%language.name.asm">
+         <contentType
+               id="org.eclipse.cdt.core.asmSource">
+         </contentType>
+      </language>
    </extension>
    <extension
          id="defaultConfigDataProvider"

@@ -16,6 +16,7 @@ import java.util.Stack;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
@@ -71,6 +72,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 		suite.addTest(new TranslationUnitTests("testBug23478A"));
 		suite.addTest(new TranslationUnitTests("testBug23478B"));
 		suite.addTest(new TranslationUnitTests("testIsValidSourceUnitName"));
+		suite.addTest(new TranslationUnitTests("testAssemblyContentType_Bug186774"));
 		// TODO: suite.addTest(new
 		// TranslationUnitTests("testGetElementAtLine"));
 		return suite;
@@ -241,5 +243,10 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 		assertFalse(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.h"));
 		assertTrue(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.cc"));
 		assertFalse(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.hh"));
+	}
+	
+	public void testAssemblyContentType_Bug186774() {
+		assertEquals(CCorePlugin.CONTENT_TYPE_ASMSOURCE, CoreModel.getRegistedContentTypeId(testProject.getProject(), "test.s"));
+		assertEquals(CCorePlugin.CONTENT_TYPE_ASMSOURCE, CoreModel.getRegistedContentTypeId(testProject.getProject(), "test.S"));
 	}
 }

@@ -67,7 +67,7 @@
 		</topic>
 		
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
-		<topic label="Make Targets" href="reference/cdt_u_make_targets_pref.htm"/>
+		<topic label="Make" href="reference/cdt_u_make_pref.htm"/>
 		
 		<topic label="New Make Projects properties" href="reference/cdt_o_proj_prop_pages.htm">
 			<topic label="Make Builder" href="reference/cdt_u_newproj_buildset.htm"/>

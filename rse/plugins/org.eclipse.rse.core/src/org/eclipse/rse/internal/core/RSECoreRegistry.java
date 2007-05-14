@@ -12,7 +12,7 @@
  *
  * Contributors:
  * Uwe Stieber (Wind River) - Added system types provider extension.
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -147,7 +147,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 			IConfigurationElement element = elements[i];
 
 			if (element.getName().equals(ELEMENT_SYTEM_TYPE)) {
-				IRSESystemType type = new RSEStaticSystemType(element);
+				IRSESystemType type = new RSESystemType(element);
 				if (!typeIds.contains(type.getId())) {
 					types.add(type);
 					typeIds.add(type.getId());

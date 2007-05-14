@@ -13,7 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Dynamic system type provider extension.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -25,12 +25,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.RSESystemType;
+import org.eclipse.rse.core.AbstractRSESystemType;
 
 /**
  * Class representing a system type statically contributed through plugin.xml.
  */
-public class RSEStaticSystemType extends RSESystemType {
+public class RSESystemType extends AbstractRSESystemType {
 
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
@@ -48,7 +48,7 @@ public class RSEStaticSystemType extends RSESystemType {
 	 * Constructor for an object representing a system type.
 	 * @param element the configuration element describing the system type
 	 */
-	public RSEStaticSystemType(IConfigurationElement element) {
+	public RSESystemType(IConfigurationElement element) {
 		super();
 		id = element.getAttribute(ATTR_ID);
 		name = element.getAttribute(ATTR_NAME);

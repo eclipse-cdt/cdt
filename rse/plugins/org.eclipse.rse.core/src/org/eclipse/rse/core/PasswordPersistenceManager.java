@@ -15,7 +15,7 @@
  *                     - updated to use new RSEPreferencesManager
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemTyep.isLocal() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -78,7 +78,7 @@ public class PasswordPersistenceManager {
 	/**
 	 * Default System Type
 	 */
-	private static class DefaultSystemType extends RSESystemType implements IRSESystemType
+	private static class DefaultSystemType extends AbstractRSESystemType implements IRSESystemType
 	{
 		private static final String DEFAULT_ID = "DEFAULT"; //$NON-NLS-1$
 		private DefaultSystemType() {

@@ -222,6 +222,11 @@ public interface IRSESystemType extends IAdaptable {
 	 * Tests whether the given boolean property matches the expected value
 	 * for this system type.
 	 * 
+	 * Clients can use their own properties with system types, but should
+	 * use reverse DNS notation to qualify their property keys (e.g.
+	 * <code>com.acme.isFoobarSystem</code>. Property keys without qualifying
+	 * namespace are reserved for RSE internal use. 
+	 * 
 	 * @param key the name of the property to return
 	 * @param expectedValue the expected boolean value of the property.
 	 * @return <code>true</code> if the Property is set on the system type and

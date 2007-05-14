@@ -152,7 +152,12 @@ If not specified, a default icon will be used by RSE.
 &lt;li&gt;&quot;icon&quot; to store the value of the icon attribute&lt;/li&gt;
 &lt;li&gt;&quot;iconLive&quot; to store the value of the iconLive attribute&lt;/li&gt;
 &lt;li&gt;&quot;enableOffline&quot; to store the value of the enableOffline attribute&lt;/li&gt;
+&lt;li&gt;&quot;isCaseSensitive&quot; for system types with a case sensitive file system&lt;/li&gt;
+&lt;li&gt;&quot;isLocal&quot; for system types that refer to the local system&lt;/li&gt;
+&lt;li&gt;&quot;isWindows&quot; for system types that refer to a Windows kind of system (case insensitive file system with drive letters)&lt;/li&gt;
 &lt;/ul&gt;
+In general, clients can use any own properties with system types, but should use reverse DNS notation to qualify their property keys (e.g. &lt;code&gt;com.acme.isFoobarSystem&lt;/code&gt;. Property keys without qualifying namespace are reserved for RSE internal use. See also class IRSESystemType, methods getProperty() and testProperty().
+
          </documentation>
       </annotation>
       <complexType>

@@ -51,7 +51,7 @@ The string attributes &lt;code&gt;defaultDateFormatStr&lt;/code&gt; &lt;code&gt;
 
    <element name="parser">
       <complexType>
-      	<attribute name="id" type="string" use="required">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -61,7 +61,7 @@ The string attributes &lt;code&gt;defaultDateFormatStr&lt;/code&gt; &lt;code&gt;
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  Name that will be displayed in the UI
+                  Name that will be displayed in the FTP Settings dialog
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -71,7 +71,7 @@ The string attributes &lt;code&gt;defaultDateFormatStr&lt;/code&gt; &lt;code&gt;
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Extension of &lt;code&gt;org.apache.commons.net.ftp.Configurable,org.apache.commons.net.ftp.FTPFileEntryParser&lt;/code&gt; implementing the parser for the specific server
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.apache.commons.net.ftp.Configurable,org.apache.commons.net.ftp.FTPFileEntryParser"/>
@@ -81,35 +81,75 @@ The string attributes &lt;code&gt;defaultDateFormatStr&lt;/code&gt; &lt;code&gt;
          <attribute name="defaultDateFormatStr" type="string">
             <annotation>
                <documentation>
-                  
+                  This property specifies the main date format that will be used by a parser configured by this configuration to parse file timestamps.  If this is not specified, such a parser will use as a default value, the most commonly used format which will be in as used in &lt;code&gt;en_US&lt;/code&gt; locales. This should be in the format described for &lt;code&gt;java.text.SimpleDateFormat&lt;/code&gt;. property.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="recentDateFormatStr" type="string">
             <annotation>
                <documentation>
-                  
+                  This property specifies a secondary date format that will be used by a parser configured by this configuration to parse file timestamps, typically those less than a year old.  If this is  not specified, such a parser will not attempt to parse using an alternate format.
+This is used primarily in unix-based systems.
+This should be in the format described for &lt;code&gt;java.text.SimpleDateFormat&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="serverLanguageCode" type="string">
             <annotation>
                <documentation>
-                  
+                  This property allows user to specify a &lt;a href=&quot;http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt&quot;&gt;
+two-letter ISO-639 language code&lt;/a&gt; that will be used to configure the set of month names used by the file timestamp parser.
+If neither this nor the shortMonthNames is specified, parsing will assume English month names, which may or may not be significant, depending on whether the date format(s) specified via  defaultDateFormatStr and/or recentDateFormatStr are using 
+ numeric or alphabetic month names.
+If the code supplied is not supported here, &lt;code&gt;en_US&lt;/code&gt;
+month names will be used.  We are supporting here those language 
+codes which, when a &lt;code&gt; java.util.Locale&lt;/code&gt; is constucted
+using it, and a &lt;code&gt;java.text.SimpleDateFormat&lt;/code&gt; is 
+constructed using that Locale, the array returned by the 
+SimpleDateFormat&apos;s &lt;code&gt;getShortMonths()&lt;/code&gt; method consists solely of three 8-bit ASCII character strings.  Additionally, 
+languages which do not meet this requirement are included if a 
+common alternative set of short month names is known to be used.
+This means that users who can tell us of additional such encodings
+may get them added to the list of supported languages by contacting
+the jakarta-commons-net team.
+&lt;strong&gt; Please note that this attribute will NOT be used to determine a locale-based date format for the language.  &lt;/strong&gt;  
+Experience has shown that many if not most FTP servers outside the
+United States employ the standard &lt;code&gt;en_US&lt;/code&gt; date format 
+orderings of &lt;code&gt;MMM d yyyy&lt;/code&gt; and &lt;code&gt;MMM d HH:mm&lt;/code&gt; 
+and attempting to deduce this automatically here would cause more
+problems than it would solve.  The date format must be changed 
+via the defaultDateFormatStr and/or recentDateFormatStr parameters.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="shortMonthNames" type="string">
             <annotation>
                <documentation>
-                  
+                  This property allows the user to specify a set of month names used by the server that is different from those that may be specified using the setServerLanguageCode property.
+This should be a string containing twelve strings each composed of
+three characters, delimited by pipe (|) characters.  Currently, 
+only 8-bit ASCII characters are known to be supported.  For example, a set of month names used by a hypothetical Icelandic FTP server might conceivably be specified as  &lt;code&gt;&quot;jan|feb|mar|apr|ma&amp;#xED;|j&amp;#xFA;n|j&amp;#xFA;l|&amp;#xE1;g&amp;#xFA;|sep|okt|n&amp;#xF3;v|des&quot;&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="serverTimeZoneId" type="string">
             <annotation>
                <documentation>
-                  
+                  This property allows a time zone to be specified corresponding to that known to be used by an FTP server in file listings.  This might be particularly useful to clients such as Ant that try to use these timestamps for dependency checking. This should be one of the identifiers used by &lt;code&gt;java.util.TimeZone&lt;/code&gt; to refer to time zones, for example, &lt;code&gt;America/Chicago&lt;/code&gt; or &lt;code&gt;Asia/Rangoon&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ftpSystemTypes" type="string">
+            <annotation>
+               <documentation>
+                  Regular expression used to match with the string returned by the FTP SYST command to autodetect the parser if not specified by the user
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  Priority used if more than one extension matches the regular expression given by ftpSystemTypes.
                </documentation>
             </annotation>
          </attribute>
@@ -193,6 +233,7 @@ available at http://www.eclipse.org/legal/epl-v10.html
 
 Contributors:
    Javier Montalvo Orus (Symbian) - initial API and implementation
+   Javier Montalvo Orus (Symbian) - added ftpSystemTypes and priority
       </documentation>
    </annotation>
 

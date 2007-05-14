@@ -6,6 +6,7 @@
  * 
  * Contributors:
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.parser;
@@ -13,6 +14,7 @@ package org.eclipse.rse.internal.subsystems.files.ftp.parser;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
@@ -60,17 +62,104 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory#getFTPClientConfig(java.lang.String)
 	 */
-	public FTPClientConfig getFTPClientConfig(String key)
+	public FTPClientConfig getFTPClientConfig(String parser, String systemName)
 	{
-		if(!ftpConfig.containsKey(key))
+		
+		FTPClientConfig ftpClientConfig = null;
+		
+		if(parser.equals("AUTO")) //$NON-NLS-1$
 		{
+			int priorityInt = Integer.MAX_VALUE;
+			int previousPriorityInt = Integer.MAX_VALUE;
+			IConfigurationElement selectedCofiguration = null;
+			
 			IConfigurationElement[] ce = ep.getConfigurationElements();
 			for (int i = 0; i < ce.length; i++) 
 			{
+				String ftpSystemTypes = ce[i].getAttribute("ftpSystemTypes"); //$NON-NLS-1$
+				if(ftpSystemTypes!=null)
+				{
+					Pattern ftpSystemTypesRegex = Pattern.compile(ftpSystemTypes);
+					if(ftpSystemTypesRegex.matcher(systemName).matches())
+					{
+						//try to get priority otherwise assigning Integer.MAX_VALUE
+						String priority = ce[i].getAttribute("priority"); //$NON-NLS-1$
+						if(priority!=null)
+						{
+							priorityInt = Integer.parseInt(priority);
+						}
+						else
+						{
+							priorityInt = Integer.MAX_VALUE;
+						}
+						
+						if(priorityInt < previousPriorityInt)
+						{
+							selectedCofiguration = ce[i];
+							previousPriorityInt = priorityInt;
+						}
+					}
+				}
+			}
+			
+			//process the selected IConfigurationElement
+			if(selectedCofiguration != null)
+			{
+				FTPClientConfig config = null;
+				
+				//populate tables
+				String clas = selectedCofiguration.getAttribute("class"); //$NON-NLS-1$
+				
+				if(!ftpFileEntryParser.containsKey(clas))
+				{
+					FTPFileEntryParser entryParser=null;
+					try {
+						entryParser = (FTPFileEntryParser)selectedCofiguration.createExecutableExtension("class"); //$NON-NLS-1$
+					} catch (CoreException e) {
+						throw new ParserInitializationException(e.getMessage());
+					} 
+					
+					ftpFileEntryParser.put(clas, entryParser);
+				}
+				
+				String defaultDateFormatStr = selectedCofiguration.getAttribute("defaultDateFormatStr"); //$NON-NLS-1$
+				String recentDateFormatStr = selectedCofiguration.getAttribute("recentDateFormatStr"); //$NON-NLS-1$
+				String serverLanguageCode = selectedCofiguration.getAttribute("serverLanguageCode"); //$NON-NLS-1$
+				String shortMonthNames = selectedCofiguration.getAttribute("shortMonthNames"); //$NON-NLS-1$
+				String serverTimeZoneId = selectedCofiguration.getAttribute("serverTimeZoneId"); //$NON-NLS-1$
+				
+				config = new FTPClientConfig(clas);
+				
+				//not necessary checking for null, as null is valid input
+				config.setDefaultDateFormatStr(defaultDateFormatStr);
+				config.setRecentDateFormatStr(recentDateFormatStr);
+				config.setServerLanguageCode(serverLanguageCode);
+				config.setShortMonthNames(shortMonthNames);
+				config.setServerTimeZoneId(serverTimeZoneId);
+				
+				//not necessary storing in the hashtable, as discovered will not be reused
+				ftpClientConfig = config;
+				
+			}
+		}
+		
+		
+		if(ftpClientConfig==null)
+		{
+			if(ftpConfig.containsKey(parser))
+			{
+				//restore parser from hashtable
+				ftpClientConfig = (FTPClientConfig)ftpConfig.get(parser);
+			}
+			else
+			{
+				IConfigurationElement[] ce = ep.getConfigurationElements();
+				for (int i = 0; i < ce.length; i++) 
+				{
 				
 					String label = ce[i].getAttribute("label"); //$NON-NLS-1$
 					
-					if(label.equals(key))
+					if(label.equals(parser))
 					{
 						
 						FTPClientConfig config = null;
@@ -103,13 +192,19 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 						config.setServerTimeZoneId(serverTimeZoneId);
 						
 						ftpConfig.put(label, config);
+						
+						ftpClientConfig = (FTPClientConfig)ftpConfig.get(parser);
+						
+						break;
 					
 					}
 				}
+			}
+			
 		}
 		
 		
-		return (FTPClientConfig)ftpConfig.get(key);
+		return ftpClientConfig;
 	}
 	
 	/*

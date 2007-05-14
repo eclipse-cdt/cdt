@@ -39,6 +39,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 174828 - [ftp] Folders are attempted to be removed as files
  * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -83,7 +84,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	private Mutex _commandMutex = new Mutex();
 	
-	private String _parser;
 	private String    _userHome;
 	private transient String _hostName;
 	private transient String _userId;
@@ -287,61 +287,24 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		//System parser
 		
-		_parser = _ftpPropertySet.getPropertyValue("parser"); //$NON-NLS-1$
+		String systemName = _ftpClient.getSystemName();
 		
-		if(!_parser.equalsIgnoreCase("AUTO")) //$NON-NLS-1$
+		_ftpClient.setParserFactory(_entryParserFactory);
+		
+		FTPClientConfig config = _entryParserFactory.getFTPClientConfig(_ftpPropertySet.getPropertyValue("parser"),systemName);  //$NON-NLS-1$
+		
+		if(config!=null)
 		{
-			
-			_ftpClient.setParserFactory(_entryParserFactory);
-			_ftpClient.configure(_entryParserFactory.getFTPClientConfig(_parser));
-			
+			_ftpClient.configure(config);
 		}
 		else
 		{
-			//try to guess
-			
-			String systemName = _ftpClient.getSystemName().toUpperCase();
-			if(systemName.indexOf(' ')!=-1)
-			{
-				systemName = systemName.substring(0,systemName.indexOf(' '));
-			}
-			
-			//FTPClientConfig.SYST_NT = "WINDOWS"
-			if(systemName.startsWith(FTPClientConfig.SYST_NT))
-			{
-				_ftpClient.setParserFactory(_entryParserFactory);
-				_ftpClient.configure(_entryParserFactory.getFTPClientConfig("WinNT")); //$NON-NLS-1$
-			}else 
-			//FTPClientConfig.SYST_MVS = "MVS" 	
-			if(systemName.startsWith(FTPClientConfig.SYST_MVS))
-			{
-				_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_MVS));
-			}else
-			//FTPClientConfig.SYST_OS2 = "OS/2" 	
-			if(systemName.startsWith(FTPClientConfig.SYST_OS2))
-			{
-				_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_OS2));
-			}else
-			//FTPClientConfig.SYST_OS400 = "OS/400"   	
-			if(systemName.startsWith(FTPClientConfig.SYST_OS400))
-			{
-				_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_OS400));
-			}else
-			//FTPClientConfig.SYST_VMS = "VMS"   	
-			if(systemName.startsWith(FTPClientConfig.SYST_VMS))
-			{
-				_ftpClient.setParserFactory(_entryParserFactory);
-				_ftpClient.configure(_entryParserFactory.getFTPClientConfig("VMS")); //$NON-NLS-1$
-			}else
-			//Default UNIX-like parsing	
-			//FTPClientConfig.SYST_UNIX = "UNIX"	
-			{
-				_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_UNIX));
-			}
+			//UNIX parsing by default if no suitable parser found
+			_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_UNIX));
 		}
+		
 				
 		// Initial active/passive mode. This action will be refreshed later using setDataConnectionMode()
-		
 		if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("true")) //$NON-NLS-1$ //$NON-NLS-2$
 		{
 			_ftpClient.enterLocalPassiveMode();

@@ -17,6 +17,7 @@ Martin Oberhuber (Wind River) - add FTP Only system type
 Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
 Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
 Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
+Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -49,34 +50,46 @@ Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to
    
    	<extension point="org.eclipse.rse.subsystems.files.ftp.ftpFileEntryParser">
       <parser
-      		id="org.eclipse.rse.ftp.parser.Unix"
             class="org.apache.commons.net.ftp.parser.UnixFTPEntryParser"
-            label="%FTPParser.UNIX">
+            ftpSystemTypes=".*[Uu][Nn][Ii][Xx].*"
+            id="org.eclipse.rse.ftp.parser.Unix"
+            label="%FTPParser.UNIX"
+            priority="100">
       </parser>
       <parser
-      		id="org.eclipse.rse.ftp.parser.MVS"
             class="org.apache.commons.net.ftp.parser.MVSFTPEntryParser"
-            label="%FTPParser.MVS">
+            ftpSystemTypes=".*[Mm][Vv][Ss].*"
+            id="org.eclipse.rse.ftp.parser.MVS"
+            label="%FTPParser.MVS"
+            priority="100">
       </parser>
       <parser
-      		id="org.eclipse.rse.ftp.parser.WinNT"
             class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSENTFTPEntryParser"
-            label="%FTPParser.WinNT">
+            ftpSystemTypes=".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss].*"
+            id="org.eclipse.rse.ftp.parser.WinNT"
+            label="%FTPParser.WinNT"
+            priority="100">
       </parser>
       <parser
-      		id="org.eclipse.rse.ftp.parser.OS2"
             class="org.apache.commons.net.ftp.parser.OS2FTPEntryParser"
-            label="%FTPParser.OS2">
+            ftpSystemTypes=".*[Oo][Ss]/2.*"
+            id="org.eclipse.rse.ftp.parser.OS2"
+            label="%FTPParser.OS2"
+            priority="100">
       </parser>
       <parser
-      		id="org.eclipse.rse.ftp.parser.OS400"
             class="org.apache.commons.net.ftp.parser.OS400FTPEntryParser"
-            label="%FTPParser.OS400">
+            ftpSystemTypes=".*[Oo][Ss]/400.*"
+            id="org.eclipse.rse.ftp.parser.OS400"
+            label="%FTPParser.OS400"
+            priority="100">
       </parser>
        <parser
-       		id="org.eclipse.rse.ftp.parser.VMS"
-            class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSEVMSFTPEntryParser"
-            label="%FTPParser.VMS">
+             class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSEVMSFTPEntryParser"
+             ftpSystemTypes=".*[Vv][Mm][Ss].*"
+             id="org.eclipse.rse.ftp.parser.VMS"
+             label="%FTPParser.VMS"
+             priority="100">
       </parser>
    </extension>
  

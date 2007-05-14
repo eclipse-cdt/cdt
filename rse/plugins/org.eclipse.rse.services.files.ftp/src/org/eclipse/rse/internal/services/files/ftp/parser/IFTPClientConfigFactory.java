@@ -6,6 +6,7 @@
  * 
  * Contributors:
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp.parser;
@@ -20,10 +21,11 @@ public interface IFTPClientConfigFactory extends FTPFileEntryParserFactory {
 
 	/**
 	 * 
-	 * @param key name attribute of the extension point to be returned
+	 * @param parser Parser selected from the FTP Settings. This setting is "AUTO" by default, performing a parser discovery 
+	 * @param systemName String returned by the host from the FTP SYST command, describing the host
 	 * @return FTPClientConfig instance created from the attributes passed in the extension point
 	 */
-	public FTPClientConfig getFTPClientConfig(String key);
+	public FTPClientConfig getFTPClientConfig(String parser, String systemName);
 	
 	/**
 	 * Returns a Set of key names

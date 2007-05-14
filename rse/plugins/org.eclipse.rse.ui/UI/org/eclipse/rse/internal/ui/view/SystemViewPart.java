@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -88,7 +89,6 @@ import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -288,7 +288,7 @@ public class SystemViewPart
 				String path = properties.getRemoteFilePath();
 				if (subsystemId != null && path != null)
 				{
-					ISubSystem subSystem = RSEUIPlugin.getTheSystemRegistry().getSubSystem(subsystemId);
+					ISubSystem subSystem = RSECorePlugin.getTheSystemRegistry().getSubSystem(subsystemId);
 					if (subSystem != null)
 					{
 						if (subSystem.isConnected())
@@ -380,7 +380,7 @@ public class SystemViewPart
 	{
 		//RSEUIPlugin.logInfo("INSIDE CREATEPARTCONTROL FOR SYSTEMVIEWPART.");
 		if (input == null)
-			//input = RSEUIPlugin.getTheSystemRegistry();
+			//input = RSECorePlugin.getTheSystemRegistry();
 			input = getInputProvider();
 		systemView = new SystemView(getShell(), parent, input, this);
 		frameList = createFrameList();
@@ -401,9 +401,9 @@ public class SystemViewPart
 		}
 
 		// register global edit actions 		
-		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 
-		Clipboard clipboard = registry.getSystemClipboard();
+		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 
@@ -460,7 +460,7 @@ public class SystemViewPart
 
 		// if this is the primary RSE view, and there are no user-defined
 		// connections, auto-expand the New Connection prompt...
-		if ((input == RSEUIPlugin.getTheSystemRegistry()) && (RSEUIPlugin.getTheSystemRegistry().getHosts().length == 1))
+		if ((input == RSECorePlugin.getTheSystemRegistry()) && (RSECorePlugin.getTheSystemRegistry().getHosts().length == 1))
 		{
 			// assume this is the primary RSE view
 
@@ -747,7 +747,7 @@ public class SystemViewPart
 		super.dispose();
 		if (platformManager != null)
 			unregisterWithManager(platformManager);
-		RSEUIPlugin.getTheSystemRegistry().removeSystemPreferenceChangeListener(this);
+		RSECorePlugin.getTheSystemRegistry().removeSystemPreferenceChangeListener(this);
 		getSite().getPage().removePartListener(partListener);
 		//System.out.println("INSIDE DISPOSE FOR SYSTEMVIEWPART.");
 	}
@@ -760,7 +760,7 @@ public class SystemViewPart
 	{
 		IAdaptable inputObj = getSite().getPage().getInput();
 		inputIsRoot = false;
-		ISystemViewInputProvider inputProvider = RSEUIPlugin.getTheSystemRegistry();
+		ISystemViewInputProvider inputProvider = RSEUIPlugin.getTheSystemRegistryUI();
 		if (inputObj != null)
 		{
 			platformManager = Platform.getAdapterManager();
@@ -1111,7 +1111,7 @@ public class SystemViewPart
 	protected void restoreState(IMemento memento)
 	{
 		RestoreStateRunnable restoreAction = new RestoreStateRunnable(memento);
-		restoreAction.setRule(RSEUIPlugin.getTheSystemRegistry());
+		restoreAction.setRule(RSECorePlugin.getTheSystemRegistry());
 		restoreAction.schedule();
 
 		/* DKM - Moved to RestoreStateRunnable
@@ -1268,7 +1268,7 @@ public class SystemViewPart
 	 */
 	protected Object getObjectFromMemento(boolean showFilterPools, boolean showFilterStrings, String memento)
 	{
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 
 		ISystemProfile profile = null;
 		IHost conn = null;

@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -42,6 +43,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
@@ -808,7 +810,7 @@ public abstract class SubSystem extends RSEModelObject
 		try
 		{
 			ISystemFilterPoolReferenceManager filterMgr = getFilterPoolReferenceManager();
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			ISubSystemConfiguration factory = registry.getSubSystemConfiguration(this);
 
 			int indexOfDot = filterID.indexOf('.');
@@ -998,7 +1000,7 @@ public abstract class SubSystem extends RSEModelObject
      */
     protected void fireEvent(SystemResourceChangeEvent event)
     {
-    	RSEUIPlugin.getTheSystemRegistry().fireEvent(event);
+    	RSECorePlugin.getTheSystemRegistry().fireEvent(event);
     }
     /*
      * Helper method to fire a reference event...
@@ -1006,7 +1008,7 @@ public abstract class SubSystem extends RSEModelObject
     protected void fireEvent(SystemResourceChangeEvent event, Object grandParent)
     {
     	event.setGrandParent(grandParent);
-    	RSEUIPlugin.getTheSystemRegistry().fireEvent(event);
+    	RSECorePlugin.getTheSystemRegistry().fireEvent(event);
     }
     /*
      * Helper method to create and then fire an event...
@@ -1059,7 +1061,7 @@ public abstract class SubSystem extends RSEModelObject
 		}
 		try {
 			getSubSystemConfiguration().saveSubSystem(this);
-			RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, newPoolRef, null);
+			RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, newPoolRef, null);
 		} catch (Exception exc) {
 			SystemBasePlugin.logError("Error saving subsystem " + getName(), exc); //$NON-NLS-1$
 		}
@@ -1083,7 +1085,7 @@ public abstract class SubSystem extends RSEModelObject
         try {
            getSubSystemConfiguration().saveSubSystem(this);
 		   // fire model change event in case any BP code is listening...
-		   RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, filterPoolRef, null);		
+		   RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, filterPoolRef, null);		
         }
         catch (Exception exc)
         {
@@ -1099,7 +1101,7 @@ public abstract class SubSystem extends RSEModelObject
         try {
            getSubSystemConfiguration().saveSubSystem(this);
 		   // fire model change event in case any BP code is listening...
-		   RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, filterPoolRef, null);		
+		   RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, filterPoolRef, null);		
         }
         catch (Exception exc)
         {
@@ -1117,7 +1119,7 @@ public abstract class SubSystem extends RSEModelObject
            	getSubSystemConfiguration().saveSubSystem(this);           
            	ISystemFilterPoolReference[] poolRefs = getFilterPoolReferenceManager().getSystemFilterPoolReferences();
            	for (int idx=0; idx<poolRefs.length; idx++)
-		   		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, poolRefs[idx], null);           
+		   		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, poolRefs[idx], null);           
         }
         catch (Exception exc)
         {
@@ -1155,7 +1157,7 @@ public abstract class SubSystem extends RSEModelObject
            getSubSystemConfiguration().saveSubSystem(this);
 		   // fire model change event in case any BP code is listening...
 		   for (int idx=0; idx<poolRefs.length; idx++)
-		   	RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, poolRefs[idx], null);		
+		   	RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, poolRefs[idx], null);		
         }
         catch (Exception exc)
         {
@@ -1606,7 +1608,7 @@ public abstract class SubSystem extends RSEModelObject
     	    if (!implicitConnect(true, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
     	    internalConnect(mon);
 
-    	    ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+    	    ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.connectedStatusChange(_ss, true, false);
 			
 			if (_callback != null)
@@ -1632,7 +1634,7 @@ public abstract class SubSystem extends RSEModelObject
     		public void run()
     		{
     	    	getConnectorService().reset();
-    	        ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
+    	        ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
     	        sr.connectedStatusChange(_subsystem, false, true, _collapseTree);
     		}	
     		
@@ -1672,7 +1674,7 @@ public abstract class SubSystem extends RSEModelObject
     	
     	public IStatus runInUIThread(IProgressMonitor monitor)
     	{
-			final ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
+			final ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
     		sr.connectedStatusChange(_subsystem, true, false);
     		return Status.OK_STATUS;
     	}
@@ -2306,7 +2308,7 @@ public abstract class SubSystem extends RSEModelObject
 				//Notify connect status change
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						RSEUIPlugin.getTheSystemRegistry().connectedStatusChange(ss, true, false);
+						RSECorePlugin.getTheSystemRegistry().connectedStatusChange(ss, true, false);
 					}
 				});
 			}
@@ -2329,7 +2331,7 @@ public abstract class SubSystem extends RSEModelObject
 		// yantzi: artemis60, (defect 53082) check that the connection has not been deleted before continuing,
 		// this is a defenisve measure to protect against code that stores a handle to subsystems but does 
 		// not do this check
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		IHost host = getHost();
 		String hostName = host.getAliasName();
 		ISystemProfile profile = getSystemProfile();
@@ -2436,7 +2438,7 @@ public abstract class SubSystem extends RSEModelObject
     	if (!isConnected() || !supportsConnecting)
     	{
     	    // disconnected but may not have notified viewers (i.e. network problem)
-    	    ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
+    	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
             sr.connectedStatusChange(this, false, true, collapseTree);
     	  return;      	 	
     	}
@@ -2850,7 +2852,7 @@ public abstract class SubSystem extends RSEModelObject
 			return new NullRunnableContext();
 		}
 		// for wizards and dialogs use the specified context that was placed in the registry
-		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc != null) {
 			SystemBasePlugin.logInfo("Got runnable context from system registry"); //$NON-NLS-1$
 			return irc;
@@ -3027,7 +3029,7 @@ public abstract class SubSystem extends RSEModelObject
 	public ISubSystem getPrimarySubSystem()
 	{
 		ISubSystem firstSS = null;
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] sses = registry.getSubSystems(getHost(), false);
 		for (int i = 0; i < sses.length; i++)
 		{

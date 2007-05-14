@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -23,12 +24,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.swt.widgets.Shell;
@@ -161,7 +162,7 @@ public class SystemTeamViewCategoryAdapter
 	{
 		SystemTeamViewSubSystemConfigurationNode[] nodes = null;
 		
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurations();
 		if (factories != null)
 		{
@@ -240,7 +241,7 @@ public class SystemTeamViewCategoryAdapter
 		/*		
 		if (name.equals(P_IS_ACTIVE))
 		{			
-			boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
+			boolean active = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 			if (active)
 				return SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL);
 			else

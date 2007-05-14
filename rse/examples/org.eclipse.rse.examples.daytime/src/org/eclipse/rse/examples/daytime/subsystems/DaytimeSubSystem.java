@@ -47,7 +47,7 @@ public class DaytimeSubSystem extends SubSystem implements IServiceSubSystem {
 		//This is called after connect - expand the daytime node.
 		//May be called in worker thread.
 		//TODO find a more elegant solution for expanding the item, e.g. use implicit connect like filters 
-        final ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+        final ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistryUI();
         final SystemResourceChangeEvent event = new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
         //TODO bug 150919: postEvent() should not be necessary asynchronously
         //sr.postEvent(event);

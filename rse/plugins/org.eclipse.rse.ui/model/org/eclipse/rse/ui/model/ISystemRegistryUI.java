@@ -12,13 +12,15 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 package org.eclipse.rse.ui.model;
+
+import java.util.List;
 
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
@@ -27,12 +29,19 @@ import org.eclipse.swt.widgets.Shell;
  * Registry or front door for all remote system connections.
  */
 public interface ISystemRegistryUI 
-	extends ISystemRegistry, ISystemShellProvider, ISystemViewInputProvider {
+	extends ISystemShellProvider, ISystemViewInputProvider {
 
     /**
      * Returns the clipboard used for copy actions
      */
     public Clipboard getSystemClipboard();
+
+	/**
+	 * Returns the list of objects on the system clipboard
+	 * @param srcType the transfer type
+	 * @return the list of clipboard objects
+	 */
+	public List getSystemClipboardObjects(int srcType);
 
 	/**
 	 * Notify all listeners of a change to a system resource such as a connection.

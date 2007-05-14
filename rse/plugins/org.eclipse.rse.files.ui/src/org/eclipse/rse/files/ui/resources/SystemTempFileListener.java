@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -304,7 +305,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -376,7 +377,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 						    String ssStr = properties.getRemoteFileSubSystem();
 						    if (ssStr != null)
 						    {
-						        ISubSystem ss = RSEUIPlugin.getTheSystemRegistry().getSubSystem(ssStr);
+						        ISubSystem ss = RSECorePlugin.getTheSystemRegistry().getSubSystem(ssStr);
 						        if (doesHandle(ss))
 						        {
 						            _changedResources.add(resource);
@@ -510,7 +511,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		// to handle migration of this smoothly, we can use another method to determine the subsystem                         
 		if (subsystemId != null)
 		{
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			fs = registry.getSubSystem(subsystemId);
 		}
 
@@ -591,7 +592,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 
 	protected void refreshRemoteResource(Object parent)
 	{
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		// refresh
 		if (parent != null)
 		{							
@@ -629,7 +630,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 
 	private IRemoteFileSubSystem getLocalFileSubSystem()
 	{
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		IHost con = registry.getLocalHost();
 		if (con != null)
 		{

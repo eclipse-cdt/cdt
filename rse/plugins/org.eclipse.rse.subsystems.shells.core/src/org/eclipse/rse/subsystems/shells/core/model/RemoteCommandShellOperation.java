@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.model;
@@ -22,6 +23,7 @@ import java.util.Stack;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -30,7 +32,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.swt.widgets.Shell;
 
@@ -107,7 +108,7 @@ public abstract class RemoteCommandShellOperation
 	{
 		try
 		{
-			RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+			RSECorePlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
 			_remoteCmdShell = _cmdSubSystem.runShell(_pwd, new NullProgressMonitor());	
 		}
 		catch (Exception e)
@@ -135,7 +136,7 @@ public abstract class RemoteCommandShellOperation
 	 */
 	public void finish()
 	{
-		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSECorePlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		if (_remoteCmdShell != null && _remoteCmdShell.isActive())
 		{
 			try

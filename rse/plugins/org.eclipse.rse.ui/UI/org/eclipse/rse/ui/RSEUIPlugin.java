@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
  * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -30,14 +31,11 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -65,7 +63,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.rse.ui.internal.model.SystemRegistry;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 
@@ -84,7 +81,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    	public IStatus run(IProgressMonitor monitor)
 	    	{    		
 	            
-	    		ISystemRegistry registry = getSystemRegistryInternal();
+	    		ISystemRegistry registry = getSystemRegistryUIInternal();
 
 	    		
 	        	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree  
@@ -453,7 +450,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml"); //$NON-NLS-1$
 
         
-		ISystemRegistry registry = getSystemRegistryInternal();
+		ISystemRegistry registry = getSystemRegistryUIInternal();
 		RSECorePlugin.getDefault().setSystemRegistry(registry);
   	
     	IAdapterManager manager = Platform.getAdapterManager();
@@ -506,7 +503,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
           closeViews();
               	
           // clear in-memory settings for all filter pools and subsystems
-    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryInternal().getSubSystemConfigurationProxies();
+    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryUIInternal().getSubSystemConfigurationProxies();
     	  if (proxies != null)
     	  	for (int idx=0; idx < proxies.length; idx++)
     	  	   proxies[idx].reset();
@@ -592,7 +589,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     {
     	if (isSystemRegistryActive())
     	{
-    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryInternal().getSubSystemConfigurationProxies();
+    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryUIInternal().getSubSystemConfigurationProxies();
     	  if (proxies != null)
     	  {
     	  	for (int idx=0; idx < proxies.length; idx++)
@@ -648,7 +645,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
      * Return the SystemRegistry singleton.
      * Clients should use static @{link getTheSystemRegistry()} instead.
      */
-    private SystemRegistry getSystemRegistryInternal()
+    private SystemRegistry getSystemRegistryUIInternal()
     {
     	if (_systemRegistry == null)
         {
@@ -670,9 +667,9 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
      * A static version for convenience
 	 * Returns the master registry singleton.
      */
-    public static ISystemRegistryUI getTheSystemRegistry()
+    public static ISystemRegistryUI getTheSystemRegistryUI()
     {
-    	return getDefault().getSystemRegistryInternal();
+    	return getDefault().getSystemRegistryUIInternal();
     }
     
 	/**

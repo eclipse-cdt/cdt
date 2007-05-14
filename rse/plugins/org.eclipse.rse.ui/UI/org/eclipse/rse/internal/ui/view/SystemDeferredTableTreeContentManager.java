@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,7 +9,7 @@
  * David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -73,7 +73,7 @@ public class SystemDeferredTableTreeContentManager extends
 		{
 			_view.computeLayout();
 			_view.refresh(true);
-			//SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			//SystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			//registry.fireEvent(new SystemResourceChangeEvent(_parent, ISystemResourceChangeEvents.EVENT_PROPERTYSHEET_UPDATE, _parent));
 		}
 	}

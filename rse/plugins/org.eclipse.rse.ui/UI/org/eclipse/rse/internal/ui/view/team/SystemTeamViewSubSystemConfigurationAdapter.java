@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -272,7 +273,7 @@ public class SystemTeamViewSubSystemConfigurationAdapter
 		/*		
 		if (name.equals(P_IS_ACTIVE))
 		{			
-			boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
+			boolean active = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 			if (active)
 				return SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL);
 			else

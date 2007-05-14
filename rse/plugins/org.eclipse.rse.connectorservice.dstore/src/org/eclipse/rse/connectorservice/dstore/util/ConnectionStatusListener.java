@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore.util;
@@ -25,6 +25,7 @@ import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -121,7 +122,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 				IRunnableContext runnableContext = getRunnableContext(getShell());
 		    	runnableContext.run(false,true,_listener); // inthread, cancellable, IRunnableWithProgress
 		    	_connection.reset();
-				ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();    	    
+				ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();    	    
 	            sr.connectedStatusChange(_connection.getPrimarySubSystem(), false, true, true);
 			}
 	    	catch (InterruptedException exc) // user cancelled

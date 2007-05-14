@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -633,7 +634,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 		}
 
-		//ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		//ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 //		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
 		Display.getDefault().asyncExec(new Refresh(this));
@@ -677,7 +678,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		public void run() 
 		{
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
 		}
 	}
@@ -695,7 +696,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		public void run() 
 		{
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(_cmdShell, ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED, null));
 			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
 		}
@@ -729,7 +730,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		public void run()
 		{
-			RSEUIPlugin.getTheSystemRegistry().fireEvent(
+			RSECorePlugin.getTheSystemRegistry().fireEvent(
 					new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED, _ss));
 		}
 
@@ -816,7 +817,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			return null;
 		}
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
 		return cmdShell;
@@ -828,7 +829,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	public IRemoteCommandShell runShell(Object context, IProgressMonitor monitor) throws Exception
 	{
 		IRemoteCommandShell cmdShell = internalRunShell(context, monitor);
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
 		return cmdShell;

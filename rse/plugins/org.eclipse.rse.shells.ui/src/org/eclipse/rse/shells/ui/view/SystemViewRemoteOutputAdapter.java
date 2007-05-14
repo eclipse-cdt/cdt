@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -126,7 +127,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		    {
 				if (_copyOutputAction == null)
 				{
-					_copyOutputAction = new SystemCopyToClipboardAction(shell, RSEUIPlugin.getTheSystemRegistry().getSystemClipboard());
+					_copyOutputAction = new SystemCopyToClipboardAction(shell, RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard());
 				}
 				
 				menu.add(menuGroup, _copyOutputAction);
@@ -141,7 +142,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 						{
 						    if (_pasteToPromptAction == null)
 							{
-								_pasteToPromptAction = new SystemPasteFromClipboardAction(shell, RSEUIPlugin.getTheSystemRegistry().getSystemClipboard());
+								_pasteToPromptAction = new SystemPasteFromClipboardAction(shell, RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard());
 							}
 							
 							menu.add(menuGroup, _pasteToPromptAction);

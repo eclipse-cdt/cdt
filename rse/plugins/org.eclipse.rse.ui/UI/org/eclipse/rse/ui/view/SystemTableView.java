@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -318,8 +319,9 @@ public class SystemTableView
 
 		addSelectionChangedListener(this);
 
-		RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-		RSEUIPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		sr.addSystemResourceChangeListener(this);
+		sr.addSystemRemoteChangeListener(this);
 
 		initDragAndDrop();
 	
@@ -925,7 +927,7 @@ public class SystemTableView
 				
 			case ISystemResourceChangeEvents.EVENT_REFRESH:
 				{
-					if (child == RSEUIPlugin.getTheSystemRegistry())
+					if (child == RSECorePlugin.getTheSystemRegistry())
 					{
 						// treat this as refresh all
 						child = _objectInput;
@@ -1199,8 +1201,9 @@ public class SystemTableView
 	public void dispose()
 	{
 		removeSelectionChangedListener(this);
-		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
-		RSEUIPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		sr.removeSystemResourceChangeListener(this);
+		sr.removeSystemRemoteChangeListener(this);
 		_menuManager.removeAll();
 
 		Table table = getTable();

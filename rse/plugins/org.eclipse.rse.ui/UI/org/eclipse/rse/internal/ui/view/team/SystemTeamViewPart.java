@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -291,7 +292,7 @@ public class SystemTeamViewPart
 		// update F1 help
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IF1HelpContextID.NAV01);
 
-		RSEUIPlugin.getTheSystemRegistry().addSystemModelChangeListener(this);
+		RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(this);
 		
 		treeViewer.setAutoExpandLevel(2); // dang, it doesn't work!
 
@@ -734,7 +735,7 @@ public class SystemTeamViewPart
 
 	public void dispose() 
 	{
-		RSEUIPlugin.getTheSystemRegistry().removeSystemModelChangeListener(this);		
+		RSECorePlugin.getTheSystemRegistry().removeSystemModelChangeListener(this);		
 		super.dispose();
 	}
 
@@ -996,7 +997,7 @@ public class SystemTeamViewPart
 		boolean ok = true;
 		IStructuredSelection selection= getStructuredSelection();		
 		Iterator elements= selection.iterator();
-		ISystemProfileManager mgr = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager();
+		ISystemProfileManager mgr = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager();
 		int nbrActiveProfiles = mgr.getActiveSystemProfiles().length;
 		int activeCount = 0;
 		while (ok && elements.hasNext())
@@ -1365,7 +1366,7 @@ public class SystemTeamViewPart
 		if (memento == null)
 		  return null;
 
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISystemProfile  profile = null;
 		IProject       project = null; 
 		SystemTeamViewCategoryNode category = null;

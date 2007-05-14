@@ -13,11 +13,13 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -67,7 +69,7 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 	public void run()	
 	{		  
 		IHost conn = (IHost)getFirstSelection();
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry(); 
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
 	
 		if (conn.isOffline())
 		{

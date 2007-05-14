@@ -18,6 +18,7 @@
  * David Dykstal (IBM) - 180562: remove implementation of IRSEUserIdConstants
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -37,6 +38,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -143,7 +145,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	public SystemConnectionForm(ISystemMessageLine msgLine, ISystemConnectionFormCaller caller) {
 		this.msgLine = msgLine;
 		this.caller = caller;
-		this.defaultProfileNames = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfileNames();
+		this.defaultProfileNames = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfileNames();
 		callerInstanceOfWizardPage = caller instanceof IWizardPage;
 		callerInstanceOfSystemPromptDialog = caller instanceof ISystemPromptDialog;
 		callerInstanceOfPropertyPage = caller instanceof IWorkbenchPropertyPage;
@@ -812,7 +814,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			String currHostName = textHostName.getText().trim();
 			boolean hostNameChanged = !currHostName.equals(originalHostName);
 			IRSESystemType currSystemType = getSystemType();
-			textHostName.setItems(RSEUIPlugin.getTheSystemRegistry().getHostNames(currSystemType));
+			textHostName.setItems(RSECorePlugin.getTheSystemRegistry().getHostNames(currSystemType));
 			if (hostNameChanged) {
 				textHostName.setText(currHostName);
 			} else if (textHostName.getItemCount() > 0) {
@@ -1175,7 +1177,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 */
 	public static ISystemValidator getConnectionNameValidator(IHost conn) {
 		ISystemProfile profile = conn.getSystemProfile();
-		Vector v = RSEUIPlugin.getTheSystemRegistry().getHostAliasNames(profile);
+		Vector v = RSECorePlugin.getTheSystemRegistry().getHostAliasNames(profile);
 		v.removeElement(conn.getAliasName());
 		ValidatorConnectionName connNameValidator = new ValidatorConnectionName(v);
 		return connNameValidator;
@@ -1187,7 +1189,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 *  Can be null for syntax checking only, versus name-in-use.
 	 */
 	public static ISystemValidator getConnectionNameValidator(ISystemProfile profile) {
-		Vector v = RSEUIPlugin.getTheSystemRegistry().getHostAliasNames(profile);
+		Vector v = RSECorePlugin.getTheSystemRegistry().getHostAliasNames(profile);
 		ValidatorConnectionName connNameValidator = new ValidatorConnectionName(v);
 		return connNameValidator;
 	}
@@ -1197,7 +1199,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 * There is one validator per active system profile.
 	 */
 	public static ISystemValidator[] getConnectionNameValidators() {
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISystemProfile[] profiles = sr.getActiveSystemProfiles();
 		ISystemValidator[] connNameValidators = new ISystemValidator[profiles.length];
 		for (int idx = 0; idx < profiles.length; idx++) {

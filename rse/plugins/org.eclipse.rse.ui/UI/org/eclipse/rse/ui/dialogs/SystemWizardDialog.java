@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Uwe Stieber} (Wind River) - API consistency.
+ * Uwe Stieber (Wind River) - API consistency.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -144,11 +145,11 @@ public class SystemWizardDialog extends WizardDialog implements ISystemPromptDia
 			((ProgressMonitorPart)pm).dispose();
 		}
 		if (needsMonitor && RSEUIPlugin.isTheSystemRegistryActive()) {
-			RSEUIPlugin.getTheSystemRegistry().setRunnableContext(getShell(), this);
+			RSEUIPlugin.getTheSystemRegistryUI().setRunnableContext(getShell(), this);
 			// add a dispose listener
 			getShell().addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
-					RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
+					RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
 				}
 			});
 		}

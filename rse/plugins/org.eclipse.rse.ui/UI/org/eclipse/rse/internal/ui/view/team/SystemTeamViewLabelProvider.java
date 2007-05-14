@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -75,7 +77,7 @@ public class SystemTeamViewLabelProvider extends LabelProvider
 		if (element instanceof ISystemProfile) 
 		{
 			ISystemProfile profile = (ISystemProfile)element;
-			if (RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName()))
+			if (RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName()))
 			  return RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_PROFILE_ACTIVE_ID);
 			else
 			  return RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);

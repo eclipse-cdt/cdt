@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemThemeConstants 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -31,6 +32,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemContainer;
@@ -44,7 +46,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.rse.ui.widgets.ISystemCollapsableSectionListener;
@@ -184,7 +185,7 @@ FocusListener
 						{
 							public void run() 
 							{
-								ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+								ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 								registry.fireEvent(new SystemResourceChangeEvent(_inputObject, ISystemResourceChangeEvents.EVENT_CHANGE_CHILDREN, _inputObject));
 								//getViewer().refresh();
 							}
@@ -252,12 +253,8 @@ FocusListener
 
 		createControl(_tabFolderPage);
 
-		
-		
-		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
-			
 		// global actions
-		Clipboard clipboard = registry.getSystemClipboard();
+		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), clipboard);
 		_copyAction.setEnabled(false);
 		

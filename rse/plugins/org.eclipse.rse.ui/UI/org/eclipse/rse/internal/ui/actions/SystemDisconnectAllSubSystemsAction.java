@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,16 +11,16 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
 
@@ -42,7 +42,7 @@ public class SystemDisconnectAllSubSystemsAction extends SystemBaseAction
 	    super(SystemResources.ACTION_DISCONNECTALLSUBSYSTEMS_LABEL, SystemResources.ACTION_DISCONNECTALLSUBSYSTEMS_TOOLTIP, shell);
 	    allowOnMultipleSelection(false);
 	    setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-	    sr = RSEUIPlugin.getTheSystemRegistry();
+	    sr = RSECorePlugin.getTheSystemRegistry();
 	    // TODO help for connect all
   	    //setHelp(RSEUIPlugin.HELPPREFIX+"actn0022");
 	}

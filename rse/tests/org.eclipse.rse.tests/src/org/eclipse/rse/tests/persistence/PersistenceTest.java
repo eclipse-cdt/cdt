@@ -8,6 +8,7 @@
  * David Dykstal (IBM) - initial API and implementation.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.tests.persistence;
@@ -56,7 +57,7 @@ public class PersistenceTest extends RSECoreTestCase {
 		/*
 		 * Set up this particular test.
 		 */
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 	
 		/*
 		 * Create a new profile in this profile manager. This will be the third
@@ -160,7 +161,7 @@ public class PersistenceTest extends RSECoreTestCase {
 		/*
 		 * Set up this particular test.
 		 */
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		
 		/*
 		 * Create a new profile in this profile manager. This will be the third

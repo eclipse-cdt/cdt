@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -42,7 +43,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.dnd.Clipboard;
@@ -140,8 +140,7 @@ public class RemoteFileSubSystemConfigurationAdapter extends SubSystemConfigurat
 			// FIXME - can't do this here anymore
 			//_additionalActions.add(new SystemCommandAction(shell, true));
 			
-			ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
-			Clipboard clipboard = registry.getSystemClipboard();
+			Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 			_additionalActions.add(new SystemPasteFromClipboardAction(shell, clipboard));
     	}
 		return _additionalActions;	

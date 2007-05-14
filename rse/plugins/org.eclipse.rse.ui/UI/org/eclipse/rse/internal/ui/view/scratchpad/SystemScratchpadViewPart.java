@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -28,9 +29,11 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -41,7 +44,6 @@ import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.internal.model.SystemRegistry;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -124,8 +126,8 @@ public class SystemScratchpadViewPart extends ViewPart
 		fillLocalToolBar();
 
 		// register global edit actions 		
-		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
-		Clipboard clipboard = registry.getSystemClipboard();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 
@@ -161,7 +163,7 @@ public class SystemScratchpadViewPart extends ViewPart
 		selectionService.removeSelectionListener(this);
 		_viewer.removeSelectionChangedListener(this);
 
-		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSECorePlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		
 		if (_viewer != null)
 		{

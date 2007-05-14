@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
+
 package org.eclipse.rse.internal.useractions.ui.uda;
 
 import org.eclipse.jface.action.IMenuListener;
@@ -21,6 +23,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -378,7 +381,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 		}
 		if (deleted) {
 			remove(selection.getFirstElement());
-			RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, getResourceType(), selection.getFirstElement(), null);
+			RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, getResourceType(), selection.getFirstElement(), null);
 		}
 		return deleted;
 	}
@@ -412,7 +415,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 			refreshElementParent(firstSelect);
 			selectElement(firstSelect);
 			docManager.saveUserData(docManager.getCurrentProfile());
-			RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, getResourceType(), firstSelect, null);
+			RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, getResourceType(), firstSelect, null);
 		}
 		return true;
 	}
@@ -433,7 +436,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 			refreshElementParent(firstSelect);
 			selectElement(firstSelect);
 			docManager.saveUserData(docManager.getCurrentProfile());
-			RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, getResourceType(), firstSelect, null);
+			RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, getResourceType(), firstSelect, null);
 		}
 		return true;
 	}
@@ -473,7 +476,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 			} else
 				refreshElementParent(firstSelect);
 			selectElement(pastedElementWrapper);
-			RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, getResourceType(), pastedElementWrapper, null);
+			RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, getResourceType(), pastedElementWrapper, null);
 		}
 		clipboard.dispose();
 		clipboard = null;

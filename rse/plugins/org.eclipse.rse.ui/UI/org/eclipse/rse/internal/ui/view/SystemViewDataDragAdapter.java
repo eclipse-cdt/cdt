@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
@@ -87,13 +89,13 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	    if (dragObject instanceof ISubSystem)
 	    {
 	        subSystem = (ISubSystem)dragObject;
-	        String subSystemId = RSEUIPlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
+	        String subSystemId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
 			dataStream.append(subSystemId);
 	    }
 	    else if (dragObject instanceof IHost)
 	    {
 	        IHost connection = (IHost)dragObject;
-	        String connectionId = RSEUIPlugin.getTheSystemRegistry().getAbsoluteNameForConnection(connection);
+	        String connectionId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForConnection(connection);
 	        dataStream.append(connectionId);
 	    }
 	    else
@@ -102,7 +104,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	    
 			if (subSystem != null)
 			{
-			    String subSystemId = RSEUIPlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
+			    String subSystemId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
 				dataStream.append(subSystemId);
 				
 			}

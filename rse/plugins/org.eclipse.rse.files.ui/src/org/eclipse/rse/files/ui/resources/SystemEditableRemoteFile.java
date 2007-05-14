@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -43,6 +44,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -278,7 +280,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		// to handle migration of this smoothly, we can use another method to determine the subsystem                         
 		if (subsystemId != null)
 		{
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			fs = registry.getSubSystem(subsystemId);
 		}
 
@@ -1413,7 +1415,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		properties.setRemoteFileObject(this);
 
 		// set remote properties
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		String subSystemId = registry.getAbsoluteNameForSubSystem(subsystem);
 		properties.setRemoteFileSubSystem(subSystemId);
 		properties.setRemoteFilePath(remoteFile.getAbsolutePath());

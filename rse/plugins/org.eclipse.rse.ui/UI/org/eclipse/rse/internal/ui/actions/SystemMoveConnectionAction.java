@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -21,6 +22,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -50,7 +52,7 @@ public class SystemMoveConnectionAction extends SystemBaseCopyAction
 	{
 		super(parent, SystemResources.ACTION_MOVE_CONNECTION_LABEL, MODE_MOVE);
 		//allowOnMultipleSelection(false); // too hard to handle, for now!
-		sr = RSEUIPlugin.getTheSystemRegistry();
+		sr = RSECorePlugin.getTheSystemRegistry();
   	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0020"); //$NON-NLS-1$
   	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dmcn0000");  //$NON-NLS-1$
 	}
@@ -225,7 +227,7 @@ public class SystemMoveConnectionAction extends SystemBaseCopyAction
     	veryRootElement.setRenamable(false);
     	veryRootElement.setDeletable(false);
     	                
-    	ISystemProfile[] profiles = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+    	ISystemProfile[] profiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
     	ImageDescriptor image = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
     	                                  
     	if (profiles == null)

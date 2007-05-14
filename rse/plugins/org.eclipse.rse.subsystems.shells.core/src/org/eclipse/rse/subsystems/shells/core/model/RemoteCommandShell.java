@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.model;
@@ -22,6 +23,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -32,7 +34,6 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.ICandidateCommand;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.RemoteCmdSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandShell
 {
@@ -180,7 +181,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 				try
 				{
 					IHost host = _fileSubSystem.getHost();
-					ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+					ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 					ISubSystem[] sses = sr.getSubSystems(host);
 					for (int i = 0; i < sses.length; i++)
 					{

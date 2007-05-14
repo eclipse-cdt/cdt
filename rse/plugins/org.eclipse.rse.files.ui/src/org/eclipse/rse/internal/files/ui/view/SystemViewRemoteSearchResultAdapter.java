@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -172,7 +173,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		{
 			if (_copyOutputAction == null)
 			{
-				_copyOutputAction = new SystemCopyToClipboardAction(shell, RSEUIPlugin.getTheSystemRegistry().getSystemClipboard());
+				_copyOutputAction = new SystemCopyToClipboardAction(shell, RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard());
 			}
 			menu.add(menuGroup, _copyOutputAction);
 

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
@@ -39,6 +40,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -56,7 +58,6 @@ import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemRemoveElementAdapter;
@@ -76,8 +77,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
-
-
 
 /**
  * This class defines the Remote Search view.
@@ -249,7 +248,7 @@ public class SystemSearchViewPart extends ViewPart
 		actionBars.updateActionBars();
 
 		// add view as a system listener
-		RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+		RSECorePlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
 
 		// set help
 		SystemWidgetHelpers.setHelp(pageBook, RSEUIPlugin.HELPPREFIX + "srch0000"); //$NON-NLS-1$
@@ -306,13 +305,9 @@ public class SystemSearchViewPart extends ViewPart
 		// add remove all action
 		tbMgr.add(removeAllAction);
 
-		// register global edit actions 		
-		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
-		
 		// clipboard
-		Clipboard clipboard = registry.getSystemClipboard();
-		
-		Shell shell = registry.getShell();
+		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
+		Shell shell = RSEUIPlugin.getTheSystemRegistryUI().getShell();
 		
 		copyAction = new SystemSearchCopyToClipboardAction(shell, clipboard);
 		pasteAction = new SystemPasteFromClipboardAction(shell, clipboard);
@@ -549,7 +544,7 @@ public class SystemSearchViewPart extends ViewPart
 	public void dispose() {
 		
 		// remove as resource change listener
-		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSECorePlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		
 		// clear viewers
 		clearViewers();

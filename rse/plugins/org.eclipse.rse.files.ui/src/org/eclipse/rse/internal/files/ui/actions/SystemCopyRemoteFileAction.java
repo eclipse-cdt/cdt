@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -485,7 +486,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		  Viewer v = getViewer();
 		  if (v instanceof ISystemTree)
 		  {
-		    SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		    SystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		  	ISystemTree tree = (ISystemTree)v;
 		  	Object parent = tree.getSelectedParent();
 		  	if (parent == null)

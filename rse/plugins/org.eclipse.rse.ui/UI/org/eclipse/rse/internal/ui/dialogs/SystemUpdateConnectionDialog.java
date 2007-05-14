@@ -14,18 +14,20 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -124,7 +126,7 @@ public class SystemUpdateConnectionDialog extends SystemPromptDialog implements 
 		if (closeDialog)
 		{
 		  IHost conn = (IHost)getInputObject();
-		  ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+		  ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		  sr.updateHost( conn,conn.getSystemType(), form.getConnectionName(),form.getHostName(),
 		                       form.getConnectionDescription(), form.getDefaultUserId(),
 		                       form.getUserIdLocation() );

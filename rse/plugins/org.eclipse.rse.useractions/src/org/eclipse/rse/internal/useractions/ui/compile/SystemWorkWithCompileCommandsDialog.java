@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
@@ -23,6 +24,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -583,10 +585,10 @@ public class SystemWorkWithCompileCommandsDialog extends SystemPromptDialog impl
 				saveCompileCommand(editedCompileCmd, newMode, prevListSelection);
 				processCommandsListSelected();
 				if (newMode)
-					RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, editedCompileCmd,
+					RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, editedCompileCmd,
 							null);
 				else
-					RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD,
+					RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD,
 							editedCompileCmd, null);
 			}
 		}
@@ -925,7 +927,7 @@ public class SystemWorkWithCompileCommandsDialog extends SystemPromptDialog impl
 					rmvSrcTypeButton.setEnabled(true);
 				//traceTest = false;
 				// fire model change event in case any BP code is listening...
-				RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, deletedCmd, null);
+				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, deletedCmd, null);
 			}
 		} catch (Exception exc) {
 		}
@@ -962,7 +964,7 @@ public class SystemWorkWithCompileCommandsDialog extends SystemPromptDialog impl
 		listView.showSelection();
 		processCommandsListSelected();
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, currCmd, null);
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, currCmd, null);
 	}
 
 	/**
@@ -996,7 +998,7 @@ public class SystemWorkWithCompileCommandsDialog extends SystemPromptDialog impl
 		listView.showSelection();
 		processCommandsListSelected();
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, currCmd, null);
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, currCmd, null);
 	}
 
 	/**
@@ -1058,7 +1060,7 @@ public class SystemWorkWithCompileCommandsDialog extends SystemPromptDialog impl
 		clipboard.dispose();
 		clipboard = null;
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, oldCmd, null);
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, oldCmd, null);
 	}
 
 	/**

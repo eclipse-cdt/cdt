@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -16,6 +17,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -30,7 +32,6 @@ import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * Test cases for FTP based remote host access.
@@ -62,7 +63,7 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 	public void testFTPReadAccessToRemoteHost() {
 		if (!RSETestsPlugin.isTestCaseEnabled("FTPFileSubsystemTestCase.testFTPReadAccessToRemoteHost")) return; //$NON-NLS-1$
 		
-		ISystemRegistry systemRegistry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
 		assertNotNull("Failed to get RSE system registry instance!", systemRegistry); //$NON-NLS-1$
 		
 		// Calculate the location of the test connection properties

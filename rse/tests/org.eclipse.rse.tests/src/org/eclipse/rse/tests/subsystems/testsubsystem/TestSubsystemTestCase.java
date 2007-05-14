@@ -8,19 +8,21 @@
  * Contributors: 
  * Tobias Schwarz (Wind River) - initial API and implementation.
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.testsubsystem;
 
 import java.util.Vector;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.IRSEViews;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil;
@@ -28,7 +30,6 @@ import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 import org.eclipse.rse.tests.testsubsystem.TestSubSystemContainerNode;
 import org.eclipse.rse.tests.testsubsystem.TestSubSystemNode;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
@@ -104,7 +105,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		assertNotNull("No test subystem", testSubSystem); //$NON-NLS-1$
 
 		testSubSystem.removeAllChildNodes();
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
         registry.invalidateFiltersFor(testSubSystem);
         
 		TestSubSystemContainerNode node = null;
@@ -163,7 +164,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		assertNull("Failed to get test subsystem! Possible cause: " + cause, exception); //$NON-NLS-1$
 		assertNotNull("No test subystem", testSubSystem); //$NON-NLS-1$
 
-		RSEUIPlugin.getTheSystemRegistry().invalidateFiltersFor(testSubSystem);
+		RSECorePlugin.getTheSystemRegistry().invalidateFiltersFor(testSubSystem);
 		rseSystemView.refresh(testSubSystem);
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 		rseSystemView.expandToLevel(testSubSystem, AbstractTreeViewer.ALL_LEVELS);
@@ -182,7 +183,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 			testSubSystem.addChildNode(new TestSubSystemNode("Node 3")); //$NON-NLS-1$
 			testSubSystem.addChildNode(new TestSubSystemNode("Node 4")); //$NON-NLS-1$
 			
-			RSEUIPlugin.getTheSystemRegistry().invalidateFiltersFor(testSubSystem);
+			RSECorePlugin.getTheSystemRegistry().invalidateFiltersFor(testSubSystem);
 			rseSystemView.refresh(testSubSystem);
 			
 			RSEWaitAndDispatchUtil.waitAndDispatch(1000);
@@ -192,7 +193,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 			
 			node.setName("Node 1 (changed)"); //$NON-NLS-1$
 
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(node, ISystemResourceChangeEvents.EVENT_REFRESH, node));
 			
 			RSEWaitAndDispatchUtil.waitAndDispatch(10000);

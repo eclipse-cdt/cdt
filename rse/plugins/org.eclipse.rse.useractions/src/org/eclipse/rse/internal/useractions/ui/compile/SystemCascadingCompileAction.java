@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.compile;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,11 +7,15 @@ package org.eclipse.rse.internal.useractions.ui.compile;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
+package org.eclipse.rse.internal.useractions.ui.compile;
+
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
@@ -71,7 +73,7 @@ public class SystemCascadingCompileAction extends SystemBaseSubMenuAction implem
 		}
 		// is cascading-by-profile preference turned on?
 		if (SystemPreferencesManager.getCascadeUserActions()) {
-			ISystemProfile[] activeProfiles = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+			ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 			for (int idx = 0; idx < activeProfiles.length; idx++) {
 				SystemBaseSubMenuAction profileAction = new SystemCompileCascadeByProfileAction(getShell(), firstSelection, activeProfiles[idx], isPrompt);
 				ourSubMenu.add(profileAction.getSubMenu());
@@ -79,7 +81,7 @@ public class SystemCascadingCompileAction extends SystemBaseSubMenuAction implem
 		}
 		// else concatenate all the compile commands from all the active profiles...
 		else {
-			ISystemProfile[] activeProfiles = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+			ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 			for (int idx = 0; idx < activeProfiles.length; idx++)
 				SystemCompileCascadeByProfileAction.populateMenuWithCompileActions(ourSubMenu, getShell(), activeProfiles[idx], firstSelection, isPrompt);
 		}

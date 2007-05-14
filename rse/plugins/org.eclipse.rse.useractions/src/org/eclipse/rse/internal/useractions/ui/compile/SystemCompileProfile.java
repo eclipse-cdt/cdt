@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemCompileXMLConstants
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
@@ -28,10 +29,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -114,7 +115,7 @@ public abstract class SystemCompileProfile {
 	 * Return the system profile this is associated with
 	 */
 	public ISystemProfile getProfile() {
-		return RSEUIPlugin.getTheSystemRegistry().getSystemProfile(profileName);
+		return RSECorePlugin.getTheSystemRegistry().getSystemProfile(profileName);
 	}
 
 	/**

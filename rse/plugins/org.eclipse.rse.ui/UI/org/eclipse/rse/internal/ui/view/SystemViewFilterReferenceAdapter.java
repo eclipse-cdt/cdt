@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -58,7 +59,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemPreferencesManager;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterName;
@@ -303,13 +303,12 @@ public class SystemViewFilterReferenceAdapter
 					ISystemViewInputProvider inputProvider = getInput();
 					if ((sfr != null) && (inputProvider != null) && (inputProvider.getViewer() != null))
 					{
-						ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
 						SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
 						Viewer v = inputProvider.getViewer();
 						if (v instanceof ISystemResourceChangeListener)
 						{
 							//sr.fireEvent((ISystemResourceChangeListener)v, event); // only expand in the current viewer, not all viewers!
-							sr.postEvent((ISystemResourceChangeListener) v, event); // only expand in the current viewer, not all viewers!
+							RSEUIPlugin.getTheSystemRegistryUI().postEvent((ISystemResourceChangeListener) v, event); // only expand in the current viewer, not all viewers!
 						}
 					}
 				}

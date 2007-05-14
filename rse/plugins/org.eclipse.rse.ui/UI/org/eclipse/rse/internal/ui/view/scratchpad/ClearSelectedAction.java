@@ -12,21 +12,19 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
-
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-
-
-
 
 public class ClearSelectedAction extends BrowseAction
 {
@@ -79,7 +77,7 @@ public class ClearSelectedAction extends BrowseAction
 	        {
 	            _scratchPad.removeChild(iterator.next());
 	        }
-	        RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_scratchPad, ISystemResourceChangeEvents.EVENT_REFRESH, _scratchPad));
+	        RSECorePlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_scratchPad, ISystemResourceChangeEvents.EVENT_REFRESH, _scratchPad));
 	        //_view.updateActionStates();
 	    }
 	}

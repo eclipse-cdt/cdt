@@ -15,6 +15,7 @@
  *                     - created and used RSEPreferencesManager
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 
@@ -321,7 +322,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 		ArrayList list = new ArrayList();
 		if (systemTypes == null || restoreDefaults) {
 			for (int i = 0; i < types.length; i++) {
-				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(types[i], false);
+				ISubSystemConfiguration[] configurations = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(types[i], false);
 				if (configurations != null && configurations.length > 0) {
 					list.add(types[i]);
 				}

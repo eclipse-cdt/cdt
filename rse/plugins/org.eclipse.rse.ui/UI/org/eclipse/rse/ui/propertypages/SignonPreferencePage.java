@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
@@ -29,6 +30,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.PasswordPersistenceManager;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -339,7 +341,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 		{
 			PasswordModification mod;
 			PasswordPersistenceManager manager = PasswordPersistenceManager.getInstance();
-			IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHosts();
+			IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHosts();
 			ISubSystem[] subsystems;
 			IConnectorService system;
 			

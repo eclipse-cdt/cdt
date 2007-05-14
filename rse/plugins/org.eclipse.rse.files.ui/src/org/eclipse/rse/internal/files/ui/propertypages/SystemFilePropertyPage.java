@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -25,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -453,7 +455,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
    		  try
     	  {
     	     getRemoteFile().getParentRemoteFileSubSystem().setReadOnly(getRemoteFile(), readOnlySelected, new NullProgressMonitor());
-		     RSEUIPlugin.getTheSystemRegistry().fireEvent(
+		     RSECorePlugin.getTheSystemRegistry().fireEvent(
                    new org.eclipse.rse.core.events.SystemResourceChangeEvent(
                    getRemoteFile(),ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE,null)); 
     	     

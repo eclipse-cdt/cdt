@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemUDAConstants
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
+
 package org.eclipse.rse.internal.useractions.ui.uda;
 
 import java.io.File;
@@ -565,7 +567,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Get the active system profiles
 	 */
 	private ISystemProfile[] getActiveSystemProfiles() {
-		return RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+		return RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 	}
 
 	// ---------------------------------------------------------------------------

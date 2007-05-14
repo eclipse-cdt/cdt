@@ -13,11 +13,13 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] Fix javadoc
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core.model;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -28,7 +30,6 @@ import org.eclipse.rse.subsystems.files.core.model.IRemotePath;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -232,7 +233,7 @@ public class RemotePath implements IRemotePath {
 			return null;
 		}
 		
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		ISystemProfile profile = registry.getSystemProfile(profileName);
 		
 		if (profile == null) {

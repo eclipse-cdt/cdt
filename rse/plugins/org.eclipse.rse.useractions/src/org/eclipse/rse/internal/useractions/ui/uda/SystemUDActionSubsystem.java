@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
+
 package org.eclipse.rse.internal.useractions.ui.uda;
 
 import java.io.File;
@@ -493,7 +495,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 		// REFRESH VIEW IF REQUESTED IN ACTION         
 		// ------------------------------------------------------------
 		if (actionRunEvenOnce && action.getRefresh() && (viewer != null)) {
-			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 			try {
 				Thread.sleep(500L);
 			} catch (Exception exc) {
@@ -1065,7 +1067,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	 * Get the active system profiles
 	 */
 	protected ISystemProfile[] getActiveSystemProfiles() {
-		return RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+		return RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 	}
 
 	protected List getDirtyEditors(IStructuredSelection sel) {

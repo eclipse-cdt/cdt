@@ -14,6 +14,7 @@
  * Javier Montalvo Orús (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -1208,7 +1209,7 @@ public class SystemWidgetHelpers {
 		//System.out.println("TipId: " + ISystemConstants.RESID_HOSTNAME_TIP);		
 		Combo combo = createCombo(parent, listener, SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
 		//System.out.println("Tip  : " + combo.getToolTipText());
-		combo.setItems(RSEUIPlugin.getTheSystemRegistry().getHostNames(systemType));
+		combo.setItems(RSECorePlugin.getTheSystemRegistry().getHostNames(systemType));
 		combo.select(0);
 		return combo;
 	}

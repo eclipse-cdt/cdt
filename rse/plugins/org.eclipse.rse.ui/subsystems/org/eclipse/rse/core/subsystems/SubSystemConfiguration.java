@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -37,6 +38,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -609,7 +611,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		for (int idx = 0; idx < subsystems.length; idx++)
 		{
 			ISubSystem ss = subsystems[idx];
-			RSEUIPlugin.getTheSystemRegistry().fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(ss, ISystemResourceChangeEvents.EVENT_CHANGE_CHILDREN, ss));
+			RSECorePlugin.getTheSystemRegistry().fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(ss, ISystemResourceChangeEvents.EVENT_CHANGE_CHILDREN, ss));
 		}
 	}
 
@@ -1000,7 +1002,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		{
 			// the safest way is to re-use existing method that will restore for every defined connection
 			//  in the active profiles (although if user makes another profile active, we'll have to revisit)
-			IHost[] allActiveConnections = RSEUIPlugin.getTheSystemRegistry().getHosts();
+			IHost[] allActiveConnections = RSECorePlugin.getTheSystemRegistry().getHosts();
 			if (allActiveConnections != null)
 			{
 				for (int idx = 0; idx < allActiveConnections.length; idx++)
@@ -1234,7 +1236,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				saveSubSystem(subsys);  
 				//DKM - save this event til all the processing is done!
 				// fire model change event in case any BP code is listening...
-				//RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);						
+				//RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);						
 			}
 			catch (Exception exc)
 			{
@@ -1356,7 +1358,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				saveSubSystem(subsys);
 
 				// fire model change event in case any BP code is listening...
-				RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);						
+				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);						
 			}
 			catch (Exception exc)
 			{
@@ -1529,7 +1531,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireEvent(subsystem, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, subsystem.getHost());
 
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystem, null);						
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystem, null);						
 
 		// if the updated subsystem is one of many that share a single IConnectorService, then 
 		// update all of them too...
@@ -1641,7 +1643,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 		
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystem, null);						
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystem, null);						
 		return true;
 	}
 
@@ -1715,7 +1717,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			{
 				boolean anyAdded = false;
 				SystemFilterPoolWrapperInformation poolWrapperInfo = getNewFilterWizardPoolWrapperInformation();
-				ISystemProfile[] activeProfiles = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+				ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 				ISystemProfile activeProfile = selectedSubSystem.getHost().getSystemProfile();
 				for (int idx = 0; idx < activeProfiles.length; idx++)
 				{
@@ -1882,7 +1884,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ISystemFilterPoolManager[] getActiveFilterPoolManagers()
 	{
-		ISystemProfile[] activeProfiles = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+		ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 		ISystemFilterPoolManager[] activeManagers = new ISystemFilterPoolManager[activeProfiles.length];
 		for (int idx = 0; idx < activeProfiles.length; idx++)
 		{
@@ -2044,7 +2046,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public ISystemFilterPool getSystemFilterPoolForBrokenReference(ISystemFilterPoolReferenceManager callingRefMgr, String missingPoolMgrName, String missingPoolName)
 	{
 		ISystemFilterPool match = null;
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISystemProfile profile = sr.getSystemProfile(missingPoolMgrName);
 		if (profile != null)
 		{
@@ -2163,7 +2165,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	protected void fireEvent(SystemResourceChangeEvent event)
 	{
-		RSEUIPlugin.getTheSystemRegistry().fireEvent(event);
+		RSECorePlugin.getTheSystemRegistry().fireEvent(event);
 	}
 	/**
 	 * Helper method to create and then fire an event...
@@ -2364,7 +2366,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//fireEvent(newPool, EVENT_ADD, this); // hmm, might not need to do this since we only work on references?
 		
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, newPool, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, newPool, null);		
 	}
 	/**
 	 * A filter pool has been deleted
@@ -2374,7 +2376,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//fireEvent(oldPool, EVENT_DELETE, this); currently called by SystemView's delete support
 
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, oldPool, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, oldPool, null);		
 	}
 	/**
 	 * A filter pool has been renamed
@@ -2384,7 +2386,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//fireEvent(pool, EVENT_RENAME, this); subsystem handles in firing of reference rename
 
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, pool, oldName);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, pool, oldName);		
 	}
 	/**
 	 * One or more filter pools have been re-ordered within their manager
@@ -2396,7 +2398,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		// fire model change event in case any BP code is listening...
 		if (pools!=null)
 			for (int idx=0; idx<pools.length; idx++)
-				RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, pools[idx], null);		
+				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, pools[idx], null);		
 	}
 
 	// ---------------------
@@ -2410,7 +2412,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_ADD_FILTER_REFERENCE, newFilter);
 
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, newFilter, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, newFilter, null);		
 	}
 
 	/**
@@ -2421,7 +2423,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_DELETE_FILTER_REFERENCE, oldFilter);
 
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, oldFilter, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, oldFilter, null);		
 	}
 
 	/**
@@ -2432,7 +2434,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_RENAME_FILTER_REFERENCE, filter);
 
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filter, oldName);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filter, oldName);		
 	}
 
 	/**
@@ -2443,7 +2445,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE, filter);
 
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filter, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filter, null);		
 	}
 
 	/**
@@ -2458,7 +2460,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			fireSubSystemFilterEvent(event, filters[0]);
 			// fire model change event in case any BP code is listening...
 			for (int idx=0; idx<filters.length; idx++)
-				RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filters[idx], null);		
+				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filters[idx], null);		
 
 		}
 		//System.out.println("In SubSystemConfigurationImpl#filterEventFiltersRepositioned(). Firing EVENT_MOVE_FILTER_REFERENCES");
@@ -2474,7 +2476,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_ADD_FILTERSTRING_REFERENCE, newFilterString);
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, newFilterString.getParentSystemFilter(), null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, newFilterString.getParentSystemFilter(), null);		
 	}
 	/**
 	 * A filter string has been deleted
@@ -2483,7 +2485,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_DELETE_FILTERSTRING_REFERENCE, oldFilterString);
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, oldFilterString.getParentSystemFilter(), null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, oldFilterString.getParentSystemFilter(), null);		
 	}
 	/**
 	 * A filter string has been updated
@@ -2492,7 +2494,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_CHANGE_FILTERSTRING_REFERENCE, filterString);
 		// fire model change event in case any BP code is listening...
-		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filterString.getParentSystemFilter(), null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filterString.getParentSystemFilter(), null);		
 	}
 	/**
 	 * One or more filters have been re-ordered within their filter
@@ -2502,7 +2504,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_MOVE_FILTERSTRING_REFERENCES, filterStrings, delta);
 		// fire model change event in case any BP code is listening...
 		if ((filterStrings!=null) && (filterStrings.length>0))
-			RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filterStrings[0].getParentSystemFilter(), null);		
+			RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filterStrings[0].getParentSystemFilter(), null);		
 	}
 
 	// ---------------------------------

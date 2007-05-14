@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,20 +12,16 @@
  * 
  * Contributors:
  * Kevin Doyle (IBM) - Changed name Validator to ValidatorFileUniqueName
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
 
-import java.util.Vector;
-
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileChildrenContentsType;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -71,7 +67,7 @@ public class SystemNewFolderWizardMainPage
 		super(wizard, "NewFolder",  //$NON-NLS-1$
 				FileResources.RESID_NEWFOLDER_PAGE1_TITLE, 
 				FileResources.RESID_NEWFOLDER_PAGE1_DESCRIPTION);
-	//	nameValidator = new ValidatorProfileName(RSEUIPlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());
+	//	nameValidator = new ValidatorProfileName(RSECorePlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());
 	    nameValidator = new ValidatorUniqueString(allnames, true);
 	    this.parentFolders = parentFolders; 
 	}

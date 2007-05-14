@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -85,7 +86,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 	
 	private void pasteClipboardToSelection(Object target)
 	{
-		List srcObjects = RSEUIPlugin.getTheSystemRegistry().getSystemClipboardObjects(_srcType);
+		List srcObjects = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboardObjects(_srcType);
 		if (srcObjects.size() > 0)
 		{
 			// do the transfer
@@ -140,7 +141,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 				}
 			}
 			runnable.schedule();
-			RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
+			RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
 		}
 		// clear clipboard
 		// _clipboard.setContents(new Object[] { null }, new Transfer[] { PluginTransfer.getInstance()});
@@ -317,7 +318,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -344,7 +345,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
      */
       
 			irc = new ProgressMonitorDialog(shell);
-			RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
+			RSEUIPlugin.getTheSystemRegistryUI().setRunnableContext(shell, irc);
 			return irc;
 		}
 	}

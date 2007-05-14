@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -21,6 +22,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -417,11 +419,11 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	String connName = extractConnectionName(fileString);
     	if ((profileName == null) || (connName == null))
     	  return null;
-    	ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+    	ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
     	ISystemProfile profile = sr.getSystemProfile(profileName);
     	if (profile == null)
           return null;
-    	IHost conn = RSEUIPlugin.getTheSystemRegistry().getHost(profile,connName);
+    	IHost conn = RSECorePlugin.getTheSystemRegistry().getHost(profile,connName);
     	return conn;
 	}
 	
@@ -569,7 +571,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	if ((profileName == null) || (connName == null) || (dirName == null))
     	  return null;
     	  
-    	ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+    	ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
     	
     	// turn profile name into profile object...
     	ISystemProfile profile = sr.getSystemProfile(profileName);
@@ -581,7 +583,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	}
     	
 		// turn connection name into connection object...
-    	IHost conn = RSEUIPlugin.getTheSystemRegistry().getHost(profile,connName);
+    	IHost conn = RSECorePlugin.getTheSystemRegistry().getHost(profile,connName);
     	if (conn == null)
     	{
     	  msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);

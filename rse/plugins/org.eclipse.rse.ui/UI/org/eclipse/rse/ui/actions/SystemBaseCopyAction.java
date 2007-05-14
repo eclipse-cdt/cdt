@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -22,6 +23,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
@@ -35,7 +37,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.dialogs.SystemSimpleCopyDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -89,7 +90,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 		      parent);
 		this.mode = mode;
 		mgr = SystemProfileManager.getDefault();
-		sr = RSEUIPlugin.getTheSystemRegistry();
+		sr = RSECorePlugin.getTheSystemRegistry();
 		allowOnMultipleSelection(true);
         setProcessAllSelections(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
@@ -214,8 +215,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 	 */
 	protected IRunnableContext getRunnableContext()
 	{
-		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
-		IRunnableContext irc = sr.getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc == null)
 		  irc = new ProgressMonitorDialog(getShell());
 		return irc;

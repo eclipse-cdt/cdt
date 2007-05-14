@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a this package, was in 
  *                       the org.eclipse.rse.core package of the UI plugin.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -187,7 +188,7 @@ public class SystemPreferencesManager {
 	 * list kept in the system registry.
 	 */
 	public static void setConnectionNamesOrder() {
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		IHost[] conns = sr.getHosts();
 		String[] names = new String[conns.length];
 		for (int idx = 0; idx < names.length; idx++)
@@ -329,7 +330,7 @@ public class SystemPreferencesManager {
 		store.setValue(ISystemPreferencesConstants.SHOWFILTERPOOLS, show);
 		savePreferences();
 		if (show != prevValue) {
-			RSEUIPlugin.getTheSystemRegistry().setShowFilterPools(show);
+			RSECorePlugin.getTheSystemRegistry().setShowFilterPools(show);
 		}
 	}
 

@@ -12,14 +12,15 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public abstract class SystemResourceSelectionInputProvider extends SystemAbstractAPIProvider
@@ -38,7 +39,7 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	public SystemResourceSelectionInputProvider()
 	{
 		// choose random host
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		IHost[] hosts = registry.getHosts();
 		if (hosts != null)
 			_connection = hosts[0];
@@ -84,7 +85,7 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	{
 		if (_connection == null)
 		{
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			_connection = registry.getHosts()[0];
 			
 		}

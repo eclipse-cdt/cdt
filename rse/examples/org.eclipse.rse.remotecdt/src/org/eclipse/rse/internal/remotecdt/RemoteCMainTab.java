@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 PalmSource, Inc.
+ * Copyright (c) 2006, 2007 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Ewa Matejska (PalmSource) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 
 package org.eclipse.rse.internal.remotecdt;
@@ -19,10 +20,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.window.Window;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -300,7 +301,7 @@ public class RemoteCMainTab extends CMainTab {
 		String remoteConnection =  currentSelection >= 0 ? connectionCombo.getItem(currentSelection) : null;
 		if(remoteConnection == null)
 			return null;
-		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHosts();
+		IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHosts();
 		int i = 0;
 		for(i = 0; i < connections.length; i++)
 			if(connections[i].getAliasName().equals(remoteConnection))
@@ -325,7 +326,7 @@ public class RemoteCMainTab extends CMainTab {
 	
 	protected void updateConnectionPulldown() {
 		connectionCombo.removeAll();
-		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory("shells"); //$NON-NLS-1$
+		IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory("shells"); //$NON-NLS-1$
 		for(int i = 0; i < connections.length; i++)
 			connectionCombo.add(connections[i].getAliasName());
 		

@@ -13,9 +13,11 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.internal.core.model.SystemPreferenceChangeEvent;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -41,7 +43,7 @@ public class SystemPreferenceRestoreStateAction extends SystemBaseAction
 		super(SystemResources.ACTION_RESTORE_STATE_PREFERENCE_LABEL,SystemResources.ACTION_RESTORE_STATE_PREFERENCE_TOOLTIP, parent);
         setSelectionSensitive(false);
         allowOnMultipleSelection(true);
-        //sr = RSEUIPlugin.getTheSystemRegistry();	        
+        //sr = RSECorePlugin.getTheSystemRegistry();	        
         setChecked(SystemPreferencesManager.getRememberState());
 
 		setHelp(RSEUIPlugin.HELPPREFIX+"aprefres"); //$NON-NLS-1$
@@ -64,7 +66,7 @@ public class SystemPreferenceRestoreStateAction extends SystemBaseAction
      */
     private void firePreferenceChangeEvent(int type, boolean oldValue, boolean newValue)
     {
-    	RSEUIPlugin.getTheSystemRegistry().fireEvent(
+    	RSECorePlugin.getTheSystemRegistry().fireEvent(
     	  new SystemPreferenceChangeEvent(type,
     	                                  oldValue ? Boolean.TRUE : Boolean.FALSE,
     	                                  newValue ? Boolean.TRUE : Boolean.FALSE));

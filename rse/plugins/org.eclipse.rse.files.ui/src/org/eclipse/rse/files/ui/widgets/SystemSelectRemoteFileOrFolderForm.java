@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -27,6 +28,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemRemoteObjectMatcher;
@@ -47,7 +49,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.util.SystemRemoteFileMatcher;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -168,7 +169,7 @@ public class SystemSelectRemoteFileOrFolderForm
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);				
 		//rb = RSEUIPlugin.getResourceBundle();
-		sr = RSEUIPlugin.getTheSystemRegistry();
+		sr = RSECorePlugin.getTheSystemRegistry();
 
 		// set default GUI
 		verbiage = fileMode ? SystemFileResources.RESID_SELECTFILE_VERBIAGE: SystemFileResources.RESID_SELECTDIRECTORY_VERBIAGE;
@@ -290,7 +291,7 @@ public class SystemSelectRemoteFileOrFolderForm
         setSystemConnection(connection);
         setShowNewConnectionPrompt(false);
         setAutoExpandDepth(1);        
-		//ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		//ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(connection);
 		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemConfiguration();
 		RemoteFileFilterString rffs = new RemoteFileFilterString(ssf);

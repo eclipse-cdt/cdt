@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.uda;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,17 +7,21 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
+
+package org.eclipse.rse.internal.useractions.ui.uda;
+
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.useractions.ui.uda.actions.SystemWorkWithUDAsAction;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.actions.SystemBaseDummyAction;
 import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
@@ -74,7 +76,7 @@ public class SystemUDACascadeAction extends SystemBaseSubMenuAction implements I
 		}
 		// is cascading-by-profile preference turned on?
 		else {
-			ISystemProfile[] activeProfiles = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+			ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 			for (int idx = 0; idx < activeProfiles.length; idx++) {
 				SystemBaseSubMenuAction profileAction = new SystemUDACascadeByProfileAction(shell, udsubsystem, getSelection(), activeProfiles[idx]);
 				ourSubMenu.add(profileAction.getSubMenu());

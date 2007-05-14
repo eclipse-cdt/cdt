@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -197,8 +198,9 @@ public class SystemScratchpadView
 
 			addSelectionChangedListener(this);
 
-			RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-			RSEUIPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			sr.addSystemResourceChangeListener(this);
+			sr.addSystemRemoteChangeListener(this);
 
 			initDragAndDrop();
 
@@ -615,8 +617,9 @@ public class SystemScratchpadView
 		
 		// remove listeners
 		removeSelectionChangedListener(this);
-		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
-		RSEUIPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		sr.removeSystemResourceChangeListener(this);
+		sr.removeSystemRemoteChangeListener(this);
 
 		//Composite tree = getTree();
 		//boolean isDisposed = tree.isDisposed();

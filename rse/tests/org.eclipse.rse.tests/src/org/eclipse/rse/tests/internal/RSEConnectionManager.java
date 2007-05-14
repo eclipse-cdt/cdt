@@ -12,6 +12,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -48,7 +49,6 @@ import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionManager;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.osgi.framework.Bundle;
 
 /**
@@ -170,7 +170,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 	public void removeConnection(String profileName, String name) {
 		assert profileName != null && name != null;
 		
-		ISystemRegistry systemRegistry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
 		Assert.assertNotNull("FAILED(findOrCreateConnection): RSE system registry unavailable!", systemRegistry); //$NON-NLS-1$
 		
 		ISystemProfile profile = systemRegistry.getSystemProfile(profileName);
@@ -191,7 +191,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 		
 		IHost connection = null;
 
-		ISystemRegistry systemRegistry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
 		Assert.assertNotNull("FAILED(findOrCreateConnection): RSE system registry unavailable!", systemRegistry); //$NON-NLS-1$
 
 		Exception exception = null;
@@ -275,7 +275,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 	 */
 	public IShellServiceSubSystem getShellSubSystem(IHost connection) throws Exception {
 		assert connection != null;
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] subSystems = registry.getSubSystems(connection);
 		for (int i = 0; i < subSystems.length; i++) {
 			ISubSystem subSystem = subSystems[i];
@@ -291,7 +291,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 	 */
 	public ITestSubSystem getTestSubSystem(IHost connection) throws Exception {
 		assert connection != null;
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] subSystems = registry.getSubSystems(connection);
 		for (int i = 0; i < subSystems.length; i++) {
 			ISubSystem subSystem = subSystems[i];

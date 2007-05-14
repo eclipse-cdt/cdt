@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -113,7 +114,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 /**
  * Registry for all connections.
  */
-public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvider
+public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISystemViewInputProvider
 {
 	private static Exception lastException = null;
 	private static SystemRegistry registry = null;
@@ -1988,7 +1989,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemViewInputProvid
 		String subSystemId = str.substring(0, subsystemDelim);
 		String srcKey = str.substring(subsystemDelim + 1, str.length());
 
-		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem subSystem = registry.getSubSystem(subSystemId);
 		if (subSystem != null)
 		{

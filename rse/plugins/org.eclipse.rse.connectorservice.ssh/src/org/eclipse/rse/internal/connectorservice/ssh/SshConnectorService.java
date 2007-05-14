@@ -10,6 +10,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API 
  *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -34,6 +35,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -256,7 +258,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 		    	//runnableContext.run(false,true,this); // inthread, cancellable, IRunnableWithProgress
 		    	runnableContext.run(true,true,this); // fork, cancellable, IRunnableWithProgress
 		    	_connection.reset();
-				ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();    	    
+				ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();    	    
 	            sr.connectedStatusChange(_connection.getPrimarySubSystem(), false, true, true);
 			}
 	    	catch (InterruptedException exc) // user cancelled

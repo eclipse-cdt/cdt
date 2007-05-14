@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -1349,7 +1350,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			case CommunicationsEvent.AFTER_DISCONNECT :	
 				_cachedRemoteFiles.clear();
 				// DKM - taking this out because it causes an exception when the event occurs in Modal Context
-				//ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();	
+				//ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
 				//sr.connectedStatusChange(this, false, true, true);
 				getConnectorService().removeCommunicationsListener(this);
 		

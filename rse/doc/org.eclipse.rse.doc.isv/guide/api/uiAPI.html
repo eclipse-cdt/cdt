@@ -123,12 +123,12 @@ To get the system registry, use the
 </p>
 
 <p>At times, you may want to post events in a dispatch thread rather than using the
-original client's thread; or you may want to pass the originating viewer's ID
-with the resource change event. Such operations are only possible when the UI 
+original client's thread; or you may need access to the System Clipboard.
+Such operations are only possible when the UI 
 is loaded, and therefore you need to use
 <samp><A href="../../reference/api/org/eclipse/rse/core/model/ISystemRegistry.html#fireRemoteResourceChangeEvent(int, java.lang.Object, java.lang.Object, org.eclipse.rse.core.subsystems.ISubSystem, java.lang.String, java.lang.Object)">ISystemRegistry.fireEvent()</a></samp>
 method in that case. To get the system registry UI interface, use the
-<samp><A href="../../reference/api/org/eclipse/rse/ui/RSEUIPlugin.html#getTheSystemRegistry()">RSEUIPlugin.getTheSystemRegistry()</a></samp>
+<samp><A href="../../reference/api/org/eclipse/rse/ui/RSEUIPlugin.html#getTheSystemRegistryUI()">RSEUIPlugin.getTheSystemRegistryUI()</a></samp>
 method.
 </p>
 

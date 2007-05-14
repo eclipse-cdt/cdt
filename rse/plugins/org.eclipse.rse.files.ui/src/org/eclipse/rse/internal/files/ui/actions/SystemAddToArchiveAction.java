@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -28,6 +29,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -159,7 +161,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 				IRemoteFile selection = (IRemoteFile) _selected.get(i);
 				addToArchive(selection, destinationArchive, saveFullPathInfo, relativeTo);
 			}
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, destinationArchive, destinationArchive.getParentPath(), destSS, null);
 			registry.fireEvent(new SystemResourceChangeEvent(destinationArchive, ISystemResourceChangeEvents.EVENT_REFRESH, destinationArchive.getParentPath()));
 			repeat = false;
@@ -315,7 +317,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;

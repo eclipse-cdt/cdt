@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -24,6 +25,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -32,7 +34,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -85,7 +86,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();	
 			ISubSystem ss = (ISubSystem)element;
-			ISubSystemConfiguration ssFactory = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(ss);
+			ISubSystemConfiguration ssFactory = RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(ss);
 			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 
 			IAction[] actions = adapter.getSubSystemActions(menu, selection, shell, menuGroup, ssFactory, ss);
@@ -110,7 +111,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE GETIMAGEDESCRIPTOR FOR SUBSYSTEM VIEW ADAPTER: "+element);				
 		ISubSystem ss = (ISubSystem)element;
-		ISubSystemConfiguration ssFactory = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(ss);
+		ISubSystemConfiguration ssFactory = RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(ss);
 		if (ssFactory != null)
 		{
 			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
@@ -182,7 +183,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE GETPARENT FOR SUBSYSTEM VIEW ADAPTER: "+element);		
 		ISubSystem ss = (ISubSystem)element;		
-		return RSEUIPlugin.getTheSystemRegistry().getHost(ss.getSystemProfile(),ss.getHostAliasName());
+		return RSECorePlugin.getTheSystemRegistry().getHost(ss.getSystemProfile(),ss.getHostAliasName());
 	}
 	
 	/**
@@ -655,7 +656,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE DODELETE FOR SUBSYSTEM VIEW ADAPTER: "+element);		
 		ISubSystem ss = (ISubSystem)element;		
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();								
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();								
 		sr.deleteSubSystem(ss);
 		return true;
 	}	

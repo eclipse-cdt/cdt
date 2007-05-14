@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -22,6 +23,7 @@ package org.eclipse.rse.core.model;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.rse.core.IRSESystemType;
@@ -51,7 +53,7 @@ import org.eclipse.rse.internal.core.RSECoreRegistry;
  * <p>
  * This interface is not intended to be implemented by clients.
  */
-public interface ISystemRegistry extends ISchedulingRule {
+public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
 	public ISystemFilterStartHere getSystemFilterStartHere();
 
@@ -469,13 +471,6 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * then no host names should be returned. Previously all for all types were returned.
 	 */
 	public String[] getHostNames(IRSESystemType systemType);
-
-	/**
-	 * Returns the list of objects on the system clipboard
-	 * @param srcType the transfer type
-	 * @return the list of clipboard objects
-	 */
-	public List getSystemClipboardObjects(int srcType);
 
 	/**
 	 * Convenience method to create a local connection, as it often that one is needed

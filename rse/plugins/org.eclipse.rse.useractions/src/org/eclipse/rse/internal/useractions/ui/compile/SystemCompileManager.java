@@ -8,13 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
 
 import java.util.Hashtable;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
@@ -300,7 +303,7 @@ public abstract class SystemCompileManager {
 		String srcType = rmtAdapter.getRemoteSourceType(selection);
 		if (srcType == null) return false;
 		boolean compilable = false;
-		ISystemProfile[] activeProfiles = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+		ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 		for (int idx = 0; !compilable && (idx < activeProfiles.length); idx++) {
 			SystemCompileProfile compProfile = getCompileProfile(activeProfiles[idx]);
 			compProfile.addContributions(selection);

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -28,6 +29,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -244,7 +246,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 	 */
 	private Object getObjectFor(String str)
 	{
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		// first extract subsystem id
 		int connectionDelim = str.indexOf(":"); //$NON-NLS-1$
 		if (connectionDelim == -1) // not subsystem, therefore likely to be a connection
@@ -308,7 +310,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -335,7 +337,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
      */
       
 			irc = new ProgressMonitorDialog(shell);
-			RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
+			RSEUIPlugin.getTheSystemRegistryUI().setRunnableContext(shell, irc);
 			return irc;
 		}
 	}

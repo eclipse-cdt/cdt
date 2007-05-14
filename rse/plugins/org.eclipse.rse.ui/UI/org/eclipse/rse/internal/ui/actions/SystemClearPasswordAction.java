@@ -12,10 +12,12 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -73,7 +75,7 @@ public class SystemClearPasswordAction extends SystemBaseAction
 		try {
 			IConnectorService system = ss.getConnectorService();
 			system.clearPassword(true, true);
-			RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(ss, 
+			RSECorePlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(ss, 
 					ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, 
 					ss.getHost()));
 		}

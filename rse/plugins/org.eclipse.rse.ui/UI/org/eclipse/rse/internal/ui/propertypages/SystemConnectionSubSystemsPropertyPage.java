@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -22,6 +23,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -236,7 +238,7 @@ public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPa
 	protected ISubSystem[] getSubSystems()
 	{
 		ISubSystem[] subsystems = 
-			RSEUIPlugin.getTheSystemRegistry().getSubSystems(getConnection());		
+			RSECorePlugin.getTheSystemRegistry().getSubSystems(getConnection());		
 		return subsystems;
 	}
 	

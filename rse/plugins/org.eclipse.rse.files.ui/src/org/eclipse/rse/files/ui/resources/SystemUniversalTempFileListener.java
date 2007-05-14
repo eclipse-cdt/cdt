@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -22,13 +23,14 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.actions.SystemUploadConflictAction;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -262,7 +264,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				
 				IRemoteFile parent = remoteFile.getParentRemoteFile();
 	
-				ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+				ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 				// refresh
 				if (parent != null)
 				{
@@ -308,7 +310,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				//			2) Overwrite remote
 				//			3) Save as...
 				//			4) Cancel
-				Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
+				Shell shell = RSEUIPlugin.getTheSystemRegistryUI().getShell();
 
 				SystemUploadConflictAction conflictAction = new SystemUploadConflictAction(shell, tempFile, remoteFile, remoteNewer);
 				conflictAction.run();

@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -24,6 +25,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
@@ -31,7 +33,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
@@ -174,7 +175,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, String ssConfigId, boolean showNewButton)
 	{
 		super(parent, style);	
-	    restrictSystemTypesTo = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(ssConfigId).getSystemTypes();
+	    restrictSystemTypesTo = RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(ssConfigId).getSystemTypes();
 		init(parent, showNewButton);	
 		populateSSFactoryId = ssConfigId;
 	    populateConnectionCombo(connectionCombo, ssConfigId, defaultConnection);
@@ -212,7 +213,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 		super(parent, style);
 		if (showNewButton) // this is expensive, so only need to do this if New is enabled
 		{
-			ISubSystemConfigurationProxy[] ssfProxies = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationProxiesByCategory(ssFactoryCategory);
+			ISubSystemConfigurationProxy[] ssfProxies = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationProxiesByCategory(ssFactoryCategory);
 			Vector vTypes = new Vector();
 			for (int idx = 0; idx < ssfProxies.length; idx++) {
 				// Do not call ISubSystemConfigurationProxy.getSystemTypes() directly. If
@@ -692,9 +693,9 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 		boolean matchFound = false;
 		IHost[] additionalConnections = null;
         if ( (systemType == null) || (systemType.equals("*")) ) //$NON-NLS-1$        
-          additionalConnections = RSEUIPlugin.getTheSystemRegistry().getHosts();
+          additionalConnections = RSECorePlugin.getTheSystemRegistry().getHosts();
         else
-          additionalConnections = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(systemType);
+          additionalConnections = RSECorePlugin.getTheSystemRegistry().getHostsBySystemType(systemType);
         if (additionalConnections != null)
         {
           String[] connectionNames = new String[additionalConnections.length];
@@ -776,7 +777,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 */
 	protected boolean populateConnectionCombo(Combo combo, ISubSystemConfiguration ssFactory, IHost defaultConnection)
 	{
-		connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySubSystemConfiguration(ssFactory);
+		connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfiguration(ssFactory);
         return addConnections(combo, connections, defaultConnection);
 	}	
 	/**
@@ -790,7 +791,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 */
 	protected boolean populateConnectionCombo(Combo combo, String ssFactoryId, IHost defaultConnection)
 	{
-		connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationId(ssFactoryId);
+		connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationId(ssFactoryId);
         return addConnections(combo, connections, defaultConnection);
 	}
 
@@ -805,7 +806,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 */
 	protected boolean populateConnectionCombo(Combo combo, IHost defaultConnection, String ssFactoryCategory)
 	{
-		connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory(ssFactoryCategory);
+		connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory(ssFactoryCategory);
         return addConnections(combo, connections, defaultConnection);
 	}
 	/**
@@ -948,7 +949,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 			// register with system registry for events
 			// ----------------------------------------
 			listeningForConnectionEvents = true;
-			RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+			RSECorePlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
 		}
 		else
 		{
@@ -956,7 +957,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 			// remove register with system registry for events
 			// ----------------------------------------
 			listeningForConnectionEvents = false;
-			RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+			RSECorePlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		}
 	}
 	/**
@@ -967,7 +968,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 		if (listeningForConnectionEvents)
 		{
 			listeningForConnectionEvents = false;
-			RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);			
+			RSECorePlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);			
 		}
 	}
 	

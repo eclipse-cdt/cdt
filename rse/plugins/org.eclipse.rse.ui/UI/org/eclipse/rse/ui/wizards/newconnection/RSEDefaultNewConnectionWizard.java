@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -32,6 +33,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
@@ -210,7 +212,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
 				// 2. If the wizard is invoked the 1st time, the default private system profile is the
 				//    default profile.
-				ISystemProfile defaultPrivateProfile = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile();
+				ISystemProfile defaultPrivateProfile = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile();
 				if (defaultPrivateProfile != null) defaultProfileName = defaultPrivateProfile.getName();
 				if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
 					// 4. The first non-empty profile from the list of active profiles is the default profile.
@@ -300,7 +302,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		if (ok) {
 			boolean cursorSet = true;
 			setBusyCursor(true);
-			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 
 			// if private profile is not null, then we have to rename the private profile
 			// with the new profile name
@@ -378,7 +380,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		if (subsystemFactorySuppliedWizardPages == null) {
 			// query all affected subsystems for their list of additional wizard pages...
 			Vector additionalPages = new Vector();
-			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 			ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType, true);
 			for (int idx = 0; idx < factories.length; idx++) {
 				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factories[idx].getAdapter(ISubSystemConfigurationAdapter.class);

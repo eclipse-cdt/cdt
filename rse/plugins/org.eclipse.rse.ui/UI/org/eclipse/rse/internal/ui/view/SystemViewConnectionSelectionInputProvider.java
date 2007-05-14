@@ -13,13 +13,14 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.internal.model.SystemNewConnectionPromptObject;
 
 
@@ -84,9 +85,9 @@ public class SystemViewConnectionSelectionInputProvider extends SystemAbstractAP
 		//System.out.println("Inside getSystemViewRoots. showNew = "+showNew);
 		IHost[] conns = null;
 		if (systemTypes == null)
-			conns = RSEUIPlugin.getTheSystemRegistry().getHosts();
+			conns = RSECorePlugin.getTheSystemRegistry().getHosts();
 		else
-			conns = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemTypes(systemTypes);			
+			conns = RSECorePlugin.getTheSystemRegistry().getHostsBySystemTypes(systemTypes);			
 		if (showNew)
 		{
 			if ((conns == null) || (conns.length == 0))

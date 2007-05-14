@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -139,7 +140,7 @@ public class SystemTeamViewProfileAdapter
 	public ImageDescriptor getImageDescriptor(Object element)
 	{
 		ISystemProfile profile = (ISystemProfile)element;				
-		if (RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName()))
+		if (RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName()))
 		  return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ACTIVE_ID);
 		else
 		  return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
@@ -197,7 +198,7 @@ public class SystemTeamViewProfileAdapter
 	public String getStatusLineText(Object element)
 	{
 		ISystemProfile profile = (ISystemProfile)element;
-		boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
+		boolean active = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 		return getType(element) + ": " + profile.getName() + ", " + //$NON-NLS-1$ //$NON-NLS-2$
 		       SystemViewResources.RESID_PROPERTY_PROFILESTATUS_LABEL + ": " + //$NON-NLS-1$
 		       (active ? SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL : SystemViewResources.RESID_PROPERTY_PROFILESTATUS_NOTACTIVE_LABEL);
@@ -316,7 +317,7 @@ public class SystemTeamViewProfileAdapter
 		
 		if (name.equals(ISystemPropertyConstants.P_IS_ACTIVE))
 		{			
-			boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
+			boolean active = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 			if (active)
 				return SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL;
 			else
@@ -348,7 +349,7 @@ public class SystemTeamViewProfileAdapter
 	public boolean doDelete(Shell shell, Object element, IProgressMonitor monitor) throws Exception
 	{
 		boolean ok = true;
-		RSEUIPlugin.getTheSystemRegistry().deleteSystemProfile((ISystemProfile)element);
+		RSECorePlugin.getTheSystemRegistry().deleteSystemProfile((ISystemProfile)element);
 		return ok;
 	}
   
@@ -370,7 +371,7 @@ public class SystemTeamViewProfileAdapter
 	public boolean doRename(Shell shell, Object element, String newName) throws Exception
 	{
 		boolean ok = true;		
-		RSEUIPlugin.getTheSystemRegistry().renameSystemProfile((ISystemProfile)element, newName);
+		RSECorePlugin.getTheSystemRegistry().renameSystemProfile((ISystemProfile)element, newName);
 		return ok;
 	}    
 	/**

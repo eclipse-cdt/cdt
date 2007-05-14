@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -154,7 +155,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 
 		// refresh all instances of the source parent, and all affected filters...
 		ISubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
-		//RSEUIPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
+		//RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		  // ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, copiedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
     	RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, movedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
@@ -164,7 +165,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		Viewer v = getViewer();
 		if (v instanceof ISystemTree)
 		{
-		    SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		    SystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		  	ISystemTree tree = (ISystemTree)v;
 		  	Object parent = tree.getSelectedParent();
 		  	if (parent != null)

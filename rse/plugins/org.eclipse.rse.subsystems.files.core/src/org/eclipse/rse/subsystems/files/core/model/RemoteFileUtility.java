@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
@@ -20,13 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 
@@ -35,7 +36,7 @@ public class RemoteFileUtility
 
 	public static IRemoteFileSubSystem getFileSubSystem(IHost connection)
 	{
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{
@@ -51,7 +52,7 @@ public class RemoteFileUtility
 	public static IRemoteFileSubSystem[] getFileSubSystems(IHost connection)
 	{
 		List results = new ArrayList();
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{
@@ -66,7 +67,7 @@ public class RemoteFileUtility
 	
 	 public static IRemoteFileSubSystemConfiguration getFileSubSystemConfiguration(IRSESystemType systemType)
 	 {
-			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 			ISubSystemConfiguration[] sses = sr.getSubSystemConfigurationsBySystemType(systemType, false);
 			for (int i = 0; i < sses.length; i++)
 			{

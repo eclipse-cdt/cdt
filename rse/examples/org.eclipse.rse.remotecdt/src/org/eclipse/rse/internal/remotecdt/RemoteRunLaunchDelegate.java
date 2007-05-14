@@ -8,6 +8,7 @@
  * Contributors: 
  * Ewa Matejska (PalmSource) - Adapted from LocalRunLaunchDelegate
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
 
 
@@ -41,6 +42,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.IService;
@@ -50,7 +52,6 @@ import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
@@ -181,7 +182,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	protected IHost getCurrentConnection(ILaunchConfiguration config) throws CoreException {
 		String remoteConnection = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION, ""); //$NON-NLS-1$
 
-		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHosts();
+		IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHosts();
 		int i = 0;
 		for(i = 0; i < connections.length; i++)
 			if(connections[i].getAliasName().equals(remoteConnection))

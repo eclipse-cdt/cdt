@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -171,7 +171,7 @@ public class SystemCommonDeleteAction
 			catch (Exception e)
 			{				
 			}
-			RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
+			RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
 	      setEnabled(target.canDelete());
 		}
 		return null;
@@ -179,7 +179,7 @@ public class SystemCommonDeleteAction
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -187,7 +187,7 @@ public class SystemCommonDeleteAction
 		else
 		{
 			irc = new ProgressMonitorDialog(shell);
-			RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
+			RSEUIPlugin.getTheSystemRegistryUI().setRunnableContext(shell, irc);
 			return irc;
 		}
 	}

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.actions;
@@ -28,6 +29,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
@@ -47,7 +49,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.swt.widgets.Shell;
 
 public class SystemKillProcessAction extends SystemBaseDialogAction implements IRunnableWithProgress
@@ -147,8 +148,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 	 */
 	protected IRunnableContext getRunnableContext()
 	{
-		ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
-		IRunnableContext irc = sr.getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc == null)
 		  irc = new ProgressMonitorDialog(getShell());
 		return irc;
@@ -241,7 +241,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 		
 		
 		// update the ui
-		ISystemRegistry  registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry  registry = RSECorePlugin.getTheSystemRegistry();
 		for (int i = 0; i < results.size(); i++)
 		{
 			ISystemFilterReference ref = (ISystemFilterReference)results.get(i);
@@ -260,7 +260,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 	 */
 	protected List getAffectedFilters(Object[] processesDeathRow, ISubSystem subSystem)
 	{
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		List result = new ArrayList();
 		for (int i = 0; i < processesDeathRow.length; i++)
 		{

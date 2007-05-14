@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -61,7 +62,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
@@ -177,7 +177,7 @@ public class SystemViewConnectionAdapter
 		Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
 		RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 		
-		ISystemRegistry sysReg = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sysReg = RSECorePlugin.getTheSystemRegistry();
 		boolean anySupportsConnect = sysReg.isAnySubSystemSupportsConnect(host);
 
 		if (anySupportsConnect) {
@@ -330,7 +330,7 @@ public class SystemViewConnectionAdapter
 	 */
 	public ImageDescriptor getImageDescriptor(Object element) {
 		IHost connection = (IHost)element;
-		boolean anyConnected = RSEUIPlugin.getTheSystemRegistry().isAnySubSystemConnected(connection);
+		boolean anyConnected = RSECorePlugin.getTheSystemRegistry().isAnySubSystemConnected(connection);
 		ImageDescriptor descriptor = null;
 		IRSESystemType systemType = getSystemTypeForHost(connection);
 		if (systemType != null) {
@@ -352,7 +352,7 @@ public class SystemViewConnectionAdapter
 	public String getText(Object element)
 	{
 		IHost conn = (IHost)element;	
-		boolean qualifyNames = RSEUIPlugin.getTheSystemRegistry().getQualifiedHostNames();		
+		boolean qualifyNames = RSECorePlugin.getTheSystemRegistry().getQualifiedHostNames();		
 		if (!qualifyNames)
 		  return conn.getAliasName();
 		else
@@ -417,7 +417,7 @@ public class SystemViewConnectionAdapter
 	 */
 	public Object getParent(Object element)
 	{
-		return RSEUIPlugin.getTheSystemRegistry();
+		return RSECorePlugin.getTheSystemRegistry();
 	}
 	
 	/**
@@ -558,7 +558,7 @@ public class SystemViewConnectionAdapter
 			}
 			else
 			{
-			 	boolean anyConnected = RSEUIPlugin.getTheSystemRegistry().isAnySubSystemConnected(conn);
+			 	boolean anyConnected = RSECorePlugin.getTheSystemRegistry().isAnySubSystemConnected(conn);
 			  	if (anyConnected)
 			    	return SystemViewResources.RESID_PROPERTY_CONNECTIONSTATUS_CONNECTED_VALUE;
 		  		else
@@ -629,7 +629,7 @@ public class SystemViewConnectionAdapter
         //System.out.println("Inside resetPropertyValue in adapter");    
 		String property = (String)propertyObject;    	
 	    IHost conn = (IHost)propertySourceInput;   	
-	    ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 	    	   
 	    if (property.equals(ISystemPropertyConstants.P_DEFAULTUSERID))
 	    {
@@ -657,7 +657,7 @@ public class SystemViewConnectionAdapter
     	//if (!data.getIsLocal())
     	  //whereToUpdate = USERID_LOCATION_DEFAULT_SYSTEMTYPE;
     	String userId = data.getLocalValue(); // will be "" if !data.getIsLocal(), which results in wiping out local override
-	    ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();    	
+	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();    	
 		sr.updateHost(conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(),
 		                      conn.getDescription(), userId, whereToUpdate);
     }
@@ -669,7 +669,7 @@ public class SystemViewConnectionAdapter
     {
 		String name = (String)property;    	
 	    IHost conn = (IHost)propertySourceInput;   		   
-	    ISystemRegistryUI sr = RSEUIPlugin.getTheSystemRegistry();
+	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 	       	
 	    if (name.equals(ISystemPropertyConstants.P_DEFAULTUSERID))
 	    {
@@ -714,7 +714,7 @@ public class SystemViewConnectionAdapter
 	    {
 	    	IHost sysCon = (IHost) element;
 	    	if (sysCon.getSystemType().isLocal()) return existsMoreThanOneLocalConnection();
-	        ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+	        ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 	    	return !sr.isAnySubSystemConnected((IHost)element);
 	    }
 		return true;
@@ -723,7 +723,7 @@ public class SystemViewConnectionAdapter
 	protected boolean existsMoreThanOneLocalConnection()
 	{
 		IRSESystemType localType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
-		IHost[] localCons = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(localType);
+		IHost[] localCons = RSECorePlugin.getTheSystemRegistry().getHostsBySystemType(localType);
 		return localCons.length > 1;		
 	}
 	
@@ -734,7 +734,7 @@ public class SystemViewConnectionAdapter
 	{
 		boolean ok = true;
 		IHost conn = (IHost)element;
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		sr.deleteHost(conn);
 		return ok;
 	}
@@ -755,7 +755,7 @@ public class SystemViewConnectionAdapter
 	{
 		boolean ok = true;
 		IHost conn = (IHost)element;
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();		
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();		
 		sr.renameHost(conn,name); // renames and saves to disk
 		return ok;
 	}    

@@ -13,8 +13,9 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used PreferencesMapper
- * Martin Oberhuber (Wind River) - [180562] dont implement ISystemPreferencesConstants
+ * Martin Oberhuber (Wind River) - [180562] don't implement ISystemPreferencesConstants
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -201,7 +202,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = showFilterPoolsEditor.getBooleanValue();
     	   	if (newValue != lastShowFilterPoolsValue)
     	   	{
-    	     	RSEUIPlugin.getTheSystemRegistry().setShowFilterPools(newValue);
+    	     	RSECorePlugin.getTheSystemRegistry().setShowFilterPools(newValue);
     	     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_SHOWFILTERPOOLS,lastShowFilterPoolsValue,newValue);
     	   	}
     	   	lastShowFilterPoolsValue = newValue;
@@ -211,7 +212,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = showNewConnectionPromptEditor.getBooleanValue();
     	   	if (newValue != lastShowNewConnectionPromptValue)
     	   	{
-    	     	RSEUIPlugin.getTheSystemRegistry().setShowNewHostPrompt(newValue);
+    	     	RSECorePlugin.getTheSystemRegistry().setShowNewHostPrompt(newValue);
     	   	}
     	   	lastShowNewConnectionPromptValue = newValue;    		
     	}
@@ -220,7 +221,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = qualifyConnectionNamesEditor.getBooleanValue();
     	   	if (newValue != lastQualifyConnectionNamesValue)
     	   	{
-    	     	RSEUIPlugin.getTheSystemRegistry().setQualifiedHostNames(newValue);
+    	     	RSECorePlugin.getTheSystemRegistry().setQualifiedHostNames(newValue);
     	     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_QUALIFYCONNECTIONNAMES,lastQualifyConnectionNamesValue,newValue);
     	   	}
     	   	lastQualifyConnectionNamesValue = newValue;    		
@@ -243,7 +244,7 @@ public class RemoteSystemsPreferencePage
      */
     private void firePreferenceChangeEvent(int type, boolean oldValue, boolean newValue)
     {
-    	RSEUIPlugin.getTheSystemRegistry().fireEvent(
+    	RSECorePlugin.getTheSystemRegistry().fireEvent(
     	  new SystemPreferenceChangeEvent(type,
     	                                  oldValue ? Boolean.TRUE : Boolean.FALSE,
     	                                  newValue ? Boolean.TRUE : Boolean.FALSE));

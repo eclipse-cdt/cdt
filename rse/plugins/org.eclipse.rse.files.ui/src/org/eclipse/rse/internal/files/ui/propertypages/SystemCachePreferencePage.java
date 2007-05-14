@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 176488: adding some text for the cache limit checkbox
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -33,6 +34,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -342,7 +344,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -425,7 +427,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 						else if (properties.getDownloadFileTimeStamp() != child.getLocation().toFile().lastModified())
 						{
 							String ssString = properties.getRemoteFileSubSystem();
-							ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+							ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 							ISubSystem subsystem = registry.getSubSystem(ssString);
 							if (subsystem != null)
 							{
@@ -537,7 +539,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 								else
 								{
 									String ssString = properties.getRemoteFileSubSystem();
-									ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+									ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 									ISubSystem subsystem = registry.getSubSystem(ssString);
 									if (subsystem != null)
 									{

@@ -16,6 +16,7 @@
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -29,6 +30,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
@@ -197,7 +199,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 			result = RSEPreferencesManager.getIsSystemTypeEnabled(systemType);
 			// if enabled, check if the system type has any registered subsystems. If
 			// not, this will auto-disable the system type.
-			if (result && RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(systemType, true).length == 0) {
+			if (result && RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(systemType, true).length == 0) {
 				result = false;
 			}
 		}
@@ -304,7 +306,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 		// SystemClearAllPasswordsAction is accepted only if passwords are supported
 		// by any of the sub systems.
 		if (actionClass.equals(SystemClearAllPasswordsAction.class)) {
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			IConnectorService[] connectorServices = registry.getConnectorServices(host);
 			boolean passwordsSupported = false;
 			for (int i = 0; i < connectorServices.length && passwordsSupported == false; i++) {

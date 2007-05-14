@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,11 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -61,7 +62,7 @@ public class SystemNewProfileWizardMainPage
 		super(wizard, "NewProfile",  //$NON-NLS-1$
 		      SystemResources.RESID_NEWPROFILE_PAGE1_TITLE, 
 		      SystemResources.RESID_NEWPROFILE_PAGE1_DESCRIPTION);
-		nameValidator = new ValidatorProfileName(RSEUIPlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());
+		nameValidator = new ValidatorProfileName(RSECorePlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());
 		setHelp(HELPID_PREFIX+"0000");	 //$NON-NLS-1$
 	}
 

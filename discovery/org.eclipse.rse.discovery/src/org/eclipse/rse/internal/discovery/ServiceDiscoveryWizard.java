@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.discovery;
@@ -32,7 +33,6 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.tm.discovery.model.Pair;
 import org.eclipse.tm.discovery.model.Service;
@@ -93,7 +93,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		
 		SystemRefreshAllAction systemRefreshAllAction = new SystemRefreshAllAction(null);
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 				
 		String[] addresses = serviceDiscoveryPage.getAddresses();
 		for (int i = 0; i < addresses.length; i++) {
@@ -109,7 +109,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 				IRSESystemType discoveryType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_DISCOVERY_ID);
 				conn = registry.createHost(discoveryType, "Discovery@" + hostName, hostName, "Discovered services in "+hostName);//$NON-NLS-1$ //$NON-NLS-2$
 			} catch (Exception e) {
-				RSEUIPlugin.getTheSystemRegistry().deleteHost(conn);
+				RSECorePlugin.getTheSystemRegistry().deleteHost(conn);
 				return false;
 			} 
 			
@@ -187,7 +187,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 				}
 			}
 	
-			RSEUIPlugin.getTheSystemRegistry().expandHost(conn);			
+			RSECorePlugin.getTheSystemRegistry().expandHost(conn);			
 		}
 		
 		systemRefreshAllAction.run();

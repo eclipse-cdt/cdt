@@ -14,6 +14,7 @@
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -44,6 +45,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
@@ -73,7 +75,6 @@ import org.eclipse.rse.ui.actions.SystemTablePrintAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemSelectAnythingDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -339,7 +340,7 @@ public class SystemTableViewPart extends ViewPart
 				((ISystemContainer)inputObject).markStale(true);
 			}
 			((SystemTableViewProvider) _viewer.getContentProvider()).flushCache();
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(inputObject, ISystemResourceChangeEvents.EVENT_REFRESH, inputObject));
 
 			//_viewer.refresh();
@@ -397,7 +398,7 @@ public class SystemTableViewPart extends ViewPart
 			Object inputObject = _viewer.getInput();
 			if (inputObject == null)
 			{
-				inputObject = RSEUIPlugin.getTheSystemRegistry();
+				inputObject = RSECorePlugin.getTheSystemRegistry();
 			}
 			dlg.setInputObject(inputObject);
 			if (dlg.open() == Window.OK)
@@ -641,7 +642,7 @@ public class SystemTableViewPart extends ViewPart
 			String filterID = memento.getString(TAG_TABLE_VIEW_FILTER_ID);
 			String objectID = memento.getString(TAG_TABLE_VIEW_OBJECT_ID);
 
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			Object input = null;
 			if (subsystemId == null)
 			{
@@ -1115,7 +1116,7 @@ public class SystemTableViewPart extends ViewPart
 	        }
 	        else
 	        {
-	            setInput(RSEUIPlugin.getTheSystemRegistry());
+	            setInput(RSECorePlugin.getTheSystemRegistry());
 	        }
 	    }
 
@@ -1159,8 +1160,8 @@ public class SystemTableViewPart extends ViewPart
 		_browsePosition = 0;
 
 		// register global edit actions 		
-		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
-		Clipboard clipboard = registry.getSystemClipboard();
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 
@@ -1228,7 +1229,7 @@ public class SystemTableViewPart extends ViewPart
 		selectionService.removeSelectionListener(this);
 		_viewer.removeSelectionChangedListener(this);
 
-		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSECorePlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		if (_viewer != null)
 		{
 			_viewer.dispose();
@@ -1654,7 +1655,7 @@ public class SystemTableViewPart extends ViewPart
 	private void restoreState(IMemento memento)
 	{
 		RestoreStateRunnable rsr = new RestoreStateRunnable(memento);
-		rsr.setRule(RSEUIPlugin.getTheSystemRegistry());
+		rsr.setRule(RSECorePlugin.getTheSystemRegistry());
 		rsr.schedule();
 		_memento = null;
 	}
@@ -1715,7 +1716,7 @@ public class SystemTableViewPart extends ViewPart
 					ISubSystem subsystem = va.getSubSystem(input);
 					if (subsystem != null)
 					{
-						ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+						ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 						String subsystemID = registry.getAbsoluteNameForSubSystem(subsystem);
 						String profileID = subsystem.getHost().getSystemProfileName();
 						String connectionID = subsystem.getHost().getAliasName();

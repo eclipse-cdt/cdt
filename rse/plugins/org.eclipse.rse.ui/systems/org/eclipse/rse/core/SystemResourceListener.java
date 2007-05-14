@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -583,7 +584,7 @@ public class SystemResourceListener implements ISystemResourceListener, Runnable
     {
     	return SystemPerspectiveHelpers.findRSEView();
     	/*
-        SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+        SystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
         IWorkbench wb = PlatformUI.getWorkbench();
         IWorkbenchWindow[] wbWindows = wb.getWorkbenchWindows();
         for (int idx = 0; idx < wbWindows.length; idx++)
@@ -608,7 +609,7 @@ public class SystemResourceListener implements ISystemResourceListener, Runnable
      */
     private IWorkbenchPage[] getRSEPerspectives()
     {
-        ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+        ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
         IWorkbench wb = PlatformUI.getWorkbench();
         IWorkbenchWindow[] wbWindows = wb.getWorkbenchWindows();
         Vector v = new Vector();
@@ -672,7 +673,7 @@ public class SystemResourceListener implements ISystemResourceListener, Runnable
         }
         else if (runAction == FIRE_EVENT)
         {
-            RSEUIPlugin.getTheSystemRegistry().fireEvent(
+            RSECorePlugin.getTheSystemRegistry().fireEvent(
               new SystemModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ALL_RELOADED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_ALL, "dummy")); //$NON-NLS-1$
         }
 

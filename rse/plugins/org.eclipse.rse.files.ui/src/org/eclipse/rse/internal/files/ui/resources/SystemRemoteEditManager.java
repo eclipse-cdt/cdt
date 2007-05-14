@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.resources;
@@ -34,6 +35,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.resources.ISystemMountPathMapper;
@@ -542,7 +544,7 @@ public class SystemRemoteEditManager
 			String pathStr = properties.getRemoteFilePath();
 			if (subsystemStr != null && pathStr != null)
 			{
-				ISubSystem subsystem = RSEUIPlugin.getTheSystemRegistry().getSubSystem(subsystemStr);
+				ISubSystem subsystem = RSECorePlugin.getTheSystemRegistry().getSubSystem(subsystemStr);
 				if (subsystem != null)
 				{
 					Object rmtObject = null;

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.servicesubsystem;
@@ -19,13 +20,13 @@ package org.eclipse.rse.internal.subsystems.shells.servicesubsystem;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.subsystems.shells.core.ShellStrings;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 
 
@@ -73,7 +74,7 @@ public class OutputRefreshJob extends UIJob
 		{
 			try
 			{
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			if (_outputs != null)
 			{
 				if ((_outputs.length > 0) && (_outputs[0] != null)) {

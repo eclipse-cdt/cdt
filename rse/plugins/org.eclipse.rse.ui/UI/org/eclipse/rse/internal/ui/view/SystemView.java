@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -427,8 +428,9 @@ public class SystemView extends SafeTreeViewer
 		// ----------------------------------------
 		// register with system registry for events
 		// ----------------------------------------
-		RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-		RSEUIPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		sr.addSystemResourceChangeListener(this);
+		sr.addSystemRemoteChangeListener(this);
 		// -----------------------------
 		// Enable right-click popup menu
 		// -----------------------------
@@ -1319,8 +1321,9 @@ public class SystemView extends SafeTreeViewer
 	public void handleDispose(DisposeEvent event) {
 		//if (debug)
 		//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Inside handleDispose for SystemView");
-		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
-		RSEUIPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		sr.removeSystemResourceChangeListener(this);
+		sr.removeSystemRemoteChangeListener(this);
 		busyCursor.dispose();
 		super.handleDispose(event);
 	}
@@ -1595,7 +1598,7 @@ public class SystemView extends SafeTreeViewer
 			Object parent = _event.getParent();
 			
 			String[] properties = new String[1];
-			if (parent == RSEUIPlugin.getTheSystemRegistry()) parent = inputProvider;
+			if (parent == RSECorePlugin.getTheSystemRegistry()) parent = inputProvider;
 			ISubSystem ss = null;
 			Widget item = null;
 			Widget parentItem = null;
@@ -1914,7 +1917,7 @@ public class SystemView extends SafeTreeViewer
 				//  refresh(src); // ONLY VALID WHEN USER TRULY WANTS TO REQUERY CHILDREN FROM HOST
 				//else
 				//  refresh(); // refresh entire tree
-				if ((src == null) || (src == RSEUIPlugin.getTheSystemRegistry()))
+				if ((src == null) || (src == RSECorePlugin.getTheSystemRegistry()))
 					refreshAll();
 				else {
 					//smartRefresh(src, false);
@@ -2428,7 +2431,7 @@ public class SystemView extends SafeTreeViewer
 	protected boolean affectsInput(Object[] elements) {
 		boolean affected = false;
 		IWorkbenchPart viewPart = getWorkbenchPart();
-		if ((viewPart != null) && (getInput() != RSEUIPlugin.getTheSystemRegistry()) && !(getInput() instanceof SystemEmptyListAPIProviderImpl)) {
+		if ((viewPart != null) && (getInput() != RSECorePlugin.getTheSystemRegistry()) && !(getInput() instanceof SystemEmptyListAPIProviderImpl)) {
 			for (int idx = 0; !affected && (idx < elements.length); idx++)
 				affected = affectsInput(elements[idx]);
 		}
@@ -2442,7 +2445,7 @@ public class SystemView extends SafeTreeViewer
 	protected boolean affectsInput(Object element) {
 		boolean affected = false;
 		IWorkbenchPart viewPart = getWorkbenchPart();
-		if ((viewPart != null) && (getInput() != RSEUIPlugin.getTheSystemRegistry()) && !(getInput() instanceof SystemEmptyListAPIProviderImpl)) {
+		if ((viewPart != null) && (getInput() != RSECorePlugin.getTheSystemRegistry()) && !(getInput() instanceof SystemEmptyListAPIProviderImpl)) {
 
 			Object input = viewPart.getSite().getPage().getInput();
 			if (input != null) {

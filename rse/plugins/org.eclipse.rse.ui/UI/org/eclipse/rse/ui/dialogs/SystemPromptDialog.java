@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Uwe Stieber} (Wind River) - API consistency.
+ * Uwe Stieber (Wind River) - API consistency.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -1160,14 +1161,14 @@ public abstract class SystemPromptDialog
 			}
 			if (RSEUIPlugin.isTheSystemRegistryActive())
 			{
-			  RSEUIPlugin.getTheSystemRegistry().setRunnableContext(getShell(),this);
+			  RSEUIPlugin.getTheSystemRegistryUI().setRunnableContext(getShell(),this);
 	          // add a dispose listener for the shell
 	          getShell().addDisposeListener(new DisposeListener() 
 	          {
 		        public void widgetDisposed(DisposeEvent e) 
 		        {
 		          //System.out.println("Inside dispose for SystemPromptDialog");
-        	      RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();		      	
+        	      RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();		      	
 		        }
  	          });
 			}

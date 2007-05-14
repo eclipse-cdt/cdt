@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.window.Window;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -503,7 +505,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             try
             {
                 _saveasFile = _saveasFile.getParentRemoteFileSubSystem().getRemoteFileObject(_saveasFile.getAbsolutePath(), new NullProgressMonitor());
-                RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_saveasFile.getParentRemoteFile(), ISystemResourceChangeEvents.EVENT_REFRESH, null));
+                RSECorePlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_saveasFile.getParentRemoteFile(), ISystemResourceChangeEvents.EVENT_REFRESH, null));
                         
             }
             catch (SystemMessageException e)

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -114,7 +115,7 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 					{
 					}
 				}
-				RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
+				RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
 			}
 
 			/** FIXME - IREmoteFile is systems.core independent now
@@ -181,7 +182,7 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 						{
 						}
 					}
-					RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
+					RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
 				}
 			}
 			catch (SystemMessageException e)
@@ -202,7 +203,7 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 		 */
 		private Object getObjectFor(String str)
 		{
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			// first extract subsystem id
 			int connectionDelim = str.indexOf(":"); //$NON-NLS-1$
 			if (connectionDelim == -1) // not subsystem, therefore likely to be a connection
@@ -266,14 +267,14 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistryUI().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
 		}
 
 		irc = new ProgressMonitorDialog(shell);
-		RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
+		RSEUIPlugin.getTheSystemRegistryUI().setRunnableContext(shell, irc);
 		return irc;
 	}
 }

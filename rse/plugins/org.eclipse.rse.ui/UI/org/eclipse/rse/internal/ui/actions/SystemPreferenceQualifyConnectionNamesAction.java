@@ -12,9 +12,11 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.core.model.SystemPreferenceChangeEvent;
@@ -42,7 +44,7 @@ public class SystemPreferenceQualifyConnectionNamesAction extends SystemBaseActi
 		      parent);
         setSelectionSensitive(false);
         allowOnMultipleSelection(true);
-        sr = RSEUIPlugin.getTheSystemRegistry();	        
+        sr = RSECorePlugin.getTheSystemRegistry();	        
         setChecked(sr.getQualifiedHostNames());
 
 		setHelp(RSEUIPlugin.HELPPREFIX+"actn0008"); //$NON-NLS-1$
@@ -65,7 +67,7 @@ public class SystemPreferenceQualifyConnectionNamesAction extends SystemBaseActi
      */
     private void firePreferenceChangeEvent(int type, boolean oldValue, boolean newValue)
     {
-    	RSEUIPlugin.getTheSystemRegistry().fireEvent(
+    	RSECorePlugin.getTheSystemRegistry().fireEvent(
     	  new SystemPreferenceChangeEvent(type,
     	                                  oldValue ? Boolean.TRUE : Boolean.FALSE,
     	                                  newValue ? Boolean.TRUE : Boolean.FALSE));

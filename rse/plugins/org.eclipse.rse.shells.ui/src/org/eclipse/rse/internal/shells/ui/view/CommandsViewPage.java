@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -53,7 +54,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -205,10 +205,8 @@ FocusListener
 		_tabFolderPage.setLayout(gridLayout);
 		createControl(_tabFolderPage);
 		
-		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
-			
 		// global actions
-		Clipboard clipboard = registry.getSystemClipboard();
+		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), clipboard);
 		_copyAction.setEnabled(false);
 		

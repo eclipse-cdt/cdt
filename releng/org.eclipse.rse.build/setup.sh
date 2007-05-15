@@ -91,12 +91,12 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200705021527.jar ]; then
   tar xfvz cdt-4.0.0-RC0-${cdt_arch}.tar.gz
   rm cdt-4.0.0-RC0-${cdt_arch}.tar.gz
 fi
-if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200703291501.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.emf_2.3.0.v200705110650.jar ]; then
   # EMF 2.3.0 Runtime
   echo "Getting EMF Runtime..."
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200703291501/emf-sdo-runtime-2.3.0M6.zip"
-  unzip -o emf-sdo-runtime-2.3.0M6.zip
-  rm emf-sdo-runtime-2.3.0M6.zip 
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200705110650/emf-sdo-runtime-2.3.0M7.zip"
+  unzip -o emf-sdo-runtime-2.3.0M7.zip
+  rm emf-sdo-runtime-2.3.0M7.zip 
 fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v200701261102/junit.jar ]; then
   # Eclipse Test Framework
@@ -107,8 +107,9 @@ if [ ! -f eclipse/plugins/org.junit_3.8.2.v200701261102/junit.jar ]; then
 fi
 
 # checkout the basebuilder
-baseBuilderTag=M7_33
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.3.0.v20070501-0010.jar ]; then
+baseBuilderTag=M7i_33
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.3.0.v20070501-0010.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build/pdebuild.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder

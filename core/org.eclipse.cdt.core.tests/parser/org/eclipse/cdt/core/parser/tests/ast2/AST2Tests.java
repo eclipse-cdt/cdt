@@ -86,6 +86,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
@@ -3701,5 +3702,92 @@ public class AST2Tests extends AST2BaseTest {
 			"}\n";
 		
 		parseAndCheckBindings(code, ParserLanguage.C);
+	}
+    
+	//	template <typename T>
+	//	class auto_ptr {
+	//	private:
+	//	  T* ptr;
+	//	public:
+	//	  explicit auto_ptr(T* p = 0) : ptr(p) {}
+	//	  ~auto_ptr()                 { delete ptr; }
+	//	  T& operator*()              { return *ptr; }
+	//	  T* operator->()             { return ptr; }
+	//	};
+	//
+	//	class A {
+	//	public:
+	//	  int method() { return 0; }
+	//	};
+	//
+	//	class B {
+	//	  auto_ptr<A> a;
+	//
+	//	  void f() {
+	//	    int b = a->method();        // Problem: method
+	//	    int c = (*a).method();      // Problem: method
+	//	  }
+	//	};
+	public void _test186736() throws Exception {
+		StringBuffer buffer = getContents(1)[0];
+		IASTTranslationUnit tu= parseAndCheckBindings(buffer.toString(), ParserLanguage.CPP);
+		CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        IBinding methodb= col.getName(27).resolveBinding();
+        IBinding methodc= col.getName(30).resolveBinding();
+        assertEquals("method", methodb.getName());
+        assertEquals("method", methodc.getName());
+        assertInstance(methodb, ICPPMethod.class);
+        assertInstance(methodc, ICPPMethod.class);
+        assertEquals("A", ((ICPPMethod)methodb).getClassOwner().getName());
+        assertEquals("A", ((ICPPMethod)methodc).getClassOwner().getName());
+	}
+	
+	//	template <typename T, typename U>
+	//	class odd_pair {
+	//	private:
+	//	  T* ptr1;
+	//	  U* ptr2;
+	//	public:
+	//	  T* operator->()             { return 0; }
+	//	  U* operator->() const       { return 0; }
+	//	};
+	//
+	//	class A {
+	//	public:
+	//	  int method() { return 0; }
+	//	};
+	//
+	//	class AA {
+	//	public:
+	//	  int method() { return 0; }
+	//	};
+	//
+	//	class B {
+	//	public:
+	//	  odd_pair<A, AA> a1;
+	//	  const odd_pair<A, AA> a2;
+	//
+	//	  B() {
+	//	  }
+	//
+	//	  void f() {
+	//	    int b1 = a1->method();        // Problem: method
+	//	    int b2 = a2->method();        // Problem: method
+	//	  }
+	//	};
+	public void _test186736_variant1() throws Exception {
+		StringBuffer buffer = getContents(1)[0];
+		IASTTranslationUnit tu= parseAndCheckBindings(buffer.toString(), ParserLanguage.CPP);
+		CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        IBinding methodA= col.getName(30).resolveBinding();
+        IBinding methodAA= col.getName(33).resolveBinding();
+        assertEquals("method", methodA.getName());
+        assertEquals("method", methodAA.getName());
+        assertInstance(methodA, ICPPMethod.class);
+        assertInstance(methodAA, ICPPMethod.class);
+        assertEquals("A", ((ICPPMethod)methodA).getClassOwner().getName());
+        assertEquals("AA", ((ICPPMethod)methodAA).getClassOwner().getName());
 	}
 }

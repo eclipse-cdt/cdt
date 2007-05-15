@@ -11,7 +11,6 @@
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
@@ -422,7 +422,9 @@ public class BuildStep implements IBuildStep {
 		String result = str;
 		try {
 			if(resolveAll){
-				SupplierBasedCdtVariableSubstitutor sub = createSubstitutor(fileData);
+				IConfiguration cfg = getBuildDescription().getConfiguration();
+				IBuilder builder = cfg.getBuilder();
+				SupplierBasedCdtVariableSubstitutor sub = createSubstitutor(cfg, builder, fileData);
 				result = CdtVariableResolver.resolveToString(str, sub);
 			} else {
 				result = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(str, "", " ", IBuildMacroProvider.CONTEXT_FILE, fileData);	//$NON-NLS-1$	//$NON-NLS-2$
@@ -433,11 +435,13 @@ public class BuildStep implements IBuildStep {
 		return result;
 	}
 	
-	private SupplierBasedCdtVariableSubstitutor createSubstitutor(IFileContextData fileData){
+	private SupplierBasedCdtVariableSubstitutor createSubstitutor(IConfiguration cfg, IBuilder builder, IFileContextData fileData){
 		BuildMacroProvider prov = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 		IMacroContextInfo info = prov.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE, fileData); 
 		FileMacroExplicitSubstitutor sub = new FileMacroExplicitSubstitutor(
 				info,
+				cfg,
+				builder,
 				"", " ");	//$NON-NLS-1$	//$NON-NLS-2$
 
 		return sub;
@@ -445,12 +449,15 @@ public class BuildStep implements IBuildStep {
 	
 	private String[] getCommandFlags(IPath inRcPath, IPath outRcPath, boolean resolveAll){
 		try {
-			return resolveAll ? 
-					((Tool)fTool).getToolCommandFlags(inRcPath, outRcPath, 
-							createSubstitutor(new FileContextData(inRcPath, outRcPath, null, fTool)),
-							BuildMacroProvider.getDefault())
-					:
-						fTool.getToolCommandFlags(inRcPath, outRcPath);
+			if(resolveAll) {
+				IConfiguration cfg = getBuildDescription().getConfiguration();
+				IBuilder builder = cfg.getBuilder();
+					return ((Tool)fTool).getToolCommandFlags(inRcPath, outRcPath, 
+							createSubstitutor(cfg, builder,
+									new FileContextData(inRcPath, outRcPath, null, fTool)),
+							BuildMacroProvider.getDefault());
+			}
+			return fTool.getToolCommandFlags(inRcPath, outRcPath);
 		} catch (BuildException e) {
 		}
 		return new String[0];

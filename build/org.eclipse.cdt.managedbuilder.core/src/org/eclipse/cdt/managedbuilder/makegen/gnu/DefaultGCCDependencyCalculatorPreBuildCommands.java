@@ -19,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
@@ -83,9 +84,9 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		if (buildContext instanceof IConfiguration) {
 			IConfiguration config = (IConfiguration)buildContext;
 			project = (IProject)config.getOwner();
-		} else if (buildContext instanceof IResourceConfiguration) {
-			IResourceConfiguration resConfig = (IResourceConfiguration)buildContext;
-			project = (IProject)resConfig.getOwner();
+		} else if (buildContext instanceof IResourceInfo) {
+			IResourceInfo resInfo = (IResourceInfo)buildContext;
+			project = (IProject)resInfo.getParent().getOwner();
 		}
 		
 		sourceLocation = (source.isAbsolute() ? source : project.getLocation().append(source));

@@ -22,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -125,25 +126,32 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	}
 
 	public class FileContextMacro extends BuildMacro{
-		private IFileContextData fContextData;
-		private IConfiguration fConfiguration;
+//		private IFileContextData fContextData;
+//		private IConfiguration fConfiguration;
 		//TODO: initialize builder
-		private IBuilder fBuilder;
+//		private IBuilder fBuilder;
 		private boolean fIsExplicit = true;
 		private boolean fIsInitialized;
 		private String fExplicitValue;
 		private boolean fIsExplicitResolved;
+		private IPath fInputFileLocation;
+		private IPath fOutputFileLocation;
+
 		private FileContextMacro(String name, IFileContextData contextData){
 			fName = name;
 			fType = VALUE_TEXT;
-			fContextData = contextData;
+
+			loadValue(contextData);
+
+//			fContextData = contextData;
 		}
 		
-		private void loadValue(){
+		private void loadValue(IFileContextData contextData){
 			if(fIsInitialized)
 				return;
 			IBuilder builder = null;
-			IOptionContextData optionContext = fContextData.getOptionContextData();
+			IConfiguration configuration = null;
+			IOptionContextData optionContext = contextData.getOptionContextData();
 			if(optionContext != null){
 				IBuildObject buildObject = optionContext.getParent();
 				if(buildObject instanceof ITool){
@@ -154,11 +162,11 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				if(buildObject instanceof IToolChain){
 					IToolChain toolChain = (IToolChain)buildObject;
 					builder = toolChain.getBuilder();
-					fConfiguration = toolChain.getParent();
-				} else if (buildObject instanceof IResourceConfiguration){
-					fConfiguration = ((IResourceConfiguration)buildObject).getParent();
-					if(fConfiguration != null){
-						IToolChain toolChain = fConfiguration.getToolChain();
+					configuration = toolChain.getParent();
+				} else if (buildObject instanceof IResourceInfo){
+					configuration = ((IResourceInfo)buildObject).getParent();
+					if(configuration != null){
+						IToolChain toolChain = configuration.getToolChain();
 						if(toolChain != null)
 							builder = toolChain.getBuilder();
 					}
@@ -176,25 +184,27 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			
 			if(fStringValue == null){
 				fIsExplicit = true;
-				fStringValue = getExplicitFileMacroValue(fName, fContextData.getInputFileLocation(), fContextData.getOutputFileLocation(), fBuilder, fConfiguration);
+				fStringValue = getExplicitFileMacroValue(fName, contextData.getInputFileLocation(), contextData.getOutputFileLocation(), builder, configuration);
 				fExplicitValue = fStringValue;
 				fIsExplicitResolved = true;
 			}
 			
+			fInputFileLocation = contextData.getInputFileLocation();
+			fOutputFileLocation = contextData.getOutputFileLocation();
 			fIsInitialized = true;
 		}
 		
-		public String getExplicitMacroValue(){
-			loadValue();
+		public String getExplicitMacroValue(IConfiguration configuration, IBuilder builder){
+//			loadValue();
 			if(!fIsExplicitResolved){
-				fExplicitValue = getExplicitFileMacroValue(fName, fContextData.getInputFileLocation(), fContextData.getOutputFileLocation(), fBuilder, fConfiguration);
+				fExplicitValue = getExplicitFileMacroValue(fName, fInputFileLocation, fOutputFileLocation, builder, configuration);
 				fIsExplicitResolved = true;
 			}
 			return fExplicitValue;
 		}
 		
 		public boolean isExplicit(){
-			loadValue();
+//			loadValue();
 			return fIsExplicit;
 		}
 		
@@ -202,7 +212,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringValue()
 		 */
 		public String getStringValue(){
-			loadValue();
+//			loadValue();
 			return fStringValue;
 		}
 	}
@@ -861,22 +871,22 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	}
 
 	public class OptionMacro extends BuildMacro{
-		private IOptionContextData fOptionContextData;
-		private IOptionContextData fParentOptionContextData;
+//		private IOptionContextData fOptionContextData;
+//		private IOptionContextData fParentOptionContextData;
 //		private IOption fParentOption;
 		private OptionMacro(String name, IOptionContextData optionContextData){
 			fName = name;
-			fOptionContextData = optionContextData;
-			fParentOptionContextData = getParent(fOptionContextData);
-			load();
+//			fOptionContextData = optionContextData;
+			IOptionContextData parentOptionContextData = getParent(optionContextData);
+			load(optionContextData, parentOptionContextData);
 		}
 		
-		private boolean load(){
+		private boolean load(IOptionContextData optionContextData, IOptionContextData parentOptionContextData){
 			fStringValue = null;
 			fStringListValue = null;
 			fType = 0;
-			if(fParentOptionContextData != null){
-				IOption option = fParentOptionContextData.getOption();
+			if(parentOptionContextData != null){
+				IOption option = parentOptionContextData.getOption();
 				try{
 					switch (option.getValueType()) {
 					case IOption.BOOLEAN:
@@ -949,9 +959,9 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 						break;
 					}
 					if(fStringValue != null)
-						fStringValue = CdtVariableResolver.resolveToString(fStringValue,new IncludeDefaultsSubstitutor(fParentOptionContextData));
+						fStringValue = CdtVariableResolver.resolveToString(fStringValue,new IncludeDefaultsSubstitutor(parentOptionContextData));
 					else if(fStringListValue != null)
-						fStringListValue = CdtVariableResolver.resolveStringListValues(fStringListValue,new IncludeDefaultsSubstitutor(fParentOptionContextData), true);
+						fStringListValue = CdtVariableResolver.resolveStringListValues(fStringListValue,new IncludeDefaultsSubstitutor(parentOptionContextData), true);
 				}catch(Exception e){
 					fType = 0;
 				}

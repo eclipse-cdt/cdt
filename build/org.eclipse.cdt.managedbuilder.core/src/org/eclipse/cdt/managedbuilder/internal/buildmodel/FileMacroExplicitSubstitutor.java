@@ -13,18 +13,26 @@ package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.macros.MbsMacroSupplier;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 
 public class FileMacroExplicitSubstitutor extends SupplierBasedCdtVariableSubstitutor {
-		
+	private IConfiguration fCfg;	
+	private IBuilder fBuilder;	
 //	public FileMacroExplicitSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter){
 //		super(contextType, contextData, inexistentMacroValue, listDelimiter);
 //	}
 
-	public FileMacroExplicitSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
+	public FileMacroExplicitSubstitutor(IMacroContextInfo contextInfo, 
+			IConfiguration cfg,
+			IBuilder builder,
+			String inexistentMacroValue, String listDelimiter){
 		super(contextInfo, inexistentMacroValue, listDelimiter);
+		fCfg = cfg;
+		fBuilder = builder;
 	}
 
 	/* (non-Javadoc)
@@ -33,7 +41,7 @@ public class FileMacroExplicitSubstitutor extends SupplierBasedCdtVariableSubsti
 	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException{
 		if(macro instanceof MbsMacroSupplier.FileContextMacro){
 			MbsMacroSupplier.FileContextMacro fileMacro = (MbsMacroSupplier.FileContextMacro)macro;
-			String val = fileMacro.getExplicitMacroValue();
+			String val = fileMacro.getExplicitMacroValue(fCfg, fBuilder);
 			return new ResolvedMacro(macro.getName(), val);
 		}
 		return super.resolveMacro(macro);

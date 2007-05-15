@@ -37,7 +37,7 @@ public class TerminalConnectorExtension {
 	 * @return a new list of ITerminalConnectors. 
 	 */
 	public static ITerminalConnector[] getTerminalConnectors() {
-		IConfigurationElement[] config=RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.internal.terminal.provisional.api.terminalConnector"); //$NON-NLS-1$
+		IConfigurationElement[] config=RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnector"); //$NON-NLS-1$
 		List result=new ArrayList();
 		for (int i = 0; i < config.length; i++) {
 			try {

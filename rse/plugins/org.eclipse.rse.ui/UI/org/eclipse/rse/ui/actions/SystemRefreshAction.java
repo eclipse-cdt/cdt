@@ -17,7 +17,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -77,40 +79,77 @@ public class SystemRefreshAction extends SystemBaseAction
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		if (_selection != null)
 		{
-			Vector parents = new Vector();
+			Set localItems = new HashSet();
+			Set remoteItems = new HashSet();
+			Vector namesToSelect = new Vector();
 			
 			Iterator iter = _selection.iterator();
-			
-			while(iter.hasNext())
-			{
+			while(iter.hasNext()) {
 				Object obj = iter.next();
-				
-				if (obj instanceof ISystemContainer)
-				{
+				if (obj instanceof ISystemContainer) {
 					((ISystemContainer)obj).markStale(true);
 				}
 				
 				// get the adapter and find out if it's a leaf node. If so, refresh the parent as well.
 				ISystemViewElementAdapter adapter = getViewAdapter(obj);
-				
 				if (adapter != null) {
-					Object parent = adapter.getParent(obj);
-					boolean hasChildren = adapter.hasChildren((IAdaptable)obj);
-					
-					if ((parent != null) && !hasChildren && (!parents.contains(parent))) {
-						parents.add(parent);
-						sr.fireEvent(new SystemResourceChangeEvent(parent, ISystemResourceChangeEvents.EVENT_REFRESH, parent));						
+					// choose the item to refresh -- use parent in case of leaf node
+					Object itemToRefresh = obj;
+					if (!adapter.hasChildren((IAdaptable)obj)) {
+						Object parent = adapter.getParent(obj);
+						if (parent!=null) {
+							itemToRefresh = parent;
+						}
 					}
-					
-					sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH, obj));
+
+					// If we can REFRESH_REMOTE, add the absolute name to reselect
+					String absoluteName = adapter.getAbsoluteName(obj);
+					if (absoluteName!=null) {
+						//Remote items will be refreshed later
+						remoteItems.add(itemToRefresh);
+						namesToSelect.add(absoluteName);
+					} else if (!localItems.contains(obj)) {
+						localItems.add(obj);
+						sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH, obj));
+					}
 				}
 				else {
 					sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH, obj));
 				}
 			}
+			//Free objects
+			localItems.clear();
+			//Deferred refresh of remote items: Try to optimize refresh by reducing the number of parents
+			boolean itemsChanged = true;
+			while (remoteItems.size()>1 && itemsChanged) {
+				itemsChanged = false;
+				Iterator it = remoteItems.iterator();
+				while (it.hasNext()) {
+					Object obj = it.next();
+					ISystemViewElementAdapter adapter = getViewAdapter(obj);
+					Object parent = adapter.getParent(obj);
+					if (remoteItems.contains(parent)) {
+						it.remove();
+						itemsChanged = true;
+					}
+				}
+			}
+			//Fire events
+			Iterator it = remoteItems.iterator();
+			while (it.hasNext()) {
+				Object obj = it.next();
+				String absName = getViewAdapter(obj).getAbsoluteName(obj);
+				if (absName!=null) {
+					sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, namesToSelect));
+				} else {
+					sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH, obj));
+					sr.fireEvent(new SystemResourceChangeEvent(namesToSelect, ISystemResourceChangeEvents.EVENT_SELECT_REMOTE, null));
+				}
+			}
 		}
 		else
 		{
+			//TODO Check if this is dead code?
 			if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener))
 			{			
 			  sr.fireEvent((ISystemResourceChangeListener)viewer,

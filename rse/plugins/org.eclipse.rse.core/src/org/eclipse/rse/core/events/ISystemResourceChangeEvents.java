@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.core.events;
 
+import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
+
 /**
  * Interface of event ID constants
  */
@@ -126,29 +128,78 @@ public interface ISystemResourceChangeEvents
 	 * The event is an icon change event
 	 */
 	public static final int EVENT_ICON_CHANGE = 81;
+
 	/**
-	 * The event is a full refresh event: all expanded sub-nodes are re-queried for their children, unexpanded nodes lose their children cache.
+	 * Refresh the single item passed in the "source" field of the event.
+	 * 
+	 * All expanded sub-nodes are re-queried for their children, unexpanded
+	 * nodes lose their children cache. Selection is not maintained by this
+	 * event (use EVENT_REFRESH_REMOTE instead to maintain the selection).
 	 */
 	public static final int EVENT_REFRESH = 82;
+
 	/**
-	 * The event is a selection-dependent refresh event: all expanded sub-nodes are re-queried for their children, unexpanded nodes lose their children cache.
+	 * Refresh the items currently selected in the SystemView.
+	 *  
+	 * All expanded sub-nodes are re-queried for their children, unexpanded nodes
+	 * lose their children cache. After refreshing, selection of the currently selected
+	 * elements is restored if possible (in case an absoluteName is available).
+	 * 
+	 * In case any of the selected items is a leaf node, the parent of that
+	 * leaf node is refreshed rather than the leaf node itself. In this particular
+	 * case, a multiselect is not considered properly.
+	 * 
+	 * The SystemScratchpadView also listens to this event and refreshes those
+	 * elements that are selected in it.
+	 * 
+	 * @deprecated obtain the selection yourself and do EVENT_REFRESH or EVENT_REFRESH_REMOTE
 	 */
 	public static final int EVENT_REFRESH_SELECTED = 83;
+
 	/**
-	 * The event is a selection-dependent refresh event: refreshes the parent of the current selections
+	 * Refresh the parent of the first item currently selected in the SystemView.
+	 * 
+	 * This only refreshes the parent TreeItem of the first item in the selection.
+	 * It does not consider multiselect, multiple occurrences of the Item under multiple
+	 * filters, and does not maintain the current selection.
+	 * 
+	 * @deprecated obtain the selection yourself and do EVENT_REFRESH or EVENT_REFRESH_REMOTE
 	 */
 	public static final int EVENT_REFRESH_SELECTED_PARENT = 84;
+
 	/**
-	 * The event is a selection-dependent refresh event: from the filter level, all expanded sub-nodes are re-queried for their children, unexpanded nodes lose their children cache.
+	 * Refresh the filter under which the first item currently selected in the 
+	 * SystemView is found.
+	 * 
+	 * From the filter level, all expanded sub-nodes are re-queried
+	 * for their children, unexpanded nodes lose their children cache.
+	 * After refreshing, selection of the currently selected elements
+	 * is restored if possible. Multiselect is not considered properly.
+	 * 
+	 * @deprecated Refreshing a particular context(filter) only can lead
+	 *     to inconsistencies, so better obtain the selection yourself
+	 *     and do EVENT_REFRESH or EVENT_REFRESH_REMOTE
 	 */
 	public static final int EVENT_REFRESH_SELECTED_FILTER = 135;
+
 	/**
-	 * The event is refreshes a remote object (has an ISystemViewRemoteElementAdapter) given either the remote object or a string that will match on getAbsoluteName.
-	 * The tricky part about remote objects is their actual memory object changes on each refresh, so to find one in the tree we must use something
+	 * Refresh a remote object in the SystemView, given either the remote 
+	 * object or a string that will match on getAbsoluteName, and optionally
+	 * (re)select a list of objects after refreshing.
+	 * 
+	 * An object is considered remote if it has an adapter that implements
+	 * {@link ISystemViewElementAdapter}, so it is possible to get the 
+	 * associated subsystem and absolute name. This method refreshes all
+	 * occurrences of the remote object, even under multiple filters.
+	 * The tricky part about remote objects is their actual memory object changes
+	 * on each refresh, so to find one in the tree we must use something
 	 * more permanent: hence the use of getAbsoluteName to find it. 
 	 * <p>
-	 * You can optionally pass a child remote object, or string, or vector of objects or strings, in the parent parameter, and it/they will be selected after the refresh.
-	 * If it a string then it must be the result of getAbsoluteName on the adapter.
+	 * You can optionally pass a child remote object, or string, or Vector of
+	 * objects or strings, in the "parent" parameter of the event, and it/they
+	 * will be selected after the refresh. When passing a string, it must be 
+	 * the result of {@link IRemoteObjectIdentifier#getAbsoluteName(Object)}
+	 * on the adapter.
 	 */
 	public static final int EVENT_REFRESH_REMOTE = 85;
 
@@ -192,8 +243,16 @@ public interface ISystemResourceChangeEvents
 	 * The event is simply to force selection of the given object.
 	 */
 	public static final int EVENT_SELECT = 100;
+
 	/**
-	 * The event is to select a remote object
+	 * Select one or more remote objects.
+	 * 
+	 * The "src" parameter holds a remote object, or string, or Vector of
+	 * objects or strings. When passing a string, it must be the result of
+	 * {@link IRemoteObjectIdentifier#getAbsoluteName(Object)}
+	 * on the adapter of the object.
+	 * The "parent" parameter can optionally hold a model object that is 
+	 * the parent of the objects to be refreshed, in order to optimize searches.
 	 */
 	public static final int EVENT_SELECT_REMOTE = 101;
 

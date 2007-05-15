@@ -1718,7 +1718,9 @@ public class SystemViewPart
 							list.add(element);
 					//System.out.println("Added to selection list: " + element);
 				}
-				systemView.setSelection(new StructuredSelection(list));
+				if (list.size()>0) {
+					systemView.setSelection(new StructuredSelection(list));
+				}
 				if (remoteElements.size() > 0)
 				{
 					Vector v = new Vector();

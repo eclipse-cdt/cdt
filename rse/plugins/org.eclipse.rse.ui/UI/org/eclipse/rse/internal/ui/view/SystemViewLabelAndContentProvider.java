@@ -287,7 +287,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	               // if (ss.isConnected())
 	                {
 			            
-						Object[] children = manager.getChildren(object);
+						Object[] children = manager.getChildren(object, getViewer());
 						if (children != null) 
 						{
 							// This will be a placeholder to indicate 

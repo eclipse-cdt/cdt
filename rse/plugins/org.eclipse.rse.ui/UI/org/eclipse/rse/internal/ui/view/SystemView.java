@@ -1609,6 +1609,8 @@ public class SystemView extends SafeTreeViewer
 
 		public ResourceChangedJob(ISystemResourceChangeEvent event, SystemView originatingViewer) {
 			super("Resource Changed..."); //$NON-NLS-1$
+			//FIXME Shouldn't the originatingViewer be taken from the event if possible, if it is instanceof ISystemResourceChangeEventUI?
+			//See also originatedHere, below
 			_originatingViewer = originatingViewer;
 			_event = event;
 		}
@@ -1941,6 +1943,7 @@ public class SystemView extends SafeTreeViewer
 				if ((src == null) || (src == RSECorePlugin.getTheSystemRegistry()))
 					refreshAll();
 				else {
+					//FIXME Why do we forceRemote here? EVENT_REFRESH_SELECTED also does not do forceRemote.
 					//smartRefresh(src, false);
 					smartRefresh(src, true);
 				}
@@ -1996,6 +1999,7 @@ public class SystemView extends SafeTreeViewer
 				}
 				if (parentElementItem != null) {
 					//refresh(parentElement);
+					//FIXME IF a multi-select contains elements with a different parent than the one found, they will be ignored.
 					smartRefresh(new TreeItem[] { (TreeItem) parentElementItem });
 					if (selectedRemoteObjects.size() > 0) {
 						selectRemoteObjects(selectedRemoteObjects, ss, parentElementItem);
@@ -2797,18 +2801,27 @@ public class SystemView extends SafeTreeViewer
 		ISystemViewElementAdapter rmtAdapter = null;
 		ISubSystem subsystem = null;
 		String oldElementName = null;
+		boolean doesDeferredQueries = false;
 		if (!(remoteObject instanceof String)) {
 			rmtAdapter = getViewAdapter(remoteObject);
 			if (rmtAdapter == null) return false;
 			subsystem = rmtAdapter.getSubSystem(remoteObject);
 			oldElementName = rmtAdapter.getAbsoluteName(remoteObject);
+			doesDeferredQueries = rmtAdapter.supportsDeferredQueries(subsystem);
 		} else
 			oldElementName = (String) remoteObject;
 
 		Vector matches = new Vector();
 		// STEP 2: find all references to the object
 		findAllRemoteItemReferences(oldElementName, remoteObject, subsystem, matches);
-		if (remoteObject instanceof String) remoteObject = getFirstRemoteObject(matches);
+		if (remoteObject instanceof String) {
+			remoteObject = getFirstRemoteObject(matches);
+			rmtAdapter = getViewAdapter(remoteObject);
+			if (rmtAdapter!=null) {
+				subsystem = rmtAdapter.getSubSystem(remoteObject);
+				doesDeferredQueries = rmtAdapter.supportsDeferredQueries(subsystem);
+			}
+		}
 
 		if (remoteObject instanceof ISystemContainer) {
 			((ISystemContainer) remoteObject).markStale(true);
@@ -2842,7 +2855,11 @@ public class SystemView extends SafeTreeViewer
 						// STEP 4: If requested, select the kids in the newly refreshed object. 
 						// If the same binary object appears multiple times, select the kids in the first occurrence.
 						//  ... what else to do?
-						if (!(toSelect instanceof SystemViewDummyObject)) selectRemoteObjects(toSelect, null, match); // select the given kids in this parent
+						if (!doesDeferredQueries && !(toSelect instanceof SystemViewDummyObject)) {
+							//selecting remote objects makes only sense if not deferred, because
+							//in the deferred case the objects will be retrieved in a separate job.
+							selectRemoteObjects(toSelect, null, match); // select the given kids in this parent
+						}
 					}
 				}
 			}
@@ -2894,7 +2911,8 @@ public class SystemView extends SafeTreeViewer
 		if (forceRemote || (isSelectionRemote() && isTreeItemSelectedOrChildSelected(widget))) {
 			if (!isTreeItemSelected(widget)) // it is one of our kids that is selected
 			{
-				clearSelection(); // there is nothing much else we can do. Calling code will restore it anyway hopefully
+				//MOB cannot see why the selection is cleared here
+				//clearSelection(); // there is nothing much else we can do. Calling code will restore it anyway hopefully
 				doOurInternalRefresh(fWidget, fElement, fDoStruct, true);
 			} else // it is us that is selected. This might be a refresh selected operation. TreeItem address won't change
 			{

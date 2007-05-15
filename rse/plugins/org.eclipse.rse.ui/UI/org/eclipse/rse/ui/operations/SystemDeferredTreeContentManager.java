@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,7 +9,7 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [181145] restore selection after deferred query
  ********************************************************************************/
 package org.eclipse.rse.ui.operations;
 
@@ -54,26 +54,6 @@ public class SystemDeferredTreeContentManager extends
         return super.getAdapter(element);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.progress.DeferredTreeContentManager#getChildren(java.lang.Object)
-     */
-    public Object[] getChildren(final Object parent) {
-        IDeferredWorkbenchAdapter element = getAdapter(parent);
-        if (element == null) {
-			return null;
-		}
-        PendingUpdateAdapter placeholder = createPendingUpdateAdapter();
-       
-        if (!_pendingQueries.contains(parent))
-        {
-        	startFetchingDeferredChildren(parent, element, placeholder);
-        	_pendingQueries.add(parent);
-        	return new Object[] { placeholder };
-        }
-        return null;
-    }
-    
     /**
      * Returns the child elements of the given element, or in the case of a
      * deferred element, returns a placeholder. If a deferred element is used, a
@@ -91,9 +71,6 @@ public class SystemDeferredTreeContentManager extends
      */
     public Object[] getChildren(final Object parent, final Viewer viewer) {
     	final ISelection selection = viewer.getSelection();
-    	if (selection.isEmpty()) {
-    		return getChildren(parent);
-    	}
         IDeferredWorkbenchAdapter element = getAdapter(parent);
         if (element == null) {
 			return null;

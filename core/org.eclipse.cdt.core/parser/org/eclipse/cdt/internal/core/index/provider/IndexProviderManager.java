@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.Platform;
  */
 public final class IndexProviderManager implements IElementChangedListener {
 	public static final String READ_ONLY_PDOM_PROVIDER= "ReadOnlyPDOMProvider"; //$NON-NLS-1$
-	private IIndexFragmentProvider[] allProviders;
+	private IIndexFragmentProvider[] allProviders= {};
 	private Map provisionMap= new HashMap();
 	
 	public IndexProviderManager() {

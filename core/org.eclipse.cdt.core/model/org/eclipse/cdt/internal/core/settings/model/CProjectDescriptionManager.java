@@ -277,7 +277,6 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private static CProjectDescriptionManager fInstance;
 
 	private CProjectDescriptionManager(){
-		fDescriptorManager= CConfigBasedDescriptorManager.getInstance();
 	}
 	
 	public static CProjectDescriptionManager getInstance(){
@@ -292,25 +291,28 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return fInstance;
 	}
 
+	public Job startup(){
+		if(fRcChangeHandler == null){
+			fRcChangeHandler = new ResourceChangeHandler();
 
-	public void registerResourceListener() {
-		assert fRcChangeHandler == null;
-		fRcChangeHandler = new ResourceChangeHandler();
-		
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				fRcChangeHandler, 
-				IResourceChangeEvent.POST_CHANGE 
-				| IResourceChangeEvent.PRE_DELETE
-				| IResourceChangeEvent.PRE_CLOSE
-				/*| IResourceChangeEvent.POST_BUILD*/);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(
+					fRcChangeHandler, 
+					IResourceChangeEvent.POST_CHANGE 
+					| IResourceChangeEvent.PRE_DELETE
+					| IResourceChangeEvent.PRE_CLOSE
+			/*| IResourceChangeEvent.POST_BUILD*/);
+
+			if(fDescriptorManager == null){
+				fDescriptorManager = CConfigBasedDescriptorManager.getInstance();
+				fDescriptorManager.startup();
+			}
+
+			CExternalSettingsManager.getInstance().startup();
+		}
+		return createPostStartupJob();
 	}
 	
-	public void startup(){
-		assert fRcChangeHandler != null;
-		fDescriptorManager.startup();
-
-		CExternalSettingsManager.getInstance().startup();
-
+	private Job createPostStartupJob() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		Job rcJob = new Job(SettingsModelMessages.getString("CProjectDescriptionManager.0")){ //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
@@ -332,7 +334,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		rcJob.setRule(root);
 		rcJob.setPriority(Job.INTERACTIVE);
 		rcJob.setSystem(true);
-		rcJob.schedule();
+		return rcJob;
 	}
 
 	/*

@@ -336,49 +336,32 @@ public class CCorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
-		// make sure to register the resource listener as the first one in CDT:
+		// do harmless stuff first.
+		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
+		configurePluginDebugOptions();
+		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
+        PositionTrackerManager.getInstance().install();
+
+        // new project model needs to register the resource listener first.
 		fNewCProjectDescriptionManager= CProjectDescriptionManager.getInstance();
-		fNewCProjectDescriptionManager.registerResourceListener();
+		final Job post1= fNewCProjectDescriptionManager.startup();
 
 		fPathEntryVariableManager = new CdtVarPathEntryVariableManager();
-		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
+		fPathEntryVariableManager.startup();
+
 		fCoreModel = CoreModel.getDefault();
+		fCoreModel.startup();
 
-		// Fire up the PDOM
 		pdomManager = new PDOMManager();
-
-		//Set debug tracing options
-		configurePluginDebugOptions();
+		final Job post2= pdomManager.startup();
 		
-		// Set the default for using the structual parse mode to build the CModel
-		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
-
-        PositionTrackerManager.getInstance().install();
-        
         // bug 186755, when started after the platform has been started the jobmanager
         // is no longer suspended. So we have to start a job at the very end to make
         // sure we don't trigger a concurrent plugin activation from within the job.
-        Job postStartupJob= new Job(CCorePlugin.getResourceString("CCorePlugin.startupJob")) { //$NON-NLS-1$
-			protected IStatus run(IProgressMonitor monitor) {
-				postStart();
-				return Status.OK_STATUS;
-			}
-			public boolean belongsTo(Object family) {
-				return family == CCorePlugin.this;
-			}
-        };
-        postStartupJob.setSystem(true);
-        postStartupJob.schedule();
+		post1.schedule();
+		post2.schedule();
 	}
     
-    
-    protected void postStart() {
-		fNewCProjectDescriptionManager.startup();
-		fPathEntryVariableManager.startup();
-		CoreModel.getDefault().startup();
-		pdomManager.startup();
-	}
-
 	/**
      * TODO: Add all options here
      * Returns a table of all known configurable options with their default values.
@@ -1262,9 +1245,5 @@ public class CCorePlugin extends Plugin {
 	
 	public ICProjectDescriptionManager getProjectDescriptionManager(){
 		return fNewCProjectDescriptionManager;
-	}
-
-	public void joinStartup(IProgressMonitor monitor) throws OperationCanceledException, InterruptedException {
-		Job.getJobManager().join(this, monitor);	
 	}
 }

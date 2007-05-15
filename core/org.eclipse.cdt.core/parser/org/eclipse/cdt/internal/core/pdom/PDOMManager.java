@@ -166,11 +166,24 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private HashMap fUpdatePolicies= new HashMap();
 	private HashMap fPrefListeners= new HashMap();
     
-	/**
-	 * Startup the PDOM. This mainly sets us up to handle model
-	 * change events.
+	public Job startup() {
+		Job postStartupJob= new Job(CCorePlugin.getResourceString("CCorePlugin.startupJob")) { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				postStartup();
+				return Status.OK_STATUS;
+			}
+			public boolean belongsTo(Object family) {
+				return family == PDOMManager.this;
+			}
+		};
+		postStartupJob.setSystem(true);
+		return postStartupJob;	
+	}
+
+	/** 
+	 * Called from a job after plugin start.
 	 */
-	public void startup() {
+	protected void postStartup() {
 		// the model listener is attached outside of the job in
 		// order to avoid a race condition where its not noticed
 		// that new projects are being created
@@ -899,7 +912,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 		try {
 			try {
-				CCorePlugin.getDefault().joinStartup(monitor);
 				Job.getJobManager().join(this, monitor);
 				return true;
 			} catch (OperationCanceledException e1) {

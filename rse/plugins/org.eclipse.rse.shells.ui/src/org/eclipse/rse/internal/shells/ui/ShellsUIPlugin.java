@@ -17,7 +17,7 @@
 
 package org.eclipse.rse.internal.shells.ui;
 
-import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.osgi.framework.BundleContext;
 
 

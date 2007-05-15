@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -19,8 +20,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.ISystemRemoteObjectMatchProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 
 
 /**
@@ -48,7 +49,7 @@ import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
  * </code></pre>
  * <p>
  * The special symbol "%%ast." is resolved into an asterisk as part of the literal name.
- * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter
+ * @see org.eclipse.rse.core.subsystems.ISystemRemoteObjectMatchProvider
  */
 public class SystemRemoteObjectMatcher 
 {
@@ -362,7 +363,7 @@ public class SystemRemoteObjectMatcher
      * Given an ISystemRemoteElement, return true if that element
      * meets this criteria.
      */
-    public boolean appliesTo(ISystemRemoteElementAdapter adapter, Object element)
+    public boolean appliesTo(ISystemRemoteObjectMatchProvider adapter, Object element)
     {
         boolean applies = true;
         // must match on all attributes to apply

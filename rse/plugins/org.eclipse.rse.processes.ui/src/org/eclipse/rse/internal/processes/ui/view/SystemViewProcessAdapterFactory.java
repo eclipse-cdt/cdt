@@ -17,8 +17,8 @@
 package org.eclipse.rse.internal.processes.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.AbstractSystemRemoteAdapterFactory;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;

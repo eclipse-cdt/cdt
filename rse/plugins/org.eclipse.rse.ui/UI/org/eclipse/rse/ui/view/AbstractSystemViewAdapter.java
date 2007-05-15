@@ -39,8 +39,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
@@ -60,6 +58,7 @@ import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.operations.Policy;
@@ -1635,7 +1634,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      * object.  Returns null if the adapter is not defined or the
      * object is not adaptable.
      * <p/>
-     * Just a convenient shortcut to {@link org.eclipse.rse.core.SystemAdapterHelpers#getViewAdapter(Object, Viewer)}
+     * Just a convenient shortcut to {@link org.eclipse.rse.ui.view.SystemAdapterHelpers#getViewAdapter(Object, Viewer)}
      * <p/>
      * Should we allow clients to override this in order to provide an
      * optimized implementation for their models? But it's being called
@@ -1667,7 +1666,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
      * Returns the implementation of ISystemRemoteElement for the given
      * object.  Returns null if this object does not adaptable to this.
      * <p/>
-     * Just a convenient shortcut to {@link org.eclipse.rse.core.SystemAdapterHelpers#getRemoteAdapter(Object, Viewer)}
+     * Just a convenient shortcut to {@link org.eclipse.rse.ui.view.SystemAdapterHelpers#getRemoteAdapter(Object, Viewer)}
      * <p/>
      * Should we allow clients to override this in order to provide an
      * optimized implementation for their models? But it's being called

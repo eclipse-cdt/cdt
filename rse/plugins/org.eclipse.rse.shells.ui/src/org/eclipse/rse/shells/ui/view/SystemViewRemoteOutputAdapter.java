@@ -801,7 +801,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	 * Given a remote object, returns it remote parent object. Eg, given a file, return the folder
 	 *  it is contained in.
 	 */
-	public Object getRemoteParent(Shell shell, Object element) throws Exception
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
 	{
 		if (element instanceof IRemoteOutput)
 		{
@@ -817,7 +817,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	  *  names are allowed if the types are different, such as on iSeries. In this case return only 
 	  *  the names which should be used to do name-uniqueness validation on a rename operation.
 	  */
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element) throws Exception
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
 	{
 		return null;
 	}

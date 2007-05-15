@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.ui.part.ViewPart;
 
 

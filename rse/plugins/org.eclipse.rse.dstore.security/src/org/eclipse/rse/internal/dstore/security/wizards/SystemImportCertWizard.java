@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.wizards;
@@ -21,10 +21,10 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.eclipse.dstore.core.util.ssl.DStoreKeyStore;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.internal.dstore.security.ImageRegistry;
 import org.eclipse.rse.internal.dstore.security.UniversalSecurityProperties;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
 public class SystemImportCertWizard 

@@ -251,7 +251,7 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
     /* (non-Javadoc)
      * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParent(org.eclipse.swt.widgets.Shell, java.lang.Object)
      */
-    public Object getRemoteParent(Shell shell, Object element) throws Exception
+    public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
     {
         // TODO Auto-generated method stub
         return null;
@@ -260,7 +260,7 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
     /* (non-Javadoc)
      * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParentNamesInUse(org.eclipse.swt.widgets.Shell, java.lang.Object)
      */
-    public String[] getRemoteParentNamesInUse(Shell shell, Object element) throws Exception
+    public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
     {
         // TODO Auto-generated method stub
         return null;

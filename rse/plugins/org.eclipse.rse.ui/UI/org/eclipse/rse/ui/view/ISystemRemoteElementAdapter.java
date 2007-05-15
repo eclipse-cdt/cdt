@@ -12,46 +12,23 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
 
-import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
-import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.swt.widgets.Shell;
-
-
-
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.subsystems.ISystemRemoteObjectMatchProvider;
 
 /**
  * This is an interface that only remote system objects supply adapters for.
  * <p>
- * This interface is designed to allow remote property pages to be registered
- * against specific remote system objects of specific name, type or subtype.
+ * This interface is designed to support integration of remote objects
+ * into RSE's subsystems, filters and queries.
  */
-public interface ISystemRemoteElementAdapter extends IRemoteObjectIdentifier
+public interface ISystemRemoteElementAdapter extends ISystemRemoteObjectMatchProvider
 {
 	/**
-	 * Return the name of this object, which may be different than
-	 * the display text ({@link #getText(Object)}).
-	 * <p>
-	 * The unqualified name is used for checking uniqueness during rename
-	 * operations.
-	 * </p>
-	 * @param element the element for which to return the internal name.
-	 * @return a String representing the internal name of the given element.
-	 */
-	public String getName(Object element);
-	
-	/**
-	 * Return the label for this object.
-	 * @see #getName(Object)
-	 * @param element the element for which to return the internal name.
-	 * @return a String representing the UI visible label of the given element.
-	 */
-	public String getText(Object element);
-
-    /**
      * Return fully qualified name that uniquely identifies this remote object's
      * remote parent within its subsystem.
      * <p>
@@ -71,83 +48,6 @@ public interface ISystemRemoteElementAdapter extends IRemoteObjectIdentifier
      */
     public String getAbsoluteParentName(Object element);
     
-	/**
-	 * Return the subsystem that is responsible for getting this remote object.
-	 * <p>
-	 * When used together with getAbsoluteName, allows for unique
-	 * identification of this object.
-	 * </p>
-	 * @return the subsystem owning this remote object.
-	 *     Must not return <code>null</code>.
-	 */
-	public ISubSystem getSubSystem(Object element);
-
-	/**
-	 * Return the subsystem factory id that owns this remote object.
-	 * <p>
-	 * The value must not be translated, so that property pages registered
-	 * via xml can subset by it.
-	 * </p>
-	 * @return the ID of the subsystem configuration that created
-	 *     the subsystem which owns this remote object.
-	 */
-	public String getSubSystemConfigurationId(Object element);	
-
-	/**
-	 * Return a value for the type category property for this object.
-	 * <p>
-	 * The value must not be translated, so that property pages registered
-	 * via xml can subset by it.
-	 * </p>
-	 * @return the category id of this remote object for filtering.
-	 */
-	public String getRemoteTypeCategory(Object element);	
-
-	/**
-	 * Return a value for the type property for this object.
-	 * <p>
-	 * The value must not be translated, so that property pages registered
-	 * via xml can subset by it.
-	 * </p>
-	 * @return the type id of this remote object for filtering.
-	 */
-	public String getRemoteType(Object element);	
-
-	/**
-	 * Return a value for the subtype property for this object.
-	 * <p>
-	 * Not all object types support a subtype, so returning null is ok.
-	 * The value must not be translated, so that property pages registered
-	 * via xml can subset by it.
-	 * </p>
-	 * @return the subtype id of this remote object for filtering.
-	 *     May return <code>null</code>.
-	 */
-	public String getRemoteSubType(Object element);	
-
-	/**
-	 * Return a value for the sub-subtype property for this object.
-	 * <p>
-	 * Not all object types support a sub-subtype, so returning null is ok.
-	 * The value must not be translated, so that property pages registered
-	 * via xml can subset by it.
-	 * </p>
-	 * @return the subsubtype id of this remote object for filtering.
-	 *     May return <code>null</code>.
-	 */
-	public String getRemoteSubSubType(Object element);	
-
-	/**
-	 * Return the source type of the selected object.
-	 * <p>
-	 * Typically, this only makes sense for compilable source members.
-	 * For non-compilable remote objects, this typically just returns null.
-	 * </p>
-	 * @return the sourcetype id of this remote object,
-	 *     or <code>null</code> if not applicable.
-	 */
-	public String getRemoteSourceType(Object element);
-
 	/**
 	 * Update a visible remote object with fresh data from a new object.
 	 * <p>
@@ -214,13 +114,14 @@ public interface ISystemRemoteElementAdapter extends IRemoteObjectIdentifier
 	 * Not all subsystems support a unique parent-child relationship.
 	 * Therefore, it is acceptable to return <code>null</code>.
 	 * </p>
+	 * @param element The element for which to get the parent
+	 * @param monitor Optional progress monitor for long-running operation.
+	 *     May be <code>null</code>.
 	 * @see #getAbsoluteParentName(Object)
 	 * 
-	 * @param shell FIXME why is this needed? Should be removed
-	 * @param element The element for which to get the parent
 	 * @return the parent element, or <code>null</code> if not applicable.
 	 */
-	public Object getRemoteParent(Shell shell, Object element) throws Exception;
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Given a remote object, return the unqualified names of the objects
@@ -232,12 +133,14 @@ public interface ISystemRemoteElementAdapter extends IRemoteObjectIdentifier
 	 * different, such as on iSeries. In this case return only the names which
 	 * should be used to do name-uniqueness validation on a rename operation.
 	 * </p>
-	 * @param shell FIXME why is this needed? Should be removed
 	 * @param element The element for which to get names in use
+	 * @param monitor Optional progress monitor for long-running operation.
+	 *     May be <code>null</code>.
 	 * @return a list of unqualified names contained in this folder to check
-	 *    for uniqueness. FIXME may this return null? 
+	 *    for uniqueness, or <code>null</code> if not applicable or
+	 *    no such names were found. 
 	 */
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element) throws Exception;
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception;
 	
 	/**
 	 * Returns whether user defined actions should be shown for the object.

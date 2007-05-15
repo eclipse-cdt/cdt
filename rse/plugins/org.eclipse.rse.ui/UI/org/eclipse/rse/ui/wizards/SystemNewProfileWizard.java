@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 
 /**

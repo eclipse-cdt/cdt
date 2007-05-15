@@ -12,19 +12,19 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.dstore;
 
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
+import org.eclipse.rse.ui.SystemBasePlugin;
 
 public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystemConfiguration
 {

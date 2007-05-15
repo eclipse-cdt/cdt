@@ -1,5 +1,5 @@
-/* *******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
+/********************************************************************************
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,7 +8,8 @@
  * Don Yantzi (IBM) - initial contribution.
  * David Dykstal (IBM) - initial contribution.
  * Uwe Stieber (Wind River) - restructuring and cleanup
- * *******************************************************************************/
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ ********************************************************************************/
 package org.eclipse.rse.tests;
 
 import java.text.MessageFormat;
@@ -19,13 +20,13 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.tests.core.IRSETestLogCollectorDelegate;
 import org.eclipse.rse.tests.internal.RSEDefaultTestLogCollectorDelegate;
 import org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemAdapterFactory;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystemConfiguration;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystemNode;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.osgi.framework.BundleContext;
 
 /**

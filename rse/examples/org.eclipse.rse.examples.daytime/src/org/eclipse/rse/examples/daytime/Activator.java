@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and Wind River Systems, Inc.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.BundleContext;
 
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.examples.daytime.model.DaytimeAdapterFactory;
 import org.eclipse.rse.examples.daytime.model.DaytimeResource;
+import org.eclipse.rse.ui.SystemBasePlugin;
 
 /**
  * The main plugin class to be used in the desktop.

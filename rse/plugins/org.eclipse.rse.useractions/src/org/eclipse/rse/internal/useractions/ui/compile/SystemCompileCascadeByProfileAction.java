@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.compile;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,10 +7,12 @@ package org.eclipse.rse.internal.useractions.ui.compile;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  *******************************************************************************/
+package org.eclipse.rse.internal.useractions.ui.compile;
+
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -20,6 +20,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDummyAction;
 import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Shell;
 
 /**

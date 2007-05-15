@@ -13,9 +13,10 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  ********************************************************************************/
 
-package org.eclipse.rse.core;
+package org.eclipse.rse.internal.ui;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
@@ -24,6 +25,9 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.rse.core.ISystemResourceListener;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.core.RemoteSystemsProject;
@@ -34,6 +38,7 @@ import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewPart;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;

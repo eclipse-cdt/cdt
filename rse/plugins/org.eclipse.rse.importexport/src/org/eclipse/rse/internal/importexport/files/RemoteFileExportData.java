@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -17,7 +18,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 
 /**
  * Holds data of what to export.

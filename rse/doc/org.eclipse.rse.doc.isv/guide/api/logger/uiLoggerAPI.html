@@ -69,7 +69,7 @@ preference page is supplied:</p>
 
 <h2>Using The Common RSE Log File</h2>
 <p>To log your messages to the common RSE log file in <samp>.metadata\plugins\org.eclipse.rse.ui</samp>,
-either base your plugin class on the <samp>org.eclipse.rse.core.SystemBasePlugin</samp> class and use
+either base your plugin class on the <samp>org.eclipse.rse.ui.SystemBasePlugin</samp> class and use
 the inherited logging methods, or instead of instantiating your own <samp>Logging</samp> object, re-use the
 RSE-supplied logging object by calling <samp>getDefault().getLog()</samp> in the <samp>org.eclipse.rse.ui.RSEUIPlugin</samp>
 class.

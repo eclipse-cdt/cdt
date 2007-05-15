@@ -18,9 +18,9 @@
 package org.eclipse.rse.internal.files.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.services.search.IHostSearchResult;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.ui.IActionFilter;

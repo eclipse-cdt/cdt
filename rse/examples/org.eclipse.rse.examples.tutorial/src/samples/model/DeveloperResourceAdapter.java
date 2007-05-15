@@ -12,8 +12,6 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
- * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
- * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package samples.model;
@@ -198,7 +196,7 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParent(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
-	public Object getRemoteParent(Shell shell, Object element) throws Exception
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
 	{
 		return null; // maybe this would be a Department obj, if we fully fleshed out our model
 	}
@@ -206,7 +204,7 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParentNamesInUse(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element)
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor)
 			throws Exception
 	{
 		// developers names do not have to be unique! So we don't need to implement this!

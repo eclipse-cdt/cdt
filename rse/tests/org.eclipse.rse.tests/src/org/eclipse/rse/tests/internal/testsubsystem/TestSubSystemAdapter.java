@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Tobias Schwarz (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
@@ -78,14 +79,14 @@ public class TestSubSystemAdapter extends SystemViewSubSystemAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParent(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
-	public Object getRemoteParent(Shell shell, Object element) throws Exception {
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParentNamesInUse(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element) throws Exception {
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception {
 		return null;
 	}
 

@@ -7,11 +7,12 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.compile;
 
-import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 
 public class SystemCompileRemoteObjectMatcher {
 	private String ssfId, nameFilter, typeFilter;

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport;
 
-import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.osgi.framework.BundleContext;
 
 /**

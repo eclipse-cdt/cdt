@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
 
-import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.osgi.framework.BundleContext;
 
 

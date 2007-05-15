@@ -7,10 +7,10 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.files.compile;
 
-import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.useractions.ui.compile.ISystemCompileCommandSubstitutor;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
@@ -19,6 +19,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
+import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 
 /**
  * This class is responsible for doing variable substitution for iSeries compile

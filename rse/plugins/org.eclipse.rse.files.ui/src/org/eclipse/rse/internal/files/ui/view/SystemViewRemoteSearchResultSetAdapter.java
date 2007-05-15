@@ -234,7 +234,7 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 	*  it is contained in.
 	* 
 	*/
-	public Object getRemoteParent(Shell shell, Object element) throws Exception
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
 	{
 		return null;
 	}
@@ -246,7 +246,7 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 	 *  names are allowed if the types are different, such as on iSeries. In this case return only 
  	 *  the names which should be used to do name-uniqueness validation on a rename operation.
 	 */
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element) throws Exception
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
 	{
 		return null;
 	}

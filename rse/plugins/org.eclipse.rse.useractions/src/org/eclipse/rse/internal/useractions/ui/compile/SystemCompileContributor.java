@@ -12,8 +12,8 @@
 package org.eclipse.rse.internal.useractions.ui.compile;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 
 public class SystemCompileContributor {
 	private IConfigurationElement config;

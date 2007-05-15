@@ -12,9 +12,10 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  ********************************************************************************/
 
-package org.eclipse.rse.core;
+package org.eclipse.rse.ui;
 
 import java.io.InputStream;
 import java.net.URL;

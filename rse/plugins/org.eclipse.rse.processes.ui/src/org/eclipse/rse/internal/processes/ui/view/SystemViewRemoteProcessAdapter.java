@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemMessageObject;
@@ -40,6 +39,7 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSyst
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
@@ -410,7 +410,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	 * 
 	 * @return an IRemoteProcess object for the parent
 	 */
-	public Object getRemoteParent(Shell shell, Object element) throws Exception
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
 	{
 		return ((IRemoteProcess) element).getParentRemoteProcess();
 	}
@@ -424,7 +424,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	 * 
 	 * @return an array of all file and folder names in the parent of the given IRemoteFile object
 	 */
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element) throws Exception
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
 	{
 		String[] pids = EMPTY_STRING_LIST;
 

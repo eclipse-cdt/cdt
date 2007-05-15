@@ -19,9 +19,9 @@ package org.eclipse.rse.internal.files.ui;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
@@ -50,6 +49,7 @@ import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -441,7 +441,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	 * Given a remote object, returns it remote parent object. Eg, given a file, return the folder
 	 *  it is contained in.
 	 */
-	public Object getRemoteParent(Shell shell, Object element) throws Exception
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
 	{
 		if (element instanceof IHostSearchResult)
 		{
@@ -457,7 +457,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	  *  names are allowed if the types are different, such as on iSeries. In this case return only 
 	  *  the names which should be used to do name-uniqueness validation on a rename operation.
 	  */
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element) throws Exception
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
 	{
 		return null;
 	}

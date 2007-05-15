@@ -197,7 +197,7 @@ public class TestSubSystemNodeAdapter extends AbstractSystemViewAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParent(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
-	public Object getRemoteParent(Shell shell, Object element) throws Exception {
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception {
 		if (isTestSubSystemNode(element))
 			return ((ITestSubSystemNode)element).getParent();
 		return null;
@@ -206,7 +206,7 @@ public class TestSubSystemNodeAdapter extends AbstractSystemViewAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParentNamesInUse(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element) throws Exception {
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception {
 		return null;
 
 	}

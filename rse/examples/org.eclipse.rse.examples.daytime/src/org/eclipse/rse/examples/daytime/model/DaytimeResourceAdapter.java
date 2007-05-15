@@ -12,8 +12,6 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - adapted template for daytime example.
- * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
- * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  ********************************************************************************/
 
 package org.eclipse.rse.examples.daytime.model;
@@ -122,11 +120,11 @@ public class DaytimeResourceAdapter extends AbstractSystemViewAdapter implements
 		return false; // If daytime objects held references to their time string, we'd have to return true
 	}
 
-	public Object getRemoteParent(Shell shell, Object element) throws Exception {
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception {
 		return null; // leave as null if this is the root 
 	}
 
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element)
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor)
 			throws Exception {
 		DaytimeSubSystem ourSS = (DaytimeSubSystem)getSubSystem(element);
 		IDaytimeService service = ourSS.getDaytimeService();

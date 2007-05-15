@@ -18,7 +18,6 @@ package org.eclipse.rse.internal.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
@@ -34,6 +33,7 @@ import org.eclipse.rse.internal.ui.view.team.SystemTeamViewCategoryNode;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewProfileAdapter;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.internal.model.SystemNewConnectionPromptObject;
 import org.eclipse.rse.ui.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;

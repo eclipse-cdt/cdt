@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2005, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  ********************************************************************************/
 
 package org.eclipse.rse.processes.ui;
@@ -19,7 +19,6 @@ package org.eclipse.rse.processes.ui;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.processes.ui.ProcessesPlugin;
 import org.eclipse.rse.internal.processes.ui.SystemProcessesResources;
@@ -31,6 +30,7 @@ import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConst
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemTestFilterStringAction;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
@@ -54,11 +54,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-
 public class SystemProcessFilterStringEditPane extends
 		SystemFilterStringEditPane
 {
-	
 	// GUI widgets
 	
 	protected Label lblStatus;

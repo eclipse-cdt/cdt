@@ -18,10 +18,10 @@ package org.eclipse.rse.internal.files.ui.actions;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.window.Window;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.swt.SWT;

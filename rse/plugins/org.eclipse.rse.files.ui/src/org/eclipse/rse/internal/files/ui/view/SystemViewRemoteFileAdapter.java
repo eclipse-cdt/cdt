@@ -50,7 +50,6 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -121,6 +120,7 @@ import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
@@ -2780,7 +2780,7 @@ public class SystemViewRemoteFileAdapter
 	 * 
 	 * @return an IRemoteFile object for the parent
 	 */
-	public Object getRemoteParent(Shell shell, Object element) throws Exception
+	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
 	{
 		return ((IRemoteFile) element).getParentRemoteFile();
 	}
@@ -2793,7 +2793,7 @@ public class SystemViewRemoteFileAdapter
 	 * 
 	 * @return an array of all file and folder names in the parent of the given IRemoteFile object
 	 */
-	public String[] getRemoteParentNamesInUse(Shell shell, Object element) throws Exception
+	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
 	{
 		String[] names = EMPTY_STRING_LIST;
 

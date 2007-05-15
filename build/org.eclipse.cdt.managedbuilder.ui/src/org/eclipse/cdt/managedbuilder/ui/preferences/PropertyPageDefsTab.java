@@ -29,14 +29,19 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
     private Button show_tree;
 //    private Button show_mul;
     private Button show_mng;
-    private Button show_sav;
     private Button show_tool;
     private Button show_exp;
+
     private Button b_0;
     private Button b_1;
     private Button b_2;
     private Button b_3;
 
+    private Button s_0;
+    private Button s_1;
+    private Button s_2;
+    
+    
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
@@ -44,10 +49,6 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         show_mng = new Button(usercomp, SWT.CHECK);
         show_mng.setText(UIMessages.getString("PropertyPageDefsTab.0")); //$NON-NLS-1$
         show_mng.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		show_sav = new Button(usercomp, SWT.CHECK);
-        show_sav.setText(UIMessages.getString("PropertyPageDefsTab.3")); //$NON-NLS-1$
-        show_sav.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
     	//	show_mul = new Button(usercomp, SWT.CHECK);
         //    show_mul.setText(UIMessages.getString("PropertyPageDefsTab.2")); //$NON-NLS-1$
@@ -65,10 +66,26 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         show_exp.setText(UIMessages.getString("PropertyPageDefsTab.10")); //$NON-NLS-1$
         show_exp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+        Group saveGrp = new Group(usercomp, SWT.NONE);
+        saveGrp.setText(UIMessages.getString("PropertyPageDefsTab.11")); //$NON-NLS-1$
+        saveGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        FillLayout fl = new FillLayout(SWT.VERTICAL);
+        fl.spacing = SPACING;
+        fl.marginHeight = SPACING;
+        fl.marginWidth = SPACING;
+        saveGrp.setLayout(fl);
+        
+        s_0 = new Button(saveGrp, SWT.RADIO);
+        s_0.setText(UIMessages.getString("PropertyPageDefsTab.12")); //$NON-NLS-1$
+        s_1 = new Button(saveGrp, SWT.RADIO);
+        s_1.setText(UIMessages.getString("PropertyPageDefsTab.13")); //$NON-NLS-1$
+        s_2 = new Button(saveGrp, SWT.RADIO);
+        s_2.setText(UIMessages.getString("PropertyPageDefsTab.14")); //$NON-NLS-1$
+        
         Group discGrp = new Group(usercomp, SWT.NONE);
         discGrp.setText(UIMessages.getString("PropertyPageDefsTab.5")); //$NON-NLS-1$
         discGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        FillLayout fl = new FillLayout(SWT.VERTICAL);
+        fl = new FillLayout(SWT.VERTICAL);
         fl.spacing = SPACING;
         fl.marginHeight = SPACING;
         fl.marginWidth = SPACING;
@@ -86,7 +103,6 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         show_tree.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_DTREE));
 	//	show_mul.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI));
 		show_mng.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG));
-		show_sav.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSAVE));
 		show_tool.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOTOOLM));
 		show_exp.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_EXPORT));
 		
@@ -96,13 +112,18 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 			case CDTPrefUtil.DISC_NAMING_ALWAYS_BOTH:    b_2.setSelection(true); break;
 			case CDTPrefUtil.DISC_NAMING_ALWAYS_IDS:     b_3.setSelection(true); break;
 		}
+
+		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_POSSAVE)) {
+			case CDTPrefUtil.POSITION_SAVE_BOTH: s_0.setSelection(true); break;
+			case CDTPrefUtil.POSITION_SAVE_SIZE: s_1.setSelection(true); break;
+			case CDTPrefUtil.POSITION_SAVE_NONE: s_2.setSelection(true); break;
+		}
 	}
 
 	protected void performOK() {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_DTREE, show_tree.getSelection());
 	//	CDTPrefUtil.setBool(CDTPrefUtil.KEY_MULTI, show_mul.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, !show_mng.getSelection());
-		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOSAVE, !show_sav.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOTOOLM, !show_tool.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_EXPORT, show_exp.getSelection());
 		int x = 0;
@@ -110,6 +131,11 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		else if (b_2.getSelection()) x = 2;
 		else if (b_3.getSelection()) x = 3;
 		CDTPrefUtil.setInt(CDTPrefUtil.KEY_DISC_NAMES, x);
+
+		if (s_0.getSelection()) x = 0;
+		else if (s_1.getSelection()) x = 1;
+		else if (s_2.getSelection()) x = 2;
+		CDTPrefUtil.setInt(CDTPrefUtil.KEY_POSSAVE, x);
 	}
 	
 	protected void performDefaults() {

@@ -145,6 +145,8 @@ implements
 	protected ArrayList itabs = new ArrayList();
 	protected ICPropertyTab currentTab;
 
+	private boolean isNewOpening = true;
+	
 	protected class InternalTab {
 		Composite comp;
 		String text;
@@ -535,7 +537,7 @@ implements
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			handleResize(visible);
+			handleResize(true);
 			displayedConfig = true;
 			if (excludeFromBuildCheck != null && resd != null)
 				excludeFromBuildCheck.setSelection(resd.isExcluded());
@@ -552,8 +554,11 @@ implements
 	}
 	
 	protected void handleResize(boolean visible) {
-		if (CDTPropertyManager.getPagesCount() > 1) return; // do not duplicate
-		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSAVE)) return;
+		if (visible && !isNewOpening) return; // do not duplicate
+		isNewOpening = false;
+		
+		int saveMode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_POSSAVE);
+		if (saveMode == CDTPrefUtil.POSITION_SAVE_NONE) return;
 		
 		if (internalElement == null && !checkElement()) 
 			return; // not initialized. Do not process
@@ -569,12 +574,14 @@ implements
 			if (visible) {
 				String w = prj.getPersistentProperty(WIDTH);
 				String h = prj.getPersistentProperty(HEIGHT);
-				String x = prj.getPersistentProperty(XKEY);
-				String y = prj.getPersistentProperty(YKEY);
 				if (w != null) r.width  = Integer.parseInt(w);
 				if (h != null) r.height = Integer.parseInt(h);
-				if (x != null) r.x = Integer.parseInt(x);
-				if (y != null) r.y = Integer.parseInt(y);
+				if (saveMode == CDTPrefUtil.POSITION_SAVE_BOTH) {
+					String x = prj.getPersistentProperty(XKEY);
+					String y = prj.getPersistentProperty(YKEY);
+					if (x != null) r.x = Integer.parseInt(x);
+					if (y != null) r.y = Integer.parseInt(y);
+				}
 				getShell().setBounds(r);
 			} else {
 				prj.setPersistentProperty(WIDTH,  String.valueOf(r.width));
@@ -687,7 +694,10 @@ implements
 	
 	public void dispose() {
 		if (displayedConfig) forEach(ICPropertyTab.DISPOSE);
-		handleResize(false); // save page size 
+		
+		if (!isNewOpening)
+			handleResize(false); // save page size 
+		isNewOpening = true;
 		// clear static variables
 		if (CDTPropertyManager.getPagesCount() == 0) {
 			resd = null;

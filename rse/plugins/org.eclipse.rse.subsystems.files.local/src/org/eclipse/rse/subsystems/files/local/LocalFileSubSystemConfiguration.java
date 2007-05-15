@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [186997] No deferred queries in Local Files
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.local;
@@ -201,6 +202,11 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#supportsSubSystemConnect()
 	 */
 	public boolean supportsSubSystemConnect() {
+		return false;
+	}
+
+	public boolean supportsDeferredQueries() {
+		//No need for deferred queries in Local, since these are always fast
 		return false;
 	}
 

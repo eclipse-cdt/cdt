@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [186997] No deferred queries in Local Files
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -3238,7 +3239,7 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public boolean supportsDeferredQueries(ISubSystem subSys)
 	{
-	    return true;
+		return !subSys.getHost().getSystemType().isLocal();
 	}
 	
 

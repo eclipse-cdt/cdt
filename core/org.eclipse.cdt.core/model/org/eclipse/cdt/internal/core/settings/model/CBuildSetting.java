@@ -56,6 +56,9 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 	public void setOutputDirectories(ICOutputEntry[] entries) {
 		CBuildData data = getBuildData(true);
 		data.setOutputDirectories(entries);
+		if(entries == null){
+			CExternalSettingsManager.getInstance().restoreOutputEntryDefaults(getConfiguration());
+		}
 	}
 
 	public final int getType() {

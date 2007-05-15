@@ -476,11 +476,17 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException {
 		CConfigurationData data = getConfigurationData(true);
 		IProject project = fIsPreference ? null : getProjectDescription().getProject();
-		if(entries != null && entries.length == 0)
+		boolean restoreDefault = false;
+		if(entries == null)
+			restoreDefault = true;
+		else if(entries.length == 0)
 			entries = null;
 		entries = CDataUtil.adjustEntries(entries, false, project);
 		data.setSourceEntries(entries);
 		
+		if(restoreDefault){
+			CExternalSettingsManager.getInstance().restoreSourceEntryDefaults(this);
+		}
 //		ICSourceEntry entry;
 //		IPath entryPath;
 //		IPath paths[];

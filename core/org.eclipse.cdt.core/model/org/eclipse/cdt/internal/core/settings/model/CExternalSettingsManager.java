@@ -795,7 +795,27 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	private CExternalSettinsDeltaCalculator getDeltaCalculator(){
 		return CExternalSettinsDeltaCalculator.getInstance();
 	}
-	
+
+	public void restoreSourceEntryDefaults(ICConfigurationDescription cfg){
+		CfgContainer cr = new CfgContainer(cfg);
+		CfgContainerRefInfoContainer ric = new CfgContainerRefInfoContainer(cr);
+		CExternalSetting[] settings = ric.getRefInfo(false).createExternalSettings();
+		ExtSettingsDelta[] deltas = getDeltaCalculator().getSettingChange(settings, null);
+		if(deltas != null){
+			CExternalSettingsDeltaProcessor.applySourceEntriesChange(cfg, deltas);
+		}
+	}
+
+	public void restoreOutputEntryDefaults(ICConfigurationDescription cfg){
+		CfgContainer cr = new CfgContainer(cfg);
+		CfgContainerRefInfoContainer ric = new CfgContainerRefInfoContainer(cr);
+		CExternalSetting[] settings = ric.getRefInfo(false).createExternalSettings();
+		ExtSettingsDelta[] deltas = getDeltaCalculator().getSettingChange(settings, null);
+		if(deltas != null){
+			CExternalSettingsDeltaProcessor.applyOutputEntriesChange(cfg, deltas);
+		}
+	}
+
 	public void restoreDefaults(ICLanguageSetting ls, int entryKinds){
 		ICConfigurationDescription cfg = ls.getConfiguration();
 		CfgContainer cr = new CfgContainer(cfg);

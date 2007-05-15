@@ -9,7 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
-package org.eclipse.tm.terminal;
+package org.eclipse.tm.internal.terminal.provisional.api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +25,19 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
  * 
  * @author Michael Scharf
  *
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same. Please do not use this API without
+ * consulting with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
  */
 public class TerminalConnectorExtension {
 	/**
 	 * @return a new list of ITerminalConnectors. 
 	 */
 	public static ITerminalConnector[] getTerminalConnectors() {
-		IConfigurationElement[] config=RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnector"); //$NON-NLS-1$
+		IConfigurationElement[] config=RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.internal.terminal.provisional.api.terminalConnector"); //$NON-NLS-1$
 		List result=new ArrayList();
 		for (int i = 0; i < config.length; i++) {
 			try {

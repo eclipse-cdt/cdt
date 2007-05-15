@@ -18,7 +18,7 @@ package org.eclipse.tm.internal.terminal.serial;
 
 import gnu.io.SerialPort;
 
-import org.eclipse.tm.terminal.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public class SerialSettings implements ISerialSettings {
     protected String fSerialPort;

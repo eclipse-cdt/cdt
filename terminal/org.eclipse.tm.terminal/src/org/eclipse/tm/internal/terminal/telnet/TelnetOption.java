@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
-import org.eclipse.tm.terminal.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 
 /**
  * This class represents a single TELNET protocol option at one endpoint of a TELNET

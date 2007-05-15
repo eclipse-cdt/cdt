@@ -28,8 +28,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.tm.terminal.ISettingsPage;
-import org.eclipse.tm.terminal.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 
 class TerminalSettingsDlg extends Dialog {
 	private Combo fCtlConnTypeCombo;

@@ -13,8 +13,8 @@ package org.eclipse.tm.internal.terminal.control.impl;
 
 import java.io.OutputStream;
 
-import org.eclipse.tm.terminal.ITerminalConnector;
-import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
  * need a better name!

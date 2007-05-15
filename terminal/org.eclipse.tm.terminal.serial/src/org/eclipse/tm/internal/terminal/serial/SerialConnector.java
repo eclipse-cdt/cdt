@@ -25,12 +25,12 @@ import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tm.terminal.ISettingsPage;
-import org.eclipse.tm.terminal.ISettingsStore;
-import org.eclipse.tm.terminal.ITerminalConnector;
-import org.eclipse.tm.terminal.ITerminalControl;
-import org.eclipse.tm.terminal.Logger;
-import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 public class SerialConnector implements ITerminalConnector {
 	private OutputStream fOutputStream;

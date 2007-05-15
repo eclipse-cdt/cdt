@@ -24,12 +24,12 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.tm.terminal.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class TerminalViewPlugin extends AbstractUIPlugin {
 	protected static TerminalViewPlugin fDefault;
-	public static final String  PLUGIN_HOME = "org.eclipse.tm.terminal"; //$NON-NLS-1$
+	public static final String  PLUGIN_HOME = "org.eclipse.tm.internal.terminal.provisional.api"; //$NON-NLS-1$
 	public static final String  HELP_VIEW   = PLUGIN_HOME + ".terminal_view"; //$NON-NLS-1$
 
 	/**

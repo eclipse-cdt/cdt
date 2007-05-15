@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
-import org.eclipse.tm.terminal.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public interface ISerialSettings {
 

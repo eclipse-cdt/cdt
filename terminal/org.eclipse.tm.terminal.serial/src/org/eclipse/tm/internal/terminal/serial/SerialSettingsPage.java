@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tm.terminal.ISettingsPage;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 
 public class SerialSettingsPage implements ISettingsPage {
 	private Combo fSerialPortCombo;

@@ -20,8 +20,8 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 
-import org.eclipse.tm.terminal.ITerminalControl;
-import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 public class SerialConnectWorker extends Thread {
 	private final ITerminalControl fControl;

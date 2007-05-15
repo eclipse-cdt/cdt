@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 
-import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
  * Provided by a view implementation.

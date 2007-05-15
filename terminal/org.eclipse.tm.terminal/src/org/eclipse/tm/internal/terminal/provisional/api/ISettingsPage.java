@@ -9,7 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
-package org.eclipse.tm.terminal;
+package org.eclipse.tm.internal.terminal.provisional.api;
 
 import org.eclipse.swt.widgets.Composite;
 
@@ -19,6 +19,12 @@ import org.eclipse.swt.widgets.Composite;
  * TODO: Michael Scharf: provide a mechanism to set an error string
  * TODO: Michael Scharf: provide a long description of a wizard
  * TODO: Michael Scharf: allow multiple pages to be generated
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same. Please do not use this API without
+ * consulting with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
  */
 public interface ISettingsPage {
 	/**

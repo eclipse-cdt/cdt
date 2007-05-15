@@ -47,10 +47,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.control.ICommandInputField;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
-import org.eclipse.tm.terminal.ITerminalConnector;
-import org.eclipse.tm.terminal.ITerminalControl;
-import org.eclipse.tm.terminal.Logger;
-import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
@@ -107,14 +107,14 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#copy()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#copy()
 	 */
 	public void copy() {
 		getCtlText().copy();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#paste()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#paste()
 	 */
 	public void paste() {
 		TextTransfer textTransfer = TextTransfer.getInstance();
@@ -146,14 +146,14 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#selectAll()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#selectAll()
 	 */
 	public void selectAll() {
 		getCtlText().selectAll();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#sendKey(char)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#sendKey(char)
 	 */
 	public void sendKey(char character) {
 		Event event;
@@ -171,7 +171,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#clearTerminal()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#clearTerminal()
 	 */
 	public void clearTerminal() {
 		// The TerminalText object does all text manipulation.
@@ -180,7 +180,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#getClipboard()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#getClipboard()
 	 */
 	public Clipboard getClipboard() {
 		return fClipboard;
@@ -197,35 +197,35 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#setFocus()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setFocus()
 	 */
 	public void setFocus() {
 		getCtlText().setFocus();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#isEmpty()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#isEmpty()
 	 */
 	public boolean isEmpty() {
 		return (getCtlText().getCharCount() == 0);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#isDisposed()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#isDisposed()
 	 */
 	public boolean isDisposed() {
 		return getCtlText().isDisposed();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#isConnected()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#isConnected()
 	 */
 	public boolean isConnected() {
 		return fState==TerminalState.CONNECTED;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#disposeTerminal()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#disposeTerminal()
 	 */
 	public void disposeTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
@@ -245,7 +245,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		waitForConnect();
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#disconnectTerminal()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#disconnectTerminal()
 	 */
 	public void disconnectTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
@@ -372,7 +372,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#setupTerminal()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setupTerminal()
 	 */
 	public void setupTerminal(Composite parent) {
 		fState=TerminalState.CLOSED;
@@ -382,7 +382,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#onFontChanged()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#onFontChanged()
 	 */
 	public void setFont(Font font) {
 		getCtlText().setFont(font);
@@ -448,7 +448,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#displayTextInTerminal(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#displayTextInTerminal(java.lang.String)
 	 */
 	public void displayTextInTerminal(String text) {
 		writeToTerminal("\r\n"+text+"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -485,7 +485,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#setMsg(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setMsg(java.lang.String)
 	 */
 	public void setMsg(String msg) {
 		fMsg = msg;
@@ -501,7 +501,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#getCtlText()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#getCtlText()
 	 */
 	public StyledText getCtlText() {
 		return fCtlText;
@@ -512,7 +512,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#getTerminalText()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#getTerminalText()
 	 */
 	public TerminalText getTerminalText() {
 		return fTerminalText;
@@ -559,7 +559,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 			IContextService contextService = (IContextService) PlatformUI
 					.getWorkbench().getAdapter(IContextService.class);
 			contextActivation = contextService
-					.activateContext("org.eclipse.tm.terminal.TerminalContext"); //$NON-NLS-1$
+					.activateContext("org.eclipse.tm.internal.terminal.provisional.api.TerminalContext"); //$NON-NLS-1$
 		}
 
 		public void focusLost(FocusEvent event) {

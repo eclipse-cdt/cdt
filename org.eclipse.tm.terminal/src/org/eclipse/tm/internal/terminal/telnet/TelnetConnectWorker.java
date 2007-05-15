@@ -22,9 +22,9 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
-import org.eclipse.tm.terminal.ITerminalControl;
-import org.eclipse.tm.terminal.Logger;
-import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 class TelnetConnectWorker extends Thread {
 	private final ITerminalControl fControl;

@@ -14,12 +14,12 @@ package org.eclipse.tm.internal.terminal.ssh;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eclipse.tm.terminal.ISettingsPage;
-import org.eclipse.tm.terminal.ISettingsStore;
-import org.eclipse.tm.terminal.ITerminalConnector;
-import org.eclipse.tm.terminal.ITerminalControl;
-import org.eclipse.tm.terminal.Logger;
-import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;

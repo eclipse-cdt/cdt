@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
-import org.eclipse.tm.terminal.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public class SshSettings implements ISshSettings {
     protected String fHost;

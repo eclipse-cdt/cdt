@@ -24,7 +24,7 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class Activator extends Plugin {
 
-	public static final String PLUGIN_ID = "org.eclipse.tm.terminal.ssh"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.tm.internal.terminal.provisional.api.ssh"; //$NON-NLS-1$
 	private static Activator plugin;
 
 	// ServiceTracker for IJschService

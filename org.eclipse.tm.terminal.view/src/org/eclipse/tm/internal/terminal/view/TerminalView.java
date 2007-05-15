@@ -49,11 +49,11 @@ import org.eclipse.tm.internal.terminal.control.CommandInputFieldWithHistory;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
-import org.eclipse.tm.terminal.ISettingsStore;
-import org.eclipse.tm.terminal.ITerminalConnector;
-import org.eclipse.tm.terminal.Logger;
-import org.eclipse.tm.terminal.TerminalConnectorExtension;
-import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -149,7 +149,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			// millisecond.
 
 			getSite().getPage().showView(
-					"org.eclipse.tm.terminal.view.TerminalView",//$NON-NLS-1$
+					"org.eclipse.tm.internal.terminal.provisional.api.view.TerminalView",//$NON-NLS-1$
 					"SecondaryTerminal" + System.currentTimeMillis(), //$NON-NLS-1$
 					IWorkbenchPage.VIEW_ACTIVATE);
 		} catch (PartInitException ex) {

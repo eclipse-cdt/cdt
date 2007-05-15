@@ -35,10 +35,10 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.telnet.TelnetConnection;
-import org.eclipse.tm.terminal.ITerminalConnector;
-import org.eclipse.tm.terminal.Logger;
-import org.eclipse.tm.terminal.TerminalState;
 
 /**
  * This class processes character data received from the remote host and

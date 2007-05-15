@@ -11,7 +11,7 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
-package org.eclipse.tm.terminal;
+package org.eclipse.tm.internal.terminal.provisional.api;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,13 +29,19 @@ import java.io.PrintStream;
  * </pre>
  * 
  * @author Fran Litterio <francis.litterio@windriver.com>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same. Please do not use this API without
+ * consulting with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
  */
 public final class Logger {
-    public static final String  TRACE_DEBUG_LOG                = "org.eclipse.tm.terminal/debug/log"; //$NON-NLS-1$
-    public static final String  TRACE_DEBUG_LOG_ERROR          = "org.eclipse.tm.terminal/debug/log/error"; //$NON-NLS-1$
-    public static final String  TRACE_DEBUG_LOG_INFO           = "org.eclipse.tm.terminal/debug/log/info"; //$NON-NLS-1$
-    public static final String  TRACE_DEBUG_LOG_CHAR           = "org.eclipse.tm.terminal/debug/log/char"; //$NON-NLS-1$
-    public static final String  TRACE_DEBUG_LOG_BUFFER_SIZE    = "org.eclipse.tm.terminal/debug/log/buffer/size"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG                = "org.eclipse.tm.internal.terminal.provisional.api/debug/log"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_ERROR          = "org.eclipse.tm.internal.terminal.provisional.api/debug/log/error"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_INFO           = "org.eclipse.tm.internal.terminal.provisional.api/debug/log/info"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_CHAR           = "org.eclipse.tm.internal.terminal.provisional.api/debug/log/char"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_BUFFER_SIZE    = "org.eclipse.tm.internal.terminal.provisional.api/debug/log/buffer/size"; //$NON-NLS-1$
 
     private static PrintStream logStream;
 

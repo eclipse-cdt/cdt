@@ -25,9 +25,9 @@ import gnu.io.SerialPortEventListener;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.tm.terminal.ITerminalControl;
-import org.eclipse.tm.terminal.Logger;
-import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
  * UNDER CONSTRUCTION

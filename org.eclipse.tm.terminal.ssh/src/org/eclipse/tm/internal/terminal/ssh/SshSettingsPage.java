@@ -17,7 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tm.terminal.ISettingsPage;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 
 public class SshSettingsPage implements ISettingsPage {
 	private Text fHostText;

@@ -50,7 +50,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.tm.terminal.ITerminalConnector"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector"/>
                </appInfo>
             </annotation>
          </attribute>

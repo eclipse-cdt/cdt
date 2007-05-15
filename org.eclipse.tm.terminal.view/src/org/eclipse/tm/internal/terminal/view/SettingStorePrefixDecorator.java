@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
-import org.eclipse.tm.terminal.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public class SettingStorePrefixDecorator implements ISettingsStore {
 	private final String fPrefix;

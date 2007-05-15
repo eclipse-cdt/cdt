@@ -174,6 +174,8 @@ public class MainActionGroup extends CViewActionGroup {
 		IStructuredSelection celements = (IStructuredSelection) getCView().getViewer().getSelection();
 		IStructuredSelection resources = SelectionConverter.convertSelectionToResources(celements);
 
+		addNewMenu(menu, resources);
+
 		if (resources.isEmpty()) {
 			menu.add(new Separator(IContextMenuConstants.GROUP_GOTO));
 			menu.add(new Separator(IContextMenuConstants.GROUP_OPEN));
@@ -203,8 +205,6 @@ public class MainActionGroup extends CViewActionGroup {
 
 			return;
 		}
-
-		addNewMenu(menu, resources);
 
 		menu.add(new Separator(IContextMenuConstants.GROUP_GOTO));
 		gotoGroup.fillContextMenu(menu);

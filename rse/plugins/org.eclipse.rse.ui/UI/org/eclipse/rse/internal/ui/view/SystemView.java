@@ -25,7 +25,8 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
- * Martin Oberhuber (Wind River) - [186964] Fix adapter actions for multiselect, and and NPE 
+ * Martin Oberhuber (Wind River) - [186964] Fix adapter actions for multiselect, and and NPE
+ * Martin Oberhuber (Wind River) - [186991] Avoid remote refresh if no element is remote 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2910,10 +2911,14 @@ public class SystemView extends SafeTreeViewer
 
 	protected boolean isSelectionRemote() {
 		ISelection s = getSelection();
-		if ((s != null) && (s instanceof IStructuredSelection)) {
+		if (s instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) s;
-			Object firstSel = ss.getFirstElement();
-			if ((firstSel != null) && (getRemoteAdapter(firstSel) != null)) return true;
+			Iterator it = ss.iterator();
+			while (it.hasNext()) {
+				if (getRemoteAdapter(it.next()) != null) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -3184,24 +3189,23 @@ public class SystemView extends SafeTreeViewer
 		else
 			fullRefresh = true;
 		boolean[] wasExpanded = new boolean[itemsToRefresh.length];
-		//boolean anyGivenItemsRemote = false;
 		for (int idx = 0; idx < itemsToRefresh.length; idx++) {
 			TreeItem currItem = itemsToRefresh[idx];
-			// ...if this selected item is expanded, recursively gather up all its expanded descendents
-			Object data = currItem.getData();
-			ISystemViewElementAdapter adapter = null;
-			if (data != null) adapter = getViewAdapter(data);
-			//if (adapter instanceof ISystemRemoteElementAdapter) {
-			//  anyGivenItemsRemote = true;
-			//}
-			if (currItem.getExpanded() && (adapter != null) && adapter.isPromptable(data))
-				setExpandedState(data, false); // collapse temp expansion of prompts
-			else if (currItem.getExpanded()) {
-				//expandedChildren.add(new ExpandedItem(currItem)); we don't need special processing for given items themselves as they will not be refreshed, only their kids
-				gatherExpandedChildren((fullRefresh ? null : currItem), currItem, expandedChildren);
-				wasExpanded[idx] = true;
-			} else
+			if (currItem.getExpanded()) {
+				// ...if this selected item is expanded, recursively gather up all its expanded descendents
+				Object data = currItem.getData();
+				ISystemViewElementAdapter adapter = null;
+				if (data != null) adapter = getViewAdapter(data);
+				if (adapter != null && adapter.isPromptable(data))
+					setExpandedState(data, false); // collapse temp expansion of prompts
+				else {
+					//expandedChildren.add(new ExpandedItem(currItem)); we don't need special processing for given items themselves as they will not be refreshed, only their kids
+					gatherExpandedChildren((fullRefresh ? null : currItem), currItem, expandedChildren);
+					wasExpanded[idx] = true;
+				}
+			} else {
 				wasExpanded[idx] = false;
+			}
 		}
 		// ok, we have found all expanded descendents of all selected items. 
 
@@ -3216,7 +3220,7 @@ public class SystemView extends SafeTreeViewer
 		// If any selected nodes are remote use our own algorithm:
 		// 1. collapse each given node and refresh it to remove the children from memory, then
 		//    expand it again. It doesn't matter if it is remote or not since its own memory
-		//    address won't change, only that of its children.
+		//    address (absolute name) won't change, only that of its children.
 		for (int idx = 0; idx < itemsToRefresh.length; idx++) {
 			TreeItem currItem = itemsToRefresh[idx];
 			setExpanded(currItem, false); // collapse node
@@ -3271,15 +3275,16 @@ public class SystemView extends SafeTreeViewer
 			boolean anyExpanded = false;
 			areAnyRemote = false; // set in ExpandedItem constructor
 			ArrayList expandedChildren = new ArrayList();
-			if (roots != null) {
-				for (int idx = 0; idx < roots.length; idx++) {
-					TreeItem currItem = roots[idx];
+			for (int idx = 0; idx < roots.length; idx++) {
+				TreeItem currItem = roots[idx];
+				if (currItem.getExpanded()) {
 					Object data = currItem.getData();
 					ISystemViewElementAdapter adapter = null;
 					if (data != null) adapter = getViewAdapter(data);
-					if (currItem.getExpanded() && (adapter != null) && adapter.isPromptable(data))
+					if(adapter != null && adapter.isPromptable(data)) {
 						setExpandedState(data, false);
-					else if (currItem.getExpanded()) {
+					}
+					else {
 						//setExpanded(roots[idx], false);	
 						expandedChildren.add(new ExpandedItem(null, currItem));
 						anyExpanded = true;
@@ -3343,24 +3348,32 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	class ExpandedItem {
-		TreeItem item, parentItem;
+		//private TreeItem item; //not needed since we'll get the item by absolute name
+		                         //For mixed remote/non-remote selections we may want a TreePath
+		TreeItem parentItem;
 		Object data;
 		String remoteName;
-		ISystemViewElementAdapter remoteAdapter;
 		ISubSystem subsystem;
+		private ISystemRemoteElementAdapter remoteAdapter;
 
 		ExpandedItem(TreeItem parentItem, TreeItem item) {
 			this.parentItem = parentItem;
-			this.item = item;
 			this.data = item.getData();
 			if (data != null) {
-				remoteAdapter = getViewAdapter(data);
+				remoteAdapter = getRemoteAdapter(data);
 				if (remoteAdapter != null) {
 					remoteName = remoteAdapter.getAbsoluteName(data);
 					subsystem = remoteAdapter.getSubSystem(data);
 					areAnyRemote = true;
 					if (debug) System.out.println("ExpandedRemoteItem added. remoteName = " + remoteName); //$NON-NLS-1$
-				} else if (debug) System.out.println("ExpandedItem added. Data = " + data); //$NON-NLS-1$
+				} else {
+					ISystemViewElementAdapter adapter = getViewAdapter(data);
+					if (adapter != null) {
+						remoteName = adapter.getAbsoluteName(data);
+						subsystem = adapter.getSubSystem(data);
+					}
+					if (debug) System.out.println("ExpandedItem added. Data = " + data); //$NON-NLS-1$
+				}
 			} else if (debug) System.out.println("ExpandedItem added. Data = null"); //$NON-NLS-1$
 		}
 
@@ -3370,24 +3383,27 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Gather up all expanded children of the given tree item into a list that can be used later to
-	 * reexpand.
-	 * @param parentItem The root parent which will not be refreshed itself (only its kids) and hence will remain valid after refresh.
-	 *                    In a full refresh this will be null.
-	 * @param startingItem The starting item for this search. Usually same as parentItem, but changes via recursion
-	 * @param listToPopulate An array list that will be populated with instances of our inner class ExpandedItem
+	 * Gather up all expanded children of the given tree item into a list
+	 * that can be used later to reexpand.
+	 * @param parentItem The root parent which will not be refreshed itself
+	 *    (only its kids) and hence will remain valid after refresh.
+	 *    In a full refresh this will be null.
+	 * @param startingItem The starting item for this search.
+	 *    Usually same as parentItem, but changes via recursion
+	 * @param listToPopulate An array list that will be populated
+	 *    with instances of our inner class ExpandedItem
 	 */
 	protected void gatherExpandedChildren(TreeItem parentItem, TreeItem startingItem, ArrayList listToPopulate) {
 		TreeItem[] itemChildren = startingItem.getItems();
-		if (itemChildren != null) {
-			for (int idx = 0; idx < itemChildren.length; idx++) {
-				TreeItem currChild = itemChildren[idx];
+		for (int idx = 0; idx < itemChildren.length; idx++) {
+			TreeItem currChild = itemChildren[idx];
+			if (currChild.getExpanded()) {
 				Object data = currChild.getData();
 				ISystemViewElementAdapter adapter = null;
 				if (data != null) adapter = getViewAdapter(data);
-				if (currChild.getExpanded() && (adapter != null) && adapter.isPromptable(data))
+				if (adapter != null && adapter.isPromptable(data)) {
 					setExpandedState(data, false);
-				else if (currChild.getExpanded()) {
+				} else {
 					listToPopulate.add(new ExpandedItem(parentItem, currChild));
 					gatherExpandedChildren(parentItem, currChild, listToPopulate);
 				}

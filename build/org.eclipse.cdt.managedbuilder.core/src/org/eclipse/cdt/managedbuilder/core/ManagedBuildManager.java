@@ -2909,8 +2909,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return getBuildInfo(resource, true);
 	}
 
-	public static IManagedBuildInfo getBuildInfoLegacy(IProject project){
-		synchronized(project){
+	public static synchronized IManagedBuildInfo getBuildInfoLegacy(IProject project){
 		IManagedBuildInfo info = null;
 		try {
 			info = getLoaddedBuildInfo(project);
@@ -2928,7 +2927,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 		
 		return info;
-		}
 	}
 	/**
 	 * Finds, but does not create, the managed build information for the 

@@ -78,7 +78,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		rootElement.setAttribute(VERSION_ATTRIBUTE, ManagedBuildManager.getVersion().toString());
 		ICStorageElement cfgElemen = rootElement.createChild(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 		Configuration cfg = (Configuration)appliedCfg.getConfiguration();
-		cfg.setConfigurationDescription(des);
+//		cfg.setConfigurationDescription(des);
 //		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_APPLY);
 		cfg.serialize(cfgElemen);
 		
@@ -163,14 +163,16 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			throws CoreException {
 		if(des.isPreferenceConfiguration())
 			return createPreferences(des, base);
-		
-		IManagedBuildInfo info = getBuildInfo(des);
-		ManagedProject mProj = (ManagedProject)info.getManagedProject();
 
 		Configuration cfg = (Configuration)((BuildConfigurationData)base).getConfiguration();
-		Configuration newCfg = new Configuration(mProj, cfg, des.getId(), true, true, false);
-		newCfg.setConfigurationDescription(des);
-		newCfg.setName(des.getName());
+		Configuration newCfg = copyCfg(cfg, des);
+
+//		IManagedBuildInfo info = getBuildInfo(des);
+//		ManagedProject mProj = (ManagedProject)info.getManagedProject();
+//
+//		Configuration newCfg = new Configuration(mProj, cfg, des.getId(), true, true, false);
+//		newCfg.setConfigurationDescription(des);
+//		newCfg.setName(des.getName());
 		if(!newCfg.getId().equals(cfg.getId())){
 			newCfg.exportArtifactInfo();
 		}
@@ -180,7 +182,21 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return newCfg.getConfigurationData();
 	}
 	
-	private IManagedBuildInfo getBuildInfo(ICConfigurationDescription des){
+	public static Configuration copyCfg(Configuration cfg, ICConfigurationDescription des){
+		IManagedBuildInfo info = getBuildInfo(des);
+		ManagedProject mProj = (ManagedProject)info.getManagedProject();
+
+		Configuration newCfg = new Configuration(mProj, cfg, des.getId(), true, true, false);
+		newCfg.setConfigurationDescription(des);
+		newCfg.setName(des.getName());
+//		if(!newCfg.getId().equals(cfg.getId())){
+//			newCfg.exportArtifactInfo();
+//		}
+		
+		return newCfg;
+	}
+	
+	private static IManagedBuildInfo getBuildInfo(ICConfigurationDescription des){
 		IProject project = des.getProjectDescription().getProject();
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project, false);
 		if(info == null)
@@ -191,7 +207,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return info;
 	}
 	
-	private IManagedProject getManagedProject(ICConfigurationDescription des, IManagedBuildInfo info){
+	private static IManagedProject getManagedProject(ICConfigurationDescription des, IManagedBuildInfo info){
 		IManagedProject mProj = info.getManagedProject();
 		if(mProj == null){
 			mProj = createManagedProject(info, des.getProjectDescription());
@@ -199,7 +215,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return mProj;
 	}
 	
-	private IManagedProject createManagedProject(IManagedBuildInfo info, ICProjectDescription des){
+	private static IManagedProject createManagedProject(IManagedBuildInfo info, ICProjectDescription des){
 		IManagedProject mProj = null;
 		try {
 			ICStorageElement rootElem = des.getStorage(BUILD_SYSTEM_DATA_MODULE_NAME, false);

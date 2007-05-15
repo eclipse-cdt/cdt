@@ -78,6 +78,7 @@ public class ProjectConverter implements ICProjectConverter {
 	private final static String OLD_MAKE_TARGET_BUIDER_ID = "org.eclipse.cdt.make.MakeTargetBuilder"; //$NON-NLS-1$
 	private final static String NEW_MAKE_TARGET_BUIDER_ID = "org.eclipse.cdt.build.MakeTargetBuilder"; //$NON-NLS-1$
 
+	private static final Object LOCK = new Object();
 	
 	public boolean canConvertProject(IProject project, String oldOwnerId, ICProjectDescription oldDes) {
 		try {
@@ -503,25 +504,32 @@ public class ProjectConverter implements ICProjectConverter {
 
 	private IManagedBuildInfo convertManagedBuildInfo(IProject project, ICProjectDescription newDes){
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfoLegacy(project);
-		if(info != null && info.isValid()){
-			IManagedProject mProj = info.getManagedProject();
-			IConfiguration cfgs[] = mProj.getConfigurations();
-			if(cfgs.length != 0){
-				Configuration cfg;
-				CConfigurationData data;
-
-				for(int i = 0; i < cfgs.length; i++){
-					cfg = (Configuration)cfgs[i];
-					data = cfg.getConfigurationData();
-					try {
-						ICConfigurationDescription cfgDes = newDes.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-						cfg.setConfigurationDescription(cfgDes);
-					} catch (WriteAccessException e) {
-						ManagedBuilderCorePlugin.log(e);
-					} catch (CoreException e) {
-						ManagedBuilderCorePlugin.log(e);
+		
+		synchronized(LOCK){
+			if(info != null && info.isValid()){
+				IManagedProject mProj = info.getManagedProject();
+				IConfiguration cfgs[] = mProj.getConfigurations();
+				if(cfgs.length != 0){
+					Configuration cfg;
+					CConfigurationData data;
+	
+					for(int i = 0; i < cfgs.length; i++){
+						cfg = (Configuration)cfgs[i];
+						data = cfg.getConfigurationData();
+						try {
+							ICConfigurationDescription cfgDes = newDes.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+							if(cfg.getConfigurationDescription() != null) {
+								//copy cfg to avoid raise conditions
+								cfg = ConfigurationDataProvider.copyCfg(cfg, cfgDes);
+							}
+							cfg.setConfigurationDescription(cfgDes);
+						} catch (WriteAccessException e) {
+							ManagedBuilderCorePlugin.log(e);
+						} catch (CoreException e) {
+							ManagedBuilderCorePlugin.log(e);
+						}
+						cfg.exportArtifactInfo();
 					}
-					cfg.exportArtifactInfo();
 				}
 			}
 		}

@@ -14,9 +14,12 @@ package org.eclipse.cdt.managedbuilder.makegen.gnu;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
@@ -60,7 +63,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	//  Other Member variables
 	IProject project;
 	IConfiguration config;
-	IResourceConfiguration resConfig;
+	private IResourceInfo resInfo;
 	IPath sourceLocation;
 	IPath outputLocation;
 	boolean needExplicitRuleForFile;
@@ -86,14 +89,14 @@ public class DefaultGCCDependencyCalculator3Commands implements
 		
 		//  Compute the project
 		if (buildContext instanceof IConfiguration) {
-			resConfig = null;
 			config = (IConfiguration)buildContext;
+			resInfo = config.getRootFolderInfo();
 			project = (IProject)config.getOwner();
-		} else if (buildContext instanceof IResourceConfiguration) {
-			resConfig = (IResourceConfiguration)buildContext;
-			config = resConfig.getParent();
-			project = (IProject)resConfig.getOwner();
-		}
+		} else if (buildContext instanceof IResourceInfo) {
+			resInfo = (IResourceInfo)buildContext;
+			config = resInfo.getParent();
+			project = (IProject)config.getOwner();
+		} 
 		
 		sourceLocation = (source.isAbsolute() ? source : project.getLocation().append(source));
 		outputLocation = project.getLocation().append(topBuildDirectory).append(getDependencyFiles()[0]);

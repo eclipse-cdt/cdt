@@ -377,10 +377,8 @@ implements
 			return;
 		} else {
 			ICConfigurationDescription newConfig = cfgDescs[selectionIndex];
-			if (! (newConfig.equals(getResDesc()) )) {
-				cfgIndex = selectionIndex;
-				cfgChanged(newConfig);
-			}
+			cfgIndex = selectionIndex;
+			cfgChanged(newConfig);
 		}
 	}
 	

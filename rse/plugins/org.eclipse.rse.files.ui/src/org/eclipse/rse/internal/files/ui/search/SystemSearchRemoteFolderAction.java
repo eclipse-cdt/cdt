@@ -410,11 +410,11 @@ public class SystemSearchRemoteFolderAction extends SystemSelectRemoteFolderActi
 		  dlg = new SystemSearchRemoteFolderDialog(shell);
 		else
 		  dlg = new SystemSearchRemoteFolderDialog(shell, dlgTitle);
-		dlg.setShowNewConnectionPrompt(showNewConnectionPrompt);
+		//dlg.setShowNewConnectionPrompt(showNewConnectionPrompt);
 		dlg.setMultipleSelectionMode(multipleSelectionMode);
-		dlg.setAllowForMultipleParents(allowForMultipleParents);
-		if (restrictFolders)
-		  dlg.setRestrictFolders(true);
+		//dlg.setAllowForMultipleParents(allowForMultipleParents);
+//		if (restrictFolders)
+	//	  dlg.setRestrictFolders(true);
 		if (message != null)
 		  dlg.setMessage(message);
 		if (treeTip != null)
@@ -422,28 +422,30 @@ public class SystemSearchRemoteFolderAction extends SystemSelectRemoteFolderActi
 		if (systemConnection != null)
 		{
 			if (onlyConnection)			   
-		      dlg.setSystemConnection(systemConnection);
+		      dlg.setDefaultSystemConnection(systemConnection, true);
 		    else
-		      dlg.setDefaultConnection(systemConnection);
+		      dlg.setDefaultSystemConnection(systemConnection, false);
 		}
 		if (systemTypes != null)
 		  dlg.setSystemTypes(systemTypes);
-		if (expandDepth != 0)
-		  dlg.setAutoExpandDepth(expandDepth);		
+		//if (expandDepth != 0)
+		 // dlg.setAutoExpandDepth(expandDepth);		
 		if (preSelection != null)
 		  dlg.setPreSelection(preSelection);		  
-		else if (rootFolderConnection != null)
-		  dlg.setRootFolder(rootFolderConnection, rootFolderAbsPath);
+		//else if (rootFolderConnection != null)
+		//  dlg.setRootFolder(rootFolderConnection, rootFolderAbsPath);
 		if (showPropertySheet)
 		  if (showPropertySheetDetailsButton)
 		    dlg.setShowPropertySheet(true, showPropertySheetDetailsButtonInitialState);
 		  else
 		    dlg.setShowPropertySheet(true);
 		if (addButtonCallback != null)
-          if ((addLabel!=null) || (addToolTipText!=null))
-            dlg.enableAddMode(addButtonCallback, addLabel, addToolTipText);
-          else
-            dlg.enableAddMode(addButtonCallback);
+		{
+         // if ((addLabel!=null) || (addToolTipText!=null))
+         //   dlg.enableAddMode(addButtonCallback, addLabel, addToolTipText);
+         // else
+         //   dlg.enableAddMode(addButtonCallback);
+		}
         if (selectionValidator != null)
           dlg.setSelectionValidator(selectionValidator);
 

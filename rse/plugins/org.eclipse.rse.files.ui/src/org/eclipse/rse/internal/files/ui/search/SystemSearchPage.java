@@ -370,6 +370,38 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			selectFolderAction.setNeedsProgressMonitor(true);
 			selectFolderAction.setMultipleSelectionMode(false);
 			
+			// preselection
+			if (nameCombo.getText().length() > 0)
+			{
+				String preconnectionname = getConnectionName();
+				if (preconnectionname != null && preconnectionname.length() > 0)
+				{
+					ISystemProfile profile = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile();
+					IHost prehost = RSECorePlugin.getTheSystemRegistry().getHost(profile, preconnectionname);			
+					if (prehost != null)
+					{
+						// host preselection
+						selectFolderAction.setDefaultConnection(prehost);
+						
+						String prepath = getFolderPath();
+						if (prepath != null && prepath.length() > 0)
+						{
+							IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(prehost);
+							try
+							{
+								IRemoteFile selection = ss.getRemoteFileObject(prepath, new NullProgressMonitor());
+								if (selection != null)
+								{
+									// path preselection
+									selectFolderAction.setPreSelection(selection);
+								}
+							}
+							catch (Exception e)
+							{}
+						}
+					}
+				}
+			}
 			// run the action
 			selectFolderAction.run();
 			

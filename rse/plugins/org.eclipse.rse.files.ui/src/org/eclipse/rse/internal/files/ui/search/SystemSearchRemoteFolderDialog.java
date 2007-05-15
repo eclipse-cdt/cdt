@@ -9,21 +9,20 @@
  ********************************************************************************/
 package org.eclipse.rse.internal.files.ui.search;
 
-import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
-import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
+import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * Select dialog for search.
  */
-public class SystemSearchRemoteFolderDialog extends SystemSelectRemoteFileOrFolderDialog {
+public class SystemSearchRemoteFolderDialog extends SystemRemoteFolderDialog {
 
 	/**
 	 * Constructor.
 	 * @param shell the parent shell.
 	 */
 	public SystemSearchRemoteFolderDialog(Shell shell) {
-		super(shell, false);
+		super(shell);
 	}
 
 	/**
@@ -32,17 +31,20 @@ public class SystemSearchRemoteFolderDialog extends SystemSelectRemoteFileOrFold
 	 * @param title the the title of the dialog.
 	 */
 	public SystemSearchRemoteFolderDialog(Shell shell, String title) {
-		super(shell, title, false);
+		super(shell, title);
 	}
 
+	
 	/**
 	 * Creates an instance of the select form for search {@link SystemSearchRemoteFolderForm}
 	 * @see org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog#getForm(boolean)
 	 */
+	/*
 	protected SystemSelectRemoteFileOrFolderForm getForm(boolean fileMode) {
 		form = new SystemSearchRemoteFolderForm(getMessageLine(), this);
 		setOutputObject(null);
 		outputConnection = null;
     	return form;
 	}
+	*/
 }

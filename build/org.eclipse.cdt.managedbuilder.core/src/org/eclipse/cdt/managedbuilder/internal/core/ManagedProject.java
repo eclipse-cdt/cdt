@@ -13,8 +13,8 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -422,7 +422,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 */
 	public Map getConfigurationMap() {
 		if (configMap == null) {
-			configMap = new HashMap();
+			configMap = new LinkedHashMap();
 		}
 		return configMap;
 	}

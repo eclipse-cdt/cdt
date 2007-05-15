@@ -49,7 +49,9 @@ public class CCoreInternals {
         		try {
         			if (project != null) {
     					new LocalProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
-    					new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
+    					if (project.isOpen()) {
+    						new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
+    					}
         			}
         			new InstanceScope().getNode(CCorePlugin.PLUGIN_ID).flush();
 				} catch (BackingStoreException e) {

@@ -65,6 +65,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory;
+import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigProxy;
 import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
@@ -97,7 +98,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private boolean _isBinaryFileType = true;
 	private boolean _isPassiveDataConnectionMode = false;
 	private IFTPClientConfigFactory _entryParserFactory;
-	
+	private IFTPClientConfigProxy _clientConfigProxy;
 	
 	private class FTPBufferedInputStream extends BufferedInputStream {
 		
@@ -303,7 +304,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_UNIX));
 		}
 		
-				
+		//FTPClientConfigProxy object with information of the extended LIST command, or null
+		_clientConfigProxy = _entryParserFactory.getFTPClientConfigProxy(_ftpPropertySet.getPropertyValue("parser")); //$NON-NLS-1$
+		
 		// Initial active/passive mode. This action will be refreshed later using setDataConnectionMode()
 		if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("true")) //$NON-NLS-1$ //$NON-NLS-2$
 		{
@@ -980,7 +983,19 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 			public void run() {
 				try {
-					_ftpFiles = _ftpClient.listFiles();
+					
+					_ftpFiles = null;
+					
+					if(_clientConfigProxy!=null)
+					{
+						_ftpFiles = _ftpClient.listFiles(_clientConfigProxy.getListCommandModifiers());
+					}
+					else
+					{
+						_ftpFiles = _ftpClient.listFiles();
+					}
+					
+					
 				} catch (IOException e) {
 					_exception = e;
 				}

@@ -11,25 +11,26 @@
 
 package org.eclipse.rse.internal.subsystems.files.ftp.parser;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
 import org.apache.commons.net.ftp.parser.ParserInitializationException;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory;
+import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigProxy;
+import org.osgi.framework.Bundle;
 
 public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 
 	private static FTPClientConfigFactory factory = null;
 	
-	private Set keySet = new TreeSet();
+	private Hashtable ftpConfigProxyById = new Hashtable();
+	
 	private Hashtable ftpConfig = new Hashtable();
 	private Hashtable ftpFileEntryParser = new Hashtable();
 	private IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.subsystems.files.ftp","ftpFileEntryParser"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -53,8 +54,26 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		for (int i = 0; i < ce.length; i++) {
 			
-				String label = ce[i].getAttribute("label");  //$NON-NLS-1$
-				keySet.add(label);
+			String id = ce[i].getAttribute("id"); //$NON-NLS-1$
+			String label = ce[i].getAttribute("label"); //$NON-NLS-1$
+			String priority = ce[i].getAttribute("priority"); //$NON-NLS-1$
+			String systemTypeRegex =  ce[i].getAttribute("systemTypeRegex"); //$NON-NLS-1$
+			String className = ce[i].getAttribute("class"); //$NON-NLS-1$
+			Bundle declaringBundle = Platform.getBundle(ce[i].getContributor().getName());
+			
+			String listCommandModifiers = ce[i].getAttribute("listCommandModifiers");  //$NON-NLS-1$
+			
+			String defaultDateFormatStr = ce[i].getAttribute("defaultDateFormatStr"); //$NON-NLS-1$
+			String recentDateFormatStr = ce[i].getAttribute("recentDateFormatStr"); //$NON-NLS-1$
+			String serverLanguageCode = ce[i].getAttribute("serverLanguageCode"); //$NON-NLS-1$
+			String shortMonthNames = ce[i].getAttribute("shortMonthNames"); //$NON-NLS-1$
+			String serverTimeZoneId = ce[i].getAttribute("serverTimeZoneId"); //$NON-NLS-1$
+			
+			FTPClientConfigProxy ftpClientConfigProxy = new FTPClientConfigProxy(id,label,priority,systemTypeRegex,className,declaringBundle,listCommandModifiers,
+					defaultDateFormatStr,recentDateFormatStr,serverLanguageCode,shortMonthNames,serverTimeZoneId);
+			
+			ftpConfigProxyById.put(id, ftpClientConfigProxy);
+			
 		}
 	}
 	
@@ -69,73 +88,59 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 		
 		if(parser.equals("AUTO")) //$NON-NLS-1$
 		{
-			int priorityInt = Integer.MAX_VALUE;
-			int previousPriorityInt = Integer.MAX_VALUE;
-			IConfigurationElement selectedCofiguration = null;
+			int previousPriority = Integer.MAX_VALUE;
+			FTPClientConfigProxy foundProxy = null;
 			
-			IConfigurationElement[] ce = ep.getConfigurationElements();
-			for (int i = 0; i < ce.length; i++) 
+			Enumeration ftpConfigProxyEnum = ftpConfigProxyById.elements();
+			
+			while(ftpConfigProxyEnum.hasMoreElements())
 			{
-				String ftpSystemTypes = ce[i].getAttribute("ftpSystemTypes"); //$NON-NLS-1$
-				if(ftpSystemTypes!=null)
+				FTPClientConfigProxy proxy = (FTPClientConfigProxy)ftpConfigProxyEnum.nextElement();
+				
+				if(proxy.getSystemTypeRegex()!=null)
 				{
-					Pattern ftpSystemTypesRegex = Pattern.compile(ftpSystemTypes);
+					Pattern ftpSystemTypesRegex = Pattern.compile(proxy.getSystemTypeRegex());
 					if(ftpSystemTypesRegex.matcher(systemName).matches())
 					{
-						//try to get priority otherwise assigning Integer.MAX_VALUE
-						String priority = ce[i].getAttribute("priority"); //$NON-NLS-1$
-						if(priority!=null)
-						{
-							priorityInt = Integer.parseInt(priority);
-						}
-						else
-						{
-							priorityInt = Integer.MAX_VALUE;
-						}
+						int priority = proxy.getPriority(); 
 						
-						if(priorityInt < previousPriorityInt)
+						if(priority < previousPriority)
 						{
-							selectedCofiguration = ce[i];
-							previousPriorityInt = priorityInt;
+							foundProxy = proxy;
+							previousPriority = priority;
 						}
 					}
 				}
 			}
 			
-			//process the selected IConfigurationElement
-			if(selectedCofiguration != null)
+			//process the selected proxy
+			if(foundProxy != null)
 			{
 				FTPClientConfig config = null;
 				
-				//populate tables
-				String clas = selectedCofiguration.getAttribute("class"); //$NON-NLS-1$
-				
-				if(!ftpFileEntryParser.containsKey(clas))
+				if(!ftpFileEntryParser.containsKey(foundProxy.getClassName()))
 				{
-					FTPFileEntryParser entryParser=null;
+					FTPFileEntryParser entryParser = null;
 					try {
-						entryParser = (FTPFileEntryParser)selectedCofiguration.createExecutableExtension("class"); //$NON-NLS-1$
-					} catch (CoreException e) {
-						throw new ParserInitializationException(e.getMessage());
-					} 
-					
-					ftpFileEntryParser.put(clas, entryParser);
+						entryParser = (FTPFileEntryParser)foundProxy.getDeclaringBundle().loadClass(foundProxy.getClassName()).newInstance();
+					} catch (InstantiationException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+					ftpFileEntryParser.put(foundProxy.getClassName(), entryParser);
 				}
 				
-				String defaultDateFormatStr = selectedCofiguration.getAttribute("defaultDateFormatStr"); //$NON-NLS-1$
-				String recentDateFormatStr = selectedCofiguration.getAttribute("recentDateFormatStr"); //$NON-NLS-1$
-				String serverLanguageCode = selectedCofiguration.getAttribute("serverLanguageCode"); //$NON-NLS-1$
-				String shortMonthNames = selectedCofiguration.getAttribute("shortMonthNames"); //$NON-NLS-1$
-				String serverTimeZoneId = selectedCofiguration.getAttribute("serverTimeZoneId"); //$NON-NLS-1$
-				
-				config = new FTPClientConfig(clas);
+				config = new FTPClientConfig(foundProxy.getClassName());
 				
 				//not necessary checking for null, as null is valid input
-				config.setDefaultDateFormatStr(defaultDateFormatStr);
-				config.setRecentDateFormatStr(recentDateFormatStr);
-				config.setServerLanguageCode(serverLanguageCode);
-				config.setShortMonthNames(shortMonthNames);
-				config.setServerTimeZoneId(serverTimeZoneId);
+				config.setDefaultDateFormatStr(foundProxy.getDefaultDateFormatStr());
+				config.setRecentDateFormatStr(foundProxy.getRecentDateFormatStr());
+				config.setServerLanguageCode(foundProxy.getServerLanguageCode());
+				config.setShortMonthNames(foundProxy.getShortMonthNames());
+				config.setServerTimeZoneId(foundProxy.getServerTimeZoneId());
 				
 				//not necessary storing in the hashtable, as discovered will not be reused
 				ftpClientConfig = config;
@@ -153,46 +158,42 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 			}
 			else
 			{
-				IConfigurationElement[] ce = ep.getConfigurationElements();
-				for (int i = 0; i < ce.length; i++) 
-				{
 				
-					String label = ce[i].getAttribute("label"); //$NON-NLS-1$
+				Enumeration ftpConfigProxyEnum = ftpConfigProxyById.elements();
+				
+				while(ftpConfigProxyEnum.hasMoreElements())
+				{
+					FTPClientConfigProxy proxy = (FTPClientConfigProxy)ftpConfigProxyEnum.nextElement();
 					
-					if(label.equals(parser))
+					if(proxy.getId().equals(parser))
 					{
-						
 						FTPClientConfig config = null;
 						
-						//populate tables
-						String clas = ce[i].getAttribute("class"); //$NON-NLS-1$
+						if(!ftpFileEntryParser.containsKey(proxy.getClassName()))
+						{
+							FTPFileEntryParser entryParser = null;
+							try {
+								entryParser = (FTPFileEntryParser)proxy.getDeclaringBundle().loadClass(proxy.getClassName()).newInstance();
+							} catch (InstantiationException e) {
+								e.printStackTrace();
+							} catch (IllegalAccessException e) {
+								e.printStackTrace();
+							} catch (ClassNotFoundException e) {
+								e.printStackTrace();
+							}
+							ftpFileEntryParser.put(proxy.getClassName(), entryParser);
+						}
 						
-						FTPFileEntryParser entryParser=null;
-						try {
-							entryParser = (FTPFileEntryParser)ce[i].createExecutableExtension("class"); //$NON-NLS-1$
-						} catch (CoreException e) {
-							throw new ParserInitializationException(e.getMessage());
-						} 
-						
-						ftpFileEntryParser.put(clas, entryParser);
-						
-						String defaultDateFormatStr = ce[i].getAttribute("defaultDateFormatStr"); //$NON-NLS-1$
-						String recentDateFormatStr = ce[i].getAttribute("recentDateFormatStr"); //$NON-NLS-1$
-						String serverLanguageCode = ce[i].getAttribute("serverLanguageCode"); //$NON-NLS-1$
-						String shortMonthNames = ce[i].getAttribute("shortMonthNames"); //$NON-NLS-1$
-						String serverTimeZoneId = ce[i].getAttribute("serverTimeZoneId"); //$NON-NLS-1$
-						
-						config = new FTPClientConfig(clas);
+						config = new FTPClientConfig(proxy.getClassName());
 						
 						//not necessary checking for null, as null is valid input
-						config.setDefaultDateFormatStr(defaultDateFormatStr);
-						config.setRecentDateFormatStr(recentDateFormatStr);
-						config.setServerLanguageCode(serverLanguageCode);
-						config.setShortMonthNames(shortMonthNames);
-						config.setServerTimeZoneId(serverTimeZoneId);
+						config.setDefaultDateFormatStr(proxy.getDefaultDateFormatStr());
+						config.setRecentDateFormatStr(proxy.getRecentDateFormatStr());
+						config.setServerLanguageCode(proxy.getServerLanguageCode());
+						config.setShortMonthNames(proxy.getShortMonthNames());
+						config.setServerTimeZoneId(proxy.getServerTimeZoneId());
 						
-						ftpConfig.put(label, config);
-						
+						ftpConfig.put(parser, config);
 						ftpClientConfig = (FTPClientConfig)ftpConfig.get(parser);
 						
 						break;
@@ -200,7 +201,6 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 					}
 				}
 			}
-			
 		}
 		
 		
@@ -211,9 +211,9 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory#getKeySet()
 	 */
-	public Set getKeySet()
+	public String[] getKeySet()
 	{
-		return keySet;
+		return (String[])ftpConfigProxyById.keySet().toArray(new String[ftpConfigProxyById.size()]);
 	}
 
 	/*
@@ -228,27 +228,19 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 		//
 		if(!ftpFileEntryParser.containsKey(key))
 		{
-			IConfigurationElement[] ce = ep.getConfigurationElements();
-			for (int i = 0; i < ce.length; i++) 
-			{
-				
-					String label = ce[i].getAttribute("label"); //$NON-NLS-1$
-					
-					if(label.equals(key))
-					{
-						//populate tables
-						String clas = ce[i].getAttribute("class"); //$NON-NLS-1$
-						
-						FTPFileEntryParser entryParser=null;
-						try {
-							entryParser = (FTPFileEntryParser)ce[i].createExecutableExtension("class"); //$NON-NLS-1$
-						} catch (CoreException e) {
-							throw new ParserInitializationException(e.getMessage());
-						} 
-						
-						ftpFileEntryParser.put(clas, entryParser);
-					}
-				}
+			FTPClientConfigProxy proxy = (FTPClientConfigProxy)ftpConfigProxyById.get(key);
+			
+			FTPFileEntryParser entryParser = null;
+			try {
+				entryParser = (FTPFileEntryParser)proxy.getDeclaringBundle().loadClass(proxy.getClassName()).newInstance();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			ftpFileEntryParser.put(proxy.getClassName(), entryParser);
 		}
 		
 		
@@ -264,6 +256,15 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 		String key = config.getServerSystemKey();
 		return createFileEntryParser(key);
 		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory#getFTPClientConfigProxy(java.lang.String)
+	 */
+	public IFTPClientConfigProxy getFTPClientConfigProxy(String id)
+	{
+		return (IFTPClientConfigProxy)ftpConfigProxyById.get(id);
 	}
 	
 }

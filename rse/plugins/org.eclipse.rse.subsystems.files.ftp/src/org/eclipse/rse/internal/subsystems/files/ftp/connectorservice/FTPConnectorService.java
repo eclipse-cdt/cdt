@@ -23,7 +23,6 @@ package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
 
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
@@ -61,10 +60,11 @@ public class FTPConnectorService extends StandardConnectorService
 			_propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
 			// FTP List parser
-			Set keys = FTPClientConfigFactory.getParserFactory().getKeySet();
-			String[] keysArray = new String[keys.size()+1];
+			String[] keys = FTPClientConfigFactory.getParserFactory().getKeySet();
+			String[] keysArray = new String[keys.length+1];
 			
-			keys.toArray(keysArray);
+			System.arraycopy(keys, 0, keysArray, 0, keys.length);
+			
 			keysArray[keysArray.length-1]="AUTO"; //$NON-NLS-1$
 			
 			Arrays.sort(keysArray);

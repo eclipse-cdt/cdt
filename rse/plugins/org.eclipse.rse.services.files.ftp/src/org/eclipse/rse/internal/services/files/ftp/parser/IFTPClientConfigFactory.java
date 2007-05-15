@@ -11,8 +11,6 @@
 
 package org.eclipse.rse.internal.services.files.ftp.parser;
 
-import java.util.Set;
-
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.parser.FTPFileEntryParserFactory;
 
@@ -28,9 +26,16 @@ public interface IFTPClientConfigFactory extends FTPFileEntryParserFactory {
 	public FTPClientConfig getFTPClientConfig(String parser, String systemName);
 	
 	/**
-	 * Returns a Set of key names
-	 * @return a Set containing the name attribute of the extension points
+	 * Returns an array of strings containing the id
+	 * @return a String[] containing the name attribute of the extension points
 	 */
-	public Set getKeySet();
+	public String[] getKeySet();
+	
+	/**
+	 * Returns the IFTPClientConfigProxy that matches the given id
+	 * @param id of the FTPClientConfigProxy 
+	 * @return The IFTPClientConfigProxy or null if not found
+	 */
+	public IFTPClientConfigProxy getFTPClientConfigProxy(String id);
 	
 }

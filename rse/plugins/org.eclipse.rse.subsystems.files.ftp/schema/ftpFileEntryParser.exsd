@@ -139,7 +139,7 @@ only 8-bit ASCII characters are known to be supported.  For example, a set of mo
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="ftpSystemTypes" type="string">
+         <attribute name="systemTypeRegex" type="string">
             <annotation>
                <documentation>
                   Regular expression used to match with the string returned by the FTP SYST command to autodetect the parser if not specified by the user
@@ -149,7 +149,16 @@ only 8-bit ASCII characters are known to be supported.  For example, a set of mo
          <attribute name="priority" type="string">
             <annotation>
                <documentation>
-                  Priority used if more than one extension matches the regular expression given by ftpSystemTypes.
+                  Priority used if more than one extension matches the regular expression given by the &lt;code&gt;ftpSystemTypes&lt;/code&gt; attribute. Integer values are allowed.
+In case of more than one parser with a matching regular expression, the parser with lower priority number will be used. 
+If no priority is specified, the default value will be &lt;code&gt;Integer.MAX_VALUE&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="listCommandModifiers" type="string">
+            <annotation>
+               <documentation>
+                  Modifiers of the FTP &quot;LIST&quot; command. As an example if the LIST command has to be &quot;LIST -l&quot;, the contents of this optional field has to be &quot;-l&quot;
                </documentation>
             </annotation>
          </attribute>

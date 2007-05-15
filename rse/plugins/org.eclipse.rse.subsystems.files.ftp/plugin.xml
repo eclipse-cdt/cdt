@@ -51,42 +51,42 @@ Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
    	<extension point="org.eclipse.rse.subsystems.files.ftp.ftpFileEntryParser">
       <parser
             class="org.apache.commons.net.ftp.parser.UnixFTPEntryParser"
-            ftpSystemTypes=".*[Uu][Nn][Ii][Xx].*"
             id="org.eclipse.rse.ftp.parser.Unix"
             label="%FTPParser.UNIX"
-            priority="100">
+            priority="100"
+            systemTypeRegex=".*[Uu][Nn][Ii][Xx].*">
       </parser>
       <parser
             class="org.apache.commons.net.ftp.parser.MVSFTPEntryParser"
-            ftpSystemTypes=".*[Mm][Vv][Ss].*"
+            systemTypeRegex=".*[Mm][Vv][Ss].*"
             id="org.eclipse.rse.ftp.parser.MVS"
             label="%FTPParser.MVS"
             priority="100">
       </parser>
       <parser
             class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSENTFTPEntryParser"
-            ftpSystemTypes=".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss].*"
+            systemTypeRegex=".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss].*"
             id="org.eclipse.rse.ftp.parser.WinNT"
             label="%FTPParser.WinNT"
             priority="100">
       </parser>
       <parser
             class="org.apache.commons.net.ftp.parser.OS2FTPEntryParser"
-            ftpSystemTypes=".*[Oo][Ss]/2.*"
+            systemTypeRegex=".*[Oo][Ss]/2.*"
             id="org.eclipse.rse.ftp.parser.OS2"
             label="%FTPParser.OS2"
             priority="100">
       </parser>
       <parser
             class="org.apache.commons.net.ftp.parser.OS400FTPEntryParser"
-            ftpSystemTypes=".*[Oo][Ss]/400.*"
+            systemTypeRegex=".*[Oo][Ss]/400.*"
             id="org.eclipse.rse.ftp.parser.OS400"
             label="%FTPParser.OS400"
             priority="100">
       </parser>
        <parser
              class="org.eclipse.rse.internal.subsystems.files.ftp.parser.RSEVMSFTPEntryParser"
-             ftpSystemTypes=".*[Vv][Mm][Ss].*"
+             systemTypeRegex=".*[Vv][Mm][Ss].*"
              id="org.eclipse.rse.ftp.parser.VMS"
              label="%FTPParser.VMS"
              priority="100">

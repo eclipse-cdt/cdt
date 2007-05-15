@@ -40,13 +40,9 @@ public class SystemDeferredTreeContentManager extends
 		_pendingQueries = new ArrayList();
 	}
 
-    /**
-     * Return the IDeferredWorkbenchAdapter for element or the element if it is
-     * an instance of IDeferredWorkbenchAdapter. If it does not exist return
-     * null.
-     * 
-     * @param element
-     * @return IDeferredWorkbenchAdapter or <code>null</code>
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.progress.DeferredTreeContentManager#getAdapter(java.lang.Object)
      */
     protected IDeferredWorkbenchAdapter getAdapter(Object element) 
     {

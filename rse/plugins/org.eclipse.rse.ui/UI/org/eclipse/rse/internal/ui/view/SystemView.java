@@ -4365,8 +4365,12 @@ public class SystemView extends SafeTreeViewer
 			//  looking for are not to be found within this branch...
 			// -----------------------------------------------------------------------------------------
 			else if (rawData instanceof IHost) {
+				if (subsystem==null) {
+					return occurrences; //bug 187061: renaming a host has no subsystem associated, therefore no other matches to rename
+				}
 				IHost currConn = (IHost) rawData;
-				if (!currConn.getHostName().equals(subsystem.getHost().getHostName())) return occurrences; // they don't match, so don't bother checking the kids
+				if (!currConn.getHostName().equals(subsystem.getHost().getHostName()))
+					return occurrences; // they don't match, so don't bother checking the kids
 			}
 			// skip the new connection prompts...
 			else if (rawData instanceof ISystemPromptableObject)

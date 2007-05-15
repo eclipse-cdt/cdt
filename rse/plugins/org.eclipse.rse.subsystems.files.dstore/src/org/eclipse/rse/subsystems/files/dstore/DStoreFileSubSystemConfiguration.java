@@ -17,6 +17,7 @@
 
 package org.eclipse.rse.subsystems.files.dstore;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorService;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorServiceManager;
 import org.eclipse.rse.core.model.IHost;
@@ -24,6 +25,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.services.dstore.files.DStoreFileService;
 import org.eclipse.rse.internal.services.dstore.search.DStoreSearchService;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.subsystems.files.dstore.DStoreFileAdapter;
 import org.eclipse.rse.internal.subsystems.files.dstore.DStoreFileSubSystemSearchResultConfiguration;
 import org.eclipse.rse.internal.subsystems.files.dstore.DStoreLanguageUtilityFactory;
@@ -131,7 +133,20 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	public IFileService createFileService(IHost host)
 	{
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
-		return new DStoreFileService(connectorService, SystemFileTransferModeRegistry.getInstance(), RSEUIPlugin.getDefault());
+		DStoreFileService service = new DStoreFileService(connectorService, SystemFileTransferModeRegistry.getInstance(), RSEUIPlugin.getDefault());
+
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
+		int downloadBufferSize = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE);
+		int uploadBufferSize = store.getInt(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE);
+		if (downloadBufferSize > 0)
+		{
+			service.setBufferDownloadSize(downloadBufferSize);
+		}
+		if (uploadBufferSize > 0)
+		{
+			service.setBufferUploadSize(uploadBufferSize);
+		}
+		return service;
 	}
 	
 	public ISearchService createSearchService(IHost host)

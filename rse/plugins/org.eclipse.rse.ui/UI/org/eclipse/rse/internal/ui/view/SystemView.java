@@ -25,6 +25,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
+ * Martin Oberhuber (Wind River) - [186964] Fix adapter actions for multiselect, and and NPE 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -191,24 +192,25 @@ public class SystemView extends SafeTreeViewer
 	protected ISystemViewInputProvider previousInputProvider; // who is supplying our tree root elements?
 	protected Object previousInput;
 	protected IHost previousInputConnection;
-	// protected actions
-	protected SystemNewConnectionAction newConnectionAction;
-	protected SystemRefreshAction refreshAction;
-	protected PropertyDialogAction propertyDialogAction;
-	protected SystemCollapseAction collapseAction; // defect 41203
-	protected SystemExpandAction expandAction; // defect 41203
-	protected SystemOpenExplorerPerspectiveAction openToPerspectiveAction;
+	// protected actions initialized on demand:
+	// should be accessed by getters only
+	private SystemNewConnectionAction _newConnectionAction;
+	private SystemRefreshAction _refreshAction;
+	private PropertyDialogAction _propertyDialogAction;
+	private SystemCollapseAction _collapseAction; // defect 41203
+	private SystemExpandAction _expandAction; // defect 41203
+	private SystemOpenExplorerPerspectiveAction _openToPerspectiveAction;
 
-	protected SystemShowInTableAction showInTableAction;
-	protected SystemShowInMonitorAction showInMonitorAction;
-	protected GoIntoAction goIntoAction;
-	protected SystemCascadingGoToAction gotoActions;
-	// global actions
+	private SystemShowInTableAction _showInTableAction;
+	private SystemShowInMonitorAction _showInMonitorAction;
+	private GoIntoAction _goIntoAction;
+	private SystemCascadingGoToAction _gotoActions;
+	// global actions: to be accessed by getters only
 	// Note the Edit menu actions are set in SystemViewPart. Here we use these
 	//   actions from our own popup menu actions.
-	protected SystemCommonDeleteAction deleteAction; // for global delete menu item	
-	protected SystemCommonRenameAction renameAction; // for common rename menu item	
-	protected SystemCommonSelectAllAction selectAllAction; // for common Ctrl+A select-all
+	private SystemCommonDeleteAction _deleteAction; // for global delete menu item	
+	private SystemCommonRenameAction _renameAction; // for common rename menu item	
+	private SystemCommonSelectAllAction _selectAllAction; // for common Ctrl+A select-all
 	// special flags needed when building popup menu, set after examining selections
 	protected boolean selectionShowPropertiesAction;
 	protected boolean selectionShowRefreshAction;
@@ -626,34 +628,34 @@ public class SystemView extends SafeTreeViewer
 	 *  for performance reasons.
 	 */
 	public IAction getNewConnectionAction() {
-		if (newConnectionAction == null) newConnectionAction = new SystemNewConnectionAction(getShell(), true, this); // true=>from popup menu
-		return newConnectionAction;
+		if (_newConnectionAction == null) _newConnectionAction = new SystemNewConnectionAction(getShell(), true, this); // true=>from popup menu
+		return _newConnectionAction;
 	}
 
 	/**
 	 * Return the refresh action
 	 */
 	public IAction getRefreshAction() {
-		if (refreshAction == null) refreshAction = new SystemRefreshAction(getShell());
-		refreshAction.setId(ActionFactory.REFRESH.getId());
-		refreshAction.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
-		return refreshAction;
+		if (_refreshAction == null) _refreshAction = new SystemRefreshAction(getShell());
+		_refreshAction.setId(ActionFactory.REFRESH.getId());
+		_refreshAction.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
+		return _refreshAction;
 	}
 
 	/**
 	 * @return the collapse action. Lazily creates it.
 	 */
 	public IAction getCollapseAction() {
-		if (collapseAction == null) collapseAction = new SystemCollapseAction(getShell());
-		return collapseAction;
+		if (_collapseAction == null) _collapseAction = new SystemCollapseAction(getShell());
+		return _collapseAction;
 	}
 
 	/**
 	 * @return the expand action. Lazily creates it.
 	 */
 	public IAction getExpandAction() {
-		if (expandAction == null) expandAction = new SystemExpandAction(getShell());
-		return expandAction;
+		if (_expandAction == null) _expandAction = new SystemExpandAction(getShell());
+		return _expandAction;
 	}
 
 	/**
@@ -661,17 +663,17 @@ public class SystemView extends SafeTreeViewer
 	 *  for performance reasons.
 	 */
 	public PropertyDialogAction getPropertyDialogAction() {
-		if (propertyDialogAction == null) {
-			propertyDialogAction = new PropertyDialogAction(new SameShellProvider(getShell()), this);
-			propertyDialogAction.setId(ActionFactory.PROPERTIES.getId());
-			propertyDialogAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PROPERTIES);
-			//propertyDialogAction.setToolTipText(" "); 
+		if (_propertyDialogAction == null) {
+			_propertyDialogAction = new PropertyDialogAction(new SameShellProvider(getShell()), this);
+			_propertyDialogAction.setId(ActionFactory.PROPERTIES.getId());
+			_propertyDialogAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PROPERTIES);
+			//_propertyDialogAction.setToolTipText(" "); 
 		}
 
 
-		propertyDialogAction.selectionChanged(getSelection());
+		_propertyDialogAction.selectionChanged(getSelection());
 
-		return propertyDialogAction;
+		return _propertyDialogAction;
 	}
 
 
@@ -679,8 +681,8 @@ public class SystemView extends SafeTreeViewer
 	 * Return the select All action
 	 */
 	public IAction getSelectAllAction() {
-		if (selectAllAction == null) selectAllAction = new SystemCommonSelectAllAction(getShell(), this, this);
-		return selectAllAction;
+		if (_selectAllAction == null) _selectAllAction = new SystemCommonSelectAllAction(getShell(), this, this);
+		return _selectAllAction;
 	}
 
 	/**
@@ -688,10 +690,10 @@ public class SystemView extends SafeTreeViewer
 	 *  for performance reasons.
 	 */
 	public IAction getRenameAction() {
-		if (renameAction == null) renameAction = new SystemCommonRenameAction(getShell(), this);
-		renameAction.setId(ActionFactory.RENAME.getId());
-		renameAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.RENAME);
-		return renameAction;
+		if (_renameAction == null) _renameAction = new SystemCommonRenameAction(getShell(), this);
+		_renameAction.setId(ActionFactory.RENAME.getId());
+		_renameAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.RENAME);
+		return _renameAction;
 	}
 
 	/**
@@ -699,10 +701,10 @@ public class SystemView extends SafeTreeViewer
 	 *  for performance reasons.
 	 */
 	public IAction getDeleteAction() {
-		if (deleteAction == null) deleteAction = new SystemCommonDeleteAction(getShell(), this);
-		deleteAction.setId(ActionFactory.DELETE.getId());
-		deleteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
-		return deleteAction;
+		if (_deleteAction == null) _deleteAction = new SystemCommonDeleteAction(getShell(), this);
+		_deleteAction.setId(ActionFactory.DELETE.getId());
+		_deleteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
+		return _deleteAction;
 	}
 
 	/*
@@ -721,18 +723,18 @@ public class SystemView extends SafeTreeViewer
 	 *  scoped to the currently selected object.
 	 */
 	public SystemOpenExplorerPerspectiveAction getOpenToPerspectiveAction() {
-		if (openToPerspectiveAction == null) openToPerspectiveAction = new SystemOpenExplorerPerspectiveAction(getShell(), getWorkbenchWindow());
-		return openToPerspectiveAction;
+		if (_openToPerspectiveAction == null) _openToPerspectiveAction = new SystemOpenExplorerPerspectiveAction(getShell(), getWorkbenchWindow());
+		return _openToPerspectiveAction;
 	}
 
 	public SystemShowInTableAction getShowInTableAction() {
-		if (showInTableAction == null) showInTableAction = new SystemShowInTableAction(getShell());
-		return showInTableAction;
+		if (_showInTableAction == null) _showInTableAction = new SystemShowInTableAction(getShell());
+		return _showInTableAction;
 	}
 
 	public SystemShowInMonitorAction getShowInMonitorAction() {
-		if (showInMonitorAction == null) showInMonitorAction = new SystemShowInMonitorAction(getShell());
-		return showInMonitorAction;
+		if (_showInMonitorAction == null) _showInMonitorAction = new SystemShowInMonitorAction(getShell());
+		return _showInMonitorAction;
 	}
 
 	/**
@@ -740,20 +742,20 @@ public class SystemView extends SafeTreeViewer
 	 *  scoped to the currently selected object.
 	 */
 	public GoIntoAction getGoIntoAction() {
-		if (goIntoAction == null) {
-			goIntoAction = new GoIntoAction(getSystemViewPart().getFrameList());
-			goIntoAction.setText(SystemResources.ACTION_CASCADING_GOINTO_LABEL);
-			goIntoAction.setToolTipText(SystemResources.ACTION_CASCADING_GOINTO_TOOLTIP);
+		if (_goIntoAction == null) {
+			_goIntoAction = new GoIntoAction(getSystemViewPart().getFrameList());
+			_goIntoAction.setText(SystemResources.ACTION_CASCADING_GOINTO_LABEL);
+			_goIntoAction.setToolTipText(SystemResources.ACTION_CASCADING_GOINTO_TOOLTIP);
 		}
-		return goIntoAction;
+		return _goIntoAction;
 	}
 
 	/**
 	 * Get the common "Go To->" cascading menu action for navigating the frame list.
 	 */
 	public SystemCascadingGoToAction getGoToActions() {
-		if (gotoActions == null) gotoActions = new SystemCascadingGoToAction(getShell(), getSystemViewPart());
-		return gotoActions;
+		if (_gotoActions == null) _gotoActions = new SystemCascadingGoToAction(getShell(), getSystemViewPart());
+		return _gotoActions;
 	}
 
 	/**
@@ -844,7 +846,7 @@ public class SystemView extends SafeTreeViewer
 			// PROPERTIES ACTION...
 			// This is supplied by the system, so we pretty much get it for free. It finds the
 			// registered propertyPages extension points registered for the selected object's class type.
-			//propertyDialogAction.selectionChanged(selection);		  
+			//_propertyDialogAction.selectionChanged(selection);		  
 			if (showProperties()) {
 				PropertyDialogAction pdAction = getPropertyDialogAction();
 				if (pdAction.isApplicableForSelection()) menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
@@ -872,19 +874,19 @@ public class SystemView extends SafeTreeViewer
 				}
 
 				if (showOpenViewActions()) {
-					SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();
-					openToPerspectiveAction.setSelection(selection);
-					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), openToPerspectiveAction);
+					SystemOpenExplorerPerspectiveAction opa = getOpenToPerspectiveAction();
+					opa.setSelection(selection);
+					menu.appendToGroup(opa.getContextMenuGroup(), opa);
 				}
 
 				if (showGenericShowInTableAction()) {
 					SystemShowInTableAction showInTableAction = getShowInTableAction();
 					showInTableAction.setSelection(selection);
-					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInTableAction);
+					menu.appendToGroup(getOpenToPerspectiveAction().getContextMenuGroup(), showInTableAction);
 
 					SystemShowInMonitorAction showInMonitorAction = getShowInMonitorAction();
 					showInMonitorAction.setSelection(selection);
-					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInMonitorAction);
+					menu.appendToGroup(getOpenToPerspectiveAction().getContextMenuGroup(), showInMonitorAction);
 
 				}
 			}
@@ -907,11 +909,15 @@ public class SystemView extends SafeTreeViewer
 			ISystemViewElementAdapter adapter = null;
 			boolean skipAdapterActions = false;
 
+			// can we ask adapters to contribute menu items?
+			// This can be done consistently only if all elements
+			// in the (multi) selection adapt to the same adapter instance.
+			// otherwise, adapters will not be allowed to contribute.
 			while (elements.hasNext() && !skipAdapterActions) {
 				Object element = elements.next();
 				if (adapter == null) {
 					adapter = getViewAdapter(element);
-				} else if (adapter != getRemoteAdapter(element)) {
+				} else if (adapter != getViewAdapter(element)) {
 					// selected elements have different adapters
 					skipAdapterActions = true;
 				}
@@ -919,9 +925,8 @@ public class SystemView extends SafeTreeViewer
 				//	adapters.put(adapter,element); // want only unique adapters
 			}
 
-	
 			//Enumeration uniqueAdapters = adapters.keys();
-			if (!skipAdapterActions && adapter != null) {
+			if (adapter != null && !skipAdapterActions) {
 				Shell shell = getShell();
 
 				//while (uniqueAdapters.hasMoreElements())

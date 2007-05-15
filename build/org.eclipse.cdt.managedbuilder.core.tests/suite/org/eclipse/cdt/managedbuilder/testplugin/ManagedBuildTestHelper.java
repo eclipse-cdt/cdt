@@ -391,7 +391,17 @@ public class ManagedBuildTestHelper {
 				buffer.append("but was:\n ");
 				buffer.append("\"").append(testBuffer).append("\"");
 				buffer.append("\n\n ");
-						
+				
+				buffer.append(">>>>>>>>>>>>>>>start diff: \n");
+				String location1 = getFileLocation(project, benchmarkFile);
+				String location2 = getFileLocation(project, testFile);
+				String diff = DiffUtil.getInstance().diff(location1, location2);
+				if(diff == null)
+					diff = "!diff failed!";
+				buffer.append(diff);
+				buffer.append("\n<<<<<<<<<<<end diff");
+				buffer.append("\n\n ");
+				
 				Assert.fail(buffer.toString());
 			} 
 		}
@@ -426,6 +436,9 @@ public class ManagedBuildTestHelper {
 		return true;
 	}
 
+	static public String getFileLocation(IProject project, IPath path){
+		return project.getLocation().append(path).toString();
+	}
 	static public StringBuffer readContentsStripLineEnds(IProject project, IPath path) {
 		StringBuffer buff = new StringBuffer();
 		IPath fullPath = project.getLocation().append(path);

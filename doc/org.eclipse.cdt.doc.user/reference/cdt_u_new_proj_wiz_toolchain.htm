@@ -1,36 +1,35 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html lang="en">
-
 <head>
-	<meta http-equiv="Content-Language" content="en-us">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>New Project Wizard</title>
-	<link rel="stylesheet" type="text/css" href="../help.css">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>New Project Wizard, Select a toolchain</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-<h1>New Project Wizard</h1>
-<p>The <b>New Project</b> wizard helps you create a new C or C++ project in the workbench.
-To access the wizard, from the menu bar select
-<b>File > New > Project</b>.
-The <b>New Project</b> wizard appears:
-</p>
-
-<p><img src="../images/new_project_wizard.png" alt="New Project Wizard"></p>
-
-<p>With the <b>New Project</b> wizard you can choose to:</p>
-<ul>
-<li>Create <b>C Project</b></li>
-<li>Create <b>C++ Project</b></li>
-</ul>
+<body>
+<h1>New Project Wizard, Select a toolchain</h1>
+<p>You can select toolchain(s) from this page of the wizard.</p>
+<p><img src="../images/new_proj_wz_toolchain.png"
+ alt="New Project Wizard, Select a toolchain"></p>
 <p>
-You can either provide your makefile to build new project, 
-or let CDT generate makefile automatically.
-In CDT 3.x, there were 2 different project types: 
-"Managed make" and "Standard make", resp.
-</p>
-<p>
-Currently, these features are combined in the single project. 
-In most cases, you can switch makefile generation ON or OFF 
-at any time after project creation.
+<table border="1" cellspacing="0">
+  <tbody>
+    <tr>
+      <th>Name</th>
+      <th>Function</th>
+    </tr>
+    <tr>
+      <td><b>Toolchain</b></td>
+      <td>Specifies toolchains available for selected project type.</td>
+    </tr>
+    <tr>
+      <td><b>Show Project Types and toolchains only if they are supported on the platform</b></td>
+      <td>If checked (default), list is filtered so that only toolchains
+        that are buildable on the host system are shown.<br>
+        If unchecked, lists all known toolchains.</td>
+    </tr>
+  </tbody>
+</table>
 </p>
 
 <p><img border="0" src="../images/ngconcepts.gif" 

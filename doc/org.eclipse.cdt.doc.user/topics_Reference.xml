@@ -91,21 +91,10 @@
 	
 	<!-- NEW PROJECT WIZARD TOPICS -->
 	<topic label="C/C++ New Project Wizard" href="reference/cdt_u_new_proj_wiz.htm">
-		<topic label="Managed Make Projects" href="reference/cdt_o_new_mproj.htm">
-			<topic label="Name" href="reference/cdt_u_new_proj_wiz_m_name.htm"/>
-			<topic label="Select a Project Type" href="reference/cdt_u_new_proj_wiz_m_target.htm"/>
-			<topic label="Referenced Projects" href="reference/cdt_u_new_proj_wiz_m_proj.htm"/>
-			<topic label="C/C++ Indexer" href="reference/cdt_u_new_proj_wiz_m_cindexer.htm"/>
-		</topic>
-		<topic label="Standard Make Projects" href="reference/cdt_o_new_sproj.htm">
-			<topic label="Name" href="reference/cdt_u_new_proj_wiz_s_name.htm"/>
-			<topic label="Referenced Projects" href="reference/cdt_u_new_proj_wiz_s_proj.htm"/>
-			<topic label="Make Builder" href="reference/cdt_u_new_proj_wiz_s_mbuilder.htm"/>
-			<topic label="Error Parsers" href="reference/cdt_u_new_proj_wiz_s_errorp.htm"/>
-			<topic label="Binary Parser" href="reference/cdt_u_new_proj_wiz_s_binary.htm"/>
-			<topic label="Discovery Options" href="reference/cdt_u_new_proj_wiz_s_discovery.htm"/>
-			<topic label="C/C++ Indexer" href="reference/cdt_u_new_proj_wiz_s_cindexer.htm"/>
-		</topic>
+            <topic label="Set Project Name and Location" href="reference/cdt_u_new_proj_wiz_name.htm"/>              
+            <topic label="Select Project type" href="reference/cdt_u_new_proj_wiz_type.htm"/>     
+            <topic label="Select Toolchain" href="reference/cdt_u_new_proj_wiz_toolchain.htm"/>
+            <topic label="Select Configurations" href="reference/cdt_u_new_proj_wiz_config.htm"/>   
 	</topic>
 	
 

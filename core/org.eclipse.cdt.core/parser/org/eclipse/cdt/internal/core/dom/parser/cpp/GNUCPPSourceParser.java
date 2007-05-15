@@ -5596,6 +5596,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	protected IASTComment createComment(IToken commentToken)
 			throws EndOfFileException {
-		return new ASTComment(commentToken);
+		ASTComment comment = new ASTComment(commentToken);
+		comment.setParent(translationUnit);
+		return comment;
 	}
 }

@@ -164,12 +164,19 @@ public interface IRSESystemType extends IAdaptable {
 	 * System type Property Key (value: "isWindows") indicating whether 
 	 * a system type is declared in plugin.xml to refers to a Windows
 	 * system.
-	 * On a Windows system, the following properties are expected:
+	 * <p> 
+	 * This is an "aggregate" property consisting  of several smaller 
+	 * properties like isCaseSensitive. In the future, we'll want more
+	 * fine granular properties to check against. On a Windows system,
+	 * the following properties are expected:
 	 * <ul>
 	 *   <li>File system is not case sensitive</li>
 	 *   <li>File system has root drives</li>
 	 *   <li>Symbolic links are not supported</li>
-	 *   <li>"cmd" is used as the default shell</li>
+	 *   <li>"cmd" is used as the default shell, meaning that %envVar% refers to environment variables</li>
+	 *   <li>Path separator is backslash (\)</li>
+	 *   <li>Line end character is CRLF</li>
+	 *   <li>Valid characters in file names and paths as known on Windows</li>
 	 * </ul>
 	 * @see #testProperty(String, boolean)
 	 */
@@ -240,7 +247,7 @@ public interface IRSESystemType extends IAdaptable {
 	 * This is a shortcut for
 	 * <pre> 
 	 *   getId().equals(SYSTEMTYPE_LOCAL_ID) || 
-	 *   || getProperty(PROPERTY_IS_LOCAL, false)
+	 *   || testProperty(PROPERTY_IS_LOCAL, true)
 	 * </pre>
 	 * See {@link #PROPERTY_IS_LOCAL} for properties expected on 
 	 * a Local system.
@@ -255,10 +262,12 @@ public interface IRSESystemType extends IAdaptable {
 	 * <pre> 
 	 *   getId().equals(SYSTEMTYPE_WINDOWS_ID)
 	 *   || isLocal() && System.getProperty("os.name").toLowerCase().startsWith("win")
-	 *   || getProperty(PROPERTY_IS_WINDOWS, false)
+	 *   || testProperty(PROPERTY_IS_WINDOWS, true)
 	 * </pre>
 	 * See {@link #PROPERTY_IS_WINDOWS} for properties expected on 
-	 * a Windows system.
+	 * a Windows system. This is an "aggregate" property consisting
+	 * of several smaller properties like isCaseSensitive. In the 
+	 * future, we'll want more fine granular properties to check against.
 	 * Extenders (contributors of custom system types) may override.
 	 * @return true if the system type refers to a Windows system.
 	 */

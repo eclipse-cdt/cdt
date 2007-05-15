@@ -282,9 +282,16 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	
 	public static CProjectDescriptionManager getInstance(){
 		if(fInstance == null)
+			fInstance = getInstanceSynch();
+		return fInstance;
+	}
+	
+	private static synchronized CProjectDescriptionManager getInstanceSynch(){
+		if(fInstance == null)
 			fInstance = new CProjectDescriptionManager();
 		return fInstance;
 	}
+
 
 	public void registerResourceListener() {
 		assert fRcChangeHandler == null;

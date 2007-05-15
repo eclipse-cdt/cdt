@@ -469,11 +469,11 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	public abstract Set contributeErrorParsers(Set set);
 	
 	protected Set contributeErrorParsers(ITool[] tools, Set set){
-		if(set == null)
-			set = new HashSet();
+//		if(set == null)
+//			set = new HashSet();
 		for(int i = 0; i < tools.length; i++){
 			Tool tool = (Tool)tools[i];
-			tool.contributeErrorParsers(set);
+			set = tool.contributeErrorParsers(set);
 		}
 		return set;
 	}

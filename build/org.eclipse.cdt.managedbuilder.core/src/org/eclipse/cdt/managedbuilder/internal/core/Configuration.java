@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
@@ -1410,19 +1411,24 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //		}
 //		return errorParsers;
 		Set set = contributeErrorParsers(null, true);
-		String result[] = new String[set.size()];
-		set.toArray(result);
-		return result;
+		if(set != null){
+			String result[] = new String[set.size()];
+			set.toArray(result);
+			return result;
+		}
+		return CCorePlugin.getDefault().getAllErrorParsersIDs();
 	}
 
 	public Set contributeErrorParsers(Set set, boolean includeChildren) {
 		String parserIDs = getErrorParserIdsAttribute();
-		if(set == null)
-			set = new HashSet();
-		if (parserIDs != null && parserIDs.length() != 0) {
-			StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-			while (tok.hasMoreElements()) {
-				set.add(tok.nextToken());
+		if (parserIDs != null){
+			if(set == null)
+				set = new HashSet();
+			if(parserIDs.length() != 0) {
+				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
+				while (tok.hasMoreElements()) {
+					set.add(tok.nextToken());
+				}
 			}
 		}
 		
@@ -1430,7 +1436,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			IResourceInfo[] rcInfos = getResourceInfos();
 			for(int i = 0; i < rcInfos.length; i++){
 				ResourceInfo rcInfo = (ResourceInfo)rcInfos[i];
-				rcInfo.contributeErrorParsers(set);
+				set = rcInfo.contributeErrorParsers(set);
 			}
 		}
 		return set;

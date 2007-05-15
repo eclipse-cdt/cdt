@@ -1440,11 +1440,11 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 	public Set contributeErrorParsers(Set set){
-		if(set == null)
-			set = new HashSet();
+//		if(set == null)
+//			set = new HashSet();
 		
 		if(toolChain != null)
-			toolChain.contributeErrorParsers(this, set, true);
+			set = toolChain.contributeErrorParsers(this, set, true);
 		
 		return set;
 	}

@@ -304,7 +304,7 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 
 	public void saveProjectData() throws CoreException {
-		if(CConfigBasedDescriptorManager.getInstance().reconsile(this, fCfgDes.getProjectDescription()))
+		if(CProjectDescriptionManager.getInstance().getDescriptorManager().reconsile(this, fCfgDes.getProjectDescription()))
 			fIsDirty = true;
 		
 		checkApply();

@@ -2326,12 +2326,14 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	}
 	
 	public Set contributeErrorParsers(Set set){
-		if(set == null)
-			set = new HashSet();
-		
-		String ids[] = getErrorParserList();
-		if(ids.length != 0)
-			set.addAll(Arrays.asList(ids));
+		if(getErrorParserIds() != null){
+			if(set == null)
+				set = new HashSet();
+			
+			String ids[] = getErrorParserList();
+			if(ids.length != 0)
+				set.addAll(Arrays.asList(ids));
+		}
 		return set;
 	}
 

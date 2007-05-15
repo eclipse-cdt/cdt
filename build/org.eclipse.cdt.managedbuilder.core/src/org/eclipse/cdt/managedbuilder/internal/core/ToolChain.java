@@ -1377,24 +1377,25 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 	
 	public Set contributeErrorParsers(FolderInfo info, Set set, boolean includeChildren){
-		if(set == null)
-			set = new HashSet();
-		
 		String parserIDs = getErrorParserIdsAttribute();
-		if (parserIDs != null && parserIDs.length() != 0) {
-			StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-			while (tok.hasMoreElements()) {
-				set.add(tok.nextToken());
+		if (parserIDs != null){
+			if(set == null)
+				set = new HashSet();
+			if(parserIDs.length() != 0) {
+				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
+				while (tok.hasMoreElements()) {
+					set.add(tok.nextToken());
+				}
 			}
 		}
 		
 		if(includeChildren){
 			ITool tools[] = info.getFilteredTools();
-			info.contributeErrorParsers(tools, set);
+			set = info.contributeErrorParsers(tools, set);
 			
 			if(info.isRoot()){
 				Builder builder = (Builder)getBuilder();
-				builder.contributeErrorParsers(set);
+				set = builder.contributeErrorParsers(set);
 			}
 		}
 		return set;

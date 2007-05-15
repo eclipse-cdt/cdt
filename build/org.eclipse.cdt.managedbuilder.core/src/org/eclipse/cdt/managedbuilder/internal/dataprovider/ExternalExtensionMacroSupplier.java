@@ -215,7 +215,7 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 		if(macros == null || macros.length == 0)
 			return macros;
 		
-		ICdtVariable filtered[] = new IBuildMacro[macros.length];
+		ICdtVariable filtered[] = new ICdtVariable[macros.length];
 		int filteredNum = 0;
 		for(int i = 0; i < macros.length; i++){
 			ICdtVariable var = macros[i];

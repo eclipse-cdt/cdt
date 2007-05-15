@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Martin Oberhuber (Wind River) - [187115] force SystemMessageDialog always into Display thread
  ********************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.IndicatorException;
@@ -44,6 +46,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -586,13 +589,41 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		return SystemBasePlugin.getActiveWorkbenchShell();
 	}
 
+	private static void runInUIThread(final Runnable r) {
+		Display d = Display.getCurrent();
+		if (d!=null) {
+			r.run();
+		}
+		else {
+			d = Display.getDefault();
+			d.syncExec(r);
+		}
+	}
+	
+	private static int openInUIThread(final Window dlg) {
+		Display d = Display.getCurrent();
+		if (d!=null) {
+			return dlg.open();
+		}
+		else {
+			d = Display.getDefault();
+			final int[] rv = new int[1];
+			d.syncExec(new Runnable() {
+				public void run() {
+					rv[0] = dlg.open();
+				}
+			});
+			return rv[0];
+		}
+	}
+	
 	/**
 	 * For ease of use for simple messages with no response from user.
 	 */
 	public static void displayErrorMessage(Shell shell, SystemMessage msg)
 	{
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
-		msgDlg.open();
+		openInUIThread(msgDlg);
 	}	
 
 	/**
@@ -602,7 +633,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	{
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.setException(exc);
-		msgDlg.open();
+		openInUIThread(msgDlg);
 	}	
 
 	/**
@@ -651,7 +682,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
 		msg.makeSubstitution(hostMsg);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
-		msgDlg.open();
+		openInUIThread(msgDlg);
 	}	
 
 	/**
@@ -663,7 +694,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E_HELP);
 		msg.makeSubstitution(hostMsg,levelTwo);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
-		msgDlg.open();
+		openInUIThread(msgDlg);
 	}	
 
 	/**
@@ -674,7 +705,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_W);
 		msg.makeSubstitution(hostMsg);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
-		msgDlg.open();
+		openInUIThread(msgDlg);
 	}	
 
 	/**
@@ -686,7 +717,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_W_HELP);
 		msg.makeSubstitution(hostMsg,levelTwo);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
-		msgDlg.open();
+		openInUIThread(msgDlg);
 	}	
 
 	/**
@@ -699,7 +730,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		  shell = Display.getCurrent().getActiveShell();
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.setException(exc);
-		msgDlg.open();
+		openInUIThread(msgDlg);
 	}
 	
  
@@ -719,10 +750,14 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 */
 	public static void showExceptionMessage(Shell shell, String msg, Exception exc)
 	{
-	     org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(null);
+	     final MessageBox mb = new MessageBox(null);
 	     //mb.setTitle("Remote Systems Programming Error");
-	     mb.setMessage(msg);	
-	     mb.open();
+	     mb.setMessage(msg);
+	     runInUIThread(new Runnable() {
+	    	 public void run() {
+	    		 mb.open();
+	    	 }
+	     });
 	     SystemBasePlugin.logError(msg,exc);
 	}
 
@@ -734,12 +769,19 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	public static boolean show(Shell shell, SystemMessage msg)
 	{
 		boolean yes = false;
-		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
+		final SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		
 		if (msg.getIndicator() != SystemMessage.INQUIRY)
-			msgDlg.open();
-		else 
-			yes = msgDlg.openQuestionNoException();
+			openInUIThread(msgDlg);
+		else {
+			final boolean[] rv = new boolean[1];
+		    runInUIThread(new Runnable() {
+		    	 public void run() {
+		 			rv[0] = msgDlg.openQuestionNoException();
+		    	 }
+		    });
+		    yes = rv[0];
+		}
 		return yes;
 	}
 

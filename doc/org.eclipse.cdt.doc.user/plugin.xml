@@ -98,9 +98,9 @@
     		composite="false"
     		contentFile="$nl$/org.eclipse.cdt.doc.user/cheatsheets/cs_cdt_basic.xml"
     		id="org.eclipse.cdt-doc.cheatsheet.cdt_basic"
-    		name="Creating a C/C++ Managed Make project">
+    		name="Creating C/C++ Projects">
        		<description>
-          		Use this tutorial to learn how to create a simple C/C++ project that uses the Managed Make system.
+          		Use this tutorial to learn how to create a simple C/C++ project.
        		</description>
     	</cheatsheet>
     	<cheatsheet
@@ -108,7 +108,7 @@
     		composite="false"
     		contentFile="$nl$/org.eclipse.cdt.doc.user/cheatsheets/cs_cdt_import_project.xml"
     		id="org.eclipse.cdt-doc.cheatsheet.cdt_basic"
-    		name="Importing a C/C++ Managed Make Project">
+    		name="Importing C/C++ Projects">
        		<description>
           		Use this tutorial to learn how to successfully import a CDT project.
        		</description>

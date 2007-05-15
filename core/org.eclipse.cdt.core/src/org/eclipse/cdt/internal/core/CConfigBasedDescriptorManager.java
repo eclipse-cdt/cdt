@@ -89,6 +89,13 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	
 	public static CConfigBasedDescriptorManager getInstance(){
 		if(fInstance == null){
+			fInstance = getInstanceSynch();
+		}
+		return fInstance;
+	}
+
+	public static synchronized CConfigBasedDescriptorManager getInstanceSynch(){
+		if(fInstance == null){
 			fInstance = new CConfigBasedDescriptorManager();
 		}
 		return fInstance;

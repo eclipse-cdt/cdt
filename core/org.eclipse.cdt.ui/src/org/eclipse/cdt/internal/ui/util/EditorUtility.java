@@ -256,20 +256,6 @@ public class EditorUtility {
 	}
 
 	/**
-	 * Utility method to get an editor input for the given file system location.
-	 * If the location denotes a workspace file, a <code>FileEditorInput</code>
-	 * is returned, otherwise, the input is an <code>IStorageEditorInput</code>
-	 * assuming the location points to an existing file in the file system.
-	 * 
-	 * @param location  a valid file system location
-	 * @return an editor input
-	 * @deprecated Use {@link #getEditorInputForLocation(IPath, ICElement)} instead
-	 */
-	public static IEditorInput getEditorInputForLocation(IPath location) {
-		return getEditorInputForLocation(location, null);
-	}
-
-	/**
 	 * Utility method to open an editor for the given file system location
 	 * using {@link #getEditorInputForLocation(IPath, ICElement)} to create
 	 * the editor input.
@@ -306,16 +292,18 @@ public class EditorUtility {
 			// include paths
 			try {
 				ICProject[] projects = CCorePlugin.getDefault().getCoreModel().getCModel().getCProjects();
-				for (int i = 0; i < projects.length; i++) {
+				outerFor: for (int i = 0; i < projects.length; i++) {
 					IIncludeReference[] includeReferences = projects[i].getIncludeReferences();
 					for (int j = 0; j < includeReferences.length; j++) {
 						if (includeReferences[j].isOnIncludeEntry(location)) {
-							context = includeReferences[j].getCProject();
-							break;
+							context = projects[i];
+							break outerFor;
 						}
 					}
-					if (context != null)
-						break;
+				}
+				if (context == null && projects.length > 0) {
+					// last resort: just take any of them
+					context= projects[0];
 				}
 			} catch (CModelException e) {
 			}
@@ -329,10 +317,8 @@ public class EditorUtility {
 				if (unit != null) {
 					return new ExternalEditorInput(unit, new FileStorage(location));
 				}
-			}
-			// no translation unit - still try to get a sensible marker resource
-			// from the associated element
-			if (cproject != null) {
+				// no translation unit - still try to get a sensible marker resource
+				// from the associated element
 				IResource markerResource= cproject.getProject();
 				return new ExternalEditorInput(new FileStorage(location), markerResource);
 			}

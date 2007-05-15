@@ -22,6 +22,8 @@ import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -40,9 +42,11 @@ import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
+import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -61,6 +65,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * A document provider for C/C++ content.
@@ -729,6 +734,15 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		} else if (element instanceof ITranslationUnitEditorInput) {
 			ITranslationUnitEditorInput input = (ITranslationUnitEditorInput)element;
 			original = input.getTranslationUnit();
+		} else if (element instanceof IAdaptable) {
+			IAdaptable adaptable= (IAdaptable)element;
+			ILocationProvider locationProvider= (ILocationProvider)adaptable.getAdapter(ILocationProvider.class);
+			if (locationProvider != null) {
+				IPath location= locationProvider.getPath(element);
+				if (location != null) {
+					original= createTranslationUnit(location);
+				}
+			}
 		}
 
 		if (original == null) {
@@ -766,6 +780,19 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			extension.setIsActive(isHandlingTemporaryProblems());
 		}
 		return tuInfo;
+	}
+
+	/**
+	 * Try to synthesize an ITranslationUnit out of thin air.
+	 * @param location  the file system location of the file in question
+	 * @return a translation unit or <code>null</code>
+	 */
+	private ITranslationUnit createTranslationUnit(IPath location) {
+		IEditorInput input= EditorUtility.getEditorInputForLocation(location, null);
+		if (input instanceof ITranslationUnitEditorInput) {
+			return ((ITranslationUnitEditorInput)input).getTranslationUnit();
+		}
+		return null;
 	}
 
 	/*

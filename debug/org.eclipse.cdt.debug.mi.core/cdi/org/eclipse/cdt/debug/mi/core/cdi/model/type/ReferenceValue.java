@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
@@ -24,6 +26,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongLongType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortType;
@@ -38,13 +41,23 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
  * 
  * @since Jun 3, 2003
  */
-public class ReferenceValue extends DerivedValue implements ICDIReferenceValue {
+public class ReferenceValue extends DerivedValue implements ICDIReferenceValue, ICDIPointerValue {
 
+	private String hexAddress;
+	
 	/**
+	 * Construct a value object for the referred variable, including the actual
+	 * hexadecimal address of the variable.
 	 * @param v
+	 * @param hexAddress
 	 */
-	public ReferenceValue(Variable v) {
+	public ReferenceValue(Variable v, String hexAddress) {
 		super(v);
+		if (hexAddress.startsWith("0x") || hexAddress.startsWith("0X")) {
+			this.hexAddress = hexAddress.substring(2);
+		} else {
+			this.hexAddress = hexAddress;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -81,12 +94,16 @@ public class ReferenceValue extends DerivedValue implements ICDIReferenceValue {
 //		} else if (t instanceof ICDIReferenceType) {
 //			value = new ReferenceValue(getVariable());
 		} else if (t instanceof ICDIArrayType) {
-			value = new ArrayValue(getVariable());
+			value = new ArrayValue(getVariable(), hexAddress);
 		} else if (t instanceof ICDIStructType) {
 			value = new StructValue(getVariable());
 		} else {
 			value = new Value(getVariable());
 		}
 		return value;		
+	}
+
+	public BigInteger pointerValue() throws CDIException {
+		return new BigInteger(hexAddress, 16);
 	}
 }

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
@@ -87,6 +88,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	String language;
 	boolean isFake = false;
 	boolean isUpdated = true;
+	private String hexAddress;
 
 	public Variable(VariableDescriptor obj, MIVarCreate var) {
 		super(obj);
@@ -148,6 +150,37 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			}
 		}
 		return fMIVar;
+	}
+
+	private String getHexAddress() throws CDIException {
+
+		if (hexAddress != null) {
+			return hexAddress;
+		}
+		
+		MISession mi = ((Target)getTarget()).getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		String name = "&(" + getName() + ")";
+		MIVarCreate varCreateCmd = factory.createMIVarCreate(name);
+		try {
+			if (mi.getCommandTimeout() >= 0) {
+				mi.postCommand(varCreateCmd, mi.getCommandTimeout());
+			} else {
+				mi.postCommand(varCreateCmd);
+			}
+			MIVarCreateInfo info = varCreateCmd.getMIVarCreateInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			}
+			MIVar var = info.getMIVar();
+			Variable v = createVariable((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(),
+					name, name, getPosition(), getStackDepth(), var);
+			v.setFormat(ICDIFormat.HEXADECIMAL);
+			hexAddress = v.getValue().getValueString();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+		return hexAddress;
 	}
 
 	public Variable getChild(String name) {
@@ -351,9 +384,9 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			} else if (t instanceof ICDIPointerType) {
 				value = new PointerValue(this);
 			} else if (t instanceof ICDIReferenceType) {
-				value = new ReferenceValue(this);
+				value = new ReferenceValue(this, getHexAddress());
 			} else if (t instanceof ICDIArrayType) {
-				value = new ArrayValue(this);
+				value = new ArrayValue(this, getHexAddress());
 			} else if (t instanceof ICDIStructType) {
 				value = new StructValue(this);
 			} else {

@@ -11,11 +11,14 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
@@ -27,10 +30,27 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.VariableDescriptor;
  * 
  * @since Jun 3, 2003
  */
-public class ArrayValue extends DerivedValue implements ICDIArrayValue {
+public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPointerValue {
 
-	public ArrayValue(Variable v) {
+	private String hexAddress;
+	
+	/**
+	 * Construct the array value object given a variable and the
+	 * hexadecimal address of the variable.
+	 * 
+	 * @param v
+	 * @param hexAddress
+	 */
+	public ArrayValue(Variable v, String hexAddress) {
 		super(v);
+		if (hexAddress == null) {
+			return;
+		}
+		if (hexAddress.startsWith("0x") || hexAddress.startsWith("0X")) {
+			this.hexAddress = hexAddress.substring(2);
+		} else {
+			this.hexAddress = hexAddress;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -77,5 +97,12 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue {
 		VariableManager mgr = session.getVariableManager();
 		ICDIVariableDescriptor vo = mgr.getVariableDescriptorAsArray(variable, index, length);
 		return mgr.createVariable((VariableDescriptor)vo).getValue().getVariables();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue#pointerValue()
+	 */
+	public BigInteger pointerValue() throws CDIException {
+		return new BigInteger(hexAddress, 16);
 	}
 }

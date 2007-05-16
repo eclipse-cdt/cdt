@@ -241,9 +241,8 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 					IValue value = exp.getValue();
 					if ( value instanceof ICValue ) {
 						ICType type = ((ICValue)value).getType();
-						if ( type != null && (type.isPointer() || type.isIntegralType()) ) {
+						if ( type != null && (type.isPointer() || type.isIntegralType() || type.isArray()) ) {
 							address = value.getValueString();
-							exp.dispose();
 							if ( address != null ) {
 								// ???
 								BigInteger a = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$
@@ -266,6 +265,12 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		catch( NumberFormatException e ) {
 			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.0" ), new String[] { expression, address } ); //$NON-NLS-1$
 		}
+		finally {
+			if (exp != null) {
+				exp.dispose();
+			}
+		}
+		
 		throw new DebugException( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, msg, null ) );
 	}
 

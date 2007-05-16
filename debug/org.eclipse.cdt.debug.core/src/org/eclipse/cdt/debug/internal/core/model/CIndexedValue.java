@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model; 
 
+import java.math.BigInteger;
+
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IIndexedValue;
@@ -134,10 +140,35 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 		return ( type != null ) ? type.getName() : ""; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Please note that this function returns the address of the array, not the
+	 * contents of the array, as long as the underlying ICDIArrayValue is an
+	 * instance of ICDIPointerValue.  Otherwise, it returns an empty string.
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
 	public String getValueString() throws DebugException {
+		if ( fCDIValue instanceof ICDIPointerValue ) {
+			try {
+				IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
+				BigInteger pv = ((ICDIPointerValue)fCDIValue).pointerValue();
+				if ( pv == null )
+					return ""; //$NON-NLS-1$
+				IAddress address = factory.createAddress( pv );
+				if ( address == null )
+					return ""; //$NON-NLS-1$
+				CVariableFormat format = getParentVariable().getFormat();
+				if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.HEXADECIMAL.equals( format ) )
+					return address.toHexAddressString();
+				if ( CVariableFormat.DECIMAL.equals( format ) )
+					return address.toString();
+				if ( CVariableFormat.BINARY.equals( format ) )
+					return address.toBinaryAddressString();
+				return null;
+			} catch (CDIException e) {
+				requestFailed( e.getMessage(), null );
+			}
+		}
 		return ""; //$NON-NLS-1$
 	}
 

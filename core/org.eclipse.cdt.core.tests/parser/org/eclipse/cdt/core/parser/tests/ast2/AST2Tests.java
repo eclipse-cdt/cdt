@@ -3728,7 +3728,7 @@ public class AST2Tests extends AST2BaseTest {
 	//	    int c = (*a).method();      // Problem: method
 	//	  }
 	//	};
-	public void _test186736() throws Exception {
+	public void test186736() throws Exception {
 		StringBuffer buffer = getContents(1)[0];
 		IASTTranslationUnit tu= parseAndCheckBindings(buffer.toString(), ParserLanguage.CPP);
 		CNameCollector col = new CNameCollector();
@@ -3776,7 +3776,7 @@ public class AST2Tests extends AST2BaseTest {
 	//	    int b2 = a2->method();        // Problem: method
 	//	  }
 	//	};
-	public void _test186736_variant1() throws Exception {
+	public void test186736_variant1() throws Exception {
 		StringBuffer buffer = getContents(1)[0];
 		IASTTranslationUnit tu= parseAndCheckBindings(buffer.toString(), ParserLanguage.CPP);
 		CNameCollector col = new CNameCollector();

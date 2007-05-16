@@ -87,6 +87,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
@@ -359,12 +360,26 @@ public class CPPSemantics {
                     tempName = (IASTName) tempName.getParent();
                 
                 ASTNodeProperty prop = tempName.getPropertyInParent();
-                if( prop == IASTFieldReference.FIELD_NAME || 
+                if( (prop == STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof ICPPASTUnaryExpression) ) {
+                	ICPPASTUnaryExpression unaryExp = (ICPPASTUnaryExpression) tempName.getParent();
+                	IASTExpression oprd= unaryExp.getOperand();
+                	return CPPVisitor.getExpressionType(oprd);
+                } else if( prop == IASTFieldReference.FIELD_NAME || 
                 	(prop == STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof ICPPASTFieldReference) )
                 {
                     ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempName.getParent();
                     implied = CPPVisitor.getExpressionType( fieldRef.getFieldOwner() );
-                    if( fieldRef.isPointerDereference() && implied instanceof IPointerType ){
+                    IType ultimateImplied= getUltimateType(implied, true);
+                    if( prop != STRING_LOOKUP_PROPERTY && fieldRef.isPointerDereference() && ultimateImplied instanceof ICPPClassType) {
+                    	ICPPFunction operator= findOperator(fieldRef, (ICPPClassType) ultimateImplied);
+                    	try {
+                    		if(operator!=null) {
+                    			implied= operator.getType().getReturnType();
+                    		}
+                    	} catch(DOMException de) {
+                    		return de.getProblem();
+                    	}
+                    } else if( fieldRef.isPointerDereference() && implied instanceof IPointerType ){
                         try {
                             implied = ((IPointerType)implied).getType();
                         } catch ( DOMException e ) {
@@ -3278,7 +3293,12 @@ public class CPPSemantics {
 	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
 	    LookupData data = null;
 	    
-		if( exp instanceof IASTArraySubscriptExpression ){
+	    if( exp instanceof IASTUnaryExpression) {
+	    	astName.setName( ICPPASTOperatorName.OPERATOR_STAR );
+		    data = new LookupData( astName );
+		    data.forceQualified = true;
+		    data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+	    } else if( exp instanceof IASTArraySubscriptExpression ){
 		    astName.setName( ICPPASTOperatorName.OPERATOR_BRACKET );
 		    data = new LookupData( astName );
 		    data.forceQualified = true;

@@ -901,7 +901,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		args = addCmd(args, stopOnErrCmd);
 		args = addCmd(args, parallelBuildCmd);
 
-		return args;
+		return args != null ? args.trim() : null;
 	}
 	
 	private String addCmd(String args, String cmd){

@@ -196,6 +196,12 @@ public class BuildLanguageData extends CLanguageData {
 
 	private void initOptionStores(){
 		if(!fOptionStoreInited){
+			initOptionStoresSynch();
+		}
+	}
+	
+	private synchronized void initOptionStoresSynch(){
+		if(!fOptionStoreInited){
 			calculateKindToOptionArrayStore();
 			calculateKindToUndefOptionArrayStore();
 			fOptionStoreInited = true;

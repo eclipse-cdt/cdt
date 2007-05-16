@@ -765,7 +765,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// TODO:  This is probably wrong.  I'll bet we don't handle the case where all configs are deleted...
 		//        But, at least, our UI does not allow the last config to be deleted.		
 		// Sanity
-		if (configuration == null) return;
+		if (configuration == null || configuration.isExtensionElement()) return;
 
 		if (!configuration.equals(getDefaultConfiguration())) {
 			IProject project = owner.getProject();

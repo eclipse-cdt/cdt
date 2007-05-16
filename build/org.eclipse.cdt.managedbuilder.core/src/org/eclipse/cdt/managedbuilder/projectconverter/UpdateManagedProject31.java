@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class UpdateManagedProject31 {
+	private static final String INEXISTEND_PROP_ID = "";
 	
 	static void doProjectUpdate(IProgressMonitor monitor, final IProject project) throws CoreException {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
@@ -46,32 +47,46 @@ public class UpdateManagedProject31 {
 		if(props == null)
 			return;
 		
-		IToolChain tc = cfg.getToolChain();
-		IToolChain extTc = ManagedBuildManager.getExtensionToolChain(tc);
-		if(tc == null)
-			return;
-		String id = extTc.getId();
-		if(id == null)
+		boolean artefactTypeSupported = props.supportsType(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
+		boolean buildTypeSupported = props.supportsType(ManagedBuildManager.BUILD_TYPE_PROPERTY_ID);
+		if(!artefactTypeSupported && !buildTypeSupported)
 			return;
 		
-		if(props.supportsType(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID)){
-			String val = getBuildArtefactTypeFromId(id);
-			if(val != null && props.supportsValue(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, val)){
-				try {
-					props.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, val);
-				} catch (CoreException e) {
-					ManagedBuilderCorePlugin.log(e);
+		String artefactType = artefactTypeSupported ? null : INEXISTEND_PROP_ID;
+		String buildType = buildTypeSupported ? null : INEXISTEND_PROP_ID;
+		
+		String id = cfg.getId();
+		if(artefactType == null){
+			artefactType = getBuildArtefactTypeFromId(id);
+		}
+		if(buildType == null){
+			buildType = getBuildTypeFromId(id);
+		}
+		
+		if(artefactType == null || buildType == null){
+			for(IToolChain tc = cfg.getToolChain(); tc != null && (artefactType == null || buildType == null); tc = tc.getSuperClass()){
+				id = tc.getId();
+				if(artefactType == null){
+					artefactType = getBuildArtefactTypeFromId(id);
+				}
+				if(buildType == null){
+					buildType = getBuildTypeFromId(id);
 				}
 			}
 		}
-		if(props.supportsType(ManagedBuildManager.BUILD_TYPE_PROPERTY_ID)){
-			String val = getBuildTypeFromId(id);
-			if(val != null && props.supportsValue(ManagedBuildManager.BUILD_TYPE_PROPERTY_ID, val)){
-				try {
-					props.setProperty(ManagedBuildManager.BUILD_TYPE_PROPERTY_ID, val);
-				} catch (CoreException e) {
-					ManagedBuilderCorePlugin.log(e);
-				}
+		
+		if(artefactType != null && artefactType != INEXISTEND_PROP_ID){
+			try {
+				props.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artefactType);
+			} catch (CoreException e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
+		}
+		if(buildType != null && buildType != INEXISTEND_PROP_ID){
+			try {
+				props.setProperty(ManagedBuildManager.BUILD_TYPE_PROPERTY_ID, buildType);
+			} catch (CoreException e) {
+				ManagedBuilderCorePlugin.log(e);
 			}
 		}
 	}

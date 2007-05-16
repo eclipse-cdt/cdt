@@ -919,6 +919,8 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			Map.Entry entry = (Map.Entry)iter.next();
 			ICConfigExtensionReference[] thisRefs = (ICConfigExtensionReference[])entry.getValue();
 			ICConfigExtensionReference[] otherRefs = (ICConfigExtensionReference[])other.fExtMap.get(entry.getKey());
+			if(otherRefs == null)
+				return thisRefs.length == 0;
 			if(thisRefs.length != otherRefs.length)
 				return false;
 			

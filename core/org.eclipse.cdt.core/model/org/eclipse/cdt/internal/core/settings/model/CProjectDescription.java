@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -45,7 +46,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	private IProject fProject;
 	private ICSettingsStorage fStorage;
 	private ICStorageElement fRootStorageElement;
-	private Map fCfgMap = new HashMap();
+	private LinkedHashMap fCfgMap = new LinkedHashMap();
 	private boolean fIsReadOnly;
 	private boolean fIsModified;
 	private HashMap fPropertiesMap;
@@ -233,6 +234,10 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	void doneLoadding(){
 		doneInitializing();
 		fIsLoadding = false;
+	}
+	
+	void setLoadding(boolean loadding){
+		fIsLoadding = loadding;
 	}
 
 	private void doneInitializing(){

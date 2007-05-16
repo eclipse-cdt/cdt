@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -22,6 +25,8 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 public class BuildSettingsUtil {
 	private static final int[] COMMON_SETTINGS_IDS = new int[]{
@@ -132,5 +137,15 @@ public class BuildSettingsUtil {
 
 			values.clear();
 		}
+	}
+	
+	public static void checkApplyDescription(IProject project, ICProjectDescription des) throws CoreException{
+		ICConfigurationDescription[] cfgs = des.getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			if(!ManagedBuildManager.CFG_DATA_PROVIDER_ID.equals(cfgs[i].getBuildSystemId()))
+				des.removeConfiguration(cfgs[i]);
+		}
+		
+		CoreModel.getDefault().setProjectDescription(project, des);
 	}
 }

@@ -46,6 +46,7 @@ import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
@@ -260,12 +261,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		return defaultConfig;
 */
-		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(getOwner().getProject(), false);
-		IConfiguration activeCfg = null;
-		if(des != null){
-			ICConfigurationDescription cfgDes = des.getActiveConfiguration();
-			activeCfg = managedProject.getConfiguration(cfgDes.getId());
-		}
+		IConfiguration activeCfg = findExistingDefaultConfiguration();
 		
 		if(activeCfg == null){
 			IConfiguration cfgs[] = managedProject.getConfigurations();
@@ -275,6 +271,17 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		
 		return activeCfg;
 		
+	}
+	
+	private IConfiguration findExistingDefaultConfiguration() {
+		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(getOwner().getProject(), false);
+		IConfiguration activeCfg = null;
+		if(des != null){
+			ICConfigurationDescription cfgDes = des.getActiveConfiguration();
+			activeCfg = managedProject.getConfiguration(cfgDes.getId());
+		}
+		
+		return activeCfg;
 	}
 
 	/* (non-Javadoc)
@@ -767,7 +774,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// Sanity
 		if (configuration == null || configuration.isExtensionElement()) return;
 
-		if (!configuration.equals(getDefaultConfiguration())) {
+		if (!configuration.equals(findExistingDefaultConfiguration())) {
 			IProject project = owner.getProject();
 			ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project);
 			if(des != null){
@@ -783,8 +790,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				if(activeCfgDes != null){
 					des.setActiveConfiguration(activeCfgDes);
 					try {
-						CoreModel.getDefault().setProjectDescription(project, des);
+						BuildSettingsUtil.checkApplyDescription(project, des);
 					} catch (CoreException e) {
+						ManagedBuilderCorePlugin.log(e);
 					}
 				}
 			}

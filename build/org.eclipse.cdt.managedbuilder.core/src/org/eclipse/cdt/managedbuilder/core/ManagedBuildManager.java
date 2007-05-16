@@ -65,6 +65,7 @@ import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListene
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.buildproperties.BuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.internal.core.BooleanExpressionApplicabilityCalculator;
+import org.eclipse.cdt.managedbuilder.internal.core.BuildSettingsUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.CommonBuilder;
@@ -1420,7 +1421,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 
 //		try {
-			CoreModel.getDefault().setProjectDescription(project, projDes);
+			BuildSettingsUtil.checkApplyDescription(project, projDes);
 //		} catch (CoreException e) {
 //			return false;
 //		}
@@ -1561,7 +1562,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
 		if(projDes != null){
 			if(applyConfiguration(cfg, projDes, true)){
-				CoreModel.getDefault().setProjectDescription(project, projDes);
+				BuildSettingsUtil.checkApplyDescription(project, projDes);
 			}
 		}
 	}
@@ -1584,8 +1585,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					updated = true;
 				}
 			}
-			if(updated)
-				CoreModel.getDefault().setProjectDescription(project, projDes);
+			if(updated){
+				BuildSettingsUtil.checkApplyDescription(project, projDes);
+			}
 		}
 	}		
 	

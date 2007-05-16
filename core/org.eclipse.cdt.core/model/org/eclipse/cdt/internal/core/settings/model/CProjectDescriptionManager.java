@@ -380,10 +380,11 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 	}
 	
-	private void clearDescriptionLoadding(IProject project){
+	private CProjectDescription clearDescriptionLoadding(IProject project){
 		Map map = getDescriptionLoaddingMap(false);
 		if(map != null)
-			map.remove(project);
+			return (CProjectDescription)map.remove(project);
+		return null;
 	}
 	
 	private Map getDescriptionLoaddingMap(boolean create){
@@ -553,6 +554,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				ownerId = (String)info[0];
 				des = (CProjectDescription)info[1];
 				setDescriptionLoadding(project, des);
+				des.setLoadding(true);
 			} else {
 				ownerId = null;
 				des = null;
@@ -584,10 +586,13 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				}
 	
 				des = new CProjectDescription(des, true, el);
-				setDescriptionApplying(project, des);
-				des.applyDatas();
-				des.doneApplying();
-				clearDescriptionApplying(project);
+				try {
+					setDescriptionApplying(project, des);
+					des.applyDatas();
+					des.doneApplying();
+				} finally {
+					clearDescriptionApplying(project);
+				}
 				
 				try {
 					((InternalXmlStorageElement)des.getRootStorageElement()).setReadOnly(true);
@@ -595,7 +600,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				}
 			}
 		}finally{
-			clearDescriptionLoadding(project);
+			CProjectDescription d = clearDescriptionLoadding(project);
+			if(d != null)
+				d.setLoadding(false);
 		}
 		return des;
 	}

@@ -90,7 +90,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	}
 
 	/**
-	 * @return false, may be overriden
+	 * @return false, may be overridden
 	 * @see IConnectorService#supportsRemoteServerLaunching()
 	 */
 	public boolean supportsRemoteServerLaunching() {
@@ -98,7 +98,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	}
 
 	/**
-	 * @return false, may be overriden
+	 * @return false, may be overridden
 	 * @see IConnectorService#supportsServerLaunchProperties()
 	 */
 	public boolean supportsServerLaunchProperties() {
@@ -106,7 +106,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	}
 	
 	/**
-	 * @return null, may be overriden
+	 * @return null, may be overridden
 	 * @see IConnectorService#getRemoteServerLauncherProperties()
 	 */
 	public IServerLauncherProperties getRemoteServerLauncherProperties() {
@@ -114,7 +114,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	}
 
 	/**
-	 * Do nothing, may be overriden
+	 * Do nothing, may be overridden
 	 * @param newRemoteServerLauncher the server launcher properties
 	 * @see IConnectorService#setRemoteServerLauncherProperties(IServerLauncherProperties)
 	 */
@@ -428,14 +428,14 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 
 	/**
 	 * Performs the actual connection to the target system.
-	 * @param monitor for cancelation and progress reporting
+	 * @param monitor for cancellation and progress reporting
 	 * @throws Exception if connection does not succeed
 	 */
 	protected abstract void internalConnect(IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Performs the actual disconnection from the target system.
-	 * @param monitor for cancelation and progress reporting
+	 * @param monitor for cancellation and progress reporting
 	 * @throws Exception if disconnection does not succeed
 	 */
 	protected abstract void internalDisconnect(IProgressMonitor monitor) throws Exception;

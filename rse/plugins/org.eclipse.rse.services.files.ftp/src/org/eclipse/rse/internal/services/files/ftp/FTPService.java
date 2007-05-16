@@ -40,6 +40,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
+ * Javier Montalvo Orus (Symbian) - [187096] Drag&Drop + Copy&Paste shows error message on FTP connection
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -658,10 +659,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		IHostFile remoteHostFile = getFile(remoteParent,remoteFile,null);
 		
-		FTPClient ftpClient = getFTPClient();
-		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
+			FTPClient ftpClient = getFTPClient();
+			
 			MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
 			//IHostFile remoteHostFile = null;
 			OutputStream output = null;
@@ -825,21 +826,27 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 		boolean success = false;
 		
-		FTPClient ftpClient = getFTPClient(); 
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
+		{
 		
-		try {
+			FTPClient ftpClient = getFTPClient(); 
 			
-			String source = remoteParent.endsWith(String.valueOf(getSeparator())) ? remoteParent + oldName : remoteParent + getSeparator() + oldName;
-			
-			success = ftpClient.rename(source, newName);
-			
-			if(!success)
-			{
-				throw new Exception(ftpClient.getReplyString());
+			try {
+				
+				String source = remoteParent.endsWith(String.valueOf(getSeparator())) ? remoteParent + oldName : remoteParent + getSeparator() + oldName;
+				
+				success = ftpClient.rename(source, newName);
+				
+				if(!success)
+				{
+					throw new Exception(ftpClient.getReplyString());
+				}
+				
+			} catch (Exception e) {
+				throw new RemoteFileIOException(e);
+			}finally {
+				_commandMutex.release();
 			}
-			
-		} catch (Exception e) {
-			throw new RemoteFileIOException(e);
 		}
 
 		return success;
@@ -863,24 +870,30 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		boolean success = false;
 
-		FTPClient ftpClient = getFTPClient(); 
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
+		{
 		
-		try{
-		
-			String source = srcParent.endsWith(String.valueOf(getSeparator())) ?  srcParent + srcName : srcParent + getSeparator() + srcName;
-			String target = tgtParent.endsWith(String.valueOf(getSeparator())) ?  tgtParent + tgtName : tgtParent + getSeparator() + tgtName;
-				
-			success = ftpClient.rename(source, target);
+			FTPClient ftpClient = getFTPClient(); 
 			
-			if(!success)
-			{
-				throw new Exception(ftpClient.getReplyString());
+			try{
+			
+				String source = srcParent.endsWith(String.valueOf(getSeparator())) ?  srcParent + srcName : srcParent + getSeparator() + srcName;
+				String target = tgtParent.endsWith(String.valueOf(getSeparator())) ?  tgtParent + tgtName : tgtParent + getSeparator() + tgtName;
+					
+				success = ftpClient.rename(source, target);
+				
+				if(!success)
+				{
+					throw new Exception(ftpClient.getReplyString());
+				}
+			
+			}catch (Exception e) {
+				throw new RemoteFileIOException(e);
+			}finally {
+				_commandMutex.release();
 			}
-		
-		}catch (Exception e) {
-			throw new RemoteFileIOException(e);
+			
 		}
-		
 		return success;
 	}
 
@@ -889,24 +902,29 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile createFolder(String remoteParent, String folderName, IProgressMonitor monitor) throws SystemMessageException
 	{
-		
-		FTPClient ftpClient = getFTPClient(); 
-		
-		try
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-			if(!ftpClient.changeWorkingDirectory(remoteParent))
+			FTPClient ftpClient = getFTPClient(); 
+			
+			try
 			{
-				throw new Exception(ftpClient.getReplyString()+" ("+remoteParent+")");  //$NON-NLS-1$  //$NON-NLS-2$
+				if(!ftpClient.changeWorkingDirectory(remoteParent))
+				{
+					throw new Exception(ftpClient.getReplyString()+" ("+remoteParent+")");  //$NON-NLS-1$  //$NON-NLS-2$
+				}
+				
+				if(!ftpClient.makeDirectory(folderName))
+				{
+					throw new Exception(ftpClient.getReplyString()+" ("+folderName+")");  //$NON-NLS-1$  //$NON-NLS-2$
+				}
+							
+			}
+			catch (Exception e)	{
+				throw new RemoteFileIOException(e);
+			}finally {
+				_commandMutex.release();
 			}
 			
-			if(!ftpClient.makeDirectory(folderName))
-			{
-				throw new Exception(ftpClient.getReplyString()+" ("+folderName+")");  //$NON-NLS-1$  //$NON-NLS-2$
-			}
-						
-		}
-		catch (Exception e)	{
-			throw new RemoteFileIOException(e);
 		}
 
 		return getFile(remoteParent, folderName, monitor);

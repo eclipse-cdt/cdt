@@ -27,8 +27,7 @@
 ;../org.eclipse.rse.subsystems.shells.telnet/src
 ;../org.eclipse.rse.ui/model
 ;../org.eclipse.rse.ui/UI
-;../org.eclipse.rse.ui/subsystems
-;../org.eclipse.rse.ui/systems"
+;../org.eclipse.rse.ui/subsystems"
 -d reference/api
 -bootclasspath @rt@
 -classpath @cp@

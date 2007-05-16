@@ -1170,7 +1170,12 @@ public class CPPSemantics {
 			data.inheritanceChain = new ObjectSet( 2 );
 		
 		data.inheritanceChain.put( lookIn );
-			
+
+		// workaround to fix 185828 
+		if(data.inheritanceChain.size() > 20) { 
+			return null;
+		}
+
 		int size = bases.length;
 		for( int i = 0; i < size; i++ )
 		{

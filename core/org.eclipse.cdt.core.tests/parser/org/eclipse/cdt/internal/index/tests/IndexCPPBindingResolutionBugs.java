@@ -60,7 +60,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// 	 void foo() {
 	//      C<int>::unresolvable();
 	//   };
-	public void _test185828() throws Exception {
+	public void test185828() throws Exception {
 		// Bug 185828 reports a StackOverflowException is thrown before we get here.
 		// That the SOE is thrown is detected in BaseTestCase via an Error IStatus
 		

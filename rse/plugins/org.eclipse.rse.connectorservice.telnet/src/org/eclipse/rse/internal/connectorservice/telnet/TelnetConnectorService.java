@@ -59,7 +59,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	public static final String PROPERTY_COMMAND_PROMPT = "Command.Prompt"; //$NON-NLS-1$
 
 	private static final int TELNET_DEFAULT_PORT = 23; // TODO Make configurable
-	private static final int TELNET_CONNECT_TIMEOUT = 10; //seconds - TODO: Make configurable
+	private static final int TELNET_CONNECT_TIMEOUT = 60; //seconds - TODO: Make configurable
 	private TelnetClient fTelnetClient = new TelnetClient();
 	private SessionLostHandler fSessionLostHandler;
 	private InputStream in;

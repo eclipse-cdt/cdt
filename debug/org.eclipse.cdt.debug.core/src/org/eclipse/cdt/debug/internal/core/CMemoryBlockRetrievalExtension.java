@@ -136,13 +136,17 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	private void createMemoryBlocks( String[] expressions, String[] memorySpaceIDs ) {
 		ArrayList list = new ArrayList( expressions.length );
 		for ( int i = 0; i < expressions.length; ++i ) {
-			IAddress address = getDebugTarget().getAddressFactory().createAddress( expressions[i] );
-			if ( address != null ) {
-				if (memorySpaceIDs[i] == null) {
-					list.add( new CMemoryBlockExtension( getDebugTarget(), address.toHexAddressString(), address.getValue() ) );
-				} else {
-					list.add( new CMemoryBlockExtension( getDebugTarget(), address.getValue(), memorySpaceIDs[i] ) );
+			try {
+				IAddress address = getDebugTarget().getAddressFactory().createAddress( expressions[i] );
+				if ( address != null ) {
+					if (memorySpaceIDs[i] == null) {
+						list.add( new CMemoryBlockExtension( getDebugTarget(), address.toHexAddressString(), address.getValue() ) );
+					} else {
+						list.add( new CMemoryBlockExtension( getDebugTarget(), address.getValue(), memorySpaceIDs[i] ) );
+					}
 				}
+			} catch (NumberFormatException exc) {
+				CDebugCorePlugin.log(exc);
 			}
 		}
 		DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks( (IMemoryBlock[])list.toArray( new IMemoryBlock[list.size()] ) );

@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetUpdater;
 
@@ -48,10 +50,11 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			checkElementExistence(fWorkingSet);
+			synchronized (fWorkingSet) {
+				checkElementExistence(fWorkingSet);
+			}
 			return Status.OK_STATUS;
 		}
-	
 	}
 
 	public static final String ID= "org.eclipse.cdt.ui.CElementWorkingSetPage"; //$NON-NLS-1$
@@ -64,7 +67,9 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 		private boolean fChanged;
 		public WorkingSetDelta(IWorkingSet workingSet) {
 			fWorkingSet= workingSet;
-			fElements= new ArrayList(Arrays.asList(workingSet.getElements()));
+			synchronized (fWorkingSet) {
+				fElements= new ArrayList(Arrays.asList(fWorkingSet.getElements()));
+			}
 		}
 		public int indexOf(Object element) {
 			return fElements.indexOf(element);
@@ -90,18 +95,26 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 		CoreModel.getDefault().addElementChangedListener(this);
 	}
 	
+	protected void installListener() {
+		
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void add(final IWorkingSet workingSet) {
-		synchronized (fWorkingSets) {
-			fWorkingSets.add(workingSet);
-		}
-		// delay the check - this may be called very early in the bootstrap
+		// delay the check for existence - this may be called very early in the bootstrap
+		// otherwise it is causing all kinds of weird exceptions
 		Job check= new WorkingSetCheck(workingSet);
 		check.setUser(false);
 		check.setPriority(Job.SHORT);
 		check.schedule(1000);
+		check.addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				synchronized (fWorkingSets) {
+					fWorkingSets.add(workingSet);
+				}
+			}});
 	}
 
 	/**
@@ -268,7 +281,9 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 			}
 		}
 		if (changed) {
-			workingSet.setElements((IAdaptable[])elements.toArray(new IAdaptable[elements.size()]));
+			synchronized (workingSet) {
+				workingSet.setElements((IAdaptable[])elements.toArray(new IAdaptable[elements.size()]));
+			}
 		}
 	}
 }

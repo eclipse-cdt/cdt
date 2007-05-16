@@ -356,11 +356,12 @@ public class BuildConsolePage extends Page
 						return;
 				}
 			}
-			selection = new StructuredSelection(getConsole().getConsoleManager().getLastBuiltProject());
+			IProject project = getConsole().getConsoleManager().getLastBuiltProject();
+			if (project != null)
+				selection = new StructuredSelection(project);
 		}
 		selectionChanged(null, selection);
 	}
-
 
 	boolean setSelectionFromEditor(IEditorPart part) {
 		if (part == null)

@@ -47,11 +47,8 @@ public class TelnetSettings implements ITelnetSettings {
 		fNetworkPort = strNetworkPort;
 	}
 
-	public String getStatusString(String strConnected) {
-		return " (" + //$NON-NLS-1$
-			getHost() + ":" + //$NON-NLS-1$
-			getNetworkPortString() + " - " + //$NON-NLS-1$
-			strConnected + ")"; //$NON-NLS-1$
+	public String getSummary() {
+		return getHost() + ":" + getNetworkPortString(); //$NON-NLS-1$
 	}
 
 	public void load(ISettingsStore store) {

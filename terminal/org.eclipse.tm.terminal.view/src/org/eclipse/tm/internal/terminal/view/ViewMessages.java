@@ -22,6 +22,7 @@ public class ViewMessages extends NLS {
 	static {
 		NLS.initializeMessages(ViewMessages.class.getName(), ViewMessages.class);
 	}
+    public static String NO_CONNECTION_SELECTED;
     public static String PROP_TITLE;
     public static String SETTINGS;
 

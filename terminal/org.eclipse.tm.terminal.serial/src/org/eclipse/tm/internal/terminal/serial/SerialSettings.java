@@ -144,15 +144,13 @@ public class SerialSettings implements ISerialSettings {
 		fFlowControl = strFlow;
 	}
 
-	public String getStatusString(String strConnected) {
-		return " (" + //$NON-NLS-1$
-			getSerialPort() + ", " + //$NON-NLS-1$
+	public String getSummary() {
+		return getSerialPort() + ", " + //$NON-NLS-1$
 			getBaudRateString() + ", " + //$NON-NLS-1$
 			getDataBitsString() + ", " + //$NON-NLS-1$
 			getStopBitsString() + ", " + //$NON-NLS-1$
 			getParityString() + ", " + //$NON-NLS-1$
-			getFlowControlString() + " - " + //$NON-NLS-1$
-			strConnected + ")"; //$NON-NLS-1$
+			getFlowControlString();
 	}
 
 	public void load(ISettingsStore store) {

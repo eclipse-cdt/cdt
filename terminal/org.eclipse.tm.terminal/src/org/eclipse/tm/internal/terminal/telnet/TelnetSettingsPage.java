@@ -134,8 +134,4 @@ public class TelnetSettingsPage implements ISettingsPage {
 		}
 	}
 
-	public String getName() {
-		return TelnetMessages.CONNTYPE_NETWORK;
-	}
-
 }

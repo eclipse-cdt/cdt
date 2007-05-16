@@ -27,11 +27,9 @@ public class SshSettings implements ISshSettings {
 		fHost = strHost;
 	}
 
-	public String getStatusString(String strConnected) {
-		return " (" + //$NON-NLS-1$
-			getHost() + ":" + //$NON-NLS-1$
-			getUser() + " - " + //$NON-NLS-1$
-			strConnected + ")"; //$NON-NLS-1$
+	public String getSummary() {
+		return getHost() + ":" + getUser(); //$NON-NLS-1$
+			
 	}
 
 	public void load(ISettingsStore store) {

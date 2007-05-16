@@ -18,15 +18,19 @@ package org.eclipse.tm.internal.terminal.view;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
@@ -35,6 +39,11 @@ class TerminalSettingsDlg extends Dialog {
 	private Combo fCtlConnTypeCombo;
 	private final ITerminalConnector[] fConnectors;
 	private final ISettingsPage[] fPages;
+	/**
+	 * Maps the fConnectors index to the fPages index
+	 */
+	private final int[] fPageIndex;
+	private int fNPages;
 	private int fSelectedConnector;
 	private PageBook fPageBook;
 	private IDialogSettings fDialogSettings;
@@ -43,17 +52,66 @@ class TerminalSettingsDlg extends Dialog {
 		super(shell);
 		fConnectors=connectors;
 		fPages=new ISettingsPage[fConnectors.length];
+		fPageIndex=new int[fConnectors.length];
+		fSelectedConnector=-1;
 		for (int i = 0; i < fConnectors.length; i++) {
-			fPages[i]=fConnectors[i].makeSettingsPage();
 			if(fConnectors[i]==connector)
 				fSelectedConnector=i;
 		}
 	}
+	ISettingsPage getPage(int i) {
+		if(fPages[i]==null) {
+			try {
+				fPages[i]=fConnectors[i].makeSettingsPage();
+				// TODO: what happens if an error occurs while
+				// the control is partly created?
+				fPages[i].createControl(fPageBook);
+			} catch (final Exception e) {
+				// create a error message
+				fPages[i]=new ISettingsPage(){
+					public void createControl(Composite parent) {
+						Label l=new Label(parent,SWT.WRAP);
+						l.setText("Error"); //$NON-NLS-1$
+						l.setForeground(l.getDisplay().getSystemColor(SWT.COLOR_RED));
+						MessageDialog.openError(getShell(), "Initialization Problems!", e.getLocalizedMessage()); //$NON-NLS-1$
+					}
+					public void loadSettings() {}
+					public void saveSettings() {}
+					public boolean validateSettings() {return false;}
+				};
+				fPages[i].createControl(fPageBook);
+			}
+			fPageIndex[i]=fNPages++;
+			resize();
+		}
+		return fPages[i];
+		
+	}
+	void resize() {
+		Point size=getShell().getSize();
+		Point newSize=getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT,true);
+		newSize.x=Math.max(newSize.x,size.x);
+		newSize.y=Math.max(newSize.y,size.y);
+		if(newSize.x!=size.x || newSize.y!=size.y) {
+			setShellSize(newSize);
+		} else {
+			fPageBook.getParent().layout();
+		}
+	}
+	/**
+ 	 * Increase the size of this dialog's <code>Shell</code> by the specified amounts.
+ 	 * Do not increase the size of the Shell beyond the bounds of the Display.
+ 	 */
+	protected void setShellSize(Point size) {
+		Rectangle bounds = getShell().getMonitor().getClientArea();
+		getShell().setSize(Math.min(size.x, bounds.width), Math.min(size.y, bounds.height));
+	}
+
 	protected void okPressed() {
 		if (!validateSettings())
 			return;
 		if(fSelectedConnector>=0) {
-			fPages[fSelectedConnector].saveSettings();
+			getPage(fSelectedConnector).saveSettings();
 		}
 		super.okPressed();
 	}
@@ -80,8 +138,8 @@ class TerminalSettingsDlg extends Dialog {
 	}
 	private void initFields() {
 		// Load controls
-		for (int i = 0; i < fPages.length; i++) {
-			String name=fPages[i].getName();
+		for (int i = 0; i < fConnectors.length; i++) {
+			String name=fConnectors[i].getName();
 			fCtlConnTypeCombo.add(name);
 			if(fSelectedConnector==i) {
 				fCtlConnTypeCombo.select(i);
@@ -92,7 +150,7 @@ class TerminalSettingsDlg extends Dialog {
 	private boolean validateSettings() {
 		if(fSelectedConnector<0)
 			return true;
-		return fPages[fSelectedConnector].validateSettings();
+		return getPage(fSelectedConnector).validateSettings();
 	}
 	private void setupPanel(Composite wndParent) {
 		setupConnTypePanel(wndParent);
@@ -123,11 +181,6 @@ class TerminalSettingsDlg extends Dialog {
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fPageBook=new PageBook(group,SWT.NONE);
 		fPageBook.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		
-		for (int i = 0; i < fPages.length; i++) {
-			fPages[i].createControl(fPageBook);
-		}
 	}
 	private void setupListeners() {
 		fCtlConnTypeCombo.addSelectionListener(new SelectionAdapter() {
@@ -143,8 +196,9 @@ class TerminalSettingsDlg extends Dialog {
 	}
 	private void selectPage(int index) {
 		fSelectedConnector=index;
+		getPage(index);
 		Control[] pages=fPageBook.getChildren();
-		fPageBook.showPage(pages[fSelectedConnector]);
+		fPageBook.showPage(pages[fPageIndex[fSelectedConnector]]);
 	}
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings ds=TerminalViewPlugin.getDefault().getDialogSettings();

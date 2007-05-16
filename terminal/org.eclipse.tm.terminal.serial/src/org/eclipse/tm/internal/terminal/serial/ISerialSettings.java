@@ -22,7 +22,7 @@ public interface ISerialSettings {
 	int getParity();
 	int getFlowControl();
 	int getTimeout();
-	String getStatusString(String strConnected);
+	String getSummary();
 	void load(ISettingsStore store);
 	void save(ISettingsStore store);
 }

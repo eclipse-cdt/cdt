@@ -17,7 +17,7 @@ public interface ITelnetSettings {
 	String getHost();
 	int getNetworkPort();
 	int getTimeout();
-	String getStatusString(String strConnected);
+	String getSummary();
 	void load(ISettingsStore store);
 	void save(ISettingsStore store);
 }

@@ -41,10 +41,10 @@ find_child_console (HWND hwnd, LPARAM arg)
   thread_id = GetWindowThreadProcessId (hwnd, &process_id);
   if (process_id == pid)
     {
-      char window_class[32];
+      wchar_t window_class[32];
 
       GetClassName (hwnd, window_class, sizeof (window_class));
-      if (strcmp (window_class,	 "ConsoleWindowClass") == 0)
+      if (wcscmp (window_class, L"ConsoleWindowClass") == 0)
 		{
 		consoleHWND = hwnd;
 		return FALSE;

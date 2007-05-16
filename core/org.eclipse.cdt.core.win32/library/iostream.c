@@ -25,7 +25,7 @@
 
 //#define READ_REPORT
 
-JNIEXPORT void JNICALL ThrowByName(JNIEnv *env, const char *name, const char *msg);
+void ThrowByName(JNIEnv *env, const char *name, const char *msg);
 
 #define BUFF_SIZE  (1024)
 
@@ -35,10 +35,11 @@ JNIEXPORT void JNICALL ThrowByName(JNIEnv *env, const char *name, const char *ms
  * Method:    read0
  * Signature: (I)I
  */
+extern "C"
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_read0
   (JNIEnv * env, jobject proc, jint fd, jbyteArray buf, jint len)
 {
-	BYTE tmpBuf[BUFF_SIZE];	
+	jbyte tmpBuf[BUFF_SIZE];	
 	int nBuffOffset = 0;
 #ifdef DEBUG_MONITOR
 	_TCHAR buffer[1000];
@@ -60,7 +61,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 			NULL,
 			GetLastError(),
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(char *) &lpMsgBuf,
+			(wchar_t *) &lpMsgBuf,
 			0,
 			NULL 
 		);
@@ -114,7 +115,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 						NULL,
 						err,
 						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-						(char *) &lpMsgBuf,
+						(wchar_t *) &lpMsgBuf,
 						0,
 						NULL 
 					);
@@ -127,7 +128,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 				}
 			}
 		if(nNumberOfBytesRead > 0)
-			(*env) -> SetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesRead, tmpBuf);
+			env->SetByteArrayRegion(buf, nBuffOffset, nNumberOfBytesRead, tmpBuf);
 		else
 			break;
 		nBuffOffset += nNumberOfBytesRead;
@@ -150,6 +151,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
  * Method:    close0
  * Signature: (I)I
  */
+extern "C"
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_close0
   (JNIEnv * env, jobject proc, jint fd)
 {
@@ -168,10 +170,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_clo
 		return (rc ? GetLastError() : 0);
 }
 
+extern "C"
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_available0
   (JNIEnv * env, jobject proc, jint fd)
 {
-	int nAvail = 0;
+	DWORD nAvail = 0;
 
 	if (0 == PeekNamedPipe((HANDLE)fd, NULL, 0, NULL, &nAvail, NULL)) {
 		// error
@@ -185,10 +188,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_ava
  * Method:    write0
  * Signature: (I[BI)I
  */
+extern "C"
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_write0
   (JNIEnv * env, jobject proc, jint fd, jbyteArray buf, jint len)
 {
-	BYTE tmpBuf[BUFF_SIZE];	
+	jbyte tmpBuf[BUFF_SIZE];	
 	int nBuffOffset = 0;
 
 
@@ -196,7 +200,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
 		{
 		DWORD nNumberOfBytesToWrite = min(len - nBuffOffset, BUFF_SIZE);
 		DWORD nNumberOfBytesWritten;
-		(*env) -> GetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
+		env->GetByteArrayRegion(buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
 		if(0 == WriteFile((HANDLE)fd, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL)) 
 			{
 			char * lpMsgBuf;
@@ -207,7 +211,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
 				NULL,
 				GetLastError(),
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-				(char *) &lpMsgBuf,
+				(wchar_t *) &lpMsgBuf,
 				0,
 				NULL 
 			);
@@ -226,6 +230,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
  * Method:    close0
  * Signature: (I)I
  */
+extern "C"
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_close0
   (JNIEnv * env, jobject proc, jint fd)
 {

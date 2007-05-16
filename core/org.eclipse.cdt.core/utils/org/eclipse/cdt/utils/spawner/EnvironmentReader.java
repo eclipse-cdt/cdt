@@ -49,7 +49,7 @@ public class EnvironmentReader {
 			charSet = "UTF-16" + (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder()) ? "BE" : "LE");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 		try {
-			p = ProcessFactory.getFactory().exec(command);
+			p = Runtime.getRuntime().exec(command);
 			in = p.getInputStream();
 			BufferedReader br;
 			if (null == charSet) { 

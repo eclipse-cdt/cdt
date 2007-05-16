@@ -1,8 +1,11 @@
 ifeq ($(JAVA_HOME),)
-$(warning JAVA_HOME not set in environment)
+$(error JAVA_HOME not set in environment)
 endif
 
-# Defaults which can be overridden.
+TARGET = $(INSTALL_DIR)/winreg.dll
+
+OBJS = winreg.o
+
 OS = win32
 ARCH = x86
 
@@ -13,9 +16,6 @@ CXX = g++
 CXXFLAGS = -DUNICODE -I$(JDK_INCLUDES) -I$(JDK_OS_INCLUDES)
 
 INSTALL_DIR = ../../os/$(OS)/$(ARCH)
-
-TARGET = $(INSTALL_DIR)/winreg.dll
-OBJS = winreg.o
 
 all: $(TARGET)
 

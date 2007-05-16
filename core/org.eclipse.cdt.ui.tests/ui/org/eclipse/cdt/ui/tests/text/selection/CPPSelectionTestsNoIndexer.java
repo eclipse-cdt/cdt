@@ -449,7 +449,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)decl).getLength(), 1);
 	}
 	
-	public void _testBug86829B() throws Exception {
+	public void testBug86829B() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class X {\n"); //$NON-NLS-1$
         buffer.append("public:\n"); //$NON-NLS-1$
@@ -459,8 +459,10 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         buffer.append("public:\n"); //$NON-NLS-1$
         buffer.append("operator X();\n"); //$NON-NLS-1$
         buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("void test() {\n");
         buffer.append("Y a;\n"); //$NON-NLS-1$
         buffer.append("int c = X(a); // OK: a.operator X().operator int()\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
 		
         String code = buffer.toString();
         IFile file = importFile("testBug86829B.cpp", code); //$NON-NLS-1$

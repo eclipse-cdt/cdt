@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -95,17 +97,23 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 						boolean isDefinition= searchName.isDefinition();
 						IBinding binding = searchName.resolveBinding();
 						if (binding != null && !(binding instanceof IProblemBinding)) {
-							// 1. Try definition
-							IName[] declNames= isDefinition ?
-									findDeclarations(index, ast, binding) :
-									findDefinitions(index, ast, binding);
-							
+							IName[] declNames = findNames(index, ast, isDefinition, binding);
 							if (declNames.length == 0) {
-								declNames= isDefinition ?
-										findDefinitions(index, ast, binding) :
-										findDeclarations(index, ast, binding);
+								// bug 86829, handle implicit methods.
+								if (binding instanceof ICPPMethod) {
+									ICPPMethod method= (ICPPMethod) binding;
+									if (method.isImplicit()) {
+										try {
+											IBinding clsBinding= method.getClassOwner();
+											if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
+												declNames= findNames(index, ast, false, clsBinding);
+											}
+										} catch (DOMException e) {
+											CCorePlugin.log(e);
+										}
+									}
+								}
 							}
-
 							for (int i = 0; i < declNames.length; i++) {
 								IASTFileLocation fileloc = declNames[i].getFileLocation();
 								if (fileloc != null) {
@@ -181,6 +189,20 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
+		}
+
+		private IName[] findNames(IIndex index, IASTTranslationUnit ast,
+				boolean isDefinition, IBinding binding) throws CoreException {
+			IName[] declNames= isDefinition ?
+					findDeclarations(index, ast, binding) :
+					findDefinitions(index, ast, binding);
+			
+			if (declNames.length == 0) {
+				declNames= isDefinition ?
+						findDefinitions(index, ast, binding) :
+						findDeclarations(index, ast, binding);
+			}
+			return declNames;
 		}
 
 		private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast,

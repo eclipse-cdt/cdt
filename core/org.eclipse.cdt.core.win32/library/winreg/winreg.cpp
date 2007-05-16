@@ -78,3 +78,43 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMac
 
 	return result;
 }
+
+/*
+ * Given a subkey (string) under HKEY_LOCAL_MACHINE, and an index (starting from 0)
+ * to the key's array of keys, return the name of the indexed key. 
+ * The return value is null on any error or when the index is invalid.
+ */
+ 
+extern "C"
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineKeyName(
+	JNIEnv * env, jobject obj, jstring subkey, jint index)
+{
+	const jchar * csubkey = env->GetStringChars(subkey, NULL);
+	jstring 	result = NULL;
+
+	HKEY key;
+	LONG rc = RegOpenKeyEx(HKEY_LOCAL_MACHINE, (const wchar_t *)csubkey, 0, KEY_READ, &key);
+	if (rc != ERROR_SUCCESS)
+		return NULL;
+	
+	wchar_t keyName[256];
+	DWORD 	nameSize = sizeof(keyName) + 2;
+	
+	rc = RegEnumKeyEx(key, index, 
+			keyName, 		// UNICODE string
+			&nameSize,
+			NULL, NULL,
+			NULL,
+			NULL);			// size in BYTE of data.
+	
+	if (rc == ERROR_SUCCESS)
+	{
+		result = env->NewString((jchar *)keyName, nameSize);
+	}
+	
+	RegCloseKey(key);
+	
+	env->ReleaseStringChars(subkey, csubkey);
+
+	return result;
+}

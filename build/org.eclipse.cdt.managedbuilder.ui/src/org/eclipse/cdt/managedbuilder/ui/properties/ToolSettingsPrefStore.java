@@ -41,7 +41,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 	static ToolSettingsPrefStore store = null;
 	
 	public final static String ALL_OPTIONS_ID = EMPTY_STRING;
-	public final static String COMMAND_LINE_PATTERN_ID = Messages.getString("ToolSettingsPrefStore.0"); //$NON-NLS-1$
+	public final static String COMMAND_LINE_SUFFIX = "org.eclipse.commandLinePatternId"; //$NON-NLS-1$
 	private IResourceInfo rcInfo = null; 
 	private IOptionCategory optCategory;
 	private ToolListElement selectedElement;
@@ -88,7 +88,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		if(optCategory instanceof Tool){
 			if(optCategory.getId().equals(name))
 				return true;
-			else if(COMMAND_LINE_PATTERN_ID.equals(name))
+			else if((optCategory.getId() + COMMAND_LINE_SUFFIX).equals(name))
 				return true;
 			else if(ALL_OPTIONS_ID.equals(name))
 				return true;
@@ -143,7 +143,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		if(optCategory instanceof Tool){
 			if(optCategory.getId().equals(name))
 				return ((Tool)optCategory).getToolCommand();
-			else if(COMMAND_LINE_PATTERN_ID.equals(name))
+			else if((optCategory.getId() + COMMAND_LINE_SUFFIX).equals(name))
 				return ((Tool)optCategory).getCommandLinePattern();
 			else if(ALL_OPTIONS_ID.equals(name)){
 				try {
@@ -243,7 +243,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		if(optCategory instanceof Tool){
 			if(optCategory.getId().equals(name))
 				((Tool)optCategory).setToolCommand(value);
-			else if (COMMAND_LINE_PATTERN_ID.equals(name))
+			else if ((optCategory.getId() + COMMAND_LINE_SUFFIX).equals(name))
 				((Tool)optCategory).setCommandLinePattern(value);
 		} else
 			setOptionValue(name,value);

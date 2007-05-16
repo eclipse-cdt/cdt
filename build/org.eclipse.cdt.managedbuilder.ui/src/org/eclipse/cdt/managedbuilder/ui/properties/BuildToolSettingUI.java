@@ -150,29 +150,20 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 20);
 		addField(allOptionFieldEditor);
 		
-		// Create the Advanced Settings group
-		createAdvancedSettingsGroup(fm);
-	}		
-
-	/* (non-Javadoc)
-	 * Creates the group that contains the build artifact name controls.
-	 */
-	private void createAdvancedSettingsGroup(FontMetrics fm) {
 		addField( createLabelEditor( getFieldEditorParent(), WHITESPACE ) );
 		addField( createLabelEditor( getFieldEditorParent(), UIMessages.getString(ADVANCED_GROUP) ) );
 		
 		// Add a string editor to edit the tool command line pattern
-		Composite parent = getFieldEditorParent(); 
-		commandLinePatternField = new StringFieldEditor(ToolSettingsPrefStore.COMMAND_LINE_PATTERN_ID,
+		parent = getFieldEditorParent();
+		commandLinePatternField = new StringFieldEditor(fTool.getId() + ToolSettingsPrefStore.COMMAND_LINE_SUFFIX,
 				UIMessages.getString(COMMAND_LINE_PATTERN),
 				parent);
-		GridData gd = ((GridData)commandLinePatternField.getTextControl(parent).getLayoutData());
+		gd = ((GridData)commandLinePatternField.getTextControl(parent).getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
 		gd.widthHint =  Dialog.convertWidthInCharsToPixels(fm,30);
 		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 20);
 		addField(commandLinePatternField);
-
-	}
+	}		
 
 	protected FieldEditor createLabelEditor( Composite parent, String title ) {
 		return new LabelFieldEditor( parent, title );

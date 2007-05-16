@@ -378,9 +378,12 @@ implements
 			cfgChanged(multiCfgs[0]); 
 			return;
 		} else {
-			ICConfigurationDescription newConfig = cfgDescs[selectionIndex];
+			String id1 = getResDesc() == null ? null : getResDesc().getId();
 			cfgIndex = selectionIndex;
-			cfgChanged(newConfig);
+			ICConfigurationDescription newConfig = cfgDescs[selectionIndex];
+			String id2 = newConfig.getId();
+			if (id2 != null && !id2.equals(id1))
+				cfgChanged(newConfig);
 		}
 	}
 	

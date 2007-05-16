@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -1556,32 +1557,6 @@ public abstract class SubSystem extends RSEModelObject
     	}
     }
 
-	/**
-	 * Use this job to connect from a non-UI thread. Since this extends UIJob it will
-	 * run on the UI thread when scheduled.
-	 */
-	private class ConnectFromBackgroundJob extends UIJob {
-		public ConnectFromBackgroundJob() {
-			super(GenericMessages.RSESubSystemOperation_Connect_message);
-		}
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			IStatus result = Status.OK_STATUS;
-			try {
-				connect(monitor, false);
-			} catch (InterruptedException e) {
-				result = Status.CANCEL_STATUS;
-			} catch (Exception e) {
-				e.printStackTrace();
-				String excMsg = e.getMessage();
-				if ((excMsg == null) || (excMsg.length() == 0)) excMsg = "Exception " + e.getClass().getName(); //$NON-NLS-1$
-				SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
-				sysMsg.makeSubstitution(getHostName(), excMsg);
-				result = new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, sysMsg.getLevelOneText(), e);
-			}
-			return result;
-		}
-	}
-	
     /**
      * Represents the subsystem operation of connecting the subsystem to the remote machine.
      */
@@ -1597,6 +1572,15 @@ public abstract class SubSystem extends RSEModelObject
     		_callback = callback;
     	}
     	
+    	public IStatus run(IProgressMonitor monitor) {
+    		IStatus status = super.run(monitor);
+			if (_callback != null)
+			{
+				_callback.done(status, null);
+			}
+			return status;
+    	}
+    	
     	public void performOperation(IProgressMonitor mon) throws InterruptedException, Exception
     	{
     		String msg = null;
@@ -1610,16 +1594,6 @@ public abstract class SubSystem extends RSEModelObject
 
     	    ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.connectedStatusChange(_ss, true, false);
-			
-			if (_callback != null)
-			{
-				IStatus status = Status.OK_STATUS;
-				if (!isConnected())
-				{
-					status = Status.CANCEL_STATUS;
-				}
-				_callback.done(status, null);
-			}
     	}
     }
 
@@ -2250,29 +2224,17 @@ public abstract class SubSystem extends RSEModelObject
 	public void connect() throws Exception {
 		if (!isConnected()) {
 			if (Display.getCurrent() == null) {
-				ConnectFromBackgroundJob job = new ConnectFromBackgroundJob();
-				job.setPriority(Job.INTERACTIVE);
-				job.schedule();
-				job.join();
+				connect(new NullProgressMonitor(), false);
 			} else {
 				connect(false, null);
 			}
-//			Display display = Display.getCurrent();
-//			while (job.getResult() == null) {
-//				while (display != null && display.readAndDispatch()) {
-//					//Process everything on event queue
-//				}
-//				if (job.getResult() == null) Thread.sleep(200);
-//			}
 		}
 	}
 
-	/**
+	/*
 	 * Connect to a remote system with a monitor.
 	 * Required for Bug 176603
-	 *
-	 * @param monitor the progress monitor
-	 * @param forcePrompt indicates whether to prompt even if password is in memory
+	 * @see org.eclipse.rse.core.subsystems.ISubSystem#connect(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	public void connect(IProgressMonitor monitor, boolean forcePrompt) throws Exception 
 	{				
@@ -2297,35 +2259,28 @@ public abstract class SubSystem extends RSEModelObject
 					}
 				}
 			});
-			
 			try {
+				if (exception[0]!=null)
+					throw exception[0];
 				getConnectorService().connect(monitor);
-			} catch(Exception e) {
-				e.printStackTrace();
+				if (isConnected()) {
+					final SubSystem ss = this;
+					//Notify connect status change
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							RSECorePlugin.getTheSystemRegistry().connectedStatusChange(ss, true, false);
+						}
+					});
+				}
+			} finally {
+				monitor.done();
 			}
-			if (isConnected()) {
-				final SubSystem ss = this;
-				//Notify connect status change
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						RSECorePlugin.getTheSystemRegistry().connectedStatusChange(ss, true, false);
-					}
-				});
-			}
-			monitor.done();
 		}
 	}
 	
-	/**
-	 * Connect to the remote system, optionally forcing a signon prompt even if the password
-	 * is cached in memory or on disk.
-	 * You do not need to override this, as it does the progress monitor and error message
-	 * displaying for you.
-	 * <p>
-	 * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
-	 * 
-	 * @param forcePrompt Forces the signon prompt to be displayed even if a valid password in cached in memory
-	 * or saved on disk.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystem#connect(boolean, org.eclipse.rse.core.model.IRSECallback)
 	 */
 	public void connect(boolean forcePrompt, IRSECallback callback) throws Exception {
 		// yantzi: artemis60, (defect 53082) check that the connection has not been deleted before continuing,
@@ -2353,7 +2308,8 @@ public abstract class SubSystem extends RSEModelObject
 //dwd			if (runnableContext instanceof ProgressMonitorDialog) {
 //dwd				((ProgressMonitorDialog) runnableContext).setCancelable(true);
 //dwd			}
-			getConnectorService().acquireCredentials(forcePrompt); // prompt for userid and password    
+			getConnectorService().acquireCredentials(forcePrompt); // prompt for userid and password
+			//FIXME Error reporting from the ConnectJob? How is the exception thrown?
 			ConnectJob job = new ConnectJob(this, callback);
 			scheduleJob(job, null);
 		}
@@ -2839,13 +2795,12 @@ public abstract class SubSystem extends RSEModelObject
     	return null;
     }
 
-
-
-
 	 /**
 	 * Get the progress monitor dialog for this operation. We try to 
 	 *  use one for all phases of a single operation, such as connecting
 	 *  and resolving.
+	 * @deprecated this is scheduled to be removed since we want to 
+	 *     avoid UI components in SubSystem.
 	 */
 	protected IRunnableContext getRunnableContext(/*Shell rshell*/) {
 		if (Display.getCurrent() == null) {

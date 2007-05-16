@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -357,9 +358,13 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public boolean isOffline();
 
 	/**
-	 * Connect to the remote system. Does not force a prompt for a password.
+	 * Connect to the remote system.
+	 * Does not force a prompt for a password. Works from UI or non-UI thread.
 	 * 
-	 * @deprecated use {@link #connect(IProgressMonitor, boolean)}
+	 * @deprecated use {@link #connect(IProgressMonitor, boolean)} from background
+	 *    thread, or {@link #connect(boolean, IRSECallback) from UI thread.
+	 * @throws Exception an exception if there is a failure to connect.
+	 *    Typically, this will be a {@link SystemMessageException}.
 	 */
 	public void connect() throws Exception;
 	
@@ -377,20 +382,29 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @param monitor the progress monitor. Must not be <code>null</code>.
 	 * @param forcePrompt forces the prompt dialog to be displayed
 	 *     even if the password is currently in memory.
+	 * @throws Exception an exception if there is a failure to connect.
+	 *    Typically, this will be a {@link SystemMessageException}.
 	 */
 	public void connect(IProgressMonitor monitor, boolean forcePrompt) throws Exception;
 
 	/**
-	 * Asynchronously connect to the remote system.
-	 * 
-	 * An Eclipse background job with a progress monitor will 
-	 * be created automatically. If the optional callback is 
-	 * given, will be called when the connect is complete.
+	 * Asynchronously connect to the remote system, optionally forcing a signon prompt 
+	 * even if the password is cached in memory or on disk.
+	 * <p/> 
+	 * This method must be called on the UI Thread! An Eclipse background job with a 
+	 * progress monitor will be created automatically. If the optional callback is 
+	 * given, it will be called when the connect is complete.
+	 * You do not need to override this, as it does the progress monitor reporting 
+	 * for you.
+	 * <p/>
+	 * Override internalConnect if you want, but by default it calls 
+	 * <code>getConnectorService().connect(IProgressMonitor)</code>.
 	 * 
 	 * @param forcePrompt forces the prompt dialog even if the password is in mem
 	 * @param callback to call after connect is complete.
 	 *     May be <code>null</code>.
-	 * @throws Exception
+	 * @throws Exception an exception if there is a failure to connect.
+	 *    Typically, this will be a {@link SystemMessageException}.
 	 */
 	public void connect(boolean forcePrompt, IRSECallback callback) throws Exception;
 

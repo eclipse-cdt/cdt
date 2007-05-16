@@ -8,10 +8,15 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
  * Sheldon D'souza (Celunite) - Adapted from SshShellWriterThread
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet.shell;
 
 import java.io.PrintWriter;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.rse.internal.services.telnet.Activator;
 
 public class TelnetShellWriterThread extends Thread {
 	
@@ -90,6 +95,11 @@ public class TelnetShellWriterThread extends Thread {
 			}
 		} catch(InterruptedException e) {
 			/* no special handling -> close stream */
+		} catch(Exception e) {
+			Activator.getDefault().getLog().log(new Status(IStatus.WARNING,
+					Activator.PLUGIN_ID,
+					e.getLocalizedMessage()!=null ? e.getLocalizedMessage() : e.getClass().getName(),
+					e));
 		} finally {
 			stopThread();
 //			if( fOutputWriter != null )

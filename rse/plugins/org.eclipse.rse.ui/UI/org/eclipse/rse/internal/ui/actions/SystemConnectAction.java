@@ -12,7 +12,8 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -23,9 +24,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -50,7 +54,15 @@ public class SystemConnectAction extends SystemBaseAction
 					_subsystem.connect(monitor, false);
 				else	
 				  	_subsystem.connect(monitor, true);
-			} catch (Exception exc) {} // msg already shown
+			}
+			catch (SystemMessageException e) {
+				SystemMessageDialog.displayMessage(e);
+			}
+			catch (Exception e) {
+				SystemBasePlugin.logError(
+						e.getLocalizedMessage()!=null ? e.getLocalizedMessage() : e.getClass().getName(),
+						e);
+			}
 			if (monitor.isCanceled())
 			{
 				return Status.CANCEL_STATUS;

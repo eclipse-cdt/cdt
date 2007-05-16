@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -21,6 +22,7 @@ package org.eclipse.rse.core.subsystems;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEModelObject;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
  * A connector service provides the means of establishing a connection from 
@@ -79,6 +81,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * @param monitor a monitor for tracking the progress and canceling a connect
 	 * operation.
 	 * @throws Exception an exception of there is a failure to connect.
+	 *    Typically, this will be a {@link SystemMessageException}.
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
 
@@ -87,6 +90,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * @param monitor a monitor for tracking the progress and canceling a disconnect
 	 * operation.
 	 * @throws Exception an exception of the disconnect fails.
+	 *    Typically, this will be a {@link SystemMessageException}.
 	 */
 	public void disconnect(IProgressMonitor monitor) throws Exception;
 

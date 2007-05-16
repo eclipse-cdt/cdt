@@ -15,11 +15,11 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -43,6 +43,7 @@ import org.eclipse.rse.internal.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
@@ -50,8 +51,10 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -112,9 +115,13 @@ public class SystemCommandAction extends SystemBaseAction
 				IRemoteCommandShell cmd = _ss.runShell(_selected, monitor);
 				Display.getDefault().asyncExec(new UpdateOutputRunnable(_cmdsPart, cmd));
 			}
-			catch (Exception e)
-			{
-				
+			catch (SystemMessageException e) {
+				SystemMessageDialog.displayMessage(e);
+			}
+			catch (Exception e) {
+				SystemBasePlugin.logError(
+						e.getLocalizedMessage()!=null ? e.getLocalizedMessage() : e.getClass().getName(),
+						e);
 			}
 			return Status.OK_STATUS;
 		}
@@ -594,24 +601,14 @@ public class SystemCommandAction extends SystemBaseAction
 
 	}
 	
-	private boolean connect(SubSystem ss, IProgressMonitor monitor)
+	private boolean connect(SubSystem ss, IProgressMonitor monitor) throws Exception
 	{
 		if (!ss.isConnected())
 		{
 			
 			Display dis = Display.getDefault();
 			dis.syncExec(new PromptForPassword(ss));
-			try
-			{
-				ss.getConnectorService().connect(monitor);
-			}
-			catch (InvocationTargetException exc)
-			{
-			}
-			catch (Exception e)
-			{
-			}
-			
+			ss.getConnectorService().connect(monitor);
 			dis.asyncExec(new UpdateRegistry(ss));			
 		}
 		return true;

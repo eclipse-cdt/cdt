@@ -13,14 +13,13 @@
  * Martin Oberhuber (Wind River) - [178606] fix endless loop in readUntil()
  * Sheldon D'souza (Celunite) - [186536] login and password should be configurable
  * Sheldon D'souza (Celunite) - [186570] handle invalid user id and password more gracefully
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.SocketException;
 
 import org.apache.commons.net.telnet.TelnetClient;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -59,7 +58,8 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	public static final String PROPERTY_PASSWORD_PROMPT = "Password.Prompt"; //$NON-NLS-1$
 	public static final String PROPERTY_COMMAND_PROMPT = "Command.Prompt"; //$NON-NLS-1$
 
-	private static final int TELNET_DEFAULT_PORT = 23;
+	private static final int TELNET_DEFAULT_PORT = 23; // TODO Make configurable
+	private static final int TELNET_CONNECT_TIMEOUT = 10; //seconds - TODO: Make configurable
 	private TelnetClient fTelnetClient = new TelnetClient();
 	private SessionLostHandler fSessionLostHandler;
 	private InputStream in;
@@ -68,6 +68,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	private static final int ERROR_CODE = 100; // filed error code
 	private static final int SUCCESS_CODE = 150; // login pass code
 	private static final int CONNECT_CLOSED = 200; // code for end of login attempts
+	private static final int CONNECT_CANCELED = 250; // code for cancel progress
 
 	public TelnetConnectorService(IHost host) {
 		super(TelnetConnectorResources.TelnetConnectorService_Name,
@@ -111,7 +112,8 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		String host = getHostName();
 		String user = getUserId();
 		String password = ""; //$NON-NLS-1$
-
+		int status = ERROR_CODE;
+		Exception nestedException = null;
 		try {
 			Activator.trace("Telnet Service: Connecting....."); //$NON-NLS-1$
 			fTelnetClient.connect(host, TELNET_DEFAULT_PORT);
@@ -123,31 +125,58 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			in = fTelnetClient.getInputStream();
 			out = new PrintStream(fTelnetClient.getOutputStream());
 
+			long millisToEnd = System.currentTimeMillis() + TELNET_CONNECT_TIMEOUT*1000;
 			LoginThread checkLogin = new LoginThread(user, password);
 			checkLogin.start();
-			checkLogin.join();
-			int status = checkLogin.getLoginStatus();
-			if (status != SUCCESS_CODE) {
-				SystemMessage msg = RSEUIPlugin
-						.getPluginMessage(ISystemMessages.MSG_COMM_CONNECT_FAILED);
-				msg.makeSubstitution(getHost().getAliasName());
+			while (checkLogin.isAlive() && System.currentTimeMillis()<millisToEnd) {
+				if (monitor!=null) {
+					monitor.worked(1);
+					if (monitor.isCanceled()) {
+						status = CONNECT_CANCELED;
+						//Thread will be interrupted by sessionDisconnect()
+						//checkLogin.interrupt();
+						break;
+					}
+				}
+				Display d = Display.getCurrent();
+				if (d!=null) {
+					while(d.readAndDispatch()) {
+						//get next event if on dispatch thread
+					}
+				}
+				checkLogin.join(500);
+			}
+			if (status != CONNECT_CANCELED) {
+				status = checkLogin.getLoginStatus();
+				checkLogin.join();
+			}
+		} catch (Exception e) {
+			Activator.trace("Telnet Service failed: " + e.toString()); //$NON-NLS-1$
+			nestedException = e;
+		} finally {
+			if (status == CONNECT_CANCELED) {
+				Activator.trace("Telnet Service: Canceled"); //$NON-NLS-1$
+				sessionDisconnect(); //will eventually destroy the LoginThread
+			} else if (status == SUCCESS_CODE) {
+				fSessionLostHandler = new SessionLostHandler(this);
+				notifyConnection();
+				Activator.trace("Telnet Service: Connected"); //$NON-NLS-1$
+			} else {
+				Activator.trace("Telnet Service: Connect failed"); //$NON-NLS-1$
+				//TODO pass the nested exception as well as original prompts
+				//from the remote side with the SystemMessageException for user diagnostics
+				SystemMessage msg;
+				if (nestedException!=null) {
+					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
+					msg.makeSubstitution(nestedException);
+				} else {
+					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_AUTH_FAILED);
+					msg.makeSubstitution(getHost().getAliasName());
+				}
 				internalDisconnect(null);
 				throw new SystemMessageException(msg);
-
 			}
-
-			Activator.trace("Telnet Service: Connected"); //$NON-NLS-1$
-		} catch (SocketException se) {
-			Activator.trace("Telnet Service failed: " + se.toString()); //$NON-NLS-1$
-			sessionDisconnect();
-		} catch (IOException ioe) {
-			Activator.trace("Telnet Service failed: " + ioe.toString()); //$NON-NLS-1$
-			sessionDisconnect();
 		}
-
-		fSessionLostHandler = new SessionLostHandler(this);
-		notifyConnection();
-
 	}
 
 	/**

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -29,8 +31,11 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -63,17 +68,23 @@ public class SystemConnectAllSubSystemsAction extends SystemBaseAction
 			            {
 			                subsystem.connect(monitor, false);
 			            }
-			            catch (Exception e) 
-			            {	
+						catch (SystemMessageException e) {
+							//TODO should we collect all messages and just show one dialog with a MultiStatus?
 			                failedSystems.add(system);
-			                
-			                // if the user was prompted for password and cancelled
-			                // or if the connect was interrupted for some other reason
-			                // we don't attempt to connect the other subsystems
-			                if (e instanceof InterruptedException) {
-			                	break;
+							SystemMessageDialog.displayMessage(e);
+						}
+						catch (Exception e) {
+			                failedSystems.add(system);
+			                if ((e instanceof InterruptedException) || (e instanceof OperationCanceledException)) {
+				                // if the user was prompted for password and cancelled
+				                // or if the connect was interrupted for some other reason
+				                // we don't attempt to connect the other subsystems
+								break;
 			                }
-			            }// msg already shown	
+							SystemBasePlugin.logError(
+									e.getLocalizedMessage()!=null ? e.getLocalizedMessage() : e.getClass().getName(),
+									e);
+						}
 			        }
 			    }
 			} 

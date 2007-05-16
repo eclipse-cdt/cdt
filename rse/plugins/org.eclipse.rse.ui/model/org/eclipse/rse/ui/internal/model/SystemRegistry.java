@@ -101,6 +101,7 @@ import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.rse.ui.wizards.ISubSystemPropertiesWizardPage;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -2204,8 +2205,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISyst
 		int defaultUserIdLocation,
 		boolean createSubSystems,
 		ISystemNewConnectionWizardPage[] newConnectionWizardPages)
-		throws Exception
-	{
+		throws Exception {
 		lastException = null;
 		ISystemHostPool pool = getHostPool(profileName);
 		IHost conn = null;
@@ -2229,25 +2229,20 @@ public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISyst
 			SystemBasePlugin.logError("Exception in createConnection for " + connectionName, exc); //$NON-NLS-1$
 			throw exc;
 		}
-		if ((lastException == null) && !promptable && createSubSystems)
-		{
+		if ((lastException == null) && !promptable && createSubSystems) {
 			// only 1 factory used per service type
 			ISubSystemConfiguration[] factories = getSubSystemConfigurationsBySystemType(systemType, true);
 			ISubSystem subSystems[] = new ISubSystem[factories.length];
-			for (int idx = 0; idx < factories.length; idx++)
-			{
-				subSystems[idx] = factories[idx].createSubSystem(conn, true, getApplicableWizardPages(factories[idx], newConnectionWizardPages)); // give it the opportunity to create a subsystem
+			for (int idx = 0; idx < factories.length; idx++) {
+				ISubSystemConfiguration factory = factories[idx];
+				ISystemNewConnectionWizardPage[] interestingPages = getApplicableWizardPages(factory, newConnectionWizardPages);
+				subSystems[idx] = factory.createSubSystem(conn, true, interestingPages); // give it the opportunity to create a subsystem
 			}
-			
-			
 			FireNewHostEvents fire = new FireNewHostEvents(conn, subSystems, this);
 			Display.getDefault().syncExec(fire);
-
 		}
 		conn.commit();
 		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list                
-	
-		
 		return conn;
 	}
 	

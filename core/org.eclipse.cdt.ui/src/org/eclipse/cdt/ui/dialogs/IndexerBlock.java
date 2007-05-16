@@ -66,9 +66,9 @@ public class IndexerBlock extends AbstractCOptionPage {
 
 	private static final String PREF_PAGE_ID = "org.eclipse.cdt.ui.preferences.IndexerPreferencePage"; //$NON-NLS-1$
 
-	private static final String INDEXER_LABEL = "C/C++ Indexer"; //$NON-NLS-1$
-	private static final String INDEXER_DESCRIPTION = "C/C++ Indexer setting for this project."; //$NON-NLS-1$
-	private static final String INDEXER_COMBO_LABEL = "Select indexer"; //$NON-NLS-1$
+	private static final String INDEXER_LABEL = CUIPlugin.getResourceString("BaseIndexerBlock.label" ); //$NON-NLS-1$
+	private static final String INDEXER_DESCRIPTION = CUIPlugin.getResourceString("BaseIndexerBlock.desc"); //$NON-NLS-1$
+	private static final String INDEXER_COMBO_LABEL = CUIPlugin.getResourceString("BaseIndexerBlock.comboLabel"); //$NON-NLS-1$
 	
 	private PreferenceScopeBlock    fPrefScopeBlock;
     private Combo 					fIndexersComboBox;

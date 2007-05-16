@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.osgi.util.TextProcessor;
 
 import org.eclipse.cdt.internal.ui.preferences.formatter.IProfileVersioner;
 import org.osgi.service.prefs.BackingStoreException;
@@ -124,7 +125,7 @@ public abstract class ProfileManager extends Observable {
 		private final String fProfileKind;
 		
 		protected BuiltInProfile(String ID, String name, Map settings, int order, int currentVersion, String profileKind) {
-			fName= name;
+			fName= TextProcessor.process(name);
 			fID= ID;
 			fSettings= settings;
 			fOrder= order;

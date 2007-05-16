@@ -149,7 +149,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			// millisecond.
 
 			getSite().getPage().showView(
-					"org.eclipse.tm.internal.terminal.provisional.api.view.TerminalView",//$NON-NLS-1$
+					"org.eclipse.tm.terminal.view.TerminalView",//$NON-NLS-1$
 					"SecondaryTerminal" + System.currentTimeMillis(), //$NON-NLS-1$
 					IWorkbenchPage.VIEW_ACTIVATE);
 		} catch (PartInitException ex) {

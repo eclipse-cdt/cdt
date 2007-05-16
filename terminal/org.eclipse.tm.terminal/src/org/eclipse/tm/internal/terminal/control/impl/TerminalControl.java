@@ -559,7 +559,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 			IContextService contextService = (IContextService) PlatformUI
 					.getWorkbench().getAdapter(IContextService.class);
 			contextActivation = contextService
-					.activateContext("org.eclipse.tm.internal.terminal.provisional.api.TerminalContext"); //$NON-NLS-1$
+					.activateContext("org.eclipse.tm.terminal.TerminalContext"); //$NON-NLS-1$
 		}
 
 		public void focusLost(FocusEvent event) {

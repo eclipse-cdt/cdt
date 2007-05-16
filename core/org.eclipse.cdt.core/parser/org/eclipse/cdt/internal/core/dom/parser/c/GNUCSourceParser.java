@@ -2936,18 +2936,32 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
         IASTExpression switch_condition = condition();
-        consume(IToken.tRPAREN);
-        IASTStatement switch_body = statement();
+        switch (LT(1)) {
+        case IToken.tRPAREN:
+            consume();
+            break;
+        case IToken.tEOC:
+            break;
+        default:
+            throwBacktrack(LA(1));
+        }
+        IASTStatement  switch_body = null;
+        if (LT(1) != IToken.tEOC)
+        	switch_body = statement();
     
         IASTSwitchStatement switch_statement = createSwitchStatement();
         ((ASTNode) switch_statement).setOffsetAndLength(startOffset,
-                calculateEndOffset(switch_body) - startOffset);
+        		(switch_body != null ? calculateEndOffset(switch_body) : LA(1).getEndOffset()) - startOffset);
         switch_statement.setControllerExpression(switch_condition);
         switch_condition.setParent(switch_statement);
         switch_condition.setPropertyInParent(IASTSwitchStatement.CONTROLLER_EXP);
-        switch_statement.setBody(switch_body);
-        switch_body.setParent(switch_statement);
-        switch_body.setPropertyInParent(IASTSwitchStatement.BODY);
+        
+        if (switch_body != null) {
+            switch_statement.setBody(switch_body);
+            switch_body.setParent(switch_statement);
+            switch_body.setPropertyInParent(IASTSwitchStatement.BODY);
+        }
+
         return switch_statement;
     }
 

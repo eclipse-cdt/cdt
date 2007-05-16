@@ -5212,12 +5212,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         int startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
         IASTNode while_condition = cppStyleCondition(true);
-        consume(IToken.tRPAREN);
-        IASTStatement while_body = statement();
+        switch (LT(1)) {
+        case IToken.tRPAREN:
+            consume();
+            break;
+        case IToken.tEOC:
+            break;
+        default:
+            throwBacktrack(LA(1));
+        }
+        IASTStatement while_body = null;
+        if (LT(1) != IToken.tEOC)
+            while_body = statement();
 
         ICPPASTWhileStatement while_statement = (ICPPASTWhileStatement) createWhileStatement();
         ((ASTNode) while_statement).setOffsetAndLength(startOffset,
-                calculateEndOffset(while_body) - startOffset);
+                (while_body != null ? calculateEndOffset(while_body) : LA(1).getEndOffset()) - startOffset);
         if (while_condition instanceof IASTExpression) {
             while_statement.setCondition((IASTExpression) while_condition);
             while_condition.setParent(while_statement);
@@ -5230,9 +5240,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             while_condition
                     .setPropertyInParent(ICPPASTWhileStatement.CONDITIONDECLARATION);
         }
-        while_statement.setBody(while_body);
-        while_body.setParent(while_statement);
-        while_body.setPropertyInParent(IASTWhileStatement.BODY);
+        
+        if (while_body != null) {
+            while_statement.setBody(while_body);
+            while_body.setParent(while_statement);
+            while_body.setPropertyInParent(IASTWhileStatement.BODY);
+        }
+
         return while_statement;
 
     }
@@ -5488,12 +5502,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
         IASTNode switch_condition = cppStyleCondition(true);
-        consume(IToken.tRPAREN);
-        IASTStatement switch_body = statement();
+        switch (LT(1)) {
+        case IToken.tRPAREN:
+            consume();
+            break;
+        case IToken.tEOC:
+            break;
+        default:
+            throwBacktrack(LA(1));
+        }
+        IASTStatement  switch_body = null;
+        if (LT(1) != IToken.tEOC)
+        	switch_body = statement();
     
         ICPPASTSwitchStatement switch_statement = createSwitchStatement();
         ((ASTNode) switch_statement).setOffsetAndLength(startOffset,
-                calculateEndOffset(switch_body) - startOffset);
+                (switch_body != null ? calculateEndOffset(switch_body) : LA(1).getEndOffset()) - startOffset);
         if( switch_condition instanceof IASTExpression )
         {
             switch_statement.setControllerExpression((IASTExpression) switch_condition);
@@ -5506,9 +5530,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             switch_condition.setParent(switch_statement);
             switch_condition.setPropertyInParent(ICPPASTSwitchStatement.CONTROLLER_DECLARATION);
         }
-        switch_statement.setBody(switch_body);
-        switch_body.setParent(switch_statement);
-        switch_body.setPropertyInParent(IASTSwitchStatement.BODY);
+        
+        if (switch_body != null) {
+            switch_statement.setBody(switch_body);
+            switch_body.setParent(switch_statement);
+            switch_body.setPropertyInParent(IASTSwitchStatement.BODY);
+        }
+
         return switch_statement;
     }
 

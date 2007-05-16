@@ -100,4 +100,29 @@ public class BasicCompletionTest extends CompletionTestBase {
 		assertEquals("blah", ((ITypedef)bindings[0]).getName());
 	}
 	
+	public void testBug181624() throws Exception {
+		StringBuffer code = new StringBuffer();
+		code.append("void foo() {");
+		code.append("  switch (");
+		
+		// C++
+		IASTCompletionNode node = getGPPCompletionNode(code.toString());
+		assertNotNull(node);
+		
+		// C
+		node = getGCCCompletionNode(code.toString());
+		assertNotNull(node);
+		
+		code = new StringBuffer();
+		code.append("void foo() {");
+		code.append("  while (");
+		
+		// C++
+		node = getGPPCompletionNode(code.toString());
+		assertNotNull(node);
+		
+		// C
+		node = getGCCCompletionNode(code.toString());
+		assertNotNull(node);
+	}
 }

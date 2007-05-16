@@ -37,11 +37,11 @@ import java.io.PrintStream;
  * </p>
  */
 public final class Logger {
-    public static final String  TRACE_DEBUG_LOG                = "org.eclipse.tm.internal.terminal.provisional.api/debug/log"; //$NON-NLS-1$
-    public static final String  TRACE_DEBUG_LOG_ERROR          = "org.eclipse.tm.internal.terminal.provisional.api/debug/log/error"; //$NON-NLS-1$
-    public static final String  TRACE_DEBUG_LOG_INFO           = "org.eclipse.tm.internal.terminal.provisional.api/debug/log/info"; //$NON-NLS-1$
-    public static final String  TRACE_DEBUG_LOG_CHAR           = "org.eclipse.tm.internal.terminal.provisional.api/debug/log/char"; //$NON-NLS-1$
-    public static final String  TRACE_DEBUG_LOG_BUFFER_SIZE    = "org.eclipse.tm.internal.terminal.provisional.api/debug/log/buffer/size"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG                = "org.eclipse.tm.terminal/debug/log"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_ERROR          = "org.eclipse.tm.terminal/debug/log/error"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_INFO           = "org.eclipse.tm.terminal/debug/log/info"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_CHAR           = "org.eclipse.tm.terminal/debug/log/char"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_BUFFER_SIZE    = "org.eclipse.tm.terminal/debug/log/buffer/size"; //$NON-NLS-1$
 
     private static PrintStream logStream;
 

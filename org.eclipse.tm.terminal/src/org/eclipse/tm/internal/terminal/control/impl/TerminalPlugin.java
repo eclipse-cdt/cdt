@@ -22,7 +22,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class TerminalPlugin extends AbstractUIPlugin {
 	protected static TerminalPlugin fDefault;
-	public static final String  PLUGIN_ID  = "org.eclipse.tm.internal.terminal.provisional.api"; //$NON-NLS-1$
+	public static final String  PLUGIN_ID  = "org.eclipse.tm.terminal"; //$NON-NLS-1$
 	public static final String  HELP_VIEW  = PLUGIN_ID + ".terminal_view"; //$NON-NLS-1$
 
 	/**

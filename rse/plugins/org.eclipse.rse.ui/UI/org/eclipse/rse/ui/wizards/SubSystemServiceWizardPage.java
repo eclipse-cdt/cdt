@@ -20,6 +20,7 @@
 package org.eclipse.rse.ui.wizards;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.wizard.IWizard;
@@ -27,6 +28,7 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.DummyHost;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
@@ -36,6 +38,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.widgets.services.ConnectorServiceElement;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
+import org.eclipse.rse.ui.widgets.services.PropertySetServiceElement;
 import org.eclipse.rse.ui.widgets.services.RootServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServerLauncherPropertiesServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;
@@ -49,7 +52,7 @@ import org.eclipse.swt.widgets.Control;
 public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizardPage implements ISubSystemPropertiesWizardPage
 {
 	private ServicesForm _form;
-	private IServiceSubSystemConfiguration _selectedFactory;
+	private IServiceSubSystemConfiguration _selectedConfiguration;
 	private ServiceElement _root;
 	private ServiceElement[] _serviceElements;
 	
@@ -153,7 +156,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		{
 			_root.commit();
 			
-			_selectedFactory = ((FactoryServiceElement)_form.getSelectedService()).getFactory();
+			_selectedConfiguration = ((FactoryServiceElement)_form.getSelectedService()).getFactory();
 		}
 		return true;
 	}
@@ -190,54 +193,66 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		return (ServerLauncherPropertiesServiceElement[])results.toArray(new ServerLauncherPropertiesServiceElement[results.size()]);
 	}
 
-	public boolean applyValues(ISubSystem ss)
-	{
-		if (_selectedFactory != null)
-		{
-			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)ss.getSubSystemConfiguration();
-			if (currentFactory != null)
-			{
-				if (_selectedFactory != currentFactory)
-				{
-					((IServiceSubSystem)ss).switchServiceFactory(_selectedFactory);
+	public boolean applyValues(ISubSystem ss) {
+		if (_selectedConfiguration != null) {
+			IServiceSubSystemConfiguration currentConfiguration = (IServiceSubSystemConfiguration) ss.getSubSystemConfiguration();
+			if (currentConfiguration != null) {
+				if (_selectedConfiguration != currentConfiguration) {
+					((IServiceSubSystem) ss).switchServiceFactory(_selectedConfiguration);
 				}
-				//IHost realHost = ss.getHost();
-				if (_root != null)
-				{ 
-					{
-						ServerLauncherPropertiesServiceElement[] elements = getPropertiesServiceElement();
-						if (elements.length > 0)
-						{
-							ServerLauncherPropertiesServiceElement element = elements[0];
-							if (element.userModified())
-							{
-								IServerLauncherProperties properties = element.getServerLauncherProperties();
-						
-								IConnectorService rserv = ss.getConnectorService();
-								properties.saveToProperties();
-								rserv.setRemoteServerLauncherProperties(properties);
-							}
-							else
-							{ // just using defaults
-								
-							}
-								/*
-								PropertyElement[] properties = elements[i].getProperties();
-								for (int p = 0; p < properties.length; p++)
-								{
-									PropertyElement pel = properties[p];
-									
-								}
-								*/
-								//rserv.addPropertySets(sets);
-		
+				if (_root != null) {
+					IConnectorService connectorService = ss.getConnectorService();
+					// process server launcher properties
+					ServerLauncherPropertiesServiceElement[] elements = getPropertiesServiceElement();
+					if (elements.length > 0) {
+						ServerLauncherPropertiesServiceElement element = elements[0];
+						if (element.userModified()) {
+							IServerLauncherProperties properties = element.getServerLauncherProperties();
+							properties.saveToProperties();
+							connectorService.setRemoteServerLauncherProperties(properties);
+						}
+					}
+					/*
+					 * Process connector service property sets
+					 * The connector service element (there should be only one) is attached to a dummy host.
+					 * Therefore the property sets containing the new values can me moved from the (dummy)
+					 * connector service to the real connector service.
+					 */
+					List connectorServiceElements = getConnectorServiceElements(_root);
+					for (Iterator z = connectorServiceElements.iterator(); z.hasNext();) {
+						ConnectorServiceElement element = (ConnectorServiceElement) z.next();
+						PropertySetServiceElement[] psElements = element.getPropertySets();
+						for (int i = 0; i < psElements.length; i++) {
+							PropertySetServiceElement psElement = psElements[i];
+							IPropertySet set = psElement.getPropertySet();
+							connectorService.addPropertySet(set); // moves the property set, replacing the old one
 						}
 					}
 				}
-			
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Returns the list of connector service elements from a given service element.
+	 * @param root The root element from which to search
+	 * @return A list of all found connector service elements. The list will be empty if non 
+	 * are found.
+	 */
+	private List getConnectorServiceElements(ServiceElement root) {
+		List result = new ArrayList(10);
+		if (root instanceof ConnectorServiceElement) {
+			result.add(root);
+		}
+		ServiceElement[] children = root.getChildren();
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				ServiceElement child = children[i];
+				result.addAll(getConnectorServiceElements(child));
+			}
+		}
+		return result;
 	}
 	
 	protected IConnectorService getCustomConnectorService(IServiceSubSystemConfiguration config)

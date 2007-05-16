@@ -31,9 +31,9 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 	
 	private Hashtable ftpConfigProxyById = new Hashtable();
 	
-	private Hashtable ftpConfig = new Hashtable();
-	private Hashtable ftpFileEntryParser = new Hashtable();
-	private IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.subsystems.files.ftp","ftpFileEntryParser"); //$NON-NLS-1$ //$NON-NLS-2$
+	private Hashtable ftpConfigs = new Hashtable();
+	private Hashtable ftpParsers = new Hashtable();
+	private IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.subsystems.files.ftp","ftpFileEntryParsers"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
 	 * Constructor of the parser factory
@@ -118,7 +118,7 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 			{
 				FTPClientConfig config = null;
 				
-				if(!ftpFileEntryParser.containsKey(foundProxy.getClassName()))
+				if(!ftpParsers.containsKey(foundProxy.getClassName()))
 				{
 					FTPFileEntryParser entryParser = null;
 					try {
@@ -130,7 +130,7 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
 					}
-					ftpFileEntryParser.put(foundProxy.getClassName(), entryParser);
+					ftpParsers.put(foundProxy.getClassName(), entryParser);
 				}
 				
 				config = new FTPClientConfig(foundProxy.getClassName());
@@ -151,10 +151,10 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 		
 		if(ftpClientConfig==null)
 		{
-			if(ftpConfig.containsKey(parser))
+			if(ftpConfigs.containsKey(parser))
 			{
 				//restore parser from hashtable
-				ftpClientConfig = (FTPClientConfig)ftpConfig.get(parser);
+				ftpClientConfig = (FTPClientConfig)ftpConfigs.get(parser);
 			}
 			else
 			{
@@ -169,7 +169,7 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 					{
 						FTPClientConfig config = null;
 						
-						if(!ftpFileEntryParser.containsKey(proxy.getClassName()))
+						if(!ftpParsers.containsKey(proxy.getClassName()))
 						{
 							FTPFileEntryParser entryParser = null;
 							try {
@@ -181,7 +181,7 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 							} catch (ClassNotFoundException e) {
 								e.printStackTrace();
 							}
-							ftpFileEntryParser.put(proxy.getClassName(), entryParser);
+							ftpParsers.put(proxy.getClassName(), entryParser);
 						}
 						
 						config = new FTPClientConfig(proxy.getClassName());
@@ -193,8 +193,8 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 						config.setShortMonthNames(proxy.getShortMonthNames());
 						config.setServerTimeZoneId(proxy.getServerTimeZoneId());
 						
-						ftpConfig.put(parser, config);
-						ftpClientConfig = (FTPClientConfig)ftpConfig.get(parser);
+						ftpConfigs.put(parser, config);
+						ftpClientConfig = (FTPClientConfig)ftpConfigs.get(parser);
 						
 						break;
 					
@@ -223,10 +223,10 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 	public FTPFileEntryParser createFileEntryParser(String key)	throws ParserInitializationException {
 		
 		//
-		// the hashtable "ftpFileEntryParser" will be populated previously by getFTPClientConfig()
+		// the hashtable "ftpParsers" will be populated previously by getFTPClientConfig()
 		// but in case the execution flow gets modified it's worth checking and populating it if required
 		//
-		if(!ftpFileEntryParser.containsKey(key))
+		if(!ftpParsers.containsKey(key))
 		{
 			FTPClientConfigProxy proxy = (FTPClientConfigProxy)ftpConfigProxyById.get(key);
 			
@@ -240,11 +240,11 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-			ftpFileEntryParser.put(proxy.getClassName(), entryParser);
+			ftpParsers.put(proxy.getClassName(), entryParser);
 		}
 		
 		
-		return (FTPFileEntryParser)ftpFileEntryParser.get(key);
+		return (FTPFileEntryParser)ftpParsers.get(key);
 	}
 
 	/*

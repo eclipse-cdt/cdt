@@ -10,6 +10,7 @@
 
 package org.eclipse.rse.internal.services.files.ftp.parser;
 
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.osgi.framework.Bundle;
 
 public interface IFTPClientConfigProxy {
@@ -26,5 +27,7 @@ public interface IFTPClientConfigProxy {
 	public String getServerLanguageCode();
 	public String getShortMonthNames();
 	public String getServerTimeZoneId();
+	
+	public FTPClientConfig getFTPClientConfig();
 	
 }

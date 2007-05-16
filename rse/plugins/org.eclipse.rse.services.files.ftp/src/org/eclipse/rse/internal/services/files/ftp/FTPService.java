@@ -291,21 +291,17 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		String systemName = _ftpClient.getSystemName();
 		
 		_ftpClient.setParserFactory(_entryParserFactory);
+		_clientConfigProxy = _entryParserFactory.getFTPClientConfig(_ftpPropertySet.getPropertyValue("parser"),systemName);  //$NON-NLS-1$
 		
-		FTPClientConfig config = _entryParserFactory.getFTPClientConfig(_ftpPropertySet.getPropertyValue("parser"),systemName);  //$NON-NLS-1$
-		
-		if(config!=null)
+		if(_clientConfigProxy!=null)
 		{
-			_ftpClient.configure(config);
+			_ftpClient.configure(_clientConfigProxy.getFTPClientConfig());
 		}
 		else
 		{
 			//UNIX parsing by default if no suitable parser found
 			_ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_UNIX));
 		}
-		
-		//FTPClientConfigProxy object with information of the extended LIST command, or null
-		_clientConfigProxy = _entryParserFactory.getFTPClientConfigProxy(_ftpPropertySet.getPropertyValue("parser")); //$NON-NLS-1$
 		
 		// Initial active/passive mode. This action will be refreshed later using setDataConnectionMode()
 		if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("true")) //$NON-NLS-1$ //$NON-NLS-2$

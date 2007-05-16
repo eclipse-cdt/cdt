@@ -11,7 +11,6 @@
 
 package org.eclipse.rse.internal.services.files.ftp.parser;
 
-import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.parser.FTPFileEntryParserFactory;
 
 
@@ -19,23 +18,15 @@ public interface IFTPClientConfigFactory extends FTPFileEntryParserFactory {
 
 	/**
 	 * 
-	 * @param parser Parser selected from the FTP Settings. This setting is "AUTO" by default, performing a parser discovery 
+	 * @param parserId Parser id selected from the FTP Settings. This setting is "AUTO" by default, performing a parser discovery 
 	 * @param systemName String returned by the host from the FTP SYST command, describing the host
-	 * @return FTPClientConfig instance created from the attributes passed in the extension point
+	 * @return IFTPClientConfigProxy instance created from the attributes passed in the extension point
 	 */
-	public FTPClientConfig getFTPClientConfig(String parser, String systemName);
+	public IFTPClientConfigProxy getFTPClientConfig(String parserId, String systemName);
 	
 	/**
 	 * Returns an array of strings containing the id
 	 * @return a String[] containing the name attribute of the extension points
 	 */
 	public String[] getKeySet();
-	
-	/**
-	 * Returns the IFTPClientConfigProxy that matches the given id
-	 * @param id of the FTPClientConfigProxy 
-	 * @return The IFTPClientConfigProxy or null if not found
-	 */
-	public IFTPClientConfigProxy getFTPClientConfigProxy(String id);
-	
 }

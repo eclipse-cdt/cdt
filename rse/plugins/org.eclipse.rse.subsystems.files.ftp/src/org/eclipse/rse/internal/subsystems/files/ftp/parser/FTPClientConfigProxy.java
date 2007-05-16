@@ -11,6 +11,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.ftp.parser;
 
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigProxy;
 import org.osgi.framework.Bundle;
 
@@ -29,6 +30,8 @@ public class FTPClientConfigProxy implements IFTPClientConfigProxy{
 	private String serverLanguageCode;
 	private String shortMonthNames;
 	private String serverTimeZoneId;
+	
+	private FTPClientConfig ftpClientConfig;
 	
 	public FTPClientConfigProxy(String id, String label, String priority, String systemTypeRegex, String className, Bundle declaringBundle, String listCommandModifiers,
 			String defaultDateFormatStr, String recentDateFormatStr, String serverLanguageCode, String shortMonthNames,	String serverTimeZoneId)		
@@ -100,5 +103,13 @@ public class FTPClientConfigProxy implements IFTPClientConfigProxy{
 
 	public String getServerTimeZoneId() {
 		return serverTimeZoneId;
+	}
+
+	public FTPClientConfig getFTPClientConfig() {
+		return ftpClientConfig;
+	}
+	
+	public void setFTPClientConfig(FTPClientConfig ftpClientConfig) {
+		this.ftpClientConfig=ftpClientConfig;
 	}
 }

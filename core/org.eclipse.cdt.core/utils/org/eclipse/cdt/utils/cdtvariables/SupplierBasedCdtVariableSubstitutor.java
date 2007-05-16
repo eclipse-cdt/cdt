@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.cdtvariables.CdtVariable;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableStatus;
-import org.eclipse.cdt.internal.core.cdtvariables.DefaultVariableContextInfo;
 
 public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor {
 	private static final Object UNDEFINED_MACRO_VALUE = new Object();

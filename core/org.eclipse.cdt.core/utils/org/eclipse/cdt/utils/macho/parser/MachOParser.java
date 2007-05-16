@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.macho.parser;
  
-import java.io.EOFException;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.AbstractCExtension;

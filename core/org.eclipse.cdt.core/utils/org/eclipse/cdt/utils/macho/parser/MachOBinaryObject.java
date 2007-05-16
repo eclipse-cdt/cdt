@@ -30,7 +30,6 @@ import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.Symbol;
-import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.macho.AR;
 import org.eclipse.cdt.utils.macho.MachO;
 import org.eclipse.cdt.utils.macho.MachOHelper;

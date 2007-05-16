@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.settings.model.extension.impl;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
 public class CDefaultTargetPlatformData extends CTargetPlatformData {
 	protected String fName;

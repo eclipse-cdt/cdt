@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.envvar;
 
-import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentContributor;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.DefaultVariableContextInfo;
 import org.eclipse.cdt.internal.core.cdtvariables.EnvironmentVariableSupplier;
 import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;

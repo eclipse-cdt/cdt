@@ -13,7 +13,6 @@
 package org.eclipse.cdt.utils.macho;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Vector;
 
 /**

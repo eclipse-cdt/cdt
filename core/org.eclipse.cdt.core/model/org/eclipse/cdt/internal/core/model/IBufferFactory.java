@@ -11,7 +11,7 @@
 package org.eclipse.cdt.internal.core.model;
 
 
-import org.eclipse.cdt.core.model.*;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.IOpenable;
 /**
  * A factory that creates <code>IBuffer</code>s for CFiles.

@@ -15,10 +15,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.resources.IPathEntryStore;
-import org.eclipse.cdt.internal.core.settings.model.ConfigBasedPathEntryStore;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 
 public class PathEntryStoreChangedOperation extends CModelOperation {
 

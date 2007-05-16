@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.util;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 

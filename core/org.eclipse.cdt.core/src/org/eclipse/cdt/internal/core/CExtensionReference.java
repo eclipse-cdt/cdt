@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
-import org.eclipse.cdt.core.CDescriptorEvent;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICExtension;
-import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 
 public class CExtensionReference /*implements ICExtensionReference */{
 	private CExtensionReference(){

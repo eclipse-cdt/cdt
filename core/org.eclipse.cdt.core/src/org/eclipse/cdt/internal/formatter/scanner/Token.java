@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter.scanner;
 
-import org.eclipse.cdt.internal.formatter.scanner.ScannerContext;
 
 public class Token {
 

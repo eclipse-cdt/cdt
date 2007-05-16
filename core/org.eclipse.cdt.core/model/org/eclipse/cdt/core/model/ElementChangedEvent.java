@@ -12,6 +12,8 @@ package org.eclipse.cdt.core.model;
  *******************************************************************************/
 import java.util.EventObject;
 
+import org.eclipse.cdt.internal.core.model.CShiftData;
+
 /**
  * An element changed event describes a change to the structure or contents
  * of a tree of C elements. The changes to the elements are described by

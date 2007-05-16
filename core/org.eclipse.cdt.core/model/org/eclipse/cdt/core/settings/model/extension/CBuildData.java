@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.settings.model.extension;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentContributor;
-import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.core.runtime.IPath;

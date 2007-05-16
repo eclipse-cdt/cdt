@@ -12,4 +12,4 @@ Require-Bundle: org.eclipse.debug.core,
  org.eclipse.ui
 Eclipse-LazyStart: true
 Bundle-Activator: org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPlugin
-Bundle-Vendor: %providerName
+Bundle-Vendor: Eclipse.org

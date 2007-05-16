@@ -134,8 +134,4 @@ public class SerialSettingsPage implements ISettingsPage {
 			ctlCombo.add(label);
 		}
 	}
-
-	public String getName() {
-		return SerialMessages.CONNTYPE_SERIAL;
-	}
 }

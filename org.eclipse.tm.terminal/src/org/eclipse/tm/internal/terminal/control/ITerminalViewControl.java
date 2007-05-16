@@ -35,7 +35,7 @@ public interface ITerminalViewControl {
     Clipboard getClipboard();
     void disconnectTerminal();
     void disposeTerminal();
-    String getStatusString(String status);
+    String getSettingsSummary();
     ITerminalConnector[] getConnectors();
     void setFocus();
     ITerminalConnector getTerminalConnection();

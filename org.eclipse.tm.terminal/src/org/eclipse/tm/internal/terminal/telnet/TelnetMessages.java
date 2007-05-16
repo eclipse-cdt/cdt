@@ -17,7 +17,6 @@ public class TelnetMessages extends NLS {
 	static {
 		NLS.initializeMessages(TelnetMessages.class.getName(), TelnetMessages.class);
 	}
-    public static String CONNTYPE_NETWORK;
 	public static String PORT;
 	public static String HOST;
 	public static String CONNECTION_CLOSED_BY_FOREIGN_HOST;

@@ -67,7 +67,9 @@ import org.eclipse.ui.part.ViewPart;
 public class TerminalView extends ViewPart implements ITerminalView, ITerminalListener {
     private static final String STORE_CONNECTION_TYPE = "ConnectionType"; //$NON-NLS-1$
 
-	private static final String STORE_HAS_COMMAND_INPUT_FIELD = "HasCommandInputField"; //$NON-NLS-1$
+    private static final String STORE_SETTING_SUMMARY = "SettingSummary"; //$NON-NLS-1$
+
+    private static final String STORE_HAS_COMMAND_INPUT_FIELD = "HasCommandInputField"; //$NON-NLS-1$
 
 	private static final String STORE_COMMAND_INPUT_FIELD_HISTORY = "CommandInputFieldHistory"; //$NON-NLS-1$
 
@@ -244,19 +246,40 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			// display in the view's content description line.  This is used by class
 			// TerminalText when it processes an ANSI OSC escape sequence that commands
 			// the terminal to display text in its title bar.
+		} else if(fCtlTerminal.getTerminalConnection()==null){
+			strTitle=ViewMessages.NO_CONNECTION_SELECTED;
 		} else {
 			// When parameter 'data' is null, we construct a descriptive string to
 			// display in the content description line.
 			String strConnected = getStateDisplayName(fCtlTerminal.getState());
-			String status=fCtlTerminal.getStatusString(strConnected);
-			if(status.length()>0)
-				status=": "+status;  //$NON-NLS-1$
-			strTitle = ViewMessages.PROP_TITLE + status;
+			String summary = getSettingsSummary();
+			if(summary.length()>0)
+				summary=summary+" - ";  //$NON-NLS-1$
+			String name=fCtlTerminal.getTerminalConnection().getName();
+			if(name.length()>0) {
+				name+=": "; //$NON-NLS-1$
+			}
+			strTitle = name + "("+ summary + strConnected + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		setContentDescription(strTitle);
 		getViewSite().getActionBars().getStatusLineManager().setMessage(
 				strTitle);
+	}
+	/**
+	 * @return the setting summary. If there is no connection, or the connection 
+	 * has not been initialized, use the last stored state.
+	 */
+	private String getSettingsSummary() {
+		// TODO: use another mechanism than "?" for the magic non initialized state
+		// see TerminalConnectorProxy.getSettingsSummary
+		String summary="?"; //$NON-NLS-1$
+		if(fCtlTerminal.getTerminalConnection()!=null)
+			summary=fCtlTerminal.getSettingsSummary();
+		if("?".equals(summary)) { //$NON-NLS-1$
+			summary=fStore.get(STORE_SETTING_SUMMARY, ""); //$NON-NLS-1$
+		}
+		return summary;
 	}
 	public void onTerminalStatus() {
 		setTerminalTitle(null);
@@ -417,10 +440,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		if(fCommandInputField!=null)
 			fStore.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fCommandInputField.getHistory());
 		fStore.put(STORE_HAS_COMMAND_INPUT_FIELD,hasCommandInputField()?"true":"false");   //$NON-NLS-1$//$NON-NLS-2$
+		fStore.put(STORE_SETTING_SUMMARY, getSettingsSummary());
 		fStore.saveState(memento);
 	}
 	private ISettingsStore getStore(ITerminalConnector connector) {
-		return new SettingStorePrefixDecorator(fStore,connector.getClass().getName()+"."); //$NON-NLS-1$
+		return new SettingStorePrefixDecorator(fStore,connector.getId()+"."); //$NON-NLS-1$
 	}
 
 	protected void setupActions() {

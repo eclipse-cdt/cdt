@@ -47,11 +47,5 @@ public interface ISettingsPage {
 	 * @return true if the 
 	 */
 	boolean validateSettings();
-
-	/**
-	 * @return a name of the connection type. Used in a tab page title or drop 
-	 * down to select the connection.
-	 */
-	String getName();
 	
 }

@@ -17,7 +17,6 @@ public class SshMessages extends NLS {
 	static {
 		NLS.initializeMessages(SshMessages.class.getName(), SshMessages.class);
 	}
-    public static String CONNTYPE;
 	public static String USER;
 	public static String HOST;
 	public static String PORT;

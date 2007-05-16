@@ -52,7 +52,10 @@ public class SerialConnector implements ITerminalConnector {
 		fSettings=settins;
 	}
 	public String getId() {
-		return getClass().getName();
+		return null;
+	}
+	public String getName() {
+		return null;
 	}
 	public boolean isInstalled() {
 		// check if serial is installed
@@ -191,8 +194,8 @@ public class SerialConnector implements ITerminalConnector {
 	public ISettingsPage makeSettingsPage() {
 		return new SerialSettingsPage(fSettings);
 	}
-	public String getStatusString(String strConnected) {
-		return fSettings.getStatusString(strConnected);
+	public String getSettingsSummary() {
+		return fSettings.getSummary();
 	}
 	public void load(ISettingsStore store) {
 		fSettings.load(store);

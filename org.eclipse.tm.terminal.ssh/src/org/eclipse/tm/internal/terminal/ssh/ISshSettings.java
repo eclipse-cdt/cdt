@@ -19,7 +19,7 @@ public interface ISshSettings {
 	String getPassword();
 	int getTimeout();
 	int getPort();
-	String getStatusString(String strConnected);
+	String getSummary();
 	void load(ISettingsStore store);
 	void save(ISettingsStore store);
 }

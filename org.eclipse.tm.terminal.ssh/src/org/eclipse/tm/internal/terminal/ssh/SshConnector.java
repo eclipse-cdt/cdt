@@ -47,7 +47,10 @@ public class SshConnector implements ITerminalConnector {
 		fSettings=settings;
 	}
 	public String getId() {
-		return getClass().getName();
+		return null;
+	}
+	public String getName() {
+		return null;
 	}
 	public boolean isInstalled() {
 		return fJsch!=null;
@@ -111,8 +114,8 @@ public class SshConnector implements ITerminalConnector {
 	public ISettingsPage makeSettingsPage() {
 		return new SshSettingsPage(fSettings);
 	}
-	public String getStatusString(String strConnected) {
-		return fSettings.getStatusString(strConnected);
+	public String getSettingsSummary() {
+		return fSettings.getSummary();
 	}
 	public void load(ISettingsStore store) {
 		fSettings.load(store);

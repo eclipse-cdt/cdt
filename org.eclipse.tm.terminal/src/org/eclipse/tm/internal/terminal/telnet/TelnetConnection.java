@@ -392,12 +392,12 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	 * because a multi-byte TELNET command might be split between two (or more)
 	 * calls to this function. The state is preserved in field <i>telnetState</i>.
 	 * This function implements an FSA that recognizes TELNET option codes.
-	 * TELNET option state is stored in instances of {@link TelnetOption}.
-	 * TELNET option subnegotiation is delegated to instances of TelnetOption.
+	 * TELNET option sub-negotiation is delegated to instances of TelnetOption.
 	 * 
 	 * @return The number of bytes remaining in the buffer after removing all
 	 *         TELNET protocol bytes.
 	 */
+	//TELNET option state is stored in instances of TelnetOption.
 	protected int processTelnetProtocol(int count) {
 		// This is too noisy to leave on all the time.
 		// Logger.log("Processing " + count + " bytes of data.");

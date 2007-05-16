@@ -86,8 +86,4 @@ public class SshSettingsPage implements ISettingsPage {
 		return createTextField(composite, labelTxt, 0);
 	}
 
-	public String getName() {
-		return SshMessages.CONNTYPE;
-	}
-
 }

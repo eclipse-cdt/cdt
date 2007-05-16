@@ -21,7 +21,6 @@ public class SerialMessages extends NLS {
 	static {
 		NLS.initializeMessages(SerialMessages.class.getName(), SerialMessages.class);
 	}
-    public static String CONNTYPE_SERIAL;
     public static String PROP_TITLE;
     public static String PORT;
     public static String BAUDRATE;

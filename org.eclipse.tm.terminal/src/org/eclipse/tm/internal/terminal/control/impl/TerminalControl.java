@@ -811,10 +811,10 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		fTerminalListener.setState(state);
 	}
 
-	public String getStatusString(String strConnected) {
+	public String getSettingsSummary() {
 		if(fConnector!=null)
-			return fConnector.getStatusString(strConnected);
-		return strConnected;
+			return fConnector.getSettingsSummary();
+		return ""; //$NON-NLS-1$
 	}
 
 	public void setConnector(ITerminalConnector connector) {

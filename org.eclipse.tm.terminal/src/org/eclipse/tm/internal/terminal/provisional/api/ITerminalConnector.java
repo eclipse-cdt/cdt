@@ -28,9 +28,20 @@ import java.io.OutputStream;
  */
 public interface ITerminalConnector {
 	/**
-	 * @return an ID of this connector. Typically <code>getClass().getName()</code>
+	 * @return an ID of this connector. The id from the plugin.xml.
+	 * <p>Note: return <code>null</code> because the framework takes 
+	 * care to get the value from the plugin.xml
 	 */
+	// TODO: eliminate the need of implementing this NOOP method for extensions
 	String getId();
+
+	/**
+	 * @return <code>null</code> the name (as specified in the plugin.xml)
+	 * <p>Note: return <code>null</code> because the framework takes 
+	 * care to get the value from the plugin.xml
+	 */
+	// TODO: eliminate the need of implementing this NOOP method for extensions
+	String getName();
 
 	/**
 	 * @return true if the contribution is functioning (e.g. all external libraries are
@@ -73,7 +84,7 @@ public interface ITerminalConnector {
 	 * {@link #connect(ITerminalControl)}.
 	 * 
 	 * @param store a string based data store. Short keys like "foo" can be used to 
-	 * store the state of the connectio.
+	 * store the state of the connection.
 	 */
 	void load(ISettingsStore store);
 	
@@ -91,11 +102,9 @@ public interface ITerminalConnector {
 	ISettingsPage makeSettingsPage();
 
 	/**
-	 * @param connectedLabel a String with the connected state {@link TerminalState}. 
-	 * Like "CONNECTED", "CLOSED". Can be used to build up the status string.
 	 * @return A string that represents the state of the connection. 
 	 * TODO: Michael Scharf:
 	 */
-	String getStatusString(String connectedLabel);
+	String getSettingsSummary();
 
 }

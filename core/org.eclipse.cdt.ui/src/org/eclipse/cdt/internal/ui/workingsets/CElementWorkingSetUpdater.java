@@ -95,10 +95,6 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 		CoreModel.getDefault().addElementChangedListener(this);
 	}
 	
-	protected void installListener() {
-		
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -281,9 +277,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 			}
 		}
 		if (changed) {
-			synchronized (workingSet) {
-				workingSet.setElements((IAdaptable[])elements.toArray(new IAdaptable[elements.size()]));
-			}
+			workingSet.setElements((IAdaptable[])elements.toArray(new IAdaptable[elements.size()]));
 		}
 	}
 }

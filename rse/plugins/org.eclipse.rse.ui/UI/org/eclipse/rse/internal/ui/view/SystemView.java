@@ -859,6 +859,7 @@ public class SystemView extends SafeTreeViewer
 				GoIntoAction goIntoAction = getGoIntoAction();
 				boolean singleSelection = selection.size() == 1;
 				goIntoAction.setEnabled(singleSelection);
+				boolean selectionHasChildren = false;
 				if (singleSelection)
 				{
 					// dkm - first find out if the selection will have children
@@ -869,6 +870,7 @@ public class SystemView extends SafeTreeViewer
 					{
 						if (adapter.hasChildren((IAdaptable)selectedObject))
 						{
+							selectionHasChildren = true;
 							menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
 						}
 					}
@@ -1861,7 +1863,23 @@ public class SystemView extends SafeTreeViewer
 					close();
 					return Status.OK_STATUS;
 				}
-				parentItem = findItem(parent);
+				if (parent != null)
+					parentItem = findItem(parent);
+				else {
+					// find first parentItem for source
+					if (multiSource != null && multiSource.length > 0){
+						Widget sitem = findItem(multiSource[0]);
+						if (sitem instanceof TreeItem)
+						{
+							parentItem = ((TreeItem)sitem).getParentItem();
+							if (parentItem == null)
+							{
+								parentItem = ((TreeItem)sitem).getParent();
+							}
+						}
+					}						
+				}
+					
 				if (parentItem == null) return Status.OK_STATUS;
 				if ((parentItem instanceof Item) && !getExpanded((Item) parentItem))
 					refresh(parent); // flush memory
@@ -4661,6 +4679,9 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Required method from ISystemDeleteTarget
+	 * 
+	 * @deprecated all deletion should now occur independently of the view and the
+	 *       view should only deal with the handling of refresh events
 	 */
 	public boolean doDelete(IProgressMonitor monitor) {
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();

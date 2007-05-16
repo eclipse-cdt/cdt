@@ -15,20 +15,36 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemDeleteDialog;
+import org.eclipse.rse.ui.model.SystemRemoteElementResourceSet;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -44,18 +60,111 @@ import org.eclipse.ui.PlatformUI;
  *      running the action, and then do your own delete.
  * </ol>
  * <p>
- * If the input objects do not adapt to {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter} or 
- * {@link org.eclipse.rse.ui.view.ISystemViewElementAdapter}, then you
- * should call {@link #setNameValidator(org.eclipse.rse.core.ui.validators.ISystemValidator)} to 
- * specify a validator that is called to verify the typed new name is valid. Further, to show the type value
- * of the input objects, they should implement {@link org.eclipse.rse.ui.dialogs.ISystemTypedObject}.
  * 
  * @see org.eclipse.rse.ui.dialogs.SystemDeleteDialog
  */
 public class SystemCommonDeleteAction
        extends SystemBaseDialogAction
 {
+	public class DeleteEventRunnable implements Runnable
+	{
+		private List _localDeletedResources;
+		private List _remoteDeletedResources;
+		public DeleteEventRunnable(List localDeletedResources, List remoteDeletedResources)
+		{
+			_localDeletedResources = localDeletedResources;
+			_remoteDeletedResources = remoteDeletedResources;
+		}
+		
+		public void run()
+		{
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			
+			if (_remoteDeletedResources.size() > 0)
+			{
+				sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, _remoteDeletedResources, null, null, null);
+			}
+			if (_localDeletedResources.size() > 0)
+			{
+				Object[] localDeleted = _localDeletedResources.toArray();
+				sr.fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(localDeleted, ISystemResourceChangeEvents.EVENT_DELETE_MANY, null/*(getSelectedParent())*/));
+			}
+		}
+	}
+	
+	
+	public class DeleteJob extends Job
+	{
+		private List _localResources;
+		private List _remoteSets;
+		public DeleteJob(List localResources, List remoteSets)
+		{
+			super(SystemResources.ACTION_DELETE_LABEL);
+			_localResources = localResources;
+			_remoteSets = remoteSets;
+		}
+		
+		public IStatus run(IProgressMonitor monitor)
+		{
+			boolean ok = true;
+			List localDeletedObjects = new ArrayList();
+			List remoteDeletedObjects = new ArrayList();
+			
+			// local delete is pretty straight-forward
+			for (int l = 0; l < _localResources.size() && ok; l++)
+			{
+				Object element = _localResources.get(l);
+				ISystemViewElementAdapter adapter = getViewAdapter(element);
+				try
+				{
+					ok = adapter.doDelete(getShell(), element, monitor);
+					if (ok)
+					{
+						localDeletedObjects.add(element);
+					}
+				}
+				catch (Exception e)
+				{					
+				}
+			}
+			
+			
+			// remote delete is not as straight-forward
+			for (int r = 0; r < _remoteSets.size() && ok; r++)
+			{
+				SystemRemoteElementResourceSet set = (SystemRemoteElementResourceSet)_remoteSets.get(r);
+				ISystemViewElementAdapter adapter = set.getViewAdapter();
+				try
+				{
+					ok = adapter.doDeleteBatch(getShell(), set.getResourceSet(), monitor);
+					if (ok)
+					{
+						for (int i = 0; i < set.size(); i++)
+						{
+							remoteDeletedObjects.add(set.get(i));
+						}
+					}
+				}
+				catch (Exception e)
+				{					
+				}
+			}
+			
+			
+			// start a runnable to do the action refresh events
+			DeleteEventRunnable fireEvents = new DeleteEventRunnable(localDeletedObjects, remoteDeletedObjects);
+			Display.getDefault().asyncExec(fireEvents);
+			
+			if (ok)
+				return Status.OK_STATUS;
+			else
+				return Status.CANCEL_STATUS;
+		}
+		
+	}
+	
 	private String promptLabel; 
+	private List _setList;
 	
 	/**
 	 * Constructor for SystemDeleteAction when using a delete target
@@ -72,6 +181,7 @@ public class SystemCommonDeleteAction
 		setProcessAllSelections(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);		
   	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0021"); //$NON-NLS-1$
+  	    _setList = new ArrayList();
 	}
 	
 	/**
@@ -103,6 +213,7 @@ public class SystemCommonDeleteAction
      */
 	public boolean updateSelection(IStructuredSelection selection)
 	{
+		_setList.clear();
 		ISystemDeleteTarget deleteTarget = getDeleteTarget();
 		if (deleteTarget == null)
 		  return true;
@@ -138,44 +249,69 @@ public class SystemCommonDeleteAction
 		return dlg;
 	}
 	
-	public class DeleteRunnable implements IRunnableWithProgress
-	{
-		private ISystemDeleteTarget _target;
-		public DeleteRunnable(ISystemDeleteTarget target)
-		{			
-			_target = target;
-		}
-		
-		public void run(IProgressMonitor monitor)
-		{
-			  _target.doDelete(monitor); // deletes all the currently selected items
-		}
-	}
 	
 	/**
-	 * Required by parent. 
-	 * In our case, we overload it to also perform the deletion, but only if using a delete target,
-	 *  else it is up to the caller to call wasCancelled() and if not true, do their own deletion.
+	 * New method of doing delete where the physical deletion occurs in a job whereas the refresh is done in a runnable
 	 */
 	protected Object getDialogValue(Dialog dlg)
 	{
 		if (!((SystemDeleteDialog)dlg).wasCancelled() && (getDeleteTarget() != null))
 		{
 			ISystemDeleteTarget target = getDeleteTarget();
-			DeleteRunnable delRunnable = new DeleteRunnable(target);
-			IRunnableContext runnableContext = getRunnableContext(dlg.getShell());
-			try
-			{
-				runnableContext.run(false, true, delRunnable);
-			}
-			catch (Exception e)
+			ISelection selection = target.getSelection();
+			
+			if (selection instanceof IStructuredSelection)
 			{				
+				// keep track of the current set
+				List localSet = new ArrayList();
+
+				// divide up all objects to delete
+				IStructuredSelection ssel = (IStructuredSelection)selection;
+				Iterator iter = ssel.iterator();
+				while (iter.hasNext())
+				{
+					Object object = iter.next();
+					ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(object, (Viewer)target);
+					if (getRemoteAdapter(object) != null) 
+					{
+						ISubSystem subSystem = adapter.getSubSystem(object);
+						// a remote object so add to remote set
+						SystemRemoteElementResourceSet set = getSetFor(subSystem, adapter);
+						set.addResource(object);
+					}
+					else
+					{
+						localSet.add(object);
+					}
+				}
+				
+				// do delete for each set
+				DeleteJob job = new DeleteJob(localSet, _setList);
+				job.schedule();
 			}
-			RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
-	      setEnabled(target.canDelete());
+			
 		}
 		return null;
 	}
+
+
+	
+	
+	protected SystemRemoteElementResourceSet getSetFor(ISubSystem subSystem, ISystemViewElementAdapter adapter) {
+		for (int i = 0; i < _setList.size(); i++) {
+			SystemRemoteElementResourceSet set = (SystemRemoteElementResourceSet) _setList.get(i);
+			if (set.getViewAdapter() == adapter && set.getSubSystem() == subSystem) {
+				return set;
+			}
+		}
+
+		// no existing set - create one
+		SystemRemoteElementResourceSet newSet = new SystemRemoteElementResourceSet(subSystem, adapter);
+		_setList.add(newSet);
+		return newSet;
+	}
+	
+	
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{

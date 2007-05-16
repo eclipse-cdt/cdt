@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.rse.subsystems.files.ftp">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.subsystems.files.ftp" id="ftpFileEntryParsers" name="ftpFileEntryParsers"/>
+         <meta.schema plugin="org.eclipse.rse.subsystems.files.ftp" id="ftpListingParsers" name="ftpListingParsers"/>
       </appInfo>
       <documentation>
          Extension point that allows providing extra parsers for the FTP LIST command output.
@@ -186,15 +186,18 @@ If no priority is specified, the default value will be &lt;code&gt;Integer.MAX_V
 &lt;/parser&gt;
 
 &lt;!-- Custom parser implementing org.apache.commons.net.ftp.Configurable and org.apache.commons.net.ftp.FTPFileEntryParser --&gt;
+&lt;!-- sending FTP list command &quot;LIST -l&quot; with priority 1--&gt;
 &lt;parser
     class=&quot;com.mycompany.MyParser&quot;
-    name=&quot;MyParser&quot;&gt;
+    label=&quot;MyParser&quot;
+    listCommandModifiers=&quot;-l&quot;
+    priority=&quot;1&quot;&gt;
 &lt;/parser&gt;
 
 &lt;!--  UNIX server that uses Danish month names and &quot;European&quot; date formatting in Denmark&apos;s time zone --&gt;
 &lt;parser
     class=&quot;org.apache.commons.net.ftp.parser.UnixFTPEntryParser&quot;
-    name=&quot;UNIX_Danish&quot;
+    label=&quot;UNIX_Danish&quot;
     defaultDateFormatStr = &quot;d MMM yyyy&quot;
     recentDateFormatStr = &quot;d MMM HH:mm&quot;
     serverLanguageCode = &quot;da&quot;
@@ -205,7 +208,7 @@ If no priority is specified, the default value will be &lt;code&gt;Integer.MAX_V
 &lt;!--  VMS server that uses month names in a language not supported but uses the standard date formatting --&gt;
 &lt;parser
     class=&quot;org.apache.commons.net.ftp.parser.VMSFTPEntryParser&quot;
-    name=&quot;VMS_custom&quot;
+    label=&quot;VMS_custom&quot;
     shortMonthNames=&quot;jan|feb|mar|apr|ma\u00ED|j\u00FAn|j\u00FAl|\u00e1g\u00FA|sep|okt|n\u00F3v|des&quot; 
     &gt;
 &lt;/parser&gt;

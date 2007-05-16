@@ -31,7 +31,7 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 	
 	private Hashtable ftpConfigProxyById = new Hashtable();
 	private Hashtable ftpParsers = new Hashtable();
-	private IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.subsystems.files.ftp","ftpFileEntryParsers"); //$NON-NLS-1$ //$NON-NLS-2$
+	private IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.subsystems.files.ftp","ftpListingParsers"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
 	 * Constructor of the parser factory

@@ -106,11 +106,7 @@ public class SoundAction extends AbstractBreakpointAction {
 	}
 
 	public String getDefaultName() {
-		// if (soundFile != null) {
-		// return MessageFormat.format("Play {0}", new Object[]
-		// {soundFile.getName()});
-		// }
-		return "Untitled Sound Action"; //$NON-NLS-1$
+		return Messages.getString("SoundAction.UntitledName"); //$NON-NLS-1$
 	}
 
 	public File getSoundFile() {

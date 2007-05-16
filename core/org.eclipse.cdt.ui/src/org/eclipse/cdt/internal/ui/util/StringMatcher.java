@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
@@ -130,7 +131,11 @@ public class StringMatcher {
 
 		/* convert case */
 		if (fIgnoreCase) {
-			fPattern= aPattern.toUpperCase();
+			char[] chars= aPattern.toCharArray();
+			for (int i = 0; i < chars.length; i++) {
+				chars[i]= Character.toUpperCase(chars[i]);
+			}
+			fPattern= new String(chars);
 		} else {
 			fPattern= aPattern;
 		}

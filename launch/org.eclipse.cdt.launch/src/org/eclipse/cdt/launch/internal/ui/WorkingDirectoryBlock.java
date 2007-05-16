@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,6 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		//		WorkbenchHelp.setHelp(group,
 		// IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);
 		GridLayout workingDirLayout = new GridLayout();
-		workingDirLayout.numColumns = 2;
 		workingDirLayout.makeColumnsEqualWidth = false;
 		group.setLayout(workingDirLayout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -111,14 +110,13 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
     fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
 		fWorkingDirText.setLayoutData(gd);
 		fWorkingDirText.setFont(font);
 		fWorkingDirText.addModifyListener(fListener);
 
 		fUseDefaultWorkingDirButton = new Button(group, SWT.CHECK);
 		fUseDefaultWorkingDirButton.setText(LaunchMessages.getString("WorkingDirectoryBlock.Use_default")); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
 		fUseDefaultWorkingDirButton.setFont(font);
 		fUseDefaultWorkingDirButton.addSelectionListener(fListener);

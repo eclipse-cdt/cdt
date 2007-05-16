@@ -883,7 +883,7 @@
               enablesFor="+"
               id="org.eclipse.cdt.ui.deleteConfigsAction0"
               label="%DeleteRcConfigAction.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm3"
               />
         <action
               class="org.eclipse.cdt.ui.actions.ExcludeFromBuildAction"
@@ -896,9 +896,8 @@
               id="org.eclipse.cdt.ui.cfgmenu"
               label="%Configurations.menu"
               path="buildGroup">
-           <groupMarker
-                 name="gm1">
-           </groupMarker>
+           <groupMarker name="gm1"/>
+           <groupMarker name="gm3"/>
            <separator
                  name="sep1">
            </separator>

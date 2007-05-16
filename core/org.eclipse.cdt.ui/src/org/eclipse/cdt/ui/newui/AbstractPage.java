@@ -555,7 +555,8 @@ implements
 	
 	protected void handleResize(boolean visible) {
 		if (visible && !isNewOpening) return; // do not duplicate
-		isNewOpening = false;
+		if (visible) 
+			isNewOpening = false;
 		
 		int saveMode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_POSSAVE);
 		if (saveMode == CDTPrefUtil.POSITION_SAVE_NONE) return;

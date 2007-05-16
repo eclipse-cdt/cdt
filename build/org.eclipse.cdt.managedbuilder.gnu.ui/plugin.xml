@@ -1510,6 +1510,7 @@
           </outputType>
 		  <outputType
 	          outputs="dll,a.dll"
+	          outputPrefix=""
 			  buildVariable="LIBRARIES"
 			  id="cdt.managedbuild.tool.gnu.c.linker.cygwin.output.so"
 			  superClass="cdt.managedbuild.tool.gnu.c.linker.output.so">
@@ -1531,6 +1532,7 @@
 		  </outputType>
 		  <outputType
 	          outputs="dll,a.dll"
+	          outputPrefix=""
 			  buildVariable="LIBRARIES"
 			  id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output.so"
 			  superClass="cdt.managedbuild.tool.gnu.cpp.linker.output.so">

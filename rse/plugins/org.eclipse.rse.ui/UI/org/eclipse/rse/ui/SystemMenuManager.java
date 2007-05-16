@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Tobias Schwarz (Wind River) - [187312] Fix duplicate submenus contributed through plugin.xml
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -35,7 +35,7 @@ import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
 /**
  * Override/wrapper of JFace MenuManager so we can redirect any
  * menu additions to specific menu groups to go into 
- * pre-defined submenus.
+ * predefined submenus.
  * <p>
  * Only exposes core set of MenuManager methods. Rest can be
  * accessed by calling getMenuManger().
@@ -100,7 +100,7 @@ public class SystemMenuManager
      * Intercepted so we can direct appends to certain groups into appropriate cascading submenus.
      * <p>
      * @param groupName group to append to. See {@link org.eclipse.rse.ui.ISystemContextMenuConstants}.
-     * @param submenu submenu to append.
+     * @param menuOrSeparator menu or separator to append.
      */
     public void appendToGroup(String groupName, IContributionItem menuOrSeparator) 
     {
@@ -132,7 +132,7 @@ public class SystemMenuManager
      * Intercepted so we can direct appends to certain groups into appropriate cascading submenus.
      * <p>
      * @param groupName group to append to. See {@link org.eclipse.rse.ui.ISystemContextMenuConstants}.
-     * @param submenu submenu to append.
+     * @param subMenu submenu to append.
      */
     public void prependToGroup(String groupName, IContributionItem subMenu) 
     {
@@ -207,6 +207,31 @@ public class SystemMenuManager
     	return takenCareOf;
     }        
 
+    /**
+     * Return the given subMenu if already instantiated locally, or
+     * find it with the given subMenuId in the nested IMenuManager
+     * if not yet instantiated locally.
+     *
+     * This is necessary in order to make sure the given submenu
+     * is not created twice when it (or an item of it) has been 
+     * contributed by a client through plugin.xml already.
+     *
+     * @param subMenu existing local submenu instance, or
+     *     <code>null</code> if not yet instantiated locally.
+     * @param subMenuId submenu ID by which to find it in IMenuManager.
+     * @return existing instantiated, or newly found submenu instance,
+     *      or <code>null</code> if the subMenu does not exist yet.
+     */
+    private IMenuManager findSpecialSubMenu(IMenuManager subMenu, String subMenuId) {
+    	if (subMenu == null) {
+	    	IContributionItem item = mgr.find(subMenuId);
+	    	if (item instanceof IMenuManager) {
+	    		subMenu = (IMenuManager)item;
+	    	}
+    	}
+    	return subMenu;
+    }
+    
     private IMenuManager getSpecialSubMenu(String groupName)
     {
     	IMenuManager subMenu = null;
@@ -215,11 +240,18 @@ public class SystemMenuManager
     	{
     	  if (groupName.equals(ISystemContextMenuConstants.GROUP_NEW))
     	  {
+    		// first of all try to find the subMenu.
+    		// the submenu can already exist, when any adapter created it to allow the 
+    		// contribution of actions via plugin.xml 
+    		// RSE creates the submenus only, when they are needed within the code, 
+    		// so it is possible that submenus doesn'texist for plugin.xml contributions 
+    		// and so an error log entry is generated.
+    		newSubMenu = findSpecialSubMenu(newSubMenu, ISystemContextMenuConstants.MENU_NEW); 
     	    if (newSubMenu == null)
     	    {
-    	      newSubMenu = (new SystemCascadingNewAction()).getSubMenu();
-              mgr.appendToGroup(ISystemContextMenuConstants.GROUP_NEW, newSubMenu);	    
-              menuCreated = true;
+    	    	newSubMenu = (new SystemCascadingNewAction()).getSubMenu();
+    	    	mgr.appendToGroup(ISystemContextMenuConstants.GROUP_NEW, newSubMenu);	    
+    	    	menuCreated = true;
     	    }
     	    subMenu = newSubMenu;
     	  }
@@ -237,6 +269,7 @@ public class SystemMenuManager
     	  */
     	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_EXPANDTO))
     	  {
+    		  expandtoSubMenu = findSpecialSubMenu(expandtoSubMenu, ISystemContextMenuConstants.MENU_EXPANDTO); 
     	    if (expandtoSubMenu == null)
     	    {
     	      expandtoSubMenu = (new SystemCascadingExpandToAction()).getSubMenu();
@@ -247,6 +280,7 @@ public class SystemMenuManager
     	  }
     	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_OPENWITH))
     	  {
+    		  openwithSubMenu = findSpecialSubMenu(openwithSubMenu, ISystemContextMenuConstants.MENU_OPENWITH); 
     	    if (openwithSubMenu == null)
     	    {
     	      openwithSubMenu = (new SystemCascadingOpenWithAction()).getSubMenu();
@@ -257,6 +291,7 @@ public class SystemMenuManager
     	  }
     	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_BROWSEWITH))
     	  {
+    		  browsewithSubMenu = findSpecialSubMenu(browsewithSubMenu, ISystemContextMenuConstants.MENU_BROWSEWITH); 
     	    if (browsewithSubMenu == null)
     	    {
     	      browsewithSubMenu = (new SystemCascadingBrowseWithAction()).getSubMenu();
@@ -267,6 +302,7 @@ public class SystemMenuManager
     	  }
     	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_COMPAREWITH))
     	  {
+    		  comparewithSubMenu = findSpecialSubMenu(comparewithSubMenu, ISystemContextMenuConstants.MENU_COMPAREWITH); 
     	  	if (comparewithSubMenu == null)
     	  	{
     	  		comparewithSubMenu = (new SystemCascadingCompareWithAction()).getSubMenu();
@@ -277,6 +313,7 @@ public class SystemMenuManager
     	  }
 		  else if (groupName.equals(ISystemContextMenuConstants.GROUP_REPLACEWITH))
 		  {
+			  replacewithSubMenu = findSpecialSubMenu(replacewithSubMenu, ISystemContextMenuConstants.MENU_REPLACEWITH); 
 			if (replacewithSubMenu == null)
 			{
 				replacewithSubMenu = (new SystemCascadingReplaceWithAction()).getSubMenu();
@@ -287,6 +324,7 @@ public class SystemMenuManager
 		  }
     	  else if (groupName.equals(ISystemContextMenuConstants.GROUP_WORKWITH))
     	  {
+    		  workwithSubMenu = findSpecialSubMenu(workwithSubMenu, ISystemContextMenuConstants.MENU_WORKWITH); 
     	    if (workwithSubMenu == null)
     	    {
     	      workwithSubMenu = (new SystemCascadingWorkWithAction()).getSubMenu();
@@ -307,6 +345,7 @@ public class SystemMenuManager
     	  }
 		  else if (groupName.equals(ISystemContextMenuConstants.GROUP_STARTSERVER))
 		  {
+			serverSubMenu = findSpecialSubMenu(serverSubMenu, ISystemContextMenuConstants.MENU_STARTSERVER); 
 			if (serverSubMenu == null)
 			{
 				serverSubMenu = (new SystemCascadingRemoteServersAction()).getSubMenu();

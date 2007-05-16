@@ -2852,6 +2852,7 @@ public class SystemView extends SafeTreeViewer
 			// a reference to this remote object
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
 				Object data = match.getData();
+				boolean wasExpanded = ((TreeItem)match).getExpanded();
 				smartRefresh(new TreeItem[] { (TreeItem) match }); // refresh the remote object
 				if (firstSelection && // for now, we just select the first binary occurrence we find
 						(data == remoteObject)) // same binary object as given?
@@ -2864,7 +2865,7 @@ public class SystemView extends SafeTreeViewer
 						{
 							allowExpand = rmtAdapter.hasChildren((IAdaptable)data);
 						}
-						if (allowExpand && !getExpanded(match)) // assume if callers wants to select kids that they want to expand parent
+						if (allowExpand && wasExpanded && !getExpanded(match)) // assume if callers wants to select kids that they want to expand parent
 						{
 							createChildren(match);
 							setExpanded(match, true);

@@ -284,9 +284,9 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 	
 	// #include "testBug101287.h"
 	// int main(int argc, char **argv) {
-	//    abc
+	//    abc;
 	// }
-	public void _testBug101287() throws Exception {
+	public void testBug101287() throws Exception {
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();

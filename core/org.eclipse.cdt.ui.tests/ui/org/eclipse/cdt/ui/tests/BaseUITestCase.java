@@ -218,7 +218,7 @@ public class BaseUITestCase extends BaseTestCase {
 
 	final protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
-		for (int i=0; i<200; i++) {
+		for (int i=0; i<400; i++) {
 			try {
 				root= tree.getItem(i0);
 				if (label.equals(root.getText())) {

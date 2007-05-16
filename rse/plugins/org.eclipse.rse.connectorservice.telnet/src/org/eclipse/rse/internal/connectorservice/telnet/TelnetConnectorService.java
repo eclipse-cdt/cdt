@@ -48,21 +48,22 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-public class TelnetConnectorService extends StandardConnectorService implements ITelnetSessionProvider  {
-	
-	public static final String PROPERTY_SET_NAME="Telnet Settings"; //$NON-NLS-1$
-	public static final String PROPERTY_LOGIN_REQUIRED="Login.Required"; //$NON-NLS-1$
-	public static final String PROPERTY_LOGIN_PROMPT="Login.Prompt"; //$NON-NLS-1$
-	public static final String PROPERTY_PASSWORD_PROMPT="Password.Prompt"; //$NON-NLS-1$
-	public static final String PROPERTY_COMMAND_PROMPT="Command.Prompt"; //$NON-NLS-1$
-	
+public class TelnetConnectorService extends StandardConnectorService implements
+		ITelnetSessionProvider {
+
+	public static final String PROPERTY_SET_NAME = "Telnet Settings"; //$NON-NLS-1$
+	public static final String PROPERTY_LOGIN_REQUIRED = "Login.Required"; //$NON-NLS-1$
+	public static final String PROPERTY_LOGIN_PROMPT = "Login.Prompt"; //$NON-NLS-1$
+	public static final String PROPERTY_PASSWORD_PROMPT = "Password.Prompt"; //$NON-NLS-1$
+	public static final String PROPERTY_COMMAND_PROMPT = "Command.Prompt"; //$NON-NLS-1$
+
 	private static final int TELNET_DEFAULT_PORT = 23;
 	private static TelnetClient fTelnetClient = new TelnetClient();
 	private SessionLostHandler fSessionLostHandler;
 	private InputStream in;
-    private PrintStream out;
+	private PrintStream out;
 	private IPropertySet telnetPropertySet = null;
-	
+
 	public TelnetConnectorService(IHost host) {
 		super(TelnetConnectorResources.TelnetConnectorService_Name,
 				TelnetConnectorResources.TelnetConnectorService_Description,
@@ -70,18 +71,20 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 		fSessionLostHandler = null;
 		telnetPropertySet = getTelnetPropertySet();
 	}
-	
+
 	/**
-	 * Return the telnet property set, and fill it with default
-	 * values if it has not been created yet.
-	 * Extenders may override in order to set different default values. 
+	 * Return the telnet property set, and fill it with default values if it has
+	 * not been created yet. Extenders may override in order to set different
+	 * default values.
+	 * 
 	 * @return a property set holding properties understood by the telnet
-	 *    connector service.
+	 *         connector service.
 	 */
 	protected IPropertySet getTelnetPropertySet() {
 		IPropertySet telnetSet = getPropertySet(PROPERTY_SET_NAME);
 		if (telnetSet == null) {
-			telnetSet = createPropertySet(PROPERTY_SET_NAME, TelnetConnectorResources.PropertySet_Description);
+			telnetSet = createPropertySet(PROPERTY_SET_NAME,
+					TelnetConnectorResources.PropertySet_Description);
 			telnetSet.addProperty(PROPERTY_LOGIN_REQUIRED,
 					"true", PropertyType.getEnumPropertyType(new String[] { "true", "false" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			telnetSet.addProperty(PROPERTY_LOGIN_PROMPT,
@@ -98,75 +101,79 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 		if (monitor.isCanceled())
 			throw new OperationCanceledException();
 	}
-		
+
 	protected void internalConnect(IProgressMonitor monitor) throws Exception {
 		String host = getHostName();
-	    String user = getUserId();
-	    String password = ""; //$NON-NLS-1$
+		String user = getUserId();
+		String password = ""; //$NON-NLS-1$
 		telnetPropertySet = getTelnetPropertySet();
-		String login_required = telnetPropertySet.getPropertyValue(PROPERTY_LOGIN_REQUIRED); 
-		String login_prompt = telnetPropertySet.getPropertyValue(PROPERTY_LOGIN_PROMPT);
-		String password_prompt = telnetPropertySet.getPropertyValue(PROPERTY_PASSWORD_PROMPT);
-		String command_prompt = telnetPropertySet.getPropertyValue(PROPERTY_COMMAND_PROMPT);
-        try {
-        	Activator.trace("Telnet Service: Connecting....."); //$NON-NLS-1$
-        	fTelnetClient.connect(host,TELNET_DEFAULT_PORT );
-        	ICredentials cred = getCredentialsProvider().getCredentials();
-            if (cred!=null) {
-            	password = cred.getPassword();
-            }
-            
-            in = fTelnetClient.getInputStream();
-            out = new PrintStream( fTelnetClient.getOutputStream() );
-            //Send login and password if needed
-            if( Boolean.valueOf(login_required ).booleanValue() ) {
-            	if (login_prompt!=null && login_prompt.length()>0) {
-    	            readUntil(login_prompt);
-    	            write(user);
-            	}
-            	if (password_prompt!=null && password_prompt.length()>0) {
-    	            readUntil(password_prompt);
-    	            write(password);
-            	}
-            }
-            if (command_prompt!=null && command_prompt.length()>0) {
-	            readUntil(command_prompt);
-            }
-        	Activator.trace("Telnet Service: Connected"); //$NON-NLS-1$
-        }catch( SocketException se) {
-        	Activator.trace("Telnet Service failed: "+se.toString()); //$NON-NLS-1$
-        	sessionDisconnect();
-        }catch( IOException ioe ) {
-        	Activator.trace("Telnet Service failed: "+ioe.toString()); //$NON-NLS-1$
-        	sessionDisconnect();
-        }
-        
-		fSessionLostHandler = new SessionLostHandler( this );
+		String login_required = telnetPropertySet
+				.getPropertyValue(PROPERTY_LOGIN_REQUIRED);
+		String login_prompt = telnetPropertySet
+				.getPropertyValue(PROPERTY_LOGIN_PROMPT);
+		String password_prompt = telnetPropertySet
+				.getPropertyValue(PROPERTY_PASSWORD_PROMPT);
+		String command_prompt = telnetPropertySet
+				.getPropertyValue(PROPERTY_COMMAND_PROMPT);
+		try {
+			Activator.trace("Telnet Service: Connecting....."); //$NON-NLS-1$
+			fTelnetClient.connect(host, TELNET_DEFAULT_PORT);
+			ICredentials cred = getCredentialsProvider().getCredentials();
+			if (cred != null) {
+				password = cred.getPassword();
+			}
+
+			in = fTelnetClient.getInputStream();
+			out = new PrintStream(fTelnetClient.getOutputStream());
+			// Send login and password if needed
+			if (Boolean.valueOf(login_required).booleanValue()) {
+				if (login_prompt != null && login_prompt.length() > 0) {
+					readUntil(login_prompt);
+					write(user);
+				}
+				if (password_prompt != null && password_prompt.length() > 0) {
+					readUntil(password_prompt);
+					write(password);
+				}
+			}
+			if (command_prompt != null && command_prompt.length() > 0) {
+				readUntil(command_prompt);
+			}
+			Activator.trace("Telnet Service: Connected"); //$NON-NLS-1$
+		} catch (SocketException se) {
+			Activator.trace("Telnet Service failed: " + se.toString()); //$NON-NLS-1$
+			sessionDisconnect();
+		} catch (IOException ioe) {
+			Activator.trace("Telnet Service failed: " + ioe.toString()); //$NON-NLS-1$
+			sessionDisconnect();
+		}
+
+		fSessionLostHandler = new SessionLostHandler(this);
 		notifyConnection();
-		
+
 	}
-	
+
 	/**
-	 * Disconnect the telnet session.
-	 * Synchronized in order to avoid NPE's from commons.net when called
-	 * quickly in succession.
+	 * Disconnect the telnet session. Synchronized in order to avoid NPE's from
+	 * commons.net when called quickly in succession.
 	 */
 	private synchronized void sessionDisconnect() {
-    	Activator.trace("TelnetConnectorService.sessionDisconnect"); //$NON-NLS-1$
-    	try {
-        	if (fTelnetClient!=null) {
-        		synchronized(fTelnetClient) {
-        			if (fTelnetClient.isConnected())
-                		fTelnetClient.disconnect();
-        		}
-        	}
-    	} catch(Exception e) {
-    		//Avoid NPE on disconnect shown in UI
-    		//This is a non-critical exception so print only in debug mode
-    		if (Activator.isTracingOn()) e.printStackTrace();
-    	}
+		Activator.trace("TelnetConnectorService.sessionDisconnect"); //$NON-NLS-1$
+		try {
+			if (fTelnetClient != null) {
+				synchronized (fTelnetClient) {
+					if (fTelnetClient.isConnected())
+						fTelnetClient.disconnect();
+				}
+			}
+		} catch (Exception e) {
+			// Avoid NPE on disconnect shown in UI
+			// This is a non-critical exception so print only in debug mode
+			if (Activator.isTracingOn())
+				e.printStackTrace();
+		}
 	}
-	
+
 	public String readUntil(String pattern) {
 		try {
 			char lastChar = pattern.charAt(pattern.length() - 1);
@@ -185,139 +192,136 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 				ch = in.read();
 			}
 		} catch (Exception e) {
-			SystemBasePlugin.logError(e.getMessage()==null ? e.getClass().getName() : e.getMessage(), e);
+			SystemBasePlugin.logError(e.getMessage() == null ? 	e.getClass().getName() : e.getMessage(), e);
 		}
 		return null;
 	}
-	
-	public void write( String value ) {
-	   try {
-		 out.println( value );
-		 out.flush();
-		 if (Activator.isTracingOn()) {
-			 //Avoid printing password to stdout
-			 //Activator.trace("write: "+value ); //$NON-NLS-1$
-			 int len = value.length()+6;
-			 Activator.trace("write: ******************".substring(0, len<=24 ? len : 24)); //$NON-NLS-1$
-		 }
-	   }
-	   catch( Exception e ) {
-		 e.printStackTrace();
-	   }
+
+	public void write(String value) {
+		try {
+			out.println(value);
+			out.flush();
+			if (Activator.isTracingOn()) {
+				// Avoid printing password to stdout
+				// Activator.trace("write: "+value ); //$NON-NLS-1$
+				int len = value.length() + 6;
+				Activator.trace("write: ******************".substring(0, len <= 24 ? len : 24)); //$NON-NLS-1$
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-					 
-	protected void internalDisconnect(IProgressMonitor monitor) throws Exception {
-		
+
+	protected void internalDisconnect(IProgressMonitor monitor)
+			throws Exception {
+
 		Activator.trace("Telnet Service: Disconnecting ....."); //$NON-NLS-1$
-		boolean sessionLost = (fSessionLostHandler!=null && fSessionLostHandler.isSessionLost());
-		// no more interested in handling session-lost, since we are disconnecting anyway
+		boolean sessionLost = (fSessionLostHandler != null && fSessionLostHandler.isSessionLost());
+		// no more interested in handling session-lost, since we are
+		// disconnecting anyway
 		fSessionLostHandler = null;
 		// handle events
 		if (sessionLost) {
 			notifyError();
-		} 
-		else {
+		} else {
 			// Fire comm event to signal state about to change
 			fireCommunicationsEvent(CommunicationsEvent.BEFORE_DISCONNECT);
 		}
-		
-    	sessionDisconnect();
+
+		sessionDisconnect();
 
 		// Fire comm event to signal state changed
 		notifyDisconnection();
 	}
-	
+
 	public TelnetClient getTelnetClient() {
 		return fTelnetClient;
 	}
 
 	/**
-     * Handle session-lost events.
-     * This is generic for any sort of connector service.
-     * Most of this is extracted from dstore's ConnectionStatusListener.
-     * 
-     * TODO should be refactored to make it generally available, and allow
-     * dstore to derive from it.
-     */
-	public static class SessionLostHandler implements Runnable, IRunnableWithProgress
-	{
+	 * Handle session-lost events. This is generic for any sort of connector
+	 * service. Most of this is extracted from dstore's
+	 * ConnectionStatusListener.
+	 * 
+	 * TODO should be refactored to make it generally available, and allow
+	 * dstore to derive from it.
+	 */
+	public static class SessionLostHandler implements Runnable,
+			IRunnableWithProgress {
 		private IConnectorService _connection;
 		private boolean fSessionLost;
-		
-		public SessionLostHandler(IConnectorService cs)
-		{
+
+		public SessionLostHandler(IConnectorService cs) {
 			_connection = cs;
 			fSessionLost = false;
 		}
-		
-		/** 
-		 * Notify that the connection has been lost. This may be called 
-		 * multiple times from multiple subsystems. The SessionLostHandler
-		 * ensures that actual user feedback and disconnect actions are
-		 * done only once, on the first invocation.
+
+		/**
+		 * Notify that the connection has been lost. This may be called multiple
+		 * times from multiple subsystems. The SessionLostHandler ensures that
+		 * actual user feedback and disconnect actions are done only once, on
+		 * the first invocation.
 		 */
-		public void sessionLost()
-		{
-			//avoid duplicate execution of sessionLost
-			boolean showSessionLostDlg=false;
-			synchronized(this) {
+		public void sessionLost() {
+			// avoid duplicate execution of sessionLost
+			boolean showSessionLostDlg = false;
+			synchronized (this) {
 				if (!fSessionLost) {
 					fSessionLost = true;
-					showSessionLostDlg=true;
+					showSessionLostDlg = true;
 				}
 			}
 			if (showSessionLostDlg) {
-				//invokes this.run() on dispatch thread
+				// invokes this.run() on dispatch thread
 				Display.getDefault().asyncExec(this);
 			}
 		}
-		
+
 		public synchronized boolean isSessionLost() {
 			return fSessionLost;
 		}
-		
-		public void run()
-		{
+
+		public void run() {
 			Shell shell = getShell();
-			//TODO need a more correct message for "session lost"
-			//TODO allow users to reconnect from this dialog
-			//SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
+			// TODO need a more correct message for "session lost"
+			// TODO allow users to reconnect from this dialog
+			// SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_CANCELLED);
 			msg.makeSubstitution(_connection.getPrimarySubSystem().getHost().getAliasName());
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
 			dialog.open();
-			try
-			{
-				//TODO I think we should better use a Job for disconnecting?
-				//But what about error messages?
+			try {
+				// TODO I think we should better use a Job for disconnecting?
+				// But what about error messages?
 				IRunnableContext runnableContext = getRunnableContext(getShell());
 				// will do this.run(IProgressMonitor mon)
-		    	//runnableContext.run(false,true,this); // inthread, cancellable, IRunnableWithProgress
-		    	runnableContext.run(true,true,this); // fork, cancellable, IRunnableWithProgress
-		    	_connection.reset();
-				ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();    	    
-	            sr.connectedStatusChange(_connection.getPrimarySubSystem(), false, true, true);
-			}
-	    	catch (InterruptedException exc) // user cancelled
-	    	{
-	    	  if (shell != null)    		
-	            showDisconnectCancelledMessage(shell, _connection.getHostName(), _connection.getPort());
-	    	}    	
-	    	catch (java.lang.reflect.InvocationTargetException invokeExc) // unexpected error
-	    	{
-	    	  Exception exc = (Exception)invokeExc.getTargetException();
-	    	  if (shell != null)    		
-	    	    showDisconnectErrorMessage(shell, _connection.getHostName(), _connection.getPort(), exc);    	    	
-	    	}
-			catch (Exception e)
+				// runnableContext.run(false,true,this); // inthread,
+				// cancellable, IRunnableWithProgress
+				runnableContext.run(true, true, this); // fork, cancellable,
+														// IRunnableWithProgress
+				_connection.reset();
+				ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+				sr.connectedStatusChange(_connection.getPrimarySubSystem(),
+						false, true, true);
+			} catch (InterruptedException exc) // user cancelled
 			{
+				if (shell != null)
+					showDisconnectCancelledMessage(shell, _connection
+							.getHostName(), _connection.getPort());
+			} catch (java.lang.reflect.InvocationTargetException invokeExc) // unexpected error
+			{
+				Exception exc = (Exception) invokeExc.getTargetException();
+				if (shell != null)
+					showDisconnectErrorMessage(shell,
+							_connection.getHostName(), _connection.getPort(),
+							exc);
+			} catch (Exception e) {
 				SystemBasePlugin.logError(TelnetConnectorResources.TelnetConnectorService_ErrorDisconnecting, e);
 			}
 		}
 
 		public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException
-		{
+				throws InvocationTargetException, InterruptedException {
 			String message = null;
 			message = SubSystemConfiguration.getDisconnectingMessage(
 					_connection.getHostName(), _connection.getPort());
@@ -360,7 +364,7 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 			return null;
 		}
 
-	    /**
+		/**
 		 * Get the progress monitor dialog for this operation. We try to use one
 		 * for all phases of a single operation, such as connecting and
 		 * resolving.
@@ -391,64 +395,68 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 			return dlg;
 		}
 
-	    /**
+		/**
 		 * Show an error message when the disconnection fails. Shows a common
 		 * message by default. Overridable.
 		 */
-	    protected void showDisconnectErrorMessage(Shell shell, String hostName, int port, Exception exc)
-	    {
-	         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,RSEUIPlugin.getResourceBundle(),
-	         //                             ISystemMessages.MSG_DISCONNECT_FAILED,
-	         //                             hostName, exc.getMessage()); 	
-	         //RSEUIPlugin.logError("Disconnect failed",exc); // temporary
-	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-	    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_FAILED).makeSubstitution(hostName,exc));
-	    	 msgDlg.setException(exc);
-	    	 msgDlg.open();
-	    }	
+		protected void showDisconnectErrorMessage(Shell shell, String hostName,
+				int port, Exception exc) {
+			// SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,RSEUIPlugin.getResourceBundle(),
+			// ISystemMessages.MSG_DISCONNECT_FAILED,
+			// hostName, exc.getMessage());
+			// RSEUIPlugin.logError("Disconnect failed",exc); // temporary
+			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
+					RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_FAILED)
+							.makeSubstitution(hostName, exc));
+			msgDlg.setException(exc);
+			msgDlg.open();
+		}
 
-	    /**
-	     * Show an error message when the user cancels the disconnection.
-	     * Shows a common message by default.
-	     * Overridable.
-	     */
-	    protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
-	    {
-	         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
-	         //                             ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName);
-	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-	    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_CANCELLED).makeSubstitution(hostName));
-	    	 msgDlg.open();
-	    }
+		/**
+		 * Show an error message when the user cancels the disconnection. Shows
+		 * a common message by default. Overridable.
+		 */
+		protected void showDisconnectCancelledMessage(Shell shell,
+				String hostName, int port) {
+			// SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell,
+			// RSEUIPlugin.getResourceBundle(),
+			// ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName);
+			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
+					RSEUIPlugin.getPluginMessage(
+							ISystemMessages.MSG_DISCONNECT_CANCELLED)
+							.makeSubstitution(hostName));
+			msgDlg.open();
+		}
 	}
 
-	/* Notification from sub-services that our session was lost.
-    * Notify all subsystems properly.
-    * TODO allow user to try and reconnect?
-    */
+	/*
+	 * Notification from sub-services that our session was lost. Notify all
+	 * subsystems properly.
+	 * TODO allow user to try and reconnect?
+	 */
 	public void handleSessionLost() {
-	   	Activator.trace("TelnetConnectorService: handleSessionLost"); //$NON-NLS-1$
-	   	if (fSessionLostHandler!=null) {
-	   		fSessionLostHandler.sessionLost();
-	   	}
+		Activator.trace("TelnetConnectorService: handleSessionLost"); //$NON-NLS-1$
+		if (fSessionLostHandler != null) {
+			fSessionLostHandler.sessionLost();
+		}
 	}
 
 	protected static Display getStandardDisplay() {
-	   	Display display = Display.getCurrent();
-	   	if( display==null ) {
-	   		display = Display.getDefault();
-	   	}
-	   	return display;
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
+		return display;
 	}
-	
+
 	public boolean isConnected() {
 		boolean connected = false;
-		if (fTelnetClient!=null) {
-			synchronized(fTelnetClient) {
+		if (fTelnetClient != null) {
+			synchronized (fTelnetClient) {
 				connected = fTelnetClient.isConnected();
 			}
 		}
-		if (!connected && fSessionLostHandler!=null) {
+		if (!connected && fSessionLostHandler != null) {
 			Activator.trace("TelnetConnectorService.isConnected: false -> sessionLost"); //$NON-NLS-1$
 			fSessionLostHandler.sessionLost();
 		}
@@ -456,10 +464,10 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 	}
 
 	/**
-	 * Test if this connector service requires a password.
-	 * Telnet connector service returns false since a password is
-	 * not necessarily required, i.e. the corresponding 
-	 * password field may be empty.
+	 * Test if this connector service requires a password. Telnet connector
+	 * service returns false since a password is not necessarily required, i.e.
+	 * the corresponding password field may be empty.
+	 * 
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
 	 * @return false
 	 */
@@ -468,10 +476,10 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 	}
 
 	/**
-	 * Test if this connector service requires a user id.
-	 * Telnet connector service returns false since a user id
-	 * is not necessarily required, i.e. the corresponding 
-	 * user id field may be empty.
+	 * Test if this connector service requires a user id. Telnet connector
+	 * service returns false since a user id is not necessarily required, i.e.
+	 * the corresponding user id field may be empty.
+	 * 
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
 	 * @return false
 	 */
@@ -481,14 +489,15 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 
 	/**
 	 * Test if this connector service requires logging in.
-	 * @return false if the Property {@link #PROPERTY_LOGIN_REQUIRED}
-	 *   is set and false. Returns true otherwise.
+	 * 
+	 * @return false if the Property {@link #PROPERTY_LOGIN_REQUIRED} is set and
+	 *         false. Returns true otherwise.
 	 */
 	protected boolean supportsLogin() {
 		boolean result = true;
-		if (telnetPropertySet!=null) {
+		if (telnetPropertySet != null) {
 			String login_required = telnetPropertySet.getPropertyValue(PROPERTY_LOGIN_REQUIRED);
-			if (login_required!=null && login_required.equalsIgnoreCase("false")) { //$NON-NLS-1$
+			if (login_required != null && login_required.equalsIgnoreCase("false")) { //$NON-NLS-1$
 				result = false;
 			}
 		}
@@ -510,5 +519,5 @@ public class TelnetConnectorService extends StandardConnectorService implements 
 	public boolean supportsUserId() {
 		return supportsLogin();
 	}
-	
+
 }

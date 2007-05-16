@@ -12,6 +12,7 @@
  * Martin Oberhuber (Wind River) - apply refactorings for StandardConnectorService
  * Martin Oberhuber (Wind River) - [178606] fix endless loop in readUntil()
  * Sheldon D'souza (Celunite) - [186536] login and password should be configurable
+ * Sheldon D'souza (Celunite) - [186570] handle invalid user id and password more gracefully
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -32,12 +33,13 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.PropertyType;
+import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.ICredentials;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.services.telnet.ITelnetSessionProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -58,11 +60,14 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	public static final String PROPERTY_COMMAND_PROMPT = "Command.Prompt"; //$NON-NLS-1$
 
 	private static final int TELNET_DEFAULT_PORT = 23;
-	private static TelnetClient fTelnetClient = new TelnetClient();
+	private TelnetClient fTelnetClient = new TelnetClient();
 	private SessionLostHandler fSessionLostHandler;
 	private InputStream in;
 	private PrintStream out;
 	private IPropertySet telnetPropertySet = null;
+	private static final int ERROR_CODE = 100; // filed error code
+	private static final int SUCCESS_CODE = 150; // login pass code
+	private static final int CONNECT_CLOSED = 200; // code for end of login attempts
 
 	public TelnetConnectorService(IHost host) {
 		super(TelnetConnectorResources.TelnetConnectorService_Name,
@@ -86,7 +91,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			telnetSet = createPropertySet(PROPERTY_SET_NAME,
 					TelnetConnectorResources.PropertySet_Description);
 			telnetSet.addProperty(PROPERTY_LOGIN_REQUIRED,
-					"true", PropertyType.getEnumPropertyType(new String[] { "true", "false" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							"true", PropertyType.getEnumPropertyType(new String[] { "true", "false" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			telnetSet.addProperty(PROPERTY_LOGIN_PROMPT,
 					"ogin: ", PropertyType.getStringPropertyType()); //$NON-NLS-1$ 
 			telnetSet.addProperty(PROPERTY_PASSWORD_PROMPT,
@@ -106,39 +111,31 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		String host = getHostName();
 		String user = getUserId();
 		String password = ""; //$NON-NLS-1$
-		telnetPropertySet = getTelnetPropertySet();
-		String login_required = telnetPropertySet
-				.getPropertyValue(PROPERTY_LOGIN_REQUIRED);
-		String login_prompt = telnetPropertySet
-				.getPropertyValue(PROPERTY_LOGIN_PROMPT);
-		String password_prompt = telnetPropertySet
-				.getPropertyValue(PROPERTY_PASSWORD_PROMPT);
-		String command_prompt = telnetPropertySet
-				.getPropertyValue(PROPERTY_COMMAND_PROMPT);
+
 		try {
 			Activator.trace("Telnet Service: Connecting....."); //$NON-NLS-1$
 			fTelnetClient.connect(host, TELNET_DEFAULT_PORT);
-			ICredentials cred = getCredentialsProvider().getCredentials();
-			if (cred != null) {
-				password = cred.getPassword();
+			SystemSignonInformation ssi = getSignonInformation();
+			if (ssi != null) {
+				password = ssi.getPassword();
 			}
 
 			in = fTelnetClient.getInputStream();
 			out = new PrintStream(fTelnetClient.getOutputStream());
-			// Send login and password if needed
-			if (Boolean.valueOf(login_required).booleanValue()) {
-				if (login_prompt != null && login_prompt.length() > 0) {
-					readUntil(login_prompt);
-					write(user);
-				}
-				if (password_prompt != null && password_prompt.length() > 0) {
-					readUntil(password_prompt);
-					write(password);
-				}
+
+			LoginThread checkLogin = new LoginThread(user, password);
+			checkLogin.start();
+			checkLogin.join();
+			int status = checkLogin.getLoginStatus();
+			if (status != SUCCESS_CODE) {
+				SystemMessage msg = RSEUIPlugin
+						.getPluginMessage(ISystemMessages.MSG_COMM_CONNECT_FAILED);
+				msg.makeSubstitution(getHost().getAliasName());
+				internalDisconnect(null);
+				throw new SystemMessageException(msg);
+
 			}
-			if (command_prompt != null && command_prompt.length() > 0) {
-				readUntil(command_prompt);
-			}
+
 			Activator.trace("Telnet Service: Connected"); //$NON-NLS-1$
 		} catch (SocketException se) {
 			Activator.trace("Telnet Service failed: " + se.toString()); //$NON-NLS-1$
@@ -174,19 +171,25 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		}
 	}
 
-	public String readUntil(String pattern) {
+	public int readUntil(String pattern) {
 		try {
 			char lastChar = pattern.charAt(pattern.length() - 1);
 			StringBuffer sb = new StringBuffer();
-			int ch = (char) in.read();
+			int ch = in.read();
 			while (ch >= 0) {
 				char tch = (char) ch;
 				if (Activator.isTracingOn())
 					System.out.print(tch);
 				sb.append(tch);
+				if (tch=='t' && sb.indexOf("incorrect") >= 0) { //$NON-NLS-1$
+					return ERROR_CODE;
+				}
+				if (tch=='d' && sb.indexOf("closed") >= 0) { //$NON-NLS-1$
+					return CONNECT_CLOSED;
+				}
 				if (tch == lastChar) {
 					if (sb.toString().endsWith(pattern)) {
-						return sb.toString();
+						return SUCCESS_CODE;
 					}
 				}
 				ch = in.read();
@@ -194,7 +197,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		} catch (Exception e) {
 			SystemBasePlugin.logError(e.getMessage() == null ? 	e.getClass().getName() : e.getMessage(), e);
 		}
-		return null;
+		return CONNECT_CLOSED;
 	}
 
 	public void write(String value) {
@@ -216,6 +219,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			throws Exception {
 
 		Activator.trace("Telnet Service: Disconnecting ....."); //$NON-NLS-1$
+
 		boolean sessionLost = (fSessionLostHandler != null && fSessionLostHandler.isSessionLost());
 		// no more interested in handling session-lost, since we are
 		// disconnecting anyway
@@ -426,6 +430,58 @@ public class TelnetConnectorService extends StandardConnectorService implements
 							ISystemMessages.MSG_DISCONNECT_CANCELLED)
 							.makeSubstitution(hostName));
 			msgDlg.open();
+		}
+	}
+
+	/*
+	 * A Login Thread to catch errors during login into telnet session
+	 */
+
+	private class LoginThread extends Thread {
+
+		private String username;
+		private String password;
+		private int status = SUCCESS_CODE;
+
+		public LoginThread(String username, String password) {
+			this.username = username;
+			this.password = password;
+		}
+
+		public void run() {
+
+			telnetPropertySet = getTelnetPropertySet();
+			String login_required = telnetPropertySet
+					.getPropertyValue(PROPERTY_LOGIN_REQUIRED);
+			String login_prompt = telnetPropertySet
+					.getPropertyValue(PROPERTY_LOGIN_PROMPT);
+			String password_prompt = telnetPropertySet
+					.getPropertyValue(PROPERTY_PASSWORD_PROMPT);
+			String command_prompt = telnetPropertySet
+					.getPropertyValue(PROPERTY_COMMAND_PROMPT);
+
+			if (Boolean.valueOf(login_required).booleanValue()) {
+				status = SUCCESS_CODE;
+				if (login_prompt != null && login_prompt.length() > 0) {
+					status = readUntil(login_prompt);
+					write(username);
+				}
+				if (status == SUCCESS_CODE && password_prompt != null && password_prompt.length() > 0) {
+					status = readUntil(password_prompt);
+					write(password);
+				}
+				if (status == SUCCESS_CODE && command_prompt != null && command_prompt.length() > 0) {
+					status = readUntil(command_prompt);
+				}
+			} else {
+				if (command_prompt != null && command_prompt.length() > 0) {
+					status = readUntil(command_prompt);
+				}
+			}
+		}
+
+		public int getLoginStatus() {
+			return this.status;
 		}
 	}
 

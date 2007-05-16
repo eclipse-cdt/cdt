@@ -61,6 +61,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		objects = null;
+		cfgNames = null;
 		boolean cfgsOK = true;
 		
 		if (!selection.isEmpty()) {

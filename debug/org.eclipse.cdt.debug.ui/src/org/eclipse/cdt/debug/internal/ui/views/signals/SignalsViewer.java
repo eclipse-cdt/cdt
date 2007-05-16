@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.views.signals;
@@ -63,8 +64,8 @@ public class SignalsViewer extends TableViewer {
 		new TableColumn( table, SWT.NULL );
 		TableColumn[] columns = table.getColumns();
 		columns[0].setResizable( true );
-		columns[1].setResizable( false );
-		columns[2].setResizable( false );
+		columns[1].setResizable( true );
+		columns[2].setResizable( true );
 		columns[3].setResizable( true );
 
 		columns[0].setText( CL_NAME );

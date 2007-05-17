@@ -41,6 +41,9 @@ public class AddressPane extends AbstractPane
     {
         try
         {
+            if(this.fSelectionStartAddress == null)
+            	return;
+
             BigInteger address = getViewportAddress(x / getCellWidth(), y
                 / getCellHeight());
 

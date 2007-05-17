@@ -561,6 +561,9 @@ public abstract class AbstractPane extends Canvas
     {
         try
         {
+            if(this.fSelectionStartAddress == null)
+            	return;
+
             BigInteger address = getViewportAddress(x / getCellWidth(), y
                 / getCellHeight());
 

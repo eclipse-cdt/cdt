@@ -36,6 +36,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
@@ -1754,7 +1755,8 @@ class Rendering extends Composite implements IDebugEventSetListener
             	BigInteger dataEnd = address.add(BigInteger.valueOf(bytesRequested));
 
                 if(fCache.start.compareTo(address) <= 0
-                	&& fCache.end.compareTo(dataEnd) >= 0)
+                	&& fCache.end.compareTo(dataEnd) >= 0
+                	&& fCache.bytes.length > 0)
                     contains = true;
             }
 
@@ -1821,8 +1823,6 @@ class Rendering extends Composite implements IDebugEventSetListener
             Iterator iterator = keySet.iterator();
 
             while(iterator.hasNext())
-            {
-                try
                 {
                     BigInteger address = (BigInteger) iterator.next();
                     MemoryByte[] bytes = (MemoryByte[]) fEditBuffer
@@ -1832,10 +1832,14 @@ class Rendering extends Composite implements IDebugEventSetListener
                     for(int i = 0; i < bytes.length; i++)
                         byteValue[i] = bytes[i].getValue();
 
+            	try
+            	{
                     getMemoryBlock().setValue(address.subtract(getMemoryBlock().getBigBaseAddress()), byteValue);
                 }
                 catch(Exception e)
                 {
+					MemoryViewUtil.openError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_WRITE_MEMORY"), "", e);
+
                     logError(
                         TraditionalRenderingMessages
                             .getString("TraditionalRendering.FAILURE_WRITE_MEMORY"), e); //$NON-NLS-1$
@@ -2181,7 +2185,7 @@ class Rendering extends Composite implements IDebugEventSetListener
     {
     	if(!this.isDisposed())
     	{
-    		if(this.isVisible())
+    		if(this.isVisible() && fViewportCache != null)
     		{
     			fViewportCache.refresh();
     		}

@@ -98,7 +98,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		txt1.setLayoutData(gd);
 		txt1.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				setButtons();
+				setButtons(false);
 			}});
 				
 		Label l2 = new Label(c, SWT.NONE);
@@ -112,7 +112,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		txt2.setLayoutData(gd);
 		txt2.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				setButtons();
+				setButtons(false);
 			}});
 		
 		if (kind != ICSettingEntry.MACRO) {
@@ -210,11 +210,11 @@ public class ExpDialog extends AbstractPropertyDialog {
 
 		c.getShell().setDefaultButton(b_ok);
 		c.pack();
-		setButtons();
+		setButtons(true);
 		return c;
 	}	
 	
-	private void setButtons() {
+	private void setButtons(boolean anew) {
 		if (b_ok == null) return; // while init only
 		message.setText(EMPTY_STR);
 		String name;
@@ -225,7 +225,8 @@ public class ExpDialog extends AbstractPropertyDialog {
 			name = txt2.getText().trim();
 		if (name.length() == 0) {
 			enabled = false;
-			message.setText(UIMessages.getString("ExpDialog.8")); //$NON-NLS-1$
+			if (!anew)
+			    message.setText(UIMessages.getString("ExpDialog.8")); //$NON-NLS-1$
 		}
 		if (enabled && existing != null && existing.contains(name)) {
 			message.setText(UIMessages.getString("ExpDialog.9")); //$NON-NLS-1$

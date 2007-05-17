@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -25,6 +26,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -415,7 +417,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 					int index = 0;
 					for (Iterator iterator = m.keySet().iterator(); iterator.hasNext(); index++) {
 						String k = (String)iterator.next();
-						els[index] = k + LBR + (String)m.get(k) + RBR;  
+						els[index] = TextProcessor.process(k + LBR + (String)m.get(k) + RBR);  
 					}
 				}
 				Arrays.sort(els, CDTListComparator.getInstance());

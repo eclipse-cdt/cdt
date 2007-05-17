@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Ken Ryall (Nokia) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=118894
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -44,10 +45,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -134,6 +137,10 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	private Map fAdvancedAttributes = new HashMap(5);
 
+	private ScrolledComposite fContainer;
+
+	private Composite fContents;
+
 	public CDebuggerTab(boolean attachMode) {
 		fAttachMode = attachMode;
 		// If the default debugger has not been set, use the MI debugger.
@@ -145,19 +152,27 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	}
 
 	public void createControl(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		setControl(comp);
+		fContainer = new ScrolledComposite( parent, SWT.V_SCROLL | SWT.H_SCROLL );
+		fContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fContainer.setLayout( new FillLayout() );
+		fContainer.setExpandHorizontal(true);
+		fContainer.setExpandVertical(true);
+		
+		fContents = new Composite( fContainer, SWT.NONE );
+		setControl(fContainer);
 		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
 				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB);
 		int numberOfColumns = ( fAttachMode ) ? 2 : 1;
 		GridLayout layout = new GridLayout(numberOfColumns, false);
-		comp.setLayout(layout);
+		fContents.setLayout(layout);
 		GridData gd = new GridData( GridData.BEGINNING, GridData.CENTER, true, false );
-		comp.setLayoutData(gd);
+		fContents.setLayoutData(gd);
 
-		createDebuggerCombo(comp, ( fAttachMode ) ? 1 : 2 );
-		createOptionsComposite(comp);
-		createDebuggerGroup(comp, 2);
+		createDebuggerCombo(fContents, ( fAttachMode ) ? 1 : 2 );
+		createOptionsComposite(fContents);
+		createDebuggerGroup(fContents, 2);
+		
+		fContainer.setContent( fContents );
 	}
 
 	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {
@@ -512,5 +527,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	 */
 	protected void setInitializeDefault(boolean init) {
 		super.setInitializeDefault(init);
+	}
+	
+	protected void contentsChanged() {
+		fContainer.setMinSize(fContents.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 }

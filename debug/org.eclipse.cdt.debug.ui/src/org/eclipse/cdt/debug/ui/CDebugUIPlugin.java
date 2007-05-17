@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * ARM Limited - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186981
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.debug.core.model.ICRegister;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
@@ -26,6 +28,7 @@ import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory;
+import org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory;
 import org.eclipse.cdt.debug.internal.ui.elements.adapters.CMemoryAdapterFactory;
 import org.eclipse.cdt.debug.internal.ui.elements.adapters.CWatchExpressionFactoryAdapterFactory;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
@@ -288,7 +291,13 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters( elementAdapterFactory, IModuleRetrieval.class );
 		manager.registerAdapters( elementAdapterFactory, ICModule.class );
 		manager.registerAdapters( elementAdapterFactory, ICElement.class );
-
+		
+		CDebugElementLabelProviderFactory labelProviderFactory = new CDebugElementLabelProviderFactory();
+		manager.registerAdapters( labelProviderFactory, ICVariable.class );
+		manager.registerAdapters( labelProviderFactory, ICRegister.class );
+		manager.registerAdapters( labelProviderFactory, ICModule.class );
+		manager.registerAdapters( labelProviderFactory, ICElement.class );
+		
 		CWatchExpressionFactoryAdapterFactory watchExpressionAdapterFactory = new CWatchExpressionFactoryAdapterFactory();
 		manager.registerAdapters( watchExpressionAdapterFactory, ICVariable.class );
 		

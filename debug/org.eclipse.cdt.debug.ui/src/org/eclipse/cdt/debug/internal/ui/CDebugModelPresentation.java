@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Nokia - Added support for CSourceNotFoundElement ( 167305 )
+ * ARM Limited - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186981
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
@@ -58,7 +59,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
@@ -338,20 +338,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		String bt = getBaseText( element );
 		if ( bt == null )
 			return null;
-		StringBuffer baseText = new StringBuffer( bt );
-		if ( element instanceof ICDebugElementStatus && !((ICDebugElementStatus)element).isOK() ) {
-			baseText.append( getFormattedString( " <{0}>", ((ICDebugElementStatus)element).getMessage() ) ); //$NON-NLS-1$
-		}
-		if ( element instanceof IAdaptable ) {
-			IEnableDisableTarget target = (IEnableDisableTarget)((IAdaptable)element).getAdapter( IEnableDisableTarget.class );
-			if ( target != null ) {
-				if ( !target.isEnabled() ) {
-					baseText.append( ' ' );
-					baseText.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.25" ) ); //$NON-NLS-1$
-				}
-			}
-		}
-		return baseText.toString();
+		return CDebugUIUtils.decorateText( element, bt );
 	}
 
 	private String getBaseText( Object element ) {
@@ -541,30 +528,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return null;
 	}
 
-	private String getVariableTypeName( ICType type ) {
-		StringBuffer result = new StringBuffer();
-		String typeName = type.getName();
-		if ( typeName != null )
-			typeName = typeName.trim();
-		if ( type.isArray() && typeName != null ) {
-			int index = typeName.indexOf( '[' );
-			if ( index != -1 )
-				typeName = typeName.substring( 0, index ).trim();
-		}
-		if ( typeName != null && typeName.length() > 0 ) {
-			result.append( typeName );
-			if ( type.isArray() ) {
-				int[] dims = type.getArrayDimensions();
-				for( int i = 0; i < dims.length; ++i ) {
-					result.append( '[' );
-					result.append( dims[i] );
-					result.append( ']' );
-				}
-			}
-		}
-		return result.toString();
-	}
-
 	protected String getVariableText( IVariable var ) throws DebugException {
 		StringBuffer label = new StringBuffer();
 		if ( var instanceof ICVariable ) {
@@ -576,7 +539,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				// don't display type
 			}
 			if ( type != null && isShowVariableTypeNames() ) {
-				String typeName = getVariableTypeName( type );
+				String typeName = CDebugUIUtils.getVariableTypeName( type );
 				if ( typeName != null && typeName.length() > 0 ) {
 					label.append( typeName ).append( ' ' );
 				}
@@ -593,48 +556,8 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return label.toString();
 	}
 
-	protected String getValueText( IValue value )/* throws DebugException*/ {
-		StringBuffer label = new StringBuffer();
-		if ( value instanceof ICDebugElementStatus && !((ICDebugElementStatus)value).isOK() ) {
-			label.append(  getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.4" ), ((ICDebugElementStatus)value).getMessage() ) ); //$NON-NLS-1$
-		}
-		else if ( value instanceof ICValue ) {
-			ICType type = null;
-			try {
-				type = ((ICValue)value).getType();
-			}
-			catch( DebugException e ) {
-			}
-			try {
-				String valueString = value.getValueString();
-				if ( valueString != null ) {
-					valueString = valueString.trim();
-					if ( type != null && type.isCharacter() ) {
-						if ( valueString.length() == 0 )
-							valueString = "."; //$NON-NLS-1$
-						label.append( valueString );
-					}
-					else if ( type != null && type.isFloatingPointType() ) {
-						Number floatingPointValue = CDebugUtils.getFloatingPointValue( (ICValue)value );
-						if ( CDebugUtils.isNaN( floatingPointValue ) )
-							valueString = "NAN"; //$NON-NLS-1$
-						if ( CDebugUtils.isPositiveInfinity( floatingPointValue ) )
-							valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.23" ); //$NON-NLS-1$
-						if ( CDebugUtils.isNegativeInfinity( floatingPointValue ) )
-							valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.24" ); //$NON-NLS-1$
-						label.append( valueString );
-					}
-					else if ( type == null || (!type.isArray() && !type.isStructure()) ) {
-						if ( valueString.length() > 0 ) {
-							label.append( valueString );
-						}
-					}
-				}
-			}
-			catch( DebugException e1 ) {
-			}
-		}	
-		return label.toString();
+	protected String getValueText( IValue value ) {
+		return CDebugUIUtils.getValueText( value );
 	}
 
 	protected String getSignalText( ICSignal signal ) {
@@ -664,7 +587,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				catch( DebugException e1 ) {
 				}
 				if ( type != null && isShowVariableTypeNames() ) {
-					String typeName = getVariableTypeName( type );
+					String typeName = CDebugUIUtils.getVariableTypeName( type );
 					if ( !isEmpty( typeName ) ) {
 						result.insert( 0, typeName + ' ' );
 					}

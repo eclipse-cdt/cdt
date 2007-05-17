@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * IBM Corporation
+ * ARM Limited - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186981
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.elements.adapters; 
 
@@ -15,21 +16,15 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentProvider;
-import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleLabelProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleMementoProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleProxyFactory;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
  
-/**
- * Comment for .
- */
 public class CDebugElementAdapterFactory implements IAdapterFactory {
 
-	private static IElementLabelProvider fgModuleLabelProvider = new ModuleLabelProvider();
     private static IElementContentProvider fgModuleContentProvider = new ModuleContentProvider();
 	private static IModelProxyFactory fgModuleProxyFactory = new ModuleProxyFactory();
     private static IElementMementoProvider fgModuleMementoProvider = new ModuleMementoProvider();
@@ -40,14 +35,6 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 	public Object getAdapter( Object adaptableObject, Class adapterType ) {
 	    if ( adapterType.isInstance( adaptableObject ) ) {
 			return adaptableObject;
-		}
-		if ( adapterType.equals( IElementLabelProvider.class ) ) {
-			if ( adaptableObject instanceof ICModule ) {
-				return fgModuleLabelProvider;
-			}
-			if ( adaptableObject instanceof ICElement ) {
-				return fgModuleLabelProvider;
-			}
 		}
 		if ( adapterType.equals( IElementContentProvider.class ) ) {
 			if ( adaptableObject instanceof IModuleRetrieval ) {
@@ -78,7 +65,6 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 	 */
 	public Class[] getAdapterList() {
 		return new Class[] {
-				IElementLabelProvider.class,
 				IElementContentProvider.class,
 				IModelProxyFactory.class,
         		IElementMementoProvider.class,

@@ -46,7 +46,7 @@ Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
       </configuration>
       </extension>
        
-       <extension-point id="ftpListingParsers" name="ftpListingParsers" schema="schema/ftpListingParsers.exsd"/>
+       <extension-point id="ftpListingParsers" name="%ftpListingParsersName" schema="schema/ftpListingParsers.exsd"/>
    
    	<extension point="org.eclipse.rse.subsystems.files.ftp.ftpListingParsers">
       <parser

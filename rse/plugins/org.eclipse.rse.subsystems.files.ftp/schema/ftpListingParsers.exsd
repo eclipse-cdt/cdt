@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.rse.subsystems.files.ftp">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.subsystems.files.ftp" id="ftpListingParsers" name="ftpListingParsers"/>
+         <meta.schema plugin="org.eclipse.rse.subsystems.files.ftp" id="ftpListingParsers" name="FTP Listing Parsers"/>
       </appInfo>
       <documentation>
          Extension point that allows providing extra parsers for the FTP LIST command output.

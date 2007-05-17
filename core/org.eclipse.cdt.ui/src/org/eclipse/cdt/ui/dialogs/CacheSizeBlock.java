@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.ui.dialogs;
 
@@ -81,12 +82,12 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 
 		fDBAbsoluteLimit= new IntegerFieldEditor(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
 		fDBAbsoluteLimit.setValidRange(1, 10000);
-		ControlFactory.createLabel(cacheComp, "mb"); //$NON-NLS-1$
+		ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_MB);
 		
 		Label codeReaderLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_headerFileCache);
 		fCodeReaderLimit= new IntegerFieldEditor(CodeReaderCache.CODE_READER_BUFFER, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
 		fCodeReaderLimit.setValidRange(1, 10000);
-		ControlFactory.createLabel(cacheComp, "mb"); //$NON-NLS-1$
+		ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_MB);
 		
 		gl= (GridLayout) cacheComp.getLayout();
 		gl.numColumns= 3;

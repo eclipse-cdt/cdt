@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.dialogs;
@@ -19,6 +20,7 @@ public class DialogsMessages extends NLS {
 	public static String AbstractIndexerPage_indexUpFront;
 	public static String AbstractIndexerPage_skipAllReferences;
 	public static String AbstractIndexerPage_skipTypeReferences;
+	public static String CacheSizeBlock_MB;
 	public static String IndexerBlock_fixedBuildConfig;
 	public static String IndexerStrategyBlock_activeBuildConfig;
 	public static String IndexerStrategyBlock_autoUpdate;

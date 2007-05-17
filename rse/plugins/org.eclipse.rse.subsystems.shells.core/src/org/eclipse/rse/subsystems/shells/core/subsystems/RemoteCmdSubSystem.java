@@ -817,11 +817,14 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			return null;
 		}
 
-		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
+		Refresh refreshOnMain = new Refresh(this);
+		Display.getDefault().asyncExec(refreshOnMain);
+	
 		return cmdShell;
 	}
+	
+	
 	
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
@@ -829,12 +832,15 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	public IRemoteCommandShell runShell(Object context, IProgressMonitor monitor) throws Exception
 	{
 		IRemoteCommandShell cmdShell = internalRunShell(context, monitor);
-		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
+		
+		Refresh refreshOnMain = new Refresh(this);
+		Display.getDefault().asyncExec(refreshOnMain);
 
 		return cmdShell;
 	}
 
+	
+	
 	/**
 	 * Execute a remote command. This is only applicable if the subsystem
 	 * factory reports true for supportsCommands().

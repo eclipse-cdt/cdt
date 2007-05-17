@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -105,6 +106,8 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		}
 	};
 
+	protected static final int NO_TEXT_LIMIT = -1;
+
 	protected Button addRadioButton(Composite parent, String label, String key, int indentation) {
 		Button radioButton = new Button(parent, SWT.RADIO);
 		radioButton.setText(label);
@@ -181,9 +184,11 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 
 		Combo comboControl = new Combo(composite, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY);  // TODO: When will the combo be disposed?
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
+		if (textLimit != NO_TEXT_LIMIT) {
+			gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
+			comboControl.setTextLimit(textLimit);
+		}
 		comboControl.setLayoutData(gd);
-		comboControl.setTextLimit(textLimit);
 		fComboBoxes.put(comboControl, key);
 		comboControl.addModifyListener(fComboBoxListener);  // TODO: When will the listener be removed? 
 

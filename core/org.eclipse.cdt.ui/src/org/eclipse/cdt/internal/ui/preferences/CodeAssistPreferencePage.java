@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -110,7 +111,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 //		addCheckBox(sortingGroup, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
 
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_proposalFilterSelect ; 
-		addComboBox(sortingGroup, label, ContentAssistPreference.PROPOSALS_FILTER, 20, 0);
+		addComboBox(sortingGroup, label, ContentAssistPreference.PROPOSALS_FILTER, NO_TEXT_LIMIT, 0);
     	
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following items are grouped for Auto Activation

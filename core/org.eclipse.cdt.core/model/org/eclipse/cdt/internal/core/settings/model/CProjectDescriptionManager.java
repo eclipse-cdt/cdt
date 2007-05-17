@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -143,7 +144,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private static final String PREFERENCES_ELEMENT = "preferences";	//$NON-NLS-1$
 	private static final String ID = "id";	//$NON-NLS-1$
 	private static final String PREFERENCE_CFG_ID_PREFIX = "preference.";	//$NON-NLS-1$
-	private static final String PREFERENCE_CFG_NAME = "Preference Configuration";	//$NON-NLS-1$
+	private static final String PREFERENCE_CFG_NAME = SettingsModelMessages.getString("CProjectDescriptionManager.15"); //$NON-NLS-1$
 	private static final String ROOT_PREFERENCE_ELEMENT = "preferences";	//$NON-NLS-1$
 	private static final String DEFAULT_CFG_ID_PREFIX = CCorePlugin.PLUGIN_ID + ".default.config"; //$NON-NLS-1$
 	private static final String DEFAULT_CFG_NAME = "Configuration"; //$NON-NLS-1$

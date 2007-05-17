@@ -445,7 +445,7 @@ public class MIPlugin extends Plugin {
 		MIProcess pgdb = null;
 		boolean failed = false;
 		try {
-			pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
+			pgdb = factory.createMIProcess(args, launchTimeout, monitor);
 	
 			if (MIPlugin.getDefault().isDebugging()) {
 				StringBuffer sb = new StringBuffer();

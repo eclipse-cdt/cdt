@@ -106,20 +106,10 @@ public class MIProcessAdapter implements MIProcess {
 		return pgdb;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.mi.core.MIProcess#canInterrupt()
-	 */
 	public boolean canInterrupt(MIInferior inferior) {
 		return fGDBProcess instanceof Spawner;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.mi.core.MIProcess#interrupt()
-	 */
 	public void interrupt(MIInferior inferior) {
 		if (fGDBProcess instanceof Spawner) {
 			Spawner gdbSpawner = (Spawner) fGDBProcess;
@@ -136,70 +126,52 @@ public class MIProcessAdapter implements MIProcess {
 			// If we are still running try to drop the sig to the PID
 			if (inferior.isRunning() && inferior.getInferiorPID() > 0) {
 				// lets try something else.
-				gdbSpawner.raise(inferior.getInferiorPID(), gdbSpawner.INT);
-				synchronized (inferior) {
-					for (int i = 0; inferior.isRunning() && i < 5; i++) {
-						try {
-							inferior.wait(1000);
-						} catch (InterruptedException e) {
-						}
-					}
-				}
+				interruptInferior(inferior);
 			}
 		}
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Send an interrupt to the inferior process.
 	 * 
-	 * @see java.lang.Process#exitValue()
+	 * @param inferior
 	 */
+	protected void interruptInferior(MIInferior inferior) {
+		if (fGDBProcess instanceof Spawner) {
+			Spawner gdbSpawner = (Spawner) fGDBProcess;
+			gdbSpawner.raise(inferior.getInferiorPID(), gdbSpawner.INT);
+			synchronized (inferior) {
+				for (int i = 0; inferior.isRunning() && i < 5; i++) {
+					try {
+						inferior.wait(1000);
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+		}
+	}
+	
 	public int exitValue() {
 		return fGDBProcess.exitValue();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#waitFor()
-	 */
 	public int waitFor() throws InterruptedException {
 		return fGDBProcess.waitFor();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#destroy()
-	 */
 	public void destroy() {
 		fGDBProcess.destroy();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getErrorStream()
-	 */
 	public InputStream getErrorStream() {
 		return fGDBProcess.getErrorStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getInputStream()
-	 */
 	public InputStream getInputStream() {
 		return fGDBProcess.getInputStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getOutputStream()
-	 */
 	public OutputStream getOutputStream() {
 		return fGDBProcess.getOutputStream();
 	}

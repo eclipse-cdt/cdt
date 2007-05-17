@@ -12,8 +12,12 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.mi.core.MIProcess;
+import org.eclipse.cdt.debug.mi.core.MIProcessAdapter;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
@@ -437,5 +441,9 @@ public class CommandFactory {
 
 	public String getWorkingDirectory(File cwd) {
 		return "--cd=" + cwd.getAbsolutePath(); //$NON-NLS-1$
+	}
+	
+	public MIProcess createMIProcess(String[] args, int launchTimeout, IProgressMonitor monitor) throws IOException {
+		return new MIProcessAdapter(args, launchTimeout, monitor);
 	}
 }

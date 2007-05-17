@@ -574,7 +574,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 			}
 
-			MessageBox mBox = new MessageBox(new Shell(), SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
+			MessageBox mBox = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL | SWT.SYSTEM_MODAL);
 			mBox.setText(DeleteShellMessage);
 			mBox.setMessage(DeleteValidator);
 			result = mBox.open();

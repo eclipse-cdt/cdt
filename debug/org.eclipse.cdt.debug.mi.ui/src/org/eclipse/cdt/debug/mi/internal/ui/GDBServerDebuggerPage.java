@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.internal.ui;
 
@@ -70,7 +71,6 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		fConnectionField.doFillIntoGrid( comp, 2 );
 		((GridData)fConnectionField.getComboControl( null ).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
 		PixelConverter converter = new PixelConverter( comp );
-		LayoutUtil.setWidthHint( fConnectionField.getComboControl( null ), converter.convertWidthInCharsToPixels( 15 ) );
 		fConnectionStack = ControlFactory.createCompositeEx( comp, 1, GridData.FILL_BOTH );
 		StackLayout stackLayout = new StackLayout();
 		fConnectionStack.setLayout( stackLayout );

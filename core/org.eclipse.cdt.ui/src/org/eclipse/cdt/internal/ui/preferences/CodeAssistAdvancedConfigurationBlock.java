@@ -676,7 +676,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		for (int i= 0; i < bindings.length; i++) {
 			Binding binding= bindings[i];
 			if (command.equals(binding.getParameterizedCommand())) {
-				TriggerSequence triggers= binding.getTriggerSequence();
+				TriggerSequence triggers= bindingSvc.getBestActiveBindingFor(command.getId());
 				return triggers.format();
 			}
 		}

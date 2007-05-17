@@ -118,7 +118,7 @@ public class CDebugUIUtils {
 							valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.24" ); //$NON-NLS-1$
 						label.append( valueString );
 					}
-					else if ( type == null || (!type.isArray() && !type.isStructure()) ) {
+					else if ( type == null || !type.isStructure() ) {
 						if ( valueString.length() > 0 ) {
 							label.append( valueString );
 						}

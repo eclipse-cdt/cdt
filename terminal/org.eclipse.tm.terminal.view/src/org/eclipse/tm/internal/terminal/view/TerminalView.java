@@ -253,6 +253,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			// display in the content description line.
 			String strConnected = getStateDisplayName(fCtlTerminal.getState());
 			String summary = getSettingsSummary();
+			//TODO Title should use an NLS String and com.ibm.icu.MessageFormat
+			//In order to make the logic of assembling, and the separators, better adapt to foreign languages
 			if(summary.length()>0)
 				summary=summary+" - ";  //$NON-NLS-1$
 			String name=fCtlTerminal.getTerminalConnection().getName();

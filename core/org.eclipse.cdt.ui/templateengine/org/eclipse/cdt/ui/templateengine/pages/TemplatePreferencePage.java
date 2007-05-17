@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Bala Torati (Symbian) - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.pages;
 
@@ -56,8 +57,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	 * Preference Page buttons
 	 */
 
-	private static final String EditButton = "   Edit...   "; //$NON-NLS-1$
-	private static final String DeleteButton = "   Remove     "; //$NON-NLS-1$
+	private static final String EditButton = Messages.getString("TemplatePreferencePage.8"); //$NON-NLS-1$
+	private static final String DeleteButton = Messages.getString("TemplatePreferencePage.9"); //$NON-NLS-1$
 	private static final String PageDescription = Messages.getString("TemplatePreferencePage.0");//$NON-NLS-1$
 	public static final String Blank = "";//$NON-NLS-1$
 
@@ -164,7 +165,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	 */
 
 	private void initializeDefaults() {
-		columnNames = new String[] { TemplateEngineHelper.ID, TemplateEngineHelper.VALUE };
+		columnNames = new String[] { Messages.getString("TemplatePreferencePage.10"), Messages.getString("TemplatePreferencePage.11") };  //$NON-NLS-1$//$NON-NLS-2$
 		// Setting InfoPop help (plugin-id+ContextID).
 		pageID = CUIPlugin.getPluginId() + "." + //$NON-NLS-1$
 				SharedContextHelpID;

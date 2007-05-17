@@ -186,7 +186,12 @@ public class Thread extends CObject implements ICDIThread {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
+				try {
 				target.setCurrentThread(currentThread, false);
+				} catch (MI2CDIException e) {
+					target.releaseTarget();
+					throw e;
+				}
 				target.releaseTarget();
 			}
 		}

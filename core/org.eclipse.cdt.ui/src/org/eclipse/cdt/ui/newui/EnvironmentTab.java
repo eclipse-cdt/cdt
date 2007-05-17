@@ -11,6 +11,7 @@
 package org.eclipse.cdt.ui.newui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -372,7 +373,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		Map v = EnvironmentReader.getEnvVars();
 		MyListSelectionDialog dialog = new MyListSelectionDialog(usercomp.getShell(), v, createSelectionDialogContentProvider());
 		
-		dialog.setTitle("Select variables"); //$NON-NLS-1$
+		dialog.setTitle(UIMessages.getString("EnvironmentTab.14")); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			ICConfigurationDescription[] cfgs;
@@ -417,6 +418,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 						els[index] = k + LBR + (String)m.get(k) + RBR;  
 					}
 				}
+				Arrays.sort(els, CDTListComparator.getInstance());
 				return els;
 			}
 			public void dispose() {}

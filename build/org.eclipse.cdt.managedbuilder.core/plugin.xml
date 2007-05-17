@@ -282,12 +282,12 @@
       </managedBuildRevision>
       <configuration
       	id="org.eclipse.cdt.build.core.emptycfg" 
-      	name="Configuration1">
+      	name="%cfg1_cmpty">
       </configuration>
 
 	 <configuration
 	 	id="org.eclipse.cdt.build.core.prefbase.cfg"
-	 	name="Configuration1"
+	 	name="%cfg1_base"
 	 	 >     
 	  <toolChain
 	  	id="org.eclipse.cdt.build.core.prefbase.toolchain"

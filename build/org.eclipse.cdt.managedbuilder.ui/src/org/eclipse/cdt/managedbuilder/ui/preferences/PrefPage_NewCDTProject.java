@@ -42,7 +42,6 @@ public class PrefPage_NewCDTProject extends AbstractPrefPage {
 	}
 
 	protected String getHeader() { 
-		return  UIMessages.getString("AbstractPrefPage.0") + //$NON-NLS-1$
-				UIMessages.getString("AbstractPrefPage.1"); //$NON-NLS-1$
+		return  UIMessages.getString("AbstractPrefPage.0"); //$NON-NLS-1$
 	}
 }

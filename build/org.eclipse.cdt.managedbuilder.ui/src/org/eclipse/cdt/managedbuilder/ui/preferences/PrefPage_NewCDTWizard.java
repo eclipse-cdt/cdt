@@ -19,8 +19,7 @@ import org.eclipse.cdt.ui.newui.ICPropertyTab;
 public class PrefPage_NewCDTWizard extends AbstractPrefPage {
 
 	protected String getHeader() {
-		return Messages.getString("PrefPage_NewCDTWizard.0") + //$NON-NLS-1$
-		       Messages.getString("PrefPage_NewCDTWizard.1"); //$NON-NLS-1$
+		return Messages.getString("PrefPage_NewCDTWizard.0"); //$NON-NLS-1$
 	}
 
 	/*

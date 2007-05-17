@@ -22,7 +22,24 @@
           autostart="true"
           class="org.eclipse.rse.internal.persistence.PropertyFileProvider"
           id="org.eclipse.rse.persistence.PropertyFileProvider"
-          name="Property File Persistence Provider"/>
+          name="Property File Persistence Provider (workspace)">
+       <property
+             name="location"
+             value="workspace">
+       </property>
+    </persistenceProvider>
+    <!--
+    <persistenceProvider
+          autostart="true"
+          class="org.eclipse.rse.internal.persistence.PropertyFileProvider"
+          id="org.eclipse.rse.persistence.MetadataPropertyFileProvider"
+          name="Property File Persistence Provider (metadata)">
+       <property
+             name="location"
+             value="metadata">
+       </property>
+    </persistenceProvider>
+    -->
    </extension>
 
 <!-- ================================================================= -->

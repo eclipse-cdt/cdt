@@ -40,7 +40,15 @@
    </element>
 
    <element name="persistenceProvider">
+      <annotation>
+         <documentation>
+            The persistenceProvider element defines a class that implements the IRSEPersistenceProvider interface. It is used to persist the RSE object model to a form of external storage.
+         </documentation>
+      </annotation>
       <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="property"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -69,6 +77,30 @@
             <annotation>
                <documentation>
                   The autostart attribute determines if the persistence provider will be loaded and asked to restore the profiles known to it at the time RSE starts.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="property">
+      <annotation>
+         <documentation>
+            The property element is contained within the persistenceProvider element. Use these to provide properties that can tailor the behavior of a persistence provider. Each provider must document the properties that it expects.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name attribute provides the name for this property.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The value attribute provides the string value for this property.
                </documentation>
             </annotation>
          </attribute>

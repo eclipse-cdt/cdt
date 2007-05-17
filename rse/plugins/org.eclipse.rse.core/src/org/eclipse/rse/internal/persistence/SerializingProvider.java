@@ -23,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -172,5 +173,12 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 			}
 		}
 		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#setProperties(java.util.Properties)
+	 */
+	public void setProperties(Properties properties) {
+		// Do nothing. The serializing provider does not make use of properties
 	}
 }

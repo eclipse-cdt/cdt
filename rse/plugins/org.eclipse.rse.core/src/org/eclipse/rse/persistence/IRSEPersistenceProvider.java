@@ -17,6 +17,8 @@
 
 package org.eclipse.rse.persistence;
 
+import java.util.Properties;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -33,6 +35,15 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
  * of the DOM and should only be used by the persistence manager.
  */
 public interface IRSEPersistenceProvider {
+
+	/**
+	 * Sets the properties for this provider. This must be done immediately
+	 * after the provider is instantiated. The persistence manager will
+	 * provide these properties for providers defined as extensions.
+	 * @param properties the properties object containing the properties
+	 * supplied in the extension.
+	 */
+	public void setProperties(Properties properties);
 
 	/**
 	 * Restores an RSE DOM given a profileName. 
@@ -53,7 +64,7 @@ public interface IRSEPersistenceProvider {
 	 * @return true if succcessful
 	 */
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor);
-
+	
 	/**
 	 * Returns a job suitable for saving a DOM.
 	 * The result can be null if the persistence provider determines that 

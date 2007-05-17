@@ -98,6 +98,14 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._"; //$NON-NLS-1$ 
 	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ"; //$NON-NLS-1$
 	
+	/* properties */
+	private static final String P_LOCATION = "location"; //$NON-NLS-1$
+	
+	/* property values */
+	private static final String PV_LOCATION_WORKSPACE = "workspace"; //$NON-NLS-1$
+	private static final String PV_LOCATION_METADATA = "metadata"; //$NON-NLS-1$
+		
+	
 	interface PersistenceAnchor {
 		String[] getProfileLocationNames();
 		IStatus deleteProfileLocation(String profileName, IProgressMonitor monitor);
@@ -337,6 +345,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private Map typeQualifiers = getTypeQualifiers();
 	private Map saveJobs = new HashMap();
 	private PersistenceAnchor anchor = new WorkspaceAnchor();
+	private Properties properties = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getSavedProfileNames()
@@ -412,6 +421,23 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			saveJobs.put(dom, saveJob);
 		}
 		return saveJob;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#setProperties(java.util.Properties)
+	 */
+	public void setProperties(Properties properties) {
+		Properties defaults = new Properties();
+		defaults.setProperty(P_LOCATION, PV_LOCATION_WORKSPACE);
+		this.properties = new Properties(defaults);
+		Set keys = properties.keySet();
+		for (Iterator z = keys.iterator(); z.hasNext();) {
+			String key = (String) z.next();
+			String value = properties.getProperty(key);
+			if (value != null) {
+				this.properties.put(key, value);
+			}
+		}
 	}
 
 	/**

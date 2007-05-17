@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -113,15 +114,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 */
 	public IRSEPersistenceProvider getPersistenceProvider(String id) {
 		ProviderRecord pr = getProviderRecord(id);
-		if (pr.provider == null && pr.configurationElement != null) {
-			try {
-				pr.provider = (IRSEPersistenceProvider) pr.configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
-				loadedProviders.put(pr.provider, pr.providerId);
-			} catch (CoreException e) {
-				Logger logger = RSECorePlugin.getDefault().getLogger();
-				logger.logError("Exception loading persistence provider", e); //$NON-NLS-1$
-			}
-		}
+		loadProvider(pr);
 		return pr.provider;
 	}
 
@@ -279,7 +272,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		}
 		return pr;
 	}
-
+	
 	/**
 	 * Loads the map of known providers from the extensions made by all the plugins. 
 	 * This is done once at initialization of the manager. As these ids are resolved to 
@@ -305,6 +298,35 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 				logger.logError("Invalid element in persistenceProviders extension point", null); //$NON-NLS-1$
 			}
 		}
+	}
+
+	/**
+	 * Loads a provider given a provider record. If the provider has already been loaded
+	 * it will not load it again. After loading, the provider will be initialized with any
+	 * properties found in the extension.
+	 * @param pr the provider record containing the configuration element describing the provider
+	 * @return the provider
+	 */
+	private IRSEPersistenceProvider loadProvider(ProviderRecord pr) {
+		if (pr.provider == null) {
+			try {
+				pr.provider = (IRSEPersistenceProvider) pr.configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
+				loadedProviders.put(pr.provider, pr.providerId);
+				Properties properties = new Properties();
+				IConfigurationElement[] children = pr.configurationElement.getChildren("property"); //$NON-NLS-1$
+				for (int i = 0; i < children.length; i++) {
+					IConfigurationElement child = children[i];
+					String name = child.getAttribute("name"); //$NON-NLS-1$
+					String value = child.getAttribute("value"); //$NON-NLS-1$
+					properties.put(name, value);
+				}
+				pr.provider.setProperties(properties);
+			} catch (CoreException e) {
+				Logger logger = RSECorePlugin.getDefault().getLogger();
+				logger.logError("Exception loading persistence provider", e); //$NON-NLS-1$
+			}
+		}
+		return pr.provider;
 	}
 
 	/**

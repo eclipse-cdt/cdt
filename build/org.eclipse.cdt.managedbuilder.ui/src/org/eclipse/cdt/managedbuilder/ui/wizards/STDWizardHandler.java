@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -47,9 +48,9 @@ public class STDWizardHandler extends MBSWizardHandler {
 	/**
 	 * Note that configurations parameter is ignored
 	 */
-	public void createProject(IProject project, boolean defaults)  throws CoreException {
-		CoreModel coreModel = CoreModel.getDefault();
-		ICProjectDescription des = coreModel.createProjectDescription(project, false);
+	public void createProject(IProject project, boolean defaults, boolean onFinish)  throws CoreException {
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 		ManagedProject mProj = new ManagedProject(des);
 		info.setManagedProject(mProj);
@@ -76,7 +77,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 			CConfigurationData data = cfg.getConfigurationData();
 			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 		}
-		coreModel.setProjectDescription(project, des);
+		mngr.setProjectDescription(project, des);
 		
 		doPostProcess(project);
 	}

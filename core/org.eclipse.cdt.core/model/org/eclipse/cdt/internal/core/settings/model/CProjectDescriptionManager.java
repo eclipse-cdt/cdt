@@ -475,7 +475,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				CCorePlugin.log(e);
 			}
 			
-			des = new CProjectDescription((CProjectDescription)des, false, el);
+			des = new CProjectDescription((CProjectDescription)des, false, el, des.isCdtProjectCreating());
 			CProjectDescriptionEvent event = createCopyCreatedEvent(des, cache);
 			notifyListeners(event);
 		}
@@ -586,7 +586,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				} catch (CoreException e2) {
 				}
 	
-				des = new CProjectDescription(des, true, el);
+				des = new CProjectDescription(des, true, el, des.isCdtProjectCreating());
 				try {
 					setDescriptionApplying(project, des);
 					des.applyDatas();
@@ -801,11 +801,16 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 	
 	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException{
-		ICProjectDescription des = loadIfExists ? getProjectDescription(project) : null;
-		
-		if(des == null){
+		return createProjectDescription(project, loadIfExists, false);
+	}
+	
+	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating) throws CoreException{
+		ICProjectDescription des = getProjectDescription(project, loadIfExists, true);
+		if(des == null || !loadIfExists){
+			if(creating && des != null)
+				creating = des.isCdtProjectCreating();
 			ICStorageElement element = createStorage(project, false, true, false);
-			des = new CProjectDescription(project, element, false);
+			des = new CProjectDescription(project, element, false, creating);
 		}
 		return des;
 	}
@@ -913,7 +918,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 	private ICProjectDescription loadProjectDescription(IProject project) throws CoreException{
 		ICStorageElement storage = CProjectDescriptionManager.getInstance().createStorage(project, true, false, false);
-		CProjectDescription des = new CProjectDescription(project, storage, true);
+		CProjectDescription des = new CProjectDescription(project, storage, true, false);
 		if(des != null){
 			try {
 				setDescriptionLoadding(project, des);
@@ -1913,7 +1918,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 			if(checkCfgChange(newDescription, oldDescription, false))
 				delta.addChangeFlags(ICDescriptionDelta.INDEX_CFG);
-
+			
+			if(oldDescription.isCdtProjectCreating() && !newDescription.isCdtProjectCreating())
+				delta.addChangeFlags(ICDescriptionDelta.PROJECT_CREAION_COMPLETED);
 		}
 		return delta.isEmpty() ? null : delta;
 	}

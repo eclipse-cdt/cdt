@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFolder;
@@ -106,18 +107,25 @@ public class CProjectHelper {
 
 		return newProject[0];
 	}
-	
+
 	/**
 	 * Creates a ICProject.
 	 */
 	public static ICProject createNewStileCProject(final String projectName, final String indexerID) throws CoreException {
-		return createNewStileCProject(projectName, null, indexerID);
+		return createNewStileCProject(projectName, indexerID, false);
 	}
 
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createNewStileCProject(final String projectName, String cfgProviderId, final String indexerID) throws CoreException {
+	public static ICProject createNewStileCProject(final String projectName, final String indexerID, boolean markCreating) throws CoreException {
+		return createNewStileCProject(projectName, null, indexerID, markCreating);
+	}
+
+	/**
+	 * Creates a ICProject.
+	 */
+	public static ICProject createNewStileCProject(final String projectName, String cfgProviderId, final String indexerID, final boolean markCreating) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
 		if(cfgProviderId == null)
@@ -144,9 +152,10 @@ public class CProjectHelper {
 				if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
 					addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
 					ICConfigurationDescription prefCfg = CCorePlugin.getDefault().getPreferenceConfiguration(finalCfgProviderId);
-					ICProjectDescription projDes = CCorePlugin.getDefault().createProjectDescription(project, false);
+					ICProjectDescriptionManager mngr = CCorePlugin.getDefault().getProjectDescriptionManager();
+					ICProjectDescription projDes = mngr.createProjectDescription(project, false, markCreating);
 					projDes.createConfiguration(CDataUtil.genId(null), CDataUtil.genId("test"), prefCfg);
-					CCorePlugin.getDefault().setProjectDescription(project, projDes);
+					mngr.setProjectDescription(project, projDes);
 //					CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
 				}
 				newProject[0] = CCorePlugin.getDefault().getCoreModel().create(project);
@@ -350,7 +359,7 @@ public class CProjectHelper {
 		return null;
 	}
 
-	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
+	public static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];

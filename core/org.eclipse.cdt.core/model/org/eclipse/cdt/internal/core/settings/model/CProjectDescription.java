@@ -53,6 +53,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 //	private boolean fNeedsActiveCfgIdPersistence;
 	private boolean fIsLoadding;
 	private boolean fIsApplying;
+	private boolean fIsCreating;
 
 	private class CfgIdPair {
 		private String fId;
@@ -149,13 +150,15 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		}
 
 	}
-	CProjectDescription(IProject project, ICStorageElement element, boolean loadding) throws CoreException {
+
+	CProjectDescription(IProject project, ICStorageElement element, boolean loadding, boolean isCreating) throws CoreException {
 		fProject = project;
 		fRootStorageElement = element;
 		fIsReadOnly = loadding;
 		fIsLoadding = loadding;
 		fActiveCfgInfo = new CfgIdPair(ACTIVE_CFG_PROPERTY);
 		fSettingCfgInfo = new CfgIdPair(SETTING_CFG_PROPERTY);
+		fIsCreating = isCreating;
 		ICStorageElement el = null;
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
 		if(loadding){
@@ -258,7 +261,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return fIsApplying;
 	}
 
-	public CProjectDescription(CProjectDescription base, boolean saving, ICStorageElement el) {
+	public CProjectDescription(CProjectDescription base, boolean saving, ICStorageElement el, boolean isCreating) {
 		fActiveCfgInfo = new CfgIdPair(base.fActiveCfgInfo);
 		fSettingCfgInfo = new CfgIdPair(base.fSettingCfgInfo);
 		fProject = base.fProject;
@@ -266,6 +269,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		fIsReadOnly = saving;
 		fIsLoadding = base.fIsLoadding;
 		fIsApplying = saving || base.fIsApplying;
+		fIsCreating = isCreating;
 		
 		fPrefs = new CProjectDescriptionPreferences(base.fPrefs, (CProjectDescriptionPreferences)CProjectDescriptionManager.getInstance().getProjectDescriptionWorkspacePreferences(false), false);
 		
@@ -586,6 +590,21 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 
 	public void useDefaultConfigurationRelations() {
 		fPrefs.useDefaultConfigurationRelations();
+	}
+
+	public boolean isCdtProjectCreating() {
+		return fIsCreating;
+	}
+
+	public void setCdtProjectCreated() {
+		if(!fIsCreating)
+			return;
+		
+		if(fIsReadOnly)
+			throw ExceptionFactory.createIsReadOnlyException();
+
+		fIsCreating = false;
+		fIsModified = true;
 	}
 	
 	

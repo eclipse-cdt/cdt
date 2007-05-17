@@ -12,9 +12,36 @@ package org.eclipse.cdt.core.settings.model;
 
 
 public interface ICDescriptionDelta {
+	/*
+	 * delta kinds
+	 */
+	/**
+	 * kind specifying that the setting object returned by
+	 * the {@link #getSetting()} was removed
+	 * the {@link #getNewSetting()} returns null 
+	 * the {@link #getOldSetting()} returns the same object as {@link #getSetting()}  
+	 */
 	int REMOVED = 1;
+
+	/**
+	 * kind specifying that the setting object returned by
+	 * the {@link #getSetting()} was added
+	 * the {@link #getNewSetting()} returns the same object as {@link #getSetting()}
+	 * the {@link #getOldSetting()} returns null  
+	 */
 	int ADDED = 2;
+
+	/**
+	 * kind specifying that the setting object was changed
+	 * the {@link #getNewSetting()} returns new object 
+	 * the {@link #getOldSetting()} returns old object  
+	 * the {@link #getSetting()} returns the same object as {@link #getNewSetting()}
+	 */
 	int CHANGED = 3;
+	
+	/*
+	 * delta change flags
+	 */
 	
 	int ACTIVE_CFG = 1;
 	int NAME = 1 << 1;
@@ -38,10 +65,39 @@ public interface ICDescriptionDelta {
 	int EXT_REF = 1 << 19;
 	int OWNER = 1 << 20;
 	int INDEX_CFG = 1 << 21;
+	int SETTING_CFG = INDEX_CFG;
+	
+	/**
+	 * specifies that the project "isCdtProjectCreating" state was set to false
+	 * the PROJECT_CREAION_COMPLETED delta gets notified ONLY in case
+	 * the project previously contained the project description with 
+	 * the true "isCdtProjectCreating" state
+	 * 
+	 * in case the initial project description does NOT contain the true "isCdtProjectCreating"
+	 * the project is considered as initialized from the very beginning 
+	 * and the PROJECT_CREAION_COMPLETED delta is NOT notified
+	 * 
+	 * @see ICProjectDescription#isCdtProjectCreating()
+	 * @see ICProjectDescription#setCdtProjectCreated()
+	 * @see ICProjectDescriptionManager#createProjectDescription(org.eclipse.core.resources.IProject, boolean, boolean)
+	 */
+	int PROJECT_CREAION_COMPLETED = 1 << 22;
 
-
+	/**
+	 * returns the kind
+	 * @see #ADDED 
+	 * @see #REMOVED 
+	 * @see #CHANGED
+	 * 
+	 * @return int
+	 */
 	int getDeltaKind();
 	
+	/**
+	 * returns ored delta flags
+	 * 
+	 * @return
+	 */
 	int getChangeFlags();
 	
 	int getSettingType();

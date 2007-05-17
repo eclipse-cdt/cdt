@@ -36,6 +36,9 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.UIMessages;
 
@@ -101,8 +104,12 @@ implements IExecutableExtension, IWizardWithMemory
 		
 		return savedHandler.isChanged(); 
 	}
-	
+
 	public IProject getProject(boolean defaults) {
+		return getProject(defaults, true);
+	}
+
+	public IProject getProject(boolean defaults, boolean onFinish) {
 		if (newProject != null && isChanged()) 
 			clearProject(); 
 		if (newProject == null)	{
@@ -111,7 +118,7 @@ implements IExecutableExtension, IWizardWithMemory
 			lastProjectName = fMainPage.getProjectName();
 			lastProjectLocation = fMainPage.getProjectLocation();
 			// start creation process
-			invokeRunnable(getRunnable(defaults)); 
+			invokeRunnable(getRunnable(defaults, onFinish)); 
 		} 
 		return newProject;
 	}
@@ -147,11 +154,30 @@ implements IExecutableExtension, IWizardWithMemory
 
 	public boolean performFinish() {
 		// create project if it is not created yet
-		if (getProject(fMainPage.isCurrent()) == null) return false;
+		if (getProject(fMainPage.isCurrent(), true) == null) return false;
 		fMainPage.h_selected.postProcess(newProject);
+		setCreated();
 		BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
 		selectAndReveal(newProject);
 		return true;
+	}
+	
+	protected boolean setCreated(){
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+		
+		ICProjectDescription des = mngr.getProjectDescription(newProject, false);
+		if(des.isCdtProjectCreating()){
+			des = mngr.getProjectDescription(newProject, true);
+			des.setCdtProjectCreated();
+			try {
+				mngr.setProjectDescription(newProject, des, false, null);
+				return true;
+			} catch (CoreException e) {
+				//TODO: log/display err
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 	
     public boolean performCancel() {
@@ -163,7 +189,7 @@ implements IExecutableExtension, IWizardWithMemory
 		fConfigElement= config;
 	}
 
-	private IRunnableWithProgress getRunnable(boolean _defaults) {
+	private IRunnableWithProgress getRunnable(boolean _defaults, final boolean onFinish) {
 		final boolean defaults = _defaults;
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
@@ -172,7 +198,7 @@ implements IExecutableExtension, IWizardWithMemory
 						try {
 							newProject = createIProject(lastProjectName, lastProjectLocation);
 							if (newProject != null) 
-								fMainPage.h_selected.createProject(newProject, defaults);
+								fMainPage.h_selected.createProject(newProject, defaults, onFinish);
 						} catch (CoreException e) {	CUIPlugin.getDefault().log(e); }
 					}
 				});

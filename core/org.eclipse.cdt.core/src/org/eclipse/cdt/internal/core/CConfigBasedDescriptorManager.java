@@ -299,7 +299,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 
 	private CProjectDescription createProjDescriptionForDescriptor(IProject project) throws CoreException{
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
-		CProjectDescription des = (CProjectDescription)mngr.createProjectDescription(project, false);
+		CProjectDescription des = (CProjectDescription)mngr.createProjectDescription(project, false, true);
 			
 		CConfigurationData data = mngr.createDefaultConfigData(project, PathEntryConfigurationDataProvider.getDataFactory());
 		des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);

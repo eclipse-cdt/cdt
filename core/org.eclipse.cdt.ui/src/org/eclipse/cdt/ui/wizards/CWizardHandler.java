@@ -143,6 +143,20 @@ public class CWizardHandler implements Cloneable {
 			throws CoreException {}
 
 	/**
+	 * Creates project
+	 * 
+	 * @param proj - simple project to be used as base
+	 * @param defaults - true if called from 1st Wizard page
+	 * @param onFinish - true when the project creation is performed on finish. false -otherwise
+	 * false means that the project created is actually a temporary one that can be removed in case cancell is pressed
+	 * 
+	 * @throws CoreException
+	 */
+	public void createProject(IProject proj, boolean defaults, boolean onFinish)
+			throws CoreException {
+		createProject(proj, defaults);
+	}
+	/**
 	 * 
 	 * @return true if settings were changed 
 	 *         since last call to saveState()

@@ -161,4 +161,39 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * @param cfg
 	 */
 	void setDefaultSettingConfiguration(ICConfigurationDescription cfg);
+	
+	/**
+	 * when true specifies that the project creation is in progress.
+	 * Sometimes project creation might be performed via multiple steps, e.g.
+	 * the New Project Wizard may create a temporary project with temporary settings
+	 * and delete it on cancel, etc.
+	 * 
+	 * Thus the project may exist as well as the project may contain the associated ICProjectDescription,
+	 * but its initialization may not be completed.
+	 * 
+	 * once the flag is set to false it can never be reset back to true.
+	 * if {@link ICProjectDescriptionManager#setProjectDescription(IProject, ICProjectDescription)} is called 
+	 * for the description containing the true "isCdtProjectCreating" state,
+	 * but the project already contains the project description with the false "isCdtProjectCreating" state
+	 * the true state will be ignored, i.e. the resulting setting will contain false "isCdtProjectCreating" state
+	 * 
+	 * so only the newly created descriptions (created via a {@link ICProjectDescriptionManager#createProjectDescription(IProject, boolean, boolean)}) may contain
+	 * true "isCdtProjectCreating" state
+	 * 
+	 *  
+	 * @return boolean
+	 * 
+	 * @see ICProjectDescriptionManager#createProjectDescription(IProject, boolean, boolean)
+	 * @see #setCdtProjectCreated()
+	 */
+	boolean isCdtProjectCreating();
+
+	/**
+	 * sets the project creation state to false
+	 * 
+	 * @see #isCdtProjectCreating()
+	 * @see ICProjectDescriptionManager#createProjectDescription(IProject, boolean, boolean)
+	 */
+	void setCdtProjectCreated();
+
 }

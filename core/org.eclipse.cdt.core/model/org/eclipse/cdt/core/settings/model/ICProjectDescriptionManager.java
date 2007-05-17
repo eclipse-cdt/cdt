@@ -15,6 +15,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface ICProjectDescriptionManager {
+	
+	/**
+	 * this method is a full equivalent to {@link #createProjectDescription(IProject, boolean, false)}
+	 * 
+	 * @see #createProjectDescription(IProject, boolean, boolean)
+	 */
+	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException;
+	
 	/**
 	 * the method creates and returns a writable project description
 	 * 
@@ -22,11 +30,16 @@ public interface ICProjectDescriptionManager {
 	 * @param loadIfExists if true the method first tries to load and return the project description
 	 * from the settings file (.cproject)
 	 * if false, the stored settings are ignored and the new (empty) project description is created
-	 * NOTE: changes made to the returned project description will not be applied untill the {@link #setProjectDescription(IProject, ICProjectDescription)} is called 
+	 * @param creating if true the created project description will be contain the true "isCdtProjectCreating" state.
+	 * NOTE: in case the project already contains the project description AND its "isCdtProjectCreating" is false
+	 * the resulting description will be created with the false "isCdtProjectCreating" state
+	 * 
+	 * NOTE: changes made to the returned project description will not be applied until the {@link #setProjectDescription(IProject, ICProjectDescription)} is called 
 	 * @return {@link ICProjectDescription}
 	 * @throws CoreException
 	 */
-	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException;
+	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating) throws CoreException;
+
 	
 	/**
 	 * returns the project description associated with this project

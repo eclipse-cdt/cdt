@@ -13,19 +13,20 @@ package org.eclipse.cdt.core.settings.model;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class CProjectDescriptionTests {
+public class AllCProjectDescriptionTests {
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(CProjectDescriptionTests.class.getName());
+        TestSuite suite = new TestSuite(AllCProjectDescriptionTests.class.getName());
 
         // Just add more test cases here as you create them for
         // each class being tested
 		suite.addTest(CConfigurationDescriptionReferenceTests.suite());
 		suite.addTest(ExternalSettingsProviderTests.suite());
 		suite.addTest(CfgSettingsTests.suite());
+		suite.addTest(ProjectCreationStateTests.suite());
         return suite;
 
     }

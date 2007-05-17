@@ -54,7 +54,11 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		} catch (CoreException e2) {
 		}
 
-		CProjectDescription fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el);
+		boolean creating = fOldDescriptionCache != null ? fOldDescriptionCache.isCdtProjectCreating() : true;
+		if(creating)
+			creating = fSetDescription.isCdtProjectCreating();
+		
+		CProjectDescription fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el, creating);
 		try {
 			mngr.setDescriptionApplying(project, fNewDescriptionCache);
 			fNewDescriptionCache.applyDatas();

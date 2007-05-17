@@ -110,7 +110,10 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	
 	public void apply(boolean force) throws CoreException{
 		if(force || fIsDirty){
-			CProjectDescriptionManager.getInstance().setProjectDescription(fProject, fCfgDes.getProjectDescription());
+			ICProjectDescription des = fCfgDes.getProjectDescription();
+			if(des.isCdtProjectCreating())
+				des.setCdtProjectCreated();
+			CProjectDescriptionManager.getInstance().setProjectDescription(fProject, des);
 			fIsDirty = false;
 		}
 	}

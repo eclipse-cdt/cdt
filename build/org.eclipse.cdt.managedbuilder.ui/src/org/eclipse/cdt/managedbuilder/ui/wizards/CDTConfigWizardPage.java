@@ -317,7 +317,7 @@ public class CDTConfigWizardPage extends WizardPage {
 	private void advancedDialog() {
 		if (getWizard() instanceof CDTCommonProjectWizard) {
 			CDTCommonProjectWizard nmWizard = (CDTCommonProjectWizard)getWizard();
-			IProject newProject = nmWizard.getProject(true);
+			IProject newProject = nmWizard.getProject(true, false);
 			if (newProject != null) {
 				boolean oldManage = CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG);
 				// disable manage configurations button

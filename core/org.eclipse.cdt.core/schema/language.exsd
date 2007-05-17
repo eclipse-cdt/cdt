@@ -47,7 +47,7 @@
 
    <element name="language">
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
+         <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="contentType"/>
          </sequence>
          <attribute name="id" type="string" use="required">

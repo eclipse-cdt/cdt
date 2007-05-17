@@ -61,14 +61,16 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 	private final static class Category {
 		public final String key;
 		public final String name;
+		public final String description;
 		public final String previewText;
 		public final List children;
 		
 		public int index;
 
-		public Category(String _key, String _previewText, String _name) {
+		public Category(String _key, String _previewText, String _name, String _description) {
 			this.key= _key;
 			this.name= _name;
+			this.description = _description;
 			this.previewText= _previewText != null ? createPreviewHeader(_name) + _previewText : null; 
 			children= new ArrayList();
 		}
@@ -76,8 +78,8 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 		/**
 		 * @param _name Category name
 		 */
-		public Category(String _name) {
-		    this(null, null, _name);
+		public Category(String _name, String _description) {
+		    this(null, null, _name, _description);
 		}
 		
 		public String toString() {
@@ -137,8 +139,8 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 		private String getGroupLabel(Category category) {
 		    if (fSelection.size() == 1) {
 			    if (fSelectionState.getElements().size() == 1)
-			        return Messages.format(FormatterMessages.LineWrappingTabPage_group, category.name.toLowerCase()); 
-			    return Messages.format(FormatterMessages.LineWrappingTabPage_multi_group, new String[] {category.name.toLowerCase(), Integer.toString(fSelectionState.getElements().size())}); 
+			        return Messages.format(FormatterMessages.LineWrappingTabPage_group, category.description); 
+			    return Messages.format(FormatterMessages.LineWrappingTabPage_multi_group, new String[] {category.description, Integer.toString(fSelectionState.getElements().size())}); 
 		    }
 			return Messages.format(FormatterMessages.LineWrappingTabPage_multiple_selections, new String[] {Integer.toString(fSelectionState.getElements().size())}); 
 		}
@@ -387,14 +389,16 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 	private final Category fMethodDeclarationsParametersCategory= new Category(
 	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
 	    "class Example {void foo(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) {}};", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_parameters
+	    FormatterMessages.LineWrappingTabPage_parameters,
+	    FormatterMessages.LineWrappingTabPage_parameters_description
 	); 
 	
 	private final Category fMessageSendArgumentsCategory= new Category(
 	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
 	    "class Other {static void bar(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9) {}};"+ //$NON-NLS-1$
 	    "void foo() {Other::bar(100, 200, 300, 400, 500, 600, 700, 800, 900);}", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_arguments
+	    FormatterMessages.LineWrappingTabPage_arguments,
+	    FormatterMessages.LineWrappingTabPage_arguments_description
 	); 
 
 //	private final Category fMessageSendSelectorCategory= new Category(
@@ -435,7 +439,8 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 	private final Category fArrayInitializerExpressionsCategory= new Category(
 	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_ARRAY_INITIALIZER,
 	    "int array[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_array_init
+	    FormatterMessages.LineWrappingTabPage_array_init,
+	    FormatterMessages.LineWrappingTabPage_array_init_description
 	);
 	
 //	private final Category fExplicitConstructorArgumentsCategory= new Category(
@@ -447,7 +452,8 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 	private final Category fConditionalExpressionCategory= new Category(
 	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION,
 	    "int compare(int argument, int argument2) {return argument > argument2 ? 100000 : 200000;}", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_conditionals
+	    FormatterMessages.LineWrappingTabPage_conditionals,
+	    FormatterMessages.LineWrappingTabPage_conditionals_description
 	);
 
 //	private final Category fBinaryExpressionCategory= new Category(
@@ -584,7 +590,7 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 //		constructorDeclarations.children.add(fConstructorDeclarationsParametersCategory);
 //		constructorDeclarations.children.add(fConstructorThrowsClauseCategory);
 
-		final Category methodDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_method_decls); 
+		final Category methodDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_method_decls, FormatterMessages.LineWrappingTabPage_method_decls_description); 
 		methodDeclarations.children.add(fMethodDeclarationsParametersCategory);
 //		methodDeclarations.children.add(fMethodThrowsClauseCategory);
 
@@ -593,14 +599,14 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 //		enumDeclarations.children.add(fEnumDeclInterfacesCategory);
 //		enumDeclarations.children.add(fEnumConstArgumentsCategory);
 		
-		final Category functionCalls= new Category(FormatterMessages.LineWrappingTabPage_function_calls); 
+		final Category functionCalls= new Category(FormatterMessages.LineWrappingTabPage_function_calls, FormatterMessages.LineWrappingTabPage_function_calls_description); 
 		functionCalls.children.add(fMessageSendArgumentsCategory);
 //		functionCalls.children.add(fMessageSendSelectorCategory);
 //		functionCalls.children.add(fExplicitConstructorArgumentsCategory);
 //		functionCalls.children.add(fAllocationExpressionArgumentsCategory);
 //		functionCalls.children.add(fQualifiedAllocationExpressionCategory);
 		
-		final Category expressions= new Category(FormatterMessages.LineWrappingTabPage_expressions); 
+		final Category expressions= new Category(FormatterMessages.LineWrappingTabPage_expressions, FormatterMessages.LineWrappingTabPage_expressions_description); 
 //		expressions.children.add(fBinaryExpressionCategory);
 		expressions.children.add(fConditionalExpressionCategory);
 		expressions.children.add(fArrayInitializerExpressionsCategory);

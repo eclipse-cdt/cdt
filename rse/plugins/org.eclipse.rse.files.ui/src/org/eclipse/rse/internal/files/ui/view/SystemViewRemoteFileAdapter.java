@@ -727,8 +727,16 @@ public class SystemViewRemoteFileAdapter
 				{
 					children = EMPTY_LIST;
 				}
-				else {
-					children = filterChildren(children);	
+				else 
+				{
+					if (children.length == 1 && children[0] instanceof SystemMessageObject)
+					{
+						// don't filter children so that the message gets propagated
+					}
+					else
+					{
+						children = filterChildren(children);	
+					}
 				}
 
 			}

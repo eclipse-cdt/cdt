@@ -464,24 +464,21 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-		
-			if (fileFilter == null)
-			{
-				fileFilter = "*"; //$NON-NLS-1$
-			}
-			IMatcher filematcher = null;
-			if (fileFilter.endsWith(",")) {  //$NON-NLS-1$
-				String[] types = fileFilter.split(",");  //$NON-NLS-1$
-				filematcher = new FileTypeMatcher(types, true);
-			} else {
-				filematcher = new NamePatternMatcher(fileFilter, true, true);
-			}
-			
-			
 			try
 			{
+				if (fileFilter == null)
+				{
+					fileFilter = "*"; //$NON-NLS-1$
+				}
+				IMatcher filematcher = null;
+				if (fileFilter.endsWith(",")) {  //$NON-NLS-1$
+					String[] types = fileFilter.split(",");  //$NON-NLS-1$
+					filematcher = new FileTypeMatcher(types, true);
+				} else {
+					filematcher = new NamePatternMatcher(fileFilter, true, true);
+				}
+
 				_ftpClient = getFTPClient();
-				
 				if(!_ftpClient.changeWorkingDirectory(parentPath))
 				{
 					throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
@@ -543,16 +540,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-		
-			FTPClient ftpClient = getFTPClient();
-			
-			MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
-			
 			try
 			{
+				MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
 				
+				FTPClient ftpClient = getFTPClient();
 				ftpClient.changeWorkingDirectory(remoteParent);
-				
 				setFileType(isBinary);
 				
 				FileInputStream input =  new FileInputStream(localFile);
@@ -661,19 +654,17 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-			FTPClient ftpClient = getFTPClient();
-			
-			MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
-			//IHostFile remoteHostFile = null;
-			OutputStream output = null;
-			InputStream input = null;
-			
 			try
 			{
+				FTPClient ftpClient = getFTPClient();
+				
+				MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
+				//IHostFile remoteHostFile = null;
+				OutputStream output = null;
+				InputStream input = null;
+				
 				ftpClient.changeWorkingDirectory(remoteParent);
-				
 				setFileType(isBinary);
-				
 				if (!localFile.exists())
 				{
 					File localParentFile = localFile.getParentFile();
@@ -687,23 +678,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				output = new FileOutputStream(localFile);
 				input = ftpClient.retrieveFileStream(remoteFile);
 				
-			}
-			catch (Exception e)
-			{			
-				throw new RemoteFileIOException(e);
-			}
-			
-			
-			if(remoteHostFile != null && input != null)
-			{
-				progressMonitor.init(0, remoteFile, localFile.getName(), remoteHostFile.getSize());
-					
-				byte[] buffer = new byte[4096];
-				
-				int readCount;
-				
-				try{
-					
+				if(remoteHostFile != null && input != null)
+				{
+					progressMonitor.init(0, remoteFile, localFile.getName(), remoteHostFile.getSize());
+					byte[] buffer = new byte[4096];
+					int readCount;
 					while((readCount = input.read(buffer)) > 0)
 					{
 						output.write(buffer, 0, readCount);
@@ -723,16 +702,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 					output.close();
 					
 					ftpClient.completePendingCommand();
-					
-				}catch(IOException e)
-				{
-					e.printStackTrace();
-				} 
-				finally {
-				_commandMutex.release();
 				}
 			}
-			
+			catch (Exception e)
+			{
+				throw new RemoteFileIOException(e);
+			} finally
+			{
+				_commandMutex.release();
+			}
 		}
 		return retValue;
 	}
@@ -828,10 +806,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-		
-			FTPClient ftpClient = getFTPClient(); 
-			
 			try {
+				FTPClient ftpClient = getFTPClient(); 
 				
 				String source = remoteParent.endsWith(String.valueOf(getSeparator())) ? remoteParent + oldName : remoteParent + getSeparator() + oldName;
 				
@@ -872,10 +848,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-		
-			FTPClient ftpClient = getFTPClient(); 
-			
 			try{
+				FTPClient ftpClient = getFTPClient(); 
 			
 				String source = srcParent.endsWith(String.valueOf(getSeparator())) ?  srcParent + srcName : srcParent + getSeparator() + srcName;
 				String target = tgtParent.endsWith(String.valueOf(getSeparator())) ?  tgtParent + tgtName : tgtParent + getSeparator() + tgtName;
@@ -904,10 +878,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-			FTPClient ftpClient = getFTPClient(); 
-			
 			try
 			{
+				FTPClient ftpClient = getFTPClient(); 
 				if(!ftpClient.changeWorkingDirectory(remoteParent))
 				{
 					throw new Exception(ftpClient.getReplyString()+" ("+remoteParent+")");  //$NON-NLS-1$  //$NON-NLS-2$

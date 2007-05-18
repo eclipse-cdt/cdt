@@ -16,7 +16,7 @@ import java.io.OutputStream;
 
 /**
  * Manage a single connection. Implementations of this class are contributed 
- * via <code>org.eclipse.tm.internal.terminal.provisional.api.terminalConnector</code> extension point.
+ * via <code>org.eclipse.tm.terminal.terminalConnector</code> extension point.
  * 
  * @author Michael Scharf
  * <p>
@@ -97,13 +97,15 @@ public interface ITerminalConnector {
 
 	/**
 	 * @return a new page that can be used in a dialog to setup this connection.
+	 * The dialog should persist its settings with the {@link #load(ISettingsStore)}
+	 * and {@link #save(ISettingsStore)} methods.
 	 *  
 	 */
 	ISettingsPage makeSettingsPage();
 
 	/**
-	 * @return A string that represents the state of the connection. 
-	 * TODO: Michael Scharf:
+	 * @return A string that represents the settings of the connection. This representation
+	 * may be shown in the status line of the terminal view. 
 	 */
 	String getSettingsSummary();
 

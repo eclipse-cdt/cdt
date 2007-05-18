@@ -34,7 +34,9 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 public class ExpDialog extends AbstractPropertyDialog {
 	
 	protected static final String TO_ALL = UIMessages.getString("ExpDialog.5"); //$NON-NLS-1$
-
+	protected static final String EMPTY_NAME = UIMessages.getString("ExpDialog.8"); //$NON-NLS-1$
+	protected static final String EMPTY_VALUE = UIMessages.getString("ExpDialog.10"); //$NON-NLS-1$
+	
 	public String[] sel_types = null;
 	public String[] sel_langs = null; 
 	private Text txt1;
@@ -219,14 +221,18 @@ public class ExpDialog extends AbstractPropertyDialog {
 		message.setText(EMPTY_STR);
 		String name;
 		boolean enabled = true;
-		if (kind == ICSettingEntry.MACRO) 
+		if (kind == ICSettingEntry.MACRO)
 			name  = txt1.getText().trim();
 		else 
 			name = txt2.getText().trim();
 		if (name.length() == 0) {
 			enabled = false;
-			if (!anew)
-			    message.setText(UIMessages.getString("ExpDialog.8")); //$NON-NLS-1$
+			if (!anew) {
+				if (kind == ICSettingEntry.MACRO) 
+					message.setText(EMPTY_NAME);
+				else	
+					message.setText(EMPTY_VALUE);
+			}
 		}
 		if (enabled && existing != null && existing.contains(name)) {
 			message.setText(UIMessages.getString("ExpDialog.9")); //$NON-NLS-1$

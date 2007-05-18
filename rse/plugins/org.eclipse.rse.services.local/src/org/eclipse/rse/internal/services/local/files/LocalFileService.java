@@ -754,8 +754,19 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			name = name.substring(0, name.length() - ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
 		}
-		boolean isVirtualParent = ArchiveHandlerManager.isVirtual(remoteParent);
-		boolean isArchiveParent = ArchiveHandlerManager.getInstance().isArchive(new File(remoteParent));
+		
+		boolean isVirtualParent = false;
+		
+		if (remoteParent != null) {
+			isVirtualParent = ArchiveHandlerManager.isVirtual(remoteParent);
+		}
+		
+		boolean isArchiveParent = false;
+		
+		if (remoteParent != null) {
+			isArchiveParent = ArchiveHandlerManager.getInstance().isArchive(new File(remoteParent));
+		}
+		
 		if (!isVirtualParent && !isArchiveParent)
 		{
 			File file = null;

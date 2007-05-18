@@ -270,7 +270,12 @@ public class VariableLocalsLayoutNode extends AbstractDMVMLayoutNode<IExpression
                                 // Now that all the calls to getModelData() are complete, we create an
                                 // IExpressionDMContext object for each local variable name, saving them all
                                 // in an array.
-                                
+
+                                if (!getStatus().isOK()) {
+                                    handleFailedUpdate(update);
+                                    return;
+                                }
+         
                                 IExpressionDMContext[] expressionDMCs = new IExpressionDMContext[localsDMData.size()];
                                 
                                 int i = 0;

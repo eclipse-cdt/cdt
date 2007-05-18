@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.TableItem;
 public class ToolSelectionDialog extends Dialog {
 
 	private static final String EMPTY_STR = "";   //$NON-NLS-1$
+	private static final int COL_WIDTH = 300;
 	private Table t1, t2;
 	private CLabel errorLabel;
 	public ITool[] all, used;
@@ -48,7 +49,10 @@ public class ToolSelectionDialog extends Dialog {
 	Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 	Color red;
 	
-	public ToolSelectionDialog(Shell shell ) { super (shell); }
+	public ToolSelectionDialog(Shell shell ) { 
+		super (shell); 
+		setShellStyle(getShellStyle() | SWT.RESIZE);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
@@ -78,7 +82,7 @@ public class ToolSelectionDialog extends Dialog {
 		
 		TableColumn col = new TableColumn(t1, SWT.NONE);
 		col.setText(Messages.getString("ToolSelectionDialog.1")); //$NON-NLS-1$
-		col.setWidth(200);
+		col.setWidth(COL_WIDTH);
 		
 		Composite c2 = new Composite(composite, SWT.BORDER);
 		c2.setLayoutData(new GridData(GridData.FILL_VERTICAL));
@@ -89,7 +93,7 @@ public class ToolSelectionDialog extends Dialog {
 		
 		col = new TableColumn(t2, SWT.NONE);
 		col.setText(Messages.getString("ToolSelectionDialog.2")); //$NON-NLS-1$
-		col.setWidth(200);
+		col.setWidth(COL_WIDTH);
 
 		Display display = composite.getDisplay();
 	    red = display.getSystemColor(SWT.COLOR_RED);

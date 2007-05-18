@@ -365,9 +365,9 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		String country = locale.getCountry();
 		candidates.push("/" + name); //$NON-NLS-1$
 		if (language.length() > 0) {
-			candidates.push("/" + language + "/" + name); //$NON-NLS-1$ //$NON-NLS-2$
+			candidates.push("/nl/" + language + "/" + name); //$NON-NLS-1$ //$NON-NLS-2$
 			if (country.length() > 0) {
-				candidates.push("/" + language + "/" + country + "/" + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				candidates.push("/nl/" + language + "/" + country + "/" + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		while (!candidates.isEmpty() && result == null) {

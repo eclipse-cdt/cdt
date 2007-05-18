@@ -22,6 +22,8 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.IndexTypeInfo;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
@@ -633,5 +635,24 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		List result = new ArrayList(1);
 		result.add(selection);
 		setResult(result);
+	}
+	
+    public Object[] getFoldedElements(int index) {
+    	ArrayList result= new ArrayList();
+    	Object[] typeInfos= super.getFoldedElements(index);
+    	for (int i = 0; i < typeInfos.length; i++) {
+			Object typeInfo = typeInfos[i];
+			if (typeInfo instanceof IndexTypeInfo) {
+				addFoldedElements((IndexTypeInfo) typeInfo, result);
+			}
+    	}
+    	return result.toArray();
+    }
+
+	private void addFoldedElements(IndexTypeInfo typeInfo, ArrayList result) {
+		ITypeReference[] refs= typeInfo.getReferences();
+		for (int i = 0; i < refs.length; i++) {
+			result.add(new IndexTypeInfo(typeInfo, refs[i]));
+		}
 	}
 }

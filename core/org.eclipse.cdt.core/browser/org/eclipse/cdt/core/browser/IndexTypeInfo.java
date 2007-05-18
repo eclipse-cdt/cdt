@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -64,6 +66,11 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		this.params= params;
 		this.returnType= returnType;
 		this.index = index;
+	}
+	
+	public IndexTypeInfo(IndexTypeInfo rhs, ITypeReference ref) {
+		this(rhs.fqn, rhs.elementType, rhs.params, rhs.returnType, rhs.index);
+		this.reference= ref;
 	}
 
 	public void addDerivedReference(ITypeReference location) {
@@ -133,10 +140,6 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return new QualifiedTypeName(fqn);
 	}
 
-	public ITypeReference[] getReferences() {
-		throw new PDOMNotImplementedError();
-	}
-
 	public ITypeReference getResolvedReference() {
 		if(reference==null) {
 			try {
@@ -167,25 +170,9 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 						names= index.findNames(ibs[0], IIndex.FIND_DECLARATIONS);
 					}
 					for (int i = 0; i < names.length; i++) {
-						IIndexName indexName = names[i];
-						IIndexFileLocation ifl = indexName.getFile().getLocation();
-						String fullPath = ifl.getFullPath();
-						if (fullPath != null) {
-							IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
-							if(file!=null) {
-								reference = new IndexTypeReference(
-										ibs[0], file, file.getProject(), names[0].getNodeOffset(), names[0].getNodeLength()
-								);
-							}
+						reference= createReference(ibs[0], names[i]);
+						if (reference != null) {
 							break;
-						} else {
-							IPath path = URIUtil.toPath(ifl.getURI());
-							if(path!=null) {
-								reference = new IndexTypeReference(
-										ibs[0], path, null, names[0].getNodeOffset(), names[0].getNodeLength()
-								);
-								break;
-							}
 						}
 					}
 				}
@@ -199,6 +186,76 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		}
 		return reference;
 	}
+
+	private IndexTypeReference createReference(IIndexBinding binding, IIndexName indexName) throws CoreException {
+		IIndexFileLocation ifl = indexName.getFile().getLocation();
+		String fullPath = ifl.getFullPath();
+		if (fullPath != null) {
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
+			if(file!=null) {
+				return new IndexTypeReference(
+						binding, file, file.getProject(), indexName.getNodeOffset(), indexName.getNodeLength()
+				);
+			}
+		} else {
+			IPath path = URIUtil.toPath(ifl.getURI());
+			if(path!=null) {
+				return new IndexTypeReference(
+						binding, path, null, indexName.getNodeOffset(), indexName.getNodeLength()
+				);
+			}
+		}
+		return null;
+	}
+
+	public ITypeReference[] getReferences() {
+		List references= new ArrayList();
+		try {
+			index.acquireReadLock();
+
+			char[][] cfqn = new char[fqn.length][];
+			for(int i=0; i<fqn.length; i++)
+				cfqn[i] = fqn[i].toCharArray();
+
+			IIndexBinding[] ibs = index.findBindings(cfqn, new IndexFilter() {
+				public boolean acceptBinding(IBinding binding) {
+					boolean sameType= IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType});
+					if (sameType && binding instanceof IFunction && params != null) {
+						try {
+							String[]otherParams= IndexModelUtil.extractParameterTypes((IFunction)binding);
+							return Arrays.equals(params, otherParams);
+						} catch (DOMException exc) {
+							CCorePlugin.log(exc);				
+						}
+					}
+					return sameType;
+				}
+			}, new NullProgressMonitor());
+			for (int i = 0; i < ibs.length; i++) {
+				IIndexBinding binding = ibs[i];
+				IIndexName[] names;
+				names= index.findNames(binding, IIndex.FIND_DEFINITIONS);
+				if (names.length == 0) {
+					names= index.findNames(ibs[0], IIndex.FIND_DECLARATIONS);
+				}
+				for (int j = 0; j < names.length; j++) {
+					IIndexName indexName = names[j];
+					IndexTypeReference ref= createReference(binding, indexName);
+					if (ref != null) {
+						references.add(ref);
+					}
+				}
+			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);				
+		} catch (InterruptedException ie) {
+			CCorePlugin.log(ie);
+		} finally {
+			index.releaseReadLock();
+		}
+		return (IndexTypeReference[]) references.toArray(new IndexTypeReference[references.size()]);
+	}
+
 
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
 		throw new PDOMNotImplementedError();

@@ -33,7 +33,7 @@ Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to
 			name="%TelnetShellSubsystemName"
 			priority="300"
 			serviceType="_telnet._tcp"
-			systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.telnet"
+			systemTypeIds="org.eclipse.rse.systemtype.telnet"
 			vendor="%providerName">
 		</configuration>
 	</extension>

@@ -2577,6 +2577,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 
 	void removeErrorParsers(FolderInfo info, Set set){
 		Set oldSet = contributeErrorParsers(info, null, false);
+		if(oldSet == null)
+			oldSet = new HashSet();
+		
 		oldSet.removeAll(set);
 		setErrorParserList((String[])oldSet.toArray(new String[oldSet.size()]));
 		

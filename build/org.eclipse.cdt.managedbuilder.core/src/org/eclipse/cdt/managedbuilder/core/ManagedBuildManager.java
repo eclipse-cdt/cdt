@@ -666,6 +666,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 		return (IBuilder) getExtensionBuilderMap().get(id);
 	}
+	
+	public static IBuilder getExtensionBuilder(IBuilder builder) {
+		for(;builder != null && !builder.isExtensionElement(); builder = builder.getSuperClass());
+		return builder;
+	}
+
 
 	/**
 	 * Returns the option from the manifest with the ID specified in the argument

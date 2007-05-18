@@ -478,7 +478,7 @@ public class CommonBuilder extends ACBuilder {
 		if(VERBOSE)
 			outputTrace(project.getName(), ">>build requested, type = " + kind); //$NON-NLS-1$
 
-		IBuilder builders[] = BuilderFactory.createBuilders(project, args);
+		IBuilder builders[] = ManagedBuilderCorePlugin.createBuilders(project, args);
 		IProject[] projects = build(kind, project, builders, true, monitor);
 
 		if(VERBOSE)
@@ -1443,7 +1443,7 @@ public class CommonBuilder extends ACBuilder {
 	
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		IProject curProject = getProject();
-		IBuilder[] builders = BuilderFactory.createBuilders(curProject, null);
+		IBuilder[] builders = ManagedBuilderCorePlugin.createBuilders(curProject, null);
 		for(int i = 0; i < builders.length; i++){
 			IBuilder builder = builders[i];
 			CfgBuildInfo bInfo = new CfgBuildInfo(builder, true);
@@ -1668,13 +1668,13 @@ public class CommonBuilder extends ACBuilder {
 				// Set the environment
 				String[] env = calcEnvironment(builder);
 				String[] buildArguments = targets;
-				if (builder.isDefaultBuildCmd()) {
+//				if (builder.isDefaultBuildCmd()) {
 //					if (!builder.isStopOnError()) {
 //						buildArguments = new String[targets.length + 1];
 //						buildArguments[0] = "-k"; //$NON-NLS-1$
 //						System.arraycopy(targets, 0, buildArguments, 1, targets.length);
 //					}
-				} else {
+//				} else {
 					String args = builder.getBuildArguments();
 					if (args != null && !(args = args.trim()).equals("")) { //$NON-NLS-1$
 						String[] newArgs = makeArray(args);
@@ -1682,7 +1682,7 @@ public class CommonBuilder extends ACBuilder {
 						System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
 						System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
 					}
-				}
+//				}
 //					MakeRecon recon = new MakeRecon(buildCommand, buildArguments, env, workingDirectory, makeMonitor, cos);
 //					recon.invokeMakeRecon();
 //					cos = recon;

@@ -585,7 +585,8 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	protected void loadFromProject(ICStorageElement element) {
 		
 		// id
-		setId(element.getAttribute(IBuildObject.ID));
+		if(element.getAttribute(IBuildObject.ID) != null)
+			setId(element.getAttribute(IBuildObject.ID));
 
 		// name
 		if (element.getAttribute(IBuildObject.NAME) != null) {
@@ -596,11 +597,13 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		setVersion(getVersionFromId());
 
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
-		if (superClassId != null && superClassId.length() > 0) {
-			superClass = ManagedBuildManager.getExtensionBuilder(superClassId);
-			// Check for migration support
-			checkForMigrationSupport();
+		if(element.getAttribute(IProjectType.SUPERCLASS) != null){
+			superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+			if (superClassId != null && superClassId.length() > 0) {
+				superClass = ManagedBuildManager.getExtensionBuilder(superClassId);
+				// Check for migration support
+				checkForMigrationSupport();
+			}
 		}
 
 		// Get the 'versionSupported' attribute
@@ -636,37 +639,54 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			args = element.getAttribute(IBuilder.ARGUMENTS);
 		}
 		
-		autoBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_AUTO);
+		if(element.getAttribute(ATTRIBUTE_TARGET_AUTO) != null)
+			autoBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_AUTO);
+		
 		String tmp = element.getAttribute(ATTRIBUTE_AUTO_ENABLED);
 		if(tmp != null)
 			autoBuildEnabled = Boolean.valueOf(tmp);
-		incrementalBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL);
+		
+		if(element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL) != null)
+			incrementalBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL);
+		
 		tmp = element.getAttribute(ATTRIBUTE_INCREMENTAL_ENABLED);
 		if(tmp != null)
 			incrementalBuildEnabled = Boolean.valueOf(tmp);
-		cleanBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_CLEAN);
+		
+		if(element.getAttribute(ATTRIBUTE_TARGET_CLEAN) != null)
+			cleanBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_CLEAN);
+		
 		tmp = element.getAttribute(ATTRIBUTE_CLEAN_ENABLED);
 		if(tmp != null)
 			cleanBuildEnabled = Boolean.valueOf(tmp);
+		
 		tmp = element.getAttribute(ATTRIBUTE_MANAGED_BUILD_ON);
 		if(tmp != null)
 			managedBuildOn = Boolean.valueOf(tmp);
+		
 		tmp = element.getAttribute(ATTRIBUTE_KEEP_ENV);
 		if(tmp != null)
 			keepEnvVarInBuildfile = Boolean.valueOf(tmp);
+		
 		tmp = element.getAttribute(ATTRIBUTE_SUPORTS_MANAGED_BUILD);
 		if(tmp != null)
 			supportsManagedBuild = Boolean.valueOf(tmp);
+		
 		tmp = element.getAttribute(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS);
 		if(tmp != null)
 			customizedErrorParserIds = CDataUtil.stringToArray(tmp, ";"); //$NON-NLS-1$
+		
 		tmp = element.getAttribute(ATTRIBUTE_ENVIRONMENT);
 		if(tmp != null)
 			customizedEnvironment = (HashMap)MapStorageElement.decodeMap(tmp);
+		
 		tmp = element.getAttribute(ATTRIBUTE_APPEND_ENVIRONMENT);
 		if(tmp != null)
-			appendEnvironment = Boolean.valueOf(tmp);;
-		buildPath = element.getAttribute(ATTRIBUTE_BUILD_PATH);
+			appendEnvironment = Boolean.valueOf(tmp);
+		
+		if(element.getAttribute(ATTRIBUTE_BUILD_PATH) != null)
+			buildPath = element.getAttribute(ATTRIBUTE_BUILD_PATH);
+		
 		tmp = element.getAttribute(ATTRIBUTE_CUSTOM_PROPS);
 		if(tmp != null)
 			customBuildProperties = (HashMap)MapStorageElement.decodeMap(tmp);
@@ -682,11 +702,16 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			// TODO:  Issue warning?
 		}
 		
-		ignoreErrCmd = element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD);
+		if(element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD) != null)
+			ignoreErrCmd = element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD);
+		
         tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
         if(tmp != null)
         	stopOnErr = Boolean.valueOf(tmp);
-        parallelBuildCmd = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD);
+        
+        if(element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD) != null)
+        	parallelBuildCmd = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD);
+        
         tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
         if(tmp != null){
         	try {
@@ -694,6 +719,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
         	} catch (NumberFormatException e){
         	}
         }
+        
         tmp = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_ON);
         if(tmp != null)
         	parallelBuildOn = Boolean.valueOf(tmp);
@@ -884,7 +910,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			if (superClass != null) {
 				return superClass.getCommand();
 			} else {
-				return new String("make"); //$NON-NLS-1$
+				return "make"; //$NON-NLS-1$
 			}
 		}
 		return command;
@@ -1652,7 +1678,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	}
 
 	public boolean isDefaultBuildCmd() {
-		return isExtensionBuilder || (command == null && args == null && superClass != null);
+		return isExtensionBuilder || (command == null && args == null /*&& stopOnErr == null && parallelBuildOn == null && parallelNum == null */ &&  superClass != null);
 	}
 
 	public boolean isStopOnError() {
@@ -1699,6 +1725,9 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			if(on){
 				command = null;
 				args = null;
+//				stopOnErr = null;
+//				parallelBuildOn = null;
+//				parallelNum = null;
 			} else {
 				command = getCommand();
 			}
@@ -1918,7 +1947,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			return new String[]{BUILD_COMMAND, BuilderFactory.BUILD_COMMAND};
 		} else if(ARGUMENTS.equals(name)){
 			return new String[]{BUILD_ARGUMENTS, BuilderFactory.BUILD_ARGUMENTS};
-		} else if(ATTRIBUTE_STOP_ON_ERROR.equals(name)){
+		} else if(ATTRIBUTE_STOP_ON_ERR.equals(name)){
 			return new String[]{BuilderFactory.STOP_ON_ERROR};
 		} //TODO else if(BuilderFactory.USE_DEFAULT_BUILD_CMD.equals(name)){
 		//	return getCommand();

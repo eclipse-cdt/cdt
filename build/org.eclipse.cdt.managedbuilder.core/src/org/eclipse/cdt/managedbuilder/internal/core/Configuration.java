@@ -2360,6 +2360,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		} else {
 			resetErrorParsers();
 			Set oldSet = contributeErrorParsers(null, true);
+			if(oldSet == null)
+				oldSet = new HashSet();
 			HashSet newSet = new HashSet();
 			newSet.addAll(Arrays.asList(ids));
 			newSet.remove(null);
@@ -2385,6 +2387,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	
 	void removeErrorParsers(Set set){
 		Set oldSet = contributeErrorParsers(null, false);
+		if(oldSet == null)
+			oldSet = new HashSet();
+		
 		oldSet.removeAll(set);
 		setErrorParserAttribute((String[])oldSet.toArray(new String[oldSet.size()]));
 		

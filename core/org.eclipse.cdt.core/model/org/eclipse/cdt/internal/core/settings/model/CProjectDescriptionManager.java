@@ -548,7 +548,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 	private ICProjectDescription getConvertedDescription(IProject project, IProjectDescription eDes) throws CoreException{
 		Object info[] = loadProjectDescriptionFromOldstyleStorage(project);
-		CProjectDescription des;
+		CProjectDescription des = null;
 		String ownerId;
 		try {
 			if(info != null){
@@ -604,6 +604,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			CProjectDescription d = clearDescriptionLoadding(project);
 			if(d != null)
 				d.setLoadding(false);
+			if(des != null)
+				des.setLoadding(false);
 		}
 		return des;
 	}

@@ -45,7 +45,6 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	
 //	static final String BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
 	static final String ATTRIBUTE_BUILD_PATH = "buildPath"; //$NON-NLS-1$
-	static final String ATTRIBUTE_STOP_ON_ERROR = "stopOnError"; //$NON-NLS-1$
 //	static final String USE_DEFAULT_BUILD_CMD = "useDefaultBuildCmd"; //$NON-NLS-1$
 	static final String ATTRIBUTE_TARGET_AUTO = "autoBuildTarget"; //$NON-NLS-1$
 	static final String ATTRIBUTE_TARGET_INCREMENTAL = "incrementalBuildTarget"; //$NON-NLS-1$

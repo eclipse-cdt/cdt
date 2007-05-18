@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
+import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -23,7 +26,6 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.newmake.internal.core.MakeMessages;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -54,7 +56,7 @@ public class BuilderFactory {
 
 	static final String CONTENTS = PREFIX + ".contents"; //$NON-NLS-1$ 
 	static final String CONTENTS_BUILDER = PREFIX + ".builder"; //$NON-NLS-1$ 
-//	static final String CONTENTS_BUILDER_CUSTOMIZATION = PREFIX + ".builderCustomization"; //$NON-NLS-1$ 
+	static final String CONTENTS_BUILDER_CUSTOMIZATION = PREFIX + ".builderCustomization"; //$NON-NLS-1$ 
 	static final String CONTENTS_CONFIGURATION_IDS = PREFIX + ".configurationIds"; //$NON-NLS-1$ 
 
 //	static final String IDS = PREFIX + ".ids"; //$NON-NLS-1$ 
@@ -240,7 +242,8 @@ public class BuilderFactory {
 			args.put(IBuilder.ID, ManagedBuildManager.calculateChildId(command.getBuilderName(), null));
 		}
 		
-		return createBuilder(cfg, args);
+		//TODO: do we need a to check for the non-customization case ?
+		return createBuilder(cfg, args, cfg.getBuilder() != null);
 	}
 	
 	public static IBuilder createBuilderForEclipseBuilder(IConfiguration cfg, String eclipseBuilderID) throws CoreException {
@@ -272,37 +275,36 @@ public class BuilderFactory {
 
 
 
-	private static IBuilder createBuilder(IConfiguration cfg, Map args){
+	private static IBuilder createBuilder(IConfiguration cfg, Map args, boolean customization){
 		IToolChain tCh = cfg.getToolChain();
-		boolean isMakeTargetBuild = false;
-		if(args.get(IBuilder.ID) == null){
-			args.put(IBuilder.ID, ManagedBuildManager.calculateChildId(cfg.getId(), null));
-			isMakeTargetBuild = true;
-		}
-		MapStorageElement el = new BuildArgsStorageElement(args, null);
-		Builder builder = new Builder(tCh, el, ManagedBuildManager.getVersion().toString());
 		IBuilder cfgBuilder = cfg.getEditableBuilder();
-		if(builder.getBuildPathAttribute() == null){
-			//set the build path from the cfg settings
-			builder.setBuildPath(cfgBuilder.getBuildPath());
-		}
-		if(builder.getManagedBuildOnAttribute() == null){
-			try {
-				builder.setManagedBuildOn(cfgBuilder.isManagedBuildOn());
-			} catch (CoreException e) {
-				ManagedBuilderCorePlugin.log(e);
-			}
-		}
-		if(isMakeTargetBuild){
-			String [] ids = builder.getCustomizedErrorParserIds();
-			if(ids != null && ids.length == 0){
-				builder.setCustomizedErrorParserIds(null);
-			}
+
+		Builder builder;
+		if(customization){
+			builder = (Builder)createCustomBuilder(cfg, cfgBuilder);
+
+			//adjusting settings
+			String tmp = (String)args.get(ErrorParserManager.PREF_ERROR_PARSER);
+			if(tmp != null && tmp.length() == 0)
+				args.remove(ErrorParserManager.PREF_ERROR_PARSER);
 			
-			String id = builder.getErrorParserIds();
-			if(id == null)
-				builder.setErrorParserIds(cfgBuilder.getErrorParserIds());
+			tmp = (String)args.get(USE_DEFAULT_BUILD_CMD);
+			if(tmp != null && Boolean.valueOf(tmp).equals(Boolean.TRUE)){
+				args.remove(IMakeCommonBuildInfo.BUILD_COMMAND);
+				args.remove(IMakeCommonBuildInfo.BUILD_ARGUMENTS);
+			}
+			//end adjusting settings
+			
+			MapStorageElement el = new BuildArgsStorageElement(args, null);
+			builder.loadFromProject(el);
+		} else {
+			if(args.get(IBuilder.ID) == null){
+				args.put(IBuilder.ID, ManagedBuildManager.calculateChildId(cfg.getId(), null));
+			}
+			MapStorageElement el = new BuildArgsStorageElement(args, null);
+			builder = new Builder(tCh, el, ManagedBuildManager.getVersion().toString());
 		}
+	
 		return builder;
 	}
 
@@ -316,13 +318,13 @@ public class BuilderFactory {
 				builders = new IBuilder[]{builder};
 			} else {
 				String type = (String)args.get(CONTENTS);
-				if(type == null){
+				if(type == null || CONTENTS_BUILDER_CUSTOMIZATION.equals(type)){
 					IConfiguration cfg = info.getDefaultConfiguration();
 					IBuilder builder;
 					if(args.size() == 0){
 						builder = cfg.getEditableBuilder();
 					} else {
-						builder = createBuilder(cfg, args);
+						builder = createBuilder(cfg, args, true);
 					}
 					builders = new IBuilder[]{builder};
 					//TODO:
@@ -331,7 +333,7 @@ public class BuilderFactory {
 					if(cfgs.length != 0){
 						List list = new ArrayList(cfgs.length);
 						for(int i = 0; i < cfgs.length; i++){
-							IBuilder builder = createBuilder(cfgs[i], args);
+							IBuilder builder = createBuilder(cfgs[i], args, false);
 							if(builder != null)
 								list.add(builder);
 						}

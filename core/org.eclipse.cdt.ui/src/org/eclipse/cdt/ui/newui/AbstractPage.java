@@ -254,7 +254,7 @@ implements
 			manageButton = new Button(configGroup, SWT.PUSH);
 			manageButton.setText(UIMessages.getString("AbstractPage.12")); //$NON-NLS-1$
 			gd = new GridData(GridData.END);
-			gd.widthHint = 150;
+			gd.minimumWidth = 150;
 			manageButton.setLayoutData(gd);
 			manageButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {

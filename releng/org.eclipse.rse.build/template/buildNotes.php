@@ -250,12 +250,8 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=184007">bug 184007</a> - cri - New File on FTP connection overwrites existing files</li>
-<!--
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180994">bug 180994</a> - maj - Expand of filter hangs with dstore</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179939">bug 179939</a> - maj - BIDI locale: Remote text files written in Hebrow look incorrect</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179937">bug 179937</a> - maj - BIDI locale: Path and file names shown incorrectly with hebrew UTF 8 encoding
--->
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187301">bug 187301</a> - maj - [telnet] Telnet does not allow multiple shells</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187732">bug 187732</a> - maj - [refresh] Refresh on file renamed/deleted outside RSE on Local doesn't work</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

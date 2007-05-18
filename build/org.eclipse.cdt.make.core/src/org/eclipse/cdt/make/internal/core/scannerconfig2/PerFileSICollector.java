@@ -24,6 +24,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector3;
@@ -39,10 +41,14 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoSto
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.KVStringPair;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -117,7 +123,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
                 if (child.getNodeName().equals(CC_ELEM)) { 
                     Element cmdElem = (Element) child;
                     boolean cppFileType = cmdElem.getAttribute(FILE_TYPE_ATTR).equals("c++"); //$NON-NLS-1$
-                    CCommandDSC command = new CCommandDSC(cppFileType);
+                    CCommandDSC command = new CCommandDSC(cppFileType, project);
                     command.setCommandId(Integer.parseInt(cmdElem.getAttribute(ID_ATTR)));
                     // deserialize command
                     command.deserialize(cmdElem);
@@ -229,9 +235,10 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             addScannerInfo(((Integer)resource), scannerInfo);
             return;
         }
-        else if (!(resource instanceof IFile)) {
-            errorMessage = "resource is not an IFile";//$NON-NLS-1$
-        }
+// GSA allow per project settings
+//        else if (!(resource instanceof IFile)) {
+//            errorMessage = "resource is not an IFile";//$NON-NLS-1$
+//        }
         else if (((IFile) resource).getProject() == null) {
             errorMessage = "project is null";//$NON-NLS-1$
         }
@@ -242,19 +249,21 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             TraceUtil.outputError("PerFileSICollector.contributeToScannerConfig : ", errorMessage); //$NON-NLS-1$
             return;
         }
-        IFile file = (IFile) resource;
-       
-        for (Iterator i = scannerInfo.keySet().iterator(); i.hasNext(); ) {
-            ScannerInfoTypes type = (ScannerInfoTypes) i.next();
-            if (type.equals(ScannerInfoTypes.COMPILER_COMMAND)) {
-                List commands = (List) scannerInfo.get(type);
-                for (Iterator j = commands.iterator(); j.hasNext(); ) {
-                    addCompilerCommand(file, (CCommandDSC) j.next());
-                }
-            }
-            else {
-                addScannerInfo(type, (List) scannerInfo.get(type));
-            }
+        if (resource instanceof IFile) {
+	        IFile file = (IFile) resource;
+	       
+	        for (Iterator i = scannerInfo.keySet().iterator(); i.hasNext(); ) {
+	            ScannerInfoTypes type = (ScannerInfoTypes) i.next();
+	            if (type.equals(ScannerInfoTypes.COMPILER_COMMAND)) {
+	                List commands = (List) scannerInfo.get(type);
+	                for (Iterator j = commands.iterator(); j.hasNext(); ) {
+	                    addCompilerCommand(file, (CCommandDSC) j.next());
+	                }
+	            }
+	            else {
+	                addScannerInfo(type, (List) scannerInfo.get(type));
+	            }
+	        }
         }
     }
 
@@ -268,8 +277,12 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             List siItem = (List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
             cmd.setSymbols(siItem);
             siItem = (List) scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
-            cmd.setIncludes(CygpathTranslator.translateIncludePaths(project, siItem));
+            siItem = CygpathTranslator.translateIncludePaths(project, siItem);
+            siItem = CCommandDSC.makeAbsolute(project, siItem);
+            cmd.setIncludes(siItem);
             siItem = (List) scannerInfo.get(ScannerInfoTypes.QUOTE_INCLUDE_PATHS);
+            siItem = CygpathTranslator.translateIncludePaths(project, siItem);
+            siItem = CCommandDSC.makeAbsolute(project, siItem);
             cmd.setQuoteIncludes(siItem);
             
             cmd.setDiscovered(true);
@@ -336,6 +349,10 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		        if (fileSet == null) {
 		            fileSet = new HashSet();
 		            sid.commandIdToFilesMap.put(commandId, fileSet);
+		            CCommandDSC cmd = (CCommandDSC) sid.commandIdCommandMap.get(commandId);
+		            if (cmd != null) {
+		            	cmd.resolveOptions(project);
+		            }
 		        }
 		        if (fileSet.add(file)) {
 		            // update fileToCommandIdsMap
@@ -827,6 +844,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             	}
     			for (Iterator j = discovered.iterator(); j.hasNext(); ) {
     			    String include = (String) j.next();
+    			    include = CCommandDSC.makeRelative(project, new Path(include)).toPortableString();
     			    if (!allIncludes.contains(include)) {
     			        allIncludes.add(include);
     			    }
@@ -872,5 +890,4 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         }
         return symbols;
     }
-
 }

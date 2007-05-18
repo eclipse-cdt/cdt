@@ -111,7 +111,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
             return;
         compiledFileList.add(longFileName);
 
-        CCommandDSC command = getNewCCommandDSC(genericLine, false); // assume .c file type
+        String[] tokens = genericLine.split("\\s+"); //$NON-NLS-1$
+        CCommandDSC command = getNewCCommandDSC(tokens, false); // assume .c file type
         int index = commandsList2.indexOf(command);
         if (index == -1) {
             commandsList2.add(command);
@@ -130,9 +131,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * @param cppFileType
      * @return CCommandDSC compile command description 
      */
-    public CCommandDSC getNewCCommandDSC(String genericLine, boolean cppFileType) {
-        CCommandDSC command = new CCommandDSC(cppFileType);
-        String[] tokens = genericLine.split("\\s+"); //$NON-NLS-1$
+    public CCommandDSC getNewCCommandDSC(String[] tokens, boolean cppFileType) {
+        CCommandDSC command = new CCommandDSC(cppFileType, getProject());
         command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[0]));
         for (int i = 1; i < tokens.length; ++i) {
         	String token = tokens[i];

@@ -83,9 +83,20 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
      */
     public boolean processLine(String line) {
         boolean rc = false;
+        int lineBreakPos = line.length()-1;
+        char[] lineChars = line.toCharArray();
+        while(lineBreakPos >= 0 && Character.isWhitespace(lineChars[lineBreakPos])) {
+        	lineBreakPos--;
+        }
+        if (lineBreakPos >= 0) {
+        	if (lineChars[lineBreakPos] != '\\'
+        	    || (lineBreakPos > 0 && lineChars[lineBreakPos-1] == '\\')) {
+        		lineBreakPos = -1;
+        	}
+        }
         // check for multiline commands (ends with '\')
-        if (line.endsWith("\\")) { //$NON-NLS-1$
-            sMultiline += line.substring(0, line.length()-1);// + " "; 
+        if (lineBreakPos >= 0) {
+       		sMultiline += line.substring(0, lineBreakPos);
             bMultiline = true;
             return rc;
         }

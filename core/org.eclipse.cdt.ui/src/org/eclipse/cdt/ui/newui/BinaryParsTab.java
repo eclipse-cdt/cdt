@@ -186,6 +186,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			data[i++] = clone.get(s);
 		}
 		tv.setInput(data);
+		tv.setAllChecked(false);
 		// set check marks
 		for (i=0; i<ids.length; i++) {
 			if (configMap.containsKey(ids[i])) {

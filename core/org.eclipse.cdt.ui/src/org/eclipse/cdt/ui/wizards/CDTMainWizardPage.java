@@ -62,7 +62,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 		private static final String ELEMENT_NAME = "wizard"; //$NON-NLS-1$
 		private static final String CLASS_NAME = "class"; //$NON-NLS-1$
 		private static final String HELP_CTX = "org.eclipse.ui.ide.new_project_wizard_page_context"; //$NON-NLS-1$
-		private static final String DESC = "EntryDescriptor"; //$NON-NLS-1$ 
+		public static final String DESC = "EntryDescriptor"; //$NON-NLS-1$ 
 	    // constants
 	    private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
@@ -114,7 +114,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			createDynamicGroup(composite); 
 			
 			switchTo(updateData(tree, right, show_sup, CDTMainWizardPage.this, getWizard()),
-					getDescriptor());
+					getDescriptor(tree));
 
 			setPageComplete(validatePage());
 	        // Show description on opening
@@ -161,7 +161,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 					if (h_selected != null)
 						h_selected.setSupportedOnly(show_sup.getSelection());
 					switchTo(updateData(tree, right, show_sup, CDTMainWizardPage.this, getWizard()),
-							getDescriptor());
+							getDescriptor(tree));
 				}} );
 
 	        // restore settings from preferences
@@ -539,18 +539,13 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 		}
 
 
-		private EntryDescriptor getDescriptor() {
-
-			TreeItem[] sel = tree.getSelection();
-
+		public static EntryDescriptor getDescriptor(Tree _tree) {
+			TreeItem[] sel = _tree.getSelection();
 			if (sel == null || sel.length == 0) 
-
-			return null;
-
-			return (EntryDescriptor)sel[0].getData(DESC);
-
+				return null;
+			else
+				return (EntryDescriptor)sel[0].getData(DESC);
 		}
-
 		
 		public void toolChainListChanged(int count) {
 			setPageComplete(validatePage());

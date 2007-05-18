@@ -142,10 +142,15 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		show_tree.setSelection(false);
 	//	show_mul.setSelection(false);
 		show_mng.setSelection(true);
-		show_mng.setSelection(true);
-		show_tool.setSelection(false);
+		show_tool.setSelection(true);
 		show_exp.setSelection(false);
 		b_0.setSelection(true);
+		b_1.setSelection(false);
+		b_2.setSelection(false);
+		b_3.setSelection(false);
+		s_0.setSelection(true);
+		s_1.setSelection(false);
+		s_2.setSelection(false);
 	}
 
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) { performOK(); }

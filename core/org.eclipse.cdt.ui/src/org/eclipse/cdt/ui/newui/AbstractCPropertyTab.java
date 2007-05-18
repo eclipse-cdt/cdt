@@ -492,7 +492,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			if (canBeVisible()) performCancel();
 			break;
 		case ICPropertyTab.DEFAULTS:
-			if (canBeVisible() && getResDesc() != null) {
+			if (canBeVisible() /*&& getResDesc() != null*/) {
 				updateData(getResDesc());
 				performDefaults();
 			}

@@ -241,7 +241,9 @@ public class MBSWizardHandler extends CWizardHandler {
 				return true;
 			
 			Object ob = tcs.get(tcId);
-			if (ob == null || !(ob instanceof IToolChain))
+			if (ob == null)
+				return true; // sic ! This can occur with Other Toolchain only
+			if (!(ob instanceof IToolChain))
 				return false;
 			
 			String id1 = ((IToolChain)ob).getId();

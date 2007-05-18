@@ -20,6 +20,8 @@ import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
+import org.eclipse.cdt.ui.wizards.EntryDescriptor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -66,7 +68,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] tis = tree.getSelection();
 				if (tis == null || tis.length == 0) return;
-				switchTo((CWizardHandler)tis[0].getData());
+				switchTo((CWizardHandler)tis[0].getData(), (EntryDescriptor)tis[0].getData(CDTMainWizardPage.DESC));
 			}});
         
         right = new Composite(c, SWT.NONE);
@@ -103,10 +105,12 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				if (h_selected != null)
 					h_selected.setSupportedOnly(show_sup.getSelection());
-				switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, null, null));
-			}} );
+				switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, null, null), 
+						CDTMainWizardPage.getDescriptor(tree));
+			}});
         CDTPrefUtil.readPreferredTCs();
-        switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, null, null));
+        switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, null, null),
+        		CDTMainWizardPage.getDescriptor(tree));
     }
 
 	private void setPref(boolean set) {
@@ -123,14 +127,29 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 		h_selected.updatePreferred(CDTPrefUtil.getPreferredTCs());
 	}
 	
-	private void switchTo(CWizardHandler h) {
-		if (h == null) return;
+//	private void switchTo(CWizardHandler h) {
+//		if (h == null) return;
+//		if (h_selected != null) h_selected.handleUnSelection();
+//		h_selected = h;
+//		right_label.setText(h_selected.getHeader());
+//		h_selected.setSupportedOnly(show_sup.getSelection());
+//		h_selected.handleSelection();
+//	}
+	
+	private void switchTo(CWizardHandler h, EntryDescriptor ed) {
+		if (h == null) h = ed.getHandler();
+		try {
+			if (h != null && ed != null) h.initialize(ed);
+		} catch (CoreException e) { h = null; }
 		if (h_selected != null) h_selected.handleUnSelection();
 		h_selected = h;
+		if (h == null) return;
 		right_label.setText(h_selected.getHeader());
 		h_selected.handleSelection();
 		h_selected.setSupportedOnly(show_sup.getSelection());
 	}
+
+	
 
 	protected void performOK() {
         CDTPrefUtil.savePreferredTCs();

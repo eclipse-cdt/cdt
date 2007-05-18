@@ -43,7 +43,7 @@ public class TerminalConnectorExtension {
 	 * {@link #setTerminalSize(int, int)}, {@link #save(ISettingsStore)}
 	 *
 	 */
-	static public class TerminalConnectorProxy implements ITerminalConnector {
+	static private class TerminalConnectorProxy implements ITerminalConnector {
 		/**
 		 * The connector
 		 */

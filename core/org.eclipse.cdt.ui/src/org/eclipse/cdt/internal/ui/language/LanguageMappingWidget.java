@@ -102,6 +102,7 @@ public abstract class LanguageMappingWidget {
 		});
 
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		gridData.widthHint = MINIMUM_COLUMN_WIDTH * 2;
 		gridData.horizontalSpan = 2;
 		link.setLayoutData(gridData);
 	}

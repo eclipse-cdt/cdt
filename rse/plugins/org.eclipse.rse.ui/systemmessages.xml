@@ -684,6 +684,10 @@ Contributors:
                           <LevelOne>Failed to connect to the daemon on %1 using port %2 with an unexpected exception</LevelOne>		
                           <LevelTwo>%3</LevelTwo>
 					</Message>
+                    <Message ID="1244" Indicator="E">
+                          <LevelOne>The selected encoding is not supported.</LevelOne>		
+                          <LevelTwo></LevelTwo>
+					</Message>
 
     				<!-- universal find files pattern verification -->
                     <Message ID="1250" Indicator="E">

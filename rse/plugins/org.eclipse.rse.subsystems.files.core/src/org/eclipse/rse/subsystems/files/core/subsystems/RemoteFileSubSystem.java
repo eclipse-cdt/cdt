@@ -1443,11 +1443,27 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	}
 	
 	/**
-	 * Returns the local platform encoding by default.
+	 * Returns the local platform encoding if the default encoding of the host was not set.
 	 * Subclasses should override to return the actual remote encoding.
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getRemoteEncoding()
 	 */
 	public String getRemoteEncoding() {
-		return System.getProperty("file.encoding"); //$NON-NLS-1$
+		IHost host = getHost();
+		
+		// get the encoding from the host that was not by the remote system
+		String encoding = host.getDefaultEncoding(false);
+		
+		// get the encoding from the host that was set by querying a remote system
+		// this allows us to pick up the host encoding that may have been set by another subsystem
+		if (encoding == null) {
+			encoding = host.getDefaultEncoding(true);
+		}
+		
+		if (encoding != null) {
+			return encoding;
+		}
+		else {
+			return System.getProperty("file.encoding"); //$NON-NLS-1$
+		}
 	}
 }

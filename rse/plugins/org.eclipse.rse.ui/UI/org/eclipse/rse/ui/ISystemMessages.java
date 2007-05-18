@@ -270,6 +270,7 @@ public interface ISystemMessages
 	public static final String MSG_OPERTION_STOPPED			= "RSEG1257"; //$NON-NLS-1$
 	public static final String MSG_OPERATION_DISCONNECTED	= "RSEG1258";			 //$NON-NLS-1$
 					
+	public static final String MSG_ENCODING_NOT_SUPPORTED = "RSEG1244";	 //$NON-NLS-1$
 					
 				
     // --------------------------

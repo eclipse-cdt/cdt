@@ -26,6 +26,8 @@ package org.eclipse.rse.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -55,20 +57,27 @@ import org.eclipse.rse.ui.validators.ValidatorUserId;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
 import org.eclipse.rse.ui.wizards.newconnection.RSEAbstractNewConnectionWizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.ide.IDEEncoding;
 
 /**
  * A reusable form for prompting for connection information,
@@ -86,6 +95,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	public static final boolean CREATE_MODE = false;
 	public static final boolean UPDATE_MODE = true;
 	public static IRSESystemType lastSystemType = null;
+	protected IHost conn;
 	protected IRSESystemType defaultSystemType;
 	protected IRSESystemType[] validSystemTypes;
 
@@ -95,6 +105,9 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	protected Combo textSystemType, textHostName, profileCombo;
 	protected Text textConnectionName, textDescription;
 	protected Button verifyHostNameCB;
+	protected Group encodingGroup;
+	protected Button remoteEncodingButton, otherEncodingButton;
+	protected Combo otherEncodingCombo;
 
 	// yantzi:artemis 6.0, work offline support
 	protected Button workOfflineCB;
@@ -136,6 +149,12 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	protected String currentHostName = null;
 	protected SystemMessage errorMessage = null;
 	protected SystemMessage verifyingHostName;
+	
+	// encoding fields
+	protected boolean addEncodingFields = false;
+    protected String defaultEncoding = null;
+    protected boolean isRemoteEncoding = false;
+    protected boolean isValidBefore = true;
 
 	/**
 	 * Constructor.
@@ -304,6 +323,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 */
 	public void initializeInputFields(IHost conn, boolean updateMode) {
 		this.updateMode = updateMode;
+		this.conn = conn;
 		defaultSystemType = conn.getSystemType();
 		defaultConnectionName = conn.getAliasName();
 		defaultHostName = conn.getHostName();
@@ -311,6 +331,15 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		defaultDescription = conn.getDescription();
 		defaultProfile = conn.getSystemProfile().getName();
 		defaultWorkOffline = conn.isOffline();
+		defaultEncoding = conn.getDefaultEncoding(false);
+		
+		if (defaultEncoding == null) {
+			defaultEncoding = conn.getDefaultEncoding(true);
+			isRemoteEncoding = true;
+		}
+		else {
+			isRemoteEncoding = false;
+		}
 
 		if (updateMode) {
 			defaultProfileNames = new String[1];
@@ -441,6 +470,15 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 					errorMessage.makeSubstitution(currentHostName);
 					controlInError = textHostName;
 				}
+			}
+		}
+		
+		// validate host name...
+		if ((errorMessage == null) && addEncodingFields) {
+			errorMessage = validateEncoding();
+			
+			if (errorMessage != null) {
+				controlInError = otherEncodingCombo;
 			}
 		}
 
@@ -771,12 +809,137 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 
 		if (textUserId == null)
 			userIdLocation = IRSEUserIdConstants.USERID_LOCATION_NOTSET;
+		
+		// check if an encodings field should be added
+		if (addEncodingFields) {
+			
+			SystemWidgetHelpers.createLabel(composite_prompts, "", 2); //$NON-NLS-1$
+			
+			// encoding field
+			encodingGroup = SystemWidgetHelpers.createGroupComposite(composite_prompts, 2, SystemResources.RESID_HOST_ENCODING_GROUP_LABEL);
+			GridData data = new GridData();
+			data.horizontalSpan = 2;
+			data.horizontalAlignment = SWT.BEGINNING;
+			data.grabExcessHorizontalSpace = true;
+			data.verticalAlignment = SWT.BEGINNING;
+			data.grabExcessVerticalSpace = false;
+			encodingGroup.setLayoutData(data);
+			
+			SelectionAdapter buttonSelectionListener = new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateEncodingGroupState(remoteEncodingButton.getSelection());
+					validateEncoding();
+				}
+			};
+			
+			SystemWidgetHelpers.createLabel(encodingGroup, SystemResources.RESID_HOST_ENCODING_SETTING_MSG, 2);
+		
+			// remote encoding field
+			String defaultEncodingLabel = SystemResources.RESID_HOST_ENCODING_REMOTE_LABEL;
+			
+			remoteEncodingButton = SystemWidgetHelpers.createRadioButton(encodingGroup, null, defaultEncodingLabel, SystemResources.RESID_HOST_ENCODING_REMOTE_TOOLTIP);
+			data = new GridData();
+			data.horizontalSpan = 2;
+			remoteEncodingButton.setLayoutData(data);
+			remoteEncodingButton.addSelectionListener(buttonSelectionListener);
+			
+			// other encoding field
+			otherEncodingButton = SystemWidgetHelpers.createRadioButton(encodingGroup, null, SystemResources.RESID_HOST_ENCODING_OTHER_LABEL, SystemResources.RESID_HOST_ENCODING_OTHER_TOOLTIP);
+			data = new GridData();
+			data.grabExcessHorizontalSpace = false;
+			otherEncodingButton.setLayoutData(data);
+			otherEncodingButton.addSelectionListener(buttonSelectionListener);
+
+			// other encoding combo
+			otherEncodingCombo = SystemWidgetHelpers.createCombo(encodingGroup, null, SystemResources.RESID_HOST_ENCODING_ENTER_TOOLTIP);
+			data = new GridData();
+			data.horizontalAlignment = SWT.BEGINNING;
+			data.grabExcessHorizontalSpace = true;
+			data.horizontalIndent = 0;
+			otherEncodingCombo.setLayoutData(data);
+
+			otherEncodingCombo.addSelectionListener(new SelectionAdapter(){
+				public void widgetSelected(SelectionEvent e) {
+					validateEncoding();
+				}
+			});
+
+			otherEncodingCombo.addKeyListener(new KeyAdapter(){
+				public void keyReleased(KeyEvent e) {
+					validateEncoding();
+				}
+			});
+
+			SystemWidgetHelpers.createLabel(composite_prompts, "", 2); //$NON-NLS-1$
+		}
 
 		doInitializeFields();
 
 		contentsCreated = true;
 
 		return composite_prompts; // composite;
+	}
+	
+	/**
+	 * Update the encoding group state.
+	 * @param useDefault whether to update the state with default option on. <code>true</code> if the default option
+	 * should be on, <code>false</code> if it should be off.
+	 */
+	private void updateEncodingGroupState(boolean useDefault) {
+		remoteEncodingButton.setSelection(useDefault);
+		otherEncodingButton.setSelection(!useDefault);
+		
+		if (useDefault) {
+			
+			if (defaultEncoding != null) {
+				otherEncodingCombo.setText(defaultEncoding);
+			}
+			else {
+				otherEncodingCombo.setText(System.getProperty("file.encoding")); //$NON-NLS-1$
+			}
+		}
+		
+		otherEncodingCombo.setEnabled(!useDefault);
+		validateEncoding();
+	}
+	
+	/**
+	 * Updates the valid state of the encoding group.
+	 */
+	private SystemMessage validateEncoding() {
+		boolean isValid = isEncodingValid();
+		
+		errorMessage = null;
+		
+		if (!isValid) {
+			errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ENCODING_NOT_SUPPORTED);
+		}
+		
+		showErrorMessage(errorMessage);
+		setPageComplete();
+		return errorMessage;
+	}
+
+	/**
+	 * Returns whether the encoding is valid.
+	 * @return <code>true</code> if the encoding is valid, <code>false</code> otherwise.
+	 */
+	private boolean isEncodingValid() {
+		return remoteEncodingButton.getSelection() || isEncodingValid(otherEncodingCombo.getText());
+	}
+	
+	/**
+	 * Returns whether or not the given encoding is valid.
+	 * @param encoding the encoding.
+	 * @return <code>true</code> if the encoding is valid, <code>false</code> otherwise.
+	 */
+	private boolean isEncodingValid(String encoding) {
+		try {
+			return Charset.isSupported(encoding);
+		}
+		catch (IllegalCharsetNameException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -995,6 +1158,31 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		if (workOfflineCB != null) {
 			workOfflineCB.setSelection(defaultWorkOffline);
 		}
+		
+	    // the file encoding group
+	    if (addEncodingFields) {
+	    	List encodings = IDEEncoding.getIDEEncodings();
+	    	String[] encodingStrings = new String[encodings.size()];
+	    	encodings.toArray(encodingStrings);
+	    	otherEncodingCombo.setItems(encodingStrings);
+
+	    	// if the encoding is the same as the default encoding, then we want to choose the default encoding option
+	    	if (isRemoteEncoding) {
+	    		updateEncodingGroupState(true);
+	    	}
+	    	// otherwise choose the other encoding option
+	    	else {
+	    		otherEncodingCombo.setText(defaultEncoding);
+	    		updateEncodingGroupState(false);
+	    	}
+	    	
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			
+			// disable if any subsystem is connected
+			if (!conn.getSystemType().getId().equalsIgnoreCase(IRSESystemType.SYSTEMTYPE_LOCAL_ID) && sr.isAnySubSystemConnected(conn)) {
+				encodingGroup.setEnabled(false);
+			}
+	    }
 
 		verify(false);
 	}
@@ -1230,5 +1418,55 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			throw new InvocationTargetException(exc);
 		}
 		pm.done();
+	}
+	
+	/**
+	 * Add fields to enable encoding for the host to be set. This form will not have any encoding fields unless this is called.
+	 */
+	public void addDefaultEncodingFields() {
+		addEncodingFields = true;
+	}
+	
+	/**
+	 * Returns the encoding that was specified. Only applies if encoding fields were added to this form.
+	 * @return the encoding that was specified. This will return <code>null</code> if the selection is to use the encoding from the remote system
+	 * but that encoding has not been obtained yet.
+	 * @see #addDefaultEncodingFields()
+	 */
+	public String getDefaultEncoding() {
+		
+		if (addEncodingFields) {
+			return getSelectedEncoding();
+		}
+		else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns the currently selected encoding.
+	 * @return the currently selected encoding.
+	 */
+	private String getSelectedEncoding() {
+		if (remoteEncodingButton.getSelection()) {
+			return defaultEncoding;
+		}
+		
+		return otherEncodingCombo.getText();
+	}
+	
+	/**
+	 * Returns whether the encoding option is to use the encoding of the remote system. Only applies if encoding fields were added to this form.
+	 * @return <code>true</code> if the encoding option is to use the encoding of the remote system, <code>false</code> if the user specified the encoding.
+	 * @see #addDefaultEncodingFields()
+	 */
+	public boolean isEncodingRemoteDefault() {
+		
+		if (addEncodingFields) {
+			return remoteEncodingButton.getSelection();
+		}
+		else {
+			return false;
+		}
 	}
 }

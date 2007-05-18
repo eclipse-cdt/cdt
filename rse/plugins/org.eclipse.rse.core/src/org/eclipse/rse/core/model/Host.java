@@ -48,6 +48,10 @@ public class Host extends RSEModelObject implements IHost {
 	private boolean userIdCaseSensitive = true;
 	private ISystemHostPool pool;
 	protected String previousUserIdKey;
+	
+	private static final String ENCODING_PROPERTY_SET = "EncodingPropertySet"; //$NON-NLS-1$
+	private static final String ENCODING_REMOTE_PROPERTY_KEY = "EncodingRemotePropertyKey"; //$NON-NLS-1$
+	private static final String ENCODING_NON_REMOTE_PROPERTY_KEY = "EncodingNonRemotePropertyKey"; //$NON-NLS-1$
 
 	/**
 	 * The system type which is associated to this <code>IHost</code> object.
@@ -516,4 +520,77 @@ public class Host extends RSEModelObject implements IHost {
 		return result;
 	}
 
+	/**
+	 * The default encoding of the host. If checkRemote is <code>false</code>, returns the encoding that was not set by querying a remote system
+	 * (for example, an encoding set by a user). If checkRemote is <code>true</code>, it first checks to see if there is an encoding that was set
+	 * without querying a remote system, and if an encoding does not exist, then it returns the encoding that was set by querying a remote system.
+	 * @param checkRemote <code>false</code> to get the encoding that was obtained by not querying the remote system, <code>true</code> to also check
+	 * the encoding, if needed, that was set by querying a remote system.
+	 * @return the default encoding of the host, or <code>null</code> if no encoding was set.
+	 * @see #setDefaultEncoding(String, boolean)
+	 */
+	public String getDefaultEncoding(boolean checkRemote) {
+		
+		IPropertySet encPropertySet = getPropertySet(ENCODING_PROPERTY_SET);
+		
+		if (encPropertySet == null) {
+			return null;
+		}
+		else {
+			String nonRemoteEncoding = encPropertySet.getPropertyValue(ENCODING_NON_REMOTE_PROPERTY_KEY);
+			
+			if (nonRemoteEncoding != null) {
+				return nonRemoteEncoding;
+			}
+			else {
+				
+				if (!checkRemote) {
+					return null;
+				}
+				else {
+					String remoteEncoding = encPropertySet.getPropertyValue(ENCODING_REMOTE_PROPERTY_KEY);
+					return remoteEncoding;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets the default encoding of the host. The encoding can be set by querying the remote system or by some other means (for example, by a user).
+	 * @param encoding the encoding of the host, or <code>null</code> to erase the current encoding.
+	 * @param fromRemote <code>true</code> if the encoding is set by querying the remote system, or <code>false</code> otherwise.
+	 * @see #getDefaultEncoding(boolean)
+	 */
+	public void setDefaultEncoding(String encoding, boolean fromRemote) {
+		
+		IPropertySet encPropertySet = getPropertySet(ENCODING_PROPERTY_SET);
+		
+		if (encPropertySet == null) {
+			encPropertySet = createPropertySet(ENCODING_PROPERTY_SET);
+		}
+		
+		if (encPropertySet != null) {
+			
+			if (encoding != null) {
+				
+				if (!fromRemote) {
+					encPropertySet.addProperty(ENCODING_NON_REMOTE_PROPERTY_KEY, encoding);
+				}
+				else {
+					encPropertySet.addProperty(ENCODING_REMOTE_PROPERTY_KEY, encoding);
+				}
+			}
+			else {
+				
+				if (!fromRemote) {
+					encPropertySet.removeProperty(ENCODING_NON_REMOTE_PROPERTY_KEY);
+				}
+				else {
+					encPropertySet.removeProperty(ENCODING_REMOTE_PROPERTY_KEY);
+				}
+			}
+		}
+		
+		commit();
+	}
 }

@@ -745,11 +745,35 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @see RemoteFileSubSystem#getRemoteEncoding()
 	 */
 	public String getRemoteEncoding() {
+
 		try {
-			return getFileService().getEncoding(null);
-		} catch (SystemMessageException e) {
+			
+			IHost host = getHost();
+			
+			// get the encoding from the host that was not set by the remote system
+			String encoding = host.getDefaultEncoding(false);
+			
+			// get the encoding from the host that was set by querying a remote system
+			// this allows us to pick up the host encoding that may have been set by another subsystem
+			if (encoding == null) {
+				encoding = getFileService().getEncoding(null);
+					
+				if (encoding != null) {
+					host.setDefaultEncoding(encoding, true);
+				}
+			}
+			
+			if (encoding != null) {
+				return encoding;
+			}
+			else {
+				return super.getRemoteEncoding();
+			}
+		}
+		catch (SystemMessageException e) {
 			SystemBasePlugin.logMessage(e.getSystemMessage());
 		}
+		
 		return super.getRemoteEncoding();
 	}
 

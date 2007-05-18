@@ -29,6 +29,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * object oriented containment.
  */
 public interface IHost extends IAdaptable, IRSEModelObject {
+	
 	/**
 	 * Return the system profile that owns this connection
 	 * @return the profile which contains this host
@@ -186,6 +187,25 @@ public interface IHost extends IAdaptable, IRSEModelObject {
 	 * @return The value of the Promptable attribute
 	 */
 	boolean isPromptable();
+	
+	/**
+	 * The default encoding of the host. If checkRemote is <code>false</code>, returns the encoding that was not set by querying a remote system
+	 * (for example, an encoding set by a user). If checkRemote is <code>true</code>, it first checks to see if there is an encoding that was set
+	 * without querying a remote system, and if an encoding does not exist, then it returns the encoding that was set by querying a remote system.
+	 * @param checkRemote <code>false</code> to get the encoding that was obtained by not querying the remote system, <code>true</code> to also check
+	 * the encoding, if needed, that was set by querying a remote system.
+	 * @return the default encoding of the host, or <code>null</code> if no encoding was set.
+	 * @see #setDefaultEncoding(String, boolean)
+	 */
+	public String getDefaultEncoding(boolean checkRemote);
+	
+	/**
+	 * Sets the default encoding of the host. The encoding can be set by querying the remote system or by some other means (for example, by a user).
+	 * @param encoding the encoding of the host, or <code>null</code> to erase the current encoding.
+	 * @param fromRemote <code>true</code> if the encoding is set by querying the remote system, or <code>false</code> otherwise.
+	 * @see #getDefaultEncoding(boolean)
+	 */
+	public void setDefaultEncoding(String encoding, boolean fromRemote);
 
 	/**
 	 * Set the promptable attribute.

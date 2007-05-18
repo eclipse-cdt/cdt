@@ -1221,6 +1221,15 @@ public class SystemResources extends NLS
 	public static String RESID_DO_NOT_SHOW_MESSAGE_AGAIN_LABEL;
 	public static String RESID_DO_NOT_SHOW_MESSAGE_AGAIN_TOOLTIP;
 	
+	// Encoding
+	public static String RESID_HOST_ENCODING_GROUP_LABEL;
+	public static String RESID_HOST_ENCODING_SETTING_MSG;
+	public static String RESID_HOST_ENCODING_REMOTE_LABEL;
+	public static String RESID_HOST_ENCODING_REMOTE_TOOLTIP;
+	public static String RESID_HOST_ENCODING_OTHER_LABEL;
+	public static String RESID_HOST_ENCODING_OTHER_TOOLTIP;
+	public static String RESID_HOST_ENCODING_ENTER_TOOLTIP;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SystemResources.class);

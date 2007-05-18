@@ -252,5 +252,11 @@ public class DummyHost extends PlatformObject implements IHost
 
 	public void setTainted(boolean flag) {
 	}
-
+	
+	public String getDefaultEncoding(boolean checkRemote) {
+		return null;
+	}
+	
+	public void setDefaultEncoding(String encoding, boolean fromRemote) {
+	}
 }

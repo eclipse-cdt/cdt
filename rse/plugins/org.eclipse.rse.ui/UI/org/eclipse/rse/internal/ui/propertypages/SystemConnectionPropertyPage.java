@@ -64,6 +64,8 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		// prepare input data
     	IHost conn = (IHost)getElement();
 		form.initializeInputFields(conn);
+		// add encoding fields
+		form.addDefaultEncodingFields();
 		// create validators
     	ISystemValidator connectionNameValidators[] = new ISystemValidator[1];
     	connectionNameValidators[0] = SystemConnectionForm.getConnectionNameValidator(conn);    	
@@ -98,6 +100,21 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		                       form.getConnectionDescription(), form.getDefaultUserId(),
 		                       form.getUserIdLocation() );
 
+		  // update encoding
+		  String encoding = form.getDefaultEncoding();
+		  boolean isRemoteEncoding = form.isEncodingRemoteDefault();
+		  
+		  // user set encoding
+		  if (!isRemoteEncoding) {
+			  conn.setDefaultEncoding(encoding, false);
+		  }
+		  // remote default encoding
+		  else {
+			  // remove user encoding from host property first
+			  conn.setDefaultEncoding(null, false);
+			  // remove default remote encoding to indicate to get from remote system
+			  conn.setDefaultEncoding(null, true);
+		  }
 		  
 		  boolean offlineSelection = form.isWorkOffline();
 		  if (offlineSelection != conn.isOffline())

@@ -156,26 +156,27 @@ implements IExecutableExtension, IWizardWithMemory
 		// create project if it is not created yet
 		if (getProject(fMainPage.isCurrent(), true) == null) return false;
 		fMainPage.h_selected.postProcess(newProject);
-		setCreated();
+		try {
+			setCreated();
+		} catch (CoreException e) {
+			// TODO log or display a message
+			e.printStackTrace();
+			return false;
+		}
 		BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
 		selectAndReveal(newProject);
 		return true;
 	}
 	
-	protected boolean setCreated(){
+	protected boolean setCreated() throws CoreException {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		
 		ICProjectDescription des = mngr.getProjectDescription(newProject, false);
 		if(des.isCdtProjectCreating()){
 			des = mngr.getProjectDescription(newProject, true);
 			des.setCdtProjectCreated();
-			try {
-				mngr.setProjectDescription(newProject, des, false, null);
-				return true;
-			} catch (CoreException e) {
-				//TODO: log/display err
-				e.printStackTrace();
-			}
+			mngr.setProjectDescription(newProject, des, false, null);
+			return true;
 		}
 		return false;
 	}

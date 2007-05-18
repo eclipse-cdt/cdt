@@ -271,6 +271,13 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected void buttonSetText(int i, String text) {
 		if (buttons == null || buttons.length <= i ) return;
 		buttons[i].setText(text);
+		Composite c = buttons[i].getParent();
+		if (c != null) {
+			c.pack();
+			c = c.getParent();
+			if (c != null)
+				c.layout(true);
+		}
 	}
 
 	/**********************************************

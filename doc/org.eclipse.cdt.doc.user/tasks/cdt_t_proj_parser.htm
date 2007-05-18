@@ -16,16 +16,16 @@ correct parser for your development environment and build your project,
 you can view the components of the .o file in the C/C++ Projects view
 and view the contents of the .o file in the C/C++ editor. You can also
 easily browse for the executable when defining run/debug configurations.</p>
-<p>For a Standard Make project, you can define the properties on a per
-project basis from the New Project wizard, in the C/C++ Projects view
-or in the Navigator view. You can also define project properties in the
-Preferences window for future standard make projects.</p>
-<p>To set properties for future Standard Make projects:</p>
+<p>If you use CDT-generated makefile to build your project, appropriate
+binary parsers are set according to selected toolchain during creation.</p>
+<p>If you use your own makefile to build, default settings 
+for binary parser are got from Preferences during project creation.</p>
+<p>You can modify these settings in the Preferences window, to be used in future projects.</p>
+<p>To set properties for future projects with user-provided Makefile :</p>
 <ol>
-  <li>Click <b>Window &gt; Preferences </b>. Expand<b> C/C++,</b>
-click <b>New Make Projects</b>.</li>
+  <li>Click <b>Window &gt; Preferences &gt; C/C++ &gt; New CDT Project wizard &gt; Makefile project</b></li>
   <li>Click the <b>Binary Parser</b> tab.<br>
-    <img src="../images/new_make-binary_parser.png"
+    <img src="../images/task_binary_pref.png"
  alt="Select Binary Parser window"></li>
   <li>In the <b>Binary Parser</b> list, click:</li>
   <ul>
@@ -35,12 +35,16 @@ click <b>New Make Projects</b>.</li>
   </ul>
   <li>Click <b>OK</b>.</li>
 </ol>
-<p>For a Managed Make project:</p>
+<p>To change binary parsers for existing project:</p>
 <ol>
   <li>In the C/C++ Projects view, right-click the project, and select <b>Properties</b>.</li>
-  <li>Select <b>C/C++ Build</b> from the list.</li>
-  <li>Click the <b>Binary Parser</b> tab.</li>
+  <li>Select <b>C/C++ Build &gt; Settings</b> from the list.</li>
+  <li>Click the <b>Binary Parser</b> tab.<br>
+<img src="../images/task_binary_parser.png"
+ alt="Select Binary Parser window">
+  </li>
 </ol>
+<br>
 <p><img border="0" src="../images/ngconcepts.gif" alt="Related concepts"
  width="143" height="21"><br>
 <a href="../concepts/cdt_c_projects.htm">CDT Projects</a><br>

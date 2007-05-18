@@ -48,6 +48,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.CoreProcess;
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIInferior;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
@@ -441,6 +442,9 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#restart()
 	 */
 	public void restart() throws CDIException {
+		// Reset the inferior pid
+		MIInferior inferior = getMISession().getMIInferior();
+		int pid = inferior.resetInferiorPID();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIExecRun run = factory.createMIExecRun(new String[0]);
 		try {
@@ -450,6 +454,8 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
+			// Replace pid since we probably didn't actually restart
+			inferior.setInferiorPID(pid);
 			throw new MI2CDIException(e);
 		}
 	}

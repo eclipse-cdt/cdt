@@ -349,6 +349,12 @@ public class MIInferior extends Process {
 		}
 	}
 
+	public int resetInferiorPID() {
+		int pid = inferiorPID;
+		inferiorPID = 0;
+		return pid;
+	}
+	
 	public void setInferiorPID(int pid) {
 		inferiorPID = pid;
 	}

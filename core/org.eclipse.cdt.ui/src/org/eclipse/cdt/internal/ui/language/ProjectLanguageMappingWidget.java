@@ -100,6 +100,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
 		Button addButton = new Button(buttons, SWT.PUSH);
+		addButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 		addButton.setText(PreferencesMessages.ProjectLanguagesPropertyPage_addMappingButton);
 		addButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -133,6 +134,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		});
 
 		Button removeButton = new Button(buttons, SWT.PUSH);
+		removeButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 		removeButton.setText(PreferencesMessages.ProjectLanguagesPropertyPage_removeMappingButton);
 		removeButton.addListener(SWT.Selection, new Listener() {
 

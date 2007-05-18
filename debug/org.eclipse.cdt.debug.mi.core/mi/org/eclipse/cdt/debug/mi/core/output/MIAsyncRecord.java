@@ -65,7 +65,7 @@ public abstract class MIAsyncRecord extends MIOOBRecord {
 		if (results != null) {
 			for (int i = 0; i < results.length; i++) {
 				buffer.append(',');
-				buffer.append(results.toString());
+				buffer.append(results[i].toString());
 			}
 		}
 		buffer.append('\n');

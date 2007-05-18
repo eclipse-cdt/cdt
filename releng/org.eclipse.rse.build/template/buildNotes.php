@@ -40,7 +40,8 @@
 <li><b>Added a Telnet Subsystem</b>. It can be activated by selecting the new
   system type "Telnet Only", or by choosing it from the available services
   on Linux, Unix or AIX. The telnet subsystem is currently still experimental
-  because of problems when passing invalid credentials.
+  because of problems when passing invalid credentials, or opening multiple
+  telnet shells simultaneously.
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178201">178201</a>].</li>
 <li><b>System Type Labels are now translatable</b>
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180688">180688</a>].</li>
@@ -48,6 +49,9 @@
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179939">179939</a>].</li>
 <li><b>Terminal now provides an optional input line</b> for dumb systems
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173730">173730</a>].</li>
+<li><b>FTP now supports an ftpListingParser extension point</b> to contribute
+  custom listing parsers
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176216">176216</a>].</li>
 <!--
 <li><b>Copy&Paste, Drag&Drop to Project Explorer</b> are finally fixed
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153652">153652</a>].

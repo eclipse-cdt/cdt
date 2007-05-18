@@ -42,12 +42,12 @@
    <feature url="features/org.eclipse.rse.tests_2.0.0.qualifier.jar" id="org.eclipse.rse.tests" version="2.0.0.qualifier">
       <category name="Remote System Explorer (RSE) Extender SDK"/>
    </feature>
-   <category-def name="RSE End-User Runtime" label="RSE_Runtime">
+   <category-def name="RSE End-User Runtime" label="RSE End-User Runtime">
       <description>
          RSE Runtime-only features: no developer documentation or sources.
       </description>
    </category-def>
-   <category-def name="Remote System Explorer (RSE) Extender SDK" label="RSE_SDK">
+   <category-def name="Remote System Explorer (RSE) Extender SDK" label="Remote System Explorer (RSE) Extender SDK">
       <description>
          Remote System Explorer (RSE) with developer documentation and sources.
       </description>

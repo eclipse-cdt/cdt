@@ -38,8 +38,11 @@ public class CTestPlugin extends Plugin {
 	public static File getFileInPlugin(IPath path) {
 		try {
 			URL url = getDefault().find(path,null);
-			url= Platform.asLocalURL(url);
-			return new File(url.getFile()); 
+			if(url != null){
+				url= Platform.asLocalURL(url);
+				return new File(url.getFile());
+			}
+			return null;
 
 		} catch (Exception e) {
 			return null;

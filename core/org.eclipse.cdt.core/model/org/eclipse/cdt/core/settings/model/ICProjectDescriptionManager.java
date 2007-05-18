@@ -110,14 +110,14 @@ public interface ICProjectDescriptionManager {
 	void updateProjectDescriptions(IProject projects[], IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * aswers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
+	 * answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 * @param project
 	 * @return
 	 */
 	boolean isNewStyleProject(IProject project);
 
 	/**
-	 * aswers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
+	 * answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 * @param des
 	 * @return
 	 */

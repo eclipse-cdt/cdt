@@ -146,12 +146,55 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 		return CdtVariableResolver.convertStringListToString(value,listDelimiter);
 	}
 	
+	private static class VariableWrapper implements IBuildMacro {
+		private ICdtVariable fVariable;
+		
+		public VariableWrapper(ICdtVariable var){
+			if(var == null)
+				throw new NullPointerException();
+			
+			fVariable = var;
+		}
+
+		public ICdtVariable getVariable(){
+			return fVariable;
+		}
+
+		public int getMacroValueType() {
+			return fVariable.getValueType();
+		}
+
+		public String[] getStringListValue() throws BuildMacroException {
+			try {
+				return fVariable.getStringListValue();
+			} catch (CdtVariableException e) {
+				throw new BuildMacroException(e);
+			}
+		}
+
+		public String getStringValue() throws BuildMacroException {
+			try {
+				return fVariable.getStringValue();
+			} catch (CdtVariableException e) {
+				throw new BuildMacroException(e);
+			}
+		}
+
+		public String getName() {
+			return fVariable.getName();
+		}
+
+		public int getValueType() {
+			return fVariable.getValueType();
+		}
+	}
+	
 	public static IBuildMacro wrap(ICdtVariable var){
 		if(var == null)
 			return null;
 		if(var instanceof IBuildMacro)
 			return (IBuildMacro)var;
-		return new BuildMacro(var);
+		return new VariableWrapper(var);
 	}
 
 	public static IBuildMacro[] wrap(ICdtVariable vars[]){

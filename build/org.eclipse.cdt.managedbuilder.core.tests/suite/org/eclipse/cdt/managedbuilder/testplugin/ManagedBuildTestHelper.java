@@ -216,6 +216,10 @@ public class ManagedBuildTestHelper {
 	public static IProject loadProject(String name, String path){
 		IPath zipPath = new Path("resources").append(path).append(name).append(name).addFileExtension("zip");
 		File zipFile = CTestPlugin.getFileInPlugin(zipPath);
+		if(zipFile == null){
+			zipPath = new Path("resources").append(path).append(name).addFileExtension("zip");
+			zipFile = CTestPlugin.getFileInPlugin(zipPath);
+		}
 		if(zipFile == null) {
 			Assert.fail("zip file " + zipPath.toString() + " is missing.");
 			return null;

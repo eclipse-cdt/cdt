@@ -16,6 +16,7 @@ import java.util.Vector;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
@@ -154,7 +155,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	public boolean areCommandsGeneric() {
 		if (genericCommands != null) return genericCommands.booleanValue();
 		//  If the context is a Configuration, yes
-		if (buildContext instanceof IConfiguration) {
+		if (buildContext instanceof IConfiguration || buildContext instanceof IFolderInfo) {
 			genericCommands = new Boolean(true);
 			return true;
 		}

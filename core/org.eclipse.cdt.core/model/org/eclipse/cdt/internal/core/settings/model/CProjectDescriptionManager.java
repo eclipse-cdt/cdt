@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1415,7 +1416,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	Map createCfgStorages(ICProjectDescription des) throws CoreException{
-		Map map = new HashMap();
+		LinkedHashMap map = new LinkedHashMap();
 		ICStorageElement rootElement = des.getStorage(MODULE_ID, false);
 		if(rootElement != null){
 			ICStorageElement children[] = rootElement.getChildren();

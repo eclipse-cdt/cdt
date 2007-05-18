@@ -100,7 +100,7 @@ public class TestMacro implements
 			ms = provider.getMacros(IBuildMacroProvider.CONTEXT_CONFIGURATION, configuration, false);
 			IBuildMacro[] newms = null;
 			if (ms != null && ms.length > 0) {
-				newms = new BuildMacro[ms.length + 1];
+				newms = new IBuildMacro[ms.length + 1];
 				System.arraycopy(ms, 0, newms, 0, ms.length);
 			} else {
 				newms = new BuildMacro[1];
@@ -122,7 +122,7 @@ public class TestMacro implements
 			ms = provider.getMacros(IBuildMacroProvider.CONTEXT_PROJECT, mproj, false);
 			IBuildMacro[] newms = null;
 			if (ms != null && ms.length > 0) {
-				newms = new BuildMacro[ms.length + 1];
+				newms = new IBuildMacro[ms.length + 1];
 				System.arraycopy(ms, 0, newms, 0, ms.length);
 			} else {
 				newms = new BuildMacro[1];

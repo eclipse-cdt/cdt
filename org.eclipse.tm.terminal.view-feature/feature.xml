@@ -19,6 +19,7 @@
 
    <url>
       <update label="%tmMilestoneSiteName" url="http://download.eclipse.org/dsdp/tm/updates/milestones"/>
+      <discovery label="%tmMilestoneSiteName" url="http://download.eclipse.org/dsdp/tm/updates/milestones"/>
    </url>
 
    <requires>

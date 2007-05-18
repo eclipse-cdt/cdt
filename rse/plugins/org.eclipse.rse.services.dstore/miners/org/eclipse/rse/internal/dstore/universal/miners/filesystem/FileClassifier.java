@@ -180,7 +180,8 @@ public class FileClassifier extends Thread
             for (int i = 0; i < _subject.getNestedSize(); i++)
             {
                 DataElement child = _subject.get(i);
-
+                if (child != null && !child.isDeleted())
+                {
                 if (child.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR)
                         || child.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
                         || child.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
@@ -202,6 +203,7 @@ public class FileClassifier extends Thread
                      * IUniversalDataStoreConstants.TOKEN_SEPARATOR); if
                      * (tokenizer.countTokens() < 12) { putElement(name, child); }
                      */
+                }
                 }
             }
 

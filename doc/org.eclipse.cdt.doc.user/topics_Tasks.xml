@@ -57,15 +57,20 @@
 				<topic label="Specifying the location of source files" href="tasks/cdt_t_run_source.htm"/>
 				<topic label="Specifying the location of the run configuration" href="tasks/cdt_t_run_com.htm"/>
 			</topic>
+			
 			<topic label="Debugging" href="tasks/cdt_o_debug.htm">
 				<topic label="Debugging a program" href="tasks/cdt_t_debug_prog.htm"/>
 				<topic label="Debugging an existing executable" href="tasks/cdt_t_debug_exes.htm"/>
-				<topic label="Working with breakpoints and watchpoints" href="tasks/cdt_o_brkpnts_watch.htm">
+				
+				<topic label="Working with breakpoints, watchpoints, and breakpoint actions" href="tasks/cdt_o_brkpnts_watch.htm">
 					<topic label="Adding breakpoints" href="tasks/cdt_t_add_brkpnts.htm"/>
 					<topic label="Adding watchpoints" href="tasks/cdt_t_add_watch.htm"/>
+					<topic label="Adding breakpoint actions" href="tasks/cdt_t_add_brk_action.htm"/>
 					<topic label="Removing breakpoints and watchpoints" href="tasks/cdt_t_rem_wtch_brk.htm"/>
 					<topic label="Enabling or disable breakpoints and watchpoints" href="tasks/cdt_t_endis_able_brk_wtch.htm"/>
+					<topic label="Attaching or removing breakpoint actions" href="tasks/cdt_t_addrmv_brk_action.htm"/>
 				</topic>
+				
 				<topic label="Controlling debug execution" href="tasks/cdt_t_controldebug.htm"/>
 				<topic label="Stepping into assembler funcitons" href="tasks/cdt_t_disassembly.htm"/>
 				<topic label="Working with variables" href="tasks/cdt_t_variables.htm"/>
@@ -74,6 +79,7 @@
 				<topic label="Working with memory" href="tasks/cdt_t_memory.htm"/>
 			</topic>
 		</topic>
+		
 		<topic label="Searching the CDT" href="tasks/cdt_t_search.htm">
 			<topic label="Selection Search for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
 			<topic label="Setting Source Folders" href="tasks/cdt_t_set_src_fold.htm"/>

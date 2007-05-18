@@ -4,7 +4,6 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Shared Libraries view</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
@@ -15,23 +14,60 @@
 
 <h1>Modules view</h1>
 
-<p>The Modules view of the Debug
+<p>The <b>Modules</b> view of the Debug
 perspective lets you view information about the modules loaded in the current
 debug session, including executables and shared libraries. The view consists
 of two areas: the modules tree and the detail pane. The detail pane displays
 the detail information for the module selected in the modules tree. Expanding a
-module users can view the module's internals - functions, global variables, associated
+module enables users to view the module's internals - functions, global variables, associated
 source files, etc.</p>
 
-<dl>
-<dt><b>Load Symbols</b></dt>
-<dd>Loads the symbols of the module. The
-symbols will be loaded from the file specified in the module's properties.</dd>
+<img src="../images/view_modules.png" alt="Modules view"></img>
 
-<dt><b>Load Symbols For All</b></dt>
-<dd>Loads the symbols of the all modules involved in the current session. This option does not affect
-the modules whose symbols are already loaded.</dd>
-</dl>
+<h3>Modules view toolbar icons</h3>
+
+<p>The table below lists the icons displayed in the Modules view toolbar.</p>
+
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#999999" width="600">
+<tr>
+  <td width="10%" align="left"><b>Command</b></td>
+  <td width="30%"><b>Name</b></td>
+  <td width="60%"><b>Description</b></td>
+</tr>
+<tr>
+  <td><img border="0" src="../images/icon_load_all_modules.png"></td>
+  <td>Load Symbols for All Modules</td>
+  <td>Loads the symbols of the all modules involved in the current session. This option does not affect the modules whose symbols are already loaded.</td>
+</tr>
+</table>
+
+<h3>Modules view context menu commands</h3>
+
+<p>The table below lists the Modules context menu commands.</p>
+
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#999999" width="600">
+<tr>
+  <td width="10%" align="left"><b>Command</b></td>
+  <td width="30%"><b>Name</b></td>
+  <td width="60%"><b>Description</b></td>
+</tr>
+<tr>
+  <td><img border="0" src="../images/icon_load_all_modules.png"></td>
+  <td>Load Symbols for All</td>
+  <td>Loads the symbols of the all modules involved in the current session. This option does not affect the modules whose symbols are already loaded.</td>
+</tr>
+<tr>
+  <td><img border="0" src="../images/icon_load_all_modules.png"></td>
+  <td>Load Symbols</td>
+  <td>Loads the symbols of the module. The symbols will be loaded from the file specified in the module's properties.</td>
+</tr>
+<tr>
+  <td>&nbsp;</td>
+  <td>Properties...</td>
+  <td>Opens the Properties dialog for the module.</td>
+</tr>
+</table>
+
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>
 <a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>

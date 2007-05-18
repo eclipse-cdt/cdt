@@ -19,6 +19,7 @@ package org.eclipse.rse.subsystems.shells.core.subsystems;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IRemoteSystemEnvVar;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.swt.widgets.Shell;
@@ -142,7 +143,9 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	
 		
 	/**
-	 * Returns the shell encoding to assume when reading IO from a remote shell
+	 * Returns the shell encoding to assume when reading IO from a remote shell.
+	 * 
+	 * @deprecated use {@link IHost#getDefaultEncoding(boolean)} instead
 	 */
 	public String getShellEncoding();
 	

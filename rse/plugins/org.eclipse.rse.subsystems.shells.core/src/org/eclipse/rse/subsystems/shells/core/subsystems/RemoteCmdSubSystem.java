@@ -93,6 +93,9 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		return null;
 	}
 
+	/**
+	 * @deprecated use {@link IHost#setDefaultEncoding(String, boolean)} instead
+	 */
 	public void setShellEncoding(String encoding)
 	{
 		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$

@@ -29,7 +29,7 @@
 <li>Added a <b>milestone update site</b> for TM 2.0 milestone builds at
   <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
   In case any critical updates are announced on the dsdp-tm-dev mailing list, 
-  "Check for updates" will automatically get the patches from there.
+  "Check for updates" will automatically get the patches from there
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>].</li>
 <li><b>Digital Signing</b> of plugins has been re-enabled now that the Platform 
   issues with it are fixed. All TM stuff on the update sites is digitally
@@ -38,13 +38,15 @@
   User Actions needs to be deferred to after TM 2.0
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170909">170909</a>].</li>
 <li><b>Added a Telnet Subsystem</b>. It can be activated by selecting the new
-  system type "Telnet Only", or by choosing it from the available services
-  on Linux, Unix or AIX. The telnet subsystem is currently still experimental
-  because of problems when passing invalid credentials, or opening multiple
-  telnet shells simultaneously.
+  system type "Telnet Only (Experimental)". The telnet subsystem is currently 
+  still experimental because of problems when passing invalid credentials, or
+  opening multiple telnet shells simultaneously.
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178201">178201</a>].</li>
-<li><b>System Type Labels are now translatable</b>
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180688">180688</a>].</li>
+<li><b>System Type Labels are now translatable</b>, and methods have been added
+  for checking properties of system types like isWindows(), in order to simplify
+  working with them
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180688">180688</a>]
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186640">186640</a>].</li>
 <li><b>Fixed some Encoding Issues</b>, most prominently with BIDI support
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179939">179939</a>].</li>
 <li><b>Terminal now provides an optional input line</b> for dumb systems
@@ -65,9 +67,9 @@
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least <!-- 94 --> 38 bugs were fixed: use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-04-09&chfieldto=2007-05-20&chfield=resolution&cmdtype=doit">
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M7&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
+<li>At least 31 API changes and 75 bugs were fixed: use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-04-09&chfieldto=2007-05-20&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M7&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M6a-200704111818/index.php">
   TM 2.0M6a</a>

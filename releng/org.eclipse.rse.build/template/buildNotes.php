@@ -67,7 +67,7 @@
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least 31 API changes and 75 bugs were fixed: use 
+<li>At least 32 API changes and 74 bugs were fixed: use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-04-09&chfieldto=2007-05-20&chfield=resolution&cmdtype=doit"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M7&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,

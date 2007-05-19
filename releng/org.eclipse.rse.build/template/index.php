@@ -47,15 +47,15 @@
 </table>
 <table>
   <tbody>
-    <tr><td><b>TM 2.0M6 requires 
-    	<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php">
+    <tr><td><b>TM @buildId@ requires 
+    	<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC1-200705171700/index.php">
          Eclipse 3.3M6</a> or later.
     </b></td></tr>
     <tr><td>
       For core RSE and TM-Terminal, the
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#PlatformRuntime">
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC1-200705171700/index.php#PlatformRuntime">
         Eclipse Platform Runtime Binary</a> is sufficient. Of course you can also use the popular
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#EclipseSDK">SDK</a>. 
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC1-200705171700/index.php#EclipseSDK">SDK</a>. 
     </td></tr> 
     <tr><td>
       Prerequisites for the remotecdt and discovery add-ons (CDT, EMF) can be retrieved from the
@@ -234,9 +234,9 @@
 	</tr>
 	<tr>
 	    <td>The RSE test suite requires the JUnit plug-in, which is included in the 
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#EclipseSDK">
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC1-200705171700/index.php#EclipseSDK">
         Eclipse SDK</a> or available as<br/>
-        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M6-200703231616/index.php#JUnitPlugin">
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC1-200705171700/index.php#JUnitPlugin">
         eclipse-test-framework download</a> for users of the Eclipse Platform Runtime Binary. 
 	    </td>
 	</tr>

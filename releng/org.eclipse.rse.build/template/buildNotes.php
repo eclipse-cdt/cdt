@@ -153,21 +153,46 @@ More information can be found in the associated bugzilla items.
 <!--
 <li><b>Cleaned up ISystemRegistry</b> - removed or changed signature of several methods [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>].</li>
 -->
+<li><b>Moved some more classes</b>, like the dstore miners, ISubSystemConfigurationAdapter,
+  or Terminal API classes (which have been marked provisional).
+  These changes can simply be picked up by running "organize imports" on client code
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180649">180649</a>] 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186748">186748</a>] 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186134">186134</a>].</li> 
+<li><b>Moved the subsystemConfigurations and keystoreProviders extension points</b>
+  to org.eclipse.rse.core in order to better support UI/non-UI separation
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186523">186523</a>] 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186525">186525</a>].</li> 
+<li><b>Removed the remoteSystemsViewPreferencesActions and
+  dynamicPopupMenuExtensions extension points</b>
+  since the same can now be achieved with standard org.eclipse.ui extension points 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185552">185552</a>] 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185554">185554</a>].</li> 
+<li>Fixed incorrect usage of <b>IRSESystemType.getAdapter()</b>. This change is
+  important to <b>consider manually since it does not break the build</b> - 
+  see the bug entry for details
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186779">186779</a>].</li> 
+<li>Made <b>IRemoteFileSubSystem forward exceptions</b> rather than handling itself
+  by opening dialogs
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=183824">183824</a>].</li> 
+<li><b>Unify Singleton Access Methods</b> to use getInstance() in most cases
+  in order to achieve better API consistency
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177523">177523</a>].</li> 
 <li><b>Added IProgressMonitor parameter</b> to all long-running IRemoteFileSubSystem
   methods. Clients need to pass in a NullProgressMonitor in all these methods now.
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=184322">184322</a>].</li>
+  Moved the <b>IProgressMonitor parameter last</b> in all methods for consistency.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=184322">184322</a>]
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186128">186128</a>].</li>
 <li><b>Use IRSESystemType</b> instead of String systemTypeName everywhere -
   this is the prerequisite for allowing system type labels to be translated
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180688">180688</a>].</li>
-<li><b>Move SysteRegistry's Event Interface to non-UI</b> - See the
-  bug entry for migration docs
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168975">168975</a>].</li>
+<li><b>Move SysteRegistry's Event Interface to non-UI</b> and split ISystemRegistryUI
+  from ISystemRegistry - See the bug entries for migration docs
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168975">168975</a>]
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186773">186773</a>].</li>
 <li><b>Dont implement interfaces just for Constants</b> - See the bug 
   entry for migration docs
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=183165">183165</a>].</li>
-<li><b>Dstore miners</b> are now in a single API package. "Organize Imports"
-  should be sufficient to migrate
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180649">180649</a>].</li> 
 </ul></li>
 <li>TM 2.0M6a Breaking API Changes
 <ul>

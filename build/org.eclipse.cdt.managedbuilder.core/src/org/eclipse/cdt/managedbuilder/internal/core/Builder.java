@@ -2372,6 +2372,8 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	
 	void removeErrorParsers(Set set){
 		Set oldSet = contributeErrorParsers(null);
+		if(oldSet == null)
+			oldSet = new HashSet();
 		oldSet.removeAll(set);
 		setErrorParserList((String[])oldSet.toArray(new String[oldSet.size()]));
 	}

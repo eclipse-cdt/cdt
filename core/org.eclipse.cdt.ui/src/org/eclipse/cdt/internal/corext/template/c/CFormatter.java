@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.corext.template.c;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.eclipse.text.edits.TextEdit;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
@@ -95,6 +97,7 @@ public class CFormatter {
 			
 			internalFormat(document, context);
 			convertLineDelimiters(document);
+			convertTabs(document);
 			if (isReplacedAreaEmpty(context))
 				trimStart(document);
 			
@@ -131,6 +134,50 @@ public class CFormatter {
 			String lineDelimiter= document.getLineDelimiter(line);
 			if (lineDelimiter != null)
 				document.replace(region.getOffset() + region.getLength(), lineDelimiter.length(), fLineDelimiter);
+		}
+	}
+
+	/**
+	 * Converts tabs into spaces if such conversion is required according
+	 * to the current code style.
+	 *
+	 * @param document the document to process.
+	 * @throws BadLocationException
+	 */
+	private void convertTabs(IDocument document) throws BadLocationException {
+		int lines= document.getNumberOfLines();
+		if (lines == 0)
+			return;
+
+		String option;
+		if (fProject == null)
+			option= CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
+		else
+			option= fProject.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true);
+
+		if (!CCorePlugin.SPACE.equals(option))
+			return;
+
+		int tabWidth= CodeFormatterUtil.getTabWidth(fProject);
+		char[] spaces= null;
+		for (int line= 0; line < lines; line++) {
+			IRegion region= document.getLineInformation(line);
+			int offset= region.getOffset();
+			int length = region.getLength();
+			for (int i= 0; i < length; i++) {
+				char c= document.getChar(offset + i); 
+				if (c == '\t') {
+					int numSpaces= tabWidth - i % tabWidth;
+					if (spaces == null) {
+						spaces= new char[tabWidth];
+						Arrays.fill(spaces, ' ');
+					}
+					document.replace(offset + i, 1, String.valueOf(spaces, 0, numSpaces));
+					numSpaces--;
+					i += numSpaces;
+					length += numSpaces;
+				}
+			}
 		}
 	}
 
@@ -175,13 +222,9 @@ public class CFormatter {
 	}	
 
 	private void indent(IDocument document) throws BadLocationException, MalformedTreeException {
-		// first line
-		int offset= document.getLineOffset(0);
-		document.replace(offset, 0, CodeFormatterUtil.createIndentString(fInitialIndentLevel, fProject));
-		
-		// following lines
+		String indent = CodeFormatterUtil.createIndentString(fInitialIndentLevel, fProject);
 		int lineCount= document.getNumberOfLines();
-		IndentUtil.indentLines(document, new LineRange(1, lineCount - 1), fProject, null);
+		IndentUtil.indentLines(document, new LineRange(0, lineCount), indent);
 	}
 
 	/**

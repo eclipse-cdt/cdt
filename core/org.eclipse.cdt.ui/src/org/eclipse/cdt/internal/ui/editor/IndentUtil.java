@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.ILineRange;
+import org.eclipse.jface.text.source.LineRange;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
@@ -102,6 +103,22 @@ public final class IndentUtil {
 		return result;
 	}
 
+	/**
+	 * Inserts <code>indent</code> string at the beginning of each line in <code>lines</code>.
+	 * @param document the document to be changed.
+	 * @param lines the line range to be indented.
+	 * @param indent the indent string to be inserted.
+	 * @throws BadLocationException if <code>lines</code> is not a valid line
+	 *         range on <code>document</code>
+	 */
+	public static void indentLines(IDocument document, LineRange lines, String indent) throws BadLocationException {
+		int numberOfLines= lines.getNumberOfLines();
+		for (int line= lines.getStartLine(), last= line + numberOfLines; line < last; line++) {
+			int offset= document.getLineOffset(line);
+			document.replace(offset, 0, indent);
+		}
+	}
+	
 	/**
 	 * Returns <code>true</code> if line comments at column 0 should be indented inside, <code>false</code> otherwise.
 	 * 
@@ -580,5 +597,4 @@ public final class IndentUtil {
 		computed= new StringBuffer(previousIndent);
 		return computed.toString();
 	}
-	
 }

@@ -126,7 +126,8 @@ public class CContext extends TranslationUnitContext {
 		boolean useCodeFormatter= prefs.getBoolean(PreferenceConstants.TEMPLATES_USE_CODEFORMATTER);			
 
 		ICProject project= getCProject();
-		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()), getIndentationLevel(), useCodeFormatter, project);
+		int indentationLevel = isReadOnly() ? 0 : getIndentationLevel();
+		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()), indentationLevel, useCodeFormatter, project);
 		formatter.format(buffer, this);
 		
 		return buffer;

@@ -79,15 +79,22 @@ public class OpenIncludeAction extends Action {
 	}
 			
 	public void run() {
-		ICElement include= getIncludeStatement(fSelectionProvider.getSelection());
+		IInclude include= getIncludeStatement(fSelectionProvider.getSelection());
 		if (include == null) {
 			return;
 		}
 		
 		try {
 			IResource res = include.getUnderlyingResource();
-			ArrayList filesFound = new ArrayList(4);
-			if (res != null) {
+			ArrayList/*<IPath>*/ filesFound = new ArrayList(4);
+			String fullFileName= include.getFullFileName();
+			if (fullFileName != null) {
+				IPath fullPath= new Path(fullFileName);
+				if (fullPath.isAbsolute() && fullPath.toFile().exists()) {
+					filesFound.add(fullPath);
+				}
+			}
+			if (filesFound.isEmpty() && res != null) {
 				IProject proj = res.getProject();
 				String includeName = include.getElementName();
 				// Search in the scannerInfo information
@@ -101,12 +108,11 @@ public class OpenIncludeAction extends Action {
 					if (info != null) {
 						IExtendedScannerInfo scanInfo = new ExtendedScannerInfo(info);
 						
-						boolean isSystemInclude = include instanceof IInclude 
-							&& ((IInclude) include).isStandard();
+						boolean isSystemInclude = include.isStandard();
 						
 						if (!isSystemInclude) {
 							// search in current directory
-							IPath location= ((IInclude)include).getTranslationUnit().getLocation();
+							IPath location= include.getTranslationUnit().getLocation();
 							if (location != null) {
 								String currentDir= location.removeLastSegments(1).toOSString();
 								findFile(new String[] { currentDir }, includeName, filesFound);
@@ -270,13 +276,13 @@ public class OpenIncludeAction extends Action {
 	}
 
 
-	private static ICElement getIncludeStatement(ISelection sel) {
+	private static IInclude getIncludeStatement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			List list= ((IStructuredSelection)sel).toList();
 			if (list.size() == 1) {
 				Object element= list.get(0);
-				if (element instanceof ICElement && ((ICElement)element).getElementType() == ICElement.C_INCLUDE) {
-					return (ICElement)element;
+				if (element instanceof IInclude) {
+					return (IInclude)element;
 				}
 			}
 		}

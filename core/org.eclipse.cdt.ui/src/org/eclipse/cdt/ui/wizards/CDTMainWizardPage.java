@@ -336,9 +336,9 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        		if (w.getLastProjectName() != null && w.getLastProjectName().equals(getProjectName()))
 	        			bad = false;
 	        	}
-	        	if (bad) {
+	        	if (bad) { // Sic !! Show message but allow creation.
 	        		setErrorMessage(UIMessages.getString("CMainWizardPage.10")); //$NON-NLS-1$
-	        	    return false;
+	        	    return true;
 	        	}
 	        }
 
@@ -347,11 +347,13 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        	if (p == null) p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 	        	File f = p.append(getProjectName()).toFile();
 	        	if (f.exists()) {
-	        		if (f.isDirectory())
-	        			setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
-	        		else
+	        		if (f.isDirectory()) {
 	        			setErrorMessage(UIMessages.getString("CMainWizardPage.7")); //$NON-NLS-1$
-	        		return false;
+		        		return true; // Sic !! Show message but allow creation.
+	        		} else {
+	        			setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
+		        		return false;
+	        		}
 	        	}
 	        }
 	        

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.ui.wizards;
 
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
@@ -113,6 +115,22 @@ implements IExecutableExtension, IWizardWithMemory
 		if (newProject != null && isChanged()) 
 			clearProject(); 
 		if (newProject == null)	{
+            existingPath = false;
+			IPath p = fMainPage.getProjectLocation();
+		  	if (p == null) p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+		    p = p.append(fMainPage.getProjectName());
+        	File f = p.toFile();
+        	if (f.exists() && f.isDirectory()) {
+                if (p.append(".project").toFile().exists()) { //$NON-NLS-1$
+                	if (!
+                		MessageDialog.openConfirm(getShell(), 
+        				UIMessages.getString("CDTCommonProjectWizard.0"),  //$NON-NLS-1$
+						UIMessages.getString("CDTCommonProjectWizard.1")) //$NON-NLS-1$
+						)
+                		return null;
+                }
+                existingPath = true;
+        	} 
 			savedHandler = fMainPage.h_selected;
 			savedHandler.saveState();
 			lastProjectName = fMainPage.getProjectName();
@@ -212,7 +230,6 @@ implements IExecutableExtension, IWizardWithMemory
 	 */	
 	public IProject createIProject(final String name, final IPath location) throws CoreException{
 		if (newProject != null)	return newProject;
-		existingPath = (location != null && location.toFile().exists());
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,9 +30,8 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ResourceTransfer;
 
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 public class IBDropTargetListener implements DropTargetListener {
     
@@ -140,7 +139,7 @@ public class IBDropTargetListener implements DropTargetListener {
         for (int i = 0; i < files.length; i++) {
             IResource resource = files[i];
             if (resource.getType() == IResource.FILE) {
-                ITranslationUnit tu= CModelUtil.findTranslationUnit((IFile) resource);
+                ITranslationUnit tu= CoreModelUtil.findTranslationUnit((IFile) resource);
                 if (tu != null) {
                     return tu;
                 }

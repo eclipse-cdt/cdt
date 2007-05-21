@@ -13,6 +13,8 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,15 +39,24 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class OpenDeclarationsAction extends SelectionParseAction {
+	public static boolean sIsJUnitTest = false;	
 	public static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
 	ITextSelection selNode;
 
@@ -114,26 +125,13 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 									}
 								}
 							}
-							for (int i = 0; i < declNames.length; i++) {
-								IASTFileLocation fileloc = declNames[i].getFileLocation();
-								if (fileloc != null) {
-									found = true;
-									
-									final IPath path = new Path(fileloc.getFileName());
-									final int offset = fileloc.getNodeOffset();
-									final int length = fileloc.getNodeLength();
-									
-									runInUIThread(new Runnable() {
-										public void run() {
-											try {
-												open(path, offset, length);
-											} catch (CoreException e) {
-												CUIPlugin.getDefault().log(e);
-											}
-										}
-									});
-									break;
-								}
+							if (navigateViaCElements(workingCopy.getCProject(), index, declNames)) {
+								found= true;
+							}
+							else {
+								// leave old method as fallback for local variables, parameters and 
+								// everything else not covered by ICElementHandle.
+								found = navigateOneLocation(declNames);
 							}
 						}
 						if (!found) {
@@ -189,6 +187,80 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
+		}
+
+		private boolean navigateOneLocation(IName[] declNames) {
+			for (int i = 0; i < declNames.length; i++) {
+				IASTFileLocation fileloc = declNames[i].getFileLocation();
+				if (fileloc != null) {
+
+					final IPath path = new Path(fileloc.getFileName());
+					final int offset = fileloc.getNodeOffset();
+					final int length = fileloc.getNodeLength();
+
+					runInUIThread(new Runnable() {
+						public void run() {
+							try {
+								open(path, offset, length);
+							} catch (CoreException e) {
+								CUIPlugin.getDefault().log(e);
+							}
+						}
+					});
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private boolean navigateViaCElements(ICProject project, IIndex index, IName[] declNames) {
+			final ArrayList elements= new ArrayList();
+			for (int i = 0; i < declNames.length; i++) {
+				try {
+					ICElement elem = IndexUI.getCElementForName(project, index, declNames[i]);
+					if (elem instanceof ISourceReference) {
+						elements.add(elem);
+					}
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
+				} catch (DOMException e) {
+					CUIPlugin.getDefault().log(e);
+				}
+			}
+			if (elements.isEmpty()) {
+				return false;
+			}
+			
+			runInUIThread(new Runnable() {
+				public void run() {
+					ISourceReference target= null;
+					if (elements.size() == 1) {
+						target= (ISourceReference) elements.get(0);
+					}
+					else {
+						if (sIsJUnitTest) {
+							throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
+						}
+						ICElement[] elemArray= (ICElement[]) elements.toArray(new ICElement[elements.size()]);
+						target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, getSite().getShell(),
+								CEditorMessages.getString("OpenDeclarationsAction.dialog.title"), CEditorMessages.getString("OpenDeclarationsAction.selectMessage"), //$NON-NLS-1$ //$NON-NLS-2$
+								CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
+					}
+					if (target != null) {
+						ITranslationUnit tu= target.getTranslationUnit();
+						ISourceRange sourceRange;
+						try {
+							sourceRange = target.getSourceRange();
+							if (tu != null && sourceRange != null) {
+								open(tu.getLocation(), sourceRange.getIdStartPos(), sourceRange.getIdLength());
+							}
+						} catch (CoreException e) {
+							CUIPlugin.getDefault().log(e);
+						}
+					}
+				}
+			});
+			return true;
 		}
 
 		private IName[] findNames(IIndex index, IASTTranslationUnit ast,

@@ -70,6 +70,11 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 		super(name);
 	}
 	
+	protected void setUp() throws Exception {
+		super.setUp();
+		OpenDeclarationsAction.sIsJUnitTest= true;
+	}
+	
 	public void waitForIndex(int maxSec) throws Exception {
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(maxSec*1000, new NullProgressMonitor()));
 	}

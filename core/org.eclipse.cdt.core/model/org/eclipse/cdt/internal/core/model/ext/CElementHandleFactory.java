@@ -19,10 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -67,6 +69,9 @@ public class CElementHandleFactory {
 			element= new FieldHandle(parentElement, (IField) binding);
 		}
 		else if (binding instanceof IVariable) {
+			if (binding instanceof IParameter) {
+				return null;
+			}
 			element= new VariableHandle(parentElement, (IVariable) binding);
 		}
 		else if (binding instanceof IEnumeration) {
@@ -124,6 +129,9 @@ public class CElementHandleFactory {
 		else if (scope instanceof ICCompositeTypeScope) {
 			ICompositeType type= ((ICCompositeTypeScope) scope).getCompositeType();
 			element= new StructureHandle(parentElement, type);
+		}
+		else if (scope instanceof ICPPBlockScope) {
+			return null;
 		}
 		else if (scope instanceof ICPPNamespaceScope) {
 			element= new NamespaceHandle(parentElement, new String(scopeName.toCharArray()));

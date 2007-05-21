@@ -21,10 +21,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.editors.text.ILocationProvider;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 public class IBConversions {
 
@@ -60,7 +59,7 @@ public class IBConversions {
             return (ITranslationUnit) object;
         }
         if (object instanceof IFile) {
-        	return CModelUtil.findTranslationUnit((IFile) object);
+        	return CoreModelUtil.findTranslationUnit((IFile) object);
         }
         if (object instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) object;
@@ -70,7 +69,7 @@ public class IBConversions {
             }
             IFile file= (IFile) adaptable.getAdapter(IFile.class);
             if (file != null) {
-                return CModelUtil.findTranslationUnit(file);
+                return CoreModelUtil.findTranslationUnit(file);
             }
 
             ILocationProvider locProvider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
@@ -78,7 +77,7 @@ public class IBConversions {
             	IPath path= locProvider.getPath(locProvider);
             	if (path != null) {
             		try {
-						return CModelUtil.findTranslationUnitForLocation(path, null);
+						return CoreModelUtil.findTranslationUnitForLocation(path, null);
 					} catch (CModelException e) {
 						CUIPlugin.getDefault().log(e);
 					}

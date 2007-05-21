@@ -610,7 +610,7 @@ public class CoreModelUtil {
 	 * Returns the translation unit for the file given or <code>null</code>.
 	 */
     public static ITranslationUnit findTranslationUnit(IFile file) {
-		if (CoreModel.isTranslationUnit(file)) {
+		if (CoreModel.isTranslationUnit(file) && file.exists()) {
 			ICProject cp= CoreModel.getDefault().getCModel().getCProject(file.getProject().getName());
 			if (cp != null) {
 				ICElement tu;

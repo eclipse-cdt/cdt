@@ -125,6 +125,11 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         }
     }
     
+    protected void setUp() throws Exception {
+    	super.setUp();
+    	OpenDeclarationsAction.sIsJUnitTest= true;
+    }
+    
     protected void tearDown() throws Exception {
         if( project == null || !project.exists() ) 
             return;

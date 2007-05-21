@@ -106,6 +106,11 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         return suite;
     }
     
+    protected void setUp() throws Exception {
+    	super.setUp();
+    	OpenDeclarationsAction.sIsJUnitTest= true;
+    }
+    
     public void cleanupProject() throws Exception {
     	closeAllEditors();
     	CProjectHelper.delete(cPrj);

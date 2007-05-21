@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRange;
@@ -55,7 +56,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
@@ -168,7 +168,17 @@ public class IndexUI {
 		}
 		return EMPTY_ELEMENTS;
 	}
-			
+
+	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IName declName) throws CoreException, DOMException {
+		if (declName instanceof IASTName) {
+			return getCElementForName(preferProject, index, (IASTName) declName);
+		}
+		else if (declName instanceof IIndexName) {
+			return getCElementForName(preferProject, index, (IIndexName) declName);
+		}
+		return null;
+	}
+
 	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IASTName declName) throws CoreException, DOMException {
 		assert !declName.isReference();
 		IBinding binding= declName.resolveBinding();
@@ -192,7 +202,7 @@ public class IndexUI {
 	private static ITranslationUnit getTranslationUnit(ICProject cproject, IName name) {
 		IPath path= Path.fromOSString(name.getFileLocation().getFileName());
 		try {
-			return CModelUtil.findTranslationUnitForLocation(path, cproject);
+			return CoreModelUtil.findTranslationUnitForLocation(path, cproject);
 		} catch (CModelException e) {
 			CUIPlugin.getDefault().log(e);
 			return null;

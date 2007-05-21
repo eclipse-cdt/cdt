@@ -61,7 +61,10 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 			return null;
 		
 		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-		
+		if (workingCopy == null) {
+			return null;
+		}
+
 		IIndex index;
 		try {
 			index = CCorePlugin.getIndexManager().getIndex(workingCopy.getCProject(),

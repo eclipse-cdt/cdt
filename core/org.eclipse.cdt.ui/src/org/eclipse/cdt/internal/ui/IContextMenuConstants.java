@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,5 +130,10 @@ public interface IContextMenuConstants {
 	 * Pop-up menu: name of group for properties actions (value <code>"group.properties"</code>).
 	 */	
 	public static final String GROUP_PROPERTIES=	ICommonMenuConstants.GROUP_PROPERTIES;
+
+	/**
+	 * Pop-up menu: name of group for debug actions (value <code>"group.debug"</code>).
+	 */	
+	public static final String GROUP_DEBUG=	"group.debug"; //$NON-NLS-1$
 }
 

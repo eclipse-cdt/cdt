@@ -34,6 +34,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -113,6 +114,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -1932,7 +1934,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
+		// marker for contributions to the top
+		menu.add(new GroupMarker(ICommonMenuConstants.GROUP_TOP));
+		// separator for debug related actions (similar to ruler context menu)
+		menu.add(new Separator(IContextMenuConstants.GROUP_DEBUG));
+		
 		super.editorContextMenuAboutToShow(menu);
+		
 		// remove shift actions added by base class
 		menu.remove(ITextEditorActionConstants.SHIFT_LEFT);
 		menu.remove(ITextEditorActionConstants.SHIFT_RIGHT);

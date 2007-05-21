@@ -14,6 +14,7 @@
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [188160] avoid parent refresh if not doing deferred queries
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -30,7 +31,9 @@ import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.view.SystemViewFilterReferenceAdapter;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -93,12 +96,25 @@ public class SystemRefreshAction extends SystemBaseAction
 				// get the adapter and find out if it's a leaf node. If so, refresh the parent as well.
 				ISystemViewElementAdapter adapter = getViewAdapter(obj);
 				if (adapter != null) {
-					// choose the item to refresh -- use parent in case of leaf node
+					// choose the item to refresh -- use parent in case of leaf node.
+					//
+					// This is because subsystems with deferred queries do not have an 
+					// adapter call for deferred query of properties for a non-container.
+					//
+					// The problem with this code is, that we cannot know here whether it
+					// actually is a leaf node that can never have children, or a container
+					// that just happens not to have children right now. Also, this code
+					// adds overhead that may be an unnecessary performance hit. 
 					Object itemToRefresh = obj;
-					if (!adapter.hasChildren((IAdaptable)obj)) {
-						Object parent = adapter.getParent(obj);
-						if (parent!=null) {
-							itemToRefresh = parent;
+					ISubSystem subsys = adapter.getSubSystem(obj);
+					if (subsys!=null && adapter.supportsDeferredQueries(subsys) && !(adapter instanceof SystemViewFilterReferenceAdapter)) {
+						//if deferred queries are not supported, hasChildren() goes right to the remote.
+						//If deferred queries are supported, it is expected to be cached.
+						if (!adapter.hasChildren((IAdaptable)obj)) {
+							Object parent = adapter.getParent(obj);
+							if (parent!=null) {
+								itemToRefresh = parent;
+							}
 						}
 					}
 
@@ -138,8 +154,9 @@ public class SystemRefreshAction extends SystemBaseAction
 			Iterator it = remoteItems.iterator();
 			while (it.hasNext()) {
 				Object obj = it.next();
-				String absName = getViewAdapter(obj).getAbsoluteName(obj);
-				if (absName!=null) {
+				ISubSystem subsys = getViewAdapter(obj).getSubSystem(obj);
+				if (subsys!=null) {
+					//Remote refresh works properly inside the subsystem only. Outside, we need to do local refresh.
 					sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, namesToSelect));
 				} else {
 					sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH, obj));

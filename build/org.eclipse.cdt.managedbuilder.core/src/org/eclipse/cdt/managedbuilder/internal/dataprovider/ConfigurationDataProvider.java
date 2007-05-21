@@ -48,6 +48,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.NotificationManager;
 import org.eclipse.cdt.managedbuilder.internal.core.SettingsChangeEvent;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
@@ -60,6 +61,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	public static final String PREF_TC_ID = "org.eclipse.cdt.build.core.prefbase.toolchain";	//$NON-NLS-1$
 	private static final String PREF_TOOL_ID = "org.eclipse.cdt.build.core.settings.holder";	//$NON-NLS-1$
 	private static final QualifiedName CFG_PERSISTED_PROPERTY = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "configPersisted");	//$NON-NLS-1$
+	private static final QualifiedName NATURES_USED_ON_CACHE_PROPERTY = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "naturesUsedOnCache");	//$NON-NLS-1$
 	
 	private static boolean registered;
 	
@@ -123,6 +125,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		info.setValid(true);
 		
 		setPersistedFlag(des);
+		cacheNaturesIdsUsedOnCache(des);
+		
 		return appliedCfg;
 	}
 	
@@ -241,6 +245,34 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return mProj;
 	}
 	
+	public static String[] getNaturesIdsUsedOnCache(IConfiguration cfg){
+		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+		if(cfgDes != null)
+			return getNaturesIdsUsedOnCache(cfgDes);
+		return null;
+	}
+
+	public static String[] getNaturesIdsUsedOnCache(ICConfigurationDescription cfg){
+		String[] strs = (String[])cfg.getSessionProperty(NATURES_USED_ON_CACHE_PROPERTY);
+		return strs != null && strs.length != 0 ? (String[])strs.clone() : strs;
+	}
+
+	public static void cacheNaturesIdsUsedOnCache(ICConfigurationDescription des){
+		IProject project = des.getProjectDescription().getProject();
+		try {
+			IProjectDescription eDes = project.getDescription();
+			String[] natures = eDes.getNatureIds();
+			setNaturesIdsUsedOnCache(des, natures);
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
+	}
+	
+	private static void setNaturesIdsUsedOnCache(ICConfigurationDescription cfg, String ids[]){
+		ids = ids != null && ids.length != 0 ? (String[])ids.clone() : ids;
+		cfg.setSessionProperty(NATURES_USED_ON_CACHE_PROPERTY, ids);
+	}
+
 	private Configuration load(ICConfigurationDescription des, ManagedProject mProj, boolean isPreference) throws CoreException{
 		ICStorageElement rootElement = des.getStorage(BUILD_SYSTEM_DATA_MODULE_NAME, true);
 		ICStorageElement children[] = rootElement.getChildren();
@@ -428,6 +460,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			cfg.setConfigurationDescription(des);
 			info.setValid(true);
 			setPersistedFlag(des);
+			cacheNaturesIdsUsedOnCache(des);
 			return cfg.getConfigurationData();
 		}
 		return null;

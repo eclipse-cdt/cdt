@@ -37,8 +37,10 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
@@ -112,6 +114,35 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		CoreModel.getDefault().removeElementChangedListener(this);
 	}
 
+	private void modify(ICFileDescription fiDes){
+		ICLanguageSetting ls = fiDes.getLanguageSetting();
+		modify(ls);
+	}
+	
+	private void modify(ICFolderDescription foDes){
+		ICLanguageSetting ls = foDes.getLanguageSettingForFile("a.c");
+		modify(ls);
+	}
+	
+	private void modify(ICLanguageSetting ls){
+		List list = ls.getSettingEntriesList(ICSourceEntry.INCLUDE_PATH);
+		list.add(new CIncludePathEntry("_modify_", 0));
+		ls.setSettingEntries(ICSettingEntry.INCLUDE_PATH, list);
+	}
+
+	private void modify(IFileInfo fiInfo){
+		CLanguageData lData = fiInfo.getCLanguageDatas()[0];
+		modify(lData);
+	}
+	
+	private void modify(CLanguageData lData){
+		ICLanguageSettingEntry[] entries = lData.getEntries(ICSourceEntry.INCLUDE_PATH);
+		ICLanguageSettingEntry[] updatedEntries = new ICLanguageSettingEntry[entries.length + 1];
+		System.arraycopy(entries, 0, updatedEntries, 0, entries.length);
+		updatedEntries[entries.length] = new CIncludePathEntry("_modify_", 0);
+		lData.setEntries(ICSettingEntry.INCLUDE_PATH, updatedEntries);
+	}
+
 	public void testDescription() throws Exception{
 		final String projectName = "test1";
 		IProject project = createProject(projectName);
@@ -176,8 +207,11 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
 		assertEquals(null, cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), true));
 		
-		ICFileDescription fd_abc = cfgDes.createFileDescription(new Path("a/b/c"), rcDess[0]);
+		ICFileDescription fd_abc = cfgDes.createFileDescription(new Path("a/b/c.c"), rcDess[0]);
+		
 		assertTrue(cfgDes.isModified());
+
+		modify(fd_abc);
 		
 			ICProjectDescription anotherDes = coreModel.getProjectDescription(project);
 			assertNotNull("project description is null for re-created project", des);
@@ -206,22 +240,25 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(0, nestedFos.length);
 		assertEquals(1, nestedFis.length);
 		
-		ICFileDescription fd_asd = cfgDes.createFileDescription(new Path("a/s/d"), cfgDes.getRootFolderDescription());
+		ICFileDescription fd_asd = cfgDes.createFileDescription(new Path("a/s/d.c"), cfgDes.getRootFolderDescription());
+		modify(fd_asd);
 		assertEquals(3, cfgDes.getResourceDescriptions().length);
 		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
 		nestedFos = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
 		assertEquals(0, nestedFos.length);
 		assertEquals(2, nestedFis.length);
 		
-		cfg.createFileInfo(new Path("z/x/c"));
+		IFileInfo fi = cfg.createFileInfo(new Path("z/x/c.c"));
+		modify(fi);
 		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
 		nestedFos = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
 		assertEquals(0, nestedFos.length);
 		assertEquals(3, nestedFis.length);
 		assertEquals(4, cfgDes.getResourceDescriptions().length);
 
-		cfg.createFileInfo(new Path("q/w/e"));
-		ICFileDescription fd_qwe = (ICFileDescription)cfgDes.getResourceDescription(new Path("q/w/e"), true);
+		fi = cfg.createFileInfo(new Path("q/w/e.c"));
+		modify(fi);
+		ICFileDescription fd_qwe = (ICFileDescription)cfgDes.getResourceDescription(new Path("q/w/e.c"), true);
 		assertNotNull(fd_qwe);
 		assertEquals(5, cfgDes.getResourceDescriptions().length);
 		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
@@ -236,36 +273,38 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(3, nestedFis.length);
 		assertEquals(4, cfgDes.getResourceDescriptions().length);
 
-		cfg.removeResourceInfo(new Path("a/s/d"));
+		cfg.removeResourceInfo(new Path("a/s/d.c"));
 		assertEquals(3, cfgDes.getResourceDescriptions().length);
 		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
 		nestedFos = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
 		assertEquals(0, nestedFos.length);
 		assertEquals(2, nestedFis.length);
 		
-		IFileInfo fi_qwe = (IFileInfo)cfg.getResourceInfo(new Path("q/w/e"), true);
+		IFileInfo fi_qwe = (IFileInfo)cfg.getResourceInfo(new Path("q/w/e.c"), true);
 		assertNotNull(fi_qwe);
 		
-		ICFileDescription fid_qwe = (ICFileDescription)cfgDes.getResourceDescription(new Path("q/w/e"), true);
+		ICFileDescription fid_qwe = (ICFileDescription)cfgDes.getResourceDescription(new Path("q/w/e.c"), true);
 		assertNotNull(fid_qwe);
-		fi_qwe.setPath(new Path("r/t/y"));
-		assertEquals(fi_qwe, cfg.getResourceInfo(new Path("r/t/y"), true));
-		assertNull(cfgDes.getResourceDescription(new Path("q/w/e"), true));
-		ICFileDescription fid_rty = (ICFileDescription)cfgDes.getResourceDescription(new Path("r/t/y"), true);
+		fi_qwe.setPath(new Path("r/t/y.c"));
+		assertEquals(fi_qwe, cfg.getResourceInfo(new Path("r/t/y.c"), true));
+		assertNull(cfgDes.getResourceDescription(new Path("q/w/e.c"), true));
+		ICFileDescription fid_rty = (ICFileDescription)cfgDes.getResourceDescription(new Path("r/t/y.c"), true);
 		assertEquals(fid_qwe, fid_rty);
 		
-		fid_rty.setPath(new Path("f/g/h"));
-		assertNull(cfg.getResourceInfo(new Path("r/t/y"), true));
-		IFileInfo fi_fgh = (IFileInfo)cfg.getResourceInfo(new Path("f/g/h"), true);
+		fid_rty.setPath(new Path("f/g/h.c"));
+		assertNull(cfg.getResourceInfo(new Path("r/t/y.c"), true));
+		IFileInfo fi_fgh = (IFileInfo)cfg.getResourceInfo(new Path("f/g/h.c"), true);
 		assertEquals(fi_qwe, fi_fgh);
 		
 		ICFolderDescription fod_fg1 = cfgDes.createFolderDescription(new Path("f/g/1"), cfgDes.getRootFolderDescription());
-		
+		modify(fod_fg1);
 		ICFolderDescription fod_fg12 = cfgDes.createFolderDescription(new Path("f/g/1/2"), fod_fg1);
+		modify(fod_fg12);
 		assertEquals(fod_fg12, fod_fg1.getNestedResourceDescription(new Path("2"), true));
 
-		ICFileDescription fid_fg13 = cfgDes.createFileDescription(new Path("f/g/1/3"), fod_fg1);
-		assertEquals(fid_fg13, fod_fg1.getNestedResourceDescription(new Path("3"), true));
+		ICFileDescription fid_fg13 = cfgDes.createFileDescription(new Path("f/g/1/3.c"), fod_fg1);
+		modify(fid_fg13);
+		assertEquals(fid_fg13, fod_fg1.getNestedResourceDescription(new Path("3.c"), true));
 		
 		assertEquals(2, fod_fg1.getNestedResourceDescriptions().length);
 		assertEquals(1, fod_fg1.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE).length);
@@ -281,7 +320,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(1, fod_fg1.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER).length);
 		
 		assertEquals(fod_fg12, cfgDes.getResourceDescription(new Path("t/y/u/2"), true));
-		assertEquals(fid_fg13, cfgDes.getResourceDescription(new Path("t/y/u/3"), true));
+		assertEquals(fid_fg13, cfgDes.getResourceDescription(new Path("t/y/u/3.c"), true));
 
 		ICLanguageSetting settings[] = cfgDes.getRootFolderDescription().getLanguageSettings();
 		for(int i = 0; i < settings.length; i++){
@@ -501,7 +540,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		cfgDes.setSourceEntries(updatetSEs);
 		
 		s = cfgDes.getSourceEntries();
-		updatetSEs[1] = new CSourceEntry(projPath, new Path[]{new Path("a")}, ICSourceEntry.VALUE_WORKSPACE_PATH);
+		updatetSEs[1] = new CSourceEntry(projPath, new Path[]{new Path("a")}, ICSourceEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
 		checkArrays(updatetSEs, s);
 		//assertTrue(Arrays.equals(updatetSEs, s));
 

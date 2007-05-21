@@ -1096,12 +1096,16 @@ public class BuildDescriptionModelTests extends TestCase {
 			type.addResource(tDes.createResource(cName + "/" + art));
 		//
 
-		//FIXME: this is very bad, need to wait until the indexing is completed here
-/*		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e1) {
-		}
-*/		
+		// TODO: more testing needed, may still need a sleep here because:
+		// the legacy project creation mechanism is used for this test
+		//the IManagedBuildInfo gets created/cached when the project contains only C nature
+		//thus C++ settings are initialy not taken into the account
+		//after that the CC nature is added
+		//in this the build system is initiating the core settings update (ICProjectDescription cache refresh)
+		//the refresh is scheduled as a job, so in case we do not wait here the job may not be completed by the time
+		//the test is run
+
+		
 		CCorePlugin.getIndexManager().joinIndexer(-1, new NullProgressMonitor());
 
 		IBuildDescription des = null;

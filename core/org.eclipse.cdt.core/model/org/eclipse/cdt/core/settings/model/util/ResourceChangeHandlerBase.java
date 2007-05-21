@@ -121,33 +121,36 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getSource() instanceof IWorkspace) {
-			
 			IResourceMoveHandler handler = createResourceMoveHandler(event);
-			switch (event.getType()) {
-				case IResourceChangeEvent.PRE_CLOSE:
-					handler.handleProjectClose((IProject)event.getResource());
-					break;
+			doHahdleResourceMove(event, handler);
+		}
+	}
+	
+	protected void doHahdleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler){
+		switch (event.getType()) {
+			case IResourceChangeEvent.PRE_CLOSE:
+				handler.handleProjectClose((IProject)event.getResource());
+				break;
 //				case IResourceChangeEvent.PRE_DELETE :
 //					handler.handleResourceRemove(event.getResource());
 //					break;
-				case IResourceChangeEvent.POST_CHANGE :
-					IResourceDelta resDelta = event.getDelta();
-					if (resDelta == null) {
-						break;
-					}
-					try {
-						DeltaVisitor rcChecker = new DeltaVisitor(handler, resDelta);
-						resDelta.accept(rcChecker);
-					} catch (CoreException e) {
-						CCorePlugin.log(e);
-					}
+			case IResourceChangeEvent.POST_CHANGE :
+				IResourceDelta resDelta = event.getDelta();
+				if (resDelta == null) {
 					break;
-				default :
-					break;
-			}
-			
-			handler.done();
+				}
+				try {
+					DeltaVisitor rcChecker = new DeltaVisitor(handler, resDelta);
+					resDelta.accept(rcChecker);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+				break;
+			default :
+				break;
 		}
+			
+		handler.done();
 	}
 	
 	protected abstract IResourceMoveHandler createResourceMoveHandler(IResourceChangeEvent event);

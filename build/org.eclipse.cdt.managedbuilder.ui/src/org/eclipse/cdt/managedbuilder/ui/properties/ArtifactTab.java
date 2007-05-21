@@ -15,7 +15,9 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
@@ -33,13 +35,15 @@ import org.eclipse.swt.widgets.Text;
 
 public class ArtifactTab extends AbstractCBuildPropertyTab {
 
-	static final public String PROPERTY = ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID; 
-	Text t2, t3;
-	Combo c1;
-	int savedPos = -1; // current project type
-	IConfiguration fCfg; 
-	IBuildObjectProperties fProp; 
-	IBuildPropertyValue[] values;
+	public static final String PROPERTY = ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID; 
+	private Label l4;
+	private Text t2, t3, t4;
+	private Combo c1;
+	private int savedPos = -1; // current project type
+	private IConfiguration fCfg; 
+	private IBuildObjectProperties fProp; 
+	private IBuildPropertyValue[] values;
+	private ITool targetTool;
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -73,7 +77,17 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			public void modifyText(ModifyEvent e) {
 				fCfg.setArtifactExtension(t3.getText());
 			}} );
-
+		
+		l4 = new Label(usercomp, SWT.NONE);
+		l4.setLayoutData(new GridData(GridData.BEGINNING));
+		l4.setText(Messages.getString("ArtifactTab.3")); //$NON-NLS-1$
+		t4 = new Text(usercomp, SWT.BORDER);
+		t4.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		t4.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if(targetTool != null)
+					targetTool.setOutputPrefixForPrimaryOutput(t4.getText());
+			}} );
 		updateData(getResDesc());
 	}
 
@@ -121,8 +135,19 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			getCfg().setArtifactName(CWizardHandler.removeSpaces(s));
 		}
 		t2.setText(s);
-		
 		t3.setText(fCfg.getArtifactExtension());
+		
+		targetTool = fCfg.calculateTargetTool();
+		if(targetTool != null){
+			if (l4 != null) l4.setVisible(true);
+			if (t4 != null) {
+				t4.setVisible(true);
+				t4.setText(targetTool.getOutputPrefix());
+			}
+		} else {
+			if (l4 != null) l4.setVisible(false);
+			if (t4 != null) t4.setVisible(false);
+		}
 	}
 	
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
@@ -130,6 +155,12 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		IConfiguration cfg2 = getCfg(dst.getConfiguration());
 		cfg2.setArtifactName(cfg1.getArtifactName());
 		cfg2.setArtifactExtension(cfg1.getArtifactExtension());
+		
+		ITool t1 = cfg1.calculateTargetTool();
+		ITool t2 = cfg2.calculateTargetTool();
+		if (t1 != null && t2 != null) 
+			t2.setOutputPrefixForPrimaryOutput(t1.getOutputPrefix());
+			
 		try {
 			IBuildProperty bp = cfg1.getBuildProperties().getProperty(PROPERTY);
 			if (bp != null) {
@@ -140,14 +171,15 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 				}
 			}
 		} catch (CoreException e) {
-			System.out.println(e.getMessage());
+			CUIPlugin.getDefault().log(e);
 		}
 	}
 	
 	public void performDefaults() {
-		IConfiguration cfg = getCfg();
-		cfg.setArtifactName(cfg.getManagedProject().getDefaultArtifactName());
-		cfg.setArtifactExtension(null);
+		fCfg.setArtifactName(fCfg.getManagedProject().getDefaultArtifactName());
+		fCfg.setArtifactExtension(null);
+		if (targetTool != null)
+			targetTool.setOutputPrefixForPrimaryOutput(null);
 		updateData(getResDesc());
 	}
 

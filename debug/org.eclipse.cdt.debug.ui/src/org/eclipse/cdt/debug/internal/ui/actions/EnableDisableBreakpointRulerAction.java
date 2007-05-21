@@ -38,9 +38,9 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		if ( getBreakpoint() != null ) {
+		if ( fBreakpoint != null ) {
 			try {
-				getBreakpoint().setEnabled( !getBreakpoint().isEnabled() );
+				fBreakpoint.setEnabled( !fBreakpoint.isEnabled() );
 			}
 			catch( CoreException e ) {
 				ErrorDialog.openError( getTargetPart().getSite().getShell(), ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enabling_disabling_breakpoints_1" ), //$NON-NLS-1$

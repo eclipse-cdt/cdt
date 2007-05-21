@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui; 
 
@@ -89,14 +90,10 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 	}
 
 	private boolean isAcceptable( IBreakpoint b ) {
-		if ( b instanceof ICBreakpoint ) {
-			try {
-				String handle = ((ICBreakpoint)b).getSourceHandle();
-				File file = new File( handle );
-				return file.equals( getFile() );
-			}
-			catch( CoreException e ) {
-			}
+		String handle = b.getMarker().getAttribute(ICBreakpoint.SOURCE_HANDLE, null);
+		if (handle != null) {
+			File file = new File( handle );
+			return file.equals( getFile() );
 		}
 		return false;
 	}

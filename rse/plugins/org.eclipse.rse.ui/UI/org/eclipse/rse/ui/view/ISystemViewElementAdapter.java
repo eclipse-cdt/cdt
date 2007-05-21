@@ -177,28 +177,32 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	public Object getParent(Object element);
 	
 	/**
-	 * Return the children of this model object. 
+	 * Return the children of this model object.
+	 *
+	 * When {@link #supportsDeferredQueries(ISubSystem)} returns false,
+	 * this query will be called in the dispatch thread, so the implementation
+	 * needs to make sure that SWT thread exceptions are avoided.
+	 *  
 	 * @param element the model object to query
 	 * @param monitor the progress monitor
-	 * 
 	 * @return the children of element
-	 * 
-	 * The implementation needs to take this into
-	 * account so that SWT thread exceptions are avoided.
 	 */
 	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor);
 	
 	/**
-	 * Return the children of this object.  When a contextObject is passed in
-	 * instead of an adaptable model object, the adapter needs handle both the model object
-	 * as well as the associated filter.
+	 * Return the children of this object.
+	 * 
+	 * When a contextObject is passed in instead of an adaptable model
+	 * object, the adapter needs handle both the model object as well
+	 * as the associated filter.
+	 * 
+	 * When {@link #supportsDeferredQueries(ISubSystem)} returns false,
+	 * this query will be called in the dispatch thread, so the implementation
+	 * needs to make sure that SWT thread exceptions are avoided.
+	 * 
 	 * @param contextObject a wrapper object that contains the model object plus context information
 	 * @param monitor the progress monitor
-	 * 
 	 * @return the children of the model object in contextObject that matches the filter in contextObject
-	 * 
-	 * The implementation needs to take this into
-	 * account so that SWT thread exceptions are avoided.
 	 */
 	public Object[] getChildren(IContextObject contextObject, IProgressMonitor monitor);
 	
@@ -208,12 +212,25 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
     public Object[] getChildrenUsingExpandToFilter(Object element, String expandToFilter);
 	
     /**
-	 * Return true if this object has children
+	 * Return true if this object has children. 
+	 * <p>
+	 * In case this adapter returns true for {@link #supportsDeferredQueries(ISubSystem)},
+	 * it is expected that the underlying subsystem caches the hasChildren() attribute
+	 * such that it does not necessarily perform a server round trip. In this case, it 
+	 * has more the semantics of "can have children". In that case, 
+	 * a deferred {@link #getChildren(IAdaptable, IProgressMonitor)}
+	 * call is still allowed to return an empty array indicating no children.
+	 * </p>
+	 * @param element the element to check
+	 * @return <code>true</code> if this element can have children.
 	 */
 	public boolean hasChildren(IAdaptable element);
 	
 	/**
-	 * Return true if this object has children
+	 * Return true if this object has children.
+	 * @see #hasChildren(IAdaptable)
+	 * @param element the element to check
+	 * @return <code>true</code> if this element can have children.
 	 */
 	public boolean hasChildren(IContextObject element);
 	

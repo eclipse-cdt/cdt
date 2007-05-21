@@ -98,6 +98,7 @@ import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCascadingGoToAction;
@@ -2824,6 +2825,7 @@ public class SystemView extends SafeTreeViewer
 			rmtAdapter = getViewAdapter(remoteObject);
 			if (rmtAdapter == null) return false;
 			subsystem = rmtAdapter.getSubSystem(remoteObject);
+			assert subsystem!=null : "EVENT_REFRESH_REMOTE outside subsystem"; //$NON-NLS-1$
 			oldElementName = rmtAdapter.getAbsoluteName(remoteObject);
 			doesDeferredQueries = rmtAdapter.supportsDeferredQueries(subsystem);
 		} else
@@ -2833,10 +2835,14 @@ public class SystemView extends SafeTreeViewer
 		// STEP 2: find all references to the object
 		findAllRemoteItemReferences(oldElementName, remoteObject, subsystem, matches);
 		if (remoteObject instanceof String) {
+			//TODO one String may reference multiple different context objects, so we should really iterate over all matches here
+			//See javadoc of findAllRemoteItemReferences
 			remoteObject = getFirstRemoteObject(matches);
 			rmtAdapter = getViewAdapter(remoteObject);
+			assert rmtAdapter!=null; //cannot happen because matches were result of String query
 			if (rmtAdapter!=null) {
 				subsystem = rmtAdapter.getSubSystem(remoteObject);
+				assert subsystem!=null : "EVENT_REFRESH_REMOTE outside subsystem"; //$NON-NLS-1$
 				doesDeferredQueries = rmtAdapter.supportsDeferredQueries(subsystem);
 			}
 		}
@@ -2904,7 +2910,8 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Given the result of findAllRemoteItemReferences, scan for first non-filter object
+	 * Given the result TreeItems of findAllRemoteItemReferences,
+	 * return the Data of the first Item.
 	 */
 	protected Object getFirstRemoteObject(Vector matches) {
 		if ((matches == null) || (matches.size() == 0)) return null;
@@ -4054,14 +4061,23 @@ public class SystemView extends SafeTreeViewer
 	/**
 	 * Recursively tries to find all occurrences of a given remote object, starting at the tree root. 
 	 * Since the object memory object for a remote object is not dependable we call getAbsoluteName() 
-	 * on the adapter to do the comparisons. 
+	 * on the adapter to do the comparisons.
+	 * <p>
+	 * TODO: This method should not return any invalid matches, i.e. remote objects
+	 * that do match the String identifier but have been deleted already. Because the
+	 * same remote object can appear in multiple contexts in the RSE Tree, a single
+	 * remote object identifier String may evaluate to multiple different matches
+	 * to fill into the matches argument. All those context object matches, however,
+	 * reference the same real-world model objects due to the constraint that 
+	 * {@link IRemoteObjectIdentifier} uniquely identifies a remote object. 
 	 * <p>
 	 * This overload takes a string and a subsystem.
 	 * 
-	 * @param searchString the absolute name of the remote object to which we want to find a tree item which references it.
+	 * @param searchString the absolute name of the remote object to which
+	 *    we want to find a tree item which references it.
 	 * @param elementObject the actual remote element to find, for binary matching
 	 * @param subsystem optional subsystem to search within
-	 * @param matches the vector to populate with hits
+	 * @param matches the vector to populate with hits (TreeItem objects)
 	 */
 	protected Vector findAllRemoteItemReferences(String searchString, Object elementObject, ISubSystem subsystem, Vector matches) {
 		Tree tree = getTree();

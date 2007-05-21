@@ -20,8 +20,12 @@ import org.eclipse.rse.services.search.IHostSearchResult;
 
 /**
  * Interface that remote objects must implement in order to be 
- * identifiable for drag and drop, and clipboard support.
+ * identifiable for drag and drop, clipboard support, and finding
+ * multiple occurrences of the same remote object in different
+ * contexts in the SystemView.
+ * <p>
  * This is the functional opposite of {@link IRemoteObjectResolver}.
+ * </p>
  * 
  * @see IRemoteObjectIdentifier
  */
@@ -52,7 +56,7 @@ public interface IRemoteObjectIdentifier {
 	 * its object to support refresh in the SystemView.
 	 * </p><p>
 	 * Because each subsystem maintains its own objects, it is the 
-	 * responsability of the subsystem and its adapters to come up
+	 * responsibility of the subsystem and its adapters to come up
 	 * with a mapping that is unique for the subsystem. Some subsystems
 	 * use fully qualified path names, while others may use other methods. 
 	 * Extenders just need to ensure that objects of different type (such 
@@ -61,9 +65,18 @@ public interface IRemoteObjectIdentifier {
 	 * {@link IRemoteObjectResolver#getObjectWithAbsoluteName(String)}
 	 * method actually finds the object by the given ID. Other subsystems
 	 * do not need to be considered.
-	 * </p><p>
 	 * </p>
-	 * <p><strong>Examples</strong>
+	 * <p><strong>Uniqueness and Multiple Contexts</strong><br/>
+	 * The RSE SystemView allows the same remote object to be displayed
+	 * in multiple different contexts, i.e. under multiple different 
+	 * filters. In this case, each occurrence of the same object must
+	 * return the same absolute name. For the reverse mapping, however,
+	 * it is up to the subsystem whether its {@link IRemoteObjectResolver}
+	 * returns only one internal model object for the given identifier, 
+	 * or multiple context objects which all refer to the same remote 
+	 * object but also hold context information.
+	 * </p>
+	 * <p><strong>Examples</strong><br/>
 	 * In the File Subsystem, a fully qualified pathname is used to 
 	 * uniquely identify remote objects. For other kinds of objects
 	 * maintained by the same subsystem, the following schemes are used:
@@ -85,7 +98,7 @@ public interface IRemoteObjectIdentifier {
 	 * or the filters start with a profile name which must not contain
 	 * any of the / \ or : characters. Fully qualified path names, on 
 	 * the other hand, always start with a / or \ character (UNIX style 
-	 * pathes, Windows UNC pathes) or have a : character on the second 
+	 * paths, Windows UNC paths) or have a : character on the second 
 	 * position (Windows drive letters). The SEARCH_RESULT_DELIMITER
 	 * is ":SEARCH" which cannot be part of a valid filename.
 	 * Therefore, this naming scheme is guaranteed to be unique.

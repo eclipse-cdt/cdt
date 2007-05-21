@@ -35,7 +35,7 @@ public interface IRemoteObjectResolver {
 	 * {@link IRemoteObjectIdentifier#getAbsoluteName(Object)}.
 	 * </p><p>
 	 * Because each subsystem maintains it's own objects, it is the 
-	 * responsability of the subsystem to determine how an ID (or key)
+	 * responsibility of the subsystem to determine how an ID (or key)
 	 * for a given object maps to the real object. Subsystems also need
 	 * to ensure that objects of different type (such as filters, actual
 	 * resources or error messages) all have different IDs. See
@@ -57,6 +57,14 @@ public interface IRemoteObjectResolver {
 	 * object will typically be in memory from generating the key.
 	 * A notable exception to this case is when the system view is 
 	 * restored to its previous state during startup.  
+	 * </p>
+	 * <p><strong>Uniqueness and Multiple Contexts</strong><br/>
+	 * The RSE SystemView allows the same remote object to be displayed
+	 * in multiple different contexts, i.e. under multiple different 
+	 * filters. In this case, each occurrence of the same object must
+	 * return the same absolute name. For the reverse mapping, however,
+	 * this method may return only one context object even though 
+	 * multiple different ones are shown in the SystemView.
 	 * </p>
 	 * @see IRemoteObjectIdentifier#getAbsoluteName(Object)
 	 * 

@@ -64,7 +64,7 @@ public class AllManagedBuildTests {
 //		suite.addTest(ManagedBuildEnvironmentTests.suite());
 //		suite.addTest(ManagedBuildMacrosTests.suite());
 //		suite.addTest(ManagedBuildTCSupportedTest.suite());
-//		suite.addTest(MultiVersionSupportTests.suite());
+		suite.addTest(MultiVersionSupportTests.suite());
 		suite.addTest(OptionEnablementTests.suite());
 		suite.addTest(ManagedBuildDependencyCalculatorTests.suite());
 

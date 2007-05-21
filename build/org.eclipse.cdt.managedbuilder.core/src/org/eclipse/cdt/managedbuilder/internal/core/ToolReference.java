@@ -1325,4 +1325,12 @@ public class ToolReference implements IToolReference {
 	public String getUniqueRealName() {
 		return getName();
 	}
+
+	public IOutputType getEdtableOutputType(IOutputType base) {
+		return null;
+	}
+
+	public void setOutputPrefixForPrimaryOutput(String prefix) {
+		setOutputPrefix(prefix);
+	}
 }

@@ -419,8 +419,11 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * Sets the prefix that the tool should prepend to the name of the build artifact.
 	 * For example, a librarian usually prepends 'lib' to the target.a
 	 * @param String
+	 * @see {@link #setOutputPrefixForPrimaryOutput(String)} 
 	 */
 	public void setOutputPrefix(String prefix);
+	
+	public void setOutputPrefixForPrimaryOutput(String prefix);
 	
 	/**
 	 * Returns <code>true</code> if the Tool wants the MBS to display the Advanced 
@@ -753,6 +756,8 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	IInputType setHeaderExtensionsAttribute(IInputType type, String[] extensions);
 */
 	IInputType getEdtableInputType(IInputType base);
+	
+	IOutputType getEdtableOutputType(IOutputType base);
 	
 	boolean isEnabled();
 	

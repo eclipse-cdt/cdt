@@ -2463,6 +2463,25 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		}
 	}
 	
+	public void setOutputPrefixForPrimaryOutput(String prefix) {
+		if(prefix != null && prefix.equals(getOutputPrefix()))
+			return;
+		
+		IOutputType type = getPrimaryOutputType();
+		if(type == null)
+			setOutputPrefix(prefix);
+		else {
+			setOutputPrefixForType(type, prefix);
+		}
+	}
+	
+	private void setOutputPrefixForType(IOutputType type, String prefix){
+		type = getEdtableOutputType(type);
+		type.setOutputPrefix(prefix);
+		setRebuildState(true);
+		isDirty = true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setOutputsAttribute(java.lang.String)
 	 */
@@ -3543,6 +3562,22 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			IAdditionalInput addlInput = addlInputs[i];
 			newType.createAdditionalInput(addlInput);
 		}
+		return newType;
+	}
+	
+	public IOutputType getEdtableOutputType(IOutputType base) {
+		if(base.getParent() == this)
+			return base;
+		
+		IOutputType extType = base;
+		for(;extType != null && !extType.isExtensionElement();extType = extType.getSuperClass());
+		String id;
+		if(extType != null){
+			id = ManagedBuildManager.calculateChildId(extType.getId(), null);
+		} else {
+			id = ManagedBuildManager.calculateChildId(getId(), null);
+		}
+		IOutputType newType = (IOutputType)createOutputType(base, id, base.getName(), false);
 		return newType;
 	}
 

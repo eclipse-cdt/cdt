@@ -372,7 +372,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		}
 		while (!candidates.isEmpty() && result == null) {
 			String candidate = (String) candidates.pop();
-			result = bundle.getEntry(candidate);
+			result = bundle.getResource(candidate);
 		}
 		return result;
 	}

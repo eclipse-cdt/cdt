@@ -2476,6 +2476,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 	
 	private void setOutputPrefixForType(IOutputType type, String prefix){
+		if(prefix == null){
+			if(type.getParent() != this)
+				return;
+		}
 		type = getEdtableOutputType(type);
 		type.setOutputPrefix(prefix);
 		setRebuildState(true);

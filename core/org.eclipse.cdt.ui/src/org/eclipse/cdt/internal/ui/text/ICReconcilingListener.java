@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 
@@ -35,13 +34,11 @@ public interface ICReconcilingListener {
 	 * 
 	 * @param ast
 	 *            the translation unit AST or <code>null</code> if the working
-	 *            copy was consistent or reconciliation has been cancelled
-	 * @param positionTracker
-	 *            the position tracker to map AST positions to current document
-	 *            positions; may be <code>null</code> which means positions
-	 *            can be considered up-to-date
+	 *            copy was consistent or reconcilation has been cancelled
+	 * @param force
+	 *            flag indicating whether the reconciler was invoked forcefully
 	 * @param progressMonitor
 	 *            the progress monitor
 	 */
-	void reconciled(IASTTranslationUnit ast, IPositionConverter positionTracker, IProgressMonitor progressMonitor);
+	void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor);
 }

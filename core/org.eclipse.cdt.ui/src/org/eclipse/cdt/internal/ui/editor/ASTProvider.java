@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
@@ -320,7 +319,7 @@ public final class ASTProvider {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled()
 	 */
-	void reconciled(IASTTranslationUnit ast, IPositionConverter converter, ICElement cElement, IProgressMonitor progressMonitor) {
+	void reconciled(IASTTranslationUnit ast, ICElement cElement, IProgressMonitor progressMonitor) {
 		if (cElement == null)
 			return;
 		Assert.isTrue(cElement instanceof ITranslationUnit);

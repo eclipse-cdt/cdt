@@ -119,9 +119,11 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 		if (workingCopy == null) {
 			return;
 		}
+		boolean forced= false;
 		try {
 			// reconcile
 			synchronized (workingCopy) {
+				forced= workingCopy.isConsistent();
 				ast= workingCopy.reconcile(computeAST, true, fProgressMonitor);
 			}
 		} catch(OperationCanceledException oce) {
@@ -136,7 +138,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 					index= ast.getIndex();
 				}
 				try {
-					((ICReconcilingListener)fEditor).reconciled(ast, null, fProgressMonitor);
+					((ICReconcilingListener)fEditor).reconciled(ast, forced, fProgressMonitor);
 				} finally {
 					if (index != null) {
 						index.releaseReadLock();

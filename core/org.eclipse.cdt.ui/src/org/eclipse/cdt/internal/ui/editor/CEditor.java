@@ -137,7 +137,6 @@ import com.ibm.icu.text.BreakIterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
@@ -1100,12 +1099,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	private ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
 
 	/**
-	 * Flag indicating whether the reconciler is currently running.
-	 * @since 4.0
-	 */
-	private volatile boolean fIsReconciling;
-
-	/**
 	 * Semantic highlighting manager
 	 * @since 4.0
 	 */
@@ -1207,24 +1200,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 */
 	public ICElement getInputCElement () {
 		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditorInput());
-	}
-
-	/**
-	 * Gets the current IFile input.
-	 * This method will be remove after cdt-3.0.
-	 * We can not guaranty that the input is an IFile, it may
-	 * an external file.  Clients should test for <code>null<code> or use getInputCElement()
-	 * @deprecated use <code>CEditor.getInputCElement()</code>.
-     * @return IFile Input file or null if input is not and IFileEditorInput.
-	 */
-	public IFile getInputFile() {		
-		IEditorInput editorInput = getEditorInput();
-		if (editorInput != null) {
-			if ((editorInput instanceof IFileEditorInput)) {
-				return ((IFileEditorInput) editorInput).getFile();
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -1534,7 +1509,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 4.0
 	 */
 	protected void synchronizeOutlinePage() {
-		if(fOutlinePage != null && fOutlinePage.isLinkingEnabled() && !fIsReconciling) {
+		if(fOutlinePage != null && fOutlinePage.isLinkingEnabled()) {
 			fOutlinePage.removeSelectionChangedListener(this);
 			fOutlinePage.synchronizeSelectionWithEditor();
 			fOutlinePage.addSelectionChangedListener(this);
@@ -1938,6 +1913,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		menu.add(new GroupMarker(ICommonMenuConstants.GROUP_TOP));
 		// separator for debug related actions (similar to ruler context menu)
 		menu.add(new Separator(IContextMenuConstants.GROUP_DEBUG));
+		menu.add(new Separator(IContextMenuConstants.GROUP_DEBUG+".end")); //$NON-NLS-1$
 		
 		super.editorContextMenuAboutToShow(menu);
 		
@@ -2524,8 +2500,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 4.0
 	 */
 	public void aboutToBeReconciled() {
-		fIsReconciling= true;
-		
 		// Notify AST provider
 		CUIPlugin.getDefault().getASTProvider().aboutToBeReconciled(getInputCElement());
 
@@ -2537,23 +2511,21 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	}
 
 	/*
-	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, IPositionConverter, IProgressMonitor)
+	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 	 * @since 4.0
 	 */
-	public void reconciled(IASTTranslationUnit ast, IPositionConverter positionTracker, IProgressMonitor progressMonitor) {
-		fIsReconciling= false;
-		
+	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 		CUIPlugin cuiPlugin= CUIPlugin.getDefault();
 		if (cuiPlugin == null)
 			return;
 		
 		// Always notify AST provider
-		cuiPlugin.getASTProvider().reconciled(ast, positionTracker, getInputCElement(), progressMonitor);
+		cuiPlugin.getASTProvider().reconciled(ast, getInputCElement(), progressMonitor);
 
 		// Notify listeners
 		Object[] listeners = fReconcilingListeners.getListeners();
 		for (int i = 0, length= listeners.length; i < length; ++i) {
-			((ICReconcilingListener)listeners[i]).reconciled(ast, positionTracker, progressMonitor);
+			((ICReconcilingListener)listeners[i]).reconciled(ast, force, progressMonitor);
 		}
 	
 	}

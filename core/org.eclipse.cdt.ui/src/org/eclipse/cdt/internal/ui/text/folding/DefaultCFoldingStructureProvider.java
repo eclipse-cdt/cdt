@@ -46,7 +46,6 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
@@ -99,9 +98,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit, org.eclipse.cdt.core.IPositionConverter, org.eclipse.core.runtime.IProgressMonitor)
+		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 		 */
-		public void reconciled(IASTTranslationUnit ast, IPositionConverter positionTracker, IProgressMonitor progressMonitor) {
+		public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 			if (fInput == null || fReconciling) {
 				return;
 			}
@@ -113,7 +112,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				FoldingStructureComputationContext ctx= createContext(fInitialReconcilePending);
 				fInitialReconcilePending= false;
 				ctx.fAST= ast;
-				ctx.fASTPositionConverter= positionTracker;
 	            update(ctx);
 			} finally {
 				fReconciling= false;
@@ -137,7 +135,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		private boolean fHasHeaderComment;
 		private LinkedHashMap fMap= new LinkedHashMap();
 		private IASTTranslationUnit fAST;
-		private IPositionConverter fASTPositionConverter;
 
 		FoldingStructureComputationContext(IDocument document, ProjectionAnnotationModel model, boolean allowCollapsing) {
 			Assert.isNotNull(document);
@@ -268,13 +265,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 */
 		public boolean collapseInactiveCode() {
 			return fAllowCollapsing && fCollapseInactiveCode;
-		}
-
-		/**
-		 * @return the converter for the current AST or <code>null</code>
-		 */
-		public IPositionConverter getASTPositionConverter() {
-			return fASTPositionConverter;
 		}
 
 		/**
@@ -1051,7 +1041,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					public IStatus runOnAST(IASTTranslationUnit ast) {
 						if (ast != null) {
 							ctx.fAST= ast;
-							ctx.fASTPositionConverter= null;
 							fInitialReconcilePending= false;
 							computeFoldingStructure(ast, ctx);
 						}
@@ -1098,7 +1087,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		if (fileName == null) {
 			return;
 		}
-		IPositionConverter converter= ctx.getASTPositionConverter();
 		List branches= new ArrayList();
 		Stack branchStack = new Stack();
 
@@ -1133,10 +1121,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
 				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elseStmt.taken()));
 				branch.setEndOffset(stmtLocation.getNodeOffset());
-				if (converter != null) {
-					IRegion converted= converter.historicToActual(branch);
-					branch= new Branch(converted.getOffset(), converted.getLength(), branch.taken());
-				}
 				branches.add(branch);
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
 				if (branchStack.isEmpty()) {
@@ -1147,10 +1131,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement) statement;
 				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elifStmt.taken()));
 				branch.setEndOffset(stmtLocation.getNodeOffset());
-				if (converter != null) {
-					IRegion converted= converter.historicToActual(branch);
-					branch= new Branch(converted.getOffset(), converted.getLength(), branch.taken());
-				}
 				branches.add(branch);
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
 				if (branchStack.isEmpty()) {
@@ -1159,10 +1139,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				}
 				Branch branch= (Branch)branchStack.pop();
 				branch.setEndOffset(stmtLocation.getNodeOffset() + stmtLocation.getNodeLength());
-				if (converter != null) {
-					IRegion converted= converter.historicToActual(branch);
-					branch= new Branch(converted.getOffset(), converted.getLength(), branch.taken());
-				}
 				branch.setInclusive(true);
 				branches.add(branch);
 			}

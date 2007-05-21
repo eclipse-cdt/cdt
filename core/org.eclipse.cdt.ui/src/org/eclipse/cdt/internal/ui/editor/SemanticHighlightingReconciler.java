@@ -22,16 +22,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
 
-import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -82,16 +79,13 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/** The semantic token */
 		private SemanticToken fToken= new SemanticToken();
 		private String fFilePath;
-		private IPositionConverter fPositionTracker;
 		private int fMinLocation;
 		
 		/**
 		 * @param filePath
-		 * @param positionTracker
 		 */
-		public PositionCollector(String filePath, IPositionConverter positionTracker) {
+		public PositionCollector(String filePath) {
 			fFilePath= filePath;
-			fPositionTracker= positionTracker;
 			fMinLocation= -1;
 		}
 
@@ -267,11 +261,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			int offset= nodeLocation.getNodeOffset();
 			int length= nodeLocation.getNodeLength();
-			if (fPositionTracker != null) {
-				IRegion actualPos= fPositionTracker.historicToActual(new Region(offset, length));
-				offset= actualPos.getOffset();
-				length= actualPos.getLength();
-			}
 			if (offset > -1 && length > 0) {
 				addPosition(offset, length, highlighting);
 			}
@@ -290,11 +279,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			int offset= macroUseLocation.getNodeOffset();
 			int length= macroLength;
-			if (fPositionTracker != null) {
-				IRegion actualPos= fPositionTracker.historicToActual(new Region(offset, length));
-				offset= actualPos.getOffset();
-				length= actualPos.getLength();
-			}
 			if (offset > -1 && length > 0) {
 				addPosition(offset, length, highlighting);
 			}
@@ -387,9 +371,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	}
 
 	/*
-	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, IPositionConverter, IProgressMonitor)
+	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 	 */
-	public void reconciled(IASTTranslationUnit ast, IPositionConverter positionTracker, IProgressMonitor progressMonitor) {
+	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 		// ensure at most one thread can be reconciling at any time
 		synchronized (fReconcileLock) {
 			if (fIsReconciling)
@@ -410,7 +394,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (ast == null || fJobPresenter.isCanceled())
 				return;
 			
-			PositionCollector collector= new PositionCollector(ast.getFilePath(), positionTracker);
+			PositionCollector collector= new PositionCollector(ast.getFilePath());
 
 			startReconcilingPositions();
 			
@@ -576,7 +560,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 						ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
 						IStatus status= astProvider.runOnAST(element, ASTProvider.WAIT_YES, monitor, new ASTCache.ASTRunnable() {
 							public IStatus runOnAST(IASTTranslationUnit ast) {
-								reconciled(ast, null, monitor);
+								reconciled(ast, true, monitor);
 								synchronized (fJobLock) {
 									// allow the job to be gc'ed
 									if (fJob == me)

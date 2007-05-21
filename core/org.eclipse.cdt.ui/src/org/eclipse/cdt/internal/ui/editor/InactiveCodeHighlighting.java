@@ -26,11 +26,9 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
@@ -109,7 +107,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 							final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
 							result= astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_YES, monitor, new ASTCache.ASTRunnable() {
 								public IStatus runOnAST(IASTTranslationUnit ast) {
-									reconciled(ast, null, monitor);
+									reconciled(ast, true, monitor);
 									return Status.OK_STATUS;
 								}
 							});
@@ -189,13 +187,13 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	}
 
 	/*
-	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, IPositionConverter, IProgressMonitor)
+	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 	 */
-	public void reconciled(IASTTranslationUnit ast, final IPositionConverter positionTracker, IProgressMonitor progressMonitor) {
+	public void reconciled(IASTTranslationUnit ast, final boolean force, IProgressMonitor progressMonitor) {
 		if (progressMonitor != null && progressMonitor.isCanceled()) {
 			return;
 		}
-		final List newInactiveCodePositions= collectInactiveCodePositions(ast, positionTracker);
+		final List newInactiveCodePositions= collectInactiveCodePositions(ast);
 		Runnable updater = new Runnable() {
 			public void run() {
 				if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
@@ -214,10 +212,9 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	 * in the given translation unit.
 	 * 
 	 * @param translationUnit  the {@link IASTTranslationUnit}, may be <code>null</code>
-	 * @param positionTracker  map historic positions to actual
 	 * @return a {@link List} of {@link IRegion}s
 	 */
-	private List collectInactiveCodePositions(IASTTranslationUnit translationUnit, IPositionConverter positionTracker) {
+	private List collectInactiveCodePositions(IASTTranslationUnit translationUnit) {
 		if (translationUnit == null) {
 			return Collections.EMPTY_LIST;
 		}
@@ -277,7 +274,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 					inInactiveCode = true;
 				} else if (elseStmt.taken() && inInactiveCode) {
 					int inactiveCodeEnd = stmtLocation.getNodeOffset();
-					positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, positionTracker, false, fHighlightKey));
+					positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, false, fHighlightKey));
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
@@ -287,7 +284,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 					inInactiveCode = true;
 				} else if (elifStmt.taken() && inInactiveCode) {
 					int inactiveCodeEnd = stmtLocation.getNodeOffset();
-					positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, positionTracker, false, fHighlightKey));
+					positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, false, fHighlightKey));
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
@@ -295,7 +292,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 					boolean wasInInactiveCode = ((Boolean)inactiveCodeStack.pop()).booleanValue();
 					if (inInactiveCode && !wasInInactiveCode) {
 						int inactiveCodeEnd = stmtLocation.getNodeOffset() + stmtLocation.getNodeLength();
-						positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, positionTracker, true, fHighlightKey));
+						positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, true, fHighlightKey));
 					}
 					inInactiveCode = wasInInactiveCode;
 				}
@@ -315,17 +312,11 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	 * 
 	 * @param startOffset  the start offset of the region to align
 	 * @param endOffset  the (exclusive) end offset of the region to align
-	 * @param positionTracker  map historic position to actual
 	 * @param inclusive whether  the last line should be included or not
 	 * @param key  the highlight key
 	 * @return a position aligned for background highlighting
 	 */
-	private HighlightPosition createHighlightPosition(int startOffset, int endOffset, IPositionConverter positionTracker, boolean inclusive, String key) {
-		if (positionTracker != null) {
-			IRegion original= positionTracker.historicToActual(new Region(startOffset, endOffset - startOffset));
-			startOffset= original.getOffset();
-			endOffset= startOffset + original.getLength();
-		}
+	private HighlightPosition createHighlightPosition(int startOffset, int endOffset, boolean inclusive, String key) {
 		final IDocument document= fDocument;
 		try {
 			if (document != null) {

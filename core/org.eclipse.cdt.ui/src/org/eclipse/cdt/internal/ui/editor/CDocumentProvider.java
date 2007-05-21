@@ -290,8 +290,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
 			String markerType= MarkerUtilities.getMarkerType(marker);
 			if (markerType != null && markerType.startsWith(CMarkerAnnotation.C_MARKER_TYPE_PREFIX)) {
-				// TODO: Fix this we need the document
-				return new CMarkerAnnotation(marker, null);
+				return new CMarkerAnnotation(marker);
 			}
 			return super.createMarkerAnnotation(marker);
 		}

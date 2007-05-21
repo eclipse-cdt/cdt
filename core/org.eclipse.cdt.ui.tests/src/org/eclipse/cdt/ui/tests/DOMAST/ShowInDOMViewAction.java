@@ -1,33 +1,42 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ * IBM Rational Software - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionDelegate;
+import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
  * @author dsteffle
@@ -73,13 +82,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 	}
 	
 	private boolean isFileInView() {
-		if( editor.getInputFile() != null )
-			file = editor.getInputFile().getLocation().toOSString();
-		else
-		{
-			if( editor.getEditorInput() instanceof ExternalEditorInput )
-				file = ((ExternalEditorInput)editor.getEditorInput()).getStorage().getFullPath().toOSString();
-		}
+		file= getInputFile(editor);
 		
 		if (file == null) return false;
 
@@ -122,6 +125,36 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 		return false;
 	}
 
+	/**
+	 * Get the absolute file system location of the file open in the given editor.
+	 * @param editor
+	 * @return the absolute file system location or <code>null</code>
+	 */
+	private String getInputFile(ITextEditor editor) {
+		IEditorInput input= editor.getEditorInput();
+		if (input == null) {
+			return null;
+		}
+		IFile file= ResourceUtil.getFile(input);
+		if (file != null) {
+			return file.getLocation().toOSString();
+		}
+		if (input instanceof IPathEditorInput) {
+			IPath location= ((IPathEditorInput)input).getPath();
+			if (location != null) {
+				return location.toOSString();
+			}
+		}
+		ILocationProvider locationProvider= (ILocationProvider)input.getAdapter(ILocationProvider.class);
+		if (locationProvider != null) {
+			IPath location= locationProvider.getPath(input);
+			if (location != null) {
+				return location.toOSString();
+			}
+		}
+		return null;
+	}
+
 	private class FindDisplayNode implements Runnable {
 		private static final String IAST_NODE_NOT_FOUND = "IASTNode not found for the selection. "; //$NON-NLS-1$
 		private static final String IASTNode_NOT_FOUND = IAST_NODE_NOT_FOUND;
@@ -141,13 +174,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 				IContentProvider provider = ((DOMAST)view).getContentProvider();
 				if (provider != null && provider instanceof DOMAST.ViewContentProvider) {
 					tu = ((DOMAST.ViewContentProvider)provider).getTU();
-					if( editor.getInputFile() != null )
-						file = editor.getInputFile().getLocation().toOSString();
-					else
-					{
-						if( editor.getEditorInput() instanceof ExternalEditorInput )
-							file = ((ExternalEditorInput)editor.getEditorInput()).getStorage().getFullPath().toOSString();
-					}
+					file = getInputFile(editor);
 				}
 			}
 			

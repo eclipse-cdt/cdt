@@ -12,26 +12,28 @@
 package org.eclipse.cdt.internal.ui.util;
 
 
-import org.eclipse.jface.resource.ImageDescriptor;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.ILocationProvider;
+
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 
 
 /**
  * An EditorInput for an external (non-workspace) file.
  */
-public class ExternalEditorInput implements ITranslationUnitEditorInput {
+public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersistableElement {
            
 	private IStorage externalFile;
 	private IResource markerResource;
@@ -43,17 +45,21 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof ExternalEditorInput))
+		if (!(obj instanceof IStorageEditorInput))
 			return false;
-		ExternalEditorInput other = (ExternalEditorInput)obj;
-		return externalFile.equals(other.externalFile);
+		IStorageEditorInput other = (IStorageEditorInput)obj;
+		try {
+			return externalFile.equals(other.getStorage());
+		} catch (CoreException exc) {
+			return false;
+		}
 	}
 
 	/*
 	* @see IEditorInput#exists()
 	*/
 	public boolean exists() {
-		// External file ca not be deleted
+		// External file can not be deleted
 		return true;
 	}
 
@@ -62,12 +68,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	*/
 	public Object getAdapter(Class adapter) {
 		if (ILocationProvider.class.equals(adapter)) {
-			// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=180003
-			// see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=179982
-			if (location != null) {
-				return this;
-			}
-			return null;
+			return this;
 		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
@@ -91,7 +92,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	* @see IEditorInput#getPersistable()
 	*/
 	public IPersistableElement getPersistable() {
-		return null;
+		return this;
 	}
 
 	/*
@@ -119,7 +120,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	 * @see org.eclipse.ui.editors.text.ILocationProvider#getPath(java.lang.Object)
 	 */
 	public IPath getPath(Object element) {
-		return location ;
+		return location;
 	}
 
 	public ExternalEditorInput(ITranslationUnit unit, IStorage exFile) {
@@ -152,7 +153,19 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	public IResource getMarkerResource() {
 		return markerResource;
 	}
-	
-	
 
+	/*
+	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
+	 */
+	public String getFactoryId() {
+		return ExternalEditorInputFactory.ID;
+	}
+
+	/*
+	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		ExternalEditorInputFactory.saveState(memento, this);
+	}
+	
 }

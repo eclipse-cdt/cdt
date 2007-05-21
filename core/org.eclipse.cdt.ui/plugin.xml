@@ -60,6 +60,9 @@
       <factory
             class="org.eclipse.cdt.internal.ui.PersistableCElementFactory"
             id="org.eclipse.cdt.ui.PersistableCElementFactory"/>
+      <factory
+            class="org.eclipse.cdt.internal.ui.util.ExternalEditorInputFactory"
+            id="org.eclipse.cdt.ui.ExternalEditorInputFactory"/>
    </extension>
 
 <!-- Implement our filters.  -->

@@ -32,6 +32,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.ibm.icu.text.Collator;
@@ -63,6 +65,7 @@ public class IndexerBlock extends AbstractCOptionPage {
     private static final String ATTRIB_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATTRIB_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTRIB_INDEXERID = "indexerID"; //$NON-NLS-1$
+	private static final String ATTRIB_ID = "id"; //$NON-NLS-1$
 
 	private static final String PREF_PAGE_ID = "org.eclipse.cdt.ui.preferences.IndexerPreferencePage"; //$NON-NLS-1$
 
@@ -92,7 +95,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 	/**
      * Create a profile page only on request
      */
-    private static class IndexerConfig {
+    private static class IndexerConfig implements IPluginContribution {
     	private AbstractIndexerPage fPage;
         private IConfigurationElement fElement;
 
@@ -122,6 +125,14 @@ public class IndexerBlock extends AbstractCOptionPage {
         public String getIndexerID(){
         	return fElement.getAttribute(ATTRIB_INDEXERID); 
         }
+
+		public String getLocalId() {
+			return fElement.getAttribute(ATTRIB_ID);
+		}
+
+		public String getPluginId() {
+			return fElement.getContributor().getName();
+		}
     }
 
     public void createControl(Composite parent) {
@@ -400,11 +411,12 @@ public class IndexerBlock extends AbstractCOptionPage {
         IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.getPluginId(), "IndexerPage"); //$NON-NLS-1$
         IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
         for (int i = 0; i < infos.length; i++) {
-            if (infos[i].getName().equals(NODE_INDEXERUI)) { 
-                String id = infos[i].getAttribute(ATTRIB_INDEXERID);
-                if (id != null) {
-                	IndexerConfig config= new IndexerConfig(infos[i]);
-                	if (config.getName() != null) {
+        	final IConfigurationElement info= infos[i];
+            if (info.getName().equals(NODE_INDEXERUI)) { 
+            	final String id = info.getAttribute(ATTRIB_INDEXERID);
+            	if (id != null) {
+                	IndexerConfig config= new IndexerConfig(info);
+                	if (config.getName() != null && !WorkbenchActivityHelper.filterItem(config)) {
                 		fIndexerConfigMap.put(id, config);
                 	}
                 }

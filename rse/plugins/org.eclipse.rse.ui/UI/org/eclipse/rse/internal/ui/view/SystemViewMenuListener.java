@@ -109,15 +109,33 @@ public class SystemViewMenuListener implements IMenuListener, MenuListener, ArmL
     	if (!menuMnemonicsAdded || !doOnce)
     	{
       	  m.clear();
-      	  if (!armListeners)
-    	    m.setMnemonics((Menu)event.getSource());
-    	  else
-    	    m.setMnemonicsAndArmListener((Menu)event.getSource(), this);
+      	  Menu menu = (Menu)event.getSource();
+  	      m.setMnemonics(menu);
+      	  if (armListeners) {
+      		  setArmListener(menu);
+      	  }
     	  menuMnemonicsAdded = true;
     	  if (doOnce)
    	        ((Menu)event.getSource()).removeMenuListener(this);    	  
     	}
     }
+    
+    private void setArmListener(Menu menu) {
+    	MenuItem[] items = menu.getItems();
+    	for (int i = 0; i < items.length; i++) {
+			MenuItem menuItem = items[i];
+			setArmListener(menuItem);
+		}
+    }
+    
+    private void setArmListener(MenuItem item) {
+    	item.addArmListener(this);
+    	Menu menu = item.getMenu();
+    	if (menu != null) {
+    		setArmListener(menu);
+    	}
+    }
+    
     // --------------------
     // ArmListener methods
     // --------------------

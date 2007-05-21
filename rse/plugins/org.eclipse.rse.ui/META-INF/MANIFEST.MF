@@ -15,7 +15,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.rse.core
-Import-Package: com.ibm.icu.text
+Import-Package: com.ibm.icu.lang,
+ com.ibm.icu.text,
+ com.ibm.icu.util
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.core.internal.subsystems;x-internal:=true,
  org.eclipse.rse.core.servicesubsystem,

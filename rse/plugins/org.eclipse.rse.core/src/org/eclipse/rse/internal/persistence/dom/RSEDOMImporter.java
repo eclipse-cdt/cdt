@@ -273,8 +273,8 @@ public class RSEDOMImporter {
 				RSEDOMNode psChild = psChildren[p];
 				restorePropertySet(subSystem, psChild);
 			}
+			subSystem.wasRestored();
 		}
-		subSystem.wasRestored();
 		return subSystem;
 	}
 

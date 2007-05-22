@@ -41,8 +41,8 @@ Kushal Munir (IBM) - Changed paths to reflect internal packages
                 	<objectState name="isdirectory" value="true"/>                  
             </visibility>
          <action
-               label="Create Remote Project"
-                tooltip="%ImportToProject.tooltip"
+               label="%CreateRemoteProject.label"
+                tooltip="%CreateRemoteProject.tooltip"
                class="org.eclipse.rse.internal.eclipse.filesystem.ui.actions.CreateRemoteProjectActionDelegate"
                menubarPath="group.importexport"
                enablesFor="1"

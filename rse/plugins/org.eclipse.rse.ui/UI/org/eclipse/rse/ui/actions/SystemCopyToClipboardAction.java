@@ -174,33 +174,48 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 					
 					if (adapter.canDrag(dragObject))
 					{
-						// get the subsystem id					
-						ISubSystem subSystem = adapter.getSubSystem(dragObject);
-						String subSystemId = registry.getAbsoluteNameForSubSystem(subSystem);
-
-						dataStream.append(subSystemId);
-						dataStream.append(":"); //$NON-NLS-1$
-
-						String objectId = adapter.getAbsoluteName(dragObject);
-						dataStream.append(objectId);
-
-						if (iterator.hasNext())
-						{
-							dataStream.append(SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
-						}
-
-						if (_doResourceTransfer)
-						{
-							IResource resource = getResource((IAdaptable)dragObject);
-							if (resource != null)
+						ISubSystem subSystem = null;
+					    if (dragObject instanceof ISubSystem)
+					    {
+					        subSystem = (ISubSystem)dragObject;
+					        String subSystemId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
+							dataStream.append(subSystemId);
+					    }
+					    else if (dragObject instanceof IHost)
+					    {
+					        IHost connection = (IHost)dragObject;
+					        String connectionId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForConnection(connection);
+					        dataStream.append(connectionId);
+					    }
+					    else
+					    {
+					    	// get the subsystem id					
+							subSystem = adapter.getSubSystem(dragObject);
+							String subSystemId = registry.getAbsoluteNameForSubSystem(subSystem);
+		
+							dataStream.append(subSystemId);
+							dataStream.append(":"); //$NON-NLS-1$
+		
+							String objectId = adapter.getAbsoluteName(dragObject);
+							dataStream.append(objectId);
+		
+							if (iterator.hasNext())
 							{
-								resources.add(resource);
-								
-								String fileName = resource.getLocation().toOSString();
-								fileNames.add(fileName);
-							}							
-						}
-						
+								dataStream.append(SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
+							}
+		
+							if (_doResourceTransfer)
+							{
+								IResource resource = getResource((IAdaptable)dragObject);
+								if (resource != null)
+								{
+									resources.add(resource);
+									
+									String fileName = resource.getLocation().toOSString();
+									fileNames.add(fileName);
+								}							
+							}
+					    }
 					}
 				}
 			}
@@ -234,7 +249,14 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 				ft[i] = (String) fileNames.get(i);								
 			}
 
-			_clipboard.setContents(new Object[] { data, ft, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), FileTransfer.getInstance(), TextTransfer.getInstance()});
+			if (ft.length > 0)
+			{
+				_clipboard.setContents(new Object[] { data, ft, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), FileTransfer.getInstance(), TextTransfer.getInstance()});				
+			}
+			else
+			{
+				_clipboard.setContents(new Object[] { data, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance()});
+			}
 		}
 	}
 	

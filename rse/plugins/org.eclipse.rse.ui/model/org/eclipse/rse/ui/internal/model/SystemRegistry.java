@@ -1985,6 +1985,18 @@ public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISyst
 	{
 		// first extract subsystem id
 		int connectionDelim = str.indexOf(":"); //$NON-NLS-1$
+		if (connectionDelim == -1) // not subsystem, therefore likely to be a connection
+		{
+		    int profileDelim = str.indexOf("."); //$NON-NLS-1$
+			if (profileDelim != -1) 
+			{
+			    String profileId = str.substring(0, profileDelim);
+			    String connectionId = str.substring(profileDelim + 1, str.length());
+			    ISystemProfile profile = registry.getSystemProfile(profileId);
+			    return registry.getHost(profile, connectionId);
+			}
+		}
+		
 		int subsystemDelim = str.indexOf(":", connectionDelim + 1); //$NON-NLS-1$
 
 		String subSystemId = str.substring(0, subsystemDelim);

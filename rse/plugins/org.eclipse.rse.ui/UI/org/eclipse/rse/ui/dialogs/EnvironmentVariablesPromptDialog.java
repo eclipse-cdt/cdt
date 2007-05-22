@@ -25,6 +25,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -79,6 +80,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 		// Prompt for name 
 		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_SUBSYSTEM_ENVVAR_NAME_LABEL);
 		nameTextField = SystemWidgetHelpers.createTextField(page, null);
+		((GridData)nameTextField.getLayoutData()).widthHint = 300;
 		nameTextField.setToolTipText(SystemResources.RESID_SUBSYSTEM_ENVVAR_NAME_TOOLTIP);
 		if (name != null && !name.trim().equals("")) //$NON-NLS-1$
 		{
@@ -94,6 +96,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 		// Prompt for value
 		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_SUBSYSTEM_ENVVAR_VALUE_LABEL);
 		valueTextField = SystemWidgetHelpers.createTextField(page, null);		
+		((GridData)valueTextField.getLayoutData()).widthHint = 300;
 		valueTextField.setToolTipText(SystemResources.RESID_SUBSYSTEM_ENVVAR_VALUE_TOOLTIP);
 		if (value != null)
 		{

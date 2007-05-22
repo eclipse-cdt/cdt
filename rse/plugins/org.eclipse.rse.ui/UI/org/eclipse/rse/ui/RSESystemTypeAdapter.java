@@ -342,7 +342,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
   
   /**
    * Creates a new <code>IHost</code> object instance. This method is
-   * called from {@link org.eclipse.rse.ui.internal.model.SystemHostPool#createHost(String, String, String, String, String, int)}.
+   * called from {@link org.eclipse.rse.ui.internal.model.SystemHostPool#createHost(IRSESystemType, String, String, String, String, int)}.
    * 
    * @param profile The system profile to associate with the host.
    * @return A new <code>IHost</code> object instance.

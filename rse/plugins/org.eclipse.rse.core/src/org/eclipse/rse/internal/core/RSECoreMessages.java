@@ -37,6 +37,9 @@ public class RSECoreMessages extends NLS {
 	public static String RESID_CONNECTION_PORT_LABEL;
 	public static String RESID_SUBSYSTEM_AUTODETECT_LABEL;
 
+	public static String RESID_PROPERTYSET_REMOTE_SERVER_LAUNCHER;
+	public static String RESID_PROPERTYSET_LAUNCHER_PROPERTIES;
+
 	// Persistence
 	public static String PropertyFileProvider_LoadingTaskName;
 	public static String PropertyFileProvider_SavingTaskName;

@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui.widgets.services;
 
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ILabeledObject;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -36,6 +37,10 @@ public class ServerLauncherPropertiesServiceElement extends RSEModelServiceEleme
 	
 	public String getName()
 	{
+		if (_launcherProperties instanceof ILabeledObject) {
+			ILabeledObject lp = (ILabeledObject) _launcherProperties;
+			return lp.getLabel();
+		}
 		return _launcherProperties.getName();
 	}
 

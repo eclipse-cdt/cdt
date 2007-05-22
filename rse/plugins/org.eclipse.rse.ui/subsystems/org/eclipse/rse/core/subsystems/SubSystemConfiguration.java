@@ -52,6 +52,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ILabeledObject;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -59,6 +60,7 @@ import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.internal.core.filters.SystemFilterPoolManager;
 import org.eclipse.rse.internal.core.filters.SystemFilterPoolWrapperInformation;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
@@ -2692,6 +2694,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public IServerLauncherProperties createServerLauncher(IConnectorService connectorService)
 	{
 		IRemoteServerLauncher sl = new RemoteServerLauncher("Remote Server Launcher", connectorService); //$NON-NLS-1$
+		if (sl instanceof ILabeledObject) {
+			((ILabeledObject)sl).setLabel(RSECoreMessages.RESID_PROPERTYSET_REMOTE_SERVER_LAUNCHER);
+		}
+		
 		IRSESystemType systemType = connectorService.getHost().getSystemType();
 		String systemTypeId = systemType.getId();
 		

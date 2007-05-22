@@ -29,9 +29,10 @@ import java.util.Set;
  * Not thread-safe since the underlying {@link java.util.HashMap} is 
  * not thread-safe.
  */
-public class PropertySet extends RSEPersistableObject implements IPropertySet, Observer {
+public class PropertySet extends RSEPersistableObject implements IPropertySet, ILabeledObject, Observer {
 	
 	private String _name;
+	private String _label = null;
 	private Map _properties;
 	private IPropertySetContainer _container = null;
 
@@ -44,6 +45,10 @@ public class PropertySet extends RSEPersistableObject implements IPropertySet, O
 	public PropertySet(IPropertySet propertySet) {
 		_name = propertySet.getName();
 		_properties = new HashMap();
+		if (propertySet instanceof ILabeledObject) {
+			ILabeledObject p = (ILabeledObject) propertySet;
+			_label = p.getLabel();
+		}
 
 		String[] keys = propertySet.getPropertyKeys();
 		for (int i = 0; i < keys.length; i++) {
@@ -66,6 +71,16 @@ public class PropertySet extends RSEPersistableObject implements IPropertySet, O
 
 	public String getName() {
 		return _name;
+	}
+	
+	public String getLabel() {
+		if (_label != null) return _label;
+		return _name;
+	}
+	
+	public void setLabel(String label) {
+		_label = label;
+		setDirty(true);
 	}
 
 	public String getDescription() {

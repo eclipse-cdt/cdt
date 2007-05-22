@@ -20,6 +20,7 @@ package org.eclipse.rse.core.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.rse.core.model.ILabeledObject;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
@@ -57,8 +58,9 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 
 	protected static final ServerLaunchType SERVER_LAUNCH_TYPE_EDEFAULT = ServerLaunchType.DAEMON_LITERAL;
 
-	// proeprty set keys
+	// property set keys
 	protected final String PROPERTY_SET_NAME = "Launcher Properties"; //$NON-NLS-1$
+	private final String PROPERTY_SET_LABEL = RSECoreMessages.RESID_PROPERTYSET_LAUNCHER_PROPERTIES;
 
 	protected final String KEY_DAEMON_PORT = "daemon.port"; //$NON-NLS-1$
 	protected final String KEY_REXEC_PORT = "rexec.port"; //$NON-NLS-1$
@@ -140,6 +142,10 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		{
 			try
 			{
+				if (set instanceof ILabeledObject) {
+					ILabeledObject ps = (ILabeledObject) set;
+					ps.setLabel(PROPERTY_SET_LABEL);
+				}
 				IProperty launchTypeProperty = set.getProperty(KEY_SERVER_LAUNCH_TYPE_NAME);
 				launchTypeProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
 				String launchTypeName = launchTypeProperty.getValue();
@@ -194,7 +200,10 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		IPropertySet set = getPropertySet(PROPERTY_SET_NAME);
 		if (set == null)
 		{
-			set = createPropertySet(PROPERTY_SET_NAME, getDescription());						
+			set = createPropertySet(PROPERTY_SET_NAME, getDescription());
+			if (set instanceof ILabeledObject) {
+				((ILabeledObject)set).setLabel(PROPERTY_SET_LABEL);
+			}
 		}
 		
 		if (_serverLaunchType == null)

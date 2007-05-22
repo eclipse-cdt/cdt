@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ILabeledObject;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
@@ -62,6 +63,10 @@ implements IPropertySource
 	
 	public String getName()
 	{
+		if (_propertySet instanceof ILabeledObject) {
+			ILabeledObject ps = (ILabeledObject) _propertySet;
+			return ps.getLabel();
+		}
 		return _propertySet.getName();
 	}
 	

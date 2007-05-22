@@ -20,6 +20,7 @@ package org.eclipse.rse.internal.core.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.rse.core.model.ILabeledObject;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
@@ -28,11 +29,12 @@ import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 
 
-public abstract class ServerLauncher extends RSEModelObject implements IServerLauncherProperties
+public abstract class ServerLauncher extends RSEModelObject implements IServerLauncherProperties, ILabeledObject
 {
 	
 
 	protected String _name;
+	private String _label = null;
 	protected IConnectorService _connectorService;
 
 	protected ServerLauncher(String name, IConnectorService service)
@@ -45,6 +47,16 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 	public String getName()
 	{
 		return _name;
+	}
+	
+	public String getLabel() {
+		if (_label != null) return _label;
+		return _name;
+	}
+	
+	public void setLabel(String label) {
+		_label = label;
+		setDirty(true);
 	}
 	
 	public String getDescription()

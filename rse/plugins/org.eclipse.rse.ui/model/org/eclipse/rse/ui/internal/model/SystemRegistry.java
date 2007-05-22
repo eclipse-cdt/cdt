@@ -101,7 +101,6 @@ import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
-import org.eclipse.rse.ui.wizards.ISubSystemPropertiesWizardPage;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;

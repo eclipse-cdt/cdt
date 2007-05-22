@@ -222,7 +222,7 @@ public class SystemTableViewPart extends ViewPart
 		private IAdaptable _parent;
 		public UpAction()
 		{
-			super(SystemResources.ACTION_MOVEUP_LABEL, getEclipseImageDescriptor("elcl16/up_nav.gif")); //$NON-NLS-1$
+			super(SystemResources.ACTION_MOVEUPLEVEL_TOOLTIP, getEclipseImageDescriptor("elcl16/up_nav.gif")); //$NON-NLS-1$
 
 			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/up_nav.gif")); //$NON-NLS-1$
 		}

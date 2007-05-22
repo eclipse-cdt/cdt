@@ -999,6 +999,9 @@ public class SystemResources extends NLS
 	public static String ACTION_MOVEDOWN_LABEL;
 	public static String ACTION_MOVEDOWN_TOOLTIP;
 
+	public static String ACTION_MOVEUPLEVEL_LABEL;
+	public static String ACTION_MOVEUPLEVEL_TOOLTIP;
+
 	public static String ACTION_CONNECT_LABEL;
 	public static String ACTION_CONNECT_TOOLTIP;
 

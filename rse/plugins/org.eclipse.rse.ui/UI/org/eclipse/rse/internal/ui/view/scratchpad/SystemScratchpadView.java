@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.Assert;
@@ -273,7 +274,7 @@ public class SystemScratchpadView
 	 */
 	protected ISystemViewElementAdapter getViewAdapter(Object obj)
 	{
-		return SystemAdapterHelpers.getViewAdapter(obj, this);
+		return SystemAdapterHelpers.getViewAdapter(obj);
 	}
 
 
@@ -421,11 +422,11 @@ public class SystemScratchpadView
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
 		//boolean originatedHere = (event.getOriginatingViewer() == this);
-		Vector remoteResourceNames = null;
-		if (remoteResource instanceof Vector)
+		List remoteResourceNames = null;
+		if (remoteResource instanceof List)
 		{
-			remoteResourceNames = (Vector) remoteResource;
-			remoteResource = remoteResourceNames.elementAt(0);
+			remoteResourceNames = (List) remoteResource;
+			remoteResource = remoteResourceNames.get(0);
 		}
 		String remoteResourceName = getRemoteResourceAbsoluteName(remoteResource);
 		if (remoteResourceName == null)
@@ -551,7 +552,7 @@ public class SystemScratchpadView
 			remoteResourceName = (String) remoteResource;
 		else
 		{
-			ISystemRemoteElementAdapter ra = getRemoteAdapter(remoteResource);
+			ISystemViewElementAdapter ra = getViewAdapter(remoteResource);
 			if (ra == null)
 				return null;
 			remoteResourceName = ra.getAbsoluteName(remoteResource);

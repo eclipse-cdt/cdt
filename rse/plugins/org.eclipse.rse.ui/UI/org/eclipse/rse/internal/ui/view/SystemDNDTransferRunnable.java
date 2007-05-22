@@ -31,6 +31,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemContainer;
@@ -45,6 +47,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.rse.ui.internal.model.SystemScratchpad;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -616,6 +619,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			if (_resultTgtObjects.size() > 0)
 			{
 				boolean doRefresh = _ok;
+			
 				for (int t = 0; t < _resultTgtObjects.size() && t < _resultSrcObjects.size(); t++)
 				{
 				    Object tgt = _resultTgtObjects.get(t);
@@ -646,6 +650,10 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				if (doRefresh)
 				{
 				    registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, _resultTgtObjects, _target, _targetSubSystem, null, _originatingViewer);
+				}
+				else if (_target instanceof SystemScratchpad)
+				{
+					registry.fireEvent(new SystemResourceChangeEvent(_resultTgtObjects, ISystemResourceChangeEvents.EVENT_ADD_MANY, _target));
 				}
 			}
 

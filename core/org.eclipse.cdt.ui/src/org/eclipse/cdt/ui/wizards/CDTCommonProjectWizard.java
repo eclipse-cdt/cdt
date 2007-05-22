@@ -117,8 +117,10 @@ implements IExecutableExtension, IWizardWithMemory
 		if (newProject == null)	{
             existingPath = false;
 			IPath p = fMainPage.getProjectLocation();
-		  	if (p == null) p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-		    p = p.append(fMainPage.getProjectName());
+		  	if (p == null) { 
+		  		p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+			    p = p.append(fMainPage.getProjectName());
+		  	}
         	File f = p.toFile();
         	if (f.exists() && f.isDirectory()) {
                 if (p.append(".project").toFile().exists()) { //$NON-NLS-1$

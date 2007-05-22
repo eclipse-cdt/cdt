@@ -344,8 +344,11 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 
 	        if (bad) { // skip this check if project already created 
 	        	IPath p = getProjectLocation();
-	        	if (p == null) p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-	        	File f = p.append(getProjectName()).toFile();
+	        	if (p == null) {
+	        		p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+	        		p = p.append(getProjectName());
+	        	}
+	        	File f = p.toFile();
 	        	if (f.exists()) {
 	        		if (f.isDirectory()) {
 	        			setErrorMessage(UIMessages.getString("CMainWizardPage.7")); //$NON-NLS-1$

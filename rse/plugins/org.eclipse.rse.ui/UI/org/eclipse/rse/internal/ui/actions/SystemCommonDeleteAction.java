@@ -233,20 +233,28 @@ public class SystemCommonDeleteAction
 	 */
 	protected Dialog createDialog(Shell shell)
 	{
-		SystemDeleteDialog dlg = new SystemDeleteDialog(shell);
-		if (promptLabel != null)
-			dlg.setPromptLabel(promptLabel);
 		Object firstSelection = getFirstSelection();
-		if (getRemoteAdapter(firstSelection) != null)
+		if (firstSelection != null)
 		{
-           String warningMsg = null;
-           String warningTip = null;
-
-             warningMsg = SystemResources.RESID_DELETE_WARNING_LABEL;
-             warningTip = SystemResources.RESID_DELETE_WARNING_TOOLTIP;
-           dlg.setWarningMessage(warningMsg,warningTip);
+			SystemDeleteDialog dlg = new SystemDeleteDialog(shell);
+			if (promptLabel != null)
+				dlg.setPromptLabel(promptLabel);
+		
+			if (getRemoteAdapter(firstSelection) != null)
+			{
+	           String warningMsg = null;
+	           String warningTip = null;
+	
+	             warningMsg = SystemResources.RESID_DELETE_WARNING_LABEL;
+	             warningTip = SystemResources.RESID_DELETE_WARNING_TOOLTIP;
+	           dlg.setWarningMessage(warningMsg,warningTip);
+			}
+			return dlg;
 		}
-		return dlg;
+		else
+		{
+			return null;
+		}
 	}
 	
 	

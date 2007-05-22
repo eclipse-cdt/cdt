@@ -177,7 +177,7 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 		  	return dlg;
 		}
 		// single-select
-		else
+		else if (getSelection().size() == 1)
 		{
 		  	SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(parent);
 		  	if (copyCollisionMode)
@@ -189,6 +189,10 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 			if ((promptLabel != null) || (promptTip != null))
 				dlg.setPromptLabel(promptLabel, promptTip);
 		  	return dlg;
+		}
+		else
+		{
+			return null;
 		}
 	}
 	

@@ -105,7 +105,7 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
 	
 	// doing nothing
-	public void dispose() { projects = null; }
+	public void dispose() { }
 	public void init(IWorkbenchWindow window) { }
 
 	private static final class BuildFilesJob extends Job {

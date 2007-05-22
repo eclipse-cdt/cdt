@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexInternalTemplateParameter;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -40,7 +42,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
 	
 	public PDOMCPPTemplateTypeParameter(PDOM pdom, PDOMNode parent,
 			ICPPTemplateTypeParameter param) throws CoreException {
-		super(pdom, parent, param.getName().toCharArray());
+		super(pdom, parent, param.getNameCharArray());
 		
 		try {
 			IType dflt = param.getDefault();
@@ -64,7 +66,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_TEMPLATE_TYPE_PARAMETER;
+		return IIndexCPPBindingConstants.CPP_TEMPLATE_TYPE_PARAMETER;
 	}
 	
 	public boolean isSameType(IType type) {

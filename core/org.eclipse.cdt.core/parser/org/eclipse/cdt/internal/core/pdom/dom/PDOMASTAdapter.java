@@ -374,6 +374,7 @@ public class PDOMASTAdapter {
 						return new AnonymousCompositeType(name, (ICompositeType) binding);
 					}
 				}
+				return null;
 			}
 		}
 		return binding;

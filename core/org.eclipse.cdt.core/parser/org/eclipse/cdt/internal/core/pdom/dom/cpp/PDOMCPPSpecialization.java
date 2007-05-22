@@ -50,12 +50,12 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 	
 	public PDOMCPPSpecialization(PDOM pdom, PDOMNode parent, ICPPSpecialization spec, PDOMNamedNode specialized)
 			throws CoreException {
-		super(pdom, parent, spec.getName().toCharArray());
+		super(pdom, parent, spec.getNameCharArray());
 		pdom.getDB().putInt(record + SPECIALIZED, specialized.getRecord());
 		
 		PDOMNodeLinkedList paramList = new PDOMNodeLinkedList(pdom, record + ARGMAP_PARAMS, getLinkageImpl());
 		PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGMAP_ARGS, getLinkageImpl());
-		ObjectMap argMap = ((ICPPSpecialization)spec).getArgumentMap();
+		ObjectMap argMap = spec.getArgumentMap();
 		if (argMap != null) {
 			for (int i = 0; i < argMap.size(); i++) {
 				Object param = argMap.keyAt(i);

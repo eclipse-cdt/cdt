@@ -68,7 +68,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType)
 			throws CoreException {
-		super(pdom, parent, classType.getName().toCharArray());
+		super(pdom, parent, classType.getNameCharArray());
 
 		try {
 			pdom.getDB().putByte(record + KEY, (byte) classType.getKey());

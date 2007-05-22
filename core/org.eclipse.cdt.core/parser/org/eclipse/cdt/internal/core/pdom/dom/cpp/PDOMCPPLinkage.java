@@ -670,6 +670,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPTypedefSpecialization(pdom, record);
 		case CPP_FUNCTION_TYPE:
 			return new PDOMCPPFunctionType(pdom, record);
+		case CPP_PARAMETER_SPECIALIZATION:
+			return new PDOMCPPParameterSpecialization(pdom, record);
 		default:
 			return super.getNode(record);
 		}

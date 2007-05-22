@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -99,7 +100,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				IASTCompletionContext astContext = names[i].getCompletionContext();
 				if (astContext == null) {
 					continue;
-				} else if (astContext instanceof IASTIdExpression) {
+				} else if (astContext instanceof IASTIdExpression
+						|| astContext instanceof IASTNamedTypeSpecifier) {
 					// handle macros only if there is a prefix
 					handleMacros = prefix.length() > 0;
 				}

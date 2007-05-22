@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -61,22 +62,22 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	}
 	
 	final public int compare(int record) throws CoreException {
-		PDOMNamedNode node = ((PDOMNamedNode)linkage.getNode(record));
-		return compare(node);
+		IString name= PDOMNamedNode.getDBName(linkage.getPDOM(), record);
+		return compare(name);
 	}
 
-	private int compare(PDOMNamedNode node) throws CoreException {
+	private int compare(IString rhsName) throws CoreException {
 		int cmp;
 		if (prefixLookup) {
-			cmp= node.getDBName().comparePrefix(name, false);
+			cmp= rhsName.comparePrefix(name, false);
 			if(caseSensitive) {
-				cmp= cmp==0 ? node.getDBName().comparePrefix(name, true) : cmp;
+				cmp= cmp==0 ? rhsName.comparePrefix(name, true) : cmp;
 			}
 			return cmp;
 		} else {
-			cmp= node.getDBName().compare(name, false);
+			cmp= rhsName.compare(name, false);
 			if(caseSensitive) {
-				cmp= cmp==0 ? node.getDBName().compare(name, true) : cmp;
+				cmp= cmp==0 ? rhsName.compare(name, true) : cmp;
 			}
 		}
 		return cmp;
@@ -119,7 +120,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		
 		if (node instanceof PDOMNamedNode) {
 			PDOMNamedNode pb= (PDOMNamedNode) node;
-			if (compare(pb) == 0) {
+			if (compare(pb.getDBName()) == 0) {
 				addNode(pb);
 			}
 		}

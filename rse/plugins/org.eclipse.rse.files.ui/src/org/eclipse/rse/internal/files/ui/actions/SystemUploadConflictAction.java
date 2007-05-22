@@ -297,21 +297,18 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             GridLayout mlayout = new GridLayout();
             mlayout.numColumns = 2;
             m.setLayout(mlayout);
-            m.setLayoutData(new GridData(GridData.FILL_BOTH));
+            m.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
-            Label label = new Label(m, 0);
+            Label label = new Label(m, SWT.NONE);
             image.setBackground(label.getBackground());
             label.setImage(image);
-            label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_BEGINNING));
+            label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
             Text text = new Text(m, SWT.WRAP | SWT.MULTI);
             text.setEditable(false);
             text.setText(FileResources.RESID_CONFLICT_SAVE_MESSAGE);
-
-            GridData textData = new GridData(GridData.FILL_BOTH);
-            textData.widthHint = 100;
-            textData.horizontalSpan = 2;
-            textData.verticalSpan = 5;
+            GridData textData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+            text.setLayoutData(textData);
 
             Composite options = new Composite(c, SWT.NONE);
             GridLayout olayout = new GridLayout();

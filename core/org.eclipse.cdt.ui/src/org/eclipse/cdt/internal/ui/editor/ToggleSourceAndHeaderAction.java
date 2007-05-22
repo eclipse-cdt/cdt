@@ -266,6 +266,9 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		}
 		// search partnerfile based on filename/extension
 		IPath sourceFileLocation= tUnit.getLocation();
+		if (sourceFileLocation == null) {
+			return null;
+		}
 		IPath partnerBasePath= sourceFileLocation.removeFileExtension();
 		IContentType[] contentTypes= getPartnerContentTypes(tUnit.getContentTypeId());
 		HashSet extensionsTried= new HashSet();

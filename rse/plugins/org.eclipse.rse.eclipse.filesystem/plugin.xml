@@ -46,7 +46,7 @@ Kushal Munir (IBM) - Changed paths to reflect internal packages
                class="org.eclipse.rse.internal.eclipse.filesystem.ui.actions.CreateRemoteProjectActionDelegate"
                menubarPath="group.importexport"
                enablesFor="1"
-               id="importToProject">
+               id="createRemoteProject">
          </action>
       </objectContribution>
       </extension>

@@ -53,6 +53,15 @@
             class="org.eclipse.cdt.core.settings.model.TestCfgDataProvider">
       </provider>
    </extension>
+   
+   <extension
+         point="org.eclipse.cdt.core.CConfigurationDataProvider"
+         id="testUserAndDiscoveredCfgDataProvider">
+      <provider
+            class="org.eclipse.cdt.core.settings.model.TestUserAndDiscoveredEntriesCfgDataProvider">
+      </provider>
+   </extension>
+   
    <extension
          id="testExtSettingsProvider"
          name="name"

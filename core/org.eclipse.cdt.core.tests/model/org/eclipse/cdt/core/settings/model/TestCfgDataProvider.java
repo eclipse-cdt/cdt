@@ -11,7 +11,9 @@
 package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationDataProvider;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 
 public class TestCfgDataProvider extends CDefaultConfigurationDataProvider {
+	public static final String PROVIDER_ID = CTestPlugin.PLUGIN_ID + ".testCfgDataProvider";
 
 }

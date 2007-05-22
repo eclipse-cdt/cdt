@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.util;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -595,7 +596,7 @@ public class PathEntryTranslator {
 					basePath = mngr.resolvePath(basePath);
 					valuePath = mngr.resolvePath(valuePath);
 
-					fName = unresolvedBase.append(unresolvedValue).toString();
+					fName = unresolvedBase.isEmpty() ? unresolvedValue.toString() : unresolvedBase.append(unresolvedValue).toString();
 					fValue = fName;
 					
 					if (!basePath.isEmpty()) {
@@ -1040,8 +1041,18 @@ public class PathEntryTranslator {
 			
 			if(removedParentSet.size() != 0){
 				PathEntryCollector parent = getParent();
+				IPath parentPath = parent.getPath();
+				
+				int segsToRemove = parentPath.segmentCount();
+				if(segsToRemove > path.segmentCount())
+					segsToRemove = path.segmentCount() - 1;
+				if(segsToRemove < 0)
+					segsToRemove = 0;
+				
+				IPath filterPath = path.removeFirstSegments(segsToRemove);
+				
 				if(parent != null){
-					parent.addFilter(kind, path, removedParentSet);
+					parent.addFilter(kind, filterPath, removedParentSet);
 				}
 				
 				Map map = getEntriesMap(kind, true);
@@ -1479,6 +1490,18 @@ public class PathEntryTranslator {
 //		return (IPath[])pathSet.toArray(new IPath[pathSet.size()]);
 //	}
 	
+	private RcDesInfo getRcDesInfo(PathSettingsContainer cr, ResourceInfo rcInfo){
+		IResource rc = rcInfo.fRc;
+		IPath projPath = rc.getProjectRelativePath();
+		PathSettingsContainer child = cr.getChildContainer(projPath, true, true);
+		RcDesInfo rcDes = (RcDesInfo)child.getValue();
+		if(rcDes == null){
+			rcDes = new RcDesInfo(rcInfo);
+			child.setValue(rcDes);
+		}
+		return rcDes;
+	}
+	
 	private ReferenceSettingsInfo addPathEntries(ResolvedEntry[] rEntries, int op){
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
 		cr.setValue(new RcDesInfo(new ResourceInfo(fProject, true)));
@@ -1487,13 +1510,15 @@ public class PathEntryTranslator {
 		List projList = new ArrayList();
 		List exportSettingsList = new ArrayList();
 		ICSourceEntry srcEntries[] = null;
-		PathSettingsContainer child;
+//		PathSettingsContainer child;
 		ResolvedEntry rEntry;
 		IPath projPath;
 		IResource rc;
 		ResourceInfo rcInfo;
 		for(int i = 0; i < rEntries.length; i++){
 			rEntry = rEntries[i];
+			if(rEntry.isReadOnly())
+				continue;
 			if(toLanguageEntryKind(rEntry.fEntry.getEntryKind()) == 0){
 				switch(rEntry.fEntry.getEntryKind()){
 				case IPathEntry.CDT_SOURCE:
@@ -1513,16 +1538,14 @@ public class PathEntryTranslator {
 				exportSettingsList.add(rEntry);
 			}
 			rcInfo = rEntry.getResourceInfo();
-			rc = rcInfo.fRc;
-			projPath = rc.getProjectRelativePath();
-			child = cr.getChildContainer(projPath, true, true);
-			RcDesInfo rcDes = (RcDesInfo)child.getValue();
-			if(rcDes == null){
-				rcDes = new RcDesInfo(rcInfo);
-				child.setValue(rcDes);
-			}
+			RcDesInfo rcDes = getRcDesInfo(cr, rcInfo);
 
 			rcDes.fResolvedEntries.add(rEntry);
+			
+			ResourceInfo[] fInfos = rEntry.getFilterInfos();
+			for(int k = 0; k < fInfos.length; k++){
+				getRcDesInfo(cr, fInfos[k]);
+			}
 		}
 		
 		if(srcList.size() != 0){
@@ -1597,8 +1620,43 @@ public class PathEntryTranslator {
 				ICSettingEntry.VALUE_WORKSPACE_PATH
 				| ICSourceEntry.RESOLVED);
 	}
+	
+	private static ICSettingEntry[] replaceUserEntries(ICSettingEntry[] oldEntries, ICSettingEntry[] newUsrEntries){
+		Set set = new LinkedHashSet();
+		Class componentType = null;
+		
+		if(newUsrEntries != null){
+			for(int i = 0; i < newUsrEntries.length; i++ ){
+				ICSettingEntry entry = newUsrEntries[i];
+				if(entry.isBuiltIn() || entry.isReadOnly())
+					continue;
+				set.add(entry);
+			}
+			componentType = newUsrEntries.getClass().getComponentType();
+		}
+		
+		if(oldEntries != null){
+			for(int i = 0; i < oldEntries.length; i++ ){
+				ICSettingEntry entry = oldEntries[i];
+				if(entry.isBuiltIn() || entry.isReadOnly())
+					set.add(entry);;
+			}
+			if(componentType == null)
+				componentType = oldEntries.getClass().getComponentType();
+		}
+
+		if(componentType != null){
+			ICSettingEntry[] result = (ICSettingEntry[])Array.newInstance(componentType, set.size());
+			set.toArray(result);
+			return result;
+		}
+		return null;
+	}
 
 	private void applySourceEntries(ICSourceEntry entries[], int op){
+		ICSourceEntry[] oldEntries = fCfgData.getSourceEntries();
+		entries = (ICSourceEntry[])replaceUserEntries(oldEntries, entries);
+		
 		switch (op) {
 		case OP_ADD:
 			if(entries != null && entries.length != 0){
@@ -1722,7 +1780,12 @@ public class PathEntryTranslator {
 				continue;
 			
 			ICLanguageSettingEntry opEntries[] = info.getEntries(kind);
-			ICLanguageSettingEntry oldEntries[] = op != OP_REPLACE ? lData.getEntries(kind) : null;
+			ICLanguageSettingEntry oldEntries[] = lData.getEntries(kind);
+			opEntries = (ICLanguageSettingEntry[])replaceUserEntries(oldEntries, opEntries);
+			
+			if(op == OP_REPLACE)
+				oldEntries = null;
+//			ICLanguageSettingEntry oldEntries[] = op != OP_REPLACE ? lData.getEntries(kind) : null;
 			ICLanguageSettingEntry result[] = composeNewEntries(oldEntries, opEntries, op);
 			lData.setEntries(kind, result);
 		}
@@ -1845,7 +1908,7 @@ public class PathEntryTranslator {
 			for(int i = 0; i < filters.length; i++){
 				IResource rc = filters[i].fRc;
 				IPath projPath = rc.getProjectRelativePath();
-				if(projPath.isPrefixOf(path)){
+				if(projPath.isPrefixOf(path.makeRelative())){
 					iter.remove();
 					break;
 				}

@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.TestCfgDataProvider;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFolder;
@@ -118,6 +119,13 @@ public class CProjectHelper {
 	/**
 	 * Creates a ICProject.
 	 */
+	public static ICProject createNewStileCProject(final String projectName, String providerId, final String indexerID) throws CoreException {
+		return createNewStileCProject(projectName, providerId, indexerID, false);
+	}
+
+	/**
+	 * Creates a ICProject.
+	 */
 	public static ICProject createNewStileCProject(final String projectName, final String indexerID, boolean markCreating) throws CoreException {
 		return createNewStileCProject(projectName, null, indexerID, markCreating);
 	}
@@ -129,7 +137,7 @@ public class CProjectHelper {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
 		if(cfgProviderId == null)
-			cfgProviderId = CTestPlugin.PLUGIN_ID + ".testCfgDataProvider";
+			cfgProviderId = TestCfgDataProvider.PROVIDER_ID;
 		
 		final String finalCfgProviderId = cfgProviderId;
 		ws.run(new IWorkspaceRunnable() {

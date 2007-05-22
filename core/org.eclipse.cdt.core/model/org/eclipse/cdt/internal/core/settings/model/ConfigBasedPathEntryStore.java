@@ -118,31 +118,35 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		if(es != null){
 			List sysList = es[1];
 			List usrList = es[0];
-//			for(int i = 0; i < entries.length; i++){
-//				if(entries[i].getEntryKind() != IPathEntry.CDT_CONTAINER)
-//					usrList.add(entries[i]);
-//			}
-			
-			ICProjectDescription des = CoreModel.getDefault().getProjectDescription(fProject, true);
-			ICConfigurationDescription cfgDes = des.getDefaultSettingConfiguration();
-			CConfigurationData data = cfgDes.getConfigurationData();
-			PathEntryTranslator tr = new PathEntryTranslator(fProject, data);
-			IPathEntry[] usrEntries = (IPathEntry[])usrList.toArray(new IPathEntry[usrList.size()]);
-			IPathEntry[] sysEntries = (IPathEntry[])sysList.toArray(new IPathEntry[sysList.size()]);
-			ReferenceSettingsInfo rInfo = tr.applyPathEntries(usrEntries, sysEntries, PathEntryTranslator.OP_REPLACE);
-			cfgDes.removeExternalSettings();
-			ICExternalSetting extSettings[] = rInfo.getExternalSettings();
-			for(int i = 0; i < extSettings.length; i++){
-				ICExternalSetting setting = extSettings[i];
-				cfgDes.createExternalSetting(setting.getCompatibleLanguageIds(), 
-						setting.getCompatibleContentTypeIds(),
-						setting.getCompatibleExtensions(), 
-						setting.getEntries());
+			List newUsrList = new ArrayList(entries.length);
+			for(int i = 0; i < entries.length; i++){
+				if(entries[i].getEntryKind() != IPathEntry.CDT_CONTAINER)
+					newUsrList.add(entries[i]);
 			}
-			Map refMap = rInfo.getRefProjectsMap();
-			cfgDes.setReferenceInfo(refMap);
 			
-			CoreModel.getDefault().setProjectDescription(fProject, des);
+			if(!newUsrList.equals(usrList)){
+				usrList = newUsrList;
+				ICProjectDescription des = CoreModel.getDefault().getProjectDescription(fProject, true);
+				ICConfigurationDescription cfgDes = des.getDefaultSettingConfiguration();
+				CConfigurationData data = cfgDes.getConfigurationData();
+				PathEntryTranslator tr = new PathEntryTranslator(fProject, data);
+				IPathEntry[] usrEntries = (IPathEntry[])usrList.toArray(new IPathEntry[usrList.size()]);
+				IPathEntry[] sysEntries = (IPathEntry[])sysList.toArray(new IPathEntry[sysList.size()]);
+				ReferenceSettingsInfo rInfo = tr.applyPathEntries(usrEntries, sysEntries, PathEntryTranslator.OP_REPLACE);
+				cfgDes.removeExternalSettings();
+				ICExternalSetting extSettings[] = rInfo.getExternalSettings();
+				for(int i = 0; i < extSettings.length; i++){
+					ICExternalSetting setting = extSettings[i];
+					cfgDes.createExternalSetting(setting.getCompatibleLanguageIds(), 
+							setting.getCompatibleContentTypeIds(),
+							setting.getCompatibleExtensions(), 
+							setting.getEntries());
+				}
+				Map refMap = rInfo.getRefProjectsMap();
+				cfgDes.setReferenceInfo(refMap);
+				
+				CoreModel.getDefault().setProjectDescription(fProject, des);
+			}
 		}
 	}
 	

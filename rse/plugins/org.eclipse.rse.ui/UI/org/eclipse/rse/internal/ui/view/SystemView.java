@@ -2105,6 +2105,39 @@ public class SystemView extends SafeTreeViewer
 						// make the src the parent of the src
 						src = adapter.getParent(src);
 					}
+					else
+					{
+						// get up-to-date version of the container (need to make sure it still exists)
+						if (ss == null)
+						{
+							ss = adapter.getSubSystem(src);
+						}
+						if (ss != null)
+						{
+							String key = adapter.getAbsoluteName(src);
+							if (key != null)
+							{
+								try
+								{
+									Object srcParent = adapter.getParent(src); // get parent before we query 
+									                                           // because if after query src doesn't exist, 
+																		  	   // we can't get parent
+									
+									src = ss.getObjectWithAbsoluteName(key);
+									hasChildren = adapter.hasChildren((IAdaptable)src);
+									if (!hasChildren)
+									{
+										// make the src the parent of the src
+										src = srcParent;
+									}
+								}
+								catch (Exception e)
+								{
+									e.printStackTrace();
+								}
+							}
+						}
+					}
 				}
 				
 				refreshRemoteObject(src, parent, originatedHere);

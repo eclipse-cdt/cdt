@@ -1632,7 +1632,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					getSourceViewer().revealRange(start, length);
 					getSourceViewer().setSelectedRange(start, length);
 				}
-				updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
+				updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
 			}
 			return;
 		} catch (IllegalArgumentException x) {
@@ -1913,7 +1913,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		menu.add(new GroupMarker(ICommonMenuConstants.GROUP_TOP));
 		// separator for debug related actions (similar to ruler context menu)
 		menu.add(new Separator(IContextMenuConstants.GROUP_DEBUG));
-		menu.add(new Separator(IContextMenuConstants.GROUP_DEBUG+".end")); //$NON-NLS-1$
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_DEBUG+".end")); //$NON-NLS-1$
 		
 		super.editorContextMenuAboutToShow(menu);
 		

@@ -20,7 +20,7 @@
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  ********************************************************************************/
 
-package org.eclipse.rse.ui.internal.model;
+package org.eclipse.rse.internal.core.model;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -36,8 +36,6 @@ import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.internal.core.RSECoreMessages;
-import org.eclipse.rse.internal.core.model.SystemProfileManager;
-import org.eclipse.rse.ui.RSESystemTypeAdapter;
 
 
 /**
@@ -193,10 +191,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           
           // delegate the creation of the host object instance to the system type provider!!!
           if (systemType != null) {
-          	Object adapter = systemType.getAdapter(RSESystemTypeAdapter.class);
-          	if (adapter instanceof RSESystemTypeAdapter) {
-          		conn = ((RSESystemTypeAdapter)adapter).createNewHostInstance(profile);
-          	}
+        	  conn = systemType.createNewHostInstance(profile);
           }
           // Fallback to create host object instance here if failed by system type provider.
           if (conn == null) conn = new Host(profile);

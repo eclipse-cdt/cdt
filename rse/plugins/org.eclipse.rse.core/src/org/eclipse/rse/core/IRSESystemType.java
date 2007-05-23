@@ -19,6 +19,9 @@
 package org.eclipse.rse.core;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.internal.core.model.SystemHostPool;
 import org.osgi.framework.Bundle;
 
 /**
@@ -282,18 +285,27 @@ public interface IRSESystemType extends IAdaptable {
 	 */
 	public Bundle getDefiningBundle();
 	
-  /**
-   * Returns a list of fully qualified known subsystem configuration id's that
-   * this system type wants to be registered against. 
-   * More subsystem configurations can be added through the <tt>subsystemConfigurations</tt>
-   * extension point.
-   * <p>
-   * <b>Note:</b> The list returned here does not imply that the corresponding
-   * subsystem configurations exist. The list contains only possibilites not,
-   * requirements.
-   * 
-   * @return The list of subsystem configuration id's. May be empty,
-   *         but never <code>null</code>.
-   */
-  public String[] getSubsystemConfigurationIds();
+	/**
+	 * Returns a list of fully qualified known subsystem configuration id's that
+	 * this system type wants to be registered against. 
+	 * More subsystem configurations can be added through the <tt>subsystemConfigurations</tt>
+	 * extension point.
+	 * <p>
+	 * <b>Note:</b> The list returned here does not imply that the corresponding
+	 * subsystem configurations exist. The list contains only possibilites not,
+	 * requirements.
+	 * 
+	 * @return The list of subsystem configuration id's. May be empty,
+	 *         but never <code>null</code>.
+   	 */
+	public String[] getSubsystemConfigurationIds();
+  
+	/**
+	 * Creates a new <code>IHost</code> object instance. This method is
+	 * called from {@link SystemHostPool#createHost(IRSESystemType, String, String, String, String, int)}.
+	 * 
+	 * @param profile The system profile to associate with the host.
+	 * @return A new <code>IHost</code> object instance.
+	 */
+	public IHost createNewHostInstance(ISystemProfile profile);  
 }

@@ -79,6 +79,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
+import org.eclipse.rse.internal.core.model.SystemHostPool;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEventManager;
 import org.eclipse.rse.internal.core.model.SystemPreferenceChangeManager;

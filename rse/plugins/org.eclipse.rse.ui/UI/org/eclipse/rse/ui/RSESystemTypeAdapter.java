@@ -32,9 +32,7 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
-import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.internal.ui.RSEAdapter;
@@ -339,16 +337,4 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 		return false;
 	}
 	
-  
-  /**
-   * Creates a new <code>IHost</code> object instance. This method is
-   * called from {@link org.eclipse.rse.ui.internal.model.SystemHostPool#createHost(IRSESystemType, String, String, String, String, int)}.
-   * 
-   * @param profile The system profile to associate with the host.
-   * @return A new <code>IHost</code> object instance.
-   */
-  public IHost createNewHostInstance(ISystemProfile profile) {
-		return new Host(profile);
-  }
-
 }

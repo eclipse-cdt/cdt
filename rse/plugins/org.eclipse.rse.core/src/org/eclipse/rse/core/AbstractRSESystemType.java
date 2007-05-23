@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.rse.core.model.Host;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.osgi.framework.Bundle;
 
 /**
@@ -169,6 +172,10 @@ public abstract class AbstractRSESystemType extends PlatformObject implements IR
 		return IRSESystemType.SYSTEMTYPE_WINDOWS_ID.equals(getId())
 		   || (isLocal() && System.getProperty("os.name").toLowerCase().startsWith("win")) //$NON-NLS-1$ //$NON-NLS-2$
 		   || testProperty(IRSESystemType.PROPERTY_IS_WINDOWS, true);
+	}
+
+	public IHost createNewHostInstance(ISystemProfile profile) {
+		return new Host(profile);
 	}
 
 	/* (non-Javadoc)

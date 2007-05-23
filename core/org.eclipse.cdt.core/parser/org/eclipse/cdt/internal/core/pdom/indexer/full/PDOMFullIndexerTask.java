@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 	private final static Object SKIP=     new Object();
 	private final static Object REQUIRED_IF_CONFIG_CHANGED= new Object();
 	
-	private List fChanged = new ArrayList();
+	private List fChanged = new LinkedList();
 	private List fRemoved = new ArrayList();
 	private IWritableIndex fIndex = null;
 	private Map filePathsToParse = new HashMap/*<IIndexFileLocation, Object>*/();

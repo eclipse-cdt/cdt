@@ -828,14 +828,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		IResource resource = getResource();
 		ICProject project = getCProject();
 		IProject rproject = project.getProject();
+		IResource infoResource = resource != null ? resource : rproject;
 
-		if (!force && CoreModel.isScannerInformationEmpty(resource)) {
+		if (!force && CoreModel.isScannerInformationEmpty(infoResource)) {
 			return null;
 		}
 		
 		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(rproject);
 		if (provider != null) {
-			IResource infoResource = resource != null ? resource : rproject;
 			IScannerInfo scanInfo = provider.getScannerInformation(infoResource);
 			if (scanInfo != null)
 				return scanInfo;

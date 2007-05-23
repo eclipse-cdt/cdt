@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
@@ -1221,15 +1222,15 @@ public class CoreModel {
 	
 	/**
 	 * The method returns whether scanner information for a resource is empty or not.
-	 * <p>
-	 * Although this looks like IScannerInfoProvider method, eventually this interface
-	 * will be deprecated and the service will be moved to CoreModel.
-	 * </p>
+	 * If <code>null</code> is supplied the method returns <code>true</code>.
 	 * 
 	 * @param resource
 	 * @since 3.0
 	 */
 	public static boolean isScannerInformationEmpty(IResource resource) {
+		if (resource == null) {
+			return true;
+		}
 		IProject project = resource.getProject();
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance(); 
 		ICProjectDescription des = mngr.getProjectDescription(project, false);
@@ -1245,19 +1246,19 @@ public class CoreModel {
 						lSetting = null;
 				}
 				if(lSetting != null){
-					ICLanguageSettingEntry[] entries = lSetting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+					ICLanguageSettingEntry[] entries = lSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 					if(entries.length != 0)
 						return false;
 					
-					entries = lSetting.getSettingEntries(ICLanguageSettingEntry.MACRO);
+					entries = lSetting.getSettingEntries(ICSettingEntry.MACRO);
 					if(entries.length != 0)
 						return false;
 
-					entries = lSetting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_FILE);
+					entries = lSetting.getSettingEntries(ICSettingEntry.INCLUDE_FILE);
 					if(entries.length != 0)
 						return false;
 					
-					entries = lSetting.getSettingEntries(ICLanguageSettingEntry.MACRO_FILE);
+					entries = lSetting.getSettingEntries(ICSettingEntry.MACRO_FILE);
 					if(entries.length != 0)
 						return false;
 				}

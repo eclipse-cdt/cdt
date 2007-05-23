@@ -859,7 +859,7 @@ public class SystemViewRemoteFileAdapter
 			//Object[] contents = file.getContents(RemoteChildrenContentsType.getInstance());
 			hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
 			//if (!hasChildren && !file.isStale())
-			if (!hasChildren && file.isStale()) // there are no children, but the resource is stale, therefore it still needs to be queried
+			if (!hasChildren && file.isStale() && (file.isDirectory() || file.isArchive())) // there are no children, but the resource is stale, therefore it still needs to be queried
 				hasChildren = true;
 		}
 

@@ -86,6 +86,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	// void SomeClass::ambiguous_impl() {
 	//    ref1= 1;
 	// }
+	// void other() {}
 
 	// #include "SomeClass.h"
 	// void SomeClass::ambiguous_impl() {
@@ -112,6 +113,14 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(chTree, 0, "SomeClass::ambiguous_impl()");
 		checkTreeNode(chTree, 0, 0, "SomeClass::ref1");
 
+		// just change the call hierarchy
+		outline= activateView(IPageLayout.ID_OUTLINE);
+		outlineTree= (Tree) getFocusControl(Tree.class, avoid, 8000);
+		checkTreeNode(outlineTree, 2, "other() : void");
+		selectTreeItem(outlineTree, 2);	
+		executeCommand(outline, ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
+		checkTreeNode(chTree, 0, "other()");
+
 		openEditor(file2);
 		outline= activateView(IPageLayout.ID_OUTLINE);
 		outlineTree= (Tree) getFocusControl(Tree.class, outlineTree, 8000);
@@ -129,7 +138,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 
 	private void openEditor(IFile file) throws PartInitException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IDE.openEditor(page, file);
+		IDE.openEditor(page, file, true);
 		getFocusControl(StyledText.class, 8000);
 	}
 }

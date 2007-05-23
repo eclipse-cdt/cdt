@@ -551,7 +551,6 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 0, "main()");
 	}
 	
-	// {testStaticFunctions}
 	// void gf();
 	// static void sf() {
 	//     gf();
@@ -623,7 +622,6 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(i1, 0, null);
 	}
 
-	// {testStaticFunctions}
 	// void gf();
 	// static void sf() {
 	//     gf();

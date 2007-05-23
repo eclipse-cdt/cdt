@@ -23,6 +23,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 
@@ -53,6 +54,7 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 			}
 		} catch (Throwable e) {
 			fErrorMessage = e.toString();
+			CUIPlugin.getDefault().log(e);
 		}
 
 		return Collections.EMPTY_LIST;

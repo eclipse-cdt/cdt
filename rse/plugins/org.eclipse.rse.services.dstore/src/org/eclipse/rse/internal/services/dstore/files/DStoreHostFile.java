@@ -325,15 +325,15 @@ public class DStoreHostFile implements IHostFile
 	
 	protected static String getAttribute(String attributes, int index)
 	{
-		String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
-		if (str.length > index)
+		if (attributes != null)
 		{
-			return str[index];
+			String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
+			if (str.length > index)
+			{
+				return str[index];
+			}
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
 	public void renameTo(String newAbsolutePath) 

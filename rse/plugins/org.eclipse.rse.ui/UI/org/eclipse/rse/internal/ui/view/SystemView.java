@@ -2092,6 +2092,21 @@ public class SystemView extends SafeTreeViewer
 				break;
 			case ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH_REMOTE: src = " + src); //$NON-NLS-1$
+				
+				// first, find out if src is a container or not
+				// if it's a container, just pass into refreshRemoteObject
+				// if it's NOT a container, pass in it's parent
+				ISystemViewElementAdapter adapter = getViewAdapter(src);
+				if (adapter != null)
+				{
+					boolean hasChildren = adapter.hasChildren((IAdaptable)src);
+					if (!hasChildren)
+					{
+						// make the src the parent of the src
+						src = adapter.getParent(src);
+					}
+				}
+				
 				refreshRemoteObject(src, parent, originatedHere);
 				break;
 			case ISystemResourceChangeEvents.EVENT_SELECT_REMOTE:

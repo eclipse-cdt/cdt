@@ -569,15 +569,13 @@ public class SystemViewRemoteFileAdapter
 	{
 		//System.out.println("Inside getParent for: "+element);
 		IRemoteFile file = (IRemoteFile) element;
-		if (file.exists())
-		{
+
 			IRemoteFile parent = file.getParentRemoteFile();
 			if ((parent != null) && parent.getAbsolutePath().equals(file.getAbsolutePath()))
 				// should never happen but sometimes it does, leading to infinite loop.
 				parent = null;
 			return parent;
-		}
-		return null;
+
 	}
 
 	/**

@@ -136,9 +136,12 @@ public class SystemImportCertWizardMainPage
 		_viewer.setContentProvider(new CertTableContentProvider());
 		_viewer.setLabelProvider(new NewCertTableLabelProvider());
 		
-		for (int i = 0; i < _certificates.size(); i++)
-		{
-			_viewer.add(getElement(_certificates.get(i)));
+		if (_certificates != null)
+		{	
+			for (int i = 0; i < _certificates.size(); i++)
+			{
+				_viewer.add(getElement(_certificates.get(i)));
+			}
 		}
 	}
 

@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -20,11 +26,12 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class BackwardCompatibilityTests extends BaseTestCase {
 	private static final String PROJ_NAME_PREFIX = "BackwardCompatibilityTests_";
-	ICProject p1;
+	ICProject p1, p2;
 	
 	public static TestSuite suite() {
 		return suite(BackwardCompatibilityTests.class, "_");
@@ -54,7 +61,6 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 			CoreModel.newSourceEntry(project.getFullPath()),
 			CoreModel.newOutputEntry(project.getFullPath()),
 		};
-		assertEquals(expectedRawEntries.length, entries.length);
 		checkEntriesMatch(expectedRawEntries, entries);
 		
 		IPathEntry[] expectedResolvedEntries = new IPathEntry[]{
@@ -67,7 +73,6 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 			CoreModel.newIncludeEntry(project.getFullPath(), project.getFullPath().makeRelative(), new Path("g/h/i")),
 			CoreModel.newIncludeEntry(project.getFullPath(), new Path("j"), new Path("k/l")),
 		};
-		assertEquals(expectedResolvedEntries.length, resolvedentries.length);
 		checkEntriesMatch(expectedResolvedEntries, resolvedentries);
 
 		IPathEntry[] newEntries = new IPathEntry[entries.length + 1];
@@ -81,7 +86,6 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		CoreModel.setRawPathEntries(p1, newEntries, null);
 		
 		entries = CoreModel.getRawPathEntries(p1);
-		assertEquals(newExpectedRawEntries.length, entries.length);
 		checkEntriesMatch(entries, newExpectedRawEntries);
 		
 		IPathEntry[] newExpectedResolved = new IPathEntry[resolvedentries.length + 1];
@@ -89,9 +93,125 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		newExpectedResolved[resolvedentries.length] = CoreModel.newIncludeEntry(project.getFullPath().append("d"), null, new Path("/C/d/e"), true, new Path[]{new Path("a"), new Path("b")}, false);
 		resolvedentries = CoreModel.getResolvedPathEntries(p1);
 		checkEntriesMatch(resolvedentries, newExpectedResolved);
+		
+		entries = concatEntries(entries, new IPathEntry[]{
+		       CoreModel.newSourceEntry(project.getFullPath().append("test_src")),
+		       CoreModel.newOutputEntry(project.getFullPath().append("test_out")),});
+		
+		newExpectedRawEntries = concatEntries(newExpectedRawEntries, new IPathEntry[]{
+		       CoreModel.newSourceEntry(project.getFullPath().append("test_src")),
+		       CoreModel.newOutputEntry(project.getFullPath().append("test_out")),});
+		
+		for(int i = 0; i < newExpectedRawEntries.length; i++){
+			IPathEntry entry = newExpectedRawEntries[i];
+			if(entry.getEntryKind() == IPathEntry.CDT_SOURCE && entry.getPath().equals(project.getFullPath())){
+				newExpectedRawEntries[i] = CoreModel.newSourceEntry(project.getFullPath(), new Path[]{new Path("test_src")});
+			}
+//			if(entry.getEntryKind() == IPathEntry.CDT_OUTPUT && entry.getPath().equals(project.getFullPath())){
+//				newExpectedRawEntries[i] = CoreModel.newOutputEntry(project.getFullPath(), new Path[]{new Path("test_out")});
+//			}
+		}
+		
+		newExpectedResolved = concatEntries(newExpectedResolved, new IPathEntry[]{
+			       CoreModel.newSourceEntry(project.getFullPath().append("test_src")),
+			       CoreModel.newOutputEntry(project.getFullPath().append("test_out")),});
+			
+		for(int i = 0; i < newExpectedResolved.length; i++){
+			IPathEntry entry = newExpectedResolved[i];
+			if(entry.getEntryKind() == IPathEntry.CDT_SOURCE && entry.getPath().equals(project.getFullPath())){
+				newExpectedResolved[i] = CoreModel.newSourceEntry(project.getFullPath(), new Path[]{new Path("test_src")});
+			}
+//			if(entry.getEntryKind() == IPathEntry.CDT_OUTPUT && entry.getPath().equals(project.getFullPath())){
+//				newExpectedResolved[i] = CoreModel.newOutputEntry(project.getFullPath(), new Path[]{new Path("test_out")});
+//			}
+		}
+		
+		CoreModel.setRawPathEntries(p1, entries, null);
+		
+		entries = CoreModel.getRawPathEntries(p1);
+		resolvedentries = CoreModel.getResolvedPathEntries(p1);
+		
+		checkEntriesMatch(newExpectedRawEntries, entries);
+		checkEntriesMatch(newExpectedResolved, resolvedentries);
+		
+		CoreModel.setRawPathEntries(p1, expectedRawEntries, null);
+		entries = CoreModel.getRawPathEntries(p1);
+		resolvedentries = CoreModel.getResolvedPathEntries(p1);
+		
+		checkEntriesMatch(expectedRawEntries, entries);
+		checkEntriesMatch(expectedResolvedEntries, resolvedentries);
+		
+		//check to see that setting the same entries do not give errors
+		CoreModel.setRawPathEntries(p1, expectedRawEntries, null);
+		entries = CoreModel.getRawPathEntries(p1);
+		resolvedentries = CoreModel.getResolvedPathEntries(p1);
+		
+		checkEntriesMatch(expectedRawEntries, entries);
+		checkEntriesMatch(expectedResolvedEntries, resolvedentries);
 	}
 	
-	private void checkEntriesMatch(IPathEntry[] e1, IPathEntry[] e2){
+	public void testCPathEntriesForOldStyle() throws Exception {
+		p2 = CProjectHelper.createCCProject(PROJ_NAME_PREFIX + "b", null, IPDOMManager.ID_NO_INDEXER);
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+		IProject project = p2.getProject();
+		ICProjectDescription des = mngr.getProjectDescription(project, false);
+		assertNotNull(des);
+		assertEquals(1, des.getConfigurations().length);
+		assertFalse(mngr.isNewStyleProject(des));
+		assertFalse(mngr.isNewStyleProject(project));
+		
+		IPathEntry[] entries = CoreModel.getRawPathEntries(p2);
+		entries = concatEntries(entries, new IPathEntry[]{
+			       CoreModel.newSourceEntry(project.getFullPath().append("test_src")),
+			       CoreModel.newOutputEntry(project.getFullPath().append("test_out")),});
+
+		CoreModel.setRawPathEntries(p2, entries, null);
+		
+		ICSourceEntry[] expectedSourceEntries = new ICSourceEntry[]{
+				new CSourceEntry(project.getFullPath(), new IPath[] {new Path("test_src")}, ICSettingEntry.RESOLVED),
+				new CSourceEntry(project.getFullPath().append("test_src"), null, ICSettingEntry.RESOLVED),
+		};
+
+		ICOutputEntry[] expectedOutputEntries = new ICOutputEntry[]{
+				new COutputEntry(project.getFullPath(), null, ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH),
+				new COutputEntry(project.getFullPath().append("test_out"), null, ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH),
+		};
+
+		des = mngr.getProjectDescription(project, false);
+		ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
+		ICSourceEntry[] sEntries = cfg.getSourceEntries();
+		ICOutputEntry[] oEntries = cfg.getBuildSetting().getOutputDirectories();
+		
+		checkCEntriesMatch(expectedSourceEntries, sEntries);
+		checkCEntriesMatch(expectedOutputEntries, oEntries);
+
+		des = mngr.getProjectDescription(project, true);
+		cfg = des.getDefaultSettingConfiguration();
+		sEntries = cfg.getSourceEntries();
+		oEntries = cfg.getBuildSetting().getOutputDirectories();
+		
+		checkCEntriesMatch(expectedSourceEntries, sEntries);
+		checkCEntriesMatch(expectedOutputEntries, oEntries);
+	}
+	
+	public static IPathEntry[] concatEntries(IPathEntry[] entries1, IPathEntry[] entries2){
+		List list = new ArrayList(entries1.length + entries2.length);
+		list.addAll(Arrays.asList(entries1));
+		list.addAll(Arrays.asList(entries2));
+		return (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
+	}
+	
+	public static void checkCEntriesMatch(ICSettingEntry[] e1, ICSettingEntry[] e2){
+		if(e1.length != e2.length)
+			fail("entries num do not match");
+		
+		Set set = new HashSet(Arrays.asList(e1));
+		set.removeAll(Arrays.asList(e2));
+		if(set.size() != 0)
+			fail("entries do not match");
+	}
+	
+	public static void checkEntriesMatch(IPathEntry[] e1, IPathEntry[] e2){
 		if(e1.length != e2.length)
 			fail("entries arrays have different length \ne1: " + dumpArray(e1) +"\ne2:" + dumpArray(e2) + "\n");
 		
@@ -110,7 +230,7 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		}
 	}
 	
-	private String dumpArray(Object array[]){
+	public static String dumpArray(Object array[]){
 		if(array == null)
 			return "null";
 		

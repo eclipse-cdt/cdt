@@ -1104,7 +1104,10 @@ public class BuildDescriptionModelTests extends TestCase {
 		//in this the build system is initiating the core settings update (ICProjectDescription cache refresh)
 		//the refresh is scheduled as a job, so in case we do not wait here the job may not be completed by the time
 		//the test is run
-
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+		}
 		
 		CCorePlugin.getIndexManager().joinIndexer(-1, new NullProgressMonitor());
 

@@ -128,6 +128,8 @@ public class CDataFacroty {
 	}
 
 	public void setModified(CDataObject data, boolean modified){
+		if(data == null)
+			return;
 		switch (data.getType()) {
 		case ICSettingBase.SETTING_CONFIGURATION:
 			((CDefaultConfigurationData)data).setModified(modified);

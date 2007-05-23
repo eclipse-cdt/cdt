@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 public class CBuildSetting extends CDataProxy implements ICBuildSetting {
@@ -40,7 +41,10 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 
 	public ICOutputEntry[] getOutputDirectories() {
 		CBuildData data = getBuildData(false);
-		return data.getOutputDirectories();
+		ICOutputEntry[] entries = data.getOutputDirectories();
+		IProject project = getProject();
+		entries = CDataUtil.adjustEntries(entries, true, project);
+		return entries;
 	}
 
 	public void setBuilderCWD(IPath path) {
@@ -55,12 +59,17 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 
 	public void setOutputDirectories(ICOutputEntry[] entries) {
 		CBuildData data = getBuildData(true);
+		IProject project = getProject();
+		if(entries != null){
+			entries = CDataUtil.adjustEntries(entries, false, project);
+		}
+
 		data.setOutputDirectories(entries);
 		if(entries == null){
 			CExternalSettingsManager.getInstance().restoreOutputEntryDefaults(getConfiguration());
 		}
 	}
-
+	
 	public final int getType() {
 		return ICSettingBase.SETTING_BUILD;
 	}

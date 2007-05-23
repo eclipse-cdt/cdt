@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.model.IIncludeFileEntry;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IMacroFileEntry;
+import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
+import org.eclipse.cdt.core.settings.model.COutputEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
@@ -969,12 +971,13 @@ public class PathEntryTranslator {
 //			fCfg = cfg;
 			fProject = project;
 		}
-
+		
 		public void setSourceOutputEntries(int kind, ICExclusionPatternPathEntry entries[]){
 			Map map = getEntriesMap(kind, true);
 			Map nameKeyMap = getEntriesNameKeyMap(kind, true);
 			for(int i = 0; i < entries.length; i++){
 				ICExclusionPatternPathEntry entry = entries[i];
+				entry = CDataUtil.makeAbsolute(fProject, entry, kind == ICSettingEntry.SOURCE_PATH);
 				EntryNameKey nameKey = new EntryNameKey(entry);
 				PathEntryComposer old = (PathEntryComposer)nameKeyMap.get(nameKey);
 				if(old != null){
@@ -1510,6 +1513,7 @@ public class PathEntryTranslator {
 		List projList = new ArrayList();
 		List exportSettingsList = new ArrayList();
 		ICSourceEntry srcEntries[] = null;
+		ICOutputEntry outEntries[] = null;
 //		PathSettingsContainer child;
 		ResolvedEntry rEntry;
 		IPath projPath;
@@ -1525,7 +1529,7 @@ public class PathEntryTranslator {
 					srcList.add(rEntry.fEntry);
 					break;
 				case IPathEntry.CDT_OUTPUT:
-					outList.add(rEntry);
+					outList.add(rEntry.fEntry);
 					break;
 				case IPathEntry.CDT_PROJECT:
 					projList.add(rEntry);
@@ -1553,6 +1557,11 @@ public class PathEntryTranslator {
 		} else {
 //			srcPaths = new IPath[]{new Path("")}; //$NON-NLS-1$
 		}
+		if(outList.size() != 0){
+			outEntries = toCOutputEntries(outList);
+		} else {
+//			srcPaths = new IPath[]{new Path("")}; //$NON-NLS-1$
+		}
 		
 //		cr.accept(new IPathSettingsContainerVisitor(){
 //
@@ -1575,6 +1584,7 @@ public class PathEntryTranslator {
 		//applying settings
 
 		//applySourcePaths(srcPaths, op);
+		applyOutputEntries(outEntries, op);
 		applySourceEntries(srcEntries, op);
 		applyLangSettings(cr, op);
 		
@@ -1611,11 +1621,30 @@ public class PathEntryTranslator {
 		return entries;
 	}
 	
+	private static ICOutputEntry[] toCOutputEntries(List list){
+		ICOutputEntry[] entries = new ICOutputEntry[list.size()];
+		for(int i = 0; i < entries.length; i++){
+			entries[i] = toCOutputEntry((IOutputEntry)list.get(i), true);
+		}
+		return entries;
+	}
+
+	
 	private static ICSourceEntry toCSourceEntry(ISourceEntry entry, boolean makeProjRelative){
 		IPath path = entry.getPath();
 		if(makeProjRelative && path.isAbsolute())
 			path = path.removeFirstSegments(1);
 		return new CSourceEntry(path,
+				entry.getExclusionPatterns(), 
+				ICSettingEntry.VALUE_WORKSPACE_PATH
+				| ICSourceEntry.RESOLVED);
+	}
+	
+	private static ICOutputEntry toCOutputEntry(IOutputEntry entry, boolean makeProjRelative){
+		IPath path = entry.getPath();
+		if(makeProjRelative && path.isAbsolute())
+			path = path.removeFirstSegments(1);
+		return new COutputEntry(path,
 				entry.getExclusionPatterns(), 
 				ICSettingEntry.VALUE_WORKSPACE_PATH
 				| ICSourceEntry.RESOLVED);
@@ -1655,23 +1684,23 @@ public class PathEntryTranslator {
 
 	private void applySourceEntries(ICSourceEntry entries[], int op){
 		ICSourceEntry[] oldEntries = fCfgData.getSourceEntries();
+		oldEntries = (ICSourceEntry[])CDataUtil.makeRelative(fProject, oldEntries, true);
+		entries = (ICSourceEntry[])CDataUtil.makeRelative(fProject, entries, true);
 		entries = (ICSourceEntry[])replaceUserEntries(oldEntries, entries);
 		
 		switch (op) {
 		case OP_ADD:
 			if(entries != null && entries.length != 0){
-				ICSourceEntry curEntries[] = fCfgData.getSourceEntries();
 				Set set = new LinkedHashSet();
-				set.addAll(Arrays.asList(curEntries));
+				set.addAll(Arrays.asList(oldEntries));
 				set.addAll(Arrays.asList(entries));
 				fCfgData.setSourceEntries((ICSourceEntry[])set.toArray(new ICSourceEntry[set.size()]));
 			}
 			break;
 		case OP_REMOVE:
 			if(entries != null && entries.length != 0){
-				ICSourceEntry curEntries[] = fCfgData.getSourceEntries();
 				Set set = new HashSet();
-				set.addAll(Arrays.asList(curEntries));
+				set.addAll(Arrays.asList(oldEntries));
 				set.removeAll(Arrays.asList(entries));
 				fCfgData.setSourceEntries((ICSourceEntry[])set.toArray(new ICSourceEntry[set.size()]));
 			}
@@ -1682,6 +1711,46 @@ public class PathEntryTranslator {
 				fCfgData.setSourceEntries(entries);
 			} else {
 				fCfgData.setSourceEntries(new ICSourceEntry[0]);
+			}
+			break;
+		}		
+	}
+	
+	private void applyOutputEntries(ICOutputEntry entries[], int op){
+		CBuildData bData = fCfgData.getBuildData();
+		if(bData == null){
+			CCorePlugin.log("PathEntryTranslator: failed to apply output entries: Build Data is null, ignoring..");
+			return;
+		}
+		
+		ICOutputEntry[] oldEntries = bData.getOutputDirectories();
+		oldEntries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, oldEntries, false);
+		entries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, entries, false);
+		entries = (ICOutputEntry[])replaceUserEntries(oldEntries, entries);
+		
+		switch (op) {
+		case OP_ADD:
+			if(entries != null && entries.length != 0){
+				Set set = new LinkedHashSet();
+				set.addAll(Arrays.asList(oldEntries));
+				set.addAll(Arrays.asList(entries));
+				bData.setOutputDirectories((ICOutputEntry[])set.toArray(new ICOutputEntry[set.size()]));
+			}
+			break;
+		case OP_REMOVE:
+			if(entries != null && entries.length != 0){
+				Set set = new HashSet();
+				set.addAll(Arrays.asList(oldEntries));
+				set.removeAll(Arrays.asList(entries));
+				bData.setOutputDirectories((ICOutputEntry[])set.toArray(new ICOutputEntry[set.size()]));
+			}
+			break;
+		case OP_REPLACE:
+		default:
+			if(entries != null){
+				bData.setOutputDirectories(entries);
+			} else {
+				bData.setOutputDirectories(new ICOutputEntry[0]);
 			}
 			break;
 		}		
@@ -2492,7 +2561,4 @@ public class PathEntryTranslator {
 		PathEntryCollector cr = collectEntries(project, cfg);
 		return cr.getEntries(flags, cfg);
 	}
-//	
-//	private 
-
 }

@@ -336,7 +336,11 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		project.delete(false, true, new NullProgressMonitor());
 		
 		project = root.getProject(projectName);
+		assertFalse(project.exists());
+		assertFalse(project.isOpen());
 		des = coreModel.getProjectDescription(project);
+		assertFalse(project.exists());
+		assertFalse(project.isOpen());
 		assertNull("project description is not null for removed project", des);
 		
 		project = createProject(projectName);
@@ -376,6 +380,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		project.delete(false, true, new NullProgressMonitor());
 		
 		project = root.getProject(projectName);
+		assertFalse(project.exists());
+		assertFalse(project.isOpen());
 		des = coreModel.getProjectDescription(project);
 		assertNull("project description is not null for removed project", des);
 		

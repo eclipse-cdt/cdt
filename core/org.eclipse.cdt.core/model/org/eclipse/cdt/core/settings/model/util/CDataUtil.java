@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.util;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -758,7 +759,7 @@ public class CDataUtil {
 		return adjustEntries(entries, false, null);
 	}
 
-	private static ICSourceEntry[] getDefaultEntries(boolean absolute, IProject project){
+	private static ICSourceEntry[] getDefaultSourceEntries(boolean absolute, IProject project){
 		ICSourceEntry entry;
 		if(absolute){
 			if(project != null)
@@ -770,10 +771,30 @@ public class CDataUtil {
 		}
 		return new ICSourceEntry[]{entry};
 	}
+	
+	private static ICOutputEntry[] getDefaultOutputEntries(boolean absolute, IProject project){
+		ICOutputEntry entry;
+		if(absolute){
+			if(project != null)
+				entry = new COutputEntry(project.getFullPath(), null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+			else
+				entry = new COutputEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+		} else {
+			entry = new COutputEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+		}
+		return new ICOutputEntry[]{entry};
+	}
+
+	public static ICOutputEntry[] adjustEntries(ICOutputEntry entries[], boolean makeAbsolute, IProject project){
+		if(entries == null || entries.length == 0)
+			return getDefaultOutputEntries(makeAbsolute, project);
+		
+		return makeAbsolute ? checkMakeAbsolute(project, entries) : checkMakeRelative(project, entries);
+	}
 
 	public static ICSourceEntry[] adjustEntries(ICSourceEntry entries[], boolean makeAbsolute, IProject project){
-		if(entries == null)
-			return getDefaultEntries(makeAbsolute, project);
+		if(entries == null || entries.length == 0)
+			return getDefaultSourceEntries(makeAbsolute, project);
 		
 		ICSourceEntry ei, ej;
 		LinkedHashMap map = new LinkedHashMap();
@@ -837,31 +858,35 @@ public class CDataUtil {
 	}
 
 	public static ICSourceEntry makeAbsolute(IProject project, ICSourceEntry entry){
-		if(project == null)
-			return entry;
-		
-		IPath path = new Path(entry.getName());
-		if(path.isAbsolute())
-			return entry;
-		
-		path = project.getFullPath().append(path);
-		
-		return new CSourceEntry(path, entry.getExclusionPatterns(), entry.getFlags());
+		return (ICSourceEntry)makeAbsolute(project, entry, true);
 	}
 
 	public static ICSourceEntry makeRelative(IProject project, ICSourceEntry entry){
-		IPath path = new Path(entry.getName());
-		if(!path.isAbsolute())
-			return entry;
-		
-//		if(project != null){
-//			
-//			IPath projPath = project.getFullPath();
-//			
-//		}
-//		if(pro)
-		
-		return new CSourceEntry(path.removeFirstSegments(1).makeRelative(), entry.getExclusionPatterns(), entry.getFlags());
+		return (ICSourceEntry)makeRelative(project, entry, true);
+	}
+
+	public static ICSourceEntry[] makeRelative(IProject project, ICSourceEntry[] entries){
+		return (ICSourceEntry[])makeRelative(project, entries, true);
+	}
+
+	public static ICSourceEntry[] makeAbsolute(IProject project, ICSourceEntry[] entries){
+		return (ICSourceEntry[])makeAbsolute(project, entries, true);
+	}
+
+	public static ICOutputEntry checkMakeAbsolute(IProject project, ICOutputEntry entry){
+		return (ICOutputEntry)makeAbsolute(project, entry, false);
+	}
+
+	public static ICOutputEntry checkMakeRelative(IProject project, ICOutputEntry entry){
+		return (ICOutputEntry)makeRelative(project, entry, false);
+	}
+
+	public static ICOutputEntry[] checkMakeAbsolute(IProject project, ICOutputEntry[] entries){
+		return (ICOutputEntry[])makeAbsolute(project, entries, false);
+	}
+
+	public static ICOutputEntry[] checkMakeRelative(IProject project, ICOutputEntry[] entries){
+		return (ICOutputEntry[])makeRelative(project, entries, false);
 	}
 
 	private static Collection removePrefix(IPath prefix, Collection paths, Collection result){
@@ -983,5 +1008,57 @@ public class CDataUtil {
 		else
 			set.removeAll(Arrays.asList(o2));
 		return set;
+	}
+	
+	public static ICExclusionPatternPathEntry makeAbsolute(IProject project, ICExclusionPatternPathEntry entry, boolean force){
+		if(!entry.isValueWorkspacePath() && !force)
+			return entry;
+
+		IPath path = new Path(entry.getName());
+		IPath projPath = project.getFullPath();
+		if(!path.isAbsolute() || (force && !projPath.isPrefixOf(path))){
+			path = projPath.append(path).makeAbsolute();
+			return (ICExclusionPatternPathEntry)CDataUtil.createEntry(entry.getKind(), path.toString(), null, entry.getExclusionPatterns(), entry.getFlags());
+		}
+		return entry;
+	}
+	
+	public static ICExclusionPatternPathEntry makeRelative(IProject project, ICExclusionPatternPathEntry entry, boolean force){
+		if(!entry.isValueWorkspacePath() && !force)
+			return entry;
+		
+		IPath path = new Path(entry.getName());
+		IPath projPath = project.getFullPath();
+		
+		if(path.isAbsolute()){
+			if(projPath.isPrefixOf(path))
+				path = path.removeFirstSegments(projPath.segmentCount()).makeRelative();
+			else if (force)
+				path = path.makeRelative();
+			return (ICExclusionPatternPathEntry)CDataUtil.createEntry(entry.getKind(), entry.getName(), entry.getValue(), entry.getExclusionPatterns(), entry.getFlags());
+		}
+		return entry;
+	}
+	
+	public static ICExclusionPatternPathEntry[] makeRelative(IProject project, ICExclusionPatternPathEntry[] entries, boolean force){
+		if(entries == null)
+			return null;
+		
+		ICExclusionPatternPathEntry[] relEntries = (ICExclusionPatternPathEntry[])Array.newInstance(entries.getClass().getComponentType(), entries.length);
+		for(int i = 0; i < entries.length; i++){
+			relEntries[i] = makeRelative(project, entries[i], force);
+		}
+		return relEntries;
+	}
+	
+	public static ICExclusionPatternPathEntry[] makeAbsolute(IProject project, ICExclusionPatternPathEntry[] entries, boolean force){
+		if(entries == null)
+			return null;
+		
+		ICExclusionPatternPathEntry[] relEntries = (ICExclusionPatternPathEntry[])Array.newInstance(entries.getClass().getComponentType(), entries.length);
+		for(int i = 0; i < entries.length; i++){
+			relEntries[i] = makeAbsolute(project, entries[i], force);
+		}
+		return relEntries;
 	}
 }

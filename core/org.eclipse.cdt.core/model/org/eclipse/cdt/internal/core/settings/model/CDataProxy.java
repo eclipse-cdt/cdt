@@ -11,9 +11,11 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.extension.CDataObject;
+import org.eclipse.core.resources.IProject;
 
 public abstract class CDataProxy implements ICSettingObject {
 	protected ICDataProxyContainer fParent;
@@ -151,5 +153,17 @@ public abstract class CDataProxy implements ICSettingObject {
 	
 	public boolean isReadOnly() {
 		return false;
+	}
+	
+	protected IProject getProject(){
+		ICConfigurationDescription cfg = getConfiguration();
+		if(cfg == null)
+			return null;
+		
+		ICProjectDescription projDes = cfg.getProjectDescription();
+		if(projDes == null)
+			return null;
+		
+		return projDes.getProject();
 	}
 }

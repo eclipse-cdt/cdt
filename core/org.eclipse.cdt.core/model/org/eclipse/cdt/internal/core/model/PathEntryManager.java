@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.util.PathEntryResolveInfo;
 import org.eclipse.cdt.core.settings.model.util.PathEntryResolveInfoElement;
+import org.eclipse.cdt.core.settings.model.util.ThreadLocalMap;
 import org.eclipse.cdt.internal.core.settings.model.AbstractCExtensionProxy;
 import org.eclipse.cdt.internal.core.settings.model.ConfigBasedPathEntryStore;
 import org.eclipse.core.resources.IMarker;
@@ -112,6 +113,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	// Synchronized the access of the cache entries.
 	protected Map resolvedMap = new Hashtable();
 	private Map resolvedInfoMap = new Hashtable();
+	private ThreadLocalMap resolveInfoValidState = new ThreadLocalMap(); 
 
 	// Accessing the map is synch with the class
 	private Map storeMap = new HashMap();
@@ -415,10 +417,23 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if(info == null){
 			getResolvedPathEntries(cproject);
 			info = (PathEntryResolveInfo)resolvedInfoMap.get(cproject);
+		} else if(!getResolveInfoValidState(cproject)){
+			Object[] resolved = getResolvedPathEntries(cproject, false, false);
+			if(resolved != null)
+				info = (PathEntryResolveInfo)resolved[1]; 
 		}
 		return info;
 	}
-
+	
+	private void setResolveInfoValidState(ICProject cproject, boolean valid){
+		Object v = valid ? null : Boolean.FALSE;
+		resolveInfoValidState.set(cproject, v);
+	}
+	
+	private boolean getResolveInfoValidState(ICProject cproject){
+		return resolveInfoValidState.get(cproject) == null;
+	}
+	
 	protected IPathEntry[] removeCachedResolvedPathEntries(ICProject cproject) {
 		ArrayList resolvedListEntries = (ArrayList)resolvedMap.remove(cproject);
 		resolvedInfoMap.remove(cproject);
@@ -485,7 +500,19 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	 * @throws CModelException
 	 */
 	private ArrayList getResolvedPathEntries(ICProject cproject, boolean generateMarkers) throws CModelException {
-		ArrayList resolvedEntries = (ArrayList)resolvedMap.get(cproject);
+		Object[] result = getResolvedPathEntries(cproject, generateMarkers, true);
+		if(result != null)
+			return (ArrayList)result[0];
+		return null;
+	}
+
+	private Object[] getResolvedPathEntries(ICProject cproject, boolean generateMarkers, boolean useCache) throws CModelException {
+		ArrayList resolvedEntries = null;
+		PathEntryResolveInfo rInfo = null;
+		if(useCache){
+			resolvedEntries = (ArrayList)resolvedMap.get(cproject);
+			rInfo = (PathEntryResolveInfo)resolvedInfoMap.get(cproject);
+		}
 		if (resolvedEntries == null) {
 			List resolveInfoList = new ArrayList();
 			IPath projectPath = cproject.getPath();
@@ -561,10 +588,13 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				resolvedEntries.removeAll(dups);
 			}
 
-			resolvedMap.put(cproject, resolvedEntries);
-			resolvedInfoMap.put(cproject, new PathEntryResolveInfo(resolveInfoList));
+			rInfo = new PathEntryResolveInfo(resolveInfoList);
+			if(useCache){
+				resolvedMap.put(cproject, resolvedEntries);
+				resolvedInfoMap.put(cproject, rInfo);
+			}
 		}
-		return resolvedEntries;
+		return new Object[]{resolvedEntries, rInfo};
 	}
 
 	public void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
@@ -944,7 +974,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			list.toArray(newRawEntries);
 			IProject project = cproject.getProject();
 			IPathEntryStore store = getPathEntryStore(project, true);
+			setResolveInfoValidState(cproject, false);
 			store.setRawPathEntries(newRawEntries);
+			setResolveInfoValidState(cproject, true);
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}

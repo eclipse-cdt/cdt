@@ -91,10 +91,6 @@ public class CLanguageSetting extends CDataProxy implements
 		return (getSupportedEntryKinds() & kind) == kind;
 	}
 	
-	private IProject getProject(){
-		return getConfiguration().getProjectDescription().getProject();
-	}
-
 /*	public String[] getHeaderExtensions() {
 		CLanguageData data = getCLanguageData(false);
 		IContentType type = data.getHeaderContentType();

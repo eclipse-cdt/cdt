@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultBuildData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 public class CBuildSettingCache extends CDefaultBuildData implements
@@ -27,6 +28,7 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 	private CConfigurationDescriptionCache fCfgCache;
 	private StorableEnvironment fEnvironment;
 	private StorableEnvironment fResolvedEnvironment;
+	private ICOutputEntry[] fProjOutputEntries;
 	private ICOutputEntry[] fResolvedOutputEntries;
 
 	CBuildSettingCache(CBuildData base, CConfigurationDescriptionCache cfgCache){
@@ -96,5 +98,23 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 		}
 		return fResolvedOutputEntries;
 	}
+	
+	public ICOutputEntry[] getOutputDirectories() {
+		initOutputEntries();
+		return (ICOutputEntry[])fProjOutputEntries.clone();
+	}
+	
+	private void initOutputEntries(){
+		if(fProjOutputEntries == null){
+			IProject project = getProject(); 
+			fProjOutputEntries = CDataUtil.adjustEntries(fOutputEntries, true, project);
+		}
+	}
+	
+	private IProject getProject(){
+		ICConfigurationDescription cfg = getConfiguration();
+		return cfg.isPreferenceConfiguration() ? null : cfg.getProjectDescription().getProject();
+	}
+
 	
 }

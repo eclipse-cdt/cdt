@@ -235,9 +235,13 @@ public class PathEntryConfigurationDataProvider extends
 			IProgressMonitor monitor)
 			throws CoreException {
 		//TODO: check external/reference info here as well.
-		if(!fFactory.isModified(base))
+		if(!fFactory.isModified(base)){
+			try {
+				return createData(des);
+			} catch (Exception e){
+			}
 			return base;
-		
+		}
 		
 		
 		IProject project = des.getProjectDescription().getProject();
@@ -250,7 +254,7 @@ public class PathEntryConfigurationDataProvider extends
 		List list = new ArrayList();
 		list.addAll(Arrays.asList(entries));
 		for(int i = 0; i < curRawEntries.length; i++){
-			if(curRawEntries[i].getEntryKind() == IPathEntry.CDT_CONTAINER){
+			if(curRawEntries[i].getEntryKind() != IPathEntry.CDT_CONTAINER){
 				list.add(curRawEntries[i]);
 			}
 		}

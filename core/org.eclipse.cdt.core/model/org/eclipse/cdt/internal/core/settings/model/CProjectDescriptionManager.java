@@ -422,7 +422,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		
 		des = getDescriptionApplying(project);
 		
-		if(des == null)
+		if(des == null && project.isOpen())
 			des = getLoaddedDescription(project);
 
 		if(des == null)
@@ -892,10 +892,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		if(!overwriteIfExists && fDescriptionMap.get(project) != null)
 			return false;
 		
-		if(des != null)
-			fDescriptionMap.put(project, des);
-		else
+		if(des != null){
+			if(project.exists() && project.isOpen()){
+				fDescriptionMap.put(project, des);
+			} else {
+				CCorePlugin.log("attempt to set description for the non-openned project");
+			}
+		}else {
 			fDescriptionMap.remove(project);
+		}
 
 		return true;
 ////		try {
@@ -2527,7 +2532,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 //			}
 			ICConfigurationDescription oldIndexCfg = oldDes.getDefaultSettingConfiguration();
 			ICDescriptionDelta indexDelta;
-			if(oldIndexCfg.getId().equals(indexCfg.getId())){
+			if(oldIndexCfg != null && oldIndexCfg.getId().equals(indexCfg.getId())){
 				indexDelta = findDelta(indexCfg.getId(), projDesDelta);
 			} else {
 				indexDelta = createDelta(indexCfg, oldIndexCfg);

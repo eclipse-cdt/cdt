@@ -216,6 +216,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 				cache.applyData(factory);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
+				e.printStackTrace();
 				iter.remove();
 			}
 		}

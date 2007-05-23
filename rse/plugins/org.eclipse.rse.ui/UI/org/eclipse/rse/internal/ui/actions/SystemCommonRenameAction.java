@@ -164,8 +164,9 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 	 */
 	protected Dialog createDialog(Shell parent)
 	{
+		IStructuredSelection sel = getSelection();
 		// multi-select
-		if (getSelection().size() > 1)
+		if (sel != null && sel.size() > 1)
 		{
 		  	SystemRenameDialog dlg = new SystemRenameDialog(parent);
 		  	if (nameValidator != null)
@@ -177,7 +178,7 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 		  	return dlg;
 		}
 		// single-select
-		else if (getSelection().size() == 1)
+		else if (sel != null && sel.size() == 1)
 		{
 		  	SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(parent);
 		  	if (copyCollisionMode)

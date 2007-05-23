@@ -139,6 +139,14 @@ public class Mnemonics {
 	public void clear() {
 		usedSet.clear();
 	}
+	
+	/**
+	 * Resets the list of used mnemonic characters to those in the string.
+	 * @param usedMnemonics
+	 */
+	public void clear(String usedMnemonics) {
+		makeUsed(usedMnemonics);
+	}
 
 	/**
 	 * Given a string, this starts at the first character and iterates until
@@ -491,7 +499,7 @@ public class Mnemonics {
 			}
 		}
 	}
-
+	
 	/** 
 	 * Set if the mnemonics are for a preference page
 	 * Preference pages already have a few buttons with mnemonics set by Eclipse

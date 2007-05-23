@@ -118,7 +118,7 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 	 * @return java.lang.String
 	 */
 	protected String getErrorsTitle() {
-		return "Error creating remote project";
+		return "Error creating remote project"; //$NON-NLS-1$
 	}
 
 	/**
@@ -152,14 +152,14 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 			ProgressMonitorDialog mon = new ProgressMonitorDialog(getShell()) {
 			    protected void configureShell(Shell shell) {
 			        super.configureShell(shell);
-					shell.setText("Creating remote Project");
+					shell.setText(Messages.CreateRemoteProjectActionDelegate_CREATING_TITLE);
 			    }
 			};
 			mon.run(true, true, op);
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			displayError("Internal Error: "+e.getTargetException().getMessage());
+			displayError("Internal Error: "+e.getTargetException().getMessage()); //$NON-NLS-1$
 			return false;
 		}
 
@@ -202,11 +202,11 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 		}
 		catch (CoreException e)
 		{
-			SystemBasePlugin.logError("Error creating temp project", e);
+			SystemBasePlugin.logError("Error creating temp project", e); //$NON-NLS-1$
 		}
 		catch (Exception e)
 		{
-			SystemBasePlugin.logError("Error creating temp project", e);
+			SystemBasePlugin.logError("Error creating temp project", e); //$NON-NLS-1$
 		}
 		return editProject;
 	}

@@ -48,10 +48,12 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
@@ -1001,7 +1003,12 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		createAdvancedControls(main);
 			
 		// set mnemonics
-		SystemWidgetHelpers.setMnemonics(parent);
+		Mnemonics m = new Mnemonics();
+		StringBuffer usedMnemonics = new StringBuffer(5);
+		usedMnemonics.append(Mnemonics.getMnemonic(SearchMessages.SearchDialog_customize));
+		usedMnemonics.append(Mnemonics.getMnemonic(SearchMessages.SearchDialog_searchAction));
+		m.clear(usedMnemonics.toString());
+		m.setMnemonics(parent);
 		
 		// set the top level control
 		setControl(main);

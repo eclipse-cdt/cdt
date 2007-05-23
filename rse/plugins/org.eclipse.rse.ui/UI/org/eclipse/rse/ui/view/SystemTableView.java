@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -974,12 +975,12 @@ public class SystemTableView
 		int eventType = event.getEventType();
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
-		Vector remoteResourceNames = null;
-		if (remoteResource instanceof Vector)
-		{
-			remoteResourceNames = (Vector) remoteResource;
-			remoteResource = remoteResourceNames.elementAt(0);
+		List remoteResourceNames = null;
+		if (remoteResource instanceof List) { 
+			remoteResourceNames = (List) remoteResource;
+			remoteResource = remoteResourceNames.get(0);
 		}
+
 		String remoteResourceParentName = getRemoteResourceAbsoluteName(remoteResourceParent);
 		String remoteResourceName = getRemoteResourceAbsoluteName(remoteResource);
 		if (remoteResourceName == null)

@@ -33,8 +33,8 @@ public class CompletionTest_ExceptionReference_Prefix  extends CompletionProposa
 			"anotherClass",
 			"aNamespace",
 			"anEnumeration",
-			// missing proposal:
-			"AStruct"
+			"AStruct",
+			"AMacro(x)"
 	};
 	
 	public CompletionTest_ExceptionReference_Prefix(String name) {

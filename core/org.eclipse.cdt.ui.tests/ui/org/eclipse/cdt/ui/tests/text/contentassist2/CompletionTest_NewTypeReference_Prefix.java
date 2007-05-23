@@ -32,8 +32,8 @@ public class CompletionTest_NewTypeReference_Prefix  extends CompletionProposals
 			"anotherClass",
 			"aNamespace",
 			"AStruct",
-			// enums may not be desired, but valid
-			"anEnumeration"
+			"anEnumeration",
+			"AMacro(x)"
 	};
 	
 	public CompletionTest_NewTypeReference_Prefix(String name) {

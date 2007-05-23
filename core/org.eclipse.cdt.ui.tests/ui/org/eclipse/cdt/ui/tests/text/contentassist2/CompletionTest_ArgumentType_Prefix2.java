@@ -31,8 +31,8 @@ public class CompletionTest_ArgumentType_Prefix2  extends CompletionProposalsBas
 			"anotherClass",
 			"aNamespace",
 			"anEnumeration",
-			// missing proposal:
-			"AStruct"
+			"AStruct",
+			"AMacro(x)"
 	};
 	
 	public CompletionTest_ArgumentType_Prefix2(String name) {

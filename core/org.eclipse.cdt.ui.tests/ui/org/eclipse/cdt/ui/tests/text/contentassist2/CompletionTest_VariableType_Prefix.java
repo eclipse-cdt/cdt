@@ -29,8 +29,8 @@ public class CompletionTest_VariableType_Prefix  extends CompletionProposalsBase
 			"anotherClass",
 			"aNamespace",
 			"anEnumeration",
-			// missing proposal:
-			"AStruct"
+			"AStruct",
+			"AMacro(x)"
 	};
 	
 	public CompletionTest_VariableType_Prefix(String name) {

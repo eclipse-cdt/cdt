@@ -30,8 +30,8 @@ public class CompletionTest_FieldType_Prefix  extends CompletionProposalsBaseTes
 			"aThirdClass",
 			"aNamespace",
 			"anEnumeration",
-			// missing proposal:
-			"AStruct"
+			"AStruct",
+			"AMacro(x)"
 	};
 	
 	public CompletionTest_FieldType_Prefix(String name) {

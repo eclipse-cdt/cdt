@@ -42,38 +42,27 @@
   still experimental because of problems when passing invalid credentials, or
   opening multiple telnet shells simultaneously.
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178201">178201</a>].</li>
-<li><b>System Type Labels are now translatable</b>, and methods have been added
-  for checking properties of system types like isWindows(), in order to simplify
-  working with them
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180688">180688</a>]
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186640">186640</a>].</li>
-<li><b>Fixed some Encoding Issues</b>, most prominently with BIDI support
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179939">179939</a>].</li>
-<li><b>Terminal now provides an optional input line</b> for dumb systems
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173730">173730</a>].</li>
-<li><b>FTP now supports an ftpListingParser extension point</b> to contribute
-  custom listing parsers
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176216">176216</a>].</li>
+<li><b>Added ability to show translatable property set names</b>
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188284">188284</a>].</li>
+<li><b>Fixed automatic creation of Mnemonics</b>, added a Policy API to
+  allow products configure the policy for mnemonic generation</b>
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178768">178768</a>]
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187860">187860</a>].</li>
 <!--
 <li><b>Copy&Paste, Drag&Drop to Project Explorer</b> are finally fixed
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153652">153652</a>].
   Same support for Windows Explorer is still on the list
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181458">181458</a>].</li>
-<li>Lots of <b>Improved API and Flexibility</b> especially for system types, action contributions,
-  dynamic system types and the New Connection Wizard. See below for details on breaking API 
-  changes. As part of the improved New Connection Wizard,
-  the <b>Default System Type Preference has been removed</b>
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164413">164413</a>].</li>
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least 32 API changes and 74 bugs were fixed: use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-04-09&chfieldto=2007-05-20&chfield=resolution&cmdtype=doit"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M7&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+<li>At least 2 API changes and 13 bugs were fixed: use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-05-19&chfieldto=2007-05-27&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M6a-200704111818/index.php">
-  TM 2.0M6a</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M6a-200704111818/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M7-200705182100/index.php">
+  TM 2.0M7</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M7-200705182100/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -150,11 +139,19 @@ user attention. A short hint on what needs to change is given directly in the li
 More information can be found in the associated bugzilla items.
 
 <ul>
-<li>TM @buildId@ API Changes
+<li>TM @buildId@ Breaking API Changes
 <ul>
 <!--
 <li><b>Cleaned up ISystemRegistry</b> - removed or changed signature of several methods [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>].</li>
 -->
+<li><b>Moved RSESystemTypeAdapter.createNewHostInstance() to IRSESystemType.createNewHostInstance()</b>.
+  This was necessary in order to support moving SystemHostPool from UI to Core,
+  which is a blocking prerequisite for future enhanced UI/Non-UI separation.
+  Migration: Extenders of RSESystemTypeAdapter will need to change their code
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176211">176211</a>].</li> 
+</ul></li>
+<li>TM 2.0M7 Breaking API Changes
+<ul>
 <li><b>Moved some more classes</b>, like the dstore miners, ISubSystemConfigurationAdapter,
   or Terminal API classes (which have been marked provisional).
   These changes can simply be picked up by running "organize imports" on client code

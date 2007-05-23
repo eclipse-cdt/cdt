@@ -11,6 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
+ * Kevin Doyle (IBM) - [187736] Marked _objectInput stale when new resource created
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
@@ -1027,6 +1028,10 @@ public class SystemTableView
 						}
 						if (!madeChange)
 						{
+							if (_objectInput instanceof ISystemContainer)
+							{
+								((ISystemContainer)_objectInput).markStale(true);
+							}
 							provider.flushCache();
 							madeChange = true;
 						}

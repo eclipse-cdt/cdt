@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
@@ -79,6 +80,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -531,6 +533,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			visit((IASTBinaryExpression)node);
 		} else if (node instanceof IASTLiteralExpression) {
 			visit((IASTLiteralExpression)node);
+		} else if (node instanceof IASTUnaryExpression) {
+			visit((IASTUnaryExpression)node);
+		} else if (node instanceof IASTIdExpression) {
+			visit((IASTIdExpression)node);
 		} else if (node instanceof IASTProblemExpression) {
 			visit((IASTProblemExpression)node);
 		} else {
@@ -1258,7 +1264,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			paramExpr.accept(this);
 		}
 		scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_method_invocation);
-		scribe.printTrailingComment();
+		if (scribe.printComment()) {
+			scribe.space();
+		}
     	return PROCESS_SKIP;
 	}
 
@@ -1270,6 +1278,14 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_invocation_arguments;
 		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_invocation_arguments;
 		formatList(expressions, align, false, false);
+    	return PROCESS_SKIP;
+	}
+
+	private int visit(IASTIdExpression node) {
+		node.getName().accept(this);
+		if (scribe.printComment()) {
+			scribe.space();
+		}
     	return PROCESS_SKIP;
 	}
 
@@ -1328,19 +1344,104 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     	return PROCESS_SKIP;
 	}
 
+	private int visit(IASTUnaryExpression node) {
+		final IASTExpression operand= node.getOperand();
+		final int operator= node.getOperator();
+		switch (operator) {
+		case IASTUnaryExpression.op_bracketedPrimary:
+			scribe.printNextToken(Token.tLPAREN, scribe.printComment());
+			operand.accept(this);
+			scribe.printNextToken(Token.tRPAREN, scribe.printComment());
+			break;
+		case IASTUnaryExpression.op_prefixIncr:
+			scribe.printNextToken(Token.tINCR, scribe.printComment());
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_prefixDecr:
+			scribe.printNextToken(Token.tDECR, scribe.printComment());
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_postFixIncr:
+			operand.accept(this);
+			scribe.printNextToken(Token.tINCR, scribe.printComment());
+			break;
+		case IASTUnaryExpression.op_postFixDecr:
+			operand.accept(this);
+			scribe.printNextToken(Token.tDECR, scribe.printComment());
+			break;
+		case IASTUnaryExpression.op_minus:
+			scribe.printNextToken(Token.tMINUS, scribe.printComment());
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_plus:
+			scribe.printNextToken(Token.tPLUS, scribe.printComment());
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_not:
+			scribe.printNextToken(Token.tNOT, scribe.printComment());
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_amper:
+			scribe.printNextToken(Token.tAMPER, scribe.printComment());
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_star:
+			scribe.printNextToken(Token.tSTAR, scribe.printComment());
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_tilde:
+			scribe.printNextToken(Token.tCOMPL, scribe.printComment());
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_sizeof:
+			scribe.printNextToken(Token.t_sizeof, scribe.printComment());
+			scribe.printNextToken(Token.tLPAREN, scribe.printComment());
+			operand.accept(this);
+			if (peekNextToken() != Token.tRPAREN) {
+				scribe.skipToToken(Token.tRPAREN);
+			}
+			scribe.printNextToken(Token.tRPAREN, scribe.printComment());
+			break;
+		default:
+			formatNode(node);
+		}
+		return PROCESS_SKIP;
+	}
+
 	private int visit(IASTBinaryExpression node) {
-		// TODO binary expression alignment!
 		final IASTExpression op1= node.getOperand1();
 		// operand 1
 		op1.accept(this);
-		// operator
-		scribe.printNextToken(peekNextToken(), scribe.printComment());
-		if (scribe.printComment()) {
-			scribe.space();
-		}
-		// operand 2
-		final IASTExpression op2= node.getOperand2();
-		op2.accept(this);
+    	Alignment expressionAlignment =scribe.createAlignment(
+    			"binaryExpression", //$NON-NLS-1$
+    			// need configurable alignment
+    			Alignment.M_COMPACT_SPLIT,
+    			1,
+    			scribe.scanner.getCurrentPosition());
+
+    	scribe.enterAlignment(expressionAlignment);
+    	boolean ok = false;
+    	do {
+    		try {
+    			scribe.alignFragment(expressionAlignment, 0);
+
+    			// operator
+    			scribe.printNextToken(peekNextToken(), scribe.printComment());
+    			if (scribe.printComment()) {
+    				scribe.space();
+    			}
+
+   				// operand 2
+   				final IASTExpression op2= node.getOperand2();
+   				op2.accept(this);
+    			scribe.printTrailingComment();
+
+    			ok = true;
+    		} catch (AlignmentException e) {
+    			scribe.redoAlignment(e);
+    		}
+    	} while (!ok);
+    	scribe.exitAlignment(expressionAlignment, true);
     	return PROCESS_SKIP;
 	}
 

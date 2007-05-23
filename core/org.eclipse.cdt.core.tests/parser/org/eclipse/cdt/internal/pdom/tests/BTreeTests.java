@@ -53,6 +53,7 @@ public class BTreeTests extends BaseTestCase {
 	protected void init(int degree) throws Exception {
 		dbFile = File.createTempFile("pdomtest", "db");
 		db = new Database(dbFile, new ChunkCache(), 0);
+		db.setWritable();
 		rootRecord = Database.DATA_AREA;
 		comparator = new BTMockRecordComparator();
 		btree = new BTree(db, rootRecord, degree, comparator);

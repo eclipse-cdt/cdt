@@ -72,6 +72,10 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		super.clear();
 	}
 	
+	public void flush() throws CoreException {
+		super.flush();
+	}
+	
 	public PDOMBinding addBinding(IASTName name) throws CoreException {
 		PDOMBinding result= null;
 		PDOMLinkage linkage= createLinkage(name.getLinkage().getID());

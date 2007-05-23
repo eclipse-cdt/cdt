@@ -57,6 +57,7 @@ final class Chunk {
 	}
 
 	public void putByte(int offset, byte value) {
+		assert fLocked;
 		fDirty= true;
 		fBuffer.put(offset % Database.CHUNK_SIZE, value);
 	}
@@ -73,12 +74,14 @@ final class Chunk {
 	}
 	
 	public void putBytes(int offset, byte[] bytes) {
+		assert fLocked;
 		fDirty= true;
 		fBuffer.position(offset % Database.CHUNK_SIZE);
 		fBuffer.put(bytes, 0, bytes.length);
 	}
 	
 	public void putInt(int offset, int value) {
+		assert fLocked;
 		fDirty= true;
 		fBuffer.putInt(offset % Database.CHUNK_SIZE, value);
 	}
@@ -88,6 +91,7 @@ final class Chunk {
 	}
 
 	public void putShort(int offset, short value) {
+		assert fLocked;
 		fDirty= true;
 		fBuffer.putShort(offset % Database.CHUNK_SIZE, value);
 	}
@@ -101,11 +105,13 @@ final class Chunk {
 	}
 
 	public void putLong(int offset, long value) {
+		assert fLocked;
 		fDirty= true;
 		fBuffer.putLong(offset % Database.CHUNK_SIZE, value);
 	}
 	
 	public void putChar(int offset, char value) {
+		assert fLocked;
 		fDirty= true;
 		fBuffer.putChar(offset % Database.CHUNK_SIZE, value);
 	}
@@ -120,6 +126,7 @@ final class Chunk {
 	}
 	
 	void clear(int offset, int length) {
+		assert fLocked;
 		fDirty= true;
 		fBuffer.position(offset % Database.CHUNK_SIZE);
 		fBuffer.put(new byte[length]);

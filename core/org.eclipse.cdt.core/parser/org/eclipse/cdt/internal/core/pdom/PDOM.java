@@ -249,6 +249,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 	
 	void reloadFromFile(File file) throws CoreException {
+		assert lockCount < 0;	// must have write lock.
 		File oldFile= fPath;
 		fLinkageIDCache.clear();
 		try {
@@ -257,6 +258,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			CCorePlugin.log(e);
 		}
 		loadDatabase(file, db.getChunkCache());
+		db.setWritable();
 		oldFile.delete();
 	}		
 
@@ -750,7 +752,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		db.resetCacheCounters();
 	}
 
-	public void flush() throws CoreException {
+	protected void flush() throws CoreException {
 		db.flush();
 	}
 

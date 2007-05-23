@@ -127,6 +127,7 @@ public class DBTest extends BaseTestCase {
 		File f = getTestDir().append("testStrings.dat").toFile();
 		f.delete();
 		final Database db = new Database(f, new ChunkCache(), 0);
+		db.setWritable();
 
 		String[] names = {
 				"ARLENE",

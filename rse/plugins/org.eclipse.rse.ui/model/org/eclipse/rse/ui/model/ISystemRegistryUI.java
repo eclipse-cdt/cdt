@@ -21,15 +21,40 @@ import java.util.List;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Registry or front door for all remote system connections.
+ * Registry and control center for RSE UI related operations.
+ * 
+ * This interface is not intended to be implemented by clients.
  */
 public interface ISystemRegistryUI 
 	extends ISystemShellProvider, ISystemViewInputProvider {
+
+	// ----------------------------------
+	// UI METHODS...
+	// ----------------------------------
+	
+	/**
+	 * Show the RSE perspective if it is not already showing
+	 */
+	public void showRSEPerspective();
+
+	/**
+	 * Select and expand the given connection in the RSE, if the RSE is the active perspective.
+	 * @param conn the host connection to expand
+	 */
+	public void expandHost(IHost conn);
+
+	/**
+	 * Select and expand the given subsystem in the RSE, if the RSE is the active perspective.
+	 * @param subsystem the subsystem to expand
+	 */
+	public void expandSubSystem(ISubSystem subsystem);
 
     /**
      * Returns the clipboard used for copy actions
@@ -42,23 +67,6 @@ public interface ISystemRegistryUI
 	 * @return the list of clipboard objects
 	 */
 	public List getSystemClipboardObjects(int srcType);
-
-	/**
-	 * Notify all listeners of a change to a system resource such as a connection.
-	 * You would not normally call this as the methods in this class call it when appropriate.
-	 * <p>
-	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's 
-	 * Display.asyncExec() method.
-	 */
-	public void postEvent(ISystemResourceChangeEvent event);
-	
-	/**
-	 * Notify a specific listener of a change to a system resource such as a connection.
-	 * <p>
-	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's 
-	 * Display.asyncExec() method.
-	 */
-	public void postEvent(ISystemResourceChangeListener listener, ISystemResourceChangeEvent event);
 
 	// ----------------------------------
 	// ACTIVE PROGRESS MONITOR METHODS...
@@ -88,5 +96,26 @@ public interface ISystemRegistryUI
 	 *  more user friendly. Many dialogs/wizards have these built in so it behooves us to use it.
 	 */
 	public IRunnableContext getRunnableContext();
+
+	// ----------------------------
+	// RESOURCE EVENT METHODS...
+	// ----------------------------            
+
+	/**
+	 * Notify all listeners of a change to a system resource such as a connection.
+	 * You would not normally call this as the methods in this class call it when appropriate.
+	 * <p>
+	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's 
+	 * Display.asyncExec() method.
+	 */
+	public void postEvent(ISystemResourceChangeEvent event);
+	
+	/**
+	 * Notify a specific listener of a change to a system resource such as a connection.
+	 * <p>
+	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's 
+	 * Display.asyncExec() method.
+	 */
+	public void postEvent(ISystemResourceChangeListener listener, ISystemResourceChangeEvent event);
 
 }

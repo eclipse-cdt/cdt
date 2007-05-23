@@ -33,6 +33,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.tm.discovery.model.Pair;
 import org.eclipse.tm.discovery.model.Service;
@@ -187,7 +188,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 				}
 			}
 	
-			RSECorePlugin.getTheSystemRegistry().expandHost(conn);			
+			RSEUIPlugin.getTheSystemRegistryUI().expandHost(conn);			
 		}
 		
 		systemRefreshAllAction.run();

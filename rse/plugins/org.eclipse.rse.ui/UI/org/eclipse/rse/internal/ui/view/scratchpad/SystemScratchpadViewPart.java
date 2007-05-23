@@ -42,7 +42,7 @@ import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
-import org.eclipse.rse.ui.internal.model.SystemRegistry;
+import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
@@ -148,7 +148,7 @@ public class SystemScratchpadViewPart extends ViewPart
 
 		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "scrp0000"); //$NON-NLS-1$
 
-		setInput(SystemRegistry.getInstance().getSystemScratchPad());
+		setInput(SystemRegistryUI.getInstance().getSystemScratchPad());
 		
 		getSite().registerContextMenu(_viewer.getContextMenuManager(), _viewer);
 	}

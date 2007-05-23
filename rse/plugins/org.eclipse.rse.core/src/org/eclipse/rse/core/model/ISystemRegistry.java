@@ -57,24 +57,6 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
 	public ISystemFilterStartHere getSystemFilterStartHere();
 
-	// ----------------------------------
-	// UI METHODS...
-	// ----------------------------------
-	/**
-	 * Show the RSE perspective if it is not already showing
-	 */
-	public void showRSEPerspective();
-
-	/**
-	 * Expand the given connection in the RSE, if the RSE is the active perspective.
-	 */
-	public void expandHost(IHost conn);
-
-	/**
-	 * Expand the given subsystem in the RSE, if the RSE is the active perspective.
-	 */
-	public void expandSubSystem(ISubSystem subsystem);
-
 	// ----------------------------
 	// SUBSYSTEM FACTORY METHODS...
 	// ----------------------------            
@@ -137,19 +119,20 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
 	/**
 	 * This method is called by the connection adapter when the user expands
-	 * a connection.
-	 * This method must return the child objects to show for that connection.
+	 * a connection. This method must return the child objects to show for that
+	 * connection.
+	 * @param selectedConnection the connection undergoing expansion
+	 * @return the list of objects under the connection
 	 */
 	public Object[] getConnectionChildren(IHost selectedConnection);
 
 	/**
-	 * This method is called by the connection adapter when deciding
-	 * to show a plus-sign or not beside a connection.
-	 * 
+	 * This method is called by the connection adapter when deciding to show a plus-sign
+	 * or not beside a connection.
+	 * @param selectedConnection the connection being shown in the viewer 
 	 * @return true if this connection has children to be shown.
 	 */
 	public boolean hasConnectionChildren(IHost selectedConnection);
-
 	
 	// ----------------------------
 	// USER PREFERENCE METHODS...

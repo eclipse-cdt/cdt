@@ -12,12 +12,13 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [186773] split SystemRegistryUI from SystemRegistry implementation
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.ui.internal.model.SystemRegistry;
+import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
 import org.eclipse.rse.ui.internal.model.SystemScratchpad;
 
 
@@ -32,7 +33,7 @@ class BrowseAction extends Action
         _view = view;
 		setImageDescriptor(des);
 		setToolTipText(label);
-		_scratchPad = SystemRegistry.getInstance().getSystemScratchPad();
+		_scratchPad = SystemRegistryUI.getInstance().getSystemScratchPad();
 	}
 
 	public void checkEnabledState()

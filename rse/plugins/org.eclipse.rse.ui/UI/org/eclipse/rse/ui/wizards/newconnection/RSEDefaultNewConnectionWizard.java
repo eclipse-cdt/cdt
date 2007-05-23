@@ -340,11 +340,11 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 						if (systemType.getId().equals(IRSESystemType.SYSTEMTYPE_ISERIES_ID)) {
 							ISubSystem[] objSubSystems = sr.getSubSystemsBySubSystemConfigurationCategory("nativefiles", conn); //$NON-NLS-1$
 							if ((objSubSystems != null) && (objSubSystems.length > 0))// might be in product that doesn't have iSeries plugins
-								sr.expandSubSystem(objSubSystems[0]);
+								RSEUIPlugin.getTheSystemRegistryUI().expandSubSystem(objSubSystems[0]);
 							else
-								sr.expandHost(conn);
+								RSEUIPlugin.getTheSystemRegistryUI().expandHost(conn);
 						} else
-							sr.expandHost(conn);
+							RSEUIPlugin.getTheSystemRegistryUI().expandHost(conn);
 					}
 
 					lastProfile = form.getProfileName();

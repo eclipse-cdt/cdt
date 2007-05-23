@@ -26,6 +26,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
+ * Martin Oberhuber (Wind River) - [186773] split SystemRegistryUI from SystemRegistry implementation
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -35,13 +36,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -85,38 +82,22 @@ import org.eclipse.rse.internal.core.model.SystemModelChangeEventManager;
 import org.eclipse.rse.internal.core.model.SystemPreferenceChangeManager;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.core.model.SystemRemoteChangeEventManager;
-import org.eclipse.rse.internal.ui.view.SystemDNDTransferRunnable;
-import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
-import org.eclipse.rse.internal.ui.view.SystemView;
-import org.eclipse.rse.internal.ui.view.SystemViewDataDropAdapter;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.part.PluginTransfer;
-import org.eclipse.ui.part.PluginTransferData;
-import org.eclipse.ui.part.ResourceTransfer;
 
 /**
  * Registry for all connections.
  */
-public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISystemViewInputProvider
+public class SystemRegistry implements ISystemRegistry
 {
 	private static Exception lastException = null;
 	private static SystemRegistry registry = null;
@@ -133,15 +114,6 @@ public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISyst
 
 	private ISubSystemConfigurationProxy[] subsystemFactoryProxies = null;
 	private boolean errorLoadingFactory = false;
-	private Viewer viewer = null;
-	// progress monitor support
-	private IRunnableContext currentRunnableContext;
-	private Shell currentRunnableContextShell;
-	private Vector previousRunnableContexts = new Vector();
-	private Vector previousRunnableContextShells = new Vector();
-
-	private Clipboard clipboard = null;
-	private SystemScratchpad scratchpad = null;
 
 	/**
 	 * Constructor.
@@ -209,83 +181,6 @@ public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISyst
 //		return path;
 //	}
 
-	// ----------------------------------
-	// UI METHODS...
-	// ----------------------------------
-	/**
-	 * Show the RSE perspective if it is not already showing
-	 */
-	public void showRSEPerspective()
-	{
-		SystemPerspectiveHelpers.openRSEPerspective();
-	}
-	/**
-	 * Expand the given connection in the RSE, if the RSE is the active perspective.
-	 */
-	public void expandHost(IHost conn)
-	{
-		if (SystemPerspectiveHelpers.isRSEPerspectiveActive())
-		{
-			// find the RSE tree view
-			SystemView rseView = SystemPerspectiveHelpers.findRSEView();
-			if (rseView != null)
-			{
-				// find and expand the given connection
-				rseView.setExpandedState(conn, true); // expand this connection
-				rseView.setSelection(new StructuredSelection(conn));
-			}
-		}
-	}
-	/**
-	 * Expand the given subsystem in the RSE, if the RSE is the active perspective.
-	 */
-	public void expandSubSystem(ISubSystem subsystem)
-	{
-		if (SystemPerspectiveHelpers.isRSEPerspectiveActive())
-		{
-			// find the RSE tree view
-			SystemView rseView = SystemPerspectiveHelpers.findRSEView();
-			if (rseView != null)
-			{
-				// find and expand the given subsystem's connection, and then subsystem
-				rseView.setExpandedState(subsystem.getHost(), true); // expand this connection
-				rseView.setExpandedState(subsystem, true);
-				rseView.setSelection(new StructuredSelection(subsystem));
-			}
-		}
-	}
-	// ----------------------------------
-	// SYSTEMVIEWINPUTPROVIDER METHODS...
-	// ----------------------------------
-	/**
-	 * Return the children objects to consistute the root elements in the system view tree.
-	 * We return all connections for all active profiles.
-	 */
-	public Object[] getSystemViewRoots()
-	{
-		//DKM - only return enabled connections now
-		IHost[] connections = getHosts();
-		List result = new ArrayList(); 
-		for (int i = 0; i < connections.length; i++) {
-			IHost con = connections[i];
-			IRSESystemType sysType = con.getSystemType();
-			if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
-				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(RSESystemTypeAdapter.class));
-				// Note: System types without registered subsystems get disabled by the adapter itself!
-				//       There is no need to re-check this here again.
-				if (adapter.isEnabled(sysType)) result.add(con);
-			}
-		}
-		return result.toArray();
-	}
-	/**
-	 * Return true if {@link #getSystemViewRoots()} will return a non-empty list
-	 * We return true if there are any connections for any active profile.
-	 */
-	public boolean hasSystemViewRoots()
-	{
-		return (getHostCount() > 0);
-	}
 	/**
 	 * This method is called by the connection adapter when the user expands
 	 *  a connection. This method must return the child objects to show for that
@@ -330,183 +225,14 @@ public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISyst
 		return hasSubsystems;
 		*/
 	}
-	/**
-	 * This is the method required by the IAdaptable interface.
-	 * Given an adapter class type, return an object castable to the type, or
-	 *  null if this is not possible.
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapterType)
 	{
 		return Platform.getAdapterManager().getAdapter(this, adapterType);
-	}
-	/**
-	 * Set the shell in case it is needed for anything.
-	 * The label and content provider will call this.
-	 */
-	public void setShell(Shell shell)
-	{
-	}
-
-	/**
-	 * Return the shell of the current viewer
-	 */
-
-	// thread safe shell
-	public Shell getShell()
-	{
-		IWorkbench workbench = RSEUIPlugin.getDefault().getWorkbench();
-		if (workbench != null)
-		{
-			// first try to get the active workbench window
-			IWorkbenchWindow ww = workbench.getActiveWorkbenchWindow();
-			if (ww == null) // no active window so just get the first one
-				ww = workbench.getWorkbenchWindows()[0];
-			if (ww != null)
-			{
-				Shell shell = ww.getShell();
-				if (!shell.isDisposed())
-				{
-					return shell;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Return true to show the action bar (ie, toolbar) above the viewer.
-	 * The action bar contains connection actions, predominantly.
-	 */
-	public boolean showActionBar()
-	{
-		return true;
-	}
-	/**
-	 * Return true to show the button bar above the viewer.
-	 * The tool bar contains "Get List" and "Refresh" buttons and is typicall
-	 * shown in dialogs that list only remote system objects.
-	 */
-	public boolean showButtonBar()
-	{
-		return false;
-	}
-	/**
-	 * Return true to show right-click popup actions on objects in the tree.
-	 */
-	public boolean showActions()
-	{
-		return true;
-	}
-	/**
-	 * Set the viewer in case it is needed for anything.
-	 * The label and content provider will call this.
-	 */
-	public void setViewer(Viewer viewer)
-	{
-		this.viewer = viewer;
-	}
-	/**
-	 * Return the viewer we are currently associated with
-	 */
-	public Viewer getViewer()
-	{
-		return viewer;
-	}
-	/**
-	 * Return true if we are listing connections or not, so we know whether we are interested in 
-	 *  connection-add events
-	 */
-	public boolean showingConnections()
-	{
-		return true;
-	}
-
-	// ----------------------------------
-	// ACTIVE PROGRESS MONITOR METHODS...
-	// ----------------------------------
-	/**
-	 * Set the current active runnable context to be used for a progress monitor
-	 *  by the subsystem methods that go to the host. Called by wizards and dialogs
-	 *  that have a built-in progress monitor and hence removes the need to popup
-	 *  an intrusive pm dialog.
-	 * <p><b>You must call clearRunnableContext when your dialog/wizard is disposed!</b>
-	 * @param shell The shell of the wizard/dialog. This is recorded so it can be tested if
-	 *  it is disposed before attempting to use the context
-	 * @param context The dialog/wizard/view that implements IRunnableContext
-	 */
-	public void setRunnableContext(Shell shell, IRunnableContext context)
-	{
-		//this.currentRunnableContext = context;
-		//this.currentRunnableContextShell = shell;
-		pushRunnableContext(shell, context);
-	}
-	/**
-	 * Clear the current active runnable context to be used for a progress monitor. 
-	 * Be sure to call this from you dispose method.
-	 */
-	public void clearRunnableContext()
-	{
-		//this.currentRunnableContext = null;
-		//this.currentRunnableContextShell = null;    	
-		popRunnableContext();
-	}
-	/**
-	 * Return the current registered runnable context, or null if none registered. Use this
-	 *  for long running operations instead of an intrusive progress monitor dialog as it is
-	 *  more user friendly. Many dialogs/wizards have these built in so it behooves us to use it.
-	 */
-	public IRunnableContext getRunnableContext()
-	{
-		if ((currentRunnableContextShell != null) && currentRunnableContextShell.isDisposed())
-			clearRunnableContext();
-		if (currentRunnableContext != null)
-			return currentRunnableContext;
-		else
-			return null;
-	}
-
-	private IRunnableContext popRunnableContext()
-	{
-		Shell shell = null;
-		boolean found = false;
-		Vector disposedShells = new Vector();
-		Vector disposedContexts = new Vector();
-		for (int idx = previousRunnableContextShells.size() - 1; !found && (idx >= 0); idx--)
-		{
-			shell = (Shell) previousRunnableContextShells.elementAt(idx);
-			if ((shell == currentRunnableContextShell) || shell.isDisposed())
-			{
-				disposedShells.add(shell);
-				disposedContexts.add(previousRunnableContexts.elementAt(idx));
-			}
-			else
-			{
-				found = true;
-				currentRunnableContextShell = shell;
-				currentRunnableContext = (IRunnableContext) previousRunnableContexts.elementAt(idx);
-			}
-		}
-		if (!found)
-		{
-			currentRunnableContextShell = null;
-			currentRunnableContext = null;
-		}
-		for (int idx = 0; idx < disposedShells.size(); idx++)
-		{
-			previousRunnableContextShells.remove(disposedShells.elementAt(idx));
-			previousRunnableContexts.remove(disposedContexts.elementAt(idx));
-		}
-
-		return currentRunnableContext;
-	}
-
-	private IRunnableContext pushRunnableContext(Shell shell, IRunnableContext context)
-	{
-		previousRunnableContexts.addElement(context);
-		previousRunnableContextShells.addElement(shell);
-		currentRunnableContextShell = shell;
-		currentRunnableContext = context;
-		return currentRunnableContext;
 	}
 
 	// ----------------------------
@@ -1953,183 +1679,6 @@ public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISyst
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.rse.ui.model.ISystemRegistryUI#getSystemClipboard()
-	 */
-	public Clipboard getSystemClipboard()
-	{
-		if (clipboard == null)
-		{
-			Display display = null;
-			Shell shell = getShell();
-			if (shell == null)
-			{
-				display = Display.getDefault();
-			}
-			else
-			{
-				display = shell.getDisplay();
-			}
-			clipboard = new Clipboard(display);
-		}
-
-		return clipboard;
-	}
-	
-	/**
-	  * Method for decoding an source object ID to the actual source object.
-	  * We determine the profile, connection and subsystem, and then
-	  * we use the SubSystem.getObjectWithKey() method to get at the
-	  * object.
-	  *
-	  */
-	private Object getObjectFor(String str)
-	{
-		// first extract subsystem id
-		int connectionDelim = str.indexOf(":"); //$NON-NLS-1$
-		if (connectionDelim == -1) // not subsystem, therefore likely to be a connection
-		{
-		    int profileDelim = str.indexOf("."); //$NON-NLS-1$
-			if (profileDelim != -1) 
-			{
-			    String profileId = str.substring(0, profileDelim);
-			    String connectionId = str.substring(profileDelim + 1, str.length());
-			    ISystemProfile profile = registry.getSystemProfile(profileId);
-			    return registry.getHost(profile, connectionId);
-			}
-		}
-		
-		int subsystemDelim = str.indexOf(":", connectionDelim + 1); //$NON-NLS-1$
-
-		String subSystemId = str.substring(0, subsystemDelim);
-		String srcKey = str.substring(subsystemDelim + 1, str.length());
-
-		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-		ISubSystem subSystem = registry.getSubSystem(subSystemId);
-		if (subSystem != null)
-		{
-			Object result = null;
-			try
-			{
-				result = subSystem.getObjectWithAbsoluteName(srcKey);
-			}
-			catch (SystemMessageException e)
-			{
-				return e.getSystemMessage();
-			}
-			catch (Exception e)
-			{
-			}
-			if (result != null)
-			{
-				return result;
-			}
-			else
-			{
-				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
-				msg.makeSubstitution(srcKey, subSystem.getHostAliasName());
-				return msg;
-			}
-		}
-		else
-		{
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);
-			msg.makeSubstitution(subSystemId);
-			return msg;
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSystemClipboardObjects(int)
-	 */
-	public List getSystemClipboardObjects(int srcType)
-	{
-		Clipboard clipboard = getSystemClipboard();
-		ArrayList srcObjects = new ArrayList();
-		Object object = null;
-
-		if (srcType == SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE)
-		{
-
-			// determine the source objects
-			object = clipboard.getContents(PluginTransfer.getInstance());
-
-			if (object instanceof PluginTransferData)
-			{
-				// RSE transfer
-				PluginTransferData data = (PluginTransferData) object;
-				byte[] result = data.getData();
-
-				//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
-				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
-				
-				for (int i = 0;i < tokens.length; i++)
-				{
-					String srcStr = tokens[i];
-
-					Object srcObject = getObjectFor(srcStr);
-					srcObjects.add(srcObject);
-				}
-			}
-		}
-		else if (srcType == SystemDNDTransferRunnable.SRC_TYPE_ECLIPSE_RESOURCE)
-		{
-			// Resource transfer
-			ResourceTransfer resTransfer = ResourceTransfer.getInstance();
-			object = clipboard.getContents(resTransfer);
-			if (object != null)
-			{
-				IResource[] resourceData = (IResource[]) object;
-				for (int i = 0; i < resourceData.length; i++)
-				{
-					srcObjects.add(resourceData[i]);
-				}
-			}
-		}
-
-		else if (srcType == SystemDNDTransferRunnable.SRC_TYPE_OS_RESOURCE)
-		{
-			// Local File transfer
-			FileTransfer fileTransfer = FileTransfer.getInstance();
-			object = clipboard.getContents(fileTransfer);
-			if (object != null)
-			{
-				String[] fileData = (String[]) object;
-				{
-					for (int i = 0; i < fileData.length; i++)
-					{
-						srcObjects.add(fileData[i]);
-					}
-				}
-			}
-		}
-		else if (srcType == SystemDNDTransferRunnable.SRC_TYPE_TEXT)
-		{
-			TextTransfer textTransfer = TextTransfer.getInstance();
-			object = clipboard.getContents(textTransfer);
-			if (object != null)
-			{
-				String textData = (String) object;
-				srcObjects.add(textData);
-			}
-		}
-		return srcObjects;
-	}
-	
-    /*
-     * Returns the remote systems scratchpad root
-     */
-    public SystemScratchpad getSystemScratchPad()
-    {
-        if (scratchpad == null)
-        {
-            scratchpad = new SystemScratchpad();
-        }
-        return scratchpad;
-    }
-
-	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#createLocalHost(org.eclipse.rse.core.model.ISystemProfile, java.lang.String, java.lang.String)
 	 */
 	public IHost createLocalHost(ISystemProfile profile, String name, String userId)
@@ -2911,28 +2460,6 @@ public class SystemRegistry implements ISystemRegistry, ISystemRegistryUI, ISyst
 	public void fireEvent(ISystemResourceChangeListener l, ISystemResourceChangeEvent event)
 	{
 		l.systemResourceChanged(event);
-	}
-	/**
-	 * Notify all listeners of a change to a system resource such as a connection.
-	 * You would not normally call this as the methods in this class call it when appropriate.
-	 * <p>
-	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's 
-	 * Display.asyncExec() method.
-	 */
-	public void postEvent(ISystemResourceChangeEvent event)
-	{
-		listenerManager.postNotify(event);
-	}
-	
-	/**
-	 * Notify a specific listener of a change to a system resource such as a connection.
-	 * <p>
-	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's 
-	 * Display.asyncExec() method.
-	 */
-	public void postEvent(ISystemResourceChangeListener listener, ISystemResourceChangeEvent event)
-	{
-		new SystemPostableEventNotifier(listener, event); // create and run the notifier
 	}
 
 	// ----------------------------

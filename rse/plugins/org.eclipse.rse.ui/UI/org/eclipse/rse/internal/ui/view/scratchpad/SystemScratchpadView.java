@@ -77,7 +77,7 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
-import org.eclipse.rse.ui.internal.model.SystemRegistry;
+import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
@@ -380,7 +380,7 @@ public class SystemScratchpadView
    	    	          if (w != null)
    	    	          {
    	    	              remove(child);
-   	    	           SystemRegistry.getInstance().getSystemScratchPad().removeChild(child);
+   	    	           SystemRegistryUI.getInstance().getSystemScratchPad().removeChild(child);
    	    	          }	
 	   	    	  }
    	    	  	}

@@ -32,6 +32,7 @@ import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * Test cases for FTP based remote host access.
@@ -82,7 +83,7 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 		connection = getConnectionManager().findOrCreateConnection(properties);
 		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
 		// expand the connection in the UI
-		systemRegistry.expandHost(connection);
+		RSEUIPlugin.getTheSystemRegistryUI().expandHost(connection);
 		
 		Exception exception = null;
 		String cause = null;
@@ -136,7 +137,7 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 		if (!subSystem.isConnected() || !ftpService.isConnected()) return;
 		
 		// expand the subsystem
-		systemRegistry.expandSubSystem(subSystem);
+		RSEUIPlugin.getTheSystemRegistryUI().expandSubSystem(subSystem);
 		
 		// now we have the service reference and can start reading things from the server
 		IHostFile[] roots = ftpService.getRoots(new NullProgressMonitor());

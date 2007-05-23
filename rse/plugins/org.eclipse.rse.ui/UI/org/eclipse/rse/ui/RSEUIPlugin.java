@@ -62,6 +62,7 @@ import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.rse.ui.internal.model.SystemRegistry;
+import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.osgi.framework.BundleContext;
 
@@ -81,7 +82,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    	public IStatus run(IProgressMonitor monitor)
 	    	{    		
 	            
-	    		ISystemRegistry registry = getSystemRegistryUIInternal();
+	    		ISystemRegistry registry = getSystemRegistryInternal();
 
 	    		
 	        	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree  
@@ -132,7 +133,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     private static SystemMessageFile    defaultMessageFile = null;    
     
 //    private SystemType[]	            allSystemTypes = null;
-    private SystemRegistry           _systemRegistry = null;
+    private SystemRegistryUI           _systemRegistryUI = null;
+    private SystemRegistry             _systemRegistry = null;
 
     private Vector viewSuppliers = new Vector();
     private SystemViewAdapterFactory svaf; // for fastpath access
@@ -442,19 +444,15 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
      */
     public void start(BundleContext context) throws Exception 
 	{
-        
-        // call super first
         super.start(context);
         
 	   	messageFile = getMessageFile("systemmessages.xml"); //$NON-NLS-1$
 	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml"); //$NON-NLS-1$
 
-        
-		ISystemRegistry registry = getSystemRegistryUIInternal();
+		ISystemRegistry registry = getSystemRegistryInternal();
 		RSECorePlugin.getDefault().setSystemRegistry(registry);
   	
     	IAdapterManager manager = Platform.getAdapterManager();
-	    
 	    
 	    // DKM
 	    // for subsystem factories
@@ -503,7 +501,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
           closeViews();
               	
           // clear in-memory settings for all filter pools and subsystems
-    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryUIInternal().getSubSystemConfigurationProxies();
+    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryInternal().getSubSystemConfigurationProxies();
     	  if (proxies != null)
     	  	for (int idx=0; idx < proxies.length; idx++)
     	  	   proxies[idx].reset();
@@ -589,7 +587,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     {
     	if (isSystemRegistryActive())
     	{
-    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryUIInternal().getSubSystemConfigurationProxies();
+    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryInternal().getSubSystemConfigurationProxies();
     	  if (proxies != null)
     	  {
     	  	for (int idx=0; idx < proxies.length; idx++)
@@ -645,7 +643,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
      * Return the SystemRegistry singleton.
      * Clients should use static @{link getTheSystemRegistry()} instead.
      */
-    private SystemRegistry getSystemRegistryUIInternal()
+    private SystemRegistry getSystemRegistryInternal()
     {
     	if (_systemRegistry == null)
         {
@@ -661,6 +659,20 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
           
         }
     	return _systemRegistry;
+    }
+
+    /**
+     * Return the SystemRegistryUI singleton.
+     * Clients should use static @{link getTheSystemRegistry()} instead.
+     */
+    private SystemRegistryUI getSystemRegistryUIInternal()
+    {
+    	if (_systemRegistryUI == null)
+        {
+    	  String logfilePath = getStateLocation().toOSString();    	
+    	  _systemRegistryUI = SystemRegistryUI.getInstance(logfilePath);
+        }
+    	return _systemRegistryUI;
     }
 
     /**

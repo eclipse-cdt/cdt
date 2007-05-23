@@ -87,7 +87,6 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.typehierarchy.THInformationControl;
 import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 
 /**
@@ -147,26 +146,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		fTextEditor= editor;
 		fDocumentPartitioning= partitioning;
 		initializeScanners();
-	}
-
-	/**
-	 * Creates a new C source viewer configuration for viewers in the given editor using
-	 * the given C tools collection.
-	 *
-	 * @param tools the C text tools collection to be used
-	 * @param editor the editor in which the configured viewer will reside
-	 * 
-	 * @deprecated Use {@link #CSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore, ITextEditor editor, String partitioning)} instead.
-	 */
-	public CSourceViewerConfiguration(CTextTools tools, ITextEditor editor) {
-		super(CUIPlugin.getDefault().getCombinedPreferenceStore());
-		fTextTools= tools;
-		fColorManager= tools.getColorManager();
-		fTextEditor= editor;
-		fDocumentPartitioning= fTextTools.getDocumentPartitioning();
-		fMultilineCommentScanner= (AbstractCScanner) fTextTools.getMultilineCommentScanner();
-		fSinglelineCommentScanner= (AbstractCScanner) fTextTools.getSinglelineCommentScanner();
-		fStringScanner= (AbstractCScanner) fTextTools.getStringScanner();
 	}
 
 	/**
@@ -421,7 +400,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		if (fTextEditor != null && (fTextEditor.isEditable() || fTextEditor.getEditorInput() instanceof ExternalEditorInput)) {
+		if (fTextEditor != null) {
 			//Delay changed and non-incremental reconciler used due to 
 			//PR 130089
 			MonoReconciler reconciler= new CReconciler(fTextEditor, new CReconcilingStrategy(fTextEditor));

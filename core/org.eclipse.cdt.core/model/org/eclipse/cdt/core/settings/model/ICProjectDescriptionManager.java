@@ -15,7 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface ICProjectDescriptionManager {
-	
+	public static final int SET_FORCE = 1;
+	public static final int SET_NO_SERIALIZE = 1 << 1;
+
 	/**
 	 * this method is a full equivalent to {@link #createProjectDescription(IProject, boolean, false)}
 	 * 
@@ -70,6 +72,8 @@ public interface ICProjectDescriptionManager {
 	void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException;
 
 	void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException;
+
+	void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * returns the project description associated with this project

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.model.CModelOperation;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.CompositeWorkspaceRunnable;
 import org.eclipse.core.resources.IProject;
@@ -26,16 +27,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class SetCProjectDescriptionOperation extends CModelOperation {
-//	private IProject fProject;
-//	private ICProject fCProject;
 	private CProjectDescription fSetDescription;
-//	private CProjectDescription fNewDescriptionCache;
-//	private ICProjectDescription fOldDescriptionCache;
-	
+	private int fFlags;
 
-	SetCProjectDescriptionOperation(ICProject cProject, CProjectDescription description){
+	SetCProjectDescriptionOperation(ICProject cProject, CProjectDescription description, int flags){
 		super(cProject);
-//		fCProject = cProject;
+		fFlags = flags;
 		fSetDescription = description;
 	}
 	
@@ -119,8 +116,10 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		mngr.notifyListeners(event);
 
 		try {
-			runnable.add(mngr.createDesSerializationRunnable(fNewDescriptionCache));
-			mngr.runWspModification(runnable, new NullProgressMonitor());
+			if(!CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE))
+				runnable.add(mngr.createDesSerializationRunnable(fNewDescriptionCache));
+			if(!runnable.isEmpty())
+				mngr.runWspModification(runnable, new NullProgressMonitor());
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}

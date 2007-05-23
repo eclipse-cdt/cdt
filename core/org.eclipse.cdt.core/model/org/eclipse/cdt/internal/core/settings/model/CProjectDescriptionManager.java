@@ -191,6 +191,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				monitor.done();
 			}
 		}
+		
+		public boolean isEmpty(){
+			return fRunnables.isEmpty();
+		}
 	}
 
 	private class DesSerializationRunnable implements IWorkspaceRunnable {
@@ -1144,7 +1148,19 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 	
 	public void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException {
-		if(!force && !des.isModified())
+		int flags = 0;
+		if(force)
+			flags |= SET_FORCE;
+		setProjectDescription(project, des, flags, monitor);
+	}
+	
+	static boolean checkFlags(int flags, int check){
+		return (flags & check) == check;
+	}
+	
+	public void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException {
+
+		if(!checkFlags(flags, SET_FORCE) && !des.isModified())
 			return;
 
 		if(((CProjectDescription)des).isLoadding()){
@@ -1165,30 +1181,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cproject = manager.create(project);
 
-		SetCProjectDescriptionOperation op = new SetCProjectDescriptionOperation(cproject, (CProjectDescription)des);
+		SetCProjectDescriptionOperation op = new SetCProjectDescriptionOperation(cproject, (CProjectDescription)des, flags);
 		op.runOperation(monitor);
-		
-		
-//		CProjectDescription newDes = new CProjectDescription((CProjectDescription)des, true);
-		
-/*TODO: calculate delta, etc.
- 		ICProjectDescription previousDes = getProjecDescription(project, false);
-
-		if(des != previousDes){
-			ICConfigurationDescription cfgDess[] = des.getConfigurations();
-		}
-*/
-//		ICProjectDescription oldDes = getProjectDescription(project, false);
-//		setLoaddedDescription(newDes.getProject(), newDes);
-		
-//		ICProjectDescriptionDelta delta = createDelta(newDes, oldDes);
-		//TODO: notify listeners
-		
-//		ICStorageElement element = newDes.getRootStorageElement();
-		
-//		serialize(newDes.getProject(), STORAGE_FILE_NAME, element);
-		
-//		serialize(newDes);
 	}
 	
 	IWorkspaceRunnable createDesSerializationRunnable(CProjectDescription des) throws CoreException{

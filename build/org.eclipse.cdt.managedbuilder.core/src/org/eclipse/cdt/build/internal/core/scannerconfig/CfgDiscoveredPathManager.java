@@ -143,7 +143,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
         try {
         	IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
         		public void run(IProgressMonitor monitor) throws CoreException {
-       				ManagedBuildManager.updateCoreSettings(project, cfgs);
+       				ManagedBuildManager.updateCoreSettings(project, cfgs, true);
         		}
         	};
         	CoreModel.run(runnable, null);

@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -138,14 +139,21 @@ public class BuildSettingsUtil {
 			values.clear();
 		}
 	}
-	
+
 	public static void checkApplyDescription(IProject project, ICProjectDescription des) throws CoreException{
+		checkApplyDescription(project, des, false);
+	}
+
+	public static void checkApplyDescription(IProject project, ICProjectDescription des, boolean avoidSerialization) throws CoreException{
 		ICConfigurationDescription[] cfgs = des.getConfigurations();
 		for(int i = 0; i < cfgs.length; i++){
 			if(!ManagedBuildManager.CFG_DATA_PROVIDER_ID.equals(cfgs[i].getBuildSystemId()))
 				des.removeConfiguration(cfgs[i]);
 		}
 		
-		CoreModel.getDefault().setProjectDescription(project, des);
+		int flags = 0;
+		if(avoidSerialization)
+			flags |= ICProjectDescriptionManager.SET_NO_SERIALIZE; 
+		CoreModel.getDefault().getProjectDescriptionManager().setProjectDescription(project, des, flags, null);
 	}
 }

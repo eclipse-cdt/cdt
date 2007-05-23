@@ -1572,8 +1572,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 		}
 	}
-	
 	public static void updateCoreSettings(IProject project, IConfiguration[] cfgs) throws CoreException{
+		updateCoreSettings(project, cfgs, false);
+	}
+	
+	public static void updateCoreSettings(IProject project, IConfiguration[] cfgs, boolean avoidSerialization) throws CoreException{
 		if(cfgs == null){
 			IManagedBuildInfo info = getBuildInfo(project);
 			if(info != null && info.isValid() && info.getManagedProject() != null)
@@ -1592,7 +1595,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				}
 			}
 			if(updated){
-				BuildSettingsUtil.checkApplyDescription(project, projDes);
+				BuildSettingsUtil.checkApplyDescription(project, projDes, avoidSerialization);
 			}
 		}
 	}		

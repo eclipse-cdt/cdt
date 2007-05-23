@@ -59,8 +59,7 @@ public class Mnemonics {
 	private static final String RUSSIAN_MNEMONICS = "\u0410\u0411\u0412\u0413\u0414\u0145\u0401\u0416\u0417\u0418\u0419\u041a\u041b\u041c\u041d\u041e\u041f\u0420\u0421\u0422\u0423\u0424\u0425\u0426\u0427\u0428\u0429\u042a\u042b\u042c\u042d\u042e\u042f"; //$NON-NLS-1$
 	private static final String LATIN_MNEMONICS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //$NON-NLS-1$
 	
-//	private static final String[] TRANSPARENT_ENDINGS = { ELLIPSIS, DOUBLE_GT, DOUBLE_LT, SINGLE_GT, SINGLE_LT, COLON, FW_ELLIPSIS, FW_DOUBLE_GT, FW_DOUBLE_LT, FW_SINGLE_GT, FW_SINGLE_LT, FW_COLON };
-	private final static Pattern TRANSPARENT_ENDING_PATTERN = Pattern.compile("(\\s|\\.\\.\\.|>|<|:|\uff0e\uff0e\uff0e|\uff1e|\uff1c|\uff1a)+$"); //$NON-NLS-1$
+	private final static Pattern TRANSPARENT_ENDING_PATTERN = Pattern.compile("(\\s|\\.\\.\\.|>|<|:|\uff0e\uff0e\uff0e|\uff1e|\uff1c|\uff1a)+$|\\t.*$"); //$NON-NLS-1$
 	private boolean applyMnemonicsToPrecedingLabels = true;
 
 	private Set usedSet = new HashSet();
@@ -259,6 +258,9 @@ public class Mnemonics {
 		char ch = label.charAt(0);
 		for (int i = 0; (i < label.length()) && (uniqueIndex == -1); i++) {
 			ch = label.charAt(i);
+			if (ch == '\t') { // stop at accelerators too
+				break;
+			}
 			if (!isUsed(ch) && isAcceptable(ch)) {
 				uniqueIndex = i;
 			}
@@ -439,7 +441,7 @@ public class Mnemonics {
 			Control previousChild = currentChild;
 			currentChild = children[i];
 			if (!ignoredControls.contains(currentChild)) {
-				if (currentChild instanceof Combo || currentChild instanceof InheritableEntryField || currentChild instanceof Text) {
+				if (currentChild instanceof Combo || currentChild instanceof InheritableEntryField) {
 					if (applyMnemonicsToPrecedingLabels && previousChild instanceof Label) {
 						Label label = (Label) previousChild;
 						String text = label.getText();

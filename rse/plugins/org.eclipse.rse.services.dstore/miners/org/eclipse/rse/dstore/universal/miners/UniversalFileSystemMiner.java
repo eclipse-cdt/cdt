@@ -641,9 +641,29 @@ public class UniversalFileSystemMiner extends Miner {
 		}
 
 		if (fileobj != null)
-			// query all files and folders for the filter
-			internalQueryAll(subject, fileobj, queryType, filter,
-					caseSensitive, IClientServerConstants.INCLUDE_ALL);
+		{
+			if (!fileobj.exists())
+			{
+				subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
+				subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
+				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);	
+				
+				if (subject.getNestedSize() > 0)
+				{
+					List children = subject.getNestedData();
+					for (int i = children.size() - 1; i >= 0; i--)
+					{
+						_dataStore.deleteObject(subject, (DataElement)children.get(i));
+					}
+				}
+			}
+			else
+			{
+				// query all files and folders for the filter
+				internalQueryAll(subject, fileobj, queryType, filter,
+						caseSensitive, IClientServerConstants.INCLUDE_ALL);
+			}
+		}
 
 			// refresh datastore
 			_dataStore.refresh(subject);
@@ -861,8 +881,24 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					"Invalid query type to handleQueryFiles", null); //$NON-NLS-1$
 
 
-		internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, IClientServerConstants.INCLUDE_FILES_ONLY);
-	
+		if (!fileobj.exists())
+		{
+			subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
+			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
+			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);	
+			if (subject.getNestedSize() > 0)
+			{
+				List children = subject.getNestedData();
+				for (int i = children.size() - 1; i >= 0; i--)
+				{
+					_dataStore.deleteObject(subject, (DataElement)children.get(i));
+				}
+			}
+		}
+		else
+		{
+			internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, IClientServerConstants.INCLUDE_FILES_ONLY);
+		}
 		_dataStore.refresh(subject);
 		return statusDone(status);
 	}
@@ -901,8 +937,25 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			UniversalServerUtilities.logError(CLASSNAME,
 					"Invalid query type to handleQueryFolders", null); //$NON-NLS-1$
 
-		internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, IClientServerConstants.INCLUDE_FOLDERS_ONLY);
-
+		if (!fileobj.exists())
+		{
+			subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
+			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
+			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);	
+			if (subject.getNestedSize() > 0)
+			{
+				List children = subject.getNestedData();
+				for (int i = children.size() - 1; i >= 0; i--)
+				{
+					_dataStore.deleteObject(subject, (DataElement)children.get(i));
+				}
+			}
+		}
+		else
+		{
+			internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, IClientServerConstants.INCLUDE_FOLDERS_ONLY);
+		}
+		
 		_dataStore.refresh(subject);
 		return statusDone(status);
 	}

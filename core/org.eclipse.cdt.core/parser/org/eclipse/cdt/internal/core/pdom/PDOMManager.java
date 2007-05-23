@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -66,6 +67,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -596,6 +598,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	void addProject(final ICProject cproject) {
 		final IProject project = cproject.getProject();
+		if (!isFullyCreated(project)) {
+			return;
+		}
+		
 		Job addProject= new Job(Messages.PDOMManager_StartJob_name) {
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("", 100); //$NON-NLS-1$
@@ -635,6 +641,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		addProject.setRule(rule); 
 		addProject.setSystem(true);
 		addProject.schedule();
+	}
+
+	private boolean isFullyCreated(IProject project) {
+		ICProjectDescription desc= CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		if (desc != null && !desc.isCdtProjectCreating()) {
+			return true;
+		}
+		return false;
 	}
 
 	private void registerPreferenceListener(ICProject project) {

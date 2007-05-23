@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.internal.core.pdom;
 
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
@@ -22,9 +21,9 @@ import org.eclipse.core.resources.IProject;
 
 public class CProjectDescriptionListener implements	ICProjectDescriptionListener {
 
-	private IIndexManager fIndexManager;
+	private PDOMManager fIndexManager;
 
-	public CProjectDescriptionListener(IIndexManager manager) {
+	public CProjectDescriptionListener(PDOMManager manager) {
 		fIndexManager= manager;
 	}
 
@@ -32,23 +31,45 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 		ICProjectDescription old= event.getOldCProjectDescription();
 		ICProjectDescription act= event.getNewCProjectDescription();
 		if (old != null && act != null) {
-			ICConfigurationDescription oldConfig= old.getDefaultSettingConfiguration();
-			ICConfigurationDescription newConfig= act.getDefaultSettingConfiguration();
-			if (oldConfig != null && newConfig != null) {
-				String oldID= oldConfig.getId();
-				String newID= newConfig.getId();
-				if (oldID != null && newID != null) {
-					if (!oldID.equals(newID)) {
-						IProject project= event.getProject();
-						if (project != null && project.isOpen()) {
-							ICProject cproject= CoreModel.getDefault().getCModel().getCProject(project.getName());
-							if (cproject != null) {
-								fIndexManager.reindex(cproject);
-							}
-						}
-					}
+			if (completedProjectCreation(old, act)) {
+				ICProject project= getProject(event);
+				if (project != null) {
+					fIndexManager.addProject(project);
+				}
+			}
+			else if (changedDefaultSettingConfiguration(old, act)) {
+				ICProject project= getProject(event);
+				if (project != null) {
+					fIndexManager.reindex(project);
 				}
 			}
 		}
+	}
+
+	private boolean changedDefaultSettingConfiguration(ICProjectDescription old, ICProjectDescription act) {
+		ICConfigurationDescription oldConfig= old.getDefaultSettingConfiguration();
+		ICConfigurationDescription newConfig= act.getDefaultSettingConfiguration();
+		if (oldConfig != null && newConfig != null) {
+			String oldID= oldConfig.getId();
+			String newID= newConfig.getId();
+			if (oldID != null && newID != null) {
+				if (!oldID.equals(newID)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private ICProject getProject(CProjectDescriptionEvent event) {
+		IProject project= event.getProject();
+		if (project != null && project.isOpen()) {
+			return CoreModel.getDefault().create(project);
+		}
+		return null;
+	}
+
+	private boolean completedProjectCreation(ICProjectDescription old, ICProjectDescription act) {
+		return old.isCdtProjectCreating() && !act.isCdtProjectCreating();
 	}
 }

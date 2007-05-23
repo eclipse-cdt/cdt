@@ -88,6 +88,10 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
             "0".toCharArray(), //$NON-NLS-1$
             new char[][] { "exp".toCharArray() }); //$NON-NLS-1$
 
+    // Kludge for MSVC support until we get a real extension
+    private static final ObjectStyleMacro __stdcall = new ObjectStyleMacro(
+    		"__stdcall".toCharArray(), emptyCharArray);
+    
     /**
      * @return
      */
@@ -108,6 +112,9 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
         realDefinitions.put(__builtin_va_arg.name, __builtin_va_arg);
         realDefinitions.put(__builtin_constant_p.name, __builtin_constant_p);
         realDefinitions.put( __asm__.name, __asm__ );
+        
+        realDefinitions.put(__stdcall.name, __stdcall);
+        
         return realDefinitions;
     }
     
@@ -125,4 +132,5 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
         additionalPPKeywords.put(Keywords.cUNASSERT, IPreprocessorDirective.ppIgnore);
     	return additionalPPKeywords;
     }
+   
 }

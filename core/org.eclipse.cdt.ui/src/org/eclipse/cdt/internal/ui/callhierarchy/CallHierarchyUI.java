@@ -154,7 +154,7 @@ public class CallHierarchyUI {
 
 			index.acquireReadLock();
 			try {
-				IASTName name= IndexUI.getSelectedName(index, editorInput, sel);
+				IASTName name= IndexUI.getSelectedName(editorInput, sel);
 				if (name != null) {
 					IBinding binding= name.resolveBinding();
 					if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {

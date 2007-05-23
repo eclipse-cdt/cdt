@@ -4,14 +4,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: Anton Leherbauer (Wind River Systems) - initial API and
- * implementation
+ * Contributors: 
+ * Anton Leherbauer (Wind River Systems) - initial API and implementation
+ * Markus Schorn (Wind River Systems)
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -51,7 +53,7 @@ public class ASTCache {
 		 * @param ast  the translation unit AST, may be <code>null</code>
 		 * @return a status object
 		 */
-		IStatus runOnAST(IASTTranslationUnit ast);
+		IStatus runOnAST(IASTTranslationUnit ast) throws CoreException;
 	}
 	
 	private final int fParseMode;
@@ -92,7 +94,7 @@ public class ASTCache {
 	 * @param progressMonitor	the progress monitor or <code>null</code>
 	 * @return					the AST or <code>null</code> if the AST is not available
 	 */
-	public IASTTranslationUnit getAST(ITranslationUnit tUnit, IIndex index, boolean wait, IProgressMonitor progressMonitor) {
+	private IASTTranslationUnit getAST(ITranslationUnit tUnit, IIndex index, boolean wait, IProgressMonitor progressMonitor) {
 		if (tUnit == null)
 			return null;
 		
@@ -193,7 +195,7 @@ public class ASTCache {
 			ASTRunnable astRunnable) {
 		IIndex index;
 		try {
-			index = CCorePlugin.getIndexManager().getIndex(tUnit.getCProject());
+			index = CCorePlugin.getIndexManager().getIndex(tUnit.getCProject(), IIndexManager.ADD_DEPENDENCIES);
 			index.acquireReadLock();
 		} catch (CoreException e) {
 			return e.getStatus();
@@ -204,6 +206,9 @@ public class ASTCache {
 		try {
 			IASTTranslationUnit ast= getAST(tUnit, index, wait, monitor);
 			return astRunnable.runOnAST(ast);
+		}
+		catch (CoreException e) {
+			return e.getStatus();
 		}
 		finally {
 			index.releaseReadLock();

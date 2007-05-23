@@ -25,7 +25,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -281,30 +280,6 @@ public final class ASTProvider {
 	}
 
 	/**
-	 * Returns a shared translation unit AST for the given
-	 * C element.
-	 * <p>
-	 * Clients are not allowed to modify the AST and must
-	 * synchronize all access to its nodes.
-	 * </p>
-	 *
-	 * @param cElement				the C element
-	 * @param index				the index used to create the AST, needs to be read-locked.
-	 * @param waitFlag			{@link #WAIT_YES}, {@link #WAIT_NO} or {@link #WAIT_ACTIVE_ONLY}
-	 * @param progressMonitor	the progress monitor or <code>null</code>
-	 * @return					the AST or <code>null</code> if the AST is not available
-	 */
-	public IASTTranslationUnit getAST(ICElement cElement, IIndex index, WAIT_FLAG waitFlag, IProgressMonitor progressMonitor) {
-		if (cElement == null)
-			return null;
-		Assert.isTrue(cElement instanceof ITranslationUnit);
-		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive((ITranslationUnit)cElement)) {
-			return null;
-		}
-		return fCache.getAST((ITranslationUnit)cElement, index, waitFlag != WAIT_NO, progressMonitor);
-	}
-
-	/**
 	 * Disposes this AST provider.
 	 */
 	public void dispose() {
@@ -333,17 +308,6 @@ public final class ASTProvider {
 			return Status.CANCEL_STATUS;
 		}
 		return fCache.runOnAST((ITranslationUnit)cElement, waitFlag != WAIT_NO, monitor, astRunnable);
-	}
-
-	/**
-	 * @param cElement
-	 * @param index
-	 * @param monitor
-	 * @return an AST or <code>null</code>, if no AST could be computed
-	 */
-	public IASTTranslationUnit createAST(ICElement cElement, IIndex index, IProgressMonitor monitor) {
-		Assert.isTrue(cElement instanceof ITranslationUnit);
-		return fCache.createAST((ITranslationUnit)cElement, index, monitor);
 	}
 }
 

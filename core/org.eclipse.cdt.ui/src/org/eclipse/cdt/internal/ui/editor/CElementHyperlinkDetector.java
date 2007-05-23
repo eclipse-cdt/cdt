@@ -8,11 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corporation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
@@ -33,6 +36,8 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 
 public class CElementHyperlinkDetector implements IHyperlinkDetector {
@@ -51,16 +56,16 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 		CEditor editor = (CEditor) fTextEditor;
 		int offset = region.getOffset();
 		
-		IAction openAction= editor.getAction("OpenDeclarations"); //$NON-NLS-1$
+		final IAction openAction= editor.getAction("OpenDeclarations"); //$NON-NLS-1$
 		if (openAction == null)
 			return null;
 
 		// reuse the logic from Open Decl that recognizes a word in the editor
-		ITextSelection selection = OpenDeclarationsAction.selectWord(offset, editor);
+		final ITextSelection selection = OpenDeclarationsAction.selectWord(offset, editor);
 		if(selection == null)
 			return null;
 		
-		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+		final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
 		if (workingCopy == null) {
 			return null;
 		}
@@ -79,29 +84,36 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 			return null;
 		}
 		
+		final IHyperlink[] result= {null};
 		try {
-			IASTTranslationUnit ast =
-				ASTProvider.getASTProvider().getAST(workingCopy, index, ASTProvider.WAIT_YES, null);
-			IASTName[] selectedNames = 
-				workingCopy.getLanguage().getSelectedNames(ast, selection.getOffset(), selection.getLength());
-			
-			IRegion linkRegion;
-			if(selectedNames.length > 0 && selectedNames[0] != null) { // found a name
-				linkRegion = new Region(selection.getOffset(), selection.getLength());
-			}
-			else { // check if we are in an include statement
-				linkRegion = matchIncludeStatement(ast, selection);
-			}
-			
-			if(linkRegion != null)
-				return new IHyperlink[] { new CElementHyperlink(linkRegion, openAction) };
-			
-		} catch(CoreException e) {
+			ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
+				public IStatus runOnAST(IASTTranslationUnit ast) {
+					try {
+						IASTName[] selectedNames = 
+							workingCopy.getLanguage().getSelectedNames(ast, selection.getOffset(), selection.getLength());
+
+						IRegion linkRegion;
+						if(selectedNames.length > 0 && selectedNames[0] != null) { // found a name
+							linkRegion = new Region(selection.getOffset(), selection.getLength());
+						}
+						else { // check if we are in an include statement
+							linkRegion = matchIncludeStatement(ast, selection);
+						}
+
+						if(linkRegion != null)
+							result[0]= new CElementHyperlink(linkRegion, openAction);
+					}
+					catch (CoreException e) {
+						return e.getStatus();
+					}
+					return Status.OK_STATUS;
+				}
+			});
 		} finally {
 			index.releaseReadLock();
 		}
 		
-		return null;
+		return result[0] == null ? null : result;
 	}
 	
 	

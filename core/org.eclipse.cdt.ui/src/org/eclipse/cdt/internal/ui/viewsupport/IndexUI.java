@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
@@ -54,6 +56,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
@@ -238,18 +241,23 @@ public class IndexUI {
 		return null;
 	}
 
-	public static IASTName getSelectedName(IIndex index, IEditorInput editorInput, ITextSelection selection) throws CoreException {
-		int selectionStart = selection.getOffset();
-		int selectionLength = selection.getLength();
+	public static IASTName getSelectedName(IEditorInput editorInput, ITextSelection selection) throws CoreException {
+		final int selectionStart = selection.getOffset();
+		final int selectionLength = selection.getLength();
 
 		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 		if (workingCopy == null)
 			return null;
 		
-		IASTTranslationUnit ast= ASTProvider.getASTProvider().getAST(
-				workingCopy, index, ASTProvider.WAIT_YES, new NullProgressMonitor());
-		FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
-		ast.accept(finder);
-		return finder.getSelectedName();
+		final IASTName[] result= {null};
+		ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
+			public IStatus runOnAST(IASTTranslationUnit ast) {
+				FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
+				ast.accept(finder);
+				result[0]= finder.getSelectedName();
+				return Status.OK_STATUS;
+			}
+		});
+		return result[0];
 	}
 }

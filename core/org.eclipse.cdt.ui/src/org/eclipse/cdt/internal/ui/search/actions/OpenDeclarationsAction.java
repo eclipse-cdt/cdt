@@ -49,6 +49,8 @@ import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -70,7 +72,10 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		setDescription(CEditorMessages.getString("OpenDeclarations.description")); //$NON-NLS-1$
 	}
 
-	private class Runner extends Job {
+	private class Runner extends Job implements ASTRunnable {
+		private IWorkingCopy fWorkingCopy;
+		private IIndex fIndex;
+
 		Runner() {
 			super(CEditorMessages.getString("OpenDeclarations.dialog.title")); //$NON-NLS-1$
 		}
@@ -79,114 +84,113 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			try {
 				clearStatusLine();
 				
-				int selectionStart = selNode.getOffset();
-				int selectionLength = selNode.getLength();
-					
-				IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
-				if (workingCopy == null)
+				fWorkingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
+				if (fWorkingCopy == null)
 					return Status.CANCEL_STATUS;
 
-				IIndex index = CCorePlugin.getIndexManager().getIndex(workingCopy.getCProject(),
+				fIndex= CCorePlugin.getIndexManager().getIndex(fWorkingCopy.getCProject(),
 						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 				
 				try {
-					index.acquireReadLock();
+					fIndex.acquireReadLock();
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}
 
-
 				try {
-					IASTTranslationUnit ast=
-						ASTProvider.getASTProvider().getAST(
-								workingCopy, index, ASTProvider.WAIT_YES, monitor);
-					IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
-					 
-					if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
-						boolean found = false;
-						IASTName searchName = selectedNames[0];
-						boolean isDefinition= searchName.isDefinition();
-						IBinding binding = searchName.resolveBinding();
-						if (binding != null && !(binding instanceof IProblemBinding)) {
-							IName[] declNames = findNames(index, ast, isDefinition, binding);
-							if (declNames.length == 0) {
-								// bug 86829, handle implicit methods.
-								if (binding instanceof ICPPMethod) {
-									ICPPMethod method= (ICPPMethod) binding;
-									if (method.isImplicit()) {
-										try {
-											IBinding clsBinding= method.getClassOwner();
-											if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
-												declNames= findNames(index, ast, false, clsBinding);
-											}
-										} catch (DOMException e) {
-											CCorePlugin.log(e);
-										}
-									}
-								}
-							}
-							if (navigateViaCElements(workingCopy.getCProject(), index, declNames)) {
-								found= true;
-							}
-							else {
-								// leave old method as fallback for local variables, parameters and 
-								// everything else not covered by ICElementHandle.
-								found = navigateOneLocation(declNames);
-							}
-						}
-						if (!found) {
-							reportSymbolLookupFailure(new String(searchName.toCharArray()));
-						}
-						
-					} else {
-						// Check if we're in an include statement
-						IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
-						boolean foundInInclude = false;
-						for (int i = 0; i < preprocs.length; ++i) {
-							if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
-								continue;
-							IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
-							IASTFileLocation loc = preprocs[i].getFileLocation();
-							if (loc != null
-									&& loc.getFileName().equals(ast.getFilePath())
-									&& loc.getNodeOffset() < selectionStart
-									&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
-								// Got it
-								foundInInclude = true;
-								String name = null;
-								if (incStmt.isResolved())
-									name = incStmt.getPath();
-								
-								if (name != null) {
-									final IPath path = new Path(name);
-									runInUIThread(new Runnable() {
-										public void run() {
-											try {
-												open(path, 0, 0);
-											} catch (CoreException e) {
-												CUIPlugin.getDefault().log(e);
-											}
-										}
-									});
-								} else {
-									reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
-								}
-								
-								break;
-							}
-							if (!foundInInclude) {
-								reportSelectionMatchFailure();
-							}
-						}
-					}
+					return ASTProvider.getASTProvider().runOnAST(fWorkingCopy, ASTProvider.WAIT_YES, monitor, this);
 				} finally {
-					index.releaseReadLock();
+					fIndex.releaseReadLock();
 				}
-
-				return Status.OK_STATUS;
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
+		}
+
+		public IStatus runOnAST(IASTTranslationUnit ast) throws CoreException {
+			int selectionStart = selNode.getOffset();
+			int selectionLength = selNode.getLength();
+				
+			IASTName[] selectedNames = fWorkingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
+			 
+			if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
+				boolean found = false;
+				IASTName searchName = selectedNames[0];
+				boolean isDefinition= searchName.isDefinition();
+				IBinding binding = searchName.resolveBinding();
+				if (binding != null && !(binding instanceof IProblemBinding)) {
+					IName[] declNames = findNames(fIndex, ast, isDefinition, binding);
+					if (declNames.length == 0) {
+						// bug 86829, handle implicit methods.
+						if (binding instanceof ICPPMethod) {
+							ICPPMethod method= (ICPPMethod) binding;
+							if (method.isImplicit()) {
+								try {
+									IBinding clsBinding= method.getClassOwner();
+									if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
+										declNames= findNames(fIndex, ast, false, clsBinding);
+									}
+								} catch (DOMException e) {
+									CCorePlugin.log(e);
+								}
+							}
+						}
+					}
+					if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
+						found= true;
+					}
+					else {
+						// leave old method as fallback for local variables, parameters and 
+						// everything else not covered by ICElementHandle.
+						found = navigateOneLocation(declNames);
+					}
+				}
+				if (!found) {
+					reportSymbolLookupFailure(new String(searchName.toCharArray()));
+				}
+				
+			} else {
+				// Check if we're in an include statement
+				IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
+				boolean foundInInclude = false;
+				for (int i = 0; i < preprocs.length; ++i) {
+					if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
+						continue;
+					IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
+					IASTFileLocation loc = preprocs[i].getFileLocation();
+					if (loc != null
+							&& loc.getFileName().equals(ast.getFilePath())
+							&& loc.getNodeOffset() < selectionStart
+							&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
+						// Got it
+						foundInInclude = true;
+						String name = null;
+						if (incStmt.isResolved())
+							name = incStmt.getPath();
+						
+						if (name != null) {
+							final IPath path = new Path(name);
+							runInUIThread(new Runnable() {
+								public void run() {
+									try {
+										open(path, 0, 0);
+									} catch (CoreException e) {
+										CUIPlugin.getDefault().log(e);
+									}
+								}
+							});
+						} else {
+							reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
+						}
+						
+						break;
+					}
+					if (!foundInInclude) {
+						reportSelectionMatchFailure();
+					}
+				}
+			}
+			return Status.OK_STATUS;
 		}
 
 		private boolean navigateOneLocation(IName[] declNames) {

@@ -422,7 +422,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 //		doInit();		
 //		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_WORKSPACE, worksp);
 //		assertNotNull(ms);
-//		String[] lst = {"SCHEISE", "MERDE", "SHIT"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//		String[] lst = {"AAA", "BBB", "CCC"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 //		assertTrue(addMacro("LST", IBuildMacro.VALUE_TEXT_LIST, lst, //$NON-NLS-1$
 //				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));		
 //		 assertTrue(addMacro("ONE", IBuildMacro.VALUE_TEXT, "EIN", //$NON-NLS-1$ //$NON-NLS-2$
@@ -461,9 +461,9 @@ public class ManagedBuildMacrosTests extends TestCase {
 //			String e = mp.resolveValue("${one} - ${Two} - ${THREE} -> ${lst}", UNKNOWN, LISTSEP, //$NON-NLS-1$
 //					IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0]);
 //			
-//			assertEquals(a, "EIN - ZWEI - DREI -> SCHEISE|MERDE|SHIT"); //$NON-NLS-1$
-//			assertEquals(b, "EIN - ZWEI - <HZ> -> SCHEISE|MERDE|SHIT"); //$NON-NLS-1$
-//			assertEquals(c, "EIN - <HZ> - <HZ> -> SCHEISE|MERDE|SHIT"); //$NON-NLS-1$
+//			assertEquals(a, "EIN - ZWEI - DREI -> AAA|BBB|CCC"); //$NON-NLS-1$
+//			assertEquals(b, "EIN - ZWEI - <HZ> -> AAA|BBB|CCC"); //$NON-NLS-1$
+//			assertEquals(c, "EIN - <HZ> - <HZ> -> AAA|BBB|CCC"); //$NON-NLS-1$
 //			assertEquals(d, "nested L1-L2-L3-L4-L3-L2-L1"); //$NON-NLS-1$
 //			assertEquals(e, "<HZ> - <HZ> - <HZ> -> <HZ>");  //$NON-NLS-1$  
 //		} catch (BuildMacroException e) {

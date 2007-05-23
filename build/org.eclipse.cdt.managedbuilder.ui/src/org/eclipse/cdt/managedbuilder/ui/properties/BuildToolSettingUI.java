@@ -105,7 +105,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	public BuildToolSettingUI(AbstractCBuildPropertyTab page,
 			IResourceInfo info, ITool _tool) {
 		// Cache the configuration and tool this page is for
-		//TODO: SHIT
+		//TODO: 
 		super(info);
 		this.fTool = _tool;
 		buildPropPage = page;

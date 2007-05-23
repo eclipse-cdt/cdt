@@ -90,13 +90,14 @@ public abstract class CompositeScope implements IIndexScope {
 	
 	/**
 	 * A convenience method for processing an array of bindings with {@link CompositeScope#processUncertainBinding(IBinding)}
-	 * @param fragmentBindings
-	 * @return
+     * Returns an empty array if the input parameter is null
+	 * @param frgBindings
+	 * @return a non-null IBinding[] 
 	 */
-	protected final IBinding[] processUncertainBindings(IBinding[] fragmentBindings) {
-		IBinding[] result= new IBinding[fragmentBindings.length];
+	protected final IBinding[] processUncertainBindings(IBinding[] frgBindings) {
+		IBinding[] result= new IBinding[frgBindings==null ? 0 : frgBindings.length];
 		for(int i=0; i<result.length; i++) {
-			result[i]= processUncertainBinding(fragmentBindings[i]);
+			result[i]= processUncertainBinding(frgBindings[i]);
 		}
 		return result;
 	}

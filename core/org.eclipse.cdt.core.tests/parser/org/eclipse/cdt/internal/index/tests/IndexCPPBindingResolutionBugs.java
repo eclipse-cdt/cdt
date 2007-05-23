@@ -54,6 +54,18 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		setStrategy(new SinglePDOMTestStrategy(true));
 	}
 	
+	// namespace ns {class A{};}
+	
+	// ns::A a;
+	// class B {};
+	public void test188324() throws Exception {
+		IASTName name= findNames("B", 1)[0];
+		IBinding b0= getBindingFromASTName("ns::A", 2);
+		assertInstance(b0, ICPPNamespace.class);
+		ICPPNamespace ns= (ICPPNamespace) b0;
+		assertEquals(0, ns.getNamespaceScope().getBindings(name, false, false).length);
+	}
+	
 	//	 template<typename T>
 	//	 class C : public C<T> {};
 	

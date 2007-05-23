@@ -22,7 +22,7 @@
 		     <topic label="org.eclipse.dstore.core.client" href="reference/api/org/eclipse/dstore/core/client/package-summary.html" />
 		     <topic label="org.eclipse.dstore.core.server" href="reference/api/org/eclipse/dstore/core/server/package-summary.html" />
 		     <topic label="org.eclipse.dstore.core.util" href="reference/api/org/eclipse/dstore/core/util/package-summary.html" />
-		     <topic label="org.eclipse.dstore.core.miners.miner" href="reference/api/org/eclipse/dstore/core/miners/miner/package-summary.html" />
+		     <topic label="org.eclipse.dstore.core.miners" href="reference/api/org/eclipse/dstore/core/miners/package-summary.html" />
 	    </topic>
 	    <anchor id="reference_additions"/>
 	</topic>

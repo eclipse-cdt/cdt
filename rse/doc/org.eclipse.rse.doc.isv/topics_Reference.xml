@@ -32,7 +32,6 @@
 			<topic label="org.eclipse.rse.core.events" href="reference/api/org/eclipse/rse/core/events/package-summary.html" />
 			<topic label="org.eclipse.rse.core.servicesubsystem" href="reference/api/org/eclipse/rse/core/servicesubsystem/package-summary.html" />
 			<topic label="org.eclipse.rse.core.subsystems" href="reference/api/org/eclipse/rse/core/subsystems/package-summary.html" />
-			<topic label="org.eclipse.rse.core.subsystems.util" href="reference/api/org/eclipse/rse/core/subsystems/util/package-summary.html" />
 	    </topic>
 	    <topic label="Logging" href="provisional_api.html">
 	    	<topic label="org.eclipse.rse.logging" href="reference/api/org/eclipse/rse/logging/package-summary.html"/>
@@ -62,11 +61,6 @@
 		</topic>
 		<topic label="Services Implementations" href="provisional_api.html">
 			<topic label="org.eclipse.rse.services.dstore" href="reference/api/org/eclipse/rse/services/dstore/package-summary.html"/>
-			<topic label="org.eclipse.rse.services.dstore.files" href="reference/api/org/eclipse/rse/services/dstore/files/package-summary.html"/>
-			<topic label="org.eclipse.rse.services.dstore.processes" href="reference/api/org/eclipse/rse/services/dstore/processes/package-summary.html"/>
-			<topic label="org.eclipse.rse.services.dstore.shells" href="reference/api/org/eclipse/rse/services/dstore/shells/package-summary.html"/>
-			<topic label="org.eclipse.rse.services.dstore.rmtservice" href="reference/api/org/eclipse/rse/services/dstore/rmtservice/package-summary.html"/>
-			<topic label="org.eclipse.rse.services.dstore.search" href="reference/api/org/eclipse/rse/services/dstore/search/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.dstore.util" href="reference/api/org/eclipse/rse/services/dstore/util/package-summary.html"/>
 		</topic>
 		<topic label="DStore Miners" href="provisional_api.html">

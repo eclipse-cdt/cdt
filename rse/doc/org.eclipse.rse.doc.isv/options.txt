@@ -63,7 +63,6 @@ org.eclipse.rse.core.model
 org.eclipse.rse.core.references
 org.eclipse.rse.core.servicesubsystem
 org.eclipse.rse.core.subsystems
-org.eclipse.rse.core.subsystems.util
 org.eclipse.rse.dstore.universal.miners
 org.eclipse.rse.files.ui
 org.eclipse.rse.files.ui.actions
@@ -86,11 +85,6 @@ org.eclipse.rse.services.clientserver.processes
 org.eclipse.rse.services.clientserver.processes.handlers
 org.eclipse.rse.services.clientserver.search
 org.eclipse.rse.services.dstore
-org.eclipse.rse.services.dstore.files
-org.eclipse.rse.services.dstore.processes
-org.eclipse.rse.services.dstore.rmtservice
-org.eclipse.rse.services.dstore.search
-org.eclipse.rse.services.dstore.shells
 org.eclipse.rse.services.dstore.util
 org.eclipse.rse.services.files
 org.eclipse.rse.services.processes
@@ -128,6 +122,7 @@ org.eclipse.rse.ui.filters
 org.eclipse.rse.ui.filters.actions
 org.eclipse.rse.ui.filters.dialogs
 org.eclipse.rse.ui.messages
+org.eclipse.rse.ui.model
 org.eclipse.rse.ui.open
 org.eclipse.rse.ui.operations
 org.eclipse.rse.ui.propertypages

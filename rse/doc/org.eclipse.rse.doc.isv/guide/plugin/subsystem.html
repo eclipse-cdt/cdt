@@ -228,11 +228,11 @@ following summarizes the minimum set of classes you will be creating in order to
             <samp><a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html#configureFilterDialog(org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog)">configureFilterDialog</a></samp>
             and in it calling <samp><a href="../../reference/api/org/eclipse/rse/ui/filters/dialogs/SystemChangeFilterDialog.html#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)">setFilterStringEditPane</a></samp>
             on the given dialog.
-      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/core/subsystems/util/ISubsystemConfigurationAdapter.html#getNewFilterPoolFilterAction(org.eclipse.rse.core.filters.ISystemFilterPool, org.eclipse.swt.widgets.Shell)">getNewFilterPoolFilterAction(SystemFilterPool, Shell)</a></samp>
+      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/ui/subsystems/ISubSystemConfigurationAdapter.html#getNewFilterPoolFilterAction(org.eclipse.rse.core.filters.ISystemFilterPool, org.eclipse.swt.widgets.Shell)">getNewFilterPoolFilterAction(SystemFilterPool, Shell)</a></samp>
             method in your subsystem factory, to return an instance of your new-filter action.
             You can actually avoid creating an action subclass if you choose, by calling the configuration methods
             in the RSE-supplied <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html">new-filter action class</a>.
-      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/core/subsystems/util/ISubsystemConfigurationAdapter.html#getChangeFilterAction(org.eclipse.rse.core.filters.ISystemFilter, org.eclipse.swt.widgets.Shell)">getChangeFilterAction(SystemFilter, Shell)</a></samp>
+      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/ui/subsystems/ISubSystemConfigurationAdapter.html#getChangeFilterAction(org.eclipse.rse.core.filters.ISystemFilter, org.eclipse.swt.widgets.Shell)">getChangeFilterAction(SystemFilter, Shell)</a></samp>
             method in your subsystem factory, to return an instance of your change-filter action.
             You can actually avoid creating an action subclass if you choose, by calling the configuration methods
             in the RSE-supplied <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html">change-filter action class</a>.

@@ -1638,7 +1638,10 @@ public class BuildDescription implements IBuildDescription {
 			return null;
 		
 		IManagedDependencyCalculator depCalc = null;
-		IManagedDependencyGeneratorType depGenType = tool.getDependencyGeneratorForExtension(bRc.getLocation().getFileExtension());
+		String ext = bRc.getLocation().getFileExtension();
+		if(ext == null)
+			ext = ""; 	//$NON-NLS-1$
+		IManagedDependencyGeneratorType depGenType = tool.getDependencyGeneratorForExtension(ext);
 		IManagedDependencyGeneratorType depGen = null;
 		
 		if(depGenType != null){

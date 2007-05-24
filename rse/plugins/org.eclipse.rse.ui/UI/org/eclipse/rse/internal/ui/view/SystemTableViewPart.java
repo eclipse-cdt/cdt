@@ -75,6 +75,7 @@ import org.eclipse.rse.ui.actions.SystemTablePrintAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemSelectAnythingDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -642,7 +643,9 @@ public class SystemTableViewPart extends ViewPart
 			String filterID = memento.getString(TAG_TABLE_VIEW_FILTER_ID);
 			String objectID = memento.getString(TAG_TABLE_VIEW_OBJECT_ID);
 
+			ISystemRegistryUI registryUI = RSEUIPlugin.getTheSystemRegistryUI();
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+			
 			Object input = null;
 			if (subsystemId == null)
 			{
@@ -656,7 +659,7 @@ public class SystemTableViewPart extends ViewPart
 				{
 				    // TODO why did we use null for a while?
 					//input = null;
-					input = registry;
+					input = registryUI;
 				}
 			}
 			else

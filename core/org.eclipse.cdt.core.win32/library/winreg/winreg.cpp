@@ -112,7 +112,7 @@ static jstring getKeyName(JNIEnv * env, HKEY key, jstring subkey, jint index) {
 	jstring 	result = NULL;
 
 	HKEY skey;
-	LONG rc = RegOpenKeyEx(HKEY_LOCAL_MACHINE, (const wchar_t *)csubkey, 0, KEY_READ, &skey);
+	LONG rc = RegOpenKeyEx(key, (const wchar_t *)csubkey, 0, KEY_READ, &skey);
 	if (rc != ERROR_SUCCESS)
 		return NULL;
 	

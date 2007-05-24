@@ -237,7 +237,7 @@ public class DummyHost extends PlatformObject implements IHost
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return new IRSEPersistableContainer[0];
+		return IRSEPersistableContainer.NO_CHILDREN;
 	}
 
 	public boolean isTainted() {

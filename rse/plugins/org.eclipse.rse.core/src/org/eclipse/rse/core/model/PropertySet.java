@@ -179,7 +179,7 @@ public class PropertySet extends RSEPersistableObject implements IPropertySet, I
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return new IRSEPersistableContainer[0];
+		return IRSEPersistableContainer.NO_CHILDREN;
 	}
 	
 	public IRSEPersistableContainer getPersistableParent() {

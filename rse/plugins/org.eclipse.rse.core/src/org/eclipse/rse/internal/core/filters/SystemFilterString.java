@@ -299,7 +299,7 @@ public class SystemFilterString extends RSEModelObject implements ISystemFilterS
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return new IRSEPersistableContainer[0];
+		return IRSEPersistableContainer.NO_CHILDREN;
 	}
 
 }

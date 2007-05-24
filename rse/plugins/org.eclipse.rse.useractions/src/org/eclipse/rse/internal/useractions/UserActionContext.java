@@ -160,7 +160,7 @@ public class UserActionContext extends RSEModelObject implements IUserActionCont
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableChildren()
 	 */
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return new IRSEPersistableContainer[0];
+		return IRSEPersistableContainer.NO_CHILDREN;
 	}
 
 	/* (non-Javadoc)

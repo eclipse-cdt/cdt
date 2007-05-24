@@ -595,7 +595,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return new IRSEPersistableContainer[0];
+		return IRSEPersistableContainer.NO_CHILDREN;
 	}
 
 	// -------------------------

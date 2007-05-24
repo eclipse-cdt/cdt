@@ -20,12 +20,14 @@ package org.eclipse.rse.core.model;
 /**
  * This is the interface for all objects that contain persistent data.
  * The objects themselves may not have a persistent form, but can lie in the
- * persistence heirarchy and be reconstructed when the persistent form is restored.
+ * persistence hierarchy and be reconstructed when the persistent form is restored.
  * An example of this is the SytemFilterPoolManager, which is itself not persisted, but
  * has this interface since it can be reconstructed from its ordering and exists
  * in the parent chain from SystemFilterPool to SystemProfile.
  */
 public interface IRSEPersistableContainer {
+	
+	static final IRSEPersistableContainer[] NO_CHILDREN = new IRSEPersistableContainer[0];
 
 	/**
 	 * Request a persistence manager to persist this object.
@@ -101,15 +103,16 @@ public interface IRSEPersistableContainer {
 	/**
 	 * Retrieve the parent of this object in the persistence containment hierarchy.
 	 * This is related to, but not necessarily the same as, the model hierarchy.
-	 * @return the parent persistable object. This is null if there is no parent.
+	 * @return the parent persistent object. This is null if there is no parent.
 	 */
 	public IRSEPersistableContainer getPersistableParent();
 	
 	/**
 	 * Retrieves the children of this object in the persistence containment hierarchy.
 	 * This is related to, but not necessarily the same as, the model hierarchy.
-	 * @return the array of persistable children in the order they are to be stored in the 
+	 * @return the array of persistent children in the order they are to be stored in the 
 	 * persistent form. This is an empty array if there are no children.
+	 * See {@link #NO_CHILDREN}.
 	 */
 	public IRSEPersistableContainer[] getPersistableChildren();
 

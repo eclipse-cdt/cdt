@@ -1651,7 +1651,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return new IRSEPersistableContainer[0];
+		return IRSEPersistableContainer.NO_CHILDREN;
 	}
 
 }

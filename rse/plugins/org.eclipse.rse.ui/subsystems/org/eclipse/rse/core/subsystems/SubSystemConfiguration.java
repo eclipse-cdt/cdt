@@ -3115,7 +3115,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return new IRSEPersistableContainer[0];
+		return IRSEPersistableContainer.NO_CHILDREN;
 	}
 
 	/**

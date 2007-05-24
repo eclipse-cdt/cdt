@@ -779,7 +779,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		{
 			return conServ.getPersistableChildren();
 		}
-		return new IRSEPersistableContainer[0];
+		return IRSEPersistableContainer.NO_CHILDREN;
 	}
 	
 	

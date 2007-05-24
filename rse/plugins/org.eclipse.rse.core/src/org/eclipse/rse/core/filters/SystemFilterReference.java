@@ -491,7 +491,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
     }
     
     public IRSEPersistableContainer[] getPersistableChildren() {
-    	return new IRSEPersistableContainer[0];
+    	return IRSEPersistableContainer.NO_CHILDREN;
     }
     
 }

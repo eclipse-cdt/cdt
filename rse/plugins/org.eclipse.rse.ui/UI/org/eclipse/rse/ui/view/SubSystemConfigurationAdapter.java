@@ -1134,9 +1134,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				if (newNestedFilterAction != null)
 					childActions.addElement(newNestedFilterAction);
 			}
-			IAction chgFilterAction = getChangeFilterAction(factory, selectedFilter, shell);
-			if (chgFilterAction != null)
-				childActions.addElement(chgFilterAction);
+			
+			// IAction chgFilterAction = getChangeFilterAction(factory, selectedFilter, shell);
+			// if (chgFilterAction != null)
+			//	childActions.addElement(chgFilterAction);
 			/*
 			if (showFilterStrings())
 			{

@@ -86,6 +86,7 @@ public interface ISystemProfileManager {
 	 * Get the index of a profile given its name.
 	 * @param profileName the name of the profile to look for.
 	 * @return 0-based position of the given active profile within the list of active profiles.
+	 * @deprecated
 	 */
 	public int getActiveSystemProfilePosition(String profileName);
 
@@ -138,8 +139,12 @@ public interface ISystemProfileManager {
 	 */
 	public List getProfiles();
 	
+	/**
+	 * Adds a system profile to this profile manager.
+	 * @param profile The system profile to add. 
+	 */
 	public void addSystemProfile(ISystemProfile profile);
-
+	
 	//	/**
 	//	 * Reusable method to return a name validator for renaming a profile.
 	//	 * @param the current profile name on updates. Can be null for new profiles. Used

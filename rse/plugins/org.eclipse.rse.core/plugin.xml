@@ -28,7 +28,6 @@
              value="workspace">
        </property>
     </persistenceProvider>
-    <!--
     <persistenceProvider
           autostart="true"
           class="org.eclipse.rse.internal.persistence.PropertyFileProvider"
@@ -39,7 +38,6 @@
              value="metadata">
        </property>
     </persistenceProvider>
-    -->
    </extension>
 
 <!-- ================================================================= -->

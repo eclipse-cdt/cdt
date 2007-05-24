@@ -20,36 +20,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
@@ -65,35 +51,6 @@ import org.eclipse.rse.persistence.dom.RSEDOMNodeAttribute;
 public class PropertyFileProvider implements IRSEPersistenceProvider {
 
 	private static final String NULL_VALUE_STRING = "null"; //$NON-NLS-1$
-	private static final String PROPERTIES_FILE_NAME = "node.properties"; //$NON-NLS-1$
-
-	/* 
-	 * Metatype names 
-	 * each entry is an array. The first is the preferred name.
-	 * The other names are acceptable alternates.
-	 * Names must not contain periods or whitespace.
-	 * Lowercase letters, numbers and dashes (-) are preferred.
-	 */
-	private static final String[] MT_ATTRIBUTE_TYPE = new String[] { "04-attr-type", "attr-type" }; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String[] MT_ATTRIBUTE = new String[] { "03-attr", "attr" }; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String[] MT_CHILD = new String[] { "06-child", "child" }; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String[] MT_NODE_TYPE = new String[] { "01-type", "01-node-type", "n-type" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	private static final String[] MT_NODE_NAME = new String[] { "00-name", "00-node-name", "n-name" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	private static final String[] MT_REFERENCE = new String[] { "05-ref", "ref" }; //$NON-NLS-1$ //$NON-NLS-2$
-
-	/* Type abbreviations */
-	private static final String AB_SUBSYSTEM = "SS"; //$NON-NLS-1$
-	private static final String AB_SERVICE_LAUNCHER = "SL"; //$NON-NLS-1$
-	private static final String AB_PROPERTY_SET = "PS"; //$NON-NLS-1$
-	private static final String AB_PROPERTY = "P"; //$NON-NLS-1$
-	private static final String AB_HOST = "H"; //$NON-NLS-1$
-	private static final String AB_FILTER_STRING = "FS"; //$NON-NLS-1$
-	private static final String AB_FILTER_POOL_REFERENCE = "FPR"; //$NON-NLS-1$
-	private static final String AB_FILTER_POOL = "FP"; //$NON-NLS-1$
-	private static final String AB_FILTER = "F"; //$NON-NLS-1$
-	private static final String AB_CONNECTOR_SERVICE = "CS"; //$NON-NLS-1$
-	private static final String AB_PROFILE = "PRF"; //$NON-NLS-1$
-
 	/* interesting character sets */
 	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._"; //$NON-NLS-1$ 
 	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ"; //$NON-NLS-1$
@@ -106,252 +63,19 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private static final String PV_LOCATION_METADATA = "metadata"; //$NON-NLS-1$
 		
 	
-	interface PersistenceAnchor {
-		String[] getProfileLocationNames();
-		IStatus deleteProfileLocation(String profileName, IProgressMonitor monitor);
-		PersistenceLocation getProfileLocation(String profileName);
-	}
-	
-	interface PersistenceLocation {
-		boolean exists();
-		void ensure();
-		boolean hasContents();
-		URI getLocator();
-		PersistenceLocation[] getChildren();
-		PersistenceLocation getChild(String childName);
-		String getName();
-
-		/**
-		 * Keeps only those children from this location that are in the keep set.
-		 * Typically used to clean renamed nodes from the tree on a save operation.
-		 * @param keepSet The names of the children that should be kept. Others are discarded.
-		 */
-		void keepChildren(Set keepSet);
-		void setContents(InputStream stream);
-		InputStream getContents();
-	}
-	
-	class WorkspaceAnchor implements PersistenceAnchor {
-
-		public String[] getProfileLocationNames() {
-			List names = new Vector(10);
-			IFolder providerFolder = getProviderFolder();
-			try {
-				IResource[] profileCandidates = providerFolder.members();
-				for (int i = 0; i < profileCandidates.length; i++) {
-					IResource profileCandidate = profileCandidates[i];
-					if (profileCandidate.getType() == IResource.FOLDER) {
-						String candidateName = profileCandidate.getName();
-						if (candidateName.startsWith(AB_PROFILE)) {
-							names.add(candidateName);
-						}
-					}
-				}
-			} catch (CoreException e) {
-				logException(e);
-			}
-			String[] result = new String[names.size()];
-			names.toArray(result);
-			return result;
-		}
-		
-		public IStatus deleteProfileLocation(String profileName, IProgressMonitor monitor) {
-			IStatus result = Status.OK_STATUS;
-			IFolder profileFolder = getProfileFolder(profileName);
-			if (profileFolder.exists()) {
-				try {
-					profileFolder.delete(IResource.FORCE, monitor);
-				} catch (CoreException e) {
-					result = new Status(IStatus.ERROR, null, 0, RSECoreMessages.PropertyFileProvider_UnexpectedException, e);
-				}
-			}
-			return result;
-		}
-		
-		public PersistenceLocation getProfileLocation(String profileLocationName) {
-			IFolder profileFolder = getProfileFolder(profileLocationName);
-			PersistenceLocation result = new WorkspaceLocation(profileFolder);
-			return result;
-		}
-		
-		/**
-		 * Returns the IFolder in which a profile is stored. 
-		 * @return The folder that was created or found.
-		 */
-		private IFolder getProfileFolder(String profileLocationName) {
-			IFolder providerFolder = getProviderFolder();
-			IFolder profileFolder = getFolder(providerFolder, profileLocationName);
-			return profileFolder;
-		}
-
-		/**
-		 * Returns the IFolder in which this persistence provider stores its profiles.
-		 * This will create the folder if the folder was not found.
-		 * @return The folder that was created or found.
-		 */
-		private IFolder getProviderFolder() {
-			IProject project = SystemResourceManager.getRemoteSystemsProject();
-			try {
-				project.refreshLocal(IResource.DEPTH_INFINITE, null);
-			} catch (Exception e) {
-			}
-			IFolder providerFolder = getFolder(project, "dom.properties"); //$NON-NLS-1$
-			return providerFolder;
-		}
-		
-		/**
-		 * Returns the specified folder of the parent container. If the folder does
-		 * not exist it creates it.
-		 * @param parent the parent container - typically a project or folder
-		 * @param name the name of the folder to find or create
-		 * @return the found or created folder
-		 */
-		private IFolder getFolder(IContainer parent, String name) {
-			IPath path = new Path(name);
-			IFolder folder = parent.getFolder(path);
-			if (!folder.exists()) {
-				try {
-					folder.create(IResource.NONE, true, null);
-				} catch (CoreException e) {
-					logException(e);
-				}
-			}
-			return folder;
-		}
-
-		private void logException(Exception e) {
-			RSECorePlugin.getDefault().getLogger().logError("unexpected exception", e); //$NON-NLS-1$
-		}
-	}
-	
-	class WorkspaceLocation implements PersistenceLocation {
-		IFolder baseFolder = null;
-		
-		public WorkspaceLocation(IFolder baseResource) {
-			this.baseFolder = baseResource;
-		}
-		
-		public boolean exists() {
-			return baseFolder.exists();
-		}
-		
-		public void ensure() {
-			if (!baseFolder.exists()) {
-				try {
-					baseFolder.create(true, true, null);
-				} catch (CoreException e) {
-					logException(e);
-				}
-			}
-		}
-		
-		public PersistenceLocation getChild(String childName) {
-			IPath path = new Path(childName);
-			IFolder member = baseFolder.getFolder(path);
-			PersistenceLocation result = new WorkspaceLocation(member);
-			return result;
-		}
-		
-		public PersistenceLocation[] getChildren() {
-			IResource[] members;
-			try {
-				members = baseFolder.members();
-			} catch (CoreException e) {
-				logException(e);
-				members = new IResource[0];
-			}
-			List children = new ArrayList(members.length);
-			for (int i = 0; i < members.length; i++) {
-				IResource member = members[i];
-				if (member.getType() == IResource.FOLDER) {
-					PersistenceLocation child = new WorkspaceLocation((IFolder)member);
-					children.add(child);
-				}
-			}
-			PersistenceLocation[] result = new PersistenceLocation[children.size()];
-			children.toArray(result);
-			return result;
-		}
-		
-		public URI getLocator() {
-			return baseFolder.getLocationURI();
-		}
-		
-		public String getName() {
-			return baseFolder.getName();
-		}
-		
-		public boolean hasContents() {
-			IPath propertiesFileName = new Path(PROPERTIES_FILE_NAME);
-			IFile propertiesFile = baseFolder.getFile(propertiesFileName);
-			boolean result = propertiesFile.exists();
-			return result;
-		}
-		
-		public void keepChildren(Set keepSet) {
-			try {
-				IResource[] children = baseFolder.members();
-				for (int i = 0; i < children.length; i++) {
-					IResource child = children[i];
-					if (child.getType() == IResource.FOLDER) {
-						String childFolderName = child.getName();
-						if (!keepSet.contains(childFolderName)) {
-							child.delete(true, null);
-						}
-					}
-				}
-			} catch (CoreException e) {
-				logException(e);
-			}
-		}
-		
-		public void setContents(InputStream stream) {
-			IPath propertiesFileName = new Path(PROPERTIES_FILE_NAME);
-			IFile propertiesFile = baseFolder.getFile(propertiesFileName);
-			try {
-				if (propertiesFile.exists()) {
-					propertiesFile.setContents(stream, IResource.FORCE | IResource.KEEP_HISTORY, null);
-				} else {
-					propertiesFile.create(stream, IResource.FORCE | IResource.KEEP_HISTORY, null);
-				}
-			} catch (CoreException e) {
-				logException(e);
-			}
-		}
-		
-		public InputStream getContents() {
-			InputStream result = null;
-			IPath propertiesFileName = new Path(PROPERTIES_FILE_NAME);
-			IFile propertiesFile = baseFolder.getFile(propertiesFileName);
-			if (propertiesFile.exists()) {
-				try {
-					result = propertiesFile.getContents();
-				} catch (CoreException e) {
-					logException(e);
-				}
-			}
-			return result;
-		}
-		
-		private void logException(Exception e) {
-			RSECorePlugin.getDefault().getLogger().logError("unexpected exception", e); //$NON-NLS-1$
-		}
-
-	}
-
 	private Pattern period = Pattern.compile("\\."); //$NON-NLS-1$
 	private Pattern suffixPattern = Pattern.compile("_(\\d+)$"); //$NON-NLS-1$
 	private Pattern unicodePattern = Pattern.compile("#(\\p{XDigit}+)#"); //$NON-NLS-1$
 	private Map typeQualifiers = getTypeQualifiers();
 	private Map saveJobs = new HashMap();
-	private PersistenceAnchor anchor = new WorkspaceAnchor();
+	private PFPersistenceAnchor anchor = null;
 	private Properties properties = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getSavedProfileNames()
 	 */
 	public String[] getSavedProfileNames() {
-		String[] locationNames = anchor.getProfileLocationNames();
+		String[] locationNames = getAnchor().getProfileLocationNames();
 		String[] result = new String[locationNames.length];
 		for (int i = 0; i < locationNames.length; i++) {
 			String locationName = locationNames[i];
@@ -365,8 +89,8 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#deleteProfile(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus deleteProfile(String profileName, IProgressMonitor monitor) {
-		String profileLocationName = getLocationName(AB_PROFILE, profileName);
-		IStatus result = anchor.deleteProfileLocation(profileLocationName, monitor);
+		String profileLocationName = getLocationName(PFConstants.AB_PROFILE, profileName);
+		IStatus result = getAnchor().deleteProfileLocation(profileLocationName, monitor);
 		return result;
 	}
 
@@ -377,7 +101,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		boolean result = false;
 		synchronized (dom) {
 			String profileLocationName = getLocationName(dom);
-			PersistenceLocation profileLocation = anchor.getProfileLocation(profileLocationName);
+			PFPersistenceLocation profileLocation = getAnchor().getProfileLocation(profileLocationName);
 			try {
 				int n = countNodes(dom);
 				monitor.beginTask(RSECoreMessages.PropertyFileProvider_SavingTaskName, n);
@@ -397,8 +121,8 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 */
 	public RSEDOM loadRSEDOM(String profileName, IProgressMonitor monitor) {
 		RSEDOM dom = null;
-		String profileLocationName = getLocationName(AB_PROFILE, profileName);
-		PersistenceLocation location = anchor.getProfileLocation(profileLocationName);
+		String profileLocationName = getLocationName(PFConstants.AB_PROFILE, profileName);
+		PFPersistenceLocation location = getAnchor().getProfileLocation(profileLocationName);
 		if (location.exists()) {
 			int n = countLocations(location);
 			monitor.beginTask(RSECoreMessages.PropertyFileProvider_LoadingTaskName, n);
@@ -439,6 +163,20 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			}
 		}
 	}
+	
+	private PFPersistenceAnchor getAnchor() {
+		if (anchor == null) {
+			String location = properties.getProperty(P_LOCATION);
+			if (location.equals(PV_LOCATION_WORKSPACE)) {
+				anchor = new PFWorkspaceAnchor();
+			} else if (location.equals(PV_LOCATION_METADATA)) {
+				anchor = new PFMetadataAnchor();
+			} else {
+				anchor = new PFMetadataAnchor();
+			}
+		}
+		return anchor;
+	}
 
 	/**
 	 * Saves a node from the DOM to the file system.
@@ -447,7 +185,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @param monitor The progress monitor. If the monitor has been cancel then
 	 * this method will do nothing and return null.
 	 */
-	private void saveNode(RSEDOMNode node, PersistenceLocation location, IProgressMonitor monitor) {
+	private void saveNode(RSEDOMNode node, PFPersistenceLocation location, IProgressMonitor monitor) {
 		if (monitor.isCanceled()) return;
 		location.ensure();
 		Properties properties = getProperties(node, false, monitor);
@@ -457,9 +195,9 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			RSEDOMNode childNode = childNodes[i];
 			String index = getIndexString(i);
 			if (!isNodeEmbedded(childNode)) {
-				String key = combine(MT_REFERENCE[0], index);
+				String key = combine(PFConstants.MT_REFERENCE[0], index);
 				String childName = getLocationName(childNode);
-				PersistenceLocation childLocation = location.getChild(childName);
+				PFPersistenceLocation childLocation = location.getChild(childName);
 				saveNode(childNode, childLocation, monitor);
 				properties.put(key, childName);
 				childNames.add(childName);
@@ -613,17 +351,17 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 
 	private Map getTypeQualifiers() {
 		Map typeQualifiers = new HashMap();
-		typeQualifiers.put(IRSEDOMConstants.TYPE_CONNECTOR_SERVICE, AB_CONNECTOR_SERVICE);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_FILTER, AB_FILTER);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_FILTER_POOL, AB_FILTER_POOL);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_FILTER_POOL_REFERENCE, AB_FILTER_POOL_REFERENCE);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_FILTER_STRING, AB_FILTER_STRING);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_HOST, AB_HOST);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_PROFILE, AB_PROFILE);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_PROPERTY, AB_PROPERTY);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_PROPERTY_SET, AB_PROPERTY_SET);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_SERVER_LAUNCHER, AB_SERVICE_LAUNCHER);
-		typeQualifiers.put(IRSEDOMConstants.TYPE_SUBSYSTEM, AB_SUBSYSTEM);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_CONNECTOR_SERVICE, PFConstants.AB_CONNECTOR_SERVICE);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_FILTER, PFConstants.AB_FILTER);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_FILTER_POOL, PFConstants.AB_FILTER_POOL);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_FILTER_POOL_REFERENCE, PFConstants.AB_FILTER_POOL_REFERENCE);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_FILTER_STRING, PFConstants.AB_FILTER_STRING);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_HOST, PFConstants.AB_HOST);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_PROFILE, PFConstants.AB_PROFILE);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_PROPERTY, PFConstants.AB_PROPERTY);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_PROPERTY_SET, PFConstants.AB_PROPERTY_SET);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_SERVER_LAUNCHER, PFConstants.AB_SERVICE_LAUNCHER);
+		typeQualifiers.put(IRSEDOMConstants.TYPE_SUBSYSTEM, PFConstants.AB_SUBSYSTEM);
 		return typeQualifiers;
 	}
 
@@ -634,7 +372,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @param location The PersistenceLocation which will contain the properties.
 	 * @param monitor The progress monitor.
 	 */
-	private void writeProperties(Properties properties, String header, PersistenceLocation location) {
+	private void writeProperties(Properties properties, String header, PFPersistenceLocation location) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(500);
 		PrintWriter out = new PrintWriter(outStream);
 		out.println("# " + header); //$NON-NLS-1$
@@ -739,15 +477,15 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 */
 	private Properties getProperties(RSEDOMNode node, boolean force, IProgressMonitor monitor) {
 		Properties properties = new Properties();
-		properties.put(MT_NODE_NAME[0], node.getName());
-		properties.put(MT_NODE_TYPE[0], node.getType());
+		properties.put(PFConstants.MT_NODE_NAME[0], node.getName());
+		properties.put(PFConstants.MT_NODE_TYPE[0], node.getType());
 		properties.putAll(getAttributes(node));
 		RSEDOMNode[] children = node.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			RSEDOMNode child = children[i];
 			String index = getIndexString(i);
 			if (force || isNodeEmbedded(child)) {
-				String prefix = combine(MT_CHILD[0], index);
+				String prefix = combine(PFConstants.MT_CHILD[0], index);
 				Properties childProperties = getProperties(child, true, monitor);
 				Enumeration e = childProperties.keys();
 				while (e.hasMoreElements()) {
@@ -776,11 +514,11 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		for (int i = 0; i < attributes.length; i++) {
 			RSEDOMNodeAttribute attribute = attributes[i];
 			String attributeName = attribute.getKey();
-			String propertyKey = combine(MT_ATTRIBUTE[0], attributeName);
+			String propertyKey = combine(PFConstants.MT_ATTRIBUTE[0], attributeName);
 			properties.put(propertyKey, fixValue(attribute.getValue()));
 			String attributeType = attribute.getType();
 			if (attributeType != null) {
-				propertyKey = combine(MT_ATTRIBUTE_TYPE[0], attributeName);
+				propertyKey = combine(PFConstants.MT_ATTRIBUTE_TYPE[0], attributeName);
 				properties.put(propertyKey, attributeType);
 			}
 		}
@@ -810,14 +548,14 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @param location
 	 * @return the number of locations that have contents.
 	 */
-	private int countLocations(PersistenceLocation location) {
+	private int countLocations(PFPersistenceLocation location) {
 		int result = 0;
 		if (location.hasContents()) {
 			result += 1;
 		}
-		PersistenceLocation[] children = location.getChildren();
+		PFPersistenceLocation[] children = location.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			PersistenceLocation child = children[i];
+			PFPersistenceLocation child = children[i];
 			result += countLocations(child);
 		}
 		return result;
@@ -833,7 +571,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * is not canceled then its work count is incremented by one.
 	 * @return The newly loaded node.
 	 */
-	private RSEDOMNode loadNode(RSEDOMNode parent, PersistenceLocation nodeLocation, IProgressMonitor monitor) {
+	private RSEDOMNode loadNode(RSEDOMNode parent, PFPersistenceLocation nodeLocation, IProgressMonitor monitor) {
 		RSEDOMNode node = null;
 		if (!monitor.isCanceled()) {
 			Properties properties = loadProperties(nodeLocation);
@@ -851,7 +589,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @param location The location in which to look for properties.
 	 * @return The Properties object.
 	 */
-	private Properties loadProperties(PersistenceLocation location) {
+	private Properties loadProperties(PFPersistenceLocation location) {
 		Properties properties = null;
 		if (location.hasContents()) {
 			properties = new Properties();
@@ -872,12 +610,12 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @param parent The parent node of the node to be created.
 	 * @param location The location in which referenced child folders can be found.
 	 * @param properties The properties from which to create the node.
-	 * @param monitor a monitor to support cancelation and progress reporting.
+	 * @param monitor a monitor to support cancellation and progress reporting.
 	 * @return the newly created DOM node and its children.
 	 */
-	private RSEDOMNode makeNode(RSEDOMNode parent, PersistenceLocation location, Properties properties, IProgressMonitor monitor) {
-		String nodeType = getProperty(properties, MT_NODE_TYPE);
-		String nodeName = getProperty(properties, MT_NODE_NAME);
+	private RSEDOMNode makeNode(RSEDOMNode parent, PFPersistenceLocation location, Properties properties, IProgressMonitor monitor) {
+		String nodeType = getProperty(properties, PFConstants.MT_NODE_TYPE);
+		String nodeName = getProperty(properties, PFConstants.MT_NODE_NAME);
 		RSEDOMNode node = (parent == null) ? new RSEDOM(nodeName) : new RSEDOMNode(parent, nodeType, nodeName);
 		node.setRestoring(true);
 		Set keys = properties.keySet();
@@ -891,15 +629,15 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			String key = (String) z.next();
 			String[] words = split(key, 2);
 			String metatype = words[0];
-			if (find(metatype, MT_ATTRIBUTE)) {
+			if (find(metatype, PFConstants.MT_ATTRIBUTE)) {
 				String value = properties.getProperty(key);
 				attributes.put(words[1], value);
-			} else if (find(metatype, MT_ATTRIBUTE_TYPE)) {
+			} else if (find(metatype, PFConstants.MT_ATTRIBUTE_TYPE)) {
 				String type = properties.getProperty(key);
 				attributeTypes.put(words[1], type);
-			} else if (find(metatype, MT_REFERENCE)) {
+			} else if (find(metatype, PFConstants.MT_REFERENCE)) {
 				referenceKeys.add(key);
-			} else if (find(metatype, MT_CHILD)) {
+			} else if (find(metatype, PFConstants.MT_CHILD)) {
 				String value = properties.getProperty(key);
 				words = split(words[1], 2);
 				String childName = words[0];
@@ -925,7 +663,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		for (Iterator z = referenceKeys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
 			String childLocationName = properties.getProperty(key);
-			PersistenceLocation childLocation = location.getChild(childLocationName);
+			PFPersistenceLocation childLocation = location.getChild(childLocationName);
 			loadNode(node, childLocation, monitor);
 		}
 		node.setRestoring(false);

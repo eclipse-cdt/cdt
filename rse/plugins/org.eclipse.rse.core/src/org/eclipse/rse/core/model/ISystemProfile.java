@@ -101,6 +101,13 @@ public interface ISystemProfile extends IRSEModelObject {
 	public boolean isActive();
 	
 	/**
+	 * Activates or deactivates a profile. If the profile is already in the
+	 * requested state, this will do nothing.
+	 * @param flag true to activate the profile, false to deactivate it.
+	 */
+	public void setActive(boolean flag);
+	
+	/**
 	 * Each profile is persisted by a persistence provider. This returns the instance of the 
 	 * persistence provider used for this profile. New profiles will use the default persistence
 	 * provider unless one is set by some other means.

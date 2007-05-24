@@ -37,8 +37,6 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 public class SystemProfileManager implements ISystemProfileManager {
 
 	private List _profiles = new ArrayList(10);
-//	private String[] profileNames = null;
-//	private Vector profileNamesVector = null;
 	private static SystemProfileManager singleton = null;
 	private boolean restoring = false;
 
@@ -57,15 +55,21 @@ public class SystemProfileManager implements ISystemProfileManager {
 		if (singleton == null) {
 			singleton = new SystemProfileManager();
 			RSECorePlugin.getThePersistenceManager().restoreProfiles(5000);
+			singleton.ensureDefaultPrivateProfile();
+			singleton.ensureDefaultTeamProfile();
 		}
 		return singleton;
 	}
 
 	/**
-	 * Clear the default after a team sychronization say
+	 * Clear the default after a team synchronization say
 	 */
 	public static void clearDefault() {
 		singleton = null;
+	}
+
+	public void setRestoring(boolean flag) {
+		restoring = flag;
 	}
 
 	/**
@@ -156,10 +160,23 @@ public class SystemProfileManager implements ISystemProfileManager {
 //		profileNamesVector = null;
 //	}
 //
+	
+	public ISystemProfile getSystemProfile(String name) {
+		ISystemProfile result = null;
+		for (Iterator z = _profiles.iterator(); z.hasNext();) {
+			ISystemProfile p = (ISystemProfile) z.next();
+			if (p.getName().equals(name)) {
+				result = p;
+				break;
+			}
+		}
+		return result;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getSystemProfile(java.lang.String)
 	 */
-	public ISystemProfile getSystemProfile(String name) {
+	private ISystemProfile getSystemProfileOld(String name) {
 		ISystemProfile[] profiles = getSystemProfiles();
 		if ((profiles == null) || (profiles.length == 0)) return null;
 		ISystemProfile match = null;
@@ -209,11 +226,16 @@ public class SystemProfileManager implements ISystemProfileManager {
 		ISystemProfile newProfile = createSystemProfile(newName, false);
 		return newProfile;
 	}
+	
+	public boolean isSystemProfileActive(String profileName) {
+		ISystemProfile profile = getSystemProfile(profileName);
+		return profile.isActive();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#isSystemProfileActive(java.lang.String)
 	 */
-	public boolean isSystemProfileActive(String profileName) {
+	private boolean isSystemProfileActiveOld(String profileName) {
 		String[] activeProfiles = getActiveSystemProfileNames();
 		boolean match = false;
 		for (int idx = 0; !match && (idx < activeProfiles.length); idx++) {
@@ -226,19 +248,39 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getActiveSystemProfiles()
 	 */
 	public ISystemProfile[] getActiveSystemProfiles() {
-		String[] profileNames = getActiveSystemProfileNames();
-		ISystemProfile[] profiles = new ISystemProfile[profileNames.length];
-		for (int idx = 0; idx < profileNames.length; idx++) {
-			profiles[idx] = getOrCreateSystemProfile(profileNames[idx]);
-			((SystemProfile) profiles[idx]).setActive(true);
+		List activeProfiles = new ArrayList();
+		for (Iterator z = _profiles.iterator(); z.hasNext();) {
+			ISystemProfile p = (ISystemProfile) z.next();
+			if (p.isActive()) {
+				activeProfiles.add(p);
+			}
 		}
-		return profiles;
+		ISystemProfile[] result = new ISystemProfile[activeProfiles.size()];
+		activeProfiles.toArray(result);
+		return result;
+//		String[] profileNames = getActiveSystemProfileNames();
+//		ISystemProfile[] profiles = new ISystemProfile[profileNames.length];
+//		for (int idx = 0; idx < profileNames.length; idx++) {
+//			profiles[idx] = getOrCreateSystemProfile(profileNames[idx]);
+//			((SystemProfile) profiles[idx]).setActive(true);
+//		}
+//		return profiles;
+	}
+	
+	public String[] getActiveSystemProfileNames() {
+		ISystemProfile[] profiles = getActiveSystemProfiles();
+		String[] names = new String[profiles.length];
+		for (int i = 0; i < profiles.length; i++) {
+			ISystemProfile systemProfile = profiles[i];
+			names[i] = systemProfile.getName();
+		}
+		return names;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getActiveSystemProfileNames()
 	 */
-	public String[] getActiveSystemProfileNames() {
+	private String[] getActiveSystemProfileNamesOld() {
 		String[] activeProfileNames = RSEPreferencesManager.getActiveProfiles();
 		// dy: defect 48355, need to sync this with the actual profile list.  If the user
 		// imports old preference settings or does a team sync and a profile is deleted then
@@ -327,6 +369,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 
 	/**
 	 * @return the profile names currently selected by the user as "active" profiles
+	 * @deprecated
 	 */
 	public Vector getActiveSystemProfileNamesVector() {
 		String[] profileNames = RSEPreferencesManager.getActiveProfiles();
@@ -384,35 +427,25 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 */
 	public void addSystemProfile(ISystemProfile profile) {
 		_profiles.add(profile);
+		profile.setProfileManager(this);
 		String name = profile.getName();
 		if (profile.isActive()) {
 			RSEPreferencesManager.addActiveProfile(name);
 		}
-		profile.setDefaultPrivate(name.equalsIgnoreCase(RSEPreferencesManager.getDefaultPrivateSystemProfileName()));
 	}
 
-	private ISystemProfile[] getSystemProfiles(boolean ensureDefaultPrivateProfileExists) {
-		if (ensureDefaultPrivateProfileExists) {
-			ensureDefaultPrivateProfile();
-		}
-		ISystemProfile[] result = new ISystemProfile[_profiles.size()];
-		_profiles.toArray(result);
-		return result;
+	private void createDefaultPrivateProfile() {
+		String initProfileName = RSEPreferencesManager.getDefaultPrivateSystemProfileName();
+		ISystemProfile profile = internalCreateSystemProfile(initProfileName);
+		profile.setDefaultPrivate(true);
 	}
 
-	public void setRestoring(boolean flag) {
-		restoring = flag;
-	}
-	
 	private ISystemProfile internalCreateSystemProfile(String name) {
-			ISystemProfile newProfile = new SystemProfile();
-			newProfile.setName(name);
-			newProfile.setProfileManager(this);
-			_profiles.add(newProfile);
-	//		invalidateCache();
-			newProfile.setDefaultPrivate(name.equalsIgnoreCase(RSEPreferencesManager.getDefaultPrivateSystemProfileName()));
-			return newProfile;
-		}
+		ISystemProfile profile = new SystemProfile();
+		profile.setName(name);
+		addSystemProfile(profile);
+		return profile;
+	}
 
 	private void ensureDefaultPrivateProfile() {
 		// Ensure that one Profile is the default Profile - defect 48995 NH	
@@ -450,27 +483,35 @@ public class SystemProfileManager implements ISystemProfileManager {
 			createDefaultPrivateProfile();
 		}
 	}
-
-	private void createDefaultPrivateProfile() {
-		ISystemProfile profile = new SystemProfile();
-		String initProfileName = RSEPreferencesManager.getDefaultPrivateSystemProfileName();
-		profile.setName(initProfileName);
-		profile.setDefaultPrivate(true);
-		_profiles = new ArrayList();
-		_profiles.add(profile);
-	}
-
-	/**
-	 * Instantiate a user profile given its name.
-	 * @param userProfileName the name of the profile to find or create
-	 * @return the profile that was found or created.
-	 */
-	private ISystemProfile getOrCreateSystemProfile(String userProfileName) {
-		ISystemProfile userProfile = getSystemProfile(userProfileName);
-		if (userProfile == null) {
-			userProfile = internalCreateSystemProfile(userProfileName);
+	
+	private void ensureDefaultTeamProfile() {
+		String name = RSEPreferencesManager.getDefaultTeamProfileName();
+		ISystemProfile teamProfile = getSystemProfile(name);
+		if (teamProfile == null) {
+			teamProfile = internalCreateSystemProfile(name);
 		}
-		return userProfile;
 	}
+
+	private ISystemProfile[] getSystemProfiles(boolean ensureDefaultPrivateProfileExists) {
+		if (ensureDefaultPrivateProfileExists) {
+			ensureDefaultPrivateProfile();
+		}
+		ISystemProfile[] result = new ISystemProfile[_profiles.size()];
+		_profiles.toArray(result);
+		return result;
+	}
+
+//	/**
+//	 * Instantiate a user profile given its name.
+//	 * @param userProfileName the name of the profile to find or create
+//	 * @return the profile that was found or created.
+//	 */
+//	private ISystemProfile getOrCreateSystemProfile(String userProfileName) {
+//		ISystemProfile userProfile = getSystemProfile(userProfileName);
+//		if (userProfile == null) {
+//			userProfile = internalCreateSystemProfile(userProfileName);
+//		}
+//		return userProfile;
+//	}
 
 }

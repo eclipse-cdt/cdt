@@ -3,7 +3,7 @@
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * David Dykstal (IBM) - initial API and implementation
  ********************************************************************************/
@@ -24,7 +24,7 @@ public class RSEPreferenceInitializer extends AbstractPreferenceInitializer {
 		// the simple preferences
 		Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
 		// The ID of the default persistence provider
-		prefs.setDefault(IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER, "org.eclipse.rse.persistence.PropertyFileProvider"); //$NON-NLS-1$
+		prefs.setDefault(IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER, "org.eclipse.rse.persistence.MetadataPropertyFileProvider"); //$NON-NLS-1$
 	}
 
 }

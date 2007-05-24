@@ -417,7 +417,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	}
 
 	public boolean isValid() {
-		return fProject.exists() && fCfgMap.size() > 0;
+		return /*fProject.exists() &&*/ fCfgMap.size() > 0;
 	}
 
 	public void updateChild(CDataProxy child, boolean write) {

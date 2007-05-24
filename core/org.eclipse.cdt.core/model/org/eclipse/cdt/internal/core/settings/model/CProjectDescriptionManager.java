@@ -1159,6 +1159,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 	
 	public void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException {
+		
+		if(!des.isValid())
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName()); //$NON-NLS-1$
 
 		if(!checkFlags(flags, SET_FORCE) && !des.isModified())
 			return;

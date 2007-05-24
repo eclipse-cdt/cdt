@@ -28,6 +28,7 @@ public class AllCProjectDescriptionTests {
 		suite.addTest(CfgSettingsTests.suite());
 		suite.addTest(ProjectCreationStateTests.suite());
 		suite.addTest(BackwardCompatibilityTests.suite());
+		suite.addTest(CProjectDescriptionBasicTests.suite());
         return suite;
 
     }

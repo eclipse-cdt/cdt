@@ -984,8 +984,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void setNewProjectVersion(IProject newProject) {
 		// Get the build info for the argument
-//		ManagedBuildInfo info = findBuildInfo(newProject, true);
-//		info.setVersion(buildInfoVersion.toString());		
+		ManagedBuildInfo info = findBuildInfo(newProject, true);
+		if(info != null)
+			info.setVersion(buildInfoVersion.toString());		
 	}
 
 	/**

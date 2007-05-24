@@ -30,29 +30,18 @@
 			persist="true"/>
 	</property-group>
 	
-	<!--process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject">
-		<simple name="name" value="$(projectName)" /> 
-		<simple name="artifactExtension" value="exe" /> 
-		<simple name="isCProject" value="true" /> 
-	</process-->
-
-	<process type="org.eclipse.cdt.core.CreateSourceFolder">
-		<simple name="projectName" value="$(projectName)"/>
-		<simple name="path" value="src"/>
-	</process>
-
 	<process type="org.eclipse.cdt.core.AddFiles">
 		<simple name="projectName" value="$(projectName)"/>
 		<complex-array name="files">
 			<element>
-				<simple name="source" value="src/Basename.cpp"/>
-				<simple name="target" value="src/$(projectName).cpp"/>
+				<simple name="source" value="Basename.cpp"/>
+				<simple name="target" value="$(projectName).cpp"/>
 				<simple name="replaceable" value="true"/>
 			</element>
 		</complex-array>
 	</process>
 	
-	<process type="org.eclipse.cdt.managedbuilder.core.GenerateMakefileWithBuildDescription">
+	<process type="org.eclipse.cdt.managedbuilder.gnu.ui.SimpleGNUMakefileGenerator">
 		<simple name="projectName" value="$(projectName)"/>
 	</process>
 

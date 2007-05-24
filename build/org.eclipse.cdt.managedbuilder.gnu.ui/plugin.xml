@@ -3792,5 +3792,15 @@
             <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
       </template>
 </extension>
+<extension
+      point="org.eclipse.cdt.core.templateProcessTypes">
+   <processType
+         name="SimpleGNUMakefileGenerator"
+         processRunner="org.eclipse.cdt.managedbuilder.gnu.templates.SimpleMakefileGenerator">
+      <simple
+            name="projectName">
+      </simple>
+   </processType>
+</extension>
 
 </plugin>

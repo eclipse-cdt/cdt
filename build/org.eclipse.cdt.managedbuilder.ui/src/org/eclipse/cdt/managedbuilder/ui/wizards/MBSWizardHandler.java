@@ -433,10 +433,10 @@ public class MBSWizardHandler extends CWizardHandler {
 			if (cfgFirst == null) // select at least first configuration 
 				cfgFirst = cfgDes; 
 		}
-		if (cfgDebug == null)
-			cfgDebug = cfgFirst;
-		if (cfgDebug != null)
-			cfgDebug.setActive();
+//		if (cfgDebug == null)
+//			cfgDebug = cfgFirst;
+//		if (cfgDebug != null)
+//			cfgDebug.setActive();
 		mngr.setProjectDescription(project, des);
 		
 		doPostProcess(project);

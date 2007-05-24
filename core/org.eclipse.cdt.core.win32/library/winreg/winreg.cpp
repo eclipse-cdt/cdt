@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems
+ * Copyright (c) 2005, 2007 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,25 +12,22 @@
 #include <jni.h>
 #include <string.h>
 
-extern "C"
-JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineValue(
-	JNIEnv * env, jobject obj, jstring subkey, jstring name)
-{
+static jstring getValue(JNIEnv * env, HKEY key, jstring subkey, jstring name) {
 	const jchar * csubkey = env->GetStringChars(subkey, NULL);
 	const jchar * cname = env->GetStringChars(name, NULL);
 	jstring result = NULL;
 	
-	HKEY key;
-	LONG rc = RegOpenKeyEx(HKEY_LOCAL_MACHINE, (const wchar_t *)csubkey, 0, KEY_READ, &key);
+	HKEY skey;
+	LONG rc = RegOpenKeyEx(key, (const wchar_t *)csubkey, 0, KEY_READ, &skey);
 	if (rc == ERROR_SUCCESS) {
 		DWORD type;
 		wchar_t buffer[256];
 		DWORD len = sizeof(buffer);
-		rc = RegQueryValueEx(key, (const wchar_t *)cname, NULL, &type, (BYTE *)&buffer, &len);
+		rc = RegQueryValueEx(skey, (const wchar_t *)cname, NULL, &type, (BYTE *)&buffer, &len);
 		if (rc == ERROR_SUCCESS) {
 			result = env->NewString((jchar *)buffer, wcslen(buffer));
 		}
-		RegCloseKey(key);
+		RegCloseKey(skey);
 	}
 
 	env->ReleaseStringChars(subkey, csubkey);
@@ -39,28 +36,39 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMac
 	return result;
 }
 
+extern "C"
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineValue(
+	JNIEnv * env, jobject obj, jstring subkey, jstring name)
+{
+	return getValue(env, HKEY_LOCAL_MACHINE, subkey, name);
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getCurrentUserValue(
+	JNIEnv * env, jobject obj, jstring subkey, jstring name)
+{
+	return getValue(env, HKEY_CURRENT_USER, subkey, name);
+}
+
 /*
  * Given a subkey (string) under HKEY_LOCAL_MACHINE, and an index (starting from 0)
  * to the key's array of values, return the name of the indexed value. 
  * The return value is null on any error or when the index is invalid.
  */
- 
-extern "C"
-JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineValueName(
-	JNIEnv * env, jobject obj, jstring subkey, jint index)
-{
+
+static jstring getValueName(JNIEnv * env, HKEY key, jstring subkey, jint index) {
 	const jchar * csubkey = env->GetStringChars(subkey, NULL);
 	jstring 	result = NULL;
 
-	HKEY key;
-	LONG rc = RegOpenKeyEx(HKEY_LOCAL_MACHINE, (const wchar_t *)csubkey, 0, KEY_READ, &key);
+	HKEY skey;
+	LONG rc = RegOpenKeyEx(key, (const wchar_t *)csubkey, 0, KEY_READ, &skey);
 	if (rc != ERROR_SUCCESS)
 		return NULL;
 	
 	wchar_t valueName[256];
 	DWORD 	nameSize = sizeof(valueName) + 2;
 	
-	rc = RegEnumValue(key, index, 
+	rc = RegEnumValue(skey, index, 
 			valueName, 		// UNICODE string
 			&nameSize, 
 			NULL, NULL, 
@@ -72,11 +80,25 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMac
 		result = env->NewString((jchar *)valueName, nameSize);
 	}
 	
-	RegCloseKey(key);
+	RegCloseKey(skey);
 	
 	env->ReleaseStringChars(subkey, csubkey);
 
 	return result;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineValueName(
+	JNIEnv * env, jobject obj, jstring subkey, jint index)
+{
+	return getValueName(env, HKEY_LOCAL_MACHINE, subkey, index);
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getCurrentUserValueName(
+	JNIEnv * env, jobject obj, jstring subkey, jint index)
+{
+	return getValueName(env, HKEY_CURRENT_USER, subkey, index);
 }
 
 /*
@@ -85,22 +107,19 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMac
  * The return value is null on any error or when the index is invalid.
  */
  
-extern "C"
-JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineKeyName(
-	JNIEnv * env, jobject obj, jstring subkey, jint index)
-{
+static jstring getKeyName(JNIEnv * env, HKEY key, jstring subkey, jint index) {
 	const jchar * csubkey = env->GetStringChars(subkey, NULL);
 	jstring 	result = NULL;
 
-	HKEY key;
-	LONG rc = RegOpenKeyEx(HKEY_LOCAL_MACHINE, (const wchar_t *)csubkey, 0, KEY_READ, &key);
+	HKEY skey;
+	LONG rc = RegOpenKeyEx(HKEY_LOCAL_MACHINE, (const wchar_t *)csubkey, 0, KEY_READ, &skey);
 	if (rc != ERROR_SUCCESS)
 		return NULL;
 	
 	wchar_t keyName[256];
 	DWORD 	nameSize = sizeof(keyName) + 2;
 	
-	rc = RegEnumKeyEx(key, index, 
+	rc = RegEnumKeyEx(skey, index, 
 			keyName, 		// UNICODE string
 			&nameSize,
 			NULL, NULL,
@@ -112,9 +131,23 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMac
 		result = env->NewString((jchar *)keyName, nameSize);
 	}
 	
-	RegCloseKey(key);
+	RegCloseKey(skey);
 	
 	env->ReleaseStringChars(subkey, csubkey);
 
 	return result;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getLocalMachineKeyName(
+	JNIEnv * env, jobject obj, jstring subkey, jint index)
+{
+	return getKeyName(env, HKEY_LOCAL_MACHINE, subkey, index);
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_WindowsRegistry_getCurrentUserKeyName(
+	JNIEnv * env, jobject obj, jstring subkey, jint index)
+{
+	return getKeyName(env, HKEY_CURRENT_USER, subkey, index);
 }

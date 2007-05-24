@@ -72,10 +72,44 @@ public class WindowsRegistry {
 	 * The return value is null on any error or when the index is invalid.
 	 * The key name can be used in the above getLocalMachineValueName()
 	 * to retrieve value names.
-	 * @param subkey   subkey of HKEY_LOCAL_MACHINE
+	 * @param subkey   subkey of HKEY_CURRENT_USER
 	 * @param index    index to the subkey's array of values, starting from 0. 
 	 * @return name of registry value or null if not found
 	 */
 	public native String getLocalMachineKeyName(String subkey, int index);
+	
+	/**
+	 * Gets the registry value for the subkey of HKEY_CURRENT_USER with the
+	 * given name. If problems occur, like the name is not found, null is returned.
+	 * 
+	 * @param subkey subkey of HKEY_CURRENT_USER
+	 * @param name name of the registry value
+	 * @return registry value or null if not found
+	 */
+	public native String getCurrentUserValue(String subkey, String name);
+
+	/**
+	 * Given a subkey of HKEY_CURRENT_USER, and an index (starting from 0)
+	 * to the key's array of values, return the name of the indexed value. 
+	 * The return value is null on any error or when the index is invalid.
+	 * The value name can be used in the above getCurrentUserValue() to retrieve
+	 * the value data.
+	 * @param subkey   subkey of HKEY_CURRENT_USER
+	 * @param index    index to the subkey's array of values, starting from 0. 
+	 * @return name of registry value or null if not found
+	 */
+	public native String getCurrentUserValueName(String subkey, int index);
+	
+	/**
+	 * Given a subkey of HKEY_CURRENT_USER, and an index (starting from 0)
+	 * to the key's array of sub keys, return the name of the indexed key. 
+	 * The return value is null on any error or when the index is invalid.
+	 * The key name can be used in the above getCurrentUserValueName()
+	 * to retrieve value names.
+	 * @param subkey   subkey of HKEY_CURRENT_USER
+	 * @param index    index to the subkey's array of values, starting from 0. 
+	 * @return name of registry value or null if not found
+	 */
+	public native String getCurrentUserKeyName(String subkey, int index);
 
 }

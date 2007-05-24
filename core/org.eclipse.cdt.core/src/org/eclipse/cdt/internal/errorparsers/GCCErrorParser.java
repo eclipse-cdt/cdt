@@ -34,7 +34,7 @@ public class GCCErrorParser extends AbstractErrorParser {
 		new ErrorPattern(Messages.GCCErrorParser_skip_note),
 		new ErrorPattern(Messages.GCCErrorParser_sikp_instantiatedFromHere),
 		// The following are not...
-		new ErrorPattern(Messages.GCCErrorParser_Warnings, 1, 2, 4, 0, 0) {
+		new ErrorPattern(Messages.GCCErrorParser_Warnings, 1, 2, 5, 0, 0) {
 			public String getVarName(Matcher matcher) {
 				String desc = getDesc(matcher);
 				Matcher varMatcher = null;
@@ -49,8 +49,8 @@ public class GCCErrorParser extends AbstractErrorParser {
 				return varMatcher != null ? varMatcher.group(1) : null;
 			}
 			public int getSeverity(Matcher matcher) {
-				String warningGroup = matcher.group(5);
-				if (warningGroup != null)
+				String warningGroup = matcher.group(4);
+				if (warningGroup == null || warningGroup.contains("arning"))
 					return IMarkerGenerator.SEVERITY_WARNING;
 				else
 					return IMarkerGenerator.SEVERITY_ERROR_RESOURCE;

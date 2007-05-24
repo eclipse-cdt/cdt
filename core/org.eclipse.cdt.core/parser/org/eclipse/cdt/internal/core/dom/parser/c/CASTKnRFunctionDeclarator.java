@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -24,8 +25,8 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
  */
 public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKnRFunctionDeclarator {
 
-	IASTName[] parameterNames = null;
-	IASTDeclaration[] parameterDeclarations = null;
+	IASTName[] parameterNames = IASTName.EMPTY_NAME_ARRAY;
+	IASTDeclaration[] parameterDeclarations = IASTDeclaration.EMPTY_DECLARATION_ARRAY;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator#setParameterNames(org.eclipse.cdt.core.dom.ast.IASTName[])

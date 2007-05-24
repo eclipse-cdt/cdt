@@ -977,7 +977,7 @@ public class PathEntryTranslator {
 			Map nameKeyMap = getEntriesNameKeyMap(kind, true);
 			for(int i = 0; i < entries.length; i++){
 				ICExclusionPatternPathEntry entry = entries[i];
-				entry = CDataUtil.makeAbsolute(fProject, entry, kind == ICSettingEntry.SOURCE_PATH);
+				entry = CDataUtil.makeAbsolute(fProject, entry, true);
 				EntryNameKey nameKey = new EntryNameKey(entry);
 				PathEntryComposer old = (PathEntryComposer)nameKeyMap.get(nameKey);
 				if(old != null){
@@ -1724,8 +1724,8 @@ public class PathEntryTranslator {
 		}
 		
 		ICOutputEntry[] oldEntries = bData.getOutputDirectories();
-		oldEntries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, oldEntries, false);
-		entries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, entries, false);
+		oldEntries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, oldEntries, true);
+		entries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, entries, true);
 		entries = (ICOutputEntry[])replaceUserEntries(oldEntries, entries);
 		
 		switch (op) {

@@ -16,15 +16,15 @@ import org.eclipse.core.runtime.IPath;
 public final class COutputEntry extends ACExclusionFilterEntry implements ICOutputEntry {
 
 	public COutputEntry(IPath path, IPath exclusionPatterns[], int flags) {
-		super(path, exclusionPatterns, flags);
+		super(path, exclusionPatterns, flags | VALUE_WORKSPACE_PATH);
 	}
 
 	public COutputEntry(IFolder folder, IPath exclusionPatterns[], int flags) {
-		super(folder, exclusionPatterns, flags);
+		super(folder, exclusionPatterns, flags | VALUE_WORKSPACE_PATH);
 	}
 
 	public COutputEntry(String value, IPath exclusionPatterns[], int flags) {
-		super(value, exclusionPatterns, flags);
+		super(value, exclusionPatterns, flags | VALUE_WORKSPACE_PATH);
 	}
 
 	public final int getKind() {

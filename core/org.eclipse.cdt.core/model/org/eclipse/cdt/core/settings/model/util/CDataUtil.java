@@ -789,7 +789,7 @@ public class CDataUtil {
 		if(entries == null || entries.length == 0)
 			return getDefaultOutputEntries(makeAbsolute, project);
 		
-		return makeAbsolute ? checkMakeAbsolute(project, entries) : checkMakeRelative(project, entries);
+		return makeAbsolute ? makeAbsolute(project, entries) : makeRelative(project, entries);
 	}
 
 	public static ICSourceEntry[] adjustEntries(ICSourceEntry entries[], boolean makeAbsolute, IProject project){
@@ -873,20 +873,20 @@ public class CDataUtil {
 		return (ICSourceEntry[])makeAbsolute(project, entries, true);
 	}
 
-	public static ICOutputEntry checkMakeAbsolute(IProject project, ICOutputEntry entry){
-		return (ICOutputEntry)makeAbsolute(project, entry, false);
+	public static ICOutputEntry makeAbsolute(IProject project, ICOutputEntry entry){
+		return (ICOutputEntry)makeAbsolute(project, entry, true);
 	}
 
-	public static ICOutputEntry checkMakeRelative(IProject project, ICOutputEntry entry){
-		return (ICOutputEntry)makeRelative(project, entry, false);
+	public static ICOutputEntry makeRelative(IProject project, ICOutputEntry entry){
+		return (ICOutputEntry)makeRelative(project, entry, true);
 	}
 
-	public static ICOutputEntry[] checkMakeAbsolute(IProject project, ICOutputEntry[] entries){
-		return (ICOutputEntry[])makeAbsolute(project, entries, false);
+	public static ICOutputEntry[] makeAbsolute(IProject project, ICOutputEntry[] entries){
+		return (ICOutputEntry[])makeAbsolute(project, entries, true);
 	}
 
-	public static ICOutputEntry[] checkMakeRelative(IProject project, ICOutputEntry[] entries){
-		return (ICOutputEntry[])makeRelative(project, entries, false);
+	public static ICOutputEntry[] makeRelative(IProject project, ICOutputEntry[] entries){
+		return (ICOutputEntry[])makeRelative(project, entries, true);
 	}
 
 	private static Collection removePrefix(IPath prefix, Collection paths, Collection result){

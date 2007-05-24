@@ -257,8 +257,8 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 
 		cfgDes.getBuildSetting().setOutputDirectories(null);
 		ICOutputEntry[] expectedOutputEntries = new ICOutputEntry[]{
-				new COutputEntry("op_a", null, 0),
-				new COutputEntry("op_b", null, 0),
+				new COutputEntry(project.getFullPath().append("op_a"), null, 0),
+				new COutputEntry(project.getFullPath().append("op_b"), null, 0),
 		};
 		ICOutputEntry[] outputEntries = cfgDes.getBuildSetting().getOutputDirectories();
 		assertEquals(2, outputEntries.length);

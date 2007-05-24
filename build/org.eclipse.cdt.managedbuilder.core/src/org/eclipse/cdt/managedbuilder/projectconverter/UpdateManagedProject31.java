@@ -17,13 +17,14 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class UpdateManagedProject31 {
-	private static final String INEXISTEND_PROP_ID = "";
+	private static final String INEXISTEND_PROP_ID = ""; //$NON-NLS-1$
 	
 	static void doProjectUpdate(IProgressMonitor monitor, final IProject project) throws CoreException {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
@@ -54,7 +55,7 @@ public class UpdateManagedProject31 {
 		
 		String artefactType = artefactTypeSupported ? null : INEXISTEND_PROP_ID;
 		String buildType = buildTypeSupported ? null : INEXISTEND_PROP_ID;
-		
+		String artExt = ((Configuration)cfg).getArtifactExtensionAttribute(false);
 		String id = cfg.getId();
 		if(artefactType == null){
 			artefactType = getBuildArtefactTypeFromId(id);
@@ -89,22 +90,25 @@ public class UpdateManagedProject31 {
 				ManagedBuilderCorePlugin.log(e);
 			}
 		}
+		
+		if(artExt != null)
+			cfg.setArtifactExtension(artExt);
 	}
 	
 	private static String getBuildArtefactTypeFromId(String id){
-		if(id.indexOf(".exe") != -1)
+		if(id.indexOf(".exe") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_EXE;
-		if(id.indexOf(".so") != -1)
+		if(id.indexOf(".so") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB;
-		if(id.indexOf(".lib") != -1)
+		if(id.indexOf(".lib") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB;
 		return null;
 	}
 
 	private static String getBuildTypeFromId(String id){
-		if(id.indexOf(".debug") != -1)
+		if(id.indexOf(".debug") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_TYPE_PROPERTY_DEBUG;
-		if(id.indexOf(".release") != -1)
+		if(id.indexOf(".release") != -1) //$NON-NLS-1$
 			return ManagedBuildManager.BUILD_TYPE_PROPERTY_RELEASE;
 		return null;
 	}

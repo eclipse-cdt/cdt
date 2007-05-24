@@ -43,7 +43,7 @@ public class UpdateManagedProject30 {
 
 		// No physical conversion is need since the 3.1 model is a superset of the 3.0 model 
 		// We need to upgrade the version
-		((ManagedBuildInfo)info).setVersion("3.1.0");
+		((ManagedBuildInfo)info).setVersion("3.1.0"); //$NON-NLS-1$
 //		info.setValid(true);		
 
 		//no need to persist data here

@@ -24,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.buildmodel.IStepVisitor;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -61,7 +62,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 			try {
 				write(fWriter, step);
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), "IO exception occured: ", e));
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), ManagedMakeMessages.getString("BuildDescriptionGnuMakefileGenerator.0"), e)); //$NON-NLS-1$
 			}
 			return VISIT_CONTINUE;
 		}
@@ -104,7 +105,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 			
 			writer.flush();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), "IO exception occured: ", e));
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), ManagedMakeMessages.getString("BuildDescriptionGnuMakefileGenerator.1"), e)); //$NON-NLS-1$
 		}
 		
 	}
@@ -132,7 +133,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 			deps = createVarRef(VAR_TARGETS);
 		} else if (step == fDes.getInputStep()){
 			target = IN_STEP_RULE;
-			deps = "";
+			deps = ""; //$NON-NLS-1$
 		} else {
 			IBuildResource[] inputs = step.getInputResources();
 			IBuildResource[] outputs = step.getOutputResources();

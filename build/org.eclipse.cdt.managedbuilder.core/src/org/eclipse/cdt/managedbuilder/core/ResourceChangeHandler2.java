@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.settings.model.util.ResourceChangeHandlerBase;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -186,7 +187,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = wsp.getRoot();
 		
-		Job job = new Job("project build settings update job"){
+		Job job = new Job(ManagedMakeMessages.getString("ResourceChangeHandler2.0")){ //$NON-NLS-1$
 
 			protected IStatus run(IProgressMonitor monitor) {
 				for(Iterator iter = projSet.iterator(); iter.hasNext();){

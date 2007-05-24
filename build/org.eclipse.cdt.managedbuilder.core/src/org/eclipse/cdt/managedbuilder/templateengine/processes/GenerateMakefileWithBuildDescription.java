@@ -23,6 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildDescriptionGnuMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,16 +39,16 @@ public class GenerateMakefileWithBuildDescription extends ProcessRunner{
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projectHandle);
 		if(info == null)
-			throw new ProcessFailureException("info is null");
+			throw new ProcessFailureException(ManagedMakeMessages.getString("GenerateMakefileWithBuildDescription.0")); //$NON-NLS-1$
 		
 		IConfiguration cfg = info.getDefaultConfiguration();
 		if(cfg == null)
-			throw new ProcessFailureException("cfg is null");
+			throw new ProcessFailureException(ManagedMakeMessages.getString("GenerateMakefileWithBuildDescription.1")); //$NON-NLS-1$
 
 		IBuildDescription des;
 		try {
 			des = BuildDescriptionManager.createBuildDescription(cfg, null, 0);
-			IFile file = projectHandle.getFile("makefile");
+			IFile file = projectHandle.getFile("makefile"); //$NON-NLS-1$
 			ByteArrayOutputStream oStream = new ByteArrayOutputStream(100);
 			BuildDescriptionGnuMakefileGenerator gen = new BuildDescriptionGnuMakefileGenerator(des);
 			gen.store(oStream);

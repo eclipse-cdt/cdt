@@ -1178,16 +1178,19 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getArtifactExtension()
 	 */
 	public String getArtifactExtension() {
+		String ext = getArtifactExtensionAttribute(true);
+		return ext != null ? ext : EMPTY_STRING;
+	}
+
+	public String getArtifactExtensionAttribute(boolean querySuperClass) {
 		if (artifactExtension == null) {
 			// Ask my parent first
 			if (parent != null) {
 				return parent.getArtifactExtension();
-			} else {
-				return EMPTY_STRING;
-			}
-		} else {
-			return artifactExtension;
-		}
+			} 
+			return null; 
+		} 
+		return artifactExtension;
 	}
 
 	/* (non-Javadoc)

@@ -977,7 +977,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			IPath path = getPath();
 			String ext = path.getFileExtension();
 			if(ext == null)
-				ext = "";
+				ext = ""; //$NON-NLS-1$
 			ITool tool = ((FolderInfo)parentRc).getToolFromInputExtension(ext);
 			if(tool == null)
 				return true;

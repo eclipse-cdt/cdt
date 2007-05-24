@@ -219,7 +219,7 @@ public class UserActionModel extends RSEModelObject implements IUserActionModel 
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableChildren()
 	 */
 	public IRSEPersistableContainer[] getPersistableChildren() {
-		return null;
+		return new IRSEPersistableContainer[0];
 	}
 
 	/* (non-Javadoc)

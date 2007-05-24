@@ -1827,11 +1827,135 @@ public class SystemRegistry implements ISystemRegistry
 		return subsystems;
 	}
 	
+	class NotifyModelChangedRunnable implements Runnable
+	{
+		private ISystemModelChangeEvent _event;
+		public NotifyModelChangedRunnable(ISystemModelChangeEvent event)
+		{
+			_event = event;
+		}
+		
+		public void run()
+		{
+			modelListenerManager.notify(_event);
+		}
+	}
+	
+	class NotifyResourceChangedRunnable implements Runnable
+	{
+		private ISystemResourceChangeEvent _event;
+		public NotifyResourceChangedRunnable(ISystemResourceChangeEvent event)
+		{
+			_event = event;
+		}
+		
+		public void run()
+		{
+			listenerManager.notify(_event);
+		}
+	}
+	
+	class NotifyPreferenceChangedRunnable implements Runnable
+	{
+		private ISystemPreferenceChangeEvent _event;
+		public NotifyPreferenceChangedRunnable(ISystemPreferenceChangeEvent event)
+		{
+			_event = event;
+		}
+		
+		public void run()
+		{
+			preferenceListManager.notify(_event);
+		}
+	}
+	
+	class PreferenceChangedRunnable implements Runnable
+	{
+		private ISystemPreferenceChangeEvent _event;
+		private ISystemPreferenceChangeListener _listener;
+		
+		public PreferenceChangedRunnable(ISystemPreferenceChangeEvent event, ISystemPreferenceChangeListener listener)
+		{
+			_event = event;
+			_listener = listener;
+		}
+		
+		public void run()
+		{
+			_listener.systemPreferenceChanged(_event);
+		}
+	}
+	
+	class ModelResourceChangedRunnable implements Runnable
+	{
+		private ISystemModelChangeListener _listener;
+		private ISystemModelChangeEvent _event;
+		public ModelResourceChangedRunnable(ISystemModelChangeEvent event, ISystemModelChangeListener listener)
+		{
+			_event = event;
+			_listener = listener;
+		}
+		
+		public void run()
+		{
+			_listener.systemModelResourceChanged(_event);
+		}
+	}
+	
+	class ResourceChangedRunnable implements Runnable
+	{
+		private ISystemResourceChangeListener _listener;
+		private ISystemResourceChangeEvent _event;
+		public ResourceChangedRunnable(ISystemResourceChangeEvent event, ISystemResourceChangeListener listener)
+		{
+			_event = event;
+			_listener = listener;
+		}
+		
+		public void run()
+		{
+			_listener.systemResourceChanged(_event);
+		}
+	}
+	
+	class RemoteResourceChangedRunnable implements Runnable
+	{
+		private ISystemRemoteChangeListener _listener;
+		private ISystemRemoteChangeEvent _event;
+		public RemoteResourceChangedRunnable(ISystemRemoteChangeEvent event, ISystemRemoteChangeListener listener)
+		{
+			_event = event;
+			_listener = listener;
+		}
+		
+		public void run()
+		{
+			_listener.systemRemoteResourceChanged(_event);
+		}
+	}
+	
+	class RemoteChangedRunnable implements Runnable
+	{
+		private ISystemRemoteChangeEvent _event;
+		public RemoteChangedRunnable(ISystemRemoteChangeEvent event)
+		{
+			_event = event;
+		}
+		
+		public void run()
+		{
+			remoteListManager.notify(_event);
+		}
+	}
+	
+	
 	class FireNewHostEvents implements Runnable
 	{
 		private ISubSystem[] subSystems;
 		private IHost conn;
 		private ISystemRegistry reg;
+						
+		
 		public FireNewHostEvents(IHost host, ISubSystem[] subSystems, ISystemRegistry registry)
 		{
 			this.subSystems= subSystems; 
@@ -2449,17 +2573,28 @@ public class SystemRegistry implements ISystemRegistry
 	            {
 	                ((ISystemContainer)ref).markStale(true);
 	            }
-	        }
-	        
+	        }	        
 	    }
-		listenerManager.notify(event);
+	    
+	    if (onMainThread()) {
+	    	listenerManager.notify(event);
+	    }
+	    else {
+	    	runOnMainThread(new NotifyResourceChangedRunnable(event));
+	    }
+	    	
 	}
 	/**
 	 * Notify a specific listener of a change to a system resource such as a connection.
 	 */
 	public void fireEvent(ISystemResourceChangeListener l, ISystemResourceChangeEvent event)
 	{
-		l.systemResourceChanged(event);
+		if (onMainThread()) {
+			l.systemResourceChanged(event);
+		}
+		else {
+			runOnMainThread(new ResourceChangedRunnable(event, l));
+		}
 	}
 	
 	/**
@@ -2494,13 +2629,30 @@ public class SystemRegistry implements ISystemRegistry
 		modelListenerManager.removeSystemModelChangeListener(l);
 		modelListenerCount--;
 	}
+	
+	private boolean onMainThread()
+	{
+		return Display.getCurrent() != null;
+	}
+	
+	private void runOnMainThread(Runnable runnable)
+	{
+		Display.getDefault().asyncExec(runnable);
+	}
+	
 	/**
 	 * Notify all listeners of a change to a system model resource such as a connection.
 	 * You would not normally call this as the methods in this class call it when appropriate.
 	 */
 	public void fireEvent(ISystemModelChangeEvent event)
-	{
-		modelListenerManager.notify(event);
+	{		
+		if (onMainThread()) {
+			modelListenerManager.notify(event);
+		}
+		else {
+			// fire this on the main thread
+			runOnMainThread(new NotifyModelChangedRunnable(event));
+		}
 	}
 	/**
 	 * Notify all listeners of a change to a system model resource such as a connection.
@@ -2514,14 +2666,29 @@ public class SystemRegistry implements ISystemRegistry
 		modelEvent.setResourceType(resourceType);
 		modelEvent.setResource(resource);
 		modelEvent.setOldName(oldName);
-		modelListenerManager.notify(modelEvent);
+		
+		if (onMainThread()) {	
+			modelListenerManager.notify(modelEvent);
+		}
+		else {
+			// fire this one the main thread
+			runOnMainThread(new NotifyModelChangedRunnable(modelEvent));
+		}
 	}
+	
+
+	
 	/**
 	 * Notify a specific listener of a change to a system model resource such as a connection.
 	 */
 	public void fireEvent(ISystemModelChangeListener l, ISystemModelChangeEvent event)
 	{
-		l.systemModelResourceChanged(event);
+		if (onMainThread()) {
+			l.systemModelResourceChanged(event);
+		}
+		else {
+			runOnMainThread(new ModelResourceChangedRunnable(event, l));
+		}
 	}
 
 	// --------------------------------
@@ -2551,7 +2718,12 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void fireEvent(ISystemRemoteChangeEvent event)
 	{
-		remoteListManager.notify(event);
+		if (onMainThread()) {
+			remoteListManager.notify(event);
+		}
+		else {
+			runOnMainThread(new RemoteChangedRunnable(event));
+		}
 	}
 	
 	/**
@@ -2580,7 +2752,15 @@ public class SystemRegistry implements ISystemRegistry
 		remoteEvent.setResourceParent(resourceParent);
 		remoteEvent.setOldName(oldName);
 		remoteEvent.setSubSystem(subsystem);
-		remoteListManager.notify(remoteEvent);
+		
+		if (onMainThread())
+		{
+			remoteListManager.notify(remoteEvent);
+		}
+		else
+		{
+			runOnMainThread(new RemoteChangedRunnable(remoteEvent));
+		}
 	}
 
 	/**
@@ -2612,7 +2792,15 @@ public class SystemRegistry implements ISystemRegistry
 		remoteEvent.setOldName(oldName);
 		remoteEvent.setSubSystem(subsystem);
 		remoteEvent.setOriginatingViewer(originatingViewer);
-		remoteListManager.notify(remoteEvent);
+		
+		if (onMainThread())
+		{
+			remoteListManager.notify(remoteEvent);
+		}
+		else
+		{
+			runOnMainThread(new RemoteChangedRunnable(remoteEvent));
+		}
 	}
 
     /**
@@ -2746,7 +2934,13 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void fireEvent(ISystemRemoteChangeListener l, ISystemRemoteChangeEvent event)
 	{
-		l.systemRemoteResourceChanged(event);
+		if (onMainThread()) {
+			l.systemRemoteResourceChanged(event);
+		}
+		else {
+			runOnMainThread(new RemoteResourceChangedRunnable(event, l));
+		}
+			
 	}
 
 	// ----------------------------
@@ -2773,14 +2967,24 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void fireEvent(ISystemPreferenceChangeEvent event)
 	{
-		preferenceListManager.notify(event);
+		if (onMainThread()) {
+			preferenceListManager.notify(event);
+		}
+		else {
+			runOnMainThread(new NotifyPreferenceChangedRunnable(event));
+		}
 	}
 	/**
 	 * Notify a specific listener of a change to a system preference 
 	 */
 	public void fireEvent(ISystemPreferenceChangeListener l, ISystemPreferenceChangeEvent event)
 	{
-		l.systemPreferenceChanged(event);
+		if (onMainThread()) {
+			l.systemPreferenceChanged(event);
+		}
+		else {
+			runOnMainThread(new PreferenceChangedRunnable(event, l));
+		}
 	}
 
 	// ----------------------------

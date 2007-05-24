@@ -430,6 +430,9 @@ public class SystemTeamViewPart
 	{
 		//System.out.println("in handleKeyPressed. keyCode == SWT.F5? " + (event.keyCode==SWT.F5) + ", keyCode: "+event.keyCode);
 		IStructuredSelection selection = (IStructuredSelection)getSelection();
+		/*
+		 * DKM - taking this out since the delete key should be handled by the retargetable action
+		 * 
 		if ((event.character == SWT.DEL) && (event.stateMask == 0) && (selection.size()>0) )
 		{	      
 			if (showDelete() && canDelete())
@@ -441,7 +444,9 @@ public class SystemTeamViewPart
 				dltAction.run();
 			}
 		}
-		else if ((event.character == '-') && (event.stateMask == SWT.CTRL) )
+		else 
+		*/
+		if ((event.character == '-') && (event.stateMask == SWT.CTRL) )
 		{
 			SystemCollapseAllAction collapseAllAction = getCollapseAllAction();
 			collapseAllAction.setShell(getShell());

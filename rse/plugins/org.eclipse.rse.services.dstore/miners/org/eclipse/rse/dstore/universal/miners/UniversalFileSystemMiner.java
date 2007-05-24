@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
+ * Xuan Chen (IBM) - Fix 160768 - [refresh][dstore] Refresh on renamed node within a zip does not work; 
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -2840,7 +2841,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 						children = mgr.getContents(fileobj, virtualPath);
 					}
 					
-					subject.setAttribute(DE.A_SOURCE, setProperties(mgr.getVirtualObject(virtualPath)));
+					subject.setAttribute(DE.A_SOURCE, setProperties(mgr.getVirtualObject(path)));
 					if (children == null || children.length == 0) {
 						_dataStore.trace("problem with virtual:" + virtualPath); //$NON-NLS-1$
 					}

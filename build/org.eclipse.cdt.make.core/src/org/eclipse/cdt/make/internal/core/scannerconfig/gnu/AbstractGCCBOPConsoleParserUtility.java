@@ -49,7 +49,7 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
     /**
      * @return Returns the fBaseDirectory.
      */
-    protected IPath getBaseDirectory() {
+    public IPath getBaseDirectory() {
         return fBaseDirectory;
     }
     /**

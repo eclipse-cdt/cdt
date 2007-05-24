@@ -195,7 +195,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * @param filePath : String
      * @return filePath : IPath - not <code>null</code>
      */
-    IPath getAbsolutePath(String filePath) {
+    public IPath getAbsolutePath(String filePath) {
         IPath pFilePath;
         if (filePath.startsWith("/")) { //$NON-NLS-1$
         	return convertCygpath(new Path(filePath));

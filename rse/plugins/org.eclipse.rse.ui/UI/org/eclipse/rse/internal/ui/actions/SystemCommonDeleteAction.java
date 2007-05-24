@@ -28,7 +28,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -124,7 +123,8 @@ public class SystemCommonDeleteAction
 					}
 				}
 				catch (Exception e)
-				{					
+				{	
+					e.printStackTrace();
 				}
 			}
 			
@@ -279,7 +279,7 @@ public class SystemCommonDeleteAction
 				while (iter.hasNext())
 				{
 					Object object = iter.next();
-					ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(object, (Viewer)target);
+					ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(object);
 					if (getRemoteAdapter(object) != null) 
 					{
 						ISubSystem subSystem = adapter.getSubSystem(object);

@@ -62,9 +62,8 @@ import org.eclipse.ui.part.ResourceTransfer;
 public class SystemRegistryUI implements ISystemRegistryUI, ISystemViewInputProvider {
 
 	private static SystemRegistryUI _instance = null;
-	private ISystemRegistry registry = null;
+	private SystemRegistry registry = null;
 
-	private SystemResourceChangeManager listenerManager = null;
 	private Viewer viewer = null;
 	
 	// progress monitor support
@@ -85,8 +84,7 @@ public class SystemRegistryUI implements ISystemRegistryUI, ISystemViewInputProv
 	protected SystemRegistryUI(String logfilePath)
 	{
 		super();
-		registry = RSECorePlugin.getTheSystemRegistry();
-		listenerManager = new SystemResourceChangeManager();
+		registry = SystemRegistry.getInstance();
 	}
 
 	// ----------------------------
@@ -586,7 +584,7 @@ public class SystemRegistryUI implements ISystemRegistryUI, ISystemViewInputProv
 	 */
 	public void postEvent(ISystemResourceChangeEvent event)
 	{
-		listenerManager.postNotify(event);
+		registry.getResourceChangeManager().postNotify(event);
 	}
 
 	/*

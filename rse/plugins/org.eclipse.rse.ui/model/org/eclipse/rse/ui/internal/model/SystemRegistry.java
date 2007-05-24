@@ -2461,6 +2461,17 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		l.systemResourceChanged(event);
 	}
+	
+	/**
+	 * Return the listener manager such that the SystemRegistryUI
+	 * can re-use it for posting events that can only be posted
+	 * in UI.
+	 * @return the System resource change listener manager
+	 *    used by the registry.
+	 */
+	public SystemResourceChangeManager getResourceChangeManager() {
+		return listenerManager;
+	}
 
 	// ----------------------------
 	// MODEL RESOURCE EVENT METHODS...

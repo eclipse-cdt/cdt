@@ -20,8 +20,10 @@ import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfil
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -56,6 +58,8 @@ public class ScannerConfigBuilder extends ACBuilder {
 	public static final int FORCE_DISCOVERY = 1 << 1;
 
 	public final static String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ScannerConfigBuilder"; //$NON-NLS-1$
+	
+	private static final boolean BUILD_ALL_CONFIGS = false;
 
 	public ScannerConfigBuilder() {
 		super();
@@ -74,9 +78,32 @@ public class ScannerConfigBuilder extends ACBuilder {
 		if(bInfo != null){
 			IConfiguration cfgs[] = bInfo.getManagedProject().getConfigurations();
 			if(cfgs.length != 0){
-				monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), cfgs.length); //$NON-NLS-1$
-				for(int i = 0; i < cfgs.length; i++){
-					build(cfgs[i], 0, new SubProgressMonitor(monitor, 1));
+				if(!BUILD_ALL_CONFIGS){
+					ICProjectDescription des = CoreModel.getDefault().getProjectDescription(getProject(), false);
+					IConfiguration cfg = null;
+					if(des != null){
+						ICConfigurationDescription settingCfgDes = des.getDefaultSettingConfiguration();
+						if(settingCfgDes != null){
+							for(int i = 0; i < cfgs.length; i++){
+								if(settingCfgDes.getId().equals(cfgs[i].getId())){
+									cfg = cfgs[i];
+									break;
+								}
+							}
+						}
+					}
+					if(cfg != null){
+						cfgs = new IConfiguration[]{cfg};
+					} else {
+						cfgs = new IConfiguration[0];
+					}
+				}
+				int numWork = cfgs.length;
+				if(numWork > 0){
+					monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), numWork); //$NON-NLS-1$
+					for(int i = 0; i < cfgs.length; i++){
+						build(cfgs[i], 0, new SubProgressMonitor(monitor, 1));
+					}
 				}
 			}
 			

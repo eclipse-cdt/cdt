@@ -37,9 +37,9 @@ public class ASTCache {
 	private static final String DEBUG_PREFIX= "[ASTCache] "; //$NON-NLS-1$
 
 	/** Full parse mode (no PDOM) */
-	public static int PARSE_MODE_FULL= 0;
+	public static int PARSE_MODE_FULL= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 	/** Fast parse mode (use PDOM) */
-	public static int PARSE_MODE_FAST= ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+	public static int PARSE_MODE_FAST= ITranslationUnit.AST_SKIP_INDEXED_HEADERS | ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 
 	/**
 	 * Do something with an AST.

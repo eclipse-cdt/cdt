@@ -74,6 +74,15 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @since 4.0
 	 */
 	public static final int AST_CREATE_COMMENT_NODES = 16;
+	
+	/**
+	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Meaning: Configure the parser with language and build-information taken from a source file
+	 * that directly or indirectly includes this file. If no suitable file is found in the index,
+	 * the flag is ignored.
+	 * @since 4.0
+	 */
+	public static final int AST_CONFIGURE_USING_SOURCE_CONTEXT= 32;
 
 	/**
 	 * Creates and returns an include declaration in this translation unit
@@ -477,7 +486,8 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * translation unit does not support ASTs.
 	 * @param index	index to back up the parsing of the AST, may be <code>null</code>
 	 * @param style <code>0</code> or a combination of {@link #AST_SKIP_ALL_HEADERS}, 
-	 * {@link #AST_SKIP_IF_NO_BUILD_INFO}, {@link #AST_SKIP_INDEXED_HEADERS} and {@value #AST_CREATE_COMMENT_NODES}.
+	 * {@link #AST_SKIP_IF_NO_BUILD_INFO}, {@link #AST_SKIP_INDEXED_HEADERS}, {@link #AST_CREATE_COMMENT_NODES}
+	 * and {@link #AST_CONFIGURE_USING_SOURCE_CONTEXT}.
 	 * @return the AST requested or <code>null</code>
 	 * @throws CoreException
 	 * @since 4.0

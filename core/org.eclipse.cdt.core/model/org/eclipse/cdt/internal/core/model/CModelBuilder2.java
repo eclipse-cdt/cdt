@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -226,6 +227,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			int parseFlags= quickParseMode ? ITranslationUnit.AST_SKIP_ALL_HEADERS : ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 			if (!(elementInfo instanceof ASTHolderTUInfo)) {
 				parseFlags |= ITranslationUnit.AST_SKIP_FUNCTION_BODIES;
+			}
+			else {
+				parseFlags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 			}
 			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, parseFlags);
 			Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$

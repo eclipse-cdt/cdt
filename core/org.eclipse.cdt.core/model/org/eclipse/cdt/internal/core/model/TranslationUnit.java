@@ -27,9 +27,13 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -741,16 +745,40 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException {
 		ICodeReaderFactory codeReaderFactory;
-		if ((style & ITranslationUnit.AST_SKIP_NONINDEXED_HEADERS) != 0) {
+		if ((style & AST_SKIP_NONINDEXED_HEADERS) != 0) {
 			codeReaderFactory= NullCodeReaderFactory.getInstance();
 		} else {
 			codeReaderFactory= SavedCodeReaderFactory.getInstance();
 		}
-		if (index != null && (style & ITranslationUnit.AST_SKIP_INDEXED_HEADERS) != 0) {
+		if (index != null && (style & AST_SKIP_INDEXED_HEADERS) != 0) {
 			codeReaderFactory= new IndexBasedCodeReaderFactory(getCProject(), index, codeReaderFactory);
 		}
 		
-		IScannerInfo scanInfo = getScannerInfo( (style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
+		ITranslationUnit configureWith= this;
+		try {
+			if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
+				IIndexFile context= null;
+				IIndexFile indexFile= index.getFile(IndexLocationFactory.getIFL(this));
+				if (indexFile != null) {
+					indexFile = getParsedInContext(indexFile);
+					while (indexFile != null) {
+						context= indexFile;
+						indexFile= getParsedInContext(indexFile);
+					}
+				}
+				if (context != null) {
+					ITranslationUnit tu= CoreModelUtil.findTranslationUnitForLocation(context.getLocation(), getCProject());
+					if (tu != null && tu.isSourceUnit()) {
+						configureWith= tu;
+					}
+				}
+			}
+		}
+		catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		
+		IScannerInfo scanInfo= configureWith.getScannerInfo( (style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
 		if (scanInfo == null) {
 			return null;
 		}
@@ -759,7 +787,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		reader = getCodeReader();
 		
 		if (reader != null) {
-			ILanguage language= getLanguage();
+			ILanguage language= configureWith.getLanguage();
 			if (language != null) {
 				if (language instanceof AbstractLanguage) {
 					int options= 0;
@@ -773,6 +801,15 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				}
 				return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
 			}
+		}
+		return null;
+	}
+
+	private IIndexFile getParsedInContext(IIndexFile indexFile)
+			throws CoreException {
+		IIndexInclude include= indexFile.getParsedInContext();
+		if (include != null) {
+			return include.getIncludedBy();
 		}
 		return null;
 	}

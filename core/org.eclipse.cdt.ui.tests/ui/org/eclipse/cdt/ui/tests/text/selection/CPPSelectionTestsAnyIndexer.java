@@ -760,7 +760,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     
     // #include "cpp.h"
     // void cpp() {}
-    public void _testCNavigationInCppProject_bug183973() throws Exception {
+    public void testCNavigationInCppProject_bug183973() throws Exception {
         StringBuffer[] buffers= getContents(4);
         String hccode= buffers[0].toString();
         String ccode= buffers[1].toString();

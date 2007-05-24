@@ -2107,33 +2107,38 @@ public class SystemView extends SafeTreeViewer
 					}
 					else
 					{
-						// get up-to-date version of the container (need to make sure it still exists)
-						if (ss == null)
+						// only do this if the object is "remote"
+						Object remoteAdapter = getRemoteAdapter(src);
+						if (remoteAdapter != null)
 						{
-							ss = adapter.getSubSystem(src);
-						}
-						if (ss != null)
-						{
-							String key = adapter.getAbsoluteName(src);
-							if (key != null)
+							// get up-to-date version of the container (need to make sure it still exists)
+							if (ss == null)
 							{
-								try
+								ss = adapter.getSubSystem(src);
+							}
+							if (ss != null)
+							{
+								String key = adapter.getAbsoluteName(src);
+								if (key != null)
 								{
-									Object srcParent = adapter.getParent(src); // get parent before we query 
-									                                           // because if after query src doesn't exist, 
-																		  	   // we can't get parent
-									
-									src = ss.getObjectWithAbsoluteName(key);
-									hasChildren = adapter.hasChildren((IAdaptable)src);
-									if (!hasChildren)
+									try
 									{
-										// make the src the parent of the src
-										src = srcParent;
+										Object srcParent = adapter.getParent(src); // get parent before we query 
+										                                           // because if after query src doesn't exist, 
+																			  	   // we can't get parent
+										
+										src = ss.getObjectWithAbsoluteName(key);
+										hasChildren = adapter.hasChildren((IAdaptable)src);
+										if (!hasChildren)
+										{
+											// make the src the parent of the src
+											src = srcParent;
+										}
 									}
-								}
-								catch (Exception e)
-								{
-									e.printStackTrace();
+									catch (Exception e)
+									{
+										e.printStackTrace();
+									}
 								}
 							}
 						}

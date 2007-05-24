@@ -268,6 +268,7 @@ public class CElementBaseLabels {
 			case ICElement.C_TEMPLATE_CLASS_DECLARATION:
 			case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
 			case ICElement.C_TEMPLATE_UNION_DECLARATION:
+			case ICElement.C_NAMESPACE:
 				getTypeLabel( element, flags, buf );
 				break;
 			case ICElement.C_TYPEDEF:

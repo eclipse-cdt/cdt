@@ -29,7 +29,8 @@
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true"
-            callOnEmptyDelta="true">
+            callOnEmptyDelta="true"
+            isConfigurable="true">
          <!--run
                class="org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder">
          </run-->

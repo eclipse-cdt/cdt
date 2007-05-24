@@ -84,6 +84,10 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	
 	static final String OUTPUT_ENTRIES = "outputEntries"; //$NON-NLS-1$
 	
+	static final String DEFAULT_TARGET_INCREMENTAL = "all"; 
+	static final String DEFAULT_TARGET_CLEAN = "clean"; 
+	static final String DEFAULT_TARGET_AUTO = "all";
+	
 	/**
 	 * Returns the command line arguments to pass to the build/make utility used 
 	 * to build a configuration.

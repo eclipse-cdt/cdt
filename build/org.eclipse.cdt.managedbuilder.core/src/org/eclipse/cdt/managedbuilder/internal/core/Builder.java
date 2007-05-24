@@ -387,29 +387,14 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 				setCommand(builder.getCommand());
 			if(!getArgumentsAttribute().equals(builder.getArgumentsAttribute()))
 				setArgumentsAttribute(builder.getArgumentsAttribute());
-			if(!getAutoBuildTarget().equals(builder.getAutoBuildTarget())){
-				try {
-					setAutoBuildTarget(builder.getAutoBuildTarget());
-				} catch (CoreException e) {
-				}
+			if(!CDataUtil.objectsEqual(getAutoBuildTargetAttribute(), builder.getAutoBuildTargetAttribute())){
+				autoBuildTarget = builder.getAutoBuildTargetAttribute();
 			}
-			if(!getIncrementalBuildTarget().equals(builder.getIncrementalBuildTarget())){
-				try {
-					setIncrementalBuildTarget(builder.getIncrementalBuildTarget());
-				} catch (CoreException e) {
-				}
+			if(!CDataUtil.objectsEqual(getIncrementalBuildTargetAttribute(), builder.getIncrementalBuildTargetAttribute())){
+				incrementalBuildTarget = builder.getIncrementalBuildTargetAttribute();
 			}
-			if(!getFullBuildTarget().equals(builder.getFullBuildTarget())){
-				try {
-					setFullBuildTarget(builder.getFullBuildTarget());
-				} catch (CoreException e) {
-				}
-			}
-			if(!getCleanBuildTarget().equals(builder.getCleanBuildTarget())){
-				try {
-					setCleanBuildTarget(builder.getCleanBuildTarget());
-				} catch (CoreException e) {
-				}
+			if(!CDataUtil.objectsEqual(getCleanBuildTargetAttribute(), builder.getCleanBuildTargetAttribute())){
+				cleanBuildTarget = builder.getCleanBuildTargetAttribute();
 			}
 		}
 
@@ -1746,11 +1731,16 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	public String getAutoBuildTarget() {
 		String attr = getAutoBuildTargetAttribute();
 		
-		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
-
-		try {
-			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (BuildMacroException e) {
+		if(attr != null){
+			IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+	
+			try {
+				attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (BuildMacroException e) {
+			}
+		}
+		if(attr == null){
+			attr = DEFAULT_TARGET_AUTO;
 		}
 		
 		return attr;
@@ -1769,11 +1759,16 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	public String getCleanBuildTarget() {
 		String attr = getCleanBuildTargetAttribute();
 		
-		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
-
-		try {
-			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (BuildMacroException e) {
+		if(attr != null){
+			IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+	
+			try {
+				attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (BuildMacroException e) {
+			}
+		}
+		if(attr == null){
+			attr = DEFAULT_TARGET_CLEAN;
 		}
 		
 		return attr;
@@ -1796,11 +1791,16 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	public String getIncrementalBuildTarget() {
 		String attr = getIncrementalBuildTargetAttribute();
 		
-		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
-
-		try {
-			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (BuildMacroException e) {
+		if(attr != null){
+			IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+	
+			try {
+				attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (BuildMacroException e) {
+			}
+		}
+		if(attr == null){
+			attr = DEFAULT_TARGET_INCREMENTAL;
 		}
 		
 		return attr;

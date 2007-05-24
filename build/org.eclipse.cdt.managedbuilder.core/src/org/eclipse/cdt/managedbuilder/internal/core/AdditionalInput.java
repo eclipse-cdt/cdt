@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -216,7 +217,7 @@ public class AdditionalInput implements IAdditionalInput {
 		if (paths == null) {
 			return null;
 		}
-		String[] nameTokens = paths.split(";"); //$NON-NLS-1$
+		String[] nameTokens = CDataUtil.stringToArray(paths, ";"); //$NON-NLS-1$
 		return nameTokens;
 	}
 

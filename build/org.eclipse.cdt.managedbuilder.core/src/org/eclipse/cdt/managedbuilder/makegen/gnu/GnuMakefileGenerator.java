@@ -1065,6 +1065,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		 		HashSet handledInputExtensions = new HashSet();
 				String buildMacro;
 				for (int i=0; i<buildTools.length; i++) {
+					if(buildTools[i].getCustomBuildStep())
+						continue;
 					// Add the known sources macros
 		 			String[] extensionsList = buildTools[i].getAllInputExtensions();
 		 			for (int j=0; j<extensionsList.length; j++) {
@@ -2039,7 +2041,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			ITool[] tools = fi.getToolsToInvoke();
 			if (tools != null && tools.length > 0) {
 				tool = tools[0];
-				if(!tool.getCustomBuildStep())
+//				if(!tool.getCustomBuildStep())
 					addToBuildVar(buildVarToRuleStringMap, ext, varName, relativePath, sourceLocation, generatedSource);
 			}
 		}
@@ -2098,9 +2100,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 						if (generatedOutputs.size() > 0) {
 							IPath firstOutput = (IPath)generatedOutputs.get(0);
 							String firstExt = firstOutput.getFileExtension();
-							for (int j=0; j<buildTools.length; j++) {
-								if (buildTools[j].buildsFileType(firstExt)) {
-									String bV = buildTools[j].getPrimaryInputType().getBuildVariable();
+							ToolInfoHolder tmpH = getFolderToolInfo(rcInfo.getPath());
+							ITool[] tmpBuildTools = tmpH.buildTools;
+							for (int j=0; j<tmpBuildTools.length; j++) {
+								if (tmpBuildTools[j].buildsFileType(firstExt)) {
+									String bV = tmpBuildTools[j].getPrimaryInputType().getBuildVariable();
 									if (bV.length() > 0) {
 										buildVariable = bV; 
 										break;
@@ -3941,6 +3945,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		//		}
 				
 				//  Initialize the tool info array and the done state
+				
+				if(buildTools.length != 0 && buildTools[0].getCustomBuildStep())
+					return true;
+				
 				for (int i=0; i<buildTools.length; i++) {
 					if ((buildTools[i] == targetTool)) {
 						String ext = config.getArtifactExtension();
@@ -4704,6 +4712,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	private ToolInfoHolder getToolInfo(IPath path){
+		return getToolInfo(path, false);
+	}
+
+	private ToolInfoHolder getFolderToolInfo(IPath path){
+		IResourceInfo rcInfo = config.getResourceInfo(path, false);
+		while(rcInfo instanceof IFileInfo){
+			path = path.removeLastSegments(1);
+			rcInfo = config.getResourceInfo(path, false);
+		}
 		return getToolInfo(path, false);
 	}
 

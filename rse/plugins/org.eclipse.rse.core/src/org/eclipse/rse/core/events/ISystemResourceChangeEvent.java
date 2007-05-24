@@ -41,7 +41,7 @@ public interface ISystemResourceChangeEvent
 	
     /**
      * Returns the parent of the object source.
-     * Only quaranteed to be set for additions and deletions.
+     * Only guaranteed to be set for additions and deletions.
      *
      * @return an object identifying the parent of the source of this event,
      *     or <code>null</code> if not applicable.
@@ -56,7 +56,7 @@ public interface ISystemResourceChangeEvent
     
     /**
      * Returns the grandparent of the object source.
-     * Only quaranteed to be set for special case events, which have a
+     * Only guaranteed to be set for special case events, which have a
      * special contract with the SystemView.
      *
      * @return an object identifying the grandparent of the source of this event

@@ -409,7 +409,8 @@ public class MBSWizardHandler extends CWizardHandler {
 
 		cfgs = CfgHolder.unique(cfgs);
 		
-		ICConfigurationDescription active = null;
+		ICConfigurationDescription cfgDebug = null;
+		ICConfigurationDescription cfgFirst = null;
 		
 		for(int i = 0; i < cfgs.length; i++){
 			cf = (Configuration)cfgs[i].getConfiguration();
@@ -427,12 +428,15 @@ public class MBSWizardHandler extends CWizardHandler {
 			config.setArtifactName(removeSpaces(project.getName()));
 			
 			IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
-			if (b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))
-				active = cfgDes;
-			else if (active == null) // select at least first configuration 
-				active = cfgDes; 
+			if (cfgDebug == null && b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))
+				cfgDebug = cfgDes;
+			if (cfgFirst == null) // select at least first configuration 
+				cfgFirst = cfgDes; 
 		}
-		if (active != null) active.setActive();
+		if (cfgDebug == null)
+			cfgDebug = cfgFirst;
+		if (cfgDebug != null)
+			cfgDebug.setActive();
 		mngr.setProjectDescription(project, des);
 		
 		doPostProcess(project);

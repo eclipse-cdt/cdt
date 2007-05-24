@@ -1719,7 +1719,7 @@ public class PathEntryTranslator {
 	private void applyOutputEntries(ICOutputEntry entries[], int op){
 		CBuildData bData = fCfgData.getBuildData();
 		if(bData == null){
-			CCorePlugin.log("PathEntryTranslator: failed to apply output entries: Build Data is null, ignoring..");
+			CCorePlugin.log(UtilMessages.getString("PathEntryTranslator.2")); //$NON-NLS-1$
 			return;
 		}
 		

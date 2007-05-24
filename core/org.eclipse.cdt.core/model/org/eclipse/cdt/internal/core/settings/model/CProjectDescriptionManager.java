@@ -900,7 +900,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			if(project.exists() && project.isOpen()){
 				fDescriptionMap.put(project, des);
 			} else {
-				CCorePlugin.log("attempt to set description for the non-openned project");
+				CCorePlugin.log(SettingsModelMessages.getString("CProjectDescriptionManager.16")); //$NON-NLS-1$
 			}
 		}else {
 			fDescriptionMap.remove(project);

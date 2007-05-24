@@ -92,6 +92,7 @@ public class Include extends SourceManipulation implements IInclude {
 	public static boolean equals(IInclude lhs, IInclude rhs) {
 		return CElement.equals(lhs, rhs) && 
 			lhs.isActive() == rhs.isActive() &&
+			lhs.isResolved() == rhs.isResolved() &&
 			lhs.isLocal() == rhs.isLocal();
 	}
 }

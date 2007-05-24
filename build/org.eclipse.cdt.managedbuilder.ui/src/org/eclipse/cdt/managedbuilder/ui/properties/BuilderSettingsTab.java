@@ -123,23 +123,34 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		// Build setting group
 		Group g3 = setupGroup(comp, Messages.getString("BuilderSettingsTab.9"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		((GridLayout)(g3.getLayout())).makeColumnsEqualWidth = true;
+		((GridLayout)(g3.getLayout())).verticalSpacing = 0;
 		
 		Composite c1 = new Composite(g3, SWT.NONE);
 		setupControl(c1, 1, GridData.FILL_BOTH);
+		GridData gd = (GridData)c1.getLayoutData();
+		gd.verticalSpan = 2;
+		c1.setLayoutData(gd);
 		GridLayout gl = new GridLayout(1, false);
 		gl.marginWidth = 0;
 		c1.setLayout(gl);
 		
 		b_stopOnError = setupTri(c1, Messages.getString("BuilderSettingsTab.10"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		
 		Composite c2 = new Composite(g3, SWT.NONE);
 		setupControl(c2, 1, GridData.FILL_BOTH);
-		gl = new GridLayout(2, false);
+		gl = new GridLayout(1, false);
 		gl.marginWidth = 0;
 		c2.setLayout(gl);
 		
-		b_parallel = setupTri(c2, Messages.getString("BuilderSettingsTab.11"), 2, GridData.BEGINNING); //$NON-NLS-1$
+		b_parallel = setupTri(c2, Messages.getString("BuilderSettingsTab.11"), 1, GridData.BEGINNING); //$NON-NLS-1$
+
+		Composite c3 = new Composite(g3, SWT.NONE);
+		setupControl(c3, 1, GridData.FILL_BOTH);
+		gl = new GridLayout(2, false);
+		gl.marginWidth = 0;
+		c3.setLayout(gl);
 		
-		b_parallelOpt= new Button(c2, SWT.RADIO);
+		b_parallelOpt= new Button(c3, SWT.RADIO);
 		b_parallelOpt.setText(Messages.getString("BuilderSettingsTab.12")); //$NON-NLS-1$
 		setupControl(b_parallelOpt, 2, GridData.BEGINNING);
 		((GridData)(b_parallelOpt.getLayoutData())).horizontalIndent = 15;
@@ -149,7 +160,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				updateButtons();
 		 }});
 		
-		b_parallelNum= new Button(c2, SWT.RADIO);
+		b_parallelNum= new Button(c3, SWT.RADIO);
 		b_parallelNum.setText(Messages.getString("BuilderSettingsTab.13")); //$NON-NLS-1$
 		setupControl(b_parallelNum, 1, GridData.BEGINNING);
 		((GridData)(b_parallelNum.getLayoutData())).horizontalIndent = 15;
@@ -159,7 +170,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				updateButtons();
 		 }});
 
-		parallelProcesses = new Spinner(c2, SWT.BORDER);
+		parallelProcesses = new Spinner(c3, SWT.BORDER);
 		setupControl(parallelProcesses, 1, GridData.BEGINNING);
 		parallelProcesses.setValues(cpuNumber, 1, 10000, 0, 1, 10);
 		parallelProcesses.addSelectionListener(new SelectionAdapter () {

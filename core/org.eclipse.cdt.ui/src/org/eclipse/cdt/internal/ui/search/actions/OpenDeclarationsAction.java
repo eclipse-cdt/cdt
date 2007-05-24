@@ -131,7 +131,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 										declNames= findNames(fIndex, ast, false, clsBinding);
 									}
 								} catch (DOMException e) {
-									CCorePlugin.log(e);
+									// don't log problem bindings.
 								}
 							}
 						}
@@ -226,8 +226,6 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 						elements.add(elem);
 					}
 				} catch (CoreException e) {
-					CUIPlugin.getDefault().log(e);
-				} catch (DOMException e) {
 					CUIPlugin.getDefault().log(e);
 				}
 			}

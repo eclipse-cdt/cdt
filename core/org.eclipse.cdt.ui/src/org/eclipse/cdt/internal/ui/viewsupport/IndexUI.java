@@ -65,7 +65,7 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 public class IndexUI {
 	private static final ICElementHandle[] EMPTY_ELEMENTS = new ICElementHandle[0];
 
-	public static IIndexBinding elementToBinding(IIndex index, ICElement element) throws CoreException, DOMException {
+	public static IIndexBinding elementToBinding(IIndex index, ICElement element) throws CoreException {
 		if (element instanceof ISourceReference) {
 			ISourceReference sf = ((ISourceReference)element);
 			ISourceRange range= sf.getSourceRange();
@@ -90,23 +90,27 @@ public class IndexUI {
 		return null;
 	}
 
-	private static boolean checkBinding(IIndexBinding binding, ICElement element) throws DOMException {
-		switch(element.getElementType()) {
-		case ICElement.C_ENUMERATION:
-			return binding instanceof IEnumeration;
-		case ICElement.C_NAMESPACE:
-			return binding instanceof ICPPNamespace;
-		case ICElement.C_STRUCT:
-			return binding instanceof ICompositeType && 
-				((ICompositeType) binding).getKey() == ICompositeType.k_struct;
-		case ICElement.C_CLASS:
-			return binding instanceof ICPPClassType && 
-				((ICompositeType) binding).getKey() == ICPPClassType.k_class;
-		case ICElement.C_UNION:
-			return binding instanceof ICompositeType && 
-				((ICompositeType) binding).getKey() == ICompositeType.k_union;
-		case ICElement.C_TYPEDEF:
-			return binding instanceof ITypedef;
+	private static boolean checkBinding(IIndexBinding binding, ICElement element) {
+		try {
+			switch(element.getElementType()) {
+			case ICElement.C_ENUMERATION:
+				return binding instanceof IEnumeration;
+			case ICElement.C_NAMESPACE:
+				return binding instanceof ICPPNamespace;
+			case ICElement.C_STRUCT:
+				return binding instanceof ICompositeType && 
+					((ICompositeType) binding).getKey() == ICompositeType.k_struct;
+			case ICElement.C_CLASS:
+				return binding instanceof ICPPClassType && 
+					((ICompositeType) binding).getKey() == ICPPClassType.k_class;
+			case ICElement.C_UNION:
+				return binding instanceof ICompositeType && 
+					((ICompositeType) binding).getKey() == ICompositeType.k_union;
+			case ICElement.C_TYPEDEF:
+				return binding instanceof ITypedef;
+			}
+		} catch (DOMException e) {
+			// index bindings don't throw the DOMException.
 		}
 		return false;
 	}
@@ -142,8 +146,7 @@ public class IndexUI {
 		return null;
 	}
 
-	public static ICElementHandle[] findRepresentative(IIndex index, IBinding binding)
-		throws CoreException, DOMException {
+	public static ICElementHandle[] findRepresentative(IIndex index, IBinding binding) throws CoreException {
 		ICElementHandle[] defs = IndexUI.findAllDefinitions(index, binding);
 		if (defs.length == 0) {
 			ICElementHandle elem = IndexUI.findAnyDeclaration(index, null, binding);
@@ -154,7 +157,7 @@ public class IndexUI {
 		return defs;
 	}
 
-	public static ICElementHandle[] findAllDefinitions(IIndex index, IBinding binding) throws CoreException, DOMException {
+	public static ICElementHandle[] findAllDefinitions(IIndex index, IBinding binding) throws CoreException {
 		if (binding != null) {
 			IIndexName[] defs= index.findDefinitions(binding);
 
@@ -172,7 +175,8 @@ public class IndexUI {
 		return EMPTY_ELEMENTS;
 	}
 
-	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IName declName) throws CoreException, DOMException {
+	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IName declName) 
+			throws CoreException {
 		if (declName instanceof IASTName) {
 			return getCElementForName(preferProject, index, (IASTName) declName);
 		}
@@ -182,7 +186,8 @@ public class IndexUI {
 		return null;
 	}
 
-	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IASTName declName) throws CoreException, DOMException {
+	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IASTName declName) 
+			throws CoreException {
 		assert !declName.isReference();
 		IBinding binding= declName.resolveBinding();
 		if (binding != null) {
@@ -212,7 +217,8 @@ public class IndexUI {
 		}
 	}
 
-	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IIndexName declName) throws CoreException, DOMException {
+	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IIndexName declName) 
+			throws CoreException {
 		assert !declName.isReference();
 		ITranslationUnit tu= getTranslationUnit(preferProject, declName);
 		if (tu != null) {
@@ -221,14 +227,15 @@ public class IndexUI {
 		return null;
 	}
 
-	public static ICElementHandle getCElementForName(ITranslationUnit tu, IIndex index, IIndexName declName) throws CoreException,
-			DOMException {
+	public static ICElementHandle getCElementForName(ITranslationUnit tu, IIndex index, IIndexName declName) 
+			throws CoreException {
 		IRegion region= new Region(declName.getNodeOffset(), declName.getNodeLength());
 		long timestamp= declName.getFile().getTimestamp();
 		return CElementHandleFactory.create(tu, index.findBinding(declName), declName.isDefinition(), region, timestamp);
 	}
 
-	public static ICElementHandle findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding) throws CoreException, DOMException {
+	public static ICElementHandle findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding) 
+			throws CoreException {
 		if (binding != null) {
 			IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
 			for (int i = 0; i < names.length; i++) {

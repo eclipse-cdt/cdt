@@ -176,9 +176,6 @@ public class TypeHierarchyUI {
 		catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
 		} 
-		catch (DOMException e) {
-			CUIPlugin.getDefault().log(e);
-		} 
 		catch (InterruptedException e) {
 		}
 		return null;
@@ -212,32 +209,33 @@ public class TypeHierarchyUI {
 		catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
 		} 
-		catch (DOMException e) {
-			CUIPlugin.getDefault().log(e);
-		} 
 		catch (InterruptedException e) {
 		}
 		return null;
 	}
 
-	private static IBinding findTypeBinding(IBinding memberBinding) throws DOMException {
-		if (memberBinding instanceof IEnumerator) {
-			IType type= ((IEnumerator) memberBinding).getType();
-			if (type instanceof IBinding) {
-				return (IBinding) type;
+	private static IBinding findTypeBinding(IBinding memberBinding) {
+		try {
+			if (memberBinding instanceof IEnumerator) {
+				IType type= ((IEnumerator) memberBinding).getType();
+				if (type instanceof IBinding) {
+					return (IBinding) type;
+				}
 			}
-		}
-		else if (memberBinding instanceof ICPPMember) {
-			return ((ICPPMember) memberBinding).getClassOwner();
-		}
-		else if (memberBinding instanceof IField) {
-			return ((IField) memberBinding).getCompositeTypeOwner();
+			else if (memberBinding instanceof ICPPMember) {
+				return ((ICPPMember) memberBinding).getClassOwner();
+			}
+			else if (memberBinding instanceof IField) {
+				return ((IField) memberBinding).getCompositeTypeOwner();
+			}
+		} catch (DOMException e) {
+			// don't log problem bindings
 		}
 		return null;
 	}
 
-	private static ICElement findDefinition(ICProject project, IIndex index,
-			IASTName name, IBinding binding) throws CoreException, DOMException {
+	private static ICElement findDefinition(ICProject project, IIndex index, IASTName name, IBinding binding) 
+			throws CoreException {
 		if (name != null && name.isDefinition()) {
 			return IndexUI.getCElementForName(project, index, name);
 		}
@@ -249,8 +247,8 @@ public class TypeHierarchyUI {
 		return IndexUI.findAnyDeclaration(index, project, binding);
 	}
 
-	private static ICElement findDeclaration(ICProject project, IIndex index,
-			IASTName name, IBinding binding) throws CoreException, DOMException {
+	private static ICElement findDeclaration(ICProject project, IIndex index, IASTName name, IBinding binding) 
+			throws CoreException {
 		if (name != null && name.isDefinition()) {
 			return IndexUI.getCElementForName(project, index, name);
 		}

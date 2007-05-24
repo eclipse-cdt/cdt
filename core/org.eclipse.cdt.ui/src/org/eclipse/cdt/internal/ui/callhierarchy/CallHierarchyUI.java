@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -186,9 +185,6 @@ public class CallHierarchyUI {
 		catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
 		} 
-		catch (DOMException e) {
-			CUIPlugin.getDefault().log(e);
-		} 
 		catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
@@ -227,9 +223,6 @@ public class CallHierarchyUI {
 			}
 		}
 		catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		} 
-		catch (DOMException e) {
 			CUIPlugin.getDefault().log(e);
 		} 
 		catch (InterruptedException e) {

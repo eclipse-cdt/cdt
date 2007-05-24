@@ -46,9 +46,19 @@ import org.eclipse.jface.text.IRegion;
 public class CElementHandleFactory {
 	private CElementHandleFactory() {}
 
-	public static ICElementHandle create(ITranslationUnit tu, IBinding binding, boolean definition,
-			IRegion region, long timestamp) throws CoreException, DOMException {
-		
+	public static ICElementHandle create(ITranslationUnit tu, IBinding binding, boolean isDefinition,
+			IRegion region, long timestamp) throws CoreException {
+		try {
+			return internalCreate(tu, binding, isDefinition, region, timestamp);
+		}
+		catch (DOMException e) {
+			return null;
+		}
+	}
+	
+	
+	public static ICElementHandle internalCreate(ITranslationUnit tu, IBinding binding, boolean definition,
+			IRegion region, long timestamp) throws CoreException, DOMException {		
 		ICElement parentElement= create(tu, binding.getScope());
 		if (parentElement == null) {
 			return null;

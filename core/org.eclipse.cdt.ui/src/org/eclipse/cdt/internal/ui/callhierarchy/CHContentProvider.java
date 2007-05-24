@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -100,15 +99,13 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				}
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
-			} catch (DOMException e) {
-				CUIPlugin.getDefault().log(e);
 			} catch (InterruptedException e) {
 			}
 		}
 		return NO_CHILDREN;
 	}
 	
-	private Object[] asyncronouslyComputeReferencedBy(CHNode parent) throws CoreException, InterruptedException, DOMException {
+	private Object[] asyncronouslyComputeReferencedBy(CHNode parent) throws CoreException, InterruptedException {
 		ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
 		IIndex index= CCorePlugin.getIndexManager().getIndex(scope);
 		index.acquireReadLock();
@@ -120,7 +117,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		}
 	}
 
-	private Object[] asyncronouslyComputeRefersTo(CHNode parent) throws CoreException, InterruptedException, DOMException {
+	private Object[] asyncronouslyComputeRefersTo(CHNode parent) throws CoreException, InterruptedException {
 		ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
 		IIndex index= CCorePlugin.getIndexManager().getIndex(scope);
 		index.acquireReadLock();

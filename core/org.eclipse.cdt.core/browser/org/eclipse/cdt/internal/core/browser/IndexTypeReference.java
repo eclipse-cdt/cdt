@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.browser;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.TypeReference;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -54,8 +55,8 @@ public class IndexTypeReference extends TypeReference {
 			IRegion region= new Region(getOffset(), getLength());
 			try {
 				return CElementHandleFactory.create(tu, binding, true, region, timestamp);
-			} catch (CoreException exc) {
-			} catch (DOMException exc) {
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
 			}
 		}
 		return null;

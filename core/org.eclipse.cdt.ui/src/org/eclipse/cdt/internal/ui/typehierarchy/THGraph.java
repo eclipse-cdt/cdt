@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -140,8 +141,6 @@ class THGraph {
 				fInputNode= addNode(inputHandle == null ? input : inputHandle);
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
-			} catch (DOMException e) {
-				CUIPlugin.getDefault().log(e);
 			}
 		}
 	}
@@ -161,7 +160,7 @@ class THGraph {
 			ICElement elem= (ICElement) stack.remove(stack.size()-1);
 			THGraphNode graphNode= addNode(elem);
 			try {
-				IBinding binding = IndexUI.elementToBinding(index, elem);
+				IIndexBinding binding = IndexUI.elementToBinding(index, elem);
 				if (binding != null) {
 					addMembers(index, graphNode, binding);
 				}
@@ -205,6 +204,7 @@ class THGraph {
 					}
 				}
 			} catch (DOMException e) {
+				// index bindings should not throw this kind of exception, might as well log it.
 				CUIPlugin.getDefault().log(e);
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
@@ -254,33 +254,35 @@ class THGraph {
 						}
 					}
 				}
-			} catch (DOMException e) {
-				CUIPlugin.getDefault().log(e);
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			}
 		}
 	}
 	
-	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws DOMException, CoreException {
+	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws CoreException {
 		if (graphNode.getMembers(false) == null) {
 			ArrayList memberList= new ArrayList();
-			if (binding instanceof ICPPClassType) {
-				ICPPClassType ct= (ICPPClassType) binding;
-				IBinding[] members= ct.getDeclaredFields();
-				addMemberElements(index, members, memberList);
-				members= ct.getDeclaredMethods();
-				addMemberElements(index, members, memberList);
-			}
-			else if (binding instanceof ICompositeType) {
-				ICompositeType ct= (ICompositeType) binding;
-				IBinding[] members= ct.getFields();
-				addMemberElements(index, members, memberList);
-			}
-			else if (binding instanceof IEnumeration) {
-				IEnumeration ct= (IEnumeration) binding;
-				IBinding[] members= ct.getEnumerators();
-				addMemberElements(index, members, memberList);
+			try {
+				if (binding instanceof ICPPClassType) {
+					ICPPClassType ct= (ICPPClassType) binding;
+					IBinding[] members= ct.getDeclaredFields();
+					addMemberElements(index, members, memberList);
+					members= ct.getDeclaredMethods();
+					addMemberElements(index, members, memberList);
+				}
+				else if (binding instanceof ICompositeType) {
+					ICompositeType ct= (ICompositeType) binding;
+					IBinding[] members= ct.getFields();
+					addMemberElements(index, members, memberList);
+				}
+				else if (binding instanceof IEnumeration) {
+					IEnumeration ct= (IEnumeration) binding;
+					IBinding[] members= ct.getEnumerators();
+					addMemberElements(index, members, memberList);
+				}
+			} catch (DOMException e) {
+				// problem bindings should not be reported to the log.
 			}
 			if (memberList.isEmpty()) {
 				graphNode.setMembers(NO_MEMBERS);
@@ -291,7 +293,8 @@ class THGraph {
 		}
 	}
 	
-	private void addMemberElements(IIndex index, IBinding[] members, ArrayList memberList) throws CoreException, DOMException {
+	private void addMemberElements(IIndex index, IBinding[] members, ArrayList memberList) 
+			throws CoreException {
 		for (int i = 0; i < members.length; i++) {
 			IBinding binding = members[i];
 			ICElement[] elems= IndexUI.findRepresentative(index, binding);

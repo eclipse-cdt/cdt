@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -36,10 +35,9 @@ public class CHQueries {
     
 	/**
 	 * Searches for functions and methods that call a given element.
-	 * @throws DOMException 
 	 */
-	public static CHNode[] findCalledBy(CHContentProvider cp, CHNode node, 
-			IIndex index, IProgressMonitor pm) throws CoreException, DOMException {
+	public static CHNode[] findCalledBy(CHContentProvider cp, CHNode node, IIndex index, IProgressMonitor pm) 
+			throws CoreException {
 		CalledByResult result= new CalledByResult();
 		ICElement callee= node.getRepresentedDeclaration();
 		if (! (callee instanceof ISourceReference)) {
@@ -51,7 +49,8 @@ public class CHQueries {
 		return cp.createNodes(node, result);
 	}
 
-	private static void findCalledBy(IIndex index, IBinding callee, ICProject project, CalledByResult result) throws CoreException, DOMException {
+	private static void findCalledBy(IIndex index, IBinding callee, ICProject project, CalledByResult result) 
+			throws CoreException {
 		if (callee != null) {
 			IIndexName[] names= index.findReferences(callee);
 			for (int i = 0; i < names.length; i++) {
@@ -69,9 +68,9 @@ public class CHQueries {
 
 	/**
 	 * Searches for all calls that are made within a given range.
-	 * @throws DOMException 
 	 */
-	public static CHNode[] findCalls(CHContentProvider cp, CHNode node, IIndex index, IProgressMonitor pm) throws CoreException, DOMException {
+	public static CHNode[] findCalls(CHContentProvider cp, CHNode node, IIndex index, IProgressMonitor pm) 
+			throws CoreException {
 		ICElement caller= node.getRepresentedDeclaration();
 		CallsToResult result= new CallsToResult();
 		IIndexName callerName= IndexUI.elementToName(index, caller);

@@ -346,6 +346,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		tv.setChecked(d, checked);
 		table.setSelection(n);
 		saveChecked();
+		updateButtons();
 	}
 	
 	private void saveChecked() {

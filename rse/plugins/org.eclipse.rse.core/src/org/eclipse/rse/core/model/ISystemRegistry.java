@@ -48,10 +48,12 @@ import org.eclipse.rse.internal.core.RSECoreRegistry;
  * To get it, call the {@link org.eclipse.rse.core.RSECorePlugin#getTheSystemRegistry()}.
  * <p>
  * The idea here is that connections are grouped by system profile. At any 
- *  time, there is a user-specified number of profiles "active" and connections
- *  from each active profile are worked with.
+ * time, there is a user-specified number of profiles "active" and connections
+ * from each active profile are worked with.
+ * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
+ * </p>
  */
 public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 

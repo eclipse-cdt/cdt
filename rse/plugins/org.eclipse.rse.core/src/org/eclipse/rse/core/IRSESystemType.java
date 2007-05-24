@@ -27,9 +27,11 @@ import org.osgi.framework.Bundle;
 /**
  * Interface for a system type. Constants are defined for various system types.
  * These constants are kept in sync with definitions in plugin.xml.
- * 
- * This interface is not intended to be implemented directly by clients.
- * Clients should extend the abstract base class {@link AbstractRSESystemType} instead.
+ * <p>
+ * This interface is not intended to be implemented by clients.  System type
+ * implementations must subclass {@link AbstractRSESystemType} rather than
+ * implementing this interface directly.
+ * </p>
  */
 public interface IRSESystemType extends IAdaptable {
 

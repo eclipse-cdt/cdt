@@ -29,8 +29,9 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Registry and control center for RSE UI related operations.
- * 
+ * <p>
  * This interface is not intended to be implemented by clients.
+ * </p>
  */
 public interface ISystemRegistryUI 
 	extends ISystemShellProvider, ISystemViewInputProvider {

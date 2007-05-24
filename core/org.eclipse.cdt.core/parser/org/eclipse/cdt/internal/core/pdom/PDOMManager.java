@@ -362,7 +362,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	public void setDefaultIndexerId(String indexerId) {
-		setIndexerId(null, indexerId);
+		IndexerPreferences.setDefaultIndexerId(indexerId);
 	}
 	
     public String getIndexerId(ICProject project) {

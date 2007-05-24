@@ -318,6 +318,10 @@ public class IndexerPreferences {
 		prefs.put(KEY_FILES_TO_PARSE_UP_FRONT, DEFAULT_FILES_TO_PARSE_UP_FRONT);
 	}
 
+	public static void setDefaultIndexerId(String defaultId) {
+		getDefaultPreferences().put(KEY_INDEXER_ID, defaultId);
+	}
+	
 	public static void addChangeListener(IProject prj, IPreferenceChangeListener pcl) {
 		Preferences node= getProjectPreferences(prj);
 		addListener(node, pcl);

@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -13,7 +14,7 @@
  * Contributors:
  * Michael Berger (IBM) - 146326 fixed erroneously disconnected dstore elements.
  * Michael Berger (IBM) - 145799 added refresh() method with depth parameter.
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
 

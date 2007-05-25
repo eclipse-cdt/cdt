@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -66,6 +67,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -819,7 +821,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			encodingGroup = SystemWidgetHelpers.createGroupComposite(composite_prompts, 2, SystemResources.RESID_HOST_ENCODING_GROUP_LABEL);
 			GridData data = new GridData();
 			data.horizontalSpan = 2;
-			data.horizontalAlignment = SWT.BEGINNING;
+			data.horizontalAlignment = SWT.FILL;
 			data.grabExcessHorizontalSpace = true;
 			data.verticalAlignment = SWT.BEGINNING;
 			data.grabExcessVerticalSpace = false;
@@ -832,7 +834,30 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 				}
 			};
 			
-			SystemWidgetHelpers.createLabel(encodingGroup, SystemResources.RESID_HOST_ENCODING_SETTING_MSG, 2);
+	        Composite messageComposite = new Composite(encodingGroup, SWT.NONE);
+	        GridLayout messageLayout = new GridLayout();
+	        messageLayout.numColumns = 2;
+	        messageLayout.marginWidth = 0;
+	        messageLayout.marginHeight = 0;
+	        messageComposite.setLayout(messageLayout);
+	        messageComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+			
+	        Label noteLabel = new Label(messageComposite, SWT.BOLD);
+	        noteLabel.setText(SystemResources.RESID_HOST_ENCODING_SETTING_NOTE);
+	        noteLabel.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
+	        data = new GridData();
+	        data.grabExcessHorizontalSpace = false;
+	        noteLabel.setLayoutData(data);
+			
+	        Label messageLabel = new Label(messageComposite, SWT.NULL);
+	        messageLabel.setText(SystemResources.RESID_HOST_ENCODING_SETTING_MSG);
+	        data = new GridData();
+	        data.horizontalAlignment = SWT.BEGINNING;
+	        data.grabExcessHorizontalSpace = true;
+	        data.horizontalIndent = 0;
+	        messageLabel.setLayoutData(data);
+	        
+			SystemWidgetHelpers.createLabel(encodingGroup, ""); //$NON-NLS-1$
 		
 			// remote encoding field
 			String defaultEncodingLabel = SystemResources.RESID_HOST_ENCODING_REMOTE_LABEL;
@@ -840,18 +865,27 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			remoteEncodingButton = SystemWidgetHelpers.createRadioButton(encodingGroup, null, defaultEncodingLabel, SystemResources.RESID_HOST_ENCODING_REMOTE_TOOLTIP);
 			data = new GridData();
 			data.horizontalSpan = 2;
+			data.grabExcessHorizontalSpace = true;
 			remoteEncodingButton.setLayoutData(data);
 			remoteEncodingButton.addSelectionListener(buttonSelectionListener);
 			
+	        Composite otherComposite = new Composite(encodingGroup, SWT.NONE);
+	        GridLayout otherLayout = new GridLayout();
+	        otherLayout.numColumns = 2;
+	        otherLayout.marginWidth = 0;
+	        otherLayout.marginHeight = 0;
+	        otherComposite.setLayout(otherLayout);
+	        otherComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+			
 			// other encoding field
-			otherEncodingButton = SystemWidgetHelpers.createRadioButton(encodingGroup, null, SystemResources.RESID_HOST_ENCODING_OTHER_LABEL, SystemResources.RESID_HOST_ENCODING_OTHER_TOOLTIP);
+			otherEncodingButton = SystemWidgetHelpers.createRadioButton(otherComposite, null, SystemResources.RESID_HOST_ENCODING_OTHER_LABEL, SystemResources.RESID_HOST_ENCODING_OTHER_TOOLTIP);
 			data = new GridData();
 			data.grabExcessHorizontalSpace = false;
 			otherEncodingButton.setLayoutData(data);
 			otherEncodingButton.addSelectionListener(buttonSelectionListener);
 
 			// other encoding combo
-			otherEncodingCombo = SystemWidgetHelpers.createCombo(encodingGroup, null, SystemResources.RESID_HOST_ENCODING_ENTER_TOOLTIP);
+			otherEncodingCombo = SystemWidgetHelpers.createCombo(otherComposite, null, SystemResources.RESID_HOST_ENCODING_ENTER_TOOLTIP);
 			data = new GridData();
 			data.horizontalAlignment = SWT.BEGINNING;
 			data.grabExcessHorizontalSpace = true;
@@ -869,6 +903,8 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 					validateEncoding();
 				}
 			});
+			
+			SystemWidgetHelpers.createLabel(encodingGroup, ""); //$NON-NLS-1$
 
 			SystemWidgetHelpers.createLabel(composite_prompts, "", 2); //$NON-NLS-1$
 		}

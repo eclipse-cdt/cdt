@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFileEntryParser;
 import org.apache.commons.net.ftp.parser.ParserInitializationException;
+import org.apache.commons.net.ftp.parser.UnixFTPEntryParser;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
@@ -32,6 +33,7 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 	private Hashtable ftpConfigProxyById = new Hashtable();
 	private Hashtable ftpParsers = new Hashtable();
 	private IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.subsystems.files.ftp","ftpListingParsers"); //$NON-NLS-1$ //$NON-NLS-2$
+	private UnixFTPEntryParser defaultFTPEntryParser = new UnixFTPEntryParser();
 	
 	/**
 	 * Constructor of the parser factory
@@ -209,29 +211,18 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 	 */
 	public FTPFileEntryParser createFileEntryParser(String key)	throws ParserInitializationException {
 		
-		//
-		// the hashtable "ftpFileEntryParser" will be populated previously by getFTPClientConfig()
-		// but in case the execution flow gets modified it's worth checking and populating it if required
-		//
+		FTPFileEntryParser entryParser = null;
+		
 		if(!ftpParsers.containsKey(key))
 		{
-			FTPClientConfigProxy proxy = (FTPClientConfigProxy)ftpConfigProxyById.get(key);
-			
-			FTPFileEntryParser entryParser = null;
-			try {
-				entryParser = (FTPFileEntryParser)proxy.getDeclaringBundle().loadClass(proxy.getClassName()).newInstance();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			ftpParsers.put(proxy.getClassName(), entryParser);
+			entryParser = defaultFTPEntryParser;
+		}
+		else
+		{
+			entryParser = (FTPFileEntryParser)ftpParsers.get(key); 
 		}
 		
-		
-		return (FTPFileEntryParser)ftpParsers.get(key);
+		return entryParser;
 	}
 
 	/*

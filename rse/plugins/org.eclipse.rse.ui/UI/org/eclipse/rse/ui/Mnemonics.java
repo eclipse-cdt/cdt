@@ -145,6 +145,7 @@ public class Mnemonics {
 	 * @param usedMnemonics
 	 */
 	public void clear(String usedMnemonics) {
+		clear();
 		makeUsed(usedMnemonics);
 	}
 

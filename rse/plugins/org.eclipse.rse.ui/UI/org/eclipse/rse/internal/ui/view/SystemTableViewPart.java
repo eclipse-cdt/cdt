@@ -680,7 +680,7 @@ public class SystemTableViewPart extends ViewPart
 						{
 							try
 							{
-								subsystem.connect();
+								subsystem.connect(monitor, false);
 							}
 							catch (Exception e)
 							{

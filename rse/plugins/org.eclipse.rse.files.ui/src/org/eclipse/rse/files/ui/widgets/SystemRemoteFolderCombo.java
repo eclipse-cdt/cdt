@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -71,7 +72,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	private SystemHistoryCombo folderCombo = null;
 	private Button             browseButton = null;	
 	//private RemoteFileSubSystem subsystem = null;
-	//private RemoteFileSubSystemConfiguration subsystemFactory = null;
+	//private RemoteFileSubSystemConfiguration subsystemConfiguration = null;
 	private IRSESystemType[]   systemTypes = null;	
 	private IHost   connection = null;
 	private boolean            showNewConnectionPrompt = true;
@@ -545,7 +546,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	}
 	/**
 	 * Returns action to be called when Browse... pressed.
-	 * Either connection or subsystemFactoryId better be set!
+	 * Either connection or subsystemConfigurationId better be set!
 	 */
 	protected SystemSelectRemoteFolderAction getBrowseAction(Shell shell)
 	{		

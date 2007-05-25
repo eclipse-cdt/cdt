@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -84,23 +85,23 @@ public class SystemRemoteObjectMatcher
     private boolean genericSubSystemEnd = false;
     
     /**
-     * Historical constructor that doesn't support "subsystemFactoryCategory" or "systemTypes".
+     * Historical constructor that doesn't support "subsystemConfigurationCategory" or "systemTypes".
      */
-    public SystemRemoteObjectMatcher(String subsystemFactoryId, String categoryFilter,
+    public SystemRemoteObjectMatcher(String subsystemConfigurationId, String categoryFilter,
                                      String nameFilter, String typeFilter,
                                      String subtypeFilter, String subsubtypeFilter)
     {
-    	this(subsystemFactoryId, null, categoryFilter, null, nameFilter, typeFilter, subtypeFilter, subsubtypeFilter);
+    	this(subsystemConfigurationId, null, categoryFilter, null, nameFilter, typeFilter, subtypeFilter, subsubtypeFilter);
     }
     /**
-     * Constructor that supports "subsystemFactoryCategory" and "systemTypes".
+     * Constructor that supports "subsystemConfigurationCategory" and "systemTypes".
      */
-    public SystemRemoteObjectMatcher(String subsystemFactoryId, String subsystemFactoryCategoryFilter, String categoryFilter,
+    public SystemRemoteObjectMatcher(String subsystemConfigurationId, String subsystemConfigurationCategoryFilter, String categoryFilter,
                                      String systemTypes, String nameFilter, String typeFilter,
                                      String subtypeFilter, String subsubtypeFilter)
     {
-    	this.subsystemCategoryFilter = subsystemFactoryCategoryFilter;
-    	this.subsystemfilter = subsystemFactoryId;
+    	this.subsystemCategoryFilter = subsystemConfigurationCategoryFilter;
+    	this.subsystemfilter = subsystemConfigurationId;
     	this.systypesfilter = systemTypes;
         this.categoryfilter = categoryFilter;
     	this.namefilter = nameFilter;

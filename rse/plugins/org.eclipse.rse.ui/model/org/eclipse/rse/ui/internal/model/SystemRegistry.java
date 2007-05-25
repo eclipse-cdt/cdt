@@ -29,6 +29,7 @@
  * Martin Oberhuber (Wind River) - [186773] split SystemRegistryUI from SystemRegistry implementation
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -113,7 +114,7 @@ public class SystemRegistry implements ISystemRegistry
 	private int modelListenerCount = 0;
 	private int remoteListCount = 0;
 
-	private ISubSystemConfigurationProxy[] subsystemFactoryProxies = null;
+	private ISubSystemConfigurationProxy[] subsystemConfigurationProxies = null;
 	private boolean errorLoadingFactory = false;
 
 	/**
@@ -200,14 +201,14 @@ public class SystemRegistry implements ISystemRegistry
 		return true; // much faster and safer
 		/*
 		boolean hasSubsystems = false;
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-		  for (int idx = 0; (!hasSubsystems) && (idx < subsystemFactoryProxies.length); idx++)
+		  for (int idx = 0; (!hasSubsystems) && (idx < subsystemConfigurationProxies.length); idx++)
 		  {
-		  	 if (subsystemFactoryProxies[idx].appliesToSystemType(selectedConnection.getSystemType().getName()) &&
-		  	     subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
+		  	 if (subsystemConfigurationProxies[idx].appliesToSystemType(selectedConnection.getSystemType().getName()) &&
+		  	     subsystemConfigurationProxies[idx].isSubSystemConfigurationActive())
 		  	 {
-		  	   SubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+		  	   SubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 		  	   if (factory != null)          	   
 		  	   {
 		         SubSystem[] sss = factory.getSubSystems(selectedConnection, SubSystemConfiguration.LAZILY);               
@@ -247,7 +248,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void setSubSystemConfigurationProxies(ISubSystemConfigurationProxy[] proxies)
 	{
-		subsystemFactoryProxies = proxies;
+		subsystemConfigurationProxies = proxies;
 		//for (int idx=0; idx<proxies.length; idx++)
 		// proxies[idx].setLogFile(logFile);
 	}
@@ -256,7 +257,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxies()
 	{
-		return subsystemFactoryProxies;
+		return subsystemConfigurationProxies;
 	}
 
 	/**
@@ -266,11 +267,11 @@ public class SystemRegistry implements ISystemRegistry
 	public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxiesByCategory(String factoryCategory)
 	{
 		Vector v = new Vector();
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
-				if (subsystemFactoryProxies[idx].getCategory().equals(factoryCategory))
-					v.addElement(subsystemFactoryProxies[idx]);
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
+				if (subsystemConfigurationProxies[idx].getCategory().equals(factoryCategory))
+					v.addElement(subsystemConfigurationProxies[idx]);
 		}
 		ISubSystemConfigurationProxy[] proxies = new ISubSystemConfigurationProxy[v.size()];
 		for (int idx = 0; idx < v.size(); idx++)
@@ -317,13 +318,13 @@ public class SystemRegistry implements ISystemRegistry
 	public ISubSystemConfiguration[] getSubSystemConfigurationsByCategory(String factoryCategory)
 	{
 		Vector v = new Vector();
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].getCategory().equals(factoryCategory))
+				if (subsystemConfigurationProxies[idx].getCategory().equals(factoryCategory))
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 						v.addElement(factory);
 				}
@@ -347,11 +348,11 @@ public class SystemRegistry implements ISystemRegistry
 		List serviceTypesAdded = new ArrayList();
 		List serviceImplsAdded = new ArrayList();
 		Vector v = new Vector();
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				ISubSystemConfigurationProxy ssfProxy = subsystemFactoryProxies[idx];
+				ISubSystemConfigurationProxy ssfProxy = subsystemConfigurationProxies[idx];
 				if (ssfProxy.appliesToSystemType(systemType))
 				{
 					ISubSystemConfiguration ssFactory = ssfProxy.getSubSystemConfiguration();
@@ -440,13 +441,13 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void setShowFilterPools(boolean show)
 	{
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
+				if (subsystemConfigurationProxies[idx].isSubSystemConfigurationActive())
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 					if ((factory != null) && factory.supportsFilters())
 						factory.setShowFilterPools(show);
 				}
@@ -458,13 +459,13 @@ public class SystemRegistry implements ISystemRegistry
 	 *
 	public void setShowFilterStrings(boolean show)
 	{
-	    if (subsystemFactoryProxies != null)
+	    if (subsystemConfigurationProxies != null)
 	    {
-	      for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+	      for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 	      {
-	      	 if (subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
+	      	 if (subsystemConfigurationProxies[idx].isSubSystemConfigurationActive())
 	      	 {
-	      	   SubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+	      	   SubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 	      	   if ((factory!=null)&&factory.supportsFilters())
 	      	     factory.setShowFilterStrings(show);
 	      	 }
@@ -748,9 +749,9 @@ public class SystemRegistry implements ISystemRegistry
 				if (newConns != null)
 					for (int idx = 0; idx < newConns.length; idx++)
 						deleteHost(newConns[idx]);
-				for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+				for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 						factory.deletingSystemProfile(newProfile);
 				}
@@ -798,11 +799,11 @@ public class SystemRegistry implements ISystemRegistry
 			deleteHost(connections[idx]);
 		}
 		// step 2: bring to life every factory and ask it to delete all filter pools for this profile
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+				ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 				if (factory != null)
 					factory.deletingSystemProfile(profile);
 			}
@@ -827,13 +828,13 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		// Test if there are any filter pools in this profile that are referenced by another active profile...    	
 		Vector activeReferenceVector = new Vector();
-		if (!makeActive && (subsystemFactoryProxies != null))
+		if (!makeActive && (subsystemConfigurationProxies != null))
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				//if (subsystemFactoryProxies[idx].isSubSystemConfigurationActive()) // don't bother if not yet alive
+				//if (subsystemConfigurationProxies[idx].isSubSystemConfigurationActive()) // don't bother if not yet alive
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
 						ISubSystem[] activeReferences = factory.testForActiveReferences(profile);
@@ -873,13 +874,13 @@ public class SystemRegistry implements ISystemRegistry
 		// To be safe, we tell each subsystem factory about the change in status. 
 		// At a minimum, each factory may have to load the subsystems for connections that
 		//  are suddenly active.
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].isSubSystemConfigurationActive()) // don't bother if not yet alive
+				if (subsystemConfigurationProxies[idx].isSubSystemConfigurationActive()) // don't bother if not yet alive
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 						factory.changingSystemProfileActiveStatus(profile, makeActive);
 				}
@@ -974,13 +975,13 @@ public class SystemRegistry implements ISystemRegistry
 		ISubSystem[] subsystems = null;
 		Vector v = new Vector();
 
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				// if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()))
+				// if (subsystemConfigurationProxies[idx].appliesToSystemType(conn.getSystemType()))
 				// {
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
 						ISubSystem[] sss = factory.getSubSystems(conn, force);
@@ -1002,7 +1003,7 @@ public class SystemRegistry implements ISystemRegistry
 
 	/**
 	 * Resolve a subsystem from it's absolute name.  The absolute name of a subsystem
-	 * is denoted by <I>profileName</I>.<I>connectionName</I>:<I>subsystemFactoryId</I>
+	 * is denoted by <I>profileName</I>.<I>connectionName</I>:<I>subsystemConfigurationId</I>
 	 * 
 	 * @param absoluteSubSystemName the name of the subsystem
 	 * 
@@ -1019,30 +1020,41 @@ public class SystemRegistry implements ISystemRegistry
 			String srcProfileName = absoluteSubSystemName.substring(0, profileDelim);
 			String srcConnectionName = absoluteSubSystemName.substring(profileDelim + 1, connectionDelim);
 			String srcSubSystemConfigurationId = absoluteSubSystemName.substring(connectionDelim + 1, absoluteSubSystemName.length());
-
-			return getSubSystem(srcProfileName, srcConnectionName, srcSubSystemConfigurationId);
+			
+			ISystemProfile profile = getSystemProfile(srcProfileName);
+			return getSubSystem(profile, srcConnectionName, srcSubSystemConfigurationId);
 		}
 
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystem(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public ISubSystem getSubSystem(String srcProfileName, String srcConnectionName, String subsystemConfigurationId)
+	{
+		ISystemProfile profile = getSystemProfile(srcProfileName);
+		return getSubSystem(profile, srcConnectionName, subsystemConfigurationId);
+	}
+
 	/**
 	 * Resolve a subsystem from it's profile, connection and subsystem name.
 	 * 
-	 * @param srcProfileName the name of the profile
+	 * @param profile the profile to search
 	 * @param srcConnectionName the name of the connection
-	 * @param subsystemFactoryId the factory Id of the subsystem
+	 * @param subsystemConfigurationId the factory Id of the subsystem
 	 * 
 	 * @return the subsystem
 	 */
-	public ISubSystem getSubSystem(String srcProfileName, String srcConnectionName, String subsystemFactoryId)
+	public ISubSystem getSubSystem(ISystemProfile profile, String srcConnectionName, String subsystemConfigurationId)
 	{
 		// find the src connection    	    	
-		IHost[] connections = registry.getHostsByProfile(srcProfileName);
+		IHost[] connections = getHostsByProfile(profile);
 		if (connections == null)
 		{
 			// if the profile can't be found, get all connections
-			connections = registry.getHosts();
+			connections = getHosts();
 		}
 
 		for (int i = 0; i < connections.length; i++)
@@ -1057,7 +1069,7 @@ public class SystemRegistry implements ISystemRegistry
 				{
 					ISubSystem subsystem = subsystems[s];
 					String compareId = subsystem.getConfigurationId();
-					if (compareId.equals(subsystemFactoryId))
+					if (compareId.equals(subsystemConfigurationId))
 					{
 						return subsystem;
 					}
@@ -1065,7 +1077,7 @@ public class SystemRegistry implements ISystemRegistry
 					{
 						// for migration purposes, test the against the name
 						// we used to use the subsystem name instead of the factory Id
-						if (subsystem.getName().equals(subsystemFactoryId))
+						if (subsystem.getName().equals(subsystemConfigurationId))
 						{
 							return subsystem;
 						}
@@ -1130,13 +1142,13 @@ public class SystemRegistry implements ISystemRegistry
 		ISubSystem[] subsystems = null;
 		Vector v = new Vector();
 
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()) && subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
+				if (subsystemConfigurationProxies[idx].appliesToSystemType(conn.getSystemType()) && subsystemConfigurationProxies[idx].isSubSystemConfigurationActive())
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
 						ISubSystem[] sss = factory.getSubSystems(conn, ISubSystemConfiguration.LAZILY);
@@ -1209,12 +1221,12 @@ public class SystemRegistry implements ISystemRegistry
 	 * Get a list of subsystem objects for given connection, owned by the subsystem factory 
 	 * identified by its given plugin.xml-described id. Array will never be null but may be length zero.
 	 */
-	public ISubSystem[] getSubSystems(String factoryId, IHost connection)
+	public ISubSystem[] getSubSystems(String configId, IHost connection)
 	{
-		ISubSystemConfiguration factory = getSubSystemConfiguration(factoryId);
-		if (factory == null)
+		ISubSystemConfiguration config = getSubSystemConfiguration(configId);
+		if (config == null)
 			return (new ISubSystem[0]);
-		return factory.getSubSystems(connection, ISubSystemConfiguration.FORCE_INTO_MEMORY);
+		return config.getSubSystems(connection, ISubSystemConfiguration.FORCE_INTO_MEMORY);
 	}
 	/**
 	 * Get a list of subsystem objects for given connection, owned by a subsystem factory 
@@ -1488,13 +1500,13 @@ public class SystemRegistry implements ISystemRegistry
 	public IHost[] getHostsBySubSystemConfigurationCategory(String factoryCategory)
 	{
 		Vector v = new Vector();
-		if (subsystemFactoryProxies != null)
+		if (subsystemConfigurationProxies != null)
 		{
-			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].getCategory().equals(factoryCategory))
+				if (subsystemConfigurationProxies[idx].getCategory().equals(factoryCategory))
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
+					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
 						ISubSystem[] subsystems = factory.getSubSystems(true); // true ==> force full restore
@@ -1654,7 +1666,14 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public Vector getHostAliasNames(ISystemProfile profile)
 	{
-		return getHostAliasNames(profile.getName());
+		ISystemHostPool pool = getHostPool(profile);
+		Vector names = new Vector();
+		IHost[] conns = pool.getHosts();
+		for (int idx = 0; idx < conns.length; idx++)
+		{
+			names.addElement(conns[idx].getAliasName());
+		}
+		return names;
 	}
 	
 	/*
@@ -1667,7 +1686,7 @@ public class SystemRegistry implements ISystemRegistry
 		Vector allNames = new Vector();
 		for (int idx = 0; idx < allPools.length; idx++)
 		{
-			Vector v = getHostAliasNames(getSystemProfileName(allPools[idx]));
+			Vector v = getHostAliasNames(getSystemProfile(allPools[idx]));
 			for (int jdx = 0; jdx < v.size(); jdx++)
 				allNames.addElement(v.elementAt(jdx));
 		}

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -234,10 +235,12 @@ public class RSEDOMImporter {
 					((IServiceSubSystem) subSystem).switchServiceFactory(serviceFactory);
 				}
 			} else {
-				ISubSystem[] existingSubSystems = _registry.getSubSystems(type, host);
-
-				if (existingSubSystems != null && existingSubSystems.length > 0) {
-					subSystem = existingSubSystems[0];
+				ISubSystemConfiguration config = _registry.getSubSystemConfiguration(type);
+				if (config!=null) {
+					ISubSystem[] existingSubSystems = config.getSubSystems(host, true);
+					if (existingSubSystems != null && existingSubSystems.length > 0) {
+						subSystem = existingSubSystems[0];
+					}
 				}
 			}
 			

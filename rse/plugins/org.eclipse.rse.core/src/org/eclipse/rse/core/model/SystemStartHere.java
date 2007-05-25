@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -108,12 +109,17 @@ public class SystemStartHere
     * <p>
     * SAME AS: <code>getSystemRegistry().getSubSystems(subsystemConfigurationId)</code>
     * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfigurations extension point
-    * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(String)
-    * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
+    * @see ISystemRegistry#getSubSystemConfiguration(String)
+    * @see ISubSystemConfiguration#getSubSystems(boolean)
+    * @see ISubSystemConfiguration#getId()
     */
    public static ISubSystem[] getSubSystems(String subsystemConfigurationId)
    {
-   	   return getSystemRegistry().getSubSystems(subsystemConfigurationId);
+	   ISystemRegistry sr = getSystemRegistry();
+	   ISubSystemConfiguration config = sr.getSubSystemConfiguration(subsystemConfigurationId);
+	   if (config == null)
+			return (new ISubSystem[0]);
+   	   return config.getSubSystems(true);
    }
    /**
     * STEP 3b. Get all subsystems for the given connection for your subsystem configuration, identified by subsystemConfigurationId.
@@ -121,12 +127,16 @@ public class SystemStartHere
     * SAME AS: <code>getSystemRegistry().getSubSystems(subsystemConfigurationId, connection)</code>
     * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfigurations extension point
     * @param connection The connection object you wish to get the subsystems for. Typically there is only one subsystem per object.
-    * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(String, IHost)
-    * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
+    * @see ISystemRegistry#getSubSystemConfiguration(String)
+    * @see ISubSystemConfiguration#getSubSystems(IHost, boolean)
     */
    public static ISubSystem[] getSubSystems(String subsystemConfigurationId, IHost connection)
    {
-   	   return getSystemRegistry().getSubSystems(subsystemConfigurationId, connection);
+	   ISystemRegistry sr = getSystemRegistry();
+	   ISubSystemConfiguration config = sr.getSubSystemConfiguration(subsystemConfigurationId);
+	   if (config == null)
+			return (new ISubSystem[0]);
+	   return config.getSubSystems(connection, true);
    }
    /**
     * STEP 3c. Same as {@link #getSubSystems(String,IHost)} by used when you know
@@ -138,7 +148,7 @@ public class SystemStartHere
     */
    public static ISubSystem getSubSystem(String subsystemConfigurationId, IHost connection)
    {
-   	   ISubSystem[] subsystems = getSystemRegistry().getSubSystems(subsystemConfigurationId, connection);
+   	   ISubSystem[] subsystems = getSubSystems(subsystemConfigurationId, connection);
    	   if ((subsystems == null) || (subsystems.length==0))
    	     return null;
    	   else

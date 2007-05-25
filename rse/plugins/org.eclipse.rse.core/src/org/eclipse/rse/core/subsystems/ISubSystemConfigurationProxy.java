@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 168870: move core function from UI to core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -104,7 +105,7 @@ public interface ISubSystemConfigurationProxy {
 
 	//	/**
 	//	 * Return an instance of the IConnectorService class identified by the "systemClass" attribute
-	//	 * of this subsystemFactory extension point. Note each call to this method returns a
+	//	 * of this subsystemConfigurations extension point. Note each call to this method returns a
 	//	 * new instance of the class, or null if no "systemClass" attribute was specified. 
 	//	 */
 	//	public IConnectorService getSystemObject();

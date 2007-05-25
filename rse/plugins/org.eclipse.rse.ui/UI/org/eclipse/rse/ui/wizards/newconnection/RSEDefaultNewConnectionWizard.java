@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -58,7 +59,7 @@ import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizard {
 
 	private RSEDefaultNewConnectionWizardMainPage mainPage;
-	private ISystemNewConnectionWizardPage[] subsystemFactorySuppliedWizardPages;
+	private ISystemNewConnectionWizardPage[] subsystemConfigurationSuppliedWizardPages;
 	private Map ssfWizardPagesPerSystemType = new Hashtable();
 	private String defaultUserId;
 	private String defaultConnectionName;
@@ -89,7 +90,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		super.dispose();
 		
 		mainPage = null;
-		subsystemFactorySuppliedWizardPages = null;
+		subsystemConfigurationSuppliedWizardPages = null;
 		ssfWizardPagesPerSystemType.clear();
 		defaultUserId = null;
 		defaultHostName = null;
@@ -109,7 +110,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			IRSESystemType systemType = getSystemType();
 			mainPage.setTitle(getPageTitle());
 			mainPage.setSystemType(systemType);
-			subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType);
+			subsystemConfigurationSuppliedWizardPages = getAdditionalWizardPages(systemType);
 		}
 	}
 	
@@ -153,7 +154,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			mainPage = new RSEDefaultNewConnectionWizardMainPage(this, getPageTitle(), SystemResources.RESID_NEWCONN_PAGE1_DESCRIPTION);
 			mainPage.setTitle(getPageTitle());
 			mainPage.setSystemType(systemType);
-			subsystemFactorySuppliedWizardPages = systemType != null ? getAdditionalWizardPages(systemType) : null;
+			subsystemConfigurationSuppliedWizardPages = systemType != null ? getAdditionalWizardPages(systemType) : null;
 		}
 
 		return mainPage;
@@ -293,10 +294,10 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		if (!ok)
 			setPageError(mainPage);
 		else if (ok && hasAdditionalPages()) {
-			for (int idx = 0; ok && (idx < subsystemFactorySuppliedWizardPages.length); idx++) {
-				ok = subsystemFactorySuppliedWizardPages[idx].performFinish();
+			for (int idx = 0; ok && (idx < subsystemConfigurationSuppliedWizardPages.length); idx++) {
+				ok = subsystemConfigurationSuppliedWizardPages[idx].performFinish();
 				if (!ok)
-					setPageError((IWizardPage)subsystemFactorySuppliedWizardPages[idx]);
+					setPageError((IWizardPage)subsystemConfigurationSuppliedWizardPages[idx]);
 			}
 		}
 		if (ok) {
@@ -330,7 +331,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 					SystemConnectionForm form = mainPage.getSystemConnectionForm();
 					IHost conn = sr.createHost(form.getProfileName(), systemType, form.getConnectionName(), form.getHostName(),
 																			form.getConnectionDescription(), form.getDefaultUserId(), form.getUserIdLocation(),
-																			subsystemFactorySuppliedWizardPages);
+																			subsystemConfigurationSuppliedWizardPages);
 
 					setBusyCursor(false);
 					cursorSet = false;
@@ -376,8 +377,8 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	private ISystemNewConnectionWizardPage[] getAdditionalWizardPages(IRSESystemType systemType) {
 		assert systemType != null;
 		// this query is expensive, so only do it once...
-		subsystemFactorySuppliedWizardPages = (ISystemNewConnectionWizardPage[])ssfWizardPagesPerSystemType.get(systemType);
-		if (subsystemFactorySuppliedWizardPages == null) {
+		subsystemConfigurationSuppliedWizardPages = (ISystemNewConnectionWizardPage[])ssfWizardPagesPerSystemType.get(systemType);
+		if (subsystemConfigurationSuppliedWizardPages == null) {
 			// query all affected subsystems for their list of additional wizard pages...
 			Vector additionalPages = new Vector();
 			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
@@ -393,12 +394,12 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 					}
 				}
 			}
-			subsystemFactorySuppliedWizardPages = new ISystemNewConnectionWizardPage[additionalPages.size()];
-			for (int idx = 0; idx < subsystemFactorySuppliedWizardPages.length; idx++)
-				subsystemFactorySuppliedWizardPages[idx] = (ISystemNewConnectionWizardPage)additionalPages.elementAt(idx);
-			ssfWizardPagesPerSystemType.put(systemType, subsystemFactorySuppliedWizardPages);
+			subsystemConfigurationSuppliedWizardPages = new ISystemNewConnectionWizardPage[additionalPages.size()];
+			for (int idx = 0; idx < subsystemConfigurationSuppliedWizardPages.length; idx++)
+				subsystemConfigurationSuppliedWizardPages[idx] = (ISystemNewConnectionWizardPage)additionalPages.elementAt(idx);
+			ssfWizardPagesPerSystemType.put(systemType, subsystemConfigurationSuppliedWizardPages);
 		}
-		return subsystemFactorySuppliedWizardPages;
+		return subsystemConfigurationSuppliedWizardPages;
 	}
 
 	/**
@@ -406,20 +407,20 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 *  on the main page
 	 */
 	protected boolean hasAdditionalPages() {
-		return (subsystemFactorySuppliedWizardPages != null) && (subsystemFactorySuppliedWizardPages.length > 0);
+		return (subsystemConfigurationSuppliedWizardPages != null) && (subsystemConfigurationSuppliedWizardPages.length > 0);
 	}
 
 	/**
 	 * Return the first additional page to show when user presses Next on the main page
 	 */
 	protected ISystemNewConnectionWizardPage getFirstAdditionalPage() {
-		if ((subsystemFactorySuppliedWizardPages != null) && (subsystemFactorySuppliedWizardPages.length > 0)) {
+		if ((subsystemConfigurationSuppliedWizardPages != null) && (subsystemConfigurationSuppliedWizardPages.length > 0)) {
 			IWizardPage previousPage = mainPage;
-			for (int idx = 0; idx < subsystemFactorySuppliedWizardPages.length; idx++) {
-				((IWizardPage)subsystemFactorySuppliedWizardPages[idx]).setPreviousPage(previousPage);
-				previousPage = (IWizardPage)subsystemFactorySuppliedWizardPages[idx];
+			for (int idx = 0; idx < subsystemConfigurationSuppliedWizardPages.length; idx++) {
+				((IWizardPage)subsystemConfigurationSuppliedWizardPages[idx]).setPreviousPage(previousPage);
+				previousPage = (IWizardPage)subsystemConfigurationSuppliedWizardPages[idx];
 			}
-			return subsystemFactorySuppliedWizardPages[0];
+			return subsystemConfigurationSuppliedWizardPages[0];
 		} else
 			return null;
 	}
@@ -437,10 +438,10 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			return null;
 		else {
 			int index = getAdditionalPageIndex(page);
-			if ((index == (subsystemFactorySuppliedWizardPages.length - 1)))
+			if ((index == (subsystemConfigurationSuppliedWizardPages.length - 1)))
 				// last page or page not found
 				return null;
-			return (IWizardPage)subsystemFactorySuppliedWizardPages[index + 1];
+			return (IWizardPage)subsystemConfigurationSuppliedWizardPages[index + 1];
 		}
 	}
 
@@ -452,8 +453,8 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	}
 
 	private int getAdditionalPageIndex(IWizardPage page) {
-		for (int idx = 0; idx < subsystemFactorySuppliedWizardPages.length; idx++) {
-			if (page == subsystemFactorySuppliedWizardPages[idx])
+		for (int idx = 0; idx < subsystemConfigurationSuppliedWizardPages.length; idx++) {
+			if (page == subsystemConfigurationSuppliedWizardPages[idx])
 				return idx;
 		}
 		return -1;
@@ -466,8 +467,8 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		boolean ok = mainPage.isPageComplete();
 
 		if (ok && hasAdditionalPages()) {
-			for (int idx = 0; ok && (idx < subsystemFactorySuppliedWizardPages.length); idx++)
-				ok = subsystemFactorySuppliedWizardPages[idx].isPageComplete();
+			for (int idx = 0; ok && (idx < subsystemConfigurationSuppliedWizardPages.length); idx++)
+				ok = subsystemConfigurationSuppliedWizardPages[idx].isPageComplete();
 		}
 		return ok;
 	}

@@ -12,11 +12,15 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
+import java.util.Vector;
+
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -62,7 +66,12 @@ public class SystemNewProfileWizardMainPage
 		super(wizard, "NewProfile",  //$NON-NLS-1$
 		      SystemResources.RESID_NEWPROFILE_PAGE1_TITLE, 
 		      SystemResources.RESID_NEWPROFILE_PAGE1_DESCRIPTION);
-		nameValidator = new ValidatorProfileName(RSECorePlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());
+		ISystemProfile[] profiles = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().getSystemProfiles();
+		Vector profileNames = new Vector(profiles.length);
+		for (int i=0; i<profiles.length; i++) {
+			profileNames.add(profiles[i].getName());
+		}
+		nameValidator = new ValidatorProfileName(profileNames);
 		setHelp(HELPID_PREFIX+"0000");	 //$NON-NLS-1$
 	}
 

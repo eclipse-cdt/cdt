@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -206,14 +207,14 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 * @param style SWT style flags for overall composite widget. Typically just pass SWT.NULL
 	 * @param defaultConnection the system connection to preselect. Pass null to preselect first connection.
 	 * @param showNewButton true if a New... button is to be included in this composite
-	 * @param ssFactoryCategory Only connections with subsystems owned by factories of this category are returned.
+	 * @param ssConfigCategory Only connections with subsystems owned by factories of this category are returned.
 	 * @param showLabel true if a 'Connection' label is to be included in this composite
 	 */
-	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, boolean showNewButton, String ssFactoryCategory, boolean showLabel) {
+	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, boolean showNewButton, String ssConfigCategory, boolean showLabel) {
 		super(parent, style);
 		if (showNewButton) // this is expensive, so only need to do this if New is enabled
 		{
-			ISubSystemConfigurationProxy[] ssfProxies = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationProxiesByCategory(ssFactoryCategory);
+			ISubSystemConfigurationProxy[] ssfProxies = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationProxiesByCategory(ssConfigCategory);
 			Vector vTypes = new Vector();
 			for (int idx = 0; idx < ssfProxies.length; idx++) {
 				// Do not call ISubSystemConfigurationProxy.getSystemTypes() directly. If
@@ -229,8 +230,8 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 			restrictSystemTypesTo = (IRSESystemType[])vTypes.toArray(new IRSESystemType[vTypes.size()]);
 		}
 		init(parent, showNewButton, showLabel);
-		populateSSFactoryCategory = ssFactoryCategory;
-		populateConnectionCombo(connectionCombo, defaultConnection, ssFactoryCategory);
+		populateSSFactoryCategory = ssConfigCategory;
+		populateConnectionCombo(connectionCombo, defaultConnection, ssConfigCategory);
 		setConnectionToolTipText();
 		addOurConnectionSelectionListener();
 	}
@@ -617,7 +618,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 		return composite;
 	}
 	/**
-	 * Creates a new readonly connection combobox instance and sets the default
+	 * Creates a new read-only connection combobox instance and sets the default
 	 * layout data, with tooltip text.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * <p>
@@ -657,7 +658,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	}
 
 	/**
-	 * Populates a readonly connection combobox instance with system connections for the given
+	 * Populates a read-only connection combobox instance with system connections for the given
 	 * system type.
 	 * <p>
 	 * This fills the combination with the names of all the active connections of the given
@@ -675,7 +676,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	}
 	
 	/**
-	 * Populates a readonly connection combobox instance with system connections for the given
+	 * Populates a read-only connection combobox instance with system connections for the given
 	 * system type.
 	 * <p>
 	 * This fills the combination with the names of all the active connections of the given
@@ -746,7 +747,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
         return matchFound;
 	}	
 	/**
-	 * Populates a readonly connection combobox instance with system connections for the given
+	 * Populates a read-only connection combobox instance with system connections for the given
 	 * array of system types.
 	 * @param combo composite to populate
 	 * @param systemTypes the system types to restrict the connection list to. Pass null or * for all system types
@@ -767,46 +768,48 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
            select(0);
 	}	
 	/**
-	 * Populates a readonly connection combobox instance with system connections which have subsystems
+	 * Populates a read-only connection combobox instance with system connections which have subsystems
 	 * owned by the given subsystem factory.
 	 * <p>
 	 * @param combo composite to populate
-	 * @param ssFactory the subsystem factory to restrict the connection list to.
+	 * @param ssConfig the subsystem factory to restrict the connection list to.
 	 * @param defaultConnection the default system connection to preselect.
 	 * @return true if given default connection was found and selected
 	 */
-	protected boolean populateConnectionCombo(Combo combo, ISubSystemConfiguration ssFactory, IHost defaultConnection)
+	protected boolean populateConnectionCombo(Combo combo, ISubSystemConfiguration ssConfig, IHost defaultConnection)
 	{
-		connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfiguration(ssFactory);
+		connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfiguration(ssConfig);
         return addConnections(combo, connections, defaultConnection);
 	}	
 	/**
-	 * Populates a readonly connection combobox instance with system connections which have subsystems
+	 * Populates a read-only connection combobox instance with system connections which have subsystems
 	 * owned by a subsystem factory of the given subsystem factory id.
 	 * <p>
 	 * @param combo composite to populate
 	 * @param defaultConnection the default system connection to preselect.
-	 * @param ssFactoryId the subsystem factory id to restrict the connection list by.
+	 * @param ssConfigId the subsystem factory id to restrict the connection list by.
 	 * @return true if given default connection was found and selected
 	 */
-	protected boolean populateConnectionCombo(Combo combo, String ssFactoryId, IHost defaultConnection)
+	protected boolean populateConnectionCombo(Combo combo, String ssConfigId, IHost defaultConnection)
 	{
-		connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationId(ssFactoryId);
+		org.eclipse.rse.core.model.ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		ISubSystemConfiguration config = sr.getSubSystemConfiguration(ssConfigId);
+		connections = sr.getHostsBySubSystemConfiguration(config);
         return addConnections(combo, connections, defaultConnection);
 	}
 
 	/**
-	 * Populates a readonly connection combobox instance with system connections which have subsystems
+	 * Populates a read-only connection combobox instance with system connections which have subsystems
 	 * owned by a subsystem factory of the given subsystem factory category.
 	 * <p>
 	 * @param combo composite to populate
 	 * @param defaultConnection the default system connection to preselect.
-	 * @param ssFactoryCategory the subsystem factory category to restrict the connection list by.
+	 * @param ssConfigCategory the subsystem factory category to restrict the connection list by.
 	 * @return true if given default connection was found and selected
 	 */
-	protected boolean populateConnectionCombo(Combo combo, IHost defaultConnection, String ssFactoryCategory)
+	protected boolean populateConnectionCombo(Combo combo, IHost defaultConnection, String ssConfigCategory)
 	{
-		connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory(ssFactoryCategory);
+		connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory(ssConfigCategory);
         return addConnections(combo, connections, defaultConnection);
 	}
 	/**

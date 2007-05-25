@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -25,7 +25,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConf
 
 /**
  * This class is a provider of root nodes to the remote systems tree viewer part.
- * It is used when the intial connections are to be subset to those that support a particular remote file subsystem factory,
+ * It is used when the initial connections are to be subset to those that support a particular remote file subsystem factory,
  *   and subsystems shown within those connections are to be subset to only those from this subsystem factory.
  */
 public class SystemFileSubSystemConfigurationAPIProviderImpl 
@@ -34,18 +34,20 @@ public class SystemFileSubSystemConfigurationAPIProviderImpl
 {
 
 
-	private IRemoteFileSubSystemConfiguration subsystemFactory = null;
+	private IRemoteFileSubSystemConfiguration subsystemConfiguration = null;
 	//protected Object[] emptyList = new Object[0];	
 	
 	/**
 	 * Constructor
-	 * @param subsystemFactory The remote file subsystem factory. Users will drill down from connections that support this factory.
+	 * @param subsystemConfiguration The remote file subsystem configuration.
+	 *     Users will drill down from connections that support this subsystem
+	 *     configuration.
 	 * @param directoryMode true if you only want to traverse directories, false for both files and directories.
 	 */
-	public SystemFileSubSystemConfigurationAPIProviderImpl(IRemoteFileSubSystemConfiguration subsystemFactory, boolean directoryMode)
+	public SystemFileSubSystemConfigurationAPIProviderImpl(IRemoteFileSubSystemConfiguration subsystemConfiguration, boolean directoryMode)
 	{
 		super(directoryMode);
-		this.subsystemFactory = subsystemFactory;
+		this.subsystemConfiguration = subsystemConfiguration;
 	}
 	
 	/**
@@ -53,7 +55,7 @@ public class SystemFileSubSystemConfigurationAPIProviderImpl
 	 */
 	public IRemoteFileSubSystemConfiguration getSubSystemConfiguration()
 	{
-		return subsystemFactory;
+		return subsystemConfiguration;
 	}
 
     // ----------------------------------
@@ -111,7 +113,7 @@ public class SystemFileSubSystemConfigurationAPIProviderImpl
      */
     public IHost[] getConnections()
     {
-    	return sr.getHostsBySubSystemConfiguration(subsystemFactory);
+    	return sr.getHostsBySubSystemConfiguration(subsystemConfiguration);
     }
     /**
      * Return a count of all connections which have at least one subsystem that implements/extends RemoteFileSubSystem
@@ -125,7 +127,7 @@ public class SystemFileSubSystemConfigurationAPIProviderImpl
      */
     public boolean hasConnections()
     {
-    	ISubSystem[] allOurSubSystems = subsystemFactory.getSubSystems(true); // true => full get; do restore from disk if not already    
+    	ISubSystem[] allOurSubSystems = subsystemConfiguration.getSubSystems(true); // true => full get; do restore from disk if not already    
     	return ((allOurSubSystems!=null) && (allOurSubSystems.length>0));
     }
 

@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -182,7 +183,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
 	/**
 	 * Return the profiles currently selected by the user as his "active" profiles
-	 * @deprecated use getSystemProfileManager().getActiveSystemProfiles()
+	 * @see ISystemProfileManager.getActiveSystemProfiles()
 	 */
 	public ISystemProfile[] getActiveSystemProfiles();
 
@@ -195,20 +196,20 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
 	/**
 	 * Return all defined profiles
-	 * @deprecated use getSystemProfileManager().getAllSystemProfiles()
+	 * @deprecated use getSystemProfileManager().getSystemProfiles()
 	 */
 	public ISystemProfile[] getAllSystemProfiles();
 
 	/**
 	 * Return all defined profile names
-	 * @deprecated use getSystemProfileManager().getAllSystemProfiles()
+	 * @deprecated use getSystemProfileManager().getSystemProfiles()
 	 *     and get the names out of the returned array 
 	 */
 	public String[] getAllSystemProfileNames();
 
 	/**
 	 * Return all defined profile names as a vector
-	 * @deprecated use getAllSystemProfileManager().getAllSystemProfiles()
+	 * @deprecated use getAllSystemProfileManager().getSystemProfiles()
 	 *     and process the array to get a vector
 	 */
 	public Vector getAllSystemProfileNamesVector();
@@ -313,13 +314,15 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	/**
 	 * Resolve a subsystem from it's profile, connection and subsystem name.
 	 * 
+	 * @deprecated use other search methods in ISystemRegistry
+	 * 
 	 * @param srcProfileName the name of the profile
 	 * @param srcConnectionName the name of the connection
-	 * @param subsystemFactoryId the id of the subsystem
+	 * @param subsystemConfigurationId the id of the subsystem
 	 * 
 	 * @return the subsystem
 	 */
-	public ISubSystem getSubSystem(String srcProfileName, String srcConnectionName, String subsystemFactoryId);
+	public ISubSystem getSubSystem(String srcProfileName, String srcConnectionName, String subsystemConfigurationId);
 
 	/**
 	 * Resolve a subsystem from it's absolute name
@@ -371,8 +374,10 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 *  in its plugin.xml file. 
 	 * 
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
-	 * @deprecated use {@link #getSubSystemConfiguration(String).getSubSystems(connection, true)
-	 *    and filter the result by the category string
+	 * @deprecated use {@link #getSubSystemConfigurationProxiesByCategory(String)}
+	 *    and instantiate only those subsystem configurations from the proxy
+	 *    that are really needed. Then, use {@link ISubSystemConfiguration#getSubSystems(boolean)}
+	 *    with a parameter true.
 	 */
 	public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost connection);
 
@@ -426,7 +431,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 * @deprecated use {@link #getSubSystemConfiguration(String)} and
 	 *     {@link #getHostsBySubSystemConfiguration(ISubSystemConfiguration)}
 	 */
-	public IHost[] getHostsBySubSystemConfigurationId(String factoryId);
+	public IHost[] getHostsBySubSystemConfigurationId(String configId);
 
 	/**
 	 * Return all connections for which there exists one or more
@@ -480,7 +485,8 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
 	/**
 	 * Return the number of SystemConnection objects within the given profile.
-	 * @deprecated use {@link #getSystemProfile(ISystemProfile)} 
+	 * @deprecated use {@link #getSystemProfile(String)} with
+	 *     {@link #getHostCount(ISystemProfile)}
 	 */
 	public int getHostCount(String profileName);
 

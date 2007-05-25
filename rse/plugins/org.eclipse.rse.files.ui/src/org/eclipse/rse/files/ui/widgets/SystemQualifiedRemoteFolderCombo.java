@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -82,8 +83,8 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 	private SystemHistoryCombo folderCombo = null;
 	private Button             browseButton = null;	
 	//private RemoteFileSubSystem subsystem = null;
-	//private RemoteFileSubSystemConfiguration subsystemFactory = null;
-	//private String             subsystemFactoryID = null;
+	//private RemoteFileSubSystemConfiguration subsystemConfiguration = null;
+	//private String             subsystemConfigurationID = null;
 	//private IRemoteFile[]      folders = null;
 	private Hashtable          resolvedFolders = new Hashtable();
 	//private String[]           folderStrings = null;
@@ -594,10 +595,10 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	// turn folder name into folder object...
     	IRemoteFile remoteFolder = null;
     	ISubSystem[] filesubsystems = null;
-    	//if (subsystemFactoryID == null)
+    	//if (subsystemConfigurationID == null)
     	  filesubsystems = RemoteFileUtility.getFileSubSystems(conn);
     	//else
-    	//  filesubsystems = sr.getSubSystems(subsystemFactoryID, conn);
+    	//  filesubsystems = sr.getSubSystems(subsystemConfigurationID, conn);
     	
     	if (filesubsystems.length == 0)
     	{

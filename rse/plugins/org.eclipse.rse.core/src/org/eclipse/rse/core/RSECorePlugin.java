@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
  * Martin Oberhuber (Wind River) - [181939] Deferred class loading for keystoreProviders
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -261,10 +262,10 @@ public class RSECorePlugin extends Plugin {
    	    // Get reference to the plug-in registry
 	    IExtensionRegistry registry = Platform.getExtensionRegistry();
 	    // Get configured extenders
-	    IConfigurationElement[] subsystemFactoryExtensions =
+	    IConfigurationElement[] subsystemConfigurationExtensions =
 		  registry.getConfigurationElementsFor("org.eclipse.rse.core","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$   	
 
-	    return subsystemFactoryExtensions;
+	    return subsystemConfigurationExtensions;
     }
 
     /**

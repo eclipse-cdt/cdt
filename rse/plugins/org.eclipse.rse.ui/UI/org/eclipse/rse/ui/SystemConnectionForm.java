@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -166,7 +167,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	public SystemConnectionForm(ISystemMessageLine msgLine, ISystemConnectionFormCaller caller) {
 		this.msgLine = msgLine;
 		this.caller = caller;
-		this.defaultProfileNames = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfileNames();
+		this.defaultProfileNames = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().getActiveSystemProfileNames();
 		callerInstanceOfWizardPage = caller instanceof IWizardPage;
 		callerInstanceOfSystemPromptDialog = caller instanceof ISystemPromptDialog;
 		callerInstanceOfPropertyPage = caller instanceof IWorkbenchPropertyPage;
@@ -1453,7 +1454,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	 */
 	public static ISystemValidator[] getConnectionNameValidators() {
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-		ISystemProfile[] profiles = sr.getActiveSystemProfiles();
+		ISystemProfile[] profiles = sr.getSystemProfileManager().getActiveSystemProfiles();
 		ISystemValidator[] connNameValidators = new ISystemValidator[profiles.length];
 		for (int idx = 0; idx < profiles.length; idx++) {
 			Vector v = sr.getHostAliasNames(profiles[idx]);

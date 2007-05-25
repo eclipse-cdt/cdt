@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -61,8 +62,8 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	protected boolean  listConnectionsMode = false;	
     protected boolean  showNewConnectionPrompt = false;
 	protected boolean  singleConnectionMode = false;	
-	protected String   subsystemFactoryId; 
-	protected String   subsystemFactoryCategory;
+	protected String   subsystemConfigurationId; 
+	protected String   subsystemConfigurationCategory;
 	protected String   filterSuffix;
 	protected IRSESystemType[] systemTypes;
 	protected String   preSelectFilterChild;
@@ -97,19 +98,19 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	 * While this could be deduced from the first two pieces of information, it is safer to ask the
 	 * caller to explicitly identify these. If null is passed, then there is no restrictions.
 	 * 
-	 * @param factoryId The subsystemFactoryId to restrict connections and subsystems to
+	 * @param configId The subsystemConfigurationId to restrict connections and subsystems to
 	 *                           An alternative to factoryCategory. Specify only one, pass null for the other.
-	 * @param factoryCategory The subsystemFactory category to restrict connections and subsystems to. 
+	 * @param configCategory The subsystem configuration category to restrict connections and subsystems to. 
 	 *                           An alternative to factoryId. Specify only one, pass null for the other.
 	 * @param showNewConnectionPrompt true if to show "New Connection" prompt, false if not to
 	 * @param systemTypes Optional list of system types to restrict the "New Connection" wizard to. Pass null for no restrictions
 	 */
-	public SystemSelectRemoteObjectAPIProviderImpl(String factoryId, String factoryCategory, 
+	public SystemSelectRemoteObjectAPIProviderImpl(String configId, String configCategory, 
 	                                               boolean showNewConnectionPrompt, IRSESystemType[] systemTypes)
 	{
 		super();
-		this.subsystemFactoryId = factoryId;
-		this.subsystemFactoryCategory = factoryCategory;
+		this.subsystemConfigurationId = configId;
+		this.subsystemConfigurationCategory = configCategory;
 		this.systemTypes = systemTypes;
 		this.showNewConnectionPrompt = showNewConnectionPrompt;
 		this.listConnectionsMode = true;
@@ -135,7 +136,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	/**
 	 * Specify system types to restrict what types of connections
 	 * the user can create, and see.
-	 * This will override subsystemFactoryId,if that has been set!
+	 * This will override subsystemConfigurationId,if that has been set!
 	 * 
      * @param systemTypes An array of system types, or
      *     <code>null</code> to allow all registered valid system types.
@@ -406,7 +407,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
  				ISubSystem subsystem = subsystems[0]; // always just use first. Hopefully never a problem!
  				
  				if (subsystems.length > 1)
- 				  SystemBasePlugin.logWarning(this.getClass().getName() + ": More than one subsystem meeting criteria. SSFID = "+subsystemFactoryId+", SSFCat = "+subsystemFactoryCategory); //$NON-NLS-1$ //$NON-NLS-2$
+ 				  SystemBasePlugin.logWarning(this.getClass().getName() + ": More than one subsystem meeting criteria. SSFID = "+subsystemConfigurationId+", SSFCat = "+subsystemConfigurationCategory); //$NON-NLS-1$ //$NON-NLS-2$
  				  
  				if (quickFilters != null)
  				{
@@ -538,10 +539,12 @@ public class SystemSelectRemoteObjectAPIProviderImpl
          conns = inputConnections;       
        else if (systemTypes != null)
          conns = sr.getHostsBySystemTypes(systemTypes);
-       else if (subsystemFactoryId != null)
-         conns = sr.getHostsBySubSystemConfigurationId(subsystemFactoryId);
-       else if (subsystemFactoryCategory != null)
-         conns = sr.getHostsBySubSystemConfigurationCategory(subsystemFactoryCategory);
+       else if (subsystemConfigurationId != null) {
+   	     ISubSystemConfiguration config = sr.getSubSystemConfiguration(subsystemConfigurationId);
+         conns = sr.getHostsBySubSystemConfiguration(config);
+       }
+       else if (subsystemConfigurationCategory != null)
+         conns = sr.getHostsBySubSystemConfigurationCategory(subsystemConfigurationCategory);
        else
          conns = sr.getHosts();
        
@@ -571,15 +574,21 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 
 	/**
 	 * Given a connection, return the subsystem(s) appropriate for the given 
-	 *  ssfactoryid or category
+	 * subsystem configuration id or category
 	 */
 	protected ISubSystem[] getSubSystems(IHost selectedConnection)
 	{
 		ISubSystem[] subsystems = null;
-		if (subsystemFactoryId != null)
-		  subsystems = sr.getSubSystems(subsystemFactoryId, selectedConnection);
-		else if (subsystemFactoryCategory != null)
-		  subsystems = sr.getSubSystemsBySubSystemConfigurationCategory(subsystemFactoryCategory, selectedConnection);
+		if (subsystemConfigurationId != null) {
+			ISubSystemConfiguration config = sr.getSubSystemConfiguration(subsystemConfigurationId);
+			if (config==null)
+				subsystems = new ISubSystem[0];
+			else
+				subsystems = config.getSubSystems(selectedConnection, true);
+		}
+		else if (subsystemConfigurationCategory != null) {
+		  subsystems = sr.getSubSystemsBySubSystemConfigurationCategory(subsystemConfigurationCategory, selectedConnection);
+		}
 		else
 		  subsystems = sr.getSubSystems(selectedConnection);
 		return subsystems;

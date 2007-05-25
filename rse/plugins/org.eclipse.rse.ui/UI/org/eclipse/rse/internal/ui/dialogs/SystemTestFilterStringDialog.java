@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
@@ -21,6 +22,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemTestFilterStringAPIProviderImpl;
 import org.eclipse.rse.internal.ui.view.SystemViewForm;
@@ -53,7 +55,7 @@ public class SystemTestFilterStringDialog
 {
 	protected ISubSystem subsystem = null;
 	protected ISystemRegistry sr = null;
-	protected String subsystemFactoryId = null;
+	protected String subsystemConfigurationId = null;
 	protected String filterString = null;
     protected SystemTestFilterStringAPIProviderImpl inputProvider = null;
 	// GUI widgets
@@ -86,7 +88,7 @@ public class SystemTestFilterStringDialog
 		setBlockOnOpen(true); // always modal	
 		this.subsystem = subsystem;
 		this.filterString = filterString;
-		this.subsystemFactoryId = subsystem.getSubSystemConfiguration().getId();
+		this.subsystemConfigurationId = subsystem.getSubSystemConfiguration().getId();
 		sr = RSECorePlugin.getTheSystemRegistry();
 		setNeedsProgressMonitor(true);
 		//pack();
@@ -175,7 +177,7 @@ public class SystemTestFilterStringDialog
     {
 		this.subsystem = subsystem;
 		this.filterString = filterString;
-		//this.subsystemFactoryId = subsystem.getParentSubSystemConfiguration().getId();
+		//this.subsystemConfigurationId = subsystem.getParentSubSystemConfiguration().getId();
     	inputProvider.setSubSystem(subsystem);
     	inputProvider.setFilterString(filterString);
     	tree.reset(inputProvider);    		
@@ -197,13 +199,15 @@ public class SystemTestFilterStringDialog
     	{
     		//System.out.println("connection changed");
     		IHost newConnection = connectionCombo.getHost();
-    		ISubSystem[] newSubSystems = sr.getSubSystems(subsystemFactoryId, newConnection);
     		ISubSystem newSubSystem = null;
-    		if ((newSubSystems != null) && (newSubSystems.length>0))
-    		{
-    		  newSubSystem = newSubSystems[0];
-		      subsystemFactoryId = subsystem.getSubSystemConfiguration().getId();
-    		}
+			ISubSystemConfiguration config = sr.getSubSystemConfiguration(subsystemConfigurationId);
+			if (config!=null) {
+				ISubSystem[] newSubSystems = config.getSubSystems(newConnection, true);
+				if (newSubSystems != null && newSubSystems.length > 0) {
+		    		  newSubSystem = newSubSystems[0];
+				      subsystemConfigurationId = subsystem.getSubSystemConfiguration().getId();
+				}
+			}
     		inputProvider.setSubSystem(newSubSystem);
     		tree.reset(inputProvider);    		
     	}

@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -61,7 +62,7 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 		if (element instanceof IProject) 
 		{
 			//IProject rseProject = (IProject)element;
-			ISystemProfile[] profiles = RSECorePlugin.getTheSystemRegistry().getAllSystemProfiles();
+			ISystemProfile[] profiles = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().getSystemProfiles();
 			children = profiles;
 			//return profiles;
 		}

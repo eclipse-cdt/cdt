@@ -33,7 +33,7 @@ public class RefsTab extends AbstractCPropertyTab {
 	public Composite comp;
 	Tree tree;
 
-	static private final String ACTIVE = "[Active]"; //$NON-NLS-1$
+	static private final String ACTIVE = "[" + UIMessages.getString("RefsTab.3") + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);

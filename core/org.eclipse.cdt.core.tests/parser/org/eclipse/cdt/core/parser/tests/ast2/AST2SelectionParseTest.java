@@ -1646,11 +1646,13 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 	}
 	
 	public void testBug86126() throws Exception {
-		importFile("foo.h", "int x;\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
-		String code = "#include \"foo.h\"\r\n"; //$NON-NLS-1$
-		IFile file = importFile("blah.c", code);
-		int offset1 = code.indexOf( "#include \"foo.h\"" ); //$NON-NLS-1$
-		int length = "#include \"foo.h\"".length(); //$NON-NLS-1$
+		String header= "foo"+System.currentTimeMillis()+".h";
+		String source= "blah"+System.currentTimeMillis()+".c";
+		importFile(header, "int x;\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		String code = "#include \""+header+"\"\r\n"; //$NON-NLS-1$
+		IFile file = importFile(source, code);
+		int offset1 = code.indexOf( "#include \""+header+"\"" ); //$NON-NLS-1$
+		int length = ("#include \""+header+"\"").length(); //$NON-NLS-1$
 		IASTNode node = parse( file, ParserLanguage.C, offset1, length );
 		assertNotNull(node);
 	}

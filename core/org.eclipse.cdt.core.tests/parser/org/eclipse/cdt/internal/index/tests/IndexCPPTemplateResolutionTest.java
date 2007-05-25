@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -55,7 +58,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		setStrategy(new ReferencedProject(true));
 	}
 	
-	// // Brian W.'s example from bugzilla#167098
+	// // Bryan W.'s example from bugzilla#167098
 	//    template<class K>
 	//    class D { //CPPClassTemplate
 	//    public:
@@ -211,6 +214,50 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  		}
  	}
  	
+	// class A {}; class B {}; class C {};
+	// template<typename T1, typename T2>
+	// class D {};
+	// 
+	// template<typename T3>
+	// class D<A, T3> {};
+	
+	// template<typename T3> class D<A, T3>; // harmless declaration for test purposes
+	// template<typename T3>
+	// class D<B, T3> {};
+	// template<typename T3>
+	// class D<C, T3> {};
+	public void _testClassPartialSpecializations() throws Exception {
+		IBinding b0= getBindingFromASTName("D<A, T3>", 8, true);
+		IBinding b1= getBindingFromASTName("D<B, T3>", 8, true);
+		IBinding b2= getBindingFromASTName("D<C, T3>", 8, true);
+ 		IBinding b3= getBindingFromASTName("D<B", 1);
+ 		
+ 		List spBindings= new ArrayList();
+ 		assertInstance(b0, ICPPSpecialization.class);
+ 		assertInstance(b0, ICPPClassTemplate.class);
+ 		spBindings.add(((ICPPSpecialization)b0).getSpecializedBinding());
+ 		
+ 		assertInstance(b1, ICPPSpecialization.class);
+ 		assertInstance(b1, ICPPClassTemplate.class);
+ 		spBindings.add(((ICPPSpecialization)b1).getSpecializedBinding());
+ 		
+ 		assertInstance(b2, ICPPSpecialization.class);
+ 		assertInstance(b2, ICPPClassTemplate.class);
+ 		spBindings.add(((ICPPSpecialization)b2).getSpecializedBinding());
+ 		
+ 		for(int i=0; i<spBindings.size(); i++) {
+ 			for(int j=0; j<spBindings.size(); j++) {
+ 	 			IType ty1= (IType) spBindings.get(i);
+ 	 			IType ty2= (IType) spBindings.get(j);
+ 	 			assertTrue(ty1.isSameType(ty2));
+ 	 		}
+ 		}
+ 		
+ 		assertInstance(b3, ICPPClassTemplate.class);
+ 		ICPPClassTemplate ct= (ICPPClassTemplate) b3;
+ 		assertEquals(3, ct.getPartialSpecializations().length);
+	}
+	
 	//	class B {};
 	//
 	//	template<typename T>
@@ -498,9 +545,9 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// class Foo<A> {};
 	//
 	// Foo<B> b2;
-	public void _testClassSpecializations() {
+	public void testClassSpecializations() {
 		IBinding b1a = getBindingFromASTName("Foo<B> b1;", 3);
-		IBinding b1b = getBindingFromASTName("Foo<B> b1;", 5, true);
+		IBinding b1b = getBindingFromASTName("Foo<B> b1;", 6, true);
 		
 		assertInstance(b1a, ICPPClassType.class);
 		assertInstance(b1a, ICPPClassTemplate.class);
@@ -515,7 +562,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("B", b1pct.getName());
 		
 		IBinding b2a = getBindingFromASTName("Foo<B> b2;", 3);
-		IBinding b2b = getBindingFromASTName("Foo<B> b2;", 5, true);
+		IBinding b2b = getBindingFromASTName("Foo<B> b2;", 6, true);
 		
 		assertInstance(b2a, ICPPClassType.class);
 		assertInstance(b2a, ICPPClassTemplate.class);
@@ -536,14 +583,20 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	   	return a;
 	//	}
 	//  void sanity() {}
+	//  int d;
 	
 	//  void foo() { sanity(); }
 	//	class Int {};
 	//	Int a,b;
 	//	Int c= left(a,b);
+	//  Int c= left(a,d);
 	public void testSimpleFunctionTemplate() {
 		IBinding b0 = getBindingFromASTName("sanity();", 6);
 		IBinding b1 = getBindingFromASTName("a,b;", 1);
-		IBinding b2 = getBindingFromASTName("left(a,b)", 4);
+		IBinding b2 = getBindingFromASTName("a,b)", 1);
+		IBinding b3 = getBindingFromASTName("b)", 1);
+		IBinding b4 = getBindingFromASTName("d)", 1);
+		IBinding b5 = getBindingFromASTName("left(a,b)", 4);
+		IBinding b6 = getBindingFromASTName("left(a,b)", 4);
 	}
 }

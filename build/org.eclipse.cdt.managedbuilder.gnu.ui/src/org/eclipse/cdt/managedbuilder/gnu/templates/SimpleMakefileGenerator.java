@@ -99,7 +99,7 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 		for (Iterator i = valueStore.keySet().iterator(); i.hasNext();) {
 			String key = (String)i.next();
 			String pattern = START + key +END;
-			if (!fileContents.contains(pattern))
+			if (fileContents.indexOf(pattern)==-1)
 				// Not used
 				continue;
 			

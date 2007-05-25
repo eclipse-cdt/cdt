@@ -41,6 +41,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
  * Javier Montalvo Orus (Symbian) - [187096] Drag&Drop + Copy&Paste shows error message on FTP connection
+ * Javier Montalvo Orus (Symbian) - [187531] Improve exception thrown when Login Failed on FTP
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -77,6 +78,7 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
+import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
 
 public class FTPService extends AbstractFileService implements IFileService, IFTPService
@@ -235,7 +237,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		_entryParserFactory = entryParserFactory;
 	}
 
-	public void connect() throws Exception
+	public void connect() throws RemoteFileSecurityException,IOException
 	{
 		
 		if (_ftpClient == null)
@@ -277,14 +279,14 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			{
 				String lastMessage = _ftpClient.getReplyString();
 				disconnect();
-				throw new Exception(lastMessage);
+				throw new RemoteFileSecurityException(new Exception(lastMessage));
 			}
 		}
 		else if(!FTPReply.isPositiveCompletion(userReply))
 		{
 			String lastMessage = _ftpClient.getReplyString();
 			disconnect();
-			throw new Exception(lastMessage);
+			throw new RemoteFileSecurityException(new Exception(lastMessage));
 		}
 		
 		//System parser

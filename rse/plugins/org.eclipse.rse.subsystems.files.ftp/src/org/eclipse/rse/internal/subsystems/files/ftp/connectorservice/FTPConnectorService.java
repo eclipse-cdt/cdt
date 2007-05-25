@@ -17,10 +17,12 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [cleanup] move FTPSubsystemResources out of core
  * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
+ * Javier Montalvo Orus (Symbian) - [187531] Improve exception thrown when Login Failed on FTP
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
@@ -30,9 +32,10 @@ import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.internal.services.files.ftp.FTPService;
-import org.eclipse.rse.internal.subsystems.files.ftp.parser.FTPClientConfigFactory;
 import org.eclipse.rse.internal.subsystems.files.ftp.FTPSubsystemResources;
+import org.eclipse.rse.internal.subsystems.files.ftp.parser.FTPClientConfigFactory;
 import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -73,12 +76,12 @@ public class FTPConnectorService extends StandardConnectorService
 		}	
 	} 
 	
-	protected void internalConnect(IProgressMonitor monitor) throws Exception
+	protected void internalConnect(IProgressMonitor monitor)  throws RemoteFileException, IOException
 	{
 		internalConnect();
 	}
 
-	private void internalConnect() throws Exception
+	private void internalConnect() throws RemoteFileException, IOException
 	{
 
 		SystemSignonInformation info = getSignonInformation();
@@ -91,7 +94,9 @@ public class FTPConnectorService extends StandardConnectorService
 		_ftpService.setFTPClientConfigFactory(FTPClientConfigFactory.getParserFactory());
 		
 		
-		_ftpService.connect();	
+		_ftpService.connect();
+		
+		
 	}
 	
 	private OutputStream getLoggingStream(String hostName,int portNumber)

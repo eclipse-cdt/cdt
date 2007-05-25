@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Javier Montalvo Orus (Symbian) - [188146] Incorrect "FTP Settings" node in Property Sheet for Linux connection
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -168,21 +169,24 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		{
 			{
 				ServiceElement el = _serviceElements[i];
-				ServiceElement[] children = el.getChildren();
-				if (children != null)
+				if(el.isSelected())
 				{
-					for (int c = 0; c < children.length; c++)
+					ServiceElement[] children = el.getChildren();
+					if (children != null)
 					{
-						ServiceElement child = children[c];
-						if (child instanceof ConnectorServiceElement)
+						for (int c = 0; c < children.length; c++)
 						{
-							ServiceElement[] cch = child.getChildren();
-							if (cch != null && cch.length > 0) 
+							ServiceElement child = children[c];
+							if (child instanceof ConnectorServiceElement)
 							{
-								if(cch[0] instanceof ServerLauncherPropertiesServiceElement)
+								ServiceElement[] cch = child.getChildren();
+								if (cch != null && cch.length > 0) 
 								{
-									ServerLauncherPropertiesServiceElement result = (ServerLauncherPropertiesServiceElement)cch[0];
-									results.add(result);
+									if(cch[0] instanceof ServerLauncherPropertiesServiceElement)
+									{
+										ServerLauncherPropertiesServiceElement result = (ServerLauncherPropertiesServiceElement)cch[0];
+										results.add(result);
+									}
 								}
 							}
 						}
@@ -242,14 +246,18 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 	 */
 	private List getConnectorServiceElements(ServiceElement root) {
 		List result = new ArrayList(10);
-		if (root instanceof ConnectorServiceElement) {
-			result.add(root);
-		}
-		ServiceElement[] children = root.getChildren();
-		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				ServiceElement child = children[i];
-				result.addAll(getConnectorServiceElements(child));
+		if(root.isSelected())
+		{
+			if (root instanceof ConnectorServiceElement) {
+				result.add(root);
+			}
+			
+			ServiceElement[] children = root.getChildren();
+			if (children != null) {
+				for (int i = 0; i < children.length; i++) {
+					ServiceElement child = children[i];
+					result.addAll(getConnectorServiceElements(child));
+				}
 			}
 		}
 		return result;

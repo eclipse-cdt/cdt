@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -88,6 +89,13 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
     
 		group.setText(LaunchMessages.getString("CArgumentsTab.C/C++_Program_Arguments")); //$NON-NLS-1$
 		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		fPrgmArgumentsText.getAccessible().addAccessibleListener(
+				new AccessibleAdapter() {                       
+                    public void getName(AccessibleEvent e) {
+                            e.result = LaunchMessages.getString("CArgumentsTab.C/C++_Program_Arguments"); //$NON-NLS-1$
+                    }
+                }
+		);
     gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
     gd.widthHint = 100;

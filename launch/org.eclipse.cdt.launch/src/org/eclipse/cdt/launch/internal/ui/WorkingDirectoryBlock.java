@@ -28,6 +28,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -106,9 +108,16 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		group.setFont(font);
 		setControl(group);
 
-    group.setText(LaunchMessages.getString("WorkingDirectoryBlock.Working_directory")); 
+    group.setText(LaunchMessages.getString("WorkingDirectoryBlock.Working_directory")); //$NON-NLS-1$
 
     fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
+    fWorkingDirText.getAccessible().addAccessibleListener(
+			new AccessibleAdapter() {                       
+                public void getName(AccessibleEvent e) {
+                        e.result = LaunchMessages.getString("WorkingDirectoryBlock.Working_directory"); //$NON-NLS-1$
+                }
+            }
+	);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWorkingDirText.setLayoutData(gd);
 		fWorkingDirText.setFont(font);

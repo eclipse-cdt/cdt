@@ -52,7 +52,7 @@
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least 4 API changes and 28 bugs were fixed: use 
+<li>At least 6 API changes and 28 bugs were fixed: use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-05-19&chfieldto=2007-05-27&chfield=resolution&cmdtype=doit"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
@@ -153,6 +153,10 @@ More information can be found in the associated bugzilla items.
 <li><b>ISystemRegistry.fireEvent() now switches to the Display thread automatically.</b>
   This may be relevant for event listeners to know
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176601">176601</a>].</li>
+<li><b>Moved SystemIFileProperties from UI to Core</b>, in preparation of moving
+  SystemRegistry into non-UI in the future.
+  For migration, just organize imports
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189130">189130</a>].</li>
 <li><b>Moved three methods from ISystemRegistry into ISystemRegistryUI</b>
   in preparation of moving SystemRegistry into non-UI in the future:
   <code>showRSEPerspective(), expandHost(), expandSubSystem()</code> are now
@@ -160,7 +164,6 @@ More information can be found in the associated bugzilla items.
   ISystemResourceChangeEvents.EVENT_SELECT_EXPAND. Migration notes: use the 
   methods from their new home. For details, see bug
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189123">189123</a>].</li>
-<!--
 <li><b>Moved one method 
   from ISubSystemConfigurationAdapter into ISubSystemConfiguration</b>
   in preparation of moving SystemRegistry into non-UI in the future:
@@ -168,7 +171,6 @@ More information can be found in the associated bugzilla items.
   from its new home. Override renameSubSystemProfile() in its new home.
   For details, see bug
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189123">189123</a>].</li>
--->
 </ul></li>
 <li>TM 2.0M7 Breaking API Changes
 <ul>

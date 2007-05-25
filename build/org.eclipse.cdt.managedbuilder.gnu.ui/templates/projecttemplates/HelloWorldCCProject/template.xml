@@ -34,7 +34,6 @@
 				type="input"
 				default="%HelloWorld.sourceDir.default"
 				pattern="[a-zA-Z0-9]+"
-				mandatory="true"
 				persist="true"/>
 	</property-group>
 	

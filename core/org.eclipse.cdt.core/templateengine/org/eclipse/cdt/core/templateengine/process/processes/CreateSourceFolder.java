@@ -48,6 +48,12 @@ public class CreateSourceFolder extends ProcessRunner {
 	}
 
 	protected void createSourceFolder(String projectName, String targetPath, IProgressMonitor monitor) throws ProcessFailureException {
+		//If the targetPath is an empty string, there will be no source folder to create.
+		// Also this is not an error. So just return gracefully.
+		if (targetPath == null || targetPath.equals("")) {
+			return;
+		}
+		
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		
 		if (!projectHandle.exists()) {

@@ -35,7 +35,7 @@
 				type="input"
 				default="%HelloWorld.sourceDir.default"
 				pattern="[a-zA-Z0-9]+"
-				mandatory="true"
+				mandatory="false"
 				persist="true"/>
 	</property-group>
 
@@ -47,7 +47,7 @@
 
 	<process type="org.eclipse.cdt.core.CreateSourceFolder">
 		<simple name="projectName" value="$(projectName)"/>
-		<simple name="path" value="src"/>
+		<simple name="path" value="$(sourceDir)"/>
 	</process>
 
 	<process type="org.eclipse.cdt.core.AddFiles">
@@ -55,7 +55,7 @@
 		<complex-array name="files">
 			<element>
 				<simple name="source" value="src/Basename.c"/>
-				<simple name="target" value="src/$(projectName).c"/>
+				<simple name="target" value="$(sourceDir)/$(projectName).c"/>
 				<simple name="replaceable" value="true"/>
 			</element>
 		</complex-array>

@@ -42,6 +42,7 @@
  * Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
  * Javier Montalvo Orus (Symbian) - [187096] Drag&Drop + Copy&Paste shows error message on FTP connection
  * Javier Montalvo Orus (Symbian) - [187531] Improve exception thrown when Login Failed on FTP
+ * Javier Montalvo Orus (Symbian) - [187862] Incorrect Error Message when creating new file in read-only directory
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -917,11 +918,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			
 			if(!success)
 			{
-				throw new Exception(getFTPClient().getReplyString());
+				throw new RemoteFileIOException(new Exception(getFTPClient().getReplyString()));
 			}
 		}
 		catch (Exception e) {			
-			throw new RemoteFileIOException(e);
+			throw new RemoteFileSecurityException(e);
 		}
 
 		return getFile(remoteParent, fileName, monitor);

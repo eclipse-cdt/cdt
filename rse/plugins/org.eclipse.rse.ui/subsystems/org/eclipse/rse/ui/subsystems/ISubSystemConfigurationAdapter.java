@@ -61,7 +61,7 @@ public interface ISubSystemConfigurationAdapter
 	 * <p>
 	 * This method is from the ISystemNewFilterActionConfigurator interface
 	 */
-	public void configureNewFilterAction(ISubSystemConfiguration factory, SystemNewFilterAction newFilterAction, Object callerData);
+	public void configureNewFilterAction(ISubSystemConfiguration config, SystemNewFilterAction newFilterAction, Object callerData);
 	
 
 	// -----------------------------------
@@ -69,7 +69,7 @@ public interface ISubSystemConfigurationAdapter
 	// -----------------------------------
 	/**
 	 * Optionally return one or more wizard pages to append to the New Connection Wizard if
-	 *  the user selects a system type that this subsystem factory supports.
+	 *  the user selects a system type that this subsystem configuration supports.
 	 * <p>
 	 * Some details:
 	 * <ul>
@@ -81,21 +81,22 @@ public interface ISubSystemConfigurationAdapter
 	 * </ul>
 	 * Tip: consider extending {@link org.eclipse.rse.ui.wizards.AbstractSystemNewConnectionWizardPage} for your wizard page class.
 	 */
-	public ISystemNewConnectionWizardPage[] getNewConnectionWizardPages(ISubSystemConfiguration factory, IWizard wizard);
+	public ISystemNewConnectionWizardPage[] getNewConnectionWizardPages(ISubSystemConfiguration config, IWizard wizard);
 
 	/**
 	 * Returns any framework-supplied actions remote objects that should be contributed to the popup menu
 	 * for the given selection list. This does nothing if this adapter does not implement ISystemViewRemoteElementAdapter,
 	 * else it potentially adds menu items for "User Actions" and Compile", for example. It queries the subsystem
-	 * factory of the selected objects to determine if these actions are appropriate to add.
+	 * configuration of the selected objects to determine if these actions are appropriate to add.
 	 * 
+	 * @param config The subsystem configuration to work on
 	 * @param menu The menu to contribute actions to
 	 * @param selection The window's current selection.
 	 * @param shell of viewer calling this. Most dialogs require a shell.
 	 * @param menuGroup recommended menu group to add actions to. If added to another group, you must be sure to create that group first.
 	 * @param subsystem the subsystem of the selection
 	 */
-	public void addCommonRemoteActions(ISubSystemConfiguration factory, SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystem subsystem);
+	public void addCommonRemoteActions(ISubSystemConfiguration config, SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystem subsystem);
 
 
 	// ---------------------------------
@@ -104,22 +105,24 @@ public interface ISubSystemConfigurationAdapter
 
     /**
      * Returns a list of actions for the popup menu when user right clicks on a
-     *  filter pool object within a subsystem of this factory.
+     *  filter pool object within a subsystem of this subsystem configuration.
      * Only supported by subsystems that support filters.
      */
-    public IAction[] getFilterPoolActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPool selectedPool);
- 
+    public IAction[] getFilterPoolActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilterPool selectedPool);
+
+    
 	// ---------------------------------
 	// FILTER POOL REFERENCE METHODS...
 	// ---------------------------------
     /**
      * Returns a list of actions for the popup menu when user right clicks on a
-     *  filter pool reference object within a subsystem of this factory. Note,
-     *  these are added to the list returned by getFilterPoolActions().
+     * filter pool reference object within a subsystem of this subsystem
+     * configuration. Note, these are added to the list returned by 
+     * getFilterPoolActions().
      * <p>
      * Only supported by subsystems that support filters.
      */
-    public IAction[] getFilterPoolReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPoolReference selectedPoolReference);
+    public IAction[] getFilterPoolReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilterPoolReference selectedPoolReference);
 
     
     // ---------------------------------
@@ -134,38 +137,38 @@ public interface ISubSystemConfigurationAdapter
      * Most actions are handled in this base, except if you have your own action for
      * creating a new nested filter. In this case, <b>override getNewFilterAction()</b>
      */
-    public IAction[] getFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilter selectedFilter);
+    public IAction[] getFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilter selectedFilter);
 
 	/**
 	 * In addition to a change filter action, we now also support the same functionality
 	 *  via a Properties page for filters. When this page is activated, this method is called
 	 *  to enable customization of the page, given the selected filter.
 	 */
-	public void customizeChangeFilterPropertyPage(ISubSystemConfiguration factory, SystemChangeFilterPropertyPage page, ISystemFilter selectedFilter, Shell shell);
+	public void customizeChangeFilterPropertyPage(ISubSystemConfiguration config, SystemChangeFilterPropertyPage page, ISystemFilter selectedFilter, Shell shell);
+
 	/**
 	 * In addition to a change filter action, we now also support the same functionality
 	 *  via a Properties page for filter strings, in the Team View. When this page is activated, 
 	 *  this method is called to enable customization of the page, given the selected filter string.
 	 */
-	public void customizeFilterStringPropertyPage(ISubSystemConfiguration factory, SystemFilterStringPropertyPage page, ISystemFilterString selectedFilterString, Shell shell);
+	public void customizeFilterStringPropertyPage(ISubSystemConfiguration config, SystemFilterStringPropertyPage page, ISystemFilterString selectedFilterString, Shell shell);
 	
-
     /**
      * Prompt the user to create a new filter as a result of the user expanding a promptable
      * filter.
      * @return the filter created by the user or null if they cancelled the prompting
      */
-    public ISystemFilter createFilterByPrompting(ISubSystemConfiguration factory, ISystemFilterReference referenceToPromptableFilter, Shell shell)
+    public ISystemFilter createFilterByPrompting(ISubSystemConfiguration config, ISystemFilterReference referenceToPromptableFilter, Shell shell)
         throws Exception;
 
-
+    
     // ---------------------------------
     // FILTER REFERENCE METHODS
     // ---------------------------------
 
     /**
      * Returns a list of actions for the popup menu when user right clicks on a
-     *  filter reference object within a subsystem of this factory.
+     *  filter reference object within a subsystem of this subsystem configuration.
      * Only supported and used by subsystems that support filters.
      * <p>
      * Most actions are handled in this base, except if you have your own action for
@@ -175,67 +178,87 @@ public interface ISubSystemConfigurationAdapter
      * @param selectedFilterRef the currently selected filter reference
      * @param shell parent shell of viewer where the popup menu is being constructed
      */
-    public IAction[] getFilterReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterReference selectedFilterRef);
+    public IAction[] getFilterReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilterReference selectedFilterRef);
 
     /**
-     * Returns a list of actions for the popup menu when user right clicks on a subsystem object from this factory.
+     * Returns a list of actions for the popup menu when user right clicks on a
+     * subsystem object from this subsystem configuration.
      */
-    public IAction[] getSubSystemActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISubSystem selectedSubSystem);
-
+    public IAction[] getSubSystemActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISubSystem selectedSubSystem);
 
     
     // --------------------------
     // SERVER LAUNCHER METHODS...
     // --------------------------
-	/**
+
+    /**
 	 * Return the form used in the property page, etc for this server launcher.
 	 * Only called if {@link ISubSystemConfiguration#supportsServerLaunchProperties(IHost)} returns true.
 	 */
-	public IServerLauncherForm getServerLauncherForm(ISubSystemConfiguration factory, Shell shell, ISystemMessageLine msgLine);	
+	public IServerLauncherForm getServerLauncherForm(ISubSystemConfiguration config, Shell shell, ISystemMessageLine msgLine);	
 
+	
     // --------------------------
     // SUBSYSTEM PROPERTY PAGE METHOD...
     // --------------------------
-	/*
-	 * Return the form used in the subsyste property page
+	/**
+	 * Return the form used in the subsystem property page.
+	 * @return the form used in the subsystem property page.
 	 */
-	public ISystemSubSystemPropertyPageCoreForm getSubSystemPropertyPageCoreFrom(ISubSystemConfiguration factory, ISystemMessageLine msgLine, Object caller);
+	public ISystemSubSystemPropertyPageCoreForm getSubSystemPropertyPageCoreFrom(ISubSystemConfiguration config, ISystemMessageLine msgLine, Object caller);
 	
-	  /**
-     * Return image descriptor for subsystems created by this factory. Comes from icon attribute in extension point xml
+	/**
+     * Return image descriptor for subsystems created by this 
+     * subsystem configuration.
+     * Comes from icon attribute in extension point xml.
+     * @param config the subsystem configuration
+     * @return the image descriptor for the given subsystem configuration.
      */
-    public ImageDescriptor getImage(ISubSystemConfiguration factory);
+    public ImageDescriptor getImage(ISubSystemConfiguration config);
+
     /**
-     * Return actual graphics Image of this factory.
-     * This is the same as calling getImage().createImage() but the resulting image is cached
+     * Return actual graphics Image of this subsystem configuration.
+     * This is the same as calling getImage().createImage(),
+     * but the resulting image is cached.
+     * @param config the subsystem configuration
+     * @return the cached image for the given subsystem configuration.
      */
-    public Image getGraphicsImage(ISubSystemConfiguration factory);
+    public Image getGraphicsImage(ISubSystemConfiguration config);
+
     /**
-     * Return image to use when this susystem is connection. Comes from icon attribute in extension point xml
+     * Return image to use when this subsystem is connected.
+     * Comes from icon attribute in extension point xml.
+     * @param config the subsystem configuration
+     * @return the image descriptor for the given subsystem configuration.
      */
-    public ImageDescriptor getLiveImage(ISubSystemConfiguration factory);
+    public ImageDescriptor getLiveImage(ISubSystemConfiguration config);
+
     /**
-     * Return actual graphics LiveImage of this factory.
-     * This is the same as calling getLiveImage().createImage() but the resulting image is cached
+     * Return actual graphics LiveImage of this subsystem configuration.
+     * This is the same as calling getLiveImage().createImage(),
+     * but the resulting image is cached.
+     * @param config the subsystem configuration
+     * @return the cached image for the given subsystem configuration.
      */
-    public Image getGraphicsLiveImage(ISubSystemConfiguration factory);
+    public Image getGraphicsLiveImage(ISubSystemConfiguration config);
 
 	/**
 	 * Supply the image to be used for filter pool managers, within actions.
 	 * REQUIRED BY SYSTEMFILTERPOOLMANAGERPROVIDER INTERFACE
 	 */
 	public ImageDescriptor getSystemFilterPoolManagerImage();
+
 	/**
 	 * Supply the image to be used for filter pools, within actions.
 	 * REQUIRED BY SYSTEMFILTERPOOLMANAGERPROVIDER INTERFACE
 	 */
 	public ImageDescriptor getSystemFilterPoolImage(ISystemFilterPool filterPool);
+
 	/**
 	 * Supply the image to be used for filters, within actions.
 	 * REQUIRED BY SYSTEMFILTERPOOLMANAGERPROVIDER INTERFACE
 	 */
 	public ImageDescriptor getSystemFilterImage(ISystemFilter filter);
-	
 	
 	/**
 	 * Supply the image to be used for filter pool references
@@ -247,20 +270,19 @@ public interface ISubSystemConfigurationAdapter
 	 */
 	public ImageDescriptor getSystemFilterImage(ISystemFilterReference filter);
 	
-	
-	/*
+	/**
 	 * Supply the image to be used for the given filter string, within actions.
 	 * REQUIRED BY SYSTEMFILTERPOOLMANAGERPROVIDER INTERFACE
 	 */
 	public ImageDescriptor getSystemFilterStringImage(ISystemFilterString filterString);
 	
-	/*
+	/**
 	 * Supply the image to be used for the given filter string string, within actions.
 	 * REQUIRED BY SYSTEMFILTERPOOLMANAGERPROVIDER INTERFACE
 	 */
 	public ImageDescriptor getSystemFilterStringImage(String filterStringString);
 	
-	public void renameSubSystemProfile(ISubSystemConfiguration factory, String oldProfileName, String newProfileName);
+	public void renameSubSystemProfile(ISubSystemConfiguration config, String oldProfileName, String newProfileName);
 	
 	/**
 	 * Return the single property page to show in the tabbed notebook for the
@@ -272,9 +294,6 @@ public interface ISubSystemConfigurationAdapter
 	 */
    public PropertyPage getPropertyPage(ISubSystem subsystem, Composite parent);
    
-   
-   
-
 	/**
 	 * Return the validator for the userId.
 	 * A default is supplied.
@@ -284,11 +303,13 @@ public interface ISubSystemConfigurationAdapter
 	 * This must be castable to ICellEditorValidator for the property sheet support.
 	 */
 	public ISystemValidator getUserIdValidator(ISubSystemConfiguration config);
+
 	/**
 	 * Return the validator for the password which is prompted for at runtime.
 	 * No default is supplied.
 	 */
 	public ISystemValidator getPasswordValidator(ISubSystemConfiguration confi);
+
 	/**
 	 * Return the validator for the port.
 	 * A default is supplied.

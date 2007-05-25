@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 168870: move core function from UI to core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -317,6 +318,23 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * Get owning profile object given a filter pool object
 	 */
 	public ISystemProfile getSystemProfile(ISystemFilterPool pool);
+
+	/**
+	 * Callback method called after renaming a subsystem profile.
+	 * <p>
+	 * This is called by SystemRegistry's renameSystemProfile method
+	 * after it is complete, , in order to allow the subsystem configuration
+	 * perform any required cleanup. For instance, subsystem configurations
+	 * must ensure that they update their filter pool manager names
+	 * (and their folders).
+	 * </p><p>
+	 * Must be called AFTER changing the profile's name!!
+	 * </p> 
+	 * @param oldProfileName the old profile name.
+	 * @param newProfileName the new profile name.
+	 */
+	public void renameSubSystemProfile(String oldProfileName, String newProfileName);
+	
 
 	// ---------------------------------
 	// SUBSYSTEM METHODS...

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move from UI/org.eclipse.rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.subsystems;
@@ -281,8 +282,6 @@ public interface ISubSystemConfigurationAdapter
 	 * REQUIRED BY SYSTEMFILTERPOOLMANAGERPROVIDER INTERFACE
 	 */
 	public ImageDescriptor getSystemFilterStringImage(String filterStringString);
-	
-	public void renameSubSystemProfile(ISubSystemConfiguration config, String oldProfileName, String newProfileName);
 	
 	/**
 	 * Return the single property page to show in the tabbed notebook for the

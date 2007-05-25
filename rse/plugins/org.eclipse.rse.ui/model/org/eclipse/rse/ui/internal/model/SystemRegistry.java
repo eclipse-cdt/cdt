@@ -28,6 +28,7 @@
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Martin Oberhuber (Wind River) - [186773] split SystemRegistryUI from SystemRegistry implementation
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
+ * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -90,7 +91,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Display;
@@ -609,9 +609,7 @@ public class SystemRegistry implements ISystemRegistry
 				ISubSystemConfiguration factory = proxies[idx].getSubSystemConfiguration();
 				if (factory != null)
 				{
-					//FIXME why is this done via the adapter, and not the ISubSystemConfiguration directly?
-					ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
-					adapter.renameSubSystemProfile(factory,oldName, newName);
+					factory.renameSubSystemProfile(oldName, newName);
 				}
 			}
 		}

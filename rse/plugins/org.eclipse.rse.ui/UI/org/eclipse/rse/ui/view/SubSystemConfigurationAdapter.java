@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -1208,34 +1209,6 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		public IServerLauncherForm getServerLauncherForm(ISubSystemConfiguration factory, Shell shell, ISystemMessageLine msgLine)
 		{
 			return new RemoteServerLauncherForm(shell, msgLine);
-		}
-
-		/**
-		 * Called by SystemRegistry's renameSystemProfile method to ensure we update our
-		 *  filter pool manager names (and their folders)
-		 * <p>
-		 * Must be called AFTER changing the profile's name!!
-		 */
-		public void renameSubSystemProfile(ISubSystemConfiguration factory, String oldProfileName, String newProfileName)
-		{
-			//RSEUIPlugin.logDebugMessage(this.getClass().getName(), "Inside renameSubSystemProfile. newProfileName = "+newProfileName);
-			ISystemProfile profile = factory.getSystemProfile(newProfileName);
-			factory.renameFilterPoolManager(profile); // update filter pool manager name
-			//if (profile.isDefaultPrivate()) // I don't remember why this was here, but it caused bad things, Phil.
-			{
-				// Rename the default filter pool for this profile, as it's name is derived from the profile.
-				ISystemFilterPool defaultPoolForThisProfile = factory.getDefaultFilterPool(profile, oldProfileName);
-				if (defaultPoolForThisProfile != null)
-					try
-					{
-						factory.getFilterPoolManager(profile).renameSystemFilterPool(defaultPoolForThisProfile, SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, factory.getId()));
-					}
-					catch (Exception exc)
-					{
-						SystemBasePlugin.logError("Unexpected error renaming default filter pool " + SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, factory.getId()), exc); //$NON-NLS-1$
-						System.out.println("Unexpected error renaming default filter pool " + SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, factory.getId()) + ": " + exc); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-			}					
 		}
 
 		/**

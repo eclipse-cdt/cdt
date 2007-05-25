@@ -891,12 +891,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				
 				if(!ftpClient.makeDirectory(folderName))
 				{
-					throw new Exception(ftpClient.getReplyString()+" ("+folderName+")");  //$NON-NLS-1$  //$NON-NLS-2$
+					throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+folderName+")"));  //$NON-NLS-1$  //$NON-NLS-2$
 				}
 							
 			}
 			catch (Exception e)	{
-				throw new RemoteFileIOException(e);
+				throw new RemoteFileSecurityException(e);
 			}finally {
 				_commandMutex.release();
 			}

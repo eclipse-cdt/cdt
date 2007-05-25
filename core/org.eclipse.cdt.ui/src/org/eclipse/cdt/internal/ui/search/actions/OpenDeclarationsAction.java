@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -107,11 +108,11 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			}
 		}
 
-		public IStatus runOnAST(IASTTranslationUnit ast) throws CoreException {
+		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 			int selectionStart = selNode.getOffset();
 			int selectionLength = selNode.getLength();
 				
-			IASTName[] selectedNames = fWorkingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
+			IASTName[] selectedNames = lang.getSelectedNames(ast, selectionStart, selectionLength);
 			 
 			if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
 				boolean found = false;

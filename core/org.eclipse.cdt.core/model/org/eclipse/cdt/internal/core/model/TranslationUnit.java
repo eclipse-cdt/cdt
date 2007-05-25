@@ -83,6 +83,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	protected IProblemRequestor problemRequestor;
 
 	SourceManipulationInfo sourceManipulationInfo = null;
+	private ILanguage fLanguageOfContext;
 
 	public TranslationUnit(ICElement parent, IFile file, String idType) {
 		super(parent, file, ICElement.C_UNIT);
@@ -754,9 +755,41 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			codeReaderFactory= new IndexBasedCodeReaderFactory(getCProject(), index, codeReaderFactory);
 		}
 		
+		ITranslationUnit configureWith = getSourceContextTU(index, style);
+		
+		IScannerInfo scanInfo= configureWith.getScannerInfo( (style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
+		if (scanInfo == null) {
+			return null;
+		}
+		
+		CodeReader reader;
+		reader = getCodeReader();
+		
+		if (reader != null) {
+			ILanguage language= configureWith.getLanguage();
+			fLanguageOfContext= language;
+			if (language != null) {
+				if (language instanceof AbstractLanguage) {
+					int options= 0;
+					if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
+						options |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
+					}
+					if ((style & AST_CREATE_COMMENT_NODES) != 0) {
+						options |= AbstractLanguage.OPTION_ADD_COMMENTS;
+					}
+					return ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, options, ParserUtil.getParserLogService());
+				}
+				return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
+			}
+		}
+		return null;
+	}
+
+	private ITranslationUnit getSourceContextTU(IIndex index, int style) {
 		ITranslationUnit configureWith= this;
-		try {
-			if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
+		if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
+			try {
+				fLanguageOfContext= null;
 				IIndexFile context= null;
 				IIndexFile indexFile= index.getFile(IndexLocationFactory.getIFL(this));
 				if (indexFile != null) {
@@ -773,36 +806,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 					}
 				}
 			}
-		}
-		catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		
-		IScannerInfo scanInfo= configureWith.getScannerInfo( (style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
-		if (scanInfo == null) {
-			return null;
-		}
-		
-		CodeReader reader;
-		reader = getCodeReader();
-		
-		if (reader != null) {
-			ILanguage language= configureWith.getLanguage();
-			if (language != null) {
-				if (language instanceof AbstractLanguage) {
-					int options= 0;
-					if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
-						options |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
-					}
-					if ((style & AST_CREATE_COMMENT_NODES) != 0) {
-						options |= AbstractLanguage.OPTION_ADD_COMMENTS;
-					}
-					return ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, options, ParserUtil.getParserLogService());
-				}
-				return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
+			catch (CoreException e) {
+				CCorePlugin.log(e);
 			}
 		}
-		return null;
+		return configureWith;
 	}
 
 	private IIndexFile getParsedInContext(IIndexFile indexFile)
@@ -829,7 +837,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			codeReaderFactory = SavedCodeReaderFactory.getInstance();
 		}
 		
-		IScannerInfo scanInfo = getScannerInfo( (style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
+		ITranslationUnit configureWith= getSourceContextTU(index, style);
+		
+		IScannerInfo scanInfo = configureWith.getScannerInfo( (style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
 		if (scanInfo == null) {
 			return null;
 		}
@@ -837,7 +847,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		CodeReader reader;
 		reader = getCodeReader();
 		
-		ILanguage language= getLanguage();
+		ILanguage language= configureWith.getLanguage();
+		fLanguageOfContext= language;
 		if (language != null) {
 			return language.getCompletionNode(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService(), offset);
 		}
@@ -881,5 +892,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			return new ScannerInfo();
 		}
 		return null;
+	}
+	
+	/**
+	 * Return the language of the context this file was parsed in. Works only after using 
+	 * {@link #getAST(IIndex, int)} with the flag {@link ITranslationUnit#AST_CONFIGURE_USING_SOURCE_CONTEXT}.
+	 */
+	public ILanguage getLanguageOfContext() throws CoreException {
+		final ILanguage result= fLanguageOfContext;
+		return result != null ? result : getLanguage();
 	}
 }

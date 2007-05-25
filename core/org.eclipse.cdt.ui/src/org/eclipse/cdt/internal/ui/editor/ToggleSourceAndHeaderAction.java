@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -102,7 +103,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		{
 			shouldVisitDeclarators= true;
 		}
-		public IStatus runOnAST(IASTTranslationUnit ast) {
+		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			fIndex= ast.getIndex();
 			fFilePath= Path.fromOSString(ast.getFilePath());
 			fMap= new HashMap();

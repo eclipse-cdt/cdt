@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -157,7 +158,7 @@ public class ASTCacheTests extends BaseTestCase {
 		final int[] counter= {0};
 		cache.setActiveElement(fTU1);
 		IStatus status= cache.runOnAST(fTU1, false, null, new ASTRunnable() {
-			public IStatus runOnAST(IASTTranslationUnit ast) throws CoreException {
+			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				assertNull(ast);
 				counter[0]++;
 				return Status.OK_STATUS;
@@ -168,7 +169,7 @@ public class ASTCacheTests extends BaseTestCase {
 		IProgressMonitor npm= new NullProgressMonitor();
 		npm.setCanceled(true);
 		status= cache.runOnAST(fTU1, true, npm, new ASTRunnable() {
-			public IStatus runOnAST(IASTTranslationUnit ast) throws CoreException {
+			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				assertNull(ast);
 				counter[0]++;
 				return Status.OK_STATUS;
@@ -178,7 +179,7 @@ public class ASTCacheTests extends BaseTestCase {
 
 		npm.setCanceled(false);
 		status= cache.runOnAST(fTU1, true, npm, new ASTRunnable() {
-			public IStatus runOnAST(IASTTranslationUnit ast) throws CoreException {
+			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				assertNotNull(ast);
 				counter[0]++;
 				return Status.OK_STATUS;
@@ -203,7 +204,7 @@ public class ASTCacheTests extends BaseTestCase {
 			}
 			reconciler1.fStopped= true;
 			IStatus status= cache.runOnAST(fTU1, true, null, new ASTRunnable() {
-				public IStatus runOnAST(IASTTranslationUnit ast) throws CoreException {
+				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					assertNotNull(ast);
 					assertTrue(cache.isActiveElement(fTU1));
 					assertFalse(cache.isReconciling(fTU1));
@@ -225,7 +226,7 @@ public class ASTCacheTests extends BaseTestCase {
 			reconciler2.fStopped= true;
 			
 			status= cache.runOnAST(fTU2, true, null, new ASTRunnable() {
-				public IStatus runOnAST(IASTTranslationUnit ast) throws CoreException {
+				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					assertNotNull(ast);
 					assertTrue(cache.isActiveElement(fTU2));
 					assertFalse(cache.isReconciling(fTU2));
@@ -256,7 +257,7 @@ public class ASTCacheTests extends BaseTestCase {
 				cache.setActiveElement(fTU1);
 				Thread.sleep(50);
 				waitForAST(cache, fTU1, new ASTRunnable() {
-					public IStatus runOnAST(IASTTranslationUnit ast) {
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						assertNotNull(ast);
 						assertEquals("void foo1() {}", ast.getDeclarations()[0].getRawSignature());
 						return Status.OK_STATUS;
@@ -264,7 +265,7 @@ public class ASTCacheTests extends BaseTestCase {
 				});
 
 				waitForAST(cache, fTU2, new ASTRunnable() {
-					public IStatus runOnAST(IASTTranslationUnit ast) {
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						assertNotNull(ast);
 						assertEquals("void foo2() {}", ast.getDeclarations()[0].getRawSignature());
 						return Status.OK_STATUS;
@@ -275,7 +276,7 @@ public class ASTCacheTests extends BaseTestCase {
 				cache.setActiveElement(fTU2);
 				Thread.sleep(50);
 				waitForAST(cache, fTU2, new ASTRunnable() {
-					public IStatus runOnAST(IASTTranslationUnit ast) {
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						assertNotNull(ast);
 						assertEquals("void foo2() {}", ast.getDeclarations()[0].getRawSignature());
 						return Status.OK_STATUS;
@@ -283,7 +284,7 @@ public class ASTCacheTests extends BaseTestCase {
 				});
 
 				waitForAST(cache, fTU1, new ASTRunnable() {
-					public IStatus runOnAST(IASTTranslationUnit ast) {
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						assertNotNull(ast);
 						assertEquals("void foo1() {}", ast.getDeclarations()[0].getRawSignature());
 						return Status.OK_STATUS;

@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -117,11 +118,11 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		/*
 		 * @see org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable#runOnAST(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 		 */
-		public IStatus runOnAST(IASTTranslationUnit ast) {
+		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null) {
 				try {
 					IASTName[] names;
-					names = fTU.getLanguage().getSelectedNames(ast, fTextRegion.getOffset(), fTextRegion.getLength());
+					names = lang.getSelectedNames(ast, fTextRegion.getOffset(), fTextRegion.getLength());
 					if (names != null && names.length >= 1) {
 						for (int i = 0; i < names.length; i++) {
 							IASTName name= names[i];

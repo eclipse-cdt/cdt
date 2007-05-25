@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
@@ -1038,7 +1039,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			if (ast == null) {
 				final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
 				IStatus status= astProvider.runOnAST(getInputElement(), ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTCache.ASTRunnable() {
-					public IStatus runOnAST(IASTTranslationUnit ast) {
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						if (ast != null) {
 							ctx.fAST= ast;
 							fInitialReconcilePending= false;

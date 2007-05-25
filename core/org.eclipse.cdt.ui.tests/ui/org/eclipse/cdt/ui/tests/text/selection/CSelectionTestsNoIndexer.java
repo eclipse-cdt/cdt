@@ -26,8 +26,10 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -44,14 +46,17 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 
 /**
@@ -266,16 +271,21 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
             // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
             ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
             
-            if (sel instanceof TextSelection) {
-            	ITextSelection textSel = (ITextSelection)sel;
+            final IASTName[] result= {null};
+            if (sel instanceof ITextSelection) {
+            	final ITextSelection textSel = (ITextSelection)sel;
             	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
-            	IASTTranslationUnit ast = tu.getAST();
-                IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
-                
-                if (names == null || names.length == 0)
-                    return null;
-
-				return names[0];
+        		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
+        			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
+                        IASTName[] names = language.getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
+                        if (names != null && names.length > 0)
+                            result[0]= names[0];
+        	
+        				return Status.OK_STATUS;
+        			}
+        		});
+        		assertTrue(ok.isOK());
+				return result[0];
             }
         }
         

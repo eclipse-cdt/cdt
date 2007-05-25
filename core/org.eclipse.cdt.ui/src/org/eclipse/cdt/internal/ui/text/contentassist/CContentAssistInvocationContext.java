@@ -128,7 +128,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 				}
 			}
 
-			int flags = ITranslationUnit.AST_SKIP_ALL_HEADERS;
+			int flags = ITranslationUnit.AST_SKIP_ALL_HEADERS | ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 			if (fIndex == null) {
 				flags = 0;
 			}

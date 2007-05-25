@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -86,29 +87,27 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 		
 		final IHyperlink[] result= {null};
 		try {
-			ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
-				public IStatus runOnAST(IASTTranslationUnit ast) {
-					try {
-						IASTName[] selectedNames = 
-							workingCopy.getLanguage().getSelectedNames(ast, selection.getOffset(), selection.getLength());
+			IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
+				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+					IASTName[] selectedNames= 
+						lang.getSelectedNames(ast, selection.getOffset(), selection.getLength());
 
-						IRegion linkRegion;
-						if(selectedNames.length > 0 && selectedNames[0] != null) { // found a name
-							linkRegion = new Region(selection.getOffset(), selection.getLength());
-						}
-						else { // check if we are in an include statement
-							linkRegion = matchIncludeStatement(ast, selection);
-						}
+					IRegion linkRegion;
+					if(selectedNames.length > 0 && selectedNames[0] != null) { // found a name
+						linkRegion = new Region(selection.getOffset(), selection.getLength());
+					}
+					else { // check if we are in an include statement
+						linkRegion = matchIncludeStatement(ast, selection);
+					}
 
-						if(linkRegion != null)
-							result[0]= new CElementHyperlink(linkRegion, openAction);
-					}
-					catch (CoreException e) {
-						return e.getStatus();
-					}
+					if(linkRegion != null)
+						result[0]= new CElementHyperlink(linkRegion, openAction);
 					return Status.OK_STATUS;
 				}
 			});
+			if (!status.isOK()) {
+				CUIPlugin.getDefault().log(status);
+			}
 		} finally {
 			index.releaseReadLock();
 		}

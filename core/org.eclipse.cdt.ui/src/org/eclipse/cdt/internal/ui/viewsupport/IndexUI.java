@@ -36,9 +36,17 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -50,6 +58,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -97,17 +106,48 @@ public class IndexUI {
 				return binding instanceof IEnumeration;
 			case ICElement.C_NAMESPACE:
 				return binding instanceof ICPPNamespace;
+			case ICElement.C_STRUCT_DECLARATION:
 			case ICElement.C_STRUCT:
 				return binding instanceof ICompositeType && 
 					((ICompositeType) binding).getKey() == ICompositeType.k_struct;
 			case ICElement.C_CLASS:
+			case ICElement.C_CLASS_DECLARATION:
 				return binding instanceof ICPPClassType && 
 					((ICompositeType) binding).getKey() == ICPPClassType.k_class;
 			case ICElement.C_UNION:
+			case ICElement.C_UNION_DECLARATION:
 				return binding instanceof ICompositeType && 
 					((ICompositeType) binding).getKey() == ICompositeType.k_union;
 			case ICElement.C_TYPEDEF:
 				return binding instanceof ITypedef;
+			case ICElement.C_METHOD:	
+			case ICElement.C_METHOD_DECLARATION:
+				return binding instanceof ICPPMethod;
+			case ICElement.C_FIELD:
+				return binding instanceof IField;
+			case ICElement.C_FUNCTION:	
+			case ICElement.C_FUNCTION_DECLARATION:
+				return binding instanceof ICPPFunction && !(binding instanceof ICPPMethod);
+			case ICElement.C_VARIABLE:
+			case ICElement.C_VARIABLE_DECLARATION:
+				return binding instanceof IVariable;
+			case ICElement.C_ENUMERATOR:
+				return binding instanceof IEnumerator;
+			case ICElement.C_TEMPLATE_CLASS:
+			case ICElement.C_TEMPLATE_CLASS_DECLARATION:
+			case ICElement.C_TEMPLATE_STRUCT:
+			case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
+			case ICElement.C_TEMPLATE_UNION:
+			case ICElement.C_TEMPLATE_UNION_DECLARATION:
+				return binding instanceof ICPPClassTemplate;
+			case ICElement.C_TEMPLATE_FUNCTION:
+			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+				return binding instanceof ICPPFunctionTemplate && !(binding instanceof ICPPMethod);
+			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
+			case ICElement.C_TEMPLATE_METHOD:
+				return binding instanceof ICPPFunctionTemplate && binding instanceof ICPPMethod;
+			case ICElement.C_TEMPLATE_VARIABLE:
+				return binding instanceof ICPPTemplateParameter;
 			}
 		} catch (DOMException e) {
 			// index bindings don't throw the DOMException.
@@ -258,7 +298,7 @@ public class IndexUI {
 		
 		final IASTName[] result= {null};
 		ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
-			public IStatus runOnAST(IASTTranslationUnit ast) {
+			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 				FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
 				ast.accept(finder);
 				result[0]= finder.getSelectedName();

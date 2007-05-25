@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,10 +51,11 @@ public class ASTCache {
 		/**
 		 * Do something with the given AST.
 		 * 
+		 * @param lang the language with which the AST has been created.
 		 * @param ast  the translation unit AST, may be <code>null</code>
 		 * @return a status object
 		 */
-		IStatus runOnAST(IASTTranslationUnit ast) throws CoreException;
+		IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException;
 	}
 	
 	private final int fParseMode;
@@ -205,7 +207,8 @@ public class ASTCache {
 		
 		try {
 			IASTTranslationUnit ast= getAST(tUnit, index, wait, monitor);
-			return astRunnable.runOnAST(ast);
+			ILanguage lang= (tUnit instanceof TranslationUnit) ? ((TranslationUnit) tUnit).getLanguageOfContext() : tUnit.getLanguage();
+			return astRunnable.runOnAST(lang, ast);
 		}
 		catch (CoreException e) {
 			return e.getStatus();

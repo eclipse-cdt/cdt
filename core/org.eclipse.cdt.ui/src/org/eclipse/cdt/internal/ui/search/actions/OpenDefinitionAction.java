@@ -40,8 +40,8 @@ import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 
 /**
  * Open Definition Action (Ctrl+F3).
- * 
- * @author dsteffle
+ *
+ * @deprecated use {@link OpenDeclarationsAction}.
  */
 public class OpenDefinitionAction extends SelectionParseAction {
 

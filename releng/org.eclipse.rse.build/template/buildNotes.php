@@ -26,17 +26,6 @@
 <li>TM @buildId@ <b>requires Eclipse 3.3M6 or later</b>. Platform Runtime is the minimum
   requirement for core RSE and Terminal. Discovery needs EMF, and the Remotecdt
   integration needs CDT.</li>
-<li>Added a <b>milestone update site</b> for TM 2.0 milestone builds at
-  <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
-  In case any critical updates are announced on the dsdp-tm-dev mailing list, 
-  "Check for updates" will automatically get the patches from there
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>].</li>
-<li><b>Digital Signing</b> of plugins has been re-enabled now that the Platform 
-  issues with it are fixed. All TM stuff on the update sites is digitally
-  signed with the Eclipse certificate.</li>
-<li><b>Added Import/Export</b> to downloadable builds -
-  User Actions needs to be deferred to after TM 2.0
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170909">170909</a>].</li>
 <li><b>Added a Telnet Subsystem</b>. It can be activated by selecting the new
   system type "Telnet Only (Experimental)". The telnet subsystem is currently 
   still experimental because of problems when passing invalid credentials, or
@@ -48,6 +37,13 @@
   allow products configure the policy for mnemonic generation</b>
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178768">178768</a>]
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187860">187860</a>].</li>
+<li><b>Persistence of RSE objects is now done in .metadata by default</b>.
+  This fixes problems with workspace locking. Existing connection definitions
+  in the old format are still read and understood. The old default behavior
+  can be restored by a Preference setting. For details, see bug
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187647">187647</a>].</li>
+<li>Fixed many problems with externalized Strings relevant for translated
+  versions of RSE with NL packs.</li>
 <!--
 <li><b>Copy&Paste, Drag&Drop to Project Explorer</b> are finally fixed
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153652">153652</a>].
@@ -56,7 +52,7 @@
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least 2 API changes and 13 bugs were fixed: use 
+<li>At least 4 API changes and 28 bugs were fixed: use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-05-19&chfieldto=2007-05-27&chfield=resolution&cmdtype=doit"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
@@ -144,11 +140,35 @@ More information can be found in the associated bugzilla items.
 <!--
 <li><b>Cleaned up ISystemRegistry</b> - removed or changed signature of several methods [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>].</li>
 -->
+<li><b>Created API for default encoding of a connection on the IHost level</b>.
+  Existing <code>IRemoteCmdSubSystem.getEncoding()</code> is to be replaced by
+  <code>IRemoteCmdSubSystem.getHost().getDefaultEncoding(true)</code>.
+  For details, see bug 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179937">179937</a>].</li> 
 <li><b>Moved RSESystemTypeAdapter.createNewHostInstance() to IRSESystemType.createNewHostInstance()</b>.
   This was necessary in order to support moving SystemHostPool from UI to Core,
   which is a blocking prerequisite for future enhanced UI/Non-UI separation.
   Migration: Extenders of RSESystemTypeAdapter will need to change their code
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176211">176211</a>].</li> 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176211">176211</a>].</li>
+<li><b>ISystemRegistry.fireEvent() now switches to the Display thread automatically.</b>
+  This may be relevant for event listeners to know
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176601">176601</a>].</li>
+<li><b>Moved three methods from ISystemRegistry into ISystemRegistryUI</b>
+  in preparation of moving SystemRegistry into non-UI in the future:
+  <code>showRSEPerspective(), expandHost(), expandSubSystem()</code> are now
+  UI-only methods. Note that for non-UI expand, an event exists in 
+  ISystemResourceChangeEvents.EVENT_SELECT_EXPAND. Migration notes: use the 
+  methods from their new home. For details, see bug
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189123">189123</a>].</li>
+<!--
+<li><b>Moved one method 
+  from ISubSystemConfigurationAdapter into ISubSystemConfiguration</b>
+  in preparation of moving SystemRegistry into non-UI in the future:
+  <code>renameSubSystemProfile()</code>. Migration notes: use the method
+  from its new home. Override renameSubSystemProfile() in its new home.
+  For details, see bug
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189123">189123</a>].</li>
+-->
 </ul></li>
 <li>TM 2.0M7 Breaking API Changes
 <ul>

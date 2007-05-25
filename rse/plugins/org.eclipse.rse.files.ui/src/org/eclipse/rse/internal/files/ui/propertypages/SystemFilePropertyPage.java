@@ -46,6 +46,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -179,10 +180,13 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		// indicates that it supports encodings
 		if (file.getParentRemoteFileSubSystem().supportsEncoding()) {
 			
+			SystemWidgetHelpers.createLabel(composite_prompts, "", 2); //$NON-NLS-1$
+			
 			// encoding field
 			Group encodingGroup = SystemWidgetHelpers.createGroupComposite(composite_prompts, 2, SystemFileResources.RESID_PP_FILE_ENCODING_GROUP_LABEL);
 			GridData data = new GridData();
-			data.horizontalAlignment = SWT.BEGINNING;
+			data.horizontalSpan = 2;
+			data.horizontalAlignment = SWT.FILL;
 			data.grabExcessHorizontalSpace = true;
 			data.verticalAlignment = SWT.BEGINNING;
 			data.grabExcessVerticalSpace = false;
@@ -209,13 +213,21 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 			data.horizontalSpan = 2;
 			defaultEncodingButton.setLayoutData(data);
 			defaultEncodingButton.addSelectionListener(buttonSelectionListener);
+			
+	        Composite otherComposite = new Composite(encodingGroup, SWT.NONE);
+	        GridLayout otherLayout = new GridLayout();
+	        otherLayout.numColumns = 2;
+	        otherLayout.marginWidth = 0;
+	        otherLayout.marginHeight = 0;
+	        otherComposite.setLayout(otherLayout);
+	        otherComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
 			// other encoding field
-			otherEncodingButton = SystemWidgetHelpers.createRadioButton(encodingGroup, null, SystemFileResources.RESID_PP_FILE_ENCODING_OTHER_LABEL, SystemFileResources.RESID_PP_FILE_ENCODING_OTHER_TOOLTIP);
+			otherEncodingButton = SystemWidgetHelpers.createRadioButton(otherComposite, null, SystemFileResources.RESID_PP_FILE_ENCODING_OTHER_LABEL, SystemFileResources.RESID_PP_FILE_ENCODING_OTHER_TOOLTIP);
 			otherEncodingButton.addSelectionListener(buttonSelectionListener);
 
 			// other encoding combo
-			otherEncodingCombo = SystemWidgetHelpers.createCombo(encodingGroup, null, SystemFileResources.RESID_PP_FILE_ENCODING_ENTER_TOOLTIP);
+			otherEncodingCombo = SystemWidgetHelpers.createCombo(otherComposite, null, SystemFileResources.RESID_PP_FILE_ENCODING_ENTER_TOOLTIP);
 			data = new GridData();
 			data.horizontalAlignment = SWT.BEGINNING;
 			data.grabExcessHorizontalSpace = true;
@@ -232,15 +244,10 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 					updateValidState();
 				}
 			});
+			
+			SystemWidgetHelpers.createLabel(encodingGroup, ""); //$NON-NLS-1$
 
-			Label emptyLabel = new Label(composite_prompts, SWT.NONE);
-			emptyLabel.setText("");
-			data = new GridData();
-			data.horizontalAlignment = SWT.BEGINNING;
-			data.grabExcessHorizontalSpace = false;
-			data.verticalAlignment = SWT.BEGINNING;
-			data.grabExcessVerticalSpace = true;
-			emptyLabel.setLayoutData(data);
+			SystemWidgetHelpers.createLabel(composite_prompts, "", 2); //$NON-NLS-1$
 			
 			encodingFieldAdded = true;
 		}

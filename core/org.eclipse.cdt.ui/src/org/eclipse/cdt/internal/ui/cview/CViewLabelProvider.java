@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
@@ -82,7 +83,7 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 			IPath path = reference.getPath();
 			IContainer container = reference.getCModel().getWorkspace().getRoot().getContainerForLocation(path);
 			if (container != null && container.isAccessible()) {
-				ImageDescriptor desc = CElementImageProvider.getImageDescriptor(ICElement.C_PROJECT);
+				ImageDescriptor desc = CPluginImages.DESC_OBJS_INCLUDES_FOLDER_WORKSPACE;
 				desc = new CElementImageDescriptor(desc, 0, CElementImageProvider.SMALL_SIZE);
 				return CUIPlugin.getImageDescriptorRegistry().get(desc);
 			}

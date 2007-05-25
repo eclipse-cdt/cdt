@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -24,7 +25,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -288,6 +291,10 @@ public class CElementImageProvider {
 					return CPluginImages.DESC_OBJS_UNKNOWN;
 				} else if (celement instanceof IIncludeReference) {
 					return CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
+				} else if (celement instanceof IArchiveContainer) {
+					return CPluginImages.DESC_OBJS_ARCHIVES_CONTAINER;
+				} else if (celement instanceof IBinaryContainer) {
+					return CPluginImages.DESC_OBJS_BINARIES_CONTAINER;
 				}
 				return CPluginImages.DESC_OBJS_CONTAINER;
 

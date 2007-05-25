@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
@@ -34,7 +35,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
-	private final Color inDirect = new Color(Display.getDefault(), new RGB(170, 170, 170));
+	private Color inDirect = new Color(Display.getDefault(), new RGB(170, 170, 170));
 
 	private String fNewLabel, fCreateLabel;
 	private ImageDescriptor fIncludeIcon, fMacroIcon, fLibWSrcIcon, fLibIcon;
@@ -71,6 +72,15 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 		bShowParentInfo = showParentInfo;
 	}
 
+	/*
+	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+		inDirect.dispose();
+		inDirect= null;
+		super.dispose();
+	}
+	
 	public String getText(Object element) {
 		if (element instanceof CPElement) {
 			return getCPElementText((CPElement)element);

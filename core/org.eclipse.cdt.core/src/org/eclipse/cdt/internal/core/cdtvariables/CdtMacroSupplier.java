@@ -14,7 +14,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.utils.Platform;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.osgi.framework.Bundle;
@@ -32,6 +34,8 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 	private static final String fConfigurationMacros[] = new String[]{
 		"ConfigName",	//$NON-NLS-1$
 		"ConfigDescription",	//$NON-NLS-1$
+		"ProjName",	//$NON-NLS-1$
+		"ProjDirPath",	//$NON-NLS-1$
 //		"BuildArtifactFileName",	//$NON-NLS-1$
 //		"BuildArtifactFileExt",	//$NON-NLS-1$
 //		"BuildArtifactFileBaseName",	//$NON-NLS-1$
@@ -183,6 +187,11 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 		return macro;
 	}
 
+	private IProject getProject(ICConfigurationDescription cfgDes){
+		ICProjectDescription des = cfgDes.getProjectDescription();
+		return des != null ? des.getProject() : null;
+	}
+	
 	public ICdtVariable getMacro(String macroName, ICConfigurationDescription cfg){
 		ICdtVariable macro = null;
 		if("ConfigName".equals(macroName)){	//$NON-NLS-1$
@@ -190,6 +199,14 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 		}
 		else if("ConfigDescription".equals(macroName)){	//$NON-NLS-1$
 			macro = new CdtVariable(macroName,ICdtVariable.VALUE_TEXT,cfg.getDescription());
+		} else if("ProjName".equals(macroName)){	//$NON-NLS-1$
+			IProject project = getProject(cfg);
+			if(project != null)
+				macro = new CdtVariable(macroName,ICdtVariable.VALUE_TEXT,project.getName());
+		} else if("ProjDirPath".equals(macroName)){	//$NON-NLS-1$
+			IProject project = getProject(cfg);
+			if(project != null)
+				macro = new CdtVariable(macroName,ICdtVariable.VALUE_TEXT,project.getLocation().toString());
 		}
 /*		else if("BuildArtifactFileName".equals(macroName)){	//$NON-NLS-1$
 			String name = cfg.getArtifactName();

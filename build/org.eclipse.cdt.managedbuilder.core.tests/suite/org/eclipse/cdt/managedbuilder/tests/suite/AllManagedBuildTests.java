@@ -59,7 +59,7 @@ public class AllManagedBuildTests {
 //		suite.addTest(ManagedCommandLineGeneratorTest.suite());
 //		suite.addTest(ResourceBuildCoreTests.suite());
 //		suite.addTest(ManagedProject21MakefileTests.suite());
-//		suite.addTest(ManagedProject30MakefileTests.suite());
+		suite.addTest(ManagedProject30MakefileTests.suite());
 		suite.addTest(ManagedBuildCoreTests_SharedToolOptions.suite());
 //		suite.addTest(ManagedBuildEnvironmentTests.suite());
 //		suite.addTest(ManagedBuildMacrosTests.suite());

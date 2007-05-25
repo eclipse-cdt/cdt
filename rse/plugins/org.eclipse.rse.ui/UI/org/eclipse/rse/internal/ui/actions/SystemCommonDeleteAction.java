@@ -37,6 +37,7 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemDeleteDialog;
 import org.eclipse.rse.ui.model.SystemRemoteElementResourceSet;
@@ -124,7 +125,7 @@ public class SystemCommonDeleteAction
 				}
 				catch (Exception e)
 				{	
-					e.printStackTrace();
+					SystemBasePlugin.logError(e.getMessage(), e);
 				}
 			}
 			

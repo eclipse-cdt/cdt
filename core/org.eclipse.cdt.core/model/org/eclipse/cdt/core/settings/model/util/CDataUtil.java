@@ -1035,7 +1035,7 @@ public class CDataUtil {
 				path = path.removeFirstSegments(projPath.segmentCount()).makeRelative();
 			else if (force)
 				path = path.makeRelative();
-			return (ICExclusionPatternPathEntry)CDataUtil.createEntry(entry.getKind(), entry.getName(), entry.getValue(), entry.getExclusionPatterns(), entry.getFlags());
+			return (ICExclusionPatternPathEntry)CDataUtil.createEntry(entry.getKind(), path.toString(), null, entry.getExclusionPatterns(), entry.getFlags());
 		}
 		return entry;
 	}

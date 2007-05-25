@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
+ * Gerhard Schaber (Wind River Systems) - bug 187910
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -83,13 +84,8 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         for (compilerInvocationIndex=0; compilerInvocationIndex<split.size(); compilerInvocationIndex++) {
 	        String command = (String)split.get(compilerInvocationIndex);
 	        // verify that it is compiler invocation
-	        int cii2 = -1;
-	        for (int cii = 0; cii < compilerInvocation.length; ++cii) {
-	        	cii2 = command.indexOf(compilerInvocation[cii]);
-	        	if (cii2 >= 0)
-	                break;
-	        }
-        	if (cii2 >= 0)
+	        int idx = lastIndexOfCompilerCommand(command);
+        	if (idx >= 0)
                 break;
         }    
 	    if (compilerInvocationIndex >= split.size()) {
@@ -179,6 +175,17 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         }
         return rc;
     }
+
+	private int lastIndexOfCompilerCommand(String command) {
+		int cii2 = -1;
+		for (int cii = 0; cii < compilerInvocation.length; ++cii) {
+			cii2 = command.lastIndexOf(compilerInvocation[cii]);
+			if (cii2 >= 0) {
+				break;
+			}
+		}
+		return cii2;
+	}
 
     /**
      * Splits and unquotes all compiler command segments; supports build command such as 
@@ -297,8 +304,21 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 	        		break;
 	        	}
 	        }
-	    	if (startPos >= 0 && endPos >= 0 && startPos >= compilerInvocationIndex) {
-	    		split.add(line.substring(startPos, endPos));
+	    	if (startPos >= 0 && endPos >= 0) {
+	    		String cmdFragment = line.substring(startPos, endPos);
+	    		if (startPos >= compilerInvocationIndex) { // the compiler name or one of its options
+	    			split.add(cmdFragment);
+	    		}
+	    		else if (endPos > compilerInvocationIndex) {
+	    			// compiler name is found within another command fragment--we have to check, whether this
+	    			// is a valid compiler invocation (e.g., C:/Programs/gcc/gcc.exe) or only a part
+	    			// of a command that contains by chance the compiler name (e.g., cat testgccsettings.txt)
+	    	        int idx = lastIndexOfCompilerCommand(cmdFragment);
+	            	if (idx == 0 ||
+	            	   (idx > 0 && (cmdFragment.charAt(idx-1) == '\\' || cmdFragment.charAt(idx-1) == '/'))) {
+		    			split.add(cmdFragment);
+	            	}
+	    		}
 	    	}
         }
         return split;

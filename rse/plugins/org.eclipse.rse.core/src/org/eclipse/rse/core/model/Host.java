@@ -520,10 +520,9 @@ public class Host extends RSEModelObject implements IHost {
 		return result;
 	}
 
-	/**
-	 * Returns the default encoding of the host.
-	 * @see IHost#getDefaultEncoding(boolean) 
-	 * @see #setDefaultEncoding(String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#getDefaultEncoding(boolean)
 	 */
 	public String getDefaultEncoding(boolean fromRemote) {
 		
@@ -551,10 +550,9 @@ public class Host extends RSEModelObject implements IHost {
 		}
 	}
 
-	/**
-	 * Sets the default encoding of the host.
-	 * @see IHost#setDefaultEncoding(String, boolean) 
-	 * @see #getDefaultEncoding(boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IHost#setDefaultEncoding(java.lang.String, boolean)
 	 */
 	public void setDefaultEncoding(String encoding, boolean fromRemote) {
 		

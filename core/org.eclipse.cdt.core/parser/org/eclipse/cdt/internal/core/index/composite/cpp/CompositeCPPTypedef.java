@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -32,11 +33,11 @@ class CompositeCPPTypedef extends CompositeCPPBinding implements ITypedef, IInde
 		return ((ITypedef)rbinding).isSameType(type);
 	}
 
-	public Object clone() {
-		fail(); return null;
-	}
-
 	public void setType(IType type) {
 		fail();
+	}
+	
+	public Object clone() {
+		return new CPPTypedefClone(this);
 	}
 }

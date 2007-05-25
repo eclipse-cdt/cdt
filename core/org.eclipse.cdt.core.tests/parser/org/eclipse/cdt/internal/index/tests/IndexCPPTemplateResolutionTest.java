@@ -545,7 +545,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// class Foo<A> {};
 	//
 	// Foo<B> b2;
-	public void testClassSpecializations() {
+	public void _testClassSpecializations_180738() {
 		IBinding b1a = getBindingFromASTName("Foo<B> b1;", 3);
 		IBinding b1b = getBindingFromASTName("Foo<B> b1;", 6, true);
 		

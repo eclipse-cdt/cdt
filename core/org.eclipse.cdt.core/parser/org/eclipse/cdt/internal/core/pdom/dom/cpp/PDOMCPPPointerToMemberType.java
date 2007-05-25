@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
+import org.eclipse.cdt.internal.core.index.PointerTypeClone;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -72,7 +73,7 @@ implements ICPPPointerToMemberType, IIndexType {
 		return new PDOMCPPPointerToMemberTypeClone(this);
 	}
 	
-	private static class PDOMCPPPointerToMemberTypeClone extends PDOMPointerType.PDOMPointerTypeClone implements ICPPPointerToMemberType {
+	private static class PDOMCPPPointerToMemberTypeClone extends PointerTypeClone implements ICPPPointerToMemberType {
 		public PDOMCPPPointerToMemberTypeClone(ICPPPointerToMemberType pointer) {
 			super(pointer);
 		}

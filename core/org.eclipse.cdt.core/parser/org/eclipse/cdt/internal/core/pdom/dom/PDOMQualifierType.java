@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.IIndexType;
+import org.eclipse.cdt.internal.core.index.QualifierTypeClone;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -150,49 +151,6 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 	}
 
 	public Object clone() {
-		return new PDOMQualifierTypeClone(this);
-	}
-	
-	private static class PDOMQualifierTypeClone implements IQualifierType, ITypeContainer, IIndexType {
-		private final IQualifierType delegate;
-		private IType type = null;
-		
-		public PDOMQualifierTypeClone(IQualifierType qualifier) {
-			this.delegate = qualifier;
-		}
-		public IType getType() throws DOMException {
-			if (type == null) {
-				return delegate.getType();
-			}
-			return type;
-		}
-		public boolean isConst() throws DOMException {
-			return delegate.isConst();
-		}
-		public boolean isVolatile() throws DOMException {
-			return delegate.isVolatile();
-		}
-		public boolean isSameType(IType type) {
-		    if( type instanceof ITypedef )
-		        return type.isSameType( this );
-		    if( !( type instanceof IQualifierType ) ) 
-		        return false;
-		    
-		    IQualifierType pt = (IQualifierType) type;
-		    try {
-				if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() ) {
-					IType myType= getType();
-				    return myType != null && myType.isSameType( pt.getType() );
-				}
-			} catch (DOMException e) {
-			}
-		    return false;
-		}
-		public void setType(IType type) {
-			this.type = type;
-		}
-		public Object clone() {
-			return new PDOMQualifierTypeClone(this);
-		}
+		return new QualifierTypeClone(this);
 	}
 }

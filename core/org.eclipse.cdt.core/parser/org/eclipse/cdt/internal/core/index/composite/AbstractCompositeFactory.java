@@ -75,7 +75,8 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	
 	/**
 	 * Convenience method for finding a binding with a definition in the specified index
-	 * context, which is equivalent to the specified binding
+	 * context, which is equivalent to the specified binding, or null if no definitions were
+     * found.
 	 * @param index
 	 * @param binding
 	 * @return
@@ -84,7 +85,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		try{
 			CIndex cindex = (CIndex) index;
 			IIndexFragmentBinding[] ibs = cindex.findEquivalentBindings(binding);
-			IBinding def = ibs[0];
+			IBinding def = ibs.length>0 ? ibs[0] : null;
 			for(int i=0; i<ibs.length; i++) {
 				if(ibs[i].hasDefinition()) {
 					def = ibs[i];

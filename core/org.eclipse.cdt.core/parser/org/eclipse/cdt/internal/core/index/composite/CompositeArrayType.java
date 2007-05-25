@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.ArrayTypeClone;
 
 public class CompositeArrayType extends CompositeTypeContainer implements IArrayType, ITypeContainer {
 	public CompositeArrayType(IArrayType arrayType, ICompositesFactory cf) {
@@ -22,5 +23,9 @@ public class CompositeArrayType extends CompositeTypeContainer implements IArray
 
 	public IASTExpression getArraySizeExpression() throws DOMException {
 		fail(); return null;
+	}
+	
+	public Object clone() {
+		return new ArrayTypeClone(this);
 	}
 }

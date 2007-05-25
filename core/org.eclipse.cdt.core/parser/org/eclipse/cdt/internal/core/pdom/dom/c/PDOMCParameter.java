@@ -128,7 +128,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 	}
 
 	public Object getAdapter(Class adapter) {
-		throw new PDOMNotImplementedError();
+		return null;
 	}
 
 	public char[] getNameCharArray() {

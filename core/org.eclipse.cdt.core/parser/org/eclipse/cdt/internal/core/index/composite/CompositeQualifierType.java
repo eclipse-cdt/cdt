@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.QualifierTypeClone;
 
 public class CompositeQualifierType extends CompositeTypeContainer implements IQualifierType, ITypeContainer {
 	public CompositeQualifierType(IQualifierType qualifierType, ICompositesFactory cf) throws DOMException {
@@ -30,5 +31,9 @@ public class CompositeQualifierType extends CompositeTypeContainer implements IQ
 
 	public boolean isSameType(IType other) {		
 		return ((IQualifierType)type).isSameType(other);
+	}
+	
+	public Object clone() {
+		return new QualifierTypeClone(this);
 	}
 }

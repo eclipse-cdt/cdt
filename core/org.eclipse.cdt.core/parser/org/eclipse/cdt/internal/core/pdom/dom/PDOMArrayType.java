@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.ArrayTypeClone;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -93,48 +94,6 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 	}
 	
 	public Object clone() {
-		return new PDOMArrayTypeClone(this);
-	}
-	
-	private static class PDOMArrayTypeClone implements IIndexType, IArrayType, ITypeContainer {
-		private final IArrayType delegate;
-		private IType type = null;
-		
-		public PDOMArrayTypeClone(IArrayType array) {
-			this.delegate = array;
-		}
-		public boolean isSameType(IType type) {
-			if( type instanceof ITypedef )
-			    return ((ITypedef)type).isSameType( this );
-			
-			if( !( type instanceof IArrayType )) 
-			    return false;
-			
-			try {
-				IType type1= this.getType();
-				if( type1 == null )
-				    return false;
-				
-				IArrayType rhs = (IArrayType) type;
-				return type1.isSameType( rhs.getType() );
-			} catch (DOMException e) {
-			}
-			return false;
-		}
-		public IASTExpression getArraySizeExpression() throws DOMException {
-			return delegate.getArraySizeExpression();
-		}
-		public IType getType() throws DOMException {
-			if (type == null) {
-				return delegate.getType();
-			}
-			return type;
-		}
-		public void setType(IType type) {
-			this.type = type;
-		}
-		public Object clone() {
-			return new PDOMArrayTypeClone(this);
-		}
+		return new ArrayTypeClone(this);
 	}
 }

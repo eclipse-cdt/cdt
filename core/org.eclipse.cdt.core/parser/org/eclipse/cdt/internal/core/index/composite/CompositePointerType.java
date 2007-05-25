@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.PointerTypeClone;
 
 public class CompositePointerType extends CompositeTypeContainer implements IPointerType, ITypeContainer {
 	public CompositePointerType(IPointerType pointerType, ICompositesFactory cf) throws DOMException {
@@ -30,5 +31,9 @@ public class CompositePointerType extends CompositeTypeContainer implements IPoi
 	
 	public boolean isSameType(IType other) {
 		return ((IPointerType)type).isSameType(other);
+	}
+	
+	public Object clone() {
+		return new PointerTypeClone(this);
 	}
 }

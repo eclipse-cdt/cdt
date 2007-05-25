@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.CPPReferenceTypeClone;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -99,44 +100,6 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 	}
 
 	public Object clone() {
-		return new PDOMCPPReferenceTypeClone(this);
-	}
-	
-	private static class PDOMCPPReferenceTypeClone implements ICPPReferenceType, ITypeContainer, IIndexType {
-		private final ICPPReferenceType delegate;
-		private IType type = null;
-		
-		public PDOMCPPReferenceTypeClone(ICPPReferenceType reference) {
-			this.delegate = reference;
-		}
-		public IType getType() throws DOMException {
-			if (type == null) {
-				return delegate.getType();
-			}
-			return type;
-		}
-		public boolean isSameType(IType type) {
-			if( type instanceof ITypedef )
-			    return type.isSameType(this);
-			
-			if( !( type instanceof ICPPReferenceType )) 
-			    return false;
-			
-			ICPPReferenceType rhs = (ICPPReferenceType) type;
-			try {
-				IType type1= getType();
-				if (type1 != null) {
-					return type1.isSameType(rhs.getType());
-				}
-			} catch (DOMException e) {
-			}
-			return false;
-		}
-		public void setType(IType type) {
-			this.type = type;
-		}
-		public Object clone() {
-			return new PDOMCPPReferenceTypeClone(this);
-		}
+		return new CPPReferenceTypeClone(this);
 	}
 }

@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -1640,5 +1641,40 @@ public class CPPTemplates {
 			((ICPPInternalTemplate)template).addSpecialization( arguments, instance );
 	
 		return instance;	
+	}
+	
+	/**
+	 * Returns an array of specialised bases. The bases will be specialised versions of
+	 * the template instances associated specialised bindings bases.
+	 * binding.
+	 * @param classInstance
+	 * @return
+	 * @throws DOMException
+	 */
+	public static ICPPBase[] getBases(ICPPTemplateInstance classInstance) throws DOMException {		
+		assert classInstance instanceof ICPPClassType;
+		ICPPBase[] pdomBases = ((ICPPClassType) classInstance.getTemplateDefinition()).getBases();
+
+		if (pdomBases != null) {
+			ICPPBase[] result = null;
+			
+			for (int i = 0; i < pdomBases.length; i++) {
+				ICPPBase origBase = pdomBases[i];
+				ICPPBase specBase = (ICPPBase) ((ICPPInternalBase)origBase).clone();
+				IBinding origClass = origBase.getBaseClass();
+				if (origClass instanceof IType) {
+					IType specClass = CPPTemplates.instantiateType((IType) origClass, classInstance.getArgumentMap());
+					specClass = CPPSemantics.getUltimateType(specClass, true);
+					if (specClass instanceof IBinding) {
+						((ICPPInternalBase)specBase).setBaseClass((IBinding) specClass);
+					}
+					result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBase);
+				}
+			}
+			
+			return (ICPPBase[]) ArrayUtil.trim(ICPPBase.class, result);
+		}
+		
+		return new ICPPBase[0];
 	}
 }

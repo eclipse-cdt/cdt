@@ -52,7 +52,7 @@
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least 6 API changes and 28 bugs were fixed: use 
+<li>At least 7 API changes and 28 bugs were fixed: use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-05-19&chfieldto=2007-05-27&chfield=resolution&cmdtype=doit"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
@@ -171,6 +171,10 @@ More information can be found in the associated bugzilla items.
   from its new home. Override renameSubSystemProfile() in its new home.
   For details, see bug
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189123">189123</a>].</li>
+<li><b>Renamed subsystemFactory to subsystemConfiguration in IActionFilter</b>
+  implementation of RSE model objects, which is being used in plugin.xml
+  contributed popupMenu and propertyPage extensions  
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189163">189163</a>].</li>
 </ul></li>
 <li>TM 2.0M7 Breaking API Changes
 <ul>

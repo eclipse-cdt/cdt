@@ -73,7 +73,7 @@ the information needed to enable them to in Remote System Explorer.
                          class=&quot;samples.ui.propertypages.TeamFilterPropertyPage&quot;
                          id=&quot;samples.ui.pp.filter.team&quot;
                          objectClass=&quot;org.eclipse.rse.core.filters.ISystemFilterReference&quot; &gt;
-                    <b>&lt;filter name=&quot;subsystemFactoryId&quot; value=&quot;samples.subsystems.factory&quot;/&gt;</b>
+                    <b>&lt;filter name=&quot;subsystemConfigurationId&quot; value=&quot;samples.subsystems.factory&quot;/&gt;</b>
                    &lt;/page&gt;
                &lt;/extension&gt;
             </code></pre>
@@ -116,7 +116,7 @@ the information needed to enable them to in Remote System Explorer.
                    &lt;objectContribution
                          id =&quot;samples.ui.actions.TeamFilterActions&quot;
                          objectClass=&quot;org.eclipse.rse.core.filters.ISystemFilterReference&quot;&gt;
-                         <b>&lt;filter name=&quot;subsystemFactoryId&quot; value=&quot;samples.subsystems.factory&quot;/&gt;</b>
+                         <b>&lt;filter name=&quot;subsystemConfigurationId&quot; value=&quot;samples.subsystems.factory&quot;/&gt;</b>
                          &lt;action id=&quot;samples.ui.actions.TeamFilterAction1&quot;
                                  label=&quot;Sample Team Filter Action&quot;
                                  class=&quot;samples.ui.actions.ShowJarContents&quot;&gt;
@@ -156,10 +156,10 @@ adapter reports that it has children or "false" if it doesn't have children.
 <li><b><samp>"systemType"</samp></b>. Will test the <i>value</i> for an exact match on the system type of
 this object's parent SystemConnection object.
 You can specify multiple values if you comma-separate them.
-<li><b><samp>"subsystemFactoryId"</samp></b>. Will test the <i>value</i> for an exact match on the
+<li><b><samp>"subsystemConfigurationId"</samp></b>. Will test the <i>value</i> for an exact match on the
 <samp>ID</samp> of the subsystem factory that created this object's subsystem. Returns false for SystemConnection objects.
 You can specify multiple values if you comma-separate them.
-<li><b><samp>"subsystemFactoryCategory"</samp></b>. Will test the <i>value</i> for an exact match
+<li><b><samp>"subsystemConfigurationCategory"</samp></b>. Will test the <i>value</i> for an exact match
 on the <samp>category</samp> of the subsystem factory that created this object's subsystem.
 You can specify multiple values if you comma-separate them.
 </ul>

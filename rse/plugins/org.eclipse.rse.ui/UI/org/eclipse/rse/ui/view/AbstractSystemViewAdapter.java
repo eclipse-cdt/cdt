@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [189163] Update IActionFilter constants from subsystemFactory to subsystemConfiguration
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -1382,10 +1383,10 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 *       returns true if the subsystem is offline.
 	 *  <li>name="systemType". The given value is a system type, and this returns true if this object's connection is of that
 	 *       type. You can specify multiple values by comma-separating them, and this returns if there is a match on any them.
-	 *  <li>name="subsystemFactoryId". The given value is a subsystem factory Id, and this returns true if this object's 
+	 *  <li>name="subsystemConfigurationId". The given value is a subsystem factory Id, and this returns true if this object's 
 	 *       subsystem is from that subsystem factory. For connections, returns false.
 	 *       You can specify multiple values by comma-separating them, and this returns if there is a match on any them.
-	 *  <li>name="subsystemFactoryCategory". The given value is a subsystem category, and this returns true if this object's
+	 *  <li>name="subsystemConfigurationCategory". The given value is a subsystem category, and this returns true if this object's
 	 *       subsystem is from a subsystem factory of that category. For connections, returns false.
 	 *       You can specify multiple values by comma-separating them, and this returns if there is a match on any them.
 	 * </ol>
@@ -1476,7 +1477,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			}
 			return false;
 		}
-		else if (name.equalsIgnoreCase("subsystemFactoryId")) //$NON-NLS-1$
+		else if (name.equalsIgnoreCase("subsystemConfigurationId")) //$NON-NLS-1$
 		{
 			ISubSystem ss = getSubSystem(target);
 			//System.out.println("ss null? " + (ss == null));
@@ -1494,7 +1495,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			//System.out.println("Returning: " + ok);
 			return ok;
 		}
-		else if (name.equalsIgnoreCase("subsystemFactoryCategory")) //$NON-NLS-1$
+		else if (name.equalsIgnoreCase("subsystemConfigurationCategory")) //$NON-NLS-1$
 		{
 			ISubSystem ss = getSubSystem(target);
 			if (ss == null)

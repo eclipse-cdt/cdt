@@ -192,7 +192,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 			data.grabExcessVerticalSpace = false;
 			encodingGroup.setLayoutData(data);
 			
-			SelectionAdapter buttonSelectionListener = new SelectionAdapter() {
+			SelectionAdapter defaultButtonSelectionListener = new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					updateEncodingGroupState(defaultEncodingButton.getSelection());
 					updateValidState();
@@ -212,7 +212,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 			data = new GridData();
 			data.horizontalSpan = 2;
 			defaultEncodingButton.setLayoutData(data);
-			defaultEncodingButton.addSelectionListener(buttonSelectionListener);
+			defaultEncodingButton.addSelectionListener(defaultButtonSelectionListener);
 			
 	        Composite otherComposite = new Composite(encodingGroup, SWT.NONE);
 	        GridLayout otherLayout = new GridLayout();
@@ -224,7 +224,15 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 
 			// other encoding field
 			otherEncodingButton = SystemWidgetHelpers.createRadioButton(otherComposite, null, SystemFileResources.RESID_PP_FILE_ENCODING_OTHER_LABEL, SystemFileResources.RESID_PP_FILE_ENCODING_OTHER_TOOLTIP);
-			otherEncodingButton.addSelectionListener(buttonSelectionListener);
+			
+			SelectionAdapter otherButtonSelectionListener = new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateEncodingGroupState(!otherEncodingButton.getSelection());
+					updateValidState();
+				}
+			};
+			
+			otherEncodingButton.addSelectionListener(otherButtonSelectionListener);
 
 			// other encoding combo
 			otherEncodingCombo = SystemWidgetHelpers.createCombo(otherComposite, null, SystemFileResources.RESID_PP_FILE_ENCODING_ENTER_TOOLTIP);

@@ -27,7 +27,12 @@ package org.eclipse.rse.core.model;
  */
 public interface IRSEPersistableContainer {
 	
-	static final IRSEPersistableContainer[] NO_CHILDREN = new IRSEPersistableContainer[0];
+	/**
+	 * A constant indicating the presence of no children for a given container.
+	 * This can be used when implementing {@link #getPersistableChildren()}.
+	 * The value is an empty array.
+	 */
+	public static final IRSEPersistableContainer[] NO_CHILDREN = new IRSEPersistableContainer[0];
 
 	/**
 	 * Request a persistence manager to persist this object.

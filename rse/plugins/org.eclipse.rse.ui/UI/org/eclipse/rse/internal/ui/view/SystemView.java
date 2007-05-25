@@ -2103,7 +2103,11 @@ public class SystemView extends SafeTreeViewer
 					if (!hasChildren)
 					{
 						// make the src the parent of the src
-						src = adapter.getParent(src);
+						Object srcParent = adapter.getParent(src);
+						if (srcParent != null)
+						{
+							src = srcParent;
+						}
 					}
 					else
 					{
@@ -2126,13 +2130,15 @@ public class SystemView extends SafeTreeViewer
 										Object srcParent = adapter.getParent(src); // get parent before we query 
 										                                           // because if after query src doesn't exist, 
 																			  	   // we can't get parent
-										
-										src = ss.getObjectWithAbsoluteName(key);
-										hasChildren = adapter.hasChildren((IAdaptable)src);
-										if (!hasChildren)
-										{
-											// make the src the parent of the src
-											src = srcParent;
+										if (srcParent != null)
+										{	
+											src = ss.getObjectWithAbsoluteName(key);
+											hasChildren = adapter.hasChildren((IAdaptable)src);
+											if (!hasChildren)
+											{
+												// make the src the parent of the src
+												src = srcParent;
+											}
 										}
 									}
 									catch (Exception e)

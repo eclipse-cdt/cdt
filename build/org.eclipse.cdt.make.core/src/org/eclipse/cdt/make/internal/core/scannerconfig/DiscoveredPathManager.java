@@ -126,6 +126,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 					if (resource.getType() == IResource.PROJECT) {
 						//TODO: better handlind of resource remove/rename
 						fDiscoveredInfoHolderMap.remove(resource);
+						ScannerConfigProfileManager.getInstance().handleProjectRemoved(resource.getProject());
 					}
 					break;
 			}

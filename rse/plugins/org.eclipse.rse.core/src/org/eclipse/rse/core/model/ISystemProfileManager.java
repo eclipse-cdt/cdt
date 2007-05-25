@@ -20,16 +20,16 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * A class that manages a list of SystemProfile objects.
+ * Manages a list of SystemProfile objects. System profiles
+ * should be created, deleted, restored, activated, and deactivated though
+ * this interface if event processing is not desired. If events are necessary
+ * then the system registry should be used.
  */
-
 public interface ISystemProfileManager {
 
 	/**
 	 * Create a new profile with the given name, and add to the list.
 	 * The name must be unique within the existing list.
-	 * <p>
-	 * The underlying folder is created in the file system.
 	 * <p>
 	 * @param name What to name this profile
 	 * @param makeActive true if this profile is to be added to the active profile list.
@@ -86,7 +86,6 @@ public interface ISystemProfileManager {
 	 * Get the index of a profile given its name.
 	 * @param profileName the name of the profile to look for.
 	 * @return 0-based position of the given active profile within the list of active profiles.
-	 * @deprecated
 	 */
 	public int getActiveSystemProfilePosition(String profileName);
 

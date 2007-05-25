@@ -28,6 +28,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
@@ -55,6 +56,7 @@ import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IRSECallback;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -87,6 +89,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
@@ -634,14 +637,14 @@ public class SystemTableViewPart extends ViewPart
 			_rmemento = memento;
 		}
 
-		public IStatus runInUIThread(IProgressMonitor monitor)
+		public IStatus runInUIThread(final IProgressMonitor monitor)
 		{
-			IMemento memento = _rmemento;
+			final IMemento memento = _rmemento;
 			String profileId = memento.getString(TAG_TABLE_VIEW_PROFILE_ID);
 			String connectionId = memento.getString(TAG_TABLE_VIEW_CONNECTION_ID);
 			String subsystemId = memento.getString(TAG_TABLE_VIEW_SUBSYSTEM_ID);
-			String filterID = memento.getString(TAG_TABLE_VIEW_FILTER_ID);
-			String objectID = memento.getString(TAG_TABLE_VIEW_OBJECT_ID);
+			final String filterID = memento.getString(TAG_TABLE_VIEW_FILTER_ID);
+			final String objectID = memento.getString(TAG_TABLE_VIEW_OBJECT_ID);
 
 			ISystemRegistryUI registryUI = RSEUIPlugin.getTheSystemRegistryUI();
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
@@ -665,62 +668,85 @@ public class SystemTableViewPart extends ViewPart
 			else
 			{
 				// from the subsystem ID determine the profile, system and subsystem
-				ISubSystem subsystem = registry.getSubSystem(subsystemId);
+				final ISubSystem subsystem = registry.getSubSystem(subsystemId);
 
-				if (subsystem != null)
-				{
-					if (filterID == null && objectID == null)
-					{
+				if (subsystem != null) {
+					if (filterID == null && objectID == null) {
 						input = subsystem;
 					}
-					else
-					{
-
-						if (!subsystem.isConnected())
-						{
-							try
-							{
-								subsystem.connect(monitor, false);
+					else {
+						if (!subsystem.isConnected()) {
+							try {
+								final Object finInput = input;
+								subsystem.connect(false, new IRSECallback() {
+									public void done(IStatus status, Object result) {
+										// this needs to be done on the main thread
+										// so doing an asynchExec()
+										Display.getDefault().asyncExec(new RunOnceConnectedOnMainThread(memento, finInput, subsystem, filterID, objectID));
+									}
+								});
+								return Status.OK_STATUS;
 							}
-							catch (Exception e)
-							{
+							catch (Exception e) {
 								return Status.CANCEL_STATUS;
 							}
 						}
-						if (subsystem.isConnected())
-						{
-
-							if (filterID != null)
-							{
-								try
-								{
-									input = subsystem.getObjectWithAbsoluteName(filterID);
-								}
-								catch (Exception e)
-								{
-								}
-							}
-							else
-							{
-
-								if (objectID != null)
-								{
-
-									try
-									{
-										input = subsystem.getObjectWithAbsoluteName(objectID);
-									}
-									catch (Exception e)
-									{
-										return Status.CANCEL_STATUS;
-									}
-								}
-							} // end else
-						} // end if (subsystem.isConnected)
+						return runOnceConnected(monitor, memento, input, subsystem, filterID, objectID);
 					} // end else
 				} // end if (subsystem != null)
 			} // end else
+			return runWithInput(monitor, input, memento);
+		}
+			
+		private class RunOnceConnectedOnMainThread implements Runnable
+		{
+			private IMemento _inmemento;
+			private Object _input;
+			private ISubSystem _subSystem;
+			private String _filterID;
+			private String _objectID;
+			public RunOnceConnectedOnMainThread(IMemento memento, Object input, ISubSystem subSystem, String filterID, String objectID)
+			{
+				_inmemento = memento;
+				_input = input;
+				_subSystem = subSystem;
+				_filterID = filterID;
+				_objectID = objectID;
+			}
+			
+			public void run()
+			{
+				runOnceConnected(new NullProgressMonitor(), _inmemento, _input, _subSystem, _filterID, _objectID);
+			}
+		}
+		
+		public IStatus runOnceConnected(IProgressMonitor monitor, IMemento memento, Object input, ISubSystem subsystem, String filterID, String objectID)
+		{
+			if (subsystem.isConnected()) {
+				if (filterID != null) {
+					try {
+						input = subsystem.getObjectWithAbsoluteName(filterID);
+					}
+					catch (Exception e) {
+						//ignore
+					}
+				}
+				else {
+					if (objectID != null) {
+						try {
+							input = subsystem.getObjectWithAbsoluteName(objectID);
+						}
+						catch (Exception e)	{
+							return Status.CANCEL_STATUS;
+						}
+					}
+				} // end else
+			} // end if (subsystem.isConnected)
+			return runWithInput(monitor, input, memento);
+		}
 
+		public IStatus runWithInput(IProgressMonitor monitor, Object input, IMemento memento)
+		{
 			if (input != null && input instanceof IAdaptable)
 			{
 				_mementoInput = (IAdaptable) input;

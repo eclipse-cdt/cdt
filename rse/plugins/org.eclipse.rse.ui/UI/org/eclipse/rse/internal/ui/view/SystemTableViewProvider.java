@@ -110,7 +110,10 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 
 	public Object getParent(Object object)
 	{
-		return getAdapterFor(object).getParent(object);
+		ISystemViewElementAdapter adapter = getAdapterFor(object);
+		if (adapter != null)
+			return adapter.getParent(object);
+		return null;
 	}
 
 	public boolean hasChildren(Object object)

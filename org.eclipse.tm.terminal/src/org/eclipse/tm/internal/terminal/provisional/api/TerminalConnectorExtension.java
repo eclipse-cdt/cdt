@@ -84,7 +84,8 @@ public class TerminalConnectorExtension {
 			if(!isInitialized()) {
 				try {
 					fConnector=createConnector(fConfig);
-					if(!fConnector.isInstalled())
+					if(fConnector==null || !fConnector.isInstalled())
+						// TODO MSA externalize
 						throw new RuntimeException(getName()+ " is not properly installed!"); //$NON-NLS-1$
 				} catch (Exception e) {
 					fException=e;
@@ -92,9 +93,8 @@ public class TerminalConnectorExtension {
 				if(fConnector!=null && fStore!=null)
 					fConnector.load(fStore);
 			}
-			if(fConnector==null) {
+			if(fException!=null)
 				throw new RuntimeException(fException);
-			}
 			return fConnector;
 		}
 		private boolean isInitialized() {

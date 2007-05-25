@@ -23,6 +23,7 @@ import java.net.SocketException;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -239,7 +240,12 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		if(fConnector==null)
 			return;
 		fTerminalText.resetState();
-		fConnector.connect(this);
+		try {
+			fConnector.connect(this);
+		} catch(RuntimeException e) {
+			showErrorMessage(NLS.bind(TerminalMessages.CannotConnectTo,new Object[]{fConnector.getName(),e.getMessage()}));
+			return;
+		}
 		// clean the error message
 		setMsg(""); //$NON-NLS-1$
 		waitForConnect();
@@ -272,14 +278,18 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		}
 		if (!getMsg().equals("")) //$NON-NLS-1$
 		{
-			String strTitle = TerminalMessages.TerminalError;
-			MessageDialog.openError( getShell(), strTitle, getMsg());
+			showErrorMessage(getMsg());
 	
 			disconnectTerminal();
 			return;
 		}
 	
 		getCtlText().setFocus();
+	}
+
+	private void showErrorMessage(String message) {
+		String strTitle = TerminalMessages.TerminalError;
+		MessageDialog.openError( getShell(), strTitle, message);
 	}
 
 	protected void sendString(String string) {
@@ -294,21 +304,16 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		} catch (SocketException socketException) {
 			displayTextInTerminal(socketException.getMessage());
 
-			String strTitle = TerminalMessages.TerminalError;
 			String strMsg = TerminalMessages.SocketError
 					+ "!\n" + socketException.getMessage(); //$NON-NLS-1$
+			showErrorMessage(strMsg);
 
-			MessageDialog.openError(getShell(), strTitle, strMsg);
 			Logger.logException(socketException);
 
 			disconnectTerminal();
 		} catch (IOException ioException) {
-			displayTextInTerminal(ioException.getMessage());
+			showErrorMessage(TerminalMessages.IOError + "!\n" + ioException.getMessage());//$NON-NLS-1$
 
-			String strTitle = TerminalMessages.TerminalError;
-			String strMsg = TerminalMessages.IOError + "!\n" + ioException.getMessage(); //$NON-NLS-1$
-
-			MessageDialog.openError(getShell(), strTitle, strMsg);
 			Logger.logException(ioException);
 
 			disconnectTerminal();
@@ -348,11 +353,10 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 
 			displayTextInTerminal(socketException.getMessage());
 
-			String strTitle = TerminalMessages.TerminalError;
 			String strMsg = TerminalMessages.SocketError
 					+ "!\n" + socketException.getMessage(); //$NON-NLS-1$
 
-			MessageDialog.openError(getShell(), strTitle, strMsg);
+			showErrorMessage(strMsg);
 			Logger.logException(socketException);
 
 			disconnectTerminal();
@@ -361,10 +365,9 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 
 			displayTextInTerminal(ioException.getMessage());
 
-			String strTitle = TerminalMessages.TerminalError;
 			String strMsg = TerminalMessages.IOError + "!\n" + ioException.getMessage(); //$NON-NLS-1$
 
-			MessageDialog.openError(getShell(), strTitle, strMsg);
+			showErrorMessage(strMsg);
 			Logger.logException(ioException);
 
 			disconnectTerminal();

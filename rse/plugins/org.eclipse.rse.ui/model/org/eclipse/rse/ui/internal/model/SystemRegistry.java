@@ -27,6 +27,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Martin Oberhuber (Wind River) - [186773] split SystemRegistryUI from SystemRegistry implementation
+ * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -608,6 +609,7 @@ public class SystemRegistry implements ISystemRegistry
 				ISubSystemConfiguration factory = proxies[idx].getSubSystemConfiguration();
 				if (factory != null)
 				{
+					//FIXME why is this done via the adapter, and not the ISubSystemConfiguration directly?
 					ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
 					adapter.renameSubSystemProfile(factory,oldName, newName);
 				}
@@ -859,6 +861,8 @@ public class SystemRegistry implements ISystemRegistry
 			}
 			ISubSystem firstSubSystem = (ISubSystem) activeReferenceVector.elementAt(0);
 			String connectionName = firstSubSystem.getHost().getSystemProfileName() + "." + firstSubSystem.getHost().getAliasName(); //$NON-NLS-1$
+			//Warning. Profile '%1' should be active. Active connection '%2' contains a reference to it.
+			//FIXME I think it should be sufficient to log this as warning rather than open a dialog
 			SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED);
 			sysMsg.makeSubstitution(profile.getName(), connectionName);
 			SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText()); //$NON-NLS-1$

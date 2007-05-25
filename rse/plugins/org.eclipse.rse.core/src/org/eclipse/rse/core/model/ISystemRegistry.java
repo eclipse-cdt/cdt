@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;

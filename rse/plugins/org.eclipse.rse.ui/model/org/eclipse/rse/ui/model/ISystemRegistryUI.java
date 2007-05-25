@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  ********************************************************************************/
 package org.eclipse.rse.ui.model;
 

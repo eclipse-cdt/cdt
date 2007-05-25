@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split SystemRegistryUI from SystemRegistry implementation
+ * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  ********************************************************************************/
 package org.eclipse.rse.ui.internal.model;
 

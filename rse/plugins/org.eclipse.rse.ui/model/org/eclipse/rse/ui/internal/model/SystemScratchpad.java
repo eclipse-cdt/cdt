@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Kevin Doyle (IBM) - [160280] Added a check to see if the item to be added already exists
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -63,7 +64,8 @@ public class SystemScratchpad implements IAdaptable
     
     public void addChild(Object child)
     {
-        _children.add(child);
+    	if (!contains(child))
+    		_children.add(child);
     }
     
     public void removeChild(Object child)

@@ -585,9 +585,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 	
 	public void updateData(ICResourceDescription cfgd) {
-		handleOptionSelection();
 		fInfo = getResCfg(cfgd);
 		setValues();
+		handleOptionSelection();
 	}
 
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {

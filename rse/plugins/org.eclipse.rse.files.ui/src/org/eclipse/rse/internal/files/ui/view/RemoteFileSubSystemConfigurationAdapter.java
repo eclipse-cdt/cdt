@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -20,28 +21,21 @@ package org.eclipse.rse.internal.files.ui.view;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.internal.files.ui.actions.SystemFileUpdateFilterAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemNewFileAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemNewFileFilterAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemNewFolderAction;
-import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.files.ui.wizards.SystemFileNewConnectionWizardPage;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
@@ -146,62 +140,6 @@ public class RemoteFileSubSystemConfigurationAdapter extends SubSystemConfigurat
 		return _additionalActions;	
     }  
     
-	/**
-	 * Called by SystemRegistry's renameSystemProfile method to ensure we update our
-	 *  subsystem names within each subsystem.
-	 * <p>
-	 * Must be called AFTER changing the profile's name!!
-	 */
-	public void renameSubSystemProfile(ISubSystemConfiguration factory, String oldProfileName, String newProfileName)
-	{		
-		super.renameSubSystemProfile(factory, oldProfileName, newProfileName);
-		
-		// change all IFile properties in remote systems temp files tree
-		IProject project = SystemBasePlugin.getWorkspaceRoot().getProject(SystemRemoteEditManager.REMOTE_EDIT_PROJECT_NAME);
-		if (project != null)
-		{
-			IFolder folder = project.getFolder(oldProfileName);
-			if (folder != null && folder.exists())
-			{		
-				// recursively change all subsystem ids	for the temp files
-				recursivelyUpdateIFileProperties(newProfileName, folder);
-			}				
-		}
-	}
-
-
-	protected void recursivelyUpdateIFileProperties(String newName, IFolder container)
-	{
-		try
-		{
-		IResource[] resources = container.members();		
-		for (int i = 0; i < resources.length; i++)
-		{
-			IResource resource = resources[i];
-			if (resource instanceof IFile)
-			{				
-				IFile file = (IFile)resource;
-				SystemIFileProperties properties = new SystemIFileProperties(file);
-				
-				String absoluteSubSystemName = properties.getRemoteFileSubSystem();
-				if (absoluteSubSystemName != null)
-				{
-					int profileDelim = absoluteSubSystemName.indexOf("."); //$NON-NLS-1$
-					String theRest = absoluteSubSystemName.substring(profileDelim, absoluteSubSystemName.length());										
-					properties.setRemoteFileSubSystem(newName + theRest);			
-				}
-			}
-			else if (resource instanceof IFolder)
-			{
-				recursivelyUpdateIFileProperties(newName, (IFolder)resource);	
-			}
-		}		
-		}
-		catch (Exception e)
-		{
-		}
-	}
-
 	/**
 	 * Checks the preference setting for hidden files and filters out hidden files if the preference setting is to not show hidden files.
 	 * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#applyViewFilters(org.eclipse.rse.ui.view.IContextObject, java.lang.Object[])

@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -33,7 +34,6 @@ import org.eclipse.rse.core.subsystems.SubSystem.SystemMessageDialogRunnable;
 import org.eclipse.rse.files.ui.dialogs.ISaveAsDialog;
 import org.eclipse.rse.files.ui.dialogs.SaveAsDialog;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
-import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
@@ -41,6 +41,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
+import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;

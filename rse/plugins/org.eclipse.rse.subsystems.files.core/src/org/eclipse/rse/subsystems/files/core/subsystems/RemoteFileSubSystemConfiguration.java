@@ -13,11 +13,17 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -26,7 +32,9 @@ import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.IFileConstants;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
+import org.eclipse.rse.internal.core.SystemResourceConstants;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileFilterString;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -248,7 +256,60 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		return false;
 	}
     
-    // -------------------------------------------------------
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#renameSubSystemProfile(java.lang.String, java.lang.String)
+	 */
+	public void renameSubSystemProfile(String oldProfileName, String newProfileName)
+	{		
+		super.renameSubSystemProfile(oldProfileName, newProfileName);
+		
+		// change all IFile properties in remote systems temp files tree
+		IProject project = SystemBasePlugin.getWorkspaceRoot().getProject(SystemResourceConstants.RESOURCE_TEMPFILES_PROJECT_NAME);
+		if (project != null)
+		{
+			IFolder folder = project.getFolder(oldProfileName);
+			if (folder != null && folder.exists())
+			{		
+				// recursively change all subsystem ids	for the temp files
+				recursivelyUpdateIFileProperties(newProfileName, folder);
+			}				
+		}
+	}
+
+	protected void recursivelyUpdateIFileProperties(String newName, IFolder container)
+	{
+		try
+		{
+		IResource[] resources = container.members();		
+		for (int i = 0; i < resources.length; i++)
+		{
+			IResource resource = resources[i];
+			if (resource instanceof IFile)
+			{				
+				IFile file = (IFile)resource;
+				SystemIFileProperties properties = new SystemIFileProperties(file);
+				
+				String absoluteSubSystemName = properties.getRemoteFileSubSystem();
+				if (absoluteSubSystemName != null)
+				{
+					int profileDelim = absoluteSubSystemName.indexOf("."); //$NON-NLS-1$
+					String theRest = absoluteSubSystemName.substring(profileDelim, absoluteSubSystemName.length());										
+					properties.setRemoteFileSubSystem(newName + theRest);			
+				}
+			}
+			else if (resource instanceof IFolder)
+			{
+				recursivelyUpdateIFileProperties(newName, (IFolder)resource);	
+			}
+		}		
+		}
+		catch (Exception e)
+		{
+		}
+	}
+
+	// -------------------------------------------------------
     // PARENT METHODS RELATED TO FILTERS...
     // ... ONLY INTERESTING IF supportsFilters() returns true!
     // -------------------------------------------------------

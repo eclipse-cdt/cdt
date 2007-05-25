@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186997] No deferred queries in Local Files
+ * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -68,7 +69,6 @@ import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
-import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.actions.SystemAddToArchiveAction;
@@ -103,6 +103,7 @@ import org.eclipse.rse.services.search.HostSearchResultSet;
 import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
+import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileRemoteTypes;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;

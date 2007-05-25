@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,16 +11,16 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.resources;
+package org.eclipse.rse.subsystems.files.core;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.rse.internal.files.ui.resources.ISystemRemoteEditConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemRemoteEditConstants;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemTextEditorConstants;
 
 
 
@@ -56,7 +56,7 @@ public class SystemIFileProperties {
 	
 	// local encoding qualified name
 	// NOTE: DO NOT CHANGE THIS!! This exact qualified name is used by the IBM debugger.
-	private static QualifiedName _nameLocalEncoding		  = new QualifiedName(RSEUIPlugin.getDefault().getSymbolicName(), ISystemTextEditorConstants.LOCAL_ENCODING_KEY);
+	private static QualifiedName _nameLocalEncoding		  = new QualifiedName("org.eclipse.rse.ui", ISystemTextEditorConstants.LOCAL_ENCODING_KEY); //$NON-NLS-1$
 		
 	protected IResource _resource = null;
 	

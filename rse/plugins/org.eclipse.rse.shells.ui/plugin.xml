@@ -112,15 +112,6 @@ Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter fro
          <enabledWhen>
             <instanceof value="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem"/>
          </enabledWhen>
-      </page> 
-      
-      <page
-            name="%PropertyPage.ShellSettings"
-            class="org.eclipse.rse.internal.shells.ui.propertypages.SystemShellPropertyPage"
-            id="org.eclipse.rse.shells.ui.propertypages.SystemShellPropertyPage">
-         <enabledWhen>
-            <instanceof value="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem"/>
-         </enabledWhen>
       </page>
 
       <page

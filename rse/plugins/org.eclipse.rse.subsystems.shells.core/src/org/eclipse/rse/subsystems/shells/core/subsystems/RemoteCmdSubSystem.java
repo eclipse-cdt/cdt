@@ -83,31 +83,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		return (IRemoteCmdSubSystemConfiguration) super.getSubSystemConfiguration();
 	}
 
-	public String getShellEncoding()
-	{
-		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
-		if (set != null)
-		{
-			return set.getPropertyValue("shell.encoding"); //$NON-NLS-1$
-		}
-		return null;
-	}
-
-	/**
-	 * @deprecated use {@link IHost#setDefaultEncoding(String, boolean)} instead
-	 */
-	public void setShellEncoding(String encoding)
-	{
-		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
-		if (set == null)
-		{
-			set = createPropertySet("Remote", getDescription()); //$NON-NLS-1$
-		}
-		set.addProperty("shell.encoding", encoding); //$NON-NLS-1$
-		setDirty(true);
-		commit();
-	}
-
 	/**
 	 * Long running list processing calls this method to check for a user-cancel
 	 * event. If user did cancel, an exception is thrown.

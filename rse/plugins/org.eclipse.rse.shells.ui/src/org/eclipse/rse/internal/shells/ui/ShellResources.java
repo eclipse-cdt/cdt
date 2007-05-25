@@ -22,15 +22,6 @@ public class ShellResources extends NLS
 {
 	private static String BUNDLE_NAME = "org.eclipse.rse.internal.shells.ui.ShellResources"; //$NON-NLS-1$
 
-	public static String RESID_SHELL_PROPERTYPAGE_TITLE;
-	public static String RESID_SHELL_PROPERTYPAGE_DESCRIPTION;
-	public static String RESID_SHELL_PROPERTYPAGE_ENCODING;
-	public static String RESID_SHELL_PROPERTYPAGE_DEFAULT_ENCODING;
-	public static String RESID_SHELL_PROPERTYPAGE_HOST_ENCODING;
-	public static String RESID_SHELL_PROPERTYPAGE_OTHER_ENCODING;
-	public static String RESID_UNSUPPORTED_ENCODING;
-
-
 	public static String RESID_SHELLS_RUN_IN_NEW_SHELL_LABEL; 
 	public static String RESID_SHELLS_RUN_IN_NEW_SHELL_TOOLTIP;
 	public static String RESID_SHELLS_RUN_COMMAND_LABEL;

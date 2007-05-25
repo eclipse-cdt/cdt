@@ -96,7 +96,7 @@
     	<cheatsheet
     		category="org.eclipse.cdt-doc.category.tutorials"
     		composite="false"
-    		contentFile="$nl$/org.eclipse.cdt.doc.user/cheatsheets/cs_cdt_basic.xml"
+    		contentFile="$nl$/cheatsheets/cs_cdt_basic.xml"
     		id="org.eclipse.cdt-doc.cheatsheet.cdt_basic"
     		name="Creating C/C++ Projects">
        		<description>
@@ -106,8 +106,8 @@
     	<cheatsheet
     		category="org.eclipse.cdt-doc.category.tutorials"
     		composite="false"
-    		contentFile="$nl$/org.eclipse.cdt.doc.user/cheatsheets/cs_cdt_import_project.xml"
-    		id="org.eclipse.cdt-doc.cheatsheet.cdt_basic"
+    		contentFile="$nl$/cheatsheets/cs_cdt_import_project.xml"
+    		id="org.eclipse.cdt-doc.cheatsheet.cdt_import_project"
     		name="Importing C/C++ Projects">
        		<description>
           		Use this tutorial to learn how to successfully import a CDT project.

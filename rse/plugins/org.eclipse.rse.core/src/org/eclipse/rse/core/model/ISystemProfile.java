@@ -22,22 +22,17 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 
-//
-
 /**
- * The interface that RSE system profiles implement.
+ * A system profile holds definitions for hosts
+ * (connections), filter pools, filters, and filter strings.
+ * It is the unit of persistence for those definitions. Individual
+ * hosts and filter pool definitions always reside in a profile and the profile
+ * itself is the entity that is saved and restored.
  * <p>
- * A profile represents a user or name which is used to key important user-data
- *  by:
- * <ul>
- *  <li>Hosts
- *  <li>Filter pools
- *  <li>User actions
- *  <li>Compile commands
- * </ul>
- * 
+ * Profiles may be active or inactive. An active profile contributes its
+ * definitions to RSE. When made inactive, it those definition are no longer 
+ * available for use.
  * <p>
- * @lastgen interface SystemProfile  {}
  */
 public interface ISystemProfile extends IRSEModelObject {
 
@@ -96,7 +91,10 @@ public interface ISystemProfile extends IRSEModelObject {
 	public ISystemFilterPool[] getFilterPools(ISubSystemConfiguration ssf);
 
 	/**
-	 * Return true if this profile is currently active for this user
+	 * Return true if this profile is currently active.
+	 * An active profile is one that whose connections and filter pools are available
+	 * for use by RSE. A profile may be loaded but be inactive.
+	 * The active state of a profile is remembered from session to session.
 	 */
 	public boolean isActive();
 	
@@ -104,6 +102,7 @@ public interface ISystemProfile extends IRSEModelObject {
 	 * Activates or deactivates a profile. If the profile is already in the
 	 * requested state, this will do nothing.
 	 * @param flag true to activate the profile, false to deactivate it.
+	 * @see ISystemProfile#isActive()
 	 */
 	public void setActive(boolean flag);
 	

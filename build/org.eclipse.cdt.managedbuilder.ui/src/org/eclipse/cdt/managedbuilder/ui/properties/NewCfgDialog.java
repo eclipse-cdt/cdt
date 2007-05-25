@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -428,9 +427,9 @@ public class NewCfgDialog implements INewCfgDialog {
 		if (imp == null || !(imp instanceof ManagedProject)) return;
 		ManagedProject mp = (ManagedProject) imp;
 		try {
+			ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
 			Configuration config = new Configuration(mp, (Configuration)parentConfig, id, false, true);
-			CConfigurationData data = config.getConfigurationData();
-			ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+			ICConfigurationDescription cfgDes = des.createConfiguration(id, newName, base);
 			config.setConfigurationDescription(cfgDes);
 			config.exportArtifactInfo();
 			config.setName(newName);

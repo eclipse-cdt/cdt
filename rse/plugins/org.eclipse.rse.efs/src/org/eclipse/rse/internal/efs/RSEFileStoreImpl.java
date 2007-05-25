@@ -18,9 +18,10 @@
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  ********************************************************************************/
 
-package org.eclipse.rse.internal.eclipse.filesystem;
+package org.eclipse.rse.internal.efs;
 
 import java.io.InputStream;
 import java.io.OutputStream;

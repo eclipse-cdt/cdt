@@ -56,9 +56,16 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.rse.eclipse.filesystem"
-         download-size="14"
-         install-size="27"
+         id="org.eclipse.rse.efs"
+         download-size="7"
+         install-size="14"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.efs.ui"
+         download-size="7"
+         install-size="14"
          version="0.0.0"
          unpack="false"/>
 

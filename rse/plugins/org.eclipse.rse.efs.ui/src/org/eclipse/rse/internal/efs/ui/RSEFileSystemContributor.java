@@ -16,10 +16,11 @@
  *    - Fix early startup issues by deferring FileStore evaluation and classloading,
  *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
+ * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  ********************************************************************************/
 
 
-package org.eclipse.rse.internal.eclipse.filesystem;
+package org.eclipse.rse.internal.efs.ui;
 
 import java.net.URI;
 
@@ -30,6 +31,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
+import org.eclipse.rse.internal.efs.RSEFileStoreImpl;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.swt.widgets.Shell;

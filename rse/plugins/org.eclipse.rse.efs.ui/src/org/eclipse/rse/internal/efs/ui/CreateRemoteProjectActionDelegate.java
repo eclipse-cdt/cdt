@@ -20,9 +20,10 @@
  *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  ********************************************************************************/
 
-package org.eclipse.rse.internal.eclipse.filesystem.ui.actions;
+package org.eclipse.rse.internal.efs.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -45,8 +46,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.rse.internal.eclipse.filesystem.Activator;
-import org.eclipse.rse.internal.eclipse.filesystem.RSEFileSystem;
+import org.eclipse.rse.internal.efs.Activator;
+import org.eclipse.rse.internal.efs.RSEFileSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Display;

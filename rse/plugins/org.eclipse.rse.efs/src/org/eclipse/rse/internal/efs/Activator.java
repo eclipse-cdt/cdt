@@ -16,17 +16,18 @@
  *    - Fix early startup issues by deferring FileStore evaluation and classloading,
  *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
+ * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  ********************************************************************************/
 
-package org.eclipse.rse.internal.eclipse.filesystem;
+package org.eclipse.rse.internal.efs;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
  */
-public class Activator extends AbstractUIPlugin {
+public class Activator extends Plugin {
 
 	//The shared instance.
 	private static Activator plugin;

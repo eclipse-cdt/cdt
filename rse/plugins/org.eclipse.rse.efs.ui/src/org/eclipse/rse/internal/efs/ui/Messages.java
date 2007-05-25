@@ -7,13 +7,14 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  *******************************************************************************/
-package org.eclipse.rse.internal.eclipse.filesystem.ui.actions;
+package org.eclipse.rse.internal.efs.ui;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.rse.internal.eclipse.filesystem.ui.actions.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.rse.internal.efs.ui.messages"; //$NON-NLS-1$
 	public static String CreateRemoteProjectActionDelegate_CREATING_TITLE;
 	static {
 // initialize resource bundle

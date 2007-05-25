@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,22 +13,16 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
 Kushal Munir (IBM) - Changed paths to reflect internal packages
+Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
 -->
 <?eclipse version="3.0"?>
 <plugin>
-   <extension
-         id="org.eclipse.rse.eclipse.filesystem"
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem scheme="rse">
-         <run class="org.eclipse.rse.internal.eclipse.filesystem.RSEFileSystem"/>
-      </filesystem>
-   </extension>
    <extension
          id="org.eclipse.rse.eclipse.filesystemSupport"
          point="org.eclipse.ui.ide.filesystemSupport">
       <filesystemContributor 
        scheme="rse"
-       class="org.eclipse.rse.internal.eclipse.filesystem.RSEFileSystemContributor"
+       class="org.eclipse.rse.internal.efs.ui.RSEFileSystemContributor"
        label="RSE">
       </filesystemContributor>
    </extension>
@@ -36,14 +30,14 @@ Kushal Munir (IBM) - Changed paths to reflect internal packages
       <extension point="org.eclipse.ui.popupMenus">
 	      <objectContribution
             objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
-            id="org.eclipse.rse.eclipse.filesystem.createproject.">
+            id="org.eclipse.rse.efs.createproject">
                 <visibility> 
                 	<objectState name="isdirectory" value="true"/>                  
             </visibility>
          <action
                label="%createRemoteProject.label"
                 tooltip="%createRemoteProject.tooltip"
-               class="org.eclipse.rse.internal.eclipse.filesystem.ui.actions.CreateRemoteProjectActionDelegate"
+               class="org.eclipse.rse.internal.efs.ui.CreateRemoteProjectActionDelegate"
                menubarPath="group.importexport"
                enablesFor="1"
                id="createRemoteProject">

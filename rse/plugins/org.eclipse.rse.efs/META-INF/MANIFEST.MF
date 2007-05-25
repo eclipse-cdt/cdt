@@ -14,4 +14,4 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Export-Package: org.eclipse.rse.internal.efs;x-internal:=true
+Export-Package: org.eclipse.rse.internal.efs;x-friends:="org.eclipse.rse.efs.ui"

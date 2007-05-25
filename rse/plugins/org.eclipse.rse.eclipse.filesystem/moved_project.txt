@@ -1,0 +1,4 @@
+The contents of this plugin was moved and split into
+  org.eclipse.rse.efs
+  org.eclipse.rse.efs.ui
+respectively.

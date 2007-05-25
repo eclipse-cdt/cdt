@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
@@ -24,13 +25,11 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector3;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
+import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
@@ -41,14 +40,10 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoSto
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.KVStringPair;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -844,7 +839,9 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             	}
     			for (Iterator j = discovered.iterator(); j.hasNext(); ) {
     			    String include = (String) j.next();
-    			    include = CCommandDSC.makeRelative(project, new Path(include)).toPortableString();
+    			    // the following line degrades perfomance
+    			    // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=189127
+//    			    include = CCommandDSC.makeRelative(project, new Path(include)).toPortableString();
     			    if (!allIncludes.contains(include)) {
     			        allIncludes.add(include);
     			    }

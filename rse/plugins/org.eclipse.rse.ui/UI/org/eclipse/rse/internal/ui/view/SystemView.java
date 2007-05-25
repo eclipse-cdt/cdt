@@ -3038,10 +3038,49 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 		if (firstCall) {
+			
 			internalRefresh(element);
 		}
 	}
 
+	/**
+	 * Override of internalRefreshStruct so that we can account for context
+	 */
+	protected void internalRefreshStruct(Widget widget, Object element, boolean updateLabels) {
+		if (widget instanceof TreeItem)
+		{
+				IContextObject contextObject = getContextObject((TreeItem)widget);
+				internalRSERefreshStruct(widget, contextObject, updateLabels);
+		}
+		else
+		{
+			internalRSERefreshStruct(widget, element, updateLabels);
+		}
+	}
+	
+	/**
+	 * This is used during RSE refresh - otherwise filters aren't applied during refresh
+	 * @param widget the widget to refresh
+	 * @param element the element to refresh
+	 * @param updateLabels whether to update labels (ends up being ignored and having the value of true)
+	 */
+	private void internalRSERefreshStruct(Widget widget, Object element, boolean updateLabels) 
+	{
+		updateChildren(widget, element, null); // DKM - using deprecated API because it's the only way to call updateChildren
+											   // need a better solution for this in the future (the proper updateChildren is private)
+		Item[] children = getChildren(widget);
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				Widget item = children[i];
+				Object data = item.getData();
+				if (data != null) {
+					internalRSERefreshStruct(item, data, updateLabels);
+				}
+			}
+		}
+
+	}
+	
 	protected Object[] getRawChildren(Widget w) {
 		Object parent = w.getData();
 

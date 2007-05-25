@@ -1171,7 +1171,22 @@ public class SystemRegistry implements ISystemRegistry
 		return factory.getSubSystems(true); // true ==> force full restore from disk
 	}
 
-	public ISubSystem[] getServiceSubSystems(Class serviceType, IHost connection)
+	public ISubSystem[] getSubsystems(IHost connection, Class subsystemInterface)
+	{
+		List matches = new ArrayList();
+		ISubSystem[] allSS = connection.getSubSystems();
+		for (int i = 0; i < allSS.length; i++)
+		{
+			ISubSystem ss = allSS[i];
+			if (subsystemInterface.isInstance(subsystemInterface))
+			{
+				matches.add(ss);
+			}						
+		}
+		return (ISubSystem[])matches.toArray(new ISubSystem[matches.size()]);
+	}
+	
+	public ISubSystem[] getServiceSubSystems(IHost connection, Class serviceType)
 	{
 		List matches = new ArrayList();
 		ISubSystem[] allSS = connection.getSubSystems();
@@ -1300,7 +1315,7 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public boolean deleteSubSystem(ISubSystem subsystem)
 	{
-		ISubSystemConfiguration ssFactory = getSubSystemConfiguration(subsystem);
+		ISubSystemConfiguration ssFactory = subsystem.getSubSystemConfiguration();
 		if (ssFactory == null)
 			return false;
 		boolean ok = ssFactory.deleteSubSystem(subsystem);
@@ -1575,6 +1590,15 @@ public class SystemRegistry implements ISystemRegistry
 		return pos;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostCount(org.eclipse.rse.core.model.ISystemProfile)
+	 */
+	public int getHostCount(ISystemProfile profile)
+	{
+		return getHostPool(profile).getHostCount();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostCount(java.lang.String)

@@ -227,7 +227,7 @@ public class RSEDOMImporter {
 		if (factory != null) {
 			if (factory instanceof IServiceSubSystemConfiguration) {
 				IServiceSubSystemConfiguration serviceFactory = (IServiceSubSystemConfiguration) factory;
-				ISubSystem[] existingSubSystems = _registry.getServiceSubSystems(serviceFactory.getServiceType(), host);
+				ISubSystem[] existingSubSystems = _registry.getServiceSubSystems(host, serviceFactory.getServiceType());
 				if (existingSubSystems != null && existingSubSystems.length > 0) {
 					subSystem = existingSubSystems[0];
 					// need to switch factories

@@ -811,15 +811,13 @@ public abstract class SubSystem extends RSEModelObject
 		try
 		{
 			ISystemFilterPoolReferenceManager filterMgr = getFilterPoolReferenceManager();
-			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-			ISubSystemConfiguration factory = registry.getSubSystemConfiguration(this);
 
 			int indexOfDot = filterID.indexOf('.');
 			if (indexOfDot > 0)
 			{
 				String mgrName = filterID.substring(0, indexOfDot);
 
-				ISystemFilterPoolManager mgr = factory.getSystemFilterPoolManager(mgrName);
+				ISystemFilterPoolManager mgr = parentSubSystemConfiguration.getSystemFilterPoolManager(mgrName);
 
 				int indexOfDot2 = filterID.indexOf('.', indexOfDot + 1);
 				if (mgr != null && indexOfDot2 > 0)

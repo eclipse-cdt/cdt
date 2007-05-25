@@ -40,7 +40,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	public void setUp() {
 		IHost localHost = getLocalSystemConnection();
 		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 
-		ISubSystem[] ss = sr.getServiceSubSystems(IFileService.class, localHost);
+		ISubSystem[] ss = sr.getServiceSubSystems(localHost, IFileService.class);
 		for (int i=0; i<ss.length; i++) {
 			if (ss[i] instanceof IFileServiceSubSystem) {
 				fss = (IFileServiceSubSystem)ss[i];

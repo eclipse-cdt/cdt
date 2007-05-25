@@ -58,17 +58,15 @@ import org.eclipse.rse.internal.core.RSECoreRegistry;
  */
 public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
+	/**
+	 * Get the SystemFilterStartHere singleton instance. 
+	 * @return the SystemFilterStartHere singleton instance.
+	 */
 	public ISystemFilterStartHere getSystemFilterStartHere();
 
 	// ----------------------------
 	// SUBSYSTEM FACTORY METHODS...
 	// ----------------------------            
-	/**
-	 * Private method used by RSEUIPlugin to tell registry all registered subsystem
-	 *  factories. This way, all code can use this registry to access them versus the
-	 *  RSEUIPlugin.
-	 */
-	public void setSubSystemConfigurationProxies(ISubSystemConfigurationProxy[] proxies);
 
 	/**
 	 * Public method to retrieve list of subsystem factory proxies registered by extension points.
@@ -82,18 +80,23 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxiesByCategory(String factoryCategory);
 
 	/**
-	 * Return all subsystem factories. Be careful when you call this, as it activates all 
-	 *   subsystem factories.
+	 * Return all subsystem factories.
+	 * 
+	 * Be careful when you call this, as it activates all subsystem configurations.
+	 * @deprecated use {@link #getSubSystemConfigurationProxies()} and filter the
+	 *    list of needed subsystem configurations in order to activate only those
+	 *    that are really needed.
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurations();
 
 	/**
-	 * Return the parent subsystemconfiguration given a subsystem object.
+	 * Return the parent subsystem configuration given a subsystem object.
+	 * @deprecated use subsystem.getSubSystemConfiguration()
 	 */
 	public ISubSystemConfiguration getSubSystemConfiguration(ISubSystem subsystem);
 
 	/**
-	 * Return the subsystemconfiguration, given its plugin.xml-declared id.
+	 * Return the subsystem configuration, given its plugin.xml-declared id.
 	 */
 	public ISubSystemConfiguration getSubSystemConfiguration(String id);
 
@@ -101,8 +104,12 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 * Return all subsystem factories which have declared themselves part of the given category.
 	 * <p>
 	 * This looks for a match on the "category" of the subsystem factory's xml declaration
-	 *  in its plugin.xml file. Thus, it is efficient as it need not bring to life a 
-	 *  subsystem factory just to test its parent class type.
+	 * in its plugin.xml file. Thus, it is efficient as it need not bring to life a 
+	 * subsystem factory just to test its parent class type.
+	 * 
+	 * @deprecated use {@link #getSubSystemConfigurationProxiesByCategory(String)}
+	 *    and instantiate only those subsystem configurations from the proxy
+	 *    that are really needed.
 	 * 
 	 * @see ISubSystemConfigurationCategories
 	 */
@@ -175,26 +182,34 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
 	/**
 	 * Return the profiles currently selected by the user as his "active" profiles
+	 * @deprecated use getSystemProfileManager().getActiveSystemProfiles()
 	 */
 	public ISystemProfile[] getActiveSystemProfiles();
 
 	/**
 	 * Return the profile names currently selected by the user as his "active" profiles
+	 * @deprecated use getSystemProfileManager().getActiveSystemProfiles() 
+	 *     and get the names out of the returned array 
 	 */
 	public String[] getActiveSystemProfileNames();
 
 	/**
 	 * Return all defined profiles
+	 * @deprecated use getSystemProfileManager().getAllSystemProfiles()
 	 */
 	public ISystemProfile[] getAllSystemProfiles();
 
 	/**
 	 * Return all defined profile names
+	 * @deprecated use getSystemProfileManager().getAllSystemProfiles()
+	 *     and get the names out of the returned array 
 	 */
 	public String[] getAllSystemProfileNames();
 
 	/**
 	 * Return all defined profile names as a vector
+	 * @deprecated use getAllSystemProfileManager().getAllSystemProfiles()
+	 *     and process the array to get a vector
 	 */
 	public Vector getAllSystemProfileNamesVector();
 
@@ -219,7 +234,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	public ISystemProfile copySystemProfile(ISystemProfile profile, String newName, boolean makeActive, IProgressMonitor monitor) throws Exception;
 
 	/**
-	 * Rename a SystemProfile. Rename is propogated to all subsystem factories so
+	 * Rename a SystemProfile. Rename is propagated to all subsystem factories so
 	 * they can rename their filter pool managers and whatever else is required.
 	 */
 	public void renameSystemProfile(ISystemProfile profile, String newName) throws Exception;
@@ -263,7 +278,37 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 */
 	public ISubSystem[] getSubSystems(IHost conn, boolean force);
 
-	public ISubSystem[] getServiceSubSystems(Class serviceType, IHost connection);
+	/**
+	 * Get those subsystems that are registered against a given connection,
+	 * which are an instance of the given interface class.
+	 * <p>
+	 * This method activates all subsystem configurations of the given
+	 * host in order to support checking against the given interface.
+	 * If lazy loading is desired, use {@link #getSubSystems(IHost, boolean)}
+	 * with a boolean parameter <code>false</code> instead, and check against
+	 * the class instance in client code.
+	 * </p>
+	 * @param connection the connection to check
+	 * @param subsystemInterface the interface class to filter against
+	 * @return list of matching subsystems
+	 */
+	public ISubSystem[] getSubsystems(IHost connection, Class subsystemInterface);
+	
+	/**
+	 * Get those subsystems that are registered against a given connection,
+	 * which are an instance of ServiceSubSystem for the given serviceType.
+	 * <p>
+	 * This method activates all subsystem configurations of the given
+	 * host in order to support checking against the given interface.
+	 * If lazy loading is desired, use {@link #getSubSystems(IHost, boolean)}
+	 * with a boolean parameter <code>false</code> instead, and check against
+	 * the class instance in client code.
+	 * </p>
+	 * @param connection the connection to check
+	 * @param serviceType the class of service to ask for
+	 * @return list of matching subsystems
+	 */
+	public ISubSystem[] getServiceSubSystems(IHost connection, Class serviceType);
 
 	/**
 	 * Resolve a subsystem from it's profile, connection and subsystem name.
@@ -300,16 +345,21 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	public String getAbsoluteNameForConnection(IHost connection);
 
 	/**
-	 * Get a list of subsystem objects owned by the subsystem factory identified by 
-	 *  its given plugin.xml-described id. Array is never null, but may be of length 0.
+	 * Get a list of subsystem objects owned by the subsystem configuration
+	 * identified by its given plugin.xml-described id.
 	 * <p>
 	 * This is a list that of all subsystems for all connections owned by the factory.
+	 * Array is never null, but may be of length 0.
+	 * </p>
+	 * @deprecated use {@link #getSubSystemConfiguration(String).getSubSystems(true)
 	 */
 	public ISubSystem[] getSubSystems(String factoryId);
 
 	/**
-	 * Get a list of subsystem objects for given connection, owned by the subsystem factory 
-	 * identified by its given plugin.xml-described id. Array will never be null but may be length zero.
+	 * Get a list of subsystem objects for given connection, owned by the subsystem 
+	 * configuration identified by its given plugin.xml-described id.
+	 * Array will never be null but may be length zero.
+	 * @deprecated use {@link #getSubSystemConfiguration(String).getSubSystems(connection, true)
 	 */
 	public ISubSystem[] getSubSystems(String factoryId, IHost connection);
 
@@ -321,6 +371,8 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 *  in its plugin.xml file. 
 	 * 
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
+	 * @deprecated use {@link #getSubSystemConfiguration(String).getSubSystems(connection, true)
+	 *    and filter the result by the category string
 	 */
 	public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost connection);
 
@@ -355,6 +407,8 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
 	/**
 	 * Return all connections in a given profile name.
+	 * @deprecated use {@link #getSystemProfile(String)} and
+	 *     {@link #getHostsByProfile(ISystemProfile)}
 	 */
 	public IHost[] getHostsByProfile(String profileName);
 
@@ -363,12 +417,14 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 * subsystems owned by a given subsystem configuration.
 	 * @see #getSubSystemConfiguration(String)
 	 */
-	public IHost[] getHostsBySubSystemConfiguration(ISubSystemConfiguration factory);
+	public IHost[] getHostsBySubSystemConfiguration(ISubSystemConfiguration config);
 
 	/**
 	 * Return all connections for which there exists one or more
 	 * subsystems owned  by a given subsystem configuration,
 	 * identified by configuration Id.
+	 * @deprecated use {@link #getSubSystemConfiguration(String)} and
+	 *     {@link #getHostsBySubSystemConfiguration(ISubSystemConfiguration)}
 	 */
 	public IHost[] getHostsBySubSystemConfigurationId(String factoryId);
 
@@ -420,6 +476,12 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	/**
 	 * Return the number of SystemConnection objects within the given profile.
 	 */
+	public int getHostCount(ISystemProfile profile);
+
+	/**
+	 * Return the number of SystemConnection objects within the given profile.
+	 * @deprecated use {@link #getSystemProfile(ISystemProfile)} 
+	 */
 	public int getHostCount(String profileName);
 
 	/**
@@ -437,6 +499,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	/**
 	 * Return a vector of previously-used connection names in the given named profile.
 	 * @return Vector of String objects.
+	 * @deprecated use {@link #getHostAliasNames(ISystemProfile)}
 	 */
 	public Vector getHostAliasNames(String profileName);
 

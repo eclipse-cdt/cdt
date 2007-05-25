@@ -99,7 +99,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 
 public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
-
+	private static final IPath DOT_SLASH_PATH = new Path("./");  //$NON-NLS-1$ 
+	
 	/**
 	 * This class walks the delta supplied by the build system to determine
 	 * what resources have been changed. The logic is very simple. If a 
@@ -3373,7 +3374,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		String fileName = sourceLocation.removeFileExtension().lastSegment();
 		//  Replace the % with the file name
 		String outName = outPath.toOSString().replaceAll("%", fileName); //$NON-NLS-1$ 
-		return Path.fromOSString(outName);
+		IPath result = Path.fromOSString(outName);
+		return DOT_SLASH_PATH.isPrefixOf(outPath) ? DOT_SLASH_PATH.append(result) : result;
 	}
 	
 	/* (non-Javadoc)

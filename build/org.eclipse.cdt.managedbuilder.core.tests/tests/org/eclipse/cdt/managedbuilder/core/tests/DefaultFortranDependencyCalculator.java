@@ -249,7 +249,8 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 					//        directory path relative to the top-level build directory.  The relative path comes from the source
 					//        file location.  In order to specify that this output file is always in the top-level build 
 					//        directory, regardless of the source file directory structure, return "./path".
-					IPath modName = Path.fromOSString("." + Path.SEPARATOR + modules[i] + "." + MODULE_EXTENSION);
+					IPath modName = new Path("./").append(Path.fromOSString(modules[i] + "." + MODULE_EXTENSION));
+					
 					outs.add(modName);				
 				}
 			}

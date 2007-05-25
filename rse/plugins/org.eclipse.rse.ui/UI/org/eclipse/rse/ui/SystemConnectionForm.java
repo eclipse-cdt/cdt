@@ -827,13 +827,6 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			data.grabExcessVerticalSpace = false;
 			encodingGroup.setLayoutData(data);
 			
-			SelectionAdapter buttonSelectionListener = new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					updateEncodingGroupState(remoteEncodingButton.getSelection());
-					validateEncoding();
-				}
-			};
-			
 	        Composite messageComposite = new Composite(encodingGroup, SWT.NONE);
 	        GridLayout messageLayout = new GridLayout();
 	        messageLayout.numColumns = 2;
@@ -862,12 +855,38 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			// remote encoding field
 			String defaultEncodingLabel = SystemResources.RESID_HOST_ENCODING_REMOTE_LABEL;
 			
+			// check if user set encoding
+			// if so, we leave default encoding label as is
+			// if not, we check if remote encoding is set, and if it is, include the encoding in the label
+			if (conn.getDefaultEncoding(false) == null) {
+				
+				String remoteEncoding = conn.getDefaultEncoding(true);
+				
+				if (remoteEncoding != null) {
+					defaultEncodingLabel = SystemResources.RESID_HOST_ENCODING_REMOTE_ENCODING_LABEL;
+					
+					int idx = defaultEncodingLabel.indexOf('%');
+					
+					if (idx != -1) {
+						defaultEncodingLabel = defaultEncodingLabel.substring(0, idx) + remoteEncoding + defaultEncodingLabel.substring(idx+2);
+					}
+				}
+			}
+			
 			remoteEncodingButton = SystemWidgetHelpers.createRadioButton(encodingGroup, null, defaultEncodingLabel, SystemResources.RESID_HOST_ENCODING_REMOTE_TOOLTIP);
 			data = new GridData();
 			data.horizontalSpan = 2;
 			data.grabExcessHorizontalSpace = true;
 			remoteEncodingButton.setLayoutData(data);
-			remoteEncodingButton.addSelectionListener(buttonSelectionListener);
+			
+			SelectionAdapter remoteButtonSelectionListener = new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateEncodingGroupState(remoteEncodingButton.getSelection());
+					validateEncoding();
+				}
+			};
+			
+			remoteEncodingButton.addSelectionListener(remoteButtonSelectionListener);
 			
 	        Composite otherComposite = new Composite(encodingGroup, SWT.NONE);
 	        GridLayout otherLayout = new GridLayout();
@@ -882,7 +901,15 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			data = new GridData();
 			data.grabExcessHorizontalSpace = false;
 			otherEncodingButton.setLayoutData(data);
-			otherEncodingButton.addSelectionListener(buttonSelectionListener);
+			
+			SelectionAdapter otherButtonSelectionListener = new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateEncodingGroupState(!otherEncodingButton.getSelection());
+					validateEncoding();
+				}
+			};
+			
+			otherEncodingButton.addSelectionListener(otherButtonSelectionListener);
 
 			// other encoding combo
 			otherEncodingCombo = SystemWidgetHelpers.createCombo(otherComposite, null, SystemResources.RESID_HOST_ENCODING_ENTER_TOOLTIP);
@@ -935,7 +962,6 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			}
 		}
 		
-		otherEncodingCombo.setEnabled(!useDefault);
 		validateEncoding();
 	}
 	
@@ -1217,6 +1243,9 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			// disable if any subsystem is connected
 			if (!conn.getSystemType().getId().equalsIgnoreCase(IRSESystemType.SYSTEMTYPE_LOCAL_ID) && sr.isAnySubSystemConnected(conn)) {
 				encodingGroup.setEnabled(false);
+				remoteEncodingButton.setEnabled(false);
+				otherEncodingButton.setEnabled(false);
+				otherEncodingCombo.setEnabled(false);
 			}
 	    }
 

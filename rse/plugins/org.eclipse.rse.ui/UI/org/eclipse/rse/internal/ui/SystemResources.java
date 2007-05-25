@@ -1229,6 +1229,7 @@ public class SystemResources extends NLS
 	public static String RESID_HOST_ENCODING_SETTING_NOTE;
 	public static String RESID_HOST_ENCODING_SETTING_MSG;
 	public static String RESID_HOST_ENCODING_REMOTE_LABEL;
+	public static String RESID_HOST_ENCODING_REMOTE_ENCODING_LABEL;
 	public static String RESID_HOST_ENCODING_REMOTE_TOOLTIP;
 	public static String RESID_HOST_ENCODING_OTHER_LABEL;
 	public static String RESID_HOST_ENCODING_OTHER_TOOLTIP;

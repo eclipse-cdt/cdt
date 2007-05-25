@@ -86,7 +86,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();	
 			ISubSystem ss = (ISubSystem)element;
-			ISubSystemConfiguration ssFactory = RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(ss);
+			ISubSystemConfiguration ssFactory = ss.getSubSystemConfiguration();
 			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 
 			IAction[] actions = adapter.getSubSystemActions(menu, selection, shell, menuGroup, ssFactory, ss);
@@ -111,7 +111,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE GETIMAGEDESCRIPTOR FOR SUBSYSTEM VIEW ADAPTER: "+element);				
 		ISubSystem ss = (ISubSystem)element;
-		ISubSystemConfiguration ssFactory = RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(ss);
+		ISubSystemConfiguration ssFactory = ss.getSubSystemConfiguration();
 		if (ssFactory != null)
 		{
 			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);

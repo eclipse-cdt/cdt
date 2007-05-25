@@ -98,7 +98,7 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 		assertNull("Failed to get ftp.files subsystem! Possible cause: " + cause, exception); //$NON-NLS-1$
 		assertNotNull("No ftp.files subystem", subSystem); //$NON-NLS-1$
 
-		ISubSystemConfiguration configuration = systemRegistry.getSubSystemConfiguration(subSystem);
+		ISubSystemConfiguration configuration = subSystem.getSubSystemConfiguration();
 		assertNotNull("Failed to get ftp.files subsystem configuration instance!", configuration); //$NON-NLS-1$
 		
 		// The ftp.files subsystem supports filtering, therefor ISubSystem.getChildren() is expected

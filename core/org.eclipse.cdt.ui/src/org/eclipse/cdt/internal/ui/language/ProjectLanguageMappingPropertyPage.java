@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentType;
@@ -22,16 +25,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeEvent;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 
@@ -107,6 +114,18 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 		try {
 			LanguageManager manager = LanguageManager.getInstance();
 			fMappings = manager.getLanguageConfiguration(project);
+			
+			ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project);
+			Map availableLanguages = LanguageVerifier.computeAvailableLanguages();
+			Set missingLanguages = LanguageVerifier.removeMissingLanguages(fMappings, description, availableLanguages);
+			if (missingLanguages.size() > 0) {
+				MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
+				messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
+				String affectedLanguages = LanguageVerifier.computeAffectedLanguages(missingLanguages);
+				messageBox.setMessage(Messages.format(PreferencesMessages.ProjectLanguagesPropertyPage_missingLanguage, affectedLanguages));
+				messageBox.open();
+			}
+
 			fMappingWidget.setMappings(fMappings.getContentTypeMappings());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -117,6 +136,17 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 		try {
 			LanguageManager manager = LanguageManager.getInstance();
 			WorkspaceLanguageConfiguration workspaceMappings = manager.getWorkspaceLanguageConfiguration();
+
+			Map availableLanguages = LanguageVerifier.computeAvailableLanguages();
+			Set missingLanguages = LanguageVerifier.removeMissingLanguages(workspaceMappings, availableLanguages);
+			if (missingLanguages.size() > 0) {
+				MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
+				messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
+				String affectedLanguages = LanguageVerifier.computeAffectedLanguages(missingLanguages);
+				messageBox.setMessage(Messages.format(PreferencesMessages.WorkspaceLanguagesPreferencePage_missingLanguage, affectedLanguages));
+				messageBox.open();
+			}
+
 			fInheritedMappingWidget.setMappings(workspaceMappings.getWorkspaceMappings());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

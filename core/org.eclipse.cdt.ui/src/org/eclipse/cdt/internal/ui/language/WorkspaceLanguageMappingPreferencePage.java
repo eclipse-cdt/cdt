@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -23,6 +28,7 @@ import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.core.model.LanguageManager;
 
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class WorkspaceLanguageMappingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -35,14 +41,29 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 	
 	protected Control createContents(Composite parent) {
 		try {
-			fMappings = LanguageManager.getInstance().getWorkspaceLanguageConfiguration();
-			fMappingWidget.setMappings(fMappings.getWorkspaceMappings());
+			fetchMappings();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		return fMappingWidget.createContents(parent, PreferencesMessages.WorkspaceLanguagesPreferencePage_description);
 	}
 	
+	private void fetchMappings() throws CoreException {
+		fMappings = LanguageManager.getInstance().getWorkspaceLanguageConfiguration();
+		
+		Map availableLanguages = LanguageVerifier.computeAvailableLanguages();
+		Set missingLanguages = LanguageVerifier.removeMissingLanguages(fMappings, availableLanguages);
+		if (missingLanguages.size() > 0) {
+			MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
+			messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
+			String affectedLanguages = LanguageVerifier.computeAffectedLanguages(missingLanguages);
+			messageBox.setMessage(Messages.format(PreferencesMessages.WorkspaceLanguagesPreferencePage_missingLanguage, affectedLanguages));
+			messageBox.open();
+		}
+		
+		fMappingWidget.setMappings(fMappings.getWorkspaceMappings());
+	}
+
 	public void init(IWorkbench workbench) {
 	}
 	
@@ -63,9 +84,7 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 	protected void performDefaults() {
 		super.performDefaults();
 		try {
-			LanguageManager manager = LanguageManager.getInstance();
-			WorkspaceLanguageConfiguration config = manager.getWorkspaceLanguageConfiguration();
-			fMappingWidget.setMappings(config.getWorkspaceMappings());
+			fetchMappings();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

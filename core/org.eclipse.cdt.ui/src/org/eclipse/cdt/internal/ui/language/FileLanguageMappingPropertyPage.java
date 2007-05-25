@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.ui.language;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IFile;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -72,10 +74,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 	public FileLanguageMappingPropertyPage() {
 		super();
 		fLanguages = LanguageManager.getInstance().getRegisteredLanguages();
-		fLanguageIds = new TreeMap();
-		for (int i = 0; i < fLanguages.length; i++) {
-			fLanguageIds.put(fLanguages[i].getId(), fLanguages[i]);
-		}
+		fLanguageIds = LanguageVerifier.computeAvailableLanguages();
 	}
 	
 	protected Control createContents(Composite parent) {
@@ -200,6 +199,15 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		defaultItem.setText(CONFIGURATION_COLUMN, PreferencesMessages.FileLanguagesPropertyPage_defaultMapping);
 		
 		ProjectLanguageConfiguration config = LanguageManager.getInstance().getLanguageConfiguration(project);
+		
+		Set missingLanguages = LanguageVerifier.removeMissingLanguages(config, description, fLanguageIds);
+		if (missingLanguages.size() > 0) {
+			MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
+			messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
+			String affectedLanguages = LanguageVerifier.computeAffectedLanguages(missingLanguages);
+			messageBox.setMessage(Messages.format(PreferencesMessages.FileLanguagesPropertyPage_missingLanguage, affectedLanguages));
+			messageBox.open();
+		}
 		
 		String defaultLanguageId = config.getLanguageForFile(null, file);
 		LanguageTableData defaultData = new LanguageTableData(null, defaultLanguageId );

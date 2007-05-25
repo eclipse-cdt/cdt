@@ -21,5 +21,5 @@ public class TerminalMessages extends NLS {
     public static String TerminalError;
     public static String SocketError;
     public static String IOError;
-
+    public static String CannotConnectTo;
 }

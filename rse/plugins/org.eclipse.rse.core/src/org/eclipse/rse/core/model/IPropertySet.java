@@ -31,7 +31,11 @@ import java.util.Map;
  * use, to store the description of the Property set.
  */
 public interface IPropertySet {
-	/** The key used to store the description of the Property Set. */
+	/** 
+	 * The key used to store the description of the Property Set. 
+	 * This is no longer used and should not be referenced except for 
+	 * compatibility reasons.
+	 */
 	public static final String DESCRIPTION_KEY = "description"; //$NON-NLS-1$ 
 
 	/** 

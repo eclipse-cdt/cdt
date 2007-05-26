@@ -28,6 +28,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.core.model.IRSEModelObject;
@@ -166,6 +167,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		for (int i = 0; i < propertySets.length; i++) {
 			IPropertySet set = propertySets[i];
 			RSEDOMNode propertySetNode = new RSEDOMNode(parent, IRSEDOMConstants.TYPE_PROPERTY_SET, set.getName());
+			propertySetNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION, set.getDescription());
 			String[] keys = set.getPropertyKeys();
 			for (int k = 0; k < keys.length; k++) {
 				String key = keys[k];

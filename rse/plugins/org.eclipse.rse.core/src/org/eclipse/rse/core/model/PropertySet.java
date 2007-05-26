@@ -33,6 +33,7 @@ public class PropertySet extends RSEPersistableObject implements IPropertySet, I
 	
 	private String _name;
 	private String _label = null;
+	private String _description = null;
 	private Map _properties;
 	private IPropertySetContainer _container = null;
 
@@ -44,6 +45,7 @@ public class PropertySet extends RSEPersistableObject implements IPropertySet, I
 	 */
 	public PropertySet(IPropertySet propertySet) {
 		_name = propertySet.getName();
+		_description = propertySet.getDescription();
 		_properties = new HashMap();
 		if (propertySet instanceof ILabeledObject) {
 			ILabeledObject p = (ILabeledObject) propertySet;
@@ -84,11 +86,11 @@ public class PropertySet extends RSEPersistableObject implements IPropertySet, I
 	}
 
 	public String getDescription() {
-		return getPropertyValue(DESCRIPTION_KEY);
+		return _description;
 	}
 	
 	public void setDescription(String description) {
-		addProperty(DESCRIPTION_KEY, description);
+		_description = description;
 		setDirty(true);
 	}
 

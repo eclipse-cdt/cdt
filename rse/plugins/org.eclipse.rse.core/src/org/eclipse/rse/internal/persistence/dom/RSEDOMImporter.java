@@ -438,13 +438,17 @@ public class RSEDOMImporter {
 	public IPropertySet restorePropertySet(IRSEModelObject modelObject, RSEDOMNode propertySetNode) {
 		String name = propertySetNode.getName();
 		IPropertySet set = modelObject.createPropertySet(name);
-		// properties used to be stored as attributes, get those first for compatability
+		// properties used to be stored as attributes, get those first for compatibility
 		RSEDOMNodeAttribute[] attributes = propertySetNode.getAttributes();
 		for (int i = 0; i < attributes.length; i++) {
 			RSEDOMNodeAttribute attribute = attributes[i];
-			String typeStr = attribute.getType();
-			IPropertyType type = PropertyType.fromString(typeStr);
-			set.addProperty(attribute.getKey(), attribute.getValue(), type);
+			if (attribute.getKey().equals(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION)) { // descriptions really are stored as attributes
+				set.setDescription(attribute.getValue());
+			} else {
+				String typeStr = attribute.getType();
+				IPropertyType type = PropertyType.fromString(typeStr);
+				set.addProperty(attribute.getKey(), attribute.getValue(), type);
+			}
 		}
 		// properties are now stored as children, get those next
 		RSEDOMNode[] children = propertySetNode.getChildren();
@@ -454,7 +458,11 @@ public class RSEDOMImporter {
 			String propertyValue = child.getAttribute(IRSEDOMConstants.ATTRIBUTE_VALUE).getValue();
 			String propertyTypeName = child.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
 			IPropertyType propertyType = PropertyType.fromString(propertyTypeName);
-			set.addProperty(propertyName, propertyValue, propertyType);
+			if (propertyName.equals(IPropertySet.DESCRIPTION_KEY)) { // any descriptions found as properties should be set directly
+				set.setDescription(propertyValue);
+			} else {
+				set.addProperty(propertyName, propertyValue, propertyType);
+			}
 		}
 		return set;
 	}

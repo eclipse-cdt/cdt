@@ -17,6 +17,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
+
 /**
  * A simple logger class. Every method in this class is static, so they can be
  * called from both class and instance methods. To use this class, write code
@@ -163,25 +167,28 @@ public final class Logger {
 	 * log file.
 	 */
 	public static final void logException(Exception ex) {
+		// log in eclipse error log
+		TerminalPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
 		// Read my own stack to get the class name, method name, and line number
 		// of
 		// where this method was called.
+		if(logStream!=null) {
+			StackTraceElement caller = new Throwable().getStackTrace()[1];
+			int lineNumber = caller.getLineNumber();
+			String className = caller.getClassName();
+			String methodName = caller.getMethodName();
+			className = className.substring(className.lastIndexOf('.') + 1);
 
-		StackTraceElement caller = new Throwable().getStackTrace()[1];
-		int lineNumber = caller.getLineNumber();
-		String className = caller.getClassName();
-		String methodName = caller.getMethodName();
-		className = className.substring(className.lastIndexOf('.') + 1);
+			PrintStream tmpStream = System.err;
 
-		PrintStream tmpStream = System.err;
+			if (logStream != null) {
+				tmpStream = logStream;
+			}
 
-		if (logStream != null) {
-			tmpStream = logStream;
+			tmpStream.println(className
+					+ "." + methodName + ":" + lineNumber + ": " + //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					"Caught exception: " + ex); //$NON-NLS-1$
+			ex.printStackTrace(tmpStream);
 		}
-
-		tmpStream.println(className
-				+ "." + methodName + ":" + lineNumber + ": " + //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-				"Caught exception: " + ex); //$NON-NLS-1$
-		ex.printStackTrace(tmpStream);
 	}
 }

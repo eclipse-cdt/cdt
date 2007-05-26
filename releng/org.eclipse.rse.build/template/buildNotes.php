@@ -305,8 +305,11 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188939">bug 188939</a> - cri - [terminal] All terminal connections fail if RXTX is not available</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189043">bug 189043</a> - cri - TVT33:TCT335: ru: encoding not remembered or file content corruption</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187301">bug 187301</a> - maj - [telnet] Telnet does not allow multiple shells</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187732">bug 187732</a> - maj - [refresh] Refresh on file renamed/deleted outside RSE on Local doesn't work</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188637">bug 188637</a> - maj - deleting a file to which you are not authorized gives no error message</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188863">bug 188863</a> - maj - [persistence] Eclipse hangs after choosing "Refresh" button in Team view</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

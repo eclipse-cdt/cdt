@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 1996, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Michael Scharf (Wind River) - initial API and implementation 
+ * Michael Scharf (Wind River) - initial API and implementation
+ * Douglas Lea (Addison Wesley) - [cq:1552] BoundedBufferWithStateTracking adapted to BoundedByteBuffer 
  *******************************************************************************/
 
 package org.eclipse.tm.internal.terminal.control.impl;
@@ -83,6 +84,13 @@ public class TerminalInputStream extends InputStream {
 	 * Adapted from BoundedBufferWithStateTracking 
 	 * http://gee.cs.oswego.edu/dl/cpj/allcode.java
 	 * http://gee.cs.oswego.edu/dl/cpj/
+	 * <p>
+	 * BoundedBufferWithStateTracking is part of the examples for the book
+	 * Concurrent Programming in Java: Design Principles and Patterns by
+	 * Doug Lea (ISBN 0-201-31009-0). Second edition published by 
+	 * Addison-Wesley, November 1999. The code is 
+	 * Copyright(c) Douglas Lea 1996, 1999 and released to the public domain
+	 * and may be used for any purposes whatsoever. 
 	 * <p>
 	 * For some reasons a solution based on
 	 * PipedOutputStream/PipedIntputStream

@@ -28,27 +28,12 @@ import java.io.OutputStream;
  */
 public interface ITerminalConnector {
 	/**
-	 * @return an ID of this connector. The id from the plugin.xml.
-	 * <p>Note: return <code>null</code> because the framework takes 
-	 * care to get the value from the plugin.xml
+	 * Initializes the Connector. Some connector depend on external libraries that
+	 * might not be installed. 
+	 * @throws Exception The exception should have a useful 
+	 * {@link Exception#getLocalizedMessage()} that explains the problem to the user.
 	 */
-	// TODO: eliminate the need of implementing this NOOP method for extensions
-	String getId();
-
-	/**
-	 * @return <code>null</code> the name (as specified in the plugin.xml)
-	 * <p>Note: return <code>null</code> because the framework takes 
-	 * care to get the value from the plugin.xml
-	 */
-	// TODO: eliminate the need of implementing this NOOP method for extensions
-	String getName();
-
-	/**
-	 * @return true if the contribution is functioning (e.g. all external libraries are
-	 * installed). This was added for the serial support, because it requires the java comm 
-	 * library, which is installed in the lib/ext directory of the
-	 */
-	boolean isInstalled();
+	void initialize() throws Exception;
 
 	/**
 	 * Connect using the current state of the settings.

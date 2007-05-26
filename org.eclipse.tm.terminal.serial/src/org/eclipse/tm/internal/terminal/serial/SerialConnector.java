@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
@@ -40,33 +41,19 @@ public class SerialConnector implements ITerminalConnector {
     private CommPortIdentifier fSerialPortIdentifier;
 	private SerialPortHandler fTerminalSerialPortHandler;
 	private boolean fIsPortInUse;
-	private final SerialSettings fSettings;
+	private SerialSettings fSettings;
 	public SerialConnector() {
-		SerialSettings settins=null;
-		try {
-			settins=new SerialSettings();			
-		} catch (NoClassDefFoundError e) {
-			// tell the user how to install the library
-			Activator.getDefault().getLog().log(new Status(IStatus.WARNING,Activator.PLUGIN_ID,0, SerialMessages.ERROR_LIBRARY_NOT_INSTALLED,e));
-		}
-		fSettings=settins;
-	}
-	public String getId() {
-		return null;
-	}
-	public String getName() {
-		return null;
-	}
-	public boolean isInstalled() {
-		// check if serial is installed
-		try {
-			return SerialPort.class!=null;
-		} catch (Throwable e) {
-			return false;
-		}
 	}
 	public SerialConnector(SerialSettings settings) {
 		fSettings=settings;
+	}
+	public void initialize() throws Exception {
+		try {
+			fSettings=new SerialSettings();			
+		} catch (NoClassDefFoundError e) {
+			// tell the user how to install the library
+			throw new CoreException(new Status(IStatus.WARNING,Activator.PLUGIN_ID,0, SerialMessages.ERROR_LIBRARY_NOT_INSTALLED,e));
+		}
 	}
 	public void connect(ITerminalControl control) {
 		Logger.log("entered."); //$NON-NLS-1$
@@ -203,5 +190,4 @@ public class SerialConnector implements ITerminalConnector {
 	public void save(ISettingsStore store) {
 		fSettings.save(store);
 	}
-	
 }

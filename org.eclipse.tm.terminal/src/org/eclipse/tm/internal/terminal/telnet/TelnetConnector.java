@@ -41,14 +41,10 @@ public class TelnetConnector implements ITerminalConnector {
 	public TelnetConnector() {
 		this(new TelnetSettings());
 	}
-	public String getId() {
-		return null;
-	}
-	public String getName() {
-		return null;
-	}
 	public TelnetConnector(TelnetSettings settings) {
 		fSettings=settings;
+	}
+	public void initialize() throws Exception {
 	}
 	public void connect(ITerminalControl control) {
 		Logger.log("entered."); //$NON-NLS-1$
@@ -164,8 +160,5 @@ public class TelnetConnector implements ITerminalConnector {
 	}
 	public void save(ISettingsStore store) {
 		fSettings.save(store);
-	}
-	public boolean isInstalled() {
-		return true;
 	}
 }

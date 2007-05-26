@@ -38,5 +38,8 @@ public class ViewMessages extends NLS {
 	public static String STATE_CONNECTING;
 	public static String STATE_OPENED;
 	public static String STATE_CLOSED;
+	
+	public static String CANNOT_INITIALIZE;
+	public static String CONNECTOR_NOT_AVAILABLE;
 
 }

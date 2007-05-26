@@ -36,24 +36,12 @@ public class SshConnector implements ITerminalConnector {
 	private int fHeight;
 	public SshConnector() {
 		this(new SshSettings());
-		try {
-			fJsch=new JSch();
-		} catch(NoClassDefFoundError e) {
-			// ignore
-			e.printStackTrace();
-		}
 	}
 	public SshConnector(SshSettings settings) {
 		fSettings=settings;
 	}
-	public String getId() {
-		return null;
-	}
-	public String getName() {
-		return null;
-	}
-	public boolean isInstalled() {
-		return fJsch!=null;
+	public void initialize() throws Exception {
+		fJsch=new JSch();
 	}
 	public void connect(ITerminalControl control) {
 		Logger.log("entered."); //$NON-NLS-1$

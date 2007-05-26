@@ -1744,11 +1744,17 @@ public class TerminalText implements ControlListener {
 		// there is nothing we can do to tell the remote host about the size of the
 		// terminal.
 
-		ITerminalConnector telnetConnection = terminal.getTerminalConnection();
+		ITerminalConnector telnetConnection = getConnector();
 		// TODO MSA: send only if dimensions have really changed!
 		if (telnetConnection != null && widthInColumns != 0 && heightInLines != 0) {
 			telnetConnection.setTerminalSize(widthInColumns, heightInLines);
 		}
+	}
+
+	private ITerminalConnector getConnector() {
+		if(terminal.getTerminalConnectorInfo()!=null)
+			return terminal.getTerminalConnectorInfo().getConnector();
+		return null;
 	}
 
 	/**

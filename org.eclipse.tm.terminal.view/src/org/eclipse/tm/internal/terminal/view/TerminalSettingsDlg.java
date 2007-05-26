@@ -16,9 +16,16 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,11 +40,11 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
 
 class TerminalSettingsDlg extends Dialog {
 	private Combo fCtlConnTypeCombo;
-	private final ITerminalConnector[] fConnectors;
+	private final ITerminalConnectorInfo[] fConnectors;
 	private final ISettingsPage[] fPages;
 	/**
 	 * Maps the fConnectors index to the fPages index
@@ -48,9 +55,9 @@ class TerminalSettingsDlg extends Dialog {
 	private PageBook fPageBook;
 	private IDialogSettings fDialogSettings;
 
-	public TerminalSettingsDlg(Shell shell, ITerminalConnector[] connectors, ITerminalConnector connector) {
+	public TerminalSettingsDlg(Shell shell, ITerminalConnectorInfo[] connectors, ITerminalConnectorInfo connector) {
 		super(shell);
-		fConnectors=connectors;
+		fConnectors=getValidConnectors(connectors);
 		fPages=new ISettingsPage[fConnectors.length];
 		fPageIndex=new int[fConnectors.length];
 		fSelectedConnector=-1;
@@ -59,28 +66,47 @@ class TerminalSettingsDlg extends Dialog {
 				fSelectedConnector=i;
 		}
 	}
+	/**
+	 * @param connectors
+	 * @return connectors excluding connectors with errors
+	 */
+	private ITerminalConnectorInfo[] getValidConnectors(ITerminalConnectorInfo[] connectors) {
+		List list=new ArrayList(Arrays.asList(connectors));
+		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+			ITerminalConnectorInfo info = (ITerminalConnectorInfo) iterator.next();
+			if(info.isInitialized() && info.getInitializationErrorMessage()!=null)
+				iterator.remove();
+		}
+		connectors=(ITerminalConnectorInfo[]) list.toArray(new ITerminalConnectorInfo[list.size()]);
+		return connectors;
+	}
 	ISettingsPage getPage(int i) {
 		if(fPages[i]==null) {
-			try {
-				fPages[i]=fConnectors[i].makeSettingsPage();
-				// TODO: what happens if an error occurs while
-				// the control is partly created?
-				fPages[i].createControl(fPageBook);
-			} catch (final Exception e) {
+			if(fConnectors[i].getInitializationErrorMessage()!=null) {
 				// create a error message
+				final ITerminalConnectorInfo conn=fConnectors[i];
 				fPages[i]=new ISettingsPage(){
 					public void createControl(Composite parent) {
 						Label l=new Label(parent,SWT.WRAP);
-						l.setText("Error"); //$NON-NLS-1$
+						String error=NLS.bind(ViewMessages.CONNECTOR_NOT_AVAILABLE,conn.getName());
+						l.setText(error); 
 						l.setForeground(l.getDisplay().getSystemColor(SWT.COLOR_RED));
-						MessageDialog.openError(getShell(), "Initialization Problems!", e.getLocalizedMessage()); //$NON-NLS-1$
+						MessageDialog.openError(getShell(), 
+								error,
+								NLS.bind(ViewMessages.CANNOT_INITIALIZE,
+										conn.getName(),
+										conn.getInitializationErrorMessage())); 
 					}
 					public void loadSettings() {}
 					public void saveSettings() {}
 					public boolean validateSettings() {return false;}
 				};
-				fPages[i].createControl(fPageBook);
+			} else {
+				fPages[i]=fConnectors[i].getConnector().makeSettingsPage();
 			}
+			// TODO: what happens if an error occurs while
+			// the control is partly created?
+			fPages[i].createControl(fPageBook);
 			fPageIndex[i]=fNPages++;
 			resize();
 		}
@@ -136,6 +162,11 @@ class TerminalSettingsDlg extends Dialog {
 
 		return ctlComposite;
 	}
+	public void create() {
+		super.create();
+		// initialize the OK button after creating the all dialog elements
+		updateOKButton();
+	}
 	private void initFields() {
 		// Load controls
 		for (int i = 0; i < fConnectors.length; i++) {
@@ -189,7 +220,7 @@ class TerminalSettingsDlg extends Dialog {
 			}
 		});
 	}
-	public ITerminalConnector getConnector() {
+	public ITerminalConnectorInfo getConnector() {
 		if(fSelectedConnector>=0)
 			return fConnectors[fSelectedConnector];
 		return null;
@@ -199,6 +230,21 @@ class TerminalSettingsDlg extends Dialog {
 		getPage(index);
 		Control[] pages=fPageBook.getChildren();
 		fPageBook.showPage(pages[fPageIndex[fSelectedConnector]]);
+		updateOKButton();
+
+	}
+	/**
+	 * enables the OK button if the user can create a connection
+	 */
+	private void updateOKButton() {
+		// TODO: allow contributions to enable the OK button
+		// enable the OK button if we have a valid connection selected
+		if(getButton(IDialogConstants.OK_ID)!=null) {
+			boolean enable=false;
+			if(getConnector()!=null)
+				enable=getConnector().getInitializationErrorMessage()==null;
+			getButton(IDialogConstants.OK_ID).setEnabled(enable);
+		}
 	}
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings ds=TerminalViewPlugin.getDefault().getDialogSettings();

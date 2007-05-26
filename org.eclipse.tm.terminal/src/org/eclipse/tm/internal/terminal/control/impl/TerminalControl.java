@@ -49,6 +49,7 @@ import org.eclipse.tm.internal.terminal.control.ICommandInputField;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -88,14 +89,14 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
     private String                    fMsg = ""; //$NON-NLS-1$
     private VerifyKeyListener         fVerifyKeyListener;
     private FocusListener             fFocusListener;
-    private ITerminalConnector		  fConnector;
-    private final ITerminalConnector[]      fConnectors;
+    private ITerminalConnectorInfo		  fConnectorInfo;
+    private final ITerminalConnectorInfo[]      fConnectors;
 
 	private ICommandInputField fCommandInputField;
 
 	private volatile TerminalState fState;
 
-	public TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors) {
+	public TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnectorInfo[] connectors) {
 		fConnectors=connectors;
 		fTerminalListener=target;
 		setTerminalText(new TerminalText(this));
@@ -103,7 +104,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		setupTerminal(wndParent);
 	}
 
-	public ITerminalConnector[] getConnectors() {
+	public ITerminalConnectorInfo[] getConnectors() {
 		return fConnectors;
 	}
 
@@ -237,18 +238,27 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 
 	public void connectTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
-		if(fConnector==null)
+		if(getTerminalConnector()==null)
 			return;
 		fTerminalText.resetState();
-		try {
-			fConnector.connect(this);
-		} catch(RuntimeException e) {
-			showErrorMessage(NLS.bind(TerminalMessages.CannotConnectTo,new Object[]{fConnector.getName(),e.getMessage()}));
+		if(fConnectorInfo.getInitializationErrorMessage()!=null) {
+			showErrorMessage(NLS.bind(
+					TerminalMessages.CannotConnectTo,
+					fConnectorInfo.getName(),
+					fConnectorInfo.getInitializationErrorMessage()));
+			// we cannot connect because the connector was not initialized
 			return;
 		}
+		getTerminalConnector().connect(this);
 		// clean the error message
 		setMsg(""); //$NON-NLS-1$
 		waitForConnect();
+	}
+
+	private ITerminalConnector getTerminalConnector() {
+		if(fConnectorInfo==null)
+			return null;
+		return fConnectorInfo.getConnector();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#disconnectTerminal()
@@ -259,9 +269,8 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		if (getState()==TerminalState.CLOSED) {
 			return;
 		}
-		if(fConnector!=null) {
-			fConnector.disconnect();
-//			fConnector=null;
+		if(getTerminalConnector()!=null) {
+			getTerminalConnector().disconnect();
 		}
 	}
 
@@ -482,8 +491,8 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 
 
 	public OutputStream getOutputStream() {
-		if(fConnector!=null)
-			return fConnector.getOutputStream();
+		if(getTerminalConnector()!=null)
+			return getTerminalConnector().getOutputStream();
 		return null;
 	}
 
@@ -523,10 +532,9 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 
 	/**
 	 */
-	public ITerminalConnector getTerminalConnection() {
-		return fConnector;
+	public ITerminalConnectorInfo getTerminalConnectorInfo() {
+		return fConnectorInfo;
 	}
-
 	protected class TerminalModifyListener implements ModifyListener {
 		public void modifyText(ModifyEvent e) {
 			if (e.getSource() instanceof StyledText) {
@@ -752,9 +760,9 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 			// locally, send a LF after sending a CR.
 			// ISSUE: Is this absolutely required?
 
-			if (character == '\r' && getTerminalConnection() != null
+			if (character == '\r' && getTerminalConnectorInfo() != null
 					&& isConnected()
-					&& getTerminalConnection().isLocalEcho()) {
+					&& getTerminalConnectorInfo().getConnector().isLocalEcho()) {
 				sendChar('\n', false);
 			}
 
@@ -773,8 +781,8 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 			//
 			// o The character is the DELETE character.
 
-			if (getTerminalConnection() == null
-					|| getTerminalConnection().isLocalEcho() == false || altKeyPressed
+			if (getTerminalConnectorInfo() == null
+					|| getTerminalConnectorInfo().getConnector().isLocalEcho() == false || altKeyPressed
 					|| (character >= '\u0001' && character < '\t')
 					|| (character > '\t' && character < '\r')
 					|| (character > '\r' && character <= '\u001f')
@@ -815,13 +823,13 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	public String getSettingsSummary() {
-		if(fConnector!=null)
-			return fConnector.getSettingsSummary();
+		if(getTerminalConnector()!=null)
+			return getTerminalConnector().getSettingsSummary();
 		return ""; //$NON-NLS-1$
 	}
 
-	public void setConnector(ITerminalConnector connector) {
-		fConnector=connector;
+	public void setConnector(ITerminalConnectorInfo connector) {
+		fConnectorInfo=connector;
 		
 	}
 	public ICommandInputField getCommandInputField() {

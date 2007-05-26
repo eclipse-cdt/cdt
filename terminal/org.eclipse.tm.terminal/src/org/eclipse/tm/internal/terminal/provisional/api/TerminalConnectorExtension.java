@@ -16,10 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 
 /**
  * A factory to get {@link ITerminalConnector} instances.
@@ -34,6 +31,28 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
  * </p>
  */
 public class TerminalConnectorExtension {
+	static private class TerminalConnectorInfo implements ITerminalConnectorInfo {
+		TerminalConnectorProxy fProxy;
+		TerminalConnectorInfo(TerminalConnectorProxy proxy) {
+			fProxy=proxy;
+		}
+		public ITerminalConnector getConnector() {
+			return fProxy;
+		}
+		public String getId() {
+			return fProxy.getId();
+		}
+		public String getName() {
+			return fProxy.getName();
+		}
+		public String getInitializationErrorMessage() {
+			return fProxy.getLocalizedErrorMessage();
+		}
+		public boolean isInitialized() {
+			return fProxy.isInitialized();
+		}
+
+	}
 	/**
 	 * A placeholder for the ITerminalConnector. It gets initialized when
 	 * the real connector is needed. 
@@ -67,6 +86,12 @@ public class TerminalConnectorExtension {
 		TerminalConnectorProxy(IConfigurationElement config) {
 			fConfig=config;
 		}
+		public String getLocalizedErrorMessage() {
+			getConnector();
+			if(fException!=null)
+				return fException.getLocalizedMessage();
+			return null;
+		}
 		public String getId() {
 			String id = fConfig.getAttribute("id"); //$NON-NLS-1$
 			if(id==null || id.length()==0)
@@ -84,17 +109,15 @@ public class TerminalConnectorExtension {
 			if(!isInitialized()) {
 				try {
 					fConnector=createConnector(fConfig);
-					if(fConnector==null || !fConnector.isInstalled())
-						// TODO MSA externalize
-						throw new RuntimeException(getName()+ " is not properly installed!"); //$NON-NLS-1$
+					fConnector.initialize();
 				} catch (Exception e) {
 					fException=e;
+					// that's the place where we log the exception
+					Logger.logException(e);
 				}
 				if(fConnector!=null && fStore!=null)
 					fConnector.load(fStore);
 			}
-			if(fException!=null)
-				throw new RuntimeException(fException);
 			return fConnector;
 		}
 		private boolean isInitialized() {
@@ -116,11 +139,6 @@ public class TerminalConnectorExtension {
 				// TODO: see TerminalView.getSettingsSummary
 				return "?"; //$NON-NLS-1$
 		}
-		public boolean isInstalled() {
-			if(isInitialized() && fConnector==null)
-				return false;
-			return getConnector().isInstalled();
-		}
 		public boolean isLocalEcho() {
 			return getConnector().isLocalEcho();
 		}
@@ -137,7 +155,7 @@ public class TerminalConnectorExtension {
 		public void save(ISettingsStore store) {
 			// no need to save the settings: it cannot have changed
 			// because we are not initialized....
-			if(!isInstalled())
+			if(fConnector!=null)
 				getConnector().save(store);
 		}
 		public void setTerminalSize(int newWidth, int newHeight) {
@@ -148,37 +166,26 @@ public class TerminalConnectorExtension {
 				fConnector.setTerminalSize(newWidth, newHeight);
 			}
 		}
+		public void initialize() throws Exception {	
+			throw new IllegalStateException("Connector already initialized!"); //$NON-NLS-1$
+		}
 	}
 	/**
 	 * @return null or a new connector created from the extension
 	 */
 	static private ITerminalConnector createConnector(IConfigurationElement config) throws Exception {
-		try {
-			Object obj=config.createExecutableExtension("class"); //$NON-NLS-1$
-			if(obj instanceof ITerminalConnector) {
-				ITerminalConnector conn=(ITerminalConnector) obj;
-				if(conn.isInstalled())
-					return conn;
-			}
-		} catch (Exception e) {
-			log(e);
-			throw e;
-		}
-		return null;
+		return (ITerminalConnector)config.createExecutableExtension("class"); //$NON-NLS-1$
 	}
 	/**
-	 * @return a new list of ITerminalConnectors. 
+	 * @return a new list of ITerminalConnectorInfo. 
 	 */
-	public static ITerminalConnector[] getTerminalConnectors() {
+	public static ITerminalConnectorInfo[] getTerminalConnectors() {
 		IConfigurationElement[] config=RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnector"); //$NON-NLS-1$
 		List result=new ArrayList();
 		for (int i = 0; i < config.length; i++) {
-			result.add(new TerminalConnectorProxy(config[i]));
+			result.add(new TerminalConnectorInfo(new TerminalConnectorProxy(config[i])));
 		}
-		return (ITerminalConnector[]) result.toArray(new ITerminalConnector[result.size()]);
+		return (ITerminalConnectorInfo[]) result.toArray(new ITerminalConnectorInfo[result.size()]);
 	}
 
-	private static void log(Throwable e) {
-		TerminalPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, e.getMessage(), e));
-	}
 }

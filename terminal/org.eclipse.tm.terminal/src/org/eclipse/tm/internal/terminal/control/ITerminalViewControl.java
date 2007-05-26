@@ -14,7 +14,7 @@ package org.eclipse.tm.internal.terminal.control;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
@@ -36,10 +36,10 @@ public interface ITerminalViewControl {
     void disconnectTerminal();
     void disposeTerminal();
     String getSettingsSummary();
-    ITerminalConnector[] getConnectors();
+    ITerminalConnectorInfo[] getConnectors();
     void setFocus();
-    ITerminalConnector getTerminalConnection();
-    void setConnector(ITerminalConnector connector);
+    ITerminalConnectorInfo getTerminalConnectorInfo();
+    void setConnector(ITerminalConnectorInfo connector);
     void connectTerminal();
     /**
      * @param write a single character to terminal

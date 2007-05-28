@@ -96,6 +96,8 @@ public class SystemPreferencesManager {
 		store.setDefault(ISystemPreferencesConstants.REMEMBER_STATE, ISystemPreferencesConstants.DEFAULT_REMEMBER_STATE);
 		store.setDefault(ISystemPreferencesConstants.CASCADE_UDAS_BYPROFILE, ISystemPreferencesConstants.DEFAULT_CASCADE_UDAS_BYPROFILE);
 	    store.setDefault(ISystemPreferencesConstants.SHOWNEWCONNECTIONPROMPT, showNewConnectionPrompt);
+	    store.setDefault(Mnemonics.POLICY_PREFERENCE, Mnemonics.POLICY_DEFAULT);
+	    store.setDefault(Mnemonics.APPEND_MNEMONICS_PATTERN_PREFERENCE, Mnemonics.APPEND_MNEMONICS_PATTERN_DEFAULT);
 	    savePreferences();
 	}
 	

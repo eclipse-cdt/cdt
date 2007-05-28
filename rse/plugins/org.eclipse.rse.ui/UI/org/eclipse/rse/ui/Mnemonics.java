@@ -16,11 +16,20 @@
 
 package org.eclipse.rse.ui;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
@@ -39,11 +48,76 @@ import com.ibm.icu.lang.UCharacter.UnicodeBlock;
 import com.ibm.icu.util.ULocale;
 
 /**
- * A class for creating unique mnemonics for each control in a given
- * context - usually a composite control of some sort.
+ * Instances of this class may be used to supply mnemonics to the 
+ * text for controls.
+ * There are preferences which can be set by products to control how
+ * these mnemonics are generated and applied.
+ * <p>
+ * There are two types of mnemonics which can be added to a label:
+ * embedded mnemonics and appended mnemonics. An embedded mnemonic uses
+ * an existing letter in the label for the mnemonic. An appended mnemonic
+ * is added to the end of the label (but prior to any punctuation or accelerators)
+ * and is of the form (X).
+ * <p>
+ * The org.eclipse.rse.ui/MNEMONICS_POLICY preference establishes the 
+ * desire to generated embedded mnemonics using letters that already
+ * exist in the text of the controls and/or to generate appended mnemonics
+ * if an embedded mnemonic cannot be found or is not desired.
+ * The policy is composed of bit flags.
+ * See {@link #EMBED_MNEMONICS} and {@link #APPEND_MNEMONICS} for the flag values.
+ * See {@link #POLICY_DEFAULT} for the default policy value.
+ * A policy value of 0 will disable the generation of all mnemonics.
+ * <p>
+ * The org.eclipse.rse.ui/APPEND_MNEMONICS_PATTERN preference is used to 
+ * further qualify the appending behavior by the current locale. If the 
+ * current locale name matches this pattern then appending can be performed.
+ * See {@link #APPEND_MNEMONICS_PATTERN_DEFAULT} for the default pattern.
+ * <p>
+ * Mnemonics on menus are allowed to have duplicates. Attempts are made to find the
+ * least used mnemonic when finding a duplicate.
  */
 public class Mnemonics {
+	
+	/**
+	 * An option bit mask - value 1.
+	 * If on, specifies whether or not to insert mnemonic indications into 
+	 * the current text of a label.
+	 * If off, all other options are ignored.
+	 */
+	public static final int EMBED_MNEMONICS = 1;
+	
+	/**
+	 * An option bit mask - value 2.
+	 * If on, specifies to generate mnemonics of the form (X) at the end of labels for
+	 * those languages matching the locale pattern.
+	 * If off, then only characters from the label will be used as mnemonics.
+	 */
+	public static final int APPEND_MNEMONICS = 2;
+	
+	/**
+	 * The simple name of the preference that holds the pattern  to be used for matching against the locale to determine if APPEND_MNEMONICS option applies. 
+	 */
+	public static final String APPEND_MNEMONICS_PATTERN_PREFERENCE = "APPEND_MNEMONICS_PATTERN"; //$NON-NLS-1$
 
+	/**
+	 * Some products will to append mnemonics only for certain locales.
+	 * The following provides the default pattern for matching the locale.
+	 * The default pattern matches Chinese, Japanese, and Korean.
+	 */
+	public static final String APPEND_MNEMONICS_PATTERN_DEFAULT = "zh.*|ja.*|ko.*"; //$NON-NLS-1$
+	
+	/**
+	 * The simple name of the preference that determines the policy to be  used when applying mnemonics to menus and composites.
+	 */
+	public static final String POLICY_PREFERENCE = "MNEMONICS_POLICY"; //$NON-NLS-1$
+
+	/**
+	 * The default mnemonics policy. If no policy is specified in a call to generate
+	 * mnemonics this policy will be used. Can be overridden by the 
+	 * org.eclipse.rse.ui/MNEMONICS_POLICY preference.
+	 */
+	public static final int POLICY_DEFAULT = EMBED_MNEMONICS | APPEND_MNEMONICS;
+	
 	private static final char MNEMONIC_CHAR = '&';
 
 	/*
@@ -59,10 +133,10 @@ public class Mnemonics {
 	private static final String RUSSIAN_MNEMONICS = "\u0410\u0411\u0412\u0413\u0414\u0145\u0401\u0416\u0417\u0418\u0419\u041a\u041b\u041c\u041d\u041e\u041f\u0420\u0421\u0422\u0423\u0424\u0425\u0426\u0427\u0428\u0429\u042a\u042b\u042c\u042d\u042e\u042f"; //$NON-NLS-1$
 	private static final String LATIN_MNEMONICS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //$NON-NLS-1$
 	
-	private final static Pattern TRANSPARENT_ENDING_PATTERN = Pattern.compile("(\\s|\\.\\.\\.|>|<|:|\uff0e\uff0e\uff0e|\uff1e|\uff1c|\uff1a)+$|\\t.*$"); //$NON-NLS-1$
+	private final static Pattern TRANSPARENT_ENDING_PATTERN = Pattern.compile("(\\s|\\.\\.\\.|>|<|:|\uff0e\uff0e\uff0e|\uff1e|\uff1c|\uff1a|\\t.*)+$"); //$NON-NLS-1$
 	private boolean applyMnemonicsToPrecedingLabels = true;
 
-	private Set usedSet = new HashSet();
+	private Map usedCharacters = new HashMap();
 
 	/**
 	 * Helper method to return the mnemonic from a string.
@@ -122,10 +196,10 @@ public class Mnemonics {
 	}
 	
 	/**
-	 * Finds the point at which to insert a mnemonic of the form (&x).
-	 * Checks for transparent endings and trailing spaces.
+	 * Finds the point at which to insert a mnemonic of the form (&X).
+	 * Checks for transparent endings.
 	 * @param label the label to check
-	 * @return the position at which a mnemonic can be inserted.
+	 * @return the position at which a mnemonic of the form (&X) can be inserted.
 	 */
 	private static int getEndingPosition(String label) {
 		Matcher m = TRANSPARENT_ENDING_PATTERN.matcher(label);
@@ -137,7 +211,7 @@ public class Mnemonics {
 	 * Clear the list of used mnemonic characters
 	 */
 	public void clear() {
-		usedSet.clear();
+		usedCharacters.clear();
 	}
 	
 	/**
@@ -148,89 +222,84 @@ public class Mnemonics {
 		clear();
 		makeUsed(usedMnemonics);
 	}
-
+	
+	/**
+	 * Sets a mnemonic in the given string and returns the result.
+	 * Functions according to the default policy as specified in
+	 * Sets the mnemonic according to the org.eclipse.rse.ui/MNEMONICS_POLICY preference.
+	 * Not normally called from other classes, but rather by the setMnemonic
+	 * methods in this class.
+	 * @param label The string to which to apply the mnemonic
+	 * @return the result string with the mnemonic embedded or appended
+	 */
+	public String setUniqueMnemonic(String label) {
+		Plugin plugin = RSEUIPlugin.getDefault();
+		Preferences preferences = plugin.getPluginPreferences();
+		int flags = preferences.getInt(POLICY_PREFERENCE);
+		String localePattern = preferences.getString(APPEND_MNEMONICS_PATTERN_PREFERENCE);
+		String result = setUniqueMnemonic(label, flags, localePattern, false);
+		return result;
+	}
+	
 	/**
 	 * Given a string, this starts at the first character and iterates until
 	 * it finds a character not already used as a mnemonic.
 	 * Not normally called from other classes, but rather by the setMnemonic
 	 * methods in this class.
-	 * Sets the mnemonic according to the org.eclipse.rse.ui/MNEMONIC_POLICY preference.
-	 * (Note: this preference and the values below are NOT guaranteed API as yet and may change 
-	 * without notice).
-	 * In all policies, if the label has a mnemonic it is not touched.
-	 * Duplicate mnemonics can occur between labels that have hard coded mnemonics.
-	 * <ul>
-	 * <li>0 = The labels are left untouched, mnemonics are never added.</li>
-	 * <li>1 = Mnemonics are added to a label that does not have a mnemonic
-	 * using a letter from the label
-	 * only if an unused mnemonic can be found in the label.</li>
-	 * <li>2 = A mnemonic is added to a label that does not have a mnemonic
-	 * using a letter from the label
-	 * even if that character has already been used in the context.
-	 * This will typically result in a duplicate mnemonic assignment.</li>
-	 * <li>3 = A mnemonic is added to a label that does not have a mnemonic
-	 * using a letter from the label or generating an (&x) mnemonic if a 
-	 * unique letter can be found.</li>
-	 * </ul>
-	 * @param label String to which to generate and apply the mnemonic
+	 * If the label already has a mnemonic it is not touched.
+	 * @param label String to which to apply a mnemonic
+	 * @param flags The policy bit field composed of the following options
+	 * EMBED_MNEMONICS and APPEND_MNEMONICS
+	 * @param allowDuplicates true if duplicates can be allowed. Typically used only
+	 * when assigning mnemonics to menu items. If true, it will attempt to assign the
+	 * least used duplicate mnemonic for the string from the context established so far.
 	 * @return input String with '&' inserted in front of the mnemonic character
 	 */
-	public String setUniqueMnemonic(String label) {
-		int policy = 3;
+	private String setUniqueMnemonic(String label, int flags, String localePattern, boolean allowDuplicates) {
 		// determine the cases where the label does not need a mnemonic
-		if (policy == 0 || label == null || label.trim().length() == 0 || label.equals("?")) { //$NON-NLS-1$
+		if (flags == 0 || label == null || label.trim().length() == 0 || label.equals("?")) { //$NON-NLS-1$
 			return label;
 		}
-		// if a mnemonic exists in the label mark it as used
+		StringBuffer buffer = new StringBuffer(label); 
 		char mn = getMnemonic(label);
-		makeUsed(mn);
-		// if a mnemonic exists in the label use it, if not add one
-		if (mn == ' ') { // no mnemonic exists
+		if (mn == ' ' && ((flags & EMBED_MNEMONICS) > 0)) { // no mnemonic exists, try embedding
 			int p = findUniqueMnemonic(label);
-			String mnemonicString = ""; //$NON-NLS-1$
 			if (p >= 0) { // a character in the label can be used as the mnemonic
-				makeUsed(label.charAt(p));
-				mnemonicString = Character.toString(MNEMONIC_CHAR);
-			} else {
-				// a unique character in the label cannot be found, add one according to the policy
-				if (policy == 1) { // policy 1, do not add one if one cannot be found
-				}
-				else if (policy == 2) { // policy 2, use a letter from the label anyway, favor upper case
-					int endingPosition=getEndingPosition(label);
-					for (p = 0; p < endingPosition; p++) {
-						mn = label.charAt(p);
-						if (UCharacter.isUpperCase(mn)) break;
-					}
-					if (p == endingPosition) {
-						for (p = 0; p < endingPosition; p++) {
-							mn = label.charAt(p);
-							if (UCharacter.isLetter(mn)) break;
-						}
-					}
-					if (p < label.length()) {
-						mnemonicString = Character.toString(MNEMONIC_CHAR);
-					}
-				}
-				else if (policy == 3) { // policy 3, add a mnemonic at the end
-					String candidates = getCandidates();
-					p = findUniqueMnemonic(candidates);
-					if (p >= 0) {
-						mn = candidates.charAt(p);
-						mnemonicString = "(" + MNEMONIC_CHAR + mn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-						p = getEndingPosition(label);
-						makeUsed(mn);
-					}
-				}
+				mn = label.charAt(p);
+				buffer.insert(p, MNEMONIC_CHAR);
 			}
-			StringBuffer newLabel = new StringBuffer(label);
-			if (p >= 0) {
-				newLabel.insert(p, mnemonicString);
-			}
-			label = newLabel.toString();
-		} else { // a valid mnemonic already exists in the label
-			makeUsed(mn);
 		}
-		return label;
+		if (mn == ' ' && allowDuplicates) { // no mnemonic exists, try a duplicate
+			int n = getEndingPosition(label);
+			int m = 999;
+			int p = -1;
+			for (int i = 0; i < n; i++) {
+				char ch = label.charAt(i);
+				if (isAcceptable(ch) && timesUsed(ch) < m) {
+					m = timesUsed(ch);
+					p = i;
+				}
+			}
+			if (p >= 0) {
+				mn = label.charAt(p);
+				buffer.insert(p, MNEMONIC_CHAR);
+			}
+		}
+		if (mn == ' ' && ((flags & APPEND_MNEMONICS) > 0)) { // no mnemonic exists, try appending a mnemonic
+			String localeName = ULocale.getDefault().getName(); 
+			if (localeName.matches(localePattern)) {
+				String candidates = getCandidates();
+				int p = findUniqueMnemonic(candidates);
+				if (p >= 0) {
+					mn = candidates.charAt(p);
+					String mnemonicString = "(" + MNEMONIC_CHAR + mn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+					p = getEndingPosition(label);
+					buffer.insert(p, mnemonicString);
+				}
+			}
+		}
+		makeUsed(mn);
+		return buffer.toString();
 	}
 
 	/**
@@ -239,7 +308,27 @@ public class Mnemonics {
 	 * @return true if the character has not yet been used.
 	 */
 	public boolean isUniqueMnemonic(char ch) {
-		return !isUsed(ch);
+		return timesUsed(ch) == 0;
+	}
+	
+	private Preferences getPreferences() {
+		return RSEUIPlugin.getDefault().getPluginPreferences();
+	}
+	
+	private String getLocalePattern() {
+		return getPreferences().getString(APPEND_MNEMONICS_PATTERN_PREFERENCE);
+	}
+	
+	private int getPolicy() {
+		return getPreferences().getInt(POLICY_PREFERENCE);
+	}
+	
+	private boolean isEmbedding() {
+		return (getPolicy() & EMBED_MNEMONICS) > 0;
+	}
+	
+	private boolean isAppending() {
+		return (getPolicy() & APPEND_MNEMONICS) > 0;
 	}
 	
 	/**
@@ -270,7 +359,7 @@ public class Mnemonics {
 			if (ch == '\t') { // stop at accelerators too
 				break;
 			}
-			if (!isUsed(ch) && isAcceptable(ch)) {
+			if (timesUsed(ch) == 0 && isAcceptable(ch)) {
 				uniqueIndex = i;
 			}
 		}
@@ -297,19 +386,36 @@ public class Mnemonics {
 		return false;
 	}
 	
-	private boolean isUsed(char ch) {
+	/**
+	 * Returns the number of times a given character is used as a mnemonic in this
+	 * context.
+	 * @param ch the character to examine
+	 * @return the number of times it has been reported as being used.
+	 */
+	private int timesUsed(char ch) {
 		// TODO if we are guaranteed java 1.5 we can use Character.valueOf(ch)
-		boolean result = usedSet.contains(new Character(ch));
+		int result = 0;
+		Integer count = (Integer) usedCharacters.get(new Character(ch));
+		if (count != null) {
+			result = count.intValue();
+		}
 		return result;
 	}
 	
 	private void makeUsed(char ch) {
+		// TODO if we are guaranteed java 1.5 we can use Character.valueOf(ch)
 		if (ch != ' ') {
-			char lower = Character.toLowerCase(ch);
-			char upper = Character.toUpperCase(ch);
-			usedSet.add(new Character(lower));
-			usedSet.add(new Character(upper));
+			makeUsed(new Character(Character.toLowerCase(ch)));
+			makeUsed(new Character(Character.toUpperCase(ch)));
 		}
+	}
+	
+	private void makeUsed(Character ch) {
+		Integer count = (Integer) usedCharacters.get(ch);
+		if (count == null) {
+			count = new Integer(1);
+		}
+		usedCharacters.put(ch, count);
 	}
 	
 	private void makeUsed(String s) {
@@ -367,44 +473,69 @@ public class Mnemonics {
 	}
 
 	/**
-	 * Given a menu, this method walks all the items and assigns each a unique
-	 * mnemonic. Also handles cascading menus.
-	 * The mnemonics
-	 * used on cascades are independent of those of the parent.
+	 * Given a menu, this method walks all the items and assigns each a mnemonic.
+	 * Note that menu item mnemonics do not have to be unique.
+	 * The mnemonics used on cascaded menus are independent of those of the parent.
+	 * Handles cascading menus.
 	 * Call this after populating the menu.
 	 * @param menu the menu to examine
 	 */
 	public void setMnemonics(Menu menu) {
-		gatherMenuMnemonics(menu);
-		MenuItem[] items = menu.getItems();
-		for (int i = 0; i < items.length; i++) {
-			MenuItem menuItem = items[i];
-			String text = menuItem.getText();
-			if (text.indexOf(MNEMONIC_CHAR) < 0) { // if there is no mnemonic
-				String newText = setUniqueMnemonic(text);
-				if (!text.equals(newText)) {
-					Image image = menuItem.getImage();
-					menuItem.setText(newText);
-					if (image != null) {
-						menuItem.setImage(image);
-					}
-				}
+		// this set will contain menu items without mnemonics in order of length of their text
+		Collection embeddingItems = new TreeSet(new Comparator() {
+			public int compare(Object o1, Object o2) {
+				String t1 = ((MenuItem) o1).getText();
+				String t2 = ((MenuItem) o2).getText();
+				int l1 = getEndingPosition(t1);
+				int l2 = getEndingPosition(t2);
+				if (l1 < l2) return -1;
+				if (l1 > l2) return 1;
+				return t1.compareTo(t2);
 			}
+		});
+		Collection appendingItems = new ArrayList(10);
+		// handle cascades, populate the set, record existing mnemonics
+		MenuItem[] menuItems = menu.getItems();
+		for (int i = 0; i < menuItems.length; i++) {
+			MenuItem menuItem = menuItems[i];
 			Menu cascade = menuItem.getMenu();
 			if (cascade != null) {
 				Mnemonics context = new Mnemonics();
 				context.setMnemonics(cascade);
 			}
+			String text = menuItem.getText();
+			if (text.length() > 0) {
+				char ch = getMnemonic(text);
+				if (ch == ' ') {
+					embeddingItems.add(menuItem);
+					appendingItems.add(menuItem);
+				} else {
+					makeUsed(ch);
+				}
+			}
+		}
+		// assign mnemonics to the items of the set
+		String localePattern = getLocalePattern();
+		if (isEmbedding()) {
+			processMenuItems(embeddingItems, EMBED_MNEMONICS, localePattern);
+		}
+		if (isAppending()) {
+			processMenuItems(appendingItems, APPEND_MNEMONICS, localePattern);
 		}
 	}
 	
-	private void gatherMenuMnemonics(Menu menu) {
-		MenuItem[] items = menu.getItems();
-		for (int i = 0; i < items.length; i++) {
-			MenuItem menuItem = items[i];
+	private void processMenuItems(Collection collection, int flags, String localePattern) {
+		for (Iterator z = collection.iterator(); z.hasNext();) {
+			MenuItem menuItem = (MenuItem) z.next();
 			String text = menuItem.getText();
-			char ch = getMnemonic(text);
-			makeUsed(ch);
+			String newText = setUniqueMnemonic(text, flags, localePattern, true);
+			if (!text.equals(newText)) {
+				Image image = menuItem.getImage();
+				menuItem.setText(newText);
+				if (image != null) {
+					menuItem.setImage(image);
+				}
+			}
 		}
 	}
 	

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen        (IBM)   - [189041] incorrect file name after rename a file inside a zip file - DStore Windows
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -339,12 +340,20 @@ public class DStoreHostFile implements IHostFile
 	public void renameTo(String newAbsolutePath) 
 	{
 		String current = getName();
-		
+		newAbsolutePath = ArchiveHandlerManager.cleanUpVirtualPath(newAbsolutePath);
 		int lastSep = newAbsolutePath.lastIndexOf('/');
 		if (lastSep == -1)
 			lastSep = newAbsolutePath.lastIndexOf('\\');
-		
-		String newName = newAbsolutePath.substring(lastSep + 1);
+				
+		String newName = null;
+		if (lastSep != -1)
+		{
+			newName = newAbsolutePath.substring(lastSep + 1);
+		}
+		else
+		{
+			newName = newAbsolutePath;
+		}
 
 		if (newName.equals(current))
 		{

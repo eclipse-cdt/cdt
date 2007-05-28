@@ -49,7 +49,7 @@
   <tbody>
     <tr><td><b>TM @buildId@ requires 
     	<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC2-200705251350/index.php">
-         Eclipse 3.3RC2</a> or later.
+         Eclipse 3.3M6</a> or later.
     </b></td></tr>
     <tr><td>
       For core RSE and TM-Terminal, the
@@ -62,7 +62,7 @@
       <a href="http://download.eclipse.org/releases/europa/">Europa Discovery Site</a>.
     </td></tr> 
     <tr><td>
-      Earlier versions (e.g. Eclipse 3.2.x, Eclipse 3.3RC1) will <b>not</b> work!
+      Earlier versions (e.g. Eclipse 3.2.x, Eclipse 3.3M5) will <b>not</b> work!
     </td></tr> 
   </tbody>
 </table>

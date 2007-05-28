@@ -23,7 +23,7 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>TM @buildId@ <b>requires Eclipse 3.3RC2 or later</b>. Platform Runtime is the minimum
+<li>TM @buildId@ <b>requires Eclipse 3.3M6 or later</b>. Platform Runtime is the minimum
   requirement for core RSE and Terminal. Discovery needs EMF, and the Remotecdt
   integration needs CDT.</li>
 <li><b>Added a Telnet Subsystem</b>. It can be activated by selecting the new

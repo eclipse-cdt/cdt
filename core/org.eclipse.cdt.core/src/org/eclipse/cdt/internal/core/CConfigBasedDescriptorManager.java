@@ -442,13 +442,15 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 						ICConfigurationDescription newCfg = newDes.getDefaultSettingConfiguration();
 						ICConfigurationDescription oldCfg = oldDes.getDefaultSettingConfiguration();
 						int flags = 0;
-						if(newCfg.getId().equals(oldCfg.getId())){
-							ICDescriptionDelta cfgDelta = findCfgDelta(event.getProjectDelta(), newCfg.getId());
-							if(cfgDelta != null){
-								flags = cfgDelta.getChangeFlags() & (ICDescriptionDelta.EXT_REF | ICDescriptionDelta.OWNER);
+						if(oldCfg != null && newCfg != null){
+							if(newCfg.getId().equals(oldCfg.getId())){
+								ICDescriptionDelta cfgDelta = findCfgDelta(event.getProjectDelta(), newCfg.getId());
+								if(cfgDelta != null){
+									flags = cfgDelta.getChangeFlags() & (ICDescriptionDelta.EXT_REF | ICDescriptionDelta.OWNER);
+								}
+							} else {
+								flags = CProjectDescriptionManager.getInstance().calculateDescriptorFlags(newCfg, oldCfg);
 							}
-						} else {
-							flags = CProjectDescriptionManager.getInstance().calculateDescriptorFlags(newCfg, oldCfg);
 						}
 						
 						int drEventFlags = descriptionFlagsToDescriptorFlags(flags);

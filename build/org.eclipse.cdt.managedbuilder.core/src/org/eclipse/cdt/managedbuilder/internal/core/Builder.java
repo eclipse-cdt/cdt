@@ -787,7 +787,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		if(incrementalBuildTarget != null)
 			element.setAttribute(ATTRIBUTE_TARGET_INCREMENTAL, incrementalBuildTarget);
 		if(incrementalBuildEnabled != null)
-			element.setAttribute(ATTRIBUTE_AUTO_ENABLED, incrementalBuildEnabled.toString());
+			element.setAttribute(ATTRIBUTE_INCREMENTAL_ENABLED, incrementalBuildEnabled.toString());
 		if(cleanBuildTarget != null)
 			element.setAttribute(ATTRIBUTE_TARGET_CLEAN, cleanBuildTarget);
 		if(cleanBuildEnabled != null)

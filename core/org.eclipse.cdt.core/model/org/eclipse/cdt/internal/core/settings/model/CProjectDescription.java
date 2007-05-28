@@ -525,7 +525,12 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	}
 
 	public void setSessionProperty(QualifiedName name, Object value) {
-		fPropertiesMap.put(name, value);
+		if(value != null)
+			fPropertiesMap.put(name, value);
+		else
+			fPropertiesMap.remove(name);
+		
+		fIsModified = true;
 	}
 
 	public void removeStorage(String id) throws CoreException {

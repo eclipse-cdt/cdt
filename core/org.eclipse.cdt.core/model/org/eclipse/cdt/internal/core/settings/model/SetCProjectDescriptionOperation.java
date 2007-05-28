@@ -42,9 +42,6 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		ICProject cProject = (ICProject)getElementToProcess();
 		final IProject project = cProject.getProject();
 		
-		if(!fSetDescription.isValid())
-			throw new CModelException(ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName())); //$NON-NLS-1$
-
 		CProjectDescription fOldDescriptionCache = (CProjectDescription)mngr.getProjectDescription(project, false);
 		
 		CProjectDescriptionEvent event = mngr.createAboutToApplyEvent(fSetDescription, fOldDescriptionCache);
@@ -59,7 +56,10 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		boolean creating = fOldDescriptionCache != null ? fOldDescriptionCache.isCdtProjectCreating() : true;
 		if(creating)
 			creating = fSetDescription.isCdtProjectCreating();
-		
+
+		if(!fSetDescription.isValid() && (!mngr.isEmptyCreatingDescriptionAllowed() || !creating))
+			throw new CModelException(ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName())); //$NON-NLS-1$
+
 		CProjectDescription fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el, creating);
 		try {
 			mngr.setDescriptionApplying(project, fNewDescriptionCache);

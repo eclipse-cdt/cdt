@@ -259,6 +259,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private Map fDescriptionMap = new HashMap(); //calls to this map are "manually" synchronized with the CProjectDescriptionManager object lock;
 	private ResourceChangeHandler fRcChangeHandler;
 	private CProjectDescriptionWorkspacePreferences fPreferences;
+	private boolean fAllowEmptyCreatingDescription = false; // not allowed by default
 
 //	private CStorage fPrefCfgStorage;
 	private ICDataProxyContainer fPrefUpdater = new ICDataProxyContainer(){
@@ -1160,7 +1161,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	
 	public void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException {
 		
-		if(!des.isValid())
+		if(!des.isValid() && (!fAllowEmptyCreatingDescription || !des.isCdtProjectCreating()))
 			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName()); //$NON-NLS-1$
 
 		if(!checkFlags(flags, SET_FORCE) && !des.isModified())
@@ -3442,4 +3443,13 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	public void updateExternalSettingsProviders(String[] ids, IProgressMonitor monitor){
 		ExtensionContainerFactory.updateReferencedProviderIds(ids, monitor);
 	}
+	
+	boolean isEmptyCreatingDescriptionAllowed(){
+		return fAllowEmptyCreatingDescription;
+	}
+	
+	void setEmptyCreatingDescriptionAllowed(boolean allow){
+		fAllowEmptyCreatingDescription = allow;
+	}
+
 }

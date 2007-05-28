@@ -167,4 +167,10 @@ public interface ICProjectDescriptionManager {
 	 * @see ICConfigurationDescription#updateExternalSettingsProviders(String[])
 	 */
 	void updateExternalSettingsProviders(String[] ids, IProgressMonitor monitor);
+	
+	ICConfigurationDescription getPreferenceConfiguration(String buildSystemId) throws CoreException;
+
+	ICConfigurationDescription getPreferenceConfiguration(String buildSystemId, boolean write) throws CoreException;
+	
+	void setPreferenceConfiguration(String buildSystemId, ICConfigurationDescription des) throws CoreException;
 }

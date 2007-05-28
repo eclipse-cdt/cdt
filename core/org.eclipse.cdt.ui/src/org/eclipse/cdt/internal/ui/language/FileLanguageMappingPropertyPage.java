@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.layout.GridData;
@@ -124,6 +126,12 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		fTable = new Table(tableParent, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		fTable.setHeaderVisible(true);
 		fTable.setLinesVisible(true);
+		fTable.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = PreferencesMessages.FileLanguagesPropertyPage_mappingTableTitle;
+			}
+		});
+		fTable.setToolTipText(PreferencesMessages.FileLanguagesPropertyPage_mappingTableTitle);
 
 		TableColumn contentTypeColumn = new TableColumn(fTable, SWT.LEAD);
 		contentTypeColumn.setText(PreferencesMessages.FileLanguagesPropertyPage_configurationColumn);

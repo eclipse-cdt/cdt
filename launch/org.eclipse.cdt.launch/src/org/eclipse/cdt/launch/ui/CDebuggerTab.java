@@ -45,6 +45,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -441,6 +443,13 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 					update();
 				}
 			});
+			fStopInMainSymbol.getAccessible().addAccessibleListener(
+				new AccessibleAdapter() {                       
+					public void getName(AccessibleEvent e) {
+                            e.result = LaunchMessages.getString( "CDebuggerTab.Stop_at_main_on_startup"); //$NON-NLS-1$
+					}
+				}
+			);
 		}
 		fAdvancedButton = createPushButton(optionsComp, LaunchMessages.getString("CDebuggerTab.Advanced"), null); //$NON-NLS-1$
 		((GridData)fAdvancedButton.getLayoutData()).horizontalAlignment = GridData.END;

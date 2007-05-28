@@ -214,23 +214,21 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 	}
 	
   	/**
-  	 * Validate user id value per keystroke
-	 */	
-	protected SystemMessage validateUserIdInput() 
-	{			
-	    errorMessage= null;
-	    if (textUserId != null)
-	    {
-	      if (!textUserId.isLocal())
-	        return null;
-		  if (userIdValidator != null)
-	        errorMessage= userIdValidator.validate(textUserId.getText());
-	      else if (getUserId().equals("")) //$NON-NLS-1$
-		    errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
-	    }
-		setErrorMessage(errorMessage);		
-		//setPageComplete();
-		return errorMessage;		
+	 * Validate user id value per keystroke
+	 */
+	protected SystemMessage validateUserIdInput() {
+		errorMessage = null;
+		if (textUserId != null) {
+			if (textUserId.isLocal()) {
+				if (userIdValidator != null) {
+					errorMessage = userIdValidator.validate(textUserId.getText());
+				} else if (getUserId().equals("")) { //$NON-NLS-1$
+					errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
+				}
+			}
+		}
+		setErrorMessage(errorMessage);
+		return errorMessage;
 	}
 
   	/*

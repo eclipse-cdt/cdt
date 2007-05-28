@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.make.internal.ui.preferences;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.ColorManager;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -57,10 +59,8 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 	private TableViewer fHighlightingColorListViewer;
 	private final java.util.List fHighlightingColorList= new ArrayList(5);
 
-	ColorEditor fAppearanceColorEditor;
 	Button fAppearanceColorDefault;
-	ColorEditor fSyntaxForegroundColorEditor;
-	ColorEditor fBackgroundColorEditor;
+	ColorSelector fSyntaxForegroundColorEditor;
 	Button fBoldCheckBox;
 	Button fItalicCheckBox;
 	
@@ -338,7 +338,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		gd.horizontalAlignment= GridData.BEGINNING;
 		label.setLayoutData(gd);
 
-		fSyntaxForegroundColorEditor= new ColorEditor(stylesComposite);
+		fSyntaxForegroundColorEditor= new ColorSelector(stylesComposite);
 		Button foregroundColorButton= fSyntaxForegroundColorEditor.getButton();
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;

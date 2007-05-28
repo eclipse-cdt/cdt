@@ -25,6 +25,8 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -79,6 +81,12 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		fTable = new Table(tableParent, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		fTable.setHeaderVisible(true);
 		fTable.setLinesVisible(true);
+		fTable.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = PreferencesMessages.ProjectLanguagesPropertyPage_mappingTableTitle;
+			}
+		});
+		fTable.setToolTipText(PreferencesMessages.ProjectLanguagesPropertyPage_mappingTableTitle);
 
 		TableColumn configurationColumn = new TableColumn(fTable, SWT.LEAD);
 		configurationColumn.setText(PreferencesMessages.ProjectLanguagesPropertyPage_configurationColumn);

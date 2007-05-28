@@ -197,6 +197,7 @@ public final class PreferencesMessages extends NLS {
 	
 	public static String WorkspaceLanguagesPreferencePage_description;
 	public static String WorkspaceLanguagesPreferencePage_missingLanguage;
+	public static String WorkspaceLanguagesPreferencePage_mappingTableTitle;
 	
 	public static String ProjectLanguagesPropertyPage_description;
 	public static String ProjectLanguagesPropertyPage_configurationColumn;
@@ -207,6 +208,7 @@ public final class PreferencesMessages extends NLS {
 	public static String ProjectLanguagesPropertyPage_inheritedWorkspaceMappingsGroup;
 	public static String ProjectLanguagesPropertyPage_overriddenContentType;
 	public static String ProjectLanguagesPropertyPage_missingLanguage;
+	public static String ProjectLanguagesPropertyPage_mappingTableTitle;
 	
 	public static String ContentTypeMappingsDialog_title;
 	public static String ContentTypeMappingsDialog_configuration;
@@ -225,6 +227,7 @@ public final class PreferencesMessages extends NLS {
 	public static String FileLanguagesPropertyPage_configurationColumn;
 	public static String FileLanguagesPropertyPage_defaultMapping;
 	public static String FileLanguagesPropertyPage_missingLanguage;
+	public static String FileLanguagesPropertyPage_mappingTableTitle;
 	
 	public static String CPluginPreferencePage_caption;
 	public static String CPluginPreferencePage_structuralParseMode_label;

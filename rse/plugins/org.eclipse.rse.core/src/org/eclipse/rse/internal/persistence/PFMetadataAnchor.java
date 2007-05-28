@@ -27,7 +27,7 @@ class PFMetadataAnchor implements PFPersistenceAnchor {
 		IStatus result = Status.OK_STATUS;
 		File profileFolder = getProfileFolder(profileName);
 		if (profileFolder.exists()) {
-			profileFolder.delete();
+			delete(profileFolder);
 		}
 		return result;
 	}
@@ -91,4 +91,19 @@ class PFMetadataAnchor implements PFPersistenceAnchor {
 		return folder;
 	}
 
+	/**
+	 * Delete a File resource. If the resource is a directory then 
+	 * delete its children first.
+	 * @param resource
+	 */
+	private void delete(File resource) {
+		if (resource.isDirectory()) {
+			File[] resources = resource.listFiles();
+			for (int i = 0; i < resources.length; i++) {
+				File child = resources[i];
+				delete(child);
+			}
+		}
+		resource.delete();
+	}
 }

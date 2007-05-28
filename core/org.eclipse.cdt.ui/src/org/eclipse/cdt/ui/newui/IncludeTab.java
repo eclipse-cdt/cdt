@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -23,6 +26,13 @@ public class IncludeTab extends AbstractLangsListTab {
 	   TableColumn c = new TableColumn(table, SWT.NONE);
 	   c.setWidth(210);
 	   c.setText(UIMessages.getString("IncludeTab.0")); //$NON-NLS-1$
+	   table.getAccessible().addAccessibleListener(
+			   new AccessibleAdapter() {                       
+	               public void getName(AccessibleEvent e) {
+	                       e.result = UIMessages.getString("IncludeTab.0"); //$NON-NLS-1$
+	               }
+			   }
+		);
 	   showBIButton.setSelection(true);
    }
 	

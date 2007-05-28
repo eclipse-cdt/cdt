@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -24,6 +25,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -225,6 +228,13 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		langCol.setText(UIMessages.getString("AbstractLangsListTab.1")); //$NON-NLS-1$
 		langCol.setWidth(200);
 		langCol.setResizable(false);
+		langTree.getAccessible().addAccessibleListener(
+			   new AccessibleAdapter() {                       
+	               public void getName(AccessibleEvent e) {
+	                       e.result = UIMessages.getString("AbstractLangsListTab.1"); //$NON-NLS-1$
+	               }
+			   }
+		);
 		return langTree;
 	}
 

@@ -62,6 +62,7 @@ public final class CIndenter {
 		final int prefMethodBodyIndent;
 		final int prefTypeIndent;
 		final int prefAccessSpecifierIndent;
+		final int prefNamespaceBodyIndent;
 		final boolean prefIndentBracesForBlocks;
 		final boolean prefIndentBracesForArrays;
 		final boolean prefIndentBracesForMethods;
@@ -111,6 +112,7 @@ public final class CIndenter {
 			prefMethodBodyIndent= prefMethodBodyIndent();
 			prefTypeIndent= prefTypeIndent();
 			prefAccessSpecifierIndent= prefAccessSpecifierIndent();
+			prefNamespaceBodyIndent= prefNamespaceBodyIndent();
 			prefIndentBracesForArrays= prefIndentBracesForArrays();
 			prefIndentBracesForMethods= prefIndentBracesForMethods();
 			prefIndentBracesForTypes= prefIndentBracesForTypes();
@@ -303,6 +305,13 @@ public final class CIndenter {
 		
 		private int prefAccessSpecifierIndent() {
 			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER)))
+				return prefBlockIndent();
+			else
+				return 0;
+		}
+
+		private int prefNamespaceBodyIndent() {
+			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER)))
 				return prefBlockIndent();
 			else
 				return 0;
@@ -1009,10 +1018,6 @@ public final class CIndenter {
 					case Symbols.TokenTRY:
 						return fPosition;
 
-					case Symbols.TokenSTATIC:
-						mayBeMethodBody= READ_IDENT; // treat static blocks like methods
-						break;
-
 					case Symbols.TokenCLASS:
 					case Symbols.TokenENUM:
 						isTypeBody= true;
@@ -1435,13 +1440,16 @@ public final class CIndenter {
 				pos= fPosition; // store
 
 				// special: array initializer
-				if (looksLikeArrayInitializerIntro())
+				if (looksLikeArrayInitializerIntro()) {
 					if (fPrefs.prefArrayDeepIndent)
 						return setFirstElementAlignment(pos, bound);
 					else
 						fIndent= fPrefs.prefArrayIndent;
-				else
+				} else if (isNamespace()) {
+					fIndent= fPrefs.prefNamespaceBodyIndent;
+				} else {
 					fIndent= fPrefs.prefBlockIndent;
+				}
 
 				// normal: skip to the statement start before the scope introducer
 				// opening braces are often on differently ending indents than e.g. a method definition
@@ -1500,6 +1508,24 @@ public final class CIndenter {
 		nextToken();
 		if (fToken == Symbols.TokenEQUAL || skipBrackets()) {
 			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if the the current token is "namespace", or the current token
+	 * is an identifier and the previous token is "namespace".
+	 *
+	 * @return <code>true</code> if the next elements look like the start of a namespace declaration.
+	 */
+	private boolean isNamespace() {
+		if (fToken == Symbols.TokenNAMESPACE) {
+			return true;		// Anonymous namespace
+		} else if (fToken == Symbols.TokenIDENT) {
+			nextToken();		// Get previous token
+			if (fToken == Symbols.TokenNAMESPACE) {
+				return true;	// Named namespace
+			}
 		}
 		return false;
 	}

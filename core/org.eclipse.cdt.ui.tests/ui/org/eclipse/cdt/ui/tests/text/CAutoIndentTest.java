@@ -534,5 +534,22 @@ public class CAutoIndentTest extends TestCase {
 		tester.paste(copy);
 		assertEquals(copy+copy, tester.fDoc.get());
 	}
+	
+	public void testIndentInsideNamespaceDefinition_Bug188007() throws Exception {
+		AutoEditTester tester = createAutoEditTester();
+		
+		tester.type("namespace ns {\n");
+		assertEquals("", tester.getLine());
+		assertEquals(0, tester.getCaretColumn());
+		
+		DefaultCodeFormatterOptions defaultOptions= DefaultCodeFormatterOptions.getDefaultSettings();
+		defaultOptions.indent_body_declarations_compare_to_namespace_header= true;
+		CCorePlugin.setOptions(new HashMap(defaultOptions.getMap()));
+		tester = createAutoEditTester();
+		
+		tester.type("namespace ns {\n");
+		assertEquals("\t", tester.getLine());
+		assertEquals(1, tester.getCaretColumn());
+	}
 }
 

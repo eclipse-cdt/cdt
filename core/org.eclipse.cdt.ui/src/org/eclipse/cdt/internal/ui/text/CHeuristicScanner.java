@@ -508,6 +508,8 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenVIRTUAL;
 				break;
 			case 9:
+				if ("namespace".equals(s)) //$NON-NLS-1$
+					return TokenNAMESPACE;
 				if ("protected".equals(s)) //$NON-NLS-1$
 					return TokenPROTECTED;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -244,12 +245,23 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 			return true;	
 		}
+		if (element instanceof IProject) {
+			IProject project= (IProject)element;
+			return project.isAccessible();
+		}
+		if (element instanceof IFolder) {
+			IFolder folder= (IFolder)element;
+			return folder.isAccessible();
+		}
 
 		if (element instanceof IParent) {
 			// when we have C children return true, else we fetch all the children
 			if (((IParent)element).hasChildren()) {
 				return true;
 			}
+		}
+		if (element instanceof CElementGrouping) {
+			return true;
 		}
 		Object[] children= getChildren(element);
 		return (children != null) && children.length > 0;

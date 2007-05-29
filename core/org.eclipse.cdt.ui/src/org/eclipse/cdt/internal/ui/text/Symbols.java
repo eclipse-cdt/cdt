@@ -58,5 +58,6 @@ public interface Symbols {
 	int TokenUNION= 1030;
 	int TokenENUM= 1031;
 	int TokenVIRTUAL= 1032;
+	int TokenNAMESPACE= 1033;
 	int TokenIDENT= 2000;
 }

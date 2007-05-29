@@ -22,7 +22,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 @SuppressWarnings("restriction")
 public class ExpressionColumnPresentation implements IColumnPresentation {
 
-    public static final String ID = DsfDebugUIPlugin.PLUGIN_ID + ".REGISTERS_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
+    public static final String ID = DsfDebugUIPlugin.PLUGIN_ID + ".EXPRESSION_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
 
     public void init(IPresentationContext context) {
     }

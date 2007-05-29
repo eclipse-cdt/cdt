@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -119,6 +120,15 @@ public class RenameConfigurationDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		group1.setLayoutData(gd);
+
+		// bug 187634: Add a label to warn user that configuration name will be used directly
+		// as a directory name in the filesystem.
+		Label warningLabel = new Label(group1, SWT.BEGINNING | SWT.WRAP);
+		warningLabel.setFont(parent.getFont());
+		warningLabel.setText(UIMessages.getString("RenameConfiguration.label.warning")); //$NON-NLS-1$
+		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 3, 1);
+		gd.widthHint = 300;
+		warningLabel.setLayoutData(gd);
 
 		// Add a label and a text widget for Configuration's name
 		final Label nameLabel = new Label(group1, SWT.LEFT);

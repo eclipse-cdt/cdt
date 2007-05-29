@@ -139,7 +139,6 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	}
 
 	protected Control createDialogArea(Composite parent) {
-
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
 		composite.setLayout(new GridLayout(3, false));
@@ -155,6 +154,15 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		gd.horizontalSpan = 3;
 		group1.setLayoutData(gd);
 
+		// bug 187634: Add a label to warn user that configuration name will be used directly
+		// as a directory name in the filesystem.
+		Label warningLabel = new Label(group1, SWT.BEGINNING | SWT.WRAP);
+		warningLabel.setFont(parent.getFont());
+		warningLabel.setText(UIMessages.getString("NewConfiguration.label.warning")); //$NON-NLS-1$
+		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 3, 1);
+		gd.widthHint = 300;
+		warningLabel.setLayoutData(gd);
+		
 		// Add a label and a text widget for Configuration's name
 		final Label nameLabel = new Label(group1, SWT.LEFT);
 		nameLabel.setFont(parent.getFont());

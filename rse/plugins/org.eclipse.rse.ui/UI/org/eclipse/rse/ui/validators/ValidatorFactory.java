@@ -11,7 +11,9 @@
 
 package org.eclipse.rse.ui.validators;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfileManager;
@@ -29,9 +31,10 @@ public class ValidatorFactory {
 	 */
 	public static ISystemValidator getProfileNameValidator(String profileName) {
 		ISystemProfileManager manager = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager();
-		Vector profileNames = manager.getSystemProfileNamesVector();
-		if (profileName != null) profileNames.remove(profileName);
-		ISystemValidator nameValidator = new ValidatorProfileName(profileNames);
+    	String[] nameArray = manager.getSystemProfileNames();
+    	List names = new ArrayList(Arrays.asList(nameArray));
+		if (profileName != null) names.remove(profileName);
+		ISystemValidator nameValidator = new ValidatorProfileName(names);
 		return nameValidator;
 	}
 

@@ -519,14 +519,6 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		return getSystemProfileManager().getSystemProfileNames();
 	}
-	/**
-	 * Return all defined profile names as a vector
-	 */
-	public Vector getAllSystemProfileNamesVector()
-	{
-		Vector v = getSystemProfileManager().getSystemProfileNamesVector();
-		return v;
-	}
 
 	/**
 	 * Get a SystemProfile given its name

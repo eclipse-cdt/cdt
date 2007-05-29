@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.validators;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -29,7 +29,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * IInputValidator as input, no syntax checking is done other than checking
  * the input is non-empty and unique.
  *
- * The IInputValidator interface is implelemented by our parent and it
+ * The IInputValidator interface is implemented by our parent and it
  * is used by jface's InputDialog class and property sheet window.
  */
 public class ValidatorUniqueString 
@@ -49,12 +49,11 @@ public class ValidatorUniqueString
 	protected SystemMessage    currentMessage;
 	
 	/**
-	 * Constructor accepting a Vector. 
-	 * @param existingList A vector containing list of existing strings to compare against.
+	 * @param existingList a list of existing strings to compare against.
 	 *        Note that toString() is used to get the string from each item.
 	 * @param caseSensitive true if comparisons are to be case sensitive, false if case insensitive.	 
 	 */
-	public ValidatorUniqueString(Vector existingList, boolean caseSensitive)
+	public ValidatorUniqueString(List existingList, boolean caseSensitive)
 	{
 		this.caseSensitive = caseSensitive;		
 		setExistingNamesList(existingList);
@@ -76,15 +75,15 @@ public class ValidatorUniqueString
 		                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_NOTUNIQUE));
 	}
 	/**
-	 * Constructor accepting a Vector and another validator to use for the syntax checking.
-	 * @param existingList A vector containing list of existing strings to compare against.
+	 * Constructor accepting a List and another validator to use for the syntax checking.
+	 * @param existingList A list of existing strings to compare against.
 	 *        Note that toString() is used to get the string from each item.	 
 	 * @param caseSensitive true if comparisons are to be case sensitive, false if case insensitive.
 	 * @param syntaxValidator Another IInputValidator who does the job of checking the syntax. After
 	 *         checking for non-nullness and uniqueness, this validator is used to 
 	 *         check for syntax.
 	 */
-	public ValidatorUniqueString(Vector existingList, boolean caseSensitive, 
+	public ValidatorUniqueString(List existingList, boolean caseSensitive, 
 	                             ISystemValidator syntaxValidator)
 	{
 		this(existingList, caseSensitive);
@@ -124,7 +123,7 @@ public class ValidatorUniqueString
 	/**
 	 * Reset the existing names list. 
 	 */
-	public void setExistingNamesList(Vector newList)
+	public void setExistingNamesList(List newList)
 	{		
 		if (newList == null)
 		  existingList = null;

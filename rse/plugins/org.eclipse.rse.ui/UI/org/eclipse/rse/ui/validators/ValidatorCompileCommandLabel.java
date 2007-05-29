@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -37,9 +37,9 @@ public class ValidatorCompileCommandLabel extends ValidatorUniqueString
 	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	
 	/**
-	 * Use this constructor when you have a vector of existing labels.
+	 * Use this constructor when you have a list of existing labels.
 	 */
-	public ValidatorCompileCommandLabel(Vector existingLabelList)
+	public ValidatorCompileCommandLabel(List existingLabelList)
 	{
 		super(existingLabelList, CASE_INSENSITIVE); // case insensitive uniqueness
         init();

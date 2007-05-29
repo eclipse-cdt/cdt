@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -34,11 +34,11 @@ public class ValidatorFilterPoolName
 	public static final int MAX_FILTERPOOLNAME_LENGTH = 50;
 	
 	/**
-	 * Constructor accepting a Vector. 
-	 * @param existingList vector containing list of existing filter names to compare against.
+	 * Constructor accepting a list. 
+	 * @param existingList a list of existing filter names to compare against.
 	 *        Note that toString() is used to get the string from each item.
 	 */
-	public ValidatorFilterPoolName(Vector existingList)
+	public ValidatorFilterPoolName(List existingList)
 	{
 		super(existingList, CASE_SENSITIVE);
 		init();

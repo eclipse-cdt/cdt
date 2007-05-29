@@ -183,7 +183,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 
 	/**
 	 * Return the profiles currently selected by the user as his "active" profiles
-	 * @see ISystemProfileManager.getActiveSystemProfiles()
+	 * @see ISystemProfileManager#getActiveSystemProfiles()
 	 */
 	public ISystemProfile[] getActiveSystemProfiles();
 
@@ -206,13 +206,6 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 *     and get the names out of the returned array 
 	 */
 	public String[] getAllSystemProfileNames();
-
-	/**
-	 * Return all defined profile names as a vector
-	 * @deprecated use getAllSystemProfileManager().getSystemProfiles()
-	 *     and process the array to get a vector
-	 */
-	public Vector getAllSystemProfileNamesVector();
 
 	/**
 	 * Get a SystemProfile given its name

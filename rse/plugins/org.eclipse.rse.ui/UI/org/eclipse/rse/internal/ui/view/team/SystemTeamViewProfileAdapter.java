@@ -20,6 +20,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -379,7 +380,9 @@ public class SystemTeamViewProfileAdapter
 	 */
     public ISystemValidator getNameValidator(Object element)
     {
-    	Vector names = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().getSystemProfileNamesVector();
+    	String[] nameArray = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().getSystemProfileNames();
+    	Vector names = new Vector(nameArray.length);
+    	names.addAll(Arrays.asList(nameArray));
     	ISystemValidator validator = new ValidatorProfileName(names);
 		return validator;
     }

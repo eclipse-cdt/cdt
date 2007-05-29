@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -43,10 +43,10 @@ public class ValidatorFileName
 	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	
 	/**
-	 * Use this constructor when the name must be unique. Give the
-	 * ctor a vector containing a list of existing names to compare against.
+	 * Use this constructor when the name must be unique.
+	 * @param existingNameList a list of existing names to compare against.
 	 */
-	public ValidatorFileName(Vector existingNameList)
+	public ValidatorFileName(List existingNameList)
 	{
 		super(existingNameList, false); // case insensitive uniqueness
 		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),

@@ -15,8 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.Vector;
+import java.util.List;
 
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -38,9 +39,9 @@ public class ValidatorConnectionName extends ValidatorUniqueString implements IS
 		
 	/**
 	 * Constructor. 
-	 * @param existingNameList Vector of existing names (strings) in owning profile. Can be null if not a rename operation.
+	 * @param existingNameList list of existing names (strings) in owning profile. Can be null if not a rename operation.
 	 */
-	public ValidatorConnectionName(Vector existingNameList)
+	public ValidatorConnectionName(List existingNameList)
 	{
 		super(existingNameList, CASE_SENSITIVE);
 		setErrorMessages(
@@ -60,11 +61,11 @@ public class ValidatorConnectionName extends ValidatorUniqueString implements IS
 	public static boolean validateNameNotInUse(String proposedName, Shell shell)
 	{
 		SystemMessage msg = null;
-		Vector profileNames = RSEUIPlugin.getTheSystemProfileManager().getSystemProfileNamesVector();
-		String profileName = null;
-		for (int idx=0; (msg==null)&& (idx<profileNames.size()); idx++)
+    	String[] names = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager().getSystemProfileNames();
+    	String profileName = null;
+    	for (int idx = 0; (msg == null) && (idx < names.length); idx++)
 		{
-			profileName = (String)profileNames.elementAt(idx);
+			profileName = names[idx];
 			IHost[] conns = RSEUIPlugin.getTheSystemProfileManager().getSystemProfile(profileName).getHosts();
 			for (int jdx=0; (msg==null) && (jdx<conns.length); jdx++)
 			{				

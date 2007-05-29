@@ -16,9 +16,6 @@
 
 package org.eclipse.rse.core.model;
 
-import java.util.List;
-import java.util.Vector;
-
 /**
  * Manages a list of SystemProfile objects. System profiles
  * should be created, deleted, restored, activated, and deactivated though
@@ -61,11 +58,6 @@ public interface ISystemProfileManager {
 	public String[] getSystemProfileNames();
 
 	/**
-	 * @return a vector of all existing profile names.
-	 */
-	public Vector getSystemProfileNamesVector();
-
-	/**
 	 * Get a profile given its name.
 	 * @param name the name of the profile
 	 * @return the profile
@@ -81,13 +73,6 @@ public interface ISystemProfileManager {
 	 * @return the profile names currently selected by the user as his "active" profiles
 	 */
 	public String[] getActiveSystemProfileNames();
-
-	/**
-	 * Get the index of a profile given its name.
-	 * @param profileName the name of the profile to look for.
-	 * @return 0-based position of the given active profile within the list of active profiles.
-	 */
-	public int getActiveSystemProfilePosition(String profileName);
 
 	/**
 	 * @return the default private profile created at first touch.
@@ -133,28 +118,9 @@ public interface ISystemProfileManager {
 	public boolean isSystemProfileActive(String profileName);
 
 	/**
-	 * @return The list of profiles known to this manager. This list is generated
-	 * at the point of this call and may thus be manipulated by the caller.
-	 */
-	public List getProfiles();
-	
-	/**
 	 * Adds a system profile to this profile manager.
 	 * @param profile The system profile to add. 
 	 */
 	public void addSystemProfile(ISystemProfile profile);
 	
-	//	/**
-	//	 * Reusable method to return a name validator for renaming a profile.
-	//	 * @param the current profile name on updates. Can be null for new profiles. Used
-	//	 *  to remove from the existing name list the current connection.
-	//	 */
-	//	public ISystemValidator getProfileNameValidator(String profileName);
-	//	/**
-	//	 * Reusable method to return a name validator for renaming a profile.
-	//	 * @param the current profile object on updates. Can be null for new profiles. Used
-	//	 *  to remove from the existing name list the current connection.
-	//	 */
-	//	public ISystemValidator getProfileNameValidator(ISystemProfile profile);
-
 }

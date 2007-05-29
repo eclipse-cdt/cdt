@@ -13,9 +13,6 @@
 
 package org.eclipse.rse.tests.persistence;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -74,15 +71,15 @@ public class PersistenceTest extends RSECoreTestCase {
 		/*
 		 * There should be three profiles
 		 */
-		List profiles = registry.getSystemProfileManager().getProfiles();
-		assertEquals(3, profiles.size());
+		ISystemProfile[] profiles = registry.getSystemProfileManager().getSystemProfiles();
+		assertEquals(3, profiles.length);
 		
 		/*
 		 * One should be default private profile
 		 */
 		boolean found = false;
-		for (Iterator z = profiles.iterator(); z.hasNext() && !found;) {
-			ISystemProfile p = (ISystemProfile) z.next();
+		for (int i = 0; i < profiles.length && !found; i++) {
+			ISystemProfile p = profiles[i];
 			found = p.isDefaultPrivate();
 		}
 		assertTrue("Default private profile not found", found);
@@ -91,8 +88,8 @@ public class PersistenceTest extends RSECoreTestCase {
 		 * One should be the team profile
 		 */
 		found = false;
-		for (Iterator z = profiles.iterator(); z.hasNext() && !found;) {
-			ISystemProfile p = (ISystemProfile) z.next();
+		for (int i = 0; i < profiles.length && !found; i++) {
+			ISystemProfile p = profiles[i];
 			found = p.getName().equals("Team");
 		}
 		assertTrue("Team profile not found", found);
@@ -101,8 +98,8 @@ public class PersistenceTest extends RSECoreTestCase {
 		 * One should be the test profile
 		 */
 		found = false;
-		for (Iterator z = profiles.iterator(); z.hasNext() && !found;) {
-			ISystemProfile p = (ISystemProfile) z.next();
+		for (int i = 0; i < profiles.length && !found; i++) {
+			ISystemProfile p = profiles[i];
 			found = p.getName().equals("bogus");
 		}
 		assertTrue("bogus profile not found", found);

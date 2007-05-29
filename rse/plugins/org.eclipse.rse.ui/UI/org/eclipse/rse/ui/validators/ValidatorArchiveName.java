@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
@@ -35,7 +35,7 @@ public class ValidatorArchiveName extends ValidatorFileName {
 
 	protected SystemMessage msg_NotRegisteredArchive;
 	
-	public ValidatorArchiveName(Vector existingNameList) {
+	public ValidatorArchiveName(List existingNameList) {
 		super(existingNameList);
 	}
 

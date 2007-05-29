@@ -18,10 +18,8 @@
 package org.eclipse.rse.internal.core.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
@@ -133,23 +131,6 @@ public class SystemProfileManager implements ISystemProfileManager {
 //				profileNames[idx] = profiles[idx].getName();
 //		}
 //		return profileNames;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getSystemProfileNamesVector()
-	 */
-	public Vector getSystemProfileNamesVector() {
-		List names = Arrays.asList(getSystemProfileNames()); 
-		Vector result = new Vector(names.size());
-		result.addAll(names);
-		return result;
-//		if (profileNamesVector == null) {
-//			ISystemProfile[] profiles = getSystemProfiles();
-//			profileNamesVector = new Vector(profiles.length);
-//			for (int idx = 0; idx < profiles.length; idx++)
-//				profileNamesVector.addElement(profiles[idx].getName());
-//		}
-//		return profileNamesVector;
 	}
 
 //	/**
@@ -367,30 +348,6 @@ public class SystemProfileManager implements ISystemProfileManager {
 		return activeProfileNames;
 	}
 
-	/**
-	 * @return the profile names currently selected by the user as "active" profiles
-	 * @deprecated
-	 */
-	public Vector getActiveSystemProfileNamesVector() {
-		String[] profileNames = RSEPreferencesManager.getActiveProfiles();
-		Vector v = new Vector(profileNames.length);
-		for (int idx = 0; idx < profileNames.length; idx++)
-			v.addElement(profileNames[idx]);
-		return v;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getActiveSystemProfilePosition(java.lang.String)
-	 */
-	public int getActiveSystemProfilePosition(String profileName) {
-		String[] profiles = getActiveSystemProfileNames();
-		int pos = -1;
-		for (int idx = 0; (pos < 0) && (idx < profiles.length); idx++) {
-			if (profiles[idx].equals(profileName)) pos = idx;
-		}
-		return pos;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getDefaultPrivateSystemProfile()
 	 */
@@ -405,15 +362,6 @@ public class SystemProfileManager implements ISystemProfileManager {
 		return getSystemProfile(RSEPreferencesManager.getDefaultTeamProfileName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getProfiles()
-	 */
-	public List getProfiles() {
-		List result = new ArrayList(_profiles.size());
-		result.addAll(_profiles);
-		return result;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getSize()
 	 */

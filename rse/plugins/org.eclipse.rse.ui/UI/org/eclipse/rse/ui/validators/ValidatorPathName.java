@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -39,10 +39,10 @@ public class ValidatorPathName
 	private int nbrSpecialChars;
 		
 	/**
-	 * Use this constructor when the name must be unique. Give the
-	 * ctor a vector containing a list of existing names to compare against.
+	 * Use this constructor when the name must be unique.
+	 * @param existingNameList a list of existing names to compare against.
 	 */
-	public ValidatorPathName(Vector existingNameList)
+	public ValidatorPathName(List existingNameList)
 	{
 		super(existingNameList, CASE_INSENSITIVE); // case insensitive uniqueness
         init();

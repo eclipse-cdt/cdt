@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.validators;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
  * This interface is implemented by any validator that 
@@ -37,7 +37,7 @@ public interface ISystemValidatorUniqueString
 	/**
 	 * Reset the existing names list. 
 	 */
-	public void setExistingNamesList(Vector existingList);	
+	public void setExistingNamesList(List existingList);	
 	/**
 	 * Return the existing names list. This will be a case-normalized and sorted list.
 	 */

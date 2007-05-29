@@ -62,10 +62,9 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 	 */
 	public final void setUserId(String newId) {
 		String oldUserId = credentialsProvider.getUserId();
-		if (oldUserId == null || oldUserId.equals(newId)) {
-			updateDefaultUserId(getPrimarySubSystem(), getUserId());
+		if (oldUserId == null || !oldUserId.equals(newId)) {
 			credentialsProvider.setUserId(newId);
-			setDirty(true);
+			saveUserId();
 		}
 	}
 

@@ -80,8 +80,7 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
 	 */
 	public String getText(Object element)
 	{
-		//return SystemResources.RESID_SYSTEMREGISTRY_CONNECTIONS); 
-		return "Remote Scratchpad"; //$NON-NLS-1$
+		return SystemViewResources.RESID_REMOTE_SCRATCHPAD;
 	}
 	
 	/*

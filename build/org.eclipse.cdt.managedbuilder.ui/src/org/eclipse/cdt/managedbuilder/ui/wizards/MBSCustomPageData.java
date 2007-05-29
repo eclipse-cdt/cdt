@@ -12,14 +12,14 @@
 
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Iterator;
 
 /**
  *   This class is responsible for storing all of the data associated with a given custom wizard page.
@@ -44,7 +44,7 @@ public final class MBSCustomPageData
 	/**
 	 *  Stores data on a particular toolchain that a custom wizard page supports.
 	 */
-	public class ToolchainData
+	public class ToolchainData implements Comparable
 	{
 		private String id = null;
 
@@ -84,6 +84,16 @@ public final class MBSCustomPageData
 		public String[] getVersionsSupported()
 		{
 			return versionsSupported;
+		}
+
+		/**
+		 * 
+		 */
+		public int compareTo(Object arg0) {
+			if (arg0 == null || !(arg0 instanceof ToolchainData))
+				return 0;
+			ToolchainData other = (ToolchainData)arg0;
+			return this.id.compareTo(other.id);
 		}
 
 	}

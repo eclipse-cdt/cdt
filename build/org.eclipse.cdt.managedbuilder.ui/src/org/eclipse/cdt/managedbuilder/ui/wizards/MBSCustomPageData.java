@@ -96,6 +96,18 @@ public final class MBSCustomPageData
 			return this.id.compareTo(other.id);
 		}
 
+       /* (non-Javadoc)
+        * @see java.lang.Object#equals(java.lang.Object)
+        */
+        public boolean equals(Object obj) {
+			if (obj == null || !(obj instanceof ToolchainData))
+				return false;
+           if (this == obj) {
+              return true;
+           }
+           return this.id.equals(((ToolchainData)obj).id);
+        }
+
 	}
 
 	/**

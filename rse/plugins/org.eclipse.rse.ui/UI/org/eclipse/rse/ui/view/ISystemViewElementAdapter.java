@@ -240,6 +240,15 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
      * sessions
      */
     public boolean isPromptable(Object element);	
+    
+    
+    /**
+     * Return true if this object is a "remote" object.  A remote object is defined as an object
+     * that is not part of the base RSE artifacts (hosts, subsystems, filters)
+     * @param element the object
+     * @return true if the object is remote
+     */
+    public boolean isRemote(Object element);
 		
 	/**
 	 * Set input object for property source queries. This is called by the

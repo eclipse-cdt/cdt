@@ -188,4 +188,14 @@ public class SystemTeamViewCompileTypeAdapter extends AbstractSystemViewAdapter 
 	 SystemTeamViewCompileTypeNode type = (SystemTeamViewCompileTypeNode)element;	
 	 return type.getProfile().getName() + "." + type.getParentCategory().getLabel() +"." + type.getParentSubSystemFactory().getName() + "." + type.getLabel(); 
 	 }*/
+	
+	/**
+	 * This is a local RSE artifact so returning false
+	 * 
+	 * @param element the object to check
+	 * @return false since this is not remote
+	 */
+	public boolean isRemote(Object element) {
+		return false;
+	}
 }

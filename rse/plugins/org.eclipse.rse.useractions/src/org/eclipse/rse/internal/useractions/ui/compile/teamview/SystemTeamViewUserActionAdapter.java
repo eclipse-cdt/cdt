@@ -210,4 +210,14 @@ public class SystemTeamViewUserActionAdapter extends AbstractSystemViewAdapter i
 	public String getMementoHandleKey(Object element) {
 		return null; // not needed now as we don't re-expand to this level	  
 	}
+	
+	/**
+	 * This is a local RSE artifact so returning false
+	 * 
+	 * @param element the object to check
+	 * @return false since this is not remote
+	 */
+	public boolean isRemote(Object element) {
+		return false;
+	}
 }

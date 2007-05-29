@@ -1518,6 +1518,10 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			}
 			return false;
 		}
+		else if (name.equalsIgnoreCase("isRemote"))
+		{
+			return isRemote(target);
+		}
 		
 		// Give the ISV's as the element owners/contibutors the chance to extend the standard RSE action
 		// filters for their specific needs. We do this by trying to determine the system type from the

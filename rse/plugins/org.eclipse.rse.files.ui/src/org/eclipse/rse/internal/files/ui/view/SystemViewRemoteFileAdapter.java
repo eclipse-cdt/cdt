@@ -26,9 +26,7 @@
 
 package org.eclipse.rse.internal.files.ui.view;
 import java.io.File;
-import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -146,6 +144,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+
+import com.ibm.icu.text.DateFormat;
 
 /**
  * Adapter for displaying remote file system objects in tree views.
@@ -1201,8 +1201,9 @@ public class SystemViewRemoteFileAdapter
 			{
 				if (formatted)
 				{
-					SimpleDateFormat datefmt = (SimpleDateFormat) DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
-					return datefmt.format(date);
+					DateFormat datefmt = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
+					String formattedDate = datefmt.format(date);
+					return formattedDate;
 				}
 				else
 				{

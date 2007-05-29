@@ -289,6 +289,9 @@ public class FileResources extends NLS
 	public static String ACTION_SELECT_FILE_LABEL;
 	public static String ACTION_SELECT_FILE_TOOLTIP;
 	
+	// Property Pages
+	public static String MESSAGE_ENCODING_NOT_SUPPORTED;
+	
 	static 
 	{
 		// load message values from bundle file

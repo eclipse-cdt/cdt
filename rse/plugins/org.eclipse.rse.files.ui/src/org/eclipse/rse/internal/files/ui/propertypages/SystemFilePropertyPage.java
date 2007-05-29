@@ -20,14 +20,13 @@
 package org.eclipse.rse.internal.files.ui.propertypages;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -54,6 +53,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ide.IDEEncoding;
+
+import com.ibm.icu.text.DateFormat;
 
 
 /**
@@ -302,7 +303,8 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 				clearErrorMessage();
 			}
 			else {
-				setErrorMessage("The selected encoding is not supported.");
+				// TODO make this a SystemMessage
+				setErrorMessage(FileResources.MESSAGE_ENCODING_NOT_SUPPORTED);
 			}
 		}
 	}
@@ -400,8 +402,9 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	      Date date = file.getLastModifiedDate();
 	      if (date != null)
 	      {
-	        SimpleDateFormat datefmt = (SimpleDateFormat)DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL);
-	        labelModified.setText(datefmt.format(date));
+			DateFormat datefmt = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.FULL);
+			String formattedDate = datefmt.format(date);
+	        labelModified.setText(formattedDate);
 	      }
 	    }
 	    // readonly

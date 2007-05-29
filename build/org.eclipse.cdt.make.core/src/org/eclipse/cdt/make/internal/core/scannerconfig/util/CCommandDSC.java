@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
@@ -78,7 +79,7 @@ public class CCommandDSC {
 		if (project != null &&
 			(option.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString()) ||
 			 option.getKey().equals(SCDOptionsEnum.INCLUDE.toString()) ||
-			 option.getKey().equals(SCDOptionsEnum.IDASH.toString()) ||
+			 option.getKey().equals(SCDOptionsEnum.ISYSTEM.toString()) ||
 			 option.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString())))
 		{
 			String value = option.getValue();
@@ -141,23 +142,18 @@ public class CCommandDSC {
     				continue;
     			String value = optionPair.getValue();
     			if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE.toString()) ||
-    				optionPair.getKey().equals(SCDOptionsEnum.IDASH.toString())) {
+    				optionPair.getKey().equals(SCDOptionsEnum.ISYSTEM.toString())) {
     				value = makeAbsolute(project, value);
     			}
     			if (quoteIncludePaths) {
     				if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE.toString()) ||
-    					optionPair.getKey().equals(SCDOptionsEnum.IDASH.toString())) {
+    					optionPair.getKey().equals(SCDOptionsEnum.ISYSTEM.toString())) {
     					commandAsString += optionPair.getKey() + SINGLE_SPACE + 
     							"\"" + value + "\"" + SINGLE_SPACE;  //$NON-NLS-1$//$NON-NLS-2$
     				}
     			}
-    			else if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE.toString())) {
-	    			commandAsString += optionPair.getKey() + SINGLE_SPACE + 
-	    					value + SINGLE_SPACE;
-    			}
     			else {
-	    			commandAsString += optionPair.getKey() + SINGLE_SPACE + 
-	    					value + SINGLE_SPACE;
+	    			commandAsString += optionPair.getKey() + SINGLE_SPACE + value + SINGLE_SPACE;
     			}
             }
 		}
@@ -362,27 +358,29 @@ public class CCommandDSC {
     }
     
     public void resolveOptions(IProject project) {
-    	ArrayList symbols = new ArrayList();
-    	ArrayList includes = new ArrayList();
-    	ArrayList quoteincludes = new ArrayList();
-		for (Iterator options = compilerCommand.iterator(); options.hasNext(); ) {
-			KVStringPair optionPair = (KVStringPair)options.next();
-			String key = optionPair.getKey();
-			String value = optionPair.getValue();
-			if (key.equals(SCDOptionsEnum.INCLUDE.toString())) {
-				includes.add(value);
-			}
-			else if (key.equals(SCDOptionsEnum.IDASH.toString())) {
-				quoteincludes.add(value);
-			}
-			else if (key.equals(SCDOptionsEnum.DEFINE.toString())) {
-				symbols.add(value);
-			}
-		}
-		setIncludes(includes);
-		setQuoteIncludes(quoteincludes);		                
-		setSymbols(symbols);
-        
+    	if (!isDiscovered()) {
+    		// that's wrong for sure, options cannot be resolved fron the optionPairs??
+    		ArrayList symbols = new ArrayList();
+    		ArrayList includes = new ArrayList();
+    		ArrayList quoteincludes = new ArrayList();
+    		for (Iterator options = compilerCommand.iterator(); options.hasNext(); ) {
+    			KVStringPair optionPair = (KVStringPair)options.next();
+    			String key = optionPair.getKey();
+    			String value = optionPair.getValue();
+    			if (key.equals(SCDOptionsEnum.INCLUDE.toString())) {
+    				quoteincludes.add(value);
+    			}
+    			else if (key.equals(SCDOptionsEnum.ISYSTEM.toString())) {
+    				includes.add(value);
+    			}
+    			else if (key.equals(SCDOptionsEnum.DEFINE.toString())) {
+    				symbols.add(value);
+    			}
+    		}
+    		setIncludes(includes);
+    		setQuoteIncludes(quoteincludes);		                
+    		setSymbols(symbols);
+    	}
 		setDiscovered(true);    	
     }
     

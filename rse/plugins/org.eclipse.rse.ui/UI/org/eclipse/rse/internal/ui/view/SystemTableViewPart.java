@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [189005] Changed setFocus() to setInput to SystemRegistryUI
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -112,8 +113,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.osgi.framework.Bundle;
-
-
 
 /**
  * Comment goes here
@@ -244,8 +243,12 @@ public class SystemTableViewPart extends ViewPart
 					if (parent instanceof IAdaptable)
 					{
 						_parent = (IAdaptable) parent;
-						boolean enabled = _parent != null;
-						setEnabled(enabled);
+						setEnabled(true);
+					}
+					else
+					{
+						_parent = null;
+						setEnabled(false);
 					}
 				}
 				else
@@ -1145,7 +1148,7 @@ public class SystemTableViewPart extends ViewPart
 	        }
 	        else
 	        {
-	            setInput(RSECorePlugin.getTheSystemRegistry());
+	            setInput(RSEUIPlugin.getTheSystemRegistryUI());
 	        }
 	    }
 

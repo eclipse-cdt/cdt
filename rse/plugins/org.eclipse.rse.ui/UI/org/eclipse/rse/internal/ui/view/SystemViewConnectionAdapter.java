@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
+ * Kevin Doyle (IBM) - [189005] Fixed getParent() to return SystemRegistryUI instead of SystemRegistry
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -418,7 +419,7 @@ public class SystemViewConnectionAdapter
 	 */
 	public Object getParent(Object element)
 	{
-		return RSECorePlugin.getTheSystemRegistry();
+		return RSEUIPlugin.getTheSystemRegistryUI();
 	}
 	
 	/**

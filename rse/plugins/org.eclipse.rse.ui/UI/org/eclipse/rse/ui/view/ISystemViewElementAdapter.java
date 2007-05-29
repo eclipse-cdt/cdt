@@ -244,8 +244,11 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
     
     /**
      * Return true if this object is a "remote" object.  A remote object is defined as an object
-     * that is not part of the base RSE artifacts (hosts, subsystems, filters)
-     * @param element the object
+     * that is not part of the base RSE artifacts (hosts, subsystems, filters).  This method is used
+     * to decide whether certain actions will be available from views, and how views should handle refreshing
+     * such objects.  Remote objects can appear more than once in the same view, while non-remote objects
+     * are more confined and can be handled very clearly by the RSE UI framework.
+     * @param element the object to check
      * @return true if the object is remote
      */
     public boolean isRemote(Object element);

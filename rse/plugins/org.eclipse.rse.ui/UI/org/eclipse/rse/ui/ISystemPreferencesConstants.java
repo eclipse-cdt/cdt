@@ -46,6 +46,22 @@ public interface ISystemPreferencesConstants {
 	public static final String HISTORY_FOLDER = ROOT + "history.folder"; //$NON-NLS-1$
 	public static final String HISTORY_QUALIFIED_FOLDER = ROOT + "history.qualified.folder"; //$NON-NLS-1$
 	public static final String REMEMBER_STATE = ROOT + "rememberState"; //$NON-NLS-1$
+	
+	/**
+	 * The SHOW_EMPTY_LISTS preference. Value is "SHOW_EMPTY_LISTS".
+	 * The default value is true.
+	 * This may be used in the product's plug-in initialization.
+	 * Example:
+	 * <code>
+	 * org.eclipse.rse.ui/SHOW_EMPTY_LISTS=false
+	 * </code>
+	 * To use this preference in code do the following:
+	 * <code>
+	 * Preferences store = RSEUIPlugin.getDefault().getPluginPreferences();
+	 * boolean showLists = store.getBoolean(ISystemPreferencesConstants.SHOW_EMPTY_LISTS);
+	 * </code>
+	 */
+	public static final String SHOW_EMPTY_LISTS = "SHOW_EMPTY_LISTS"; //$NON-NLS-1$
 	/*
 	 * ui preference default values
 	 */
@@ -59,4 +75,5 @@ public interface ISystemPreferencesConstants {
 	public static final boolean DEFAULT_ALERT_NON_SSL = true;
 	public static final String DEFAULT_HISTORY_FOLDER = ""; //$NON-NLS-1$
 	public static final boolean DEFAULT_REMEMBER_STATE = true; // changed in R2. Phil
+	public static final boolean DEFAULT_SHOW_EMPTY_LISTS = true;
 }

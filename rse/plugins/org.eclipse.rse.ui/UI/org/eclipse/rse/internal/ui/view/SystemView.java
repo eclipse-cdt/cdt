@@ -857,32 +857,31 @@ public class SystemView extends SafeTreeViewer
 			// GO INTO ACTION...
 			// OPEN IN NEW WINDOW ACTION...
 			if (fromSystemViewPart) {
-				GoIntoAction goIntoAction = getGoIntoAction();
-				boolean singleSelection = selection.size() == 1;
-				goIntoAction.setEnabled(singleSelection);
-				boolean selectionHasChildren = false;
-				if (singleSelection)
+				
+				Object selectedObject = selection.getFirstElement();
+				ISystemViewElementAdapter adapter = getViewAdapter(selectedObject);
+				if (!selectionIsRemoteObject)
 				{
-					// dkm - first find out if the selection will have children
-					//      only add this action if there are children
-					Object selectedObject = selection.getFirstElement();
-					ISystemViewElementAdapter adapter = getViewAdapter(selectedObject);
-					if (adapter != null)
-					{
+					GoIntoAction goIntoAction = getGoIntoAction();
+					boolean singleSelection = selection.size() == 1;
+					goIntoAction.setEnabled(singleSelection);
+					if (singleSelection) {
+						// dkm - first find out if the selection will have children
+						//      only add this action if there are children
 						if (adapter.hasChildren((IAdaptable)selectedObject))
 						{
-							selectionHasChildren = true;
 							menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
 						}
 					}
-				}
+				
 
-				if (showOpenViewActions()) {
-					SystemOpenExplorerPerspectiveAction opa = getOpenToPerspectiveAction();
-					opa.setSelection(selection);
-					menu.appendToGroup(opa.getContextMenuGroup(), opa);
+					if (showOpenViewActions()) {
+						SystemOpenExplorerPerspectiveAction opa = getOpenToPerspectiveAction();
+						opa.setSelection(selection);
+						menu.appendToGroup(opa.getContextMenuGroup(), opa);
+					}
 				}
-
+				
 				if (showGenericShowInTableAction()) {
 					SystemShowInTableAction showInTableAction = getShowInTableAction();
 					showInTableAction.setSelection(selection);
@@ -1325,6 +1324,11 @@ public class SystemView extends SafeTreeViewer
 		}
 	}
 
+	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 
+	{
+		return (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
+	}
+	
 	/**
 	 * Returns the implementation of IRemoteObjectIdentifier for the given
 	 * object.  Returns null if this object does not adaptable to this.
@@ -2112,8 +2116,7 @@ public class SystemView extends SafeTreeViewer
 					else
 					{
 						// only do this if the object is "remote"
-						Object remoteAdapter = getRemoteAdapter(src);
-						if (remoteAdapter != null)
+						if (adapter.isRemote(src))
 						{
 							// get up-to-date version of the container (need to make sure it still exists)
 							if (ss == null)
@@ -4677,7 +4680,7 @@ public class SystemView extends SafeTreeViewer
 
 			if (selectionEnableRenameAction) selectionEnableRenameAction = selectionShowRenameAction && adapter.canRename(element);
 
-			if (selectionIsRemoteObject) selectionIsRemoteObject = (getRemoteAdapter(element) != null);
+			if (selectionIsRemoteObject) selectionIsRemoteObject = adapter.isRemote(element);
 
 			if (selectionIsRemoteObject && !selectionFlagsUpdated) {
 				ISubSystem srcSubSystem = adapter.getSubSystem(element);

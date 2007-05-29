@@ -389,4 +389,13 @@ public class SystemViewFilterPoolReferenceAdapter
 		return ISystemMementoConstants.MEMENTO_KEY_FILTERPOOLREFERENCE;
 	}
 
+	/**
+	 * This is a local RSE artifact so returning false
+	 * 
+	 * @param element the object to check
+	 * @return false since this is not remote
+	 */
+	public boolean isRemote(Object element) {
+		return false;
+	}
 }

@@ -415,5 +415,15 @@ public class SystemTeamViewProfileAdapter
 	{
 		return ISystemMementoConstants.MEMENTO_KEY_PROFILE;
 	}
+	
+	/**
+	 * This is a local RSE artifact so returning false
+	 * 
+	 * @param element the object to check
+	 * @return false since this is not remote
+	 */
+	public boolean isRemote(Object element) {
+		return false;
+	}
 
 }

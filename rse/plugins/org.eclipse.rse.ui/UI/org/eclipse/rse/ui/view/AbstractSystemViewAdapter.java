@@ -1357,6 +1357,16 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     {
     	return (element instanceof ISystemPromptableObject);
     } 
+    
+    /**
+     * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
+     * Return true if this object is remote.  In this case, the default is true.
+     */
+    public boolean isRemote(Object element)
+    {
+    	return true;
+    }
+    
     /**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
      * Selection has changed in the Remote Systems view. Empty by default, but override if you need

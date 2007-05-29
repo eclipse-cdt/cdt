@@ -320,4 +320,14 @@ public class TestSubSystemNodeAdapter extends AbstractSystemViewAdapter
 	public boolean showRename(Object element) {
 		return isTestSubSystemNode(element);
 	}
+	
+	/**
+	 * This is a local RSE artifact so returning false
+	 * 
+	 * @param element the object to check
+	 * @return false since this is not remote
+	 */
+	public boolean isRemote(Object element) {
+		return false;
+	}
 }

@@ -67,6 +67,8 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 {
+
+
 	//private static String translatedFilterString = null;	
 	// -------------------
 	// property descriptors
@@ -575,5 +577,15 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 			result = super.testAttribute(target, name, value);
 		}
 		return result;
+	}
+	
+	/**
+	 * This is a local RSE artifact so returning false
+	 * 
+	 * @param element the object to check
+	 * @return false since this is not remote
+	 */
+	public boolean isRemote(Object element) {
+		return false;
 	}
 }

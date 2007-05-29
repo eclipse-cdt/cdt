@@ -290,4 +290,14 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter
     	return (mgrName + "." + newName).toUpperCase(); //$NON-NLS-1$
     }
 
+	/**
+	 * This is a local RSE artifact so returning false
+	 * 
+	 * @param element the object to check
+	 * @return false since this is not remote
+	 */
+	public boolean isRemote(Object element) {
+		return false;
+	}
+
 }

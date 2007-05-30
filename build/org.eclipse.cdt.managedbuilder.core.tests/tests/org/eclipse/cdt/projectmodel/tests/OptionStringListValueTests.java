@@ -12,7 +12,9 @@ package org.eclipse.cdt.projectmodel.tests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -161,8 +163,26 @@ public class OptionStringListValueTests extends TestCase {
 		ls = fDes.getLanguageSettingForFile("a.c");
 		
 		returned = ls.getSettingEntriesList(ICSettingEntry.LIBRARY_FILE);
+		checkEntriesMatch(list, returned);
 		assertEquals(list.size(), returned.size());
 		assertTrue(Arrays.equals(list.toArray(), returned.toArray()));
+	}
+	
+	private Set[] diff(List list1, List list2){
+		Set set1 = new LinkedHashSet(list1);
+		set1.removeAll(list2);
+		Set set2 = new LinkedHashSet(list2);
+		set2.removeAll(list1);
+		if(set1.size() == 0 && set2.size() == 0)
+			return null;
+		return new Set[]{set1, set2};
+	}
+	
+	private void checkEntriesMatch(List list1, List list2){
+		Set[] diff = diff(list1, list2);
+		if(diff != null){
+			fail("entries diff");
+		}
 	}
 	
 	private static String[] toValues(OptionStringValue[] ves){

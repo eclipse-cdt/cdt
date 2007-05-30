@@ -18,6 +18,9 @@ public interface ICProjectDescriptionManager {
 	public static final int SET_FORCE = 1;
 	public static final int SET_NO_SERIALIZE = 1 << 1;
 
+	public static final int GET_WRITABLE = 1 << 2;
+	public static final int GET_IF_LOADDED = 1 << 3;
+
 	/**
 	 * this method is a full equivalent to {@link #createProjectDescription(IProject, boolean, false)}
 	 * 
@@ -101,7 +104,9 @@ public interface ICProjectDescriptionManager {
 	 * @return {@link ICProjectDescription}
 	 */
 	ICProjectDescription getProjectDescription(IProject project, boolean write);
-	
+
+	ICProjectDescription getProjectDescription(IProject project, int flags);
+
 	/**
 	 * forces the cached data of the specified projects to be re-calculated.
 	 * if the <code>projects</code> argument is <code>null</code> al projects 

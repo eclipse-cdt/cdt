@@ -120,4 +120,19 @@ public final class CLibraryFileEntry extends ACPathEntry implements
 			return false;
 		return true;
 	}
+	
+	protected String contentsToString() {
+		String result = super.contentsToString();
+		
+		if(fSourceAttachmentPath != null){
+			StringBuffer buf = new StringBuffer();
+			buf.append(result);
+			buf.append(" ; srcPath=").append(fSourceAttachmentPath);
+			buf.append("; srcRoot=").append(fSourceAttachmentRootPath);
+			buf.append("; srcMapping=").append(fSourceAttachmentPrefixMapping);
+
+			result = buf.toString();
+		}
+		return result;
+	}
 }

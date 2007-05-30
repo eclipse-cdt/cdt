@@ -124,6 +124,9 @@ import org.w3c.dom.ProcessingInstruction;
 import org.xml.sax.SAXException;
 
 public class CProjectDescriptionManager implements ICProjectDescriptionManager {
+	public static final int INTERNAL_GET_IGNORE_CLOSE = 1 << 31 ;
+
+	
 	private static final String OLD_PROJECT_DESCRIPTION = "cdtproject"; //$NON-NLS-1$
 	private static final String OLD_CDTPROJECT_FILE_NAME = ".cdtproject";	//$NON-NLS-1$
 	private static final String OLD_PROJECT_OWNER_ID = "id"; //$NON-NLS-1$
@@ -422,12 +425,24 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	public ICProjectDescription getProjectDescription(IProject project, boolean load, boolean write){
+		int flags = load ? 0 : GET_IF_LOADDED;
+		if(write)
+			flags |= GET_WRITABLE;
+		
+		return getProjectDescription(project, flags);
+	}
+
+	public ICProjectDescription getProjectDescription(IProject project, int flags){
+
 		ICProjectDescription des = null;
 		IProjectDescription eDes = null; 
+		boolean write = checkFlags(flags, GET_WRITABLE);
+		boolean load = !checkFlags(flags, GET_IF_LOADDED);
+		boolean ignoreClose = checkFlags(flags, INTERNAL_GET_IGNORE_CLOSE);
 		
 		des = getDescriptionApplying(project);
 		
-		if(des == null && project.isOpen())
+		if(des == null && (ignoreClose || project.isOpen()))
 			des = getLoaddedDescription(project);
 
 		if(des == null)

@@ -65,6 +65,7 @@ import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListene
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.buildproperties.BuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.internal.core.BooleanExpressionApplicabilityCalculator;
+import org.eclipse.cdt.managedbuilder.internal.core.BuildDbgUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.BuildSettingsUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
@@ -88,6 +89,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.TargetPlatform;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationData;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
@@ -99,6 +101,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -117,6 +120,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -1407,25 +1413,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			return true;
 
 		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
-		IManagedProject mProj = info.getManagedProject();
-		
-		IConfiguration cfgs[] = mProj.getConfigurations();
-		ICConfigurationDescription cfgDess[] = projDes.getConfigurations();
-		
-		for(int i = 0; i < cfgs.length; i++){
-			IConfiguration cfg = cfgs[i];
-//			try {
-				applyConfiguration(cfg, projDes, force);
-//			} catch (CoreException e) {
-//			}
-		}
-		
-		for(int i = 0; i < cfgDess.length; i++){
-			ICConfigurationDescription cfgDes = cfgDess[i];
-			IConfiguration cfg = mProj.getConfiguration(cfgDes.getId());
-			if(cfg == null)
-				mProj.removeConfiguration(cfgDes.getId());
-		}
+		projDes = BuildSettingsUtil.synchBuildInfo(info, projDes, force);
 
 //		try {
 			BuildSettingsUtil.checkApplyDescription(project, projDes);
@@ -1568,7 +1556,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IProject project = cfg.getOwner().getProject();
 		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
 		if(projDes != null){
-			if(applyConfiguration(cfg, projDes, true)){
+			if(BuildSettingsUtil.applyConfiguration(cfg, projDes, true)){
 				BuildSettingsUtil.checkApplyDescription(project, projDes);
 			}
 		}
@@ -1591,7 +1579,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		boolean updated = false;
 		if(projDes != null){
 			for(int i = 0; i < cfgs.length; i++){
-				if(applyConfiguration(cfgs[i], projDes, true)){
+				if(BuildSettingsUtil.applyConfiguration(cfgs[i], projDes, true)){
 					updated = true;
 				}
 			}
@@ -1601,21 +1589,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}		
 	
-	private static boolean applyConfiguration(IConfiguration cfg, ICProjectDescription des, boolean force) throws CoreException{
-		boolean updated = false;
-		ICConfigurationDescription cfgDes = des.getConfigurationById(cfg.getId());
-		if(cfgDes == null){
-			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
-			updated = true;
-		} else if(force || cfg.isDirty()){
-			cfgDes.setConfigurationData(CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
-			updated = true;
-		}
-		
-		return updated;
-	}
-	
-
 	/**
 	 * @param resource
 	 */
@@ -2643,13 +2616,34 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return buildInfo;
 	}
 	
-	public synchronized static void setLoaddedBuildInfo(IProject project, IManagedBuildInfo info) throws CoreException{
+	public static void setLoaddedBuildInfo(IProject project, IManagedBuildInfo info) throws CoreException{
 		// Associate the build info with the project for the duration of the session
 		//project.setSessionProperty(buildInfoProperty, info);
-		if(info != null)
+		IResourceRuleFactory rcRf = ResourcesPlugin.getWorkspace().getRuleFactory();
+		ISchedulingRule rule = rcRf.modifyRule(project);
+		IJobManager mngr = Job.getJobManager();
+
+		try {
+			mngr.beginRule(rule, null);
+			doSetLoaddedInfo(project, info);
+		} catch (IllegalArgumentException e) {
+			// TODO: set anyway for now
+			doSetLoaddedInfo(project, info);
+		}finally {
+			mngr.endRule(rule);
+		}
+	}
+	
+	private synchronized static void doSetLoaddedInfo(IProject project, IManagedBuildInfo info){
+		if(info != null){
 			fInfoMap.put(project, info);
-		else
+			if(BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info set for project " + project.getName());
+		}else{
 			fInfoMap.remove(project);
+			if(BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info CLEARED for project " + project.getName());
+		}
 	}
 	
 	private static IManagedConfigElementProvider createConfigProvider(
@@ -2721,7 +2715,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	private static ManagedBuildInfo findBuildInfo(IResource rc, boolean forceLoad) {
 
-		if (rc == null) return null;
+		if (rc == null){
+			if(BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: null resource");
+			return null;
+		}
 
 		ManagedBuildInfo buildInfo = null;
 		IProject proj = rc.getProject();
@@ -2730,20 +2728,53 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			buildInfo = getLoaddedBuildInfo(proj);
 		} catch (CoreException e) {
+			if(BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info: " + e.getLocalizedMessage());
 			return null;
 		}
 	
 		if(buildInfo == null && forceLoad){
+			if(BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is NOT loadded and force_load");
 			ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(proj, false);
 			if(projDes != null){
+				if(BuildDbgUtil.DEBUG)
+					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description is obtained, qwerying the loaded build info");
 				try {
 					buildInfo = getLoaddedBuildInfo(proj);
 				} catch (CoreException e) {
+					if(BuildDbgUtil.DEBUG)
+						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info (2): " + e.getLocalizedMessage());
 					return null;
 				}
+				
+				if(buildInfo == null){
+					if(BuildDbgUtil.DEBUG)
+						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, trying the cfg data provider");
+					
+					buildInfo = ConfigurationDataProvider.getLoaddedBuildInfo(projDes);
+					if(buildInfo != null){
+						if(BuildDbgUtil.DEBUG)
+							BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info found, setting as loadded");
+						
+						try {
+							setLoaddedBuildInfo(proj, buildInfo);
+						} catch (CoreException e) {
+							if(BuildDbgUtil.DEBUG)
+								BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while setting loaded description, ignoring; : " + e.getLocalizedMessage());
+						}
+					}
+						
+				}
+
+			} else if(BuildDbgUtil.DEBUG){
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description in null");
 			}
+
 			
 			if(buildInfo == null){
+				if(BuildDbgUtil.DEBUG)
+					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr");
 				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
 			}
 		}
@@ -2766,6 +2797,16 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 		}
 */
+		if(buildInfo != null)
+			buildInfo.updateOwner(proj);
+		
+		if(BuildDbgUtil.DEBUG){
+			if(buildInfo == null)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is null");
+//			else
+//				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info found");
+		}
+
 		return buildInfo;
 	}
 	

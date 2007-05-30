@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
+
 
 
 public abstract class ACSettingEntry implements ICSettingEntry {
@@ -113,5 +115,15 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 	public int codeForContentsKey(){
 		return codeForNameKey();
 	}
+	
+	public final String toString(){
+		StringBuffer buf = new StringBuffer();
+		buf.append('[').append(LanguageSettingEntriesSerializer.kindToString(getKind())).append(']').append(' ');
+		buf.append(contentsToString());
+		buf.append(" ; flags: ").append(LanguageSettingEntriesSerializer.composeFlagsString(getFlags()));
+		return buf.toString();
+	}
+	
+	protected abstract String contentsToString();
 	
 }

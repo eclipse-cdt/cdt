@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,8 +66,8 @@ public class ResourceBuildCoreTests extends TestCase {
 		TestSuite suite = new TestSuite(ResourceBuildCoreTests.class.getName());		
 		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurations"));
 		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurationReset"));
-		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurationBuildInfo"));
-		suite.addTest(new ResourceBuildCoreTests("testResourceRename"));
+//		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurationBuildInfo"));
+//		suite.addTest(new ResourceBuildCoreTests("testResourceRename"));
 		return suite;
 	}
 

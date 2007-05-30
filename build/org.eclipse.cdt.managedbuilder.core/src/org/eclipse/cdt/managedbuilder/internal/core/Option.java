@@ -527,22 +527,27 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					//         "defaultValue" attributes.  Instead, the ListOptionValue children
 					//         are loaded in the value field.
 					List vList = null;
+					List biList = null;
 					configElements = element.getChildren();
 					for (int i = 0; i < configElements.length; ++i) {
 						if (i == 0) {
 							vList = new ArrayList();
-							builtIns = new ArrayList();
+							biList = new ArrayList();
 						}
 						ICStorageElement veNode = configElements[i];
 						if (veNode.getName().equals(LIST_VALUE)) {
 							OptionStringValue ve = new OptionStringValue(veNode);
 							if(ve.isBuiltIn())
-								builtIns.add(ve);
+								biList.add(ve);
 							else
 								vList.add(ve);
 						}
 					}
-					value = vList;
+					if(vList != null && vList.size() != 0)
+						value = vList;
+					if(biList != null && biList.size() != 0)
+						builtIns = biList;
+						
 					break;
 				default :
 					break;
@@ -1021,15 +1026,25 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	public String[] getBuiltIns() {
 		// Return the list of built-ins as an array
+		List list = getExactBuiltinsList();
+		List valueList = listValueListToValueList(list);
+		
+		if(valueList == null)
+			return EMPTY_STRING_ARRAY;
+		return (String[])valueList.toArray(new String[valueList.size()]);
+	}
+	
+	public List getExactBuiltinsList() {
+		// Return the list of built-ins as an array
 		if (builtIns == null) {
 			if (superClass != null) {
-				return superClass.getBuiltIns();
+				return ((Option)superClass).getExactBuiltinsList();
 			} else {
-				return EMPTY_STRING_ARRAY; 
+				return null; 
 			}
 		}
-		List valueList = listValueListToValueList(builtIns);
-		return (String[])valueList.toArray(new String[valueList.size()]);
+
+		return builtIns;
 	}
 
 	/* (non-Javadoc)

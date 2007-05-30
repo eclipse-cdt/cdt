@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,11 +53,11 @@ public class AllManagedBuildTests {
 				"Test for org.eclipse.cdt.managedbuild.core.tests");
 		//$JUnit-BEGIN$
 // TODO uncoment this
-//		suite.addTest(ManagedBuildCoreTests20.suite());
-//		suite.addTest(ManagedBuildCoreTests.suite());
-//		suite.addTest(ManagedProjectUpdateTests.suite());
+		suite.addTest(ManagedBuildCoreTests20.suite());
+		suite.addTest(ManagedBuildCoreTests.suite());
+		suite.addTest(ManagedProjectUpdateTests.suite());
 		suite.addTest(ManagedCommandLineGeneratorTest.suite());
-//		suite.addTest(ResourceBuildCoreTests.suite());
+		suite.addTest(ResourceBuildCoreTests.suite());
 		suite.addTest(ManagedProject21MakefileTests.suite());
 		suite.addTest(ManagedProject30MakefileTests.suite());
 		suite.addTest(ManagedBuildCoreTests_SharedToolOptions.suite());

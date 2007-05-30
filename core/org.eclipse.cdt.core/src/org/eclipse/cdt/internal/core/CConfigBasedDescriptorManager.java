@@ -180,13 +180,17 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		dr.apply(true);
 	}
 
-	public synchronized ICDescriptor getDescriptor(IProject project) throws CoreException {
-		return getDescriptor(project, true);
+	public ICDescriptor getDescriptor(IProject project) throws CoreException {
+		synchronized (CProjectDescriptionManager.getInstance()) {
+			return getDescriptor(project, true);
+		}
 	}
 
-	public synchronized ICDescriptor getDescriptor(IProject project, boolean create)
+	public ICDescriptor getDescriptor(IProject project, boolean create)
 			throws CoreException {
-		return findDescriptor(project, create);
+		synchronized (CProjectDescriptionManager.getInstance()) {
+			return findDescriptor(project, create);
+		}
 	}
 
 	public void addDescriptorListener(ICDescriptorListener listener) {
@@ -388,12 +392,15 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 					if(dr != null){
 						//the descriptor was requested while load process
 						des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(des.getProject(), true);
-						ICConfigurationDescription cfgDescription = des.getDefaultSettingConfiguration();
-						if(cfgDescription != null){
-							dr.updateConfiguration((CConfigurationDescription)cfgDescription);
-							dr.setDirty(false);
-						} else
-							setLoaddedDescriptor(des, null);
+						if(des != null){
+							ICConfigurationDescription cfgDescription = des.getDefaultSettingConfiguration();
+							if(cfgDescription != null){
+								dr.updateConfiguration((CConfigurationDescription)cfgDescription);
+								dr.setDirty(false);
+							} else {
+								setLoaddedDescriptor(des, null);
+							}
+						}
 					}
 				}
 				break;

@@ -46,6 +46,9 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 		
 		return fValue.equals(((CMacroEntry)entry).fValue);
 	}
-	
+
+	protected String contentsToString() {
+		return new StringBuffer().append(fName).append('=').append(fValue).toString();
+	}
 	
 }

@@ -123,7 +123,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	protected void putEntriesToLevel(int levelNum, SettingLevel level) {
 		switch(levelNum){
 		case 0:
-			UserEntryInfo[] userEntries = getUserEntries(level.getFlags(0));
+			UserEntryInfo[] userEntries = getUserEntries(level.getFlags(0), true);
 			for(int i = 0; i < userEntries.length; i++){
 				level.addEntry(userEntries[i].fEntry, userEntries[i].fOptionValue);
 			}
@@ -141,17 +141,27 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 	
 	private ICLanguageSettingEntry[] getDiscoveredEntries(int flags){
-		return ProfileInfoProvider.getInstance().getEntryValues(fLangData, getKind(), flags);
+		ICLanguageSettingEntry[] entries = ProfileInfoProvider.getInstance().getEntryValues(fLangData, getKind(), flags);
+		if(entries == null || entries.length == 0){
+			UserEntryInfo[] infos = getUserEntries(flags, false);
+			if(infos.length != 0){
+				entries = new ICLanguageSettingEntry[infos.length];
+				for(int i = 0; i < entries.length; i++){
+					entries[i] = infos[i].fEntry;
+				}
+			}
+		}
+		return entries;
 	}
 	
-	private UserEntryInfo[] getUserEntries(int flags){
+	private UserEntryInfo[] getUserEntries(int flags, boolean usr){
 		IOption options[] = fLangData.getOptionsForKind(getKind());
 		if(options.length > 0){
 			List entryList = new ArrayList();
 			for(int i = 0; i < options.length; i++){
 				Option option = (Option)options[i];
-				List list = (List)option.getExactValue();
-				int size = list.size();
+				List list = usr ? (List)option.getExactValue() : option.getExactBuiltinsList();
+				int size = list != null ? list.size() : 0;
 				if(size > 0){
 					for(int j = 0; j < size; j++){
 						OptionStringValue ve = (OptionStringValue)list.get(j);

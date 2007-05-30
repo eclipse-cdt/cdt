@@ -261,7 +261,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		return defaultConfig;
 */
-		IConfiguration activeCfg = findExistingDefaultConfiguration();
+		IConfiguration activeCfg = findExistingDefaultConfiguration(null);
 		
 		if(activeCfg == null){
 			IConfiguration cfgs[] = managedProject.getConfigurations();
@@ -273,8 +273,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		
 	}
 	
-	private IConfiguration findExistingDefaultConfiguration() {
-		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(getOwner().getProject(), false);
+	private IConfiguration findExistingDefaultConfiguration(ICProjectDescription des) {
+		if(des == null)
+			des = CoreModel.getDefault().getProjectDescription(getOwner().getProject(), false);
 		IConfiguration activeCfg = null;
 		if(des != null){
 			ICConfigurationDescription cfgDes = des.getActiveConfiguration();
@@ -774,9 +775,17 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// Sanity
 		if (configuration == null || configuration.isExtensionElement()) return;
 
-		if (!configuration.equals(findExistingDefaultConfiguration())) {
+		ICProjectDescription des = null;
+		try {
+			des = BuildSettingsUtil.checkSynchBuildInfo(getOwner().getProject());
+		} catch (CoreException e1) {
+			ManagedBuilderCorePlugin.log(e1);
+		}
+		
+		if (!configuration.equals(findExistingDefaultConfiguration(des))) {
 			IProject project = owner.getProject();
-			ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project);
+			if(des == null)
+				des = CoreModel.getDefault().getProjectDescription(project);
 			if(des != null){
 				ICConfigurationDescription activeCfgDes = des.getConfigurationById(configuration.getId());
 				if(activeCfgDes == null){
@@ -789,12 +798,17 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				
 				if(activeCfgDes != null){
 					des.setActiveConfiguration(activeCfgDes);
-					try {
-						BuildSettingsUtil.checkApplyDescription(project, des);
-					} catch (CoreException e) {
-						ManagedBuilderCorePlugin.log(e);
-					}
+				} else {
+					des = null;
 				}
+			}
+		}
+		
+		if(des != null){
+			try {
+				BuildSettingsUtil.checkApplyDescription(owner.getProject(), des);
+			} catch (CoreException e) {
+				ManagedBuilderCorePlugin.log(e);
 			}
 		}
 	}
@@ -897,7 +911,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			if (!owner.equals(resource)) {
 				owner = resource;
 				// Do the same for the managed project
-				managedProject.updateOwner(resource);
+				if(managedProject != null)
+					managedProject.updateOwner(resource);
 				// And finally update the cModelElement
 				cProject = CoreModel.getDefault().create(owner.getProject());
 

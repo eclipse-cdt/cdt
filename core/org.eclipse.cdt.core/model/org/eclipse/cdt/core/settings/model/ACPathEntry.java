@@ -84,4 +84,8 @@ public abstract class ACPathEntry extends ACSettingEntry
 	public boolean isValueWorkspacePath() {
 		return checkFlags(VALUE_WORKSPACE_PATH);
 	}
+
+	protected String contentsToString() {
+		return fName;
+	}
 }

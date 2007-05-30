@@ -251,7 +251,7 @@ public class LanguageSettingEntriesSerializer {
 //		throw new UnsupportedOperationException();
 	}
 
-	private static String composeFlagsString(int flags){
+	public static String composeFlagsString(int flags){
 		StringBuffer buf = new StringBuffer();
 		if((flags & ICLanguageSettingEntry.BUILTIN) != 0){
 			buf.append(BUILTIN);

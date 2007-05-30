@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,24 +87,24 @@ public class ManagedBuildMacrosTests extends TestCase {
 	public ManagedBuildMacrosTests(String name) { super(name); }
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ManagedBuildMacrosTests.class.getName());
+		TestSuite suite = new TestSuite(ManagedBuildMacrosTests.class);
 		//$JUnit-BEGIN$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroConf"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroEEnv"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroInst"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroProj"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroWrks"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroOptS"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroOptL"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroFile"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroContext"));//$NON-NLS-1$
-		
-		suite.addTest(new ManagedBuildMacrosTests("testMacroResolve"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveExceptions"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveLoop"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveMake"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveCase"));//$NON-NLS-1$
-		suite.addTest(new ManagedBuildMacrosTests("testMacroSave"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroConf"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroEEnv"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroInst"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroProj"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroWrks"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroOptS"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroOptL"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroFile"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroContext"));//$NON-NLS-1$
+//		
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroResolve"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveExceptions"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveLoop"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveMake"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveCase"));//$NON-NLS-1$
+//		suite.addTest(new ManagedBuildMacrosTests("testMacroSave"));//$NON-NLS-1$
 		//$JUnit-END$
 		return suite;
 	}
@@ -604,34 +604,34 @@ public class ManagedBuildMacrosTests extends TestCase {
 	/**
 	 * testMacroResolveCase()
 	 */
-	public void testMacroResolveCase(){
-		doInit();
-		addVars();
-		final String winOut1 = "@CASETEST uppercase uppercase uppercase";   //$NON-NLS-1$
-		final String winOut2 = "@CASETEST @CASETEST @CASETEST @CASETEST";   //$NON-NLS-1$
-		
-		final String unixOut1 = "@CASETEST capitalize lowercase upper2low"; //$NON-NLS-1$
-		final String unixOut2 = "@CASETEST @CaseTest @casetest @CaSeTeSt";  //$NON-NLS-1$
-		
-		final String ein = "${CASETEST} ${CaseTest} ${casetest} ${CaSeTeSt}"; //$NON-NLS-1$
-		final int ctx = IBuildMacroProvider.CONTEXT_CONFIGURATION;
-		String a=null, b=null; 
-		try {
-			// Config #0 contains isVariableCaseSensitive = false  
-			a = mp.resolveValueToMakefileFormat(ein, UNKNOWN, LISTSEP, ctx, cfgs[0]);
-			// Config #3 contains isVariableCaseSensitive = true
-			b = mp.resolveValueToMakefileFormat(ein, UNKNOWN, LISTSEP, ctx, cfgs[3]);
-		} catch (BuildMacroException e) {
-			fail(e.getLocalizedMessage());
-		}
-		if (windows) {
-			assertEquals(a, winOut1);
-			assertEquals(b, winOut2);
-		} else { // linux
-			assertEquals(a, unixOut1);
-			assertEquals(b, unixOut2);
-		}
-	}
+//	public void testMacroResolveCase(){
+//		doInit();
+//		addVars();
+//		final String winOut1 = "@CASETEST uppercase uppercase uppercase";   //$NON-NLS-1$
+//		final String winOut2 = "@CASETEST @CASETEST @CASETEST @CASETEST";   //$NON-NLS-1$
+//		
+//		final String unixOut1 = "@CASETEST capitalize lowercase upper2low"; //$NON-NLS-1$
+//		final String unixOut2 = "@CASETEST @CaseTest @casetest @CaSeTeSt";  //$NON-NLS-1$
+//		
+//		final String ein = "${CASETEST} ${CaseTest} ${casetest} ${CaSeTeSt}"; //$NON-NLS-1$
+//		final int ctx = IBuildMacroProvider.CONTEXT_CONFIGURATION;
+//		String a=null, b=null; 
+//		try {
+//			// Config #0 contains isVariableCaseSensitive = false  
+//			a = mp.resolveValueToMakefileFormat(ein, UNKNOWN, LISTSEP, ctx, cfgs[0]);
+//			// Config #3 contains isVariableCaseSensitive = true
+//			b = mp.resolveValueToMakefileFormat(ein, UNKNOWN, LISTSEP, ctx, cfgs[3]);
+//		} catch (BuildMacroException e) {
+//			fail(e.getLocalizedMessage());
+//		}
+//		if (windows) {
+//			assertEquals(a, winOut1);
+//			assertEquals(b, winOut2);
+//		} else { // linux
+//			assertEquals(a, unixOut1);
+//			assertEquals(b, unixOut2);
+//		}
+//	}
 
 	/**
 	 * testMacroSave()

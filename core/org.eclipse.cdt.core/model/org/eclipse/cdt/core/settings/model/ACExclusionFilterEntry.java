@@ -45,7 +45,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 	 * @return IPath[]
 	 */
 	public IPath[] getExclusionPatterns() {
-		return exclusionPatterns;
+		return exclusionPatterns.length != 0 ? (IPath[])exclusionPatterns.clone() : exclusionPatterns;
 	}
 
 	/**
@@ -85,5 +85,21 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 		
 		ACExclusionFilterEntry otherEntry = (ACExclusionFilterEntry)entry;
 		return Arrays.equals(exclusionPatterns, otherEntry.exclusionPatterns);
+	}
+
+	protected String contentsToString() {
+		String result = super.contentsToString();
+		if(exclusionPatterns.length != 0){
+			StringBuffer buf = new StringBuffer();
+			buf.append(result);
+			buf.append(" ; exclude: ");
+			for(int i = 0; i < exclusionPatterns.length; i++){
+				if(i != 0)
+					buf.append(", ");
+				buf.append(exclusionPatterns[i].toString());
+			}
+			result = buf.toString();
+		}
+		return result;
 	}
 }

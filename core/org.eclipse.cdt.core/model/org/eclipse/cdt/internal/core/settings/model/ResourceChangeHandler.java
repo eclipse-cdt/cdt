@@ -101,7 +101,10 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			IProject project = rc.getProject(); 
 			ICProjectDescription des = (ICProjectDescription)fProjDesMap.get(project);
 			if(des == null){
-				des = fMngr.getProjectDescription(project, load, true);
+				int flags = load ? 0 : CProjectDescriptionManager.GET_IF_LOADDED;
+				flags |= CProjectDescriptionManager.INTERNAL_GET_IGNORE_CLOSE;
+				flags |= CProjectDescriptionManager.GET_WRITABLE;
+				des = fMngr.getProjectDescription(project, flags);
 				fProjDesMap.put(project, des);
 			}
 			return des;
@@ -160,6 +163,9 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 						for(Iterator iter = fProjDesMap.entrySet().iterator(); iter.hasNext();){
 							Map.Entry entry = (Map.Entry)iter.next();
 							IProject project = (IProject)entry.getKey();
+							if(!project.isOpen())
+								continue;
+							
 							ICProjectDescription des = (ICProjectDescription)entry.getValue();
 							
 							try {

@@ -62,6 +62,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	private static final String PREF_TOOL_ID = "org.eclipse.cdt.build.core.settings.holder";	//$NON-NLS-1$
 	private static final QualifiedName CFG_PERSISTED_PROPERTY = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "configPersisted");	//$NON-NLS-1$
 	private static final QualifiedName NATURES_USED_ON_CACHE_PROPERTY = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "naturesUsedOnCache");	//$NON-NLS-1$
+	private static final QualifiedName BUILD_INFO_PROPERTY = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "buildInfo");	//$NON-NLS-1$
 	
 	private static boolean registered;
 	
@@ -201,16 +202,27 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	}
 	
 	private static IManagedBuildInfo getBuildInfo(ICConfigurationDescription des){
-		IProject project = des.getProjectDescription().getProject();
+		ICProjectDescription projDes = des.getProjectDescription();
+		IProject project = projDes.getProject();
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project, false);
 		if(info == null)
 			info = ManagedBuildManager.createBuildInfo(project);
+		
+		setLoaddedBuildInfo(projDes, info);
 		
 		getManagedProject(des, info);
 		
 		return info;
 	}
 	
+	private static void setLoaddedBuildInfo(ICProjectDescription des, IManagedBuildInfo info){
+		des.setSessionProperty(BUILD_INFO_PROPERTY, info);
+	}
+
+	public static ManagedBuildInfo getLoaddedBuildInfo(ICProjectDescription des){
+		return (ManagedBuildInfo)des.getSessionProperty(BUILD_INFO_PROPERTY);
+	}
+
 	private static IManagedProject getManagedProject(ICConfigurationDescription des, IManagedBuildInfo info){
 		IManagedProject mProj = info.getManagedProject();
 		if(mProj == null){

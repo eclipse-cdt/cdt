@@ -237,7 +237,7 @@
          name="%ProjectConverter.name"
          point="org.eclipse.cdt.core.projectConverter">
          <converter
-         	owners="org.eclipse.cdt.managedbuilder.core.managedMake"
+         	owners="org.eclipse.cdt.managedbuilder.core.managedMake;org.eclipse.cdt.make.core.make"
          	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature"
          	class="org.eclipse.cdt.managedbuilder.internal.dataprovider.ProjectConverter"
          />

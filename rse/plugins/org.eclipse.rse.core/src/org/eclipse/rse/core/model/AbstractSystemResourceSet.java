@@ -21,6 +21,11 @@ import java.util.List;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
+/**
+ * The common abstract implementation of a ISystemResourceSet.  Extenders
+ * can use this to inherit the basic implementations.
+ *
+ */
 public class AbstractSystemResourceSet implements ISystemResourceSet {
 	private List _resourceSet;
 	private SystemMessage _message;

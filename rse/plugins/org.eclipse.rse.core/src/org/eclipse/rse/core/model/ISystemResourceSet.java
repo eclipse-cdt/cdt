@@ -20,24 +20,76 @@ import java.util.List;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
+
+/**
+ * This interface is refers to a collection of any type of resources.  The resources
+ * may be remote RSE resources, or local workspace resources. 
+ *
+ */
 public interface ISystemResourceSet {
+	
+	/**
+	 * Returns the number of resources in the set
+	 * @return the number of resources in the set
+	 */
 	public int size();
 
+	/**
+	 * Returns the resource in the set with the specified absoluteName
+	 * @param absoluteName the path of the resource to return
+	 * @return the resource
+	 */
 	public Object get(String absoluteName);
 
+	/**
+	 * Returns the path of a specified resource.  This is the same path
+	 * that is used be the get(absoluteName) method to retrieve the object
+	 * @param obj the resource to return the path for
+	 * @return the path of the resource
+	 */
 	public String pathFor(Object obj);
 
+	/**
+	 * Returns the resource at the specified index
+	 * @param index the index of the resource to return
+	 * @return the resource
+	 */
 	public Object get(int index);
 
+	/**
+	 * Returns the set of resources as a List
+	 * @return the set of resources as a List
+	 */
 	public List getResourceSet();
 
+	/**
+	 * Returns a message if a problem occurs when using this resource set
+	 * @return the message
+	 */
 	public SystemMessage getMessage();
 
+	/**
+	 * Indicates whether a message was set corresponding to this resource set
+	 * during an operation against it.
+	 * @return true if there is a message
+	 */
 	public boolean hasMessage();
 
+	/**
+	 * Indicates whether the set of resources has a size in bytes greater than zero
+	 * @return true if there are more than 0 bytes in this set
+	 */
 	public boolean hasByteSize();
 
+	/**
+	 * Returns the total number of bytes in this collection of resources
+	 * @return the number of bytes
+	 */
 	public long byteSize();
 
+	/**
+	 * Sets the total number of bytes in this collection of resources
+	 * @param byteSize the number of bytes
+	 */
 	public void setByteSize(long byteSize);
 }

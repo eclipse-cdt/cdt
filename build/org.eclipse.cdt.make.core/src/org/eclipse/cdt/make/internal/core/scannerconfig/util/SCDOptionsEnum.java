@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Gerhard Schaber (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
@@ -32,7 +33,8 @@ public final class SCDOptionsEnum {
 	public static final SCDOptionsEnum IPREFIX = new SCDOptionsEnum(11);			// -iprefix prefix
 	public static final SCDOptionsEnum IWITHPREFIX = new SCDOptionsEnum(12);		// -iwithprefix dir
 	public static final SCDOptionsEnum IWITHPREFIXBEFORE = new SCDOptionsEnum(13);	// -iwithprefixbefore dir
-	public static final int MAX = 13;
+    public static final SCDOptionsEnum IQUOTE = new SCDOptionsEnum(14);          // -iquote dir
+	public static final int MAX = 14;
 	
 	private static final String[] SCDOPTION_STRING_VALS = {
 		"cc", //$NON-NLS-1$
@@ -48,7 +50,8 @@ public final class SCDOptionsEnum {
         "-isystem", //$NON-NLS-1$
         "-iprefix", //$NON-NLS-1$
         "-iwithprefix", //$NON-NLS-1$
-        "-iwithprefixbefore"   //$NON-NLS-1$
+        "-iwithprefixbefore",   //$NON-NLS-1$
+        "-iquote"   //$NON-NLS-1$
 	};
 	private static final SCDOptionsEnum SCDOPTIONS[] = {
 		COMMAND, DEFINE, UNDEFINE, IDASH, INCLUDE, NOSTDINC, NOSTDINCPP, INCLUDE_FILE, IMACROS_FILE,

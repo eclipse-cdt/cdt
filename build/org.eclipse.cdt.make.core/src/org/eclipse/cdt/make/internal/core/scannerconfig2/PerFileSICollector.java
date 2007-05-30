@@ -13,6 +13,7 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -273,11 +274,11 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             cmd.setSymbols(siItem);
             siItem = (List) scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
             siItem = CygpathTranslator.translateIncludePaths(project, siItem);
-            siItem = CCommandDSC.makeAbsolute(project, siItem);
+            siItem = CCommandDSC.makeRelative(project, siItem);
             cmd.setIncludes(siItem);
             siItem = (List) scannerInfo.get(ScannerInfoTypes.QUOTE_INCLUDE_PATHS);
             siItem = CygpathTranslator.translateIncludePaths(project, siItem);
-            siItem = CCommandDSC.makeAbsolute(project, siItem);
+            siItem = CCommandDSC.makeRelative(project, siItem);
             cmd.setQuoteIncludes(siItem);
             
             cmd.setDiscovered(true);
@@ -603,7 +604,18 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
          */
         public IPath[] getIncludePaths() {
 //            return new IPath[0];
-            return getAllIncludePaths(INCLUDE_PATH);
+        	IPath[] includepaths = getAllIncludePaths(INCLUDE_PATH);
+        	IPath[] quotepaths = getAllIncludePaths(QUOTE_INCLUDE_PATH);
+        	if (quotepaths == null || quotepaths.length == 0) {
+        		return includepaths;
+        	}
+        	if (includepaths == null || includepaths.length == 0) {
+        		return quotepaths;
+        	}
+        	ArrayList result = new ArrayList(includepaths.length + quotepaths.length);
+        	result.addAll(Arrays.asList(includepaths));
+        	result.addAll(Arrays.asList(quotepaths));
+            return (IPath[])result.toArray(new IPath[result.size()]);
         }
 
         /* (non-Javadoc)
@@ -841,7 +853,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
     			    String include = (String) j.next();
     			    // the following line degrades perfomance
     			    // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=189127
-//    			    include = CCommandDSC.makeRelative(project, new Path(include)).toPortableString();
+    			    // it is not necessary for renaming projects anyway
+    			    // include = CCommandDSC.makeRelative(project, new Path(include)).toPortableString();
     			    if (!allIncludes.contains(include)) {
     			        allIncludes.add(include);
     			    }

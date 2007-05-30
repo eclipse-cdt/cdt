@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Gerhard Schaber (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
@@ -80,7 +81,8 @@ public class CCommandDSC {
 			(option.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString()) ||
 			 option.getKey().equals(SCDOptionsEnum.INCLUDE.toString()) ||
 			 option.getKey().equals(SCDOptionsEnum.ISYSTEM.toString()) ||
-			 option.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString())))
+			 option.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString()) ||
+			 option.getKey().equals(SCDOptionsEnum.IQUOTE.toString())))
 		{
 			String value = option.getValue();
 			value = (String)CygpathTranslator.translateIncludePaths(project, Collections.singletonList(value)).get(0);
@@ -142,12 +144,14 @@ public class CCommandDSC {
     				continue;
     			String value = optionPair.getValue();
     			if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE.toString()) ||
-    				optionPair.getKey().equals(SCDOptionsEnum.ISYSTEM.toString())) {
+    				optionPair.getKey().equals(SCDOptionsEnum.ISYSTEM.toString()) || 
+    				optionPair.getKey().equals(SCDOptionsEnum.IQUOTE.toString())) {
     				value = makeAbsolute(project, value);
     			}
     			if (quoteIncludePaths) {
     				if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE.toString()) ||
-    					optionPair.getKey().equals(SCDOptionsEnum.ISYSTEM.toString())) {
+  	    				optionPair.getKey().equals(SCDOptionsEnum.ISYSTEM.toString()) || 
+   	    				optionPair.getKey().equals(SCDOptionsEnum.IQUOTE.toString())) {
     					commandAsString += optionPair.getKey() + SINGLE_SPACE + 
     							"\"" + value + "\"" + SINGLE_SPACE;  //$NON-NLS-1$//$NON-NLS-2$
     				}
@@ -367,11 +371,11 @@ public class CCommandDSC {
     			KVStringPair optionPair = (KVStringPair)options.next();
     			String key = optionPair.getKey();
     			String value = optionPair.getValue();
-    			if (key.equals(SCDOptionsEnum.INCLUDE.toString())) {
-    				quoteincludes.add(value);
-    			}
-    			else if (key.equals(SCDOptionsEnum.ISYSTEM.toString())) {
+    			if (key.equals(SCDOptionsEnum.INCLUDE.toString()) || key.equals(SCDOptionsEnum.ISYSTEM.toString())) {
     				includes.add(value);
+    			}
+    			else if (key.equals(SCDOptionsEnum.IQUOTE.toString())) {
+    				quoteincludes.add(value);
     			}
     			else if (key.equals(SCDOptionsEnum.DEFINE.toString())) {
     				symbols.add(value);

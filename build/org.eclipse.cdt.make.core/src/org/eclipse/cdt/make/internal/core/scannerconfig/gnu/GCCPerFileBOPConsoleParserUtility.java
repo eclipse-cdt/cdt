@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Martin Oberhuber (Wind River Systems) - bug 155096
+ * Gerhard Schaber (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -132,6 +133,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * @return CCommandDSC compile command description 
      */
     public CCommandDSC getNewCCommandDSC(String[] tokens, boolean cppFileType) {
+		ArrayList dirafter = new ArrayList();
+		ArrayList includes = new ArrayList();
         CCommandDSC command = new CCommandDSC(cppFileType, getProject());
         command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[0]));
         for (int i = 1; i < tokens.length; ++i) {
@@ -163,6 +166,12 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                         // ex. -I/dir
                     }
                     else if (SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IDASH)) {
+                    	for (Iterator iter=includes.iterator(); iter.hasNext(); ) {
+                    		option = (String)iter.next();
+                            KVStringPair pair = new KVStringPair(SCDOptionsEnum.IQUOTE.toString(), option);
+                        	command.addSCOption(pair);                    		
+                    	}
+                    	includes = new ArrayList();
                         // -I- has no parameter
                     }
                     else {
@@ -179,15 +188,34 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                             SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.INCLUDE_FILE) ||
                             SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IMACROS_FILE) ||
                             SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IDIRAFTER) ||
-                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.ISYSTEM))) {
+                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.ISYSTEM) || 
+                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IQUOTE) )) {
                         option = (getAbsolutePath(option)).toString();
                     }
-                    // add the pair
-                    command.addSCOption(new KVStringPair(SCDOptionsEnum.getSCDOptionsEnum(j).toString(), option));
+                    if (SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IDIRAFTER)) {
+                        KVStringPair pair = new KVStringPair(SCDOptionsEnum.INCLUDE.toString(), option);
+                    	dirafter.add(pair);
+                    }
+                    else if (SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.INCLUDE)) {
+                    	includes.add(option);
+                    }
+                    else { // add the pair
+                        KVStringPair pair = new KVStringPair(SCDOptionsEnum.getSCDOptionsEnum(j).toString(), option);
+                    	command.addSCOption(pair);
+                    }
                     break;
                 }
             }
         }
+        String option;
+    	for (Iterator iter=includes.iterator(); iter.hasNext(); ) {
+    		option = (String)iter.next();
+            KVStringPair pair = new KVStringPair(SCDOptionsEnum.INCLUDE.toString(), option);
+        	command.addSCOption(pair);                    		
+    	}
+    	for (Iterator iter=dirafter.iterator(); iter.hasNext(); ) {
+        	command.addSCOption((KVStringPair)iter.next());                    		
+    	}
         return command;
     }
 

@@ -13,6 +13,9 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -98,16 +101,27 @@ public class ToggleWatchpointActionDelegate extends ActionDelegate implements IO
 				}
  			}
 			if (resource != null) {
-				targetAdapter = (IToggleBreakpointsTarget)resource.getAdapter(IToggleBreakpointsTarget.class);
+				targetAdapter = getAdapter(resource);
 			}
 			if (targetAdapter == null) {
-				targetAdapter = (IToggleBreakpointsTarget)fTargetPart.getAdapter(IToggleBreakpointsTarget.class);
+				targetAdapter = getAdapter(fTargetPart);
 			}
 		}
 		if (targetAdapter == null) {
 			targetAdapter = fBreakpointAdapter;
 		}
 		return targetAdapter;
+	}
+
+	private IToggleBreakpointsTarget getAdapter(IAdaptable adaptable) {
+		IToggleBreakpointsTarget adapter= (IToggleBreakpointsTarget)adaptable.getAdapter(IToggleBreakpointsTarget.class);
+		if (adapter == null) {
+			IAdapterManager adapterManager= Platform.getAdapterManager();
+			if (adapterManager.hasAdapter(adaptable, IToggleBreakpointsTarget.class.getName())) { 
+				adapter= (IToggleBreakpointsTarget)adapterManager.loadAdapter(adaptable, IToggleBreakpointsTarget.class.getName()); 
+			}
+		}
+		return adapter;
 	}
 
 	private void setSelection( ISelection selection ) {

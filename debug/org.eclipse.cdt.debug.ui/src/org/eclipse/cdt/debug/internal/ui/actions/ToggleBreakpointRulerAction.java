@@ -16,6 +16,9 @@ import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.Action;
@@ -103,15 +106,26 @@ public class ToggleBreakpointRulerAction extends Action {
 				resource = (IResource) ((IEditorPart)fTargetPart).getEditorInput().getAdapter(IResource.class);
 			}
 			if (resource != null) {
-				fTargetAdapter = (IToggleBreakpointsTarget)resource.getAdapter(IToggleBreakpointsTarget.class);
+				fTargetAdapter = getAdapter(resource);
 			}
 			if (fTargetAdapter == null) {
-				fTargetAdapter = (IToggleBreakpointsTarget)fTargetPart.getAdapter(IToggleBreakpointsTarget.class);
+				fTargetAdapter = getAdapter(fTargetPart);
 			}
 		}
 		if (fTargetAdapter == null) {
 			fTargetAdapter = new ToggleBreakpointAdapter();
 		}
+	}
+
+	private IToggleBreakpointsTarget getAdapter(IAdaptable adaptable) {
+		IToggleBreakpointsTarget adapter= (IToggleBreakpointsTarget)adaptable.getAdapter(IToggleBreakpointsTarget.class);
+		if (adapter == null) {
+			IAdapterManager adapterManager= Platform.getAdapterManager();
+			if (adapterManager.hasAdapter(adaptable, IToggleBreakpointsTarget.class.getName())) { 
+				adapter= (IToggleBreakpointsTarget)adapterManager.loadAdapter(adaptable, IToggleBreakpointsTarget.class.getName()); 
+			}
+		}
+		return adapter;
 	}
 
 	/**

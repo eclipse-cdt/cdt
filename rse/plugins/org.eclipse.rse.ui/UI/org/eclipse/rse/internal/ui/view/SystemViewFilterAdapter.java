@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -53,6 +54,7 @@ import org.eclipse.rse.ui.validators.ValidatorFilterName;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
+import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -197,7 +199,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 		if (filter.isTransient())
 		{
 			 if (filter.isPromptable())
-			   return checkForNull(processPromptingFilter(filter), true);
+			   return checkForEmptyList(processPromptingFilter(filter), element, true);
 
 			 Object[] children = null;
              SystemFilterSimple simpleFilter = (SystemFilterSimple)filter;
@@ -232,7 +234,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 		     	}
 		     	// otherwise, get children and then cache
 		     	else {
-		     		children = checkForNull(ss.resolveFilterStrings(filterStrings, monitor), true);
+		     		children = checkForEmptyList(ss.resolveFilterStrings(filterStrings, monitor), element, true);
 		     		
 		     		if (ss.getSubSystemConfiguration().supportsFilterCaching()) {
 		     			simpleFilter.setContents(SystemChildrenContentsType.getInstance(), children);
@@ -245,7 +247,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
                    for (int idx=0; (match==null) && (idx<children.length); idx++)
                    {
                    	  Object child = children[idx];
-                   	  String objName = getSystemViewElementAdapter(child).getName(child);
+                   	  String objName = SystemAdapterHelpers.getViewAdapter(child, getViewer()).getName(child);
                    	  if ((objName != null) && (objName.equals(preSelectName)))
                    	    match = child;
                    }
@@ -270,7 +272,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 		}
 
 		if (filter.isPromptable())
-		  return checkForNull(null, false);
+		  return checkForEmptyList(null, element, false);
 		
 		// normal filters...
     	//Vector strings = filter.getFilterStringsVector();

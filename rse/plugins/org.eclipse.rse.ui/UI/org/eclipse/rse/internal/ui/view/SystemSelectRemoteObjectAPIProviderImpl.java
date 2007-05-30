@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -364,7 +365,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	 	  children = resolveFilterString(subsystem, filterString);
 	 	}
 		
-		return checkForNull(children, true);
+		return checkForEmptyList(children, null, true);
 	}
 	
 	/**
@@ -401,10 +402,11 @@ public class SystemSelectRemoteObjectAPIProviderImpl
  		{
  			Object[] children = null;
  			ISubSystem[] subsystems = getSubSystems(selectedConnection);
+ 			ISubSystem subsystem = null;
  			
  			if ((subsystems != null) && (subsystems.length > 0))
  			{
- 				ISubSystem subsystem = subsystems[0]; // always just use first. Hopefully never a problem!
+ 				subsystem = subsystems[0]; // always just use first. Hopefully never a problem!
  				
  				if (subsystems.length > 1)
  				  SystemBasePlugin.logWarning(this.getClass().getName() + ": More than one subsystem meeting criteria. SSFID = "+subsystemConfigurationId+", SSFCat = "+subsystemConfigurationCategory); //$NON-NLS-1$ //$NON-NLS-2$
@@ -457,7 +459,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	 	        }
  			}
  			
- 			return checkForNull(children, true);
+ 			return checkForEmptyList(children, subsystem, true);
  		}
 	}
 	
@@ -539,7 +541,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 			multiConnections = ((conns!=null) && (conns.length>1)); // 50167pc
        }
 
-       return checkForNull(children, false);
+       return checkForEmptyList(children, null, false);
     }     
 
 	/**

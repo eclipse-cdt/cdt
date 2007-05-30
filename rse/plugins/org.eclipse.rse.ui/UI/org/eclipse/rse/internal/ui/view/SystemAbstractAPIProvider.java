@@ -12,16 +12,19 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -45,11 +48,15 @@ public abstract class SystemAbstractAPIProvider
 	protected ISystemRegistry sr;
 	
 	protected Object[] emptyList = new Object[0];
-	protected Object[] msgList   = new Object[1];	
+	protected Object[] msgList   = new Object[1];
+	/**
+	 * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)} instead.
+	 */
 	protected SystemMessageObject nullObject     = null;
 	protected SystemMessageObject canceledObject = null;	
 	protected SystemMessageObject errorObject    = null;	
 	
+	private Preferences fPrefStore = null;
 	
 	/**
 	 * Constructor 
@@ -104,17 +111,51 @@ public abstract class SystemAbstractAPIProvider
     	return viewer;
     }
 
-	private void initMsgObjects()
-	{
-		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
-		canceledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
-		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
-	}
-	
+    protected final void initMsgObjects()
+ 	{
+ 		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
+ 		canceledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
+ 		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
+ 	}
+
+    /**
+     * <i>Callable by subclasses. Do not override</i><br>
+     * In getChildren, return <samp>checkForEmptyList(children, parent, true/false)<.samp>
+     * versus your array directly. This method checks for a null array which is
+     * not allowed and replaces it with an empty array. 
+     * If true is passed then it returns the "Empty list" message object if the array is null or empty
+     * 
+     * @param children The list of children.
+     * @param parent The parent for the children.
+     * @param returnNullMsg <code>true</code> if an "Empty List" message should be returned.
+     * @return The list of children, a list with the "Empty List" message object or an empty list.
+     */
+    protected Object[] checkForEmptyList(Object[] children, Object parent, boolean returnNullMsg) {
+    	if ((children == null) || (children.length == 0)) {
+    		if (fPrefStore == null) {
+    			fPrefStore = RSEUIPlugin.getDefault().getPluginPreferences();
+    		}
+    		if (!returnNullMsg
+    				|| (fPrefStore != null && !fPrefStore
+    						.getBoolean(ISystemPreferencesConstants.SHOW_EMPTY_LISTS))) {
+    			return emptyList;
+    		} else {
+    			return new Object[] {
+    				new SystemMessageObject(
+    					RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),
+    					ISystemMessageObject.MSGTYPE_EMPTY, 
+    					parent)};
+    		}
+    	}
+    	return children;
+    }
+    
     /**
      * In getChildren, return checkForNull(children, true/false) vs your array directly.
      * This method checks for a null array which not allow and replaces it with an empty array.
      * If true is passed then it returns the "Empty list" message object if the array is null or empty
+     * 
+     * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)} instead.
      */
     protected Object[] checkForNull(Object[] children, boolean returnNullMsg)
     {

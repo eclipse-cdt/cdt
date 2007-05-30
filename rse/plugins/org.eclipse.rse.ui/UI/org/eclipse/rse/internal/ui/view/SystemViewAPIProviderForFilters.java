@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -212,13 +213,7 @@ public class SystemViewAPIProviderForFilters
 		     	SystemBasePlugin.logError("Exception resolving filters' strings ",exc); //$NON-NLS-1$
 		     } // message already issued
 
-			 if ((children == null) || (children.length==0))
-			 {
-		       children = new SystemMessageObject[1];
-		       children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),
-		                                             ISystemMessageObject.MSGTYPE_EMPTY, element);
-			 }    	     
-    	   	 return children;
+    	   	 return checkForEmptyList(children, element, true);
     	   }	
     	}		
 	}

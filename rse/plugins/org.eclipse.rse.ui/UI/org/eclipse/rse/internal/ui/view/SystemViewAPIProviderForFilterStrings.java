@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -138,12 +139,7 @@ public class SystemViewAPIProviderForFilterStrings
 		try
 		{
 			children = ss.resolveFilterString(filterStringReference.getString(), new NullProgressMonitor());
-			if ((children == null) || (children.length==0))
-			{
-		      children = new SystemMessageObject[1];
-		      children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),
-		                                            ISystemMessageObject.MSGTYPE_EMPTY, element);
-			}
+			children = checkForEmptyList(children, element, true);
 		}
 		catch (InterruptedException exc)
 		{

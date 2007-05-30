@@ -12,16 +12,13 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemMessageObject;
-import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 
@@ -49,13 +46,6 @@ public class SystemTestFilterStringAPIProviderImpl
 		super();
 		this.subsystem = subsystem;
 		this.filterString = filterString;
-	}
-	
-	private void initMsgObjects()
-	{
-		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
-		canceledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
-		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
 	}
 	
 	/**
@@ -88,25 +78,13 @@ public class SystemTestFilterStringAPIProviderImpl
 		try
 		{
 	 	   children = subsystem.resolveFilterString(filterString, new NullProgressMonitor());
-	 	   if ((children == null) || (children.length==0))
-	 	   {
-	 	   	 if (nullObject == null)
-	 	   	   initMsgObjects();
-	 	   	 msgList[0] = nullObject;
-	 	     children = msgList;
-	 	   }
+	 	   children = checkForEmptyList(children, null, true);
 		} catch (InterruptedException exc)
 		{
-		   if (canceledObject == null)
-		     initMsgObjects();
-		   msgList[0] = canceledObject;
-		   children = msgList;
+		   children = getCancelledMessageObject();
 		} catch (Exception exc)
 		{
-		   if (errorObject == null)
-		     initMsgObjects();
-		   msgList[0] = errorObject;
-		   children = msgList;			
+		   children = getFailedMessageObject();			
 		   SystemBasePlugin.logError("Error in SystemTestFilterStringAPIProviderImpl#getSystemViewRoots()",exc); //$NON-NLS-1$
 		}
 		return children;

@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [189163] Update IActionFilter constants from subsystemFactory to subsystemConfiguration
+ * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -33,6 +34,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
@@ -58,6 +60,7 @@ import org.eclipse.rse.internal.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -136,6 +139,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	protected Object[] msgList   = new Object[1];	
 	/**
 	 * Frequently returned msg object from getChildren: "empty list"
+	 * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)} instead.
 	 */
 	protected SystemMessageObject nullObject     = null;
 	/**
@@ -186,6 +190,8 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	protected Object   _lastSelected = null;
 
+	private Preferences fPrefStore = null;
+	
 	/**
 	 * Static constructor.
 	 */
@@ -1518,16 +1524,16 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 			}
 			return false;
 		}
-		else if (name.equalsIgnoreCase("isRemote"))
+		else if (name.equalsIgnoreCase("isRemote")) //$NON-NLS-1$
 		{
-			return isRemote(target);
+			return isRemote(target) ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
-		// Give the ISV's as the element owners/contibutors the chance to extend the standard RSE action
+		// Give the ISV's as the element owners/contributors the chance to extend the standard RSE action
 		// filters for their specific needs. We do this by trying to determine the system type from the
 		// target object and try to adapt the system type to an IActionFilter.
 		//
-		// Note: Everything we do here is performance critical to the menu to show up. Therefor
+		// Note: Everything we do here is performance critical to the menu to show up. Therefore
 		//       we cache as much as possible here. The cache is static to all AbstractSystemViewAdapter
 		//       instances throughout the whole hierarchy.
 		IHost conn = null;
@@ -1821,11 +1827,45 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
 	}
 	
+	/**
+	 * <i>Callable by subclasses. Do not override</i><br>
+	 * In getChildren, return <samp>checkForEmptyList(children, parent, true/false)<.samp>
+	 * versus your array directly. This method checks for a null array which is
+	 * not allowed and replaces it with an empty array. 
+	 * If true is passed then it returns the "Empty list" message object if the array is null or empty
+	 * 
+	 * @param children The list of children.
+	 * @param parent The parent for the children.
+	 * @param returnNullMsg <code>true</code> if an "Empty List" message should be returned.
+	 * @return The list of children, a list with the "Empty List" message object or an empty list.
+	 */
+	protected Object[] checkForEmptyList(Object[] children, Object parent, boolean returnNullMsg) {
+		if ((children == null) || (children.length == 0)) {
+			if (fPrefStore == null) {
+				fPrefStore = RSEUIPlugin.getDefault().getPluginPreferences();
+			}
+			if (!returnNullMsg
+					|| (fPrefStore != null && !fPrefStore
+							.getBoolean(ISystemPreferencesConstants.SHOW_EMPTY_LISTS))) {
+				return emptyList;
+			} else {
+				return new Object[] {
+					new SystemMessageObject(
+						RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),
+						ISystemMessageObject.MSGTYPE_EMPTY, 
+						parent)};
+			}
+		}
+		return children;
+	}
+
     /**
      * <i>Callable by subclasses. Do not override</i><br>
-     * In getChildren, return <samp>checkForNull(children, true/false)<.samp> versus your array directly.
+     * In getChildren, return <samp>checkForNull(children, true/false)</samp> versus your array directly.
      * This method checks for a null array which is not allowed and replaces it with an empty array.
      * If true is passed then it returns the "Empty list" message object if the array is null or empty
+     * 
+     * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)} instead.
      */
     protected Object[] checkForNull(Object[] children, boolean returnNullMsg)
     {
@@ -1847,7 +1887,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 
     /**
      * <i>Callable by subclasses. Do not override</i><br>
-     * Return the "Operation cancelled by user" msg as an object array so can be used to answer getChildren()
+     * Return the "Operation canceled by user" msg as an object array so can be used to answer getChildren()
      */
     protected final Object[] getCancelledMessageObject()
     {    	
@@ -1870,6 +1910,8 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
     /**
      * <i>Callable by subclasses. Do not override</i><br>
      * Return the "Empty list" msg as an object array so can be used to answer getChildren()
+     * 
+     * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)} instead.
      */
     protected final Object[] getEmptyMessageObject()
     {    	

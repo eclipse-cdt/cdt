@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,9 +38,10 @@ public class ValidatorUserActionName extends ValidatorUniqueString
 	
 	/**
 	 * Use this constructor when the name must be unique.
-	 * @param existingNameList a list of existing names to compare against.
+	 * @param existingNameList a collection of existing names to compare against.
+	 * The collection will not be modified by the validator.
 	 */
-	public ValidatorUserActionName(List existingNameList)
+	public ValidatorUserActionName(Collection existingNameList)
 	{
 		super(existingNameList, CASE_SENSITIVE); // case sensitive uniqueness
         init();

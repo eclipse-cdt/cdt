@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -39,11 +39,12 @@ public class ValidatorFilterString
 	protected SystemMessage   msg_Invalid;
 	
 	/**
-	 * Constructor accepting a list of existing strings, as simple strings.
-	 * @param existingList A list of strings to compare against.
+	 * Constructor accepting a collection of existing strings, as simple strings.
+	 * @param existingList A collection of strings to compare against.
+	 * This will not be modified by the validator.
 	 * @param caseSensitive true if comparisons are to be case sensitive, false if case insensitive.
 	 */
-	public ValidatorFilterString(List existingList, boolean caseSensitive)
+	public ValidatorFilterString(Collection existingList, boolean caseSensitive)
 	{
 		super(existingList, caseSensitive); // case sensitive uniqueness		
 		init();

@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -37,11 +37,12 @@ public class ValidatorFilterName
 	//public static final boolean CASE_INSENSITIVE = false;
 	
 	/**
-	 * Constructor accepting a List. 
-	 * @param existingList a list of existing filter names to compare against.
-	 *        Note that toString() is used to get the string from each item.
+	 * Constructor accepting a Collection. 
+	 * @param existingList a collection of existing filter names to compare against.
+	 * The collection will not be modified by the validator.
+	 * Note that toString() is used to get the string from each item.
 	 */
-	public ValidatorFilterName(List existingList)
+	public ValidatorFilterName(Collection existingList)
 	{
 		super(existingList, CASE_SENSITIVE);
 		init();

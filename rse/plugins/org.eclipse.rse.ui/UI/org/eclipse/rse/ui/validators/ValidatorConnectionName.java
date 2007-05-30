@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -41,7 +41,7 @@ public class ValidatorConnectionName extends ValidatorUniqueString implements IS
 	 * Constructor. 
 	 * @param existingNameList list of existing names (strings) in owning profile. Can be null if not a rename operation.
 	 */
-	public ValidatorConnectionName(List existingNameList)
+	public ValidatorConnectionName(Collection existingNameList)
 	{
 		super(existingNameList, CASE_SENSITIVE);
 		setErrorMessages(

@@ -16,12 +16,12 @@
 
 package org.eclipse.rse.ui.validators;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This interface is implemented by any validator that 
- *  does uniqueness checking. Allows common code that will set the 
- *  list of string to check against.
+ * does uniqueness checking. Allows common code that will set the 
+ * list of string to check against.
  */
 public interface ISystemValidatorUniqueString 
 {
@@ -36,10 +36,13 @@ public interface ISystemValidatorUniqueString
 	public void setExistingNamesList(String[] existingList);
 	/**
 	 * Reset the existing names list. 
+	 * The collection used here is to be treated as 
+	 * read-only by any implementer of this interface.
 	 */
-	public void setExistingNamesList(List existingList);	
+	public void setExistingNamesList(Collection existingList);	
 	/**
-	 * Return the existing names list. This will be a case-normalized and sorted list.
+	 * Return the existing names list.
+	 * This will be a case-normalized and sorted list.
 	 */
 	public String[] getExistingNamesList();	
 }

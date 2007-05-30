@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -36,10 +36,11 @@ public class ValidatorProfileName
 	private SystemMessage reservedNameMsg;
 	
 	/**
-	 * The list of existing names can be null if this is not a rename operation.
-	 * @param existingNameList the list of names to compare against
+	 * The collection of existing names can be null if this is not a rename operation.
+	 * @param existingNameList the collection of names to compare against.
+	 * This will not be modified by the validator.
 	 */
-	public ValidatorProfileName(List existingNameList)
+	public ValidatorProfileName(Collection existingNameList)
 	{
 		super(existingNameList);
 		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PROFILENAME_EMPTY),

@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.validators;
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
@@ -37,7 +37,7 @@ public class ValidatorLocalPath extends ValidatorPathName
 	/**
 	 * Constructor for ValidatorLocalPath
 	 */
-	public ValidatorLocalPath(List existingNameList) 
+	public ValidatorLocalPath(Collection existingNameList) 
 	{
 		super(existingNameList);
 	}

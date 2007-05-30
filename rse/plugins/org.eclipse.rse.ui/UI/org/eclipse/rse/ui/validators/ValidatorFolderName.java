@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -44,9 +44,10 @@ public class ValidatorFolderName
 	
 	/**
 	 * Use this constructor when the name must be unique. Give the
-	 * @param existingNameList a list of existing names to compare against.
+	 * @param existingNameList a collection of existing names to compare against.
+	 * This will not be modified by the validator.
 	 */
-	public ValidatorFolderName(List existingNameList)
+	public ValidatorFolderName(Collection existingNameList)
 	{
 		super(existingNameList, CASE_INSENSITIVE); // case insensitive uniqueness
 		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),
@@ -56,7 +57,7 @@ public class ValidatorFolderName
 	}
 	/**
 	 * Use this constructor when the name must be unique. Give the
-	 * ctor a string array of existing names to compare against.
+	 * constructor a string array of existing names to compare against.
 	 */
 	public ValidatorFolderName(String existingNameList[])
 	{

@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.validators;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -49,11 +49,11 @@ public class ValidatorUniqueString
 	protected SystemMessage    currentMessage;
 	
 	/**
-	 * @param existingList a list of existing strings to compare against.
-	 *        Note that toString() is used to get the string from each item.
+	 * @param existingList a collection of existing strings to compare against.
+	 * Note that toString() is used to get the string from each item.
 	 * @param caseSensitive true if comparisons are to be case sensitive, false if case insensitive.	 
 	 */
-	public ValidatorUniqueString(List existingList, boolean caseSensitive)
+	public ValidatorUniqueString(Collection existingList, boolean caseSensitive)
 	{
 		this.caseSensitive = caseSensitive;		
 		setExistingNamesList(existingList);
@@ -75,15 +75,15 @@ public class ValidatorUniqueString
 		                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_NOTUNIQUE));
 	}
 	/**
-	 * Constructor accepting a List and another validator to use for the syntax checking.
-	 * @param existingList A list of existing strings to compare against.
-	 *        Note that toString() is used to get the string from each item.	 
+	 * Constructor accepting a collection and another validator to use for the syntax checking.
+	 * @param existingList A collection of existing strings to compare against.
+	 * Note that toString() is used to get the string from each item.	 
 	 * @param caseSensitive true if comparisons are to be case sensitive, false if case insensitive.
 	 * @param syntaxValidator Another IInputValidator who does the job of checking the syntax. After
 	 *         checking for non-nullness and uniqueness, this validator is used to 
 	 *         check for syntax.
 	 */
-	public ValidatorUniqueString(List existingList, boolean caseSensitive, 
+	public ValidatorUniqueString(Collection existingList, boolean caseSensitive, 
 	                             ISystemValidator syntaxValidator)
 	{
 		this(existingList, caseSensitive);
@@ -121,9 +121,10 @@ public class ValidatorUniqueString
 	}
 	
 	/**
-	 * Reset the existing names list. 
+	 * Reset the collection of existing names.
+	 * The collection will not be modified by the validator.
 	 */
-	public void setExistingNamesList(List newList)
+	public void setExistingNamesList(Collection newList)
 	{		
 		if (newList == null)
 		  existingList = null;

@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -42,9 +42,10 @@ public class ValidatorSystemName
 	
 	/**
 	 * Use this constructor when the name must be unique.
-	 * @param existingNameList a list of existing names to compare against.
+	 * @param existingNameList a collection of existing names to compare against.
+	 * This collection will not be modified by the validator.
 	 */
-	public ValidatorSystemName(List existingNameList)
+	public ValidatorSystemName(Collection existingNameList)
 	{
 		super(existingNameList, true); // case sensitive uniqueness
 		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),

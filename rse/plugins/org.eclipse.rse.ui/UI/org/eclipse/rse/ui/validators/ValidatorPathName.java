@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -40,16 +40,17 @@ public class ValidatorPathName
 		
 	/**
 	 * Use this constructor when the name must be unique.
-	 * @param existingNameList a list of existing names to compare against.
+	 * @param existingNameList a collection of existing names to compare against.
+	 * This will not be modified by the validator.
 	 */
-	public ValidatorPathName(List existingNameList)
+	public ValidatorPathName(Collection existingNameList)
 	{
 		super(existingNameList, CASE_INSENSITIVE); // case insensitive uniqueness
         init();
 	}
 	/**
 	 * Use this constructor when the name must be unique. Give the
-	 * ctor a string array of existing names to compare against.
+	 * constructor a string array of existing names to compare against.
 	 */
 	public ValidatorPathName(String existingNameList[])
 	{

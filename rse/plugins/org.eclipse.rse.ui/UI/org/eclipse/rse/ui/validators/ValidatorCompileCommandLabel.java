@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,8 +38,9 @@ public class ValidatorCompileCommandLabel extends ValidatorUniqueString
 	
 	/**
 	 * Use this constructor when you have a list of existing labels.
+	 * The collection will not be modified by the validator.
 	 */
-	public ValidatorCompileCommandLabel(List existingLabelList)
+	public ValidatorCompileCommandLabel(Collection existingLabelList)
 	{
 		super(existingLabelList, CASE_INSENSITIVE); // case insensitive uniqueness
         init();

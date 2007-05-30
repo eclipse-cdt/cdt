@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -44,9 +44,10 @@ public class ValidatorFileName
 	
 	/**
 	 * Use this constructor when the name must be unique.
-	 * @param existingNameList a list of existing names to compare against.
+	 * @param existingNameList a collection of existing names to compare against.
+	 * This will not be modified by the validator.
 	 */
-	public ValidatorFileName(List existingNameList)
+	public ValidatorFileName(Collection existingNameList)
 	{
 		super(existingNameList, false); // case insensitive uniqueness
 		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),

@@ -94,7 +94,6 @@ import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -267,9 +266,11 @@ public class SystemTableView
 	protected boolean _selectionShowOpenViewActions;
 	protected boolean _selectionShowDeleteAction;
 	protected boolean _selectionShowRenameAction;
+	protected boolean _selectionShowPropertiesAction;
 	protected boolean _selectionEnableDeleteAction;
 	protected boolean _selectionEnableRenameAction;
 
+	
 	protected boolean _selectionIsRemoteObject = true;
 	protected boolean _selectionFlagsUpdated = false;
 
@@ -814,15 +815,29 @@ public class SystemTableView
 		_lastWidths = widths;
 	}
 
-	protected void initDragAndDrop()
-	{
-		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] dragtransfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(),  FileTransfer.getInstance(), EditorInputTransfer.getInstance()};
-		Transfer[] droptransfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), FileTransfer.getInstance(), EditorInputTransfer.getInstance()};
-		
-		addDragSupport(ops, dragtransfers, new SystemViewDataDragAdapter((ISelectionProvider) this));
-		addDropSupport(ops | DND.DROP_DEFAULT, droptransfers, new SystemViewDataDropAdapter(this));
-	}
+    /**
+     * Initialize drag and drop support for this view.
+     * 
+     */  
+    protected void initDragAndDrop() 
+    {
+        int ops = DND.DROP_COPY | DND.DROP_MOVE;
+        Transfer[] dragtransfers = new Transfer[]   
+            { PluginTransfer.getInstance(), 
+        		FileTransfer.getInstance(),
+        		EditorInputTransfer.getInstance()
+            };  
+   
+        Transfer[] droptransfers = new Transfer[]   
+            { PluginTransfer.getInstance(), 
+        		FileTransfer.getInstance(),
+                EditorInputTransfer.getInstance()
+             };  
+        
+        addDragSupport(ops | DND.DROP_DEFAULT, dragtransfers, new SystemViewDataDragAdapter(this));
+        addDropSupport(ops | DND.DROP_DEFAULT, droptransfers, new SystemViewDataDropAdapter(this));
+    }
+
 	/** 
 	 * Used to asynchronously update the view whenever properties change.
 	 * @see org.eclipse.rse.core.events.ISystemResourceChangeListener#systemResourceChanged(org.eclipse.rse.core.events.ISystemResourceChangeEvent)
@@ -1469,10 +1484,20 @@ public class SystemTableView
 		return ok;
 	}
 
+	
+	/**
+	 * Decides whether to even show the properties menu item.
+	 * Assumes scanSelections() has already been called
+	 */
+	protected boolean showProperties() {
+		return _selectionShowPropertiesAction;
+	}
+	
 	// ---------------------------
 	// ISYSTEMRENAMETARGET METHODS
 	// ---------------------------
 
+	
 	/**
 	 * Required method from ISystemRenameTarget.
 	 * Decides whether to even show the rename menu item.
@@ -1734,13 +1759,15 @@ public class SystemTableView
 			// registered propertyPages extension points registered for the selected object's class type.
 			//propertyDialogAction.selectionChanged(selection);		  
 
-	
-			PropertyDialogAction pdAction = getPropertyDialogAction();
-			if (pdAction.isApplicableForSelection())
+			if (showProperties())
 			{
-
-				menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
+				PropertyDialogAction pdAction = getPropertyDialogAction();
+				if (pdAction.isApplicableForSelection())
+				{
+					menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
+				}
 			}
+			
 			// OPEN IN NEW PERSPECTIVE ACTION... if (fromSystemViewPart && showOpenViewActions())
 			if (!_selectionIsRemoteObject)
 			{
@@ -1776,6 +1803,7 @@ public class SystemTableView
 		_selectionShowOpenViewActions = true;
 		_selectionShowDeleteAction = true;
 		_selectionShowRenameAction = true;
+		_selectionShowPropertiesAction = true;
 		_selectionEnableDeleteAction = true;
 		_selectionEnableRenameAction = true;
 		_selectionIsRemoteObject = true;
@@ -1799,6 +1827,9 @@ public class SystemTableView
 
 			if (_selectionShowRenameAction)
 				_selectionShowRenameAction = adapter.showRename(element);
+			
+			if (_selectionShowPropertiesAction)
+				_selectionShowPropertiesAction = adapter.showProperties(element);
 
 			if (_selectionEnableDeleteAction)
 				_selectionEnableDeleteAction = _selectionShowDeleteAction && adapter.canDelete(element);
@@ -1808,7 +1839,7 @@ public class SystemTableView
 				_selectionEnableRenameAction = _selectionShowRenameAction && adapter.canRename(element);
 
 			if (_selectionIsRemoteObject)
-				_selectionIsRemoteObject = (getRemoteAdapter(element) != null);
+				_selectionIsRemoteObject = adapter.isRemote(element);
 		}
 
 	}

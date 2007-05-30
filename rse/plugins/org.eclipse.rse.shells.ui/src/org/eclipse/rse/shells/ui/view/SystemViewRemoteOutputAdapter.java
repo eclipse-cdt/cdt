@@ -981,6 +981,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	{
 		return false;
 	}
+	
 	/**
 	 * Return true if this object is renamable by the user. If so, when selected,
 	 *  the Rename popup menu item will be enabled.
@@ -1248,4 +1249,13 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	public boolean supportsUserDefinedActions(Object object) {
 		return false;
 	}
+	
+	
+	/**
+	 * Don't show properties for remote output
+	 */
+	public boolean showProperties(Object element){
+		return false;
+	}
+	
 }

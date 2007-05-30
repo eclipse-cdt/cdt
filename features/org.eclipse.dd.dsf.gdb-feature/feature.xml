@@ -12,108 +12,12 @@ Debug Services Framework
 GDB-MI Implementation
    </description>
 
-   <copyright url="http://www.eclipse.org/legal/epl-v10.html">
-      Copyright (c) 2006-2007 Wind River Systems and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Eclipse Public License
-v1.0 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/epl-v10.html
+   <copyright>
+      %copyright
    </copyright>
 
-   <license url="http://www.eclipse.org/legal/epl-v10.html">
-      ECLIPSE FOUNDATION SOFTWARE USER AGREEMENT
-March 17, 2005
-Usage Of Content
-THE ECLIPSE FOUNDATION MAKES AVAILABLE SOFTWARE, DOCUMENTATION,
-INFORMATION AND/OR OTHER MATERIALS FOR OPEN SOURCE PROJECTS (COLLECTIVELY
-&quot;CONTENT&quot;). USE OF THE CONTENT IS GOVERNED BY THE TERMS AND CONDITIONS
-OF THIS AGREEMENT AND/OR THE TERMS AND CONDITIONS OF LICENSE
-AGREEMENTS OR NOTICES INDICATED OR REFERENCED BELOW. BY USING
-THE CONTENT, YOU AGREE THAT YOUR USE OF THE CONTENT IS GOVERNED
-BY THIS AGREEMENT AND/OR THE TERMS AND CONDITIONS OF ANY APPLICABLE
-LICENSE AGREEMENTS OR NOTICES INDICATED OR REFERENCED BELOW.
-IF YOU DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS AGREEMENT
-AND THE TERMS AND CONDITIONS OF ANY APPLICABLE LICENSE AGREEMENTS
-OR NOTICES INDICATED OR REFERENCED BELOW, THEN YOU MAY NOT USE
-THE CONTENT.
-Applicable Licenses
-Unless otherwise indicated, all Content made available by the
-Eclipse Foundation is provided to you under the terms and conditions
-of the Eclipse Public License Version 1.0 (&quot;EPL&quot;). A copy of
-the EPL is provided with this Content and is also available at
-http://www.eclipse.org/legal/epl-v10.html. For purposes of the
-EPL, &quot;Program&quot; will mean the Content.
-Content includes, but is not limited to, source code, object
-code, documentation and other files maintained in the Eclipse.org
-CVS repository (&quot;Repository&quot;) in CVS modules (&quot;Modules&quot;) and
-made available as downloadable archives (&quot;Downloads&quot;).
-- Content may be structured and packaged into modules to facilitate
-delivering,
-extending, and upgrading the Content. Typical modules may include
-plug-ins (&quot;Plug-ins&quot;),
-plug-in fragments (&quot;Fragments&quot;), and features (&quot;Features&quot;).
-- Each Plug-in or Fragment may be packaged as a sub-directory
-or JAR (Java? ARchive)
-in a directory named &quot;plugins&quot;.
-- A Feature is a bundle of one or more Plug-ins and/or Fragments
-and associated material.
-Each Feature may be packaged as a sub-directory in a directory
-named &quot;features&quot;.
-Within a Feature, files named &quot;feature.xml&quot; may contain a list
-of the names and version
-numbers of the Plug-ins and/or Fragments associated with that
-Feature.
-- Features may also include other Features (&quot;Included Features&quot;).
-Within a Feature, files
-named &quot;feature.xml&quot; may contain a list of the names and version
-numbers of Included Features.
-Features may also include other Features (&quot;Included Features&quot;).
-Files named &quot;feature.xml&quot; may contain a list of the names and
-version numbers of Included Features.
-The terms and conditions governing Plug-ins and Fragments should
-be contained in files named &quot;about.html&quot; (&quot;Abouts&quot;). The terms
-and conditions governing Features and Included Features should
-be contained in files named &quot;license.html&quot; (&quot;Feature Licenses&quot;).
-Abouts and Feature
-Licenses may be located in any directory of a Download or Module
-including, but not limited to the following locations:
-- The top-level (root) directory
-- Plug-in and Fragment directories
-- Inside Plug-ins and Fragments packaged as JARs
-- Sub-directories of the directory named &quot;src&quot; of certain Plug-ins
-- Feature directories
-Note: if a Feature made available by the Eclipse Foundation is
-installed using the Eclipse Update Manager, you must agree to
-a license (&quot;Feature Update License&quot;) during the installation
-process. If the Feature contains Included Features, the Feature
-Update License should either provide you
-with the terms and conditions governing the Included Features
-or inform you where you can locate them. Feature Update Licenses
-may be found in the &quot;license&quot; property of files named &quot;feature.properties&quot;.
-Such Abouts, Feature Licenses and Feature Update Licenses contain
-the terms and conditions (or references to such terms and conditions)
-that govern your
-use of the associated Content in that directory.
-THE ABOUTS, FEATURE LICENSES AND FEATURE UPDATE LICENSES MAY
-REFER TO THE EPL OR OTHER LICENSE AGREEMENTS, NOTICES OR TERMS
-AND CONDITIONS. SOME OF THESE OTHER LICENSE AGREEMENTS MAY INCLUDE
-(BUT ARE NOT LIMITED TO):
-- Common Public License Version 1.0 (available at http://www.eclipse.org/legal/cpl-v10.html)
-IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS AND CONDITIONS
-PRIOR TO USE OF THE CONTENT. If no About, Feature License or
-Feature Update License is provided, please contact the Eclipse
-Foundation to determine what terms and conditions govern that
-particular Content.
-Cryptography
-Content may contain encryption software. The country in which
-you are currently may have restrictions on the import, possession,
-and use, and/or re-export to another country, of encryption software.
-BEFORE using any encryption software, please check the country&apos;s
-laws,
-regulations and policies concerning the import, possession, or
-use, and re-export of encryption software, to see if this is
-permitted.
-Java and all Java-based trademarks are trademarks of Sun Microsystem
+   <license url="%licenseURL">
+      %license
    </license>
 
    <url>

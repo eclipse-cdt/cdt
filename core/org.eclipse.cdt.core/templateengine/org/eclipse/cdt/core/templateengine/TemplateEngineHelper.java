@@ -43,7 +43,7 @@ public class TemplateEngineHelper {
 	public static final String PROJRESOURCE = "plugin.xml"; //$NON-NLS-1$
 	public static final String PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 	public static final String PLUGIN_PROPERTIES = "plugin.properties"; //$NON-NLS-1$
-	public static final String TEMPLATE_PROPERTIES = "templates.properties"; //$NON-NLS-1$
+	public static final String TEMPLATE_PROPERTIES = "template.properties"; //$NON-NLS-1$
 	public static final String BOOLTRUE = "true"; //$NON-NLS-1$
 	public static final String ID = "id"; //$NON-NLS-1$
 	public static final String VALUE = "value"; //$NON-NLS-1$

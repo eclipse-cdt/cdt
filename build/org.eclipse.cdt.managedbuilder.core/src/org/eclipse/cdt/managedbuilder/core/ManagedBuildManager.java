@@ -2639,11 +2639,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		if(info != null){
 			fInfoMap.put(project, info);
 			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info set for project " + project.getName());
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info set for project " + project.getName()); //$NON-NLS-1$
 		}else{
 			fInfoMap.remove(project);
 			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info CLEARED for project " + project.getName());
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info CLEARED for project " + project.getName()); //$NON-NLS-1$
 		}
 	}
 	
@@ -2718,7 +2718,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 		if (rc == null){
 			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: null resource");
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: null resource"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -2730,7 +2730,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			buildInfo = getLoaddedBuildInfo(proj);
 		} catch (CoreException e) {
 			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info: " + e.getLocalizedMessage());
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info: " + e.getLocalizedMessage()); //$NON-NLS-1$
 			return null;
 		}
 	
@@ -2738,46 +2738,46 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			int flags = forceLoad ? 0 : ICProjectDescriptionManager.GET_IF_LOADDED;
 			
 			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is NOT loadded" + (forceLoad ? " forceload" : ""));
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is NOT loadded" + (forceLoad ? " forceload" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			ICProjectDescription projDes = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(proj, flags);
 			if(projDes != null){
 				if(BuildDbgUtil.DEBUG)
-					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description is obtained, qwerying the loaded build info");
+					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description is obtained, qwerying the loaded build info"); //$NON-NLS-1$
 				try {
 					buildInfo = getLoaddedBuildInfo(proj);
 				} catch (CoreException e) {
 					if(BuildDbgUtil.DEBUG)
-						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info (2): " + e.getLocalizedMessage());
+						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info (2): " + e.getLocalizedMessage()); //$NON-NLS-1$
 					return null;
 				}
 				
 				if(buildInfo == null){
 					if(BuildDbgUtil.DEBUG)
-						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, trying the cfg data provider");
+						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, trying the cfg data provider"); //$NON-NLS-1$
 					
 					buildInfo = ConfigurationDataProvider.getLoaddedBuildInfo(projDes);
 					if(buildInfo != null){
 						if(BuildDbgUtil.DEBUG)
-							BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info found, setting as loadded");
+							BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info found, setting as loadded"); //$NON-NLS-1$
 						
 						try {
 							setLoaddedBuildInfo(proj, buildInfo);
 						} catch (CoreException e) {
 							if(BuildDbgUtil.DEBUG)
-								BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while setting loaded description, ignoring; : " + e.getLocalizedMessage());
+								BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while setting loaded description, ignoring; : " + e.getLocalizedMessage()); //$NON-NLS-1$
 						}
 					}
 						
 				}
 
 			} else if(BuildDbgUtil.DEBUG){
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description in null");
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description in null"); //$NON-NLS-1$
 			}
 
 			
 			if(buildInfo == null){
 				if(BuildDbgUtil.DEBUG)
-					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr");
+					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr"); //$NON-NLS-1$
 				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
 			}
 		}
@@ -2805,7 +2805,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		
 		if(BuildDbgUtil.DEBUG){
 			if(buildInfo == null)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is null");
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is null"); //$NON-NLS-1$
 //			else
 //				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info found");
 		}

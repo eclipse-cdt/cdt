@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -16,6 +17,8 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -42,6 +45,13 @@ public class RefsTab extends AbstractCPropertyTab {
 		
 		tree = new Tree(usercomp, SWT.SINGLE | SWT.CHECK | SWT.BORDER);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tree.getAccessible().addAccessibleListener(
+            new AccessibleAdapter() {                       
+                public void getName(AccessibleEvent e) {
+                        e.result = UIMessages.getString("RefsTab.4"); //$NON-NLS-1$
+                }
+            }
+        );
 		initData();
 		tree.addSelectionListener(new SelectionAdapter() {
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -20,6 +21,9 @@ import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.TriButton;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.accessibility.AccessibleListener;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -181,6 +185,11 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		});
 
 		// Workbench behaviour group
+		AccessibleListener makeTargetLabelAccessibleListener = new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = Messages.getString("BuilderSettingsTab.16");
+			}
+		};
 		Group g4 = setupGroup(comp, Messages.getString("BuilderSettingsTab.14"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g4, Messages.getString("BuilderSettingsTab.15"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		title2 = setupLabel(g4, Messages.getString("BuilderSettingsTab.16"), 2, GridData.BEGINNING); //$NON-NLS-1$
@@ -192,6 +201,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, t_autoBuild.getText());
 				} catch (CoreException ex) {}
 			}} );
+		t_autoBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
 		setupLabel(g4, Messages.getString("BuilderSettingsTab.18"), 3, GridData.BEGINNING); //$NON-NLS-1$
 		b_cmdBuild = setupCheck(g4, Messages.getString("BuilderSettingsTab.19"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_cmdBuild = setupBlock(g4, b_cmdBuild);
@@ -201,6 +211,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, t_cmdBuild.getText());
 				} catch (CoreException ex) {}
 			}} );
+		t_cmdBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
 		b_cmdClean = setupCheck(g4, Messages.getString("BuilderSettingsTab.20"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_cmdClean = setupBlock(g4, b_cmdClean);
 		t_cmdClean.addModifyListener(new ModifyListener() {
@@ -209,6 +220,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, t_cmdClean.getText());
 				} catch (CoreException ex) {}
 			}} );
+		t_cmdClean.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
 
 		// Build location group
 		Group g5 = setupGroup(comp, Messages.getString("BuilderSettingsTab.21"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$

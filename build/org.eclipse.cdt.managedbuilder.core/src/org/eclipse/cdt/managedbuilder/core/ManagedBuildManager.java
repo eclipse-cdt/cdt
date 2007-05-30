@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.XmlStorageElement;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
@@ -2619,19 +2620,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static void setLoaddedBuildInfo(IProject project, IManagedBuildInfo info) throws CoreException{
 		// Associate the build info with the project for the duration of the session
 		//project.setSessionProperty(buildInfoProperty, info);
-		IResourceRuleFactory rcRf = ResourcesPlugin.getWorkspace().getRuleFactory();
-		ISchedulingRule rule = rcRf.modifyRule(project);
-		IJobManager mngr = Job.getJobManager();
+//		IResourceRuleFactory rcRf = ResourcesPlugin.getWorkspace().getRuleFactory();
+//		ISchedulingRule rule = rcRf.modifyRule(project);
+//		IJobManager mngr = Job.getJobManager();
 
-		try {
-			mngr.beginRule(rule, null);
+//		try {
+//			mngr.beginRule(rule, null);
 			doSetLoaddedInfo(project, info);
-		} catch (IllegalArgumentException e) {
-			// TODO: set anyway for now
-			doSetLoaddedInfo(project, info);
-		}finally {
-			mngr.endRule(rule);
-		}
+//		} catch (IllegalArgumentException e) {
+//			// TODO: set anyway for now
+//			doSetLoaddedInfo(project, info);
+//		}finally {
+//			mngr.endRule(rule);
+//		}
 	}
 	
 	private synchronized static void doSetLoaddedInfo(IProject project, IManagedBuildInfo info){
@@ -2733,10 +2734,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			return null;
 		}
 	
-		if(buildInfo == null && forceLoad){
+		if(buildInfo == null /*&& forceLoad*/){
+			int flags = forceLoad ? 0 : ICProjectDescriptionManager.GET_IF_LOADDED;
+			
 			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is NOT loadded and force_load");
-			ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(proj, false);
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is NOT loadded" + (forceLoad ? " forceload" : ""));
+			ICProjectDescription projDes = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(proj, flags);
 			if(projDes != null){
 				if(BuildDbgUtil.DEBUG)
 					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description is obtained, qwerying the loaded build info");

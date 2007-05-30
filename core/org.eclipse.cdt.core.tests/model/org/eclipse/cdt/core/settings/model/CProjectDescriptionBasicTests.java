@@ -13,7 +13,9 @@ package org.eclipse.cdt.core.settings.model;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -27,7 +29,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 public class CProjectDescriptionBasicTests  extends BaseTestCase{
 	private static final String PROJ_NAME_PREFIX = "CProjectDescriptionBasicTests_";
-	IProject p1, p2;
+	IProject p1, p2, p3;
 	
 	public static TestSuite suite() {
 		return suite(CProjectDescriptionBasicTests.class, "_");
@@ -59,6 +61,49 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 		assertTrue(failed);
 	}
 	
+	public void testModulesCopiedOnCreateNewConfig() throws Exception {
+		ICProject p = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
+		p3 = p.getProject();
+		
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+		
+		ICProjectDescription des = mngr.getProjectDescription(p3);
+		ICConfigurationDescription baseCfg = des.getConfigurations()[0];
+		final String baseCfgId = baseCfg.getId();
+		final String STORAGE_ID = "test.storage_id";
+		final String ATTR = "testAttr";
+		final String ATTR_VALUE = "testAttrValue";
+		final String EL_NAME = "testElName";
+		final String ATTR2 = "testAttr2";
+		final String ATTR2_VALUE = "testAttr2Value";
+		
+		ICStorageElement el = baseCfg.getStorage(STORAGE_ID, false);
+		assertNull(el);
+		el = baseCfg.getStorage(STORAGE_ID, true);
+		assertNotNull(el);
+		assertNull(el.getAttribute(ATTR));
+		el.setAttribute(ATTR, ATTR_VALUE);
+		assertEquals(0, el.getChildren().length);
+		ICStorageElement child = el.createChild(EL_NAME);
+		child.setAttribute(ATTR2, ATTR2_VALUE);
+		
+		final String newCfgId1 = CDataUtil.genId(null);
+		final String newCfgId2 = CDataUtil.genId(null);
+		
+		ICConfigurationDescription cfg1 = des.createConfiguration(newCfgId1, newCfgId1 + ".name", baseCfg);
+		assertEquals(newCfgId1, cfg1.getId());
+		el = cfg1.getStorage(STORAGE_ID, false);
+		assertNotNull(el);
+		assertEquals(ATTR_VALUE, el.getAttribute(ATTR));
+		assertEquals(1, el.getChildren().length);
+		child = el.getChildren()[0];
+		assertEquals(EL_NAME, child.getName());
+		assertEquals(ATTR2_VALUE, child.getAttribute(ATTR2));
+
+		mngr.setProjectDescription(p3, des);
+		
+	}
+
 	public void remove_prefix_testSetInvalidCreatingDescription() throws Exception {
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = wsp.getRoot();
@@ -104,6 +149,11 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 		try {
 			if(p2 != null)
 				p2.getProject().delete(true, null);
+		} catch (CoreException e){
+		}
+		try {
+			if(p3 != null)
+				p3.getProject().delete(true, null);
 		} catch (CoreException e){
 		}
 		super.tearDown();

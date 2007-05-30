@@ -89,7 +89,15 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		super(null, projectDes, null);
 
 		setConfiguration(this);
-		fCfgSpecSettings = new CConfigurationSpecSettings(this, ((CConfigurationDescription)base).getSpecSettings());
+		internalSetId(id);
+		
+		CConfigurationSpecSettings baseSettings = ((CConfigurationDescription)base).getSpecSettings();
+		InternalXmlStorageElement baseRootEl = (InternalXmlStorageElement)baseSettings.getRootStorageElement();
+		InternalXmlStorageElement newRootEl = CProjectDescriptionManager.getInstance().copyElement(baseRootEl, false);
+		ICStorageElement parentEl = baseRootEl.getParent();
+		parentEl.importChild(newRootEl);
+		
+		fCfgSpecSettings = new CConfigurationSpecSettings(this, baseSettings, newRootEl);
 		fCfgSpecSettings.setId(id);
 		fCfgSpecSettings.setName(name);
 		CConfigurationData baseData = ((IInternalCCfgInfo)base).getConfigurationData(false);

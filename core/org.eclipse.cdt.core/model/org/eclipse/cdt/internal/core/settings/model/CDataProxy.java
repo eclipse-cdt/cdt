@@ -106,6 +106,10 @@ public abstract class CDataProxy implements ICSettingObject {
 		fData = data;
 	}
 	
+	void internalSetId(String id){
+		fId = id;
+	}
+	
 	void doClearData(){
 		fData = null;
 		setRescan(true);

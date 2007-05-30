@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -218,16 +219,39 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 
 	public boolean isSameType(IType type) {
-        if( type instanceof PDOMNode ) {
+		if( type == this )
+			return true;
+
+		if( type instanceof ITypedef )
+			return type.isSameType( this );
+
+		if( type instanceof PDOMNode ) {
 			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM() && node.getRecord() == getRecord()) {
 				return true;
 			}
-        }
-        if( type instanceof ITypedef )
-            return ((ITypedef)type).isSameType( this );
-        
-        return false;
+		}
+
+		if( type instanceof ICPPSpecialization ){
+			ICPPClassType myCT= (ICPPClassType) getSpecializedBinding();
+			ICPPClassType otherCT= (ICPPClassType) ((ICPPSpecialization)type).getSpecializedBinding(); 
+			if(!myCT.isSameType(otherCT)) {
+				return false;
+			}
+
+			ObjectMap m1 = getArgumentMap(), m2 = ((ICPPSpecialization)type).getArgumentMap();
+			if( m1 == null || m2 == null || m1.size() != m2.size())
+				return false;
+			for( int i = 0; i < m1.size(); i++ ){
+				IType t1 = (IType) m1.getAt( i );
+				IType t2 = (IType) m2.getAt( i );
+				if( t1 == null || ! t1.isSameType( t2 ) )
+					return false;
+			}
+			return true;
+		}
+
+		return false;
 	}
 	
 	public Object clone() {fail();return null;}

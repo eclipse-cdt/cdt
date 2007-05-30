@@ -19,8 +19,10 @@ import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -200,7 +202,62 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		return (ICPPTemplateInstance) CPPTemplates.createInstance( (ICPPScope) getScope(), this, argMap, args );
 	}
 
+	private static class NodeCollector implements IPDOMVisitor {
+		private List nodes = new ArrayList();
+		public boolean visit(IPDOMNode node) throws CoreException {
+			nodes.add(node);
+			return false;
+		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		public IPDOMNode[] getNodes() {
+			return (IPDOMNode[])nodes.toArray(new IPDOMNode[nodes.size()]);
+		}
+	}
+	
 	public ObjectMap getArgumentMap() {
+		try {
+			PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
+			ICPPTemplateParameter[] params = getTemplateParameters();
+			NodeCollector argVisitor = new NodeCollector();
+			argList.accept(argVisitor);
+			IPDOMNode[] argNodes = argVisitor.getNodes();
+			
+			ObjectMap map = new ObjectMap(params.length);
+			for (int i = 0; i < params.length; i++) {
+				map.put(params[i], argNodes[i]);
+			}
+			
+			return map;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 		return null;
+	}
+	
+	public boolean isSameType(IType type) {
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
+		
+		if( type instanceof ICPPSpecialization ) {
+	        	ICPPClassType ct1= (ICPPClassType) getSpecializedBinding();
+	        	ICPPClassType ct2= (ICPPClassType) ((ICPPSpecialization)type).getSpecializedBinding();
+	        	if(!ct1.isSameType(ct2))
+	        		return false;
+	        	
+	        	ObjectMap m1 = getArgumentMap(), m2 = ((ICPPSpecialization)type).getArgumentMap();
+	        	if( m1 == null || m2 == null || m1.size() != m2.size())
+	        		return false;
+	        	for( int i = 0; i < m1.size(); i++ ){
+	        		IType t1 = (IType) m1.getAt( i );
+	        		IType t2 = (IType) m2.getAt( i );
+	        		if( t1 == null || ! t1.isSameType( t2 ) )
+	        			return false;
+	        	}
+	        	return true;
+	        }
+		
+		return false;
 	}
 }

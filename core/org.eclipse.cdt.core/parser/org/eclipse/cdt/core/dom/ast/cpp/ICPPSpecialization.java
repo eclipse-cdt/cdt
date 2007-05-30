@@ -18,30 +18,28 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
- * @author aniefer
- */
-
-/**
  * For an instantiation of a class template, the members of that instantiation will be
  * specializations of the members of the original class template.
  * For an instantiation of a function template, the parameters will be specializations 
  * of the parameters of the original function template.
  * 
  * Specializations can also be explicitly defined
+ * 
  * @author aniefer
  *
  */
 public interface ICPPSpecialization extends ICPPBinding {
 	/**
-	 * get the original binding that this is a specialization of
-	 * @return
-	 */
+	 * Return the binding that this specialization specializes.
+	 * @return the original binding that this is a specialization of
+	 */ 
 	public IBinding getSpecializedBinding();
 	
 	/**
-	 * return a map which maps from template parameter to the corresponding
-	 * template argument 
-	 * @return
+	 * Returns the argument map for this specialization. For partial specializations, only
+	 * those arguments which have been specialized will appear.
+	 * @return a map which maps from template parameter to the corresponding
+	 * template argument
 	 */
 	public ObjectMap getArgumentMap();
 }

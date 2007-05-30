@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -35,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
@@ -355,5 +358,56 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType implements
 		}
 		
 		return CPPTemplates.instantiateTemplate(this, arguments, null);
+	}
+	
+	public boolean isSameType(IType type) {
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
+		
+		try {
+		if( type instanceof ICPPClassTemplate  && !(type instanceof ProblemBinding)) {
+			boolean same= !(type instanceof ICPPClassTemplatePartialSpecialization);
+			ICPPClassType ctype= (ICPPClassType) type;
+			try {
+				if (same && ctype.getKey() == getKey()) {
+					char[][] qname= ctype.getQualifiedNameCharArray();
+					same= hasQualifiedName(qname, qname.length-1);
+				}
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+			if(!same)
+				return false;
+			
+			ICPPTemplateParameter[] params= getTemplateParameters();
+			ICPPTemplateParameter[] oparams= ((ICPPClassTemplate)type).getTemplateParameters();
+			
+			if(params==null && oparams==null)
+				return true;
+			
+			if(params==null || oparams==null)
+				return false;
+			
+			if(params.length != oparams.length)
+				return false;
+			
+			for(int i=0; same && i<params.length; i++) {
+				ICPPTemplateParameter p= params[i], op= oparams[i];
+				if(p instanceof IType && op instanceof IType) {
+					same &= (((IType)p).isSameType((IType)op));
+				} else {
+					fail();
+				}
+			}
+			
+			return same;
+		}
+		} catch(DOMException de) {
+			CCorePlugin.log(de);
+			return false;
+		}
+		
+		return false;
 	}
 }

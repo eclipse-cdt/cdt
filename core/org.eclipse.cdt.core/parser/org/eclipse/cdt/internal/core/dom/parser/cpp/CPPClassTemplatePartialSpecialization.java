@@ -104,7 +104,19 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 		return getPrimaryClassTemplate();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization#getArgumentMap()
+	 */
 	public ObjectMap getArgumentMap() {
-		return null;
+		IType[] arg= getArguments();
+		ICPPTemplateParameter[] params = getTemplateParameters();
+
+		ObjectMap map = new ObjectMap(params.length);
+		for (int i = 0; i < params.length; i++) {
+			map.put(params[i], arg[i]);
+		}
+
+		return map;
 	}
 }

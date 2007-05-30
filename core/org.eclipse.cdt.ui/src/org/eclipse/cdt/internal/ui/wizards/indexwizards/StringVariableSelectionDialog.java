@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.ui.wizards.indexwizards;
@@ -16,6 +17,8 @@ import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -125,6 +128,11 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		fArgumentText.setFont(container.getFont());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fArgumentText.setLayoutData(gd);		
+		fArgumentText.getAccessible().addAccessibleListener(new AccessibleAdapter() {                       
+            public void getName(AccessibleEvent e) {
+                    e.result = Messages.StringVariableSelectionDialog_columnArgument;
+            }
+		});
 		
 		desc = new Label(container, SWT.NONE);
 		desc.setFont(parent.getFont());

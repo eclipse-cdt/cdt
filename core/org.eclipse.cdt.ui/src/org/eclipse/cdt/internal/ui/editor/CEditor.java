@@ -10,7 +10,7 @@
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -1076,7 +1076,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	private final static String CLOSE_ANGULAR_BRACKETS = PreferenceConstants.EDITOR_CLOSE_ANGULAR_BRACKETS;
 
     /** Preference key for compiler task tags */
-    private final static String TRANSLATION_TASK_TAGS = CCorePreferenceConstants.TRANSLATION_TASK_TAGS;
+    private final static String TODO_TASK_TAGS = CCorePreferenceConstants.TODO_TASK_TAGS;
 
 	/** 
 	 * This editor's projection support 
@@ -1328,8 +1328,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					}
 				}
 
-				// Not implemented ... for the future.
-				if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
+				if (TODO_TASK_TAGS.equals(event.getProperty())) {
 					ISourceViewer sourceViewer = getSourceViewer();
 					if (sourceViewer != null && affectsTextPresentation(event))
 						sourceViewer.invalidateTextPresentation();

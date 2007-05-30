@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.pdom.indexer;
@@ -46,6 +47,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.cdt.internal.core.pdom.ITodoTaskUpdater;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.cdt.internal.core.pdom.PDOMWriter;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
@@ -155,15 +157,15 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			return null;
 		}
 		ILanguage language = tu.getLanguage();
-		if (! (language instanceof AbstractLanguage))
+		if (!(language instanceof AbstractLanguage))
 			return null;
 
 		CodeReader codeReader = tu.getCodeReader();
 		if (codeReader == null) {
 			return null;
 		}
-
-		return createAST((AbstractLanguage)language, codeReader, scannerInfo, options, pm);
+		
+		return createAST((AbstractLanguage) language, codeReader, scannerInfo, options, pm);
 	}
 
 	/**
@@ -172,7 +174,8 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	 * @see #parseTUs(IWritableIndex, int, Collection, Collection, IProgressMonitor)
 	 * @since 4.0
 	 */
-	abstract protected IASTTranslationUnit createAST(AbstractLanguage lang, CodeReader codeReader, IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException;
+	abstract protected IASTTranslationUnit createAST(AbstractLanguage lang, CodeReader codeReader,
+			IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException;
 
 	/**
 	 * Convenience method for subclasses, parses the files calling out to the methods 
@@ -194,15 +197,17 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	}
 	
 	private void internalParseTUs(IWritableIndex index, int readlockCount, Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
-		int options= 0;
+		TodoTaskUpdater taskUpdater = new TodoTaskUpdater();
+
+		int options= AbstractLanguage.OPTION_ADD_COMMENTS;
 		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
 			options |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
 		}
 		for (Iterator iter = fFilesUpFront.iterator(); iter.hasNext();) {
 			String upfront= (String) iter.next();
-			parseUpFront(upfront, options, index, readlockCount, monitor);
+			parseUpFront(upfront, options, index, readlockCount, taskUpdater, monitor);
 		}
-		
+
 		// sources first
 		for (Iterator iter = sources.iterator(); iter.hasNext();) {
 			if (monitor.isCanceled()) 
@@ -210,7 +215,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			final IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
 			if (needToUpdate(ifl, 0)) {
-				parseTU(ifl, tu, options, index, readlockCount, monitor);
+				parseTU(ifl, tu, options, index, readlockCount, taskUpdater, monitor);
 			}
 		}
 
@@ -226,7 +231,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			else {
 				ITranslationUnit context= findContext(index, ifl);
 				if (context != null) {
-					parseTU(ifl, context, options, index, readlockCount, monitor);
+					parseTU(ifl, context, options, index, readlockCount, taskUpdater, monitor);
 				}
 			}
 		}
@@ -242,14 +247,14 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					iter.remove();
 				}
 				else {
-					parseTU(ifl, tu, options, index, readlockCount, monitor);
+					parseTU(ifl, tu, options, index, readlockCount, taskUpdater, monitor);
 				}
 			}
 		}
 	}
 	
 	/**
-	 * Convinience method to check whether a translation unit in the index is outdated
+	 * Convenience method to check whether a translation unit in the index is outdated
 	 * with respect to its timestamp.
 	 * @throws CoreException
 	 * @since 4.0
@@ -271,7 +276,8 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	}
 
 
-	private void parseTU(IIndexFileLocation originator, ITranslationUnit tu, int options, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
+	private void parseTU(IIndexFileLocation originator, ITranslationUnit tu, int options, IWritableIndex index,
+			int readlockCount, ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= tu.getPath();
 		try {
 			// skip if no scanner info
@@ -291,7 +297,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					IASTTranslationUnit ast= createAST(tu, scanner, options, pm);
 					fStatistics.fParsingTime += System.currentTimeMillis()-start;
 					if (ast != null) {
-						addSymbols(ast, index, readlockCount, false, configHash, pm);
+						addSymbols(ast, index, readlockCount, false, configHash, taskUpdater, pm);
 					}
 				}
 			}
@@ -307,7 +313,8 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 	}
 
-	private void parseUpFront(String file, int options, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
+	private void parseUpFront(String file, int options, IWritableIndex index, int readlockCount,
+			ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws CoreException, InterruptedException {
 		file= file.trim();
 		if (file.length() == 0) {
 			return;
@@ -348,7 +355,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 				
 			fStatistics.fParsingTime += System.currentTimeMillis()-start;
 			if (ast != null) {
-				addSymbols(ast, index, readlockCount, false, 0, pm);
+				addSymbols(ast, index, readlockCount, false, 0, taskUpdater, pm);
 				updateInfo(-1, +1, 0);
 			}
 		}
@@ -364,7 +371,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	}
 
 	/**
-	 * Overriders must call super.needToUpdate(). If <code>false</code> is returned
+	 * Overrides must call super.needToUpdate(). If <code>false</code> is returned
 	 * this must be passed on to their caller:
 	 * <pre>
 	 *   if (super.needToUpdate()) {

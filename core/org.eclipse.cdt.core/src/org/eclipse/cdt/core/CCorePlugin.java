@@ -119,21 +119,6 @@ public class CCorePlugin extends Plugin {
 	 */
 	public static final String FORMATTER_EXTPOINT_ID = "CodeFormatter" ; //$NON-NLS-1$
 
-	/**
-	 * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
-	 * @see #getDefaultOptions
-	 */
-	public static final String TRANSLATION_TASK_PRIORITY_NORMAL = "NORMAL"; //$NON-NLS-1$	    
-    /**
-     * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
-     * @see #getDefaultOptions
-     */
-    public static final String TRANSLATION_TASK_PRIORITY_HIGH = "HIGH"; //$NON-NLS-1$
-    /**
-     * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
-     * @see #getDefaultOptions
-     */
-    public static final String TRANSLATION_TASK_PRIORITY_LOW = "LOW"; //$NON-NLS-1$
     /**
      * Possible  configurable option ID.
      * @see #getDefaultOptions
@@ -354,18 +339,18 @@ public class CCorePlugin extends Plugin {
 
 		pdomManager = new PDOMManager();
 		final Job post2= pdomManager.startup();
-		
-        // bug 186755, when started after the platform has been started the jobmanager
+        
+        // bug 186755, when started after the platform has been started the job manager
         // is no longer suspended. So we have to start a job at the very end to make
         // sure we don't trigger a concurrent plugin activation from within the job.
 		post1.schedule();
 		post2.schedule();
 	}
-    
+
 	/**
      * TODO: Add all options here
      * Returns a table of all known configurable options with their default values.
-     * These options allow to configure the behaviour of the underlying components.
+     * These options allow to configure the behavior of the underlying components.
      * The client may safely use the result as a template that they can modify and
      * then pass to <code>setOptions</code>.
      * 
@@ -375,26 +360,6 @@ public class CCorePlugin extends Plugin {
      * Note: more options might be added in further releases.
      * <pre>
      * RECOGNIZED OPTIONS:
-     * TRANSLATION / Define the Automatic Task Tags
-     *    When the tag list is not empty, translation will issue a task marker whenever it encounters
-     *    one of the corresponding tags inside any comment in C/C++ source code.
-     *    Generated task messages will include the tag, and range until the next line separator or comment ending.
-     *    Note that tasks messages are trimmed. If a tag is starting with a letter or digit, then it cannot be leaded by
-     *    another letter or digit to be recognized ("fooToDo" will not be recognized as a task for tag "ToDo", but "foo#ToDo"
-     *    will be detected for either tag "ToDo" or "#ToDo"). Respectively, a tag ending with a letter or digit cannot be followed
-     *    by a letter or digit to be recognized ("ToDofoo" will not be recognized as a task for tag "ToDo", but "ToDo:foo" will
-     *    be detected either for tag "ToDo" or "ToDo:").
-     *     - option id:         "org.eclipse.cdt.core.translation.taskTags"
-     *     - possible values:   { "<tag>[,<tag>]*" } where <tag> is a String without any wild-card or leading/trailing spaces 
-     *     - default:           ""
-     * 
-     * TRANSLATION / Define the Automatic Task Priorities
-     *    In parallel with the Automatic Task Tags, this list defines the priorities (high, normal or low)
-     *    of the task markers issued by the translation.
-     *    If the default is specified, the priority of each task marker is "NORMAL".
-     *     - option id:         "org.eclipse.cdt.core.transltaion.taskPriorities"
-     *     - possible values:   { "<priority>[,<priority>]*" } where <priority> is one of "HIGH", "NORMAL" or "LOW"
-     *     - default:           ""
      * 
      * CORE / Specify Default Source Encoding Format
      *    Get the encoding format for translated sources. This setting is read-only, it is equivalent

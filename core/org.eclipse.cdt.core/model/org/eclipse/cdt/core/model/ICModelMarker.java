@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,9 +46,9 @@ public interface ICModelMarker {
 	/**
 	 * C model task marker type (value <code>"org.eclipse.cdt.core.task"</code>).
 	 * This can be used to recognize task markers in the workspace that correspond to tasks
-	 * specified in C/C++ source comments and detected during translation (for example, 'TO-DO: ...').
+	 * specified in C/C++ source comments and detected during code indexing (for example, 'TO-DO: ...').
 	 * Tasks are identified by a task tag, which can be customized through <code>CCorePlugin</code>
-	 * option <code>"org.eclipse.cdt.core.translation.taskTag"</code>.
+	 * option <code>"org.eclipse.cdt.core.taskTag"</code>.
 	 */
 	public static final String TASK_MARKER = CCorePlugin.PLUGIN_ID + ".task"; //$NON-NLS-1$
 	

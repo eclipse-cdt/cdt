@@ -21,6 +21,8 @@ public class Messages extends NLS {
 	public static String PDOMIndexerTask_errorWhileParsing;
 	public static String PDOMIndexerTask_parsingFileTask;
 	public static String PDOMIndexerTask_tooManyIndexProblems;
+	public static String TodoTaskUpdater_taskFormat;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

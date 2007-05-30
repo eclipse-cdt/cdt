@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
@@ -90,7 +90,7 @@ public class ListDialogField extends DialogField {
 	protected IBaseLabelProvider fLabelProvider;
 	protected ListViewerAdapter fListViewerAdapter;
 	protected List fElements;
-	protected ViewerSorter fViewerSorter;
+	protected ViewerComparator fViewerComparator;
 
 	protected String[] fButtonLabels;
 	private Button[] fButtonControls;
@@ -182,11 +182,11 @@ public class ListDialogField extends DialogField {
 	}
 	
 	/**
-	 * Sets the viewerSorter.
-	 * @param viewerSorter The viewerSorter to set
+	 * Sets the viewerComparator.
+	 * @param viewerComparator The viewerComparator to set
 	 */
-	public void setViewerSorter(ViewerSorter viewerSorter) {
-		fViewerSorter= viewerSorter;
+	public void setViewerComparator(ViewerComparator viewerComparator) {
+		fViewerComparator= viewerComparator;
 	}
 	
 	public void setTableColumns(ColumnsDescription column) {
@@ -329,8 +329,8 @@ public class ListDialogField extends DialogField {
 			
 			fTable.setInput(fParentElement);
 			
-			if (fViewerSorter != null) {
-				fTable.setSorter(fViewerSorter);
+			if (fViewerComparator != null) {
+				fTable.setComparator(fViewerComparator);
 			}
 			
 			fTableControl.setEnabled(isEnabled());
@@ -699,9 +699,9 @@ public class ListDialogField extends DialogField {
 	
 	public void selectFirstElement() {
 		Object element= null;
-		if (fViewerSorter != null) {
+		if (fViewerComparator != null) {
 			Object[] arr= fElements.toArray(); 
-			fViewerSorter.sort(fTable, arr);
+			fViewerComparator.sort(fTable, arr);
 			if (arr.length > 0) {
 				element= arr[0];
 			}

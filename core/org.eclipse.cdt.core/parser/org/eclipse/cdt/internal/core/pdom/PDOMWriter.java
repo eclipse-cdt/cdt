@@ -110,13 +110,13 @@ abstract public class PDOMWriter {
 		
 	/**
 	 * Fully equivalent to 
-	 * <code>addSymbols(IASTTranslationUnit, IWritableIndex, int, true, int, IProgressMonitor)</code>.
+	 * <code>addSymbols(IASTTranslationUnit, IWritableIndex, int, true, int, null, IProgressMonitor)</code>.
 	 * @since 4.0
 	 */
 	public void addSymbols(IASTTranslationUnit ast, 
 			IWritableIndex index, int readlockCount,
 			int configHash, IProgressMonitor pm) throws InterruptedException, CoreException {
-		addSymbols(ast, index, readlockCount, true, configHash, pm);
+		addSymbols(ast, index, readlockCount, true, configHash, null, pm);
 	}
 
 	/**
@@ -133,7 +133,7 @@ abstract public class PDOMWriter {
 	 */
 	public void addSymbols(IASTTranslationUnit ast, 
 			IWritableIndex index, int readlockCount, boolean flushIndex,
-			int configHash, IProgressMonitor pm) throws InterruptedException, CoreException {
+			int configHash, ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws InterruptedException, CoreException {
 		final Map symbolMap= new HashMap();
 		try {
 			HashSet contextIncludes= new HashSet();
@@ -205,6 +205,10 @@ abstract public class PDOMWriter {
 				index.releaseWriteLock(readlockCount, flushIndex);
 			}
 			fStatistics.fAddToIndexTime+= System.currentTimeMillis()-start;
+			
+			if (taskUpdater != null) {
+				taskUpdater.updateTasks(ast.getComments(), orderedPaths);
+			}
 		}
 		finally {
 			synchronized(fInfo) {

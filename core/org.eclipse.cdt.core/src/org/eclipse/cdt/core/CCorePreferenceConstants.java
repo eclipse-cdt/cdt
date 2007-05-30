@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -15,10 +16,34 @@ package org.eclipse.cdt.core;
 public class CCorePreferenceConstants {
 
 	/**
-	 * Possible configurable option ID.
-	 * @see #getDefaultOptions
+     * <pre>
+     * RECOGNIZED OPTIONS:
+     * Define the Automatic Task Tags
+     *    When the tag list is not empty, indexer will issue a task marker whenever it encounters
+     *    one of the corresponding tags inside any comment in C/C++ source code.
+     *    Generated task messages will include the tag, and range until the next line separator or comment ending.
+     *    Note that tasks messages are trimmed. If a tag is starting with a letter or digit, then it cannot be leaded by
+     *    another letter or digit to be recognized ("fooToDo" will not be recognized as a task for tag "ToDo", but "foo#ToDo"
+     *    will be detected for either tag "ToDo" or "#ToDo"). Respectively, a tag ending with a letter or digit cannot be followed
+     *    by a letter or digit to be recognized ("ToDofoo" will not be recognized as a task for tag "ToDo", but "ToDo:foo" will
+     *    be detected either for tag "ToDo" or "ToDo:").
+     *     - option id:         "org.eclipse.cdt.core.taskTags"
+     *     - possible values:   { "<tag>[,<tag>]*" } where <tag> is a String without any wild-card or leading/trailing spaces 
+     *     - default:           ""
+     * 
+     * Define the Automatic Task Priorities
+     *    In parallel with the Automatic Task Tags, this list defines the priorities (high, normal or low)
+     *    of the task markers issued by the translation.
+     *    If the default is specified, the priority of each task marker is "normal".
+     *     - option id:         "org.eclipse.cdt.core.taskPriorities"
+     *     - possible values:   { "<priority>[,<priority>]*" } where <priority> is one of "high", "normal" or "low"
+     *     - default:           ""
+     */
+
+	/**
+	 * Task tags used in code comments.
 	 */
-	public static final String TRANSLATION_TASK_TAGS = CCorePlugin.PLUGIN_ID + ".translation.taskTags"; //$NON-NLS-1$
+	public static final String TODO_TASK_TAGS = CCorePlugin.PLUGIN_ID + ".taskTags"; //$NON-NLS-1$
 
 	/**
 	 * Default task tag
@@ -26,14 +51,36 @@ public class CCorePreferenceConstants {
 	public static final String DEFAULT_TASK_TAG = "TODO"; //$NON-NLS-1$
 	
 	/**
+	 * Possible configurable option value for TODO_TASK_PRIORITIES.
+	 */
+	public static final String TASK_PRIORITY_NORMAL = "normal"; //$NON-NLS-1$	    
+    /**
+     * Possible configurable option value for TODO_TASK_PRIORITIES.
+     */
+    public static final String TASK_PRIORITY_HIGH = "high"; //$NON-NLS-1$
+    /**
+     * Possible configurable option value for TODO_TASK_PRIORITIES.
+     */
+    public static final String TASK_PRIORITY_LOW = "low"; //$NON-NLS-1$
+	/**
 	 * Default task priority
 	 */
-	public static final String DEFAULT_TASK_PRIORITY = CCorePlugin.TRANSLATION_TASK_PRIORITY_NORMAL;
+	public static final String DEFAULT_TASK_PRIORITY = TASK_PRIORITY_NORMAL;
+
 	/**
-	 * Possible configurable option ID.
-	 * @see #getDefaultOptions
+	 * Priorities associated with task tags.
 	 */
-	public static final String TRANSLATION_TASK_PRIORITIES = CCorePlugin.PLUGIN_ID + ".translation.taskPriorities"; //$NON-NLS-1$
+	public static final String TODO_TASK_PRIORITIES = CCorePlugin.PLUGIN_ID + ".taskPriorities"; //$NON-NLS-1$
+
+	/**
+	 * Case sensitivity of task tags.
+	 */
+	public static final String TODO_TASK_CASE_SENSITIVE = CCorePlugin.PLUGIN_ID + ".taskCaseSensitive"; //$NON-NLS-1$
+
+	/**
+	 * Default case sensitivity of task tags.
+	 */
+	public static final String DEFAULT_TASK_CASE_SENSITIVE = "false"; //$NON-NLS-1$
 
 	/**
 	 * Active code formatter ID.

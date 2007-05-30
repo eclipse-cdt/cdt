@@ -673,6 +673,11 @@
             id="org.eclipse.cdt.ui.preferences.LanguageMappings"
             name="%CDTLanguagesProperty.name">
       </page>
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage"
+            name="%todoTaskPrefName"/>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"

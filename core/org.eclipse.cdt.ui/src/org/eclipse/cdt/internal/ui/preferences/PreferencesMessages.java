@@ -192,7 +192,34 @@ public final class PreferencesMessages extends NLS {
 
 	public static String CodeFormatterPreferencePage_title;
 	public static String CodeFormatterPreferencePage_description; 
+
+	public static String TodoTaskPreferencePage_title;
+	public static String TodoTaskPreferencePage_description;
+	public static String TodoTaskConfigurationBlock_markers_tasks_high_priority;
+	public static String TodoTaskConfigurationBlock_markers_tasks_normal_priority;
+	public static String TodoTaskConfigurationBlock_markers_tasks_low_priority;
+	public static String TodoTaskConfigurationBlock_markers_tasks_add_button;
+	public static String TodoTaskConfigurationBlock_markers_tasks_remove_button;
+	public static String TodoTaskConfigurationBlock_markers_tasks_edit_button;
+	public static String TodoTaskConfigurationBlock_markers_tasks_name_column;
+	public static String TodoTaskConfigurationBlock_markers_tasks_priority_column;
+	public static String TodoTaskConfigurationBlock_markers_tasks_setdefault_button;
+	public static String TodoTaskConfigurationBlock_casesensitive_label;
+	public static String TodoTaskConfigurationBlock_needsbuild_title;
+	public static String TodoTaskConfigurationBlock_tasks_default;
 	
+	public static String TodoTaskInputDialog_new_title;
+	public static String TodoTaskInputDialog_edit_title;
+	public static String TodoTaskInputDialog_name_label;
+	public static String TodoTaskInputDialog_priority_label;
+	public static String TodoTaskInputDialog_priority_high;
+	public static String TodoTaskInputDialog_priority_normal;
+	public static String TodoTaskInputDialog_priority_low;
+	public static String TodoTaskInputDialog_error_enterName;
+	public static String TodoTaskInputDialog_error_comma;
+	public static String TodoTaskInputDialog_error_entryExists;
+	public static String TodoTaskInputDialog_error_noSpace;
+
 	public static String LanguageMappings_missingLanguageTitle;
 	
 	public static String WorkspaceLanguagesPreferencePage_description;

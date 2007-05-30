@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -103,7 +104,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
  * @author Doug Schaefer
  */
 public class PDOMManager implements IWritableIndexManager, IListener {
-
 	private static final class PerInstanceSchedulingRule implements ISchedulingRule {
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
@@ -113,7 +113,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 	
-	private final class PCL implements IPreferenceChangeListener {
+	private final class PCL implements IPreferenceChangeListener, IPropertyChangeListener {
 		private ICProject fProject;
 		public PCL(ICProject prj) {
 			fProject= prj;
@@ -123,8 +123,16 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				onPreferenceChange(fProject, event);
 			}
 		}
+		public void propertyChange(PropertyChangeEvent event) {
+			String property = event.getProperty();
+			if (property.equals(CCorePreferenceConstants.TODO_TASK_TAGS) ||
+					property.equals(CCorePreferenceConstants.TODO_TASK_PRIORITIES) ||
+					property.equals(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE)) {
+				// Rebuild index if task tag preferences change.
+				reindex(fProject);
+			}
+		}
 	}
-
 
 	private static final String SETTINGS_FOLDER_NAME = ".settings"; //$NON-NLS-1$
 	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
@@ -659,6 +667,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			fPrefListeners.put(prj, pcl);
 		}
 		IndexerPreferences.addChangeListener(prj, pcl);
+        Preferences pref = CCorePlugin.getDefault().getPluginPreferences();
+		pref.addPropertyChangeListener(pcl);
 	}
 
 	private void unregisterPreferenceListener(ICProject project) {
@@ -666,6 +676,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		PCL pcl= (PCL) fPrefListeners.remove(prj);
 		if (pcl != null) {
 			IndexerPreferences.removeChangeListener(prj, pcl);
+	        Preferences pref = CCorePlugin.getDefault().getPluginPreferences();
+			pref.removePropertyChangeListener(pcl);
 		}
 	}
 

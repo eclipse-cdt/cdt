@@ -101,6 +101,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected final boolean supportDeclspecSpecifiers;
 
 	protected final IBuiltinBindingsProvider builtinBindingsProvider;
+	
+	private IToken lastTokenFromScanner;
 
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
@@ -253,8 +255,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      *             thrown when the scanner.nextToken() yields no tokens
      */
     protected IToken fetchToken() throws EndOfFileException {
+    	IToken value= null;
+    	boolean adjustNextToken= false;
         try {
-            IToken value = scanner.nextToken();
+            value= scanner.nextToken();
             // Put the Comments in the Array for later processing
             int type = value.getType();
 			while(type == IToken.tCOMMENT || type == IToken.tBLOCKCOMMENT){
@@ -262,12 +266,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             	comments = ASTComment.addComment(comments, comment);
             	value = scanner.nextToken();
             	type= value.getType();
+            	adjustNextToken= true;
             }
-            return value;
         } catch (OffsetLimitReachedException olre) {
             handleOffsetLimitException(olre);
-            return null;
+            value= null;
         }
+        
+        if (lastTokenFromScanner != null && adjustNextToken) {
+        	lastTokenFromScanner.setNext(value);
+        }
+        lastTokenFromScanner= value;
+        return value;
     }
 
     protected boolean isCancelled = false;

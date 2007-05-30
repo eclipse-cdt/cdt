@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,14 +68,13 @@ public class CCommentScanner extends AbstractCScanner
             StringTokenizer tokenizer= new StringTokenizer(value, delimiters);
             int size= tokenizer.countTokens();
             String[] tokens= new String[size];
-            int i= 0;
-            while (i < size)
-                tokens[i++]= tokenizer.nextToken();
+            for (int i = 0; i < size; i++)
+                tokens[i] = tokenizer.nextToken();
             return tokens;
         }
     }
     
-    private static final String TRANSLATION_TASK_TAGS= CCorePreferenceConstants.TRANSLATION_TASK_TAGS;    
+    private static final String TODO_TASK_TAGS= CCorePreferenceConstants.TODO_TASK_TAGS;    
     protected static final String TASK_TAG= ICColorConstants.TASK_TAG;
 
     private TaskTagRule fTaskTagRule;
@@ -108,10 +107,10 @@ public class CCommentScanner extends AbstractCScanner
         List list= new ArrayList();
         
         String tasks= null;
-        if (getPreferenceStore().contains(TRANSLATION_TASK_TAGS)) {
-            tasks= getPreferenceStore().getString(TRANSLATION_TASK_TAGS);
+        if (getPreferenceStore().contains(TODO_TASK_TAGS)) {
+            tasks= getPreferenceStore().getString(TODO_TASK_TAGS);
         } else if (fCorePreferenceStore != null) {
-            tasks= fCorePreferenceStore.getString(TRANSLATION_TASK_TAGS);
+            tasks= fCorePreferenceStore.getString(TODO_TASK_TAGS);
         }
         
         if (tasks != null) {
@@ -130,14 +129,14 @@ public class CCommentScanner extends AbstractCScanner
      * @see org.eclipse.cdt.internal.ui.text.AbstractJavaScanner#affectsBehavior(org.eclipse.jface.util.PropertyChangeEvent)
      */
     public boolean affectsBehavior(PropertyChangeEvent event) {
-        return event.getProperty().equals(TRANSLATION_TASK_TAGS) || super.affectsBehavior(event);
+        return event.getProperty().equals(TODO_TASK_TAGS) || super.affectsBehavior(event);
     }
 
     /*
      * @see org.eclipse.cdt.internal.ui.text.AbstractJavaScanner#adaptToPreferenceChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
     public void adaptToPreferenceChange(PropertyChangeEvent event) {
-        if (fTaskTagRule != null && event.getProperty().equals(TRANSLATION_TASK_TAGS)) {
+        if (fTaskTagRule != null && event.getProperty().equals(TODO_TASK_TAGS)) {
             Object value= event.getNewValue();
 
             if (value instanceof String) {

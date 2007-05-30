@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.parser.AbstractScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.index.IIndex;

@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;

@@ -90,7 +90,7 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 
     // Kludge for MSVC support until we get a real extension
     private static final ObjectStyleMacro __stdcall = new ObjectStyleMacro(
-    		"__stdcall".toCharArray(), emptyCharArray);
+    		"__stdcall".toCharArray(), emptyCharArray); //$NON-NLS-1$
     
     /**
      * @return

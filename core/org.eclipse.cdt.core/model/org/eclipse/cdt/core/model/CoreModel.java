@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModel;
@@ -51,7 +50,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 

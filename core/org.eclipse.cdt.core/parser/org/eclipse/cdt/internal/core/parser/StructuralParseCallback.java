@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTScope;
 

@@ -14,8 +14,6 @@ package org.eclipse.cdt.core.resources;
 
 import java.util.EventListener;
 
-import org.eclipse.core.resources.IPathVariableChangeListener;
-
 
 /**
  * An interface to be implemented by objects interested in path variable

@@ -34,7 +34,7 @@ import org.osgi.framework.Bundle;
  * @since 4.0
  */
 public class TemplateEngineHelper {
-
+	public static final String US = "_";  //$NON-NLS-1$
 	public static final String OPEN_MARKER = "$("; //$NON-NLS-1$
 	public static final String CLOSE_MARKER = ")"; //$NON-NLS-1$
 	public static final String STRING_EXTERNALIZATION_MARKER = "%"; //$NON-NLS-1$
@@ -42,6 +42,8 @@ public class TemplateEngineHelper {
 	// This is used while getting the Plugin Path.
 	public static final String PROJRESOURCE = "plugin.xml"; //$NON-NLS-1$
 	public static final String PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+	public static final String PLUGIN_PROPERTIES = "plugin.properties"; //$NON-NLS-1$
+	public static final String TEMPLATE_PROPERTIES = "templates.properties"; //$NON-NLS-1$
 	public static final String BOOLTRUE = "true"; //$NON-NLS-1$
 	public static final String ID = "id"; //$NON-NLS-1$
 	public static final String VALUE = "value"; //$NON-NLS-1$
@@ -230,7 +232,7 @@ public class TemplateEngineHelper {
 			String pluginId = ti.getPluginId();
 			String path = ti.getTemplatePath();
 			IPath p = new Path(path);
-			String propertiesPath = "template.properties";
+			String propertiesPath = TEMPLATE_PROPERTIES;
 			if(p.segmentCount() != 0){
 				p = p.removeLastSegments(1);
 				propertiesPath = p.append(propertiesPath).toString();
@@ -246,7 +248,7 @@ public class TemplateEngineHelper {
 			try {
 				value = location != null ? getValueFromProperties(pluginId, location, key.substring(1)) : null;
 				if (value == null) {
-					value = getValueFromProperties(pluginId, "plugin.properties", key.substring(1));
+					value = getValueFromProperties(pluginId, PLUGIN_PROPERTIES, key.substring(1));
 				}
 			} catch (IOException e) {
 				value = key;
@@ -288,13 +290,13 @@ public class TemplateEngineHelper {
 		String country = locale.getCountry();
 		String variant = locale.getVariant();
 		
-		url = bundle.getResource(propertiesFile + "_" + lang + "_" + country + "_" + variant);
+		url = bundle.getResource(propertiesFile + US + lang + US + country + US + variant);
 		
 		if (url == null) {
-			url = bundle.getResource(propertiesFile + "_" + lang + "_" + country);
+			url = bundle.getResource(propertiesFile + US + lang + US + country);
 		}
 		if (url == null) {
-			url = bundle.getResource(propertiesFile + "_" + lang);
+			url = bundle.getResource(propertiesFile + US + lang);
 		}
 		if (url == null) {
 			url = bundle.getResource(propertiesFile);

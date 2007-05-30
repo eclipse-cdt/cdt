@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;

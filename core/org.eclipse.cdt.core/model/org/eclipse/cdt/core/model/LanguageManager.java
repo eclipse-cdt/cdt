@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;

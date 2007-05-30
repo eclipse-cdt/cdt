@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.EntryStore;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
-import org.eclipse.core.resources.IProject;
 
 public class CLanguageSetting extends CDataProxy implements
 		ICLanguageSetting {

@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.core.index;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;

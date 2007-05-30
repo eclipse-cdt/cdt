@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.model.CModelOperation;
-import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.CompositeWorkspaceRunnable;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;

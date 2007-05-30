@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.core.runtime.CoreException;
 
 /**

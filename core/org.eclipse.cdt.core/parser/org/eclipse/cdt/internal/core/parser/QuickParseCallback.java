@@ -15,8 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.eclipse.cdt.core.parser.*;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;

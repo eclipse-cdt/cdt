@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 
 /**

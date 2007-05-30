@@ -39,7 +39,6 @@ import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
-import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.CDTLogWriter;

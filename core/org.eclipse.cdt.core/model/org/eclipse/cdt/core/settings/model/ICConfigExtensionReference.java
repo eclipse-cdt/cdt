@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 
 public interface ICConfigExtensionReference {
     /**

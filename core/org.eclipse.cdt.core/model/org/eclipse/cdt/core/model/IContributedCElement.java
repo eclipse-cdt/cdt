@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Additions to the <code>ICElement</code> hierarchy provided by

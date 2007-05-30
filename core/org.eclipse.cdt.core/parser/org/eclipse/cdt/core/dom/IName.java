@@ -12,7 +12,6 @@
 package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
  * Common interface for names in the index and the AST.

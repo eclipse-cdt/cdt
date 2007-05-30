@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186525] Move keystoreProviders to core
  * Martin Oberhuber (Wind River) - [181939] Deferred class loading for keystoreProviders
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Martin Oberhuber (Wind River) - [160293] NPE on startup when only Core feature is installed
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -294,9 +295,8 @@ public class RSECorePlugin extends Plugin {
             for (int idx=0; idx<v.size(); idx++)
                _subsystemConfigurations[idx] = (ISubSystemConfigurationProxy)v.elementAt(idx);
           }
+          Arrays.sort(_subsystemConfigurations, new SubSystemConfigurationProxyComparator());
     	}
-    	
-    	Arrays.sort(_subsystemConfigurations, new SubSystemConfigurationProxyComparator());
     	
     	return _subsystemConfigurations;
     }

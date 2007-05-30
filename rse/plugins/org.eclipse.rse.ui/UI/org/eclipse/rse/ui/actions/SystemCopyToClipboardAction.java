@@ -59,7 +59,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 {
 	private IStructuredSelection _selection;
 	private Clipboard _clipboard;
-	private boolean  _doResourceTransfer = true; //experiment
+	private boolean  _doResourceTransfer = false; // determines whether or not to download on copy
 
 	/**
 	 * Constructor
@@ -93,19 +93,18 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 		
 		if (remoteAdapter != null)
 		{
-			
 			if (remoteAdapter.canEdit(dragObject))
-			{				
-				ISystemEditableRemoteObject editable = remoteAdapter.getEditableRemoteObject(dragObject);
-				// corresponds to a file
-				IFile file = editable.getLocalResource();
-				if (!file.exists())
-				{
-					LazyDownloadJob job = new LazyDownloadJob(editable);
-					job.schedule();
+				{				
+					ISystemEditableRemoteObject editable = remoteAdapter.getEditableRemoteObject(dragObject);
+					// corresponds to a file
+					IFile file = editable.getLocalResource();
+					if (!file.exists())
+					{
+						LazyDownloadJob job = new LazyDownloadJob(editable);
+						job.schedule();
+					}
+					resource = file;
 				}
-				resource = file;
-			}
 			else if (viewAdapter != null)
 			{
 				if (viewAdapter.hasChildren(dragObject)) 
